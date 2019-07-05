@@ -2,6 +2,15 @@
  Attributes ( OmniVersion = 1 ) Protected Class HarvestRates
 Inherits Beacon.ConfigGroup
 	#tag Event
+		Sub CommandLineOptions(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
+		  #Pragma Unused Mask
+		  #Pragma Unused SourceDocument
+		  
+		  Values.Append(New Beacon.ConfigValue("?", "UseOptimizedHarvestingHealth", If(Self.mUseOptimizedRates, "true", "false")))
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
 		  #Pragma Unused Mask
 		  #Pragma Unused SourceDocument
@@ -11,6 +20,9 @@ Inherits Beacon.ConfigGroup
 		    Dim Rate As Double = Entry.Value
 		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "HarvestResourceItemAmountClassMultipliers", "(ClassName=""" + ClassString + """,Multiplier=" + Rate.PrettyText + ")"))
 		  Next
+		  
+		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PlayerHarvestingDamageMultiplier", Self.mPlayerHarvestingDamageMultiplier.PrettyText))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "DinoHarvestingDamageMultiplier", Self.mDinoHarvestingDamageMultiplier.PrettyText))
 		End Sub
 	#tag EndEvent
 
@@ -19,7 +31,9 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Mask
 		  #Pragma Unused SourceDocument
 		  
-		  Values.Append(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "HarvestAmountMultiplier", Self.mGlobalMultiplier.PrettyText))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "HarvestAmountMultiplier", Self.mHarvestAmountMultiplier.PrettyText))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "HarvestHealthMultiplier", Self.mHarvestHealthMultiplier.PrettyText))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ClampResourceHarvestDamage", If(Self.mClampResourceHarvestDamage, "True", "False")))
 		End Sub
 	#tag EndEvent
 
@@ -27,8 +41,21 @@ Inherits Beacon.ConfigGroup
 		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
+		  // There is a slight performance impact here, since DoubleValue will check HasKey too,
+		  // but this way is safe.
+		  If Dict.HasKey("Harvest Amount Multiplier") Then
+		    Self.mHarvestAmountMultiplier = Dict.DoubleValue("Harvest Amount Multiplier", 1.0)
+		  ElseIf Dict.HasKey("Global") Then
+		    Self.mHarvestAmountMultiplier = Dict.DoubleValue("Global", 1.0)
+		  End If
+		  
+		  Self.mHarvestHealthMultiplier = Dict.DoubleValue("Harvest Health Multiplier", 1.0)
+		  Self.mUseOptimizedRates = Dict.BooleanValue("Use Optimized Rates", False)
+		  Self.mClampResourceHarvestDamage = Dict.BooleanValue("Clamp Resource Harvest Damage", False)
+		  Self.mPlayerHarvestingDamageMultiplier = Dict.DoubleValue("Player Harvesting Damage Multiplier", 1.0)
+		  Self.mDinoHarvestingDamageMultiplier = Dict.DoubleValue("Dino Harvesting Damage Multiplier", 1.0)
+		  
 		  Self.mOverrides = Dict.DictionaryValue("Overrides", New Xojo.Core.Dictionary)
-		  Self.mGlobalMultiplier = Dict.DoubleValue("Global", 1.0)
 		End Sub
 	#tag EndEvent
 
@@ -36,8 +63,13 @@ Inherits Beacon.ConfigGroup
 		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
-		  Dict.Value("Global") = Self.mGlobalMultiplier
+		  Dict.Value("Harvest Amount Multiplier") = Self.mHarvestAmountMultiplier
+		  Dict.Value("Harvest Health Multiplier") = Self.mHarvestHealthMultiplier
 		  Dict.Value("Overrides") = Self.mOverrides
+		  Dict.Value("Use Optimized Rates") = Self.mUseOptimizedRates
+		  Dict.Value("Clamp Resource Harvest Damage") = Self.mClampResourceHarvestDamage
+		  Dict.Value("Player Harvesting Damage Multiplier") = Self.mPlayerHarvestingDamageMultiplier
+		  Dict.Value("Dino Harvesting Damage Multiplier") = Self.mDinoHarvestingDamageMultiplier
 		End Sub
 	#tag EndEvent
 
@@ -61,6 +93,12 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Super.Constructor()
+		  Self.mClampResourceHarvestDamage = False
+		  Self.mDinoHarvestingDamageMultiplier = 1.0
+		  Self.mHarvestAmountMultiplier = 1.0
+		  Self.mHarvestHealthMultiplier = 1.0
+		  Self.mPlayerHarvestingDamageMultiplier = 1.0
+		  Self.mUseOptimizedRates = False
 		  Self.mOverrides = New Xojo.Core.Dictionary
 		End Sub
 	#tag EndMethod
@@ -77,8 +115,20 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused QualityMultiplier
 		  
-		  Dim GlobalMultiplier As Double = ParsedData.DoubleValue("HarvestAmountMultiplier", 1.0, True)
+		  Dim HarvestAmountMultiplier As Double = ParsedData.DoubleValue("HarvestAmountMultiplier", 1.0, True)
+		  Dim HarvestHealthMultiplier As Double = ParsedData.DoubleValue("HarvestHealthMultiplier", 1.0, True)
+		  Dim PlayerHarvestingDamageMultiplier As Double = ParsedData.DoubleValue("PlayerHarvestingDamageMultiplier", 1.0, True)
+		  Dim DinoHarvestingDamageMultiplier As Double = ParsedData.DoubleValue("DinoHarvestingDamageMultiplier", 1.0, True)
+		  Dim ClampResourceHarvestDamage As Boolean = ParsedData.BooleanValue("ClampResourceHarvestDamage", False, True)
+		  Dim UseOptimizedRates As Boolean = False
 		  Dim Overrides As New Xojo.Core.Dictionary
+		  
+		  If CommandLineOptions <> Nil And CommandLineOptions.HasKey("UseOptimizedHarvestingHealth") Then
+		    Try
+		      UseOptimizedRates = CommandLineOptions.BooleanValue("UseOptimizedHarvestingHealth", False, False)
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
 		  
 		  If ParsedData.HasKey("HarvestResourceItemAmountClassMultipliers") Then
 		    Dim AutoValue As Auto = ParsedData.Value("HarvestResourceItemAmountClassMultipliers")
@@ -108,14 +158,21 @@ Inherits Beacon.ConfigGroup
 		    Next
 		  End If
 		  
-		  If GlobalMultiplier = 1.0 And Overrides.Count = 0 Then
-		    Return Nil
-		  End If
-		  
+		  // Use the public properties here to toggle modified ...
 		  Dim Config As New BeaconConfigs.HarvestRates
-		  Config.mGlobalMultiplier = GlobalMultiplier
+		  Config.HarvestAmountMultiplier = HarvestAmountMultiplier
+		  Config.HarvestHealthMultiplier = HarvestHealthMultiplier
+		  Config.PlayerHarvestingDamageMultiplier = PlayerHarvestingDamageMultiplier
+		  Config.DinoHarvestingDamageMultiplier = DinoHarvestingDamageMultiplier
+		  Config.ClampResourceHarvestDamage = ClampResourceHarvestDamage
+		  Config.UseOptimizedRates = UseOptimizedRates
 		  Config.mOverrides = Overrides
-		  Return Config
+		  
+		  // ... so it can be checked here to determine if any of the values are non-default
+		  If Config.Modified Or Config.mOverrides.Count > 0 Then
+		    Config.Modified = False
+		    Return Config
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -147,27 +204,132 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mGlobalMultiplier
+			  Return Self.mClampResourceHarvestDamage
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mGlobalMultiplier <> Value Then
-			    Self.mGlobalMultiplier = Value
+			  If Self.mClampResourceHarvestDamage <> Value Then
+			    Self.mClampResourceHarvestDamage = Value
 			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter
-		GlobalMultiplier As Double
+		ClampResourceHarvestDamage As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mDinoHarvestingDamageMultiplier
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mDinoHarvestingDamageMultiplier <> Value Then
+			    Self.mDinoHarvestingDamageMultiplier = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		DinoHarvestingDamageMultiplier As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mHarvestAmountMultiplier
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mHarvestAmountMultiplier <> Value Then
+			    Self.mHarvestAmountMultiplier = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		HarvestAmountMultiplier As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mHarvestHealthMultiplier
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mHarvestHealthMultiplier <> Value Then
+			    Self.mHarvestHealthMultiplier = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		HarvestHealthMultiplier As Double
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mGlobalMultiplier As Double = 1.0
+		Private mClampResourceHarvestDamage As Boolean = False
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDinoHarvestingDamageMultiplier As Double = 1.0
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHarvestAmountMultiplier As Double = 1.0
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHarvestHealthMultiplier As Double = 1.0
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mOverrides As Xojo.Core.Dictionary
 	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPlayerHarvestingDamageMultiplier As Double = 1.0
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUseOptimizedRates As Boolean = False
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mPlayerHarvestingDamageMultiplier
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mPlayerHarvestingDamageMultiplier <> Value Then
+			    Self.mPlayerHarvestingDamageMultiplier = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		PlayerHarvestingDamageMultiplier As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mUseOptimizedRates
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mUseOptimizedRates <> Value Then
+			    Self.mUseOptimizedRates = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		UseOptimizedRates As Boolean
+	#tag EndComputedProperty
 
 
 	#tag ViewBehavior
@@ -210,7 +372,7 @@ Inherits Beacon.ConfigGroup
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="GlobalMultiplier"
+			Name="HarvestAmountMultiplier"
 			Group="Behavior"
 			Type="Double"
 		#tag EndViewProperty

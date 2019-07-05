@@ -51,6 +51,12 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function BooleanValue(Extends Dict As Xojo.Core.Dictionary, Key As Auto, Default As Boolean, AllowArray As Boolean = False) As Boolean
+		  Return GetValueAsType(Dict, Key, "Boolean", Default, AllowArray, AddressOf CoerceToBoolean)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Clone(Extends Source As Xojo.Core.DateInterval) As Xojo.Core.DateInterval
 		  Return New Xojo.Core.DateInterval(Source.Years, Source.Months, Source.Days, Source.Hours, Source.Minutes, Source.Seconds, Source.NanoSeconds)
 		End Function
@@ -71,6 +77,41 @@ Protected Module Beacon
 		    Clone.Value(Entry.Key) = Entry.Value
 		  Next
 		  Return Clone
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function CoerceToBoolean(ByRef Value As Auto, Info As Xojo.Introspection.TypeInfo) As Boolean
+		  Select Case Info.FullName
+		  Case "Boolean"
+		    Return True
+		  Case "Text"
+		    Dim TextValue As Text = Value
+		    Value = If(TextValue = "true", True, False)
+		    Return True
+		  Case "String"
+		    Dim StringValue As String = Value
+		    Value = If(StringValue = "true", True, False)
+		    Return True
+		  Case "Integer"
+		    Dim IntegerValue As Integer = Value
+		    Value = If(IntegerValue >= 1, True, False)
+		    Return True
+		  Case "Double"
+		    Dim DoubleValue As Double = Value
+		    Value = If(DoubleValue >= 1, True, False)
+		    Return True
+		  Else
+		    #Pragma BreakOnExceptions False
+		    Try
+		      Dim VariantValue As Variant = Value
+		      Value = VariantValue.BooleanValue
+		      Return True
+		    Catch Err As TypeMismatchException
+		      Return False
+		    End Try
+		    #Pragma BreakOnExceptions Default
+		  End Select
 		End Function
 	#tag EndMethod
 
