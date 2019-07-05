@@ -55,6 +55,7 @@ End
 		Sub Close()
 		  // Part of the Beacon.WebView interface.
 		  
+		  Self.mMuteErrors = True
 		  Super.Close
 		End Sub
 	#tag EndMethod
@@ -92,6 +93,10 @@ End
 		Private mHandler As Beacon.URLHandler
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mMuteErrors As Boolean
+	#tag EndProperty
+
 
 #tag EndWindowCode
 
@@ -117,10 +122,12 @@ End
 		  End If
 		  
 		  If Self.mHandler <> Nil And Self.mHandler.Invoke(URL.ToText) Then
+		    Self.mMuteErrors = True
 		    Return True
 		  End If
 		  
 		  If App.HandleURL(URL, True) Then
+		    Self.mMuteErrors = True
 		    Return True
 		  End If
 		  
@@ -137,6 +144,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Error(errorNumber as Integer, errorMessage as String)
+		  If Self.mMuteErrors Then
+		    Return
+		  End If
+		  
 		  Dim Message As String = "Error " + Str(errorNumber, "-0")
 		  If Trim(errorMessage) <> "" Then
 		    Message = Message + ":" + EndOfLine + errorMessage
