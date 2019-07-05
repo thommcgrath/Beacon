@@ -29,7 +29,7 @@ if [ -e "${OUTPUT}/${APPNAME}.dmg" ]; then
 fi
 hdiutil convert "${OUTPUT}/${APPNAME}.sparseimage" -format UDBZ -o "${OUTPUT}/${APPNAME}.dmg";
 hdiutil internet-enable -yes "${OUTPUT}/${APPNAME}.dmg";
-codesign -s 'Developer ID Application: Thom McGrath' "${OUTPUT}/${APPNAME}.dmg";
+codesign -s 'Developer ID Application: Thom McGrath' --timestamp "${OUTPUT}/${APPNAME}.dmg";
 rm -rf "${OUTPUT}/${APPNAME}.sparseimage";
 
 echo "Uploading disk image for notarization. This can take a while.";
