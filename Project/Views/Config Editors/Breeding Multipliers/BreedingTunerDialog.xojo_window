@@ -479,9 +479,11 @@ End
 		  Next
 		  
 		  Const IterationLimit = 10000
+		  Const IterationStep = 0.995
+		  Const IterationStepMin = 1 / IterationLimit
 		  
 		  Dim OfficialCuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period")
-		  Dim ImprintMultiplier As Double = 1.0
+		  Dim ImprintMultiplier As Double = 1000.0
 		  Dim Found As Boolean
 		  
 		  // First, establish a baseline
@@ -505,7 +507,7 @@ End
 		      End If
 		      Dim MaxImprint As Double = MaxCuddles * PerCuddle
 		      If MaxImprint < Threshold Then
-		        ImprintMultiplier = ImprintMultiplier - (1 / IterationLimit)
+		        ImprintMultiplier = Min(ImprintMultiplier - IterationStepMin, ImprintMultiplier * IterationStep)
 		        Iterations = Iterations + 1
 		        Continue Do
 		      End If
