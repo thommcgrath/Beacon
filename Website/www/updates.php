@@ -29,6 +29,18 @@ if (isset($_GET['arch'])) {
 		break;
 	}
 }
+if (isset($_GET['platform']) && isset($_GET['osversion']) && preg_match('/^\d{1,3}\.\d{1,3}\.\d{1,6}$/', $_GET['osversion']) === 1) {
+	switch ($_GET['platform']) {
+	case 'mac':
+		$version_column = 'min_mac_version';
+		$os_version = $_GET['osversion'];
+		break;
+	case 'win':
+		$version_column = 'min_win_version';
+		$os_version = $_GET['osversion'];
+		break;
+	}
+}
 
 $include_notices = $current_build > 33;
 
@@ -48,7 +60,11 @@ if ($include_notices) {
 	}
 }
 
-$results = $database->Query('SELECT * FROM updates WHERE build_number > $1 AND stage >= $2 ORDER BY build_number DESC;', $current_build, $stage);
+if (isset($version_column) && isset($os_version)) {
+	$results = $database->Query('SELECT * FROM updates WHERE build_number > $1 AND stage >= $2 AND os_version_as_integer(' . $version_column . ') <= os_version_as_integer($3) ORDER BY build_number DESC;', $current_build, $stage, $os_version);
+} else {
+	$results = $database->Query('SELECT * FROM updates WHERE build_number > $1 AND stage >= $2 ORDER BY build_number DESC;', $current_build, $stage);
+}
 if ($results->RecordCount() == 0) {
 	if ($html_mode) {
 		echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Beacon Update</title></head><body><h1>No update</h1></body></html>';
