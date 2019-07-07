@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 11.2
--- Dumped by pg_dump version 11.2
+-- Dumped from database version 11.4
+-- Dumped by pg_dump version 11.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -12,6 +12,7 @@ SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
+SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
@@ -116,6 +117,16 @@ CREATE TYPE public.loot_source_kind AS ENUM (
 
 
 ALTER TYPE public.loot_source_kind OWNER TO thommcgrath;
+
+--
+-- Name: os_version; Type: DOMAIN; Schema: public; Owner: thommcgrath
+--
+
+CREATE DOMAIN public.os_version AS text
+	CONSTRAINT os_version_check CHECK ((VALUE ~ '^\d{1,3}\.\d{1,3}\.\d{1,6}$'::text));
+
+
+ALTER DOMAIN public.os_version OWNER TO thommcgrath;
 
 --
 -- Name: publish_status; Type: TYPE; Schema: public; Owner: thommcgrath
@@ -440,6 +451,31 @@ $$;
 ALTER FUNCTION public.object_update_trigger() OWNER TO thommcgrath;
 
 --
+-- Name: os_version_as_integer(public.os_version); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.os_version_as_integer(p_version public.os_version) RETURNS bigint
+    LANGUAGE plpgsql STABLE
+    AS $_$
+DECLARE
+	v_matches TEXT[];
+	v_major INTEGER DEFAULT 0;
+	v_minor INTEGER DEFAULT 0;
+	v_bug INTEGER DEFAULT 0;
+BEGIN
+	v_matches := regexp_matches(p_version::TEXT, '^(\d{1,3})\.(\d{1,3})\.(\d{1,6})$');
+	IF v_matches IS NOT NULL THEN
+		v_major = v_matches[1];
+		v_minor = v_matches[2];
+		v_bug = v_matches[3];
+	END IF;
+	RETURN (v_major::BIGINT * 1000000000) + (v_minor::BIGINT * 1000000) + v_bug::BIGINT;
+END; $_$;
+
+
+ALTER FUNCTION public.os_version_as_integer(p_version public.os_version) OWNER TO thommcgrath;
+
+--
 -- Name: presets_json_sync_function(); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
@@ -672,6 +708,8 @@ CREATE TABLE public.creatures (
     rideable boolean NOT NULL,
     carryable boolean NOT NULL,
     breedable boolean NOT NULL,
+    incubation_time interval,
+    mature_time interval,
     CONSTRAINT creatures_path_check CHECK ((path OPERATOR(public.~~) '/%'::public.citext))
 )
 INHERITS (public.objects);
@@ -1112,7 +1150,8 @@ CREATE TABLE public.purchases (
     total_paid numeric(6,2) NOT NULL,
     merchant_reference public.citext NOT NULL,
     client_reference_id text,
-    refunded boolean DEFAULT false NOT NULL
+    refunded boolean DEFAULT false NOT NULL,
+    tax_locality text
 );
 
 
@@ -1324,14 +1363,68 @@ CREATE TABLE public.updates (
     notes text NOT NULL,
     mac_url text NOT NULL,
     mac_signature public.citext NOT NULL,
-    win_url text NOT NULL,
-    win_signature public.citext NOT NULL,
     preview text DEFAULT ''::text NOT NULL,
-    stage integer DEFAULT 0 NOT NULL
+    stage integer DEFAULT 0 NOT NULL,
+    win_64_url text,
+    win_32_url text,
+    win_combo_url text,
+    win_64_signature text,
+    win_32_signature text,
+    win_combo_signature text,
+    min_mac_version public.os_version NOT NULL,
+    min_win_version public.os_version NOT NULL
 );
 
 
 ALTER TABLE public.updates OWNER TO thommcgrath;
+
+--
+-- Name: usercloud; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.usercloud (
+    remote_path text NOT NULL,
+    content_type public.citext DEFAULT 'application/octet-stream'::public.citext NOT NULL,
+    size_in_bytes bigint NOT NULL,
+    hash public.hex NOT NULL,
+    modified timestamp with time zone NOT NULL,
+    deleted boolean DEFAULT false NOT NULL,
+    header public.hex
+);
+
+
+ALTER TABLE public.usercloud OWNER TO thommcgrath;
+
+--
+-- Name: usercloud_cache; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.usercloud_cache (
+    cache_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    remote_path text NOT NULL,
+    hostname public.citext NOT NULL,
+    size_in_bytes bigint NOT NULL,
+    last_accessed timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    hash public.hex NOT NULL
+);
+
+
+ALTER TABLE public.usercloud_cache OWNER TO thommcgrath;
+
+--
+-- Name: usercloud_queue; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.usercloud_queue (
+    remote_path text NOT NULL,
+    hostname public.citext NOT NULL,
+    request_method public.citext NOT NULL,
+    queue_time timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    http_status integer
+);
+
+
+ALTER TABLE public.usercloud_queue OWNER TO thommcgrath;
 
 --
 -- Name: users; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -1348,6 +1441,7 @@ CREATE TABLE public.users (
     last_api_version text,
     email_id uuid,
     username public.citext,
+    usercloud_key public.hex,
     CONSTRAINT users_check CHECK ((((email_id IS NULL) AND (username IS NULL) AND (private_key_iterations IS NULL) AND (private_key_salt IS NULL) AND (private_key IS NULL)) OR ((email_id IS NOT NULL) AND (username IS NOT NULL) AND (private_key_iterations IS NOT NULL) AND (private_key_salt IS NOT NULL) AND (private_key IS NOT NULL))))
 );
 
@@ -1830,14 +1924,6 @@ ALTER TABLE ONLY public.loot_sources
 
 
 --
--- Name: loot_sources loot_sources_sort_key1; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
---
-
-ALTER TABLE ONLY public.loot_sources
-    ADD CONSTRAINT loot_sources_sort_key1 UNIQUE (sort);
-
-
---
 -- Name: mods mods_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -2062,6 +2148,30 @@ ALTER TABLE ONLY public.updates
 
 
 --
+-- Name: usercloud_cache usercloud_cache_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.usercloud_cache
+    ADD CONSTRAINT usercloud_cache_pkey PRIMARY KEY (cache_id);
+
+
+--
+-- Name: usercloud usercloud_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.usercloud
+    ADD CONSTRAINT usercloud_pkey PRIMARY KEY (remote_path);
+
+
+--
+-- Name: usercloud_queue usercloud_queue_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.usercloud_queue
+    ADD CONSTRAINT usercloud_queue_pkey PRIMARY KEY (remote_path);
+
+
+--
 -- Name: users users_email_id_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -2114,6 +2224,13 @@ CREATE UNIQUE INDEX exception_users_exception_id_user_id_idx ON public.exception
 
 
 --
+-- Name: loot_sources_sort_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX loot_sources_sort_idx ON public.loot_sources USING btree (sort);
+
+
+--
 -- Name: mods_workshop_id_user_id_uidx; Type: INDEX; Schema: public; Owner: thommcgrath
 --
 
@@ -2132,6 +2249,13 @@ CREATE INDEX purchases_purchaser_email_idx ON public.purchases USING btree (purc
 --
 
 CREATE UNIQUE INDEX stw_purchases_original_purchase_id_generated_purchase_id_idx ON public.stw_purchases USING btree (original_purchase_id, generated_purchase_id);
+
+
+--
+-- Name: usercloud_cache_remote_path_hostname_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX usercloud_cache_remote_path_hostname_idx ON public.usercloud_cache USING btree (remote_path, hostname);
 
 
 --
@@ -2951,6 +3075,27 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.support_table_of_contents TO t
 --
 
 GRANT SELECT ON TABLE public.updates TO thezaz_website;
+
+
+--
+-- Name: TABLE usercloud; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.usercloud TO thezaz_website;
+
+
+--
+-- Name: TABLE usercloud_cache; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.usercloud_cache TO thezaz_website;
+
+
+--
+-- Name: TABLE usercloud_queue; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.usercloud_queue TO thezaz_website;
 
 
 --
