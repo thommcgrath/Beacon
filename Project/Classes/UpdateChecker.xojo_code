@@ -35,6 +35,12 @@ Protected Class UpdateChecker
 		  Else
 		    Params.Value("arch") = "x86"
 		  End If
+		  Params.Value("osversion") = OSVersion.ToText
+		  #if TargetMacOS
+		    Params.Value("platform") = "mac"
+		  #elseif TargetWin32
+		    Params.Value("platform") = "win"
+		  #endif
 		  
 		  Self.mSocket.Send("GET", Beacon.WebURL("/updates.php?" + BeaconAPI.Request.URLEncodeFormData(Params)))
 		End Sub
@@ -165,6 +171,31 @@ Protected Class UpdateChecker
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Function OSVersion() As String
+		  #if TargetMacOS
+		    Declare Function NSClassFromString Lib "AppKit" (ClassName As CFStringRef) As Ptr
+		    Declare Function ProcessInfo Lib "AppKit" Selector "processInfo" (ClassRef As Ptr) As Ptr
+		    Declare Function OperatingSystemVersion Lib "AppKit" Selector "operatingSystemVersion" (NSProcessInfo As Ptr) As MacOSVersion
+		    
+		    Dim Info As Ptr = ProcessInfo(NSClassFroMString("NSProcessInfo"))
+		    Dim Struct As MacOSVersion = OperatingSystemVersion(Info)
+		    Return Str(Struct.Major, "-0") + "." + Str(Struct.Minor, "-0") + "." + Str(Struct.Bug, "-0")
+		  #elseif TargetWin32
+		    If System.IsFunctionAvailable("RtlGetVersion", "ntdll.dll") Then
+		      Soft Declare Function RtlGetVersion Lib "ntdll.dll" (ByRef VersionInformation As WinOSVersion) As Int32
+		      
+		      Dim Struct As WinOSVersion
+		      Struct.OSVersionInfoSize = WinOSVersion.Size
+		      
+		      Call RtlGetVersion(Struct)
+		      
+		      Return Str(Struct.MajorVersion, "-0") + "." + Str(Struct.MinorVersion, "-0") + "." + Str(Struct.BuildNumber, "-0")
+		    End If
+		  #endif
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Shared Function VerifyFile(File As Global.FolderItem, Signature As String) As Boolean
 		  Dim Stream As BinaryStream = BinaryStream.Open(File, False)
@@ -204,6 +235,27 @@ Protected Class UpdateChecker
 
 	#tag Constant, Name = PublicKey, Type = String, Dynamic = False, Default = \"30820120300D06092A864886F70D01010105000382010D003082010802820101008F9D9B313D28FDE0FD2100032D2E1A7F968A2E4975AF93A507823A95EFFE6A73176BD76D1286CC5DE513D3F4163F6F4E3D2A2FC472D540533020035FA0ED3FDFA33CBA289A94753D70546544459BE69E99B3B08AACBF489DEFA45BA1CC04DE0976DE2DABDC523A13FCEAE701468D994FEC116F30D44B307FD80AB13B1E15E76EA8B1366EC22E814F15D8021993FAE0BA39DF440EEF17550BC3A6CE2831A1B479E93088F2CAACFD19179D1C0744F0293A94C06D8F7D1D73C089D950F86953C2605F70462A889C4A1160B70192C1F97964F0741ED74713E10FF9CDC5BE6205385E5245297D41C31A75067699CB85D9FA6F806E8C770C5E91D706BCD5426C3080B1020111", Scope = Private
 	#tag EndConstant
+
+
+	#tag Structure, Name = MacOSVersion, Flags = &h21
+		Major As Integer
+		  Minor As Integer
+		Bug As Integer
+	#tag EndStructure
+
+	#tag Structure, Name = WinOSVersion, Flags = &h21
+		OSVersionInfoSize As UInt32
+		  MajorVersion As UInt32
+		  MinorVersion As UInt32
+		  BuildNumber As UInt32
+		  PlatformId As UInt32
+		  CSDVersion As String * 256
+		  ServicePackMajor As UInt16
+		  ServicePackMinor As UInt16
+		  SuiteMask As UInt16
+		  ProductType As UInt8
+		Reserved As UInt8
+	#tag EndStructure
 
 
 	#tag ViewBehavior
