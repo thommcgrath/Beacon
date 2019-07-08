@@ -50,7 +50,7 @@ $cache_key = $results->Field('article_hash');
 $photoswipe_triggers = array();
 
 $article_data = BeaconCache::Get($cache_key);
-//if (is_null($article_data)) {
+if (is_null($article_data)) {
 	$results = $database->Query('SELECT subject, content_markdown, preview, forward_url, array_to_string(affected_ini_keys, \', \',\'\') AS affected_keys FROM support_articles WHERE article_id = $1;', $article_id);
 	
 	$article_data = array(
@@ -116,7 +116,7 @@ $article_data = BeaconCache::Get($cache_key);
 	}
 	
 	BeaconCache::Set($cache_key, $article_data, 86400);
-//}
+}
 if (isset($article_data['forward'])) {
 	BeaconCommon::Redirect($article_data['forward'], false);
 }
