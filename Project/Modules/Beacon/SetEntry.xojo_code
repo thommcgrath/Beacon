@@ -146,7 +146,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Next
 		    Dim AverageWeight As Double = WeightSum / Count
 		    
-		    BlueprintEntry.Append(New Beacon.SetEntryOption(Beacon.Data.GetEngramByPath(Path), AverageWeight))
+		    Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
+		    If Engram = Nil Then
+		      Engram = Beacon.Engram.CreateUnknownEngram(Path)
+		    End If
+		    
+		    BlueprintEntry.Append(New Beacon.SetEntryOption(Engram, AverageWeight))
 		  Next
 		  
 		  BlueprintEntry.ChanceToBeBlueprint = 1.0
