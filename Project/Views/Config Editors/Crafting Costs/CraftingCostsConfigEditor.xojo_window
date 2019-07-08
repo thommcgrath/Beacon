@@ -483,7 +483,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowDuplicateSelection()
-		  If Self.List.SelCount <> 1 Then
+		  If Self.List.SelCount <> 1 Or Self.List.ListIndex < 0 Or Self.List.ListIndex >= Self.List.ListCount Then
 		    Return
 		  End If
 		  
