@@ -52,6 +52,10 @@ class BeaconUser implements JsonSerializable {
 		return $this->user_id;
 	}
 	
+	public function Email() {
+		return $this->email_id;
+	}
+	
 	public function Suffix() {
 		return substr($this->user_id, 0, 8);
 	}

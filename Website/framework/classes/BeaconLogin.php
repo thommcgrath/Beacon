@@ -91,12 +91,6 @@ class BeaconLogin {
 		$html = '<center><a href="' . BeaconCommon::AbsoluteURL('/account/login/?email=' . urlencode($email) . '&code=' . urlencode($code)) . '">Click Here to Confirm Your E-Mail</a></center><br /><br \>If you need to enter the code manually, your code is ' . htmlentities($code) . '. The code is case-sensitive, so using copy and paste is recommended.<br /><br />If you need help, simply reply to this email.';
 		
 		return BeaconEmail::SendMail($email, 'Please Verify Your E-Mail Address', $plain, $html);
-		
-		/*$headers = 'From: "Beacon Support" <forgotmyparachute@beaconapp.cc>';
-		$subject = 'Please Verify Your E-Mail Address';
-		$body = "To continue setting up your Beacon Account, enter the following code where prompted.\n\n$code\n\nIf you need help, simply reply to this email.";
-		
-		return mail($email, $subject, $body, $headers);*/
 	}
 }
 

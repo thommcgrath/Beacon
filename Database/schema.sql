@@ -1120,6 +1120,21 @@ CREATE TABLE public.products (
 ALTER TABLE public.products OWNER TO thommcgrath;
 
 --
+-- Name: purchase_codes; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.purchase_codes (
+    code public.citext NOT NULL,
+    source text,
+    creation_date timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    redemption_date timestamp with time zone,
+    redemption_purchase_id uuid
+);
+
+
+ALTER TABLE public.purchase_codes OWNER TO thommcgrath;
+
+--
 -- Name: purchase_items; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
@@ -1996,6 +2011,14 @@ ALTER TABLE ONLY public.products
 
 
 --
+-- Name: purchase_codes purchase_codes_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.purchase_codes
+    ADD CONSTRAINT purchase_codes_pkey PRIMARY KEY (code);
+
+
+--
 -- Name: purchase_items purchase_items_pkey1; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -2703,6 +2726,14 @@ ALTER TABLE ONLY public.presets
 
 
 --
+-- Name: purchase_codes purchase_codes_redemption_purchase_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.purchase_codes
+    ADD CONSTRAINT purchase_codes_redemption_purchase_id_fkey FOREIGN KEY (redemption_purchase_id) REFERENCES public.purchases(purchase_id) ON UPDATE CASCADE ON DELETE SET DEFAULT DEFERRABLE INITIALLY DEFERRED;
+
+
+--
 -- Name: purchase_items purchase_items_product_id_fkey1; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -2984,6 +3015,13 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.presets TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE public.products TO thezaz_website;
+
+
+--
+-- Name: TABLE purchase_codes; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,UPDATE ON TABLE public.purchase_codes TO thezaz_website;
 
 
 --
