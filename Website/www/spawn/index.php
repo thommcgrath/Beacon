@@ -31,6 +31,7 @@ $include_mod_names = true;
 $cache_key = 'spawn_' . (is_null($mod_id) ? 'all' : $mod_id) . '_' . $build . '_' . $last_database_update->format('U');
 
 $cached = BeaconCache::Get($cache_key);
+$title = BeaconCache::Get($cache_key . '_title');
 if (is_null($cached)) {
 	ob_start();
 	if ($mod_id === null) {
@@ -66,7 +67,6 @@ if (is_null($cached)) {
 			$title = implode(', ', $mod_names) . ', and ' . $last;
 		}
 		$title = 'Spawn codes for ' . $title;
-		BeaconTemplate::SetTitle($title);
 	}
 	?><h1><?php echo htmlentities($title); ?><br><span class="subtitle">Up to date as of <?php echo '<time datetime="' . $last_database_update->format('c') . '">' . $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A') . ' UTC</time>'; ?></span></h1>
 	<p><input type="search" id="beacon-filter-field" placeholder="Filter Engrams" autocomplete="off"></p>
@@ -104,8 +104,10 @@ if (is_null($cached)) {
 	$cached = ob_get_contents();
 	ob_end_clean();
 	BeaconCache::Set($cache_key, $cached);
+	BeaconCache::Set($cache_key . '_title', $title);
 }
 echo $cached;
+BeaconTemplate::SetTitle($title);
 
 function CompareBlueprints($left, $right) {
 	$left_label = strtolower($left->Label());
