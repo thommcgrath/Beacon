@@ -32,7 +32,7 @@ $cache_key = 'spawn_' . (is_null($mod_id) ? 'all' : $mod_id) . '_' . $build . '_
 
 $cached = BeaconCache::Get($cache_key);
 $title = BeaconCache::Get($cache_key . '_title');
-if (is_null($cached)) {
+if (is_null($cached) || is_null($title)) {
 	ob_start();
 	if ($mod_id === null) {
 		$title = 'All Spawn Codes';
