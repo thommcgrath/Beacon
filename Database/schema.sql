@@ -1120,6 +1120,22 @@ CREATE TABLE public.products (
 ALTER TABLE public.products OWNER TO thommcgrath;
 
 --
+-- Name: purchase_code_log; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.purchase_code_log (
+    log_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    code public.citext NOT NULL,
+    user_id uuid NOT NULL,
+    attempt_time timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    source_ip inet NOT NULL,
+    success boolean NOT NULL
+);
+
+
+ALTER TABLE public.purchase_code_log OWNER TO thommcgrath;
+
+--
 -- Name: purchase_codes; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
@@ -2011,6 +2027,14 @@ ALTER TABLE ONLY public.products
 
 
 --
+-- Name: purchase_code_log purchase_code_log_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.purchase_code_log
+    ADD CONSTRAINT purchase_code_log_pkey PRIMARY KEY (log_id);
+
+
+--
 -- Name: purchase_codes purchase_codes_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -2726,6 +2750,14 @@ ALTER TABLE ONLY public.presets
 
 
 --
+-- Name: purchase_code_log purchase_code_log_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.purchase_code_log
+    ADD CONSTRAINT purchase_code_log_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
 -- Name: purchase_codes purchase_codes_redemption_purchase_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -3015,6 +3047,13 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.presets TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE public.products TO thezaz_website;
+
+
+--
+-- Name: TABLE purchase_code_log; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT ON TABLE public.purchase_code_log TO thezaz_website;
 
 
 --

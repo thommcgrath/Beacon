@@ -14,6 +14,7 @@ if (is_null($session)) {
 
 header('Cache-Control: no-cache');
 
+$database = BeaconCommon::Database();
 $user = BeaconUser::GetByUserID($session->UserID());
 BeaconTemplate::SetTitle('Account: ' . $user->LoginKey());
 
@@ -30,40 +31,51 @@ BeaconTemplate::StartStyles(); ?>
 </style><?php
 BeaconTemplate::FinishStyles();
 
+if (isset($_REQUEST['code'])) {
+	$code = substr($_REQUEST['code'], 0, 9);
+} else {
+	$code = '';
+}
+
 $email_id = $user->Email();
 
-$database = BeaconCommon::Database();
 $results = $database->Query('SELECT * FROM purchased_products WHERE purchaser_email = $1 AND product_id = $2;', $email_id, OMNI_PRODUCT_ID);
 if ($results->RecordCount() > 0) {
 	echo '<div id="redeem_form"><p class="text-center"><span class="text-red">You already own Omni! There\'s no reason to redeem the code again!</span><br>But you can <a href="/account/#omni">click here</a> to see activation instructions instead.</p></div>';
 	return;
 }
 
-if (isset($_REQUEST['code'])) {
-	$code = $_REQUEST['code'];
-} else {
-	$code = '';
-}
-
 if (strtoupper($_SERVER['REQUEST_METHOD']) === 'POST') {
-	$results = $database->Query('SELECT retail_price FROM products WHERE product_id = $1;', OMNI_PRODUCT_ID);
-	$retail_price = $results->Field('retail_price');
-	
-	$results = $database->Query('SELECT code FROM purchase_codes WHERE LOWER(code) = LOWER($1) AND redemption_date IS NULL;', $code);
-	if ($results->RecordCount() == 0) {
+	$results = $database->Query('SELECT COUNT(log_id) AS num_attempts FROM purchase_code_log WHERE user_id = $1 AND attempt_time > CURRENT_TIMESTAMP - \'1 hour\'::INTERVAL;', $user->UserID());
+	if (intval($results->Field('num_attempts')) >= 20) {
 		$error = 'Sorry, the code is either invalid or already redeemed.';
-	} else {
-		$code = $results->Field('code');
-		$purchase_id = BeaconCommon::GenerateUUID();
-		
 		$database->BeginTransaction();
-		$database->Query('UPDATE purchase_codes SET redemption_date = CURRENT_TIMESTAMP, redemption_purchase_id = $2 WHERE code = $1;', $code, $purchase_id);
-		$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference) VALUES ($1, $2, $3, $3, 0, 0, $4);', $purchase_id, $email_id, $retail_price, 'Code ' . $code);
-		$database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, quantity, line_total) VALUES ($1, $2, $3, $3, 1, 0);', $purchase_id, OMNI_PRODUCT_ID, $retail_price);
+		$database->Query('INSERT INTO purchase_code_log (code, user_id, source_ip, success) VALUES ($1, $2, $3, FALSE);', $code, $user->UserID(), $_SERVER['REMOTE_ADDR']);
 		$database->Commit();
+	} else {
+		$results = $database->Query('SELECT retail_price FROM products WHERE product_id = $1;', OMNI_PRODUCT_ID);
+		$retail_price = $results->Field('retail_price');
 		
-		echo '<div id="redeem_form"><p class="text-center"><span class="text-blue">You now own Beacon Omni!</span><br><a href="/account/#omni">Activation instructions</a> are available if you need them.</p></div>';
-		return;
+		$results = $database->Query('SELECT code FROM purchase_codes WHERE LOWER(code) = LOWER($1) AND redemption_date IS NULL;', $code);
+		if ($results->RecordCount() == 0) {
+			$error = 'Sorry, the code is either invalid or already redeemed.';
+			$database->BeginTransaction();
+			$database->Query('INSERT INTO purchase_code_log (code, user_id, source_ip, success) VALUES ($1, $2, $3, FALSE);', $code, $user->UserID(), $_SERVER['REMOTE_ADDR']);
+			$database->Commit();
+		} else {
+			$code = $results->Field('code');
+			$purchase_id = BeaconCommon::GenerateUUID();
+			
+			$database->BeginTransaction();
+			$database->Query('UPDATE purchase_codes SET redemption_date = CURRENT_TIMESTAMP, redemption_purchase_id = $2 WHERE code = $1;', $code, $purchase_id);
+			$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference) VALUES ($1, $2, $3, $3, 0, 0, $4);', $purchase_id, $email_id, $retail_price, 'Code ' . $code);
+			$database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, quantity, line_total) VALUES ($1, $2, $3, $3, 1, 0);', $purchase_id, OMNI_PRODUCT_ID, $retail_price);
+			$database->Query('INSERT INTO purchase_code_log (code, user_id, source_ip, success) VALUES ($1, $2, $3, TRUE);', $code, $user->UserID(), $_SERVER['REMOTE_ADDR']);
+			$database->Commit();
+			
+			echo '<div id="redeem_form"><p class="text-center"><span class="text-blue">You now own Beacon Omni!</span><br><a href="/account/#omni">Activation instructions</a> are available if you need them.</p></div>';
+			return;
+		}
 	}
 }
 
