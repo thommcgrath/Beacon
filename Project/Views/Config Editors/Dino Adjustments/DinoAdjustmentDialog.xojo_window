@@ -2,7 +2,7 @@
 Begin BeaconDialog DinoAdjustmentDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   CloseButton     =   True
+   CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
    Frame           =   8
@@ -14,12 +14,12 @@ Begin BeaconDialog DinoAdjustmentDialog
    LiveResize      =   True
    MacProcID       =   0
    MaxHeight       =   32000
-   MaximizeButton  =   True
+   MaximizeButton  =   False
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
    MinHeight       =   64
-   MinimizeButton  =   True
+   MinimizeButton  =   False
    MinWidth        =   64
    Placement       =   1
    Resizeable      =   False
@@ -987,7 +987,7 @@ End
 		Shared Function Present(Parent As Window, EditClass As Text, Config As BeaconConfigs.DinoAdjustments, Mods As Beacon.TextList) As Boolean
 		  // This one needs the whole config because there are a lot of factors to showing the creatures in the menus
 		  
-		  If Parent = Nil Then
+		  If Parent = Nil Or Config = Nil Then
 		    Return False
 		  End If
 		  
