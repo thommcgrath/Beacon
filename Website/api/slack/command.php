@@ -47,6 +47,10 @@ case '/grant':
 case '/grant-' . $env:
 	include('commands/grant.php');
 	break;
+case '/createcodes':
+case '/createcodes-' . $env:
+	include('commands/createcodes.php');
+	break;
 default:
 	http_response_code(404);
 	echo "Unknown command";
