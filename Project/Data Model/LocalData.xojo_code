@@ -1316,8 +1316,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.BeginTransaction()
 		  Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM custom_presets WHERE object_id = ?1;", PresetID)
 		  If Results.RecordCount = 1 Then
-		    Dim Changes As RecordSet = Self.SQLSelect("UPDATE custom_presets SET label = ?2, contents = ?3 WHERE object_id = ?1 AND label != ?2 AND contents != ?3;", PresetID, Preset.Label, Contents)
-		    Imported = Changes.RecordCount = 1
+		    Try
+		      Dim Changes As RecordSet = Self.SQLSelect("UPDATE custom_presets SET label = ?2, contents = ?3 WHERE object_id = ?1 AND label != ?2 AND contents != ?3;", PresetID, Preset.Label, Contents)
+		      Imported = Changes.RecordCount = 1
+		    Catch Err As UnsupportedOperationException
+		      Imported = False
+		    End Try
 		  Else
 		    Self.SQLExecute("INSERT INTO custom_presets (object_id, label, contents) VALUES (?1, ?2, ?3);", PresetID, Preset.Label, Contents)
 		    Imported = True
