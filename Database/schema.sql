@@ -1144,7 +1144,8 @@ CREATE TABLE public.purchase_codes (
     source text,
     creation_date timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     redemption_date timestamp with time zone,
-    redemption_purchase_id uuid
+    redemption_purchase_id uuid,
+    purchaser_email_id uuid NOT NULL
 );
 
 
@@ -2755,6 +2756,14 @@ ALTER TABLE ONLY public.presets
 
 ALTER TABLE ONLY public.purchase_code_log
     ADD CONSTRAINT purchase_code_log_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: purchase_codes purchase_codes_purchaser_email_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.purchase_codes
+    ADD CONSTRAINT purchase_codes_purchaser_email_id_fkey FOREIGN KEY (purchaser_email_id) REFERENCES public.email_addresses(email_id) ON UPDATE CASCADE ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED;
 
 
 --

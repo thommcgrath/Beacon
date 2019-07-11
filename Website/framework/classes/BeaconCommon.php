@@ -459,6 +459,10 @@ abstract class BeaconCommon {
 			return '';
 		}
 	}
+	
+	public static function CreateGiftCode() {
+		return BeaconCommon::GenerateRandomKey(9, '23456789ABCDEFGHJKMNPQRSTUVWXYZ');
+	}
 }
 
 ?>

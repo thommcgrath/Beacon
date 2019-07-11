@@ -4,6 +4,7 @@ $has_purchased = $user->OmniVersion() >= BeaconCommon::CurrentOmniVersion();
 
 if (!$has_purchased) {
 	echo '<div class="small_section"><p>You have not purchased Beacon Omni. <a href="/omni/">Learn more about Beacon Omni here.</a></p></div>';
+	ShowGiftCodes();
 	return;
 }
 
@@ -210,4 +211,30 @@ BeaconTemplate::FinishScript();
 		</div>
 		<div class="push">&nbsp;</div>
 	</div>
-</div>
+</div><?php
+	
+ShowGiftCodes();
+
+function ShowGiftCodes() {
+	global $user;
+	
+	$database = BeaconCommon::Database();
+	$results = $database->Query('SELECT code, redemption_date FROM purchase_codes WHERE purchaser_email_id = $1;', $user->Email());
+	if ($results->RecordCount() == 0) {
+		return;
+	}
+	
+	echo '<h2>Gift Codes</h2>';
+	echo '<table class="generic"><thead><tr><th>Code</th><th>Status</th><th>Redeem Link</th></thead>';
+	while (!$results->EOF()) {
+		$code = $results->Field('code');
+		$redeemed = is_null($results->Field('redemption_date')) === false;
+		
+		echo '<tr><td>' . htmlentities($code) . '</td><td>' . ($redeemed ? 'Redeemed' : '&nbsp;') . '</td><td>' . ($redeemed ? '&nbsp;' : 'https://beaconapp.cc/redeem/' . htmlentities($code)) . '</td>';
+		$results->MoveNext();
+	}
+	echo '</table>';
+	echo '<p>Codes can be redeemed at <a href="https://beaconapp.cc/redeem">https://beaconapp.cc/redeem</a> or using the link next to each code.</p>';
+}
+
+?>

@@ -85,6 +85,7 @@ case 'checkout.session.completed':
 	$purchase_discount = 0;
 	$purchase_id = BeaconCommon::GenerateUUID();
 	$stw_copies = 0;
+	$gift_copies = 0;
 	$database->BeginTransaction();
 	foreach ($purchased_products as $item) {
 		$product_id = $item['product_id'];
@@ -101,6 +102,9 @@ case 'checkout.session.completed':
 		if ($product_id == 'f2a99a9e-e27f-42cf-91a8-75a7ef9cf015') {
 			$stw_copies += $quantity;
 		}
+		if ($product_id == '2207d5c1-4411-4854-b26f-bc4b48aa33bf') {
+			$gift_copies += $quantity;
+		}
 		
 		$database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, quantity, line_total) VALUES ($1, $2, $3, $4, $5, $6);', $purchase_id, $product_id, $full_unit_price, $discount_per_unit, $quantity, $line_total);
 	}
@@ -113,7 +117,33 @@ case 'checkout.session.completed':
 	for ($i = 0; $i < $stw_copies; $i++) {
 		$database->Query('INSERT INTO stw_purchases (original_purchase_id) VALUES ($1);', $purchase_id);
 	}
+	$codes = array();
+	for ($i = 0; $i < $gift_copies; $i++) {
+		$code = BeaconCommon::CreateGiftCode();
+		$database->Query('INSERT INTO purchase_codes (code, source, purchaser_email_id) VALUES ($1, $2, uuid_for_email($3));', $code, 'Purchase ' . $purchase_id, $email);
+		$codes[] = $code;
+	}
 	$database->Commit();
+	
+	if (count($codes) > 0) {
+		$email_body_plain = 'Thanks for purchasing ' . (count($codes) > 1 ? 'gift codes' : 'a gift code') . ' for Beacon Omni! Codes can be redeemed at <https://beaconapp.cc/redeem>.' . "\n\n";
+		$email_body_html = '<p>Thanks for purchasing ' . (count($codes) > 1 ? 'gift codes' : 'a gift code') . ' for Beacon Omni! Codes can be redeemed at <a href="https://beaconapp.cc/redeem">https://beaconapp.cc/redeem</a> or by the direct link for a code below.</p>';
+		if (count($codes) > 1) {
+			$email_body_plain .= "Your codes are:\n" . implode("\n", $codes);
+			$email_body_html .= '<p>Your codes are';
+			for ($i = 0; $i < count($codes); $i++) {
+				$email_body_html .= '<br />' . $codes[$i] . ',  Redeem Link: <a href="https://beaconapp.cc/redeem/' . $codes[$i] . '">https://beaconapp.cc/redeem/' . $codes[$i] . '</a>';
+			}
+			$email_body_html .= '</p>';
+		} else {
+			$email_body_plain .= "Your code is " . $codes[0];
+			$email_body_html .= '<p>Your code is ' . $codes[0] . ' and can be redeemed using <a href="https://beaconapp.cc/redeem/' . $codes[0] . '">https://beaconapp.cc/redeem/' . $codes[0] . '</a></p>';
+		}
+		$email_body_plain .= "\n\nYou can also view the status of all purchased gift codes at <https://beaconapp.cc/account/#omni>.";
+		$email_body_html .= '<p>You can also view the status of all purchased gift codes at <a href="https://beaconapp.cc/account/#omni">https://beaconapp.cc/account/#omni</a></p>';
+		
+		BeaconEmail::SendMail($email, 'Your Beacon Omni Gift', $email_body_plain, $email_body_html);
+	}
 	
 	http_response_code(200);
 	echo 'Purchase redeemed successfully';

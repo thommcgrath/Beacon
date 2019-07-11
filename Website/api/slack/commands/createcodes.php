@@ -21,8 +21,8 @@ $database = BeaconCommon::Database();
 $database->BeginTransaction();
 $codes = array();
 for ($i = 0; $i < $num_codes; $i++) {
-	$code = BeaconCommon::GenerateRandomKey(9, '23456789ABCDEFGHJKMNPQRSTUVWXYZ');
-	$database->Query('INSERT INTO purchase_codes (code, source) VALUES ($1, $2);', $code, $source);
+	$code = BeaconCommon::CreateGiftCode();
+	$database->Query('INSERT INTO purchase_codes (code, source, purchaser_email_id) VALUES ($1, $2, $3);', $code, $source, '676d972a-9797-4006-b423-b5f34923a5dc');
 	$codes[] = $code;
 }
 $database->Commit();

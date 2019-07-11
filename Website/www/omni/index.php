@@ -2,6 +2,7 @@
 	
 define('OMNI_UUID', '972f9fc5-ad64-4f9c-940d-47062e705cc5');
 define('STW_UUID', 'f2a99a9e-e27f-42cf-91a8-75a7ef9cf015');
+define('GIFT_UUID', '2207d5c1-4411-4854-b26f-bc4b48aa33bf');
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconTemplate::AddHeaderLine('<script src="https://js.stripe.com/v3/"></script>');
@@ -29,6 +30,11 @@ $results = $database->Query('SELECT stripe_sku, retail_price FROM products WHERE
 $stw_sku = $results->Field('stripe_sku');
 $stw_price = $results->Field('retail_price');
 $stw_price_formatted = '$' . number_format($stw_price, 2, '.', ',');
+
+$results = $database->Query('SELECT stripe_sku, retail_price FROM products WHERE product_id = $1;', GIFT_UUID);
+$gift_sku = $results->Field('stripe_sku');
+$gift_price = $results->Field('retail_price');
+$gift_price_formatted = '$' . number_format($gift_price, 2, '.', ',');
 
 BeaconTemplate::StartStyles(); ?>
 <style type="text/css">
@@ -71,7 +77,7 @@ $purchase_email = null;
 if ($results->RecordCount() == 1) {
 	$purchased = true;
 	$subtext = 'You have already purchased Beacon Omni.';
-	$buy_button_caption = 'Buy Share The Wealth Licenses';
+	$buy_button_caption = 'Gift Omni to Others';
 	
 	$merchant_reference = $results->Field('merchant_reference');
 	if (substr($merchant_reference, 0, 3) == 'pi_') {
@@ -91,13 +97,18 @@ BeaconTemplate::StartScript();
 var update_total = function() {
 	var include_omni = document.getElementById('omni_checkbox').checked;
 	var stw_quantity = Math.min(document.getElementById('stw_quantity_field').value, 10);
+	var gift_quantity = Math.min(document.getElementById('gift_quantity_field').value, 10);
 	if (document.getElementById('stw_quantity_field').value != stw_quantity) {
 		document.getElementById('stw_quantity_field').value = stw_quantity;
+	}
+	if (document.getElementById('gift_quantity_field').value != gift_quantity) {
+		document.getElementById('gift_quantity_field').value = gift_quantity;
 	}
 	
 	var omni_price = <?php echo json_encode($omni_price * 100); ?>;
 	var stw_price = <?php echo json_encode($stw_price * 100); ?>;
-	var total = stw_price * stw_quantity;
+	var gift_price = <?php echo json_encode($gift_price * 100); ?>;
+	var total = (stw_price * stw_quantity) + (gift_price * gift_quantity);
 	if (include_omni) {
 		total += omni_price;
 	}
@@ -124,6 +135,10 @@ document.addEventListener('DOMContentLoaded', function() {
 		update_total();
 	});
 	
+	document.getElementById('gift_quantity_field').addEventListener('input', function(ev) {
+		update_total();
+	});
+	
 	document.getElementById('omni_checkbox').addEventListener('change', function(ev) {
 		update_total();
 	});
@@ -133,6 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		
 		var include_omni = document.getElementById('omni_checkbox').checked;
 		var stw_quantity = Math.min(document.getElementById('stw_quantity_field').value, 10);
+		var gift_quantity = Math.min(document.getElementById('gift_quantity_field').value, 10);
 		
 		var items = [];
 		if (include_omni) {
@@ -140,6 +156,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 		if (stw_quantity > 0) {
 			items.push({sku: <?php echo json_encode($stw_sku); ?>, quantity: stw_quantity});
+		}
+		if (gift_quantity > 0) {
+			items.push({sku: <?php echo json_encode($gift_sku); ?>, quantity: gift_quantity});
 		}
 		
 		var stripe = Stripe(<?php echo json_encode(BeaconCommon::GetGlobal('Stripe_Public_Key')); ?>, {});
@@ -269,8 +288,13 @@ if (is_null($session)) {
 			<td class="price_column"><?php echo htmlentities($omni_price_formatted); ?></td>
 		</tr>
 		<tr>
-			<td>Beacon Share The Wealth<br><span class="smaller text-lighter">Beacon Share The Wealth is an optional purchase that allows you to show further financial support by gifting copies of Beacon Omni to random users at a reduced cost. <a href="stw">Learn More</a></span></td>
-			<td class="quantity_column"><input class="text-center" type="number" value="<?php echo ($purchased ? 1 : 0); ?>" id="stw_quantity_field" min="0" max="10"></td>
+			<td>Beacon Omni Gift Codes<br><span class="smaller text-lighter">If you would like to purchase a copy of Beacon Omni for somebody else, this is the option for you. You'll be given codes which you can distribute any way you feel like.</span></td>
+			<td class="quantity_column"><input class="text-center" type="number" value="<?php echo ($purchased ? 1 : 0); ?>" id="gift_quantity_field" min="0" max="10"></td>
+			<td class="price_column"><?php echo htmlentities($gift_price_formatted); ?>
+		</tr>
+		<tr>
+			<td>Beacon Share The Wealth<br><span class="smaller text-lighter">Beacon Share The Wealth is an optional purchase that allows you to show further financial support by gifting copies of Beacon Omni to <em>random</em> users at a reduced cost. <a href="stw">Learn More</a></span></td>
+			<td class="quantity_column"><input class="text-center" type="number" value="0" id="stw_quantity_field" min="0" max="10"></td>
 			<td class="price_column"><?php echo htmlentities($stw_price_formatted); ?>
 		</tr>
 		<tr>
