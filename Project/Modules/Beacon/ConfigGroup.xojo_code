@@ -83,9 +83,15 @@ Protected Class ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function IsValid(Document As Beacon.Document) As Boolean
-		  If Not Self.mIsValidCached Then
+		  Dim HashComponents() As Text
+		  RaiseEvent ValidityHashComponents(Document, HashComponents)
+		  HashComponents.Append(Self.mLastModified.ToText)
+		  
+		  Dim ValidityHash As Text = Beacon.EncodeHex(Beacon.MD5(Text.Join(HashComponents, " ")))
+		  
+		  If ValidityHash <> Self.mLastValidityHash Then
 		    Self.mIsValid = Not RaiseEvent HasIssues(Document)
-		    Self.mIsValidCached = True
+		    Self.mLastValidityHash = ValidityHash
 		  End If
 		  Return Self.mIsValid
 		End Function
@@ -100,7 +106,9 @@ Protected Class ConfigGroup
 	#tag Method, Flags = &h0
 		Sub Modified(Assigns Value As Boolean)
 		  Self.mModified = Value
-		  Self.mIsValidCached = False
+		  If Value Then
+		    Self.mLastModified = Microseconds
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -155,6 +163,10 @@ Protected Class ConfigGroup
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event ValidityHashComponents(Document As Beacon.Document, Components() As Text)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
 	#tag EndHook
 
@@ -185,7 +197,11 @@ Protected Class ConfigGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mIsValidCached As Boolean
+		Private mLastModified As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastValidityHash As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

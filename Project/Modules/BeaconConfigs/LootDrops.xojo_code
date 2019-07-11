@@ -51,6 +51,18 @@ Implements Xojo.Core.Iterable
 	#tag EndEvent
 
 	#tag Event
+		Sub ValidityHashComponents(Document As Beacon.Document, Components() As Text)
+		  If Document.Mods <> Nil Then
+		    Components.Append(Document.Mods.Join(" "))
+		  End If
+		  
+		  If Beacon.Data <> Nil Then
+		    Components.Append(Beacon.Data.LastEditTime.ToText)
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  

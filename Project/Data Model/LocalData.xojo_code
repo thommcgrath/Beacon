@@ -193,6 +193,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  If Savepoint = "" Then
 		    Self.SQLExecute("COMMIT TRANSACTION;")
+		    Self.mLastCommitTime = Microseconds
 		  Else
 		    Self.SQLExecute("RELEASE SAVEPOINT " + Savepoint + ";")
 		  End If
@@ -307,6 +308,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Self.mBase.SQLExecute("PRAGMA cache_size = -100000;")
+		  
+		  // Careful removing this, the commit updates the mLastCommitTime property
 		  Self.BeginTransaction()
 		  Self.SQLExecute("UPDATE mods SET console_safe = ?2 WHERE mod_id = ?1 AND console_safe != ?2;", Self.UserModID, True)
 		  Self.Commit()
@@ -1339,6 +1342,18 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function LastCommitTime() As Double
+		  Return Self.mLastCommitTime
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LastEditTime() As Double
+		  Return Self.mLastCommitTime
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function LastSync() As Xojo.Core.Date
 		  Dim LastSync As String = Self.Variable("sync_time")
 		  If LastSync = "" Then
@@ -2308,6 +2323,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private Shared mInstance As LocalData
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastCommitTime As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
