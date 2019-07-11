@@ -19,7 +19,8 @@ if (isset($_GET['html'])) {
 	$html_mode = false;
 	header('Content-Type: application/json');
 }
-if (isset($_GET['arch'])) {
+// Beacon 1.2.0 and its betas did not report architecture correctly
+if ($current_build >= 10201300 && isset($_GET['arch'])) {
 	switch ($_GET['arch']) {
 	case 'x86_64':
 		$arch_priority = array('64', 'combo');

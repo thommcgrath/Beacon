@@ -48,21 +48,34 @@ Protected Class UpdateChecker
 
 	#tag Method, Flags = &h21
 		Private Function Is64Bit() As Boolean
+		  #If Target64Bit
+		    // If we're already executing 64-bit code, then we know it's a 64-bit system
+		    Return True
+		  #endif
+		  
 		  #If TargetWin32 Then
 		    Soft Declare Function GetCurrentProcess Lib "kernel32"  As Integer
 		    Dim ProcessID As Integer = GetCurrentProcess
 		    
-		    Soft Declare Function IsWow64Process Lib "kernel32" (Handle As Integer, ByRef Result As Boolean) As Integer
-		    
-		    If System.IsFunctionAvailable("IsWow64Process", "Kernel32") Then
-		      Dim Value As Boolean
-		      Call IsWow64Process(ProcessID, Value)
-		      Return Value
-		    Else
-		      Return False
+		    If System.IsFunctionAvailable("IsWow64Process2", "kernel32") Then
+		      Soft Declare Function IsWow64Process2 Lib "kernel32" (Handle As Integer, ByRef ProcessMachine As UInt16, ByRef NativeMachine As UInt16) As Boolean
+		      
+		      Dim ProcessMachine, NativeMachine As UInt16
+		      If Not IsWow64Process2(ProcessID, ProcessMachine, NativeMachine) Then
+		        Return False
+		      End If
+		      
+		      Return NativeMachine = &h200 Or NativeMachine = &h8664 Or NativeMachine = &hAA64 Or NativeMachine = &h284
+		    ElseIf System.IsFunctionAvailable("IsWow64Process", "kernel32") Then
+		      Soft Declare Function IsWow64Process Lib "kernel32" (Handle As Integer, ByRef Wow64Process As Boolean) As Boolean
+		      
+		      Dim Wow64Process As Boolean
+		      If Not IsWow64Process(ProcessID, Wow64Process) Then
+		        Return False
+		      End If
+		      
+		      Return Wow64Process
 		    End If
-		  #ElseIf TargetMacOS
-		    Return True
 		  #Endif
 		End Function
 	#tag EndMethod
