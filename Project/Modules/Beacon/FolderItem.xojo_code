@@ -1,5 +1,5 @@
 #tag Class
-Protected Class FolderItem
+ Attributes ( Deprecated = "FolderItem" ) Protected Class FolderItem
 	#tag Method, Flags = &h0
 		Function Child(Name As Text) As Beacon.FolderItem
 		  #if TargetiOS

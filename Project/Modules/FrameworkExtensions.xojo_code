@@ -151,8 +151,21 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Convert(Extends Source As MemoryBlock) As Xojo.Core.MemoryBlock
+		  Dim Temp As New Xojo.Core.MemoryBlock(Source)
+		  Return Temp.Left(Source.Size)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Convert(Extends Source As Xojo.Core.Date) As Date
 		  Return New Date(Source.Year, Source.Month, Source.Day, Source.Hour, Source.Minute, Source.Second, Source.TimeZone.SecondsFromGMT / 3600)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Convert(Extends Source As Xojo.Core.MemoryBlock) As MemoryBlock
+		  Return CType(Source.Data, MemoryBlock).StringValue(0, Source.Size)
 		End Function
 	#tag EndMethod
 
@@ -456,6 +469,24 @@ Protected Module FrameworkExtensions
 		  Catch Err As RuntimeException
 		    Return False
 		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Write(Extends File As FolderItem, Source As Text, Encoding As Xojo.Core.TextEncoding) As Boolean
+		  Dim Mem As Xojo.Core.MemoryBlock
+		  Try
+		    Mem = Encoding.ConvertTextToData(Source, False)
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
+		  Return File.Write(Mem.Convert)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Write(Extends File As FolderItem, Contents As Xojo.Core.MemoryBlock) As Boolean
+		  Return File.Write(Contents.Convert)
 		End Function
 	#tag EndMethod
 
