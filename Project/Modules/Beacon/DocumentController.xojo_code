@@ -190,25 +190,21 @@ Protected Class DocumentController
 		    End If
 		  Case Beacon.DocumentURL.TypeLocal
 		    Try
-		      Dim File As New Beacon.FolderItem(Self.mDocumentURL.Path)
-		      If File.Exists Then
-		        File.Delete  
+		      If Self.mFileRef <> Nil And Self.mFileRef.Exists Then
+		        Self.mFileRef.Delete
+		        If Self.mFileRef.LastErrorCode = 0 Then
+		          Call CallLater.Schedule(0, AddressOf TriggerDeleteSuccess)
+		        Else
+		          Call CallLater.Schedule(0, AddressOf TriggerDeleteError, Language.FolderItemErrorReason(Self.mFileRef.LastErrorCode))
+		        End If
+		      Else
+		        Call CallLater.Schedule(0, AddressOf TriggerDeleteSuccess)
 		      End If
-		      Call CallLater.Schedule(0, AddressOf TriggerDeleteSuccess)
 		    Catch Err As RuntimeException
 		      Call CallLater.Schedule(0, AddressOf TriggerDeleteError, Err.Explanation)
 		    End Try
 		  Case Beacon.DocumentURL.TypeTransient
-		    Dim Path As Text = Self.mDocumentURL.URL.Mid(Beacon.DocumentURL.TypeTransient.Length + 3)
-		    Try
-		      Dim File As Beacon.FolderItem = Beacon.FolderItem.Temporary.Child(Path + BeaconFileTypes.BeaconDocument.PrimaryExtension.ToText)
-		      If File.Exists Then
-		        File.Delete
-		      End If
-		      Call CallLater.Schedule(0, AddressOf TriggerDeleteSuccess)
-		    Catch Err As RuntimeException
-		      Call CallLater.Schedule(0, AddressOf TriggerDeleteError, Err.Explanation)
-		    End Try
+		    Call CallLater.Schedule(0, AddressOf TriggerDeleteSuccess)
 		  Else
 		    Call CallLater.Schedule(0, AddressOf TriggerDeleteError, "Unknown storage scheme " + Self.mDocumentURL.Scheme)
 		  End Select
@@ -252,14 +248,14 @@ Protected Class DocumentController
 		    Dim Success As Boolean
 		    Dim Message As Text = "Could not load data from file"
 		    Try
-		      Dim File As Beacon.FolderItem
+		      Dim File As BookmarkedFolderItem
 		      If Self.mDocumentURL.HasParam("saveinfo") Then
-		        File = Beacon.FolderItem.FromSaveInfo(Self.mDocumentURL.Param("saveinfo"))
+		        File = BookmarkedFolderItem.FromSaveInfo(Self.mDocumentURL.Param("saveinfo"))
 		      Else
-		        File = New Beacon.FolderItem(Self.mDocumentURL.Path)
+		        File = New BookmarkedFolderItem(Self.mDocumentURL.Path, FolderItem.PathTypeNative)
 		      End If
 		      If File <> Nil And File.Exists Then
-		        FileContent = File.Read()
+		        FileContent = File.Read().Convert
 		        Self.mFileRef = File // Just to keep the security scoped bookmark open
 		        Success = True
 		      End If
@@ -272,14 +268,8 @@ Protected Class DocumentController
 		      Return
 		    End If
 		  Case Beacon.DocumentURL.TypeTransient
-		    // just a local file stored in the the temp directory
-		    Dim File As Beacon.FolderItem = Beacon.FolderItem.Temporary.Child(Self.mDocumentURL.Path + BeaconFileTypes.BeaconDocument.PrimaryExtension.ToText)
-		    If File.Exists Then
-		      FileContent = File.Read()
-		    Else
-		      Dim Temp As New Beacon.Document
-		      FileContent = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Xojo.Data.GenerateJSON(Temp.ToDictionary(Self.mIdentity)))
-		    End If
+		    Dim Temp As New Beacon.Document
+		    FileContent = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Xojo.Data.GenerateJSON(Temp.ToDictionary(Self.mIdentity)))
 		  Else
 		    Return
 		  End Select
@@ -417,7 +407,7 @@ Protected Class DocumentController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Writer_Finished(Sender As Beacon.JSONWriter, Destination As Beacon.FolderItem)
+		Private Sub Writer_Finished(Sender As Beacon.JSONWriter, Destination As FolderItem)
 		  If Sender = Nil Or Destination = Nil Then
 		    Return
 		  End If
@@ -467,7 +457,7 @@ Protected Class DocumentController
 		    AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Upload
 		    Self.mActiveThread.Run
 		  Case Beacon.DocumentURL.TypeLocal
-		    Dim Writer As New Beacon.JSONWriter(Self.mDocument, Self.mIdentity, New Beacon.FolderItem(Destination.Path))
+		    Dim Writer As New Beacon.JSONWriter(Self.mDocument, Self.mIdentity, New FolderItem(Destination.Path, FolderItem.PathTypeNative))
 		    AddHandler Writer.Finished, AddressOf Writer_Finished
 		    Writer.Run
 		  End Select
@@ -525,7 +515,7 @@ Protected Class DocumentController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mFileRef As Beacon.FolderItem
+		Private mFileRef As BookmarkedFolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

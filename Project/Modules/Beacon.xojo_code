@@ -1244,6 +1244,21 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function SanitizeFilename(Filename As String) As String
+		  Filename = Filename.ReplaceAll("/", "-")
+		  Filename = Filename.ReplaceAll("\", "-")
+		  Filename = Filename.ReplaceAll(":", "-")
+		  Filename = Filename.ReplaceAll("""", "")
+		  Filename = Filename.ReplaceAll("<", "")
+		  Filename = Filename.ReplaceAll(">", "")
+		  Filename = Filename.ReplaceAll("|", "")
+		  Filename = Filename.ReplaceAll("*", "")
+		  Filename = Filename.ReplaceAll("?", "")
+		  Return Filename
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function SearchForCreatures(Extends Source As Beacon.DataSource, SearchText As Text = "", Mods As Beacon.TextList = Nil, Tags As Text = "") As Beacon.Creature()
 		  If Mods = Nil Then

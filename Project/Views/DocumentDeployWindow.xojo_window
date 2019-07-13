@@ -472,9 +472,9 @@ End
 		    // Move to the next step
 		    Self.DeployingList.DeleteAllRows
 		    
-		    Dim Now As New Xojo.Core.Date(Xojo.Core.Date.Now.SecondsFrom1970, New Xojo.Core.TimeZone(0))
-		    Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
-		    Self.mDeployLabel = Now.Year.ToText(Locale, "0000") + "-" + Now.Month.ToText(Locale, "00") + "-" + Now.Day.ToText(Locale, "00") + " " + Now.Hour.ToText(Locale, "00") + "." + Now.Minute.ToText(Locale, "00") + "." + Now.Second.ToText(Locale, "00") + " GMT"
+		    Dim Now As New Date()
+		    Now.GMTOffset = 0
+		    Self.mDeployLabel = Str(Now.Year, "0000") + "-" + Str(Now.Month, "00") + "-" + Str(Now.Day, "00") + " " + Str(Now.Hour, "00") + "." + Str(Now.Minute, "00") + "." + Str(Now.Second, "00") + " GMT"
 		    
 		    
 		    For I As Integer = 0 To Self.mDocument.ServerProfileCount - 1
@@ -499,7 +499,7 @@ End
 		    Next
 		    
 		    For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
-		      DeploymentEngine.Begin(Self.mDeployLabel, Self.mDocument, App.IdentityManager.CurrentIdentity)
+		      DeploymentEngine.Begin(Self.mDeployLabel.ToText, Self.mDocument, App.IdentityManager.CurrentIdentity)
 		    Next
 		    
 		    Self.DeployingWatchTimer.Mode = Timer.ModeMultiple
@@ -523,12 +523,31 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Backup(Engine As Beacon.DeploymentEngine, Folder As Beacon.FolderItem)
+		Private Sub Backup(Engine As Beacon.DeploymentEngine, Folder As FolderItem)
+		  // Returning true means the backup either succeeded or should not complete
+		  // Returning false means there was an error and the process needs to stop
+		  
 		  If Engine.Errored Then
 		    Return
 		  End If
 		  
-		  Dim ServerFolder As Beacon.FolderItem = Folder.Child(Beacon.FolderItem.SanitizeFilename(Engine.Name))
+		  If Folder = Nil Then
+		    App.Log("Unable to backup " + Engine.Name + ": No backup root folder")
+		    Return
+		  End If
+		  
+		  Dim ServerFolder As FolderItem = Folder.Child(Beacon.SanitizeFilename(Engine.Name))
+		  If ServerFolder = Nil Then
+		    App.Log("Unable to backup " + Engine.Name + ": Could not to get path to server backup folder")
+		    Return
+		  ElseIf ServerFolder.Exists = False Then
+		    ServerFolder.CreateAsFolder
+		    Dim ServerFolderError As Integer = ServerFolder.LastErrorCode
+		    If ServerFolderError <> 0 Then
+		      App.Log("Unable to backup " + Engine.Name + ": Could not create server backup folder " + ServerFolder.NativePath + ": " + Language.FolderItemErrorReason(ServerFolderError))
+		      Return
+		    End If
+		  End If
 		  
 		  Dim GameIniContent As Text = Engine.BackupGameIni.Trim
 		  Dim GameUserSettingsIniContent As Text = Engine.BackupGameUserSettingsIni.Trim
@@ -536,24 +555,39 @@ End
 		    Return
 		  End If
 		  
-		  If Not ServerFolder.Exists Then
-		    ServerFolder.CreateAsFolder
-		  End If
-		  
-		  Dim Subfolder As Beacon.FolderItem = ServerFolder.Child(Self.mDeployLabel)
+		  Dim Subfolder As FolderItem = ServerFolder.Child(Beacon.SanitizeFilename(Self.mDeployLabel))
 		  Dim Counter As Integer = 1
-		  While Subfolder.Exists
-		    Subfolder = ServerFolder.Child(Self.mDeployLabel + "-" + Counter.ToText)
+		  While Subfolder <> Nil And Subfolder.Exists
+		    Subfolder = ServerFolder.Child(Beacon.SanitizeFilename(Self.mDeployLabel + "-" + Str(Counter, "-0")))
 		    Counter = Counter + 1
 		  Wend
 		  
+		  If Subfolder = Nil Then
+		    App.Log("Unable to backup " + Engine.Name + ": Could not to get path to deployment folder")
+		    Return
+		  End If
 		  Subfolder.CreateAsFolder
+		  Dim SubfolderError As Integer = Subfolder.LastErrorCode
+		  If SubfolderError <> 0 Then
+		    App.Log("Unable to backup " + Engine.Name + ": Could not create deployment folder " + Subfolder.NativePath + ": " + Language.FolderItemErrorReason(SubfolderError))
+		    Return
+		  End If
 		  
 		  If GameIniContent <> "" Then
-		    Subfolder.Child("Game.ini").Write(GameIniContent, Xojo.Core.TextEncoding.UTF8)
+		    Dim GameIniFile As FolderItem = Subfolder.Child("Game.ini")
+		    If GameIniFile = Nil Then
+		      App.Log("Unable to backup Game.ini for " + Engine.Name + ": Could not get path to Game.ini")
+		    ElseIf GameIniFile.Write(GameIniContent, Xojo.Core.TextEncoding.UTF8) = False Then
+		      App.Log("Unable to backup Game.ini for " + Engine.Name + " to " + GameIniFile.NativePath + ": " + Language.FolderItemErrorReason(GameIniFile.LastErrorCode))
+		    End If
 		  End If
 		  If GameUserSettingsIniContent <> "" Then
-		    Subfolder.Child("GameUserSettings.ini").Write(GameUserSettingsIniContent, Xojo.Core.TextEncoding.UTF8)
+		    Dim GameUserSettingsIniFile As FolderItem = Subfolder.Child("GameUserSettings.ini")
+		    If GameUserSettingsIniFile = Nil Then
+		      App.Log("Unable to backup Game.ini for " + Engine.Name + ": Could not get path to GameUserSettings.ini")
+		    ElseIf GameUserSettingsIniFile.Write(GameUserSettingsIniContent, Xojo.Core.TextEncoding.UTF8) = False Then
+		      App.Log("Unable to backup Game.ini for " + Engine.Name + " to " + GameUserSettingsIniFile.NativePath + ": " + Language.FolderItemErrorReason(GameUserSettingsIniFile.LastErrorCode))
+		    End If
 		  End If
 		End Sub
 	#tag EndMethod
@@ -622,7 +656,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDeployLabel As Text
+		Private mDeployLabel As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -795,7 +829,7 @@ End
 		  Next
 		  
 		  If Finished Then
-		    Dim BackupsFolder As Beacon.FolderItem = App.ApplicationSupport.Child("Backups")
+		    Dim BackupsFolder As FolderItem = App.ApplicationSupport.Child("Backups")
 		    If Not BackupsFolder.Exists Then
 		      BackupsFolder.CreateAsFolder
 		    End If

@@ -1517,13 +1517,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Dim PresetsFolder As FolderItem = SupportFolder.Child("Presets")
 		    If PresetsFolder.Exists Then
 		      For I As Integer = PresetsFolder.Count DownTo 1
-		        Dim File As Beacon.FolderItem = PresetsFolder.Item(I)
+		        Dim File As FolderItem = PresetsFolder.Item(I)
 		        If Not File.IsType(BeaconFileTypes.BeaconPreset) Then
 		          File.Delete
 		          Continue
 		        End If
 		        
-		        Dim Content As Text = File.Read(Xojo.Core.TextEncoding.UTF8)
+		        Dim Content As Text = File.Read(Encodings.UTF8).ToText
 		        
 		        Try
 		          Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content)

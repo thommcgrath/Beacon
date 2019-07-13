@@ -178,7 +178,6 @@ Window=NitradoDiscoveryView;Views/Document Import/Discovery Views/NitradoDiscove
 Window=FTPDiscoveryView;Views/Document Import/Discovery Views/FTPDiscoveryView.xojo_window;&h000000001681EFFF;&h0000000020AC2FFF;false
 Window=LocalDiscoveryView;Views/Document Import/Discovery Views/LocalDiscoveryView.xojo_window;&h0000000035476FFF;&h0000000020AC2FFF;false
 Class=DocumentController;Modules/Beacon/DocumentController.xojo_code;&h000000006C1A17FF;&h0000000055ADDFFF;false
-Class=FolderItem;Modules/Beacon/FolderItem.xojo_code;&h000000001999BFFF;&h0000000055ADDFFF;false
 Class=Collection;Modules/Beacon/Collection.xojo_code;&h00000000452CE7FF;&h0000000055ADDFFF;false
 Class=CollectionIterator;Modules/Beacon/CollectionIterator.xojo_code;&h000000007DB517FF;&h0000000055ADDFFF;false
 Class=LootSourceCollection;Modules/Beacon/LootSourceCollection.xojo_code;&h000000005980AFFF;&h0000000055ADDFFF;false

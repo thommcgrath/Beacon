@@ -50,7 +50,7 @@ Inherits Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Document As Beacon.Document, Identity As Beacon.Identity, Destination As Beacon.FolderItem)
+		Sub Constructor(Document As Beacon.Document, Identity As Beacon.Identity, Destination As FolderItem)
 		  Self.Constructor()
 		  Self.mSourceDocument = Document
 		  Self.mSourceIdentity = Identity
@@ -59,7 +59,7 @@ Inherits Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target32Bit or Target64Bit))
-		Sub Constructor(Source As Xojo.Core.Dictionary, Destination As Beacon.FolderItem)
+		Sub Constructor(Source As Xojo.Core.Dictionary, Destination As FolderItem)
 		  Self.Constructor()
 		  Self.mSource = Source
 		  Self.mDestination = Destination
@@ -140,33 +140,31 @@ Inherits Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target32Bit or Target64Bit))
-		Shared Function WriteSynchronous(Source As Xojo.Core.Dictionary, File As Beacon.FolderItem, Compress As Boolean) As Boolean
+		Shared Function WriteSynchronous(Source As Xojo.Core.Dictionary, File As FolderItem, Compress As Boolean) As Boolean
 		  // Prepare
 		  Dim Content As Text = Xojo.Data.GenerateJSON(Source)
 		  
 		  #if TargetiOS
 		    Content = PrettyPrint(Content)
-		    File.Write(Content, Xojo.Core.TextEncoding.UTF8)
+		    Return File.Write(Content, Xojo.Core.TextEncoding.UTF8)
 		  #else
 		    If Compress Then
 		      Dim Compressor As New _GZipString
 		      Compressor.UseHeaders = True
 		      
-		      Dim Bytes As Global.MemoryBlock = Compressor.Compress(Content, _GZipString.DefaultCompression)
-		      File.Write(Beacon.ConvertMemoryBlock(Bytes))
+		      Dim Bytes As MemoryBlock = Compressor.Compress(Content, _GZipString.DefaultCompression)
+		      Return File.Write(Bytes)
 		    Else
 		      Content = PrettyPrint(Content)
-		      File.Write(Content, Xojo.Core.TextEncoding.UTF8)
+		      Return File.Write(Content, Xojo.Core.TextEncoding.UTF8)
 		    End If
 		  #endif
-		  
-		  Return True
 		End Function
 	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
-		Event Finished(Destination As Beacon.FolderItem)
+		Event Finished(Destination As FolderItem)
 	#tag EndHook
 
 
@@ -189,7 +187,7 @@ Inherits Thread
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target32Bit or Target64Bit))
-		Private mDestination As Beacon.FolderItem
+		Private mDestination As FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

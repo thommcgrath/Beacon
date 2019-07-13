@@ -238,6 +238,18 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Extension(Extends File As FolderItem) As String
+		  Dim Name As String = File.Name
+		  If Name.IndexOf(".") = -1 Then
+		    Return ""
+		  End If
+		  
+		  Dim Parts() As String = Name.Split(".")
+		  Return Parts(Parts.Ubound)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IndexOf(Extends Source As String, StartAt As Integer = 0, Other As String) As Integer
 		  Return InStr(StartAt, Source, Other) - 1
 		End Function
@@ -261,6 +273,12 @@ Protected Module FrameworkExtensions
 		  Else
 		    Return 0
 		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsType(Extends File As FolderItem, Type As FileType) As Boolean
+		  Return File.Name.EndsWith(Type.PrimaryExtension)
 		End Function
 	#tag EndMethod
 
@@ -349,6 +367,16 @@ Protected Module FrameworkExtensions
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Read(Extends File As FolderItem, Encoding As TextEncoding) As String
+		  Dim Mem As MemoryBlock = File.Read
+		  If Mem = Nil Then
+		    Return ""
+		  End If
+		  Return Mem.StringValue(0, Mem.Size).DefineEncoding(Encoding)
 		End Function
 	#tag EndMethod
 

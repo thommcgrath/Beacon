@@ -379,7 +379,7 @@ End
 		  CopyProfileMenuItem.Enabled = False
 		  Base.Append(CopyProfileMenuItem)
 		  
-		  Dim BackupsRoot As Beacon.FolderItem = App.ApplicationSupport.Child("Backups")
+		  Dim BackupsRoot As FolderItem = App.ApplicationSupport.Child("Backups")
 		  
 		  Dim RowIndex As Integer = Me.RowFromXY(X, Y)
 		  If RowIndex = -1 Then
@@ -392,7 +392,7 @@ End
 		    CopyProfileMenuItem.Tag = Profile.ProfileID.Left(8)
 		    CopyProfileMenuItem.Enabled = True
 		    
-		    Dim Folder As Beacon.FolderItem = BackupsRoot.Child(Beacon.FolderItem.SanitizeFilename(Profile.Name))
+		    Dim Folder As FolderItem = BackupsRoot.Child(Beacon.SanitizeFilename(Profile.Name))
 		    Base.Append(New MenuItem("Show Config Backups", Folder))
 		  Catch Err As RuntimeException
 		    Dim Item As New MenuItem("Show Config Backups", BackupsRoot)
@@ -407,7 +407,7 @@ End
 		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
 		  Select Case HitItem.Text
 		  Case "Show Config Backups"
-		    Dim Folder As Beacon.FolderItem = HitItem.Tag
+		    Dim Folder As FolderItem = HitItem.Tag
 		    If Folder = Nil Then
 		      Return True
 		    End If

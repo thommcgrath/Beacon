@@ -1,6 +1,27 @@
 #tag Module
 Protected Module Language
 	#tag Method, Flags = &h1
+		Protected Function FolderItemErrorReason(ErrorCode As Integer) As String
+		  Select Case ErrorCode
+		  Case FolderItem.DestDoesNotExistError
+		    Return "The destination does not exist"
+		  Case FolderItem.FileNotFound
+		    Return "File not found"
+		  Case FolderItem.AccessDenied
+		    Return "Permission denied"
+		  Case FolderItem.NotEnoughMemory
+		    Return "Out of memory"
+		  Case FolderItem.FileInUse
+		    Return "File is in use"
+		  Case FolderItem.InvalidName
+		    Return "Filename is invalid"
+		  Else
+		    Return "Other error #" + ErrorCode.ToText
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function LabelForConfig(Config As Beacon.ConfigGroup) As Text
 		  Return Language.LabelForConfig(Config.ConfigName)
 		End Function

@@ -159,7 +159,7 @@ Implements NotificationKit.Receiver
 			Dim Dialog As New OpenDialog
 			Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.JsonFile + BeaconFileTypes.BeaconIdentity
 			
-			Dim File As Beacon.FolderItem = Dialog.ShowModal
+			Dim File As FolderItem = Dialog.ShowModal
 			If File <> Nil Then
 			Self.OpenFile(File, True)
 			End If
@@ -809,7 +809,7 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenFile(File As Beacon.FolderItem, Import As Boolean)
+		Sub OpenFile(File As FolderItem, Import As Boolean)
 		  If Self.mIdentityManager = Nil Or Self.mIdentityManager.CurrentIdentity = Nil Then
 		    Return
 		  End If
@@ -820,7 +820,7 @@ Implements NotificationKit.Receiver
 		  
 		  If File.IsType(BeaconFileTypes.JsonFile) Then
 		    Try
-		      Dim Content As Text = File.Read(Xojo.Core.TextEncoding.UTF8)
+		      Dim Content As Text = File.Read(Encodings.UTF8).ToText
 		      LocalData.SharedInstance.Import(Content)
 		    Catch Err As RuntimeException
 		      

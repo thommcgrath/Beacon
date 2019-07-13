@@ -180,19 +180,21 @@ Protected Class DocumentURL
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function URLForFile(File As Beacon.FolderItem) As Beacon.DocumentURL
-		  Dim Path As Text = File.URLPath
+		Shared Function URLForFile(File As FolderItem) As Beacon.DocumentURL
+		  Dim Path As String = File.URLPath
 		  #if TargetMacOS
-		    Dim SaveInfo As Text = File.SaveInfo
-		    If SaveInfo <> "" Then
-		      If Path.IndexOf("?") = -1 Then
-		        Path = Path + "?saveinfo=" + Beacon.EncodeURLComponent(SaveInfo)
-		      Else
-		        Path = Path + "&saveinfo=" + Beacon.EncodeURLComponent(SaveInfo)
+		    If File IsA BookmarkedFolderItem Then
+		      Dim SaveInfo As String = BookmarkedFolderItem(File).SaveInfo
+		      If SaveInfo <> "" Then
+		        If Path.IndexOf("?") = -1 Then
+		          Path = Path + "?saveinfo=" + SaveInfo
+		        Else
+		          Path = Path + "&saveinfo=" + SaveInfo
+		        End If
 		      End If
 		    End If
 		  #endif
-		  Return Path
+		  Return New Beacon.DocumentURL(Path.ToText)
 		End Function
 	#tag EndMethod
 
