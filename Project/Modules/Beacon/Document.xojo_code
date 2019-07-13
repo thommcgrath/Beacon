@@ -434,22 +434,13 @@ Implements Beacon.DocumentItem
 		  
 		  Dim Configs() As Beacon.ConfigGroup = Self.ImplementedConfigs()
 		  For Each Config As Beacon.ConfigGroup In Configs
-		    If Not Config.IsValid(Self) Then
+		    Dim Issues() As Beacon.Issue = Config.Issues(Self)
+		    If Issues <> Nil And Issues.Ubound > -1 Then
 		      Return False
 		    End If
 		  Next
 		  
 		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsValid(Document As Beacon.Document) As Boolean
-		  If Document = Nil Then
-		    Return Self.IsValid()
-		  Else
-		    Return Document.IsValid()
-		  End If
 		End Function
 	#tag EndMethod
 

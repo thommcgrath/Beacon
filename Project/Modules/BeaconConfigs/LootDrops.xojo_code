@@ -22,19 +22,6 @@ Implements Xojo.Core.Iterable
 	#tag EndEvent
 
 	#tag Event
-		Function HasIssues(Document As Beacon.Document) As Boolean
-		  For Each Source As Beacon.LootSource In Self.mSources
-		    If Not Document.SupportsLootSource(Source) Then
-		      Return True
-		    End If
-		    If Not Source.IsValid(Document) Then
-		      Return True
-		    End If
-		  Next
-		End Function
-	#tag EndEvent
-
-	#tag Event
 		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
@@ -46,18 +33,6 @@ Implements Xojo.Core.Iterable
 		        Self.mSources.Append(Source)
 		      End If
 		    Next
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub ValidityHashComponents(Document As Beacon.Document, Components() As Text)
-		  If Document.Mods <> Nil Then
-		    Components.Append(Document.Mods.Join(" "))
-		  End If
-		  
-		  If Beacon.Data <> Nil Then
-		    Components.Append(Beacon.Data.LastEditTime.ToText)
 		  End If
 		End Sub
 	#tag EndEvent

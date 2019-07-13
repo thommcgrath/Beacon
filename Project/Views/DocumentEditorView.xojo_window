@@ -389,6 +389,11 @@ End
 		  Else
 		    Self.Autosave()
 		    
+		    If Self.Document.IsValid = False Then
+		      Self.ShowIssues()
+		      Return
+		    End If
+		    
 		    Dim Win As DocumentDeployWindow = DocumentDeployWindow.Create(Self.Document)
 		    If Win <> Nil Then
 		      Self.mDeployWindow = New WeakRef(Win)
@@ -401,6 +406,11 @@ End
 	#tag Method, Flags = &h21
 		Private Sub BeginExport()
 		  Self.Autosave()
+		  
+		  If Self.Document.IsValid = False Then
+		    Self.ShowIssues()
+		    Return
+		  End If
 		  
 		  DocumentExportWindow.Present(Self, Self.Document)
 		End Sub
@@ -640,13 +650,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function ReadyToDeploy() As Boolean
-		  Return Self.Document <> Nil And Self.Document.ServerProfileCount > 0 And Self.Document.IsValid
+		  Return Self.Document <> Nil And Self.Document.ServerProfileCount > 0
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function ReadyToExport() As Boolean
-		  Return Self.Document <> Nil And Self.Document.IsValid
+		  Return Self.Document <> Nil
 		End Function
 	#tag EndMethod
 
@@ -750,7 +760,6 @@ End
 		  #if DeployEnabled
 		    Self.BeaconToolbar1.DeployButton.Enabled = Self.ReadyToDeploy
 		  #endif
-		  Self.BeaconToolbar1.IssuesButton.Enabled = Not Self.Document.IsValid
 		End Sub
 	#tag EndMethod
 
@@ -898,8 +907,6 @@ End
 		  Dim ShareButton As New BeaconToolbarItem("ShareButton", IconToolbarShare, Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud, "Copy link to this document")
 		  
 		  Dim HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarHelp, False, "Toggle help panel")
-		  Dim IssuesButton As New BeaconToolbarItem("IssuesButton", IconToolbarIssues, Not Self.Document.IsValid, "Show document issues")
-		  IssuesButton.IconColor = BeaconToolbarItem.IconColors.Red
 		  
 		  Me.LeftItems.Append(ImportButton)
 		  Me.LeftItems.Append(ExportButton)
@@ -907,7 +914,6 @@ End
 		    Me.LeftItems.Append(DeployButton)
 		  #endif
 		  Me.LeftItems.Append(ShareButton)
-		  Me.LeftItems.Append(IssuesButton)
 		  
 		  Me.RightItems.Append(HelpButton)
 		End Sub
@@ -945,8 +951,6 @@ End
 		    LocalData.SharedInstance.SaveNotification(Notification)
 		  Case "DeployButton"
 		    Self.BeginDeploy()
-		  Case "IssuesButton"
-		    Self.ShowIssues()
 		  End Select
 		End Sub
 	#tag EndEvent

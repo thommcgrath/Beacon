@@ -376,6 +376,31 @@ Inherits Beacon.ConfigGroup
 			Group="Behavior"
 			Type="Double"
 		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ClampResourceHarvestDamage"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DinoHarvestingDamageMultiplier"
+			Group="Behavior"
+			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HarvestHealthMultiplier"
+			Group="Behavior"
+			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="PlayerHarvestingDamageMultiplier"
+			Group="Behavior"
+			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="UseOptimizedRates"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
 #tag EndClass
