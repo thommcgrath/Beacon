@@ -1486,7 +1486,7 @@ End
 		  Dim MinItemSets As Integer = Floor(CDbl(Self.CustomizeMinSetsField.Text))
 		  Dim MaxItemSets As Integer = Floor(CDbl(Self.CustomizeMaxSetsField.Text))
 		  Dim PreventDuplicates As Boolean = Self.CustomizePreventDuplicatesCheck.Value
-		  Dim AppendMode As Boolean = False
+		  Dim AppendMode As Boolean = Self.mSource.AppendMode
 		  Dim ReconfigurePresets As Boolean = Self.CustomizeReconfigureCheckbox.Value
 		  Dim Mask As UInt64 = Self.mDocument.MapCompatibility
 		  Dim Mods As Beacon.TextList = Self.mDocument.Mods
