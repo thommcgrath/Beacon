@@ -444,6 +444,16 @@ Implements Beacon.DocumentItem
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Attributes( Deprecated = "Document.IsValid()" )  Function IsValid(Document As Beacon.Document) As Boolean
+		  If Document <> Self Then
+		    Raise New UnsupportedOperationException
+		  End If
+		  
+		  Return Self.IsValid()
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function LastSaved() As Global.Date
 		  Return Self.mLastSavedLegacy
