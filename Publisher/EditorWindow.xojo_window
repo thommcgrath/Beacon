@@ -210,7 +210,7 @@ Begin Window EditorWindow
       Password        =   False
       ReadOnly        =   True
       Scope           =   2
-      TabIndex        =   9
+      TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -245,7 +245,7 @@ Begin Window EditorWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   8
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Build:"
@@ -288,7 +288,7 @@ Begin Window EditorWindow
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -323,7 +323,7 @@ Begin Window EditorWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   6
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Short Version:"
@@ -371,7 +371,7 @@ Begin Window EditorWindow
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
       Styled          =   True
-      TabIndex        =   14
+      TabIndex        =   21
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -406,7 +406,7 @@ Begin Window EditorWindow
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   12
+      TabIndex        =   19
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -437,7 +437,7 @@ Begin Window EditorWindow
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   13
+      TabIndex        =   20
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   298
@@ -481,7 +481,7 @@ Begin Window EditorWindow
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   11
+      TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -516,7 +516,7 @@ Begin Window EditorWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   10
+      TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Banner Text:"
@@ -615,7 +615,7 @@ Begin Window EditorWindow
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   15
+      TabIndex        =   18
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -647,7 +647,7 @@ Begin Window EditorWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   16
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Windows 64-bit File:"
@@ -690,7 +690,7 @@ Begin Window EditorWindow
       Password        =   False
       ReadOnly        =   True
       Scope           =   2
-      TabIndex        =   17
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -725,7 +725,7 @@ Begin Window EditorWindow
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   18
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -757,7 +757,7 @@ Begin Window EditorWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   19
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Windows 32-bit File:"
@@ -800,7 +800,7 @@ Begin Window EditorWindow
       Password        =   False
       ReadOnly        =   True
       Scope           =   2
-      TabIndex        =   20
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -835,7 +835,7 @@ Begin Window EditorWindow
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   21
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -958,6 +958,8 @@ End
 		  InsertData.Value("notes") = "convert_from(decode('" + EncodeHex(Self.mNotesText) + "', 'hex'), 'UTF8')"
 		  InsertData.Value("stage") = Str(Self.mStageCode, "-0")
 		  InsertData.Value("preview") = "'" + ReplaceAll(Self.mBannerText, "'", "''") + "'"
+		  InsertData.Value("min_mac_version") = "'10.11.0'"
+		  InsertData.Value("min_win_version") = "'6.1.7601'"
 		  
 		  If Self.mMacFile <> Nil And Self.mMacFile.Exists And Self.mMacSignature <> "" And Self.mMacPath <> "" Then
 		    InsertData.Value("mac_url") = "'" + ReplaceAll(Root + "/" + Self.mMacPath, "'", "''") + "'"
