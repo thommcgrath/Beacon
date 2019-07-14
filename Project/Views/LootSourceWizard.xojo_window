@@ -44,7 +44,6 @@ Begin BeaconDialog LootSourceWizard
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   2
@@ -1486,7 +1485,7 @@ End
 		  Dim MinItemSets As Integer = Floor(CDbl(Self.CustomizeMinSetsField.Text))
 		  Dim MaxItemSets As Integer = Floor(CDbl(Self.CustomizeMaxSetsField.Text))
 		  Dim PreventDuplicates As Boolean = Self.CustomizePreventDuplicatesCheck.Value
-		  Dim AppendMode As Boolean = Self.mSource.AppendMode
+		  Dim AppendMode As Boolean = If(Self.mSource <> Nil, Self.mSource.AppendMode, False)
 		  Dim ReconfigurePresets As Boolean = Self.CustomizeReconfigureCheckbox.Value
 		  Dim Mask As UInt64 = Self.mDocument.MapCompatibility
 		  Dim Mods As Beacon.TextList = Self.mDocument.Mods
