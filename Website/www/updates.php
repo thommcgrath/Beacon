@@ -85,7 +85,7 @@ $values = array(
 	'version' => $results->Field('build_display'),
 	'preview' => $results->Field('preview'),
 	'mac' => array(
-		'url' => $results->Field('mac_url'),
+		'url' => BeaconCommon::SignDownloadURL($results->Field('mac_url')),
 		'signature' => $results->Field('mac_signature')
 	)
 );
@@ -93,7 +93,7 @@ $values = array(
 foreach ($arch_priority as $part) {
 	if (is_null($results->Field('win_' . $part . '_url')) === false) {
 		$values['win'] = array(
-			'url' => $results->Field('win_' . $part . '_url'),
+			'url' => BeaconCommon::SignDownloadURL($results->Field('win_' . $part . '_url')),
 			'signature' => $results->Field('win_' . $part . '_signature')
 		);
 		break;

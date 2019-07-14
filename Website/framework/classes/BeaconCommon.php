@@ -463,6 +463,22 @@ abstract class BeaconCommon {
 	public static function CreateGiftCode() {
 		return BeaconCommon::GenerateRandomKey(9, '23456789ABCDEFGHJKMNPQRSTUVWXYZ');
 	}
+	
+	public static function SignDownloadURL(string $url, int $expires = 3600) {
+		if (strtolower(substr($url, 0, 29)) === 'https://releases.beaconapp.cc') {
+			$key = static::GetGlobal('BunnyCDN_Signing_Key');
+			if (is_null($key)) {
+				return $url;
+			}
+			
+			$path = substr($url, 29);
+			$expires += time();
+			$token = str_replace('=', '', strtr(base64_encode(md5($key . $path . $expires, true)), '+/', '-_'));
+			return $url . "?token=$token&expires=$expires";
+		} else {
+			return $url;
+		}
+	}
 }
 
 ?>

@@ -118,7 +118,7 @@ $alternate_links[] = array(
 
 $alternate_html = array();
 foreach ($alternate_links as $link) {
-	$alternate_html[] = '<a href="' . htmlentities($link['url']) . '" rel="nofollow">' . htmlentities($link['label']) . '</a>';
+	$alternate_html[] = '<a href="' . htmlentities(BeaconCommon::SignDownloadURL($link['url'])) . '" rel="nofollow">' . htmlentities($link['label']) . '</a>';
 }
 
 $results = $database->Query("SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE objects.min_version <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM game_variables)) AS merged;", $build);
@@ -127,32 +127,32 @@ $prerelease = $database->Query("SELECT mac_url, win_64_url, win_combo_url, win_3
 
 ?><h1>Current Version</h1>
 <p class="text-center">Version <?php echo $version; ?></p>
-<p class="text-center"><?php foreach ($primary_links as $link) { ?><a class="button" href="<?php echo $link['url']; ?>" rel="nofollow"><?php echo htmlentities($link['label']); ?></a><?php } ?><br><span class="mini"><?php echo implode(' | ' , $alternate_html); ?></span></p>
+<p class="text-center"><?php foreach ($primary_links as $link) { ?><a class="button" href="<?php echo BeaconCommon::SignDownloadURL($link['url']); ?>" rel="nofollow"><?php echo htmlentities($link['label']); ?></a><?php } ?><br><span class="mini"><?php echo implode(' | ' , $alternate_html); ?></span></p>
 <h3>Engrams Database</h3>
 <div class="indent">
 	<p><a href="classes.php?version=<?php echo $build; ?>" rel="nofollow">Download Engrams Database</a><br>Last updated <?php echo '<time datetime="' . $last_database_update->format('c') . '">' . $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A') . ' UTC</time>'; ?>.</p>
 </div>
 <?php if ($prerelease->RecordCount() == 1) {
 	
-	$prerelease_links = array('<a href="' . htmlentities($prerelease->Field('mac_url')) . '" rel="nofollow">Mac Download</a>');
+	$prerelease_links = array('<a href="' . htmlentities(BeaconCommon::SignDownloadURL($prerelease->Field('mac_url'))) . '" rel="nofollow">Mac Download</a>');
 	$is_64 = BeaconCommon::IsMacOS() || BeaconCommon::IsWindows64();
 	
 	if (is_null($prerelease->Field('win_64_url')) && is_null($prerelease->Field('win_32_url'))) {
-		$prerelease_links[] = '<a href="' . $prerelease->Field('win_combo_url') . '" rel="nofolow">Windows Download</a>';
+		$prerelease_links[] = '<a href="' . htmlentities(BeaconCommon::SignDownloadURL($prerelease->Field('win_combo_url'))) . '" rel="nofolow">Windows Download</a>';
 	} else {
 		if (is_null($prerelease->Field('win_64_url')) === false) {
 			$label = 'Windows Download';
 			if ($is_64 === false && is_null($prerelease->Field('win_32_url')) === false) {
 				$label .= ' (64-bit)';
 			}
-			$prerelease_links[] = '<a href="' . $prerelease->Field('win_64_url') . '" rel="nofolow">' . $label . '</a>';
+			$prerelease_links[] = '<a href="' . htmlentities(BeaconCommon::SignDownloadURL($prerelease->Field('win_64_url'))) . '" rel="nofolow">' . $label . '</a>';
 		}
 		if (is_null($prerelease->Field('win_32_url')) === false) {
 			$label = 'Windows Download';
 			if ($is_64 === true && is_null($prerelease->Field('win_64_url')) === false) {
 				$label .= ' (32-bit)';
 			}
-			$prerelease_links[] = '<a href="' . $prerelease->Field('win_32_url') . '" rel="nofolow">' . $label . '</a>';
+			$prerelease_links[] = '<a href="' . htmlentities(BeaconCommon::SignDownloadURL($prerelease->Field('win_32_url'))) . '" rel="nofolow">' . $label . '</a>';
 		}
 	}
 	
