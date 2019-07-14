@@ -200,7 +200,7 @@ End
 		  Dim AutosaveFolder As FolderItem = App.AutosaveFolder()
 		  If AutosaveFolder <> Nil Then
 		    For I As Integer = 1 To AutosaveFolder.Count
-		      Dim File As FolderItem = AutosaveFolder.Item(I)
+		      Dim File As BookmarkedFolderItem = New BookmarkedFolderItem(AutosaveFolder.Item(I))
 		      If Not File.Name.EndsWith(BeaconFileTypes.BeaconDocument.PrimaryExtension) Then
 		        Continue
 		      End If
@@ -481,7 +481,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub OpenFile(File As FolderItem)
-		  Dim URL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(File)
+		  Dim URL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(New BookmarkedFolderItem(File))
 		  Self.OpenController(New Beacon.DocumentController(URL, App.IdentityManager.CurrentIdentity))
 		End Sub
 	#tag EndMethod
