@@ -528,33 +528,37 @@ End
 		    Return
 		  End If
 		  
-		  Dim ServerFolder As Beacon.FolderItem = Folder.Child(Beacon.FolderItem.SanitizeFilename(Engine.Name))
-		  
 		  Dim GameIniContent As Text = Engine.BackupGameIni.Trim
 		  Dim GameUserSettingsIniContent As Text = Engine.BackupGameUserSettingsIni.Trim
 		  If GameIniContent = "" And GameUserSettingsIniContent = "" Then
 		    Return
 		  End If
 		  
-		  If Not ServerFolder.Exists Then
-		    ServerFolder.CreateAsFolder
-		  End If
-		  
-		  Dim Subfolder As Beacon.FolderItem = ServerFolder.Child(Self.mDeployLabel)
-		  Dim Counter As Integer = 1
-		  While Subfolder.Exists
-		    Subfolder = ServerFolder.Child(Self.mDeployLabel + "-" + Counter.ToText)
-		    Counter = Counter + 1
-		  Wend
-		  
-		  Subfolder.CreateAsFolder
-		  
-		  If GameIniContent <> "" Then
-		    Subfolder.Child("Game.ini").Write(GameIniContent, Xojo.Core.TextEncoding.UTF8)
-		  End If
-		  If GameUserSettingsIniContent <> "" Then
-		    Subfolder.Child("GameUserSettings.ini").Write(GameUserSettingsIniContent, Xojo.Core.TextEncoding.UTF8)
-		  End If
+		  Try
+		    Dim ServerFolder As Beacon.FolderItem = Folder.Child(Beacon.FolderItem.SanitizeFilename(Engine.Name))
+		    
+		    If Not ServerFolder.Exists Then
+		      ServerFolder.CreateAsFolder
+		    End If
+		    
+		    Dim Subfolder As Beacon.FolderItem = ServerFolder.Child(Self.mDeployLabel)
+		    Dim Counter As Integer = 1
+		    While Subfolder.Exists
+		      Subfolder = ServerFolder.Child(Self.mDeployLabel + "-" + Counter.ToText)
+		      Counter = Counter + 1
+		    Wend
+		    
+		    Subfolder.CreateAsFolder
+		    
+		    If GameIniContent <> "" Then
+		      Subfolder.Child("Game.ini").Write(GameIniContent, Xojo.Core.TextEncoding.UTF8)
+		    End If
+		    If GameUserSettingsIniContent <> "" Then
+		      Subfolder.Child("GameUserSettings.ini").Write(GameUserSettingsIniContent, Xojo.Core.TextEncoding.UTF8)
+		    End If
+		  Catch Err As RuntimeException
+		    LocalData.SharedInstance.SaveNotification(New Beacon.UserNotification("Beacon was unable to create a backup of your ini files for server " + Engine.Name + ", deploy label " + Self.mDeployLabel + "."))
+		  End Try
 		End Sub
 	#tag EndMethod
 
