@@ -1,0 +1,46 @@
+#tag MultiImage
+Image LoginSidebar
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAGSAAAAAAGSAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8QTG9naW5TaWRlYmFyLnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAEsvOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkxvZ2luU2lkZWJhci5wbmcAAA4AIgAQAEwAbwBnAGkAbgBTAGkAZABlAGIAYQByAC4AcABuAGcADwAaAAwATQBhAGMAaQBuAHQAbwBzAGgAIABIAEQAEgBJVXNlcnMvdGhvbW1jZ3JhdGgvRG9jdW1lbnRzL1RoZSBaQVogU291cmNlcy9CZWFjb24vSWNvbnMvTG9naW5TaWRlYmFyLnBuZwAAEwABLwAAFQACABL//wAAAAAAAAAA
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/LoginSidebar.png
+		PartialPath = ..\Icons\LoginSidebar.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = 215.00
+			Orientation = Any
+			Platform = 15
+			PPI = 72
+			VSize = 360.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAGcAAAAAAGcAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8TTG9naW5TaWRlYmFyQDJ4LnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAE4vOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkxvZ2luU2lkZWJhckAyeC5wbmcADgAoABMATABvAGcAaQBuAFMAaQBkAGUAYgBhAHIAQAAyAHgALgBwAG4AZwAPABoADABNAGEAYwBpAG4AdABvAHMAaAAgAEgARAASAExVc2Vycy90aG9tbWNncmF0aC9Eb2N1bWVudHMvVGhlIFpBWiBTb3VyY2VzL0JlYWNvbi9JY29ucy9Mb2dpblNpZGViYXJAMngucG5nABMAAS8AABUAAgAS//8AAAAAAAAAAA==
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/LoginSidebar@2x.png
+		PartialPath = ..\Icons\LoginSidebar@2x.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = 215.00
+			Orientation = Any
+			Platform = 15
+			PPI = 144
+			VSize = 360.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAGcAAAAAAGcAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8TTG9naW5TaWRlYmFyQDN4LnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAE4vOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkxvZ2luU2lkZWJhckAzeC5wbmcADgAoABMATABvAGcAaQBuAFMAaQBkAGUAYgBhAHIAQAAzAHgALgBwAG4AZwAPABoADABNAGEAYwBpAG4AdABvAHMAaAAgAEgARAASAExVc2Vycy90aG9tbWNncmF0aC9Eb2N1bWVudHMvVGhlIFpBWiBTb3VyY2VzL0JlYWNvbi9JY29ucy9Mb2dpblNpZGViYXJAM3gucG5nABMAAS8AABUAAgAS//8AAAAAAAAAAA==
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/LoginSidebar@3x.png
+		PartialPath = ..\Icons\LoginSidebar@3x.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = 215.00
+			Orientation = Any
+			Platform = 15
+			PPI = 216
+			VSize = 360.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+End Image
+#tag EndMultiImage

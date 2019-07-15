@@ -73,8 +73,26 @@ Protected Module SimpleHTTP
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h1
-		Protected Delegate Sub ResponseCallback(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Protected Delegate Sub ResponseCallback(URL As Text, Status As Integer, Content As Xojo . Core . MemoryBlock, Tag As Auto)
 	#tag EndDelegateDeclaration
+
+	#tag Method, Flags = &h0
+		Sub SetFormData(Extends Socket As URLConnection, Fields As Dictionary)
+		  If Fields = Nil Then
+		    Fields = New Dictionary
+		  End If
+		  
+		  Dim Parts() As String
+		  Dim Keys() As Variant = Fields.Keys
+		  For Each Key As Variant In Keys
+		    Dim Value As Variant = Fields.Value(Key)
+		    
+		    Parts.Append(EncodeURLComponent(Key) + "=" + EncodeURLComponent(Value))
+		  Next
+		  
+		  Socket.SetRequestContent(Join(Parts, "&"), "application/x-www-form-urlencoded")
+		End Sub
+	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
