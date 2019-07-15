@@ -9,16 +9,16 @@ Begin BeaconWindow UpdateWindow
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   104
+   Height          =   132
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
    MaxHeight       =   32000
-   MaximizeButton  =   True
+   MaximizeButton  =   False
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   104
+   MinHeight       =   132
    MinimizeButton  =   True
    MinWidth        =   600
    Placement       =   2
@@ -29,7 +29,7 @@ Begin BeaconWindow UpdateWindow
    Begin PagePanel ViewPanel
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   104
+      Height          =   132
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -229,7 +229,7 @@ Begin BeaconWindow UpdateWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   64
+         Top             =   92
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -261,7 +261,7 @@ Begin BeaconWindow UpdateWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   64
+         Top             =   92
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -383,11 +383,46 @@ Begin BeaconWindow UpdateWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   64
+         Top             =   92
          Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   120
+      End
+      Begin Label Label1
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   96
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   10
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   "After downloading, the update will install only when you're ready."
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   52
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   484
       End
    End
    Begin UpdateChecker Checker
@@ -500,7 +535,7 @@ End
 	#tag Constant, Name = HeightDownload, Type = Double, Dynamic = False, Default = \"124", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = HeightResults, Type = Double, Dynamic = False, Default = \"104", Scope = Private
+	#tag Constant, Name = HeightResults, Type = Double, Dynamic = False, Default = \"132", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ViewCheck, Type = Double, Dynamic = False, Default = \"0", Scope = Private
