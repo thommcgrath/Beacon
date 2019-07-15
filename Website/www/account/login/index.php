@@ -57,6 +57,8 @@ if (isset($_SESSION['login_explicit_key'])) {
 }
 
 if (is_null($explicit_email) === false && is_null($explicit_key) === false) {
+	unset($_SESSION['login_explicit_email'], $_SESSION['login_explicit_key']);
+	
 	$database = BeaconCommon::Database();
 	$results = $database->Query('SELECT email_id, code FROM email_verification WHERE email_id = uuid_for_email($1);', $explicit_email);
 	if ($results->RecordCount() == 1) {
@@ -76,7 +78,6 @@ if (is_null($explicit_email) === false && is_null($explicit_key) === false) {
 	} else {
 		$explicit_key = null;
 	}
-	unset($_SESSION['login_explicit_email'], $_SESSION['login_explicit_key']);
 } elseif (is_null($explicit_email) === false && is_null($explicit_code) === false) {
 	// confirm
 	$database = BeaconCommon::Database();
