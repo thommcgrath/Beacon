@@ -531,6 +531,12 @@ End
 		    Return
 		  End If
 		  
+		  Dim GameIniContent As Text = Engine.BackupGameIni.Trim
+		  Dim GameUserSettingsIniContent As Text = Engine.BackupGameUserSettingsIni.Trim
+		  If GameIniContent = "" And GameUserSettingsIniContent = "" Then
+		    Return
+		  End If
+		  
 		  If Folder = Nil Then
 		    App.Log("Unable to backup " + Engine.Name + ": No backup root folder")
 		    Return
@@ -547,12 +553,6 @@ End
 		      App.Log("Unable to backup " + Engine.Name + ": Could not create server backup folder " + ServerFolder.NativePath + ": " + Language.FolderItemErrorReason(ServerFolderError))
 		      Return
 		    End If
-		  End If
-		  
-		  Dim GameIniContent As Text = Engine.BackupGameIni.Trim
-		  Dim GameUserSettingsIniContent As Text = Engine.BackupGameUserSettingsIni.Trim
-		  If GameIniContent = "" And GameUserSettingsIniContent = "" Then
-		    Return
 		  End If
 		  
 		  Dim Subfolder As FolderItem = ServerFolder.Child(Beacon.SanitizeFilename(Self.mDeployLabel))
