@@ -168,7 +168,6 @@ Window=SimulatorView;Views/SimulatorView.xojo_window;&h000000004191F7FF;&h000000
 Class=ServerProfile;Modules/Beacon/ServerProfile.xojo_code;&h0000000077D2F7FF;&h0000000055ADDFFF;false
 Class=NitradoServerProfile;Modules/Beacon/NitradoServerProfile.xojo_code;&h0000000059FFFFFF;&h0000000055ADDFFF;false
 Class=FTPServerProfile;Modules/Beacon/FTPServerProfile.xojo_code;&h000000006EA30FFF;&h0000000055ADDFFF;false
-Window=MiniBrowser;Views/MiniBrowser.xojo_window;&h00000000396A67FF;&h0000000008A387FF;false
 Module=SimpleHTTP;Modules/SimpleHTTP.xojo_code;&h0000000003F8BFFF;&h000000001444B7FF;false
 Class=SimpleHTTPSocket;Modules/SimpleHTTP/SimpleHTTPSocket.xojo_code;&h000000001E84C7FF;&h0000000003F8BFFF;false
 Interface=WebView;Modules/Beacon/WebView.xojo_code;&h000000006FB37FFF;&h0000000055ADDFFF;false

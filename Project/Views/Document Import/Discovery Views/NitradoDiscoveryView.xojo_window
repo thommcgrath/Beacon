@@ -320,15 +320,6 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Close()
-		  If Self.mBrowser <> Nil And Self.mBrowser.Value <> Nil And Self.mBrowser.Value IsA MiniBrowser Then
-		    MiniBrowser(Self.mBrowser.Value).Close
-		    Self.mBrowser = Nil
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub GetValuesFromDocument(Document As Beacon.Document)
 		  Self.AuthClient.AuthData = Document.OAuthData("Nitrado")
 		End Sub
@@ -465,10 +456,6 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mBrowser As WeakRef
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mSelectedServers As Xojo.Core.Dictionary
 	#tag EndProperty
 
@@ -485,11 +472,6 @@ End
 #tag Events FindingCancelButton
 	#tag Event
 		Sub Action()
-		  If Self.mBrowser <> Nil And Self.mBrowser.Value <> Nil And Self.mBrowser.Value IsA MiniBrowser Then
-		    MiniBrowser(Self.mBrowser.Value).Close
-		    Self.mBrowser = Nil
-		  End If
-		  
 		  Self.ShouldCancel()
 		End Sub
 	#tag EndEvent
