@@ -23,6 +23,10 @@ if (empty($_GET['code']) === false) {
 	$_SESSION['login_explicit_code'] = $_GET['code'];
 	$cleanup_url = true;
 }
+if (empty($_GET['key']) === false) {
+	$_SESSION['login_explicit_key'] = $_GET['key'];
+	$cleanup_url = true;
+}
 
 if ($cleanup_url) {
 	header('Location: /account/login/');
@@ -46,8 +50,34 @@ if (isset($_SESSION['login_explicit_code'])) {
 } else {
 	$explicit_code = null;
 }
+if (isset($_SESSION['login_explicit_key'])) {
+	$explicit_key = $_SESSION['login_explicit_key'];
+} else {
+	$explicit_key = null;
+}
 
-if (is_null($explicit_email) === false && is_null($explicit_code) === false) {
+if (is_null($explicit_email) === false && is_null($explicit_key) === false) {
+	$database = BeaconCommon::Database();
+	$results = $database->Query('SELECT email_id, code FROM email_verification WHERE email_id = uuid_for_email($1);', $explicit_email);
+	if ($results->RecordCount() == 1) {
+		$encrypted_code = $results->Field('code');
+		try {
+			$code = BeaconEncryption::SymmetricDecrypt($explicit_key, hex2bin($encrypted_code));
+			$database->BeginTransaction();
+			$database->Query('UPDATE email_verification SET verified = TRUE WHERE email_id = $1;', $results->Field('email_id'));
+			$database->Commit();
+			
+			echo '<div id="login_container"><h1>Address Confirmed</h1><p>You can now close this window and continue following the instructions inside Beacon.</p></div>';
+			
+			exit;
+		} catch (Exception $err) {
+			$explicit_key = null;
+		}
+	} else {
+		$explicit_key = null;
+	}
+	unset($_SESSION['login_explicit_email'], $_SESSION['login_explicit_key']);
+} elseif (is_null($explicit_email) === false && is_null($explicit_code) === false) {
 	// confirm
 	$database = BeaconCommon::Database();
 	$results = $database->Query('SELECT email_id FROM email_verification WHERE email_id = uuid_for_email($1) AND code = encode(digest($2, \'sha512\'), \'hex\');', $explicit_email, $explicit_code);

@@ -57,7 +57,7 @@ class BeaconLogin {
 		return $results->Field('username');
 	}
 	
-	public static function GenerateVerificationCode(string $email) {
+	public static function GenerateVerificationCode(string $email, $key = null) {
 		if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 			return null;
 		}
@@ -66,7 +66,12 @@ class BeaconLogin {
 		$code = BeaconCommon::GenerateRandomKey(8);
 		$database->BeginTransaction();
 		$database->Query('DELETE FROM email_verification WHERE email_id = uuid_for_email($1);', $email);
-		$database->Query('INSERT INTO email_verification (email_id, code) VALUES (uuid_for_email($1, TRUE), encode(digest($2, \'sha512\'), \'hex\'));', $email, $code);
+		if (is_null($key)) {
+			$database->Query('INSERT INTO email_verification (email_id, code) VALUES (uuid_for_email($1, TRUE), encode(digest($2, \'sha512\'), \'hex\'));', $email, $code);
+		} else {
+			$encrypted_code = bin2hex(BeaconEncryption::SymmetricEncrypt($key, $code, false));
+			$database->Query('INSERT INTO email_verification (email_id, code) VALUES (uuid_for_email($1, TRUE), $2);', $email, $encrypted_code);
+		}
 		$database->Commit();
 		
 		return $code;
@@ -81,14 +86,14 @@ class BeaconLogin {
 		return BeaconCommon::AbsoluteURL('/account/login/?email=' . urlencode($email) . '&code=' . urlencode($code));
 	}
 	
-	public static function SendVerification(string $email) {
-		$code = static::GenerateVerificationCode($email);
+	public static function SendVerification(string $email, $key = null) {
+		$code = static::GenerateVerificationCode($email, $key);
 		if (is_null($code)) {
 			return false;
 		}
 		
 		$plain = "To continue setting up your Beacon Account, enter the following code where prompted.\n\n$code\n\nNote: The code is case-sensitive.\nIf you need help, simply reply to this email.";
-		$html = '<center><a href="' . BeaconCommon::AbsoluteURL('/account/login/?email=' . urlencode($email) . '&code=' . urlencode($code)) . '">Click Here to Confirm Your E-Mail</a></center><br /><br \>If you need to enter the code manually, your code is ' . htmlentities($code) . '. The code is case-sensitive, so using copy and paste is recommended.<br /><br />If you need help, simply reply to this email.';
+		$html = '<center><a href="' . BeaconCommon::AbsoluteURL('/account/login/?email=' . urlencode($email) . (is_null($key) ? '&code=' . urlencode($code) : '&key=' . urlencode($key))) . '">Click Here to Confirm Your E-Mail</a></center><br /><br \>If you need to enter the code manually, your code is ' . htmlentities($code) . '. The code is case-sensitive, so using copy and paste is recommended.<br /><br />If you need help, simply reply to this email.';
 		
 		return BeaconEmail::SendMail($email, 'Please Verify Your E-Mail Address', $plain, $html);
 	}

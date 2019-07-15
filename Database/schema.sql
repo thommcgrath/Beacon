@@ -941,7 +941,8 @@ ALTER TABLE public.email_addresses OWNER TO thommcgrath;
 
 CREATE TABLE public.email_verification (
     email_id uuid NOT NULL,
-    code public.hex NOT NULL
+    code public.hex NOT NULL,
+    verified boolean DEFAULT false NOT NULL
 );
 
 

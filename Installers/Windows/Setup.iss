@@ -52,9 +52,6 @@ WizardStyle=modern
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [InstallDelete]
-#ifdef x86
-Type: filesandordirs; Name: "{commonpf64}\Beacon"; Check: Not Is64BitInstallMode;
-#endif
 #ifdef x64
 Type: filesandordirs; Name: "{commonpf32}\Beacon"; Check: Is64BitInstallMode;
 #endif
