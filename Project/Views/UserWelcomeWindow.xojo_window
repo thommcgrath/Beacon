@@ -1504,7 +1504,22 @@ End
 		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
 		    // Success
-		    Break
+		    
+		    Try
+		      Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content.DefineEncoding(Encodings.UTF8).ToText)
+		      Dim Verified As Boolean = Dict.Value("verified")
+		      Dim Code As Text = Dict.Value("code")
+		      If Verified Then
+		        Self.ConfirmCodeField.Text = Code
+		        Self.mConfirmedAddress = Dict.Value("email")
+		        Self.PagePanel1.Value = Self.PageChooseIdentity
+		        Return
+		      End If
+		    Catch Err As Xojo.Data.InvalidJSONException
+		      Self.ShowError("You will need to enter your confirmation code manually because there was an error checking for it automatically.", Err)
+		      Return
+		    End Try
+		    
 		    Self.mConfirmedEmailScheduleKey = CallLater.Schedule(5000, AddressOf CheckForConfirmedEmail)
 		    Return
 		  End If
