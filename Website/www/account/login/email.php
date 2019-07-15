@@ -14,7 +14,9 @@ if (empty($_POST['email']) || BeaconUser::ValidateEmail($_POST['email']) == fals
 }
 
 $email = $_POST['email'];
-if (BeaconLogin::SendVerification($email)) {
+$key = isset($_POST['key']) ? $_POST['key'] : null;
+
+if (BeaconLogin::SendVerification($email, $key)) {
 	http_response_code(200);
 	echo json_encode($response = array(
 		'email' => $email,
