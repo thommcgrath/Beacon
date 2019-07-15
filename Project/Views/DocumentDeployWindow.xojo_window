@@ -523,35 +523,35 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Backup(Engine As Beacon.DeploymentEngine, Folder As FolderItem)
+		Private Function Backup(Engine As Beacon.DeploymentEngine, Folder As FolderItem) As Boolean
 		  // Returning true means the backup either succeeded or should not complete
 		  // Returning false means there was an error and the process needs to stop
 		  
 		  If Engine.Errored Then
-		    Return
+		    Return True
 		  End If
 		  
 		  Dim GameIniContent As Text = Engine.BackupGameIni.Trim
 		  Dim GameUserSettingsIniContent As Text = Engine.BackupGameUserSettingsIni.Trim
 		  If GameIniContent = "" And GameUserSettingsIniContent = "" Then
-		    Return
+		    Return True
 		  End If
 		  
 		  If Folder = Nil Then
 		    App.Log("Unable to backup " + Engine.Name + ": No backup root folder")
-		    Return
+		    Return False
 		  End If
 		  
 		  Dim ServerFolder As FolderItem = Folder.Child(Beacon.SanitizeFilename(Engine.Name))
 		  If ServerFolder = Nil Then
 		    App.Log("Unable to backup " + Engine.Name + ": Could not to get path to server backup folder")
-		    Return
+		    Return False
 		  ElseIf ServerFolder.Exists = False Then
 		    ServerFolder.CreateAsFolder
 		    Dim ServerFolderError As Integer = ServerFolder.LastErrorCode
 		    If ServerFolderError <> 0 Then
 		      App.Log("Unable to backup " + Engine.Name + ": Could not create server backup folder " + ServerFolder.NativePath + ": " + Language.FolderItemErrorReason(ServerFolderError))
-		      Return
+		      Return False
 		    End If
 		  End If
 		  
@@ -564,32 +564,42 @@ End
 		  
 		  If Subfolder = Nil Then
 		    App.Log("Unable to backup " + Engine.Name + ": Could not to get path to deployment folder")
-		    Return
+		    Return False
 		  End If
 		  Subfolder.CreateAsFolder
 		  Dim SubfolderError As Integer = Subfolder.LastErrorCode
 		  If SubfolderError <> 0 Then
 		    App.Log("Unable to backup " + Engine.Name + ": Could not create deployment folder " + Subfolder.NativePath + ": " + Language.FolderItemErrorReason(SubfolderError))
-		    Return
+		    Return False
 		  End If
 		  
+		  Dim BackedUp As Boolean = True
 		  If GameIniContent <> "" Then
 		    Dim GameIniFile As FolderItem = Subfolder.Child("Game.ini")
 		    If GameIniFile = Nil Then
 		      App.Log("Unable to backup Game.ini for " + Engine.Name + ": Could not get path to Game.ini")
+		      BackedUp = False
 		    ElseIf GameIniFile.Write(GameIniContent, Xojo.Core.TextEncoding.UTF8) = False Then
 		      App.Log("Unable to backup Game.ini for " + Engine.Name + " to " + GameIniFile.NativePath + ": " + Language.FolderItemErrorReason(GameIniFile.LastErrorCode))
+		      BackedUp = False
 		    End If
 		  End If
 		  If GameUserSettingsIniContent <> "" Then
 		    Dim GameUserSettingsIniFile As FolderItem = Subfolder.Child("GameUserSettings.ini")
 		    If GameUserSettingsIniFile = Nil Then
 		      App.Log("Unable to backup Game.ini for " + Engine.Name + ": Could not get path to GameUserSettings.ini")
+		      BackedUp = False
 		    ElseIf GameUserSettingsIniFile.Write(GameUserSettingsIniContent, Xojo.Core.TextEncoding.UTF8) = False Then
 		      App.Log("Unable to backup Game.ini for " + Engine.Name + " to " + GameUserSettingsIniFile.NativePath + ": " + Language.FolderItemErrorReason(GameUserSettingsIniFile.LastErrorCode))
+		      BackedUp = False
 		    End If
 		  End If
-		End Sub
+		  
+		  Return BackedUp
+		  
+		  Exception Err As RuntimeException
+		    Return False
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -835,7 +845,9 @@ End
 		    End If
 		    
 		    For Each Engine As Beacon.DeploymentEngine In Self.mDeploymentEngines
-		      Self.Backup(Engine, BackupsFolder)
+		      If Not Self.Backup(Engine, BackupsFolder) Then
+		        LocalData.SharedInstance.SaveNotification(New Beacon.UserNotification("Beacon was unable to create a backup of your ini files for server " + Engine.Name + ", deploy label " + Self.mDeployLabel.ToText + "."))
+		      End If
 		    Next
 		    
 		    Self.ShowResults()
