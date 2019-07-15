@@ -456,20 +456,6 @@ End
 		  Self.RefreshServerStatus()
 		End Sub
 	#tag EndEvent
-	#tag Event
-		Function ShowURL(URL As Text) As Beacon.WebView
-		  If Self.mBrowser <> Nil And Self.mBrowser.Value <> Nil And Self.mBrowser.Value IsA MiniBrowser Then
-		    MiniBrowser(Self.mBrowser.Value).Close
-		    Self.mBrowser = Nil
-		  End If
-		  
-		  Dim Browser As MiniBrowser = MiniBrowser.ShowURL(URL)
-		  If Browser <> Nil Then
-		    Self.mBrowser = New WeakRef(Browser)
-		  End If
-		  Return Browser
-		End Function
-	#tag EndEvent
 #tag EndEvents
 #tag Events Controls
 	#tag Event

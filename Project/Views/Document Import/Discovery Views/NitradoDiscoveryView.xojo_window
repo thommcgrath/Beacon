@@ -544,34 +544,6 @@ End
 		  Self.ShouldCancel()
 		End Sub
 	#tag EndEvent
-	#tag Event
-		Function ShowURL(URL As Text) As Beacon.WebView
-		  If Self.mBrowser <> Nil And Self.mBrowser.Value <> Nil And Self.mBrowser.Value IsA MiniBrowser Then
-		    MiniBrowser(Self.mBrowser.Value).Close
-		    Self.mBrowser = Nil
-		  End If
-		  
-		  // This code is disabled because Nitrado login is currently working in embedded webkit in 10.10
-		  #if false and TargetMacOS
-		    Declare Function NSClassFromString Lib "Cocoa" (ClassName As CFStringRef) As Ptr
-		    Declare Function GetProcessInfo Lib "Cocoa" Selector "processInfo" (Target As Ptr) As Ptr
-		    Declare Function OperatingSystemVersion Lib "AppKit" Selector "operatingSystemVersion" (Target As Ptr) As MacVersionInfo
-		    
-		    Dim Info As Ptr = GetProcessInfo(NSClassFromString("NSProcessInfo"))
-		    Dim Version As MacVersionInfo = OperatingSystemVersion(Info)
-		    Dim ComboVersion As Integer = Val(Str(Version.MajorVersion, "000") + Str(Version.MinorVersion, "000") + Str(Version.BugVersion, "000"))
-		    If ComboVersion < 10012000 Then
-		      Return Nil
-		    End If
-		  #endif
-		  
-		  Dim Browser As MiniBrowser = MiniBrowser.ShowURL(URL)
-		  If Browser <> Nil Then
-		    Self.mBrowser = New WeakRef(Browser)
-		  End If
-		  Return Browser
-		End Function
-	#tag EndEvent
 #tag EndEvents
 #tag Events LookupStartTimer
 	#tag Event

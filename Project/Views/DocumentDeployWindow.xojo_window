@@ -780,11 +780,6 @@ End
 		  Self.Pages.Value = Self.PageServerSelection
 		End Sub
 	#tag EndEvent
-	#tag Event
-		Function ShowURL(URL As Text) As Beacon.WebView
-		  Return MiniBrowser.ShowURL(URL)
-		End Function
-	#tag EndEvent
 #tag EndEvents
 #tag Events DeployingWatchTimer
 	#tag Event

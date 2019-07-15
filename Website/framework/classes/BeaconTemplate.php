@@ -19,6 +19,11 @@ abstract class BeaconTemplate {
 		register_shutdown_function('BeaconTemplate::Finish');
 	}
 	
+	public static function Cancel() {
+		ob_end_clean();
+		self::$template_name = null;
+	}
+	
 	public static function SetTemplate(string $template_name) {
 		$template_name = preg_replace('/[^a-zA-Z0-9]+/', '', $template_name);
 		$file = BeaconCommon::FrameworkPath() . '/templates/' . $template_name . '.php';
@@ -29,6 +34,10 @@ abstract class BeaconTemplate {
 	}
 	
 	public static function Finish() {
+		if (ob_get_level() === 0 || is_null(self::$template_name)) {
+			return;
+		}
+		
 		$buffer = ob_get_contents();
 		ob_end_clean();
 		

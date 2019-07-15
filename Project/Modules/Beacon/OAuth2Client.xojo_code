@@ -71,11 +71,6 @@ Protected Class OAuth2Client
 		    URL = URL.Left(FragmentPos)
 		  End If
 		  
-		  If Self.mBrowser <> Nil Then
-		    Self.mBrowser.Close
-		    Self.mBrowser = Nil
-		  End If
-		  
 		  Dim AccessToken, RefreshToken As Text
 		  Dim Expires As UInteger
 		  
@@ -207,21 +202,15 @@ Protected Class OAuth2Client
 	#tag Method, Flags = &h21
 		Private Sub NewAuthorization()
 		  Dim URL As Text = Self.AuthURL + "?provider=" + Beacon.EncodeURLComponent(Self.mProvider)
-		  Dim Browser As Beacon.WebView = RaiseEvent ShowURL(URL)
-		  If Browser = Nil Then
-		    If Self.References = Nil Then
-		      Self.References = New Xojo.Core.Dictionary
-		    End If
-		    
-		    Self.mRequestID = Beacon.CreateUUID
-		    Dim Ref As Xojo.Core.WeakRef = Xojo.Core.WeakRef.Create(Self)
-		    Self.References.Value(Self.mRequestID) = Ref
-		    
-		    ShowURL(URL + "&requestid=" + Beacon.EncodeURLComponent(Self.mRequestID))
-		    Return
+		  If Self.References = Nil Then
+		    Self.References = New Xojo.Core.Dictionary
 		  End If
-		  Browser.URLHandler = AddressOf Authorization_Handler
-		  Self.mBrowser = Browser
+		  
+		  Self.mRequestID = Beacon.CreateUUID
+		  Dim Ref As Xojo.Core.WeakRef = Xojo.Core.WeakRef.Create(Self)
+		  Self.References.Value(Self.mRequestID) = Ref
+		  
+		  ShowURL(URL + "&requestid=" + Beacon.EncodeURLComponent(Self.mRequestID))
 		End Sub
 	#tag EndMethod
 
@@ -266,10 +255,6 @@ Protected Class OAuth2Client
 		Event AuthenticationError()
 	#tag EndHook
 
-	#tag Hook, Flags = &h0
-		Event ShowURL(URL As Text) As Beacon.WebView
-	#tag EndHook
-
 
 	#tag Property, Flags = &h21
 		Private mAccessToken As Text
@@ -277,10 +262,6 @@ Protected Class OAuth2Client
 
 	#tag Property, Flags = &h21
 		Private mAuthState As Text
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mBrowser As Beacon.WebView
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
