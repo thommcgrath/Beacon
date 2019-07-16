@@ -93,7 +93,7 @@ class BeaconLogin {
 		}
 		
 		$plain = "To continue setting up your Beacon Account, enter the following code where prompted.\n\n$code\n\nNote: The code is case-sensitive.\nIf you need help, simply reply to this email.";
-		$html = '<center><a href="' . BeaconCommon::AbsoluteURL('/account/login/?email=' . urlencode($email) . (is_null($key) ? '&code=' . urlencode($code) : '&key=' . urlencode($key))) . '">Click Here to Confirm Your E-Mail</a></center><br /><br \>If you need to enter the code manually, your code is ' . htmlentities($code) . '. The code is case-sensitive, so using copy and paste is recommended.<br /><br />If you need help, simply reply to this email.';
+		$html = '<center><a href="' . BeaconCommon::AbsoluteURL('/account/login/?email=' . urlencode($email) . '&code=' . urlencode($code) . (is_null($key) ? '' : '&key=' . urlencode($key))) . '">Click Here to Confirm Your E-Mail</a></center><br /><br \>If you need to enter the code manually, your code is ' . htmlentities($code) . '. The code is case-sensitive, so using copy and paste is recommended.<br /><br />If you need help, simply reply to this email.';
 		
 		return BeaconEmail::SendMail($email, 'Please Verify Your E-Mail Address', $plain, $html);
 	}
