@@ -29,8 +29,6 @@ Protected Module UITweaks
 		        If ControlPanelIndex = 4294967295 Then
 		          ControlPanelIndex = -1
 		        End If
-		      #else
-		        #Pragma Error "Test PanelIndex again to make sure this code is still necessary"
 		      #endif
 		    #endif
 		    If ControlPanelIndex <> PanelIndex Then
