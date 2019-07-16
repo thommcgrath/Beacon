@@ -1022,7 +1022,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function RewriteIniContent(InitialContent As Text, NewConfigs As Xojo.Core.Dictionary, WithMarkup As Boolean = True) As Text
+		Attributes( Deprecated = "Beacon.Rewriter" ) Protected Function RewriteIniContent(InitialContent As Text, NewConfigs As Xojo.Core.Dictionary, WithMarkup As Boolean = True) As Text
 		  // First, normalize line endings
 		  Dim EOL As Text = InitialContent.DetectLineEnding
 		  InitialContent = Beacon.ReplaceLineEndings(InitialContent, Text.FromUnicodeCodepoint(10))
