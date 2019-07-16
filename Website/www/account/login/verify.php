@@ -18,21 +18,33 @@ $code = null;
 $verified = false;
 
 $database = BeaconCommon::Database();
-if (isset($_POST['code'])) {
-	$code = $_POST['code'];
-	$results = $database->Query('SELECT email_id FROM email_verification WHERE email_id = uuid_for_email($1) AND code = encode(digest($2, \'sha512\'), \'hex\');', $email, $code);
-	$verified = $results->RecordCount() == 1;
-} else {
+if (isset($_POST['key'])) {
 	$key = $_POST['key'];
 	$results = $database->Query('SELECT email_id, code, verified FROM email_verification WHERE email_id = uuid_for_email($1);', $email);
 	if ($results->RecordCount() == 1) {
 		$encrypted_code = $results->Field('code');
-		try {
-			$code = BeaconEncryption::SymmetricDecrypt($key, hex2bin($encrypted_code));
-			$verified = $results->Field('verified');
-		} catch (Exception $err) {
+		$verified = $results->Field('verified');
+		if ($verified) {
+			try {
+				$code = BeaconEncryption::SymmetricDecrypt($key, hex2bin($encrypted_code));
+			} catch (Exception $err) {
+			}
+		} elseif (isset($_POST['code'])) {
+			$code = $_POST['code'];
+			try {
+				$decrypted_code = BeaconEncryption::SymmetricDecrypt($key, hex2bin($encrypted_code));
+				$verified = $decrypted_code === $code;
+				$database->BeginTransaction();
+				$database->Query('UPDATE email_verification SET verified = TRUE WHERE verified = FALSE AND email_id = uuid_for_email($1);', $email);
+				$database->Commit();
+			} catch (Exception $err) {
+			}
 		}
 	}
+} else {
+	$code = $_POST['code'];
+	$results = $database->Query('SELECT email_id FROM email_verification WHERE email_id = uuid_for_email($1) AND code = encode(digest($2, \'sha512\'), \'hex\');', $email, $code);
+	$verified = $results->RecordCount() == 1;
 }
 
 $response = array(

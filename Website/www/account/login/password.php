@@ -21,6 +21,7 @@ $user_id = null;
 $email = $_POST['email'];
 $password = $_POST['password'];
 $code = $_POST['code'];
+$key = isset($_POST['key']) ? $_POST['key'] : null;
 $username = trim($_POST['username']); // only used for new accounts
 $allow_vulnerable = isset($_POST['allow_vulnerable']) ? filter_var($_POST['allow_vulnerable'], FILTER_VALIDATE_BOOLEAN) : false;
 $database = BeaconCommon::Database();
@@ -29,9 +30,8 @@ $database = BeaconCommon::Database();
 $results = $database->Query('SELECT uuid_for_email($1) AS email_id;', $email);
 $email_id = $results->Field('email_id');
 
-// make sure the verification code matches
-$results = $database->Query('SELECT * FROM email_verification WHERE email_id = $1 AND code = encode(digest($2, \'sha512\'), \'hex\');', $email_id, $code);
-if ($results->RecordCount() == 0) {
+// validate the code, and if provided, the key
+if (ValidateCode($email_id, $code, $key) == false) {
 	http_response_code(ERR_EMAIL_NOT_VERIFIED);
 	echo json_encode(array('message' => 'Email not verified.'), JSON_PRETTY_PRINT);
 	exit;
@@ -96,6 +96,10 @@ if ($user->Commit() == false) {
 $session = BeaconSession::Create($user->UserID());
 $token = $session->SessionID();
 
+$database->BeginTransaction();
+$database->Query('DELETE FROM email_verification WHERE email_id = $1;', $email_id);
+$database->Commit();
+
 $response = array(
 	'session_id' => $token
 );
@@ -108,5 +112,33 @@ if ($new_user) {
 
 http_response_code(200);
 echo json_encode($response, JSON_PRETTY_PRINT);
+
+function ValidateCode(string $email_id, string $code, $key) {
+	$database = BeaconCommon::Database();
+	
+	if (is_null($key) == false) {
+		$results = $database->Query('SELECT verified, code FROM email_verification WHERE email_id = $1;', $email_id);
+		if ($results->RecordCount() == 0) {
+			return false;
+		}
+		
+		$encrypted_code = $results->Field('code');
+		$verified = $results->Field('verified');
+		if ($verified == false) {
+			return false;
+		}
+		try {
+			$decrypted_code = BeaconEncryption::SymmetricDecrypt($key, hex2bin($encrypted_code));
+			return $decrypted_code === $code;
+		} catch (Exception $err) {
+			return false;
+		}
+	} else {
+		$results = $database->Query('SELECT * FROM email_verification WHERE email_id = $1 AND code = encode(digest($2, \'sha512\'), \'hex\');', $email_id, $code);	
+		if ($results->RecordCount() == 0) {
+			return false;
+		}
+	}
+}
 
 ?>

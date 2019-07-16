@@ -56,7 +56,46 @@ if (isset($_SESSION['login_explicit_key'])) {
 	$explicit_key = null;
 }
 
+if (is_null($explicit_email) === false && is_null($explicit_code) === false) {
+	// confirm
+	unset($_SESSION['login_explicit_email'], $_SESSION['login_explicit_code']);
+	
+	if (is_null($explicit_key) === false) {
+		unset($_SESSION['login_explicit_key']);
+		
+		$database = BeaconCommon::Database();
+		$results = $database->Query('SELECT email_id, code FROM email_verification WHERE email_id = uuid_for_email($1);', $explicit_email);
+		if ($results->RecordCount() == 1) {
+			$encrypted_code = $results->Field('code');
+			try {
+				$decrypted_code = BeaconEncryption::SymmetricDecrypt($explicit_key, hex2bin($encrypted_code));
+				
+				if ($decrypted_code === $explicit_code) {
+					$database->BeginTransaction();
+					$database->Query('UPDATE email_verification SET verified = TRUE WHERE email_id = $1;', $results->Field('email_id'));
+					$database->Commit();
+					
+					echo '<div id="login_container"><h1>Address Confirmed</h1><p>You can now close this window and continue following the instructions inside Beacon.</p></div>';
+					
+					exit;
+				}
+			} catch (Exception $err) {
+			}
+		}
+		$explicit_key = null;
+		unset($explicit_key);
+	} else {
+		$database = BeaconCommon::Database();
+		$results = $database->Query('SELECT email_id FROM email_verification WHERE email_id = uuid_for_email($1) AND code = encode(digest($2, \'sha512\'), \'hex\');', $explicit_email, $explicit_code);
+		if ($results->RecordCount() == 0) {
+			$explicit_code = null;
+		}
+	}
+}
+
 if (is_null($explicit_email) === false && is_null($explicit_key) === false) {
+	unset($_SESSION['login_explicit_email'], $_SESSION['login_explicit_key']);
+	
 	$database = BeaconCommon::Database();
 	$results = $database->Query('SELECT email_id, code FROM email_verification WHERE email_id = uuid_for_email($1);', $explicit_email);
 	if ($results->RecordCount() == 1) {
@@ -76,16 +115,7 @@ if (is_null($explicit_email) === false && is_null($explicit_key) === false) {
 	} else {
 		$explicit_key = null;
 	}
-	unset($_SESSION['login_explicit_email'], $_SESSION['login_explicit_key']);
-} elseif (is_null($explicit_email) === false && is_null($explicit_code) === false) {
-	// confirm
-	$database = BeaconCommon::Database();
-	$results = $database->Query('SELECT email_id FROM email_verification WHERE email_id = uuid_for_email($1) AND code = encode(digest($2, \'sha512\'), \'hex\');', $explicit_email, $explicit_code);
-	if ($results->RecordCount() == 0) {
-		$explicit_code = null;
-	}
-	unset($_SESSION['login_explicit_email'], $_SESSION['login_explicit_code']);
-}
+} else
 
 $session = BeaconSession::GetFromCookie();
 if (is_null($session) == false) {
