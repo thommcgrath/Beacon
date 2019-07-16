@@ -89,8 +89,10 @@ abstract class BeaconAPI {
 		$authorized = false;
 		$content = '';
 		self::$user_id = BeaconCommon::GenerateUUID(); // To return a "new" UUID even if authorization fails.
+		$http_fail_status = 401;
 		
 		if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+			$http_fail_status = 403;
 			$optional = false; // if authorization included, it is no longer optional
 			$authorization = $_SERVER['HTTP_AUTHORIZATION'];
 			$pos = strpos($authorization, ' ');
@@ -144,7 +146,7 @@ abstract class BeaconAPI {
 		
 		if ((!$authorized) && (!$optional)) {
 			header('WWW-Authenticate: Basic realm="Beacon API"');
-			self::ReplyError('Unauthorized', $content, 401);
+			self::ReplyError('Unauthorized', $content, $http_fail_status);
 		}
 	}
 	
