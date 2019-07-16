@@ -42,11 +42,11 @@ Begin Window UserWelcomeWindow
       PanelCount      =   4
       Panels          =   ""
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   1
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   424
       Begin Label PrivacyMessageLabel
@@ -304,7 +304,7 @@ Begin Window UserWelcomeWindow
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   8
+         TabIndex        =   9
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -336,7 +336,7 @@ Begin Window UserWelcomeWindow
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   7
+         TabIndex        =   8
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -596,7 +596,7 @@ Begin Window UserWelcomeWindow
          LockTop         =   True
          Scope           =   2
          State           =   0
-         TabIndex        =   9
+         TabIndex        =   6
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -699,7 +699,7 @@ Begin Window UserWelcomeWindow
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   7
          TabPanelIndex   =   3
          TabStop         =   True
          TextFont        =   "System"
@@ -731,7 +731,7 @@ Begin Window UserWelcomeWindow
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   6
          TabPanelIndex   =   3
          TabStop         =   True
          TextFont        =   "System"
@@ -772,7 +772,7 @@ Begin Window UserWelcomeWindow
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   4
+         TabIndex        =   3
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   ""
@@ -807,7 +807,7 @@ Begin Window UserWelcomeWindow
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   5
+         TabIndex        =   2
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "E-Mail Address:"
@@ -851,7 +851,7 @@ Begin Window UserWelcomeWindow
          Password        =   False
          ReadOnly        =   True
          Scope           =   2
-         TabIndex        =   6
+         TabIndex        =   5
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   ""
@@ -886,7 +886,7 @@ Begin Window UserWelcomeWindow
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   7
+         TabIndex        =   4
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Code:"
@@ -1057,7 +1057,7 @@ Begin Window UserWelcomeWindow
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   3
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   ""
@@ -1093,7 +1093,7 @@ Begin Window UserWelcomeWindow
          Scope           =   2
          Selectable      =   False
          ShowAsLink      =   True
-         TabIndex        =   3
+         TabIndex        =   4
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Pick a random name"
@@ -1138,7 +1138,7 @@ Begin Window UserWelcomeWindow
          Password        =   True
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   4
+         TabIndex        =   6
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   ""
@@ -1182,7 +1182,7 @@ Begin Window UserWelcomeWindow
          Password        =   True
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   5
+         TabIndex        =   8
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   ""
@@ -1217,7 +1217,7 @@ Begin Window UserWelcomeWindow
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   6
+         TabIndex        =   2
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Username:"
@@ -1252,7 +1252,7 @@ Begin Window UserWelcomeWindow
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   7
+         TabIndex        =   5
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Password:"
@@ -1287,7 +1287,7 @@ Begin Window UserWelcomeWindow
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   8
+         TabIndex        =   7
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Password Again:"
@@ -1355,7 +1355,7 @@ Begin Window UserWelcomeWindow
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   10
+         TabIndex        =   11
          TabPanelIndex   =   4
          TabStop         =   True
          TextFont        =   "System"
@@ -1387,7 +1387,7 @@ Begin Window UserWelcomeWindow
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   11
+         TabIndex        =   10
          TabPanelIndex   =   4
          TabStop         =   True
          TextFont        =   "System"
@@ -1477,7 +1477,7 @@ Begin Window UserWelcomeWindow
          Scope           =   2
          Selectable      =   False
          ShowAsLink      =   True
-         TabIndex        =   10
+         TabIndex        =   7
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Create or Recover Account"
@@ -1489,6 +1489,7 @@ Begin Window UserWelcomeWindow
          Top             =   235
          Transparent     =   False
          Underline       =   True
+         URL             =   ""
          Visible         =   True
          Width           =   268
       End
@@ -1506,7 +1507,7 @@ Begin Window UserWelcomeWindow
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   11
+         TabIndex        =   10
          TabPanelIndex   =   2
          TabStop         =   True
          Top             =   324
@@ -1534,7 +1535,7 @@ Begin Window UserWelcomeWindow
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   12
+         TabIndex        =   11
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Logging in…"
@@ -1569,7 +1570,7 @@ Begin Window UserWelcomeWindow
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
