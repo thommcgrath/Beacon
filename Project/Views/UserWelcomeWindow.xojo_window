@@ -26,27 +26,6 @@ Begin Window UserWelcomeWindow
    Title           =   "Welcome to Beacon"
    Visible         =   True
    Width           =   640
-   Begin BeaconWebView ContentView
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Height          =   90
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Left            =   494
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Renderer        =   1
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   -129
-      Visible         =   True
-      Width           =   107
-   End
    Begin PagePanel PagePanel1
       AutoDeactivate  =   True
       Enabled         =   True
@@ -67,7 +46,7 @@ Begin Window UserWelcomeWindow
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   3
+      Value           =   1
       Visible         =   True
       Width           =   424
       Begin Label PrivacyMessageLabel
@@ -369,38 +348,6 @@ Begin Window UserWelcomeWindow
          Visible         =   True
          Width           =   80
       End
-      Begin UITweaks.ResizedPushButton LoginSignupButton
-         AutoDeactivate  =   True
-         Bold            =   False
-         ButtonStyle     =   "0"
-         Cancel          =   False
-         Caption         =   "Create or Recover Account"
-         Default         =   False
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   236
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   False
-         Scope           =   2
-         TabIndex        =   6
-         TabPanelIndex   =   2
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   320
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   188
-      End
       Begin Label LoginMessageLabel
          AutoDeactivate  =   True
          Bold            =   True
@@ -655,7 +602,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   204
+         Top             =   203
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -833,7 +780,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   152
+         Top             =   136
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -869,7 +816,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   152
+         Top             =   136
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -912,11 +859,11 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   186
+         Top             =   170
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
-         Visible         =   True
+         Visible         =   False
          Width           =   114
       End
       Begin UITweaks.ResizedLabel ConfirmCodeLabel
@@ -948,10 +895,10 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   186
+         Top             =   170
          Transparent     =   False
          Underline       =   False
-         Visible         =   True
+         Visible         =   False
          Width           =   104
       End
       Begin ProgressWheel ConfirmSpinner
@@ -1158,6 +1105,7 @@ Begin Window UserWelcomeWindow
          Top             =   180
          Transparent     =   False
          Underline       =   True
+         URL             =   ""
          Visible         =   True
          Width           =   267
       End
@@ -1508,6 +1456,99 @@ Begin Window UserWelcomeWindow
          Visible         =   False
          Width           =   129
       End
+      Begin LinkLabel LoginSignupButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   352
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         ShowAsLink      =   True
+         TabIndex        =   10
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   "Create or Recover Account"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   235
+         Transparent     =   False
+         Underline       =   True
+         Visible         =   True
+         Width           =   268
+      End
+      Begin ProgressWheel LoginSpinner
+         AutoDeactivate  =   True
+         Enabled         =   True
+         Height          =   16
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Left            =   236
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   11
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Top             =   324
+         Transparent     =   False
+         Visible         =   False
+         Width           =   16
+      End
+      Begin Label LoginStatusLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   16
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   264
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   12
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   "Logging in…"
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   324
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   False
+         Width           =   172
+      End
    End
    Begin Canvas SidebarCanvas
       AcceptFocus     =   False
@@ -1538,6 +1579,7 @@ Begin Window UserWelcomeWindow
       Width           =   216
    End
    Begin URLConnection ConfirmCodeCreationSocket
+      AllowCertificateValidation=   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1545,6 +1587,7 @@ Begin Window UserWelcomeWindow
       TabPanelIndex   =   0
    End
    Begin URLConnection CheckForConfirmationSocket
+      AllowCertificateValidation=   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1552,6 +1595,7 @@ Begin Window UserWelcomeWindow
       TabPanelIndex   =   0
    End
    Begin URLConnection VerifyConfirmationCodeSocket
+      AllowCertificateValidation=   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1559,6 +1603,7 @@ Begin Window UserWelcomeWindow
       TabPanelIndex   =   0
    End
    Begin URLConnection IdentitySuggestionSocket
+      AllowCertificateValidation=   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1566,6 +1611,14 @@ Begin Window UserWelcomeWindow
       TabPanelIndex   =   0
    End
    Begin URLConnection SubmitIdentitySocket
+      AllowCertificateValidation=   False
+      HTTPStatusCode  =   0
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+   Begin URLConnection LoginSocket
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1592,21 +1645,29 @@ End
 		Sub Open()
 		  AddHandler App.IdentityManager.Finished, AddressOf IdentityManager_Finished
 		  
-		  Self.mBaseURL = Beacon.WebURL("inapp/")
-		  Dim Fields() As Text
 		  If Self.mLoginOnly Then
-		    Fields.Append("login_only=true")
+		    Self.PagePanel1.Value = Self.PageLogin
 		  Else
 		    Preferences.OnlineEnabled = False
 		  End If
-		  If SystemColors.IsDarkMode Then
-		    Fields.Append("dark")
-		  End If
-		  Dim Path As String = Self.mBaseURL + "welcome.php"
-		  If Fields.Ubound > -1 Then
-		    Path = Path + "?" + Fields.Join("&")
-		  End If
-		  Self.ContentView.LoadURL(Path)
+		  
+		  #if false
+		    Self.mBaseURL = Beacon.WebURL("inapp/")
+		    Dim Fields() As Text
+		    If Self.mLoginOnly Then
+		      Fields.Append("login_only=true")
+		    Else
+		      Preferences.OnlineEnabled = False
+		    End If
+		    If SystemColors.IsDarkMode Then
+		      Fields.Append("dark")
+		    End If
+		    Dim Path As String = Self.mBaseURL + "welcome.php"
+		    If Fields.Ubound > -1 Then
+		      Path = Path + "?" + Fields.Join("&")
+		    End If
+		    Self.ContentView.LoadURL(Path)
+		  #endif
 		End Sub
 	#tag EndEvent
 
@@ -1639,7 +1700,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckLoginButton()
-		  Self.LoginActionButton.Enabled = Self.ValidateEmail(Self.LoginEmailField.Text.Trim) And Self.LoginPasswordField.Text.Trim <> ""
+		  Self.LoginActionButton.Enabled = Self.ValidateEmail(Self.LoginEmailField.Text.Trim) And Self.LoginPasswordField.Text <> ""
 		End Sub
 	#tag EndMethod
 
@@ -1686,6 +1747,8 @@ End
 		  Self.mConfirmEncryptionKey = ""
 		  Self.ConfirmAddressField.ReadOnly = False
 		  Self.ConfirmCodeField.ReadOnly = True
+		  Self.ConfirmCodeField.Visible = False
+		  Self.ConfirmCodeLabel.Visible = False
 		  Self.ConfirmCodeField.Text = ""
 		  Self.ConfirmActionButton.Caption = "Send Confirmation"
 		  Self.ConfirmActionButton.Width = 142
@@ -1696,6 +1759,29 @@ End
 		  Self.ConfirmSpinner.Visible = False
 		  Self.ConfirmStatusLabel.Visible = False
 		  Self.CheckConfirmButton()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SetLoginStatus(Status As String)
+		  Self.LoginStatusLabel.Text = Status
+		  
+		  If Status = "" Then
+		    Self.LoginSpinner.Visible = False
+		    Self.LoginStatusLabel.Visible = False
+		    Self.LoginEmailField.ReadOnly = False
+		    Self.LoginPasswordField.ReadOnly = False
+		    Self.LoginSignupButton.Enabled = True
+		    Self.CheckLoginButton()
+		    Return
+		  End If
+		  
+		  Self.LoginSpinner.Visible = True
+		  Self.LoginStatusLabel.Visible = True
+		  Self.LoginActionButton.Enabled = False
+		  Self.LoginEmailField.ReadOnly = True
+		  Self.LoginPasswordField.ReadOnly = True
+		  Self.LoginSignupButton.Enabled = False
 		End Sub
 	#tag EndMethod
 
@@ -1843,84 +1929,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events ContentView
-	#tag Event
-		Function CancelLoad(URL as String) As Boolean
-		  If URL.Left(Self.mBaseURL.Len) = Self.mBaseURL Then
-		    Return False
-		  End If
-		  If Not Beacon.IsBeaconURL(URL) Then
-		    ShowURL(URL)
-		    Return True
-		  End If
-		  
-		  Dim Pos As Integer = URL.InStr("?")
-		  Dim Path, Query As String
-		  If Pos > 0 Then
-		    Path = URL.Left(Pos - 1)
-		    Query = URL.Mid(Pos + 1)
-		  Else
-		    Path = URL
-		  End If
-		  
-		  Pos = Query.InStr("#")
-		  If Pos > 0 Then
-		    Query = Query.Left(Pos - 1)
-		  End If
-		  
-		  Dim Params As New Dictionary
-		  Dim Parts() As String = Split(Query, "&")
-		  For Each Part As String In Parts
-		    Pos = Part.InStr("=")
-		    Dim Key As String = DecodeURLComponent(Part.Left(Pos - 1)).DefineEncoding(Encodings.UTF8)
-		    Dim Value As String = DecodeURLComponent(Part.Mid(Pos + 1)).DefineEncoding(Encodings.UTF8)
-		    Params.Value(Key) = Value
-		  Next
-		  
-		  Select Case Path
-		  Case "set_user_privacy"
-		    Dim Action As String = Params.Lookup("action", "full") // err on the side of privacy
-		    Select Case Action
-		    Case "anonymous"
-		      Self.HandleAnonymous()
-		    Case "full"
-		      Self.HandleDisableOnline()
-		    Case "none"
-		    Else
-		    End Select
-		  Case "set_user_token"
-		    Dim StringToken As String = Params.Lookup("token", "")
-		    Dim StringPassword As String = Params.Lookup("password", "")
-		    
-		    Preferences.OnlineEnabled = True
-		    Preferences.OnlineToken = StringToken.ToText
-		    
-		    App.IdentityManager.RefreshUserDetails(StringPassword.ToText)
-		  Case "dismiss_me"
-		    Self.Close()
-		  Else
-		    Return False
-		  End Select
-		  
-		  Return True
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub Error(errorNumber as Integer, errorMessage as String)
-		  App.Log("UserWelcomeWindow.ContentView.Error " + Str(ErrorNumber) + ": " + ErrorMessage)
-		  App.IdentityManager.Create()
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub DocumentComplete(URL as String)
-		  If URL.BeginsWith("chrome-error://") Then
-		    // It's an error and this is stupid.
-		    App.Log("UserWelcomeWindow Chrome Error")
-		    App.IdentityManager.Create()
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events PagePanel1
 	#tag Event
 		Sub Change()
@@ -1979,27 +1987,23 @@ End
 #tag Events LoginActionButton
 	#tag Event
 		Sub Action()
+		  Self.SetLoginStatus("Logging in…")
 		  
+		  Self.LoginSocket.Send("POST", BeaconAPI.URL("session.php"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events LoginCancelButton
 	#tag Event
 		Sub Action()
-		  Self.PagePanel1.Value = Self.PagePrivacy
-		  Self.SubmitIdentitySocket.Disconnect()
-		  Self.IdentitySuggestionSocket.Disconnect()
-		  Self.SetSubmitIdentityStatus("")
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events LoginSignupButton
-	#tag Event
-		Sub Action()
-		  If Self.ConfirmAddressField.Text.Trim = "" Then
-		    Self.ConfirmAddressField.Text = Self.LoginEmailField.Text.Trim
+		  Self.SetLoginStatus("")
+		  Self.LoginSocket.Disconnect()
+		  
+		  If Self.mLoginOnly Then
+		    Self.Close
+		  Else
+		    Self.PagePanel1.Value = Self.PagePrivacy
 		  End If
-		  Self.PagePanel1.Value = Self.PageConfirm
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -2043,6 +2047,8 @@ End
 		    
 		    Self.ConfirmAddressField.ReadOnly = True
 		    Self.ConfirmCodeField.ReadOnly = False
+		    Self.ConfirmCodeField.Visible = True
+		    Self.ConfirmCodeLabel.Visible = True
 		    Self.ConfirmActionButton.Caption = "Check Code"
 		    Self.ConfirmActionButton.Width = 100
 		    Self.ConfirmActionButton.Left = Self.Width - (20 + Self.ConfirmActionButton.Width)
@@ -2058,6 +2064,8 @@ End
 		  
 		  Me.Enabled = False
 		  Self.ConfirmCodeField.ReadOnly = True
+		  Self.ConfirmCodeField.Visible = False
+		  Self.ConfirmCodeLabel.Visible = False
 		  
 		  Dim Fields As New Dictionary
 		  Fields.Value("code") = Self.ConfirmCodeField.Text.Trim
@@ -2147,6 +2155,19 @@ End
 		Sub Action()
 		  Self.ResetConfirmUI()
 		  Self.PagePanel1.Value = Self.PageConfirm
+		  Self.SubmitIdentitySocket.Disconnect()
+		  Self.IdentitySuggestionSocket.Disconnect()
+		  Self.SetSubmitIdentityStatus("")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LoginSignupButton
+	#tag Event
+		Sub Action()
+		  If Self.ConfirmAddressField.Text.Trim = "" Then
+		    Self.ConfirmAddressField.Text = Self.LoginEmailField.Text.Trim
+		  End If
+		  Self.PagePanel1.Value = Self.PageConfirm
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -2172,6 +2193,9 @@ End
 #tag Events ConfirmCodeCreationSocket
 	#tag Event
 		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		  #Pragma Unused URL
+		  #Pragma Unused Content
+		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
 		    // Success
 		    Self.ConfirmStatusLabel.Text = "Waiting for confirmation…"
@@ -2193,6 +2217,8 @@ End
 #tag Events CheckForConfirmationSocket
 	#tag Event
 		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		  #Pragma Unused URL
+		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
 		    // Success
 		    
@@ -2236,6 +2262,8 @@ End
 #tag Events VerifyConfirmationCodeSocket
 	#tag Event
 		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		  #Pragma Unused URL
+		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
 		    // Success
 		    
@@ -2287,6 +2315,8 @@ End
 #tag Events IdentitySuggestionSocket
 	#tag Event
 		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		  #Pragma Unused URL
+		  
 		  Self.IdentityRandomNameButton.Enabled = True
 		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
@@ -2315,6 +2345,8 @@ End
 #tag Events SubmitIdentitySocket
 	#tag Event
 		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		  #Pragma Unused URL
+		  
 		  Self.SetSubmitIdentityStatus("")
 		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
@@ -2357,6 +2389,54 @@ End
 		  Self.SetSubmitIdentityStatus("")
 		  Self.ShowError("Cannot create your account.", e)
 		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LoginSocket
+	#tag Event
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		  #Pragma Unused URL
+		  
+		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
+		    Try
+		      Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content.DefineEncoding(Encodings.UTF8).ToText)
+		      Dim SessionID As Text = Dict.Value("session_id")
+		      
+		      Preferences.OnlineToken = SessionID
+		      Preferences.OnlineEnabled = True
+		      
+		      App.IdentityManager.RefreshUserDetails(Self.LoginPasswordField.Text.ToText)
+		      Self.SetLoginStatus("Downloading keys…")
+		    Catch Err As Xojo.Data.InvalidJSONException
+		      Self.ShowError("There was an error reading the response from the connector.", Err)
+		    End Try
+		    
+		    Return
+		  End If
+		  
+		  Self.SetLoginStatus("")
+		  
+		  If HTTPStatus = 403 Then
+		    Self.ShowAlert("Your email and password was not accepted.", "If you need to reset your password, use the ""Create or Recover Account"" link below.")
+		  Else
+		    Self.ShowError("Unable to login", HTTPStatus)
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Error(e As RuntimeException)
+		  Self.SetLoginStatus("")
+		  Self.ShowError("Unable to login", e)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function AuthenticationRequested(realm As String, ByRef name As String, ByRef password As String) As Boolean
+		  #Pragma Unused Realm
+		  
+		  Name = Self.LoginEmailField.Text.Trim
+		  Password = Self.LoginPasswordField.Text
+		  
+		  Return True
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
