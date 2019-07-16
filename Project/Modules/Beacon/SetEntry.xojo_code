@@ -44,7 +44,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mMaxQuantity = 1
 		  Self.mMinQuality = Beacon.Qualities.Tier1
 		  Self.mMaxQuality = Beacon.Qualities.Tier3
-		  Self.mChanceToBeBlueprint = 1.0
+		  Self.mChanceToBeBlueprint = 0.25
 		  Self.mWeight = 250
 		  Self.mUniqueID = ""
 		End Sub
