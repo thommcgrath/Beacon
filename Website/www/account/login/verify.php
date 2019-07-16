@@ -34,6 +34,9 @@ if (isset($_POST['key'])) {
 			try {
 				$decrypted_code = BeaconEncryption::SymmetricDecrypt($key, hex2bin($encrypted_code));
 				$verified = $decrypted_code === $code;
+				$database->BeginTransaction();
+				$database->Query('UPDATE email_verification SET verified = TRUE WHERE verified = FALSE AND email_id = uuid_for_email($1);', $email);
+				$database->Commit();
 			} catch (Exception $err) {
 			}
 		}
