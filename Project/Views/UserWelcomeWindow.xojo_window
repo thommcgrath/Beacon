@@ -60,17 +60,17 @@ Begin Window UserWelcomeWindow
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      PanelCount      =   5
+      PanelCount      =   4
       Panels          =   ""
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   2
+      Value           =   3
       Visible         =   True
       Width           =   424
-      Begin Label Label1
+      Begin Label PrivacyMessageLabel
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
@@ -105,7 +105,7 @@ Begin Window UserWelcomeWindow
          Visible         =   True
          Width           =   384
       End
-      Begin Label Label2
+      Begin Label PrivacyExplanationLabel
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
@@ -140,7 +140,7 @@ Begin Window UserWelcomeWindow
          Visible         =   True
          Width           =   384
       End
-      Begin LinkLabel LinkLabel1
+      Begin LinkLabel PrivacyPolicyLabel
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
@@ -697,7 +697,7 @@ Begin Window UserWelcomeWindow
          Visible         =   True
          Width           =   384
       End
-      Begin Label Label3
+      Begin Label ConfirmExplanationLabel
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
@@ -1011,6 +1011,503 @@ Begin Window UserWelcomeWindow
          Visible         =   False
          Width           =   110
       End
+      Begin Label IdentityMessageLabel
+         AutoDeactivate  =   True
+         Bold            =   True
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   236
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Text            =   "Create Your Profile"
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   20
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   384
+      End
+      Begin Label IdentityExplanationLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   90
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   236
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   True
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   1
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Text            =   "Time to choose a username and password. Your username can be anything you wish. Your password must be at least 8 characters long, but there are no other wacky requirements. This password will protect your account's private key, so the longer, the better."
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   52
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   384
+      End
+      Begin UITweaks.ResizedTextField IdentityUsernameField
+         AcceptTabs      =   False
+         Alignment       =   0
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   False
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         CueText         =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   353
+         LimitText       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Mask            =   ""
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Text            =   ""
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   154
+         Transparent     =   False
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   267
+      End
+      Begin LinkLabel IdentityRandomNameButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   353
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         ShowAsLink      =   True
+         TabIndex        =   3
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Text            =   "Pick a random name"
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   180
+         Transparent     =   False
+         Underline       =   True
+         Visible         =   True
+         Width           =   267
+      End
+      Begin UITweaks.ResizedTextField IdentityPasswordField
+         AcceptTabs      =   False
+         Alignment       =   0
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   False
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         CueText         =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   353
+         LimitText       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Mask            =   ""
+         Password        =   True
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   4
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Text            =   ""
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   212
+         Transparent     =   False
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   267
+      End
+      Begin UITweaks.ResizedTextField IdentityPasswordConfirmField
+         AcceptTabs      =   False
+         Alignment       =   0
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   False
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         CueText         =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   353
+         LimitText       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Mask            =   ""
+         Password        =   True
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   5
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Text            =   ""
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   246
+         Transparent     =   False
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   267
+      End
+      Begin UITweaks.ResizedLabel IdentityUsernameLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   236
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   6
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Text            =   "Username:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   154
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   105
+      End
+      Begin UITweaks.ResizedLabel IdentityPasswordLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   236
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   7
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Text            =   "Password:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   212
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   105
+      End
+      Begin UITweaks.ResizedLabel IdentityPasswordConfirmLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   236
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   8
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Text            =   "Password Again:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   246
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   105
+      End
+      Begin CheckBox IdentityRevealCheckbox
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Reveal Password"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   353
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         State           =   0
+         TabIndex        =   9
+         TabPanelIndex   =   4
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   280
+         Transparent     =   False
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         Width           =   267
+      End
+      Begin UITweaks.ResizedPushButton IdentityActionButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   False
+         Caption         =   "Create Account"
+         Default         =   True
+         Enabled         =   False
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   497
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   10
+         TabPanelIndex   =   4
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   320
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   123
+      End
+      Begin UITweaks.ResizedPushButton IdentityCancelButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   True
+         Caption         =   "Cancel"
+         Default         =   False
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   405
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   11
+         TabPanelIndex   =   4
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   320
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin ProgressWheel IdentitySpinner
+         AutoDeactivate  =   True
+         Enabled         =   True
+         Height          =   16
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Left            =   236
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   12
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Top             =   324
+         Transparent     =   False
+         Visible         =   False
+         Width           =   16
+      End
+      Begin Label IdentityStatusLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   16
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   264
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   13
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Text            =   "Creating account…"
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   324
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   False
+         Width           =   129
+      End
    End
    Begin Canvas SidebarCanvas
       AcceptFocus     =   False
@@ -1048,6 +1545,27 @@ Begin Window UserWelcomeWindow
       TabPanelIndex   =   0
    End
    Begin URLConnection CheckForConfirmationSocket
+      HTTPStatusCode  =   0
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+   Begin URLConnection VerifyConfirmationCodeSocket
+      HTTPStatusCode  =   0
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+   Begin URLConnection IdentitySuggestionSocket
+      HTTPStatusCode  =   0
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+   Begin URLConnection SubmitIdentitySocket
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1114,6 +1632,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub CheckIdentityActionButton()
+		  Self.IdentityActionButton.Enabled = Self.IdentityUsernameField.Text.Trim <> "" And Self.IdentityPasswordField.Text <> "" And Self.IdentityPasswordField.Text = Self.IdentityPasswordConfirmField.Text
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub CheckLoginButton()
 		  Self.LoginActionButton.Enabled = Self.ValidateEmail(Self.LoginEmailField.Text.Trim) And Self.LoginPasswordField.Text.Trim <> ""
 		End Sub
@@ -1176,6 +1700,56 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub SetPageFocus()
+		  Select Case Self.PagePanel1.Value
+		  Case Self.PageLogin
+		    If Self.LoginEmailField.Text.Trim = "" Then
+		      Self.LoginEmailField.SetFocus()
+		    ElseIf Self.LoginPasswordField.Text.Trim = "" Then
+		      Self.LoginPasswordField.SetFocus()
+		    End If
+		  Case Self.PageConfirm
+		    If Self.ConfirmAddressField.Text.Trim = "" And Self.ConfirmAddressField.ReadOnly = False Then
+		      Self.ConfirmAddressField.SetFocus()
+		    ElseIf Self.ConfirmCodeField.Text.Trim = "" And Self.ConfirmCodeField.ReadOnly = False Then
+		      Self.ConfirmCodeField.SetFocus()
+		    End If
+		  Case Self.PageIdentity
+		    If Self.IdentityUsernameField.Text.Trim = "" Then
+		      Self.IdentityUsernameField.SetFocus()
+		    ElseIf Self.IdentityPasswordField.Text = "" Then
+		      Self.IdentityPasswordField.SetFocus()
+		    ElseIf Self.IdentityPasswordConfirmField.Text = "" Then
+		      Self.IdentityPasswordConfirmField.SetFocus()
+		    End If
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SetSubmitIdentityStatus(Status As String)
+		  Self.IdentityStatusLabel.Text = Status
+		  
+		  If Status = "" Then
+		    Self.CheckIdentityActionButton()
+		    Self.IdentityUsernameField.ReadOnly = False
+		    Self.IdentityPasswordField.ReadOnly = False
+		    Self.IdentityPasswordConfirmField.ReadOnly = False
+		    Self.IdentitySpinner.Visible = False
+		    Self.IdentityStatusLabel.Visible = False
+		    Return
+		  End If
+		  
+		  Self.IdentityActionButton.Enabled = False
+		  Self.IdentityUsernameField.ReadOnly = True
+		  Self.IdentityPasswordField.ReadOnly = True
+		  Self.IdentityPasswordConfirmField.ReadOnly = True
+		  Self.IdentitySpinner.Visible = True
+		  Self.IdentityStatusLabel.Visible = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ShowError(Message As String, HTTPStatus As Integer)
 		  Select Case HTTPStatus
 		  Case 404
@@ -1199,6 +1773,24 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub SubmitIdentity(AllowInsecurePassword As Boolean)
+		  Dim Fields As New Dictionary
+		  Fields.Value("email") = Self.mConfirmedAddress
+		  Fields.Value("code") = Self.mConfirmedCode
+		  Fields.Value("key") = Self.mConfirmEncryptionKey
+		  Fields.Value("username") = Self.IdentityUsernameField.Text.Trim
+		  Fields.Value("password") = Self.IdentityPasswordField.Text
+		  Fields.Value("allow_vulnerable") = AllowInsecurePassword
+		  
+		  Self.SubmitIdentitySocket.RequestHeader("X-BEACON-UPGRADE-ENCRYPTION") = "True"
+		  Self.SubmitIdentitySocket.SetFormData(Fields)
+		  Self.SubmitIdentitySocket.Send("POST", Beacon.WebURL("/account/login/password.php"))
+		  
+		  Self.SetSubmitIdentityStatus(If(Self.mUseRecoverLanguage, "Changing password…", "Creating account…"))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Shared Function ValidateEmail(Address As String) As Boolean
 		  Dim Validator As New RegEx
 		  Validator.SearchPattern = "^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|""(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$"
@@ -1216,6 +1808,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mConfirmedCode As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mConfirmedEmailScheduleKey As String
 	#tag EndProperty
 
@@ -1227,14 +1823,15 @@ End
 		Private mLoginOnly As Boolean
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mUseRecoverLanguage As Boolean
+	#tag EndProperty
 
-	#tag Constant, Name = PageChooseIdentity, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+
+	#tag Constant, Name = PageConfirm, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PageEnterAddress, Type = Double, Dynamic = False, Default = \"2", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = PageEnterConfirmation, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = PageIdentity, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageLogin, Type = Double, Dynamic = False, Default = \"1", Scope = Private
@@ -1331,9 +1928,23 @@ End
 		  Case Self.PageLogin
 		    Self.LoginRevealCheckbox.Value = False
 		    Self.CheckLoginButton()
-		  Case Self.PageEnterAddress
+		  Case Self.PageConfirm
 		    Self.CheckConfirmButton()
+		  Case Self.PageIdentity
+		    Self.IdentityRevealCheckbox.Value = False
+		    Self.IdentityActionButton.Caption = If(Self.mUseRecoverLanguage, "Reset Password", "Create Account")
+		    Self.IdentityMessageLabel.Text = If(Self.mUseRecoverLanguage, "Recover Your Account", "Create Your Account")
+		    Self.CheckIdentityActionButton()
 		  End Select
+		  
+		  Call CallLater.Schedule(1, AddressOf SetPageFocus)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PrivacyPolicyLabel
+	#tag Event
+		Sub Action()
+		  ShowURL(Beacon.WebURL("/privacy.php"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1365,10 +1976,20 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events LoginActionButton
+	#tag Event
+		Sub Action()
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events LoginCancelButton
 	#tag Event
 		Sub Action()
 		  Self.PagePanel1.Value = Self.PagePrivacy
+		  Self.SubmitIdentitySocket.Disconnect()
+		  Self.IdentitySuggestionSocket.Disconnect()
+		  Self.SetSubmitIdentityStatus("")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1378,7 +1999,7 @@ End
 		  If Self.ConfirmAddressField.Text.Trim = "" Then
 		    Self.ConfirmAddressField.Text = Self.LoginEmailField.Text.Trim
 		  End If
-		  Self.PagePanel1.Value = Self.PageEnterAddress
+		  Self.PagePanel1.Value = Self.PageConfirm
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1406,6 +2027,11 @@ End
 #tag Events ConfirmActionButton
 	#tag Event
 		Sub Action()
+		  If Self.mConfirmedAddress = Self.ConfirmAddressField.Text.Trim And Self.mConfirmedCode <> "" Then
+		    Self.PagePanel1.Value = Self.PageIdentity
+		    Return
+		  End If
+		  
 		  If Self.mConfirmEncryptionKey = "" Then
 		    Self.mConfirmEncryptionKey = Beacon.CreateUUID
 		    
@@ -1426,8 +2052,20 @@ End
 		    Self.ConfirmSpinner.Visible = True
 		    Self.ConfirmStatusLabel.Visible = True
 		    Self.CheckConfirmButton()
+		    Self.ConfirmCodeField.SetFocus()
 		    Return
 		  End If
+		  
+		  Me.Enabled = False
+		  Self.ConfirmCodeField.ReadOnly = True
+		  
+		  Dim Fields As New Dictionary
+		  Fields.Value("code") = Self.ConfirmCodeField.Text.Trim
+		  Fields.Value("key") = Self.mConfirmEncryptionKey
+		  Fields.Value("email") = Self.ConfirmAddressField.Text.Trim
+		  
+		  Self.VerifyConfirmationCodeSocket.SetFormData(Fields)
+		  Self.VerifyConfirmationCodeSocket.Send("POST", Beacon.WebURL("/account/login/verify.php"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1437,6 +2075,8 @@ End
 		  Self.PagePanel1.Value = Self.PageLogin
 		  Self.ResetConfirmUI()
 		  Self.ConfirmCodeCreationSocket.Disconnect()
+		  Self.CheckForConfirmationSocket.Disconnect()
+		  Self.VerifyConfirmationCodeSocket.Disconnect()
 		  If Self.mConfirmedEmailScheduleKey <> "" Then
 		    CallLater.Cancel(Self.mConfirmedEmailScheduleKey)
 		    Self.mConfirmedEmailScheduleKey = ""
@@ -1455,6 +2095,58 @@ End
 	#tag Event
 		Sub TextChange()
 		  Self.CheckConfirmButton()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events IdentityUsernameField
+	#tag Event
+		Sub TextChange()
+		  Self.CheckIdentityActionButton()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events IdentityRandomNameButton
+	#tag Event
+		Sub Action()
+		  Self.IdentitySuggestionSocket.Send("GET", Beacon.WebURL("/account/login/suggest.php"))
+		  Me.Enabled = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events IdentityPasswordField
+	#tag Event
+		Sub TextChange()
+		  Self.CheckIdentityActionButton()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events IdentityPasswordConfirmField
+	#tag Event
+		Sub TextChange()
+		  Self.CheckIdentityActionButton()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events IdentityRevealCheckbox
+	#tag Event
+		Sub Action()
+		  Self.IdentityPasswordField.Password = Not Me.Value
+		  Self.IdentityPasswordConfirmField.Password = Not Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events IdentityActionButton
+	#tag Event
+		Sub Action()
+		  Self.SubmitIdentity(False)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events IdentityCancelButton
+	#tag Event
+		Sub Action()
+		  Self.ResetConfirmUI()
+		  Self.PagePanel1.Value = Self.PageConfirm
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1487,7 +2179,6 @@ End
 		    Return
 		  End If
 		  
-		  
 		  Self.ResetConfirmUI()
 		  Self.ShowError("Could not send your confirmation code.", HTTPStatus)
 		End Sub
@@ -1508,11 +2199,20 @@ End
 		    Try
 		      Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content.DefineEncoding(Encodings.UTF8).ToText)
 		      Dim Verified As Boolean = Dict.Value("verified")
-		      Dim Code As Text = Dict.Value("code")
 		      If Verified Then
+		        Dim Code As Text = Dict.Value("code")
 		        Self.ConfirmCodeField.Text = Code
 		        Self.mConfirmedAddress = Dict.Value("email")
-		        Self.PagePanel1.Value = Self.PageChooseIdentity
+		        Self.mConfirmedCode = Dict.Value("code")
+		        
+		        If Dict.Value("username") <> Nil Then
+		          Self.IdentityUsernameField.Text = Dict.Value("username")
+		          Self.mUseRecoverLanguage = True
+		        Else
+		          Self.mUseRecoverLanguage = False
+		        End If
+		        
+		        Self.PagePanel1.Value = Self.PageIdentity
 		        Return
 		      End If
 		    Catch Err As Xojo.Data.InvalidJSONException
@@ -1530,6 +2230,132 @@ End
 	#tag Event
 		Sub Error(e As RuntimeException)
 		  Self.ShowError("You will need to enter your confirmation code manually because there was an error checking for it automatically.", e)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events VerifyConfirmationCodeSocket
+	#tag Event
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
+		    // Success
+		    
+		    Try
+		      Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content.DefineEncoding(Encodings.UTF8).ToText)
+		      Dim Verified As Boolean = Dict.Value("verified")
+		      If Verified Then
+		        If Self.mConfirmedEmailScheduleKey <> "" Then
+		          CallLater.Cancel(Self.mConfirmedEmailScheduleKey)
+		          Self.mConfirmedEmailScheduleKey = ""
+		        End If
+		        
+		        If Dict.Value("username") <> Nil Then
+		          Self.IdentityUsernameField.Text = Dict.Value("username")
+		          Self.mUseRecoverLanguage = True
+		        Else
+		          Self.mUseRecoverLanguage = False
+		        End If
+		        
+		        Self.mConfirmedAddress = Dict.Value("email")
+		        Self.mConfirmedCode = Dict.Value("code")
+		        Self.PagePanel1.Value = Self.PageIdentity
+		        Return
+		      Else
+		        Self.ShowAlert("Your confirmation code is not correct.", "Try using copy and paste, the code is case-sensitive.")
+		      End If
+		    Catch Err As Xojo.Data.InvalidJSONException
+		      Self.ShowError("There was an error reading the confirmation response from the connector.", Err)
+		    End Try
+		    
+		    Self.ConfirmCodeField.ReadOnly = False
+		    Self.CheckConfirmButton()
+		    Return
+		  End If
+		  
+		  Self.ShowError("Unable to verify your confirmation code.", HTTPStatus)
+		  Self.ConfirmCodeField.ReadOnly = False
+		  Self.CheckConfirmButton()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Error(e As RuntimeException)
+		  Self.ShowError("Unable to verify your confirmation code.", e)
+		  Self.ConfirmCodeField.ReadOnly = False
+		  Self.CheckConfirmButton()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events IdentitySuggestionSocket
+	#tag Event
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		  Self.IdentityRandomNameButton.Enabled = True
+		  
+		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
+		    Try
+		      Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content.DefineEncoding(Encodings.UTF8).ToText)
+		      Dim Username As Text = Dict.Value("username")
+		      Self.IdentityUsernameField.Text = Username
+		    Catch Err As Xojo.Data.InvalidJSONException
+		      Self.ShowError("Cannot get a username suggestion.", Err)
+		      Return
+		    End Try
+		    
+		    Return
+		  End If
+		  
+		  Self.ShowError("Cannot get a username suggestion.", HTTPStatus)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Error(e As RuntimeException)
+		  Self.IdentityRandomNameButton.Enabled = True
+		  Self.ShowError("Cannot get a username suggestion.", e)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SubmitIdentitySocket
+	#tag Event
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		  Self.SetSubmitIdentityStatus("")
+		  
+		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
+		    Try
+		      Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content.DefineEncoding(Encodings.UTF8).ToText)
+		      Dim SessionID As Text = Dict.Value("session_id")
+		      
+		      Preferences.OnlineToken = SessionID
+		      Preferences.OnlineEnabled = True
+		      
+		      App.IdentityManager.RefreshUserDetails(Self.IdentityPasswordField.Text.ToText)
+		      Self.SetSubmitIdentityStatus("Downloading keys…")
+		    Catch Err As Xojo.Data.InvalidJSONException
+		      Self.ShowError("There was an error reading the response from the connector.", Err)
+		    End Try
+		    
+		    Return
+		  End If
+		  
+		  Select Case HTTPStatus
+		  Case 436 // Not Validated
+		    Self.ShowAlert("Your E-Mail address has not been validated.", "You will be sent back to the email confirmation step.")
+		    Self.mConfirmedAddress = ""
+		    Self.mConfirmedCode = ""
+		    Self.ResetConfirmUI()
+		    Self.PagePanel1.Value = Self.PageConfirm
+		  Case 437 // Rules
+		    Self.ShowAlert("Your chosen password is not acceptable.", "Pick a password at least 8 characters long.")
+		  Case 438 // Compromised
+		    If Not Self.ShowConfirm("Your password has been previously discovered by hackers. You should pick a different password.", "The website haveibeenpwned.com tracks breaches. Beacon found your password in their database, which means attackers know it. The password should no longer be used on any service.", "Understood", "Use Anyway") Then
+		      Self.SubmitIdentity(True)
+		    End If
+		  Else
+		    Self.ShowError("Cannot create your account.", HTTPStatus)
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Error(e As RuntimeException)
+		  Self.SetSubmitIdentityStatus("")
+		  Self.ShowError("Cannot create your account.", e)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
