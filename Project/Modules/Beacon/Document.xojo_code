@@ -225,6 +225,9 @@ Implements Beacon.DocumentItem
 		      End If
 		    End If
 		  End If
+		  If Dict.HasKey("Trust") Then
+		    Doc.mTrustKey = Dict.Value("Trust")
+		  End If
 		  
 		  If Dict.HasKey("Timestamp") Then
 		    Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
@@ -773,6 +776,7 @@ Implements Beacon.DocumentItem
 		  Dim Document As New Xojo.Core.Dictionary
 		  Document.Value("Version") = Self.DocumentVersion
 		  Document.Value("Identifier") = Self.DocumentID
+		  Document.Value("Trust") = Self.TrustKey
 		  
 		  Dim ModsList() As Text = Self.Mods
 		  Document.Value("Mods") = ModsList
@@ -950,6 +954,10 @@ Implements Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mTrustKey As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mUseCompression As Boolean
 	#tag EndProperty
 
@@ -968,6 +976,19 @@ Implements Beacon.DocumentItem
 			End Set
 		#tag EndSetter
 		Title As Text
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Self.mTrustKey = "" Then
+			    Self.mTrustKey = Beacon.EncodeHex(Xojo.Crypto.GenerateRandomBytes(6))
+			    Self.mModified = True
+			  End If
+			  Return Self.mTrustKey
+			End Get
+		#tag EndGetter
+		TrustKey As Text
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0

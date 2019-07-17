@@ -160,7 +160,7 @@ Inherits Beacon.ConfigGroup
 		    Beacon.ConfigValue.FillConfigDict(ConfigDict, ConfigValues)
 		    
 		    Dim Errored As Boolean
-		    Dim Rewritten As String = Beacon.Rewriter.Rewrite("", ConfigDict, False, Errored)
+		    Dim Rewritten As String = Beacon.Rewriter.Rewrite("", ConfigDict, "", Errored)
 		    If Not Errored Then
 		      Value = Rewritten
 		    End If
@@ -227,7 +227,7 @@ Inherits Beacon.ConfigGroup
 		    Beacon.ConfigValue.FillConfigDict(ConfigDict, ConfigValues)
 		    
 		    Dim Errored As Boolean
-		    Dim Rewritten As String = Beacon.Rewriter.Rewrite("", ConfigDict, False, Errored)
+		    Dim Rewritten As String = Beacon.Rewriter.Rewrite("", ConfigDict, "", Errored)
 		    If Not Errored Then
 		      Value = Rewritten
 		    End If

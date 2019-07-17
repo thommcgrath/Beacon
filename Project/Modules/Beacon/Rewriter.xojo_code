@@ -6,7 +6,7 @@ Inherits Global.Thread
 		  Self.mFinished = False
 		  Self.mTriggers.Append(CallLater.Schedule(1, AddressOf TriggerStarted))
 		  Dim Errored As Boolean
-		  Self.mUpdatedContent = Self.Rewrite(Self.mInitialContent, Self.mMode, Self.mDocument, Self.mIdentity, Self.mMask, Self.mWithMarkup, Self.mProfile, Errored)
+		  Self.mUpdatedContent = Self.Rewrite(Self.mInitialContent, Self.mMode, Self.mDocument, Self.mIdentity, Self.mMask, If(Self.mWithMarkup, Self.mDocument.TrustKey, ""), Self.mProfile, Errored)
 		  Self.mFinished = True
 		  Self.mErrored = Errored
 		  Self.mTriggers.Append(CallLater.Schedule(1, AddressOf TriggerFinished))
@@ -36,7 +36,7 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Rewrite(InitialContent As String, ConfigDict As Dictionary, WithMarkup As Boolean, ByRef Errored As Boolean) As String
+		Shared Function Rewrite(InitialContent As String, ConfigDict As Dictionary, TrustKey As String, ByRef Errored As Boolean) As String
 		  Try
 		    // Normalize line endings
 		    Dim EOL As String = InitialContent.DetectLineEnding
@@ -121,47 +121,63 @@ Inherits Global.Thread
 		        BeaconGroupVersion = Val(Value)
 		      End If
 		      
-		      If BeaconDict.HasKey("ManagedKeys") Then
-		        Dim ManagedKeyLines() As String = BeaconDict.Value("ManagedKeys")
-		        For Each KeyLine As String In ManagedKeyLines
-		          Dim Header, ArrayTextContent As String
-		          
-		          If BeaconGroupVersion > 10103300 Then
-		            Dim HeaderStartPos As Integer = KeyLine.IndexOf(13, "Section=""") + 9
-		            Dim HeaderEndPos As Integer = KeyLine.IndexOf(HeaderStartPos, """")
-		            Header = KeyLine.SubString(HeaderStartPos, HeaderEndPos - HeaderStartPos)
-		            If Not UntouchedConfigs.HasKey(Header) Then
-		              Continue
-		            End If
-		            
-		            Dim ArrayStartPos As Integer = KeyLine.IndexOf(13, "Keys=(") + 6
-		            Dim ArrayEndPos As Integer = KeyLine.IndexOf(ArrayStartPos, ")")
-		            ArrayTextContent = KeyLine.SubString(ArrayStartPos, ArrayEndPos - ArrayStartPos)
-		          Else
-		            Dim HeaderPos As Integer = KeyLine.IndexOf("['") + 2
-		            Dim HeaderEndPos As Integer = KeyLine.IndexOf(HeaderPos, "']")
-		            Header = KeyLine.SubString(HeaderPos, HeaderEndPos - HeaderPos)
-		            If Not UntouchedConfigs.HasKey(Header) Then
-		              Continue
-		            End If
-		            
-		            Dim ArrayPos As Integer = KeyLine.IndexOf(HeaderEndPos, "(") + 1
-		            Dim ArrayEndPos As Integer = KeyLine.IndexOf(ArrayPos, ")")
-		            ArrayTextContent = KeyLine.Mid(ArrayPos, ArrayEndPos - ArrayPos)
-		          End If
-		          
-		          Dim ManagedKeys() As String = ArrayTextContent.Split(",")
-		          Dim SectionContents As Dictionary = UntouchedConfigs.Value(Header)
-		          For Each ManagedKey As String In ManagedKeys
-		            If SectionContents.HasKey(ManagedKey) Then
-		              SectionContents.Remove(ManagedKey)
-		            End If
-		          Next
-		          If SectionContents.Count = 0 Then
-		            UntouchedConfigs.Remove(Header)
+		      Dim IsTrusted As Boolean
+		      If BeaconDict.HasKey("Trust") Then
+		        Dim TrustLines() As String = BeaconDict.Value("Trust")
+		        For Each TrustLine As String In TrustLines
+		          If TrustLine = "Trust=" + TrustKey Then
+		            IsTrusted = True
+		            Exit
 		          End If
 		        Next
+		      Else
+		        IsTrusted = True
 		      End If
+		      
+		      If IsTrusted Then
+		        If BeaconDict.HasKey("ManagedKeys") Then
+		          Dim ManagedKeyLines() As String = BeaconDict.Value("ManagedKeys")
+		          For Each KeyLine As String In ManagedKeyLines
+		            Dim Header, ArrayTextContent As String
+		            
+		            If BeaconGroupVersion > 10103300 Then
+		              Dim HeaderStartPos As Integer = KeyLine.IndexOf(13, "Section=""") + 9
+		              Dim HeaderEndPos As Integer = KeyLine.IndexOf(HeaderStartPos, """")
+		              Header = KeyLine.SubString(HeaderStartPos, HeaderEndPos - HeaderStartPos)
+		              If Not UntouchedConfigs.HasKey(Header) Then
+		                Continue
+		              End If
+		              
+		              Dim ArrayStartPos As Integer = KeyLine.IndexOf(13, "Keys=(") + 6
+		              Dim ArrayEndPos As Integer = KeyLine.IndexOf(ArrayStartPos, ")")
+		              ArrayTextContent = KeyLine.SubString(ArrayStartPos, ArrayEndPos - ArrayStartPos)
+		            Else
+		              Dim HeaderPos As Integer = KeyLine.IndexOf("['") + 2
+		              Dim HeaderEndPos As Integer = KeyLine.IndexOf(HeaderPos, "']")
+		              Header = KeyLine.SubString(HeaderPos, HeaderEndPos - HeaderPos)
+		              If Not UntouchedConfigs.HasKey(Header) Then
+		                Continue
+		              End If
+		              
+		              Dim ArrayPos As Integer = KeyLine.IndexOf(HeaderEndPos, "(") + 1
+		              Dim ArrayEndPos As Integer = KeyLine.IndexOf(ArrayPos, ")")
+		              ArrayTextContent = KeyLine.Mid(ArrayPos, ArrayEndPos - ArrayPos)
+		            End If
+		            
+		            Dim ManagedKeys() As String = ArrayTextContent.Split(",")
+		            Dim SectionContents As Dictionary = UntouchedConfigs.Value(Header)
+		            For Each ManagedKey As String In ManagedKeys
+		              If SectionContents.HasKey(ManagedKey) Then
+		                SectionContents.Remove(ManagedKey)
+		              End If
+		            Next
+		            If SectionContents.Count = 0 Then
+		              UntouchedConfigs.Remove(Header)
+		            End If
+		          Next
+		        End If
+		      End If
+		      
 		      If UntouchedConfigs.HasKey("Beacon") Then
 		        UntouchedConfigs.Remove("Beacon")
 		      End If
@@ -188,7 +204,7 @@ Inherits Global.Thread
 		    End If
 		    
 		    // Setup the Beacon section
-		    If WithMarkup Then
+		    If TrustKey <> "" Then
 		      Dim BeaconKeys As New Dictionary
 		      For Each Header As String In NewKeys
 		        Dim Keys() As String
@@ -219,6 +235,7 @@ Inherits Global.Thread
 		          BeaconDict.Value("ManagedKeys") = SectionLines
 		        Next
 		        BeaconDict.Value("Build") = Array("Build=" + Str(App.BuildNumber, "0"))
+		        BeaconDict.Value("Trust") = Array("Trust=" + TrustKey)
 		        AllSectionHeaders.Append("Beacon")
 		        ConfigDict.Value("Beacon") = BeaconDict
 		      End If
@@ -301,7 +318,7 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Rewrite(InitialContent As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64, WithMarkup As Boolean, Profile As Beacon.ServerProfile, ByRef Errored As Boolean) As String
+		Shared Function Rewrite(InitialContent As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64, TrustKey As String, Profile As Beacon.ServerProfile, ByRef Errored As Boolean) As String
 		  Try
 		    Dim ConfigDict As New Dictionary
 		    Dim CustomContentGroup As BeaconConfigs.CustomContent
@@ -338,7 +355,7 @@ Inherits Global.Thread
 		      End If
 		    End If
 		    
-		    Return Rewrite(InitialContent, ConfigDict, WithMarkup, Errored)
+		    Return Rewrite(InitialContent, ConfigDict, TrustKey, Errored)
 		  Catch Err As RuntimeException
 		    Errored = True
 		  End Try
