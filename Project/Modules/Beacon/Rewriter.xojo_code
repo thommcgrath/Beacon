@@ -3,7 +3,13 @@ Protected Class Rewriter
 Inherits Global.Thread
 	#tag Event
 		Sub Run()
-		  Self.Perform()
+		  Self.mFinished = False
+		  Self.mTriggers.Append(CallLater.Schedule(1, AddressOf TriggerStarted))
+		  Dim Errored As Boolean
+		  Self.mUpdatedContent = Self.RewriteSynchronously(Self.mInitialContent, Self.mMode, Self.mDocument, Self.mIdentity, Self.mMask, Self.mWithMarkup, Errored)
+		  Self.mFinished = True
+		  Self.mErrored = Errored
+		  Self.mTriggers.Append(CallLater.Schedule(1, AddressOf TriggerFinished))
 		End Sub
 	#tag EndEvent
 
@@ -29,20 +35,26 @@ Inherits Global.Thread
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub Perform()
-		  Self.mFinished = False
-		  If App.CurrentThread = Nil Then
-		    RaiseEvent Started
-		  Else
-		    Self.mTriggers.Append(CallLater.Schedule(1, AddressOf TriggerStarted))
-		  End If
+	#tag Method, Flags = &h0
+		Sub Rewrite(InitialContent As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64, WithMarkup As Boolean)
+		  Self.mWithMarkup = WithMarkup
+		  Self.mInitialContent = InitialContent
+		  Self.mMode = Mode
+		  Self.mDocument = Document
+		  Self.mIdentity = Identity
+		  Self.mMask = Mask
 		  
+		  Super.Run
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function RewriteSynchronously(InitialContent As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64, WithMarkup As Boolean, ByRef Errored As Boolean) As String
 		  Try
 		    Dim ConfigDict As New Dictionary
 		    Dim CustomContentGroup As BeaconConfigs.CustomContent
 		    
-		    Dim Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
+		    Dim Groups() As Beacon.ConfigGroup = Document.ImplementedConfigs
 		    For Each Group As Beacon.ConfigGroup In Groups
 		      If Group.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
 		        CustomContentGroup = BeaconConfigs.CustomContent(Group)
@@ -50,11 +62,11 @@ Inherits Global.Thread
 		      End If
 		      
 		      Dim Options() As Beacon.ConfigValue
-		      Select Case Self.mMode
+		      Select Case Mode
 		      Case Beacon.RewriteModeGameIni
-		        Options = Group.GameIniValues(Self.mDocument, Self.mIdentity, Self.mMask)
+		        Options = Group.GameIniValues(Document, Identity, Mask)
 		      Case Beacon.RewriteModeGameUserSettingsIni
-		        Options = Group.GameUserSettingsIniValues(Self.mDocument, Self.mIdentity, Self.mMask)
+		        Options = Group.GameUserSettingsIniValues(Document, Identity, Mask)
 		      End Select
 		      If Options <> Nil And Options.Ubound > -1 Then
 		        Beacon.ConfigValue.FillConfigDict(ConfigDict, Options)
@@ -63,11 +75,11 @@ Inherits Global.Thread
 		    
 		    If CustomContentGroup <> Nil Then
 		      Dim Options() As Beacon.ConfigValue
-		      Select Case Self.mMode
+		      Select Case Mode
 		      Case Beacon.RewriteModeGameIni
-		        Options = CustomContentGroup.GameIniValues(Self.mDocument, Self.mIdentity, Self.mMask)
+		        Options = CustomContentGroup.GameIniValues(Document, Identity, Mask)
 		      Case Beacon.RewriteModeGameUserSettingsIni
-		        Options = CustomContentGroup.GameUserSettingsIniValues(Self.mDocument, Self.mIdentity, Self.mMask)
+		        Options = CustomContentGroup.GameUserSettingsIniValues(Document, Identity, Mask)
 		      End Select
 		      If Options <> Nil And Options.Ubound > -1 Then
 		        Beacon.ConfigValue.FillConfigDict(ConfigDict, Options)
@@ -75,7 +87,6 @@ Inherits Global.Thread
 		    End If
 		    
 		    // Normalize line endings
-		    Dim InitialContent As String = Self.mInitialContent
 		    Dim EOL As String = InitialContent.DetectLineEnding
 		    InitialContent = ReplaceLineEndings(InitialContent, Chr(10))
 		    
@@ -225,7 +236,7 @@ Inherits Global.Thread
 		    End If
 		    
 		    // Setup the Beacon section
-		    If Self.WithMarkup Then
+		    If WithMarkup Then
 		      Dim BeaconKeys As New Dictionary
 		      For Each Header As String In NewKeys
 		        Dim Keys() As String
@@ -293,47 +304,11 @@ Inherits Global.Thread
 		      End If
 		    Next
 		    
-		    Self.mUpdatedContent = NewLines.Join(EOL)
-		    Self.mErrored = False
+		    Return NewLines.Join(EOL)
+		    Errored = False
 		  Catch Err As RuntimeException
-		    Self.mErrored = True
+		    Errored = True
 		  End Try
-		  
-		  Self.mFinished = True
-		  
-		  If App.CurrentThread = Nil Then
-		    RaiseEvent Finished
-		  Else
-		    Self.mTriggers.Append(CallLater.Schedule(1, AddressOf TriggerFinished))
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Rewrite(InitialContent As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64, WithMarkup As Boolean)
-		  Self.WithMarkup = WithMarkup
-		  Self.mInitialContent = InitialContent
-		  Self.mMode = Mode
-		  Self.mDocument = Document
-		  Self.mIdentity = Identity
-		  Self.mMask = Mask
-		  
-		  Super.Run
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function RewriteSynchronous(InitialContent As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64, WithMarkup As Boolean) As String
-		  Self.WithMarkup = WithMarkup
-		  Self.mInitialContent = InitialContent
-		  Self.mMode = Mode
-		  Self.mDocument = Document
-		  Self.mIdentity = Identity
-		  Self.mMask = Mask
-		  
-		  Self.Perform()
-		  
-		  Return Self.mUpdatedContent
 		End Function
 	#tag EndMethod
 
@@ -407,8 +382,8 @@ Inherits Global.Thread
 		Private mUpdatedContent As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
-		WithMarkup As Boolean
+	#tag Property, Flags = &h21
+		Private mWithMarkup As Boolean
 	#tag EndProperty
 
 
@@ -449,7 +424,7 @@ Inherits Global.Thread
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="WithMarkup"
+			Name="mWithMarkup"
 			Group="Behavior"
 			Type="Boolean"
 		#tag EndViewProperty
