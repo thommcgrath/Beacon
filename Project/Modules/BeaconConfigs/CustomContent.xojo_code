@@ -175,6 +175,10 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function GameIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64) As Beacon.ConfigValue()
+		  #Pragma Unused SourceDocument
+		  #Pragma Unused Identity
+		  #Pragma Unused Mask
+		  
 		  Dim Err As UnsupportedOperationException
 		  Err.Message = "Do not call this one!"
 		  Raise Err
@@ -242,6 +246,10 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64) As Beacon.ConfigValue()
+		  #Pragma Unused SourceDocument
+		  #Pragma Unused Identity
+		  #Pragma Unused Mask
+		  
 		  Dim Err As UnsupportedOperationException
 		  Err.Message = "Do not call this one!"
 		  Raise Err
