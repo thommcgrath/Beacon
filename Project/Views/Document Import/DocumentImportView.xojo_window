@@ -842,8 +842,8 @@ End
 		  
 		  // Now figure out what configs we'll generate so CustomContent can figure out what NOT to capture.
 		  // Do not do this in the loop above to ensure all configs are loaded first, in case they rely on each other.
-		  Dim GameIniValues As New Xojo.Core.Dictionary
-		  Dim GameUserSettingsIniValues As New Xojo.Core.Dictionary
+		  Dim GameIniValues As New Dictionary
+		  Dim GameUserSettingsIniValues As New Dictionary
 		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
 		  Dim Mask As UInt64 = Beacon.Maps.All.Mask
 		  For Each Config As Beacon.ConfigGroup In Configs

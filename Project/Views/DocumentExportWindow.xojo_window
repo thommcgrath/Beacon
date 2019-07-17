@@ -602,8 +602,8 @@ End
 		  Dim Mask As UInt64 = Self.CurrentMask
 		  Dim Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  
-		  Self.GameIniRewriter.Rewrite("", Beacon.RewriteModeGameIni, Self.mDocument, Identity, Mask, False)
-		  Self.GameUserSettingsRewriter.Rewrite("", Beacon.RewriteModeGameUserSettingsIni, Self.mDocument, Identity, Mask, False)
+		  Self.GameIniRewriter.Rewrite("", Beacon.RewriteModeGameIni, Self.mDocument, Identity, Mask, False, Nil)
+		  Self.GameUserSettingsRewriter.Rewrite("", Beacon.RewriteModeGameUserSettingsIni, Self.mDocument, Identity, Mask, False, Nil)
 		  
 		  Dim CLIDict As New Dictionary
 		  Dim Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
@@ -796,7 +796,7 @@ End
 	#tag Event
 		Sub Action()
 		  Dim Board As New Clipboard
-		  Self.ClipboardRewriter.Rewrite(Board.Text, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, Self.CurrentMask, True)
+		  Self.ClipboardRewriter.Rewrite(Board.Text, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, Self.CurrentMask, True, Nil)
 		  
 		  Self.mLastRewrittenHash = ""
 		  Self.CheckButtons()
@@ -850,7 +850,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.FileRewriter.Rewrite(Content, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, Self.CurrentMask, True)
+		  Self.FileRewriter.Rewrite(Content, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, Self.CurrentMask, True, Nil)
 		  Self.mFileDestination = File
 		  
 		  Self.CheckButtons()

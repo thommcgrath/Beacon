@@ -6,7 +6,7 @@ Inherits Global.Thread
 		  Self.mFinished = False
 		  Self.mTriggers.Append(CallLater.Schedule(1, AddressOf TriggerStarted))
 		  Dim Errored As Boolean
-		  Self.mUpdatedContent = Self.RewriteSynchronously(Self.mInitialContent, Self.mMode, Self.mDocument, Self.mIdentity, Self.mMask, Self.mWithMarkup, Errored)
+		  Self.mUpdatedContent = Self.Rewrite(Self.mInitialContent, Self.mMode, Self.mDocument, Self.mIdentity, Self.mMask, Self.mWithMarkup, Self.mProfile, Errored)
 		  Self.mFinished = True
 		  Self.mErrored = Errored
 		  Self.mTriggers.Append(CallLater.Schedule(1, AddressOf TriggerFinished))
@@ -36,56 +36,8 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Rewrite(InitialContent As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64, WithMarkup As Boolean)
-		  Self.mWithMarkup = WithMarkup
-		  Self.mInitialContent = InitialContent
-		  Self.mMode = Mode
-		  Self.mDocument = Document
-		  Self.mIdentity = Identity
-		  Self.mMask = Mask
-		  
-		  Super.Run
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function RewriteSynchronously(InitialContent As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64, WithMarkup As Boolean, ByRef Errored As Boolean) As String
+		Shared Function Rewrite(InitialContent As String, ConfigDict As Dictionary, WithMarkup As Boolean, ByRef Errored As Boolean) As String
 		  Try
-		    Dim ConfigDict As New Dictionary
-		    Dim CustomContentGroup As BeaconConfigs.CustomContent
-		    
-		    Dim Groups() As Beacon.ConfigGroup = Document.ImplementedConfigs
-		    For Each Group As Beacon.ConfigGroup In Groups
-		      If Group.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
-		        CustomContentGroup = BeaconConfigs.CustomContent(Group)
-		        Continue
-		      End If
-		      
-		      Dim Options() As Beacon.ConfigValue
-		      Select Case Mode
-		      Case Beacon.RewriteModeGameIni
-		        Options = Group.GameIniValues(Document, Identity, Mask)
-		      Case Beacon.RewriteModeGameUserSettingsIni
-		        Options = Group.GameUserSettingsIniValues(Document, Identity, Mask)
-		      End Select
-		      If Options <> Nil And Options.Ubound > -1 Then
-		        Beacon.ConfigValue.FillConfigDict(ConfigDict, Options)
-		      End If
-		    Next
-		    
-		    If CustomContentGroup <> Nil Then
-		      Dim Options() As Beacon.ConfigValue
-		      Select Case Mode
-		      Case Beacon.RewriteModeGameIni
-		        Options = CustomContentGroup.GameIniValues(Document, Identity, Mask)
-		      Case Beacon.RewriteModeGameUserSettingsIni
-		        Options = CustomContentGroup.GameUserSettingsIniValues(Document, Identity, Mask)
-		      End Select
-		      If Options <> Nil And Options.Ubound > -1 Then
-		        Beacon.ConfigValue.FillConfigDict(ConfigDict, Options)
-		      End If
-		    End If
-		    
 		    // Normalize line endings
 		    Dim EOL As String = InitialContent.DetectLineEnding
 		    InitialContent = ReplaceLineEndings(InitialContent, Chr(10))
@@ -281,14 +233,15 @@ Inherits Global.Thread
 		      End If
 		      NewLines.Append("[" + Header + "]")
 		      
+		      Dim SectionConfigs() As String
+		      
 		      If UntouchedConfigs.HasKey(Header) Then
 		        Dim Section As Dictionary = UntouchedConfigs.Value(Header)
 		        Dim SectionKeys() As Variant = Section.Keys
 		        For Each Key As Variant In SectionKeys
-		          Dim Values() As String = Section.Value(Key)
-		          For Each Line As String In Values
-		            NewLines.Append(Line)
-		          Next
+		          If SectionConfigs.IndexOf(Key) = -1 Then
+		            SectionConfigs.Append(Key)
+		          End If
 		        Next
 		      End If
 		      
@@ -296,16 +249,96 @@ Inherits Global.Thread
 		        Dim Section As Dictionary = ConfigDict.Value(Header)
 		        Dim SectionKeys() As Variant = Section.Keys
 		        For Each Key As Variant In SectionKeys
-		          Dim Values() As String = Section.Value(Key)
-		          For Each Line As String In Values
-		            NewLines.Append(Line)
-		          Next
+		          If SectionConfigs.IndexOf(Key) = -1 Then
+		            SectionConfigs.Append(Key)
+		          End If
 		        Next
 		      End If
+		      
+		      SectionConfigs.Sort
+		      
+		      For Each ConfigKey As String In SectionConfigs
+		        If UntouchedConfigs.HasKey(Header) Then
+		          Dim Section As Dictionary = UntouchedConfigs.Value(Header)
+		          If Section.HasKey(ConfigKey) Then
+		            Dim Values() As String = Section.Value(ConfigKey)
+		            For Each Line As String In Values
+		              NewLines.Append(Line)
+		            Next
+		          End If
+		        End If
+		        If ConfigDict.HasKey(Header) Then
+		          Dim Section As Dictionary = ConfigDict.Value(Header)
+		          If Section.HasKey(ConfigKey) Then
+		            Dim Values() As String = Section.Value(ConfigKey)
+		            For Each Line As String In Values
+		              NewLines.Append(Line)
+		            Next
+		          End If
+		        End If
+		      Next
 		    Next
 		    
 		    Return NewLines.Join(EOL)
 		    Errored = False
+		  Catch Err As RuntimeException
+		    Errored = True
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Rewrite(InitialContent As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64, WithMarkup As Boolean, Profile As Beacon.ServerProfile)
+		  Self.mWithMarkup = WithMarkup
+		  Self.mInitialContent = InitialContent
+		  Self.mMode = Mode
+		  Self.mDocument = Document
+		  Self.mIdentity = Identity
+		  Self.mMask = Mask
+		  
+		  Super.Run
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Rewrite(InitialContent As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64, WithMarkup As Boolean, Profile As Beacon.ServerProfile, ByRef Errored As Boolean) As String
+		  Try
+		    Dim ConfigDict As New Dictionary
+		    Dim CustomContentGroup As BeaconConfigs.CustomContent
+		    
+		    Dim Groups() As Beacon.ConfigGroup = Document.ImplementedConfigs
+		    For Each Group As Beacon.ConfigGroup In Groups
+		      If Group.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
+		        CustomContentGroup = BeaconConfigs.CustomContent(Group)
+		        Continue
+		      End If
+		      
+		      Dim Options() As Beacon.ConfigValue
+		      Select Case Mode
+		      Case Beacon.RewriteModeGameIni
+		        Options = Group.GameIniValues(Document, Identity, Mask)
+		      Case Beacon.RewriteModeGameUserSettingsIni
+		        Options = Group.GameUserSettingsIniValues(Document, Identity, Mask)
+		      End Select
+		      If Options <> Nil And Options.Ubound > -1 Then
+		        Beacon.ConfigValue.FillConfigDict(ConfigDict, Options)
+		      End If
+		    Next
+		    
+		    If CustomContentGroup <> Nil Then
+		      Dim Options() As Beacon.ConfigValue
+		      Select Case Mode
+		      Case Beacon.RewriteModeGameIni
+		        Options = CustomContentGroup.GameIniValues(Document, ConfigDict, Profile)
+		      Case Beacon.RewriteModeGameUserSettingsIni
+		        Options = CustomContentGroup.GameUserSettingsIniValues(Document, ConfigDict, Profile)
+		      End Select
+		      If Options <> Nil And Options.Ubound > -1 Then
+		        Beacon.ConfigValue.FillConfigDict(ConfigDict, Options)
+		      End If
+		    End If
+		    
+		    Return Rewrite(InitialContent, ConfigDict, WithMarkup, Errored)
 		  Catch Err As RuntimeException
 		    Errored = True
 		  End Try
@@ -372,6 +405,10 @@ Inherits Global.Thread
 
 	#tag Property, Flags = &h21
 		Private mMode As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProfile As Beacon.ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
