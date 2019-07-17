@@ -312,6 +312,7 @@ Inherits Global.Thread
 		  Self.mDocument = Document
 		  Self.mIdentity = Identity
 		  Self.mMask = Mask
+		  Self.mProfile = Profile
 		  
 		  Super.Run
 		End Sub
