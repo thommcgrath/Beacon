@@ -361,6 +361,7 @@ MultiImage=IconToolbarRevert;Icons/IconToolbarRevert.xojo_image;&h0000000060A9F7
 MultiImage=IconToolbarCopied;Icons/IconToolbarCopied.xojo_image;&h0000000023AA0FFF;&h0000000007F977FF;false
 Window=BlueprintMultiEditor;Views/Blueprint Manager/BlueprintMultiEditor.xojo_window;&h00000000411FDFFF;&h00000000027EF7FF;false
 Class=Rewriter;Modules/Beacon/Rewriter.xojo_code;&h00000000598AAFFF;&h0000000055ADDFFF;false
+MultiImage=IconCommandLine;Icons/IconCommandLine.xojo_image;&h000000000D4687FF;&h0000000007F977FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=2

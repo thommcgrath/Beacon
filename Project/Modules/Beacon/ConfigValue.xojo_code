@@ -32,7 +32,7 @@ Protected Class ConfigValue
 		    Arr.Append(Value.Key + "=" + Value.Value)
 		    Section.Value(SimplifiedKey) = Arr
 		    
-		    Dict.Value(Value.Header) = Section
+		    Dict.Value(Header) = Section
 		  Next
 		End Sub
 	#tag EndMethod
