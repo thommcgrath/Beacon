@@ -251,14 +251,14 @@ Implements Beacon.DeploymentEngine
 	#tag Method, Flags = &h21
 		Private Sub UploadGameIni()
 		  Self.mStatus = "Generating Game.ini"
-		  Self.mGameIniRewriter.Rewrite(Self.mGameIniOriginal, Beacon.RewriteModeGameIni, Self.mDocument, Self.mIdentity, Self.mProfile.Mask, True, Self.mProfile)
+		  Self.mGameIniRewriter.Rewrite(Self.mGameIniOriginal, Beacon.RewriteModeGameIni, Self.mDocument, Self.mIdentity, True, Self.mProfile)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UploadGameUserSettingsIni()
 		  Self.mStatus = "Generating GameUserSettings.ini"
-		  Self.mGameUserSettingsIniRewriter.Rewrite(Self.mGameUserSettingsIniOriginal, Beacon.RewriteModeGameUserSettingsIni, Self.mDocument, Self.mIdentity, Self.mProfile.Mask, True, Self.mProfile)
+		  Self.mGameUserSettingsIniRewriter.Rewrite(Self.mGameUserSettingsIniOriginal, Beacon.RewriteModeGameUserSettingsIni, Self.mDocument, Self.mIdentity, True, Self.mProfile)
 		End Sub
 	#tag EndMethod
 

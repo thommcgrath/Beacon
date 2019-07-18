@@ -339,14 +339,6 @@ Implements Beacon.DeploymentEngine
 		      Dim MapText As Text = Config.Value("map")
 		      Dim MapParts() As Text = MapText.Split(",")
 		      Self.mMask = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.Ubound))
-		      Dim Options() As Beacon.ConfigValue
-		      Self.mDocument.CreateConfigObjects(Options, Self.mGameIniDict, Self.mGameUserSettingsIniDict, Self.mMask, Self.mIdentity, Self.mProfile)
-		      Self.mCommandLineOptions = Options
-		      
-		      Dim SessionSettingsValues() As Text = Array("SessionName=" + Self.mProfile.Name)
-		      Dim SessionSettings As New Xojo.Core.Dictionary
-		      SessionSettings.Value("SessionName") = SessionSettingsValues
-		      Self.mGameUserSettingsIniDict.Value("SessionSettings") = SessionSettings
 		    End If
 		    
 		    Self.mServerStatus = GameServer.Value("status")
@@ -380,7 +372,7 @@ Implements Beacon.DeploymentEngine
 		          Continue
 		        End If
 		        
-		        Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, Self.mIdentity, Self.mMask)
+		        Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, Self.mIdentity, Self.mProfile)
 		        For Each Option As Beacon.ConfigValue In Options
 		          CommandLineOptions.Append(Option)
 		        Next
@@ -399,13 +391,6 @@ Implements Beacon.DeploymentEngine
 		          Self.mCommandLineChanges.Append(ConfigValue)
 		        End If
 		      Next
-		      
-		      If Self.mCommandLineChanges.Ubound = -1 And Self.mGameIniDict.Count = 0 And Self.mGameUserSettingsIniDict.Count = 0 Then
-		        // Nothing to do
-		        Self.mStatus = "Finished, no changes were necessary."
-		        Self.mFinished = True
-		        Return
-		      End If
 		      
 		      Dim GameSpecific As Xojo.Core.Dictionary = GameServer.Value("game_specific")
 		      Self.mLogFilePath = GameSpecific.Value("path") + "ShooterGame/Saved/Logs/ShooterGame.log"
@@ -507,7 +492,7 @@ Implements Beacon.DeploymentEngine
 		    Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		    Headers.Value("token") = Token
 		    
-		    Dim NewTextContent As Text = Beacon.RewriteIniContent(Self.mGameIniOriginal, Self.mGameIniDict)
+		    Dim NewTextContent As Text = Self.mGameIniRewritten
 		    Dim NewContent As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(NewTextContent)
 		    
 		    SimpleHTTP.Post(TokenDict.Value("url"), "text/plain", NewContent, AddressOf Callback_UploadGameIni_Content, Nil, Headers)
@@ -564,7 +549,7 @@ Implements Beacon.DeploymentEngine
 		    Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		    Headers.Value("token") = Token
 		    
-		    Dim NewTextContent As Text = Beacon.RewriteIniContent(Self.mGameUserSettingsIniOriginal, Self.mGameUserSettingsIniDict)
+		    Dim NewTextContent As Text = Self.mGameUserSettingsIniRewritten
 		    Dim NewContent As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(NewTextContent)
 		    
 		    SimpleHTTP.Post(TokenDict.Value("url"), "text/plain", NewContent, AddressOf Callback_UploadGameUserSettingsIni_Content, Nil, Headers)
@@ -626,21 +611,19 @@ Implements Beacon.DeploymentEngine
 		Sub Constructor(Profile As Beacon.NitradoServerProfile, OAuthData As Xojo.Core.Dictionary)
 		  Self.mProfile = Profile
 		  Self.mAccessToken = OAuthData.Value("Access Token")
-		  Self.mGameIniDict = New Xojo.Core.Dictionary
-		  Self.mGameUserSettingsIniDict = New Xojo.Core.Dictionary
 		  
-		  Self.AppendTask(AddressOf WatchStatusForStop, AddressOf DownloadLogFile, AddressOf WaitNitradoIdle, AddressOf MakeConfigBackup, AddressOf EnableExpertMode, AddressOf SetNextCommandLineParam, AddressOf DownloadGameIni, AddressOf DownloadGameUserSettingsIni, AddressOf UploadGameIni, AddressOf UploadGameUserSettingsIni, AddressOf StartServerIfNeeded)
+		  Self.mGameIniRewriter = New Beacon.Rewriter
+		  AddHandler mGameIniRewriter.Finished, WeakAddressOf mGameIniRewriter_Finished
+		  
+		  Self.mGameUserSettingsIniRewriter = New Beacon.Rewriter
+		  AddHandler mGameUserSettingsIniRewriter.Finished, WeakAddressOf mGameUserSettingsIniRewriter_Finished
+		  
+		  Self.AppendTask(AddressOf WatchStatusForStop, AddressOf DownloadLogFile, AddressOf WaitNitradoIdle, AddressOf MakeConfigBackup, AddressOf EnableExpertMode, AddressOf SetNextCommandLineParam, AddressOf DownloadGameIni, AddressOf DownloadGameUserSettingsIni, AddressOf GenerateGameIni, AddressOf GenerateGameUserSettingsIni, AddressOf UploadGameIni, AddressOf UploadGameUserSettingsIni, AddressOf StartServerIfNeeded)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub DownloadGameIni()
-		  If Self.mGameIniDict.Count = 0 Then
-		    // Skip
-		    Self.RunNextTask()
-		    Return
-		  End If
-		  
 		  Self.mStatus = "Downloading Game.ini…"
 		  
 		  Dim Headers As New Xojo.Core.Dictionary
@@ -654,12 +637,6 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub DownloadGameUserSettingsIni()
-		  If Self.mGameUserSettingsIniDict.Count = 0 Then
-		    // Skip
-		    Self.RunNextTask()
-		    Return
-		  End If
-		  
 		  Self.mStatus = "Downloading GameUserSettings.ini…"
 		  
 		  Dim Headers As New Xojo.Core.Dictionary
@@ -717,6 +694,20 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub GenerateGameIni()
+		  Self.mStatus = "Generating Game.ini…"
+		  Self.mGameIniRewriter.Rewrite(Self.mGameIniOriginal, Beacon.RewriteModeGameIni, Self.mDocument, Self.mIdentity, True, Self.mProfile)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub GenerateGameUserSettingsIni()
+		  Self.mStatus = "Generating GameUserSettings.ini…"
+		  Self.mGameIniRewriter.Rewrite(Self.mGameUserSettingsIniOriginal, Beacon.RewriteModeGameUserSettingsIni, Self.mDocument, Self.mIdentity, True, Self.mProfile)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub MakeConfigBackup()
 		  Self.mStatus = "Making config backup…"
 		  
@@ -727,6 +718,34 @@ Implements Beacon.DeploymentEngine
 		  FormData.Value("name") = "Beacon " + Self.mLabel
 		  
 		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/settings/sets", FormData, AddressOf Callback_MakeConfigBackup, Nil, Headers)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mGameIniRewriter_Finished(Sender As Beacon.Rewriter)
+		  If Sender.Errored Then
+		    Self.mErrored = True
+		    Self.mStatus = "Error generating Game.ini"
+		    Self.mFinished = True
+		    Return
+		  End If
+		  
+		  Self.mGameIniRewritten = Sender.UpdatedContent.ToText
+		  Self.RunNextTask()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mGameUserSettingsIniRewriter_Finished(Sender As Beacon.Rewriter)
+		  If Sender.Errored Then
+		    Self.mErrored = True
+		    Self.mStatus = "Error generating GameUserSettings.ini"
+		    Self.mFinished = True
+		    Return
+		  End If
+		  
+		  Self.mGameUserSettingsIniRewritten = Sender.UpdatedContent.ToText
+		  Self.RunNextTask()
 		End Sub
 	#tag EndMethod
 
@@ -830,12 +849,6 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub UploadGameIni()
-		  If Self.mGameIniDict.Count = 0 Then
-		    // Skip
-		    Self.RunNextTask()
-		    Return
-		  End If
-		  
 		  Self.mStatus = "Uploading Game.ini…"
 		  
 		  Dim Headers As New Xojo.Core.Dictionary
@@ -851,12 +864,6 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub UploadGameUserSettingsIni()
-		  If Self.mGameUserSettingsIniDict.Count = 0 Then
-		    // Skip
-		    Self.RunNextTask()
-		    Return
-		  End If
-		  
 		  Self.mStatus = "Uploading GameUserSettings.ini…"
 		  
 		  Dim Headers As New Xojo.Core.Dictionary
@@ -920,10 +927,6 @@ Implements Beacon.DeploymentEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCommandLineOptions() As Beacon.ConfigValue
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mConfigPath As Text
 	#tag EndProperty
 
@@ -948,19 +951,27 @@ Implements Beacon.DeploymentEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameIniDict As Xojo.Core.Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mGameIniOriginal As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameUserSettingsIniDict As Xojo.Core.Dictionary
+		Private mGameIniRewriter As Beacon.Rewriter
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGameIniRewritten As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mGameUserSettingsIniOriginal As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGameUserSettingsIniRewriter As Beacon.Rewriter
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGameUserSettingsIniRewritten As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

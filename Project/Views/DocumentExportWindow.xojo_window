@@ -598,22 +598,22 @@ End
 		  Self.mGameUserSettingsContent = ""
 		  Self.mCommandLineContent = ""
 		  Self.mLastRewrittenHash = ""
+		  Self.mCurrentProfile = New Beacon.GenericServerProfile(Self.mDocument.Title, Self.CurrentMask)
 		  
-		  Dim Mask As UInt64 = Self.CurrentMask
 		  Dim Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  
-		  Self.GameIniRewriter.Rewrite("", Beacon.RewriteModeGameIni, Self.mDocument, Identity, Mask, False, Nil)
-		  Self.GameUserSettingsRewriter.Rewrite("", Beacon.RewriteModeGameUserSettingsIni, Self.mDocument, Identity, Mask, False, Nil)
+		  Self.GameIniRewriter.Rewrite("", Beacon.RewriteModeGameIni, Self.mDocument, Identity, False, Self.mCurrentProfile)
+		  Self.GameUserSettingsRewriter.Rewrite("", Beacon.RewriteModeGameUserSettingsIni, Self.mDocument, Identity, False, Self.mCurrentProfile)
 		  
 		  Dim CLIDict As New Dictionary
 		  Dim Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
 		  For Each Group As Beacon.ConfigGroup In Groups
-		    Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, Identity, Mask)
+		    Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, Identity, Self.mCurrentProfile)
 		    If Options <> Nil And Options.Ubound > -1 Then
 		      Beacon.ConfigValue.FillConfigDict(CLIDict, Options)
 		    End If
 		  Next
-		  Dim Maps() As Beacon.Map = Beacon.Maps.ForMask(Mask)
+		  Dim Maps() As Beacon.Map = Beacon.Maps.ForMask(Self.mCurrentProfile.Mask)
 		  Dim QuestionParameters As String
 		  If Maps.Ubound = 0 Then
 		    QuestionParameters = Maps(0).Identifier + "?listen"
@@ -721,6 +721,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mCurrentProfile As Beacon.GenericServerProfile
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDocument As Beacon.Document
 	#tag EndProperty
 
@@ -796,7 +800,7 @@ End
 	#tag Event
 		Sub Action()
 		  Dim Board As New Clipboard
-		  Self.ClipboardRewriter.Rewrite(Board.Text, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, Self.CurrentMask, True, Nil)
+		  Self.ClipboardRewriter.Rewrite(Board.Text, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, True, Self.mCurrentProfile)
 		  
 		  Self.mLastRewrittenHash = ""
 		  Self.CheckButtons()
@@ -850,7 +854,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.FileRewriter.Rewrite(Content, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, Self.CurrentMask, True, Nil)
+		  Self.FileRewriter.Rewrite(Content, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, True, Self.mCurrentProfile)
 		  Self.mFileDestination = File
 		  
 		  Self.CheckButtons()

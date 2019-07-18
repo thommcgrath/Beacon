@@ -89,39 +89,6 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "Beacon.Rewriter" )  Sub CreateConfigObjects(ByRef CommandLineOptions() As Beacon.ConfigValue, GameIniOptions As Xojo.Core.Dictionary, GameUserSettingsIniOptions As Xojo.Core.Dictionary, Mask As UInt64, Identity As Beacon.Identity, Profile As Beacon.ServerProfile)
-		  Dim Groups() As Beacon.ConfigGroup = Self.ImplementedConfigs
-		  For Each Group As Beacon.ConfigGroup In Groups
-		    If Group.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
-		      Continue
-		    End If
-		    
-		    Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self, Identity, Mask)
-		    If Options <> Nil Then
-		      For Each Option As Beacon.ConfigValue In Options
-		        CommandLineOptions.Append(Option)
-		      Next
-		    End If
-		    
-		    Beacon.ConfigValue.FillConfigDict(GameIniOptions, Group.GameIniValues(Self, Identity, Mask))
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniOptions, Group.GameUserSettingsIniValues(Self, Identity, Mask))
-		  Next
-		  
-		  Dim CustomContent As BeaconConfigs.CustomContent
-		  If Self.HasConfigGroup(BeaconConfigs.CustomContent.ConfigName) Then
-		    CustomContent = BeaconConfigs.CustomContent(Self.ConfigGroup(BeaconConfigs.CustomContent.ConfigName))
-		    #if false
-		      Beacon.ConfigValue.FillConfigDict(GameIniOptions, CustomContent.GameIniValues(Self, GameIniOptions, Profile))
-		      Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniOptions, CustomContent.GameUserSettingsIniValues(Self, GameUserSettingsIniOptions, Profile))
-		    #endif
-		    #if Not DebugBuild
-		      #Pragma Error "You really can't use this anymore"
-		    #endif
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Difficulty() As BeaconConfigs.Difficulty
 		  Static GroupName As Text = BeaconConfigs.Difficulty.ConfigName
 		  Return BeaconConfigs.Difficulty(Self.ConfigGroup(GroupName, True))

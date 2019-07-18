@@ -6,7 +6,7 @@ Inherits Global.Thread
 		  Self.mFinished = False
 		  Self.mTriggers.Append(CallLater.Schedule(1, AddressOf TriggerStarted))
 		  Dim Errored As Boolean
-		  Self.mUpdatedContent = Self.Rewrite(Self.mInitialContent, Self.mMode, Self.mDocument, Self.mIdentity, Self.mMask, If(Self.mWithMarkup, Self.mDocument.TrustKey, ""), Self.mProfile, Errored)
+		  Self.mUpdatedContent = Self.Rewrite(Self.mInitialContent, Self.mMode, Self.mDocument, Self.mIdentity, If(Self.mWithMarkup, Self.mDocument.TrustKey, ""), Self.mProfile, Errored)
 		  Self.mFinished = True
 		  Self.mErrored = Errored
 		  Self.mTriggers.Append(CallLater.Schedule(1, AddressOf TriggerFinished))
@@ -305,13 +305,12 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Rewrite(InitialContent As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64, WithMarkup As Boolean, Profile As Beacon.ServerProfile)
+		Sub Rewrite(InitialContent As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, WithMarkup As Boolean, Profile As Beacon.ServerProfile)
 		  Self.mWithMarkup = WithMarkup
 		  Self.mInitialContent = InitialContent
 		  Self.mMode = Mode
 		  Self.mDocument = Document
 		  Self.mIdentity = Identity
-		  Self.mMask = Mask
 		  Self.mProfile = Profile
 		  
 		  Super.Run
@@ -319,7 +318,7 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Rewrite(InitialContent As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64, TrustKey As String, Profile As Beacon.ServerProfile, ByRef Errored As Boolean) As String
+		Shared Function Rewrite(InitialContent As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, TrustKey As String, Profile As Beacon.ServerProfile, ByRef Errored As Boolean) As String
 		  Try
 		    Dim ConfigDict As New Dictionary
 		    Dim CustomContentGroup As BeaconConfigs.CustomContent
@@ -334,9 +333,9 @@ Inherits Global.Thread
 		      Dim Options() As Beacon.ConfigValue
 		      Select Case Mode
 		      Case Beacon.RewriteModeGameIni
-		        Options = Group.GameIniValues(Document, Identity, Mask)
+		        Options = Group.GameIniValues(Document, Identity, Profile)
 		      Case Beacon.RewriteModeGameUserSettingsIni
-		        Options = Group.GameUserSettingsIniValues(Document, Identity, Mask)
+		        Options = Group.GameUserSettingsIniValues(Document, Identity, Profile)
 		      End Select
 		      If Options <> Nil And Options.Ubound > -1 Then
 		        Beacon.ConfigValue.FillConfigDict(ConfigDict, Options)
@@ -415,10 +414,6 @@ Inherits Global.Thread
 
 	#tag Property, Flags = &h21
 		Private mInitialContent As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMask As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
