@@ -360,6 +360,11 @@ End
 		Private Sub Controller_LoadError(Sender As Beacon.DocumentController, Reason As Text)
 		  #Pragma Unused Reason
 		  
+		  If Self.mProgress <> Nil Then
+		    Self.mProgress.Close
+		    Self.mProgress = Nil
+		  End If
+		  
 		  Self.DetachControllerEvents(Sender)
 		  
 		  Dim RecentIdx As Integer = -1
@@ -378,11 +383,6 @@ End
 		    End If
 		  Else
 		    Self.ShowAlert("Unable to load """ + Sender.Name + """", "The document could not be loaded. It may have been deleted.")
-		  End If
-		  
-		  If Self.mProgress <> Nil Then
-		    Self.mProgress.Close
-		    Self.mProgress = Nil
 		  End If
 		End Sub
 	#tag EndMethod
