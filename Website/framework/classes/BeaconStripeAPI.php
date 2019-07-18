@@ -78,11 +78,15 @@ class BeaconStripeAPI {
 		}
 		
 		$address = $billing['address'];
-		if (array_key_exists('country', $address) == false || array_key_exists('state', $address) == false || is_null($address['country']) || is_null($address['state'])) {
+		if (array_key_exists('country', $address) == false || is_null($address['country'])) {
 			return null;
 		}
 		
-		return $address['country'] . ' ' . $address['state'];
+		if (array_key_exists('state', $address) == false || is_null($address['state'])) {
+			return $address['country'];
+		} else {
+			return $address['country'] . ' ' . $address['state'];
+		}
 	}
 			
 	

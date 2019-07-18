@@ -194,6 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				
 				switch (http_status) {
 				case 401:
+				case 403:
 					dialog.show('Incorrect Login', 'Username or password is not correct.');
 					break;
 				default:
