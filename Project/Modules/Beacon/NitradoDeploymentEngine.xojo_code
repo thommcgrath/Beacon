@@ -703,7 +703,7 @@ Implements Beacon.DeploymentEngine
 	#tag Method, Flags = &h21
 		Private Sub GenerateGameUserSettingsIni()
 		  Self.mStatus = "Generating GameUserSettings.ini…"
-		  Self.mGameIniRewriter.Rewrite(Self.mGameUserSettingsIniOriginal, Beacon.RewriteModeGameUserSettingsIni, Self.mDocument, Self.mIdentity, True, Self.mProfile)
+		  Self.mGameUserSettingsIniRewriter.Rewrite(Self.mGameUserSettingsIniOriginal, Beacon.RewriteModeGameUserSettingsIni, Self.mDocument, Self.mIdentity, True, Self.mProfile)
 		End Sub
 	#tag EndMethod
 
