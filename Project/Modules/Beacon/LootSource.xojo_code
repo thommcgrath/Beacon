@@ -249,7 +249,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Child)
 		    Dim Hash As Text = Set.Hash
 		    If Set <> Nil And AddedHashes.HasKey(Hash) = False Then
-		      LootSource.Append(Set)
+		      LootSource.mSets.Append(Set)
 		      AddedHashes.Value(Hash) = True
 		    End If
 		  Next
