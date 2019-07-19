@@ -798,18 +798,21 @@ End
 		    
 		  End Try
 		  
-		  Try
-		    Dim Profile As Beacon.ServerProfile = Engine.Profile
-		    If Profile <> Nil Then
-		      If ParsedData.HasKey("SessionName") Then
-		        Profile.Name = ParsedData.Value("SessionName")
-		      End If
-		      
-		      Document.Add(Profile)
+		  Dim Profile As Beacon.ServerProfile = Engine.Profile
+		  If Profile <> Nil Then
+		    If ParsedData.HasKey("SessionName") Then
+		      Dim SessionNames() As Auto = ParsedData.AutoArrayValue("SessionName")
+		      For Each SessionName As Auto In SessionNames
+		        Try
+		          Profile.Name = SessionName
+		          Exit
+		        Catch Err As TypeMismatchException
+		        End Try
+		      Next
 		    End If
-		  Catch Err As RuntimeException
 		    
-		  End Try
+		    Document.Add(Profile)
+		  End If
 		  
 		  Dim ConfigNames() As Text = BeaconConfigs.AllConfigNames()
 		  For Each ConfigName As Text In ConfigNames

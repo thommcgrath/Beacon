@@ -50,12 +50,15 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused QualityMultiplier
 		  
 		  If ParsedData.HasKey("SessionName") Then
-		    Dim Config As New BeaconConfigs.Metadata
-		    Try
-		      Config.Title = ParsedData.Value("SessionName")
-		      Return Config
-		    Catch Err As TypeMismatchException
-		    End Try
+		    Dim SessionNames() As Auto = ParsedData.AutoArrayValue("SessionName")
+		    For Each SessionName As Auto In SessionNames
+		      Try
+		        Dim Config As New BeaconConfigs.Metadata
+		        Config.Title = SessionName
+		        Return Config
+		      Catch Err As TypeMismatchException
+		      End Try
+		    Next
 		  End If
 		End Function
 	#tag EndMethod
