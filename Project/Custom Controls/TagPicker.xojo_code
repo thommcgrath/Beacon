@@ -100,6 +100,17 @@ Inherits ControlCanvas
 		  Dim CellHeight As Integer = CapHeight + (VerticalPadding * 2)
 		  Dim Clip As Graphics = G.Clip(ContentArea.Left, ContentArea.Top, ContentArea.Width, ContentArea.Height)
 		  
+		  Dim RequiredBackgroundColor As Color = SystemColors.SelectedContentBackgroundColor
+		  Dim RequiredTextColor As Color = SystemColors.AlternateSelectedControlTextColor
+		  Dim NeutralBackgroundColor As Color = SystemColors.UnemphasizedSelectedTextBackgroundColor
+		  Dim NeutralTextColor As Color = SystemColors.UnemphasizedSelectedTextColor
+		  Dim ExcludedBackgroundColor As Color = SystemColors.SystemRedColor
+		  Dim ExcludedTextColor As Color = SystemColors.AlternateSelectedControlTextColor
+		  
+		  If Self.ColorsAreSimilar(RequiredBackgroundColor, ExcludedBackgroundColor, 100) Then
+		    ExcludedBackgroundColor = SystemColors.SystemBrownColor
+		  End If
+		  
 		  For I As Integer = 0 To Self.mTags.Ubound
 		    Dim Tag As String = Self.mTags(I)
 		    Dim Required As Boolean = Self.mRequireTags.IndexOf(Tag) > -1
@@ -122,14 +133,14 @@ Inherits ControlCanvas
 		    
 		    Dim CellColor, CellTextColor As Color
 		    If Required Then
-		      CellColor = SystemColors.SelectedContentBackgroundColor
-		      CellTextColor = SystemColors.AlternateSelectedControlTextColor
+		      CellColor = RequiredBackgroundColor
+		      CellTextColor = RequiredTextColor
 		    ElseIf Excluded Then
-		      CellColor = SystemColors.SystemRedColor
-		      CellTextColor = SystemColors.AlternateSelectedControlTextColor
+		      CellColor = ExcludedBackgroundColor
+		      CellTextColor = ExcludedTextColor
 		    Else
-		      CellColor = SystemColors.UnemphasizedSelectedTextBackgroundColor
-		      CellTextColor = SystemColors.UnemphasizedSelectedTextColor
+		      CellColor = NeutralBackgroundColor
+		      CellTextColor = NeutralTextColor
 		    End If
 		    Clip.ForeColor = CellColor
 		    Clip.FillRoundRect(CellRect.Left - ContentArea.Left, CellRect.Top - ContentArea.Top, CellRect.Width, CellRect.Height, CellRect.Height, CellRect.Height)
@@ -178,6 +189,15 @@ Inherits ControlCanvas
 		  Dim Arr() As String
 		  Self.SetSelections(Arr, Arr)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function ColorsAreSimilar(Color1 As Color, Color2 As Color, Threshold As Double) As Boolean
+		  Dim Red As Double = (Color1.Red - Color2.Red)
+		  Dim Green As Double = (Color1.Green - Color2.Green)
+		  Dim Blue As Double = (Color1.Blue - Color2.Blue)
+		  Return ((Red * Red) + (Green * Green) + (Blue * Blue)) <= Threshold * Threshold
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
