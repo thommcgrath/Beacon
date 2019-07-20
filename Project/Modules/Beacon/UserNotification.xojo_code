@@ -2,15 +2,16 @@
 Protected Class UserNotification
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  
+		  Self.Severity = Beacon.UserNotification.Severities.Normal
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Message As Text)
+		Sub Constructor(Message As Text, Severity As Beacon.UserNotification.Severities = Beacon.UserNotification.Severities.Normal)
 		  Self.Constructor()
 		  Self.Message = Message
 		  Self.Timestamp = New Xojo.Core.Date(Xojo.Core.Date.Now.SecondsFrom1970, New Xojo.Core.TimeZone(0))
+		  Self.Severity = Severity
 		End Sub
 	#tag EndMethod
 
@@ -43,12 +44,22 @@ Protected Class UserNotification
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
+		Severity As Beacon.UserNotification.Severities
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
 		Timestamp As Xojo.Core.Date
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
 		UserData As Xojo.Core.Dictionary
 	#tag EndProperty
+
+
+	#tag Enum, Name = Severities, Type = Integer, Flags = &h0
+		Normal
+		Elevated
+	#tag EndEnum
 
 
 	#tag ViewBehavior
@@ -96,11 +107,6 @@ Protected Class UserNotification
 			Type="Text"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Identifier"
-			Group="Behavior"
-			Type="Text"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Read"
 			Group="Behavior"
 			Type="Boolean"
@@ -109,6 +115,11 @@ Protected Class UserNotification
 			Name="SecondaryMessage"
 			Group="Behavior"
 			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DoNotResurrect"
+			Group="Behavior"
+			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

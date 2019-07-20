@@ -1891,7 +1891,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Dim Notify As Boolean = Results.RecordCount = 0 Or Deleted Or Read
-		  Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification_id, message, secondary_message, moment, read, action_url, user_data, deleted) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.ToText, If(Notification.Read, 1, 0), Notification.ActionURL, If(Notification.UserData <> Nil, Xojo.Data.GenerateJSON(Notification.UserData), "{}"))
+		  Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification_id, message, secondary_message, moment, read, action_url, user_data, deleted) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.ToText, If(Notification.Read Or Notification.Severity = Beacon.UserNotification.Severities.Elevated, 1, 0), Notification.ActionURL, If(Notification.UserData <> Nil, Xojo.Data.GenerateJSON(Notification.UserData), "{}"))
 		  Self.Commit
 		  
 		  If Notify Then

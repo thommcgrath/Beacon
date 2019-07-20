@@ -80,8 +80,6 @@ Inherits ControlCanvas
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  G.ClearRect(0, 0, G.Width, G.Height)
-		  
 		  Dim ContentArea As REALbasic.Rect = Self.ContentArea
 		  G.ForeColor = SystemColors.SeparatorColor
 		  G.DrawRect(ContentArea.Left - 1, ContentArea.Top - 1, ContentArea.Width + 2, ContentArea.Height + 2)
@@ -99,6 +97,17 @@ Inherits ControlCanvas
 		  Dim CapHeight As Integer = Ceil(G.CapHeight)
 		  Dim CellHeight As Integer = CapHeight + (VerticalPadding * 2)
 		  Dim Clip As Graphics = G.Clip(ContentArea.Left, ContentArea.Top, ContentArea.Width, ContentArea.Height)
+		  
+		  Dim RequiredBackgroundColor As Color = SystemColors.SelectedContentBackgroundColor
+		  Dim RequiredTextColor As Color = SystemColors.AlternateSelectedControlTextColor
+		  Dim NeutralBackgroundColor As Color = SystemColors.UnemphasizedSelectedTextBackgroundColor
+		  Dim NeutralTextColor As Color = SystemColors.UnemphasizedSelectedTextColor
+		  Dim ExcludedBackgroundColor As Color = SystemColors.SystemRedColor
+		  Dim ExcludedTextColor As Color = SystemColors.AlternateSelectedControlTextColor
+		  
+		  If Self.ColorsAreSimilar(RequiredBackgroundColor, ExcludedBackgroundColor, 100) Then
+		    ExcludedBackgroundColor = SystemColors.SystemBrownColor
+		  End If
 		  
 		  For I As Integer = 0 To Self.mTags.Ubound
 		    Dim Tag As String = Self.mTags(I)
@@ -122,14 +131,14 @@ Inherits ControlCanvas
 		    
 		    Dim CellColor, CellTextColor As Color
 		    If Required Then
-		      CellColor = SystemColors.SelectedContentBackgroundColor
-		      CellTextColor = SystemColors.AlternateSelectedControlTextColor
+		      CellColor = RequiredBackgroundColor
+		      CellTextColor = RequiredTextColor
 		    ElseIf Excluded Then
-		      CellColor = SystemColors.SystemRedColor
-		      CellTextColor = SystemColors.AlternateSelectedControlTextColor
+		      CellColor = ExcludedBackgroundColor
+		      CellTextColor = ExcludedTextColor
 		    Else
-		      CellColor = SystemColors.UnemphasizedSelectedTextBackgroundColor
-		      CellTextColor = SystemColors.UnemphasizedSelectedTextColor
+		      CellColor = NeutralBackgroundColor
+		      CellTextColor = NeutralTextColor
 		    End If
 		    Clip.ForeColor = CellColor
 		    Clip.FillRoundRect(CellRect.Left - ContentArea.Left, CellRect.Top - ContentArea.Top, CellRect.Width, CellRect.Height, CellRect.Height, CellRect.Height)
@@ -148,7 +157,14 @@ Inherits ControlCanvas
 		  Next
 		  
 		  Self.mContentHeight = YPos + CellHeight + VerticalSpacing
-		  Self.mOverflowHeight = Max(Self.mContentHeight - ContentArea.Height, 0)
+		  Dim HeightDelta As Integer = Self.mContentHeight - ContentArea.Height
+		  Self.mOverflowHeight = Max(HeightDelta, 0)
+		  If HeightDelta <> 0 Then
+		    If Self.mRepaintKey <> "" Then
+		      CallLater.Cancel(Self.mRepaintKey)
+		    End If
+		    Self.mRepaintKey = CallLater.Schedule(1, AddressOf ResizeBy, HeightDelta)
+		  End If
 		  
 		  If Self.mOverflowHeight > 0 Then
 		    Dim TrackHeight As Integer = ContentArea.Height - 10  
@@ -178,6 +194,15 @@ Inherits ControlCanvas
 		  Dim Arr() As String
 		  Self.SetSelections(Arr, Arr)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function ColorsAreSimilar(Color1 As Color, Color2 As Color, Threshold As Double) As Boolean
+		  Dim Red As Double = (Color1.Red - Color2.Red)
+		  Dim Green As Double = (Color1.Green - Color2.Green)
+		  Dim Blue As Double = (Color1.Blue - Color2.Blue)
+		  Return ((Red * Red) + (Green * Green) + (Blue * Blue)) <= Threshold * Threshold
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -242,6 +267,16 @@ Inherits ControlCanvas
 		  Next
 		  Return Tags
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ResizeBy(Delta As Auto)
+		  Dim OriginalHeight As Integer = Self.Height
+		  RaiseEvent ShouldAdjustHeight(Delta)
+		  If Self.Height <> OriginalHeight Then
+		    Self.Invalidate()
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -397,6 +432,10 @@ Inherits ControlCanvas
 		Event Change()
 	#tag EndHook
 
+	#tag Hook, Flags = &h0
+		Event ShouldAdjustHeight(Delta As Integer)
+	#tag EndHook
+
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -444,6 +483,10 @@ Inherits ControlCanvas
 
 	#tag Property, Flags = &h21
 		Private mOverflowHeight As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRepaintKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
