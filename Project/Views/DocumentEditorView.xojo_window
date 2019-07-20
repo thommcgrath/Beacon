@@ -548,7 +548,7 @@ End
 		    Self.Progress = BeaconSubview.ProgressNone
 		  End If
 		  
-		  Dim Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save!")
+		  Dim Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save!", Beacon.UserNotification.Severities.Elevated)
 		  Notification.SecondaryMessage = Reason
 		  Notification.UserData = New Xojo.Core.Dictionary
 		  Notification.UserData.Value("DocumentID") = If(Sender.Document <> Nil, Sender.Document.DocumentID, "")
