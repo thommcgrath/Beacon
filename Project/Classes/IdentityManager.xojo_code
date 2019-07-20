@@ -86,7 +86,7 @@ Protected Class IdentityManager
 		    Catch Err As RuntimeException
 		      
 		    End Try
-		  ElseIf Response.HTTPStatus = 401 Then
+		  ElseIf Response.HTTPStatus = 401 Or Response.HTTPStatus = 403 Then
 		    // Need to get a new token
 		    Self.GetSessionToken()
 		  End If
