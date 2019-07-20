@@ -80,8 +80,6 @@ Inherits ControlCanvas
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  G.ClearRect(0, 0, G.Width, G.Height)
-		  
 		  Dim ContentArea As REALbasic.Rect = Self.ContentArea
 		  G.ForeColor = SystemColors.SeparatorColor
 		  G.DrawRect(ContentArea.Left - 1, ContentArea.Top - 1, ContentArea.Width + 2, ContentArea.Height + 2)
@@ -159,7 +157,14 @@ Inherits ControlCanvas
 		  Next
 		  
 		  Self.mContentHeight = YPos + CellHeight + VerticalSpacing
-		  Self.mOverflowHeight = Max(Self.mContentHeight - ContentArea.Height, 0)
+		  Dim HeightDelta As Integer = Self.mContentHeight - ContentArea.Height
+		  Self.mOverflowHeight = Max(HeightDelta, 0)
+		  If HeightDelta <> 0 Then
+		    If Self.mRepaintKey <> "" Then
+		      CallLater.Cancel(Self.mRepaintKey)
+		    End If
+		    Self.mRepaintKey = CallLater.Schedule(1, AddressOf ResizeBy, HeightDelta)
+		  End If
 		  
 		  If Self.mOverflowHeight > 0 Then
 		    Dim TrackHeight As Integer = ContentArea.Height - 10  
@@ -262,6 +267,16 @@ Inherits ControlCanvas
 		  Next
 		  Return Tags
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ResizeBy(Delta As Auto)
+		  Dim OriginalHeight As Integer = Self.Height
+		  RaiseEvent ShouldAdjustHeight(Delta)
+		  If Self.Height <> OriginalHeight Then
+		    Self.Invalidate()
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -417,6 +432,10 @@ Inherits ControlCanvas
 		Event Change()
 	#tag EndHook
 
+	#tag Hook, Flags = &h0
+		Event ShouldAdjustHeight(Delta As Integer)
+	#tag EndHook
+
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -464,6 +483,10 @@ Inherits ControlCanvas
 
 	#tag Property, Flags = &h21
 		Private mOverflowHeight As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRepaintKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

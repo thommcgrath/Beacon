@@ -512,6 +512,20 @@ End
 		  End If
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub ShouldAdjustHeight(Delta As Integer)
+		  Dim NewHeight As Integer = Max(Me.Height + Delta, (Self.PickerHelp.Top + Self.PickerHelp.Height) - Self.PickerLabel.Top)
+		  Delta = NewHeight - Me.Height
+		  Me.Height = NewHeight
+		  
+		  Self.MapLabel.Top = Self.MapLabel.Top + Delta
+		  For Each Check As Checkbox In Self.mMapCheckboxes
+		    If Check <> Nil Then
+		      Check.Top = Check.Top + Delta
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events MapCheckboxes
 	#tag Event
