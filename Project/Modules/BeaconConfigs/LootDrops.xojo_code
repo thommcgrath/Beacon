@@ -139,11 +139,8 @@ Implements Xojo.Core.Iterable
 		Function Issues(Document As Beacon.Document) As Beacon.Issue()
 		  Dim Issues() As Beacon.Issue
 		  Dim ConfigName As Text = "LootDrops"
-		  Dim DistinctEngrams As New Xojo.Core.Dictionary
 		  
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Source.GetDistinctEngrams(DistinctEngrams)
-		    
 		    If Not Document.SupportsLootSource(Source) Then
 		      Issues.Append(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " is not supported by the selected maps.", Source))
 		    End If
@@ -178,8 +175,10 @@ Implements Xojo.Core.Iterable
 		                
 		                If Option.Engram = Nil Then
 		                  Issues.Append(New Beacon.Issue(ConfigName, "The engram is missing for an option of an entry in " + Set.Label + " of loot source " + Source.Label + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
-		                ElseIf Document.Mods.IndexOf(Option.Engram.ModID) = -1 Then
+		                ElseIf Document.Mods.Count > 0 And Document.Mods.IndexOf(Option.Engram.ModID) = -1 Then
 		                  Issues.Append(New Beacon.Issue(ConfigName, Option.Engram.Label + " is provided by a mod that is currently disabled.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		                ElseIf Option.Engram.IsTagged("Generic") Or Option.Engram.IsTagged("Blueprint") Then
+		                  Issues.Append(New Beacon.Issue(ConfigName, Option.Engram.Label + " is a generic item intended for crafting recipes. It cannot spawn in a drop.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		                Else
 		                  Issues.Append(New Beacon.Issue(ConfigName, "Beacon does not know the blueprint for " + Option.Engram.ClassString + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		                End If
@@ -188,13 +187,6 @@ Implements Xojo.Core.Iterable
 		          Next
 		        End If
 		      Next
-		    End If
-		  Next
-		  
-		  For Each Entry As Xojo.Core.DictionaryEntry In DistinctEngrams
-		    Dim Engram As Beacon.Engram = Entry.Value
-		    If Engram.IsTagged("blueprint") Or Engram.IsTagged("generic") Then
-		      Issues.Append(New Beacon.Issue(ConfigName, "You cannot put '" + Engram.Label + "' in drops because it is not an actual item."))
 		    End If
 		  Next
 		  

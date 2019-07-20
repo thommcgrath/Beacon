@@ -175,18 +175,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub GetDistinctEngrams(Dict As Xojo.Core.Dictionary)
-		  If Dict = Nil Then
-		    Return
-		  End If
-		  
-		  For Each Set As Beacon.ItemSet In Self.mSets
-		    Set.GetDistinctEngrams(Dict)
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function GetIterator() As Xojo.Core.Iterator
 		  Return New Beacon.LootSourceIterator(Self)
 		End Function
