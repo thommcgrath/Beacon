@@ -141,10 +141,6 @@ Implements Xojo.Core.Iterable
 		  Dim ConfigName As Text = "LootDrops"
 		  
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    If Not Document.SupportsLootSource(Source) Then
-		      Issues.Append(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " is not supported by the selected maps.", Source))
-		    End If
-		    
 		    If Source.IsValid(Document) Then
 		      Continue
 		    End If
