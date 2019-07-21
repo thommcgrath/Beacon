@@ -271,11 +271,15 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h21
 		Private Sub ResizeBy(Delta As Auto)
-		  Dim OriginalHeight As Integer = Self.Height
-		  RaiseEvent ShouldAdjustHeight(Delta)
-		  If Self.Height <> OriginalHeight Then
-		    Self.Invalidate()
-		  End If
+		  Try
+		    Dim OriginalHeight As Integer = Self.Height
+		    RaiseEvent ShouldAdjustHeight(Delta)
+		    If Self.Height <> OriginalHeight Then
+		      Self.Invalidate()
+		    End If
+		  Catch Err As RuntimeException
+		    
+		  End Try
 		End Sub
 	#tag EndMethod
 

@@ -397,6 +397,8 @@ abstract class BeaconCommon {
 				break;
 			}
 			$prerelease .= $non_release_version;
+		} elseif ($non_release_version > 0) {
+			$prerelease = '.' . $non_release_version;
 		} else {
 			$prerelease = '';
 		}

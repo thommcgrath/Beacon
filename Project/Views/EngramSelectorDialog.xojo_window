@@ -704,6 +704,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ShouldAdjustHeight(Delta As Integer)
+		  If Me = Nil Then
+		    Return
+		  End If
+		  
 		  Me.Height = Me.Height + Delta
 		  
 		  Self.List.Height = Self.List.Height - Delta

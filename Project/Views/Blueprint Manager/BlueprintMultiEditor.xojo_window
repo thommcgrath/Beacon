@@ -514,6 +514,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ShouldAdjustHeight(Delta As Integer)
+		  If Me = Nil Then
+		    Return
+		  End If
+		  
 		  Dim NewHeight As Integer = Max(Me.Height + Delta, (Self.PickerHelp.Top + Self.PickerHelp.Height) - Self.PickerLabel.Top)
 		  Delta = NewHeight - Me.Height
 		  Me.Height = NewHeight

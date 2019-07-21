@@ -30,11 +30,15 @@ Implements Beacon.DocumentItem
 		  Self.mServerProfiles.Append(Profile.Clone)
 		  If Profile.IsConsole Then
 		    Dim SafeMods() As Text = Beacon.Data.ConsoleSafeMods
-		    For I As Integer = Self.mMods.Ubound DownTo 0
-		      If SafeMods.IndexOf(Self.mMods(I)) = -1 Then
-		        Self.mMods.Remove(I)
-		      End If
-		    Next
+		    If Self.mMods = Nil Or Self.mMods.Ubound = -1 Then
+		      Self.mMods = SafeMods
+		    Else
+		      For I As Integer = Self.mMods.Ubound DownTo 0
+		        If SafeMods.IndexOf(Self.mMods(I)) = -1 Then
+		          Self.mMods.Remove(I)
+		        End If
+		      Next
+		    End If
 		  End If
 		  Self.mModified = True
 		End Sub

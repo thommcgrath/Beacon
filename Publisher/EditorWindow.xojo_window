@@ -1126,7 +1126,7 @@ End
 	#tag Event
 		Sub TextChange()
 		  Dim Parser As New Regex
-		  Parser.SearchPattern = "^(\d+)\.(\d+)\.(\d+)(([a-z]+)(\d+))?$"
+		  Parser.SearchPattern = "^(\d+)\.(\d+)\.(\d+)(([a-z\.]+)(\d+))?$"
 		  
 		  Dim Matches As RegexMatch = Parser.Search(Me.Text.Trim)
 		  If Matches = Nil Then
@@ -1149,6 +1149,8 @@ End
 		      StageCode = 1
 		    Case "b"
 		      StageCode = 2
+		    Case "."
+		      StageCode = 3
 		    Else
 		      StageCode = 0
 		    End Select
