@@ -138,6 +138,7 @@ function ValidateCode(string $email_id, string $code, $key) {
 		if ($results->RecordCount() == 0) {
 			return false;
 		}
+		return true;
 	}
 }
 

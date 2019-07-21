@@ -112,6 +112,17 @@ End
 		  
 		  Select Case Notification.Name
 		  Case LocalData.Notification_NewAppNotification
+		    Try
+		      Dim UserNotification As Beacon.UserNotification = Notification.UserData
+		      If UserNotification.Severity = Beacon.UserNotification.Severities.Elevated Then
+		        Dim Dialog As New MessageDialog
+		        Dialog.Title = ""
+		        Dialog.Message = UserNotification.Message
+		        Dialog.Explanation = UserNotification.SecondaryMessage
+		        Call Dialog.ShowModalWithin(Self.TrueWindow)
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
 		    Self.RefreshNotifications()
 		  End Select
 		End Sub
@@ -219,7 +230,7 @@ End
 		Function UnreadCount() As Integer
 		  Dim Count As Integer
 		  For Each Notification As Beacon.UserNotification In Self.mNotifications
-		    If Not Notification.Read Then
+		    If Notification.Read = False Then
 		      Count = Count + 1
 		    End If
 		  Next

@@ -1,12 +1,13 @@
 #tag Class
 Protected Class Map
 	#tag Method, Flags = &h0
-		Sub Constructor(HumanName As Text, Identifier As Text, Mask As UInt64, DifficultyScale As Double, Official As Boolean)
+		Sub Constructor(HumanName As Text, Identifier As Text, Mask As UInt64, DifficultyScale As Double, Official As Boolean, ProvidedByModID As Text)
 		  Self.mName = HumanName
 		  Self.mIdentifier = Identifier
 		  Self.mMask = Mask
 		  Self.mDifficultyScale = DifficultyScale
 		  Self.mOfficial = Official
+		  Self.mProvidedByModID = ProvidedByModID
 		End Sub
 	#tag EndMethod
 
@@ -81,6 +82,12 @@ Protected Class Map
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ProvidedByModID() As Text
+		  Return Self.mProvidedByModID
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mDifficultyScale As Double
@@ -100,6 +107,10 @@ Protected Class Map
 
 	#tag Property, Flags = &h21
 		Private mOfficial As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProvidedByModID As Text
 	#tag EndProperty
 
 

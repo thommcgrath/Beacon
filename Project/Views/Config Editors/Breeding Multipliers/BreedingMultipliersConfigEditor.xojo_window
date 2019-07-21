@@ -667,7 +667,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       GridLinesHorizontal=   0
       GridLinesVertical=   0
       HasHeading      =   True
-      HeadingIndex    =   -1
+      HeadingIndex    =   0
       Height          =   93
       HelpTag         =   ""
       Hierarchical    =   False
@@ -1442,7 +1442,10 @@ End
 		Private Sub UpdateStats()
 		  Dim CuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period") * Self.Config(False).BabyCuddleIntervalMultiplier
 		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.TextList)
-		  Dim Index As Integer = Self.CreaturesList.ListIndex
+		  Dim SelectedClass As Text
+		  If CreaturesList.ListIndex > -1 Then
+		    SelectedClass = CreaturesList.RowTag(CreaturesList.ListIndex)
+		  End If
 		  Dim Position As Integer = Self.CreaturesList.ScrollPosition
 		  Self.CreaturesList.DeleteAllRows
 		  
@@ -1470,10 +1473,16 @@ End
 		    MaturePeriod = Beacon.SecondsToInterval(MatureSeconds)
 		    
 		    CreaturesList.AddRow(Creature.Label, Beacon.IntervalToString(IncubationPeriod), Beacon.IntervalToString(MaturePeriod), If(PerCuddle = 0, "Can't Imprint", Format(PerCuddle, "0%")), If(PerCuddle = 0, "", Format(MaxImprint, "0%")))
+		    CreaturesList.CellTag(CreaturesList.LastIndex, Self.ColumnIncubationTime) = IncubationSeconds
+		    CreaturesList.CellTag(CreaturesList.LastIndex, Self.ColumnMatureTime) = MatureSeconds
+		    CreaturesList.RowTag(CreaturesList.LastIndex) = Creature.ClassString
+		    If Creature.ClassString = SelectedClass Then
+		      CreaturesList.ListIndex = CreaturesList.LastIndex
+		    End If
 		  Next
 		  
-		  CreaturesList.ListIndex = Index
 		  CreaturesList.ScrollPosition = Position
+		  CreaturesList.Sort
 		  
 		  Self.ImprintPeriodPreviewField.Text = Beacon.IntervalToString(Beacon.SecondsToInterval(CuddlePeriod))
 		End Sub
@@ -1656,6 +1665,26 @@ End
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
 		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CreaturesList
+	#tag Event
+		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  If Column = Self.ColumnIncubationTime Or Column = Self.ColumnMatureTime Then
+		    Dim Period1 As UInt64 = Me.CellTag(Row1, Column)
+		    Dim Period2 As UInt64 = Me.CellTag(Row2, Column)
+		    If Period1 = Period2 Then
+		      Result = 0
+		    ElseIf Period1 > Period2 Then
+		      Result = 1
+		    Else
+		      Result = -1
+		    End If
+		    Return True
+		  Else
+		    Return False
+		  End If
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events Header

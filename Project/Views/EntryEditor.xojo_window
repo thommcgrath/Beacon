@@ -867,6 +867,17 @@ End
 		  Self.UpdateFilter
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub ShouldAdjustHeight(Delta As Integer)
+		  If Me = Nil Then
+		    Return
+		  End If
+		  
+		  Me.Height = Me.Height + Delta
+		  Self.EngramList.Height = Self.EngramList.Height - Delta
+		  Self.EngramList.Top = Self.EngramList.Top + Delta
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events EntryPropertiesEditor1
 	#tag Event

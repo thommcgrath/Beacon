@@ -299,16 +299,23 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function BuildVersion() As String
-		  Dim VersionString As String = Str(Self.MajorVersion, "0") + "." + Str(Self.MinorVersion, "0") + "." + Str(Self.BugVersion, "0")
+		  Dim VersionString As String = Str(Self.MajorVersion, "0") + "." + Str(Self.MinorVersion, "0")
+		  If Self.BugVersion > 0 Or (Self.StageCode = Application.Final And Self.NonReleaseVersion > 0) Then
+		    VersionString = VersionString + "." + Str(Self.BugVersion, "0")
+		  End If
 		  Select Case Self.StageCode
-		  Case 0
+		  Case Application.Development
 		    Return VersionString + "pa" + Str(Self.NonReleaseVersion, "0")
-		  Case 1
+		  Case Application.Alpha
 		    Return VersionString + "a" + Str(Self.NonReleaseVersion, "0")
-		  Case 2
+		  Case Application.Beta
 		    Return VersionString + "b" + Str(Self.NonReleaseVersion, "0")
 		  Else
-		    Return VersionString
+		    If Self.NonReleaseVersion <= 0 Then
+		      Return VersionString
+		    Else
+		      Return VersionString + "." + Str(Self.NonReleaseVersion, "0")
+		    End If
 		  End Select
 		End Function
 	#tag EndMethod

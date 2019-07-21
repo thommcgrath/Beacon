@@ -44,7 +44,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mMaxQuantity = 1
 		  Self.mMinQuality = Beacon.Qualities.Tier1
 		  Self.mMaxQuality = Beacon.Qualities.Tier3
-		  Self.mChanceToBeBlueprint = 1.0
+		  Self.mChanceToBeBlueprint = 0.25
 		  Self.mWeight = 250
 		  Self.mUniqueID = ""
 		End Sub
@@ -182,21 +182,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Keys.Value("EntryWeight") = Self.RawWeight / 1000
 		  Return Keys
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub GetDistinctEngrams(Dict As Xojo.Core.Dictionary)
-		  If Dict = Nil Then
-		    Return
-		  End If
-		  
-		  For Each Option As Beacon.SetEntryOption In Self.mOptions
-		    Dim Engram As Beacon.Engram = Option.Engram
-		    If Not Dict.HasKey(Engram.Path) Then
-		      Dict.Value(Engram.Path) = Engram
-		    End If
-		  Next
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

@@ -244,38 +244,52 @@ case 'POST':
 			} elseif ($current_status == BeaconDocumentMetadata::PUBLISH_STATUS_PRIVATE) {
 				$new_status = BeaconDocumentMetadata::PUBLISH_STATUS_REQUESTED;
 				
-				$obj = array(
-					'text' => 'Request to publish document',
-					'attachments' => array(
+				$attachment = array(
+					'title' => $document_title,
+					'text' => $document_description,
+					'fallback' => 'Unable to show response buttons.',
+					'callback_id' => 'publish_document:' . $document_id,
+					'actions' => array(
 						array(
-							'title' => $document_title,
-							'text' => $document_description,
-							'fallback' => 'Unable to show response buttons.',
-							'callback_id' => 'publish_document:' . $document_id,
-							'actions' => array(
-								array(
-									'name' => 'status',
-									'text' => 'Approve',
-									'type' => 'button',
-									'value' => BeaconDocumentMetadata::PUBLISH_STATUS_APPROVED,
-									'confirm' => array(
-										'text' => 'Are you sure you want to approve this document?',
-										'ok_text' => 'Approve'
-									)
-								),
-								array(
-									'name' => 'status',
-									'text' => 'Deny',
-									'type' => 'button',
-									'value' => BeaconDocumentMetadata::PUBLISH_STATUS_DENIED,
-									'confirm' => array(
-										'text' => 'Are you sure you want to reject this document?',
-										'ok_text' => 'Deny'
-									)
-								)
+							'name' => 'status',
+							'text' => 'Approve',
+							'type' => 'button',
+							'value' => BeaconDocumentMetadata::PUBLISH_STATUS_APPROVED,
+							'confirm' => array(
+								'text' => 'Are you sure you want to approve this document?',
+								'ok_text' => 'Approve'
+							)
+						),
+						array(
+							'name' => 'status',
+							'text' => 'Deny',
+							'type' => 'button',
+							'value' => BeaconDocumentMetadata::PUBLISH_STATUS_DENIED,
+							'confirm' => array(
+								'text' => 'Are you sure you want to reject this document?',
+								'ok_text' => 'Deny'
 							)
 						)
-					)
+					),
+					'fields' => array()
+				);
+				
+				$user = BeaconUser::GetByUserID(BeaconAPI::UserID());
+				if (is_null($user) === false) {
+					if ($user->IsAnonymous()) {
+						$username = 'Anonymous';
+					} else {
+						$username = $user->Username() . '#' . $user->Suffix();
+					}
+					$attachment['fields'][] = array(
+						'title' => 'Author',
+						'value' => $username
+					);
+				}
+				
+				$obj = array(
+					'text' => 'Request to publish document',
+					'attachments' => array($attachment)
 				);
 				BeaconCommon::PostSlackRaw(json_encode($obj));	
 			}

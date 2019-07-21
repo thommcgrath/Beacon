@@ -165,6 +165,10 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h21
 		Private Function LocalFile(RemotePath As String = "", Create As Boolean = True) As FolderItem
+		  If App.IdentityManager.CurrentIdentity = Nil Then
+		    Return Nil
+		  End If
+		  
 		  If RemotePath.Left(1) = "/" Then
 		    RemotePath = RemotePath.Mid(2)
 		  End If
@@ -281,6 +285,10 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h21
 		Private Sub UploadFileTo(LocalFile As FolderItem, RemotePath As String)
+		  If App.IdentityManager.CurrentIdentity = Nil Then
+		    Return
+		  End If
+		  
 		  Dim Stream As BinaryStream = BinaryStream.Open(LocalFile, False)
 		  Dim Contents As MemoryBlock = Stream.Read(Stream.Length)
 		  Stream.Close

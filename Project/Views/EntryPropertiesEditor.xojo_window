@@ -898,7 +898,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Setup(Entries() As Beacon.SetEntry)
-		  If Entries = Nil Then
+		  If Entries = Nil Or Entries.Ubound = -1 Then
 		    Self.Setup()
 		    Return
 		  End If

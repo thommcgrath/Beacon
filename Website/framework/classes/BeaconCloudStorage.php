@@ -192,7 +192,7 @@ abstract class BeaconCloudStorage {
 			$results = $database->Query('SELECT usercloud_queue.remote_path, usercloud_queue.request_method, usercloud.content_type FROM usercloud_queue LEFT JOIN usercloud ON (usercloud_queue.remote_path = usercloud.remote_path) WHERE usercloud_queue.hostname = $1 AND usercloud_queue.http_status IS NULL ORDER BY usercloud_queue.queue_time ASC LIMIT 1 FOR UPDATE OF usercloud_queue SKIP LOCKED;', $hostname);
 			if ($results->RecordCount() == 0) {
 				$database->Rollback();
-				return;
+				break;
 			}
 			
 			$remote_path = $results->Field('remote_path');
@@ -239,12 +239,18 @@ abstract class BeaconCloudStorage {
 				$database->Query('DELETE FROM usercloud_queue WHERE remote_path = $1 AND hostname = $2;', $remote_path, $hostname);
 			} else {
 				$database->Query('UPDATE usercloud_queue SET http_status = $3 WHERE remote_path = $1 AND hostname = $2;', $remote_path, $hostname, $http_status);
-				BeaconCommon::PostSlackMessage('Unable to ' . $request_method . ' ' . $remote_path . ', http status ' . $http_status);
+				if ($http_status != 403) {
+					BeaconCommon::PostSlackMessage('Unable to ' . $request_method . ' ' . $remote_path . ', http status ' . $http_status);
+				}
 			}
 			
 			$database->Commit();
 		}
 		curl_close($curl);
+		
+		$database->BeginTransaction();
+		$database->Query('UPDATE usercloud_queue SET http_status = NULL WHERE http_status = 403;');
+		$database->Commit();
 		
 		static::CleanupLocalCache(0);
 	}

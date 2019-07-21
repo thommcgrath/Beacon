@@ -702,6 +702,24 @@ End
 		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub ShouldAdjustHeight(Delta As Integer)
+		  If Me = Nil Then
+		    Return
+		  End If
+		  
+		  Me.Height = Me.Height + Delta
+		  
+		  Self.List.Height = Self.List.Height - Delta
+		  Self.List.Top = Self.List.Top + Delta
+		  Self.SelectedList.Top = Self.List.Top
+		  Self.SelectedList.Height = Self.List.Height
+		  
+		  Dim ToggleButtonsHeight As Integer = AddToSelectionsButton.Height + RemoveFromSelectionsButton.Height + 12
+		  Self.AddToSelectionsButton.Top = Self.SelectedList.Top + ((Self.SelectedList.Height - ToggleButtonsHeight) / 2)
+		  Self.RemoveFromSelectionsButton.Top = Self.AddToSelectionsButton.Top + Self.AddToSelectionsButton.Height + 12
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

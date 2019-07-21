@@ -79,6 +79,7 @@ Implements Beacon.Blueprint
 		  End If
 		  Engram.mPath = Path
 		  Engram.mObjectID = Beacon.CreateUUID(Xojo.Crypto.MD5(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Path.Lowercase)))
+		  Engram.mTags.Append("blueprintable")
 		  Return Engram
 		End Function
 	#tag EndMethod

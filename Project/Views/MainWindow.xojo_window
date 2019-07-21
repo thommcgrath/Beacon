@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationKit.Observer, NotificationKit.Receiver
+Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationKit.Observer,NotificationKit.Receiver
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
