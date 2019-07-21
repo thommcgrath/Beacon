@@ -150,13 +150,6 @@ Implements Beacon.DocumentItem
 		    Next
 		  End If
 		  
-		  If Dict.HasKey("Map") Then
-		    Doc.mMapCompatibility = Dict.Value("Map")
-		  ElseIf Dict.HasKey("MapPreference") Then
-		    Doc.mMapCompatibility = Dict.Value("MapPreference")
-		  Else
-		    Doc.mMapCompatibility = 0
-		  End If
 		  If Dict.HasKey("Mods") Then
 		    Dim Mods As Beacon.TextList = Beacon.TextList.FromAuto(Dict.Value("Mods"))
 		    If Mods <> Nil Then
@@ -167,6 +160,13 @@ Implements Beacon.DocumentItem
 		    If ConsoleModsOnly Then
 		      Doc.mMods = Beacon.Data.ConsoleSafeMods()
 		    End If
+		  End If
+		  If Dict.HasKey("Map") Then
+		    Doc.MapCompatibility = Dict.Value("Map")
+		  ElseIf Dict.HasKey("MapPreference") Then
+		    Doc.MapCompatibility = Dict.Value("MapPreference")
+		  Else
+		    Doc.MapCompatibility = 0
 		  End If
 		  If Dict.HasKey("UseCompression") Then
 		    Doc.UseCompression = Dict.Value("UseCompression")
@@ -869,8 +869,18 @@ Implements Beacon.DocumentItem
 		#tag Setter
 			Set
 			  Dim Limit As UInt64 = Beacon.Maps.All.Mask
-			  Self.mMapCompatibility = Value And Limit
-			  Self.mModified = True
+			  Value = Value And Limit
+			  If Self.mMapCompatibility <> Value Then
+			    If Self.mMods <> Nil And Self.mMods.Count > 0 Then
+			      Dim Maps() As Beacon.Map = Beacon.Maps.ForMask(Value)
+			      For Each Map As Beacon.Map In Maps
+			        Self.mMods.Append(Map.ProvidedByModID)
+			      Next
+			    End If
+			    
+			    Self.mMapCompatibility = Value
+			    Self.mModified = True
+			  End If
 			End Set
 		#tag EndSetter
 		MapCompatibility As UInt64

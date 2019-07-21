@@ -138,6 +138,12 @@ Inherits BeaconSubview
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub SetupUI()
+		  RaiseEvent SetupUI
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event EnableMenuItems()
