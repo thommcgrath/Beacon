@@ -2,7 +2,7 @@
 Protected Module Maps
 	#tag Method, Flags = &h1
 		Protected Function Aberration() As Beacon.Map
-		  Return New Beacon.Map("Aberration", "Aberration_P", 16, 4.0, True)
+		  Return New Beacon.Map("Aberration", "Aberration_P", 16, 4.0, True, "38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8")
 		End Function
 	#tag EndMethod
 
@@ -23,7 +23,7 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Function Extinction() As Beacon.Map
-		  Return New Beacon.Map("Extinction", "Extinction", 32, 4.0, True)
+		  Return New Beacon.Map("Extinction", "Extinction", 32, 4.0, True, "687cce7c-f1c4-440d-9bea-bd80f2717e2b")
 		End Function
 	#tag EndMethod
 
@@ -92,31 +92,31 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Function Ragnarok() As Beacon.Map
-		  Return New Beacon.Map("Ragnarok", "Ragnarok", 8, 5.0, False)
+		  Return New Beacon.Map("Ragnarok", "Ragnarok", 8, 5.0, False, "d23706bb-9875-46f4-b2aa-c137516aa65f")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function ScorchedEarth() As Beacon.Map
-		  Return New Beacon.Map("Scorched Earth", "ScorchedEarth_P", 2, 4.0, True)
+		  Return New Beacon.Map("Scorched Earth", "ScorchedEarth_P", 2, 4.0, True, "55dd6a68-7041-46aa-9405-9adc5ae1825f")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function TheCenter() As Beacon.Map
-		  Return New Beacon.Map("The Center", "TheCenter", 4, 5.0, False)
+		  Return New Beacon.Map("The Center", "TheCenter", 4, 5.0, False, "4dd9a0a5-add5-439c-9e80-103c6197d620")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function TheIsland() As Beacon.Map
-		  Return New Beacon.Map("The Island", "TheIsland", 1, 4.0, True)
+		  Return New Beacon.Map("The Island", "TheIsland", 1, 4.0, True, "30bbab29-44b2-4f4b-a373-6d4740d9d3b5")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function Valguero() As Beacon.Map
-		  Return New Beacon.Map("Valguero", "Valguero_P", 64, 5.0, False)
+		  Return New Beacon.Map("Valguero", "Valguero_P", 64, 5.0, False, "c9e5d408-078d-4a30-b15c-ae28be7b8c0b")
 		End Function
 	#tag EndMethod
 
