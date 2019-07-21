@@ -848,11 +848,11 @@ End
 		  Dim GameIniValues As New Dictionary
 		  Dim GameUserSettingsIniValues As New Dictionary
 		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
-		  Dim Profile As New Beacon.GenericServerProfile(Document.Title, Beacon.Maps.All.Mask)
+		  Dim GenericProfile As New Beacon.GenericServerProfile(Document.Title, Beacon.Maps.All.Mask)
 		  Dim Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  For Each Config As Beacon.ConfigGroup In Configs
-		    Beacon.ConfigValue.FillConfigDict(GameIniValues, Config.GameIniValues(Document, Identity, Profile))
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, Config.GameUserSettingsIniValues(Document, Identity, Profile))
+		    Beacon.ConfigValue.FillConfigDict(GameIniValues, Config.GameIniValues(Document, Identity, GenericProfile))
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, Config.GameUserSettingsIniValues(Document, Identity, GenericProfile))
 		  Next
 		  
 		  Dim CustomContent As New BeaconConfigs.CustomContent
