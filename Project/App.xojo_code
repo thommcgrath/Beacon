@@ -460,10 +460,6 @@ Implements NotificationKit.Receiver
 		    Return False
 		  End If
 		  
-		  If Beacon.OAuth2Client.HandleURL(URL.ToText) Then
-		    Return True
-		  End If
-		  
 		  If URL.Left(7) = "action/" Then
 		    Dim Instructions As String = Mid(URL, 8)
 		    Dim ParamsPos As Integer = InStr(Instructions, "?") - 1

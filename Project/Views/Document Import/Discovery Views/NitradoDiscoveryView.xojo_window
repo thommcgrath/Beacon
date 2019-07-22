@@ -456,6 +456,10 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mOAuthWindow As OAuthAuthorizationWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSelectedServers As Xojo.Core.Dictionary
 	#tag EndProperty
 
@@ -524,6 +528,30 @@ End
 		Sub AuthenticationError()
 		  Self.ShowAlert("Unable to communicate with Nitrado", "Sorry, the Nitrado API is not available at this time.")
 		  Self.ShouldCancel()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function StartAuthentication(URL As String, Provider As String) As Boolean
+		  If Not Self.ShowConfirm("Open your browser to authorize with " + Provider + "?", "To continue discovering servers, you must authorize " + Provider + " to allow Beacon to access your servers.", "Continue", "Cancel") Then
+		    Return False
+		  End If
+		  
+		  ShowURL(URL)
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub DismissWaitingWindow()
+		  If Self.mOAuthWindow <> Nil Then
+		    Self.mOAuthWindow.Close
+		    Self.mOAuthWindow = Nil
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShowWaitingWindow()
+		  Self.mOAuthWindow = New OAuthAuthorizationWindow(Me)
+		  Self.mOAuthWindow.Show()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

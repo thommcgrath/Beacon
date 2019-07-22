@@ -360,6 +360,7 @@ MultiImage=IconToolbarSave;Icons/IconToolbarSave.xojo_image;&h0000000010FDC7FF;&
 MultiImage=IconToolbarRevert;Icons/IconToolbarRevert.xojo_image;&h0000000060A9F7FF;&h0000000007F977FF;false
 MultiImage=IconToolbarCopied;Icons/IconToolbarCopied.xojo_image;&h0000000023AA0FFF;&h0000000007F977FF;false
 Window=BlueprintMultiEditor;Views/Blueprint Manager/BlueprintMultiEditor.xojo_window;&h00000000411FDFFF;&h00000000027EF7FF;false
+Window=OAuthAuthorizationWindow;Views/OAuthAuthorizationWindow.xojo_window;&h000000006037BFFF;&h0000000008A387FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=2

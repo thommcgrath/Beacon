@@ -434,6 +434,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mOAuthWindow As OAuthAuthorizationWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mProfile As Beacon.NitradoServerProfile
 	#tag EndProperty
 
@@ -445,6 +449,30 @@ End
 		Sub Authenticated()
 		  Self.mDocument.OAuthData("Nitrado") = Me.AuthData
 		  Self.RefreshServerStatus()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function StartAuthentication(URL As String, Provider As String) As Boolean
+		  If Not Self.ShowConfirm("You must reauthorize " + Provider + " to allow Beacon to access your servers.", "The authorization tokens expires. If it has been a while since you've deployed, this can happen.", "Continue", "Cancel") Then
+		    Return False
+		  End If
+		  
+		  ShowURL(URL)
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub DismissWaitingWindow()
+		  If Self.mOAuthWindow <> Nil Then
+		    Self.mOAuthWindow.Close
+		    Self.mOAuthWindow = Nil
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShowWaitingWindow()
+		  Self.mOAuthWindow = New OAuthAuthorizationWindow(Me)
+		  Self.mOAuthWindow.Show()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
