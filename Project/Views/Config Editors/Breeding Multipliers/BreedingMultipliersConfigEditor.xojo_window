@@ -1463,16 +1463,16 @@ End
 		    Dim MatureSeconds As UInt64 = Beacon.IntervalToSeconds(MaturePeriod) / MatureMultiplier
 		    
 		    Dim MaxCuddles As Integer = Floor(MatureSeconds / CuddlePeriod)
-		    Dim PerCuddle As Double = CuddlePeriod / MatureSeconds
-		    If PerCuddle > 1.0 Then
-		      PerCuddle = 0
+		    Dim PerCuddle As Double = 0
+		    If MaxCuddles > 0 Then
+		       PerCuddle = 1 / MaxCuddles
 		    End If
 		    Dim MaxImprint As Double = MaxCuddles * PerCuddle
 		    
 		    IncubationPeriod = Beacon.SecondsToInterval(IncubationSeconds)
 		    MaturePeriod = Beacon.SecondsToInterval(MatureSeconds)
 		    
-		    CreaturesList.AddRow(Creature.Label, Beacon.IntervalToString(IncubationPeriod), Beacon.IntervalToString(MaturePeriod), If(PerCuddle = 0, "Can't Imprint", Format(PerCuddle, "0%")), If(PerCuddle = 0, "", Format(MaxImprint, "0%")))
+		    CreaturesList.AddRow(Creature.Label, Beacon.IntervalToString(IncubationPeriod), Beacon.IntervalToString(MaturePeriod), If(MaxCuddles = 0, "Can't Imprint", Format(PerCuddle, "0%")), If(PerCuddle = 0, "", Format(MaxImprint, "0%")))
 		    CreaturesList.CellTag(CreaturesList.LastIndex, Self.ColumnIncubationTime) = IncubationSeconds
 		    CreaturesList.CellTag(CreaturesList.LastIndex, Self.ColumnMatureTime) = MatureSeconds
 		    CreaturesList.RowTag(CreaturesList.LastIndex) = Creature.ClassString

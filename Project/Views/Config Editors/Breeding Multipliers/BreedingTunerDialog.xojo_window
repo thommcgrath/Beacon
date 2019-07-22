@@ -84,7 +84,7 @@ Begin BeaconDialog BreedingTunerDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Choose an imprinting threshold. A higher value will require a shorter imprint interval. Beacon will try to compute a multiplier value that will allow at least the desired imprinting percent."
+      Text            =   "Choose the creatures that are important for hitting 100% imprint, and Beacon will compute the best imprint period multiplier."
       TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -95,49 +95,6 @@ Begin BeaconDialog BreedingTunerDialog
       Underline       =   False
       Visible         =   True
       Width           =   560
-   End
-   Begin UITweaks.ResizedTextField ThresholdField
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   200
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "90%"
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   100
-      Transparent     =   False
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   70
    End
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
@@ -178,7 +135,7 @@ Begin BeaconDialog BreedingTunerDialog
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
-      Enabled         =   True
+      Enabled         =   False
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -221,7 +178,7 @@ Begin BeaconDialog BreedingTunerDialog
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   214
+      Height          =   216
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -248,7 +205,7 @@ Begin BeaconDialog BreedingTunerDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   134
+      Top             =   132
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -256,41 +213,6 @@ Begin BeaconDialog BreedingTunerDialog
       Width           =   560
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
-   End
-   Begin UITweaks.ResizedLabel ThresholdLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Min Total Imprint Percent:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   100
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   168
    End
    Begin UITweaks.ResizedPushButton MajorCreaturesButton
       AutoDeactivate  =   True
@@ -305,7 +227,7 @@ Begin BeaconDialog BreedingTunerDialog
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   451
+      Left            =   236
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -318,7 +240,7 @@ Begin BeaconDialog BreedingTunerDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   101
+      Top             =   100
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -337,7 +259,7 @@ Begin BeaconDialog BreedingTunerDialog
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   310
+      Left            =   95
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -350,7 +272,39 @@ Begin BeaconDialog BreedingTunerDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   101
+      Top             =   100
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   129
+   End
+   Begin UITweaks.ResizedPushButton ClearCreaturesButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   True
+      Caption         =   "Clear Creatures"
+      Default         =   False
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   377
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   100
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -374,7 +328,6 @@ End
 		    Self.CreaturesList.RowTag(Self.CreaturesList.LastIndex) = Creature
 		  Next
 		  
-		  Self.ThresholdField.Text = Format(Preferences.BreedingTunerThreshold, "0%")
 		  Self.CheckCreatures(Preferences.BreedingTunerCreatures)
 		End Sub
 	#tag EndEvent
@@ -401,6 +354,16 @@ End
 		  Self.mAutoCheckingCreatures = False
 		  
 		  Self.mLastCheckedList = List
+		  Self.CheckEnabled()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CheckEnabled()
+		  Dim Enabled As Boolean = Self.mLastCheckedList <> ""
+		  If Self.ActionButton.Enabled <> Enabled Then
+		    Self.ActionButton.Enabled = Enabled
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -465,11 +428,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim Threshold As Double = CDbl(Self.ThresholdField.Text) / 100
-		  If Threshold = 0 Then
-		    Beep
-		    Return
-		  End If
+		  Const Threshold = 0.95
 		  
 		  Dim Creatures() As Beacon.Creature
 		  For I As Integer = 0 To Self.CreaturesList.ListCount - 1
@@ -501,9 +460,9 @@ End
 		      Dim MaturePeriod As Xojo.Core.DateInterval = Creature.MatureTime
 		      Dim MatureSeconds As UInt64 = Beacon.IntervalToSeconds(MaturePeriod) / Self.mMatureSpeedMultiplier
 		      Dim MaxCuddles As Integer = Floor(MatureSeconds / CuddlePeriod)
-		      Dim PerCuddle As Double = CuddlePeriod / MatureSeconds
-		      If PerCuddle > 1.0 Then
-		        PerCuddle = 0
+		      Dim PerCuddle As Double = 0
+		      If MaxCuddles > 0 Then
+		        PerCuddle = 1 / MaxCuddles
 		      End If
 		      Dim MaxImprint As Double = MaxCuddles * PerCuddle
 		      If MaxImprint < Threshold Then
@@ -520,7 +479,6 @@ End
 		    Return
 		  End If
 		  
-		  Preferences.BreedingTunerThreshold = Threshold
 		  Preferences.BreedingTunerCreatures = Self.mLastCheckedList.ToText
 		  Self.mChosenMultiplier = ImprintMultiplier
 		  Self.Hide
@@ -543,6 +501,7 @@ End
 		    End If
 		  Next
 		  Self.mLastCheckedList = Classes.Join(",")
+		  Self.CheckEnabled()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -557,6 +516,13 @@ End
 	#tag Event
 		Sub Action()
 		  Self.CheckCreatures("*")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ClearCreaturesButton
+	#tag Event
+		Sub Action()
+		  Self.CheckCreatures("")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
