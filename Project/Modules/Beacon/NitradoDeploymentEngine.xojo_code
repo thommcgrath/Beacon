@@ -199,22 +199,23 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, True) // Yes, allow lossy here
-		    Dim Lines() As Text = TextContent.ReplaceLineEndings(Text.FromUnicodeCodepoint(10)).Split(Text.FromUnicodeCodepoint(10))
+		    Dim EOL As String = Encodings.ASCII.Chr(10)
+		    Dim StringContent As String = Beacon.ConvertMemoryBlock(Content)
+		    Dim Lines() As String = ReplaceLineEndings(StringContent, EOL).Split(EOL)
 		    Dim TimestampFound As Boolean
 		    For I As Integer = Lines.Ubound DownTo 0
-		      Dim Line As Text = Lines(I)
+		      Dim Line As String = Lines(I)
 		      If Line.IndexOf("Log file closed") = -1 Then
 		        Continue
 		      End If
 		      
-		      Dim Year As Integer = Integer.FromText(Line.Mid(1, 4))
-		      Dim Month As Integer = Integer.FromText(Line.Mid(6, 2))
-		      Dim Day As Integer = Integer.FromText(Line.Mid(9, 2))
-		      Dim Hour As Integer = Integer.FromText(Line.Mid(12, 2))
-		      Dim Minute As Integer = Integer.FromText(Line.Mid(15, 2))
-		      Dim Second As Integer = Integer.FromText(Line.Mid(18, 2))
-		      Dim Nanosecond As Integer = (Integer.FromText(Line.Mid(21, 3)) / 1000) * 1000000000
+		      Dim Year As Integer = Val(Line.SubString(1, 4))
+		      Dim Month As Integer = Val(Line.SubString(6, 2))
+		      Dim Day As Integer = Val(Line.SubString(9, 2))
+		      Dim Hour As Integer = Val(Line.SubString(12, 2))
+		      Dim Minute As Integer = Val(Line.SubString(15, 2))
+		      Dim Second As Integer = Val(Line.SubString(18, 2))
+		      Dim Nanosecond As Integer = (Val(Line.SubString(21, 3)) / 1000) * 1000000000
 		      
 		      Self.mServerStopTime = New Xojo.Core.Date(Year, Month, Day, Hour, Minute, Second, Nanosecond, New Xojo.Core.TimeZone(0))
 		      TimestampFound = True
