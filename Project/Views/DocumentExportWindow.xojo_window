@@ -428,7 +428,6 @@ Begin BeaconDialog DocumentExportWindow
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
-      WithMarkup      =   False
    End
    Begin Beacon.Rewriter GameUserSettingsRewriter
       Index           =   -2147483648
@@ -437,7 +436,6 @@ Begin BeaconDialog DocumentExportWindow
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
-      WithMarkup      =   False
    End
    Begin Beacon.Rewriter FileRewriter
       Index           =   -2147483648
@@ -446,7 +444,6 @@ Begin BeaconDialog DocumentExportWindow
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
-      WithMarkup      =   False
    End
    Begin Beacon.Rewriter ClipboardRewriter
       Index           =   -2147483648
@@ -455,12 +452,21 @@ Begin BeaconDialog DocumentExportWindow
       Scope           =   2
       StackSize       =   0
       TabPanelIndex   =   0
-      WithMarkup      =   False
    End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Close()
+		  Self.ClipboardRewriter.Cancel
+		  Self.FileRewriter.Cancel
+		  Self.GameIniRewriter.Cancel
+		  Self.GameUserSettingsRewriter.Cancel
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h21
 		Private Sub CheckButtons()
 		  Dim Rewriting As Boolean = Self.IsRewriting

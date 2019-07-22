@@ -4,15 +4,28 @@ Inherits Global.Thread
 	#tag Event
 		Sub Run()
 		  Self.mFinished = False
-		  Self.mTriggers.Append(CallLater.Schedule(1, AddressOf TriggerStarted))
+		  Self.mTriggers.Append(CallLater.Schedule(1, WeakAddressOf TriggerStarted))
 		  Dim Errored As Boolean
 		  Self.mUpdatedContent = Self.Rewrite(Self.mInitialContent, Self.mMode, Self.mDocument, Self.mIdentity, If(Self.mWithMarkup, Self.mDocument.TrustKey, ""), Self.mProfile, Errored)
 		  Self.mFinished = True
 		  Self.mErrored = Errored
-		  Self.mTriggers.Append(CallLater.Schedule(1, AddressOf TriggerFinished))
+		  Self.mTriggers.Append(CallLater.Schedule(1, WeakAddressOf TriggerFinished))
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h0
+		Sub Cancel()
+		  If Self.State <> Thread.NotRunning Then
+		    Self.Kill
+		  End If
+		  
+		  For I As Integer = Self.mTriggers.Ubound DownTo 0
+		    CallLater.Cancel(Self.mTriggers(I))
+		    Self.mTriggers.Remove(I)
+		  Next
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
@@ -472,11 +485,6 @@ Inherits Global.Thread
 			Group="Behavior"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mWithMarkup"
-			Group="Behavior"
-			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
