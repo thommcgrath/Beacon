@@ -289,7 +289,7 @@ End
 		Sub Open()
 		  Self.Auth.Provider = Beacon.OAuth2Client.ProviderNitrado
 		  Self.Auth.AuthData = Self.mDocument.OAuthData("Nitrado")
-		  Self.Auth.Authenticate
+		  Self.Auth.Authenticate(App.IdentityManager.CurrentIdentity)
 		  
 		  Self.Controls.Caption = Self.mProfile.Name
 		  

@@ -37,7 +37,9 @@ Protected Class OAuth2Client
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Authenticate(Force As Boolean = False)
+		Sub Authenticate(Identity As Beacon.Identity, Force As Boolean = False)
+		  Self.mIdentity = Identity
+		  
 		  If Force = False And Self.IsAuthenticated Then
 		    RaiseEvent Authenticated()
 		    Return
@@ -127,7 +129,7 @@ Protected Class OAuth2Client
 
 	#tag Method, Flags = &h21
 		Private Function AuthURL() As Text
-		  Return Beacon.WebURL("/oauth/").Replace("https://", "https://api.")
+		  Return Beacon.WebURL("/account/oauth/")
 		End Function
 	#tag EndMethod
 
@@ -210,13 +212,14 @@ Protected Class OAuth2Client
 		  Dim Ref As Xojo.Core.WeakRef = Xojo.Core.WeakRef.Create(Self)
 		  Self.References.Value(Self.mRequestID) = Ref
 		  
-		  ShowURL(URL + "&requestid=" + Beacon.EncodeURLComponent(Self.mRequestID))
+		  Dim PublicKey As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Self.mIdentity.PublicKey)
+		  ShowURL(URL + "&requestid=" + Beacon.EncodeURLComponent(Self.mRequestID) + "&pubkey=" + Beacon.EncodeURLComponent(PublicKey))
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function RedirectURI() As Text
-		  Return Self.AuthURL() + "callback.php"
+		  Return Self.AuthURL() + "complete.php"
 		End Function
 	#tag EndMethod
 
@@ -274,6 +277,10 @@ Protected Class OAuth2Client
 
 	#tag Property, Flags = &h21
 		Private mExpiration As Xojo.Core.Date
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIdentity As Beacon.Identity
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

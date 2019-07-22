@@ -518,7 +518,7 @@ End
 		  Self.Auth.AuthData = Self.mDocument.OAuthData(Provider)
 		  
 		  Self.mCurrentProvider = Provider
-		  Self.Auth.Authenticate()
+		  Self.Auth.Authenticate(App.IdentityManager.CurrentIdentity)
 		End Sub
 	#tag EndMethod
 

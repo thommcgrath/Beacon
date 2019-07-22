@@ -530,7 +530,7 @@ End
 #tag Events LookupStartTimer
 	#tag Event
 		Sub Action()
-		  Self.AuthClient.Authenticate()
+		  Self.AuthClient.Authenticate(App.IdentityManager.CurrentIdentity)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
