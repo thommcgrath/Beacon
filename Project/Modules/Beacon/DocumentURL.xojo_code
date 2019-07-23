@@ -8,9 +8,9 @@ Protected Class DocumentURL
 		      // Try as Xojo SaveInfo
 		      Try
 		        Dim StringValue As String = URL
-		        Dim File As Global.FolderItem = Volume(0).GetRelative(DecodeBase64(StringValue))
+		        Dim File As FolderItem = Volume(0).GetRelative(DecodeBase64(StringValue))
 		        If File <> Nil Then
-		          URL = URLForFile(File)
+		          URL = URLForFile(New BookmarkedFolderItem(File))
 		          Pos = URL.IndexOf("://")
 		        End If
 		      Catch Err As RuntimeException
@@ -180,19 +180,19 @@ Protected Class DocumentURL
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function URLForFile(File As Beacon.FolderItem) As Beacon.DocumentURL
-		  Dim Path As Text = File.URLPath
+		Shared Function URLForFile(File As BookmarkedFolderItem) As Beacon.DocumentURL
+		  Dim Path As String = File.URLPath
 		  #if TargetMacOS
-		    Dim SaveInfo As Text = File.SaveInfo
+		    Dim SaveInfo As String = BookmarkedFolderItem(File).SaveInfo
 		    If SaveInfo <> "" Then
 		      If Path.IndexOf("?") = -1 Then
-		        Path = Path + "?saveinfo=" + Beacon.EncodeURLComponent(SaveInfo)
+		        Path = Path + "?saveinfo=" + SaveInfo
 		      Else
-		        Path = Path + "&saveinfo=" + Beacon.EncodeURLComponent(SaveInfo)
+		        Path = Path + "&saveinfo=" + SaveInfo
 		      End If
 		    End If
 		  #endif
-		  Return Path
+		  Return New Beacon.DocumentURL(Path.ToText)
 		End Function
 	#tag EndMethod
 

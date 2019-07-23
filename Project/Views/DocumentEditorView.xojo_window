@@ -357,7 +357,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim File As FolderItem = Self.AutosaveFile(True)
+		  Dim File As BookmarkedFolderItem = Self.AutosaveFile(True)
 		  If File <> Nil And Self.mController.SaveACopy(Beacon.DocumentURL.URLForFile(File)) <> Nil Then
 		    Self.AutosaveTimer.Reset
 		  End If
@@ -365,7 +365,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function AutosaveFile(CreateFolder As Boolean = False) As FolderItem
+		Private Function AutosaveFile(CreateFolder As Boolean = False) As BookmarkedFolderItem
 		  If Self.Document = Nil Then
 		    Return Nil
 		  End If
@@ -375,7 +375,7 @@ End
 		    If Folder = Nil Then
 		      Return Nil
 		    End If
-		    Self.mAutosaveFile = Folder.Child(Self.Document.DocumentID + BeaconFileTypes.BeaconDocument.PrimaryExtension)
+		    Self.mAutosaveFile = New BookmarkedFolderItem(Folder.Child(Self.Document.DocumentID + BeaconFileTypes.BeaconDocument.PrimaryExtension))
 		  End If
 		  
 		  Return Self.mAutosaveFile
@@ -685,7 +685,7 @@ End
 		      End If
 		      Self.Document.Title = Filename
 		    End If
-		    Self.mController.SaveAs(Beacon.DocumentURL.URLForFile(File))
+		    Self.mController.SaveAs(Beacon.DocumentURL.URLForFile(New BookmarkedFolderItem(File)))
 		    Self.Title = Self.mController.Name
 		    Self.ToolbarCaption = Self.mController.Name
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
@@ -781,7 +781,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mAutosaveFile As FolderItem
+		Private mAutosaveFile As BookmarkedFolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

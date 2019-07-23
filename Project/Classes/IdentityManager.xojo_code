@@ -102,7 +102,7 @@ Protected Class IdentityManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(File As Beacon.FolderItem)
+		Sub Constructor(File As FolderItem)
 		  Self.mFile = File
 		  
 		  If Self.mFile = Nil Then
@@ -303,7 +303,7 @@ Protected Class IdentityManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mFile As Beacon.FolderItem
+		Private mFile As FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -157,14 +157,14 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Protected Function ConvertMemoryBlock(Source As Global.MemoryBlock) As Xojo.Core.MemoryBlock
+		Attributes( Deprecated = "MemoryBlock.Convert" ) Protected Function ConvertMemoryBlock(Source As Global.MemoryBlock) As Xojo.Core.MemoryBlock
 		  Dim Temp As New Xojo.Core.MemoryBlock(Source)
 		  Return Temp.Left(Source.Size)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Protected Function ConvertMemoryBlock(Source As Xojo.Core.MemoryBlock) As Global.MemoryBlock
+		Attributes( Deprecated = "MemoryBlock.Convert" ) Protected Function ConvertMemoryBlock(Source As Xojo.Core.MemoryBlock) As Global.MemoryBlock
 		  Return CType(Source.Data, Global.MemoryBlock).StringValue(0, Source.Size)
 		End Function
 	#tag EndMethod
@@ -291,7 +291,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function DecodeBase64(Source As Text) As Xojo.Core.MemoryBlock
+		Attributes( Deprecated = "DecodeBase64" ) Protected Function DecodeBase64(Source As Text) As Xojo.Core.MemoryBlock
 		  #if TargetiOS
 		    
 		  #else
@@ -304,7 +304,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function DecodeHex(Source As Text) As Xojo.Core.MemoryBlock
+		Attributes( Deprecated = "DecodeHex" ) Protected Function DecodeHex(Source As Text) As Xojo.Core.MemoryBlock
 		  #if TargetiOS
 		    Dim Mem As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Source)
 		    Dim Size As UInt64 = Mem.Size\2-1
@@ -326,7 +326,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function DecodeURLComponent(Value As Text) As Text
+		Attributes( Deprecated = "DecodeURLComponent" ) Protected Function DecodeURLComponent(Value As Text) As Text
 		  #if TargetiOS
 		    Dim Chars(), HexChars() As Text
 		    Dim HexMode, UnicodeMode As Boolean
@@ -424,7 +424,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function EncodeBase64(Source As Text, Encoding As Xojo.Core.TextEncoding) As Text
+		Attributes( Deprecated = "EncodeBase64" ) Protected Function EncodeBase64(Source As Text, Encoding As Xojo.Core.TextEncoding) As Text
 		  Dim Bytes As Xojo.Core.MemoryBlock = Encoding.ConvertTextToData(Source)
 		  Return Beacon.EncodeBase64(Bytes)
 		  
@@ -432,7 +432,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function EncodeBase64(Source As Xojo.Core.MemoryBlock) As Text
+		Attributes( Deprecated = "EncodeBase64" ) Protected Function EncodeBase64(Source As Xojo.Core.MemoryBlock) As Text
 		  #if TargetiOS
 		    Dim Chars As Text = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 		    
@@ -476,13 +476,13 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Protected Function EncodeHex(Block As Global.MemoryBlock) As Text
+		Attributes( Deprecated = "EncodeBase64" ) Protected Function EncodeHex(Block As Global.MemoryBlock) As Text
 		  Return REALbasic.EncodeHex(Block).ToText
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function EncodeHex(Value As Text, Encoding As Xojo.Core.TextEncoding = Nil) As Text
+		Attributes( Deprecated = "EncodeHex" ) Protected Function EncodeHex(Value As Text, Encoding As Xojo.Core.TextEncoding = Nil) As Text
 		  If Encoding = Nil Then
 		    Encoding = Xojo.Core.TextEncoding.UTF8
 		  End If
@@ -493,7 +493,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function EncodeHex(Block As Xojo.Core.MemoryBlock) As Text
+		Attributes( Deprecated = "EncodeHex" ) Protected Function EncodeHex(Block As Xojo.Core.MemoryBlock) As Text
 		  #if TargetiOS
 		    Dim Chars() As Text
 		    For I As Integer = 0 To Block.Size - 1
@@ -508,7 +508,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function EncodeURLComponent(Value As Text) As Text
+		Attributes( Deprecated = "EncodeURLComponent" ) Protected Function EncodeURLComponent(Value As Text) As Text
 		  #if TargetiOS
 		    Dim Encoded() As Text
 		    For Each CodePoint As UInt32 In Value.Codepoints

@@ -156,7 +156,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim File As Beacon.FolderItem = Obj.FolderItem
+		    Dim File As FolderItem = Obj.FolderItem
 		    If Not File.IsType(BeaconFileTypes.BeaconPreset) Then
 		      Continue
 		    End If
