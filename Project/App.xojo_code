@@ -460,10 +460,6 @@ Implements NotificationKit.Receiver
 		    Return False
 		  End If
 		  
-		  If Beacon.OAuth2Client.HandleURL(URL.ToText) Then
-		    Return True
-		  End If
-		  
 		  If URL.Left(7) = "action/" Then
 		    Dim Instructions As String = Mid(URL, 8)
 		    Dim ParamsPos As Integer = InStr(Instructions, "?") - 1
@@ -772,7 +768,7 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mUpdateChecker_UpdateAvailable(Sender As UpdateChecker, Version As String, PreviewText As String, Notes As String, URL As String, Signature As String)
+		Private Sub mUpdateChecker_UpdateAvailable(Sender As UpdateChecker, Version As String, PreviewText As String, Notes As String, NotesURL As String, URL As String, Signature As String)
 		  #Pragma Unused Sender
 		  
 		  Dim Data As New Xojo.Core.Dictionary
@@ -781,6 +777,7 @@ Implements NotificationKit.Receiver
 		  Data.Value("Download") = URL.ToText
 		  Data.Value("Signature") = Signature.ToText
 		  Data.Value("Preview") = PreviewText.ToText
+		  Data.Value("Notes URL") = NotesURL.ToText
 		  Self.mUpdateData = Data
 		  
 		  NotificationKit.Post(Self.Notification_UpdateFound, Data)

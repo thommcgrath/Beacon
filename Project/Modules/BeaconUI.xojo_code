@@ -421,7 +421,10 @@ Protected Module BeaconUI
 		    If Win = Nil Or Win.Frame = Window.FrameTypeSheet Then
 		      Call Dialog.ShowModal()
 		    Else
+		      Dim FocusControl As RectControl = Win.Focus
+		      Win.Focus = Nil
 		      Call Dialog.ShowModalWithin(Win)
+		      Win.Focus = FocusControl
 		    End If
 		  Catch Err As RuntimeException
 		    Call Dialog.ShowModal()
@@ -455,7 +458,11 @@ Protected Module BeaconUI
 		    If Win = Nil Or Win.Frame = Window.FrameTypeSheet Then
 		      Return Dialog.ShowModal() = Dialog.ActionButton
 		    Else
-		      Return Dialog.ShowModalWithin(Win) = Dialog.ActionButton
+		      Dim FocusControl As RectControl = Win.Focus
+		      Win.Focus = Nil
+		      Dim Result As Boolean = Dialog.ShowModalWithin(Win) = Dialog.ActionButton
+		      Win.Focus = FocusControl
+		      Return Result
 		    End If
 		  Catch Err As RuntimeException
 		    Return Dialog.ShowModal() = Dialog.ActionButton

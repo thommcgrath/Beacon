@@ -1,6 +1,7 @@
 <?php
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
+BeaconTemplate::Cancel();
 
 header('Content-Type: text/plain');
 
@@ -67,7 +68,7 @@ if ($status == 200) {
 	<head>
 		<meta charset="UTF-8">
 		<title>Redirecting to Beacon</title>
-		<meta http-equiv="refresh" content="2; URL='<?php echo htmlentities($forward_to); ?>'">
+		<meta http-equiv="refresh" content="1; URL='<?php echo htmlentities($forward_to); ?>'">
 		<link href="main.css" type="text/css" rel="stylesheet">
 	</head>
 	<body>

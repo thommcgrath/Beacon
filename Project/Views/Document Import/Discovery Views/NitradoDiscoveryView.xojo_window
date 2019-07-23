@@ -320,15 +320,6 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Close()
-		  If Self.mBrowser <> Nil And Self.mBrowser.Value <> Nil And Self.mBrowser.Value IsA MiniBrowser Then
-		    MiniBrowser(Self.mBrowser.Value).Close
-		    Self.mBrowser = Nil
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub GetValuesFromDocument(Document As Beacon.Document)
 		  Self.AuthClient.AuthData = Document.OAuthData("Nitrado")
 		End Sub
@@ -465,7 +456,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mBrowser As WeakRef
+		Private mOAuthWindow As OAuthAuthorizationWindow
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -485,11 +476,6 @@ End
 #tag Events FindingCancelButton
 	#tag Event
 		Sub Action()
-		  If Self.mBrowser <> Nil And Self.mBrowser.Value <> Nil And Self.mBrowser.Value IsA MiniBrowser Then
-		    MiniBrowser(Self.mBrowser.Value).Close
-		    Self.mBrowser = Nil
-		  End If
-		  
 		  Self.ShouldCancel()
 		End Sub
 	#tag EndEvent
@@ -545,38 +531,34 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function ShowURL(URL As Text) As Beacon.WebView
-		  If Self.mBrowser <> Nil And Self.mBrowser.Value <> Nil And Self.mBrowser.Value IsA MiniBrowser Then
-		    MiniBrowser(Self.mBrowser.Value).Close
-		    Self.mBrowser = Nil
+		Function StartAuthentication(URL As String, Provider As String) As Boolean
+		  If Not Self.ShowConfirm("Open your browser to authorize with " + Provider + "?", "To continue discovering servers, you must authorize " + Provider + " to allow Beacon to access your servers.", "Continue", "Cancel") Then
+		    Return False
 		  End If
 		  
-		  // This code is disabled because Nitrado login is currently working in embedded webkit in 10.10
-		  #if false and TargetMacOS
-		    Declare Function NSClassFromString Lib "Cocoa" (ClassName As CFStringRef) As Ptr
-		    Declare Function GetProcessInfo Lib "Cocoa" Selector "processInfo" (Target As Ptr) As Ptr
-		    Declare Function OperatingSystemVersion Lib "AppKit" Selector "operatingSystemVersion" (Target As Ptr) As MacVersionInfo
-		    
-		    Dim Info As Ptr = GetProcessInfo(NSClassFromString("NSProcessInfo"))
-		    Dim Version As MacVersionInfo = OperatingSystemVersion(Info)
-		    Dim ComboVersion As Integer = Val(Str(Version.MajorVersion, "000") + Str(Version.MinorVersion, "000") + Str(Version.BugVersion, "000"))
-		    If ComboVersion < 10012000 Then
-		      Return Nil
-		    End If
-		  #endif
-		  
-		  Dim Browser As MiniBrowser = MiniBrowser.ShowURL(URL)
-		  If Browser <> Nil Then
-		    Self.mBrowser = New WeakRef(Browser)
-		  End If
-		  Return Browser
+		  ShowURL(URL)
+		  Return True
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub DismissWaitingWindow()
+		  If Self.mOAuthWindow <> Nil Then
+		    Self.mOAuthWindow.Close
+		    Self.mOAuthWindow = Nil
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShowWaitingWindow()
+		  Self.mOAuthWindow = New OAuthAuthorizationWindow(Me)
+		  Self.mOAuthWindow.Show()
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events LookupStartTimer
 	#tag Event
 		Sub Action()
-		  Self.AuthClient.Authenticate()
+		  Self.AuthClient.Authenticate(App.IdentityManager.CurrentIdentity)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

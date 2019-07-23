@@ -9,16 +9,16 @@ Begin BeaconWindow UpdateWindow
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   400
+   Height          =   132
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
    MaxHeight       =   32000
-   MaximizeButton  =   True
+   MaximizeButton  =   False
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   400
+   MinHeight       =   132
    MinimizeButton  =   True
    MinWidth        =   600
    Placement       =   2
@@ -29,7 +29,7 @@ Begin BeaconWindow UpdateWindow
    Begin PagePanel ViewPanel
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   400
+      Height          =   132
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -44,7 +44,6 @@ Begin BeaconWindow UpdateWindow
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   1
@@ -102,7 +101,6 @@ Begin BeaconWindow UpdateWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   True
          Top             =   52
          Transparent     =   False
          Value           =   0
@@ -205,28 +203,6 @@ Begin BeaconWindow UpdateWindow
          Visible         =   True
          Width           =   484
       End
-      Begin HTMLViewer ResultsNotesViewer
-         AutoDeactivate  =   True
-         Enabled         =   True
-         Height          =   294
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Left            =   97
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Renderer        =   1
-         Scope           =   2
-         TabIndex        =   4
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Top             =   53
-         Visible         =   True
-         Width           =   482
-      End
       Begin UITweaks.ResizedPushButton ResultsActionButton
          AutoDeactivate  =   True
          Bold            =   False
@@ -240,7 +216,7 @@ Begin BeaconWindow UpdateWindow
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
-         Left            =   500
+         Left            =   490
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -253,11 +229,11 @@ Begin BeaconWindow UpdateWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   360
+         Top             =   92
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   80
+         Width           =   90
       End
       Begin UITweaks.ResizedPushButton ResultsCancelButton
          AutoDeactivate  =   True
@@ -272,7 +248,7 @@ Begin BeaconWindow UpdateWindow
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
-         Left            =   408
+         Left            =   388
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -285,95 +261,11 @@ Begin BeaconWindow UpdateWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   360
+         Top             =   92
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   80
-      End
-      Begin Canvas Borders
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         DoubleBuffer    =   True
-         Enabled         =   True
-         EraseBackground =   False
-         Height          =   1
-         HelpTag         =   ""
-         Index           =   0
-         InitialParent   =   "ViewPanel"
-         Left            =   96
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   2
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Top             =   52
-         Transparent     =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   484
-      End
-      Begin Canvas Borders
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         DoubleBuffer    =   True
-         Enabled         =   True
-         EraseBackground =   False
-         Height          =   1
-         HelpTag         =   ""
-         Index           =   1
-         InitialParent   =   "ViewPanel"
-         Left            =   96
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   False
-         Scope           =   2
-         TabIndex        =   6
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Top             =   347
-         Transparent     =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   484
-      End
-      Begin Canvas Borders
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         DoubleBuffer    =   True
-         Enabled         =   True
-         EraseBackground =   False
-         Height          =   294
-         HelpTag         =   ""
-         Index           =   3
-         InitialParent   =   "ViewPanel"
-         Left            =   579
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   5
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Top             =   52
-         Transparent     =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   1
+         Width           =   90
       End
       Begin Label DownloadMessageLabel
          AutoDeactivate  =   True
@@ -410,34 +302,6 @@ Begin BeaconWindow UpdateWindow
          Visible         =   True
          Width           =   560
       End
-      Begin Canvas Borders
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         DoubleBuffer    =   True
-         Enabled         =   True
-         EraseBackground =   False
-         Height          =   294
-         HelpTag         =   ""
-         Index           =   2
-         InitialParent   =   "ViewPanel"
-         Left            =   96
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   3
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Top             =   53
-         Transparent     =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   1
-      End
       Begin ProgressBar DownloadProgressBar
          AutoDeactivate  =   True
          Enabled         =   True
@@ -455,7 +319,6 @@ Begin BeaconWindow UpdateWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
-         TabStop         =   True
          Top             =   52
          Transparent     =   False
          Value           =   0
@@ -494,16 +357,81 @@ Begin BeaconWindow UpdateWindow
          Visible         =   True
          Width           =   80
       End
+      Begin UITweaks.ResizedPushButton ResultsNotesButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   False
+         Caption         =   "Release Notes"
+         Default         =   False
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   96
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   9
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   92
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   120
+      End
+      Begin Label Label1
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   96
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   10
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   "After downloading, the update will install only when you're ready."
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   52
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   484
+      End
    End
    Begin UpdateChecker Checker
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Xojo.Net.HTTPSocket Downloader
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -549,28 +477,12 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Shared Sub Present(Version As String, Notes As String, URL As String, Signature As String)
-		  // Will show the results of an update check
-		  
-		  If mInstance = Nil Then
-		    mInstance = New UpdateWindow
-		  End If
-		  
-		  mInstance.ShowResults(Version, Notes, URL, Signature)
-		  mInstance.Show
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
-		Private Sub ShowResults(Version As String, Notes As String, URL As String, Signature As String)
-		  #Pragma Unused Version
-		  
-		  Static Temp As FolderItem = GetTemporaryFolderItem
-		  ResultsNotesViewer.LoadPage(Notes, Temp)
-		  
+		Private Sub ShowResults(Version As String, NotesURL As String, URL As String, Signature As String)
 		  Self.mURL = URL
 		  Self.mSignature = Signature
+		  Self.mNotesURL = NotesURL
+		  Self.ResultsNotesButton.Enabled = NotesURL.BeginsWith("https://")
 		  
 		  Dim PathComponents() As String = Split(NthField(URL, "?", 1), "/")
 		  Dim Filename As String = NthField(PathComponents(UBound(PathComponents)), "#", 1)
@@ -605,6 +517,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mNotesURL As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSignature As String
 	#tag EndProperty
 
@@ -619,7 +535,7 @@ End
 	#tag Constant, Name = HeightDownload, Type = Double, Dynamic = False, Default = \"124", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = HeightResults, Type = Double, Dynamic = False, Default = \"400", Scope = Private
+	#tag Constant, Name = HeightResults, Type = Double, Dynamic = False, Default = \"132", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ViewCheck, Type = Double, Dynamic = False, Default = \"0", Scope = Private
@@ -706,21 +622,18 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Borders
-	#tag Event
-		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
-		  #Pragma Unused areas
-		  
-		  G.ForeColor = &cCCCCCC
-		  G.FillRect(0, 0, G.Width, G.Height)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events DownloadCancelButton
 	#tag Event
 		Sub Action()
 		  Self.Downloader.Disconnect
 		  Self.Close
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ResultsNotesButton
+	#tag Event
+		Sub Action()
+		  ShowURL(Self.mNotesURL)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -756,10 +669,11 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub UpdateAvailable(Version As String, PreviewText As String, Notes As String, URL As String, Signature As String)
+		Sub UpdateAvailable(Version As String, PreviewText As String, Notes As String, NotesURL As String, URL As String, Signature As String)
 		  #Pragma Unused PreviewText
+		  #Pragma Unused Notes
 		  
-		  Self.ShowResults(Version, Notes, URL, Signature)
+		  Self.ShowResults(Version, NotesURL, URL, Signature)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

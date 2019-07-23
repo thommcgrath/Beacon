@@ -286,19 +286,10 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
-		  If Self.mBrowser <> Nil And Self.mBrowser.Value <> Nil And Self.mBrowser.Value IsA MiniBrowser Then
-		    MiniBrowser(Self.mBrowser.Value).Close
-		    Self.mBrowser = Nil
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Open()
 		  Self.Auth.Provider = Beacon.OAuth2Client.ProviderNitrado
 		  Self.Auth.AuthData = Self.mDocument.OAuthData("Nitrado")
-		  Self.Auth.Authenticate
+		  Self.Auth.Authenticate(App.IdentityManager.CurrentIdentity)
 		  
 		  Self.Controls.Caption = Self.mProfile.Name
 		  
@@ -443,6 +434,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mOAuthWindow As OAuthAuthorizationWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mProfile As Beacon.NitradoServerProfile
 	#tag EndProperty
 
@@ -457,18 +452,28 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function ShowURL(URL As Text) As Beacon.WebView
-		  If Self.mBrowser <> Nil And Self.mBrowser.Value <> Nil And Self.mBrowser.Value IsA MiniBrowser Then
-		    MiniBrowser(Self.mBrowser.Value).Close
-		    Self.mBrowser = Nil
+		Function StartAuthentication(URL As String, Provider As String) As Boolean
+		  If Not Self.ShowConfirm("You must reauthorize " + Provider + " to allow Beacon to access your servers.", "The authorization tokens expires. If it has been a while since you've deployed, this can happen.", "Continue", "Cancel") Then
+		    Return False
 		  End If
 		  
-		  Dim Browser As MiniBrowser = MiniBrowser.ShowURL(URL)
-		  If Browser <> Nil Then
-		    Self.mBrowser = New WeakRef(Browser)
-		  End If
-		  Return Browser
+		  ShowURL(URL)
+		  Return True
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub DismissWaitingWindow()
+		  If Self.mOAuthWindow <> Nil Then
+		    Self.mOAuthWindow.Close
+		    Self.mOAuthWindow = Nil
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShowWaitingWindow()
+		  Self.mOAuthWindow = New OAuthAuthorizationWindow(Me)
+		  Self.mOAuthWindow.Show()
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Controls
