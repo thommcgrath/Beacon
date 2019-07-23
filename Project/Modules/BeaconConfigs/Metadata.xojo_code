@@ -2,11 +2,10 @@
 Protected Class Metadata
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
-		  #Pragma Unused Mask
+		Sub GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
 		  #Pragma Unused SourceDocument
 		  
-		  Values.Append(New Beacon.ConfigValue("SessionSettings", "SessionName", Self.mTitle))
+		  Values.Append(New Beacon.ConfigValue("SessionSettings", "SessionName", Profile.Name))
 		End Sub
 	#tag EndEvent
 

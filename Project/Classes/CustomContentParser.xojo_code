@@ -68,7 +68,7 @@ Protected Class CustomContentParser
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(InitialHeader As String, ExistingConfigs As Xojo.Core.Dictionary, Profile As Beacon.ServerProfile)
+		Sub Constructor(InitialHeader As String, ExistingConfigs As Dictionary, Profile As Beacon.ServerProfile)
 		  Self.mCurrentHeader = InitialHeader
 		  Self.mExistingConfigs = ExistingConfigs
 		  Self.mProfile = Profile
@@ -77,15 +77,16 @@ Protected Class CustomContentParser
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function GetSkippedKeys(Header As String, ExistingConfigs As Xojo.Core.Dictionary) As String()
+		Private Shared Function GetSkippedKeys(Header As String, ExistingConfigs As Dictionary) As String()
 		  Dim SkippedKeys() As String
-		  If Not ExistingConfigs.HasKey(Header.ToText) Then
+		  If Not ExistingConfigs.HasKey(Header) Then
 		    Return SkippedKeys
 		  End If
 		  
-		  Dim Siblings As Xojo.Core.Dictionary = ExistingConfigs.Value(Header.ToText)
-		  For Each Entry As Xojo.Core.DictionaryEntry In Siblings
-		    SkippedKeys.Append(Entry.Key)
+		  Dim Siblings As Dictionary = ExistingConfigs.Value(Header)
+		  Dim Keys() As Variant = Siblings.Keys
+		  For Each Key As String In Keys
+		    SkippedKeys.Append(Key)
 		  Next
 		  Return SkippedKeys
 		End Function
@@ -121,7 +122,7 @@ Protected Class CustomContentParser
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mExistingConfigs As Xojo.Core.Dictionary
+		Private mExistingConfigs As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -173,11 +174,6 @@ Protected Class CustomContentParser
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mNestedParser"
-			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 	#tag EndViewBehavior

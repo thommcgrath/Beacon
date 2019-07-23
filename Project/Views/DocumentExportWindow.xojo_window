@@ -9,7 +9,7 @@ Begin BeaconDialog DocumentExportWindow
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   500
+   Height          =   675
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
@@ -26,95 +26,6 @@ Begin BeaconDialog DocumentExportWindow
    Title           =   "Export"
    Visible         =   True
    Width           =   900
-   Begin BeaconListbox FileList
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
-      Bold            =   False
-      Border          =   False
-      ColumnCount     =   1
-      ColumnsResizable=   False
-      ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      DefaultRowHeight=   32
-      Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   False
-      HeadingIndex    =   -1
-      Height          =   439
-      HelpTag         =   ""
-      Hierarchical    =   False
-      Index           =   -2147483648
-      InitialParent   =   ""
-      InitialValue    =   ""
-      Italic          =   False
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      RequiresSelection=   False
-      RowCount        =   0
-      Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionChangeBlocked=   False
-      SelectionType   =   0
-      ShowDropIndicator=   False
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   61
-      Transparent     =   True
-      Underline       =   False
-      UseFocusRing    =   False
-      Visible         =   True
-      Width           =   229
-      _ScrollOffset   =   0
-      _ScrollWidth    =   -1
-   End
-   Begin Label MessageLabel
-      AutoDeactivate  =   True
-      Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   242
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Exported Values"
-      TextAlign       =   0
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   638
-   End
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
@@ -135,13 +46,13 @@ Begin BeaconDialog DocumentExportWindow
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   460
+      Top             =   635
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -154,17 +65,17 @@ Begin BeaconDialog DocumentExportWindow
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
+      Border          =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   380
+      Height          =   553
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
       Italic          =   False
-      Left            =   242
+      Left            =   0
       LimitText       =   0
       LineHeight      =   0.0
       LineSpacing     =   1.0
@@ -180,7 +91,7 @@ Begin BeaconDialog DocumentExportWindow
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
       Styled          =   False
-      TabIndex        =   2
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -188,12 +99,12 @@ Begin BeaconDialog DocumentExportWindow
       TextFont        =   "Source Code Pro"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   60
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   638
+      Width           =   900
    End
    Begin UITweaks.ResizedPushButton SaveButton
       AutoDeactivate  =   True
@@ -208,20 +119,20 @@ Begin BeaconDialog DocumentExportWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   350
+      Left            =   128
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   460
+      Top             =   635
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -240,20 +151,20 @@ Begin BeaconDialog DocumentExportWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   242
+      Left            =   20
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   460
+      Top             =   635
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -272,20 +183,20 @@ Begin BeaconDialog DocumentExportWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   580
+      Left            =   358
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   460
+      Top             =   635
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -312,26 +223,26 @@ Begin BeaconDialog DocumentExportWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   458
+      Left            =   236
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   460
+      Top             =   635
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   110
    End
-   Begin FadedSeparator FadedSeparator1
+   Begin FadedSeparator TopSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
@@ -347,47 +258,18 @@ Begin BeaconDialog DocumentExportWindow
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   8
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   60
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   229
-   End
-   Begin FadedSeparator FadedSeparator2
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   500
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   229
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   9
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1
+      Width           =   900
    End
    Begin PopupMenu MapMenu
       AutoDeactivate  =   True
@@ -409,7 +291,7 @@ Begin BeaconDialog DocumentExportWindow
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   10
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -421,93 +303,244 @@ Begin BeaconDialog DocumentExportWindow
       Visible         =   True
       Width           =   189
    End
+   Begin ProgressWheel RewritingSpinner
+      AutoDeactivate  =   True
+      Enabled         =   True
+      Height          =   16
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   864
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   22
+      Transparent     =   False
+      Visible         =   False
+      Width           =   16
+   End
+   Begin Label RewritingStatusLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   16
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   691
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Building config…"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   22
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   False
+      Width           =   161
+   End
+   Begin FadedSeparator BottomSeparator
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   1
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   614
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   900
+   End
+   Begin Shelf Switcher
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      DrawCaptions    =   True
+      Enabled         =   True
+      EraseBackground =   False
+      Height          =   60
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      IsVertical      =   False
+      Left            =   229
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RequiresSelection=   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      Transparent     =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   442
+   End
+   Begin Beacon.Rewriter GameIniRewriter
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
+   Begin Beacon.Rewriter GameUserSettingsRewriter
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
+   Begin Beacon.Rewriter FileRewriter
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
+   Begin Beacon.Rewriter ClipboardRewriter
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Close()
+		  Self.ClipboardRewriter.Cancel
+		  Self.FileRewriter.Cancel
+		  Self.GameIniRewriter.Cancel
+		  Self.GameUserSettingsRewriter.Cancel
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h21
-		Private Sub CheckClipboard()
-		  If Self.FileList.ListIndex = -1 Then
-		    If Self.RewriteClipboardButton.Enabled Then
-		      Self.RewriteClipboardButton.Enabled = False
-		    End If
-		    If Self.RewriteClipboardButton.Caption <> "Rewrite Clipboard" Then
-		      Self.RewriteClipboardButton.Caption = "Rewrite Clipboard"
-		    End If
-		    Return
+		Private Sub CheckButtons()
+		  Dim Rewriting As Boolean = Self.IsRewriting
+		  Self.RewriteFileButton.Enabled = Rewriting = False And (Self.Switcher.SelectedIndex = 1 Or Self.Switcher.SelectedIndex = 2)
+		  Self.CopyButton.Enabled = Rewriting = False And Self.ContentArea.Text <> ""
+		  Self.SaveButton.Enabled = Self.CopyButton.Enabled And Self.CurrentMode <> ""
+		  
+		  If Self.RewritingSpinner.Visible <> Rewriting Then
+		    Self.RewritingSpinner.Visible = Rewriting
+		    Self.RewritingStatusLabel.Visible = Rewriting
 		  End If
 		  
-		  Dim SelectedConfig As String = Self.FileList.Cell(Self.FileList.ListIndex, 0)
-		  If SelectedConfig = "Command Line Options" Then
-		    If Self.RewriteClipboardButton.Enabled Then
-		      Self.RewriteClipboardButton.Enabled = False
-		    End If
-		    If Self.RewriteClipboardButton.Caption <> "Rewrite Clipboard" Then
-		      Self.RewriteClipboardButton.Caption = "Rewrite Clipboard"
-		    End If
+		  Self.CheckClipboard()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CheckClipboard()
+		  Dim Mode As String = Self.CurrentMode
+		  If Mode = "" Then
+		    Self.SetClipboardButtonCaption(False, Self.RewriteClipboard)
 		    Return
 		  End If
 		  
 		  Dim Board As New Clipboard
 		  If Board.TextAvailable = False Then
-		    If Self.RewriteClipboardButton.Enabled Then
-		      Self.RewriteClipboardButton.Enabled = False
-		    End If
-		    If ReplaceLineEndings(Board.Text, EndOfLine) = Self.CurrentContent Then
-		      If Self.RewriteClipboardButton.Caption <> Self.ReadyForPaste Then
-		        Self.RewriteClipboardButton.Caption = Self.ReadyForPaste
-		      End If
-		    Else
-		      If Self.RewriteClipboardButton.Caption <> "Rewrite Clipboard" Then
-		        Self.RewriteClipboardButton.Caption = "Rewrite Clipboard"
-		      End If
-		    End If
+		    Self.SetClipboardButtonCaption(False, Self.RewriteClipboard)
 		    Return
 		  End If
 		  
 		  Dim SearchingFor As String
-		  Select Case SelectedConfig
+		  Select Case Mode
 		  Case Beacon.RewriteModeGameIni
 		    SearchingFor = "[" + Beacon.ShooterGameHeader + "]"
 		  Case Beacon.RewriteModeGameUserSettingsIni
 		    SearchingFor = "[" + Beacon.ServerSettingsHeader + "]"
 		  Else
-		    If Self.RewriteClipboardButton.Enabled Then
-		      Self.RewriteClipboardButton.Enabled = False
-		    End If
-		    If Self.RewriteClipboardButton.Caption <> "Rewrite Clipboard" Then
-		      Self.RewriteClipboardButton.Caption = "Rewrite Clipboard"
-		    End If
+		    Self.SetClipboardButtonCaption(False, Self.RewriteClipboard)
 		    Return
 		  End Select
 		  
 		  If Board.Text.InStr(SearchingFor) <= 0 Then
-		    If Self.RewriteClipboardButton.Enabled Then
-		      Self.RewriteClipboardButton.Enabled = False
-		    End If
-		    If Self.RewriteClipboardButton.Caption <> "Rewrite Clipboard" Then
-		      Self.RewriteClipboardButton.Caption = "Rewrite Clipboard"
-		    End If
+		    Self.SetClipboardButtonCaption(False, Self.RewriteClipboard)
 		    Return
 		  End If
 		  
 		  If EncodeHex(Crypto.MD5(Board.Text)) = Self.mLastRewrittenHash Then
-		    If Self.RewriteClipboardButton.Enabled Then
-		      Self.RewriteClipboardButton.Enabled = False
-		    End If
-		    If Self.RewriteClipboardButton.Caption <> Self.ReadyForPaste Then
-		      Self.RewriteClipboardButton.Caption = Self.ReadyForPaste
-		    End If
+		    Self.SetClipboardButtonCaption(False, Self.ReadyForPaste)
 		    Return
 		  End If
 		  
-		  If Not Self.RewriteClipboardButton.Enabled Then
-		    Self.RewriteClipboardButton.Enabled = True
+		  If Self.ClipboardRewriter.State <> Thread.NotRunning Then
+		    Self.SetClipboardButtonCaption(False, Self.UpdatingClipboard)
+		    Return
 		  End If
-		  If Self.RewriteClipboardButton.Caption <> "Rewrite Clipboard" Then
-		    Self.RewriteClipboardButton.Caption = "Rewrite Clipboard"
-		  End If
+		  
+		  Self.SetClipboardButtonCaption(True, Self.RewriteClipboard)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function IsRewriting() As Boolean
+		  Dim Rewriters(3) As Beacon.Rewriter
+		  Rewriters(0) = Self.ClipboardRewriter
+		  Rewriters(1) = Self.FileRewriter
+		  Rewriters(2) = Self.GameIniRewriter
+		  Rewriters(3) = Self.GameUserSettingsRewriter
+		  
+		  For Each Rewriter As Beacon.Rewriter In Rewriters
+		    If Rewriter.State <> Thread.NotRunning Then
+		      Return True
+		    End If
+		  Next
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -534,60 +567,89 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub RefreshContentArea()
+		  Dim IntendedContent As String
+		  Select Case Self.Switcher.SelectedIndex
+		  Case 1
+		    IntendedContent = Self.mGameUserSettingsContent
+		  Case 2
+		    IntendedContent = Self.mGameIniContent
+		  Case 3
+		    IntendedContent = Self.mCommandLineContent
+		  End Select
+		  If Self.ContentArea.Text <> IntendedContent Then
+		    Self.ContentArea.Text = IntendedContent
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SetClipboardButtonCaption(Enabled As Boolean, Caption As String)
+		  If Self.RewriteClipboardButton.Enabled <> Enabled Then
+		    Self.RewriteClipboardButton.Enabled = Enabled
+		  End If
+		  If Self.RewriteClipboardButton.Caption <> Caption Then
+		    Self.RewriteClipboardButton.Caption = Caption
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Setup()
-		  If Self.mDocument = Nil Then
+		  If Self.mDocument = Nil Or Self.GameIniRewriter.State <> Thread.NotRunning Or Self.GameUserSettingsRewriter.State <> Thread.NotRunning Then
 		    Return
 		  End If
 		  
-		  Dim Options() As Beacon.ConfigValue
-		  Dim GameIniOptions As New Xojo.Core.Dictionary
-		  Dim GameUserSettingsIniOptions As New Xojo.Core.Dictionary
-		  Dim Mask As UInt64
-		  If Self.MapMenu.ListIndex = -1 Then
-		    Mask = Beacon.Maps.All.Mask
-		  Else
-		    Mask = Self.MapMenu.RowTag(Self.MapMenu.ListIndex)
-		  End If
-		  Self.mDocument.CreateConfigObjects(Options, GameIniOptions, GameUserSettingsIniOptions, Mask, App.IdentityManager.CurrentIdentity, Nil)
+		  Self.mGameIniContent = ""
+		  Self.mGameUserSettingsContent = ""
+		  Self.mCommandLineContent = ""
+		  Self.mLastRewrittenHash = ""
+		  Self.mCurrentProfile = New Beacon.GenericServerProfile(Self.mDocument.Title, Self.CurrentMask)
 		  
-		  Dim CommandLineHeaders As New Xojo.Core.Dictionary
-		  For Each Value As Beacon.ConfigValue In Options
-		    Dim Arr() As Text
-		    If CommandLineHeaders.HasKey(Value.Header) Then
-		      Arr = CommandLineHeaders.Value(Value.Header)
+		  Dim Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		  
+		  Self.GameIniRewriter.Rewrite("", Beacon.RewriteModeGameIni, Self.mDocument, Identity, False, Self.mCurrentProfile)
+		  Self.GameUserSettingsRewriter.Rewrite("", Beacon.RewriteModeGameUserSettingsIni, Self.mDocument, Identity, False, Self.mCurrentProfile)
+		  
+		  Dim CLIDict As New Dictionary
+		  Dim Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
+		  For Each Group As Beacon.ConfigGroup In Groups
+		    Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, Identity, Self.mCurrentProfile)
+		    If Options <> Nil And Options.Ubound > -1 Then
+		      Beacon.ConfigValue.FillConfigDict(CLIDict, Options)
 		    End If
-		    If Value.Value = "" Then
-		      Arr.Append(Value.Key)
-		    Else
-		      Arr.Append(Value.Key + "=" + Value.Value)
-		    End If
-		    CommandLineHeaders.Value(Value.Header) = Arr
 		  Next
-		  
-		  Self.mCommandLineConfigs = CommandLineHeaders
-		  Self.mGameIniConfigs = GameIniOptions
-		  Self.mGameUserSettingsConfigs = GameUserSettingsIniOptions
-		  
-		  Dim Index As Integer = Self.FileList.ListIndex
-		  Dim Position As Integer = Self.FileList.ScrollPosition
-		  Self.FileList.DeleteAllRows()
-		  
-		  If Self.mCommandLineConfigs.Count > 0 Then
-		    Self.FileList.AddRow("Command Line Options")
+		  Dim Maps() As Beacon.Map = Beacon.Maps.ForMask(Self.mCurrentProfile.Mask)
+		  Dim QuestionParameters As String
+		  If Maps.Ubound = 0 Then
+		    QuestionParameters = Maps(0).Identifier + "?listen"
+		  Else
+		    QuestionParameters = "Map?listen"
 		  End If
-		  
-		  If Self.mGameUserSettingsConfigs.Count > 0 Then
-		    Self.FileList.AddRow(Beacon.RewriteModeGameUserSettingsIni)
+		  If CLIDict.HasKey("?") Then
+		    Dim Dict As Dictionary = CLIDict.Value("?")
+		    Dim Keys() As Variant = Dict.Keys
+		    For Each Key As Variant In Keys
+		      Dim Arr() As String = Dict.Value(Key)
+		      QuestionParameters = QuestionParameters + "?" + Arr.Join("?")
+		    Next
 		  End If
-		  
-		  If Self.mGameIniConfigs.Count > 0 Then
-		    Self.FileList.AddRow(Beacon.RewriteModeGameIni)
+		  Dim Parameters(0) As String
+		  Parameters(0) = """" + QuestionParameters + """"
+		  If CLIDict.HasKey("-") Then
+		    Dim Dict As Dictionary = CLIDict.Value("-")
+		    Dim Keys() As Variant = Dict.Keys
+		    For Each Key As Variant In Keys
+		      Dim Arr() As String = Dict.Value(Key)
+		      For Each Command As String In Arr
+		        Parameters.Append("-" + Command)
+		      Next
+		    Next
 		  End If
+		  Self.mCommandLineContent = Parameters.Join(" ")
 		  
-		  If Index > -1 And Index < Self.FileList.ListCount Then
-		    Self.FileList.ListIndex = Index
-		  End If
-		  Self.FileList.ScrollPosition = Position
+		  Self.RefreshContentArea()
+		  Self.CheckButtons()
 		End Sub
 	#tag EndMethod
 
@@ -611,8 +673,53 @@ End
 		CurrentContent As String
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  Select Case Self.Switcher.SelectedIndex
+			  Case 1
+			    Return "GameUserSettings.ini"
+			  Case 2
+			    Return "Game.ini"
+			  Else
+			    Return ""
+			  End Select
+			End Get
+		#tag EndGetter
+		Private CurrentFilename As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  Dim Mask As UInt64
+			  If Self.MapMenu.ListIndex = -1 Then
+			    Mask = Beacon.Maps.All.Mask
+			  Else
+			    Mask = Self.MapMenu.RowTag(Self.MapMenu.ListIndex)
+			  End If
+			  Return Mask
+			End Get
+		#tag EndGetter
+		Private CurrentMask As UInt64
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  Select Case Self.Switcher.SelectedIndex
+			  Case 1
+			    Return Beacon.RewriteModeGameUserSettingsIni
+			  Case 2
+			    Return Beacon.RewriteModeGameIni
+			  End Select
+			End Get
+		#tag EndGetter
+		Private CurrentMode As String
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
-		Private mCommandLineConfigs As Xojo.Core.DIctionary
+		Private mCommandLineContent As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -620,15 +727,23 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mCurrentProfile As Beacon.GenericServerProfile
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDocument As Beacon.Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameIniConfigs As Xojo.Core.Dictionary
+		Private mFileDestination As FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameUserSettingsConfigs As Xojo.Core.Dictionary
+		Private mGameIniContent As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGameUserSettingsContent As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -639,66 +754,15 @@ End
 	#tag Constant, Name = ReadyForPaste, Type = String, Dynamic = False, Default = \"Ready for Paste!", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = RewriteClipboard, Type = String, Dynamic = False, Default = \"Rewrite Clipboard", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = UpdatingClipboard, Type = String, Dynamic = False, Default = \"Working\xE2\x80\xA6", Scope = Private
+	#tag EndConstant
+
 
 #tag EndWindowCode
 
-#tag Events FileList
-	#tag Event
-		Sub Change()
-		  Self.CopyButton.Restore
-		  Self.RewriteClipboardButton.Caption = "Rewrite Clipboard"
-		  Self.RewriteClipboardButton.Enabled = False
-		  
-		  Self.CopyButton.Enabled = Me.ListIndex > -1
-		  Self.CopyButton.Caption = "Copy All"
-		  
-		  If Me.ListIndex = -1 Then
-		    Self.SaveButton.Enabled = False
-		    Self.RewriteFileButton.Enabled = False
-		    Self.CurrentContent = ""
-		    Return
-		  End If
-		  
-		  Dim Option As String = Me.Cell(Me.ListIndex, 0)
-		  If Option = "Command Line Options" Then
-		    Dim QuestionParameters As Text = "Map?listen"
-		    If Self.mCommandLineConfigs.HasKey("?") Then
-		      Dim Arr() As Text = Self.mCommandLineConfigs.Value("?")
-		      QuestionParameters = QuestionParameters + "?" + Arr.Join("?")
-		    End If
-		    
-		    Dim Parameters(0) As Text
-		    Parameters(0) = """" + QuestionParameters + """"
-		    If Self.mCommandLineConfigs.HasKey("-") Then
-		      Dim Arr() As Text = Self.mCommandLineConfigs.Value("-")
-		      For Each Command As Text In Arr
-		        Parameters.Append("-" + Command)
-		      Next
-		    End If
-		    
-		    Self.CurrentContent = Parameters.Join(" ")
-		    
-		    Self.SaveButton.Enabled = False
-		    Self.RewriteFileButton.Enabled = False
-		    Return
-		  End If
-		  
-		  Dim Configs As Xojo.Core.Dictionary
-		  If Option = "GameUserSettings.ini" Then
-		    Configs = Self.mGameUserSettingsConfigs
-		  ElseIf Option = "Game.ini" Then
-		    Configs = Self.mGameIniConfigs
-		  Else
-		    Self.CurrentContent = ""
-		    Return
-		  End If
-		  
-		  Self.SaveButton.Enabled = True
-		  Self.RewriteFileButton.Enabled = True
-		  Self.CurrentContent = Beacon.RewriteIniContent("", Configs)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
@@ -709,31 +773,21 @@ End
 #tag Events SaveButton
 	#tag Event
 		Sub Action()
-		  Dim ConfigFilename As String = Self.FileList.Cell(Self.FileList.ListIndex, 0)
-		  
 		  Dim Dialog As New SaveAsDialog
 		  Dialog.Filter = BeaconFileTypes.IniFile
-		  Dialog.SuggestedFileName = ConfigFilename
+		  Dialog.SuggestedFileName = Self.CurrentFilename
+		  If Dialog.SuggestedFileName = "" Then
+		    Return
+		  End If
 		  
 		  Dim File As FolderItem = Dialog.ShowModal()
 		  If File = Nil Then
 		    Return
 		  End If
 		  
-		  If File.Exists And Not File.IsWriteable Then
-		    Self.ShowAlert("File " + File.DisplayName + " is not writable.", "The file may be locked or you may not have permission to edit the file.")
-		    Return
-		  End If
-		  
-		  Dim Content As String = Self.CurrentContent
-		  Try
-		    Dim OutStream As TextOutputStream = TextOutputStream.Create(File)
-		    OutStream.Write(Content)
-		    OutStream.Close
-		  Catch Err As IOException
+		  If Not File.Write(Self.ContentArea.Text) Then
 		    Self.ShowAlert("Unable to write to " + File.DisplayName, "Check file permissions and disk space.")
-		    Return
-		  End Try
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -741,7 +795,7 @@ End
 	#tag Event
 		Sub Action()
 		  Dim Board As New Clipboard
-		  Board.Text = Self.CurrentContent
+		  Board.Text = Self.ContentArea.Text
 		  Self.mLastRewrittenHash = EncodeHex(MD5(Board.Text))
 		  Me.Caption = "Copied!"
 		  Me.Enabled = False
@@ -751,22 +805,11 @@ End
 #tag Events RewriteClipboardButton
 	#tag Event
 		Sub Action()
-		  Dim SelectedConfig As String = Self.FileList.Cell(Self.FileList.ListIndex, 0)
-		  Dim Configs As Xojo.Core.Dictionary
-		  Select Case SelectedConfig
-		  Case Beacon.RewriteModeGameIni
-		    Configs = Self.mGameIniConfigs
-		  Case Beacon.RewriteModeGameUserSettingsIni
-		    Configs = Self.mGameUserSettingsConfigs
-		  Else
-		    Configs = New Xojo.Core.Dictionary
-		  End Select
-		  
 		  Dim Board As New Clipboard
-		  Board.Text = Beacon.RewriteIniContent(Board.Text.ToText, Configs)
-		  Self.mLastRewrittenHash = EncodeHex(MD5(Board.Text))
-		  Me.Enabled = False
-		  Me.Caption = Self.ReadyForPaste
+		  Self.ClipboardRewriter.Rewrite(Board.Text, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, True, Self.mCurrentProfile)
+		  
+		  Self.mLastRewrittenHash = ""
+		  Self.CheckButtons()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -780,11 +823,20 @@ End
 #tag Events RewriteFileButton
 	#tag Event
 		Sub Action()
-		  Dim ConfigFilename As String = Self.FileList.Cell(Self.FileList.ListIndex, 0)
+		  Dim Mode As String = Self.CurrentMode
+		  Dim RequiredHeader As String
+		  Select Case Mode
+		  Case Beacon.RewriteModeGameIni
+		    RequiredHeader = "[" + Beacon.ShooterGameHeader + "]"
+		  Case Beacon.RewriteModeGameUserSettingsIni
+		    RequiredHeader = "[" + Beacon.ServerSettingsHeader + "]"
+		  Else
+		    Return
+		  End Select
 		  
 		  Dim Dialog As New OpenDialog
 		  Dialog.Filter = BeaconFileTypes.IniFile
-		  Dialog.SuggestedFileName = ConfigFilename
+		  Dialog.SuggestedFileName = Self.CurrentFilename
 		  Dialog.ActionButtonCaption = "Update"
 		  
 		  Dim File As FolderItem = Dialog.ShowModal()
@@ -792,13 +844,7 @@ End
 		    Return
 		  End If
 		  
-		  If Not File.IsWriteable Then
-		    Self.ShowAlert("File " + File.DisplayName + " is not writable.", "The file may be locked or you may not have permission to edit the file.")
-		    Return
-		  End If
-		  
 		  Dim Content As String
-		  
 		  Try
 		    Dim InStream As TextInputStream = TextInputStream.Open(File)
 		    Content = InStream.ReadAll()
@@ -807,26 +853,17 @@ End
 		    Self.ShowAlert("Unable to open " + File.DisplayName, "Beacon was unable to read the current content of the file to rewriting. The file has not been changed.")
 		    Return
 		  End Try
-		  
 		  Content = Content.GuessEncoding
 		  
-		  Dim Configs As Xojo.Core.Dictionary
-		  Select Case ConfigFilename
-		  Case Beacon.RewriteModeGameIni
-		    Configs = Self.mGameIniConfigs
-		  Case Beacon.RewriteModeGameUserSettingsIni
-		    Configs = Self.mGameUserSettingsConfigs
-		  End Select
-		  Content = Beacon.RewriteIniContent(Content.ToText, Configs)
-		  
-		  Try
-		    Dim OutStream As TextOutputStream = TextOutputStream.Create(File)
-		    OutStream.Write(Content)
-		    OutStream.Close
-		  Catch Err As IOException
-		    Self.ShowAlert("Unable to write to " + File.DisplayName, "Check file permissions and disk space.")
+		  If Content.InStr(RequiredHeader) <= 0 Then
+		    Self.ShowAlert("Incorrect ini file detected.", "Beacon is expecting to find the " + RequiredHeader + " header in this file before rewriting, but cannot find it. Make sure you select the correct file config file.")
 		    Return
-		  End Try
+		  End If
+		  
+		  Self.FileRewriter.Rewrite(Content, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, True, Self.mCurrentProfile)
+		  Self.mFileDestination = File
+		  
+		  Self.CheckButtons()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -834,6 +871,97 @@ End
 	#tag Event
 		Sub Change()
 		  Self.Setup()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Switcher
+	#tag Event
+		Sub Open()
+		  Me.Add(ShelfItem.NewFlexibleSpacer)
+		  Me.Add(IconGameUserSettingsIni, "GameUserSettings.ini", "gameusersettings.ini")
+		  Me.Add(IconGameIni, "Game.ini", "game.ini")
+		  Me.Add(IconCommandLine, "Command Line", "cli")
+		  Me.Add(ShelfItem.NewFlexibleSpacer)
+		  Me.SelectedIndex = 1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  Self.RefreshContentArea()
+		  Self.CheckButtons()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events GameIniRewriter
+	#tag Event
+		Sub Finished()
+		  If Not Me.Errored Then
+		    Self.mGameIniContent = Me.UpdatedContent
+		  End If
+		  
+		  Self.RefreshContentArea()
+		  Self.CheckButtons()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Started()
+		  Self.CheckButtons()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events GameUserSettingsRewriter
+	#tag Event
+		Sub Finished()
+		  If Not Me.Errored Then
+		    Self.mGameUserSettingsContent = Me.UpdatedContent
+		  End If
+		  
+		  Self.RefreshContentArea()
+		  Self.CheckButtons()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Started()
+		  Self.CheckButtons()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events FileRewriter
+	#tag Event
+		Sub Finished()
+		  If Me.Errored = True Or Self.mFileDestination = Nil Or Self.mFileDestination.Write(Me.UpdatedContent) = False Then
+		    Self.ShowAlert("Unable to update file", "There was an error trying to rewrite the ini content in the selected file.")
+		  End If
+		  Self.mFileDestination = Nil
+		  
+		  Self.CheckButtons()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Started()
+		  Self.CheckButtons()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ClipboardRewriter
+	#tag Event
+		Sub Finished()
+		  If Me.Errored Then
+		    Self.CheckButtons()
+		    Self.ShowAlert("Unable to update clipboard", "There was an error trying to rewrite the ini content on the clipboard.")
+		    Return
+		  End If
+		  
+		  Dim Board As New Clipboard
+		  Board.Text = Me.UpdatedContent
+		  
+		  Self.mLastRewrittenHash = EncodeHex(Crypto.MD5(Me.UpdatedContent))
+		  Self.CheckButtons()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Started()
+		  Self.CheckButtons()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1066,5 +1194,6 @@ End
 		Name="CurrentContent"
 		Group="Behavior"
 		Type="String"
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 #tag EndViewBehavior

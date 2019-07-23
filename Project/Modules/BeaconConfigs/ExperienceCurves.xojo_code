@@ -2,8 +2,8 @@
  Attributes ( OmniVersion = 1 ) Protected Class ExperienceCurves
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
-		  #Pragma Unused Mask
+		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
 		  If Self.mPlayerLevels.Ubound = -1 Then

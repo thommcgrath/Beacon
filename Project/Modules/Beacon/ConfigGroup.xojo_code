@@ -1,11 +1,11 @@
 #tag Class
 Protected Class ConfigGroup
 	#tag Method, Flags = &h0
-		Function CommandLineOptions(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64) As Beacon.ConfigValue()
+		Function CommandLineOptions(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  Dim Values() As Beacon.ConfigValue
 		  
 		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
-		    RaiseEvent CommandLineOptions(SourceDocument, Values, Mask)
+		    RaiseEvent CommandLineOptions(SourceDocument, Values, Profile)
 		  End If
 		  
 		  Return Values
@@ -49,11 +49,11 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64) As Beacon.ConfigValue()
+		Function GameIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  Dim Values() As Beacon.ConfigValue
 		  
 		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
-		    RaiseEvent GameIniValues(SourceDocument, Values, Mask)
+		    RaiseEvent GameIniValues(SourceDocument, Values, Profile)
 		  End If
 		  
 		  Return Values
@@ -61,11 +61,11 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64) As Beacon.ConfigValue()
+		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  Dim Values() As Beacon.ConfigValue
 		  
 		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
-		    RaiseEvent GameUserSettingsIniValues(SourceDocument, Values, Mask)
+		    RaiseEvent GameUserSettingsIniValues(SourceDocument, Values, Profile)
 		  End If
 		  
 		  Return Values
@@ -124,15 +124,15 @@ Protected Class ConfigGroup
 
 
 	#tag Hook, Flags = &h0
-		Event CommandLineOptions(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
+		Event CommandLineOptions(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
+		Event GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
+		Event GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
