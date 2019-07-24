@@ -26,11 +26,19 @@ Implements Xojo.Core.Iterable
 		  #Pragma Unused Identity
 		  
 		  If Dict.HasKey("Contents") Then
+		    // Only keep the most recent of the duplicates
 		    Dim Contents() As Auto = Dict.Value("Contents")
+		    Dim UniqueClasses As New Xojo.Core.Dictionary
 		    For Each DropDict As Xojo.Core.Dictionary In Contents
 		      Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(DropDict)
 		      If Source <> Nil Then
-		        Self.mSources.Append(Source)
+		        Dim Idx As Integer = UniqueClasses.Lookup(Source.ClassString, -1)
+		        If Idx = -1 Then
+		          Self.mSources.Append(Source)
+		          UniqueClasses.Value(Source.ClassString) = Self.mSources.Ubound
+		        Else
+		          Self.mSources(Idx) = Source
+		        End If
 		      End If
 		    Next
 		  End If
@@ -96,11 +104,19 @@ Implements Xojo.Core.Iterable
 		    Dicts.Append(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
 		  End Try
 		  
+		  // Only keep the most recent of the duplicates
 		  Dim LootDrops As New BeaconConfigs.LootDrops
+		  Dim UniqueClasses As New Xojo.Core.Dictionary
 		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
 		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, QualityMultiplier)
 		    If Source <> Nil Then
-		      LootDrops.Append(Source)
+		      Dim Idx As Integer = UniqueClasses.Lookup(Source.ClassString, -1)
+		      If Idx = -1 Then
+		        LootDrops.Append(Source)
+		        UniqueClasses.Value(Source.ClassString) = LootDrops.UBound
+		      Else
+		        LootDrops(Idx) = Source
+		      End If
 		    End If
 		  Next
 		  If LootDrops.UBound > -1 Then
