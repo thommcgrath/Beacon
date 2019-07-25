@@ -141,7 +141,7 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.LootDrops
+		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.LootDrops
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  
@@ -160,7 +160,7 @@ Implements Xojo.Core.Iterable
 		  Dim LootDrops As New BeaconConfigs.LootDrops
 		  Dim UniqueClasses As New Xojo.Core.Dictionary
 		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
-		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, QualityMultiplier)
+		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Difficulty)
 		    If Source <> Nil Then
 		      Dim Idx As Integer = UniqueClasses.Lookup(Source.ClassString, -1)
 		      If Idx = -1 Then
@@ -309,12 +309,6 @@ Implements Xojo.Core.Iterable
 	#tag Method, Flags = &h0
 		Function UBound() As Integer
 		  Return Self.mSources.Ubound
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function WasPerfectImport() As Boolean
-		  Return False
 		End Function
 	#tag EndMethod
 

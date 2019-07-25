@@ -332,7 +332,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts.FromImport(ParsedData, New Xojo.Core.Dictionary, Self.Document.MapCompatibility, Self.Document.DifficultyValue)
+		  Dim OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts.FromImport(ParsedData, New Xojo.Core.Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
 		  If OtherConfig = Nil Or OtherConfig.Ubound = -1 Then
 		    Return
 		  End If

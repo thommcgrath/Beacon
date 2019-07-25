@@ -363,6 +363,7 @@ Window=BlueprintMultiEditor;Views/Blueprint Manager/BlueprintMultiEditor.xojo_wi
 Class=Rewriter;Modules/Beacon/Rewriter.xojo_code;&h00000000598AAFFF;&h0000000055ADDFFF;false
 MultiImage=IconCommandLine;Icons/IconCommandLine.xojo_image;&h000000000D4687FF;&h0000000007F977FF;false
 Class=GenericServerProfile;Modules/Beacon/GenericServerProfile.xojo_code;&h0000000039202FFF;&h0000000055ADDFFF;false
+Module=Tests;Modules/Tests.xojo_code;&h00000000656D4FFF;&h000000001444B7FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=2

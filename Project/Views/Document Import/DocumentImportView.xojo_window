@@ -836,7 +836,7 @@ End
 		          Params(0) = ParsedData
 		          Params(1) = CommandLineOptions
 		          Params(2) = Document.MapCompatibility
-		          Params(3) = Document.DifficultyValue
+		          Params(3) = Document.Difficulty
 		          Dim Group As Beacon.ConfigGroup = Signature.Invoke(Nil, Params)
 		          If Group <> Nil Then
 		            Document.AddConfigGroup(Group)

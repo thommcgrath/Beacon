@@ -46,9 +46,9 @@ Protected Module Qualities
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ForValue(Value As Double, CrateQualityMultiplier As Double, DifficultyValue As Double) As Beacon.Quality
+		Protected Function ForValue(Value As Double, CrateQualityMultiplier As Double, Difficulty As BeaconConfigs.Difficulty) As Beacon.Quality
 		  Dim CrateArbitraryQuality As Double = CrateQualityMultiplier + ((CrateQualityMultiplier - 1) * 0.2)
-		  Dim Multiplier As Double = CrateArbitraryQuality * DifficultyValue
+		  Dim Multiplier As Double = CrateArbitraryQuality * Difficulty.BaseArbitraryQuality
 		  Dim Quality As Double = Value * Multiplier
 		  
 		  // Thanks to math, we can get the quality as 15.99999 instead of 16. So rounding it is.

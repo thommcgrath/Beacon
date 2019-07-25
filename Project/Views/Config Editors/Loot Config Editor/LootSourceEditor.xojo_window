@@ -1434,7 +1434,7 @@ End
 		  
 		  Dim SourceLootSources() As Beacon.LootSource
 		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
-		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Difficulty.DifficultyValue)
+		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Difficulty)
 		    If Source <> Nil Then
 		      SourceLootSources.Append(Source)
 		    End If

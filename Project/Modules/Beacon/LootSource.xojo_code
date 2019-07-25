@@ -267,7 +267,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromConfig(Dict As Xojo.Core.Dictionary, DifficultyValue As Double) As Beacon.LootSource
+		Shared Function ImportFromConfig(Dict As Xojo.Core.Dictionary, Difficulty As BeaconConfigs.Difficulty) As Beacon.LootSource
 		  Dim ClassString As Text
 		  If Dict.HasKey("SupplyCrateClassString") Then
 		    ClassString = Dict.Value("SupplyCrateClassString")
@@ -298,7 +298,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  End If
 		  Dim AddedHashes As New Xojo.Core.Dictionary
 		  For Each Child As Xojo.Core.Dictionary In Children
-		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromConfig(Child, LootSource.Multipliers, DifficultyValue)
+		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromConfig(Child, LootSource.Multipliers, Difficulty)
 		    Dim Hash As Text = Set.Hash
 		    If Set <> Nil And AddedHashes.HasKey(Hash) = False Then
 		      LootSource.Append(Set)
