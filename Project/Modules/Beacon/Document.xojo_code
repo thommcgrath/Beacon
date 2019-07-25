@@ -839,6 +839,20 @@ Implements Beacon.DocumentItem
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function UsesOmniFeaturesWithoutOmni(Identity As Beacon.Identity) As Beacon.ConfigGroup()
+		  Dim OmniVersion As Integer = Identity.OmniVersion
+		  Dim Configs() As Beacon.ConfigGroup = Self.ImplementedConfigs()
+		  Dim ExcludedConfigs() As Beacon.ConfigGroup
+		  For Each Config As Beacon.ConfigGroup In Configs
+		    If Config.Purchased(OmniVersion) = False Then
+		      ExcludedConfigs.Append(Config)
+		    End If
+		  Next
+		  Return ExcludedConfigs
+		End Function
+	#tag EndMethod
+
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter

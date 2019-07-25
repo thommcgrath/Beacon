@@ -96,6 +96,12 @@ Protected Module BeaconConfigs
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Purchased(Extends Config As Beacon.ConfigGroup, PurchasedVersion As Integer) As Boolean
+		  Return ConfigPurchased(Config.ConfigName, PurchasedVersion)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function TypeInfoForConfigName(ConfigName As Text) As Xojo.Introspection.TypeInfo
 		  Select Case ConfigName

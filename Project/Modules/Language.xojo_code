@@ -1,5 +1,46 @@
 #tag Module
 Protected Module Language
+	#tag Method, Flags = &h0
+		Function EnglishOxfordList(Extends Items() As String) As String
+		  Return EnglishOxfordList(Items)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function EnglishOxfordList(Extends Items() As Text) As Text
+		  Return EnglishOxfordList(Items)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function EnglishOxfordList(Items() As String) As String
+		  If Items.Ubound = -1 Then
+		    Return ""
+		  ElseIf Items.Ubound = 0 Then
+		    Return Items(0)
+		  ElseIf Items.Ubound = 1 Then
+		    Return Items(0) + " and " + Items(1)
+		  Else
+		    Dim LastItem As String = Items(Items.Ubound)
+		    Items.Remove(Items.Ubound)
+		    Dim List As String = Join(Items, ", ") + ", and " + LastItem
+		    Items.Append(LastItem) // Gotta put it back
+		    Return List
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function EnglishOxfordList(Items() As Text) As Text
+		  Dim Converted() As String
+		  Redim Converted(Items.Ubound)
+		  For I As Integer = 0 To Items.Ubound
+		    Converted(I) = Items(I)
+		  Next
+		  Return EnglishOxfordList(Converted).ToText
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function LabelForConfig(Config As Beacon.ConfigGroup) As Text
 		  Return Language.LabelForConfig(Config.ConfigName)
