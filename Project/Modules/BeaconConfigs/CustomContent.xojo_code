@@ -153,12 +153,17 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub GameIniContent(SupportedConfigs As Xojo.Core.Dictionary = Nil, Assigns Value As String)
+		Sub GameIniContent(SupportedConfigs As Dictionary = Nil, Assigns Value As String)
 		  If SupportedConfigs <> Nil Then
 		    Dim ConfigValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ShooterGameHeader, Value, SupportedConfigs, Nil)
-		    Dim ConfigDict As New Xojo.Core.Dictionary
+		    Dim ConfigDict As New Dictionary
 		    Beacon.ConfigValue.FillConfigDict(ConfigDict, ConfigValues)
-		    Value = Beacon.RewriteIniContent("", ConfigDict, False)
+		    
+		    Dim Errored As Boolean
+		    Dim Rewritten As String = Beacon.Rewriter.Rewrite("", ConfigDict, "", Errored)
+		    If Not Errored Then
+		      Value = Rewritten
+		    End If
 		  End If
 		  
 		  If StrComp(Self.mGameIniContent, Value, 0) <> 0 Then
@@ -169,13 +174,25 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameIniValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
-		  Return Self.GameIniValues(SourceDocument, New Xojo.Core.Dictionary, Profile)
+		Function GameIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64) As Beacon.ConfigValue()
+		  #Pragma Unused SourceDocument
+		  #Pragma Unused Identity
+		  #Pragma Unused Mask
+		  
+		  Dim Err As UnsupportedOperationException
+		  Err.Message = "Do not call this one!"
+		  Raise Err
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameIniValues(SourceDocument As Beacon.Document, ExistingConfigs As Xojo.Core.Dictionary, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
+		Function GameIniValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
+		  Return Self.GameIniValues(SourceDocument, New Dictionary, Profile)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GameIniValues(SourceDocument As Beacon.Document, ExistingConfigs As Dictionary, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
 		  
 		  Return Self.IniValues(Beacon.ShooterGameHeader, Self.mGameIniContent, ExistingConfigs, Profile)
@@ -189,7 +206,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub GameUserSettingsIniContent(SupportedConfigs As Xojo.Core.Dictionary = Nil, Assigns Value As String)
+		Sub GameUserSettingsIniContent(SupportedConfigs As Dictionary = Nil, Assigns Value As String)
 		  If SupportedConfigs <> Nil Then
 		    Dim ConfigValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ServerSettingsHeader, Value, SupportedConfigs, Nil)
 		    
@@ -210,9 +227,14 @@ Inherits Beacon.ConfigGroup
 		      End If
 		    Next
 		    
-		    Dim ConfigDict As New Xojo.Core.Dictionary
+		    Dim ConfigDict As New Dictionary
 		    Beacon.ConfigValue.FillConfigDict(ConfigDict, ConfigValues)
-		    Value = Beacon.RewriteIniContent("", ConfigDict, False)
+		    
+		    Dim Errored As Boolean
+		    Dim Rewritten As String = Beacon.Rewriter.Rewrite("", ConfigDict, "", Errored)
+		    If Not Errored Then
+		      Value = Rewritten
+		    End If
 		  End If
 		  
 		  If StrComp(Self.mGameUserSettingsIniContent, Value, 0) <> 0 Then
@@ -223,13 +245,25 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
-		  Return Self.GameUserSettingsIniValues(SourceDocument, New Xojo.Core.Dictionary, Profile)
+		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64) As Beacon.ConfigValue()
+		  #Pragma Unused SourceDocument
+		  #Pragma Unused Identity
+		  #Pragma Unused Mask
+		  
+		  Dim Err As UnsupportedOperationException
+		  Err.Message = "Do not call this one!"
+		  Raise Err
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, ExistingConfigs As Xojo.Core.Dictionary, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
+		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
+		  Return Self.GameUserSettingsIniValues(SourceDocument, New Dictionary, Profile)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, ExistingConfigs As Dictionary, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
 		  
 		  Return Self.IniValues(Beacon.ServerSettingsHeader, Self.mGameUserSettingsIniContent, ExistingConfigs, Profile)
@@ -237,7 +271,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function IniValues(InitialHeader As Text, Source As String, ExistingConfigs As Xojo.Core.Dictionary, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
+		Private Function IniValues(InitialHeader As Text, Source As String, ExistingConfigs As Dictionary, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  Source = Source.ReplaceAll(Self.EncryptedTag, "")
 		  Source = ReplaceLineEndings(Source, Encodings.ASCII.Chr(10))
 		  

@@ -226,7 +226,7 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Extends Source As String, StartAt As Integer = 0, Other As String) As Integer
-		  Return InStr(StartAt, Source, Other) - 1
+		  Return InStr(StartAt + 1, Source, Other) - 1
 		End Function
 	#tag EndMethod
 

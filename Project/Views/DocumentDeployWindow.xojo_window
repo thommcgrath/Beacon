@@ -488,7 +488,7 @@ End
 		      Case IsA Beacon.NitradoServerProfile
 		        DeploymentEngine = New Beacon.NitradoDeploymentEngine(Beacon.NitradoServerProfile(Profile), Self.mDocument.OAuthData(Profile.OAuthProvider))
 		      Case IsA Beacon.FTPServerProfile
-		        DeploymentEngine = New Beacon.FTPDeploymentEngine(Beacon.FTPServerProfile(Profile), App.IdentityManager.CurrentIdentity)
+		        DeploymentEngine = New Beacon.FTPDeploymentEngine(Beacon.FTPServerProfile(Profile))
 		      Else
 		        Continue
 		      End Select

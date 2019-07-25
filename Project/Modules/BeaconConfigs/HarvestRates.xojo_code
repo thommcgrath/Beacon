@@ -2,8 +2,8 @@
  Attributes ( OmniVersion = 1 ) Protected Class HarvestRates
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub CommandLineOptions(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
-		  #Pragma Unused Mask
+		Sub CommandLineOptions(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
 		  Values.Append(New Beacon.ConfigValue("?", "UseOptimizedHarvestingHealth", If(Self.mUseOptimizedRates, "true", "false")))
@@ -11,8 +11,8 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
-		  #Pragma Unused Mask
+		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mOverrides
@@ -27,8 +27,8 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
-		  #Pragma Unused Mask
+		Sub GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
 		  Values.Append(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "HarvestAmountMultiplier", Self.mHarvestAmountMultiplier.PrettyText))
