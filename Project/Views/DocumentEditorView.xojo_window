@@ -389,7 +389,7 @@ End
 		  Else
 		    Self.Autosave()
 		    
-		    If Self.Document.IsValid = False Then
+		    If Self.Document.IsValid(App.IdentityManager.CurrentIdentity) = False Then
 		      Self.ShowIssues()
 		      Return
 		    End If
@@ -407,7 +407,7 @@ End
 		Private Sub BeginExport()
 		  Self.Autosave()
 		  
-		  If Self.Document.IsValid = False Then
+		  If Self.Document.IsValid(App.IdentityManager.CurrentIdentity) = False Then
 		    Self.ShowIssues()
 		    Return
 		  End If

@@ -427,8 +427,18 @@ Implements Beacon.DocumentItem
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Attributes( Deprecated, Hidden ) Private Function IsValid(Document As Beacon.Document) As Boolean
+		  If Document <> Self Then
+		    Raise New UnsupportedOperationException
+		  End If
+		  
+		  // Keep this method around to satisfy the interface, but don't use it.
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
-		Function IsValid() As Boolean
+		Function IsValid(Identity As Beacon.Identity) As Boolean
 		  If Self.mMapCompatibility = 0 Then
 		    Return False
 		  End If
@@ -438,23 +448,13 @@ Implements Beacon.DocumentItem
 		  
 		  Dim Configs() As Beacon.ConfigGroup = Self.ImplementedConfigs()
 		  For Each Config As Beacon.ConfigGroup In Configs
-		    Dim Issues() As Beacon.Issue = Config.Issues(Self)
+		    Dim Issues() As Beacon.Issue = Config.Issues(Self, Identity)
 		    If Issues <> Nil And Issues.Ubound > -1 Then
 		      Return False
 		    End If
 		  Next
 		  
 		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "Document.IsValid()" )  Function IsValid(Document As Beacon.Document) As Boolean
-		  If Document <> Self Then
-		    Raise New UnsupportedOperationException
-		  End If
-		  
-		  Return Self.IsValid()
 		End Function
 	#tag EndMethod
 

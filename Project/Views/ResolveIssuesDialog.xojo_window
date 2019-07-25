@@ -341,14 +341,10 @@ End
 		Private Shared Function DescribeIssues(Document As Beacon.Document) As Beacon.Issue()
 		  Dim DocumentIssues() As Beacon.Issue
 		  
-		  If Document.IsValid Then
-		    Return DocumentIssues
-		  End If
-		  
 		  Dim UniqueIssues As New Xojo.Core.Dictionary
 		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
 		  For Each Config As Beacon.ConfigGroup In Configs
-		    Dim Issues() As Beacon.Issue = Config.Issues(Document)
+		    Dim Issues() As Beacon.Issue = Config.Issues(Document, App.IdentityManager.CurrentIdentity)
 		    For Each Issue As Beacon.Issue In Issues
 		      If Not UniqueIssues.HasKey(Issue.Description) Then
 		        DocumentIssues.Append(Issue)

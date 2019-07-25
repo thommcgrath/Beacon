@@ -73,10 +73,11 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Issues(Document As Beacon.Document) As Beacon.Issue()
-		  #Pragma Unused Document
-		  
+		Function Issues(Document As Beacon.Document, Identity As Beacon.Identity) As Beacon.Issue()
 		  Dim Arr() As Beacon.Issue
+		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
+		    RaiseEvent DetectIssues(Document, Arr)
+		  End If
 		  Return Arr
 		End Function
 	#tag EndMethod
@@ -125,6 +126,10 @@ Protected Class ConfigGroup
 
 	#tag Hook, Flags = &h0
 		Event CommandLineOptions(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event DetectIssues(Document As Beacon.Document, Issues() As Beacon.Issue)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

@@ -815,9 +815,15 @@ End
 		  End If
 		  
 		  Dim ConfigNames() As Text = BeaconConfigs.AllConfigNames()
+		  Dim PurchasedOmniVersion As Integer = App.IdentityManager.CurrentIdentity.OmniVersion
 		  For Each ConfigName As Text In ConfigNames
 		    If ConfigName = BeaconConfigs.Difficulty.ConfigName Or ConfigName = BeaconConfigs.CustomContent.ConfigName Then
 		      // Difficulty and custom content area special
+		      Continue For ConfigName
+		    End If
+		    
+		    If BeaconConfigs.ConfigPurchased(ConfigName, PurchasedOmniVersion) = False Then
+		      // Do not import code for groups that the user has not purchased
 		      Continue For ConfigName
 		    End If
 		    
