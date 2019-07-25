@@ -755,15 +755,18 @@ End
 		      End If
 		      
 		      Dim Document As Beacon.Document = DocumentEditorView(View).Document
-		      Dim Sources As Beacon.LootSourceCollection = Document.LootSources
-		      Dim SourcesBound As Integer = Sources.UBound
-		      For X As Integer = 0 To SourcesBound
-		        Dim Source As Beacon.LootSource = Sources(X)
-		        If Source.IsOfficial = False And Classes.IndexOf(Source.ClassString) = -1 Then
-		          Classes.Append(Source.ClassString)
-		          Self.mSources.Append(Source)
-		        End If
-		      Next
+		      If Document.HasConfigGroup(BeaconConfigs.LootDrops.ConfigName) Then
+		        Dim Config As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.LootDrops.ConfigName))
+		        Dim Sources As Beacon.LootSourceCollection = Config.DefinedSources
+		        Dim SourcesBound As Integer = Sources.UBound
+		        For X As Integer = 0 To SourcesBound
+		          Dim Source As Beacon.LootSource = Sources(X)
+		          If Source.IsOfficial = False And Classes.IndexOf(Source.ClassString) = -1 Then
+		            Classes.Append(Source.ClassString)
+		            Self.mSources.Append(Source)
+		          End If
+		        Next
+		      End If
 		    Next
 		  End If
 		  

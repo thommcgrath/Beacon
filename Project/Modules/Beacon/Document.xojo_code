@@ -1,18 +1,5 @@
 #tag Class
 Protected Class Document
-Implements Beacon.DocumentItem
-	#tag Method, Flags = &h0
-		Sub Add(LootSource As Beacon.LootSource)
-		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops(True)
-		  Dim Idx As Integer = Drops.IndexOf(LootSource)
-		  If Idx > -1 Then
-		    Drops(Idx) = LootSource
-		  Else
-		    Drops.Append(LootSource)
-		  End If
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub Add(Profile As Beacon.ServerProfile)
 		  If Profile = Nil Then
@@ -82,17 +69,6 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
-		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
-		  If Drops <> Nil Then
-		    For Each Source As Beacon.LootSource In Drops
-		      Source.ConsumeMissingEngrams(Engrams)
-		    Next
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Difficulty() As BeaconConfigs.Difficulty
 		  Static GroupName As Text = BeaconConfigs.Difficulty.ConfigName
 		  Return BeaconConfigs.Difficulty(Self.ConfigGroup(GroupName, True))
@@ -102,16 +78,6 @@ Implements Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function DocumentID() As Text
 		  Return Self.mIdentifier
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Drops(Create As Boolean = False) As BeaconConfigs.LootDrops
-		  Static GroupName As Text = BeaconConfigs.LootDrops.ConfigName
-		  Dim Group As Beacon.ConfigGroup = Self.ConfigGroup(GroupName, Create)
-		  If Group <> Nil Then
-		    Return BeaconConfigs.LootDrops(Group)
-		  End If
 		End Function
 	#tag EndMethod
 
@@ -384,31 +350,12 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasLootSource(LootSource As Beacon.LootSource) As Boolean
-		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
-		  If Drops <> Nil Then
-		    Return Drops.IndexOf(LootSource) > -1
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ImplementedConfigs() As Beacon.ConfigGroup()
 		  Dim Groups() As Beacon.ConfigGroup
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mConfigGroups
 		    Groups.Append(Entry.Value)
 		  Next
 		  Return Groups
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Attributes( Deprecated, Hidden ) Private Function IsValid(Document As Beacon.Document) As Boolean
-		  If Document <> Self Then
-		    Raise New UnsupportedOperationException
-		  End If
-		  
-		  // Keep this method around to satisfy the interface, but don't use it.
 		End Function
 	#tag EndMethod
 
@@ -442,37 +389,6 @@ Implements Beacon.DocumentItem
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
 		Function LastSaved() As Xojo.Core.Date
 		  Return Self.mLastSaved
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function LootSource(Index As Integer) As Beacon.LootSource
-		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
-		  If Drops <> Nil Then
-		    Return Drops(Index)
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function LootSourceCount() As UInteger
-		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
-		  If Drops <> Nil Then
-		    Return Drops.UBound + 1
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function LootSources() As Beacon.LootSourceCollection
-		  Dim Results As New Beacon.LootSourceCollection
-		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
-		  If Drops <> Nil Then
-		    For Each LootSource As Beacon.LootSource In Drops
-		      Results.Append(LootSource)
-		    Next
-		  End If
-		  Return Results
 		End Function
 	#tag EndMethod
 
@@ -649,32 +565,6 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ReconfigurePresets() As UInteger
-		  If Self.mMapCompatibility = 0 Then
-		    Return 0
-		  End If
-		  
-		  Dim NumChanged As UInteger
-		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
-		  If Drops <> Nil Then
-		    For Each Source As Beacon.LootSource In Drops
-		      NumChanged = NumChanged + Source.ReconfigurePresets(Self.mMapCompatibility, Self.Mods)
-		    Next
-		  End If
-		  Return NumChanged
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Remove(LootSource As Beacon.LootSource)
-		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
-		  If Drops <> Nil Then
-		    Self.Drops.Remove(LootSource)
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Remove(Profile As Beacon.ServerProfile)
 		  For I As Integer = 0 To Self.mServerProfiles.Ubound
 		    If Self.mServerProfiles(I) = Profile Then
@@ -717,12 +607,6 @@ Implements Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function ServerProfileCount() As Integer
 		  Return Self.mServerProfiles.Ubound + 1
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SupportsLootSource(Source As Beacon.LootSource) As Boolean
-		  Return (Source.Availability And Self.mMapCompatibility) > 0
 		End Function
 	#tag EndMethod
 
@@ -1071,6 +955,11 @@ Implements Beacon.DocumentItem
 			Name="UseCompression"
 			Group="Behavior"
 			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TrustKey"
+			Group="Behavior"
+			Type="Text"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -141,6 +141,16 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DefinedSources() As Beacon.LootSourceCollection
+		  Dim Results As New Beacon.LootSourceCollection
+		  For Each LootSource As Beacon.LootSource In Self.mSources
+		    Results.Append(LootSource)
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.LootDrops
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
@@ -182,6 +192,12 @@ Implements Xojo.Core.Iterable
 		  // Part of the Xojo.Core.Iterable interface.
 		  
 		  Return New BeaconConfigs.LootDropIterator(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasLootSource(Source As Beacon.LootSource) As Boolean
+		  Return Self.IndexOf(Source) > -1
 		End Function
 	#tag EndMethod
 
@@ -249,6 +265,20 @@ Implements Xojo.Core.Iterable
 		  Self.mSources(Index) = Source
 		  Self.Modified = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ReconfigurePresets(Mask As UInt64, Mods As Beacon.TextList) As UInteger
+		  If Mask = 0 Then
+		    Return 0
+		  End If
+		  
+		  Dim NumChanged As UInteger
+		  For Each Source As Beacon.LootSource In Self.mSources
+		    NumChanged = NumChanged + Source.ReconfigurePresets(Mask, Mods)
+		  Next
+		  Return NumChanged
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
