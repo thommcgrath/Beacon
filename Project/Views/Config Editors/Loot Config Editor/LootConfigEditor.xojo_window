@@ -775,6 +775,14 @@ End
 		    End If
 		    
 		    If LootSources.Ubound = -1 Then
+		      Dim Warning As MenuItem
+		      If Mask = 0 Then
+		        Warning = New MenuItem("List is empty because no maps have been selected.")
+		      Else
+		        Warning = New MenuItem("List is empty because all drops have been implemented.")
+		      End If
+		      Warning.Enabled = False
+		      Menu.Append(Warning)
 		      Return
 		    End If
 		    

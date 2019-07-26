@@ -760,10 +760,11 @@ Protected Module Beacon
 		    Names.Append(Map.Name)
 		  Next
 		  
-		  
-		  If UBound(Names) = 0 Then
+		  If Names.Ubound = -1 Then
+		    Return "No Maps"
+		  ElseIf Names.Ubound = 0 Then
 		    Return Names(0)
-		  ElseIf UBound(Names) = 1 Then
+		  ElseIf Names.Ubound = 1 Then
 		    Return Names(0) + " & " + Names(1)
 		  Else
 		    Dim Tail As Text = Names(UBound(Names))

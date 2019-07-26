@@ -657,7 +657,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function ValidForMask(Mask As UInt64) As Boolean
-		  Return Mask = 0 Or (Self.mAvailability And Mask) > 0
+		  Return (Self.mAvailability And Mask) > 0
 		End Function
 	#tag EndMethod
 

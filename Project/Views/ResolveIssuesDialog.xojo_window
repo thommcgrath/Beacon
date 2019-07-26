@@ -342,6 +342,12 @@ End
 		  Dim DocumentIssues() As Beacon.Issue
 		  
 		  Dim UniqueIssues As New Xojo.Core.Dictionary
+		  If Document.MapCompatibility = 0 Then
+		    Dim Issue As New Beacon.Issue("Maps", "No maps have been selected. Use the ""Maps"" config editor to choose maps.")
+		    UniqueIssues.Value(Issue.Description) = Issue
+		    DocumentIssues.Append(Issue)
+		  End If
+		  
 		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
 		  For Each Config As Beacon.ConfigGroup In Configs
 		    Dim Issues() As Beacon.Issue = Config.Issues(Document, App.IdentityManager.CurrentIdentity)
