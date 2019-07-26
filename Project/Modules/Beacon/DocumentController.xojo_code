@@ -192,14 +192,8 @@ Protected Class DocumentController
 		    Try
 		      If Self.mFileRef <> Nil And Self.mFileRef.Exists Then
 		        Self.mFileRef.Delete
-		        If Self.mFileRef.LastErrorCode = 0 Then
-		          Call CallLater.Schedule(0, AddressOf TriggerDeleteSuccess)
-		        Else
-		          Call CallLater.Schedule(0, AddressOf TriggerDeleteError, Language.FolderItemErrorReason(Self.mFileRef.LastErrorCode))
-		        End If
-		      Else
-		        Call CallLater.Schedule(0, AddressOf TriggerDeleteSuccess)
 		      End If
+		      Call CallLater.Schedule(0, AddressOf TriggerDeleteSuccess)
 		    Catch Err As RuntimeException
 		      Call CallLater.Schedule(0, AddressOf TriggerDeleteError, Err.Explanation)
 		    End Try

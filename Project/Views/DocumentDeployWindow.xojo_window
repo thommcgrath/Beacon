@@ -644,12 +644,12 @@ End
 		    App.Log("Unable to backup " + Engine.Name + ": Could not to get path to server backup folder")
 		    Return False
 		  ElseIf ServerFolder.Exists = False Then
-		    ServerFolder.CreateAsFolder
-		    Dim ServerFolderError As Integer = ServerFolder.LastErrorCode
-		    If ServerFolderError <> 0 Then
-		      App.Log("Unable to backup " + Engine.Name + ": Could not create server backup folder " + ServerFolder.NativePath + ": " + Language.FolderItemErrorReason(ServerFolderError))
+		    Try
+		      ServerFolder.CreateAsFolder
+		    Catch Err As IOException
+		      App.Log("Unable to backup " + Engine.Name + ": Could not create server backup folder " + ServerFolder.NativePath + ": " + Err.Message)
 		      Return False
-		    End If
+		    End Try
 		  End If
 		  
 		  Dim Subfolder As FolderItem = ServerFolder.Child(Beacon.SanitizeFilename(Self.mDeployLabel))
@@ -663,12 +663,11 @@ End
 		    App.Log("Unable to backup " + Engine.Name + ": Could not to get path to deployment folder")
 		    Return False
 		  End If
-		  Subfolder.CreateAsFolder
-		  Dim SubfolderError As Integer = Subfolder.LastErrorCode
-		  If SubfolderError <> 0 Then
-		    App.Log("Unable to backup " + Engine.Name + ": Could not create deployment folder " + Subfolder.NativePath + ": " + Language.FolderItemErrorReason(SubfolderError))
-		    Return False
-		  End If
+		  Try
+		    Subfolder.CreateAsFolder
+		  Catch Err As IOException
+		    App.Log("Unable to backup " + Engine.Name + ": Could not create deployment folder " + Subfolder.NativePath + ": " + Err.Message)
+		  End Try
 		  
 		  Dim BackedUp As Boolean = True
 		  If GameIniContent <> "" Then
@@ -677,7 +676,7 @@ End
 		      App.Log("Unable to backup Game.ini for " + Engine.Name + ": Could not get path to Game.ini")
 		      BackedUp = False
 		    ElseIf GameIniFile.Write(GameIniContent, Xojo.Core.TextEncoding.UTF8) = False Then
-		      App.Log("Unable to backup Game.ini for " + Engine.Name + " to " + GameIniFile.NativePath + ": " + Language.FolderItemErrorReason(GameIniFile.LastErrorCode))
+		      App.Log("Unable to backup Game.ini for " + Engine.Name + " to " + GameIniFile.NativePath)
 		      BackedUp = False
 		    End If
 		  End If
@@ -687,7 +686,7 @@ End
 		      App.Log("Unable to backup Game.ini for " + Engine.Name + ": Could not get path to GameUserSettings.ini")
 		      BackedUp = False
 		    ElseIf GameUserSettingsIniFile.Write(GameUserSettingsIniContent, Xojo.Core.TextEncoding.UTF8) = False Then
-		      App.Log("Unable to backup Game.ini for " + Engine.Name + " to " + GameUserSettingsIniFile.NativePath + ": " + Language.FolderItemErrorReason(GameUserSettingsIniFile.LastErrorCode))
+		      App.Log("Unable to backup Game.ini for " + Engine.Name + " to " + GameUserSettingsIniFile.NativePath)
 		      BackedUp = False
 		    End If
 		  End If
