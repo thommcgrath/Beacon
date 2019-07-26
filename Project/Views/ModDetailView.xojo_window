@@ -1,15 +1,15 @@
 #tag Window
 Begin BeaconContainer ModDetailView
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   419
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,10 +23,10 @@ Begin BeaconContainer ModDetailView
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   864
    Begin PagePanel Panel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   419
@@ -42,6 +42,7 @@ Begin BeaconContainer ModDetailView
       PanelCount      =   4
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   3
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -52,19 +53,29 @@ Begin BeaconContainer ModDetailView
       Width           =   864
       Begin UITweaks.ResizedTextField ConfirmField
          AcceptTabs      =   False
-         Alignment       =   2
+         Alignment       =   "2"
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
+         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -76,6 +87,7 @@ Begin BeaconContainer ModDetailView
          LockRight       =   False
          LockTop         =   True
          Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   True
          Scope           =   2
@@ -83,6 +95,7 @@ Begin BeaconContainer ModDetailView
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -91,10 +104,13 @@ Begin BeaconContainer ModDetailView
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
+         ValidationMask  =   ""
+         Value           =   ""
          Visible         =   True
          Width           =   380
       End
       Begin ReactionButton CopyButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -102,6 +118,9 @@ Begin BeaconContainer ModDetailView
          Caption         =   "Copy To Clipboard"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -113,6 +132,7 @@ Begin BeaconContainer ModDetailView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   3
@@ -127,11 +147,15 @@ Begin BeaconContainer ModDetailView
          Width           =   145
       End
       Begin Label ConfirmExplanation
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   86
          HelpTag         =   ""
          Index           =   -2147483648
@@ -150,7 +174,8 @@ Begin BeaconContainer ModDetailView
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "You have not yet confirmed ownership of this mod. To so do, please copy the value below and insert it anywhere on the mod's Steam page. Then press the ""Confirm Ownership"" button below. Once confirmed, the text can be removed from your Steam page."
-         TextAlign       =   1
+         TextAlign       =   "1"
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -158,10 +183,12 @@ Begin BeaconContainer ModDetailView
          Top             =   101
          Transparent     =   True
          Underline       =   False
+         Value           =   "You have not yet confirmed ownership of this mod. To so do, please copy the value below and insert it anywhere on the mod's Steam page. Then press the ""Confirm Ownership"" button below. Once confirmed, the text can be removed from your Steam page."
          Visible         =   True
          Width           =   380
       End
       Begin UITweaks.ResizedPushButton ConfirmButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -169,6 +196,9 @@ Begin BeaconContainer ModDetailView
          Caption         =   "Confirm Ownership"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -180,6 +210,7 @@ Begin BeaconContainer ModDetailView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   4
          TabPanelIndex   =   3
@@ -194,11 +225,15 @@ Begin BeaconContainer ModDetailView
          Width           =   145
       End
       Begin Label NoSelectionLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -217,7 +252,8 @@ Begin BeaconContainer ModDetailView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "No Mod Selected"
-         TextAlign       =   1
+         TextAlign       =   "1"
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -225,14 +261,17 @@ Begin BeaconContainer ModDetailView
          Top             =   199
          Transparent     =   True
          Underline       =   False
+         Value           =   "No Mod Selected"
          Visible         =   True
          Width           =   824
       End
       Begin ProgressBar LoadingIndicator
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Enabled         =   True
          Height          =   20
          HelpTag         =   ""
+         Indeterminate   =   False
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   262
@@ -242,17 +281,25 @@ Begin BeaconContainer ModDetailView
          LockRight       =   False
          LockTop         =   True
          Maximum         =   0
+         MaximumValue    =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
          TabStop         =   True
          Top             =   199
          Transparent     =   False
-         Value           =   0
+         Value           =   0.0
          Visible         =   True
          Width           =   340
       End
       Begin BeaconListbox EngramList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   False
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -263,12 +310,22 @@ Begin BeaconContainer ModDetailView
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
+         DropIndicatorVisible=   False
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLinesHorizontal=   "0"
+         GridLinesHorizontalStyle=   "0"
+         GridLinesVertical=   "0"
+         GridLinesVerticalStyle=   "0"
+         HasBorder       =   False
+         HasHeader       =   True
          HasHeading      =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
          HeadingIndex    =   1
          Height          =   378
          HelpTag         =   ""
@@ -284,12 +341,14 @@ Begin BeaconContainer ModDetailView
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowCount        =   0
+         RowCount        =   "0"
+         RowSelectionType=   "1"
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionType   =   1
+         SelectionRequired=   False
+         SelectionType   =   "1"
          ShowDropIndicator=   False
          TabIndex        =   1
          TabPanelIndex   =   4
@@ -309,12 +368,16 @@ Begin BeaconContainer ModDetailView
       Begin BeaconToolbar Header
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "Mod Detail"
-         DoubleBuffer    =   False
+         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   False
+         EraseBackground =   "False"
          Height          =   40
          HelpTag         =   ""
          Index           =   -2147483648
@@ -341,12 +404,16 @@ Begin BeaconContainer ModDetailView
       Begin BeaconToolbar NoSelectionHeader
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "No Mod Selected"
-         DoubleBuffer    =   False
+         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   False
+         EraseBackground =   "False"
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -373,12 +440,16 @@ Begin BeaconContainer ModDetailView
       Begin BeaconToolbar LoadingHeader
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "Mod Detail"
-         DoubleBuffer    =   False
+         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   False
+         EraseBackground =   "False"
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -405,12 +476,16 @@ Begin BeaconContainer ModDetailView
       Begin BeaconToolbar ConfirmationHeader
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "Untitled"
-         DoubleBuffer    =   False
+         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   False
+         EraseBackground =   "False"
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -445,11 +520,15 @@ Begin BeaconContainer ModDetailView
    Begin FadedSeparator HeaderSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -526,14 +605,14 @@ End
 		  If Response.Success Then
 		    Self.CurrentMod.Constructor(Response.JSON)
 		    If Self.CurrentMod.Confirmed Then
-		      Panel.Value = PageEngrams
+		      Panel.SelectedPanelIndex = PageEngrams
 		      Self.ShowAlert("Mod ownership confirmed.", "You may now remove the confirmation code from your Steam page.")
 		    Else
-		      Panel.Value = PageNeedsConfirmation
+		      Panel.SelectedPanelIndex = PageNeedsConfirmation
 		      Self.ShowAlert("Mod ownership has not been confirmed.", "The confirmation code was not found on mod's Steam page.")
 		    End If
 		  Else
-		    Panel.Value = PageNeedsConfirmation
+		    Panel.SelectedPanelIndex = PageNeedsConfirmation
 		    Self.ShowAlert("Mod ownership has not been confirmed.", Response.Message)
 		  End If
 		End Sub
@@ -544,12 +623,12 @@ End
 		  #Pragma Unused Request
 		  
 		  If Not Response.Success Then
-		    Panel.Value = PageEngrams
+		    Panel.SelectedPanelIndex = PageEngrams
 		    Self.ShowAlert("Unable to delete engrams.", Response.Message)
 		    Return
 		  End If
 		  
-		  Panel.Value = PageEngrams
+		  Panel.SelectedPanelIndex = PageEngrams
 		  Self.EngramSet.ClearModifications(False)
 		  Header.PublishButton.Enabled = False
 		  Self.ShowAlert("Engrams published.", "Your changes are now live.")
@@ -563,7 +642,7 @@ End
 		  
 		  Self.mEngramSets.Value(Self.CurrentMod.ModID) = New BeaconAPI.EngramSet(Response.JSON)
 		  Self.ShowCurrentEngrams()
-		  Panel.Value = PageEngrams
+		  Panel.SelectedPanelIndex = PageEngrams
 		End Sub
 	#tag EndMethod
 
@@ -572,7 +651,7 @@ End
 		  #Pragma Unused Request
 		  
 		  If Not Response.Success Then
-		    Panel.Value = PageEngrams
+		    Panel.SelectedPanelIndex = PageEngrams
 		    Self.ShowAlert("Unable to save engrams.", Response.Message)
 		    Return
 		  End If
@@ -581,7 +660,7 @@ End
 		    Return
 		  End If
 		  
-		  Panel.Value = PageEngrams
+		  Panel.SelectedPanelIndex = PageEngrams
 		  Self.EngramSet.ClearModifications(False)
 		  Header.PublishButton.Enabled = False
 		  Self.ShowAlert("Engrams published.", "Your changes are now live.")
@@ -602,7 +681,7 @@ End
 		    Return False
 		  End If
 		  
-		  Panel.Value = PageLoading
+		  Panel.SelectedPanelIndex = PageLoading
 		  
 		  Dim UIDs() As Text
 		  For Each Engram As BeaconAPI.Engram In DeletedEngrams
@@ -670,7 +749,7 @@ End
 		  Dim Dict As Dictionary = Self.mStates.Value(ModID)
 		  
 		  Dim Selected() As String = Dict.Value("Selected")
-		  For I As Integer = 0 To Self.EngramList.ListCount - 1
+		  For I As Integer = 0 To Self.EngramList.RowCount - 1
 		    Dim Engram As BeaconAPI.Engram = Self.EngramList.RowTag(I)
 		    Self.EngramList.Selected(I) = Selected.IndexOf(Engram.ID) > -1
 		  Next
@@ -686,7 +765,7 @@ End
 		  End If
 		  
 		  Dim Selected() As String
-		  For I As Integer = 0 To Self.EngramList.ListCount - 1
+		  For I As Integer = 0 To Self.EngramList.RowCount - 1
 		    Dim Engram As BeaconAPI.Engram = Self.EngramList.RowTag(I)
 		    If Self.EngramList.Selected(I) Then
 		      Selected.Append(Engram.ID)
@@ -709,7 +788,7 @@ End
 		    Return False
 		  End If
 		  
-		  Panel.Value = PageLoading
+		  Panel.SelectedPanelIndex = PageLoading
 		  
 		  Dim Dicts() As Xojo.Core.Dictionary
 		  For Each Engram As BeaconAPI.Engram In NewEngrams
@@ -737,7 +816,7 @@ End
 		  Dim Engrams() As BeaconAPI.Engram = EngramSet.ActiveEngrams
 		  For Each Engram As BeaconAPI.Engram In Engrams
 		    Self.EngramList.AddRow("")
-		    Self.ShowEngramInRow(Self.EngramList.LastIndex, Engram)
+		    Self.ShowEngramInRow(Self.EngramList.LastAddedRowIndex, Engram)
 		  Next
 		  Self.EngramList.Sort
 		  Self.RestoreListState()
@@ -765,7 +844,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowFileImport()
-		  Dim Dialog As New OpenDialog
+		  Dim Dialog As New OpenFileDialog
 		  Dialog.Filter = BeaconFileTypes.Text
 		  
 		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
@@ -818,7 +897,7 @@ End
 			  Self.mCurrentMod = Value
 			  
 			  If Self.mCurrentMod = Nil Then
-			    Panel.Value = Self.PageNoSelection
+			    Panel.SelectedPanelIndex = Self.PageNoSelection
 			    Return
 			  End If
 			  
@@ -827,17 +906,17 @@ End
 			  Self.Header.Caption = Value.Name
 			  
 			  If Not Self.mCurrentMod.Confirmed Then
-			    ConfirmField.Text = Self.mCurrentMod.ConfirmationCode
-			    Panel.Value = PageNeedsConfirmation
+			    ConfirmField.Value = Self.mCurrentMod.ConfirmationCode
+			    Panel.SelectedPanelIndex = PageNeedsConfirmation
 			    Return
 			  End If
 			  
 			  If Self.mEngramSets.HasKey(Self.mCurrentMod.ModID) Then
 			    Self.ShowCurrentEngrams()
-			    Panel.Value = PageEngrams
+			    Panel.SelectedPanelIndex = PageEngrams
 			  Else
 			    // Load engrams
-			    Panel.Value = PageLoading
+			    Panel.SelectedPanelIndex = PageLoading
 			    Dim Request As New BeaconAPI.Request(Self.mCurrentMod.EngramsURL, "GET", AddressOf APICallback_EngramsLoad)
 			    Self.Socket.Start(Request)
 			  End If
@@ -878,7 +957,7 @@ End
 	#tag Event
 		Sub Action()
 		  Dim C As New Clipboard
-		  C.Text = ConfirmField.Text
+		  C.Text = ConfirmField.Value
 		  
 		  Me.Caption = "Copied!"
 		  Me.Enabled = False
@@ -888,7 +967,7 @@ End
 #tag Events ConfirmButton
 	#tag Event
 		Sub Action()
-		  Panel.Value = PageLoading
+		  Panel.SelectedPanelIndex = PageLoading
 		  
 		  Dim Request As New BeaconAPI.Request(Self.CurrentMod.ConfirmURL, "GET", AddressOf APICallback_ConfirmMod)
 		  Request.Sign(App.IdentityManager.CurrentIdentity)
@@ -953,7 +1032,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Header.RemoveButton.Enabled = Me.ListIndex > -1
+		  Header.RemoveButton.Enabled = Me.SelectedIndex > -1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -965,11 +1044,11 @@ End
 		    Dim Engram As New BeaconAPI.Engram
 		    Engram.ModID = Self.CurrentMod.ModID
 		    EngramList.AddRow("")
-		    Self.ShowEngramInRow(EngramList.LastIndex, Engram)
-		    EngramList.EditCell(EngramList.LastIndex, 0)
+		    Self.ShowEngramInRow(EngramList.LastAddedRowIndex, Engram)
+		    EngramList.EditCell(EngramList.LastAddedRowIndex, 0)
 		    Self.EngramSet.Add(Engram)
 		  Case "RemoveButton"
-		    For I As Integer = EngramList.ListCount -1 DownTo 0
+		    For I As Integer = EngramList.RowCount -1 DownTo 0
 		      If EngramList.Selected(I) Then
 		        Dim Engram As BeaconAPI.Engram = EngramList.RowTag(I)
 		        Self.EngramSet.Remove(Engram)
@@ -1034,7 +1113,7 @@ End
 		    APIEngram.ModID = Self.mCurrentMod.ModID
 		    Set.Add(APIEngram)
 		    EngramList.AddRow("")
-		    Self.ShowEngramInRow(EngramList.LastIndex, APIEngram)
+		    Self.ShowEngramInRow(EngramList.LastAddedRowIndex, APIEngram)
 		    EngramDict.Value(Engram.Path) = True
 		  Next
 		  
@@ -1044,6 +1123,54 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="DoubleBuffer"
 		Visible=true
 		Group="Windows Behavior"
@@ -1052,39 +1179,10 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
 	#tag EndViewProperty
@@ -1097,72 +1195,74 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Height"
 		Visible=true
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -1170,6 +1270,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -1179,12 +1280,15 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -1198,21 +1302,15 @@ End
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType="Boolean"
 	#tag EndViewProperty
@@ -1230,5 +1328,6 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

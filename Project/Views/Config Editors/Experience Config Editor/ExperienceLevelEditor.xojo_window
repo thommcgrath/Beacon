@@ -2,36 +2,54 @@
 Begin BeaconDialog ExperienceLevelEditor
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
-   Frame           =   8
+   DefaultLocation =   "1"
+   Frame           =   "8"
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
+   HasBackgroundColor=   False
+   HasCloseButton  =   False
+   HasFullScreenButton=   False
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
    Height          =   230
    ImplicitInstance=   False
-   LiveResize      =   True
+   LiveResize      =   "True"
    MacProcID       =   0
    MaxHeight       =   230
    MaximizeButton  =   False
+   MaximumHeight   =   230
+   MaximumWidth    =   382
    MaxWidth        =   382
    MenuBar         =   0
    MenuBarVisible  =   True
    MinHeight       =   230
    MinimizeButton  =   False
+   MinimumHeight   =   230
+   MinimumWidth    =   382
    MinWidth        =   382
-   Placement       =   1
-   Resizeable      =   False
+   Placement       =   "1"
+   Resizable       =   True
+   Resizeable      =   "False"
+   SystemUIVisible =   True
    Title           =   "Set Experience for Level"
+   Type            =   "8"
    Visible         =   True
    Width           =   382
    Begin Label MessageLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   True
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -50,7 +68,8 @@ Begin BeaconDialog ExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Set Experience for Level"
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -58,15 +77,20 @@ Begin BeaconDialog ExperienceLevelEditor
       Top             =   20
       Transparent     =   False
       Underline       =   False
+      Value           =   "Set Experience for Level"
       Visible         =   True
       Width           =   342
    End
    Begin Label LevelField
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -85,7 +109,8 @@ Begin BeaconDialog ExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "2"
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -93,15 +118,20 @@ Begin BeaconDialog ExperienceLevelEditor
       Top             =   52
       Transparent     =   False
       Underline       =   False
+      Value           =   "2"
       Visible         =   True
       Width           =   230
    End
    Begin Label LevelLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -120,7 +150,8 @@ Begin BeaconDialog ExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Level:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -128,15 +159,20 @@ Begin BeaconDialog ExperienceLevelEditor
       Top             =   52
       Transparent     =   False
       Underline       =   False
+      Value           =   "Level:"
       Visible         =   True
       Width           =   100
    End
    Begin Label MinXPLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -155,7 +191,8 @@ Begin BeaconDialog ExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Min XP:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -163,15 +200,20 @@ Begin BeaconDialog ExperienceLevelEditor
       Top             =   84
       Transparent     =   False
       Underline       =   False
+      Value           =   "Min XP:"
       Visible         =   True
       Width           =   100
    End
    Begin Label MinXPField
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -190,7 +232,8 @@ Begin BeaconDialog ExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "0"
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -198,15 +241,20 @@ Begin BeaconDialog ExperienceLevelEditor
       Top             =   84
       Transparent     =   False
       Underline       =   False
+      Value           =   "0"
       Visible         =   True
       Width           =   230
    End
    Begin Label MaxXPLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -225,7 +273,8 @@ Begin BeaconDialog ExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Max XP:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -233,15 +282,20 @@ Begin BeaconDialog ExperienceLevelEditor
       Top             =   116
       Transparent     =   False
       Underline       =   False
+      Value           =   "Max XP:"
       Visible         =   True
       Width           =   100
    End
    Begin Label MaxXPField
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -260,7 +314,8 @@ Begin BeaconDialog ExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "2,147,483,647"
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -268,24 +323,35 @@ Begin BeaconDialog ExperienceLevelEditor
       Top             =   116
       Transparent     =   False
       Underline       =   False
+      Value           =   "2,147,483,647"
       Visible         =   True
       Width           =   230
    End
    Begin UITweaks.ResizedTextField XPField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   132
@@ -296,6 +362,7 @@ Begin BeaconDialog ExperienceLevelEditor
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -303,6 +370,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -311,15 +379,21 @@ Begin BeaconDialog ExperienceLevelEditor
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
       Width           =   230
    End
    Begin UITweaks.ResizedLabel XPLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -338,7 +412,8 @@ Begin BeaconDialog ExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "XP For Level:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -346,10 +421,12 @@ Begin BeaconDialog ExperienceLevelEditor
       Top             =   148
       Transparent     =   False
       Underline       =   False
+      Value           =   "XP For Level:"
       Visible         =   True
       Width           =   100
    End
    Begin UITweaks.ResizedPushButton ActionButton
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -357,6 +434,9 @@ Begin BeaconDialog ExperienceLevelEditor
       Caption         =   "OK"
       Default         =   True
       Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -368,6 +448,7 @@ Begin BeaconDialog ExperienceLevelEditor
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   10
       TabPanelIndex   =   0
@@ -382,6 +463,7 @@ Begin BeaconDialog ExperienceLevelEditor
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton CancelButton
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -389,6 +471,9 @@ Begin BeaconDialog ExperienceLevelEditor
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -400,6 +485,7 @@ Begin BeaconDialog ExperienceLevelEditor
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   9
       TabPanelIndex   =   0
@@ -419,10 +505,10 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.LevelField.Text = Format(Self.mEditingLevel, "0,")
-		  Self.MinXPField.Text = Format(Self.mMinXP, "0,")
-		  Self.MaxXPField.Text = Format(Self.mMaxXP, "0,")
-		  Self.XPField.Text = Format(Self.mInitialXP, "0,")
+		  Self.LevelField.Value = Format(Self.mEditingLevel, "0,")
+		  Self.MinXPField.Value = Format(Self.mMinXP, "0,")
+		  Self.MaxXPField.Value = Format(Self.mMaxXP, "0,")
+		  Self.XPField.Value = Format(Self.mInitialXP, "0,")
 		  Self.XPField.SelectAll()
 		  
 		  Self.SwapButtons()
@@ -432,7 +518,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckActionEnabled()
-		  Dim XP As UInt64 = CDbl(Self.XPField.Text)
+		  Dim XP As UInt64 = CDbl(Self.XPField.Value)
 		  Self.ActionButton.Enabled = XP >= Self.mMinXP And XP <= Self.mMaxXP
 		End Sub
 	#tag EndMethod
@@ -454,7 +540,7 @@ End
 		  
 		  Dim Cancelled As Boolean = Win.mCancelled
 		  If Not Cancelled Then
-		    LevelXP = CDbl(Win.XPField.Text)
+		    LevelXP = CDbl(Win.XPField.Value)
 		  End If
 		  Win.Close
 		  Return Not Cancelled
@@ -510,74 +596,43 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="Name"
-		Visible=true
-		Group="ID"
-		Type="String"
-		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Interfaces"
-		Visible=true
-		Group="ID"
-		Type="String"
-		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Super"
-		Visible=true
-		Group="ID"
-		Type="String"
-		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Width"
-		Visible=true
-		Group="Size"
-		InitialValue="600"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Height"
-		Visible=true
-		Group="Size"
-		InitialValue="400"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinWidth"
+		Name="MinimumWidth"
 		Visible=true
 		Group="Size"
 		InitialValue="64"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MinHeight"
+		Name="MinimumHeight"
 		Visible=true
 		Group="Size"
 		InitialValue="64"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MaxWidth"
+		Name="MaximumWidth"
 		Visible=true
 		Group="Size"
 		InitialValue="32000"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MaxHeight"
+		Name="MaximumHeight"
 		Visible=true
 		Group="Size"
 		InitialValue="32000"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Frame"
+		Name="Type"
 		Visible=true
 		Group="Frame"
 		InitialValue="0"
-		Type="Integer"
+		Type="Types"
 		EditorType="Enum"
 		#tag EnumValues
 			"0 - Document"
@@ -594,14 +649,7 @@ End
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Title"
-		Visible=true
-		Group="Frame"
-		InitialValue="Untitled"
-		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="CloseButton"
+		Name="HasCloseButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -609,7 +657,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Resizeable"
+		Name="Resizable"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -617,7 +665,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MaximizeButton"
+		Name="HasMaximizeButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -625,7 +673,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MinimizeButton"
+		Name="HasMinimizeButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -633,7 +681,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="FullScreenButton"
+		Name="HasFullScreenButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="False"
@@ -641,31 +689,11 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Composite"
-		Group="OS X (Carbon)"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MacProcID"
-		Group="OS X (Carbon)"
-		InitialValue="0"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ImplicitInstance"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Placement"
+		Name="DefaultLocation"
 		Visible=true
 		Group="Behavior"
 		InitialValue="0"
-		Type="Integer"
+		Type="Locations"
 		EditorType="Enum"
 		#tag EnumValues
 			"0 - Default"
@@ -676,6 +704,102 @@ End
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
+		Name="SystemUIVisible"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Name"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Interfaces"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Super"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Width"
+		Visible=true
+		Group="Size"
+		InitialValue="600"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Height"
+		Visible=true
+		Group="Size"
+		InitialValue="400"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Title"
+		Visible=true
+		Group="Frame"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composite"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MacProcID"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="0"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ImplicitInstance"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Visible"
 		Visible=true
 		Group="Behavior"
@@ -684,37 +808,18 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="LiveResize"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="FullScreen"
+		Visible=false
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
 	#tag EndViewProperty
@@ -722,20 +827,8 @@ End
 		Name="MenuBar"
 		Visible=true
 		Group="Menus"
+		InitialValue=""
 		Type="MenuBar"
 		EditorType="MenuBar"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MenuBarVisible"
-		Visible=true
-		Group="Deprecated"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="mMinXP"
-		Group="Behavior"
-		Type="Integer"
 	#tag EndViewProperty
 #tag EndViewBehavior

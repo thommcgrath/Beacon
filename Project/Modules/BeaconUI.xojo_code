@@ -35,44 +35,44 @@ Protected Module BeaconUI
 		      #if DebugBuild
 		        System.DebugLog("Unable to get class reference to NSFont.")
 		      #endif
-		      Return G.TextAscent * 0.8
+		      Return G.FontAscent * 0.8
 		    End If
 		    
 		    Dim FontObject As Ptr
-		    If G.TextFont = "SmallSystem" And G.TextSize = 0 Then
+		    If G.FontName = "SmallSystem" And G.FontSize = 0 Then
 		      If G.Bold Then
 		        Declare Function SystemFontOfSize Lib "Cocoa.framework" Selector "boldSystemFontOfSize:" (Target As Ptr, Size As CGFloat) As Ptr
-		        FontObject = SystemFontOfSize(NSFont,11)
+		        FontObject = SystemFontOfSize(NSFont, 11)
 		      Else
 		        Declare Function SystemFontOfSize Lib "Cocoa.framework" Selector "systemFontOfSize:" (Target As Ptr, Size As CGFloat) As Ptr
-		        FontObject = SystemFontOfSize(NSFont,11)
+		        FontObject = SystemFontOfSize(NSFont, 11)
 		      End If
-		    ElseIf G.TextFont = "System" Or G.TextFont = "SmallSystem" Then
+		    ElseIf G.FontName = "System" Or G.FontName = "SmallSystem" Then
 		      If G.Bold Then
 		        Declare Function SystemFontOfSize Lib "Cocoa.framework" Selector "boldSystemFontOfSize:" (Target As Ptr, Size As CGFloat) As Ptr
-		        FontObject = SystemFontOfSize(NSFont,G.TextSize)
+		        FontObject = SystemFontOfSize(NSFont, G.FontSize)
 		      Else
 		        Declare Function SystemFontOfSize Lib "Cocoa.framework" Selector "systemFontOfSize:" (Target As Ptr, Size As CGFloat) As Ptr
-		        FontObject = SystemFontOfSize(NSFont,G.TextSize)
+		        FontObject = SystemFontOfSize(NSFont, G.FontSize)
 		      End If
 		    Else
 		      Declare Function FontWithName Lib "Cocoa.framework" Selector "fontWithName:size:" (Target As Ptr, FontName As CFStringRef, Size As CGFloat) As Ptr
-		      FontObject = FontWithName(NSFont,G.TextFont,G.TextSize)
+		      FontObject = FontWithName(NSFont,G.FontName, G.FontSize)
 		    End If
 		    
 		    If FontObject = Nil Then
 		      #if DebugBuild
 		        System.DebugLog("Unable to get font object.")
 		      #endif
-		      Return G.TextAscent * 0.8
+		      Return G.FontAscent * 0.8
 		    End If
 		    
 		    Declare Function GetCapHeight Lib "Cocoa.framework" Selector "capHeight" (Target As Ptr) As CGFloat
 		    Return GetCapHeight(FontObject)
 		  #elseif TargetWin32
-		    Return G.TextAscent * 0.75
+		    Return G.FontAscent * 0.75
 		  #else
-		    Return G.TextAscent
+		    Return G.FontAscent
 		  #endif
 		End Function
 	#tag EndMethod
@@ -252,9 +252,9 @@ Protected Module BeaconUI
 		    
 		    Declare Function GetPointSize Lib "Cocoa.framework" Selector "pointSize" (Target As Ptr) As CGFloat
 		    
-		    Panel.TextUnit = FontUnits.Point
-		    Panel.TextFont = "System"
-		    Panel.TextSize = GetPointSize(FontObject)
+		    Panel.FontUnit = FontUnits.Point
+		    Panel.FontName = "System"
+		    Panel.FontSize = GetPointSize(FontObject)
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -380,19 +380,19 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ResizeCells(Extends Target As SegmentedControl)
-		  Dim CellCount As Integer = Target.Items.UBound + 1
+		Sub ResizeCells(Extends Target As SegmentedButton)
+		  Dim CellCount As Integer = Target.SegmentCount
 		  Dim AvailableWidth As Integer = Target.Width - (CellCount * 2)
 		  Dim BaseCellWidth As Integer = Floor(AvailableWidth / CellCount)
 		  Dim Remainder As Integer = AvailableWidth - (BaseCellWidth * CellCount)
 		  
-		  For I As Integer = 0 To Target.Items.UBound
+		  For I As Integer = 0 To CellCount - 1
 		    Dim CellWidth As Integer = BaseCellWidth
 		    If I < Remainder Then
 		      CellWidth = CellWidth + 1
 		    End If
 		    
-		    Dim Cell As SegmentedControlItem = Target.Items(I)
+		    Dim Cell As Segment = Target.SegmentValueAt(I)
 		    Cell.Width = CellWidth
 		  Next
 		End Sub
@@ -418,7 +418,7 @@ Protected Module BeaconUI
 		  Dialog.Explanation = Explanation
 		  
 		  Try
-		    If Win = Nil Or Win.Frame = Window.FrameTypeSheet Then
+		    If Win = Nil Or Win.Type = Window.Types.Sheet Then
 		      Call Dialog.ShowModal()
 		    Else
 		      Dim FocusControl As RectControl = Win.Focus
@@ -455,7 +455,7 @@ Protected Module BeaconUI
 		  Dialog.CancelButton.Visible = True
 		  
 		  Try
-		    If Win = Nil Or Win.Frame = Window.FrameTypeSheet Then
+		    If Win = Nil Or Win.Type = Window.Types.Sheet Then
 		      Return Dialog.ShowModal() = Dialog.ActionButton
 		    Else
 		      Dim FocusControl As RectControl = Win.Focus
@@ -522,6 +522,7 @@ Protected Module BeaconUI
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -529,18 +530,23 @@ Protected Module BeaconUI
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -548,6 +554,7 @@ Protected Module BeaconUI
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Module

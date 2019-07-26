@@ -2,7 +2,7 @@
 Protected Class DocumentController
 	#tag Method, Flags = &h0
 		Function Busy() As Boolean
-		  Return Self.mActiveThread <> Nil And Self.mActiveThread.State <> Thread.NotRunning
+		  Return Self.mActiveThread <> Nil And Self.mActiveThread.ThreadState <> Thread.ThreadStates.NotRunning
 		End Function
 	#tag EndMethod
 
@@ -45,7 +45,7 @@ Protected Class DocumentController
 		  End If
 		  
 		  Self.mActiveThread = New Thread
-		  Self.mActiveThread.Priority = Thread.HighPriority
+		  Self.mActiveThread.Priority = 10
 		  AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Delete
 		  Self.mActiveThread.Run
 		End Sub
@@ -457,7 +457,7 @@ Protected Class DocumentController
 		  Select Case Destination.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
 		    Self.mActiveThread = New Thread
-		    Self.mActiveThread.Priority = Thread.LowestPriority
+		    Self.mActiveThread.Priority = 1
 		    AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Upload
 		    Self.mActiveThread.Run
 		  Case Beacon.DocumentURL.TypeLocal
@@ -546,6 +546,7 @@ Protected Class DocumentController
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -553,18 +554,23 @@ Protected Class DocumentController
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -572,6 +578,7 @@ Protected Class DocumentController
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -2,31 +2,46 @@
 Begin BeaconWindow UpdateWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    CloseButton     =   False
    Compatibility   =   ""
    Composite       =   True
-   Frame           =   0
+   DefaultLocation =   "2"
+   Frame           =   "0"
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
+   HasBackgroundColor=   False
+   HasCloseButton  =   False
+   HasFullScreenButton=   False
+   HasMaximizeButton=   False
+   HasMinimizeButton=   True
    Height          =   132
    ImplicitInstance=   False
-   LiveResize      =   True
+   LiveResize      =   "True"
    MacProcID       =   0
    MaxHeight       =   32000
    MaximizeButton  =   False
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
    MinHeight       =   132
    MinimizeButton  =   True
+   MinimumHeight   =   132
+   MinimumWidth    =   600
    MinWidth        =   600
-   Placement       =   2
-   Resizeable      =   True
+   Placement       =   "2"
+   Resizable       =   True
+   Resizeable      =   "True"
+   SystemUIVisible =   True
    Title           =   "Beacon Updates"
+   Type            =   "0"
    Visible         =   True
    Width           =   600
    Begin PagePanel ViewPanel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   132
@@ -42,19 +57,25 @@ Begin BeaconWindow UpdateWindow
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   1
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   1
       Visible         =   True
       Width           =   600
       Begin Label CheckMessageLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -73,7 +94,8 @@ Begin BeaconWindow UpdateWindow
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Check for Beacon updates…"
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -81,14 +103,17 @@ Begin BeaconWindow UpdateWindow
          Top             =   20
          Transparent     =   True
          Underline       =   False
+         Value           =   "Check for Beacon updates…"
          Visible         =   True
          Width           =   560
       End
       Begin ProgressBar CheckProgress
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Enabled         =   True
          Height          =   20
          HelpTag         =   ""
+         Indeterminate   =   False
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Left            =   20
@@ -98,16 +123,19 @@ Begin BeaconWindow UpdateWindow
          LockRight       =   True
          LockTop         =   True
          Maximum         =   0
+         MaximumValue    =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
+         TabStop         =   True
          Top             =   52
          Transparent     =   False
-         Value           =   0
+         Value           =   0.0
          Visible         =   True
          Width           =   560
       End
       Begin UITweaks.ResizedPushButton CheckCancelButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -115,6 +143,9 @@ Begin BeaconWindow UpdateWindow
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -126,6 +157,7 @@ Begin BeaconWindow UpdateWindow
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   1
@@ -142,11 +174,15 @@ Begin BeaconWindow UpdateWindow
       Begin ControlCanvas ResultsIconCanvas
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
-         DoubleBuffer    =   True
+         DoubleBuffer    =   "True"
          Enabled         =   True
-         EraseBackground =   False
+         EraseBackground =   "False"
          Height          =   64
          HelpTag         =   ""
          Index           =   -2147483648
@@ -169,11 +205,15 @@ Begin BeaconWindow UpdateWindow
          Width           =   64
       End
       Begin Label ResultsMessageLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -192,7 +232,8 @@ Begin BeaconWindow UpdateWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "A new version of Beacon is available!"
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -200,10 +241,12 @@ Begin BeaconWindow UpdateWindow
          Top             =   20
          Transparent     =   True
          Underline       =   False
+         Value           =   "A new version of Beacon is available!"
          Visible         =   True
          Width           =   484
       End
       Begin UITweaks.ResizedPushButton ResultsActionButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -211,6 +254,9 @@ Begin BeaconWindow UpdateWindow
          Caption         =   "Download"
          Default         =   True
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -222,6 +268,7 @@ Begin BeaconWindow UpdateWindow
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   8
          TabPanelIndex   =   2
@@ -236,6 +283,7 @@ Begin BeaconWindow UpdateWindow
          Width           =   90
       End
       Begin UITweaks.ResizedPushButton ResultsCancelButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -243,6 +291,9 @@ Begin BeaconWindow UpdateWindow
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -254,6 +305,7 @@ Begin BeaconWindow UpdateWindow
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   7
          TabPanelIndex   =   2
@@ -268,11 +320,15 @@ Begin BeaconWindow UpdateWindow
          Width           =   90
       End
       Begin Label DownloadMessageLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -291,7 +347,8 @@ Begin BeaconWindow UpdateWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Downloading update…"
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -299,14 +356,17 @@ Begin BeaconWindow UpdateWindow
          Top             =   20
          Transparent     =   True
          Underline       =   False
+         Value           =   "Downloading update…"
          Visible         =   True
          Width           =   560
       End
       Begin ProgressBar DownloadProgressBar
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Enabled         =   True
          Height          =   20
          HelpTag         =   ""
+         Indeterminate   =   False
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Left            =   20
@@ -316,16 +376,19 @@ Begin BeaconWindow UpdateWindow
          LockRight       =   True
          LockTop         =   True
          Maximum         =   0
+         MaximumValue    =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
+         TabStop         =   True
          Top             =   52
          Transparent     =   False
-         Value           =   0
+         Value           =   0.0
          Visible         =   True
          Width           =   560
       End
       Begin UITweaks.ResizedPushButton DownloadCancelButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -333,6 +396,9 @@ Begin BeaconWindow UpdateWindow
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -344,6 +410,7 @@ Begin BeaconWindow UpdateWindow
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   3
@@ -358,6 +425,7 @@ Begin BeaconWindow UpdateWindow
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton ResultsNotesButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -365,6 +433,9 @@ Begin BeaconWindow UpdateWindow
          Caption         =   "Release Notes"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -376,6 +447,7 @@ Begin BeaconWindow UpdateWindow
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   9
          TabPanelIndex   =   2
@@ -390,11 +462,15 @@ Begin BeaconWindow UpdateWindow
          Width           =   120
       End
       Begin Label Label1
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -413,7 +489,8 @@ Begin BeaconWindow UpdateWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "After downloading, the update will install only when you're ready."
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -421,17 +498,20 @@ Begin BeaconWindow UpdateWindow
          Top             =   52
          Transparent     =   False
          Underline       =   False
+         Value           =   "After downloading, the update will install only when you're ready."
          Visible         =   True
          Width           =   484
       End
    End
    Begin UpdateChecker Checker
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Xojo.Net.HTTPSocket Downloader
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -471,7 +551,7 @@ End
 		    mInstance = New UpdateWindow
 		  End If
 		  
-		  mInstance.ViewPanel.Value = UpdateWindow.ViewCheck
+		  mInstance.ViewPanel.SelectedPanelIndex = UpdateWindow.ViewCheck
 		  mInstance.Show
 		  mInstance.Checker.Check(False)
 		End Sub
@@ -499,7 +579,7 @@ End
 		    Self.mFile = Folder.Child(Self.mFilename)
 		  #endif
 		  
-		  Self.ViewPanel.Value = Self.ViewResults
+		  Self.ViewPanel.SelectedPanelIndex = Self.ViewResults
 		End Sub
 	#tag EndMethod
 
@@ -553,7 +633,7 @@ End
 #tag Events ViewPanel
 	#tag Event
 		Sub Change()
-		  Select Case Me.Value
+		  Select Case Me.SelectedPanelIndex
 		  Case Self.ViewCheck
 		    Self.Height = Self.HeightCheck
 		    Self.Resizeable = False
@@ -588,7 +668,7 @@ End
 	#tag Event
 		Sub Action()
 		  If Self.mFile = Nil Then
-		    Dim Dialog As New SaveAsDialog
+		    Dim Dialog As New SaveFileDialog
 		    Dialog.SuggestedFileName = Self.mFilename
 		    Dialog.PromptText = "Choose a location for the update file"
 		    
@@ -610,8 +690,8 @@ End
 		  End If
 		  
 		  Self.Downloader.Send("GET", Self.mURL.ToText)
-		  Self.DownloadProgressBar.Maximum = 0
-		  Self.ViewPanel.Value = Self.ViewDownload
+		  Self.DownloadProgressBar.MaximumValue = 0
+		  Self.ViewPanel.SelectedPanelIndex = Self.ViewDownload
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -710,10 +790,10 @@ End
 		Sub ReceiveProgress(BytesReceived as Int64, TotalBytes as Int64, NewData as xojo.Core.MemoryBlock)
 		  #Pragma Unused NewData
 		  
-		  If Self.DownloadProgressBar.Maximum <> 1000 Then
-		    Self.DownloadProgressBar.Maximum = 1000
+		  If Self.DownloadProgressBar.MaximumValue <> 1000 Then
+		    Self.DownloadProgressBar.MaximumValue = 1000
 		  End If
-		  Self.DownloadProgressBar.Value = (BytesReceived / TotalBytes) * Self.DownloadProgressBar.Maximum
+		  Self.DownloadProgressBar.Value = (BytesReceived / TotalBytes) * Self.DownloadProgressBar.MaximumValue
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -775,39 +855,43 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="BackColor"
+		Name="MinimumWidth"
 		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Backdrop"
+		Name="MinimumHeight"
 		Visible=true
-		Group="Background"
-		Type="Picture"
-		EditorType="Picture"
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="CloseButton"
+		Name="MaximumWidth"
 		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Composite"
-		Group="OS X (Carbon)"
-		InitialValue="False"
-		Type="Boolean"
+		Name="MaximumHeight"
+		Visible=true
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Frame"
+		Name="Type"
 		Visible=true
 		Group="Frame"
 		InitialValue="0"
-		Type="Integer"
+		Type="Types"
 		EditorType="Enum"
 		#tag EnumValues
 			"0 - Document"
@@ -824,14 +908,39 @@ End
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="FullScreen"
-		Group="Behavior"
-		InitialValue="False"
+		Name="HasCloseButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="FullScreenButton"
+		Name="Resizable"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasMaximizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasMinimizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasFullScreenButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="False"
@@ -839,11 +948,67 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="HasBackColor"
+		Name="DefaultLocation"
+		Visible=true
+		Group="Behavior"
+		InitialValue="0"
+		Type="Locations"
+		EditorType="Enum"
+		#tag EnumValues
+			"0 - Default"
+			"1 - Parent Window"
+			"2 - Main Screen"
+			"3 - Parent Window Screen"
+			"4 - Stagger"
+		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="SystemUIVisible"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
 		Visible=true
 		Group="Background"
 		InitialValue="False"
 		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Backdrop"
+		Visible=true
+		Group="Background"
+		InitialValue=""
+		Type="Picture"
+		EditorType="Picture"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composite"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="FullScreen"
+		Visible=false
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -851,6 +1016,7 @@ End
 		Group="Size"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ImplicitInstance"
@@ -864,115 +1030,39 @@ End
 		Name="Interfaces"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="LiveResize"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MacProcID"
+		Visible=false
 		Group="OS X (Carbon)"
 		InitialValue="0"
 		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxHeight"
-		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaximizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxWidth"
-		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MenuBar"
 		Visible=true
 		Group="Menus"
+		InitialValue=""
 		Type="MenuBar"
 		EditorType="MenuBar"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MenuBarVisible"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinHeight"
-		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinWidth"
-		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Placement"
-		Visible=true
-		Group="Behavior"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		#tag EnumValues
-			"0 - Default"
-			"1 - Parent Window"
-			"2 - Main Screen"
-			"3 - Parent Window Screen"
-			"4 - Stagger"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Resizeable"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -982,6 +1072,7 @@ End
 		Group="Frame"
 		InitialValue="Untitled"
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -997,5 +1088,6 @@ End
 		Group="Size"
 		InitialValue="600"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

@@ -56,13 +56,13 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h21
 		Private Sub CleanupEmptyFolders(Folder As FolderItem)
-		  If Folder = Nil Or Folder.Exists = False Or Folder.Directory = False Then
+		  If Folder = Nil Or Folder.Exists = False Or Folder.Folder = False Then
 		    Return
 		  End If
 		  
 		  For I As Integer = Folder.Count DownTo 1
 		    Dim Child As FolderItem = Folder.Item(I)
-		    If Not Child.Directory Then
+		    If Not Child.Folder Then
 		      Continue
 		    End If
 		    If Child.Count > 0 Then
@@ -115,7 +115,7 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h21
 		Private Sub DiscoverPaths(BasePath As String, Folder As FolderItem, Destination As Dictionary)
-		  If Not Folder.Directory Then
+		  If Not Folder.Folder Then
 		    Return
 		  End If
 		  
@@ -125,7 +125,7 @@ Protected Module UserCloud
 		      Continue
 		    End If
 		    
-		    If Child.Directory Then
+		    If Child.Folder Then
 		      DiscoverPaths(BasePath + "/" + EncodeURLComponent(Child.Name), Child, Destination)
 		    Else
 		      Destination.Value(BasePath + "/" + EncodeURLComponent(Child.Name)) = Child
@@ -139,7 +139,7 @@ Protected Module UserCloud
 		  If PendingRequests = Nil Then
 		    PendingRequests = New Dictionary
 		  End If
-		  Return PendingRequests.Count > 0
+		  Return PendingRequests.KeyCount > 0
 		End Function
 	#tag EndMethod
 
@@ -238,7 +238,7 @@ Protected Module UserCloud
 		    PendingRequests = New Dictionary
 		  End If
 		  
-		  Dim Fresh As Boolean = PendingRequests.Count = 0
+		  Dim Fresh As Boolean = PendingRequests.KeyCount = 0
 		  
 		  Request.Authenticate(Preferences.OnlineToken)
 		  PendingRequests.Value(Request.RequestID) = Request
@@ -347,7 +347,9 @@ Protected Module UserCloud
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -355,12 +357,15 @@ Protected Module UserCloud
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -368,6 +373,7 @@ Protected Module UserCloud
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -375,6 +381,7 @@ Protected Module UserCloud
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Module

@@ -2,8 +2,8 @@
 Protected Class TextAreaState
 	#tag Method, Flags = &h0
 		Sub ApplyTo(Area As TextArea)
-		  Area.SelStart = Self.SelStart
-		  Area.SelLength = Self.SelLength
+		  Area.SelectionStart = Self.SelStart
+		  Area.SelectionLength = Self.SelLength
 		  Area.ScrollPosition = Self.ScrollPosition
 		End Sub
 	#tag EndMethod
@@ -17,8 +17,8 @@ Protected Class TextAreaState
 	#tag Method, Flags = &h0
 		Sub Constructor(Area As TextArea)
 		  Self.ScrollPosition = Area.ScrollPosition
-		  Self.SelStart = Area.SelStart
-		  Self.SelLength = Area.SelLength
+		  Self.SelStart = Area.SelectionStart
+		  Self.SelLength = Area.SelectionLength
 		End Sub
 	#tag EndMethod
 
@@ -41,7 +41,9 @@ Protected Class TextAreaState
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -49,12 +51,15 @@ Protected Class TextAreaState
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -62,6 +67,7 @@ Protected Class TextAreaState
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -69,11 +75,31 @@ Protected Class TextAreaState
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="SelStart"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollPosition"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SelLength"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

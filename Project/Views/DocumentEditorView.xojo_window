@@ -1,15 +1,15 @@
 #tag Window
 Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,NotificationKit.Receiver
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   528
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,10 +23,10 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   858
    Begin PagePanel PagePanel1
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   487
@@ -42,8 +42,10 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   1
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   1
@@ -52,12 +54,16 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Begin LogoFillCanvas LogoFillCanvas1
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "Select A Config To Begin"
-         DoubleBuffer    =   False
+         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          Height          =   487
          HelpTag         =   ""
          Index           =   -2147483648
@@ -82,11 +88,15 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Begin Canvas OmniNoticeBanner
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
-         DoubleBuffer    =   False
+         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          Height          =   31
          HelpTag         =   ""
          Index           =   -2147483648
@@ -111,11 +121,15 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -140,12 +154,16 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
    Begin BeaconToolbar BeaconToolbar1
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   ""
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   False
+      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -172,14 +190,18 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
    Begin HelpDrawer HelpDrawer
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Body            =   ""
       Borders         =   8
       DetailURL       =   ""
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   487
       HelpTag         =   ""
       Index           =   -2147483648
@@ -203,19 +225,25 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Width           =   300
    End
    Begin Timer AutosaveTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Mode            =   2
+      Mode            =   "2"
       Period          =   60000
+      RunMode         =   "2"
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin UITweaks.ResizedPopupMenu ConfigMenu
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -230,6 +258,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      SelectedRowIndex=   0
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
@@ -248,7 +277,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Activate()
-		  Self.ContentsChanged = Self.Document.Modified
+		  Self.Changed = Self.Document.Modified
 		End Sub
 	#tag EndEvent
 
@@ -284,7 +313,7 @@ End
 		  If Self.CurrentPanel <> Nil Then
 		    Self.CurrentPanel.EnableMenuItems()
 		  Else
-		    DocumentRestoreConfigToDefault.Text = "Restore Config to Default"
+		    DocumentRestoreConfigToDefault.Value = "Restore Config to Default"
 		  End If
 		End Sub
 	#tag EndEvent
@@ -294,10 +323,10 @@ End
 		  If Self.mController.Document <> Nil Then
 		    Dim DocumentID As Text = Self.mController.Document.DocumentID
 		    Dim ConfigName As Text = Preferences.LastUsedConfigName(DocumentID)
-		    For I As Integer = 0 To Self.ConfigMenu.ListCount - 1
+		    For I As Integer = 0 To Self.ConfigMenu.RowCount - 1
 		      Dim Tag As Variant = Self.ConfigMenu.RowTag(I)
 		      If (Tag.Type = Variant.TypeText And Tag.TextValue = ConfigName) Or (Tag.Type = Variant.TypeString And Tag.StringValue = ConfigName) Then
-		        Self.ConfigMenu.ListIndex = I
+		        Self.ConfigMenu.SelectedRowIndex = I
 		        Exit For I
 		      End If
 		    Next
@@ -525,9 +554,9 @@ End
 		  End If
 		  
 		  Dim ConfigName As Text = Issue.ConfigName
-		  For I As Integer = 0 To Self.ConfigMenu.ListCount - 1
+		  For I As Integer = 0 To Self.ConfigMenu.RowCount - 1
 		    If Self.ConfigMenu.RowTag(I) = ConfigName Then
-		      Self.ConfigMenu.ListIndex = I
+		      Self.ConfigMenu.SelectedRowIndex = I
 		      Exit For I
 		    End If
 		  Next
@@ -596,7 +625,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub mController_WriteSuccess(Sender As Beacon.DocumentController)
 		  If Not Self.Closed Then
-		    Self.ContentsChanged = Sender.Document <> Nil And Sender.Document.Modified
+		    Self.Changed = Sender.Document <> Nil And Sender.Document.Modified
 		    Self.Title = Sender.Name
 		    Self.BeaconToolbar1.ShareButton.Enabled = (Sender.URL.Scheme = Beacon.DocumentURL.TypeCloud)
 		    Self.Progress = BeaconSubview.ProgressNone
@@ -645,9 +674,9 @@ End
 		  Select Case Notification.Name
 		  Case IdentityManager.Notification_IdentityChanged
 		    // Simply toggle the menu to force a redraw
-		    Dim ListIndex As Integer = Self.ConfigMenu.ListIndex
-		    Self.ConfigMenu.ListIndex = -1
-		    Self.ConfigMenu.ListIndex = ListIndex
+		    Dim ListIndex As Integer = Self.ConfigMenu.SelectedRowIndex
+		    Self.ConfigMenu.SelectedRowIndex = -1
+		    Self.ConfigMenu.SelectedRowIndex = ListIndex
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -670,8 +699,8 @@ End
 		Private Sub Panel_ContentsChanged(Sender As ConfigEditor)
 		  #Pragma Unused Sender
 		  
-		  If Self.ContentsChanged <> Self.Document.Modified Then
-		    Self.ContentsChanged = Self.Document.Modified
+		  If Self.Changed <> Self.Document.Modified Then
+		    Self.Changed = Self.Document.Modified
 		  End If
 		  
 		  If Self.mUpdateUITag <> "" Then
@@ -703,7 +732,7 @@ End
 		    Self.ToolbarCaption = Self.mController.Name
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		  Case DocumentSaveToCloudWindow.StateSaveLocal
-		    Dim Dialog As New SaveAsDialog
+		    Dim Dialog As New SaveFileDialog
 		    Dialog.SuggestedFileName = Self.mController.Name + BeaconFileTypes.BeaconDocument.PrimaryExtension
 		    Dialog.Filter = BeaconFileTypes.BeaconDocument
 		    
@@ -765,7 +794,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ShowIssues()
 		  ResolveIssuesDialog.Present(Self, Self.Document, AddressOf GoToIssue)
-		  Self.ContentsChanged = Self.Document.Modified
+		  Self.Changed = Self.Document.Modified
 		End Sub
 	#tag EndMethod
 
@@ -961,7 +990,7 @@ End
 		      DocumentImportWindow(Self.mImportWindowRef.Value).Show()
 		    Else
 		      Dim OtherDocuments() As Beacon.Document
-		      For I As Integer = 0 To Self.mEditorRefs.Count - 1
+		      For I As Integer = 0 To Self.mEditorRefs.KeyCount - 1
 		        Dim Key As Variant = Self.mEditorRefs.Key(I)
 		        Dim Ref As WeakRef = Self.mEditorRefs.Value(Key)
 		        If Ref <> Nil And Ref.Value <> Nil And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Document.DocumentID <> Self.Document.DocumentID Then
@@ -1024,8 +1053,8 @@ End
 	#tag Event
 		Sub Change()
 		  Dim Tag As Variant
-		  If Me.ListIndex > -1 Then
-		    Tag = Me.RowTag(Me.ListIndex)
+		  If Me.SelectedRowIndex > -1 Then
+		    Tag = Me.RowTag(Me.SelectedRowIndex)
 		  End If
 		  Dim NewPanel As ConfigEditor
 		  Dim Embed As Boolean
@@ -1111,9 +1140,9 @@ End
 		    Self.CurrentPanel.SwitchedTo()
 		    Self.CurrentPanel.AddObserver(Self, "MinimumWidth")
 		    Self.CurrentPanel.AddObserver(Self, "MinimumHeight")
-		    Self.PagePanel1.Value = 1
+		    Self.PagePanel1.SelectedPanelIndex = 1
 		  Else
-		    Self.PagePanel1.Value = 0
+		    Self.PagePanel1.SelectedPanelIndex = 0
 		  End If
 		  
 		  Self.UpdateMinimumDimensions()
@@ -1122,10 +1151,60 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Progress"
+		Visible=false
 		Group="Behavior"
 		InitialValue="ProgressNone"
 		Type="Double"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -1133,6 +1212,7 @@ End
 		Group="Behavior"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumHeight"
@@ -1140,10 +1220,13 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
+		Visible=false
 		Group="Behavior"
+		InitialValue=""
 		Type="String"
 		EditorType="MultiLineEditor"
 	#tag EndViewProperty
@@ -1151,6 +1234,7 @@ End
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -1158,6 +1242,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -1167,6 +1252,7 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -1174,53 +1260,71 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -1228,6 +1332,7 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -1254,69 +1359,20 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"

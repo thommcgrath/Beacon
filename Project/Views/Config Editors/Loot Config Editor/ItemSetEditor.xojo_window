@@ -1,15 +1,15 @@
 #tag Window
 Begin BeaconContainer ItemSetEditor
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   428
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,10 +23,16 @@ Begin BeaconContainer ItemSetEditor
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   560
    Begin BeaconListbox EntryList
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -37,12 +43,22 @@ Begin BeaconContainer ItemSetEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
+      DropIndicatorVisible=   False
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   1
-      GridLinesVertical=   1
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLinesHorizontal=   "1"
+      GridLinesHorizontalStyle=   "1"
+      GridLinesVertical=   "1"
+      GridLinesVerticalStyle=   "1"
+      HasBorder       =   False
+      HasHeader       =   True
       HasHeading      =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   0
       Height          =   343
       HelpTag         =   ""
@@ -58,12 +74,14 @@ Begin BeaconContainer ItemSetEditor
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   0
+      RowCount        =   "0"
+      RowSelectionType=   "1"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   1
+      SelectionRequired=   False
+      SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -83,12 +101,16 @@ Begin BeaconContainer ItemSetEditor
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Item Set Contents"
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   False
+      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -115,11 +137,15 @@ Begin BeaconContainer ItemSetEditor
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -144,13 +170,19 @@ Begin BeaconContainer ItemSetEditor
    Begin ItemSetSettingsContainer Settings
       AcceptFocus     =   False
       AcceptTabs      =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       HasBackColor    =   False
+      HasBackgroundColor=   False
       Height          =   23
       HelpTag         =   ""
       Index           =   -2147483648
@@ -174,13 +206,17 @@ Begin BeaconContainer ItemSetEditor
    Begin StatusBar StatusBar1
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   21
       HelpTag         =   ""
       Index           =   -2147483648
@@ -215,7 +251,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub EditSelectedEntries(Prefilter As String = "")
 		  Dim Sources() As Beacon.SetEntry
-		  For I As Integer = 0 To EntryList.ListCount - 1
+		  For I As Integer = 0 To EntryList.RowCount - 1
 		    If Not EntryList.Selected(I) Then
 		      Continue
 		    End If
@@ -249,9 +285,9 @@ End
 
 	#tag Method, Flags = &h0
 		Function GoToChild(Entry As Beacon.SetEntry, Option As Beacon.SetEntryOption = Nil) As Boolean
-		  For I As Integer = 0 To Self.EntryList.ListCount - 1
+		  For I As Integer = 0 To Self.EntryList.RowCount - 1
 		    If Self.EntryList.RowTag(I) = Entry Then
-		      Self.EntryList.ListIndex = I
+		      Self.EntryList.SelectedIndex = I
 		      Self.EntryList.EnsureSelectionIsVisible()
 		      If Option <> Nil And Option.Engram <> Nil Then
 		        Self.EditSelectedEntries(Option.Engram.ClassString)
@@ -259,7 +295,7 @@ End
 		      Return True
 		    End If
 		  Next
-		  Self.EntryList.ListIndex = -1
+		  Self.EntryList.SelectedIndex = -1
 		  Return False
 		End Function
 	#tag EndMethod
@@ -268,7 +304,7 @@ End
 		Private Sub RemoveSelectedEntries()
 		  Dim Changed As Boolean
 		  
-		  For I As Integer = EntryList.ListCount - 1 DownTo 0
+		  For I As Integer = EntryList.RowCount - 1 DownTo 0
 		    If Not EntryList.Selected(I) Then
 		      Continue
 		    End If
@@ -307,7 +343,7 @@ End
 		    Next
 		    ScrollToSelection = True
 		  Else
-		    For I As Integer = 0 To EntryList.ListCount - 1
+		    For I As Integer = 0 To EntryList.RowCount - 1
 		      If EntryList.Selected(I) Then
 		        Dim Entry As Beacon.SetEntry = EntryList.RowTag(I)
 		        Selected.Append(Entry.UniqueID)
@@ -370,7 +406,7 @@ End
 		    End If
 		    
 		    EntryList.AddRow("")
-		    Dim Idx As Integer = EntryList.LastIndex
+		    Dim Idx As Integer = EntryList.LastAddedRowIndex
 		    EntryList.Cell(Idx, Self.ColumnLabel) = Entry.Label
 		    EntryList.Cell(Idx, Self.ColumnQuality) = QualityText
 		    EntryList.Cell(Idx, Self.ColumnQuantity) = QuantityText
@@ -399,7 +435,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
 		  Dim TotalCount As UInteger = Self.EntryList.RowCount
-		  Dim SelectedCount As UInteger = Self.EntryList.SelCount
+		  Dim SelectedCount As UInteger = Self.EntryList.SelectedRowCount
 		  
 		  Dim Caption As String = Format(TotalCount, "0,") + " " + If(TotalCount = 1, "Item Set Entry", "Item Set Entries")
 		  If SelectedCount > 0 Then
@@ -461,7 +497,7 @@ End
 #tag Events EntryList
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.ListIndex > -1
+		  Return Me.SelectedIndex > -1
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -479,7 +515,7 @@ End
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
 		  Dim Entries() As Xojo.Core.Dictionary
-		  For I As Integer = 0 To Me.ListCount - 1
+		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
 		      Entries.Append(Beacon.SetEntry(Me.RowTag(I)).Export)
 		    End If
@@ -543,7 +579,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.ListIndex > -1
+		  Return Me.SelectedIndex > -1
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -604,8 +640,8 @@ End
 		  Dim Item As MenuItem
 		  
 		  Item = New MenuItem
-		  Item.Text = "Create Blueprint Entry"
-		  Item.Enabled = Me.SelCount > 0
+		  Item.Value = "Create Blueprint Entry"
+		  Item.Enabled = Me.SelectedRowCount > 0
 		  Item.Tag = "createblueprintentry"
 		  
 		  Base.Append(Item)
@@ -617,7 +653,7 @@ End
 		  Select Case hitItem.Tag
 		  Case "createblueprintentry"
 		    Dim Entries() As Beacon.SetEntry
-		    For I As Integer = 0 To Me.ListCount - 1
+		    For I As Integer = 0 To Me.RowCount - 1
 		      If Me.Selected(I) Then
 		        Entries.Append(Me.RowTag(I))
 		      End If
@@ -640,7 +676,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Self.Header.EditEntry.Enabled = Me.SelCount > 0
+		  Self.Header.EditEntry.Enabled = Me.SelectedRowCount > 0
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndEvent
@@ -706,6 +742,54 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="DoubleBuffer"
 		Visible=true
 		Group="Windows Behavior"
@@ -714,39 +798,10 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
 	#tag EndViewProperty
@@ -759,72 +814,74 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Height"
 		Visible=true
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -832,6 +889,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -841,12 +899,15 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -860,21 +921,15 @@ End
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType="Boolean"
 	#tag EndViewProperty
@@ -892,5 +947,6 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

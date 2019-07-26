@@ -2,39 +2,57 @@
 Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationKit.Observer,NotificationKit.Receiver
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    CloseButton     =   True
    Compatibility   =   ""
    Composite       =   True
-   Frame           =   0
+   DefaultLocation =   "2"
+   Frame           =   "0"
    FullScreen      =   False
    FullScreenButton=   True
    HasBackColor    =   False
+   HasBackgroundColor=   False
+   HasCloseButton  =   True
+   HasFullScreenButton=   True
+   HasMaximizeButton=   True
+   HasMinimizeButton=   True
    Height          =   400
    ImplicitInstance=   True
-   LiveResize      =   True
+   LiveResize      =   "True"
    MacProcID       =   0
    MaxHeight       =   32000
    MaximizeButton  =   True
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
    MaxWidth        =   32000
    MenuBar         =   817604607
    MenuBarVisible  =   True
    MinHeight       =   400
    MinimizeButton  =   True
+   MinimumHeight   =   400
+   MinimumWidth    =   800
    MinWidth        =   800
-   Placement       =   2
-   Resizeable      =   True
+   Placement       =   "2"
+   Resizable       =   True
+   Resizeable      =   "True"
+   SystemUIVisible =   True
    Title           =   "Beacon"
+   Type            =   "0"
    Visible         =   True
    Width           =   800
    Begin TabBar TabBar1
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Count           =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   25
       HelpTag         =   ""
       Index           =   -2147483648
@@ -58,6 +76,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Width           =   759
    End
    Begin PagePanel Views
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   375
@@ -73,8 +92,10 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   25
       Transparent     =   False
       Value           =   0
@@ -83,15 +104,22 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Begin DashboardPane DashboardPane1
          AcceptFocus     =   False
          AcceptTabs      =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   375
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   41
          LockBottom      =   True
@@ -117,11 +145,15 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    Begin ControlCanvas UpdateBar
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   25
       HelpTag         =   ""
       Index           =   -2147483648
@@ -146,11 +178,15 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    Begin ControlCanvas OverlayCanvas
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   100
       HelpTag         =   ""
       Index           =   -2147483648
@@ -175,15 +211,22 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    Begin LibraryPane LibraryPane1
       AcceptFocus     =   False
       AcceptTabs      =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       HasBackColor    =   False
+      HasBackgroundColor=   False
       Height          =   400
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   -259
       LockBottom      =   True
@@ -212,7 +255,7 @@ End
 		  Dim ModifiedViews() As BeaconSubview
 		  
 		  For Each View As BeaconSubview In Self.mSubviews
-		    If View.ContentsChanged Then
+		    If View.Changed Then
 		      ModifiedViews.Append(View)
 		    End If
 		  Next
@@ -301,8 +344,8 @@ End
 		    
 		    Dim AvailableBounds As New Xojo.Core.Rect(IdealScreen.AvailableLeft, IdealScreen.AvailableTop, IdealScreen.AvailableWidth, IdealScreen.AvailableHeight)
 		    
-		    Dim Width As Integer = Min(Max(Bounds.Width, Self.MinWidth), Self.MaxWidth, AvailableBounds.Width)
-		    Dim Height As Integer = Min(Max(Bounds.Height, Self.MinHeight), Self.MaxHeight, AvailableBounds.Height)
+		    Dim Width As Integer = Min(Max(Bounds.Width, Self.MinimumWidth), Self.MaximumWidth, AvailableBounds.Width)
+		    Dim Height As Integer = Min(Max(Bounds.Height, Self.MinimumHeight), Self.MaximumHeight, AvailableBounds.Height)
 		    Dim Left As Integer = Min(Max(Bounds.Left, AvailableBounds.Left), AvailableBounds.Right - Width)
 		    Dim Top As Integer = Min(Max(Bounds.Top, AvailableBounds.Top), AvailableBounds.Bottom - Height)
 		    Self.Bounds = New REALbasic.Rect(Left, Top, Width, Height)
@@ -519,9 +562,9 @@ End
 		  End If
 		  
 		  If View = Nil Or View = DashboardPane1 Then
-		    Self.ContentsChanged = False
+		    Self.Changed = False
 		    Self.mCurrentView = Nil
-		    Self.Views.Value = 0
+		    Self.Views.SelectedPanelIndex = 0
 		    Self.TabBar1.SelectedIndex = 0
 		    Self.UpdateSizeForView(DashboardPane1)
 		    Self.DashboardPane1.SwitchedTo()
@@ -544,7 +587,7 @@ End
 		  End If
 		  Self.TabBar1.SelectedIndex = ViewIndex + 1
 		  
-		  Self.ContentsChanged = View.ContentsChanged
+		  Self.Changed = View.Changed
 		  Self.UpdateSizeForView(View)
 		  
 		  If View.Title <> "" Then
@@ -559,14 +602,14 @@ End
 		  Self.UpdateSizeForView(Self.mCurrentView)
 		  Self.mCurrentView.AddObserver(Self, "MinimumHeight")
 		  Self.mCurrentView.AddObserver(Self, "MinimumWidth")
-		  Self.Views.Value = 1
+		  Self.Views.SelectedPanelIndex = 1
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub Subview_ContentsChanged(Sender As ContainerControl)
 		  If Self.mCurrentView = Sender Then
-		    Self.ContentsChanged = Sender.ContentsChanged
+		    Self.Changed = Sender.Changed
 		    If Sender.Title <> "" Then
 		      Self.Title = "Beacon: " + Sender.Title
 		    Else
@@ -585,10 +628,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateSizeForView(View As BeaconSubview)
-		  Self.MinWidth = Max(View.MinimumWidth, Self.AbsoluteMinWidth) + Self.Views.Left
-		  Self.MinHeight = Max(View.MinimumHeight, Self.AbsoluteMinHeight) + Self.Views.Top
-		  Self.Width = Max(Self.Width, Self.MinWidth)
-		  Self.Height = Max(Self.Height, Self.MinHeight)
+		  Self.MinimumWidth = Max(View.MinimumWidth, Self.AbsoluteMinWidth) + Self.Views.Left
+		  Self.MinimumHeight = Max(View.MinimumHeight, Self.AbsoluteMinHeight) + Self.Views.Top
+		  Self.Width = Max(Self.Width, Self.MinimumWidth)
+		  Self.Height = Max(Self.Height, Self.MinimumHeight)
 		End Sub
 	#tag EndMethod
 
@@ -877,39 +920,43 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="BackColor"
+		Name="MinimumWidth"
 		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Backdrop"
+		Name="MinimumHeight"
 		Visible=true
-		Group="Background"
-		Type="Picture"
-		EditorType="Picture"
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="CloseButton"
+		Name="MaximumWidth"
 		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Composite"
-		Group="OS X (Carbon)"
-		InitialValue="False"
-		Type="Boolean"
+		Name="MaximumHeight"
+		Visible=true
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Frame"
+		Name="Type"
 		Visible=true
 		Group="Frame"
 		InitialValue="0"
-		Type="Integer"
+		Type="Types"
 		EditorType="Enum"
 		#tag EnumValues
 			"0 - Document"
@@ -926,14 +973,39 @@ End
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="FullScreen"
-		Group="Behavior"
-		InitialValue="False"
+		Name="HasCloseButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="FullScreenButton"
+		Name="Resizable"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasMaximizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasMinimizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasFullScreenButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="False"
@@ -941,11 +1013,67 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="HasBackColor"
+		Name="DefaultLocation"
+		Visible=true
+		Group="Behavior"
+		InitialValue="0"
+		Type="Locations"
+		EditorType="Enum"
+		#tag EnumValues
+			"0 - Default"
+			"1 - Parent Window"
+			"2 - Main Screen"
+			"3 - Parent Window Screen"
+			"4 - Stagger"
+		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="SystemUIVisible"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
 		Visible=true
 		Group="Background"
 		InitialValue="False"
 		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Backdrop"
+		Visible=true
+		Group="Background"
+		InitialValue=""
+		Type="Picture"
+		EditorType="Picture"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composite"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="FullScreen"
+		Visible=false
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -953,6 +1081,7 @@ End
 		Group="Size"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ImplicitInstance"
@@ -966,116 +1095,39 @@ End
 		Name="Interfaces"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="LiveResize"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MacProcID"
+		Visible=false
 		Group="OS X (Carbon)"
 		InitialValue="0"
 		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxHeight"
-		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaximizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxWidth"
-		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MenuBar"
 		Visible=true
 		Group="Menus"
+		InitialValue=""
 		Type="MenuBar"
 		EditorType="MenuBar"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MenuBarVisible"
-		Visible=true
-		Group="Deprecated"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinHeight"
-		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinWidth"
-		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Placement"
-		Visible=true
-		Group="Behavior"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		#tag EnumValues
-			"0 - Default"
-			"1 - Parent Window"
-			"2 - Main Screen"
-			"3 - Parent Window Screen"
-			"4 - Stagger"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Resizeable"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -1085,6 +1137,7 @@ End
 		Group="Frame"
 		InitialValue="Untitled"
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -1100,5 +1153,6 @@ End
 		Group="Size"
 		InitialValue="600"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

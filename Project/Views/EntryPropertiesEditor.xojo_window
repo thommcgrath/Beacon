@@ -1,15 +1,15 @@
 #tag Window
 Begin BeaconContainer EntryPropertiesEditor
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   209
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,16 +23,19 @@ Begin BeaconContainer EntryPropertiesEditor
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   498
    Begin CheckBox EditChanceCheck
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Edit"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   23
       HelpTag         =   ""
       Index           =   -2147483648
@@ -45,7 +48,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   1
+      State           =   "1"
       TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
@@ -57,15 +60,20 @@ Begin BeaconContainer EntryPropertiesEditor
       Underline       =   False
       Value           =   True
       Visible         =   False
+      VisualState     =   "1"
       Width           =   58
    End
    Begin CheckBox EditMaxQualityCheck
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Edit"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -78,7 +86,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   1
+      State           =   "1"
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
@@ -90,15 +98,20 @@ Begin BeaconContainer EntryPropertiesEditor
       Underline       =   False
       Value           =   True
       Visible         =   False
+      VisualState     =   "1"
       Width           =   58
    End
    Begin CheckBox EditMinQualityCheck
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Edit"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -111,7 +124,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   1
+      State           =   "1"
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
@@ -123,15 +136,20 @@ Begin BeaconContainer EntryPropertiesEditor
       Underline       =   False
       Value           =   True
       Visible         =   False
+      VisualState     =   "1"
       Width           =   58
    End
    Begin CheckBox EditMaxQuantityCheck
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Edit"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -144,7 +162,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   1
+      State           =   "1"
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
@@ -156,15 +174,20 @@ Begin BeaconContainer EntryPropertiesEditor
       Underline       =   False
       Value           =   True
       Visible         =   False
+      VisualState     =   "1"
       Width           =   58
    End
    Begin CheckBox EditMinQuantityCheck
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Edit"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -177,7 +200,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   1
+      State           =   "1"
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
@@ -189,14 +212,19 @@ Begin BeaconContainer EntryPropertiesEditor
       Underline       =   False
       Value           =   True
       Visible         =   False
+      VisualState     =   "1"
       Width           =   58
    End
    Begin UITweaks.ResizedLabel ChancePercentLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -215,7 +243,8 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "%"
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -223,24 +252,35 @@ Begin BeaconContainer EntryPropertiesEditor
       Top             =   142
       Transparent     =   True
       Underline       =   False
+      Value           =   "%"
       Visible         =   True
       Width           =   37
    End
    Begin UITweaks.ResizedTextField ChanceField
       AcceptTabs      =   False
-      Alignment       =   3
+      Alignment       =   "3"
+      AllowAutoDeactivate=   False
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   False
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -252,6 +292,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Mask            =   "99#"
+      MaximumCharactersAllowed=   3
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -259,6 +300,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "25"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -267,10 +309,14 @@ Begin BeaconContainer EntryPropertiesEditor
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   "99#"
+      Value           =   "25"
       Visible         =   True
       Width           =   53
    End
    Begin Slider ChanceSlider
+      AllowAutoDeactivate=   True
+      AllowLiveScrolling=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   23
@@ -286,12 +332,15 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Maximum         =   100
+      MaximumValue    =   100
       Minimum         =   0
+      MinimumValue    =   0
       PageStep        =   25
       Scope           =   2
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
+      TickMarkStyle   =   "0"
       TickStyle       =   "0"
       Top             =   142
       Transparent     =   False
@@ -300,11 +349,15 @@ Begin BeaconContainer EntryPropertiesEditor
       Width           =   139
    End
    Begin Label ChanceLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   23
       HelpTag         =   ""
       Index           =   -2147483648
@@ -323,7 +376,8 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Chance To Be Blueprint:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -331,15 +385,20 @@ Begin BeaconContainer EntryPropertiesEditor
       Top             =   142
       Transparent     =   True
       Underline       =   False
+      Value           =   "Chance To Be Blueprint:"
       Visible         =   True
       Width           =   152
    End
    Begin UITweaks.ResizedPopupMenu QualityMenus
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   1
@@ -354,6 +413,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      SelectedRowIndex=   0
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
@@ -367,11 +427,15 @@ Begin BeaconContainer EntryPropertiesEditor
       Width           =   244
    End
    Begin Label MaxQualityLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -390,7 +454,8 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Max Quality:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -398,15 +463,20 @@ Begin BeaconContainer EntryPropertiesEditor
       Top             =   110
       Transparent     =   True
       Underline       =   False
+      Value           =   "Max Quality:"
       Visible         =   True
       Width           =   152
    End
    Begin UITweaks.ResizedPopupMenu QualityMenus
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   0
@@ -421,6 +491,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      SelectedRowIndex=   0
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
@@ -434,11 +505,15 @@ Begin BeaconContainer EntryPropertiesEditor
       Width           =   244
    End
    Begin Label MinQualityLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -457,7 +532,8 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Min Quality:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -465,24 +541,35 @@ Begin BeaconContainer EntryPropertiesEditor
       Top             =   78
       Transparent     =   True
       Underline       =   False
+      Value           =   "Min Quality:"
       Visible         =   True
       Width           =   152
    End
    Begin UITweaks.ResizedTextField MaxQuantityField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -494,6 +581,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   False
       LockTop         =   True
       Mask            =   "####"
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -501,6 +589,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1"
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -509,15 +598,21 @@ Begin BeaconContainer EntryPropertiesEditor
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   "####"
+      Value           =   "1"
       Visible         =   True
       Width           =   80
    End
    Begin Label MaxQuantityLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -536,7 +631,8 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Max Quantity:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -544,24 +640,35 @@ Begin BeaconContainer EntryPropertiesEditor
       Top             =   44
       Transparent     =   True
       Underline       =   False
+      Value           =   "Max Quantity:"
       Visible         =   True
       Width           =   152
    End
    Begin UITweaks.ResizedTextField MinQuantityField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -573,6 +680,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   False
       LockTop         =   True
       Mask            =   "####"
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -580,6 +688,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1"
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -588,15 +697,21 @@ Begin BeaconContainer EntryPropertiesEditor
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   "####"
+      Value           =   "1"
       Visible         =   True
       Width           =   80
    End
    Begin Label MinQuantityLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -615,7 +730,8 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Min Quantity:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -623,15 +739,20 @@ Begin BeaconContainer EntryPropertiesEditor
       Top             =   10
       Transparent     =   True
       Underline       =   False
+      Value           =   "Min Quantity:"
       Visible         =   True
       Width           =   152
    End
    Begin Label WeightLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   23
       HelpTag         =   ""
       Index           =   -2147483648
@@ -650,7 +771,8 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Weight:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -658,10 +780,13 @@ Begin BeaconContainer EntryPropertiesEditor
       Top             =   176
       Transparent     =   True
       Underline       =   False
+      Value           =   "Weight:"
       Visible         =   True
       Width           =   152
    End
    Begin Slider WeightSlider
+      AllowAutoDeactivate=   True
+      AllowLiveScrolling=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   23
@@ -677,12 +802,15 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Maximum         =   1000
+      MaximumValue    =   1000
       Minimum         =   1
+      MinimumValue    =   1
       PageStep        =   25
       Scope           =   2
       TabIndex        =   18
       TabPanelIndex   =   0
       TabStop         =   True
+      TickMarkStyle   =   "0"
       TickStyle       =   "0"
       Top             =   176
       Transparent     =   False
@@ -692,19 +820,30 @@ Begin BeaconContainer EntryPropertiesEditor
    End
    Begin RangeField WeightField
       AcceptTabs      =   False
-      Alignment       =   3
+      Alignment       =   "3"
+      AllowAutoDeactivate=   False
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   False
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   325
@@ -715,6 +854,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -722,6 +862,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "250"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -730,16 +871,21 @@ Begin BeaconContainer EntryPropertiesEditor
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      Value           =   0.0
+      ValidationMask  =   ""
+      Value           =   "250"
       Visible         =   True
       Width           =   53
    End
    Begin UITweaks.ResizedLabel WeightPercentLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -758,7 +904,8 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -766,16 +913,21 @@ Begin BeaconContainer EntryPropertiesEditor
       Top             =   176
       Transparent     =   True
       Underline       =   False
+      Value           =   ""
       Visible         =   True
       Width           =   37
    End
    Begin CheckBox EditWeightCheck
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Edit"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   23
       HelpTag         =   ""
       Index           =   -2147483648
@@ -788,7 +940,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   1
+      State           =   "1"
       TabIndex        =   21
       TabPanelIndex   =   0
       TabStop         =   True
@@ -800,6 +952,7 @@ Begin BeaconContainer EntryPropertiesEditor
       Underline       =   False
       Value           =   True
       Visible         =   False
+      VisualState     =   "1"
       Width           =   58
    End
 End
@@ -808,8 +961,8 @@ End
 #tag WindowCode
 	#tag Method, Flags = &h0
 		Sub ApplyTo(Entries() As Beacon.SetEntry)
-		  Dim MinQuantity As Integer = Val(MinQuantityField.Text)
-		  Dim MaxQuantity As Integer = Val(MaxQuantityField.Text)
+		  Dim MinQuantity As Integer = Val(MinQuantityField.Value)
+		  Dim MaxQuantity As Integer = Val(MaxQuantityField.Value)
 		  If MinQuantity > MaxQuantity Then
 		    Dim Temp As Integer = MaxQuantity
 		    MaxQuantity = MinQuantity
@@ -837,7 +990,7 @@ End
 		      Entry.ChanceToBeBlueprint = ChanceSlider.Value / 100
 		    End If
 		    If EditWeightCheck.Value Then
-		      Entry.RawWeight = WeightField.Value
+		      Entry.RawWeight = WeightField.DoubleValue
 		    End If
 		    If EditMaxQualityCheck.Value Then
 		      Entry.MaxQuality = MaxQuality
@@ -923,8 +1076,8 @@ End
 		  MaxQualities.Sort
 		  
 		  Self.mIgnoreChanges = True
-		  MinQuantityField.Text = Str(MinQuantities(0))
-		  MaxQuantityField.Text = Str(MaxQuantities(UBound(MaxQuantities)))
+		  MinQuantityField.Value = Str(MinQuantities(0))
+		  MaxQuantityField.Value = Str(MaxQuantities(UBound(MaxQuantities)))
 		  If CanBeBlueprint Then
 		    ChanceSlider.Value = 100 * (TotalChance / (Entries.Ubound + 1))
 		    ChanceSlider.Enabled = True
@@ -941,7 +1094,7 @@ End
 		  MinQualityMenu.SelectByTag(MinQualities(0))
 		  MaxQualityMenu.SelectByTag(MaxQualities(MaxQualities.Ubound))
 		  WeightSlider.Value = TotalWeight / (Entries.Ubound + 1)
-		  WeightField.Value = TotalWeight / (Entries.Ubound + 1)
+		  WeightField.DoubleValue = TotalWeight / (Entries.Ubound + 1)
 		  Self.mIgnoreChanges = False
 		  
 		  If UBound(Entries) > 0 Then
@@ -988,13 +1141,13 @@ End
 	#tag Event
 		Sub TextChange()
 		  If Self.Focus = Me Then
-		    ChanceSlider.Value = Max(Min(Val(Me.Text), ChanceSlider.Maximum), ChanceSlider.Minimum)
+		    ChanceSlider.Value = Max(Min(Val(Me.Value), ChanceSlider.MaximumValue), ChanceSlider.MinimumValue)
 		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub LostFocus()
-		  Me.Text = Str(ChanceSlider.Value, "-0")
+		  Me.Value = Str(ChanceSlider.Value, "-0")
 		  ChanceSlider.Enabled = True
 		End Sub
 	#tag EndEvent
@@ -1008,7 +1161,7 @@ End
 	#tag Event
 		Sub ValueChanged()
 		  If Self.Focus <> ChanceField Then
-		    ChanceField.Text = Str(Me.Value, "-0")
+		    ChanceField.Value = Str(Me.Value, "-0")
 		  End If
 		  
 		  If Not Self.mIgnoreChanges Then
@@ -1028,7 +1181,7 @@ End
 		    Me.AddRow(Language.LabelForQuality(Quality), Quality.BaseValue)
 		  Next
 		  
-		  Me.ListIndex = 0
+		  Me.SelectedRowIndex = 0
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1069,7 +1222,7 @@ End
 	#tag Event
 		Sub ValueChanged()
 		  If Self.Focus <> WeightField Then
-		    WeightField.Value = Me.Value
+		    WeightField.DoubleValue = Me.Value
 		  End If
 		  
 		  If Not Self.mIgnoreChanges Then
@@ -1083,7 +1236,7 @@ End
 	#tag Event
 		Sub TextChange()
 		  If Self.Focus = Me Then
-		    WeightSlider.Value = Round(Me.Value)
+		    WeightSlider.Value = Round(Me.DoubleValue)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1106,6 +1259,54 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="DoubleBuffer"
 		Visible=true
 		Group="Windows Behavior"
@@ -1114,39 +1315,10 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
 	#tag EndViewProperty
@@ -1159,72 +1331,74 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Height"
 		Visible=true
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -1232,6 +1406,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -1241,12 +1416,15 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -1260,21 +1438,15 @@ End
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType="Boolean"
 	#tag EndViewProperty
@@ -1292,5 +1464,6 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

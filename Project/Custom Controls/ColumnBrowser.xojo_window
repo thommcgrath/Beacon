@@ -1,15 +1,15 @@
 #tag Window
 Begin BeaconContainer ColumnBrowser
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   300
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,11 +23,13 @@ Begin BeaconContainer ColumnBrowser
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   300
    Begin ScrollBar Scroller
       AcceptFocus     =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   True
+      AllowLiveScrolling=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   15
@@ -43,7 +45,9 @@ Begin BeaconContainer ColumnBrowser
       LockRight       =   True
       LockTop         =   False
       Maximum         =   100
+      MaximumValue    =   100
       Minimum         =   0
+      MinimumValue    =   0
       PageStep        =   300
       Scope           =   2
       TabIndex        =   0
@@ -56,6 +60,13 @@ Begin BeaconContainer ColumnBrowser
       Width           =   300
    End
    Begin BeaconListbox Lists
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -66,12 +77,22 @@ Begin BeaconContainer ColumnBrowser
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
+      DropIndicatorVisible=   False
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLinesHorizontal=   "0"
+      GridLinesHorizontalStyle=   "0"
+      GridLinesVertical=   "0"
+      GridLinesVerticalStyle=   "0"
+      HasBorder       =   False
+      HasHeader       =   False
       HasHeading      =   False
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   285
       HelpTag         =   ""
@@ -87,12 +108,14 @@ Begin BeaconContainer ColumnBrowser
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   0
+      RowCount        =   "0"
+      RowSelectionType=   "0"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   0
+      SelectionRequired=   False
+      SelectionType   =   "0"
       ShowDropIndicator=   False
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -112,11 +135,15 @@ Begin BeaconContainer ColumnBrowser
    Begin FadedSeparator Separators
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   285
       HelpTag         =   ""
       Index           =   0
@@ -180,7 +207,7 @@ End
 	#tag Method, Flags = &h0
 		Sub AppendChildren(Children() As String)
 		  // Create new list if there is a selection
-		  Dim NewList As Boolean = Self.Lists(Self.mListBound).ListIndex > -1
+		  Dim NewList As Boolean = Self.Lists(Self.mListBound).SelectedIndex > -1
 		  Dim TargetList As BeaconListbox
 		  
 		  If NewList Then
@@ -204,11 +231,11 @@ End
 		      Self.mScrollTask = Nil
 		    End If
 		    
-		    If Self.Scroller.Value <> Self.Scroller.Maximum Then
+		    If Self.Scroller.Value <> Self.Scroller.MaximumValue Then
 		      Self.mScrollTask = New AnimationKit.ScrollTask(Self.Scroller)
 		      Self.mScrollTask.DurationInSeconds = 0.15
 		      Self.mScrollTask.Curve = AnimationKit.Curve.CreateEaseOut
-		      Self.mScrollTask.Position = Self.Scroller.Maximum
+		      Self.mScrollTask.Position = Self.Scroller.MaximumValue
 		      Self.mScrollTask.Run
 		    End If
 		  Else
@@ -233,7 +260,7 @@ End
 		    End If
 		    
 		    List.AddRow("", Child)
-		    List.RowTag(List.LastIndex) = Parent + Children(I)
+		    List.RowTag(List.LastAddedRowIndex) = Parent + Children(I)
 		  Next
 		  List.Sort
 		  
@@ -250,7 +277,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Reset()
-		  Self.Lists(0).ListIndex = -1
+		  Self.Lists(0).SelectedIndex = -1
 		  
 		  Dim DefaultChildren() As String
 		  Self.AppendChildren(DefaultChildren)
@@ -269,8 +296,8 @@ End
 		  If Self.Scroller.Value <> Position Then
 		    Self.Scroller.Value = Position
 		  End If
-		  If Self.Scroller.Maximum <> Overflow Then
-		    Self.Scroller.Maximum = Overflow
+		  If Self.Scroller.MaximumValue <> Overflow Then
+		    Self.Scroller.MaximumValue = Overflow
 		  End If
 		  
 		  Dim ListHeight As Integer
@@ -367,12 +394,12 @@ End
 		  
 		  Dim NewPath As String
 		  Dim TriggerEvent As Boolean
-		  If Me.ListIndex > -1 Then
-		    NewPath = Me.RowTag(Me.ListIndex)
+		  If Me.SelectedIndex > -1 Then
+		    NewPath = Me.RowTag(Me.SelectedIndex)
 		    TriggerEvent = True
 		  Else
 		    If Index > 0 Then
-		      NewPath = Self.Lists(Index - 1).RowTag(Self.Lists(Index - 1).ListIndex)
+		      NewPath = Self.Lists(Index - 1).RowTag(Self.Lists(Index - 1).SelectedIndex)
 		    Else
 		      NewPath = "/"
 		    End If
@@ -420,7 +447,7 @@ End
 		  #Pragma Unused BackgroundColor
 		  #Pragma Unused IsHighlighted
 		  
-		  If Column <> 0 Or Row >= Me.ListCount Then
+		  If Column <> 0 Or Row >= Me.RowCount Then
 		    Return
 		  End If
 		  
@@ -440,9 +467,58 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -450,6 +526,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -459,6 +536,7 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -466,53 +544,71 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -520,6 +616,7 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -546,69 +643,20 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"
@@ -628,7 +676,9 @@ End
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="CurrentPath"
+		Visible=false
 		Group="Behavior"
+		InitialValue=""
 		Type="String"
 		EditorType="MultiLineEditor"
 	#tag EndViewProperty

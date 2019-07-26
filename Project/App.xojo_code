@@ -158,7 +158,7 @@ Implements NotificationKit.Receiver
 
 	#tag MenuHandler
 		Function FileImport() As Boolean Handles FileImport.Action
-			Dim Dialog As New OpenDialog
+			Dim Dialog As New OpenFileDialog
 			Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.JsonFile + BeaconFileTypes.BeaconIdentity
 			
 			Dim File As FolderItem = Dialog.ShowModal
@@ -214,7 +214,7 @@ Implements NotificationKit.Receiver
 
 	#tag MenuHandler
 		Function HelpCreateOfflineAuthorizationRequest() As Boolean Handles HelpCreateOfflineAuthorizationRequest.Action
-			Dim Dialog As New SaveAsDialog
+			Dim Dialog As New SaveFileDialog
 			Dialog.SuggestedFileName = "Authorization Request" + BeaconFileTypes.BeaconAuth.PrimaryExtension
 			
 			Dim File As FolderItem = Dialog.ShowModal()
@@ -230,7 +230,7 @@ Implements NotificationKit.Receiver
 			
 			Dim Dict As New Xojo.Core.Dictionary
 			Dict.Value("UserID") = Identity.Identifier
-			Dict.Value("Signed") = Beacon.EncodeHex(Signed)
+			Dict.Value("Signed") = EncodeHex(Signed.Convert)
 			Dict.Value("Device") = HardwareID
 			
 			Dim JSON As Text = Xojo.Data.GenerateJSON(Dict)
@@ -325,7 +325,7 @@ Implements NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Sub CheckFolder(Folder As FolderItem)
 		  If Folder.Exists Then
-		    If Not Folder.Directory Then
+		    If Not Folder.Folder Then
 		      Folder.Delete
 		      Folder.CreateAsFolder
 		    End If

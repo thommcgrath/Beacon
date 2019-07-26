@@ -266,7 +266,7 @@ Inherits Beacon.Thread
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.State <> Thread.NotRunning Then
+			  If Self.ThreadState <> Thread.ThreadStates.NotRunning Then
 			    Dim Err As New RuntimeException
 			    Err.Reason = "Importer is already running"
 			    Raise Err
@@ -286,7 +286,7 @@ Inherits Beacon.Thread
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.State <> Thread.NotRunning Then
+			  If Self.ThreadState <> Thread.ThreadStates.NotRunning Then
 			    Dim Err As New RuntimeException
 			    Err.Reason = "Importer is already running"
 			    Raise Err
@@ -333,70 +333,60 @@ Inherits Beacon.Thread
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="State"
-			Group="Behavior"
-			Type="Beacon.Thread.States"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Running"
-				"1 - Waiting"
-				"2 - Suspended"
-				"3 - Sleeping"
-				"4 - NotRunning"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Left"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
+			EditorType="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType="String"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Priority"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="StackSize"
+			Visible=false
 			Group="Behavior"
-			Type="UInteger"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Top"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
+			EditorType="String"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="GameIniContent"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Text"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="GameUserSettingsIniContent"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Text"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

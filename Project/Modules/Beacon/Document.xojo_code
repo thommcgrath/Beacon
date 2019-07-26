@@ -181,7 +181,7 @@ Protected Class Document
 		    #if TargetiOS
 		      Doc.mLastSaved = New Xojo.Core.Date(Year, Month, Day, Hour, Minute, Second, 0, New Xojo.Core.TimeZone(GMTOffset))
 		    #else
-		      Doc.mLastSavedLegacy = New Global.Date(Year, Month, Day, Hour, Minute, Second, GMTOffset)
+		      Doc.mLastSavedLegacy = New Global.Date(Year, Month, Day, Hour, Minute, Second, 0, New TimeZone(GMTOffset))
 		    #endif
 		  End If
 		  
@@ -642,8 +642,7 @@ Protected Class Document
 		    Dim Now As New Xojo.Core.Date(Xojo.Core.Date.Now, New Xojo.Core.TimeZone(0))
 		    Document.Value("Timestamp") = Now.Year.ToText(Locale, "0000") + "-" + Now.Month.ToText(Locale, "00") + "-" + Now.Day.ToText(Locale, "00") + " " + Now.Hour.ToText(Locale, "00") + ":" + Now.Minute.ToText(Locale, "00") + ":" + Now.Second.ToText(Locale, "00")
 		  #else
-		    Dim Now As New Global.Date
-		    Now.GMTOffset = 0
+		    Dim Now As New Date(Date.Now.SecondsFrom1970, New TimeZone(0))
 		    Document.Value("Timestamp") = Now.Year.ToText(Locale, "0000") + "-" + Now.Month.ToText(Locale, "00") + "-" + Now.Day.ToText(Locale, "00") + " " + Now.Hour.ToText(Locale, "00") + ":" + Now.Minute.ToText(Locale, "00") + ":" + Now.Second.ToText(Locale, "00")
 		  #endif
 		  
@@ -895,13 +894,19 @@ Protected Class Document
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="Description"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Text"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DifficultyValue"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Double"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -909,11 +914,15 @@ Protected Class Document
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="IsPublic"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -921,28 +930,39 @@ Protected Class Document
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MapCompatibility"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="UInt64"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Title"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Text"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -950,16 +970,23 @@ Protected Class Document
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="UseCompression"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TrustKey"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Text"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

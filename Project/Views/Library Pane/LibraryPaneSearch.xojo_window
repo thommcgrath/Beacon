@@ -1,15 +1,15 @@
 #tag Window
 Begin LibrarySubview LibraryPaneSearch
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   300
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,18 +23,21 @@ Begin LibrarySubview LibraryPaneSearch
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   300
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Search"
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   False
+      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -60,19 +63,29 @@ Begin LibrarySubview LibraryPaneSearch
    End
    Begin UITweaks.ResizedTextField SearchField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   "Search"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   "Search"
       Index           =   -2147483648
       Italic          =   False
       Left            =   10
@@ -83,6 +96,7 @@ Begin LibrarySubview LibraryPaneSearch
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -90,6 +104,7 @@ Begin LibrarySubview LibraryPaneSearch
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -98,6 +113,8 @@ Begin LibrarySubview LibraryPaneSearch
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
       Width           =   280
    End
@@ -105,8 +122,9 @@ Begin LibrarySubview LibraryPaneSearch
       Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Mode            =   0
+      Mode            =   "0"
       Period          =   300
+      RunMode         =   "0"
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -121,11 +139,15 @@ Begin LibrarySubview LibraryPaneSearch
    Begin ControlCanvas Area
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   218
       HelpTag         =   ""
       Index           =   -2147483648
@@ -176,12 +198,12 @@ End
 		  Dim Title As Text = Dict.Lookup("title", "")
 		  Dim Summary As Text = Dict.Lookup("summary", "")
 		  
-		  G.TextFont = "System"
-		  G.TextSize = FontSizePoints
+		  G.FontName = "System"
+		  G.FontSize = FontSizePoints
 		  Dim TitleCapHeight As Double = G.CapHeight
 		  Dim TitleWidth As Integer = Ceil(G.StringWidth(Title))
 		  
-		  G.TextSize = SmallFontSizePoints
+		  G.FontSize = SmallFontSizePoints
 		  Dim TypeCapHeight As Double = G.CapHeight
 		  
 		  Dim RectHeight As Integer = ((Self.ResultPadding + 1) * 2) + Max(TitleCapHeight, TypeCapHeight)
@@ -223,11 +245,11 @@ End
 		  G.FillRoundRect(Rect.Left, Rect.Top, Rect.Width, Rect.Height, 12, 12)
 		  G.ForeColor = TypeFrameColor
 		  G.FillRoundRect(TypeLeft, TypeTop, TypeWidth, TypeHeight, 6, 6)
-		  G.TextSize = FontSizePoints
+		  G.FontSize = FontSizePoints
 		  G.ForeColor = LinkColor
 		  G.Underline = True
 		  G.DrawString(Title, Rect.Left + 1 + Self.ResultPadding, TitleBaseline, TitleMaxWidth, True)
-		  G.TextSize = SmallFontSizePoints
+		  G.FontSize = SmallFontSizePoints
 		  G.Underline = False
 		  If Summary <> "" Then
 		    G.ForeColor = SummaryColor
@@ -329,14 +351,14 @@ End
 #tag Events SearchField
 	#tag Event
 		Sub TextChange()
-		  Self.SearchTimer.Mode = Timer.ModeSingle
+		  Self.SearchTimer.RunMode = Timer.RunModes.Single
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SearchTimer
 	#tag Event
 		Sub Action()
-		  Dim Terms As Text = Trim(Self.SearchField.Text).ToText
+		  Dim Terms As Text = Self.SearchField.Value.Trim.ToText
 		  
 		  If Terms = "" Then
 		    Self.Reset()
@@ -400,8 +422,8 @@ End
 		  
 		  If Self.mResultDicts.Ubound = -1 Then
 		    If Self.mSearchTerms = "" Then
-		      G.TextFont = "System"
-		      G.TextSize = 0
+		      G.FontName = "System"
+		      G.FontSize = 0
 		      G.DrawString(Self.StringSearchHelp, 10, 20 + G.CapHeight, G.Width - 20, False)
 		    Else
 		      G.Bold = True
@@ -497,11 +519,68 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
 		Group="Behavior"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumHeight"
@@ -509,6 +588,7 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
@@ -519,39 +599,10 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
 	#tag EndViewProperty
@@ -564,71 +615,74 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Height"
 		Visible=true
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -636,6 +690,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -645,12 +700,15 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -662,7 +720,9 @@ End
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
+		Visible=false
 		Group="Behavior"
+		InitialValue=""
 		Type="String"
 		EditorType="MultiLineEditor"
 	#tag EndViewProperty
@@ -670,21 +730,15 @@ End
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType="Boolean"
 	#tag EndViewProperty
@@ -702,5 +756,6 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

@@ -96,9 +96,70 @@ Inherits Label
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="AllowAutoDeactivate"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TextAlignment"
+			Visible=true
+			Group="Appearance"
+			InitialValue="0"
+			Type="TextAlignments"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Left"
+				"2 - Center"
+				"3 - Right"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Value"
+			Visible=true
+			Group="Appearance"
+			InitialValue="Untitled"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FontName"
+			Visible=true
+			Group="Font"
+			InitialValue="System"
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FontSize"
+			Visible=true
+			Group="Font"
+			InitialValue="0"
+			Type="Single"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FontUnit"
+			Visible=true
+			Group="Font"
+			InitialValue="0"
+			Type="FontUnits"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Default"
+				"1 - Pixel"
+				"2 - Point"
+				"3 - Inch"
+				"4 - Millimeter"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="Integer"
 			EditorType="Integer"
 		#tag EndViewProperty
@@ -106,6 +167,7 @@ Inherits Label
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
 			EditorType="String"
 		#tag EndViewProperty
@@ -113,6 +175,7 @@ Inherits Label
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
 			EditorType="String"
 		#tag EndViewProperty
@@ -122,6 +185,7 @@ Inherits Label
 			Group="Position"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Height"
@@ -129,41 +193,55 @@ Inherits Label
 			Group="Position"
 			InitialValue="20"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="InitialParent"
+			Visible=false
 			Group="Position"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
 			Visible=true
 			Group="Position"
+			InitialValue=""
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="LockBottom"
 			Visible=true
 			Group="Position"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="LockLeft"
 			Visible=true
 			Group="Position"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="LockRight"
 			Visible=true
 			Group="Position"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="LockTop"
 			Visible=true
 			Group="Position"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabIndex"
@@ -171,18 +249,23 @@ Inherits Label
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabPanelIndex"
+			Visible=false
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
 			Visible=true
 			Group="Position"
+			InitialValue=""
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Width"
@@ -190,13 +273,7 @@ Inherits Label
 			Group="Position"
 			InitialValue="100"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AutoDeactivate"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
@@ -204,11 +281,13 @@ Inherits Label
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HelpTag"
 			Visible=true
 			Group="Appearance"
+			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
@@ -216,7 +295,9 @@ Inherits Label
 			Name="Multiline"
 			Visible=true
 			Group="Appearance"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Selectable"
@@ -224,32 +305,15 @@ Inherits Label
 			Group="Appearance"
 			InitialValue="False"
 			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Text"
-			Visible=true
-			Group="Appearance"
-			InitialValue="Untitled"
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextAlign"
-			Visible=true
-			Group="Appearance"
-			InitialValue="0"
-			Type="Integer"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Left"
-				"1 - Center"
-				"2 - Right"
-			#tag EndEnumValues
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TextColor"
+			Visible=false
 			Group="Appearance"
+			InitialValue=""
 			Type="Color"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Transparent"
@@ -265,6 +329,7 @@ Inherits Label
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Bold"
@@ -272,6 +337,7 @@ Inherits Label
 			Group="Font"
 			InitialValue="False"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Italic"
@@ -279,35 +345,7 @@ Inherits Label
 			Group="Font"
 			InitialValue="False"
 			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextFont"
-			Visible=true
-			Group="Font"
-			InitialValue="System"
-			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextSize"
-			Visible=true
-			Group="Font"
-			InitialValue="0"
-			Type="Single"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextUnit"
-			Visible=true
-			Group="Font"
-			InitialValue="0"
-			Type="FontUnits"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Default"
-				"1 - Pixel"
-				"2 - Point"
-				"3 - Inch"
-				"4 - Millimeter"
-			#tag EndEnumValues
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Underline"
@@ -315,11 +353,13 @@ Inherits Label
 			Group="Font"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DataField"
 			Visible=true
 			Group="Database Binding"
+			InitialValue=""
 			Type="String"
 			EditorType="DataField"
 		#tag EndViewProperty
@@ -327,6 +367,7 @@ Inherits Label
 			Name="DataSource"
 			Visible=true
 			Group="Database Binding"
+			InitialValue=""
 			Type="String"
 			EditorType="DataSource"
 		#tag EndViewProperty
@@ -336,10 +377,13 @@ Inherits Label
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="URL"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty

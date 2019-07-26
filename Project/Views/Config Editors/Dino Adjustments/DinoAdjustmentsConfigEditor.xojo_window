@@ -1,15 +1,15 @@
 #tag Window
 Begin ConfigEditor DinoAdjustmentsConfigEditor
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   526
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,18 +23,21 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   730
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Creature Adjustments"
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   False
+      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -61,11 +64,15 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
    Begin FadedSeparator HeaderSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -88,6 +95,13 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       Width           =   730
    End
    Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -98,12 +112,22 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   34
+      DropIndicatorVisible=   False
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLinesHorizontal=   "0"
+      GridLinesHorizontalStyle=   "0"
+      GridLinesVertical=   "0"
+      GridLinesVerticalStyle=   "0"
+      HasBorder       =   False
+      HasHeader       =   True
       HasHeading      =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   0
       Height          =   485
       HelpTag         =   ""
@@ -119,12 +143,14 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   0
+      RowCount        =   "0"
+      RowSelectionType=   "1"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   1
+      SelectionRequired=   False
+      SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -163,7 +189,7 @@ End
 		    Config.Behavior(Behavior.TargetClass) = Behavior
 		    Classes.Append(Behavior.TargetClass)
 		  Next
-		  Self.ContentsChanged = True
+		  Self.Changed = True
 		  Self.UpdateList(Classes)
 		End Sub
 	#tag EndEvent
@@ -214,16 +240,16 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub EditSelected()
-		  If Self.List.ListIndex = -1 Then
+		  If Self.List.SelectedIndex = -1 Then
 		    Return
 		  End If
 		  
 		  // See the comment in ShowAdd
-		  Dim ClassString As Text = Self.List.RowTag(Self.List.ListIndex)
+		  Dim ClassString As Text = Self.List.RowTag(Self.List.SelectedIndex)
 		  If DinoAdjustmentDialog.Present(Self, ClassString, Self.Config(False), Self.Document.Mods) Then
 		    Call Self.Config(True)
 		    Self.UpdateList()
-		    Self.ContentsChanged = True
+		    Self.Changed = True
 		  End If
 		End Sub
 	#tag EndMethod
@@ -237,19 +263,19 @@ End
 		  If DinoAdjustmentDialog.Present(Self, "", Config, Self.Document.Mods) Then
 		    Call Self.Config(True)
 		    Self.UpdateList()
-		    Self.ContentsChanged = True
+		    Self.Changed = True
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub ShowDuplicate()
-		  If Self.List.SelCount <> 1 Then
+		  If Self.List.SelectedRowCount <> 1 Then
 		    Return
 		  End If
 		  
 		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(False)
-		  Dim SelectedClass As Text = Self.List.RowTag(Self.List.ListIndex)
+		  Dim SelectedClass As Text = Self.List.RowTag(Self.List.SelectedIndex)
 		  Dim SelectedBehavior As Beacon.CreatureBehavior = Config.Behavior(SelectedClass)
 		  If SelectedBehavior = Nil Then
 		    Return
@@ -276,14 +302,14 @@ End
 		    SelectClasses.Append(Behavior.TargetClass)
 		  Next
 		  Self.UpdateList(SelectClasses)
-		  Self.ContentsChanged = True
+		  Self.Changed = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
 		  Dim Classes() As Text
-		  For I As Integer = 0 To Self.List.ListCount - 1
+		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
 		      Classes.Append(Self.List.RowTag(I))
 		    End If
@@ -322,10 +348,10 @@ End
 		    End If
 		    
 		    If SelectClasses.IndexOf(Behavior.TargetClass) > -1 Then
-		      Self.List.Selected(Self.List.LastIndex) = True
+		      Self.List.Selected(Self.List.LastAddedRowIndex) = True
 		    End If
 		    
-		    Self.List.RowTag(Self.List.LastIndex) = Behavior.TargetClass
+		    Self.List.RowTag(Self.List.LastAddedRowIndex) = Behavior.TargetClass
 		  Next
 		  
 		  Self.List.Sort()
@@ -397,12 +423,12 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.SelCount > 0
+		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelCount > 0
+		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -414,10 +440,10 @@ End
 		Sub PerformClear(Warn As Boolean)
 		  If Warn Then
 		    Dim Message As String
-		    If Me.SelCount = 1 Then
-		      Message = "Are you sure you want to delete the """ + NthField(Me.Cell(Me.ListIndex, Self.ColumnName), EndOfLine, 1) + """ creature adjustment?"
+		    If Me.SelectedRowCount = 1 Then
+		      Message = "Are you sure you want to delete the """ + NthField(Me.Cell(Me.SelectedIndex, Self.ColumnName), EndOfLine, 1) + """ creature adjustment?"
 		    Else
-		      Message = "Are you sure you want to delete these " + Str(Me.SelCount, "-0") + " creature adjustments?"
+		      Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " creature adjustments?"
 		    End If
 		    
 		    If Not Self.ShowConfirm(Message, "This action cannot be undone.", "Delete", "Cancel") Then
@@ -426,11 +452,11 @@ End
 		  End If
 		  
 		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
-		  For I As Integer = Me.ListCount - 1 DownTo 0
+		  For I As Integer = Me.RowCount - 1 DownTo 0
 		    If Me.Selected(I) Then
 		      Dim ClassString As Text = Me.RowTag(I)
 		      Config.RemoveBehavior(ClassString)
-		      Self.ContentsChanged = True
+		      Self.Changed = True
 		    End If
 		  Next
 		  Self.UpdateList()
@@ -440,7 +466,7 @@ End
 		Sub PerformCopy(Board As Clipboard)
 		  Dim Dicts() As Xojo.Core.Dictionary
 		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(False)
-		  For I As Integer = 0 To Me.ListCount - 1
+		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
@@ -481,7 +507,7 @@ End
 		      
 		      Config.Behavior(Behavior.TargetClass) = Behavior
 		    Next
-		    Self.ContentsChanged = True
+		    Self.Changed = True
 		    Self.UpdateList(SelectClasses)
 		    Return
 		  End If
@@ -500,16 +526,66 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Self.Header.Duplicate.Enabled = Me.SelCount = 1
+		  Self.Header.Duplicate.Enabled = Me.SelectedRowCount = 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Progress"
+		Visible=false
 		Group="Behavior"
 		InitialValue="ProgressNone"
 		Type="Double"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -517,6 +593,7 @@ End
 		Group="Behavior"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumHeight"
@@ -524,10 +601,13 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
+		Visible=false
 		Group="Behavior"
+		InitialValue=""
 		Type="String"
 		EditorType="MultiLineEditor"
 	#tag EndViewProperty
@@ -535,6 +615,7 @@ End
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -542,6 +623,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -551,6 +633,7 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -558,53 +641,71 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -612,6 +713,7 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -638,69 +740,20 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"

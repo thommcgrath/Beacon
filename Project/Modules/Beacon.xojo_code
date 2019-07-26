@@ -202,7 +202,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function CRC32(Data As Xojo.Core.MemoryBlock) As UInt32
-		  Return Beacon.CRC32(Beacon.ConvertMemoryBlock(Data))
+		  Return Beacon.CRC32(Data.Convert)
 		End Function
 	#tag EndMethod
 
@@ -320,7 +320,8 @@ Protected Module Beacon
 		    
 		    Return New Xojo.Core.MemoryBlock(Bytes)
 		  #else
-		    Return Beacon.ConvertMemoryBlock(REALbasic.DecodeHex(Source))
+		    Dim Mem As MemoryBlock = REALbasic.DecodeHex(Source)
+		    Return Mem.Convert
 		  #endif
 		End Function
 	#tag EndMethod
@@ -652,9 +653,9 @@ Protected Module Beacon
 		      // Seriously?
 		      Return ""
 		    End If
-		    Created.GMTOffset = 0
+		    Created = New Date(Created.SecondsFrom1970, New TimeZone(0))
 		    
-		    Return REALbasic.EncodeHex(Crypto.SHA256(Str(Created.TotalSeconds, "-0"))).Lowercase.ToText
+		    Return REALbasic.EncodeHex(Crypto.SHA256(Str(Created.SecondsFrom1970 + 2082844800, "-0"))).Lowercase.ToText
 		  #endif
 		End Function
 	#tag EndMethod
@@ -1022,6 +1023,21 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function SanitizeFilename(Filename As String) As String
+		  Filename = Filename.ReplaceAll("/", "-")
+		  Filename = Filename.ReplaceAll("\", "-")
+		  Filename = Filename.ReplaceAll(":", "-")
+		  Filename = Filename.ReplaceAll("""", "")
+		  Filename = Filename.ReplaceAll("<", "")
+		  Filename = Filename.ReplaceAll(">", "")
+		  Filename = Filename.ReplaceAll("|", "")
+		  Filename = Filename.ReplaceAll("*", "")
+		  Filename = Filename.ReplaceAll("?", "")
+		  Return Filename
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function SearchForCreatures(Extends Source As Beacon.DataSource, SearchText As Text = "", Mods As Beacon.TextList = Nil, Tags As Text = "") As Beacon.Creature()
 		  If Mods = Nil Then
@@ -1269,6 +1285,7 @@ Protected Module Beacon
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -1276,18 +1293,23 @@ Protected Module Beacon
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -1295,6 +1317,7 @@ Protected Module Beacon
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Module

@@ -2,38 +2,56 @@
 Begin Window ExceptionWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
-   Frame           =   1
+   DefaultLocation =   "2"
+   Frame           =   "1"
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
+   HasBackgroundColor=   False
+   HasCloseButton  =   False
+   HasFullScreenButton=   False
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
    Height          =   400
    ImplicitInstance=   False
-   LiveResize      =   True
+   LiveResize      =   "True"
    MacProcID       =   0
    MaxHeight       =   32000
    MaximizeButton  =   False
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
    MinHeight       =   64
    MinimizeButton  =   False
+   MinimumHeight   =   64
+   MinimumWidth    =   64
    MinWidth        =   64
-   Placement       =   2
-   Resizeable      =   False
+   Placement       =   "2"
+   Resizable       =   True
+   Resizeable      =   "False"
+   SystemUIVisible =   True
    Title           =   "Beacon Error"
+   Type            =   "1"
    Visible         =   True
    Width           =   600
    Begin ControlCanvas LogoCanvas
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   64
       HelpTag         =   ""
       Index           =   -2147483648
@@ -56,11 +74,15 @@ Begin Window ExceptionWindow
       Width           =   64
    End
    Begin Label MessageLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   True
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -79,7 +101,8 @@ Begin Window ExceptionWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Beacon has encountered an unrecoverable error"
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -87,15 +110,20 @@ Begin Window ExceptionWindow
       Top             =   20
       Transparent     =   False
       Underline       =   False
+      Value           =   "Beacon has encountered an unrecoverable error"
       Visible         =   True
       Width           =   476
    End
    Begin Label ExplanationLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   38
       HelpTag         =   ""
       Index           =   -2147483648
@@ -114,7 +142,8 @@ Begin Window ExceptionWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Well this is embarrassing. Something has gone wrong that Beacon wasn't prepared for. Beacon will need to stop now."
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -122,10 +151,12 @@ Begin Window ExceptionWindow
       Top             =   52
       Transparent     =   False
       Underline       =   False
+      Value           =   "Well this is embarrassing. Something has gone wrong that Beacon wasn't prepared for. Beacon will need to stop now."
       Visible         =   True
       Width           =   476
    End
    Begin UITweaks.ResizedPushButton QuitButton
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -133,6 +164,9 @@ Begin Window ExceptionWindow
       Caption         =   "Quit"
       Default         =   False
       Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -144,6 +178,7 @@ Begin Window ExceptionWindow
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -160,11 +195,15 @@ Begin Window ExceptionWindow
    Begin FadedSeparator TopBorder
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -189,11 +228,15 @@ Begin Window ExceptionWindow
    Begin FadedSeparator LeftBorder
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   236
       HelpTag         =   ""
       Index           =   -2147483648
@@ -218,11 +261,15 @@ Begin Window ExceptionWindow
    Begin FadedSeparator BottomBorder
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -247,11 +294,15 @@ Begin Window ExceptionWindow
    Begin FadedSeparator RightBorder
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   236
       HelpTag         =   ""
       Index           =   -2147483648
@@ -274,6 +325,7 @@ Begin Window ExceptionWindow
       Width           =   1
    End
    Begin PagePanel Pages
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   236
@@ -289,6 +341,7 @@ Begin Window ExceptionWindow
       PanelCount      =   4
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   3
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
@@ -298,11 +351,15 @@ Begin Window ExceptionWindow
       Visible         =   True
       Width           =   474
       Begin Label CheckingLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -321,7 +378,8 @@ Begin Window ExceptionWindow
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Checking for solution…"
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -329,14 +387,17 @@ Begin Window ExceptionWindow
          Top             =   123
          Transparent     =   False
          Underline       =   False
+         Value           =   "Checking for solution…"
          Visible         =   True
          Width           =   434
       End
       Begin ProgressBar CheckingIndicator
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Enabled         =   True
          Height          =   20
          HelpTag         =   ""
+         Indeterminate   =   False
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   125
@@ -346,22 +407,27 @@ Begin Window ExceptionWindow
          LockRight       =   True
          LockTop         =   True
          Maximum         =   0
+         MaximumValue    =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
          Top             =   155
          Transparent     =   False
-         Value           =   0
+         Value           =   0.0
          Visible         =   True
          Width           =   434
       End
       Begin Label PermissionLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   70
          HelpTag         =   ""
          Index           =   -2147483648
@@ -380,7 +446,8 @@ Begin Window ExceptionWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Your privacy settings prevent Beacon from looking for a solution to this problem. Would you like to allow a one-time connection? No information about you or your computer will be sent to Beacon's server."
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -388,10 +455,12 @@ Begin Window ExceptionWindow
          Top             =   123
          Transparent     =   False
          Underline       =   False
+         Value           =   "Your privacy settings prevent Beacon from looking for a solution to this problem. Would you like to allow a one-time connection? No information about you or your computer will be sent to Beacon's server."
          Visible         =   True
          Width           =   434
       End
       Begin UITweaks.ResizedPushButton PermissionButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -399,6 +468,9 @@ Begin Window ExceptionWindow
          Caption         =   "Allow Connection"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -410,6 +482,7 @@ Begin Window ExceptionWindow
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
@@ -424,11 +497,15 @@ Begin Window ExceptionWindow
          Width           =   135
       End
       Begin LinkLabel PermissionPolicyLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -448,7 +525,8 @@ Begin Window ExceptionWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Privacy Policy"
-         TextAlign       =   1
+         TextAlign       =   "1"
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
@@ -457,15 +535,20 @@ Begin Window ExceptionWindow
          Transparent     =   False
          Underline       =   True
          URL             =   ""
+         Value           =   "Privacy Policy"
          Visible         =   True
          Width           =   434
       End
       Begin Label SolutionLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   38
          HelpTag         =   ""
          Index           =   -2147483648
@@ -484,7 +567,8 @@ Begin Window ExceptionWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Good news! It seems like there is more information about this problem available online."
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -492,10 +576,12 @@ Begin Window ExceptionWindow
          Top             =   123
          Transparent     =   False
          Underline       =   False
+         Value           =   "Good news! It seems like there is more information about this problem available online."
          Visible         =   True
          Width           =   434
       End
       Begin UITweaks.ResizedPushButton SolutionOpenButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -503,6 +589,9 @@ Begin Window ExceptionWindow
          Caption         =   "View Online"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -514,6 +603,7 @@ Begin Window ExceptionWindow
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
@@ -528,11 +618,15 @@ Begin Window ExceptionWindow
          Width           =   110
       End
       Begin Label NoSolutionLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   90
          HelpTag         =   ""
          Index           =   -2147483648
@@ -551,7 +645,8 @@ Begin Window ExceptionWindow
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Unfortunately, Beacon could not find any new information about this problem. You may be the first to experience it.\n\nIf the error happens consistently, please report it with as much detail as possible. Doing so may help other users."
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -559,10 +654,12 @@ Begin Window ExceptionWindow
          Top             =   123
          Transparent     =   False
          Underline       =   False
+         Value           =   "Unfortunately, Beacon could not find any new information about this problem. You may be the first to experience it.\n\nIf the error happens consistently, please report it with as much detail as possible. Doing so may help other users."
          Visible         =   True
          Width           =   434
       End
       Begin UITweaks.ResizedPushButton ReportButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -570,6 +667,9 @@ Begin Window ExceptionWindow
          Caption         =   "Add Comments"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -581,6 +681,7 @@ Begin Window ExceptionWindow
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   4
@@ -596,11 +697,15 @@ Begin Window ExceptionWindow
       End
    End
    Begin Label ErrorIDLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -619,7 +724,8 @@ Begin Window ExceptionWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Error ID: <hash>"
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -627,6 +733,7 @@ Begin Window ExceptionWindow
       Top             =   361
       Transparent     =   False
       Underline       =   False
+      Value           =   "Error ID: <hash>"
       Visible         =   True
       Width           =   475
    End
@@ -636,7 +743,7 @@ End
 #tag WindowCode
 	#tag Method, Flags = &h21
 		Private Sub BeginChecking()
-		  Self.Pages.Value = Self.PageStart
+		  Self.Pages.SelectedPanelIndex = Self.PageStart
 		  
 		  Dim Trace() As Xojo.Core.StackFrame = Self.mExceptionDetails.Value("Trace")
 		  Dim Lines() As Text
@@ -685,7 +792,7 @@ End
 		  #Pragma Unused Tag
 		  
 		  If Status <> 200 Then
-		    Self.Pages.Value = Self.PageNoSolution
+		    Self.Pages.SelectedPanelIndex = Self.PageNoSolution
 		    Return
 		  End If
 		  
@@ -694,13 +801,13 @@ End
 		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
 		    
 		    If Dict.HasKey("solution") And Dict.Value("solution") <> Nil Then
-		      Self.Pages.Value = Self.PageSolutionFound
+		      Self.Pages.SelectedPanelIndex = Self.PageSolutionFound
 		      Self.mSolutionURL = Dict.Value("solution")
 		    Else
-		      Self.Pages.Value = Self.PageNoSolution
+		      Self.Pages.SelectedPanelIndex = Self.PageNoSolution
 		    End If
 		  Catch Err As RuntimeException
-		    Self.Pages.Value = Self.PageNoSolution
+		    Self.Pages.SelectedPanelIndex = Self.PageNoSolution
 		  End Try
 		End Sub
 	#tag EndMethod
@@ -708,12 +815,12 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ShowModal()
 		  If Not Preferences.OnlineEnabled Then
-		    Self.Pages.Value = Self.PagePermission
+		    Self.Pages.SelectedPanelIndex = Self.PagePermission
 		  Else
 		    Self.BeginChecking()
 		  End If
 		  
-		  Self.ErrorIDLabel.Text = Self.ErrorIDLabel.Text.Replace("<hash>", Self.mExceptionHash)
+		  Self.ErrorIDLabel.Value = Self.ErrorIDLabel.Value.Replace("<hash>", Self.mExceptionHash)
 		  
 		  Super.ShowModal()
 		End Sub
@@ -767,7 +874,7 @@ End
 #tag Events Pages
 	#tag Event
 		Sub Change()
-		  Self.QuitButton.Enabled = Me.Value <> Self.PageStart
+		  Self.QuitButton.Enabled = Me.SelectedPanelIndex <> Self.PageStart
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -805,74 +912,43 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="Name"
-		Visible=true
-		Group="ID"
-		Type="String"
-		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Interfaces"
-		Visible=true
-		Group="ID"
-		Type="String"
-		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Super"
-		Visible=true
-		Group="ID"
-		Type="String"
-		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Width"
-		Visible=true
-		Group="Size"
-		InitialValue="600"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Height"
-		Visible=true
-		Group="Size"
-		InitialValue="400"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinWidth"
+		Name="MinimumWidth"
 		Visible=true
 		Group="Size"
 		InitialValue="64"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MinHeight"
+		Name="MinimumHeight"
 		Visible=true
 		Group="Size"
 		InitialValue="64"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MaxWidth"
+		Name="MaximumWidth"
 		Visible=true
 		Group="Size"
 		InitialValue="32000"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MaxHeight"
+		Name="MaximumHeight"
 		Visible=true
 		Group="Size"
 		InitialValue="32000"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Frame"
+		Name="Type"
 		Visible=true
 		Group="Frame"
 		InitialValue="0"
-		Type="Integer"
+		Type="Types"
 		EditorType="Enum"
 		#tag EnumValues
 			"0 - Document"
@@ -889,14 +965,7 @@ End
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Title"
-		Visible=true
-		Group="Frame"
-		InitialValue="Untitled"
-		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="CloseButton"
+		Name="HasCloseButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -904,7 +973,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Resizeable"
+		Name="Resizable"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -912,7 +981,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MaximizeButton"
+		Name="HasMaximizeButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -920,7 +989,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MinimizeButton"
+		Name="HasMinimizeButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -928,7 +997,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="FullScreenButton"
+		Name="HasFullScreenButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="False"
@@ -936,31 +1005,11 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Composite"
-		Group="OS X (Carbon)"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MacProcID"
-		Group="OS X (Carbon)"
-		InitialValue="0"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ImplicitInstance"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Placement"
+		Name="DefaultLocation"
 		Visible=true
 		Group="Behavior"
 		InitialValue="0"
-		Type="Integer"
+		Type="Locations"
 		EditorType="Enum"
 		#tag EnumValues
 			"0 - Default"
@@ -971,6 +1020,102 @@ End
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
+		Name="SystemUIVisible"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Name"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Interfaces"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Super"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Width"
+		Visible=true
+		Group="Size"
+		InitialValue="600"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Height"
+		Visible=true
+		Group="Size"
+		InitialValue="400"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Title"
+		Visible=true
+		Group="Frame"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composite"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MacProcID"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="0"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ImplicitInstance"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Visible"
 		Visible=true
 		Group="Behavior"
@@ -979,37 +1124,18 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="LiveResize"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="FullScreen"
+		Visible=false
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
 	#tag EndViewProperty
@@ -1017,15 +1143,8 @@ End
 		Name="MenuBar"
 		Visible=true
 		Group="Menus"
+		InitialValue=""
 		Type="MenuBar"
 		EditorType="MenuBar"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MenuBarVisible"
-		Visible=true
-		Group="Deprecated"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 #tag EndViewBehavior

@@ -42,7 +42,7 @@ Inherits Thread
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor()
-		  Self.Priority = Thread.LowestPriority
+		  Self.Priority = 1
 		  #if Not TargetiOS
 		    Self.mLock = New CriticalSection
 		  #endif
@@ -248,8 +248,11 @@ Inherits Thread
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="Finished"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -263,33 +266,47 @@ Inherits Thread
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
 			EditorType="String"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Priority"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Running"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="StackSize"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Success"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
 			EditorType="String"
 		#tag EndViewProperty

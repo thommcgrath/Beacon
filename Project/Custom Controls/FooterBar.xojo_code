@@ -16,7 +16,7 @@ Implements ObservationKit.Observer
 		  Self.mMouseX = X
 		  Self.mMouseY = Y
 		  Self.mMouseDown = True
-		  Self.mHoldTimer.Mode = Timer.ModeSingle
+		  Self.mHoldTimer.RunMode = Timer.RunModes.Single
 		  Self.mMouseHeld = False
 		  Self.mNoActionOnRelease = False
 		  Self.mPressTarget = Target
@@ -44,7 +44,7 @@ Implements ObservationKit.Observer
 		    End If
 		    If Not Self.mMouseHeld Then
 		      Self.mHoldTimer.Reset
-		      Self.mHoldTimer.Mode = Timer.ModeSingle
+		      Self.mHoldTimer.RunMode = Timer.RunModes.Single
 		    End If
 		  Else
 		    If Self.mMouseDown Then
@@ -52,7 +52,7 @@ Implements ObservationKit.Observer
 		      Self.Invalidate
 		    End If
 		    Self.mHoldTimer.Reset
-		    Self.mHoldTimer.Mode = Timer.ModeOff
+		    Self.mHoldTimer.RunMode = Timer.RunModes.Off
 		  End If
 		End Sub
 	#tag EndEvent
@@ -63,7 +63,7 @@ Implements ObservationKit.Observer
 		  Self.mMouseY = Y
 		  
 		  Self.mHoldTimer.Reset
-		  Self.mHoldTimer.Mode = Timer.ModeOff
+		  Self.mHoldTimer.RunMode = Timer.RunModes.Off
 		  
 		  If Self.mMouseDown Then
 		    Self.mMouseDown = False
@@ -158,7 +158,7 @@ Implements ObservationKit.Observer
 		  Super.Constructor
 		  
 		  Self.mHoldTimer = New Timer
-		  Self.mHoldTimer.Mode = Timer.ModeOff
+		  Self.mHoldTimer.RunMode = Timer.RunModes.Off
 		  Self.mHoldTimer.Period = 250
 		  AddHandler Self.mHoldTimer.Action, WeakAddressOf Self.mHoldTimer_Action
 		End Sub
@@ -461,43 +461,52 @@ Implements ObservationKit.Observer
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="ScrollSpeed"
-			Group="Behavior"
-			InitialValue="20"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AcceptFocus"
-			Visible=true
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AcceptTabs"
-			Visible=true
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AutoDeactivate"
+			Name="AllowAutoDeactivate"
 			Visible=true
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowFocusRing"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowFocus"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowTabs"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollSpeed"
+			Visible=false
+			Group="Behavior"
+			InitialValue="20"
+			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Backdrop"
 			Visible=true
 			Group="Appearance"
+			InitialValue=""
 			Type="Picture"
 			EditorType="Picture"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
@@ -505,14 +514,7 @@ Implements ObservationKit.Observer
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="EraseBackground"
-			Visible=true
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Height"
@@ -520,11 +522,13 @@ Implements ObservationKit.Observer
 			Group="Position"
 			InitialValue="25"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HelpTag"
 			Visible=true
 			Group="Appearance"
+			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
@@ -532,48 +536,63 @@ Implements ObservationKit.Observer
 			Name="Index"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="Integer"
 			EditorType="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="InitialParent"
+			Visible=false
 			Group="Position"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
 			Visible=true
 			Group="Position"
+			InitialValue=""
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="LockBottom"
 			Visible=true
 			Group="Position"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="LockLeft"
 			Visible=true
 			Group="Position"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="LockRight"
 			Visible=true
 			Group="Position"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="LockTop"
 			Visible=true
 			Group="Position"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
 			EditorType="String"
 		#tag EndViewProperty
@@ -581,6 +600,7 @@ Implements ObservationKit.Observer
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
 			EditorType="String"
 		#tag EndViewProperty
@@ -590,12 +610,15 @@ Implements ObservationKit.Observer
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabPanelIndex"
+			Visible=false
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabStop"
@@ -603,12 +626,15 @@ Implements ObservationKit.Observer
 			Group="Position"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
 			Visible=true
 			Group="Position"
+			InitialValue=""
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Transparent"
@@ -619,18 +645,12 @@ Implements ObservationKit.Observer
 			EditorType="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="UseFocusRing"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Visible"
 			Visible=true
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Width"
@@ -638,6 +658,7 @@ Implements ObservationKit.Observer
 			Group="Position"
 			InitialValue="100"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

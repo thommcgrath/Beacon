@@ -2,31 +2,46 @@
 Begin BeaconDialog DeveloperModSettingsDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    CloseButton     =   True
    Compatibility   =   ""
    Composite       =   False
-   Frame           =   8
+   DefaultLocation =   "1"
+   Frame           =   "8"
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
+   HasBackgroundColor=   False
+   HasCloseButton  =   True
+   HasFullScreenButton=   False
+   HasMaximizeButton=   True
+   HasMinimizeButton=   True
    Height          =   193
    ImplicitInstance=   False
-   LiveResize      =   True
+   LiveResize      =   "True"
    MacProcID       =   0
    MaxHeight       =   32000
    MaximizeButton  =   True
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
    MinHeight       =   64
    MinimizeButton  =   True
+   MinimumHeight   =   64
+   MinimumWidth    =   64
    MinWidth        =   64
-   Placement       =   1
-   Resizeable      =   True
+   Placement       =   "1"
+   Resizable       =   True
+   Resizeable      =   "True"
+   SystemUIVisible =   True
    Title           =   "Mod Settings"
+   Type            =   "8"
    Visible         =   True
    Width           =   520
    Begin UITweaks.ResizedPushButton ActionButton
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -34,6 +49,9 @@ Begin BeaconDialog DeveloperModSettingsDialog
       Caption         =   "OK"
       Default         =   True
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -45,6 +63,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
@@ -59,6 +78,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton CancelButton
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -66,6 +86,9 @@ Begin BeaconDialog DeveloperModSettingsDialog
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -77,6 +100,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -91,11 +115,15 @@ Begin BeaconDialog DeveloperModSettingsDialog
       Width           =   80
    End
    Begin Label MessageLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   True
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -114,7 +142,8 @@ Begin BeaconDialog DeveloperModSettingsDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Mod Settings"
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -122,24 +151,35 @@ Begin BeaconDialog DeveloperModSettingsDialog
       Top             =   20
       Transparent     =   True
       Underline       =   False
+      Value           =   "Mod Settings"
       Visible         =   True
       Width           =   480
    End
    Begin UITweaks.ResizedTextField PullURLField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   122
@@ -150,6 +190,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -157,6 +198,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -165,15 +207,21 @@ Begin BeaconDialog DeveloperModSettingsDialog
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
       Width           =   378
    End
    Begin UITweaks.ResizedLabel PullURLLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -192,7 +240,8 @@ Begin BeaconDialog DeveloperModSettingsDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Engrams URL:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -200,15 +249,20 @@ Begin BeaconDialog DeveloperModSettingsDialog
       Top             =   53
       Transparent     =   True
       Underline       =   False
+      Value           =   "Engrams URL:"
       Visible         =   True
       Width           =   90
    End
    Begin Label PullURLExplanationLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   55
       HelpTag         =   ""
       Index           =   -2147483648
@@ -227,7 +281,8 @@ Begin BeaconDialog DeveloperModSettingsDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "A list of engrams can be posted online and the Beacon server will use it to automatically maintain the engrams list. See the API Guide for more details."
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -235,10 +290,12 @@ Begin BeaconDialog DeveloperModSettingsDialog
       Top             =   86
       Transparent     =   True
       Underline       =   False
+      Value           =   "A list of engrams can be posted online and the Beacon server will use it to automatically maintain the engrams list. See the API Guide for more details."
       Visible         =   True
       Width           =   378
    End
    Begin ProgressWheel Spinner
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   16
@@ -288,7 +345,7 @@ End
 		Shared Sub Present(Parent As Window, WorkshopMod As BeaconAPI.WorkshopMod)
 		  Dim Win As New DeveloperModSettingsDialog
 		  Win.WorkshopMod = WorkshopMod
-		  Win.PullURLField.Text = WorkshopMod.PullURL
+		  Win.PullURLField.Value = WorkshopMod.PullURL
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		End Sub
 	#tag EndMethod
@@ -304,7 +361,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Self.WorkshopMod.PullURL = Self.PullURLField.Text.ToText
+		  Self.WorkshopMod.PullURL = Self.PullURLField.Value.ToText
 		  Dim Payload As Text = Xojo.Data.GenerateJSON(Self.WorkshopMod.AsDictionary)
 		  
 		  Dim Request As New BeaconAPI.Request("mod.php", "POST", Payload, "application/json", AddressOf APICallback_SaveMod)
@@ -323,7 +380,7 @@ End
 #tag Events PullURLField
 	#tag Event
 		Sub TextChange()
-		  Dim URL As String = Trim(Me.Text)
+		  Dim URL As String = Trim(Me.Value)
 		  ActionButton.Enabled = URL = "" Or Left(URL, 8) = "https://" Or Left(URL, 7) = "http://"
 		End Sub
 	#tag EndEvent
@@ -346,39 +403,43 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="BackColor"
+		Name="MinimumWidth"
 		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Backdrop"
+		Name="MinimumHeight"
 		Visible=true
-		Group="Background"
-		Type="Picture"
-		EditorType="Picture"
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="CloseButton"
+		Name="MaximumWidth"
 		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Composite"
-		Group="OS X (Carbon)"
-		InitialValue="False"
-		Type="Boolean"
+		Name="MaximumHeight"
+		Visible=true
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Frame"
+		Name="Type"
 		Visible=true
 		Group="Frame"
 		InitialValue="0"
-		Type="Integer"
+		Type="Types"
 		EditorType="Enum"
 		#tag EnumValues
 			"0 - Document"
@@ -395,14 +456,39 @@ End
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="FullScreen"
-		Group="Behavior"
-		InitialValue="False"
+		Name="HasCloseButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="FullScreenButton"
+		Name="Resizable"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasMaximizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasMinimizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasFullScreenButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="False"
@@ -410,11 +496,67 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="HasBackColor"
+		Name="DefaultLocation"
+		Visible=true
+		Group="Behavior"
+		InitialValue="0"
+		Type="Locations"
+		EditorType="Enum"
+		#tag EnumValues
+			"0 - Default"
+			"1 - Parent Window"
+			"2 - Main Screen"
+			"3 - Parent Window Screen"
+			"4 - Stagger"
+		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="SystemUIVisible"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
 		Visible=true
 		Group="Background"
 		InitialValue="False"
 		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Backdrop"
+		Visible=true
+		Group="Background"
+		InitialValue=""
+		Type="Picture"
+		EditorType="Picture"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composite"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="FullScreen"
+		Visible=false
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -422,6 +564,7 @@ End
 		Group="Size"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ImplicitInstance"
@@ -435,116 +578,39 @@ End
 		Name="Interfaces"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="LiveResize"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MacProcID"
+		Visible=false
 		Group="OS X (Carbon)"
 		InitialValue="0"
 		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxHeight"
-		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaximizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxWidth"
-		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MenuBar"
 		Visible=true
 		Group="Menus"
+		InitialValue=""
 		Type="MenuBar"
 		EditorType="MenuBar"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MenuBarVisible"
-		Visible=true
-		Group="Deprecated"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinHeight"
-		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinWidth"
-		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Placement"
-		Visible=true
-		Group="Behavior"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		#tag EnumValues
-			"0 - Default"
-			"1 - Parent Window"
-			"2 - Main Screen"
-			"3 - Parent Window Screen"
-			"4 - Stagger"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Resizeable"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -554,6 +620,7 @@ End
 		Group="Frame"
 		InitialValue="Untitled"
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -569,5 +636,6 @@ End
 		Group="Size"
 		InitialValue="600"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

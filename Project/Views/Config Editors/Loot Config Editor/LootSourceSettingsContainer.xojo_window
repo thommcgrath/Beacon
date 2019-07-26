@@ -1,15 +1,15 @@
 #tag Window
 Begin ContainerControl LootSourceSettingsContainer
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   130
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,14 +23,16 @@ Begin ContainerControl LootSourceSettingsContainer
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   250
    Begin DisclosureTriangle DisclosureTriangle1
       AcceptFocus     =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
       AutoDeactivate  =   True
       Enabled         =   True
-      Facing          =   0
+      Facing          =   "0"
+      FacingDirection =   "0"
       Height          =   18
       HelpTag         =   ""
       Index           =   -2147483648
@@ -54,11 +56,15 @@ Begin ContainerControl LootSourceSettingsContainer
    Begin FadedSeparator FadedSeparator2
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -81,11 +87,15 @@ Begin ContainerControl LootSourceSettingsContainer
       Width           =   250
    End
    Begin Label SettingsLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   18
       HelpTag         =   ""
       Index           =   -2147483648
@@ -104,7 +114,8 @@ Begin ContainerControl LootSourceSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Settings"
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -112,24 +123,36 @@ Begin ContainerControl LootSourceSettingsContainer
       Top             =   2
       Transparent     =   False
       Underline       =   False
+      Value           =   "Settings"
       Visible         =   True
       Width           =   219
    End
    Begin RangeField MinItemSetsField
       AcceptTabs      =   False
-      Alignment       =   2
+      Alignment       =   "2"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   20
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   117
@@ -140,6 +163,7 @@ Begin ContainerControl LootSourceSettingsContainer
       LockRight       =   False
       LockTop         =   True
       Mask            =   "####"
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -147,6 +171,7 @@ Begin ContainerControl LootSourceSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1"
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -155,16 +180,21 @@ Begin ContainerControl LootSourceSettingsContainer
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      Value           =   0
+      ValidationMask  =   "####"
+      Value           =   "1"
       Visible         =   True
       Width           =   50
    End
    Begin UITweaks.ResizedLabel MinItemSetsLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -183,7 +213,8 @@ Begin ContainerControl LootSourceSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Min Item Sets:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -191,24 +222,36 @@ Begin ContainerControl LootSourceSettingsContainer
       Top             =   32
       Transparent     =   False
       Underline       =   False
+      Value           =   "Min Item Sets:"
       Visible         =   True
       Width           =   85
    End
    Begin RangeField MaxItemSetsField
       AcceptTabs      =   False
-      Alignment       =   2
+      Alignment       =   "2"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   20
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   117
@@ -219,6 +262,7 @@ Begin ContainerControl LootSourceSettingsContainer
       LockRight       =   False
       LockTop         =   True
       Mask            =   "####"
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -226,6 +270,7 @@ Begin ContainerControl LootSourceSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1"
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -234,16 +279,21 @@ Begin ContainerControl LootSourceSettingsContainer
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      Value           =   0
+      ValidationMask  =   "####"
+      Value           =   "1"
       Visible         =   True
       Width           =   50
    End
    Begin UITweaks.ResizedLabel MaxItemSetsLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -262,7 +312,8 @@ Begin ContainerControl LootSourceSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Max Item Sets:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -270,16 +321,21 @@ Begin ContainerControl LootSourceSettingsContainer
       Top             =   56
       Transparent     =   False
       Underline       =   False
+      Value           =   "Max Item Sets:"
       Visible         =   True
       Width           =   85
    End
    Begin CheckBox NoDuplicatesCheck
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Prevent Duplicates"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -292,7 +348,7 @@ Begin ContainerControl LootSourceSettingsContainer
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   0
+      State           =   "0"
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
@@ -304,10 +360,12 @@ Begin ContainerControl LootSourceSettingsContainer
       Underline       =   False
       Value           =   False
       Visible         =   True
+      VisualState     =   "0"
       Width           =   210
    End
    Begin UpDownArrows MinItemSetsStepper
       AcceptFocus     =   False
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   20
@@ -331,6 +389,7 @@ Begin ContainerControl LootSourceSettingsContainer
    End
    Begin UpDownArrows MaxItemSetsStepper
       AcceptFocus     =   False
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   20
@@ -353,12 +412,16 @@ Begin ContainerControl LootSourceSettingsContainer
       Width           =   13
    End
    Begin CheckBox AppendModeCheck
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Add Item Sets to Default"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   "When checked, the item sets are added to the default loot source contents. When unchecked, the item sets completely replace the loot source contents."
       Index           =   -2147483648
@@ -371,7 +434,7 @@ Begin ContainerControl LootSourceSettingsContainer
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   0
+      State           =   "0"
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
@@ -383,6 +446,7 @@ Begin ContainerControl LootSourceSettingsContainer
       Underline       =   False
       Value           =   False
       Visible         =   True
+      VisualState     =   "0"
       Width           =   210
    End
 End
@@ -416,15 +480,15 @@ End
 		  Redim Self.mSources(Sources.Ubound)
 		  
 		  If Sources.Ubound = -1 Then
-		    Self.MinItemSetsField.Text = ""
-		    Self.MaxItemSetsField.Text = ""
-		    Self.NoDuplicatesCheck.State = CheckBox.CheckedStates.Unchecked
-		    Self.AppendModeCheck.State = CheckBox.CheckedStates.Unchecked
+		    Self.MinItemSetsField.Value = ""
+		    Self.MaxItemSetsField.Value = ""
+		    Self.NoDuplicatesCheck.VisualState = CheckBox.VisualStates.Unchecked
+		    Self.AppendModeCheck.VisualState = CheckBox.VisualStates.Unchecked
 		  Else
 		    Dim CommonMinItemSets As Integer = Sources(0).MinItemSets
 		    Dim CommonMaxItemSets As Integer = Sources(0).MaxItemSets
-		    Dim CommonNoDuplicates As CheckBox.CheckedStates = If(Sources(0).SetsRandomWithoutReplacement, CheckBox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked)
-		    Dim CommonAppendMode As CheckBox.CheckedStates = If(Sources(0).AppendMode, CheckBox.CheckedStates.Checked, CheckBox.CheckedStates.Unchecked)
+		    Dim CommonNoDuplicates As CheckBox.VisualStates = If(Sources(0).SetsRandomWithoutReplacement, CheckBox.VisualStates.Checked, Checkbox.VisualStates.Unchecked)
+		    Dim CommonAppendMode As CheckBox.VisualStates = If(Sources(0).AppendMode, CheckBox.VisualStates.Checked, CheckBox.VisualStates.Unchecked)
 		    
 		    For I As Integer = 0 To Sources.Ubound
 		      Self.mSources(I) = New WeakRef(Sources(I))
@@ -435,18 +499,18 @@ End
 		      If Sources(I).MaxItemSets <> CommonMaxItemSets Then
 		        CommonMaxItemSets = -1
 		      End If
-		      If If(Sources(I).SetsRandomWithoutReplacement, CheckBox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked) <> CommonNoDuplicates Then
-		        CommonNoDuplicates = CheckBox.CheckedStates.Indeterminate
+		      If If(Sources(I).SetsRandomWithoutReplacement, CheckBox.VisualStates.Checked, Checkbox.VisualStates.Unchecked) <> CommonNoDuplicates Then
+		        CommonNoDuplicates = CheckBox.VisualStates.Indeterminate
 		      End If
-		      If If(Sources(I).AppendMode, CheckBox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked) <> CommonAppendMode Then
-		        CommonAppendMode = CheckBox.CheckedStates.Indeterminate
+		      If If(Sources(I).AppendMode, CheckBox.VisualStates.Checked, Checkbox.VisualStates.Unchecked) <> CommonAppendMode Then
+		        CommonAppendMode = CheckBox.VisualStates.Indeterminate
 		      End If
 		    Next
 		    
-		    Self.MinItemSetsField.Text = If(CommonMinItemSets > -1, Str(CommonMinItemSets, "-0"), "")
-		    Self.MaxItemSetsField.Text = If(CommonMaxItemSets > -1, Str(CommonMaxItemSets, "-0"), "")
-		    Self.NoDuplicatesCheck.State = CommonNoDuplicates
-		    Self.AppendModeCheck.State = CommonAppendMode
+		    Self.MinItemSetsField.Value = If(CommonMinItemSets > -1, Str(CommonMinItemSets, "-0"), "")
+		    Self.MaxItemSetsField.Value = If(CommonMaxItemSets > -1, Str(CommonMaxItemSets, "-0"), "")
+		    Self.NoDuplicatesCheck.VisualState = CommonNoDuplicates
+		    Self.AppendModeCheck.VisualState = CommonAppendMode
 		  End If
 		  Self.mSettingUp = False
 		End Sub
@@ -507,7 +571,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Integer = Val(Me.Text)
+		  Dim Value As Integer = Val(Me.Value)
 		  If Value = 0 Then
 		    Return
 		  End If
@@ -548,7 +612,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Integer = Val(Me.Text)
+		  Dim Value As Integer = Val(Me.Value)
 		  If Value = 0 Then
 		    Return
 		  End If
@@ -605,7 +669,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.MinItemSetsField.Value = Self.MinItemSetsField.Value - 1
+		  Self.MinItemSetsField.DoubleValue = Self.MinItemSetsField.DoubleValue - 1
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -614,7 +678,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.MinItemSetsField.Value = Self.MinItemSetsField.Value + 1
+		  Self.MinItemSetsField.DoubleValue = Self.MinItemSetsField.DoubleValue + 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -625,7 +689,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.MaxItemSetsField.Value = Self.MaxItemSetsField.Value - 1
+		  Self.MaxItemSetsField.DoubleValue = Self.MaxItemSetsField.DoubleValue - 1
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -634,7 +698,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.MaxItemSetsField.Value = Self.MaxItemSetsField.Value + 1
+		  Self.MaxItemSetsField.DoubleValue = Self.MaxItemSetsField.DoubleValue + 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -656,9 +720,58 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -666,6 +779,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -675,6 +789,7 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -682,53 +797,71 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -736,6 +869,7 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -762,69 +896,20 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"

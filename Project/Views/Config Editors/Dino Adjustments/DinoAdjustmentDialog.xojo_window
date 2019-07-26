@@ -2,36 +2,54 @@
 Begin BeaconDialog DinoAdjustmentDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
-   Frame           =   8
+   DefaultLocation =   "1"
+   Frame           =   "8"
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
+   HasBackgroundColor=   False
+   HasCloseButton  =   False
+   HasFullScreenButton=   False
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
    Height          =   346
    ImplicitInstance=   False
-   LiveResize      =   True
+   LiveResize      =   "True"
    MacProcID       =   0
    MaxHeight       =   32000
    MaximizeButton  =   False
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
    MinHeight       =   64
    MinimizeButton  =   False
+   MinimumHeight   =   64
+   MinimumWidth    =   64
    MinWidth        =   64
-   Placement       =   1
-   Resizeable      =   False
+   Placement       =   "1"
+   Resizable       =   True
+   Resizeable      =   "False"
+   SystemUIVisible =   True
    Title           =   "Edit Creature"
+   Type            =   "8"
    Visible         =   True
    Width           =   626
    Begin Label MessageLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   True
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -50,7 +68,8 @@ Begin BeaconDialog DinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Edit Creature"
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -58,15 +77,20 @@ Begin BeaconDialog DinoAdjustmentDialog
       Top             =   20
       Transparent     =   False
       Underline       =   False
+      Value           =   "Edit Creature"
       Visible         =   True
       Width           =   586
    End
    Begin Label ExplanationLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   36
       HelpTag         =   ""
       Index           =   -2147483648
@@ -85,7 +109,8 @@ Begin BeaconDialog DinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "From here you can adjust creature damage and resistance multipliers, replace the creature with another, or disable the creature completely."
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -93,15 +118,20 @@ Begin BeaconDialog DinoAdjustmentDialog
       Top             =   52
       Transparent     =   False
       Underline       =   False
+      Value           =   "From here you can adjust creature damage and resistance multipliers, replace the creature with another, or disable the creature completely."
       Visible         =   True
       Width           =   586
    End
    Begin UITweaks.ResizedLabel TargetDinoLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -120,7 +150,8 @@ Begin BeaconDialog DinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Creature:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -128,14 +159,19 @@ Begin BeaconDialog DinoAdjustmentDialog
       Top             =   100
       Transparent     =   False
       Underline       =   False
+      Value           =   "Creature:"
       Visible         =   True
       Width           =   120
    End
    Begin RadioButton ModeMultipliersRadio
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Change Multipliers"
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -162,10 +198,14 @@ Begin BeaconDialog DinoAdjustmentDialog
       Width           =   140
    End
    Begin RadioButton ModeReplaceRadio
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Replace Creature"
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -192,10 +232,14 @@ Begin BeaconDialog DinoAdjustmentDialog
       Width           =   140
    End
    Begin RadioButton ModeDisableRadio
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Disable Creature"
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -222,11 +266,15 @@ Begin BeaconDialog DinoAdjustmentDialog
       Width           =   140
    End
    Begin UITweaks.ResizedLabel ModeLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -245,7 +293,8 @@ Begin BeaconDialog DinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Mode:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -253,10 +302,12 @@ Begin BeaconDialog DinoAdjustmentDialog
       Top             =   132
       Transparent     =   False
       Underline       =   False
+      Value           =   "Mode:"
       Visible         =   True
       Width           =   120
    End
    Begin PagePanel Pages
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   136
@@ -272,6 +323,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
@@ -282,19 +334,29 @@ Begin BeaconDialog DinoAdjustmentDialog
       Width           =   626
       Begin UITweaks.ResizedTextField WildDamageField
          AcceptTabs      =   False
-         Alignment       =   2
+         Alignment       =   "2"
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
+         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -306,6 +368,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          LockRight       =   False
          LockTop         =   True
          Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -313,6 +376,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "1.0"
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -321,15 +385,21 @@ Begin BeaconDialog DinoAdjustmentDialog
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
+         ValidationMask  =   ""
+         Value           =   "1.0"
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedLabel WildDamageLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -348,7 +418,8 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Wild Damage:"
-         TextAlign       =   2
+         TextAlign       =   "2"
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -356,24 +427,35 @@ Begin BeaconDialog DinoAdjustmentDialog
          Top             =   164
          Transparent     =   False
          Underline       =   False
+         Value           =   "Wild Damage:"
          Visible         =   True
          Width           =   120
       End
       Begin UITweaks.ResizedTextField WildResistanceField
          AcceptTabs      =   False
-         Alignment       =   2
+         Alignment       =   "2"
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
+         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -385,6 +467,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          LockRight       =   False
          LockTop         =   True
          Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -392,6 +475,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "1.0"
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -400,15 +484,21 @@ Begin BeaconDialog DinoAdjustmentDialog
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
+         ValidationMask  =   ""
+         Value           =   "1.0"
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedLabel WildResistanceLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -427,7 +517,8 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Wild Resistance:"
-         TextAlign       =   2
+         TextAlign       =   "2"
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -435,15 +526,20 @@ Begin BeaconDialog DinoAdjustmentDialog
          Top             =   198
          Transparent     =   False
          Underline       =   False
+         Value           =   "Wild Resistance:"
          Visible         =   True
          Width           =   120
       End
       Begin UITweaks.ResizedLabel WildDamageHelp
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -462,7 +558,8 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Greater than 1.0 increases wild creature damage"
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
@@ -470,15 +567,20 @@ Begin BeaconDialog DinoAdjustmentDialog
          Top             =   164
          Transparent     =   False
          Underline       =   False
+         Value           =   "Greater than 1.0 increases wild creature damage"
          Visible         =   True
          Width           =   362
       End
       Begin UITweaks.ResizedLabel WildResistanceHelp
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -497,7 +599,8 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Less than 1.0 increases amount of damage taken"
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
@@ -505,24 +608,35 @@ Begin BeaconDialog DinoAdjustmentDialog
          Top             =   198
          Transparent     =   False
          Underline       =   False
+         Value           =   "Less than 1.0 increases amount of damage taken"
          Visible         =   True
          Width           =   362
       End
       Begin UITweaks.ResizedTextField TameDamageField
          AcceptTabs      =   False
-         Alignment       =   2
+         Alignment       =   "2"
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
+         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -534,6 +648,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          LockRight       =   False
          LockTop         =   True
          Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -541,6 +656,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "1.0"
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -549,15 +665,21 @@ Begin BeaconDialog DinoAdjustmentDialog
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
+         ValidationMask  =   ""
+         Value           =   "1.0"
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedLabel TameDamageLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -576,7 +698,8 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Tame Damage:"
-         TextAlign       =   2
+         TextAlign       =   "2"
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -584,24 +707,35 @@ Begin BeaconDialog DinoAdjustmentDialog
          Top             =   232
          Transparent     =   False
          Underline       =   False
+         Value           =   "Tame Damage:"
          Visible         =   True
          Width           =   120
       End
       Begin UITweaks.ResizedTextField TameResistanceField
          AcceptTabs      =   False
-         Alignment       =   2
+         Alignment       =   "2"
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
+         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -613,6 +747,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          LockRight       =   False
          LockTop         =   True
          Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -620,6 +755,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "1.0"
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -628,15 +764,21 @@ Begin BeaconDialog DinoAdjustmentDialog
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
+         ValidationMask  =   ""
+         Value           =   "1.0"
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedLabel TameResistanceLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -655,7 +797,8 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Tame Resistance:"
-         TextAlign       =   2
+         TextAlign       =   "2"
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -663,15 +806,20 @@ Begin BeaconDialog DinoAdjustmentDialog
          Top             =   266
          Transparent     =   False
          Underline       =   False
+         Value           =   "Tame Resistance:"
          Visible         =   True
          Width           =   120
       End
       Begin UITweaks.ResizedLabel TameDamageHelp
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -690,7 +838,8 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Greater than 1.0 increases tamed creature damage"
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
@@ -698,15 +847,20 @@ Begin BeaconDialog DinoAdjustmentDialog
          Top             =   232
          Transparent     =   False
          Underline       =   False
+         Value           =   "Greater than 1.0 increases tamed creature damage"
          Visible         =   True
          Width           =   362
       End
       Begin UITweaks.ResizedLabel TameResistanceHelp
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -725,7 +879,8 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Less than 1.0 increases amount of damage taken"
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
@@ -733,15 +888,20 @@ Begin BeaconDialog DinoAdjustmentDialog
          Top             =   266
          Transparent     =   False
          Underline       =   False
+         Value           =   "Less than 1.0 increases amount of damage taken"
          Visible         =   True
          Width           =   362
       End
       Begin UITweaks.ResizedLabel ReplacementDinoLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -760,7 +920,8 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Replacement:"
-         TextAlign       =   2
+         TextAlign       =   "2"
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -768,10 +929,12 @@ Begin BeaconDialog DinoAdjustmentDialog
          Top             =   164
          Transparent     =   False
          Underline       =   False
+         Value           =   "Replacement:"
          Visible         =   True
          Width           =   120
       End
       Begin UITweaks.ResizedPushButton ChooseReplacementButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -779,6 +942,9 @@ Begin BeaconDialog DinoAdjustmentDialog
          Caption         =   "Choose…"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -790,6 +956,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
@@ -804,11 +971,15 @@ Begin BeaconDialog DinoAdjustmentDialog
          Width           =   86
       End
       Begin UITweaks.ResizedLabel ReplacementDinoNameLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -827,7 +998,8 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Not Selected"
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -835,11 +1007,13 @@ Begin BeaconDialog DinoAdjustmentDialog
          Top             =   164
          Transparent     =   False
          Underline       =   False
+         Value           =   "Not Selected"
          Visible         =   True
          Width           =   356
       End
    End
    Begin UITweaks.ResizedPushButton ActionButton
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -847,6 +1021,9 @@ Begin BeaconDialog DinoAdjustmentDialog
       Caption         =   "OK"
       Default         =   True
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -858,6 +1035,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   9
       TabPanelIndex   =   0
@@ -872,6 +1050,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton CancelButton
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -879,6 +1058,9 @@ Begin BeaconDialog DinoAdjustmentDialog
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -890,6 +1072,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   10
       TabPanelIndex   =   0
@@ -904,6 +1087,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton ChooseTargetButton
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -911,6 +1095,9 @@ Begin BeaconDialog DinoAdjustmentDialog
       Caption         =   "Choose…"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -922,6 +1109,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   11
       TabPanelIndex   =   0
@@ -936,11 +1124,15 @@ Begin BeaconDialog DinoAdjustmentDialog
       Width           =   86
    End
    Begin UITweaks.ResizedLabel TargetDinoNameLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -959,7 +1151,8 @@ Begin BeaconDialog DinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Not Selected"
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -967,6 +1160,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       Top             =   100
       Transparent     =   False
       Underline       =   False
+      Value           =   "Not Selected"
       Visible         =   True
       Width           =   356
    End
@@ -1015,10 +1209,10 @@ End
 		        Win.SelectedReplacement = Behavior.ReplacementClass
 		        Win.ModeReplaceRadio.Value = True
 		      Else
-		        Win.WildDamageField.Text = Format(Behavior.DamageMultiplier, "0.0#####")
-		        Win.WildResistanceField.Text = Format(Behavior.ResistanceMultiplier, "0.0#####")
-		        Win.TameDamageField.Text = Format(Behavior.TamedDamageMultiplier, "0.0#####")
-		        Win.TameResistanceField.Text = Format(Behavior.TamedResistanceMultiplier, "0.0#####")
+		        Win.WildDamageField.Value = Format(Behavior.DamageMultiplier, "0.0#####")
+		        Win.WildResistanceField.Value = Format(Behavior.ResistanceMultiplier, "0.0#####")
+		        Win.TameDamageField.Value = Format(Behavior.TamedDamageMultiplier, "0.0#####")
+		        Win.TameResistanceField.Value = Format(Behavior.TamedResistanceMultiplier, "0.0#####")
 		        Win.ModeMultipliersRadio.Value = True
 		      End If
 		    End If
@@ -1036,10 +1230,10 @@ End
 		  ElseIf Win.ModeReplaceRadio.Value Then
 		    Behavior.ReplacementClass = Win.SelectedReplacement
 		  Else
-		    Behavior.DamageMultiplier = CDbl(Win.WildDamageField.Text)
-		    Behavior.ResistanceMultiplier = CDbl(Win.WildResistanceField.Text)
-		    Behavior.TamedDamageMultiplier = CDbl(Win.TameDamageField.Text)
-		    Behavior.TamedResistanceMultiplier = CDbl(Win.TameResistanceField.Text)
+		    Behavior.DamageMultiplier = CDbl(Win.WildDamageField.Value)
+		    Behavior.ResistanceMultiplier = CDbl(Win.WildResistanceField.Value)
+		    Behavior.TamedDamageMultiplier = CDbl(Win.TameDamageField.Value)
+		    Behavior.TamedResistanceMultiplier = CDbl(Win.TameResistanceField.Value)
 		  End If
 		  
 		  If EditClass <> "" And TargetClass <> EditClass Then
@@ -1091,15 +1285,15 @@ End
 			  Self.mSelectedClass = Value
 			  If Self.mSelectedClass = "" Then
 			    Self.TargetDinoNameLabel.Italic = True
-			    Self.TargetDinoNameLabel.Text = "No Selection"
+			    Self.TargetDinoNameLabel.Value = "No Selection"
 			  Else
 			    Self.TargetDinoNameLabel.Italic = False
 			    
 			    Dim Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Self.mSelectedClass)
 			    If Creature <> Nil Then
-			      Self.TargetDinoNameLabel.Text = Creature.Label
+			      Self.TargetDinoNameLabel.Value = Creature.Label
 			    Else
-			      Self.TargetDinoNameLabel.Text = Self.mSelectedClass
+			      Self.TargetDinoNameLabel.Value = Self.mSelectedClass
 			    End If
 			  End If
 			  
@@ -1126,15 +1320,15 @@ End
 			  Self.mSelectedReplacement = Value
 			  If Self.mSelectedReplacement = "" Then
 			    Self.ReplacementDinoNameLabel.Italic = True
-			    Self.ReplacementDinoNameLabel.Text = "No Selection"
+			    Self.ReplacementDinoNameLabel.Value = "No Selection"
 			  Else
 			    Self.ReplacementDinoNameLabel.Italic = False
 			    
 			    Dim Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Self.mSelectedReplacement)
 			    If Creature <> Nil Then
-			      Self.ReplacementDinoNameLabel.Text = Creature.Label
+			      Self.ReplacementDinoNameLabel.Value = Creature.Label
 			    Else
-			      Self.ReplacementDinoNameLabel.Text = Self.mSelectedReplacement
+			      Self.ReplacementDinoNameLabel.Value = Self.mSelectedReplacement
 			    End If
 			  End If
 			End Set
@@ -1168,7 +1362,7 @@ End
 	#tag Event
 		Sub Action()
 		  If Me.Value Then
-		    Self.Pages.Value = Self.PageMultipliers
+		    Self.Pages.SelectedPanelIndex = Self.PageMultipliers
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1177,7 +1371,7 @@ End
 	#tag Event
 		Sub Action()
 		  If Me.Value Then
-		    Self.Pages.Value = Self.PageReplace
+		    Self.Pages.SelectedPanelIndex = Self.PageReplace
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1186,7 +1380,7 @@ End
 	#tag Event
 		Sub Action()
 		  If Me.Value Then
-		    Self.Pages.Value = Self.PageDisable
+		    Self.Pages.SelectedPanelIndex = Self.PageDisable
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1195,7 +1389,7 @@ End
 	#tag Event
 		Sub Change()
 		  Dim OriginalHeight As Integer = Me.Height
-		  Select Case Me.Value
+		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageMultipliers
 		    Me.Height = Self.HeightMultipliers
 		  Case Self.PageReplace
@@ -1245,10 +1439,10 @@ End
 		      Return
 		    End If
 		  ElseIf Self.ModeMultipliersRadio.Value Then
-		    Dim DamageMultiplier As Double = CDbl(Self.WildDamageField.Text)
-		    Dim ResistanceMultiplier As Double = CDbl(Self.WildResistanceField.Text)
-		    Dim TamedDamageMultiplier As Double = CDbl(Self.TameDamageField.Text)
-		    Dim TamedResistanceMultiplier As Double = CDbl(Self.TameResistanceField.Text)
+		    Dim DamageMultiplier As Double = CDbl(Self.WildDamageField.Value)
+		    Dim ResistanceMultiplier As Double = CDbl(Self.WildResistanceField.Value)
+		    Dim TamedDamageMultiplier As Double = CDbl(Self.TameDamageField.Value)
+		    Dim TamedResistanceMultiplier As Double = CDbl(Self.TameResistanceField.Value)
 		    
 		    If DamageMultiplier < 0 Or ResistanceMultiplier < 0 Or TamedDamageMultiplier < 0 Or TamedResistanceMultiplier < 0 Then
 		      Self.ShowAlert("You have a multiplier that doesn't make sense", "It's ok to make the multipliers really small, but they must be at least zero.")
@@ -1294,74 +1488,43 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="Name"
-		Visible=true
-		Group="ID"
-		Type="String"
-		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Interfaces"
-		Visible=true
-		Group="ID"
-		Type="String"
-		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Super"
-		Visible=true
-		Group="ID"
-		Type="String"
-		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Width"
-		Visible=true
-		Group="Size"
-		InitialValue="600"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Height"
-		Visible=true
-		Group="Size"
-		InitialValue="400"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinWidth"
+		Name="MinimumWidth"
 		Visible=true
 		Group="Size"
 		InitialValue="64"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MinHeight"
+		Name="MinimumHeight"
 		Visible=true
 		Group="Size"
 		InitialValue="64"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MaxWidth"
+		Name="MaximumWidth"
 		Visible=true
 		Group="Size"
 		InitialValue="32000"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MaxHeight"
+		Name="MaximumHeight"
 		Visible=true
 		Group="Size"
 		InitialValue="32000"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Frame"
+		Name="Type"
 		Visible=true
 		Group="Frame"
 		InitialValue="0"
-		Type="Integer"
+		Type="Types"
 		EditorType="Enum"
 		#tag EnumValues
 			"0 - Document"
@@ -1378,14 +1541,7 @@ End
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Title"
-		Visible=true
-		Group="Frame"
-		InitialValue="Untitled"
-		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="CloseButton"
+		Name="HasCloseButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -1393,7 +1549,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Resizeable"
+		Name="Resizable"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -1401,7 +1557,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MaximizeButton"
+		Name="HasMaximizeButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -1409,7 +1565,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MinimizeButton"
+		Name="HasMinimizeButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -1417,7 +1573,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="FullScreenButton"
+		Name="HasFullScreenButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="False"
@@ -1425,31 +1581,11 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Composite"
-		Group="OS X (Carbon)"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MacProcID"
-		Group="OS X (Carbon)"
-		InitialValue="0"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ImplicitInstance"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Placement"
+		Name="DefaultLocation"
 		Visible=true
 		Group="Behavior"
 		InitialValue="0"
-		Type="Integer"
+		Type="Locations"
 		EditorType="Enum"
 		#tag EnumValues
 			"0 - Default"
@@ -1460,6 +1596,102 @@ End
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
+		Name="SystemUIVisible"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Name"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Interfaces"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Super"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Width"
+		Visible=true
+		Group="Size"
+		InitialValue="600"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Height"
+		Visible=true
+		Group="Size"
+		InitialValue="400"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Title"
+		Visible=true
+		Group="Frame"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composite"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MacProcID"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="0"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ImplicitInstance"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Visible"
 		Visible=true
 		Group="Behavior"
@@ -1468,37 +1700,18 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="LiveResize"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="FullScreen"
+		Visible=false
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
 	#tag EndViewProperty
@@ -1506,15 +1719,8 @@ End
 		Name="MenuBar"
 		Visible=true
 		Group="Menus"
+		InitialValue=""
 		Type="MenuBar"
 		EditorType="MenuBar"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MenuBarVisible"
-		Visible=true
-		Group="Deprecated"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 #tag EndViewBehavior

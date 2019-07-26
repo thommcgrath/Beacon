@@ -1,15 +1,15 @@
 #tag Window
 Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   468
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,10 +23,10 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   300
    Begin PagePanel Views
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   468
@@ -42,8 +42,10 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       PanelCount      =   8
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   1
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   1
@@ -52,15 +54,22 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       Begin LibraryPaneDocuments DocumentsView
          AcceptFocus     =   False
          AcceptTabs      =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   468
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -86,15 +95,22 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       Begin LibraryPanePresets PresetsView
          AcceptFocus     =   False
          AcceptTabs      =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   468
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -119,15 +135,22 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       Begin LibraryPaneEngrams EngramsView
          AcceptFocus     =   False
          AcceptTabs      =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   468
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -152,15 +175,22 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       Begin LibraryPaneTools ToolsView
          AcceptFocus     =   False
          AcceptTabs      =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   468
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -185,15 +215,22 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       Begin LibraryPaneSearch SearchView
          AcceptFocus     =   False
          AcceptTabs      =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   468
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -218,15 +255,22 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       Begin LibraryPaneMenu MenuView
          AcceptFocus     =   False
          AcceptTabs      =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   468
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -251,15 +295,22 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       Begin LibraryPaneNotifications NotificationsView
          AcceptFocus     =   False
          AcceptTabs      =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   468
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -285,12 +336,16 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
    Begin Shelf ViewShelf
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       DrawCaptions    =   False
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   468
       HelpTag         =   ""
       Index           =   -2147483648
@@ -383,13 +438,13 @@ End
 
 	#tag Method, Flags = &h0
 		Function CurrentPage() As Integer
-		  Return Self.Views.Value
+		  Return Self.Views.SelectedPanelIndex
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function CurrentView() As LibrarySubview
-		  Return Self.ViewAtIndex(Self.Views.Value)
+		  Return Self.ViewAtIndex(Self.Views.SelectedPanelIndex)
 		End Function
 	#tag EndMethod
 
@@ -465,7 +520,7 @@ End
 		    Return
 		  End If
 		  
-		  If Self.Views.Value <> Index Then
+		  If Self.Views.SelectedPanelIndex <> Index Then
 		    Dim OldPage As LibrarySubview = Self.CurrentView
 		    If OldPage <> Nil Then
 		      OldPage.SwitchedFrom()
@@ -473,7 +528,7 @@ End
 		    
 		    Dim NewPage As LibrarySubview = Self.ViewAtIndex(Index)
 		    If NewPage <> Nil Then
-		      Self.Views.Value = Index
+		      Self.Views.SelectedPanelIndex = Index
 		      NewPage.SwitchedTo(UserData)
 		    End If
 		  End If
@@ -772,6 +827,54 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="DoubleBuffer"
 		Visible=true
 		Group="Windows Behavior"
@@ -780,39 +883,10 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
 	#tag EndViewProperty
@@ -825,72 +899,74 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Height"
 		Visible=true
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -898,6 +974,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -907,12 +984,15 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -926,21 +1006,15 @@ End
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType="Boolean"
 	#tag EndViewProperty
@@ -958,5 +1032,6 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

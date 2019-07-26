@@ -2,36 +2,54 @@
 Begin BeaconDialog EngramSelectorDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
-   Frame           =   8
+   DefaultLocation =   "1"
+   Frame           =   "8"
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
+   HasBackgroundColor=   False
+   HasCloseButton  =   False
+   HasFullScreenButton=   False
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
    Height          =   471
    ImplicitInstance=   False
-   LiveResize      =   True
+   LiveResize      =   "True"
    MacProcID       =   0
    MaxHeight       =   32000
    MaximizeButton  =   False
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
    MinHeight       =   471
    MinimizeButton  =   False
+   MinimumHeight   =   471
+   MinimumWidth    =   600
    MinWidth        =   600
-   Placement       =   1
-   Resizeable      =   True
+   Placement       =   "1"
+   Resizable       =   True
+   Resizeable      =   "True"
+   SystemUIVisible =   True
    Title           =   "Select Object"
+   Type            =   "8"
    Visible         =   True
    Width           =   600
    Begin Label MessageLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   True
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -50,7 +68,8 @@ Begin BeaconDialog EngramSelectorDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Select an Object"
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -58,24 +77,35 @@ Begin BeaconDialog EngramSelectorDialog
       Top             =   20
       Transparent     =   False
       Underline       =   False
+      Value           =   "Select an Object"
       Visible         =   True
       Width           =   560
    End
    Begin UITweaks.ResizedTextField FilterField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   "Search Objects"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   "Search Objects"
       Index           =   -2147483648
       Italic          =   False
       Left            =   20
@@ -86,6 +116,7 @@ Begin BeaconDialog EngramSelectorDialog
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -93,6 +124,7 @@ Begin BeaconDialog EngramSelectorDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -101,10 +133,19 @@ Begin BeaconDialog EngramSelectorDialog
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
       Width           =   560
    End
    Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -115,12 +156,22 @@ Begin BeaconDialog EngramSelectorDialog
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DropIndicatorVisible=   False
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLinesHorizontal=   "0"
+      GridLinesHorizontalStyle=   "0"
+      GridLinesVertical=   "0"
+      GridLinesVerticalStyle=   "0"
+      HasBorder       =   True
+      HasHeader       =   True
       HasHeading      =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   254
       HelpTag         =   ""
@@ -136,12 +187,14 @@ Begin BeaconDialog EngramSelectorDialog
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   0
+      RowCount        =   "0"
+      RowSelectionType=   "0"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   0
+      SelectionRequired=   False
+      SelectionType   =   "0"
       ShowDropIndicator=   False
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -159,6 +212,7 @@ Begin BeaconDialog EngramSelectorDialog
       _ScrollWidth    =   -1
    End
    Begin UITweaks.ResizedPushButton ActionButton
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -166,6 +220,9 @@ Begin BeaconDialog EngramSelectorDialog
       Caption         =   "Select"
       Default         =   True
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -177,6 +234,7 @@ Begin BeaconDialog EngramSelectorDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -191,6 +249,7 @@ Begin BeaconDialog EngramSelectorDialog
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton CancelButton
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -198,6 +257,9 @@ Begin BeaconDialog EngramSelectorDialog
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -209,6 +271,7 @@ Begin BeaconDialog EngramSelectorDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -223,6 +286,13 @@ Begin BeaconDialog EngramSelectorDialog
       Width           =   80
    End
    Begin BeaconListbox SelectedList
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -233,12 +303,22 @@ Begin BeaconDialog EngramSelectorDialog
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DropIndicatorVisible=   False
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLinesHorizontal=   "0"
+      GridLinesHorizontalStyle=   "0"
+      GridLinesVertical=   "0"
+      GridLinesVerticalStyle=   "0"
+      HasBorder       =   True
+      HasHeader       =   True
       HasHeading      =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   254
       HelpTag         =   ""
@@ -254,12 +334,14 @@ Begin BeaconDialog EngramSelectorDialog
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   0
+      RowCount        =   "0"
+      RowSelectionType=   "1"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   1
+      SelectionRequired=   False
+      SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   5
       TabPanelIndex   =   0
@@ -277,6 +359,7 @@ Begin BeaconDialog EngramSelectorDialog
       _ScrollWidth    =   -1
    End
    Begin UITweaks.ResizedPushButton AddToSelectionsButton
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -284,6 +367,9 @@ Begin BeaconDialog EngramSelectorDialog
       Caption         =   ">>"
       Default         =   False
       Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -295,6 +381,7 @@ Begin BeaconDialog EngramSelectorDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0
@@ -309,6 +396,7 @@ Begin BeaconDialog EngramSelectorDialog
       Width           =   40
    End
    Begin UITweaks.ResizedPushButton RemoveFromSelectionsButton
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -316,6 +404,9 @@ Begin BeaconDialog EngramSelectorDialog
       Caption         =   "<<"
       Default         =   False
       Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -327,6 +418,7 @@ Begin BeaconDialog EngramSelectorDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   7
       TabPanelIndex   =   0
@@ -343,12 +435,16 @@ Begin BeaconDialog EngramSelectorDialog
    Begin TagPicker Picker
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Border          =   15
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   67
       HelpTag         =   ""
       Index           =   -2147483648
@@ -414,12 +510,12 @@ End
 		  If AllowMultipleSelection Then
 		    Self.Width = Self.Width + 150
 		    Self.List.ColumnWidths = "*,150"
-		    Self.List.SelectionType = Listbox.SelectionMultiple
+		    Self.List.RowSelectionType = Listbox.RowSelectionTypes.Multiple
 		    Self.List.Width = Self.List.Width - (24 + Self.SelectedList.Width + Self.AddToSelectionsButton.Width)
 		    Self.AddToSelectionsButton.Left = Self.List.Left + Self.List.Width + 12
 		    Self.RemoveFromSelectionsButton.Left = Self.AddToSelectionsButton.Left
 		    Self.SelectedList.Left = Self.AddToSelectionsButton.Left + Self.AddToSelectionsButton.Width + 12
-		    Self.MessageLabel.Text = "Select Objects"
+		    Self.MessageLabel.Value = "Select Objects"
 		  End If
 		End Sub
 	#tag EndMethod
@@ -430,29 +526,29 @@ End
 		    Self.SelectedList.DeleteAllRows()
 		  End If
 		  
-		  If Self.List.SelCount > 1 Then
-		    For I As Integer = Self.List.ListCount - 1 DownTo 0
+		  If Self.List.SelectedRowCount > 1 Then
+		    For I As Integer = Self.List.RowCount - 1 DownTo 0
 		      If Not Self.List.Selected(I) Then
 		        Continue
 		      End If
 		      
 		      Self.SelectedList.AddRow(Self.List.Cell(I, 0))
-		      Self.SelectedList.RowTag(Self.SelectedList.LastIndex) = Self.List.RowTag(I)
+		      Self.SelectedList.RowTag(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTag(I)
 		      If Self.mAllowMultipleSelection Then
 		        Self.mExcluded.Append(Beacon.Blueprint(Self.List.RowTag(I)).Path)
 		        Self.List.RemoveRow(I)
 		      End If
 		    Next
-		  ElseIf Self.List.SelCount = 1 Then
-		    Self.SelectedList.AddRow(Self.List.Cell(Self.List.ListIndex, 0))
-		    Self.SelectedList.RowTag(Self.SelectedList.LastIndex) = Self.List.RowTag(Self.List.ListIndex)
+		  ElseIf Self.List.SelectedRowCount = 1 Then
+		    Self.SelectedList.AddRow(Self.List.Cell(Self.List.SelectedIndex, 0))
+		    Self.SelectedList.RowTag(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTag(Self.List.SelectedIndex)
 		    If Self.mAllowMultipleSelection Then
-		      Self.mExcluded.Append(Beacon.Blueprint(Self.List.RowTag(Self.List.ListIndex)).Path)
-		      Self.List.RemoveRow(Self.List.ListIndex)
+		      Self.mExcluded.Append(Beacon.Blueprint(Self.List.RowTag(Self.List.SelectedIndex)).Path)
+		      Self.List.RemoveRow(Self.List.SelectedIndex)
 		    End If
 		  End If
 		  
-		  Self.ActionButton.Enabled = Self.SelectedList.ListCount > 0
+		  Self.ActionButton.Enabled = Self.SelectedList.RowCount > 0
 		End Sub
 	#tag EndMethod
 
@@ -510,7 +606,7 @@ End
 		    Return Blueprints
 		  End If
 		  
-		  For I As Integer = 0 To Win.SelectedList.ListCount - 1
+		  For I As Integer = 0 To Win.SelectedList.RowCount - 1
 		    Blueprints.Append(Win.SelectedList.RowTag(I))
 		  Next
 		  
@@ -531,7 +627,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UnmakeSelection()
 		  Dim SelectPaths() As Text
-		  For I As Integer = Self.SelectedList.ListCount - 1 DownTo 0
+		  For I As Integer = Self.SelectedList.RowCount - 1 DownTo 0
 		    If Not Self.SelectedList.Selected(I) Then
 		      Continue
 		    End If
@@ -544,11 +640,11 @@ End
 		    SelectPaths.Append(Blueprint.Path)
 		    Self.SelectedList.RemoveRow(I)
 		  Next
-		  Self.ActionButton.Enabled = Self.SelectedList.ListCount > 0
+		  Self.ActionButton.Enabled = Self.SelectedList.RowCount > 0
 		  
 		  Self.List.SelectionChangeBlocked = True
 		  Self.UpdateFilter()
-		  For I As Integer = 0 To Self.List.ListCount - 1
+		  For I As Integer = 0 To Self.List.RowCount - 1
 		    Dim Blueprint As Beacon.Blueprint = Self.List.RowTag(I)
 		    Self.List.Selected(I) = SelectPaths.IndexOf(Blueprint.Path) > -1
 		  Next
@@ -559,7 +655,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
-		  Dim SearchText As String = Self.FilterField.Text
+		  Dim SearchText As String = Self.FilterField.Value
 		  Dim Tags As Text = Self.Picker.Spec.ToText
 		  
 		  Dim Blueprints() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints(Self.mCategory, SearchText.ToText, Self.mMods, Tags)
@@ -571,7 +667,7 @@ End
 		    End If
 		    
 		    Self.List.AddRow(Blueprint.Label, Blueprint.ModName)
-		    Self.List.RowTag(Self.List.LastIndex) = Blueprint
+		    Self.List.RowTag(Self.List.LastAddedRowIndex) = Blueprint
 		  Next
 		  Self.List.ScrollPosition = ScrollPosition
 		End Sub
@@ -623,7 +719,7 @@ End
 		    Self.MakeSelection()
 		  End If
 		  
-		  Self.AddToSelectionsButton.Enabled = Me.SelCount > 0
+		  Self.AddToSelectionsButton.Enabled = Me.SelectedRowCount > 0
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -656,12 +752,12 @@ End
 #tag Events SelectedList
 	#tag Event
 		Sub Change()
-		  Self.RemoveFromSelectionsButton.Enabled = Me.SelCount > 0
+		  Self.RemoveFromSelectionsButton.Enabled = Me.SelectedRowCount > 0
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelCount > 0
+		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -723,74 +819,43 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="Name"
-		Visible=true
-		Group="ID"
-		Type="String"
-		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Interfaces"
-		Visible=true
-		Group="ID"
-		Type="String"
-		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Super"
-		Visible=true
-		Group="ID"
-		Type="String"
-		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Width"
-		Visible=true
-		Group="Size"
-		InitialValue="600"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Height"
-		Visible=true
-		Group="Size"
-		InitialValue="400"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinWidth"
+		Name="MinimumWidth"
 		Visible=true
 		Group="Size"
 		InitialValue="64"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MinHeight"
+		Name="MinimumHeight"
 		Visible=true
 		Group="Size"
 		InitialValue="64"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MaxWidth"
+		Name="MaximumWidth"
 		Visible=true
 		Group="Size"
 		InitialValue="32000"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MaxHeight"
+		Name="MaximumHeight"
 		Visible=true
 		Group="Size"
 		InitialValue="32000"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Frame"
+		Name="Type"
 		Visible=true
 		Group="Frame"
 		InitialValue="0"
-		Type="Integer"
+		Type="Types"
 		EditorType="Enum"
 		#tag EnumValues
 			"0 - Document"
@@ -807,14 +872,7 @@ End
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Title"
-		Visible=true
-		Group="Frame"
-		InitialValue="Untitled"
-		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="CloseButton"
+		Name="HasCloseButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -822,7 +880,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Resizeable"
+		Name="Resizable"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -830,7 +888,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MaximizeButton"
+		Name="HasMaximizeButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -838,7 +896,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MinimizeButton"
+		Name="HasMinimizeButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -846,7 +904,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="FullScreenButton"
+		Name="HasFullScreenButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="False"
@@ -854,31 +912,11 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Composite"
-		Group="OS X (Carbon)"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MacProcID"
-		Group="OS X (Carbon)"
-		InitialValue="0"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ImplicitInstance"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Placement"
+		Name="DefaultLocation"
 		Visible=true
 		Group="Behavior"
 		InitialValue="0"
-		Type="Integer"
+		Type="Locations"
 		EditorType="Enum"
 		#tag EnumValues
 			"0 - Default"
@@ -889,6 +927,102 @@ End
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
+		Name="SystemUIVisible"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Name"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Interfaces"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Super"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Width"
+		Visible=true
+		Group="Size"
+		InitialValue="600"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Height"
+		Visible=true
+		Group="Size"
+		InitialValue="400"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Title"
+		Visible=true
+		Group="Frame"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composite"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MacProcID"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="0"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ImplicitInstance"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Visible"
 		Visible=true
 		Group="Behavior"
@@ -897,37 +1031,18 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="LiveResize"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="FullScreen"
+		Visible=false
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
 	#tag EndViewProperty
@@ -935,15 +1050,8 @@ End
 		Name="MenuBar"
 		Visible=true
 		Group="Menus"
+		InitialValue=""
 		Type="MenuBar"
 		EditorType="MenuBar"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MenuBarVisible"
-		Visible=true
-		Group="Deprecated"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 #tag EndViewBehavior

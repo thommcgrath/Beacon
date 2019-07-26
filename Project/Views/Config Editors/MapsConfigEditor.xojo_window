@@ -1,15 +1,15 @@
 #tag Window
 Begin ConfigEditor MapsConfigEditor
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   472
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,16 +23,19 @@ Begin ConfigEditor MapsConfigEditor
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   750
    Begin CheckBox MapCheckboxes
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "The Island"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   1
@@ -45,7 +48,7 @@ Begin ConfigEditor MapsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   0
+      State           =   "0"
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -57,15 +60,20 @@ Begin ConfigEditor MapsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
+      VisualState     =   "0"
       Width           =   200
    End
    Begin CheckBox MapCheckboxes
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Scorched Earth"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   2
@@ -78,7 +86,7 @@ Begin ConfigEditor MapsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   0
+      State           =   "0"
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
@@ -90,15 +98,20 @@ Begin ConfigEditor MapsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
+      VisualState     =   "0"
       Width           =   200
    End
    Begin CheckBox MapCheckboxes
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Aberration"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   16
@@ -111,7 +124,7 @@ Begin ConfigEditor MapsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   0
+      State           =   "0"
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
@@ -123,15 +136,20 @@ Begin ConfigEditor MapsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
+      VisualState     =   "0"
       Width           =   200
    End
    Begin CheckBox MapCheckboxes
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Extinction"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   32
@@ -144,7 +162,7 @@ Begin ConfigEditor MapsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   0
+      State           =   "0"
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
@@ -156,15 +174,20 @@ Begin ConfigEditor MapsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
+      VisualState     =   "0"
       Width           =   200
    End
    Begin CheckBox MapCheckboxes
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "The Center"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   4
@@ -177,7 +200,7 @@ Begin ConfigEditor MapsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   0
+      State           =   "0"
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
@@ -189,15 +212,20 @@ Begin ConfigEditor MapsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
+      VisualState     =   "0"
       Width           =   200
    End
    Begin CheckBox MapCheckboxes
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Ragnarok"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   8
@@ -210,7 +238,7 @@ Begin ConfigEditor MapsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   0
+      State           =   "0"
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
@@ -222,15 +250,20 @@ Begin ConfigEditor MapsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
+      VisualState     =   "0"
       Width           =   200
    End
    Begin CheckBox MapCheckboxes
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Valguero"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   64
@@ -243,7 +276,7 @@ Begin ConfigEditor MapsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   0
+      State           =   "0"
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
@@ -255,6 +288,7 @@ Begin ConfigEditor MapsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
+      VisualState     =   "0"
       Width           =   200
    End
 End
@@ -305,17 +339,67 @@ End
 		  Else
 		    Self.Document.MapCompatibility = Self.Document.MapCompatibility And Not MaskValue
 		  End If
-		  Self.ContentsChanged = True
+		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Progress"
+		Visible=false
 		Group="Behavior"
 		InitialValue="ProgressNone"
 		Type="Double"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -323,6 +407,7 @@ End
 		Group="Behavior"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumHeight"
@@ -330,10 +415,13 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
+		Visible=false
 		Group="Behavior"
+		InitialValue=""
 		Type="String"
 		EditorType="MultiLineEditor"
 	#tag EndViewProperty
@@ -341,6 +429,7 @@ End
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -348,6 +437,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -357,6 +447,7 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -364,53 +455,71 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -418,6 +527,7 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -444,69 +554,20 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"

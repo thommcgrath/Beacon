@@ -1,15 +1,15 @@
 #tag Window
 Begin ContainerControl ItemSetSettingsContainer
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   154
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,14 +23,16 @@ Begin ContainerControl ItemSetSettingsContainer
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   300
    Begin DisclosureTriangle DisclosureTriangle1
       AcceptFocus     =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
       AutoDeactivate  =   True
       Enabled         =   True
-      Facing          =   0
+      Facing          =   "0"
+      FacingDirection =   "0"
       Height          =   18
       HelpTag         =   ""
       Index           =   -2147483648
@@ -54,11 +56,15 @@ Begin ContainerControl ItemSetSettingsContainer
    Begin FadedSeparator BottomBorder
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -81,11 +87,15 @@ Begin ContainerControl ItemSetSettingsContainer
       Width           =   300
    End
    Begin Label SettingsLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   18
       HelpTag         =   ""
       Index           =   -2147483648
@@ -104,7 +114,8 @@ Begin ContainerControl ItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Settings"
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -112,24 +123,35 @@ Begin ContainerControl ItemSetSettingsContainer
       Top             =   2
       Transparent     =   False
       Underline       =   False
+      Value           =   "Settings"
       Visible         =   True
       Width           =   219
    End
    Begin UITweaks.ResizedTextField NameField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   20
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   101
@@ -140,6 +162,7 @@ Begin ContainerControl ItemSetSettingsContainer
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -147,6 +170,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -155,15 +179,21 @@ Begin ContainerControl ItemSetSettingsContainer
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
       Width           =   179
    End
    Begin Label NameLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -182,7 +212,8 @@ Begin ContainerControl ItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Name:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -190,15 +221,20 @@ Begin ContainerControl ItemSetSettingsContainer
       Top             =   32
       Transparent     =   False
       Underline       =   False
+      Value           =   "Name:"
       Visible         =   True
       Width           =   69
    End
    Begin Label MinEntriesLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -217,7 +253,8 @@ Begin ContainerControl ItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Min Entries:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -225,15 +262,20 @@ Begin ContainerControl ItemSetSettingsContainer
       Top             =   56
       Transparent     =   False
       Underline       =   False
+      Value           =   "Min Entries:"
       Visible         =   True
       Width           =   69
    End
    Begin Label MaxEntriesLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -252,7 +294,8 @@ Begin ContainerControl ItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Max Entries:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -260,15 +303,20 @@ Begin ContainerControl ItemSetSettingsContainer
       Top             =   80
       Transparent     =   False
       Underline       =   False
+      Value           =   "Max Entries:"
       Visible         =   True
       Width           =   69
    End
    Begin Label WeightLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -287,7 +335,8 @@ Begin ContainerControl ItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Weight:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -295,16 +344,21 @@ Begin ContainerControl ItemSetSettingsContainer
       Top             =   104
       Transparent     =   False
       Underline       =   False
+      Value           =   "Weight:"
       Visible         =   True
       Width           =   69
    End
    Begin CheckBox PreventDuplicatesCheck
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Prevent Duplicates"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -317,7 +371,7 @@ Begin ContainerControl ItemSetSettingsContainer
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   0
+      State           =   "0"
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
@@ -329,23 +383,35 @@ Begin ContainerControl ItemSetSettingsContainer
       Underline       =   False
       Value           =   False
       Visible         =   True
+      VisualState     =   "0"
       Width           =   179
    End
    Begin RangeField MinEntriesField
       AcceptTabs      =   False
-      Alignment       =   2
+      Alignment       =   "2"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   20
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   101
@@ -356,6 +422,7 @@ Begin ContainerControl ItemSetSettingsContainer
       LockRight       =   False
       LockTop         =   True
       Mask            =   "####"
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -363,6 +430,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -371,25 +439,37 @@ Begin ContainerControl ItemSetSettingsContainer
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      Value           =   0.0
+      ValidationMask  =   "####"
+      Value           =   ""
       Visible         =   True
       Width           =   82
    End
    Begin RangeField MaxEntriesField
       AcceptTabs      =   False
-      Alignment       =   2
+      Alignment       =   "2"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   20
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   101
@@ -400,6 +480,7 @@ Begin ContainerControl ItemSetSettingsContainer
       LockRight       =   False
       LockTop         =   True
       Mask            =   "####"
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -407,6 +488,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -415,25 +497,37 @@ Begin ContainerControl ItemSetSettingsContainer
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      Value           =   0.0
+      ValidationMask  =   "####"
+      Value           =   ""
       Visible         =   True
       Width           =   82
    End
    Begin RangeField WeightField
       AcceptTabs      =   False
-      Alignment       =   2
+      Alignment       =   "2"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   20
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   101
@@ -444,6 +538,7 @@ Begin ContainerControl ItemSetSettingsContainer
       LockRight       =   False
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -451,6 +546,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -459,12 +555,14 @@ Begin ContainerControl ItemSetSettingsContainer
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      Value           =   0.0
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
       Width           =   82
    End
    Begin UpDownArrows WeightStepper
       AcceptFocus     =   False
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   20
@@ -488,6 +586,7 @@ Begin ContainerControl ItemSetSettingsContainer
    End
    Begin UpDownArrows MaxEntriesStepper
       AcceptFocus     =   False
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   20
@@ -511,6 +610,7 @@ Begin ContainerControl ItemSetSettingsContainer
    End
    Begin UpDownArrows MinEntriesStepper
       AcceptFocus     =   False
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   20
@@ -611,17 +711,17 @@ End
 			  Self.mSettingUp = True
 			  If Value <> Nil Then
 			    Self.mItemSetRef = New WeakRef(Value)
-			    Self.NameField.Text = Value.Label
-			    Self.MinEntriesField.Value = Value.MinNumItems
-			    Self.MaxEntriesField.Value = Value.MaxNumItems
-			    Self.WeightField.Value = Value.RawWeight
+			    Self.NameField.Value = Value.Label
+			    Self.MinEntriesField.DoubleValue = Value.MinNumItems
+			    Self.MaxEntriesField.DoubleValue = Value.MaxNumItems
+			    Self.WeightField.DoubleValue = Value.RawWeight
 			    Self.PreventDuplicatesCheck.Value = Value.ItemsRandomWithoutReplacement
 			  Else
 			    Self.mItemSetRef = Nil
-			    Self.NameField.Text = ""
-			    Self.MinEntriesField.Text = ""
-			    Self.MaxEntriesField.Text = ""
-			    Self.WeightField.Text = ""
+			    Self.NameField.Value = ""
+			    Self.MinEntriesField.Value = ""
+			    Self.MaxEntriesField.Value = ""
+			    Self.WeightField.Value = ""
 			    Self.PreventDuplicatesCheck.Value = False
 			  End If
 			  Self.SetupUI()
@@ -666,11 +766,11 @@ End
 		    Return
 		  End If
 		  
-		  If StrComp(Self.ItemSet.Label, Me.Text, 0) = 0 Then
+		  If StrComp(Self.ItemSet.Label, Me.Value, 0) = 0 Then
 		    Return
 		  End If
 		  
-		  Self.ItemSet.Label = Me.Text.ToText
+		  Self.ItemSet.Label = Me.Value.ToText
 		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent
@@ -700,7 +800,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Integer = Val(Me.Text)
+		  Dim Value As Integer = Val(Me.Value)
 		  If Value = 0 Then
 		    Return
 		  End If
@@ -731,7 +831,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Integer = Val(Me.Text)
+		  Dim Value As Integer = Val(Me.Value)
 		  If Value = 0 Then
 		    Return
 		  End If
@@ -762,7 +862,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double = Me.Value
+		  Dim Value As Double = Me.DoubleValue
 		  If Value = 0 Then
 		    Return
 		  End If
@@ -793,7 +893,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.WeightField.Value = Self.WeightField.Value - (If(Keyboard.AsyncShiftKey, 5, 1) * (Self.WeightScale / 100))
+		  Self.WeightField.DoubleValue = Self.WeightField.DoubleValue - (If(Keyboard.AsyncShiftKey, 5, 1) * (Self.WeightScale / 100))
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -802,7 +902,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.WeightField.Value = Self.WeightField.Value + (If(Keyboard.AsyncShiftKey, 5, 1) * (Self.WeightScale / 100))
+		  Self.WeightField.DoubleValue = Self.WeightField.DoubleValue + (If(Keyboard.AsyncShiftKey, 5, 1) * (Self.WeightScale / 100))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -813,7 +913,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.MaxEntriesField.Value = Self.MaxEntriesField.Value - 1
+		  Self.MaxEntriesField.DoubleValue = Self.MaxEntriesField.DoubleValue - 1
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -822,7 +922,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.MaxEntriesField.Value = Self.MaxEntriesField.Value + 1
+		  Self.MaxEntriesField.DoubleValue = Self.MaxEntriesField.DoubleValue + 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -833,7 +933,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.MinEntriesField.Value = Self.MinEntriesField.Value - 1
+		  Self.MinEntriesField.DoubleValue = Self.MinEntriesField.DoubleValue - 1
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -842,15 +942,64 @@ End
 		    Return
 		  End If
 		  
-		  Self.MinEntriesField.Value = Self.MinEntriesField.Value + 1
+		  Self.MinEntriesField.DoubleValue = Self.MinEntriesField.DoubleValue + 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -858,6 +1007,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -867,6 +1017,7 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -874,53 +1025,71 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -928,6 +1097,7 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -954,69 +1124,20 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"

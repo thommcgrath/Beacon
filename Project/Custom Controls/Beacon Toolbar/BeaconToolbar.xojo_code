@@ -48,7 +48,7 @@ Implements ObservationKit.Observer
 		    Self.mPressedName = Self.mMouseDownName
 		    Self.Refresh
 		    If HitItem.HasMenu Then
-		      Self.mHoldTimer.Mode = Timer.ModeSingle
+		      Self.mHoldTimer.RunMode = Timer.RunModes.Single
 		    End If
 		    Return True
 		  End If
@@ -98,7 +98,7 @@ Implements ObservationKit.Observer
 		        End If
 		        If Not Self.mMouseHeld Then
 		          Self.mHoldTimer.Reset
-		          Self.mHoldTimer.Mode = Timer.ModeSingle
+		          Self.mHoldTimer.RunMode = Timer.RunModes.Single
 		        End If
 		      Else
 		        If Self.mPressedName <> "" Then
@@ -106,7 +106,7 @@ Implements ObservationKit.Observer
 		          Self.Invalidate
 		        End If
 		        Self.mHoldTimer.Reset
-		        Self.mHoldTimer.Mode = Timer.ModeOff
+		        Self.mHoldTimer.RunMode = Timer.RunModes.Off
 		      End If
 		      Return
 		    End If
@@ -150,7 +150,7 @@ Implements ObservationKit.Observer
 		  Self.mMouseY = Y
 		  
 		  Self.mHoldTimer.Reset
-		  Self.mHoldTimer.Mode = Timer.ModeOff
+		  Self.mHoldTimer.RunMode = Timer.RunModes.Off
 		  
 		  If Self.mResizing Then
 		    Self.mResizing = False
@@ -176,7 +176,6 @@ Implements ObservationKit.Observer
 		Sub Open()
 		  RaiseEvent Open
 		  Self.Transparent = True
-		  Self.DoubleBuffer = False
 		End Sub
 	#tag EndEvent
 
@@ -197,7 +196,7 @@ Implements ObservationKit.Observer
 		  Self.mRightItems = New BeaconToolbarItemArray
 		  Self.mRightItems.AddObserver(Self, BeaconToolbarItem.KeyChanged)
 		  Self.mHoldTimer = New Timer
-		  Self.mHoldTimer.Mode = Timer.ModeOff
+		  Self.mHoldTimer.RunMode = Timer.RunModes.Off
 		  Self.mHoldTimer.Period = 250
 		  AddHandler Self.mHoldTimer.Action, WeakAddressOf Self.mHoldTimer_Action
 		End Sub
@@ -472,12 +471,12 @@ Implements ObservationKit.Observer
 		    
 		    Dim CaptionSize As Double = 0
 		    
-		    G.TextSize = CaptionSize
+		    G.FontSize = CaptionSize
 		    Dim CaptionWidth As Integer = Ceil(G.StringWidth(Caption))
 		    
 		    CaptionWidth = Min(CaptionWidth, ContentRect.Width)
 		    Dim CaptionLeft As Integer = ContentRect.Left + ((ContentRect.Width - CaptionWidth) / 2)
-		    Dim CaptionBottom As Integer = ContentRect.Top + (ContentRect.Height / 2) + ((G.TextAscent * 0.8) / 2)
+		    Dim CaptionBottom As Integer = ContentRect.Top + (ContentRect.Height / 2) + ((G.FontAscent * 0.8) / 2)
 		    
 		    G.ForeColor = SystemColors.LabelColor
 		    G.DrawString(Self.Caption, CaptionLeft, CaptionBottom, CaptionWidth, True)
@@ -698,9 +697,42 @@ Implements ObservationKit.Observer
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="AllowAutoDeactivate"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowFocusRing"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowFocus"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowTabs"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="Integer"
 			EditorType="Integer"
 		#tag EndViewProperty
@@ -708,6 +740,7 @@ Implements ObservationKit.Observer
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
 			EditorType="String"
 		#tag EndViewProperty
@@ -715,6 +748,7 @@ Implements ObservationKit.Observer
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
 			EditorType="String"
 		#tag EndViewProperty
@@ -724,17 +758,23 @@ Implements ObservationKit.Observer
 			Group="Position"
 			InitialValue="40"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="InitialParent"
+			Visible=false
 			Group="Position"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
 			Visible=true
 			Group="Position"
+			InitialValue=""
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="LockBottom"
@@ -742,6 +782,7 @@ Implements ObservationKit.Observer
 			Group="Position"
 			InitialValue="False"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="LockLeft"
@@ -749,6 +790,7 @@ Implements ObservationKit.Observer
 			Group="Position"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="LockRight"
@@ -756,6 +798,7 @@ Implements ObservationKit.Observer
 			Group="Position"
 			InitialValue="False"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="LockTop"
@@ -763,6 +806,7 @@ Implements ObservationKit.Observer
 			Group="Position"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabIndex"
@@ -770,12 +814,15 @@ Implements ObservationKit.Observer
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabPanelIndex"
+			Visible=false
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabStop"
@@ -783,12 +830,15 @@ Implements ObservationKit.Observer
 			Group="Position"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
 			Visible=true
 			Group="Position"
+			InitialValue=""
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Width"
@@ -796,17 +846,13 @@ Implements ObservationKit.Observer
 			Group="Position"
 			InitialValue="200"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AutoDeactivate"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Backdrop"
+			Visible=false
 			Group="Appearance"
+			InitialValue=""
 			Type="Picture"
 			EditorType="Picture"
 		#tag EndViewProperty
@@ -816,20 +862,15 @@ Implements ObservationKit.Observer
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HelpTag"
 			Visible=true
 			Group="Appearance"
+			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="UseFocusRing"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Visible"
@@ -837,24 +878,15 @@ Implements ObservationKit.Observer
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ScrollSpeed"
+			Visible=false
 			Group="Behavior"
 			InitialValue="20"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AcceptFocus"
-			Visible=true
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AcceptTabs"
-			Visible=true
-			Group="Behavior"
-			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Caption"
@@ -863,17 +895,6 @@ Implements ObservationKit.Observer
 			InitialValue="Untitled"
 			Type="String"
 			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="EraseBackground"
-			Group="Behavior"
-			Type="Boolean"
-			EditorType="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Resizer"
@@ -890,7 +911,9 @@ Implements ObservationKit.Observer
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Transparent"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Boolean"
 			EditorType="Boolean"
 		#tag EndViewProperty
@@ -900,6 +923,7 @@ Implements ObservationKit.Observer
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

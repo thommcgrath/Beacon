@@ -1,15 +1,15 @@
 #tag Window
 Begin ServerViewContainer FTPServerView
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   600
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,18 +23,21 @@ Begin ServerViewContainer FTPServerView
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   600
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Untitled"
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   False
+      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -61,11 +64,15 @@ Begin ServerViewContainer FTPServerView
    Begin FadedSeparator HeaderSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -89,19 +96,29 @@ Begin ServerViewContainer FTPServerView
    End
    Begin UITweaks.ResizedTextField ServerNameField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   204
@@ -112,6 +129,7 @@ Begin ServerViewContainer FTPServerView
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -119,6 +137,7 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -127,15 +146,21 @@ Begin ServerViewContainer FTPServerView
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
       Width           =   376
    End
    Begin UITweaks.ResizedLabel ServerNameLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -154,7 +179,8 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Server Name:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -162,24 +188,35 @@ Begin ServerViewContainer FTPServerView
       Top             =   61
       Transparent     =   False
       Underline       =   False
+      Value           =   "Server Name:"
       Visible         =   True
       Width           =   172
    End
    Begin UITweaks.ResizedTextField HostField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   204
@@ -190,6 +227,7 @@ Begin ServerViewContainer FTPServerView
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -197,6 +235,7 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -205,15 +244,21 @@ Begin ServerViewContainer FTPServerView
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
       Width           =   376
    End
    Begin UITweaks.ResizedLabel HostLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -232,7 +277,8 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Host:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -240,24 +286,35 @@ Begin ServerViewContainer FTPServerView
       Top             =   127
       Transparent     =   False
       Underline       =   False
+      Value           =   "Host:"
       Visible         =   True
       Width           =   172
    End
    Begin UITweaks.ResizedTextField PortField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   204
@@ -268,6 +325,7 @@ Begin ServerViewContainer FTPServerView
       LockRight       =   False
       LockTop         =   True
       Mask            =   "#####"
+      MaximumCharactersAllowed=   5
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -275,6 +333,7 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -283,15 +342,21 @@ Begin ServerViewContainer FTPServerView
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   "#####"
+      Value           =   ""
       Visible         =   True
       Width           =   67
    End
    Begin UITweaks.ResizedLabel PortLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -310,7 +375,8 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Port:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -318,24 +384,35 @@ Begin ServerViewContainer FTPServerView
       Top             =   161
       Transparent     =   False
       Underline       =   False
+      Value           =   "Port:"
       Visible         =   True
       Width           =   172
    End
    Begin UITweaks.ResizedTextField UserField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   204
@@ -346,6 +423,7 @@ Begin ServerViewContainer FTPServerView
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -353,6 +431,7 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -361,15 +440,21 @@ Begin ServerViewContainer FTPServerView
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
       Width           =   376
    End
    Begin UITweaks.ResizedLabel UserLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -388,7 +473,8 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Username:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -396,24 +482,35 @@ Begin ServerViewContainer FTPServerView
       Top             =   195
       Transparent     =   False
       Underline       =   False
+      Value           =   "Username:"
       Visible         =   True
       Width           =   172
    End
    Begin UITweaks.ResizedTextField PassField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   204
@@ -424,6 +521,7 @@ Begin ServerViewContainer FTPServerView
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   True
       ReadOnly        =   False
       Scope           =   2
@@ -431,6 +529,7 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -439,15 +538,21 @@ Begin ServerViewContainer FTPServerView
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
       Width           =   376
    End
    Begin UITweaks.ResizedLabel PassLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -466,7 +571,8 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Password:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -474,24 +580,35 @@ Begin ServerViewContainer FTPServerView
       Top             =   229
       Transparent     =   False
       Underline       =   False
+      Value           =   "Password:"
       Visible         =   True
       Width           =   172
    End
    Begin UITweaks.ResizedTextField GameIniPathField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   204
@@ -502,6 +619,7 @@ Begin ServerViewContainer FTPServerView
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -509,6 +627,7 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -517,15 +636,21 @@ Begin ServerViewContainer FTPServerView
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
       Width           =   376
    End
    Begin UITweaks.ResizedLabel GameIniPathLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -544,7 +669,8 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Game.ini Path:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -552,24 +678,35 @@ Begin ServerViewContainer FTPServerView
       Top             =   295
       Transparent     =   False
       Underline       =   False
+      Value           =   "Game.ini Path:"
       Visible         =   True
       Width           =   172
    End
    Begin UITweaks.ResizedTextField GameUserSettingsIniPathField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   204
@@ -580,6 +717,7 @@ Begin ServerViewContainer FTPServerView
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -587,6 +725,7 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -595,15 +734,21 @@ Begin ServerViewContainer FTPServerView
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
       Width           =   376
    End
    Begin UITweaks.ResizedLabel GameUserSettingsIniPathLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -622,7 +767,8 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "GameUserSettings.ini Path:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -630,15 +776,20 @@ Begin ServerViewContainer FTPServerView
       Top             =   329
       Transparent     =   False
       Underline       =   False
+      Value           =   "GameUserSettings.ini Path:"
       Visible         =   True
       Width           =   172
    End
    Begin UITweaks.ResizedPopupMenu ModeMenu
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -653,6 +804,7 @@ Begin ServerViewContainer FTPServerView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      SelectedRowIndex=   0
       TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
@@ -666,11 +818,15 @@ Begin ServerViewContainer FTPServerView
       Width           =   165
    End
    Begin UITweaks.ResizedLabel ModeLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -689,7 +845,8 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Mode:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -697,15 +854,20 @@ Begin ServerViewContainer FTPServerView
       Top             =   263
       Transparent     =   False
       Underline       =   False
+      Value           =   "Mode:"
       Visible         =   True
       Width           =   172
    End
    Begin UITweaks.ResizedPopupMenu MapMenu
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -720,6 +882,7 @@ Begin ServerViewContainer FTPServerView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      SelectedRowIndex=   0
       TabIndex        =   18
       TabPanelIndex   =   0
       TabStop         =   True
@@ -733,11 +896,15 @@ Begin ServerViewContainer FTPServerView
       Width           =   165
    End
    Begin UITweaks.ResizedLabel MapLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -756,7 +923,8 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Build Config For:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -764,15 +932,20 @@ Begin ServerViewContainer FTPServerView
       Top             =   95
       Transparent     =   False
       Underline       =   False
+      Value           =   "Build Config For:"
       Visible         =   True
       Width           =   172
    End
    Begin UITweaks.ResizedLabel MapHelp
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -791,7 +964,8 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Does not change the map"
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -799,6 +973,7 @@ Begin ServerViewContainer FTPServerView
       Top             =   95
       Transparent     =   False
       Underline       =   False
+      Value           =   "Does not change the map"
       Visible         =   True
       Width           =   199
    End
@@ -809,13 +984,13 @@ End
 	#tag Event
 		Sub Open()
 		  Self.Header.Caption = Self.mProfile.Name
-		  Self.ServerNameField.Text = Self.mProfile.Name
-		  Self.HostField.Text = Self.mProfile.Host
-		  Self.PortField.Text = Self.mProfile.Port.ToText
-		  Self.UserField.Text = Self.mProfile.Username
-		  Self.PassField.Text = Self.mProfile.Password
-		  Self.GameIniPathField.Text = Self.mProfile.GameIniPath
-		  Self.GameUserSettingsIniPathField.Text = Self.mProfile.GameUserSettingsIniPath
+		  Self.ServerNameField.Value = Self.mProfile.Name
+		  Self.HostField.Value = Self.mProfile.Host
+		  Self.PortField.Value = Self.mProfile.Port.ToText
+		  Self.UserField.Value = Self.mProfile.Username
+		  Self.PassField.Value = Self.mProfile.Password
+		  Self.GameIniPathField.Value = Self.mProfile.GameIniPath
+		  Self.GameUserSettingsIniPathField.Value = Self.mProfile.GameUserSettingsIniPath
 		  Self.ModeMenu.SelectByTag(Self.mProfile.Mode)
 		  Self.MapMenu.SelectByTag(Self.mProfile.Mask)
 		End Sub
@@ -839,57 +1014,57 @@ End
 #tag Events ServerNameField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Name = Me.Text.ToText
-		  Self.Header.Caption = Me.Text
-		  Self.ContentsChanged = Self.mProfile.Modified
+		  Self.mProfile.Name = Me.Value.ToText
+		  Self.Header.Caption = Me.Value
+		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events HostField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Host = Me.Text.ToText
-		  Self.ContentsChanged = Self.mProfile.Modified
+		  Self.mProfile.Host = Me.Value.ToText
+		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events PortField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Port = Integer.FromText(Me.Text.ToText)
-		  Self.ContentsChanged = Self.mProfile.Modified
+		  Self.mProfile.Port = Integer.FromText(Me.Value.ToText)
+		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events UserField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Username = Me.Text.ToText
-		  Self.ContentsChanged = Self.mProfile.Modified
+		  Self.mProfile.Username = Me.Value.ToText
+		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events PassField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Password = Me.Text.ToText
-		  Self.ContentsChanged = Self.mProfile.Modified
+		  Self.mProfile.Password = Me.Value.ToText
+		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events GameIniPathField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.GameIniPath = Me.Text.ToText
-		  Self.ContentsChanged = Self.mProfile.Modified
+		  Self.mProfile.GameIniPath = Me.Value.ToText
+		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events GameUserSettingsIniPathField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.GameUserSettingsIniPath = Me.Text.ToText
-		  Self.ContentsChanged = Self.mProfile.Modified
+		  Self.mProfile.GameUserSettingsIniPath = Me.Value.ToText
+		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -906,7 +1081,7 @@ End
 	#tag Event
 		Sub Change()
 		  Self.mProfile.Mode = Me.Tag
-		  Self.ContentsChanged = Self.mProfile.Modified
+		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -924,26 +1099,78 @@ End
 	#tag Event
 		Sub Change()
 		  Dim Mask As UInt64
-		  If Me.ListIndex = -1 Then
+		  If Me.SelectedRowIndex = -1 Then
 		    Mask = Beacon.Maps.All.Mask
 		  Else
-		    Mask = Me.RowTag(Me.ListIndex)
+		    Mask = Me.RowTag(Me.SelectedRowIndex)
 		  End If
 		  Self.mProfile.Mask = Mask
-		  Self.ContentsChanged = Self.mProfile.Modified
+		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Progress"
+		Visible=false
 		Group="Behavior"
 		InitialValue="ProgressNone"
 		Type="Double"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
+		Visible=false
 		Group="Behavior"
+		InitialValue=""
 		Type="String"
 		EditorType="MultiLineEditor"
 	#tag EndViewProperty
@@ -953,6 +1180,7 @@ End
 		Group="Behavior"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumHeight"
@@ -960,11 +1188,13 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -972,6 +1202,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -981,6 +1212,7 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -988,53 +1220,71 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -1042,6 +1292,7 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -1068,69 +1319,20 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"

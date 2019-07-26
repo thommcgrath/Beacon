@@ -1,15 +1,15 @@
 #tag Window
 Begin ConfigEditor CraftingCostsConfigEditor
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   396
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,18 +23,21 @@ Begin ConfigEditor CraftingCostsConfigEditor
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   650
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Engrams"
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   False
+      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -61,11 +64,15 @@ Begin ConfigEditor CraftingCostsConfigEditor
    Begin FadedSeparator HeaderSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -90,13 +97,17 @@ Begin ConfigEditor CraftingCostsConfigEditor
    Begin StatusBar ListStatusBar
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   21
       HelpTag         =   ""
       Index           =   -2147483648
@@ -119,6 +130,13 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Width           =   250
    End
    Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -129,12 +147,22 @@ Begin ConfigEditor CraftingCostsConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DropIndicatorVisible=   False
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLinesHorizontal=   "0"
+      GridLinesHorizontalStyle=   "0"
+      GridLinesVertical=   "0"
+      GridLinesVerticalStyle=   "0"
+      HasBorder       =   False
+      HasHeader       =   False
       HasHeading      =   False
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   0
       Height          =   334
       HelpTag         =   ""
@@ -150,12 +178,14 @@ Begin ConfigEditor CraftingCostsConfigEditor
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   0
+      RowCount        =   "0"
+      RowSelectionType=   "1"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   1
+      SelectionRequired=   False
+      SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -175,11 +205,15 @@ Begin ConfigEditor CraftingCostsConfigEditor
    Begin FadedSeparator ListSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   396
       HelpTag         =   ""
       Index           =   -2147483648
@@ -202,6 +236,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Width           =   1
    End
    Begin PagePanel Panel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   396
@@ -217,6 +252,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   1
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
@@ -228,12 +264,16 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Begin LogoFillCanvas FillCanvas
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "No Selection"
-         DoubleBuffer    =   False
+         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          Height          =   396
          HelpTag         =   ""
          Index           =   -2147483648
@@ -258,13 +298,19 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Begin CraftingCostEditor Editor
          AcceptFocus     =   False
          AcceptTabs      =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   396
          HelpTag         =   ""
          Index           =   -2147483648
@@ -288,12 +334,16 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Begin LogoFillCanvas LogoFillCanvas1
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "Multiple Selection"
-         DoubleBuffer    =   False
+         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          Height          =   396
          HelpTag         =   ""
          Index           =   -2147483648
@@ -349,7 +399,7 @@ End
 		    End If
 		    NewCosts.Append(CraftingCost)
 		  Next
-		  Self.ContentsChanged = True
+		  Self.Changed = True
 		  Self.UpdateList(NewCosts)
 		End Sub
 	#tag EndEvent
@@ -477,13 +527,13 @@ End
 		  Next
 		  
 		  Self.UpdateList(NewCosts)
-		  Self.ContentsChanged = True
+		  Self.Changed = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub ShowDuplicateSelection()
-		  If Self.List.SelCount <> 1 Or Self.List.ListIndex < 0 Or Self.List.ListIndex >= Self.List.ListCount Then
+		  If Self.List.SelectedRowCount <> 1 Or Self.List.SelectedIndex < 0 Or Self.List.SelectedIndex >= Self.List.RowCount Then
 		    Return
 		  End If
 		  
@@ -502,7 +552,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim SourceCost As Beacon.CraftingCost = Self.List.RowTag(Self.List.ListIndex)
+		  Dim SourceCost As Beacon.CraftingCost = Self.List.RowTag(Self.List.SelectedIndex)
 		  Config = Self.Config(True)
 		  
 		  Dim NewCosts() As Beacon.CraftingCost
@@ -514,14 +564,14 @@ End
 		  Next
 		  
 		  Self.UpdateList(NewCosts)
-		  Self.ContentsChanged = True
+		  Self.Changed = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
 		  Dim Arr() As Beacon.CraftingCost
-		  For I As Integer = 0 To Self.List.ListCount - 1
+		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.Selected(I) Then
 		      Continue
 		    End If
@@ -547,8 +597,8 @@ End
 		  For I As Integer = 0 To Config.Ubound
 		    Dim Cost As Beacon.CraftingCost = Config(I)
 		    Self.List.AddRow(If(Cost.Engram <> Nil, Cost.Engram.Label, "No Engram Selected"))
-		    Self.List.RowTag(Self.List.LastIndex) = Cost
-		    Self.List.Selected(Self.List.LastIndex) = ObjectIDs.IndexOf(Cost.ObjectID) > -1
+		    Self.List.RowTag(Self.List.LastAddedRowIndex) = Cost
+		    Self.List.Selected(Self.List.LastAddedRowIndex) = ObjectIDs.IndexOf(Cost.ObjectID) > -1
 		  Next
 		  
 		  Self.List.Sort
@@ -571,8 +621,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  Dim TotalItems As Integer = Self.List.ListCount
-		  Dim SelectedItems As Integer = Self.List.SelCount
+		  Dim TotalItems As Integer = Self.List.RowCount
+		  Dim SelectedItems As Integer = Self.List.SelectedRowCount
 		  
 		  Dim Noun As String = If(TotalItems = 1, "Engram", "Engrams")
 		  
@@ -641,38 +691,38 @@ End
 #tag Events List
 	#tag Event
 		Sub Change()
-		  If Me.SelCount = 1 Then
-		    Self.Editor.Target = Me.RowTag(Me.ListIndex)
+		  If Me.SelectedRowCount = 1 Then
+		    Self.Editor.Target = Me.RowTag(Me.SelectedIndex)
 		  Else
 		    Self.Editor.Target = Nil
 		  End If
 		  
-		  If Me.SelCount = 0 Then
-		    Self.Panel.Value = Self.PageNoSelection
-		  ElseIf Me.SelCount = 1 Then
-		    Self.Panel.Value = Self.PageSingleSelection
+		  If Me.SelectedRowCount = 0 Then
+		    Self.Panel.SelectedPanelIndex = Self.PageNoSelection
+		  ElseIf Me.SelectedRowCount = 1 Then
+		    Self.Panel.SelectedPanelIndex = Self.PageSingleSelection
 		  Else
-		    Self.Panel.Value = Self.PageMultipleSelection
+		    Self.Panel.SelectedPanelIndex = Self.PageMultipleSelection
 		  End If
 		  
-		  Self.Header.Duplicate.Enabled = Me.SelCount = 1
+		  Self.Header.Duplicate.Enabled = Me.SelectedRowCount = 1
 		  
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelCount > 0
+		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
 		  If Warn Then
 		    Dim Message As String
-		    If Me.SelCount = 1 Then
-		      Message = "Are you sure you want to delete the """ + Me.Cell(Me.ListIndex, 0) + """ crafting cost override?"
+		    If Me.SelectedRowCount = 1 Then
+		      Message = "Are you sure you want to delete the """ + Me.Cell(Me.SelectedIndex, 0) + """ crafting cost override?"
 		    Else
-		      Message = "Are you sure you want to delete these " + Str(Me.SelCount, "-0") + " crafting cost overrides?"
+		      Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " crafting cost overrides?"
 		    End If
 		    
 		    If Not Self.ShowConfirm(Message, "This action cannot be undone.", "Delete", "Cancel") Then
@@ -682,7 +732,7 @@ End
 		  
 		  Me.SelectionChangeBlocked = True
 		  Dim Config As BeaconConfigs.CraftingCosts = Self.Config(True)
-		  For I As Integer = Me.ListCount - 1 DownTo 0
+		  For I As Integer = Me.RowCount - 1 DownTo 0
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
@@ -696,7 +746,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.SelCount > 0
+		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -715,7 +765,7 @@ End
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
 		  Dim Dicts() As Xojo.Core.Dictionary
-		  For I As Integer = 0 To Me.ListCount - 1
+		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
@@ -751,7 +801,7 @@ End
 		      Next
 		      
 		      Self.UpdateList(Costs)
-		      Self.ContentsChanged = True
+		      Self.Changed = True
 		    Catch Err As RuntimeException
 		    End Try
 		    Return
@@ -767,10 +817,10 @@ End
 #tag Events Editor
 	#tag Event
 		Sub ContentsChanged()
-		  If Self.List.SelCount = 1 Then
-		    Self.List.Cell(Self.List.ListIndex, 0) = Me.Target.Label
+		  If Self.List.SelectedRowCount = 1 Then
+		    Self.List.Cell(Self.List.SelectedIndex, 0) = Me.Target.Label
 		    Self.List.Sort
-		    Self.ContentsChanged = True
+		    Self.Changed = True
 		  End If
 		End Sub
 	#tag EndEvent
@@ -784,10 +834,60 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Progress"
+		Visible=false
 		Group="Behavior"
 		InitialValue="ProgressNone"
 		Type="Double"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -795,6 +895,7 @@ End
 		Group="Behavior"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumHeight"
@@ -802,10 +903,13 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
+		Visible=false
 		Group="Behavior"
+		InitialValue=""
 		Type="String"
 		EditorType="MultiLineEditor"
 	#tag EndViewProperty
@@ -813,6 +917,7 @@ End
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -820,6 +925,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -829,6 +935,7 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -836,53 +943,71 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -890,6 +1015,7 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -916,69 +1042,20 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"

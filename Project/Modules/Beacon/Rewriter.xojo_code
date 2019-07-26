@@ -16,7 +16,7 @@ Inherits Global.Thread
 
 	#tag Method, Flags = &h0
 		Sub Cancel()
-		  If Self.State <> Thread.NotRunning Then
+		  If Self.ThreadState <> Thread.ThreadStates.NotRunning Then
 		    Self.Kill
 		  End If
 		  
@@ -184,7 +184,7 @@ Inherits Global.Thread
 		                SectionContents.Remove(ManagedKey)
 		              End If
 		            Next
-		            If SectionContents.Count = 0 Then
+		            If SectionContents.KeyCount = 0 Then
 		              UntouchedConfigs.Remove(Header)
 		            End If
 		          Next
@@ -210,7 +210,7 @@ Inherits Global.Thread
 		            OldContents.Remove(NewContentKey)
 		          End If
 		        Next
-		        If OldContents.Count = 0 Then
+		        If OldContents.KeyCount = 0 Then
 		          UntouchedConfigs.Remove(Header)
 		        End If
 		      Next
@@ -235,7 +235,7 @@ Inherits Global.Thread
 		        
 		        BeaconKeys.Value(Header) = Keys
 		      Next
-		      If BeaconKeys.Count > 0 Then
+		      If BeaconKeys.KeyCount > 0 Then
 		        Dim BeaconDict As New Dictionary
 		        Dim BeaconKeysKeys() As Variant = BeaconKeys.Keys
 		        For Each Header As String In BeaconKeysKeys
@@ -455,6 +455,7 @@ Inherits Global.Thread
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
 			EditorType="String"
 		#tag EndViewProperty
@@ -462,6 +463,7 @@ Inherits Global.Thread
 			Name="Index"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="Integer"
 			EditorType="Integer"
 		#tag EndViewProperty
@@ -469,6 +471,7 @@ Inherits Global.Thread
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
 			EditorType="String"
 		#tag EndViewProperty
@@ -478,6 +481,7 @@ Inherits Global.Thread
 			Group="Behavior"
 			InitialValue="5"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="StackSize"
@@ -485,6 +489,7 @@ Inherits Global.Thread
 			Group="Behavior"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

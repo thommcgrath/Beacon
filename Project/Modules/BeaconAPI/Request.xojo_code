@@ -124,7 +124,7 @@ Protected Class Request
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub ReplyCallback(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		Delegate Sub ReplyCallback(Request As BeaconAPI . Request, Response As BeaconAPI . Response)
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
@@ -213,6 +213,7 @@ Protected Class Request
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -220,18 +221,23 @@ Protected Class Request
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -239,6 +245,7 @@ Protected Class Request
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

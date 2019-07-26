@@ -86,12 +86,6 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function BeginsWith(Extends Source As String, Other As String) As Boolean
-		  Return Left(Source, Len(Other)) = Other
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Characters(Extends Source As String) As String()
 		  Return Split(Source, "")
 		End Function
@@ -100,7 +94,7 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function CheckIsFolder(Extends Folder As FolderItem, Create As Boolean = True) As Boolean
 		  If Folder.Exists Then
-		    If Folder.Directory Then
+		    If Folder.Folder Then
 		      Return True
 		    Else
 		      If Create = True Then
@@ -146,7 +140,7 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function Convert(Extends Source As Date) As Xojo.Core.Date
-		  Return New Xojo.Core.Date(Source.Year, Source.Month, Source.Day, Source.Hour, Source.Minute, Source.Second, 0, New Xojo.Core.TimeZone(Source.GMTOffset * 3600))
+		  Return New Xojo.Core.Date(Source.SecondsFrom1970, New Xojo.Core.TimeZone(Source.Timezone.SecondsFromGMT))
 		End Function
 	#tag EndMethod
 
@@ -159,7 +153,7 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function Convert(Extends Source As Xojo.Core.Date) As Date
-		  Return New Date(Source.Year, Source.Month, Source.Day, Source.Hour, Source.Minute, Source.Second, Source.TimeZone.SecondsFromGMT / 3600)
+		  Return New Date(Source.SecondsFrom1970, New TimeZone(Source.TimeZone.SecondsFromGMT))
 		End Function
 	#tag EndMethod
 
@@ -193,7 +187,7 @@ Protected Module FrameworkExtensions
 		    Return True
 		  End If
 		  
-		  If File.Directory Then
+		  If File.Folder Then
 		    For I As Integer = File.Count DownTo 1
 		      If Not File.Item(I).DeepDelete Then
 		        Return False
@@ -220,12 +214,6 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function EndsWith(Extends Source As String, Other As String) As Boolean
-		  Return Right(Source, Len(Other)) = Other
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Explanation(Extends Err As RuntimeException) As Text
 		  If Err.Reason <> "" Then
 		    Return Err.Reason
@@ -246,12 +234,6 @@ Protected Module FrameworkExtensions
 		  
 		  Dim Parts() As String = Name.Split(".")
 		  Return Parts(Parts.Ubound)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IndexOf(Extends Source As String, StartAt As Integer = 0, Other As String) As Integer
-		  Return InStr(StartAt + 1, Source, Other) - 1
 		End Function
 	#tag EndMethod
 
@@ -305,12 +287,6 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Length(Extends Source As String) As Integer
-		  Return Len(Source)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Localize(Extends Rect As Xojo.Core.Rect, Point As Xojo.Core.Point) As Xojo.Core.Point
 		  Return New Xojo.Core.Point(Point.X - Rect.Origin.X, Point.Y - Rect.Origin.Y)
 		End Function
@@ -325,9 +301,7 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function LocalTime(Extends Source As Date) As Date
 		  Dim Now As New Date
-		  Source = New Date(Source)
-		  Source.GMTOffset = Now.GMTOffset
-		  Return Source
+		  Return New Date(Source.SecondsFrom1970, Now.Timezone)
 		End Function
 	#tag EndMethod
 
@@ -382,11 +356,12 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function SQLDateTimeWithOffset(Extends Source As Date) As String
-		  Dim Offset As Double = Abs(Source.GMTOffset)
+		  Dim Zone As TimeZone = Source.Timezone
+		  Dim Offset As Double = Abs(Zone.SecondsFromGMT / 3600)
 		  Dim Hours As Integer = Floor(Offset)
 		  Dim Minutes As Integer = (Offset - Floor(Offset)) * 60
 		  
-		  Return Str(Source.Year, "0000") + "-" + Str(Source.Month, "00") + "-" + Str(Source.Day, "00") + " " + Str(Source.Hour, "00") + ":" + Str(Source.Minute, "00") + ":" + Str(Source.Second, "00") + If(Source.GMTOffset < 0, "-", "+") + Str(Hours, "00") + ":" + Str(Minutes, "00")
+		  Return Str(Source.Year, "0000") + "-" + Str(Source.Month, "00") + "-" + Str(Source.Day, "00") + " " + Str(Source.Hour, "00") + ":" + Str(Source.Minute, "00") + ":" + Str(Source.Second, "00") + If(Zone.SecondsFromGMT < 0, "-", "+") + Str(Hours, "00") + ":" + Str(Minutes, "00")
 		End Function
 	#tag EndMethod
 
@@ -430,7 +405,7 @@ Protected Module FrameworkExtensions
 		    End If
 		  End If
 		  
-		  Source.Constructor(Year, Month, Day, Hour, Minute, Second, Offset)
+		  Source.Constructor(Year, Month, Day, Hour, Minute, Second, 0, New TimeZone(Offset))
 		End Sub
 	#tag EndMethod
 
@@ -486,7 +461,7 @@ Protected Module FrameworkExtensions
 		    Dim Stream As BinaryStream
 		    If File.Exists Then
 		      Stream = BinaryStream.Open(File, True)
-		      Stream.Position = 0
+		      Stream.BytePosition = 0
 		      Stream.Length = 0
 		    Else
 		      Stream = BinaryStream.Create(File, True)
@@ -524,7 +499,9 @@ Protected Module FrameworkExtensions
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -532,12 +509,15 @@ Protected Module FrameworkExtensions
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -545,6 +525,7 @@ Protected Module FrameworkExtensions
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -552,6 +533,7 @@ Protected Module FrameworkExtensions
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Module

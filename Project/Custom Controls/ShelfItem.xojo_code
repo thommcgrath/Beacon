@@ -191,7 +191,7 @@ Implements ObservationKit.Observable
 			    ElseIf Value <> ShelfItem.NotificationColors.None And Self.mPulseTimer = Nil Then
 			      Self.mPulseTimer = New Timer
 			      Self.mPulseTimer.Period = 5
-			      Self.mPulseTimer.Mode = Timer.ModeMultiple
+			      Self.mPulseTimer.RunMode = Timer.RunModes.Multiple
 			      AddHandler mPulseTimer.Action, WeakAddressOf mPulseTimer_Action
 			    End If
 			    Self.NotifyObservers("PulseAmount", 0.0)
@@ -275,6 +275,7 @@ Implements ObservationKit.Observable
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -282,18 +283,23 @@ Implements ObservationKit.Observable
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -301,38 +307,67 @@ Implements ObservationKit.Observable
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Caption"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Icon"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Picture"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Tag"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Type"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="NotificationColor"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="ShelfItem.NotificationColors"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - None"
+				"1 - Blue"
+				"2 - Brown"
+				"3 - Gray"
+				"4 - Green"
+				"5 - Orange"
+				"6 - Pink"
+				"7 - Purple"
+				"8 - Red"
+				"9 - Yellow"
+			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="PulseAmount"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Double"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

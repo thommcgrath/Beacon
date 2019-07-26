@@ -2,31 +2,46 @@
 Begin BeaconDialog DocumentDeployWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
-   Frame           =   0
+   DefaultLocation =   "1"
+   Frame           =   "0"
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
+   HasBackgroundColor=   False
+   HasCloseButton  =   False
+   HasFullScreenButton=   False
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
    Height          =   400
    ImplicitInstance=   False
-   LiveResize      =   True
+   LiveResize      =   "True"
    MacProcID       =   0
    MaxHeight       =   32000
    MaximizeButton  =   False
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
    MinHeight       =   400
    MinimizeButton  =   False
+   MinimumHeight   =   400
+   MinimumWidth    =   600
    MinWidth        =   600
-   Placement       =   1
-   Resizeable      =   True
+   Placement       =   "1"
+   Resizable       =   True
+   Resizeable      =   "True"
+   SystemUIVisible =   True
    Title           =   "Deploy"
+   Type            =   "0"
    Visible         =   True
    Width           =   600
    Begin PagePanel Pages
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   400
@@ -42,6 +57,7 @@ Begin BeaconDialog DocumentDeployWindow
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -51,11 +67,15 @@ Begin BeaconDialog DocumentDeployWindow
       Visible         =   True
       Width           =   600
       Begin Label ServerSelectionMessageLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -74,7 +94,8 @@ Begin BeaconDialog DocumentDeployWindow
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Select Deployment Servers"
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -82,10 +103,18 @@ Begin BeaconDialog DocumentDeployWindow
          Top             =   20
          Transparent     =   False
          Underline       =   False
+         Value           =   "Select Deployment Servers"
          Visible         =   True
          Width           =   560
       End
       Begin BeaconListbox ServerSelectionList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -96,12 +125,22 @@ Begin BeaconDialog DocumentDeployWindow
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   -1
+         DropIndicatorVisible=   False
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLinesHorizontal=   "0"
+         GridLinesHorizontalStyle=   "0"
+         GridLinesVertical=   "0"
+         GridLinesVerticalStyle=   "0"
+         HasBorder       =   True
+         HasHeader       =   False
          HasHeading      =   False
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
          HeadingIndex    =   -1
          Height          =   280
          HelpTag         =   ""
@@ -117,12 +156,14 @@ Begin BeaconDialog DocumentDeployWindow
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowCount        =   0
+         RowCount        =   "0"
+         RowSelectionType=   "0"
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionType   =   0
+         SelectionRequired=   False
+         SelectionType   =   "0"
          ShowDropIndicator=   False
          TabIndex        =   1
          TabPanelIndex   =   1
@@ -140,6 +181,7 @@ Begin BeaconDialog DocumentDeployWindow
          _ScrollWidth    =   -1
       End
       Begin UITweaks.ResizedPushButton ServerSelectionActionButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -147,6 +189,9 @@ Begin BeaconDialog DocumentDeployWindow
          Caption         =   "Begin"
          Default         =   True
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -158,6 +203,7 @@ Begin BeaconDialog DocumentDeployWindow
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   1
@@ -172,6 +218,7 @@ Begin BeaconDialog DocumentDeployWindow
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton ServerSelectionCancelButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -179,6 +226,9 @@ Begin BeaconDialog DocumentDeployWindow
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -190,6 +240,7 @@ Begin BeaconDialog DocumentDeployWindow
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   1
@@ -204,11 +255,15 @@ Begin BeaconDialog DocumentDeployWindow
          Width           =   80
       End
       Begin Label DeployingMessageLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -227,7 +282,8 @@ Begin BeaconDialog DocumentDeployWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Deploying…"
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -235,15 +291,20 @@ Begin BeaconDialog DocumentDeployWindow
          Top             =   20
          Transparent     =   False
          Underline       =   False
+         Value           =   "Deploying…"
          Visible         =   True
          Width           =   560
       End
       Begin Label FinishedMessageLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -262,7 +323,8 @@ Begin BeaconDialog DocumentDeployWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Finished!"
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -270,10 +332,12 @@ Begin BeaconDialog DocumentDeployWindow
          Top             =   20
          Transparent     =   False
          Underline       =   False
+         Value           =   "Finished!"
          Visible         =   True
          Width           =   560
       End
       Begin UITweaks.ResizedPushButton FinishedButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -281,6 +345,9 @@ Begin BeaconDialog DocumentDeployWindow
          Caption         =   "Done"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -292,6 +359,7 @@ Begin BeaconDialog DocumentDeployWindow
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   3
@@ -306,6 +374,13 @@ Begin BeaconDialog DocumentDeployWindow
          Width           =   80
       End
       Begin BeaconListbox DeployingList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -316,12 +391,22 @@ Begin BeaconDialog DocumentDeployWindow
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   40
+         DropIndicatorVisible=   False
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLinesHorizontal=   "0"
+         GridLinesHorizontalStyle=   "0"
+         GridLinesVertical=   "0"
+         GridLinesVerticalStyle=   "0"
+         HasBorder       =   True
+         HasHeader       =   False
          HasHeading      =   False
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
          HeadingIndex    =   -1
          Height          =   280
          HelpTag         =   ""
@@ -337,12 +422,14 @@ Begin BeaconDialog DocumentDeployWindow
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowCount        =   0
+         RowCount        =   "0"
+         RowSelectionType=   "0"
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionType   =   0
+         SelectionRequired=   False
+         SelectionType   =   "0"
          ShowDropIndicator=   False
          TabIndex        =   1
          TabPanelIndex   =   2
@@ -360,6 +447,7 @@ Begin BeaconDialog DocumentDeployWindow
          _ScrollWidth    =   -1
       End
       Begin UITweaks.ResizedPushButton DeployingCancelButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -367,6 +455,9 @@ Begin BeaconDialog DocumentDeployWindow
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -378,6 +469,7 @@ Begin BeaconDialog DocumentDeployWindow
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   2
@@ -392,11 +484,15 @@ Begin BeaconDialog DocumentDeployWindow
          Width           =   80
       End
       Begin Label FinishedReportLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   280
          HelpTag         =   ""
          Index           =   -2147483648
@@ -415,7 +511,8 @@ Begin BeaconDialog DocumentDeployWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "All servers updated successfully."
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -423,6 +520,7 @@ Begin BeaconDialog DocumentDeployWindow
          Top             =   60
          Transparent     =   False
          Underline       =   False
+         Value           =   "All servers updated successfully."
          Visible         =   True
          Width           =   560
       End
@@ -439,8 +537,9 @@ Begin BeaconDialog DocumentDeployWindow
       Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Mode            =   0
+      Mode            =   "0"
       Period          =   100
+      RunMode         =   "0"
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -458,8 +557,8 @@ End
 		    Dim Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(I)
 		    
 		    Self.ServerSelectionList.AddRow("", Profile.Name, Profile.SecondaryName)
-		    Self.ServerSelectionList.RowTag(Self.ServerSelectionList.LastIndex) = Profile
-		    Self.ServerSelectionList.CellCheck(Self.ServerSelectionList.LastIndex, 0) = Profile.Enabled
+		    Self.ServerSelectionList.RowTag(Self.ServerSelectionList.LastAddedRowIndex) = Profile
+		    Self.ServerSelectionList.CellCheck(Self.ServerSelectionList.LastAddedRowIndex, 0) = Profile.Enabled
 		  Next
 		  Self.ServerSelectionList.Sort
 		End Sub
@@ -472,10 +571,8 @@ End
 		    // Move to the next step
 		    Self.DeployingList.DeleteAllRows
 		    
-		    Dim Now As New Date()
-		    Now.GMTOffset = 0
+		    Dim Now As New Date(Date.Now.SecondsFrom1970, New TimeZone(0))
 		    Self.mDeployLabel = Str(Now.Year, "0000") + "-" + Str(Now.Month, "00") + "-" + Str(Now.Day, "00") + " " + Str(Now.Hour, "00") + "." + Str(Now.Minute, "00") + "." + Str(Now.Second, "00") + " GMT"
-		    
 		    
 		    For I As Integer = 0 To Self.mDocument.ServerProfileCount - 1
 		      Dim Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(I)
@@ -495,14 +592,14 @@ End
 		      
 		      Self.mDeploymentEngines.Append(DeploymentEngine)
 		      Self.DeployingList.AddRow(DeploymentEngine.Name + EndOfLine + DeploymentEngine.Status)
-		      Self.DeployingList.RowTag(DeployingList.LastIndex) = DeploymentEngine
+		      Self.DeployingList.RowTag(DeployingList.LastAddedRowIndex) = DeploymentEngine
 		    Next
 		    
 		    For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
 		      DeploymentEngine.Begin(Self.mDeployLabel.ToText, Self.mDocument, App.IdentityManager.CurrentIdentity)
 		    Next
 		    
-		    Self.DeployingWatchTimer.Mode = Timer.ModeMultiple
+		    Self.DeployingWatchTimer.RunMode = Timer.RunModes.Multiple
 		    Return
 		  End If
 		  
@@ -654,9 +751,9 @@ End
 		    Report.Insert(0, "Some servers successfully updated, but there were errors.")
 		  End If
 		  
-		  Self.FinishedReportLabel.Text = Join(Report, EndOfLine)
+		  Self.FinishedReportLabel.Value = Join(Report, EndOfLine)
 		  
-		  Self.Pages.Value = Self.PageFinished
+		  Self.Pages.SelectedPanelIndex = Self.PageFinished
 		End Sub
 	#tag EndMethod
 
@@ -705,7 +802,7 @@ End
 		    Beacon.ServerProfile(Me.RowTag(Row)).Enabled = Me.CellCheck(Row, Column)
 		  End If
 		  
-		  For I As Integer = 0 To Me.ListCount - 1
+		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.CellCheck(I, 0) Then
 		      Self.ServerSelectionActionButton.Enabled = True
 		      Return
@@ -763,7 +860,7 @@ End
 		    End If
 		  End Select
 		  
-		  Self.Pages.Value = Self.PageDeploying
+		  Self.Pages.SelectedPanelIndex = Self.PageDeploying
 		  
 		  For I As Integer = 0 To Self.mDocument.ServerProfileCount - 1
 		    Dim Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(I)
@@ -825,7 +922,7 @@ End
 	#tag Event
 		Sub AuthenticationError()
 		  Self.ShowAlert("Authorization failed", "The server provider " + Self.mCurrentProvider + " may be down at the moment, or there could be other problems.")
-		  Self.Pages.Value = Self.PageServerSelection
+		  Self.Pages.SelectedPanelIndex = Self.PageServerSelection
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -874,9 +971,9 @@ End
 		    Next
 		    
 		    Self.ShowResults()
-		    Me.Mode = Timer.ModeOff
+		    Me.RunMode = Timer.RunModes.Off
 		  Else
-		    For I As Integer = 0 To Self.DeployingList.ListCount - 1
+		    For I As Integer = 0 To Self.DeployingList.RowCount - 1
 		      Dim DeploymentEngine As Beacon.DeploymentEngine = Self.DeployingList.RowTag(I)
 		      Self.DeployingList.Cell(I, 0) = DeploymentEngine.Name + EndOfLine + DeploymentEngine.Status
 		    Next
@@ -886,74 +983,43 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="Name"
-		Visible=true
-		Group="ID"
-		Type="String"
-		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Interfaces"
-		Visible=true
-		Group="ID"
-		Type="String"
-		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Super"
-		Visible=true
-		Group="ID"
-		Type="String"
-		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Width"
-		Visible=true
-		Group="Size"
-		InitialValue="600"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Height"
-		Visible=true
-		Group="Size"
-		InitialValue="400"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinWidth"
+		Name="MinimumWidth"
 		Visible=true
 		Group="Size"
 		InitialValue="64"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MinHeight"
+		Name="MinimumHeight"
 		Visible=true
 		Group="Size"
 		InitialValue="64"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MaxWidth"
+		Name="MaximumWidth"
 		Visible=true
 		Group="Size"
 		InitialValue="32000"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MaxHeight"
+		Name="MaximumHeight"
 		Visible=true
 		Group="Size"
 		InitialValue="32000"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Frame"
+		Name="Type"
 		Visible=true
 		Group="Frame"
 		InitialValue="0"
-		Type="Integer"
+		Type="Types"
 		EditorType="Enum"
 		#tag EnumValues
 			"0 - Document"
@@ -970,14 +1036,7 @@ End
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Title"
-		Visible=true
-		Group="Frame"
-		InitialValue="Untitled"
-		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="CloseButton"
+		Name="HasCloseButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -985,7 +1044,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Resizeable"
+		Name="Resizable"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -993,7 +1052,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MaximizeButton"
+		Name="HasMaximizeButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -1001,7 +1060,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MinimizeButton"
+		Name="HasMinimizeButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
@@ -1009,7 +1068,7 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="FullScreenButton"
+		Name="HasFullScreenButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="False"
@@ -1017,31 +1076,11 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Composite"
-		Group="OS X (Carbon)"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MacProcID"
-		Group="OS X (Carbon)"
-		InitialValue="0"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ImplicitInstance"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Placement"
+		Name="DefaultLocation"
 		Visible=true
 		Group="Behavior"
 		InitialValue="0"
-		Type="Integer"
+		Type="Locations"
 		EditorType="Enum"
 		#tag EnumValues
 			"0 - Default"
@@ -1052,6 +1091,102 @@ End
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
+		Name="SystemUIVisible"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Name"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Interfaces"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Super"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Width"
+		Visible=true
+		Group="Size"
+		InitialValue="600"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Height"
+		Visible=true
+		Group="Size"
+		InitialValue="400"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Title"
+		Visible=true
+		Group="Frame"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composite"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MacProcID"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="0"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ImplicitInstance"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Visible"
 		Visible=true
 		Group="Behavior"
@@ -1060,37 +1195,18 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="LiveResize"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="FullScreen"
+		Visible=false
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
 	#tag EndViewProperty
@@ -1098,15 +1214,8 @@ End
 		Name="MenuBar"
 		Visible=true
 		Group="Menus"
+		InitialValue=""
 		Type="MenuBar"
 		EditorType="MenuBar"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MenuBarVisible"
-		Visible=true
-		Group="Deprecated"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 #tag EndViewBehavior

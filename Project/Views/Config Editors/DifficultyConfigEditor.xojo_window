@@ -1,15 +1,15 @@
 #tag Window
 Begin ConfigEditor DifficultyConfigEditor
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   538
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,24 +23,33 @@ Begin ConfigEditor DifficultyConfigEditor
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   884
    Begin UITweaks.ResizedTextField MaxDinoLevelField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   231
@@ -51,6 +60,7 @@ Begin ConfigEditor DifficultyConfigEditor
       LockRight       =   False
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -58,6 +68,7 @@ Begin ConfigEditor DifficultyConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -66,15 +77,21 @@ Begin ConfigEditor DifficultyConfigEditor
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
       Width           =   80
    End
    Begin UITweaks.ResizedLabel MaxDinoLevelLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -93,7 +110,8 @@ Begin ConfigEditor DifficultyConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Maximum Creature Level:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -101,14 +119,19 @@ Begin ConfigEditor DifficultyConfigEditor
       Top             =   20
       Transparent     =   False
       Underline       =   False
+      Value           =   "Maximum Creature Level:"
       Visible         =   True
       Width           =   199
    End
    Begin GroupBox ReferenceValuesGroup
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Reference Values"
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   180
       HelpTag         =   ""
       Index           =   -2147483648
@@ -134,19 +157,29 @@ Begin ConfigEditor DifficultyConfigEditor
       Width           =   311
       Begin UITweaks.ResizedTextField DifficultyOffsetField
          AcceptTabs      =   False
-         Alignment       =   0
+         Alignment       =   "0"
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
+         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "ReferenceValuesGroup"
          Italic          =   False
@@ -158,6 +191,7 @@ Begin ConfigEditor DifficultyConfigEditor
          LockRight       =   False
          LockTop         =   True
          Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   True
          Scope           =   2
@@ -165,6 +199,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -173,15 +208,21 @@ Begin ConfigEditor DifficultyConfigEditor
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
+         ValidationMask  =   ""
+         Value           =   ""
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedLabel DifficultyOffsetLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -200,7 +241,8 @@ Begin ConfigEditor DifficultyConfigEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "Difficulty Offset:"
-         TextAlign       =   2
+         TextAlign       =   "2"
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -208,24 +250,35 @@ Begin ConfigEditor DifficultyConfigEditor
          Top             =   158
          Transparent     =   False
          Underline       =   False
+         Value           =   "Difficulty Offset:"
          Visible         =   True
          Width           =   179
       End
       Begin UITweaks.ResizedTextField LootScaleField
          AcceptTabs      =   False
-         Alignment       =   0
+         Alignment       =   "0"
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
+         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "ReferenceValuesGroup"
          Italic          =   False
@@ -237,6 +290,7 @@ Begin ConfigEditor DifficultyConfigEditor
          LockRight       =   False
          LockTop         =   True
          Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   True
          Scope           =   2
@@ -244,6 +298,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -252,15 +307,21 @@ Begin ConfigEditor DifficultyConfigEditor
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
+         ValidationMask  =   ""
+         Value           =   ""
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedLabel LootScaleLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -279,7 +340,8 @@ Begin ConfigEditor DifficultyConfigEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "Loot Scale:"
-         TextAlign       =   2
+         TextAlign       =   "2"
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -287,24 +349,35 @@ Begin ConfigEditor DifficultyConfigEditor
          Top             =   90
          Transparent     =   False
          Underline       =   False
+         Value           =   "Loot Scale:"
          Visible         =   True
          Width           =   179
       End
       Begin UITweaks.ResizedTextField OverrideOfficialDifficultyField
          AcceptTabs      =   False
-         Alignment       =   0
+         Alignment       =   "0"
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
+         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "ReferenceValuesGroup"
          Italic          =   False
@@ -316,6 +389,7 @@ Begin ConfigEditor DifficultyConfigEditor
          LockRight       =   False
          LockTop         =   True
          Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   True
          Scope           =   2
@@ -323,6 +397,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -331,15 +406,21 @@ Begin ConfigEditor DifficultyConfigEditor
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
+         ValidationMask  =   ""
+         Value           =   ""
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedLabel OverrideOfficialDifficultyLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -358,7 +439,8 @@ Begin ConfigEditor DifficultyConfigEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "Override Official Difficulty:"
-         TextAlign       =   2
+         TextAlign       =   "2"
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -366,24 +448,35 @@ Begin ConfigEditor DifficultyConfigEditor
          Top             =   192
          Transparent     =   False
          Underline       =   False
+         Value           =   "Override Official Difficulty:"
          Visible         =   True
          Width           =   179
       End
       Begin UITweaks.ResizedTextField DifficultyValueField
          AcceptTabs      =   False
-         Alignment       =   0
+         Alignment       =   "0"
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
+         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "ReferenceValuesGroup"
          Italic          =   False
@@ -395,6 +488,7 @@ Begin ConfigEditor DifficultyConfigEditor
          LockRight       =   False
          LockTop         =   True
          Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   True
          Scope           =   2
@@ -402,6 +496,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -410,15 +505,21 @@ Begin ConfigEditor DifficultyConfigEditor
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
+         ValidationMask  =   ""
+         Value           =   ""
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedLabel DifficultyValueLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -437,7 +538,8 @@ Begin ConfigEditor DifficultyConfigEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "Difficulty Value:"
-         TextAlign       =   2
+         TextAlign       =   "2"
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -445,6 +547,7 @@ Begin ConfigEditor DifficultyConfigEditor
          Top             =   124
          Transparent     =   False
          Underline       =   False
+         Value           =   "Difficulty Value:"
          Visible         =   True
          Width           =   179
       End
@@ -455,7 +558,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub RestoreToDefault()
-		  Self.MaxDinoLevelField.Text = "150"
+		  Self.MaxDinoLevelField.Value = "150"
 		  Self.Document.Difficulty.IsImplicit = True
 		End Sub
 	#tag EndEvent
@@ -463,7 +566,7 @@ End
 	#tag Event
 		Sub SetupUI()
 		  Dim Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
-		  Self.MaxDinoLevelField.Text = Str(Difficulty.MaxDinoLevel, "0")
+		  Self.MaxDinoLevelField.Value = Str(Difficulty.MaxDinoLevel, "0")
 		  Self.FillReferenceFields(Difficulty)
 		End Sub
 	#tag EndEvent
@@ -477,10 +580,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub FillReferenceFields(Difficulty As BeaconConfigs.Difficulty)
-		  Self.LootScaleField.Text = Str(Difficulty.DifficultyValue, "0%")
-		  Self.DifficultyValueField.Text = Difficulty.DifficultyValue.PrettyText
-		  Self.DifficultyOffsetField.Text = Difficulty.DifficultyOffset.PrettyText
-		  Self.OverrideOfficialDifficultyField.Text = Difficulty.OverrideOfficialDifficulty.PrettyText
+		  Self.LootScaleField.Value = Str(Difficulty.DifficultyValue, "0%")
+		  Self.DifficultyValueField.Value = Difficulty.DifficultyValue.PrettyText
+		  Self.DifficultyOffsetField.Value = Difficulty.DifficultyOffset.PrettyText
+		  Self.OverrideOfficialDifficultyField.Value = Difficulty.OverrideOfficialDifficulty.PrettyText
 		End Sub
 	#tag EndMethod
 
@@ -494,7 +597,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Integer = Val(Me.Text)
+		  Dim Value As Integer = Val(Me.Value)
 		  If Value <= 0 Then
 		    Return
 		  End If
@@ -503,17 +606,67 @@ End
 		    Self.Document.Difficulty.MaxDinoLevel = Value
 		    Self.Document.Difficulty.IsImplicit = False
 		    Self.FillReferenceFields(Self.Document.Difficulty)
-		    Self.ContentsChanged = Self.Document.Modified
+		    Self.Changed = Self.Document.Modified
 		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Progress"
+		Visible=false
 		Group="Behavior"
 		InitialValue="ProgressNone"
 		Type="Double"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -521,6 +674,7 @@ End
 		Group="Behavior"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumHeight"
@@ -528,10 +682,13 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
+		Visible=false
 		Group="Behavior"
+		InitialValue=""
 		Type="String"
 		EditorType="MultiLineEditor"
 	#tag EndViewProperty
@@ -539,6 +696,7 @@ End
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -546,6 +704,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -555,6 +714,7 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -562,53 +722,71 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -616,6 +794,7 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -642,69 +821,20 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"

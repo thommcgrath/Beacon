@@ -17,7 +17,7 @@ Implements AnimationKit.Scrollable
 	#tag Method, Flags = &h0
 		Function ScrollMaximum() As Double
 		  If Self.Target <> Nil Then
-		    Return Self.Target.Maximum
+		    Return Self.Target.MaximumValue
 		  End If
 		End Function
 	#tag EndMethod
@@ -25,7 +25,7 @@ Implements AnimationKit.Scrollable
 	#tag Method, Flags = &h0
 		Sub ScrollMaximum(Assigns Value As Double)
 		  If Self.Target <> Nil Then
-		    Self.Target.Maximum = Value
+		    Self.Target.MaximumValue = Value
 		  End If
 		End Sub
 	#tag EndMethod
@@ -33,7 +33,7 @@ Implements AnimationKit.Scrollable
 	#tag Method, Flags = &h0
 		Function ScrollMinimum() As Double
 		  If Self.Target <> Nil Then
-		    Return Self.Target.Minimum
+		    Return Self.Target.MinimumValue
 		  End If
 		End Function
 	#tag EndMethod
@@ -41,7 +41,7 @@ Implements AnimationKit.Scrollable
 	#tag Method, Flags = &h0
 		Sub ScrollMinimum(Assigns Value As Double)
 		  If Self.Target <> Nil Then
-		    Self.Target.Minimum = Value
+		    Self.Target.MinimumValue = Value
 		  End If
 		End Sub
 	#tag EndMethod
@@ -83,6 +83,7 @@ Implements AnimationKit.Scrollable
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -90,18 +91,23 @@ Implements AnimationKit.Scrollable
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -109,6 +115,7 @@ Implements AnimationKit.Scrollable
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

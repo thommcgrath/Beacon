@@ -1,15 +1,15 @@
 #tag Window
 Begin ConfigEditor HarvestRatesConfigEditor
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   468
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,24 +23,33 @@ Begin ConfigEditor HarvestRatesConfigEditor
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   764
    Begin UITweaks.ResizedTextField HarvestAmountMultiplierField
       AcceptTabs      =   False
-      Alignment       =   2
+      Alignment       =   "2"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   "1.0 = Normal. Higher values increase harvest yields, smaller values decrease harvest yields."
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   259
@@ -51,6 +60,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       LockRight       =   False
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -58,6 +68,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -66,15 +77,21 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   "1.0"
       Visible         =   True
       Width           =   80
    End
    Begin UITweaks.ResizedLabel HarvestAmountMultiplierLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -93,7 +110,8 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Global Harvest Rate Multiplier:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -101,18 +119,23 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Top             =   53
       Transparent     =   False
       Underline       =   False
+      Value           =   "Global Harvest Rate Multiplier:"
       Visible         =   True
       Width           =   227
    End
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Harvest Rate Overrides"
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   False
+      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -139,11 +162,15 @@ Begin ConfigEditor HarvestRatesConfigEditor
    Begin FadedSeparator FadedSeparator2
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -166,6 +193,13 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Width           =   764
    End
    Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -176,12 +210,22 @@ Begin ConfigEditor HarvestRatesConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DropIndicatorVisible=   False
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLinesHorizontal=   "0"
+      GridLinesHorizontalStyle=   "0"
+      GridLinesVertical=   "0"
+      GridLinesVerticalStyle=   "0"
+      HasBorder       =   False
+      HasHeader       =   True
       HasHeading      =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   278
       HelpTag         =   ""
@@ -197,12 +241,14 @@ Begin ConfigEditor HarvestRatesConfigEditor
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   0
+      RowCount        =   "0"
+      RowSelectionType=   "1"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   1
+      SelectionRequired=   False
+      SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   13
       TabPanelIndex   =   0
@@ -222,11 +268,15 @@ Begin ConfigEditor HarvestRatesConfigEditor
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -249,12 +299,16 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Width           =   764
    End
    Begin CheckBox UseOptimizedRatesCheck
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Use Optimized Harvest Rates"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   "Significantly reduces lag at higher harvest amount values, but reduces number of rare resources granted."
       Index           =   -2147483648
@@ -267,7 +321,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   0
+      State           =   "0"
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
@@ -279,23 +333,34 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
+      VisualState     =   "0"
       Width           =   393
    End
    Begin UITweaks.ResizedTextField HarvestHealthMultiplierField
       AcceptTabs      =   False
-      Alignment       =   2
+      Alignment       =   "2"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   "1.0 = Normal. Higher values will require more damage to break, smaller values reduced required damage."
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   259
@@ -306,6 +371,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       LockRight       =   False
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -313,6 +379,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -321,15 +388,21 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   "1.0"
       Visible         =   True
       Width           =   80
    End
    Begin UITweaks.ResizedLabel HarvestHealthMultiplierLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -348,7 +421,8 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Global Harvest Health Multiplier:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -356,24 +430,35 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Top             =   87
       Transparent     =   False
       Underline       =   False
+      Value           =   "Global Harvest Health Multiplier:"
       Visible         =   True
       Width           =   227
    End
    Begin UITweaks.ResizedTextField PlayerHarvestDamageMultiplierField
       AcceptTabs      =   False
-      Alignment       =   2
+      Alignment       =   "2"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   "1.0 = Normal. Higher values increase damage players do to harvestable resources, smaller values decrease player damage."
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   259
@@ -384,6 +469,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       LockRight       =   False
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -391,6 +477,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -399,15 +486,21 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   "1.0"
       Visible         =   True
       Width           =   80
    End
    Begin UITweaks.ResizedLabel PlayerHarvestDamageMultiplierLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -426,7 +519,8 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Player Harvest Damage Multiplier:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -434,24 +528,35 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Top             =   121
       Transparent     =   False
       Underline       =   False
+      Value           =   "Player Harvest Damage Multiplier:"
       Visible         =   True
       Width           =   227
    End
    Begin UITweaks.ResizedTextField DinoHarvestDamageMultiplierField
       AcceptTabs      =   False
-      Alignment       =   2
+      Alignment       =   "2"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   "1.0 = Normal. Higher values increase damage creatures do to harvestable resources, smaller values decrease creature damage."
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   259
@@ -462,6 +567,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       LockRight       =   False
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -469,6 +575,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
+      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -477,15 +584,21 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   "1.0"
       Visible         =   True
       Width           =   80
    End
    Begin UITweaks.ResizedLabel DinoHarvestDamageMultiplierLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -504,7 +617,8 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Creature Harvest Damage Multiplier:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -512,16 +626,21 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Top             =   155
       Transparent     =   False
       Underline       =   False
+      Value           =   "Creature Harvest Damage Multiplier:"
       Visible         =   True
       Width           =   227
    End
    Begin CheckBox ClampHarvestDamageCheck
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Clamp Harvesting Damage"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   "Limits the amount of possible damage that can be done to resources during each harvest action."
       Index           =   -2147483648
@@ -534,7 +653,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   0
+      State           =   "0"
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
@@ -546,6 +665,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
+      VisualState     =   "0"
       Width           =   393
    End
 End
@@ -570,7 +690,7 @@ End
 		  For Each ClassString As Text In Classes
 		    Config.Override(ClassString) = OtherConfig.Override(ClassString)
 		  Next
-		  Self.ContentsChanged = True
+		  Self.Changed = True
 		  Self.UpdateList(Classes)
 		End Sub
 	#tag EndEvent
@@ -584,10 +704,10 @@ End
 	#tag Event
 		Sub SetupUI()
 		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(False)
-		  Self.HarvestAmountMultiplierField.Text = Format(Config.HarvestAmountMultiplier, "0.0#####")
-		  Self.HarvestHealthMultiplierField.Text = Format(Config.HarvestHealthMultiplier, "0.0#####")
-		  Self.PlayerHarvestDamageMultiplierField.Text = Format(Config.PlayerHarvestingDamageMultiplier, "0.0#####")
-		  Self.DinoHarvestDamageMultiplierField.Text = Format(Config.DinoHarvestingDamageMultiplier, "0.0#####")
+		  Self.HarvestAmountMultiplierField.Value = Format(Config.HarvestAmountMultiplier, "0.0#####")
+		  Self.HarvestHealthMultiplierField.Value = Format(Config.HarvestHealthMultiplier, "0.0#####")
+		  Self.PlayerHarvestDamageMultiplierField.Value = Format(Config.PlayerHarvestingDamageMultiplier, "0.0#####")
+		  Self.DinoHarvestDamageMultiplierField.Value = Format(Config.DinoHarvestingDamageMultiplier, "0.0#####")
 		  Self.ClampHarvestDamageCheck.Value = Config.ClampResourceHarvestDamage
 		  Self.UseOptimizedRatesCheck.Value = Config.UseOptimizedRates
 		  Self.UpdateList()
@@ -652,13 +772,13 @@ End
 		  Next
 		  
 		  Self.UpdateList(NewEngrams)
-		  Self.ContentsChanged = True
+		  Self.Changed = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub ShowDuplicateOverride()
-		  If Self.List.SelCount <> 1 Then
+		  If Self.List.SelectedRowCount <> 1 Then
 		    Return
 		  End If
 		  
@@ -679,7 +799,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim SourceClass As Text = Self.List.RowTag(Self.List.ListIndex)
+		  Dim SourceClass As Text = Self.List.RowTag(Self.List.SelectedIndex)
 		  Dim Rate As Double = Config.Override(SourceClass)
 		  
 		  Config = Self.Config(True)
@@ -689,14 +809,14 @@ End
 		  Next
 		  
 		  Self.UpdateList(NewEngrams)
-		  Self.ContentsChanged = True
+		  Self.Changed = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
 		  Dim Classes() As Text
-		  For I As Integer = 0 To Self.List.ListCount - 1
+		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.Selected(I) Then
 		      Continue
 		    End If
@@ -738,8 +858,8 @@ End
 		    Dim Rate As Double = Config.Override(ClassString)
 		    Dim EffectiveRate As Double = Rate * Config.HarvestAmountMultiplier
 		    Self.List.AddRow(EngramName, Rate.PrettyText, EffectiveRate.PrettyText)
-		    Self.List.RowTag(Self.List.LastIndex) = ClassString
-		    Self.List.Selected(Self.List.LastIndex) = SelectClasses.IndexOf(ClassString) > -1
+		    Self.List.RowTag(Self.List.LastAddedRowIndex) = ClassString
+		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectClasses.IndexOf(ClassString) > -1
 		  Next
 		  
 		  Self.List.Sort
@@ -778,8 +898,8 @@ End
 		  
 		  Self.SettingUp = True
 		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(True)
-		  Config.HarvestAmountMultiplier = CDbl(Me.Text)
-		  Self.ContentsChanged = Config.Modified
+		  Config.HarvestAmountMultiplier = CDbl(Me.Value)
+		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		  Self.UpdateList()
 		End Sub
@@ -819,7 +939,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Self.Header.Duplicate.Enabled = Me.SelCount = 1
+		  Self.Header.Duplicate.Enabled = Me.SelectedRowCount = 1
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -836,18 +956,18 @@ End
 		  
 		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(True)
 		  Config.Override(ClassString) = Rate
-		  Self.ContentsChanged = True
+		  Self.Changed = True
 		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.SelCount > 0
+		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelCount > 0
+		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -859,10 +979,10 @@ End
 		Sub PerformClear(Warn As Boolean)
 		  If Warn Then
 		    Dim Message As String
-		    If Me.SelCount = 1 Then
-		      Message = "Are you sure you want to delete the """ + Me.Cell(Me.ListIndex, 0) + """ harvest rate override?"
+		    If Me.SelectedRowCount = 1 Then
+		      Message = "Are you sure you want to delete the """ + Me.Cell(Me.SelectedIndex, 0) + """ harvest rate override?"
 		    Else
-		      Message = "Are you sure you want to delete these " + Str(Me.SelCount, "-0") + " harvest rate overrides?"
+		      Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " harvest rate overrides?"
 		    End If
 		    
 		    If Not Self.ShowConfirm(Message, "This action cannot be undone.", "Delete", "Cancel") Then
@@ -871,7 +991,7 @@ End
 		  End If
 		  
 		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(True)
-		  For I As Integer = 0 To Me.ListCount - 1
+		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
@@ -879,7 +999,7 @@ End
 		    Dim ClassString As Text = Me.RowTag(I)
 		    Config.Override(ClassString) = 0
 		  Next
-		  Self.ContentsChanged = True
+		  Self.Changed = True
 		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
@@ -887,7 +1007,7 @@ End
 		Sub PerformCopy(Board As Clipboard)
 		  Dim Items As New Xojo.Core.Dictionary
 		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(False)
-		  For I As Integer = 0 To Me.ListCount - 1
+		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
@@ -923,7 +1043,7 @@ End
 		      SelectClasses.Append(ClassString)
 		      Config.Override(ClassString) = Rate
 		    Next
-		    Self.ContentsChanged = True
+		    Self.Changed = True
 		    Self.UpdateList(SelectClasses)
 		    Return
 		  End If
@@ -946,7 +1066,7 @@ End
 		  Self.SettingUp = True
 		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(True)
 		  Config.UseOptimizedRates = Me.Value
-		  Self.ContentsChanged = Config.Modified
+		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
@@ -960,8 +1080,8 @@ End
 		  
 		  Self.SettingUp = True
 		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(True)
-		  Config.HarvestHealthMultiplier = CDbl(Me.Text)
-		  Self.ContentsChanged = Config.Modified
+		  Config.HarvestHealthMultiplier = CDbl(Me.Value)
+		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		  Self.UpdateList()
 		End Sub
@@ -976,8 +1096,8 @@ End
 		  
 		  Self.SettingUp = True
 		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(True)
-		  Config.PlayerHarvestingDamageMultiplier = CDbl(Me.Text)
-		  Self.ContentsChanged = Config.Modified
+		  Config.PlayerHarvestingDamageMultiplier = CDbl(Me.Value)
+		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		  Self.UpdateList()
 		End Sub
@@ -992,8 +1112,8 @@ End
 		  
 		  Self.SettingUp = True
 		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(True)
-		  Config.DinoHarvestingDamageMultiplier = CDbl(Me.Text)
-		  Self.ContentsChanged = Config.Modified
+		  Config.DinoHarvestingDamageMultiplier = CDbl(Me.Value)
+		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		  Self.UpdateList()
 		End Sub
@@ -1009,17 +1129,67 @@ End
 		  Self.SettingUp = True
 		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(True)
 		  Config.ClampResourceHarvestDamage = Me.Value
-		  Self.ContentsChanged = Config.Modified
+		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Progress"
+		Visible=false
 		Group="Behavior"
 		InitialValue="ProgressNone"
 		Type="Double"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -1027,6 +1197,7 @@ End
 		Group="Behavior"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumHeight"
@@ -1034,10 +1205,13 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
+		Visible=false
 		Group="Behavior"
+		InitialValue=""
 		Type="String"
 		EditorType="MultiLineEditor"
 	#tag EndViewProperty
@@ -1045,6 +1219,7 @@ End
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -1052,6 +1227,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -1061,6 +1237,7 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -1068,53 +1245,71 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -1122,6 +1317,7 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -1148,69 +1344,20 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"

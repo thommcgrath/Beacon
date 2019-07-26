@@ -1,15 +1,15 @@
 #tag Window
 Begin DiscoveryView FTPDiscoveryView
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   310
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,10 +23,10 @@ Begin DiscoveryView FTPDiscoveryView
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   600
    Begin PagePanel ViewPanel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   310
@@ -42,6 +42,7 @@ Begin DiscoveryView FTPDiscoveryView
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   1
       TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
@@ -51,11 +52,15 @@ Begin DiscoveryView FTPDiscoveryView
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedLabel ServerModeLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -74,7 +79,8 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Mode:"
-         TextAlign       =   2
+         TextAlign       =   "2"
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -82,15 +88,20 @@ Begin DiscoveryView FTPDiscoveryView
          Top             =   238
          Transparent     =   True
          Underline       =   False
+         Value           =   "Mode:"
          Visible         =   True
          Width           =   86
       End
       Begin UITweaks.ResizedPopupMenu ServerModeMenu
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -105,6 +116,7 @@ Begin DiscoveryView FTPDiscoveryView
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
+         SelectedRowIndex=   0
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
@@ -118,11 +130,15 @@ Begin DiscoveryView FTPDiscoveryView
          Width           =   142
       End
       Begin Label ExplanationLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   38
          HelpTag         =   ""
          Index           =   -2147483648
@@ -141,7 +157,8 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Beacon will securely send this information to the Beacon API server, which will perform the FTP work. The server will not store or log FTP information in any way."
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -149,15 +166,20 @@ Begin DiscoveryView FTPDiscoveryView
          Top             =   52
          Transparent     =   True
          Underline       =   False
+         Value           =   "Beacon will securely send this information to the Beacon API server, which will perform the FTP work. The server will not store or log FTP information in any way."
          Visible         =   True
          Width           =   560
       End
       Begin Label ServerMessageLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -176,7 +198,8 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Server Settings"
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -184,15 +207,20 @@ Begin DiscoveryView FTPDiscoveryView
          Top             =   20
          Transparent     =   True
          Underline       =   False
+         Value           =   "Server Settings"
          Visible         =   True
          Width           =   560
       End
       Begin UITweaks.ResizedLabel ServerHostLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -211,7 +239,8 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Host:"
-         TextAlign       =   2
+         TextAlign       =   "2"
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -219,24 +248,35 @@ Begin DiscoveryView FTPDiscoveryView
          Top             =   102
          Transparent     =   True
          Underline       =   False
+         Value           =   "Host:"
          Visible         =   True
          Width           =   86
       End
       Begin UITweaks.ResizedTextField ServerHostField
          AcceptTabs      =   False
-         Alignment       =   0
+         Alignment       =   "0"
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
+         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -248,6 +288,7 @@ Begin DiscoveryView FTPDiscoveryView
          LockRight       =   True
          LockTop         =   True
          Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -255,6 +296,7 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -263,15 +305,21 @@ Begin DiscoveryView FTPDiscoveryView
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
+         ValidationMask  =   ""
+         Value           =   ""
          Visible         =   True
          Width           =   462
       End
       Begin UITweaks.ResizedLabel ServerPortLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -290,7 +338,8 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Port:"
-         TextAlign       =   2
+         TextAlign       =   "2"
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -298,24 +347,35 @@ Begin DiscoveryView FTPDiscoveryView
          Top             =   136
          Transparent     =   True
          Underline       =   False
+         Value           =   "Port:"
          Visible         =   True
          Width           =   86
       End
       Begin UITweaks.ResizedTextField ServerPortField
          AcceptTabs      =   False
-         Alignment       =   0
+         Alignment       =   "0"
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
+         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -327,6 +387,7 @@ Begin DiscoveryView FTPDiscoveryView
          LockRight       =   True
          LockTop         =   True
          Mask            =   "#####"
+         MaximumCharactersAllowed=   5
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -334,6 +395,7 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "21"
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -342,15 +404,21 @@ Begin DiscoveryView FTPDiscoveryView
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
+         ValidationMask  =   "#####"
+         Value           =   "21"
          Visible         =   True
          Width           =   101
       End
       Begin UITweaks.ResizedLabel ServerUserLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -369,7 +437,8 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Username:"
-         TextAlign       =   2
+         TextAlign       =   "2"
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -377,24 +446,35 @@ Begin DiscoveryView FTPDiscoveryView
          Top             =   170
          Transparent     =   True
          Underline       =   False
+         Value           =   "Username:"
          Visible         =   True
          Width           =   86
       End
       Begin UITweaks.ResizedTextField ServerUserField
          AcceptTabs      =   False
-         Alignment       =   0
+         Alignment       =   "0"
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
+         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -406,6 +486,7 @@ Begin DiscoveryView FTPDiscoveryView
          LockRight       =   True
          LockTop         =   True
          Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -413,6 +494,7 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -421,15 +503,21 @@ Begin DiscoveryView FTPDiscoveryView
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
+         ValidationMask  =   ""
+         Value           =   ""
          Visible         =   True
          Width           =   462
       End
       Begin UITweaks.ResizedLabel ServerPassLabel
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -448,7 +536,8 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Password:"
-         TextAlign       =   2
+         TextAlign       =   "2"
+         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -456,24 +545,35 @@ Begin DiscoveryView FTPDiscoveryView
          Top             =   204
          Transparent     =   True
          Underline       =   False
+         Value           =   "Password:"
          Visible         =   True
          Width           =   86
       End
       Begin UITweaks.ResizedTextField ServerPassField
          AcceptTabs      =   False
-         Alignment       =   0
+         Alignment       =   "0"
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
+         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
+         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
@@ -485,6 +585,7 @@ Begin DiscoveryView FTPDiscoveryView
          LockRight       =   True
          LockTop         =   True
          Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   True
          ReadOnly        =   False
          Scope           =   2
@@ -492,6 +593,7 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -500,15 +602,21 @@ Begin DiscoveryView FTPDiscoveryView
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
+         ValidationMask  =   ""
+         Value           =   ""
          Visible         =   True
          Width           =   462
       End
       Begin Label DiscoveringMessage
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -527,7 +635,8 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Connecting to Server…"
-         TextAlign       =   1
+         TextAlign       =   "1"
+         TextAlignment   =   "2"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -535,14 +644,17 @@ Begin DiscoveryView FTPDiscoveryView
          Top             =   129
          Transparent     =   False
          Underline       =   False
+         Value           =   "Connecting to Server…"
          Visible         =   True
          Width           =   560
       End
       Begin ProgressBar DiscoveringProgress
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Enabled         =   True
          Height          =   20
          HelpTag         =   ""
+         Indeterminate   =   False
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Left            =   20
@@ -552,22 +664,27 @@ Begin DiscoveryView FTPDiscoveryView
          LockRight       =   True
          LockTop         =   True
          Maximum         =   0
+         MaximumValue    =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
          TabStop         =   True
          Top             =   161
          Transparent     =   False
-         Value           =   0
+         Value           =   0.0
          Visible         =   True
          Width           =   560
       End
       Begin Label BrowseMessage
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -586,7 +703,8 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Please locate your Game.ini file"
-         TextAlign       =   0
+         TextAlign       =   "0"
+         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -594,10 +712,12 @@ Begin DiscoveryView FTPDiscoveryView
          Top             =   20
          Transparent     =   False
          Underline       =   False
+         Value           =   "Please locate your Game.ini file"
          Visible         =   True
          Width           =   560
       End
       Begin PushButton BrowseActionButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -605,6 +725,9 @@ Begin DiscoveryView FTPDiscoveryView
          Caption         =   "Next"
          Default         =   True
          Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -616,6 +739,7 @@ Begin DiscoveryView FTPDiscoveryView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
@@ -630,6 +754,7 @@ Begin DiscoveryView FTPDiscoveryView
          Width           =   80
       End
       Begin PushButton BrowseCancelButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -637,6 +762,9 @@ Begin DiscoveryView FTPDiscoveryView
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -648,6 +776,7 @@ Begin DiscoveryView FTPDiscoveryView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   3
@@ -664,11 +793,15 @@ Begin DiscoveryView FTPDiscoveryView
       Begin FadedSeparator BrowseBorders
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
-         DoubleBuffer    =   False
+         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          Height          =   1
          HelpTag         =   ""
          Index           =   0
@@ -693,11 +826,15 @@ Begin DiscoveryView FTPDiscoveryView
       Begin FadedSeparator BrowseBorders
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
-         DoubleBuffer    =   False
+         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          Height          =   1
          HelpTag         =   ""
          Index           =   1
@@ -722,11 +859,15 @@ Begin DiscoveryView FTPDiscoveryView
       Begin FadedSeparator BrowseBorders
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
-         DoubleBuffer    =   False
+         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          Height          =   204
          HelpTag         =   ""
          Index           =   2
@@ -751,11 +892,15 @@ Begin DiscoveryView FTPDiscoveryView
       Begin FadedSeparator BrowseBorders
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
-         DoubleBuffer    =   False
+         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          Height          =   204
          HelpTag         =   ""
          Index           =   3
@@ -780,14 +925,20 @@ Begin DiscoveryView FTPDiscoveryView
       Begin ColumnBrowser Browser
          AcceptFocus     =   False
          AcceptTabs      =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
          CurrentPath     =   ""
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   204
          HelpTag         =   ""
          Index           =   -2147483648
@@ -809,6 +960,7 @@ Begin DiscoveryView FTPDiscoveryView
          Width           =   558
       End
       Begin ProgressWheel BrowseSpinner
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Enabled         =   True
          Height          =   16
@@ -831,6 +983,7 @@ Begin DiscoveryView FTPDiscoveryView
          Width           =   16
       End
       Begin UITweaks.ResizedPushButton ServerCancelButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -838,6 +991,9 @@ Begin DiscoveryView FTPDiscoveryView
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -849,6 +1005,7 @@ Begin DiscoveryView FTPDiscoveryView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   12
          TabPanelIndex   =   1
@@ -863,6 +1020,7 @@ Begin DiscoveryView FTPDiscoveryView
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton ServerActionButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -870,6 +1028,9 @@ Begin DiscoveryView FTPDiscoveryView
          Caption         =   "Next"
          Default         =   True
          Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -881,6 +1042,7 @@ Begin DiscoveryView FTPDiscoveryView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   13
          TabPanelIndex   =   1
@@ -950,13 +1112,13 @@ End
 		  
 		  If Response.HTTPStatus = 404 Then
 		    // Server was connected, but the path could not be determined, so time to show the browser.
-		    Self.ViewPanel.Value = Self.PageBrowse
+		    Self.ViewPanel.SelectedPanelIndex = Self.PageBrowse
 		    Self.Browser.Reset()
 		    Return
 		  End If
 		  
 		  // The connection was not succesful
-		  Self.ViewPanel.Value = Self.PageGeneral
+		  Self.ViewPanel.SelectedPanelIndex = Self.PageGeneral
 		  
 		  Self.ShowAlert("Beacon was unable to discover the server.", "Reason: " + Response.Message)
 		End Sub
@@ -983,7 +1145,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckServerActionButton()
-		  Self.ServerActionButton.Enabled = ServerHostField.Text <> "" And Val(ServerPortField.Text) > 0 And ServerUserField.Text <> "" And ServerPassField.Text <> ""
+		  Self.ServerActionButton.Enabled = ServerHostField.Value <> "" And Val(ServerPortField.Value) > 0 And ServerUserField.Value <> "" And ServerPassField.Value <> ""
 		End Sub
 	#tag EndMethod
 
@@ -1072,7 +1234,7 @@ End
 #tag Events BrowseCancelButton
 	#tag Event
 		Sub Action()
-		  Self.ViewPanel.Value = Self.PageGeneral
+		  Self.ViewPanel.SelectedPanelIndex = Self.PageGeneral
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1111,12 +1273,12 @@ End
 	#tag Event
 		Sub Action()
 		  Self.mProfile = New Beacon.FTPServerProfile()
-		  Self.mProfile.Host = Self.ServerHostField.Text.ToText
-		  Self.mProfile.Port = Val(Self.ServerPortField.Text)
-		  Self.mProfile.Username = Self.ServerUserField.Text.ToText
-		  Self.mProfile.Password = Self.ServerPassField.Text.ToText
+		  Self.mProfile.Host = Self.ServerHostField.Value.ToText
+		  Self.mProfile.Port = Val(Self.ServerPortField.Value)
+		  Self.mProfile.Username = Self.ServerUserField.Value.ToText
+		  Self.mProfile.Password = Self.ServerPassField.Value.ToText
 		  
-		  Select Case Self.ServerModeMenu.ListIndex
+		  Select Case Self.ServerModeMenu.SelectedRowIndex
 		  Case 1
 		    Self.mProfile.Mode = Beacon.FTPServerProfile.ModeFTP
 		  Case 2
@@ -1127,7 +1289,7 @@ End
 		    Self.mProfile.Mode = Beacon.FTPServerProfile.ModeAuto
 		  End Select
 		  
-		  Self.ViewPanel.Value = Self.PageDiscovering
+		  Self.ViewPanel.SelectedPanelIndex = Self.PageDiscovering
 		  
 		  Dim Fields As Xojo.Core.Dictionary = Self.FormDataFromProfile()
 		  Dim Request As New BeaconAPI.Request("ftp/path", "GET", Fields, WeakAddressOf APICallback_DetectPath)
@@ -1152,6 +1314,54 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="DoubleBuffer"
 		Visible=true
 		Group="Windows Behavior"
@@ -1160,39 +1370,10 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
 	#tag EndViewProperty
@@ -1205,72 +1386,74 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Height"
 		Visible=true
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -1278,6 +1461,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -1287,12 +1471,15 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -1306,21 +1493,15 @@ End
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType="Boolean"
 	#tag EndViewProperty
@@ -1338,5 +1519,6 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

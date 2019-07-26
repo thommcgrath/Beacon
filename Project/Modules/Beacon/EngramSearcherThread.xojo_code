@@ -201,7 +201,7 @@ Inherits Beacon.Thread
 		    Return
 		  End If
 		  
-		  If Paths.Count = 0 Then
+		  If Paths.KeyCount = 0 Then
 		    Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFinished))
 		    Return
 		  End If
@@ -291,9 +291,9 @@ Inherits Beacon.Thread
 		    CallLater.Cancel(Self.mPendingTriggers(I))
 		    Self.mPendingTriggers.Remove(I)
 		  Next
-		  If Self.State <> Thread.NotRunning Then
+		  If Self.ThreadState <> Thread.ThreadStates.NotRunning Then
 		    Self.Stop
-		    Do Until Self.State = Thread.NotRunning
+		    Do Until Self.ThreadState = Thread.ThreadStates.NotRunning
 		      App.YieldToNextThread()
 		    Loop
 		  End If
@@ -390,23 +390,31 @@ Inherits Beacon.Thread
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
 			EditorType="String"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Priority"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="StackSize"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
 			EditorType="String"
 		#tag EndViewProperty

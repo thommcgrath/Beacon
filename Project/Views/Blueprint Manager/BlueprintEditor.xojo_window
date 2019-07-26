@@ -1,15 +1,15 @@
 #tag Window
 Begin BeaconSubview BlueprintEditor
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   520
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,18 +23,21 @@ Begin BeaconSubview BlueprintEditor
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   510
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "New Object"
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   False
+      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -61,11 +64,15 @@ Begin BeaconSubview BlueprintEditor
    Begin FadedSeparator HeaderSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -89,19 +96,29 @@ Begin BeaconSubview BlueprintEditor
    End
    Begin UITweaks.ResizedTextField PathField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   152
@@ -112,6 +129,7 @@ Begin BeaconSubview BlueprintEditor
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -119,6 +137,7 @@ Begin BeaconSubview BlueprintEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -127,15 +146,21 @@ Begin BeaconSubview BlueprintEditor
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
       Width           =   338
    End
    Begin UITweaks.ResizedLabel TypeLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -154,7 +179,8 @@ Begin BeaconSubview BlueprintEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Type:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -162,15 +188,20 @@ Begin BeaconSubview BlueprintEditor
       Top             =   61
       Transparent     =   False
       Underline       =   False
+      Value           =   "Type:"
       Visible         =   True
       Width           =   120
    End
    Begin UITweaks.ResizedLabel PathLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -189,7 +220,8 @@ Begin BeaconSubview BlueprintEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Blueprint Path:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -197,15 +229,20 @@ Begin BeaconSubview BlueprintEditor
       Top             =   93
       Transparent     =   False
       Underline       =   False
+      Value           =   "Blueprint Path:"
       Visible         =   True
       Width           =   120
    End
    Begin UITweaks.ResizedPopupMenu TypeMenu
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -220,6 +257,7 @@ Begin BeaconSubview BlueprintEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      SelectedRowIndex=   0
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
@@ -234,19 +272,29 @@ Begin BeaconSubview BlueprintEditor
    End
    Begin UITweaks.ResizedTextField NameField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   152
@@ -257,6 +305,7 @@ Begin BeaconSubview BlueprintEditor
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -264,6 +313,7 @@ Begin BeaconSubview BlueprintEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -272,15 +322,21 @@ Begin BeaconSubview BlueprintEditor
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
       Width           =   338
    End
    Begin UITweaks.ResizedLabel NameLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -299,7 +355,8 @@ Begin BeaconSubview BlueprintEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Name:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -307,16 +364,21 @@ Begin BeaconSubview BlueprintEditor
       Top             =   127
       Transparent     =   False
       Underline       =   False
+      Value           =   "Name:"
       Visible         =   True
       Width           =   120
    End
    Begin CheckBox MapCheckboxes
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "The Island"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   0
@@ -329,7 +391,7 @@ Begin BeaconSubview BlueprintEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   0
+      State           =   "0"
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
@@ -341,14 +403,19 @@ Begin BeaconSubview BlueprintEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
+      VisualState     =   "0"
       Width           =   140
    End
    Begin UITweaks.ResizedLabel MapLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -367,7 +434,8 @@ Begin BeaconSubview BlueprintEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Map Availability:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -375,24 +443,35 @@ Begin BeaconSubview BlueprintEditor
       Top             =   195
       Transparent     =   False
       Underline       =   False
+      Value           =   "Map Availability:"
       Visible         =   True
       Width           =   120
    End
    Begin UITweaks.ResizedTextField TagsField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   152
@@ -403,6 +482,7 @@ Begin BeaconSubview BlueprintEditor
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -410,6 +490,7 @@ Begin BeaconSubview BlueprintEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -418,15 +499,21 @@ Begin BeaconSubview BlueprintEditor
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
       Width           =   338
    End
    Begin UITweaks.ResizedLabel TagsLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -445,7 +532,8 @@ Begin BeaconSubview BlueprintEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Tags:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -453,6 +541,7 @@ Begin BeaconSubview BlueprintEditor
       Top             =   161
       Transparent     =   False
       Underline       =   False
+      Value           =   "Tags:"
       Visible         =   True
       Width           =   120
    End
@@ -519,7 +608,7 @@ End
 		  End If
 		  
 		  Self.mModified = Value
-		  Self.ContentsChanged = Value
+		  Self.Changed = Value
 		  Self.Header.SaveButton.Enabled = Value
 		  Self.Header.RevertButton.Enabled = Value
 		End Sub
@@ -541,8 +630,8 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Save()
-		  Dim Label As Text = Trim(Self.NameField.Text).ToText
-		  Dim Path As Text = Trim(Self.PathField.Text).ToText
+		  Dim Label As Text = Trim(Self.NameField.Value).ToText
+		  Dim Path As Text = Trim(Self.PathField.Value).ToText
 		  If Label = "" Then
 		    Self.ShowAlert("This object has no name", "You'll want to correct this, it will be hard to find this object again without a name.")
 		    Return
@@ -552,7 +641,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Tags() As Text = Self.TagsField.Text.ToText.Split(",")
+		  Dim Tags() As Text = Self.TagsField.Value.ToText.Split(",")
 		  For I As Integer = Tags.Ubound DownTo 0
 		    Tags(I) = Tags(I).Trim
 		    If Tags(I) = "" Then
@@ -572,7 +661,7 @@ End
 		    Return
 		  End If
 		  
-		  Select Case Self.TypeMenu.ListIndex
+		  Select Case Self.TypeMenu.SelectedRowIndex
 		  Case 0
 		    Dim Engram As New Beacon.MutableEngram(Path, Self.mObjectID)
 		    Engram.Label = Label
@@ -654,17 +743,17 @@ End
 			    Case IsA Beacon.Engram
 			      Self.TypeMenu.SelectByCaption("Engram")
 			    End Select
-			    Self.PathField.Text = Blueprint.Path
-			    Self.NameField.Text = Blueprint.Label
-			    Self.TagsField.Text = Blueprint.Tags.Join(", ")
+			    Self.PathField.Value = Blueprint.Path
+			    Self.NameField.Value = Blueprint.Label
+			    Self.TagsField.Value = Blueprint.Tags.Join(", ")
 			    For Each Check As Checkbox In Self.mMapCheckboxes
 			      Check.Value = (Blueprint.Availability And Check.Index) = Check.Index
 			    Next
 			  Else
-			    Self.TypeMenu.ListIndex = -1
-			    Self.PathField.Text = ""
-			    Self.NameField.Text = ""
-			    Self.TagsField.Text = ""
+			    Self.TypeMenu.SelectedRowIndex = -1
+			    Self.PathField.Value = ""
+			    Self.NameField.Value = ""
+			    Self.TagsField.Value = ""
 			    For Each Check As Checkbox In Self.mMapCheckboxes
 			      Check.Value = False
 			    Next
@@ -714,10 +803,10 @@ End
 #tag Events NameField
 	#tag Event
 		Sub TextChange()
-		  If Trim(Me.Text) = "" Then
+		  If Trim(Me.Value) = "" Then
 		    Header.Caption = "New Object"
 		  Else
-		    Header.Caption = Trim(Me.Text)
+		    Header.Caption = Trim(Me.Value)
 		  End If
 		  Self.Modified = True
 		End Sub
@@ -739,8 +828,58 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarCaption"
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
 		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ToolbarCaption"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
 		Type="String"
 		EditorType="MultiLineEditor"
 	#tag EndViewProperty
@@ -750,6 +889,7 @@ End
 		Group="Behavior"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumHeight"
@@ -757,17 +897,21 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Progress"
+		Visible=false
 		Group="Behavior"
 		InitialValue="ProgressNone"
 		Type="Double"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -775,6 +919,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -784,6 +929,7 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -791,53 +937,71 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -845,6 +1009,7 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -871,69 +1036,20 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"
@@ -953,7 +1069,10 @@ End
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ObjectID"
+		Visible=false
 		Group="Behavior"
+		InitialValue=""
 		Type="Text"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

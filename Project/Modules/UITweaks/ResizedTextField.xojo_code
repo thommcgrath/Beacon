@@ -21,247 +21,55 @@ Inherits TextField
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="Transparent"
-			Visible=true
-			Group="Appearance"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AcceptTabs"
-			Visible=true
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Alignment"
-			Visible=true
-			Group="Behavior"
-			InitialValue="0"
-			Type="Integer"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Default"
-				"1 - Left"
-				"2 - Center"
-				"3 - Right"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AutoDeactivate"
+			Name="AllowAutoDeactivate"
 			Visible=true
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="AutomaticallyCheckSpelling"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="BackColor"
+			Name="BackgroundColor"
 			Visible=true
 			Group="Appearance"
 			InitialValue="&hFFFFFF"
 			Type="Color"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Bold"
-			Visible=true
-			Group="Font"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Border"
+			Name="HasBorder"
 			Visible=true
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="CueText"
-			Visible=true
-			Group="Initial State"
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataField"
-			Visible=true
-			Group="Database Binding"
-			Type="String"
-			EditorType="DataField"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataSource"
-			Visible=true
-			Group="Database Binding"
-			Type="String"
-			EditorType="DataSource"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Enabled"
+			Name="AllowFocusRing"
 			Visible=true
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Format"
-			Visible=true
-			Group="Appearance"
-			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Height"
-			Visible=true
-			Group="Position"
-			InitialValue="22"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HelpTag"
-			Visible=true
-			Group="Appearance"
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Index"
-			Visible=true
-			Group="ID"
-			Type="Integer"
-			EditorType="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Italic"
-			Visible=true
-			Group="Font"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Left"
-			Visible=true
-			Group="Position"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LimitText"
-			Visible=true
-			Group="Behavior"
-			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LockBottom"
-			Visible=true
-			Group="Position"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LockLeft"
-			Visible=true
-			Group="Position"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LockRight"
-			Visible=true
-			Group="Position"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LockTop"
-			Visible=true
-			Group="Position"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Mask"
-			Visible=true
-			Group="Behavior"
-			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Name"
-			Visible=true
-			Group="ID"
-			Type="String"
-			EditorType="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Password"
-			Visible=true
-			Group="Appearance"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ReadOnly"
-			Visible=true
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Super"
-			Visible=true
-			Group="ID"
-			Type="String"
-			EditorType="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TabIndex"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TabPanelIndex"
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TabStop"
-			Visible=true
-			Group="Position"
-			InitialValue="True"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Text"
-			Visible=true
-			Group="Initial State"
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextColor"
-			Visible=true
-			Group="Appearance"
-			InitialValue="&h000000"
-			Type="Color"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextFont"
+			Name="FontName"
 			Visible=true
 			Group="Font"
 			InitialValue="System"
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="TextSize"
+			Name="FontSize"
 			Visible=true
 			Group="Font"
 			InitialValue="0"
 			Type="Single"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="TextUnit"
+			Name="FontUnit"
 			Visible=true
 			Group="Font"
 			InitialValue="0"
@@ -276,23 +84,266 @@ Inherits TextField
 			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="Hint"
+			Visible=true
+			Group="Initial State"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Value"
+			Visible=true
+			Group="Initial State"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowTabs"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TextAlignment"
+			Visible=true
+			Group="Behavior"
+			InitialValue="0"
+			Type="TextAlignments"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Default"
+				"1 - Left"
+				"2 - Center"
+				"3 - Right"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowSpellChecking"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MaximumCharactersAllowed"
+			Visible=true
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ValidationMask"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Transparent"
+			Visible=true
+			Group="Appearance"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Bold"
+			Visible=true
+			Group="Font"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DataField"
+			Visible=true
+			Group="Database Binding"
+			InitialValue=""
+			Type="String"
+			EditorType="DataField"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DataSource"
+			Visible=true
+			Group="Database Binding"
+			InitialValue=""
+			Type="String"
+			EditorType="DataSource"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Enabled"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Format"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Height"
+			Visible=true
+			Group="Position"
+			InitialValue="22"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HelpTag"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="Integer"
+			EditorType="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Italic"
+			Visible=true
+			Group="Font"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LockBottom"
+			Visible=true
+			Group="Position"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LockLeft"
+			Visible=true
+			Group="Position"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LockRight"
+			Visible=true
+			Group="Position"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LockTop"
+			Visible=true
+			Group="Position"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Password"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ReadOnly"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabIndex"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabPanelIndex"
+			Visible=false
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabStop"
+			Visible=true
+			Group="Position"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TextColor"
+			Visible=true
+			Group="Appearance"
+			InitialValue="&h000000"
+			Type="Color"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Top"
 			Visible=true
 			Group="Position"
+			InitialValue=""
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Underline"
 			Visible=true
 			Group="Font"
+			InitialValue=""
 			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="UseFocusRing"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Visible"
@@ -300,6 +351,7 @@ Inherits TextField
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Width"
@@ -307,6 +359,7 @@ Inherits TextField
 			Group="Position"
 			InitialValue="80"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

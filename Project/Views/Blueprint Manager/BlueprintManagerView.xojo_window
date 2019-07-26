@@ -1,15 +1,15 @@
 #tag Window
 Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   592
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,18 +23,21 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   806
    Begin BeaconToolbar ListHeader
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Objects"
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   False
+      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -61,11 +64,15 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
    Begin FadedSeparator ListSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   552
       HelpTag         =   ""
       Index           =   -2147483648
@@ -88,6 +95,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Width           =   1
    End
    Begin PagePanel Pages
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   592
@@ -103,8 +111,10 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   2
@@ -113,11 +123,15 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Begin FadedSeparator EditorHeaderSeparator
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
-         DoubleBuffer    =   False
+         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          Height          =   1
          HelpTag         =   ""
          Index           =   -2147483648
@@ -142,12 +156,16 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Begin BeaconToolbar EditorHeader
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   ""
-         DoubleBuffer    =   False
+         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   False
+         EraseBackground =   "False"
          Height          =   40
          HelpTag         =   ""
          Index           =   -2147483648
@@ -174,15 +192,22 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Begin BlueprintEditor Editor
          AcceptFocus     =   False
          AcceptTabs      =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   592
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   296
          LockBottom      =   True
@@ -208,15 +233,22 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Begin BlueprintMultiEditor MultiEditor
          AcceptFocus     =   False
          AcceptTabs      =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   592
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   296
          LockBottom      =   True
@@ -240,6 +272,13 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       End
    End
    Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -250,12 +289,22 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DropIndicatorVisible=   False
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLinesHorizontal=   "0"
+      GridLinesHorizontalStyle=   "0"
+      GridLinesVertical=   "0"
+      GridLinesVerticalStyle=   "0"
+      HasBorder       =   False
+      HasHeader       =   False
       HasHeading      =   False
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   551
       HelpTag         =   ""
@@ -271,12 +320,14 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   0
+      RowCount        =   "0"
+      RowSelectionType=   "1"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   1
+      SelectionRequired=   False
+      SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -296,11 +347,15 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
    Begin FadedSeparator ListHeaderSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -323,6 +378,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Width           =   295
    End
    Begin Beacon.EngramSearcherThread Searcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -331,10 +387,12 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       TabPanelIndex   =   0
    End
    Begin Timer ClipboardWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Mode            =   0
+      Mode            =   "0"
       Period          =   500
+      RunMode         =   "0"
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -350,7 +408,7 @@ End
 
 	#tag Event
 		Sub EnableMenuItems()
-		  If Self.List.ListCount > 0 Then
+		  If Self.List.RowCount > 0 Then
 		    FileExport.Enable
 		  End If
 		End Sub
@@ -358,7 +416,7 @@ End
 
 	#tag Event
 		Sub Hidden()
-		  Self.ClipboardWatcher.Mode = Timer.ModeOff
+		  Self.ClipboardWatcher.RunMode = Timer.RunModes.Off
 		End Sub
 	#tag EndEvent
 
@@ -373,9 +431,9 @@ End
 
 	#tag Event
 		Function ShouldSave() As Boolean
-		  If Self.Pages.Value = Self.PageEditor And Self.Editor.Modified Then
+		  If Self.Pages.SelectedPanelIndex = Self.PageEditor And Self.Editor.Modified Then
 		    Self.Editor.Save()
-		  ElseIf Self.Pages.Value = Self.PageMulti And Self.MultiEditor.Modified Then
+		  ElseIf Self.Pages.SelectedPanelIndex = Self.PageMulti And Self.MultiEditor.Modified Then
 		    Self.MultiEditor.Save()
 		  End If
 		End Function
@@ -385,7 +443,7 @@ End
 		Sub Shown(UserData As Auto = Nil)
 		  #Pragma Unused UserData
 		  
-		  Self.ClipboardWatcher.Mode = Timer.ModeMultiple
+		  Self.ClipboardWatcher.RunMode = Timer.RunModes.Multiple
 		End Sub
 	#tag EndEvent
 
@@ -402,7 +460,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub AddObject()
 		  Self.Editor.ObjectID = Beacon.CreateUUID
-		  Self.Pages.Value = Self.PageEditor
+		  Self.Pages.SelectedPanelIndex = Self.PageEditor
 		End Sub
 	#tag EndMethod
 
@@ -420,7 +478,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfirmClose(Callback As BeaconSubview.BringToFrontDelegate) As Boolean
-		  If Self.Pages.Value = Self.PageEmpty Or (Self.Pages.Value = Self.PageEditor And Not Self.Editor.Modified) Or (Self.Pages.Value = Self.PageMulti And Not Self.MultiEditor.Modified) Then
+		  If Self.Pages.SelectedPanelIndex = Self.PageEmpty Or (Self.Pages.SelectedPanelIndex = Self.PageEditor And Not Self.Editor.Modified) Or (Self.Pages.SelectedPanelIndex = Self.PageMulti And Not Self.MultiEditor.Modified) Then
 		    Return True
 		  End If
 		  
@@ -428,10 +486,10 @@ End
 		    Callback.Invoke(Self)
 		  End If
 		  
-		  If Self.Pages.Value = Self.PageEditor Then
+		  If Self.Pages.SelectedPanelIndex = Self.PageEditor Then
 		    Self.Editor.ObjectID = ""
 		    Return Not Self.Editor.Modified
-		  ElseIf Self.Pages.Value = Self.PageMulti Then
+		  ElseIf Self.Pages.SelectedPanelIndex = Self.PageMulti Then
 		    Self.MultiEditor.Blueprints = Nil
 		    Return Not Self.MultiEditor.Modified
 		  End If
@@ -440,7 +498,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ExportAll()
-		  Dim Dialog As New SaveAsDialog
+		  Dim Dialog As New SaveFileDialog
 		  Dialog.SuggestedFileName = "Beacon Objects.csv"
 		  Dialog.PromptText = "Export objects to CSV"
 		  Dialog.Filter = BeaconFileTypes.CSVFile
@@ -513,7 +571,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function PromptForImportFile(Parent As Window) As FolderItem
-		  Dim Dialog As New OpenDialog
+		  Dim Dialog As New OpenFileDialog
 		  Dialog.Filter = BeaconFileTypes.Text + BeaconFileTypes.CSVFile
 		  Return Dialog.ShowModalWithin(Parent.TrueWindow)
 		End Function
@@ -545,7 +603,7 @@ End
 		  Labels.SortWith(Blueprints)
 		  
 		  Dim SelectedPaths() As Text
-		  For I As Integer = 0 To Self.List.ListCount - 1
+		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
 		      SelectedPaths.Append(Beacon.Blueprint(Self.List.RowTag(I)).Path)
 		    End If
@@ -568,34 +626,34 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateEditorWithSelection()
-		  If Self.List.SelCount = 0 Then
-		    If Self.Pages.Value = Self.PageEditor Then
+		  If Self.List.SelectedRowCount = 0 Then
+		    If Self.Pages.SelectedPanelIndex = Self.PageEditor Then
 		      Self.Editor.ObjectID = ""
 		      If Not Self.Editor.Modified Then
-		        Self.Pages.Value = Self.PageEmpty
+		        Self.Pages.SelectedPanelIndex = Self.PageEmpty
 		      End If
-		    ElseIf Self.Pages.Value = Self.PageMulti Then
+		    ElseIf Self.Pages.SelectedPanelIndex = Self.PageMulti Then
 		      Self.MultiEditor.Blueprints = Nil
 		      If Not Self.MultiEditor.Modified Then
-		        Self.Pages.Value = Self.PageEmpty
+		        Self.Pages.SelectedPanelIndex = Self.PageEmpty
 		      End If
 		    End If
-		  ElseIf Self.List.SelCount = 1 Then
-		    If Self.Pages.Value = Self.PageMulti Then
+		  ElseIf Self.List.SelectedRowCount = 1 Then
+		    If Self.Pages.SelectedPanelIndex = Self.PageMulti Then
 		      Self.MultiEditor.Blueprints = Nil
 		      If Self.MultiEditor.Modified Then
 		        Return
 		      End If
 		    End If
 		    
-		    Dim Blueprint As Beacon.Blueprint = Self.List.RowTag(Self.List.ListIndex)
+		    Dim Blueprint As Beacon.Blueprint = Self.List.RowTag(Self.List.SelectedIndex)
 		    Self.Editor.ObjectID = Blueprint.ObjectID
 		    
-		    If Self.Pages.Value <> Self.PageEditor Then
-		      Self.Pages.Value = Self.PageEditor
+		    If Self.Pages.SelectedPanelIndex <> Self.PageEditor Then
+		      Self.Pages.SelectedPanelIndex = Self.PageEditor
 		    End If
-		  ElseIf Self.List.SelCount > 1 Then
-		    If Self.Pages.Value = Self.PageEditor Then
+		  ElseIf Self.List.SelectedRowCount > 1 Then
+		    If Self.Pages.SelectedPanelIndex = Self.PageEditor Then
 		      Self.Editor.ObjectID = ""
 		      If Self.Editor.Modified Then
 		        Return
@@ -603,15 +661,15 @@ End
 		    End If
 		    
 		    Dim Blueprints() As Beacon.Blueprint
-		    For I As Integer = 0 To Self.List.ListCount - 1
+		    For I As Integer = 0 To Self.List.RowCount - 1
 		      If Self.List.Selected(I) Then
 		        Blueprints.Append(Beacon.Blueprint(Self.List.RowTag(I)))
 		      End If
 		    Next
 		    Self.MultiEditor.Blueprints = Blueprints
 		    
-		    If Self.Pages.Value <> Self.PageMulti Then
-		      Self.Pages.Value = Self.PageMulti
+		    If Self.Pages.SelectedPanelIndex <> Self.PageMulti Then
+		      Self.Pages.SelectedPanelIndex = Self.PageMulti
 		    End If
 		  End If
 		End Sub
@@ -667,13 +725,13 @@ End
 #tag Events Pages
 	#tag Event
 		Sub Change()
-		  Select Case Me.Value
+		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageEmpty
-		    Self.ContentsChanged = False
+		    Self.Changed = False
 		  Case Self.PageEditor
-		    Self.ContentsChanged = Self.Editor.ContentsChanged
+		    Self.Changed = Self.Editor.Changed
 		  Case Self.PageMulti
-		    Self.ContentsChanged = Self.Editor.ContentsChanged
+		    Self.Changed = Self.Editor.Changed
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -681,8 +739,8 @@ End
 #tag Events Editor
 	#tag Event
 		Sub ContentsChanged()
-		  If Self.Pages.Value = Self.PageEditor Then
-		    Self.ContentsChanged = Me.ContentsChanged
+		  If Self.Pages.SelectedPanelIndex = Self.PageEditor Then
+		    Self.Changed = Me.Changed
 		  End If
 		End Sub
 	#tag EndEvent
@@ -690,8 +748,8 @@ End
 #tag Events MultiEditor
 	#tag Event
 		Sub ContentsChanged()
-		  If Self.Pages.Value = Self.PageMulti Then
-		    Self.ContentsChanged = Me.ContentsChanged
+		  If Self.Pages.SelectedPanelIndex = Self.PageMulti Then
+		    Self.Changed = Me.Changed
 		  End If
 		End Sub
 	#tag EndEvent
@@ -706,17 +764,17 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelCount > 0
+		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
 		  If Warn Then
 		    Dim Message As String
-		    If Me.SelCount = 1 Then
+		    If Me.SelectedRowCount = 1 Then
 		      Message = "Are you sure you want to delete this object?"
 		    Else
-		      Message = "Are you sure you want to delete these " + Str(Me.SelCount, "-0") + " objects?"
+		      Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " objects?"
 		    End If
 		    
 		    If Not Self.ShowConfirm(Message, "This action cannot be undone.", "Delete", "Cancel") Then
@@ -725,7 +783,7 @@ End
 		  End If
 		  
 		  Dim Objects() As Beacon.Blueprint
-		  For I As Integer = 0 To Me.ListCount - 1
+		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
 		      Objects.Append(Beacon.Blueprint(Me.RowTag(I)))
 		    End If
@@ -779,8 +837,58 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarCaption"
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
 		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ToolbarCaption"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
 		Type="String"
 		EditorType="MultiLineEditor"
 	#tag EndViewProperty
@@ -790,6 +898,7 @@ End
 		Group="Behavior"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumHeight"
@@ -797,17 +906,21 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Progress"
+		Visible=false
 		Group="Behavior"
 		InitialValue="ProgressNone"
 		Type="Double"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -815,6 +928,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -824,6 +938,7 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -831,53 +946,71 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -885,6 +1018,7 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -911,69 +1045,20 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"

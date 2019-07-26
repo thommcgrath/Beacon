@@ -1,15 +1,15 @@
 #tag Window
 Begin ServerViewContainer NitradoServerView
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   600
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,7 +23,6 @@ Begin ServerViewContainer NitradoServerView
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   600
    Begin Beacon.OAuth2Client Auth
@@ -37,12 +36,16 @@ Begin ServerViewContainer NitradoServerView
    Begin BeaconToolbar Controls
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Untitled"
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   False
+      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -69,11 +72,15 @@ Begin ServerViewContainer NitradoServerView
    Begin FadedSeparator ControlsSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -96,11 +103,15 @@ Begin ServerViewContainer NitradoServerView
       Width           =   600
    End
    Begin UITweaks.ResizedLabel ServerStatusLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -119,7 +130,8 @@ Begin ServerViewContainer NitradoServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Server Status:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -127,6 +139,7 @@ Begin ServerViewContainer NitradoServerView
       Top             =   61
       Transparent     =   False
       Underline       =   False
+      Value           =   "Server Status:"
       Visible         =   True
       Width           =   110
    End
@@ -134,17 +147,22 @@ Begin ServerViewContainer NitradoServerView
       Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Mode            =   0
+      Mode            =   "0"
       Period          =   5000
+      RunMode         =   "0"
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin UITweaks.ResizedLabel ServerStatusField
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -163,7 +181,8 @@ Begin ServerViewContainer NitradoServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Checking…"
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -171,17 +190,22 @@ Begin ServerViewContainer NitradoServerView
       Top             =   61
       Transparent     =   False
       Underline       =   False
+      Value           =   "Checking…"
       Visible         =   True
       Width           =   438
    End
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -205,19 +229,29 @@ Begin ServerViewContainer NitradoServerView
    End
    Begin UITweaks.ResizedTextField ServerNameField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   142
@@ -228,6 +262,7 @@ Begin ServerViewContainer NitradoServerView
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -235,6 +270,7 @@ Begin ServerViewContainer NitradoServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -243,15 +279,21 @@ Begin ServerViewContainer NitradoServerView
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
       Width           =   438
    End
    Begin UITweaks.ResizedLabel ServerNameLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -270,7 +312,8 @@ Begin ServerViewContainer NitradoServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Server Name:"
-      TextAlign       =   2
+      TextAlign       =   "2"
+      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -278,6 +321,7 @@ Begin ServerViewContainer NitradoServerView
       Top             =   124
       Transparent     =   False
       Underline       =   False
+      Value           =   "Server Name:"
       Visible         =   True
       Width           =   110
    End
@@ -293,7 +337,7 @@ End
 		  
 		  Self.Controls.Caption = Self.mProfile.Name
 		  
-		  Self.ServerNameField.Text = Self.mProfile.Name
+		  Self.ServerNameField.Value = Self.mProfile.Name
 		End Sub
 	#tag EndEvent
 
@@ -321,39 +365,39 @@ End
 		    Dim Started, Enabled As Boolean
 		    Select Case ServerStatus
 		    Case "started"
-		      Self.ServerStatusField.Text = "Running"
+		      Self.ServerStatusField.Value = "Running"
 		      Started = True
 		      Enabled = True
 		    Case "stopped"
-		      Self.ServerStatusField.Text = "Stopped"
+		      Self.ServerStatusField.Value = "Stopped"
 		      Started = False
 		      Enabled = True
 		    Case "stopping"
-		      Self.ServerStatusField.Text = "Stopping"
+		      Self.ServerStatusField.Value = "Stopping"
 		      Started = True
 		      Enabled = False
 		    Case "restarting"
-		      Self.ServerStatusField.Text = "Restarting"
+		      Self.ServerStatusField.Value = "Restarting"
 		      Started = False
 		      Enabled = False
 		    Case "suspended"
-		      Self.ServerStatusField.Text = "Suspended"
+		      Self.ServerStatusField.Value = "Suspended"
 		      Started = False
 		      Enabled = False
 		    Case "guardian_locked"
-		      Self.ServerStatusField.Text = "Locked by Guardian"
+		      Self.ServerStatusField.Value = "Locked by Guardian"
 		      Started = False
 		      Enabled = False
 		    Case "gs_installation"
-		      Self.ServerStatusField.Text = "Switching games"
+		      Self.ServerStatusField.Value = "Switching games"
 		      Started = False
 		      Enabled = False
 		    Case "backup_restore"
-		      Self.ServerStatusField.Text = "Restoring from backup"
+		      Self.ServerStatusField.Value = "Restoring from backup"
 		      Started = False
 		      Enabled = False
 		    Case "backup_creation"
-		      Self.ServerStatusField.Text = "Creating backup"
+		      Self.ServerStatusField.Value = "Creating backup"
 		      Started = False
 		      Enabled = False
 		    End Select
@@ -365,10 +409,10 @@ End
 		    Self.Controls.PowerButton.Enabled = False
 		    Self.Controls.PowerButton.Toggled = False
 		    Self.Controls.PowerButton.HelpTag = "Server state unknown. Cannot start or stop."
-		    Self.ServerStatusField.Text = "Unknown"
+		    Self.ServerStatusField.Value = "Unknown"
 		  End Try
 		  
-		  Self.RefreshTimer.Mode = Timer.ModeSingle
+		  Self.RefreshTimer.RunMode = Timer.RunModes.Single
 		End Sub
 	#tag EndMethod
 
@@ -517,22 +561,74 @@ End
 #tag Events ServerNameField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Name = Me.Text.ToText
-		  Self.Controls.Caption = Me.Text
-		  Self.ContentsChanged = Self.mProfile.Modified
+		  Self.mProfile.Name = Me.Value.ToText
+		  Self.Controls.Caption = Me.Value
+		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Progress"
+		Visible=false
 		Group="Behavior"
 		InitialValue="ProgressNone"
 		Type="Double"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
+		Visible=false
 		Group="Behavior"
+		InitialValue=""
 		Type="String"
 		EditorType="MultiLineEditor"
 	#tag EndViewProperty
@@ -542,6 +638,7 @@ End
 		Group="Behavior"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumHeight"
@@ -549,11 +646,13 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -561,6 +660,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -570,6 +670,7 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -577,53 +678,71 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -631,6 +750,7 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -657,69 +777,20 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"

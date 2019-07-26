@@ -1,15 +1,15 @@
 #tag Window
 Begin ConfigEditor ExperienceCurvesConfigEditor
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   422
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,18 +23,21 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   710
    Begin BeaconToolbar LeftButtons
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   ""
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   False
+      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -61,12 +64,16 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
    Begin Shelf Switcher
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       DrawCaptions    =   True
       Enabled         =   True
-      EraseBackground =   False
+      EraseBackground =   "False"
       Height          =   60
       HelpTag         =   ""
       Index           =   -2147483648
@@ -93,11 +100,15 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -120,6 +131,13 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       Width           =   710
    End
    Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -130,12 +148,22 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DropIndicatorVisible=   False
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLinesHorizontal=   "0"
+      GridLinesHorizontalStyle=   "0"
+      GridLinesVertical=   "0"
+      GridLinesVerticalStyle=   "0"
+      HasBorder       =   False
+      HasHeader       =   True
       HasHeading      =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   361
       HelpTag         =   ""
@@ -151,11 +179,14 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   0
+      RowCount        =   "0"
+      RowSelectionType=   "1"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
-      SelectionType   =   1
+      SelectionChangeBlocked=   False
+      SelectionRequired=   False
+      SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -267,7 +298,7 @@ End
 		  Next
 		  
 		  Self.UpdateList()
-		  Self.ContentsChanged = True
+		  Self.Changed = True
 		End Sub
 	#tag EndMethod
 
@@ -287,7 +318,7 @@ End
 		  Next
 		  
 		  Self.UpdateList()
-		  Self.ContentsChanged = True
+		  Self.Changed = True
 		End Sub
 	#tag EndMethod
 
@@ -321,7 +352,7 @@ End
 		    Dim SelectLevels(0) As Integer
 		    SelectLevels(0) = Level
 		    Self.UpdateList(SelectLevels)
-		    Self.ContentsChanged = True
+		    Self.Changed = True
 		  End If
 		End Sub
 	#tag EndMethod
@@ -356,7 +387,7 @@ End
 		  Next
 		  
 		  Self.UpdateList()
-		  Self.ContentsChanged = True
+		  Self.Changed = True
 		End Sub
 	#tag EndMethod
 
@@ -366,7 +397,7 @@ End
 		  Dim LevelXP, MinXP, MaxXP As UInt64
 		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(False)
 		  
-		  Index = Self.List.ListIndex
+		  Index = Self.List.SelectedIndex
 		  Level = Index + 2
 		  
 		  If Self.ViewingPlayerStats Then
@@ -391,7 +422,7 @@ End
 		    Dim SelectLevels(0) As Integer
 		    SelectLevels(0) = Level
 		    Self.UpdateList(SelectLevels)
-		    Self.ContentsChanged = True
+		    Self.Changed = True
 		  End If
 		End Sub
 	#tag EndMethod
@@ -399,7 +430,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
 		  Dim SelectedLevels() As Integer
-		  For I As Integer = 0 To Self.List.ListCount - 1
+		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
 		      SelectedLevels.Append(Val(Self.List.Cell(I, 0)))
 		    End If
@@ -433,7 +464,7 @@ End
 		    Dim IsAscensionLevel As Boolean = Level > (MaxLevel - AscensionLevels)
 		    
 		    Self.List.AddRow(Format(Level, "0,"), Format(XP, "-0,"), If(IsAscensionLevel, "Yes", "No"))
-		    Self.List.Selected(Self.List.LastIndex) = SelectLevels.IndexOf(Level) > -1
+		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectLevels.IndexOf(Level) > -1
 		  Next
 		  
 		  Self.List.EnsureSelectionIsVisible(False)
@@ -512,13 +543,13 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Self.List.SelCount > 0
+		  Return Self.List.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
 		  If Warn Then
-		    Dim Count As Integer = Self.List.SelCount
+		    Dim Count As Integer = Self.List.SelectedRowCount
 		    If Count = 1 Then
 		      If Not Self.ShowConfirm("Are you sure you want to delete this experience requirement?", "You will be removing the experience requirement for the selected level. All later level requirements will be moved down. For example, when deleting level 2, level 3's requirement would become the new level 2 requirement.", "Delete", "Cancel") Then
 		        Return
@@ -532,9 +563,9 @@ End
 		  
 		  Dim Player As Boolean = Self.ViewingPlayerStats
 		  Dim Config As BeaconConfigs.ExperienceCurves
-		  Dim Modified As Boolean = Self.ContentsChanged
+		  Dim Modified As Boolean = Self.Changed
 		  
-		  For I As Integer = Self.List.ListCount - 1 DownTo 0
+		  For I As Integer = Self.List.RowCount - 1 DownTo 0
 		    If Not Self.List.Selected(I) Then
 		      Continue
 		    End If
@@ -554,17 +585,17 @@ End
 		  
 		  Dim Levels() As Integer
 		  Self.UpdateList(Levels)
-		  Self.ContentsChanged = Modified
+		  Self.Changed = Modified
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Self.LeftButtons.EditButton.Enabled = Me.SelCount = 1
+		  Self.LeftButtons.EditButton.Enabled = Me.SelectedRowCount = 1
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub DoubleClick()
-		  If Me.SelCount = 1 Then
+		  If Me.SelectedRowCount = 1 Then
 		    Self.ShowEditExperience()
 		  End If
 		End Sub
@@ -572,10 +603,60 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Progress"
+		Visible=false
 		Group="Behavior"
 		InitialValue="ProgressNone"
 		Type="Double"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -583,6 +664,7 @@ End
 		Group="Behavior"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumHeight"
@@ -590,10 +672,13 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
+		Visible=false
 		Group="Behavior"
+		InitialValue=""
 		Type="String"
 		EditorType="MultiLineEditor"
 	#tag EndViewProperty
@@ -601,6 +686,7 @@ End
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -608,6 +694,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -617,6 +704,7 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -624,53 +712,71 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -678,6 +784,7 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -704,69 +811,20 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"

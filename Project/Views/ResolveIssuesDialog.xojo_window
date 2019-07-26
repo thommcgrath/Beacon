@@ -2,36 +2,54 @@
 Begin BeaconDialog ResolveIssuesDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
-   Frame           =   8
+   DefaultLocation =   "1"
+   Frame           =   "8"
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
+   HasBackgroundColor=   False
+   HasCloseButton  =   False
+   HasFullScreenButton=   False
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
    Height          =   547
    ImplicitInstance=   False
-   LiveResize      =   True
+   LiveResize      =   "True"
    MacProcID       =   0
    MaxHeight       =   32000
    MaximizeButton  =   False
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
    MinHeight       =   500
    MinimizeButton  =   False
+   MinimumHeight   =   500
+   MinimumWidth    =   600
    MinWidth        =   600
-   Placement       =   1
-   Resizeable      =   True
+   Placement       =   "1"
+   Resizable       =   True
+   Resizeable      =   "True"
+   SystemUIVisible =   True
    Title           =   "Document Issues"
+   Type            =   "8"
    Visible         =   True
    Width           =   600
    Begin Label MessageLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   True
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -50,7 +68,8 @@ Begin BeaconDialog ResolveIssuesDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "This document has problems that must be resolved"
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -58,10 +77,12 @@ Begin BeaconDialog ResolveIssuesDialog
       Top             =   20
       Transparent     =   True
       Underline       =   False
+      Value           =   "This document has problems that must be resolved"
       Visible         =   True
       Width           =   560
    End
    Begin UITweaks.ResizedPushButton ActionButton
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -69,6 +90,9 @@ Begin BeaconDialog ResolveIssuesDialog
       Caption         =   "OK"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -80,6 +104,7 @@ Begin BeaconDialog ResolveIssuesDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0
@@ -94,6 +119,13 @@ Begin BeaconDialog ResolveIssuesDialog
       Width           =   80
    End
    Begin BeaconListbox IssuesList
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   True
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -104,12 +136,22 @@ Begin BeaconDialog ResolveIssuesDialog
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
+      DropIndicatorVisible=   False
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLinesHorizontal=   "0"
+      GridLinesHorizontalStyle=   "0"
+      GridLinesVertical=   "0"
+      GridLinesVerticalStyle=   "0"
+      HasBorder       =   True
+      HasHeader       =   False
       HasHeading      =   False
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   160
       HelpTag         =   ""
@@ -125,12 +167,14 @@ Begin BeaconDialog ResolveIssuesDialog
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   0
+      RowCount        =   "0"
+      RowSelectionType=   "0"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   0
+      SelectionRequired=   False
+      SelectionType   =   "0"
       ShowDropIndicator=   False
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -148,11 +192,15 @@ Begin BeaconDialog ResolveIssuesDialog
       _ScrollWidth    =   -1
    End
    Begin Label BlueprintsExplanation
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   39
       HelpTag         =   ""
       Index           =   -2147483648
@@ -171,7 +219,8 @@ Begin BeaconDialog ResolveIssuesDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "To resolve unknown blueprint problems, paste their spawn codes below. It is ok to include more codes than necessary, Beacon will use only the ones it needs."
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -179,21 +228,34 @@ Begin BeaconDialog ResolveIssuesDialog
       Top             =   224
       Transparent     =   True
       Underline       =   False
+      Value           =   "To resolve unknown blueprint problems, paste their spawn codes below. It is ok to include more codes than necessary, Beacon will use only the ones it needs."
       Visible         =   True
       Width           =   560
    End
    Begin TextArea BlueprintsField
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowStyledText =   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "Source Code Pro"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       Height          =   220
       HelpTag         =   ""
       HideSelection   =   True
@@ -209,6 +271,7 @@ Begin BeaconDialog ResolveIssuesDialog
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Multiline       =   True
       ReadOnly        =   False
       Scope           =   2
@@ -219,6 +282,7 @@ Begin BeaconDialog ResolveIssuesDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "Source Code Pro"
       TextSize        =   0.0
@@ -227,10 +291,13 @@ Begin BeaconDialog ResolveIssuesDialog
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
       Width           =   560
    End
    Begin UITweaks.ResizedPushButton ExtractButton
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -238,6 +305,9 @@ Begin BeaconDialog ResolveIssuesDialog
       Caption         =   "Extract Blueprints"
       Default         =   False
       Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -249,6 +319,7 @@ Begin BeaconDialog ResolveIssuesDialog
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -263,6 +334,7 @@ Begin BeaconDialog ResolveIssuesDialog
       Width           =   131
    End
    Begin UITweaks.ResizedPushButton GoToButton
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -270,6 +342,9 @@ Begin BeaconDialog ResolveIssuesDialog
       Caption         =   "Go To Issue"
       Default         =   False
       Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -281,6 +356,7 @@ Begin BeaconDialog ResolveIssuesDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
@@ -295,6 +371,7 @@ Begin BeaconDialog ResolveIssuesDialog
       Width           =   105
    End
    Begin ProgressWheel ResolutionSpinner
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   16
@@ -400,9 +477,9 @@ End
 		  Self.UpdateUI
 		  
 		  Self.ActionButton.Enabled = True
-		  Self.ExtractButton.Enabled = BlueprintsField.Text.Len > 0
+		  Self.ExtractButton.Enabled = BlueprintsField.Value.Len > 0
 		  Self.ResolutionSpinner.Visible = False
-		  Self.GoToButton.Enabled = Self.GoToIssueHandler <> Nil And Self.IssuesList.ListIndex > -1
+		  Self.GoToButton.Enabled = Self.GoToIssueHandler <> Nil And Self.IssuesList.SelectedIndex > -1
 		  Self.BlueprintsField.ReadOnly = False
 		  
 		  If SomeResolved Then
@@ -418,7 +495,7 @@ End
 		  Self.IssuesList.DeleteAllRows
 		  For Each Issue As Beacon.Issue In Self.Issues
 		    Self.IssuesList.AddRow(Issue.Description)
-		    Self.IssuesList.RowTag(Self.IssuesList.LastIndex) = Issue
+		    Self.IssuesList.RowTag(Self.IssuesList.LastAddedRowIndex) = Issue
 		  Next
 		End Sub
 	#tag EndMethod
@@ -453,14 +530,14 @@ End
 #tag Events IssuesList
 	#tag Event
 		Sub Change()
-		  Self.GoToButton.Enabled = ResolutionSpinner.Visible = False And Self.GoToIssueHandler <> Nil And Me.ListIndex > -1
+		  Self.GoToButton.Enabled = ResolutionSpinner.Visible = False And Self.GoToIssueHandler <> Nil And Me.SelectedIndex > -1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events BlueprintsField
 	#tag Event
 		Sub TextChange()
-		  Self.ExtractButton.Enabled = Trim(Me.Text) <> ""
+		  Self.ExtractButton.Enabled = Trim(Me.Value) <> ""
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -473,7 +550,7 @@ End
 		  Me.Enabled = False
 		  BlueprintsField.ReadOnly = True
 		  
-		  Dim Content As Text = BlueprintsField.Text.ToText
+		  Dim Content As Text = BlueprintsField.Value.ToText
 		  Dim Configs() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
 		  Dim Callback As Beacon.ConfigGroup.ResolveIssuesCallback = AddressOf ResolvingFinished
 		  Self.ConfigsWaitingToResolve = Configs.Ubound + 1
@@ -486,11 +563,11 @@ End
 #tag Events GoToButton
 	#tag Event
 		Sub Action()
-		  If Self.IssuesList.ListIndex = -1 Or Self.GoToIssueHandler = Nil Then
+		  If Self.IssuesList.SelectedIndex = -1 Or Self.GoToIssueHandler = Nil Then
 		    Return
 		  End If
 		  
-		  Dim Issue As Beacon.Issue = Self.IssuesList.RowTag(Self.IssuesList.ListIndex)
+		  Dim Issue As Beacon.Issue = Self.IssuesList.RowTag(Self.IssuesList.SelectedIndex)
 		  Self.Hide()
 		  Self.GoToIssueHandler.Invoke(Issue)
 		  Self.Close()
@@ -499,39 +576,43 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="BackColor"
+		Name="MinimumWidth"
 		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Backdrop"
+		Name="MinimumHeight"
 		Visible=true
-		Group="Background"
-		Type="Picture"
-		EditorType="Picture"
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="CloseButton"
+		Name="MaximumWidth"
 		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Composite"
-		Group="OS X (Carbon)"
-		InitialValue="False"
-		Type="Boolean"
+		Name="MaximumHeight"
+		Visible=true
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Frame"
+		Name="Type"
 		Visible=true
 		Group="Frame"
 		InitialValue="0"
-		Type="Integer"
+		Type="Types"
 		EditorType="Enum"
 		#tag EnumValues
 			"0 - Document"
@@ -548,14 +629,39 @@ End
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="FullScreen"
-		Group="Behavior"
-		InitialValue="False"
+		Name="HasCloseButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="FullScreenButton"
+		Name="Resizable"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasMaximizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasMinimizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasFullScreenButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="False"
@@ -563,11 +669,67 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="HasBackColor"
+		Name="DefaultLocation"
+		Visible=true
+		Group="Behavior"
+		InitialValue="0"
+		Type="Locations"
+		EditorType="Enum"
+		#tag EnumValues
+			"0 - Default"
+			"1 - Parent Window"
+			"2 - Main Screen"
+			"3 - Parent Window Screen"
+			"4 - Stagger"
+		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="SystemUIVisible"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
 		Visible=true
 		Group="Background"
 		InitialValue="False"
 		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Backdrop"
+		Visible=true
+		Group="Background"
+		InitialValue=""
+		Type="Picture"
+		EditorType="Picture"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composite"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="FullScreen"
+		Visible=false
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -575,6 +737,7 @@ End
 		Group="Size"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ImplicitInstance"
@@ -588,116 +751,39 @@ End
 		Name="Interfaces"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="LiveResize"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MacProcID"
+		Visible=false
 		Group="OS X (Carbon)"
 		InitialValue="0"
 		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxHeight"
-		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaximizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxWidth"
-		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MenuBar"
 		Visible=true
 		Group="Menus"
+		InitialValue=""
 		Type="MenuBar"
 		EditorType="MenuBar"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MenuBarVisible"
-		Visible=true
-		Group="Deprecated"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinHeight"
-		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinWidth"
-		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Placement"
-		Visible=true
-		Group="Behavior"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		#tag EnumValues
-			"0 - Default"
-			"1 - Parent Window"
-			"2 - Main Screen"
-			"3 - Parent Window Screen"
-			"4 - Stagger"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Resizeable"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -707,6 +793,7 @@ End
 		Group="Frame"
 		InitialValue="Untitled"
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -722,5 +809,6 @@ End
 		Group="Size"
 		InitialValue="600"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

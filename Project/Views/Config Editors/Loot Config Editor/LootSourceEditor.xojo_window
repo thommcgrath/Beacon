@@ -1,15 +1,15 @@
 #tag Window
 Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   464
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,10 +23,16 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   598
    Begin BeaconListbox SetList
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -37,12 +43,22 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
+      DropIndicatorVisible=   False
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLinesHorizontal=   "0"
+      GridLinesHorizontalStyle=   "0"
+      GridLinesVertical=   "0"
+      GridLinesVerticalStyle=   "0"
+      HasBorder       =   False
+      HasHeader       =   False
       HasHeading      =   False
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   0
       Height          =   120
       HelpTag         =   ""
@@ -58,12 +74,14 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   0
+      RowCount        =   "0"
+      RowSelectionType=   "1"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   1
+      SelectionRequired=   False
+      SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   5
       TabPanelIndex   =   0
@@ -95,12 +113,16 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Item Sets"
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   False
+      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -125,6 +147,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Width           =   250
    End
    Begin PagePanel Panel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   464
@@ -140,6 +163,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
@@ -151,13 +175,19 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Begin ItemSetEditor Editor
          AcceptFocus     =   False
          AcceptTabs      =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   False
-         EraseBackground =   True
+         EraseBackground =   "True"
          HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   464
          HelpTag         =   ""
          Index           =   -2147483648
@@ -181,12 +211,16 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Begin LogoFillCanvas LogoFillCanvas1
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "No Selection"
-         DoubleBuffer    =   False
+         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          Height          =   443
          HelpTag         =   ""
          Index           =   -2147483648
@@ -211,13 +245,17 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Begin StatusBar NoSelectionStatusBar
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Borders         =   1
          Caption         =   ""
-         DoubleBuffer    =   False
+         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          Height          =   21
          HelpTag         =   ""
          Index           =   -2147483648
@@ -243,11 +281,15 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   464
       HelpTag         =   ""
       Index           =   -2147483648
@@ -272,13 +314,19 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    Begin SimulatorView Simulator
       AcceptFocus     =   False
       AcceptTabs      =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       HasBackColor    =   False
+      HasBackgroundColor=   False
       Height          =   183
       HelpTag         =   ""
       Index           =   -2147483648
@@ -302,11 +350,15 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    Begin FadedSeparator FadedSeparator3
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -331,13 +383,19 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    Begin LootSourceSettingsContainer SettingsContainer
       AcceptFocus     =   False
       AcceptTabs      =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       HasBackColor    =   False
+      HasBackgroundColor=   False
       Height          =   23
       HelpTag         =   ""
       Index           =   -2147483648
@@ -361,13 +419,17 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    Begin StatusBar StatusBar1
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   21
       HelpTag         =   ""
       Index           =   -2147483648
@@ -392,13 +454,19 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    Begin LootSourceHintsContainer HintsContainer
       AcceptFocus     =   False
       AcceptTabs      =   True
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       HasBackColor    =   False
+      HasBackgroundColor=   False
       Height          =   76
       HelpTag         =   ""
       Index           =   -2147483648
@@ -441,7 +509,7 @@ End
 	#tag Event
 		Sub EnableMenuItems()
 		  Self.BuildPresetMenu(DocumentAddItemSet)
-		  If Self.SetList.SelCount > 0 Then
+		  If Self.SetList.SelectedRowCount > 0 Then
 		    DocumentRemoveItemSet.Enable
 		  End If
 		End Sub
@@ -488,8 +556,8 @@ End
 		  
 		  If Added Then
 		    SetList.AddRow(Set.Label)
-		    SetList.RowTag(SetList.LastIndex) = Set
-		    SetList.ListIndex = SetList.LastIndex
+		    SetList.RowTag(SetList.LastAddedRowIndex) = Set
+		    SetList.SelectedIndex = SetList.LastAddedRowIndex
 		    Self.mSorting = True
 		    SetList.Sort
 		    Self.mSorting = False
@@ -619,10 +687,10 @@ End
 		    AddItemSetFurArmor.Enable
 		    AddItemSetGardening.Enable
 		  #endif
-		  If SetList.SelCount > 0 Then
+		  If SetList.SelectedRowCount > 0 Then
 		    DocumentRemoveItemSet.Enable
 		  End If
-		  If SetList.SelCount = 1 Then
+		  If SetList.SelectedRowCount = 1 Then
 		    Editor.EnableMenuItems
 		  End If
 		End Sub
@@ -630,9 +698,9 @@ End
 
 	#tag Method, Flags = &h0
 		Function GoToChild(ItemSet As Beacon.ItemSet, Entry As Beacon.SetEntry = Nil, Option As Beacon.SetEntryOption = Nil) As Boolean
-		  For I As Integer = 0 To Self.SetList.ListCount - 1
+		  For I As Integer = 0 To Self.SetList.RowCount - 1
 		    If Self.SetList.RowTag(I) = ItemSet Then
-		      Self.SetList.ListIndex = I
+		      Self.SetList.SelectedIndex = I
 		      Self.SetList.EnsureSelectionIsVisible()
 		      If Entry <> Nil Then
 		        Return Self.Editor.GoToChild(Entry, Option)
@@ -641,7 +709,7 @@ End
 		      End If
 		    End If
 		  Next
-		  Self.SetList.ListIndex = -1
+		  Self.SetList.SelectedIndex = -1
 		  Return False
 		End Function
 	#tag EndMethod
@@ -667,11 +735,11 @@ End
 		  If Added Then
 		    Self.RebuildSetList()
 		    Dim Found As Boolean
-		    For I As Integer = 0 To SetList.ListCount - 1
+		    For I As Integer = 0 To SetList.RowCount - 1
 		      Dim Set As Beacon.ItemSet = SetList.RowTag(I)
 		      If Set.SourcePresetID = SelectedPreset.PresetID Then
 		        Found = True
-		        SetList.ListIndex = I
+		        SetList.SelectedIndex = I
 		        Exit
 		      End If
 		    Next
@@ -707,7 +775,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub RebuildSetList()
 		  Dim SelectedSetNames() As String
-		  For I As Integer = 0 To SetList.ListCount - 1
+		  For I As Integer = 0 To SetList.RowCount - 1
 		    If SetList.Selected(I) Then
 		      SelectedSetNames.Append(SetList.Cell(I, 0))
 		    End If
@@ -743,14 +811,14 @@ End
 		    End If
 		  Next
 		  
-		  Self.mTotalSetCount = Sets.Count
+		  Self.mTotalSetCount = Sets.KeyCount
 		  Self.mVisibleSetCount = CommonSets.Ubound + 1
 		  
 		  SetList.DeleteAllRows
 		  For Each Set As Beacon.ItemSet In CommonSets
 		    SetList.AddRow(Set.Label)
-		    SetList.RowTag(SetList.LastIndex) = Set
-		    SetList.Selected(SetList.LastIndex) = SelectedSetNames.IndexOf(Set.Label) > -1
+		    SetList.RowTag(SetList.LastAddedRowIndex) = Set
+		    SetList.Selected(SetList.LastAddedRowIndex) = SelectedSetNames.IndexOf(Set.Label) > -1
 		  Next
 		  Self.mSorting = True
 		  SetList.Sort
@@ -789,12 +857,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RemoveSelectedItemSets(RequireConfirmation As Boolean)
-		  If SetList.SelCount = 0 Then
+		  If SetList.SelectedRowCount = 0 Then
 		    Return
 		  End If
 		  
 		  Dim Sets() As Beacon.ItemSet
-		  For I As Integer = 0 To SetList.ListCount - 1
+		  For I As Integer = 0 To SetList.RowCount - 1
 		    If SetList.Selected(I) Then
 		      Sets.Append(SetList.RowTag(I))
 		    End If
@@ -803,10 +871,10 @@ End
 		  If RequireConfirmation Then
 		    Dim Dialog As New MessageDialog
 		    Dialog.Title = ""
-		    If SetList.SelCount = 1 Then
+		    If SetList.SelectedRowCount = 1 Then
 		      Dialog.Message = "Are you sure you want to delete the item set """ + Sets(0).Label + """?"
 		    Else
-		      Dialog.Message = "Are you sure you want to delete these " + Str(SetList.SelCount, "-0") + " item sets?"
+		      Dialog.Message = "Are you sure you want to delete these " + Str(SetList.SelectedRowCount, "-0") + " item sets?"
 		    End If
 		    Dialog.Explanation = "This action cannot be undone."
 		    Dialog.ActionButton.Caption = "Delete"
@@ -828,7 +896,7 @@ End
 		      End If
 		    Next
 		  Next
-		  For I As Integer = SetList.ListCount - 1 DownTo 0
+		  For I As Integer = SetList.RowCount - 1 DownTo 0
 		    If SetList.Selected(I) Then
 		      SetList.RemoveRow(I)
 		    End If
@@ -998,8 +1066,8 @@ End
 		  
 		  Dim HiddenSetCount As Integer = Self.mTotalSetCount - Self.mVisibleSetCount
 		  Dim Caption As String
-		  If Self.SetList.SelCount > 0 Then
-		    Caption = Format(Self.SetList.SelCount, "0") + " of " + Str(Self.mVisibleSetCount, "0") + " Item " + If(Self.mVisibleSetCount = 1, "Set", "Sets") + " Selected"
+		  If Self.SetList.SelectedRowCount > 0 Then
+		    Caption = Format(Self.SetList.SelectedRowCount, "0") + " of " + Str(Self.mVisibleSetCount, "0") + " Item " + If(Self.mVisibleSetCount = 1, "Set", "Sets") + " Selected"
 		  Else
 		    Caption = Str(Self.mVisibleSetCount, "0") + " Item " + If(Self.mVisibleSetCount = 1, "Set", "Sets")
 		  End If
@@ -1080,14 +1148,14 @@ End
 		    Return
 		  End If
 		  
-		  If Me.SelCount = 1 Then
-		    Editor.Set = New Beacon.ItemSet(Me.RowTag(Me.ListIndex))
+		  If Me.SelectedRowCount = 1 Then
+		    Editor.Set = New Beacon.ItemSet(Me.RowTag(Me.SelectedIndex))
 		    Editor.Enabled = True
-		    Panel.Value = 1
+		    Panel.SelectedPanelIndex = 1
 		  Else
 		    Editor.Enabled = False
 		    Editor.Set = Nil
-		    Panel.Value = 0
+		    Panel.SelectedPanelIndex = 0
 		  End If
 		  
 		  Self.UpdateStatus()
@@ -1095,7 +1163,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.SelCount > -1
+		  Return Me.SelectedRowCount > -1
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -1111,7 +1179,7 @@ End
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
 		  Dim Dicts() As Xojo.Core.Dictionary
-		  For I As Integer = 0 To Me.ListCount - 1
+		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
@@ -1205,20 +1273,20 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelCount > -1
+		  Return Me.SelectedRowCount > -1
 		End Function
 	#tag EndEvent
 	#tag Event
 		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
 		  Dim Targets() As Beacon.ItemSet
-		  If Me.SelCount = 0 Then
+		  If Me.SelectedRowCount = 0 Then
 		    Dim Idx As Integer = Me.RowFromXY(X, Y)
 		    If Idx = -1 Then
 		      Return False
 		    End If
 		    Targets.Append(Me.RowTag(Idx))
 		  Else
-		    For I As Integer = 0 To Me.ListCount - 1
+		    For I As Integer = 0 To Me.RowCount - 1
 		      If Me.Selected(I) Then
 		        Targets.Append(Me.RowTag(I))
 		      End If
@@ -1253,7 +1321,7 @@ End
 		  CreateItem.Name = "createpreset"
 		  CreateItem.Enabled = UBound(Targets) = 0
 		  If PresetFound And CreateItem.Enabled Then
-		    CreateItem.Text = "Update """ + Preset.Label + """ Preset…"
+		    CreateItem.Value = "Update """ + Preset.Label + """ Preset…"
 		  End If
 		  Base.Append(CreateItem)
 		  
@@ -1262,9 +1330,9 @@ End
 		  ReconfigureItem.Enabled = PresetFound
 		  If ReconfigureItem.Enabled Then
 		    If UBound(Targets) = 0 Then
-		      ReconfigureItem.Text = "Rebuild From """ + Preset.Label + """ Preset"
+		      ReconfigureItem.Value = "Rebuild From """ + Preset.Label + """ Preset"
 		    Else
-		      ReconfigureItem.Text = "Rebuild From Presets"
+		      ReconfigureItem.Value = "Rebuild From Presets"
 		    End If
 		  End If
 		  Base.Append(ReconfigureItem)
@@ -1522,11 +1590,11 @@ End
 		Sub Updated()
 		  // The set needs to be cloned into each loot source
 		  
-		  If SetList.SelCount <> 1 Then
+		  If SetList.SelectedRowCount <> 1 Then
 		    Return
 		  End If
 		  
-		  Dim SelIndex As Integer = SetList.ListIndex
+		  Dim SelIndex As Integer = SetList.SelectedIndex
 		  Dim OriginalSet As Beacon.ItemSet = SetList.RowTag(SelIndex)
 		  Dim NewSet As Beacon.ItemSet = Editor.Set
 		  
@@ -1630,6 +1698,54 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="DoubleBuffer"
 		Visible=true
 		Group="Windows Behavior"
@@ -1638,39 +1754,10 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
 	#tag EndViewProperty
@@ -1683,72 +1770,74 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Height"
 		Visible=true
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -1756,6 +1845,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -1765,12 +1855,15 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -1784,21 +1877,15 @@ End
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType="Boolean"
 	#tag EndViewProperty
@@ -1816,5 +1903,6 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

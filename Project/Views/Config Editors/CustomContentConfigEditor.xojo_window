@@ -1,15 +1,15 @@
 #tag Window
 Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   382
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,18 +23,21 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   608
    Begin Shelf Switcher
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       DrawCaptions    =   True
       Enabled         =   True
-      EraseBackground =   False
+      EraseBackground =   "False"
       Height          =   60
       HelpTag         =   ""
       Index           =   -2147483648
@@ -60,16 +63,28 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
    End
    Begin CodeArea ConfigArea
       AcceptTabs      =   False
-      Alignment       =   0
+      Alignment       =   "0"
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   False
+      AllowSpellChecking=   False
+      AllowStyledText =   False
+      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "Source Code Pro"
+      FontSize        =   0.0
+      FontUnit        =   0
       Format          =   ""
+      HasBorder       =   False
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       Height          =   321
       HelpTag         =   ""
       HideSelection   =   True
@@ -85,6 +100,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
+      MaximumCharactersAllowed=   0
       Multiline       =   True
       ReadOnly        =   False
       Scope           =   2
@@ -95,6 +111,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
+      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "Source Code Pro"
       TextSize        =   0.0
@@ -103,17 +120,23 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
       Width           =   608
    End
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -138,12 +161,16 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
    Begin BeaconToolbar LeftButtons
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   ""
-      DoubleBuffer    =   False
+      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   False
+      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -193,10 +220,10 @@ End
 		Sub SetupUI()
 		  Select Case Self.Switcher.SelectedIndex
 		  Case 1
-		    Self.ConfigArea.Text = Self.Config(False).GameUserSettingsIniContent
+		    Self.ConfigArea.Value = Self.Config(False).GameUserSettingsIniContent
 		    Self.mGameUserSettingsIniState.ApplyTo(Self.ConfigArea)
 		  Case 2
-		    Self.ConfigArea.Text = Self.Config(False).GameIniContent
+		    Self.ConfigArea.Value = Self.Config(False).GameIniContent
 		    Self.mGameIniState.ApplyTo(Self.ConfigArea)
 		  End Select
 		End Sub
@@ -256,12 +283,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function SelectionIsEncrypted() As Boolean
-		  If Self.ConfigArea.SelStart >= Self.ConfigArea.Text.Len Then
+		  If Self.ConfigArea.SelectionStart >= Self.ConfigArea.Value.Length Then
 		    Return False
 		  End If
 		  
-		  Dim StartPos As Integer = Self.ConfigArea.SelStart
-		  Dim EndPos As Integer = StartPos + Max(Self.ConfigArea.SelLength, 1)
+		  Dim StartPos As Integer = Self.ConfigArea.SelectionStart
+		  Dim EndPos As Integer = StartPos + Max(Self.ConfigArea.SelectionLength, 1)
 		  For Each Range As Beacon.Range In Self.mEncryptedRanges
 		    If StartPos >= Range.Min And EndPos <= Range.Max Then
 		      Return True
@@ -274,10 +301,10 @@ End
 		Private Sub ToggleEncryption()
 		  Dim Tag As String = BeaconConfigs.CustomContent.EncryptedTag
 		  Dim TagLen As Integer = Tag.Length
-		  Dim Source As String = Self.ConfigArea.Text
+		  Dim Source As String = Self.ConfigArea.Value
 		  
 		  If Self.SelectionIsEncrypted Then
-		    Dim StartPos As Integer = Self.ConfigArea.SelStart
+		    Dim StartPos As Integer = Self.ConfigArea.SelectionStart
 		    For I As Integer = StartPos DownTo TagLen
 		      If Source.Mid((I - TagLen) + 1, TagLen) = Tag Then
 		        StartPos = I
@@ -295,19 +322,19 @@ End
 		    Dim Content As String = Source.Mid(StartPos + 1, ContentLen)
 		    Dim Suffix As String = Source.Mid(EndPos + TagLen + 1)
 		    
-		    Self.ConfigArea.Text = Prefix + Content + Suffix
-		    Self.ConfigArea.SelStart = Prefix.Length
-		    Self.ConfigArea.SelLength = Content.Length
+		    Self.ConfigArea.Value = Prefix + Content + Suffix
+		    Self.ConfigArea.SelectionStart = Prefix.Length
+		    Self.ConfigArea.SelectionLength = Content.Length
 		  Else
-		    Dim Start As Integer = Self.ConfigArea.SelStart
-		    Dim Length As Integer = Self.ConfigArea.SelLength
+		    Dim Start As Integer = Self.ConfigArea.SelectionStart
+		    Dim Length As Integer = Self.ConfigArea.SelectionLength
 		    Dim Prefix As String = Source.Left(Start)
 		    Dim Content As String = Source.Mid(Start + 1, Length)
 		    Dim Suffix As String = Source.Right(Source.Length - (Start + Length))
 		    
-		    Self.ConfigArea.Text = Prefix + Tag + Content + Tag + Suffix
-		    Self.ConfigArea.SelStart = Prefix.Length + TagLen
-		    Self.ConfigArea.SelLength = Content.Length
+		    Self.ConfigArea.Value = Prefix + Tag + Content + Tag + Suffix
+		    Self.ConfigArea.SelectionStart = Prefix.Length + TagLen
+		    Self.ConfigArea.SelectionLength = Content.Length
 		  End If
 		End Sub
 	#tag EndMethod
@@ -325,7 +352,7 @@ End
 		    Button.Icon = IconToolbarUnlock
 		  Else
 		    Button.HelpTag = "Encrypt the selected text when saving."
-		    Button.Enabled = Self.ConfigArea.SelLength > 0
+		    Button.Enabled = Self.ConfigArea.SelectionLength > 0
 		    Button.Icon = IconToolbarLock
 		  End If
 		End Sub
@@ -336,7 +363,7 @@ End
 		  Redim Self.mEncryptedRanges(-1)
 		  
 		  Dim Pos As Integer
-		  Dim Source As String = Self.ConfigArea.Text
+		  Dim Source As String = Self.ConfigArea.Value
 		  Dim Tag As String = BeaconConfigs.CustomContent.EncryptedTag
 		  Dim TagLen As Integer = Tag.Length
 		  Dim Styles As StyledText = Self.ConfigArea.StyledText
@@ -413,11 +440,11 @@ End
 		  Select Case Me.SelectedIndex
 		  Case 1
 		    Self.mGameIniState = New TextAreaState(Self.ConfigArea)
-		    Self.ConfigArea.Text = Self.Config(False).GameUserSettingsIniContent
+		    Self.ConfigArea.Value = Self.Config(False).GameUserSettingsIniContent
 		    Self.mGameUserSettingsIniState.ApplyTo(Self.ConfigArea)
 		  Case 2
 		    Self.mGameUserSettingsIniState = New TextAreaState(Self.ConfigArea)
-		    Self.ConfigArea.Text = Self.Config(False).GameIniContent
+		    Self.ConfigArea.Value = Self.Config(False).GameIniContent
 		    Self.mGameIniState.ApplyTo(Self.ConfigArea)
 		  End Select
 		  Self.SettingUp = SettingUp
@@ -433,22 +460,22 @@ End
 		    Return
 		  End If
 		  
-		  Dim SanitizedText As String = Self.SanitizeText(Me.Text)
-		  If SanitizedText <> Me.Text Then
-		    Dim SelStart As Integer = Me.SelStart
-		    Dim SelLength As Integer = Me.SelLength
-		    Me.Text = SanitizedText
-		    Me.SelStart = SelStart
-		    Me.SelLength = SelLength
+		  Dim SanitizedText As String = Self.SanitizeText(Me.Value)
+		  If SanitizedText <> Me.Value Then
+		    Dim SelectionStart As Integer = Me.SelectionStart
+		    Dim SelectionLength As Integer = Me.SelectionLength
+		    Me.Value = SanitizedText
+		    Me.SelectionStart = SelectionStart
+		    Me.SelectionLength = SelectionLength
 		  End If
 		  
 		  Select Case Self.Switcher.SelectedIndex
 		  Case 1
 		    Self.Config(True).GameUserSettingsIniContent = SanitizedText
-		    Self.ContentsChanged = True
+		    Self.Changed = True
 		  Case 2
 		    Self.Config(True).GameIniContent = SanitizedText
-		    Self.ContentsChanged = True
+		    Self.Changed = True
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -475,10 +502,60 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Progress"
+		Visible=false
 		Group="Behavior"
 		InitialValue="ProgressNone"
 		Type="Double"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -486,6 +563,7 @@ End
 		Group="Behavior"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumHeight"
@@ -493,10 +571,13 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
+		Visible=false
 		Group="Behavior"
+		InitialValue=""
 		Type="String"
 		EditorType="MultiLineEditor"
 	#tag EndViewProperty
@@ -504,6 +585,7 @@ End
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -511,6 +593,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -520,6 +603,7 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -527,53 +611,71 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -581,6 +683,7 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -607,69 +710,20 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"

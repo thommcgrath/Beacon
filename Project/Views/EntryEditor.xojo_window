@@ -2,35 +2,53 @@
 Begin BeaconDialog EntryEditor
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
-   Frame           =   8
+   DefaultLocation =   "1"
+   Frame           =   "8"
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
+   HasBackgroundColor=   False
+   HasCloseButton  =   False
+   HasFullScreenButton=   False
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
    Height          =   534
    ImplicitInstance=   False
-   LiveResize      =   False
+   LiveResize      =   "False"
    MacProcID       =   0
    MaxHeight       =   32000
    MaximizeButton  =   False
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
    MinHeight       =   534
    MinimizeButton  =   False
+   MinimumHeight   =   534
+   MinimumWidth    =   900
    MinWidth        =   900
-   Placement       =   1
-   Resizeable      =   True
+   Placement       =   "1"
+   Resizable       =   True
+   Resizeable      =   "True"
+   SystemUIVisible =   True
    Title           =   "Set Entry"
+   Type            =   "8"
    Visible         =   True
    Width           =   900
    Begin GroupBox EngramsGroup
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Possible Items"
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   462
       HelpTag         =   ""
       Index           =   -2147483648
@@ -56,19 +74,29 @@ Begin BeaconDialog EntryEditor
       Width           =   380
       Begin DelayedTextField FilterField
          AcceptTabs      =   False
-         Alignment       =   0
+         Alignment       =   "0"
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
+         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   "Search or Enter Spawn Command"
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Format          =   ""
+         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
+         Hint            =   "Search or Enter Spawn Command"
          Index           =   -2147483648
          InitialParent   =   "EngramsGroup"
          Italic          =   False
@@ -80,6 +108,7 @@ Begin BeaconDialog EntryEditor
          LockRight       =   True
          LockTop         =   True
          Mask            =   ""
+         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -87,6 +116,7 @@ Begin BeaconDialog EntryEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""
+         TextAlignment   =   "0"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -95,10 +125,19 @@ Begin BeaconDialog EntryEditor
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
+         ValidationMask  =   ""
+         Value           =   ""
          Visible         =   True
          Width           =   312
       End
       Begin BeaconListbox EngramList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -109,12 +148,22 @@ Begin BeaconDialog EntryEditor
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
+         DropIndicatorVisible=   False
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLinesHorizontal=   "0"
+         GridLinesHorizontalStyle=   "0"
+         GridLinesVertical=   "0"
+         GridLinesVerticalStyle=   "0"
+         HasBorder       =   True
+         HasHeader       =   True
          HasHeading      =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
          HeadingIndex    =   1
          Height          =   261
          HelpTag         =   ""
@@ -130,12 +179,14 @@ Begin BeaconDialog EntryEditor
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowCount        =   0
+         RowCount        =   "0"
+         RowSelectionType=   "0"
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionType   =   0
+         SelectionRequired=   False
+         SelectionType   =   "0"
          ShowDropIndicator=   False
          TabIndex        =   1
          TabPanelIndex   =   0
@@ -153,12 +204,16 @@ Begin BeaconDialog EntryEditor
          _ScrollWidth    =   -1
       End
       Begin CheckBox SingleEntryCheck
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          Caption         =   "Merge selections into one entry"
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -171,7 +226,7 @@ Begin BeaconDialog EntryEditor
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         State           =   0
+         State           =   "0"
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
@@ -183,9 +238,11 @@ Begin BeaconDialog EntryEditor
          Underline       =   False
          Value           =   False
          Visible         =   True
+         VisualState     =   "0"
          Width           =   340
       End
       Begin ProgressWheel SearchSpinner
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Enabled         =   True
          Height          =   16
@@ -210,12 +267,16 @@ Begin BeaconDialog EntryEditor
       Begin TagPicker Picker
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Border          =   15
-         DoubleBuffer    =   False
+         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          Height          =   67
          HelpTag         =   ""
          Index           =   -2147483648
@@ -240,10 +301,14 @@ Begin BeaconDialog EntryEditor
       End
    End
    Begin GroupBox SettingsGroup
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Quantities And Qualities"
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   245
       HelpTag         =   ""
       Index           =   -2147483648
@@ -270,13 +335,19 @@ Begin BeaconDialog EntryEditor
       Begin EntryPropertiesEditor EntryPropertiesEditor1
          AcceptFocus     =   False
          AcceptTabs      =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   True
+         EraseBackground =   "True"
          HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   209
          HelpTag         =   ""
          Index           =   -2147483648
@@ -299,10 +370,14 @@ Begin BeaconDialog EntryEditor
       End
    End
    Begin GroupBox SimulationGroup
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Simulation"
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   205
       HelpTag         =   ""
       Index           =   -2147483648
@@ -327,6 +402,13 @@ Begin BeaconDialog EntryEditor
       Visible         =   True
       Width           =   468
       Begin BeaconListbox SimulatedResultsList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -337,12 +419,22 @@ Begin BeaconDialog EntryEditor
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
+         DropIndicatorVisible=   False
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLinesHorizontal=   "0"
+         GridLinesHorizontalStyle=   "0"
+         GridLinesVertical=   "0"
+         GridLinesVerticalStyle=   "0"
+         HasBorder       =   True
+         HasHeader       =   False
          HasHeading      =   False
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
          HeadingIndex    =   -1
          Height          =   117
          HelpTag         =   ""
@@ -358,12 +450,14 @@ Begin BeaconDialog EntryEditor
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowCount        =   0
+         RowCount        =   "0"
+         RowSelectionType=   "0"
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionType   =   0
+         SelectionRequired=   False
+         SelectionType   =   "0"
          ShowDropIndicator=   False
          TabIndex        =   0
          TabPanelIndex   =   0
@@ -381,6 +475,7 @@ Begin BeaconDialog EntryEditor
          _ScrollWidth    =   -1
       End
       Begin UITweaks.ResizedPushButton SimulateButton
+         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -388,6 +483,9 @@ Begin BeaconDialog EntryEditor
          Caption         =   "Refresh"
          Default         =   False
          Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -399,6 +497,7 @@ Begin BeaconDialog EntryEditor
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
+         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   0
@@ -414,6 +513,7 @@ Begin BeaconDialog EntryEditor
       End
    End
    Begin UITweaks.ResizedPushButton ActionButton
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -421,6 +521,9 @@ Begin BeaconDialog EntryEditor
       Caption         =   "OK"
       Default         =   True
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -432,6 +535,7 @@ Begin BeaconDialog EntryEditor
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -446,6 +550,7 @@ Begin BeaconDialog EntryEditor
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton CancelButton
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -453,6 +558,9 @@ Begin BeaconDialog EntryEditor
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -464,6 +572,7 @@ Begin BeaconDialog EntryEditor
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -483,7 +592,7 @@ Begin BeaconDialog EntryEditor
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
-      StackSize       =   "0"
+      StackSize       =   0
       State           =   ""
       TabPanelIndex   =   0
    End
@@ -503,8 +612,8 @@ End
 		  
 		  Self.Picker.Tags = LocalData.SharedInstance.AllTags(Beacon.CategoryEngrams)
 		  Self.Picker.Spec = Preferences.SelectedTag(Beacon.CategoryEngrams, "Looting")
-		  Self.Width = Max(PreferredSize.Width, Self.MinWidth)
-		  Self.Height = Max(PreferredSize.Height, Self.MinHeight)
+		  Self.Width = Max(PreferredSize.Width, Self.MinimumWidth)
+		  Self.Height = Max(PreferredSize.Height, Self.MinimumHeight)
 		  Self.SearchSpinnerVisible = False
 		  
 		  Self.SwapButtons()
@@ -536,7 +645,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub EnableButtons()
-		  Dim Enabled As Boolean = Self.EngramSearcher.State = Thread.NotRunning
+		  Dim Enabled As Boolean = Self.EngramSearcher.ThreadState = Thread.ThreadStates.NotRunning
 		  Self.ActionButton.Enabled = Enabled And Self.mSelectedEngrams.Count >= 1
 		  Self.CancelButton.Enabled = Enabled
 		End Sub
@@ -554,9 +663,9 @@ End
 		      Dim Weight As String = WeightValue.PrettyText
 		      
 		      EngramList.AddRow("", Option.Engram.Label, Option.Engram.ModName, Weight)
-		      EngramList.RowTag(EngramList.LastIndex) = Option.Engram
-		      Self.mEngramRowIndexes.Value(Path) = EngramList.LastIndex
-		      Idx = EngramList.LastIndex
+		      EngramList.RowTag(EngramList.LastAddedRowIndex) = Option.Engram
+		      Self.mEngramRowIndexes.Value(Path) = EngramList.LastAddedRowIndex
+		      Idx = EngramList.LastAddedRowIndex
 		      EngramList.CellCheck(Idx, Self.ColumnIncluded) = True
 		    End If
 		  Next
@@ -598,11 +707,11 @@ End
 		    Next
 		  End If
 		  
-		  Self.FilterField.Text = Prefilter
+		  Self.FilterField.Value = Prefilter
 		  Self.UpdateFilter()
 		  SingleEntryCheck.Value = Self.mSelectedEngrams.Count > 1
 		  
-		  For I As Integer = 0 To EngramList.ListCount - 1
+		  For I As Integer = 0 To EngramList.RowCount - 1
 		    If EngramList.CellCheck(I, 0) Then
 		      EngramList.ScrollPosition = I
 		      Exit For I
@@ -616,7 +725,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
-		  Dim SearchText As String = Self.FilterField.Text
+		  Dim SearchText As String = Self.FilterField.Value
 		  Dim Tags As Text = Self.Picker.Spec.ToText
 		  
 		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText.ToText, Self.mMods, Tags)
@@ -632,9 +741,9 @@ End
 		    End If
 		    
 		    EngramList.AddRow("", Engram.Label, Engram.ModName, Weight)
-		    EngramList.RowTag(EngramList.LastIndex) = Engram
-		    Self.mEngramRowIndexes.Value(Engram.Path) = EngramList.LastIndex
-		    EngramList.CellCheck(EngramList.LastIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.Path)
+		    EngramList.RowTag(EngramList.LastAddedRowIndex) = Engram
+		    Self.mEngramRowIndexes.Value(Engram.Path) = EngramList.LastAddedRowIndex
+		    EngramList.CellCheck(EngramList.LastAddedRowIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.Path)
 		    If Engram.Path = SearchText Or Engram.Label = SearchText Then
 		      PerfectMatch = True
 		    End If
@@ -980,9 +1089,9 @@ End
 		    End If
 		    
 		    EngramList.AddRow("", Engram.Label, Engram.ModName, Weight)
-		    EngramList.RowTag(EngramList.LastIndex) = Engram
-		    Self.mEngramRowIndexes.Value(Engram.Path) = EngramList.LastIndex
-		    EngramList.CellCheck(EngramList.LastIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.Path)
+		    EngramList.RowTag(EngramList.SelectedIndex) = Engram
+		    Self.mEngramRowIndexes.Value(Engram.Path) = EngramList.SelectedIndex
+		    EngramList.CellCheck(EngramList.SelectedIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.Path)
 		  Next
 		  Self.ListUnknownEngrams()
 		End Sub
@@ -990,39 +1099,43 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="BackColor"
+		Name="MinimumWidth"
 		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Backdrop"
+		Name="MinimumHeight"
 		Visible=true
-		Group="Background"
-		Type="Picture"
-		EditorType="Picture"
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="CloseButton"
+		Name="MaximumWidth"
 		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Composite"
-		Group="OS X (Carbon)"
-		InitialValue="False"
-		Type="Boolean"
+		Name="MaximumHeight"
+		Visible=true
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Frame"
+		Name="Type"
 		Visible=true
 		Group="Frame"
 		InitialValue="0"
-		Type="Integer"
+		Type="Types"
 		EditorType="Enum"
 		#tag EnumValues
 			"0 - Document"
@@ -1039,14 +1152,39 @@ End
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="FullScreen"
-		Group="Behavior"
-		InitialValue="False"
+		Name="HasCloseButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="FullScreenButton"
+		Name="Resizable"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasMaximizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasMinimizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasFullScreenButton"
 		Visible=true
 		Group="Frame"
 		InitialValue="False"
@@ -1054,11 +1192,67 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="HasBackColor"
+		Name="DefaultLocation"
+		Visible=true
+		Group="Behavior"
+		InitialValue="0"
+		Type="Locations"
+		EditorType="Enum"
+		#tag EnumValues
+			"0 - Default"
+			"1 - Parent Window"
+			"2 - Main Screen"
+			"3 - Parent Window Screen"
+			"4 - Stagger"
+		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="SystemUIVisible"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
 		Visible=true
 		Group="Background"
 		InitialValue="False"
 		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Backdrop"
+		Visible=true
+		Group="Background"
+		InitialValue=""
+		Type="Picture"
+		EditorType="Picture"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composite"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="FullScreen"
+		Visible=false
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -1066,6 +1260,7 @@ End
 		Group="Size"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ImplicitInstance"
@@ -1079,115 +1274,39 @@ End
 		Name="Interfaces"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="LiveResize"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MacProcID"
+		Visible=false
 		Group="OS X (Carbon)"
 		InitialValue="0"
 		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxHeight"
-		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaximizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxWidth"
-		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MenuBar"
 		Visible=true
 		Group="Menus"
+		InitialValue=""
 		Type="MenuBar"
 		EditorType="MenuBar"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MenuBarVisible"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinHeight"
-		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinWidth"
-		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Placement"
-		Visible=true
-		Group="Behavior"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		#tag EnumValues
-			"0 - Default"
-			"1 - Parent Window"
-			"2 - Main Screen"
-			"3 - Parent Window Screen"
-			"4 - Stagger"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Resizeable"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -1197,6 +1316,7 @@ End
 		Group="Frame"
 		InitialValue="Untitled"
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -1212,5 +1332,6 @@ End
 		Group="Size"
 		InitialValue="600"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

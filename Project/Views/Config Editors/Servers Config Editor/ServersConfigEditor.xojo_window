@@ -1,15 +1,15 @@
 #tag Window
 Begin ConfigEditor ServersConfigEditor
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   506
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,10 +23,16 @@ Begin ConfigEditor ServersConfigEditor
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   856
    Begin BeaconListbox ServerList
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -37,12 +43,22 @@ Begin ConfigEditor ServersConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   40
+      DropIndicatorVisible=   False
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLinesHorizontal=   "0"
+      GridLinesHorizontalStyle=   "0"
+      GridLinesVertical=   "0"
+      GridLinesVerticalStyle=   "0"
+      HasBorder       =   False
+      HasHeader       =   False
       HasHeading      =   False
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   465
       HelpTag         =   ""
@@ -58,11 +74,13 @@ Begin ConfigEditor ServersConfigEditor
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   0
+      RowSelectionType=   "0"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
-      SelectionType   =   0
+      SelectionChangeBlocked=   False
+      SelectionRequired=   False
+      SelectionType   =   "0"
       ShowDropIndicator=   False
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -82,11 +100,13 @@ Begin ConfigEditor ServersConfigEditor
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   True
       Height          =   506
       HelpTag         =   ""
       Index           =   -2147483648
@@ -111,11 +131,13 @@ Begin ConfigEditor ServersConfigEditor
    Begin FadedSeparator FadedSeparator2
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   True
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -140,12 +162,14 @@ Begin ConfigEditor ServersConfigEditor
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Servers"
-      DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   False
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -179,7 +203,7 @@ End
 		    Dim Profile As Beacon.ServerProfile = Self.Document.ServerProfile(I)
 		    
 		    Self.ServerList.AddRow(Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName)
-		    Self.ServerList.RowTag(Self.ServerList.LastIndex) = Profile
+		    Self.ServerList.RowTag(Self.ServerList.LastAddedRowIndex) = Profile
 		  Next
 		End Sub
 	#tag EndEvent
@@ -239,9 +263,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub View_ContentsChanged(Sender As ServerViewContainer)
-		  Self.ContentsChanged = Sender.ContentsChanged
+		  Self.Changed = Sender.Changed
 		  
-		  For I As Integer = 0 To Self.ServerList.ListCount - 1
+		  For I As Integer = 0 To Self.ServerList.RowCount - 1
 		    Dim Profile As Beacon.ServerProfile = Self.ServerList.RowTag(I)
 		    Dim Status As String = Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
 		    If Self.ServerList.Cell(I, 0) <> Status Then
@@ -307,12 +331,12 @@ End
 #tag Events ServerList
 	#tag Event
 		Sub Change()
-		  If Me.ListIndex = -1 Then
+		  If Me.SelectedIndex = -1 Then
 		    Self.CurrentProfileID = ""
 		    Return
 		  End If
 		  
-		  Dim Profile As Beacon.ServerProfile = Me.RowTag(Me.ListIndex)
+		  Dim Profile As Beacon.ServerProfile = Me.RowTag(Me.SelectedIndex)
 		  Dim ProfileID As Text = Profile.ProfileID
 		  If Not Self.mViews.HasKey(ProfileID) Then
 		    // Create the view
@@ -341,7 +365,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  Dim SelCount As Integer = Me.SelCount
+		  Dim SelCount As Integer = Me.SelectedRowCount
 		  If SelCount = 0 Then
 		    Return
 		  End If
@@ -354,7 +378,7 @@ End
 		    End If
 		  End If
 		  
-		  For I As Integer = 0 To Me.ListCount - 1
+		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
 		      Dim Profile As Beacon.ServerProfile = Me.RowTag(I)
 		      If Self.mViews.HasKey(Profile.ProfileID) Then
@@ -367,7 +391,7 @@ End
 		        Self.mViews.Remove(Profile.ProfileID)
 		      End If
 		      Self.Document.Remove(Profile)
-		      Self.ContentsChanged = True
+		      Self.Changed = True
 		      Me.RemoveRow(I)
 		    End If
 		  Next
@@ -405,7 +429,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
-		  Select Case HitItem.Text
+		  Select Case HitItem.Value
 		  Case "Show Config Backups"
 		    Dim Folder As FolderItem = HitItem.Tag
 		    If Folder = Nil Then
@@ -427,10 +451,60 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Progress"
+		Visible=false
 		Group="Behavior"
 		InitialValue="ProgressNone"
 		Type="Double"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -438,6 +512,7 @@ End
 		Group="Behavior"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumHeight"
@@ -445,10 +520,13 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
+		Visible=false
 		Group="Behavior"
+		InitialValue=""
 		Type="String"
 		EditorType="MultiLineEditor"
 	#tag EndViewProperty
@@ -456,6 +534,7 @@ End
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -463,6 +542,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -472,6 +552,7 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -479,53 +560,71 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -533,6 +632,7 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -559,69 +659,20 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="EraseBackground"
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"
@@ -641,7 +692,10 @@ End
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="CurrentProfileID"
+		Visible=false
 		Group="Behavior"
+		InitialValue=""
 		Type="Text"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

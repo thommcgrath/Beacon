@@ -20,7 +20,7 @@ Protected Module CallLater
 		  
 		  Dim CallbackTimer As CallLater.TriggerTimer = Timers.Value(Key)
 		  Timers.Remove(Key)
-		  CallbackTimer.Mode = Timer.ModeOff
+		  CallbackTimer.RunMode = Timer.RunModes.Off
 		  CallbackTimer.Callback = Nil
 		  CallbackTimer.CallbackWithArg = Nil
 		End Sub
@@ -30,7 +30,7 @@ Protected Module CallLater
 		Protected Function Schedule(Delay As Integer, Callback As CallLater.CallNoParams) As String
 		  Dim CallTimer As New CallLater.TriggerTimer
 		  CallTimer.Period = Delay
-		  CallTimer.Mode = Timer.ModeSingle
+		  CallTimer.RunMode = Timer.RunModes.Single
 		  CallTimer.Key = Crypto.GenerateRandomBytes(20)
 		  CallTimer.Callback = Callback
 		  
@@ -47,7 +47,7 @@ Protected Module CallLater
 		Protected Function Schedule(Delay As Integer, Callback As CallLater.CallWithArg, Argument As Auto) As String
 		  Dim CallTimer As New CallLater.TriggerTimer
 		  CallTimer.Period = Delay
-		  CallTimer.Mode = Timer.ModeSingle
+		  CallTimer.RunMode = Timer.RunModes.Single
 		  CallTimer.Key = Crypto.GenerateRandomBytes(20)
 		  CallTimer.CallbackWithArg = Callback
 		  CallTimer.Argument = Argument
@@ -72,7 +72,9 @@ Protected Module CallLater
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -80,12 +82,15 @@ Protected Module CallLater
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -93,6 +98,7 @@ Protected Module CallLater
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -100,6 +106,7 @@ Protected Module CallLater
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Module

@@ -1,15 +1,15 @@
 #tag Window
 Begin ConfigEditor LootConfigEditor
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+   AllowAutoDeactivate=   True
+   AllowFocus      =   False
+   AllowFocusRing  =   False
+   AllowTabs       =   True
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
+   HasBackgroundColor=   False
    Height          =   436
    HelpTag         =   ""
    InitialParent   =   ""
@@ -23,18 +23,19 @@ Begin ConfigEditor LootConfigEditor
    TabStop         =   True
    Top             =   0
    Transparent     =   True
-   UseFocusRing    =   False
    Visible         =   True
    Width           =   702
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Sources"
-      DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   False
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -61,11 +62,13 @@ Begin ConfigEditor LootConfigEditor
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   True
       Height          =   436
       HelpTag         =   ""
       Index           =   -2147483648
@@ -88,6 +91,13 @@ Begin ConfigEditor LootConfigEditor
       Width           =   1
    End
    Begin BeaconListbox List
+      AllowAutoDeactivate=   True
+      AllowAutoHideScrollbars=   True
+      AllowExpandableRows=   False
+      AllowFocusRing  =   False
+      AllowResizableColumns=   False
+      AllowRowDragging=   False
+      AllowRowReordering=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -98,12 +108,22 @@ Begin ConfigEditor LootConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   34
+      DropIndicatorVisible=   False
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      GridLinesHorizontal=   "0"
+      GridLinesHorizontalStyle=   "0"
+      GridLinesVertical=   "0"
+      GridLinesVerticalStyle=   "0"
+      HasBorder       =   False
+      HasHeader       =   False
       HasHeading      =   False
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   374
       HelpTag         =   ""
@@ -119,12 +139,14 @@ Begin ConfigEditor LootConfigEditor
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   0
+      RowCount        =   "0"
+      RowSelectionType=   "1"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   1
+      SelectionRequired=   False
+      SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -142,6 +164,7 @@ Begin ConfigEditor LootConfigEditor
       _ScrollWidth    =   -1
    End
    Begin PagePanel Panel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   436
@@ -157,6 +180,7 @@ Begin ConfigEditor LootConfigEditor
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
+      SelectedPanelIndex=   0
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
@@ -168,13 +192,18 @@ Begin ConfigEditor LootConfigEditor
       Begin LootSourceEditor Editor
          AcceptFocus     =   False
          AcceptTabs      =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   True
          HasBackColor    =   False
+         HasBackgroundColor=   False
          Height          =   436
          HelpTag         =   ""
          Index           =   -2147483648
@@ -198,12 +227,14 @@ Begin ConfigEditor LootConfigEditor
       Begin LogoFillCanvas LogoFillCanvas1
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "No Selection"
-         DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   True
          Height          =   415
          HelpTag         =   ""
          Index           =   -2147483648
@@ -228,13 +259,15 @@ Begin ConfigEditor LootConfigEditor
       Begin StatusBar NoSelectionStatusBar
          AcceptFocus     =   False
          AcceptTabs      =   False
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Borders         =   1
          Caption         =   ""
-         DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   True
          Height          =   21
          HelpTag         =   ""
          Index           =   -2147483648
@@ -260,11 +293,13 @@ Begin ConfigEditor LootConfigEditor
    Begin FadedSeparator FadedSeparator2
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   True
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -289,13 +324,15 @@ Begin ConfigEditor LootConfigEditor
    Begin StatusBar StatusBar1
       AcceptFocus     =   False
       AcceptTabs      =   False
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
-      DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   True
       Height          =   21
       HelpTag         =   ""
       Index           =   -2147483648
@@ -325,7 +362,7 @@ End
 		Sub EnableMenuItems()
 		  DocumentAddBeacon.Enable
 		  
-		  If Self.List.SelCount > 0 Then
+		  If Self.List.SelectedRowCount > 0 Then
 		    DocumentDuplicateBeacon.Enable
 		    DocumentRemoveBeacon.Enable
 		    DocumentRebuildPresets.Enable
@@ -470,7 +507,7 @@ End
 		    End If
 		    
 		    Config.Append(Source)
-		    Self.ContentsChanged = Self.Document.Modified
+		    Self.Changed = Self.Document.Modified
 		  Next
 		  
 		  Self.UpdateSourceList(Sources)
@@ -511,9 +548,9 @@ End
 
 	#tag Method, Flags = &h0
 		Function GoToChild(Source As Beacon.LootSource, ItemSet As Beacon.ItemSet = Nil, Entry As Beacon.SetEntry = Nil, Option As Beacon.SetEntryOption = Nil) As Boolean
-		  For I As Integer = 0 To Self.List.ListCount - 1
+		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.RowTag(I) = Source Then
-		      Self.List.ListIndex = I
+		      Self.List.SelectedIndex = I
 		      Self.List.EnsureSelectionIsVisible()
 		      If ItemSet <> Nil Then
 		        Return Self.Editor.GoToChild(ItemSet, Entry, Option)
@@ -522,7 +559,7 @@ End
 		      End If
 		    End If
 		  Next
-		  Self.List.ListIndex = -1
+		  Self.List.SelectedIndex = -1
 		  Return False
 		End Function
 	#tag EndMethod
@@ -536,7 +573,7 @@ End
 		  End If
 		  
 		  Self.UpdateSourceList()
-		  Self.ContentsChanged = Self.ContentsChanged Or Self.Document.Modified
+		  Self.Changed = Self.Changed Or Self.Document.Modified
 		  
 		  If NumChanges = 1 Then
 		    Self.ShowAlert("1 item set changed", "Rebuilding changed 1 item set to match its preset.")
@@ -548,17 +585,17 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RemoveSelectedBeacons(RequireConfirmation As Boolean)
-		  If Self.List.SelCount = 0 Then
+		  If Self.List.SelectedRowCount = 0 Then
 		    Return
 		  End If
 		  
 		  If RequireConfirmation Then
 		    Dim Dialog As New MessageDialog
 		    Dialog.Title = ""
-		    If Self.List.SelCount = 1 Then
+		    If Self.List.SelectedRowCount = 1 Then
 		      Dialog.Message = "Are you sure you want to delete the selected loot source?"
 		    Else
-		      Dialog.Message = "Are you sure you want to delete these " + Str(Self.List.SelCount, "-0") + " loot sources?"
+		      Dialog.Message = "Are you sure you want to delete these " + Str(Self.List.SelectedRowCount, "-0") + " loot sources?"
 		    End If
 		    Dialog.Explanation = "This action cannot be undone."
 		    Dialog.ActionButton.Caption = "Delete"
@@ -570,14 +607,14 @@ End
 		    End If
 		  End If
 		  
-		  For I As Integer = Self.List.ListCount - 1 DownTo 0
+		  For I As Integer = Self.List.RowCount - 1 DownTo 0
 		    If Self.List.Selected(I) Then
 		      Self.Config(True).Remove(Beacon.LootSource(Self.List.RowTag(I)))
 		      Self.List.RemoveRow(I)
 		    End If
 		  Next
 		  
-		  Self.ContentsChanged = Self.Document.Modified
+		  Self.Changed = Self.Document.Modified
 		End Sub
 	#tag EndMethod
 
@@ -606,7 +643,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddLootSource(DuplicateSelected As Boolean = False)
-		  If DuplicateSelected And Self.List.SelCount <> 1 Then
+		  If DuplicateSelected And Self.List.SelectedRowCount <> 1 Then
 		    Return
 		  End If
 		  
@@ -619,7 +656,7 @@ End
 		  
 		  Dim DuplicateSource As Beacon.LootSource
 		  If DuplicateSelected Then
-		    DuplicateSource = Self.List.RowTag(Self.List.ListIndex)
+		    DuplicateSource = Self.List.RowTag(Self.List.SelectedIndex)
 		  End If
 		  
 		  If LootSourceWizard.Present(Self, Config, Self.Document.MapCompatibility, Self.Document.Mods, DuplicateSource, DuplicateSelected) Then
@@ -648,7 +685,7 @@ End
 		      SelectedClasses.Append(Source.ClassString)
 		    Next
 		  Else
-		    Dim Bound As Integer = Self.List.ListCount - 1
+		    Dim Bound As Integer = Self.List.RowCount - 1
 		    For I As Integer = 0 To Bound
 		      If Self.List.Selected(I) Then
 		        SelectedClasses.Append(Beacon.LootSource(Self.List.RowTag(I)).ClassString)
@@ -675,9 +712,9 @@ End
 		  
 		  Editor.Sources = Selection
 		  If Selection.Ubound = -1 Then
-		    Panel.Value = 0
+		    Panel.SelectedPanelIndex = 0
 		  Else
-		    Panel.Value = 1
+		    Panel.SelectedPanelIndex = 1
 		  End If
 		  
 		  Self.Header.Rebuild.Enabled = VisibleSources.Ubound > -1
@@ -688,7 +725,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
 		  Dim TotalCount As UInteger = Self.List.RowCount
-		  Dim SelectedCount As UInteger = Self.List.SelCount
+		  Dim SelectedCount As UInteger = Self.List.SelectedRowCount
 		  
 		  Dim Caption As String = Format(TotalCount, "0,") + " " + If(TotalCount = 1, "Loot Source", "Loot Sources")
 		  If SelectedCount > 0 Then
@@ -796,7 +833,7 @@ End
 		      Menu.Append(New MenuItem(MenuItem.TextSeparator))
 		      
 		      Dim ExpItem As New MenuItem("Show Experimental Sources", "toggle_experimental")
-		      ExpItem.Checked = Preferences.ShowExperimentalLootSources
+		      ExpItem.HasCheckMark = Preferences.ShowExperimentalLootSources
 		      Menu.Append(ExpItem)
 		    End If
 		  End Select
@@ -837,7 +874,7 @@ End
 		  #Pragma Unused IsHighlighted
 		  #Pragma Unused TextColor
 		  
-		  If Row >= Me.ListCount Then
+		  If Row >= Me.RowCount Then
 		    Return
 		  End If
 		  
@@ -856,12 +893,12 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.SelCount > 0
+		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelCount > 0
+		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -876,13 +913,13 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  If Me.SelCount = 0 Then
+		  If Me.SelectedRowCount = 0 Then
 		    Return
 		  End If
 		  
 		  Dim Lines() As Text
 		  Dim Dicts() As Xojo.Core.Dictionary
-		  For I As Integer = 0 To Me.ListCount - 1
+		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
 		      Dim Source As Beacon.LootSource = Me.RowTag(I)
 		      Dicts.Append(Source.Export)
@@ -939,14 +976,14 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Header.Duplicate.Enabled = Me.SelCount = 1
+		  Header.Duplicate.Enabled = Me.SelectedRowCount = 1
 		  
 		  If Self.mBlockSelectionChanged Then
 		    Return
 		  End If
 		  
 		  Dim Sources() As Beacon.LootSource
-		  For I As Integer = 0 To Me.ListCount - 1
+		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
 		      Sources.Append(Me.RowTag(I))
 		    End If
@@ -954,9 +991,9 @@ End
 		  
 		  Editor.Sources = Sources
 		  If Sources.Ubound = -1 Then
-		    Panel.Value = 0
+		    Panel.SelectedPanelIndex = 0
 		  Else
-		    Panel.Value = 1
+		    Panel.SelectedPanelIndex = 1
 		  End If
 		  
 		  Self.UpdateStatus()
@@ -970,7 +1007,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub DoubleClick()
-		  For I As Integer = 0 To Me.ListCount - 1
+		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
@@ -979,7 +1016,7 @@ End
 		    If LootSourceWizard.Present(Self, Config, Self.Document.MapCompatibility, Self.Document.Mods, Me.RowTag(I)) Then
 		      Call Self.Config(True) // Actually saves the config to the document
 		      Self.UpdateSourceList()
-		      Self.ContentsChanged = True
+		      Self.Changed = True
 		    End If
 		    
 		    Return
@@ -990,7 +1027,7 @@ End
 #tag Events Editor
 	#tag Event
 		Sub Updated()
-		  Self.ContentsChanged = Self.Document.Modified
+		  Self.Changed = Self.Document.Modified
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -999,7 +1036,7 @@ End
 		  If LootSourceWizard.Present(Self, Config, Self.Document.MapCompatibility, Self.Document.Mods, Source) Then
 		    Call Self.Config(True) // Actually saves the config to the document
 		    Self.UpdateSourceList()
-		    Self.ContentsChanged = True
+		    Self.Changed = True
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1011,10 +1048,60 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AllowAutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackgroundColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AllowTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Progress"
+		Visible=false
 		Group="Behavior"
 		InitialValue="ProgressNone"
 		Type="Double"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -1022,6 +1109,7 @@ End
 		Group="Behavior"
 		InitialValue="400"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumHeight"
@@ -1029,6 +1117,7 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
@@ -1039,39 +1128,10 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Backdrop"
 		Visible=true
 		Group="Background"
+		InitialValue=""
 		Type="Picture"
 		EditorType="Picture"
 	#tag EndViewProperty
@@ -1084,72 +1144,74 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="EraseBackground"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Height"
 		Visible=true
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
 		Visible=true
 		Group="Appearance"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="InitialParent"
+		Visible=false
 		Group="Position"
+		InitialValue=""
 		Type="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Left"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockBottom"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockLeft"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockRight"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LockTop"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -1157,6 +1219,7 @@ End
 		Name="Super"
 		Visible=true
 		Group="ID"
+		InitialValue=""
 		Type="String"
 		EditorType="String"
 	#tag EndViewProperty
@@ -1166,12 +1229,15 @@ End
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabPanelIndex"
+		Visible=false
 		Group="Position"
 		InitialValue="0"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabStop"
@@ -1183,7 +1249,9 @@ End
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
+		Visible=false
 		Group="Behavior"
+		InitialValue=""
 		Type="String"
 		EditorType="MultiLineEditor"
 	#tag EndViewProperty
@@ -1191,21 +1259,15 @@ End
 		Name="Top"
 		Visible=true
 		Group="Position"
+		InitialValue=""
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"
 		Visible=true
 		Group="Behavior"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=true
-		Group="Appearance"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType="Boolean"
 	#tag EndViewProperty
@@ -1223,5 +1285,6 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

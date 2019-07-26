@@ -2,35 +2,51 @@
 Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
+   BackgroundColor =   &cFFFFFF00
    CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
-   Frame           =   0
+   DefaultLocation =   "2"
+   Frame           =   "0"
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
+   HasBackgroundColor=   False
+   HasCloseButton  =   False
+   HasFullScreenButton=   False
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
    Height          =   124
    ImplicitInstance=   False
-   LiveResize      =   True
+   LiveResize      =   "True"
    MacProcID       =   0
    MaxHeight       =   32000
    MaximizeButton  =   False
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
    MinHeight       =   64
    MinimizeButton  =   False
+   MinimumHeight   =   64
+   MinimumWidth    =   64
    MinWidth        =   64
-   Placement       =   2
-   Resizeable      =   False
+   Placement       =   "2"
+   Resizable       =   True
+   Resizeable      =   "False"
+   SystemUIVisible =   True
    Title           =   ""
+   Type            =   "0"
    Visible         =   False
    Width           =   450
    Begin ProgressBar Indicator
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   20
       HelpTag         =   ""
+      Indeterminate   =   False
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   20
@@ -40,21 +56,27 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       LockRight       =   True
       LockTop         =   True
       Maximum         =   0
+      MaximumValue    =   0
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   52
       Transparent     =   False
-      Value           =   0
+      Value           =   0.0
       Visible         =   True
       Width           =   410
    End
    Begin Label MessageLabel
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   True
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -73,7 +95,8 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Updating Engram Definitions…"
-      TextAlign       =   0
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -81,18 +104,22 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       Top             =   20
       Transparent     =   False
       Underline       =   False
+      Value           =   "Updating Engram Definitions…"
       Visible         =   True
       Width           =   410
    End
    Begin Timer RevealTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Mode            =   1
+      Mode            =   "1"
       Period          =   2000
+      RunMode         =   "1"
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin UITweaks.ResizedPushButton CancelButton
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -100,6 +127,9 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -111,6 +141,7 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -155,7 +186,7 @@ End
 		  
 		  Select Case Notification.Name
 		  Case LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed
-		    Self.RevealTimer.Mode = Timer.ModeOff
+		    Self.RevealTimer.RunMode = Timer.RunModes.Off
 		    
 		    Dim Date As Xojo.Core.Date
 		    If Notification.UserData <> Nil And Notification.UserData IsA Xojo.Core.Date Then

@@ -1,6 +1,7 @@
 Type=Desktop
-RBProjectVersion=2019.011
+RBProjectVersion=2019.02
 MinIDEVersion=20150400
+OrigIDEVersion=00000000
 Class=App;App.xojo_code;&h00000000283BFFFF;&h0000000000000000;false
 MenuBar=MainMenuBar;MainMenuBar.xojo_menu;&h0000000030BBA7FF;&h0000000000000000;false
 FileTypeSet=BeaconFileTypes;BeaconFileTypes.xojo_filetypeset;&h0000000029A467FF;&h0000000000000000;false
@@ -229,7 +230,6 @@ Window=DocumentSaveToCloudWindow;Views/DocumentSaveToCloudWindow.xojo_window;&h0
 Window=DocumentDeployWindow;Views/DocumentDeployWindow.xojo_window;&h000000001ECD1FFF;&h0000000008A387FF;false
 Folder=Config Editors;Views/Config Editors;&h00000000434D97FF;&h0000000008A387FF;false
 Class=ConfigEditor;Views/Config Editors/ConfigEditor.xojo_code;&h000000005966B7FF;&h00000000434D97FF;false
-Class=BeaconPopupMenu;Custom Controls/BeaconPopupMenu.xojo_code;&h0000000004074FFF;&h0000000030DCFFFF;false
 MultiImage=IconToolbarAdd;Icons/IconToolbarAdd.xojo_image;&h0000000055249FFF;&h0000000007F977FF;false
 MultiImage=IconToolbarDeploy;Icons/IconToolbarDeploy.xojo_image;&h0000000002E7D7FF;&h0000000007F977FF;false
 Class=Rect;Modules/BeaconUI/Rect.xojo_code;&h0000000041A65FFF;&h0000000012A7B7FF;false
