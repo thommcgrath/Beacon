@@ -135,16 +135,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function CheckError(SQLString As String) As RuntimeException
-		  If Self.mBase.Error Then
-		    Dim Err As New UnsupportedOperationException
-		    Err.Message = Self.mBase.ErrorMessage + EndOfLine + SQLString
-		    Return Err
-		  End If
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub CheckForEngramUpdates()
 		  If Self.mCheckingForUpdates Then
@@ -2082,69 +2072,95 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End Try
 		  End If
 		  
-		  If Values.Ubound = -1 Then
-		    Self.mBase.SQLExecute(SQLString)
+		  For I As Integer = 0 To Values.Ubound
+		    Dim Value As Variant = Values(I)
+		    If Value.Type <> Variant.TypeObject Then
+		      Continue
+		    End If
+		    Select Case Value.ObjectValue
+		    Case IsA Xojo.Core.MemoryBlock
+		      Dim Mem As Xojo.Core.MemoryBlock = Value
+		      Values(I) = Mem.Convert.StringValue(0, Mem.Size)
+		    Case IsA MemoryBlock
+		      Dim Mem As MemoryBlock = Value
+		      Values(I) = Mem.StringValue(0, Mem.Size)
+		    End Select
+		  Next
+		  
+		  Try
+		    Self.mBase.ExecuteSQL(SQLString, Values)
+		    Self.mLock.Leave
+		  Catch Err As DatabaseException
+		    Self.mLock.Leave
+		    Dim Cloned As New UnsupportedOperationException
+		    Cloned.Message = Err.Message + EndOfLine + SQLString
+		    Raise Cloned
+		  End Try
+		  
+		  #if false
+		    If Values.Ubound = -1 Then
+		      
+		      Self.mBase.SQLExecute(SQLString)
+		      Dim Err As RuntimeException = Self.CheckError(SQLString)
+		      Self.mLock.Leave
+		      If Err <> Nil Then
+		        Raise Err
+		      End If
+		      Return
+		    End If
+		    
+		    Dim Statement As SQLitePreparedStatement = Self.mBase.Prepare(SQLString)
 		    Dim Err As RuntimeException = Self.CheckError(SQLString)
+		    If Err <> Nil Then
+		      Self.mLock.Leave
+		      Raise Err
+		    End If
+		    
+		    For I As Integer = 0 To Values.Ubound
+		      Dim Value As Variant = Values(I)
+		      Select Case Value.Type
+		      Case Variant.TypeInteger, Variant.TypeInt32
+		        Statement.BindType(I, SQLitePreparedStatement.SQLITE_INTEGER)
+		      Case Variant.TypeInt64
+		        Statement.BindType(I, SQLitePreparedStatement.SQLITE_INT64)
+		      Case Variant.TypeCurrency, Variant.TypeDouble, Variant.TypeSingle
+		        Statement.BindType(I, SQLitePreparedStatement.SQLITE_DOUBLE)
+		      Case Variant.TypeText
+		        Statement.BindType(I, SQLitePreparedStatement.SQLITE_TEXT)
+		        Dim StringValue As String = Value.TextValue
+		        Value = StringValue
+		      Case Variant.TypeNil
+		        Statement.BindType(I, SQLitePreparedStatement.SQLITE_NULL)
+		      Case Variant.TypeBoolean
+		        Statement.BindType(I, SQLitePreparedStatement.SQLITE_BOOLEAN)
+		      Case Variant.TypeObject
+		        Dim Obj As Object = Value.ObjectValue
+		        Select Case Obj
+		        Case IsA Xojo.Core.MemoryBlock
+		          Dim Mem As Xojo.Core.MemoryBlock = Value
+		          Statement.BindType(I, SQLitePreparedStatement.SQLITE_BLOB)
+		          Value = CType(Mem.Data, Global.MemoryBlock).StringValue(0, Mem.Size)
+		        End Select
+		      Else
+		        Statement.BindType(I, SQLitePreparedStatement.SQLITE_TEXT)
+		      End Select
+		      
+		      Statement.Bind(I, Value)
+		    Next
+		    
+		    Statement.SQLExecute()
+		    Err = Self.CheckError(SQLString)
 		    Self.mLock.Leave
 		    If Err <> Nil Then
 		      Raise Err
 		    End If
-		    Return
-		  End If
-		  
-		  Dim Statement As SQLitePreparedStatement = Self.mBase.Prepare(SQLString)
-		  Dim Err As RuntimeException = Self.CheckError(SQLString)
-		  If Err <> Nil Then
-		    Self.mLock.Leave
-		    Raise Err
-		  End If
-		  
-		  For I As Integer = 0 To Values.Ubound
-		    Dim Value As Variant = Values(I)
-		    Select Case Value.Type
-		    Case Variant.TypeInteger, Variant.TypeInt32
-		      Statement.BindType(I, SQLitePreparedStatement.SQLITE_INTEGER)
-		    Case Variant.TypeInt64
-		      Statement.BindType(I, SQLitePreparedStatement.SQLITE_INT64)
-		    Case Variant.TypeCurrency, Variant.TypeDouble, Variant.TypeSingle
-		      Statement.BindType(I, SQLitePreparedStatement.SQLITE_DOUBLE)
-		    Case Variant.TypeText
-		      Statement.BindType(I, SQLitePreparedStatement.SQLITE_TEXT)
-		      Dim StringValue As String = Value.TextValue
-		      Value = StringValue
-		    Case Variant.TypeNil
-		      Statement.BindType(I, SQLitePreparedStatement.SQLITE_NULL)
-		    Case Variant.TypeBoolean
-		      Statement.BindType(I, SQLitePreparedStatement.SQLITE_BOOLEAN)
-		    Case Variant.TypeObject
-		      Dim Obj As Object = Value.ObjectValue
-		      Select Case Obj
-		      Case IsA Xojo.Core.MemoryBlock
-		        Dim Mem As Xojo.Core.MemoryBlock = Value
-		        Statement.BindType(I, SQLitePreparedStatement.SQLITE_BLOB)
-		        Value = CType(Mem.Data, Global.MemoryBlock).StringValue(0, Mem.Size)
-		      End Select
-		    Else
-		      Statement.BindType(I, SQLitePreparedStatement.SQLITE_TEXT)
-		    End Select
-		    
-		    Statement.Bind(I, Value)
-		  Next
-		  
-		  Statement.SQLExecute()
-		  Err = Self.CheckError(SQLString)
-		  Self.mLock.Leave
-		  If Err <> Nil Then
-		    Raise Err
-		  End If
+		  #endif
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function SQLSelect(SQLString As String, ParamArray Values() As Variant) As RowSet
 		  Self.mLock.Enter
-		  
-		  Dim RS As RowSet
 		  
 		  If Values.Ubound = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
 		    // Dictionary keys are placeholder values, values are... values
@@ -2161,62 +2177,109 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End Try
 		  End If
 		  
-		  If Values.Ubound = -1 Then
-		    RS = Self.mBase.SQLSelect(SQLString)
+		  For I As Integer = 0 To Values.Ubound
+		    Dim Value As Variant = Values(I)
+		    If Value.Type <> Variant.TypeObject Then
+		      Continue
+		    End If
+		    Select Case Value.ObjectValue
+		    Case IsA Xojo.Core.MemoryBlock
+		      Dim Mem As Xojo.Core.MemoryBlock = Value
+		      Values(I) = Mem.Convert.StringValue(0, Mem.Size)
+		    Case IsA MemoryBlock
+		      Dim Mem As MemoryBlock = Value
+		      Values(I) = Mem.StringValue(0, Mem.Size)
+		    End Select
+		  Next
+		  
+		  Try
+		    Dim Results As RowSet = Self.mBase.SelectSQL(SQLString, Values)
+		    Self.mLock.Leave
+		    Return Results
+		  Catch Err As DatabaseException
+		    Self.mLock.Leave
+		    Dim Cloned As New UnsupportedOperationException
+		    Cloned.Message = Err.Message + EndOfLine + SQLString
+		    Raise Cloned
+		  End Try
+		  
+		  #if false
+		    Self.mLock.Enter
+		    
+		    Dim RS As RowSet
+		    
+		    If Values.Ubound = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
+		      // Dictionary keys are placeholder values, values are... values
+		      Dim Dict As Dictionary = Values(0)
+		      Redim Values(-1)
+		      
+		      Try
+		        // I know this line looks insane, but it's correct. Placeholders start at 1.
+		        For I As Integer = 1 To Dict.KeyCount
+		          Values.Append(Dict.Value(I))
+		        Next
+		      Catch Err As TypeMismatchException
+		        Redim Values(-1)
+		      End Try
+		    End If
+		    
+		    If Values.Ubound = -1 Then
+		      RS = Self.mBase.SQLSelect(SQLString)
+		      Dim Err As RuntimeException = Self.CheckError(SQLString)
+		      Self.mLock.Leave
+		      If Err <> Nil Then
+		        Raise Err
+		      End If
+		      Return RS
+		    End If
+		    
+		    Dim Statement As SQLitePreparedStatement = Self.mBase.Prepare(SQLString)
 		    Dim Err As RuntimeException = Self.CheckError(SQLString)
+		    If Err <> Nil Then
+		      Self.mLock.Leave
+		      Raise Err
+		    End If
+		    
+		    For I As Integer = 0 To Values.Ubound
+		      Dim Value As Variant = Values(I)
+		      Select Case Value.Type
+		      Case Variant.TypeInteger, Variant.TypeInt32
+		        Statement.BindType(I, SQLitePreparedStatement.SQLITE_INTEGER)
+		      Case Variant.TypeInt64
+		        Statement.BindType(I, SQLitePreparedStatement.SQLITE_INT64)
+		      Case Variant.TypeCurrency, Variant.TypeDouble, Variant.TypeSingle
+		        Statement.BindType(I, SQLitePreparedStatement.SQLITE_DOUBLE)
+		      Case Variant.TypeText
+		        Statement.BindType(I, SQLitePreparedStatement.SQLITE_TEXT)
+		        Dim StringValue As String = Value.TextValue
+		        Value = StringValue
+		      Case Variant.TypeNil
+		        Statement.BindType(I, SQLitePreparedStatement.SQLITE_NULL)
+		      Case Variant.TypeBoolean
+		        Statement.BindType(I, SQLitePreparedStatement.SQLITE_BOOLEAN)
+		      Case Variant.TypeObject
+		        Dim Obj As Object = Value.ObjectValue
+		        Select Case Obj
+		        Case IsA Xojo.Core.MemoryBlock
+		          Dim Mem As Xojo.Core.MemoryBlock = Value
+		          Statement.BindType(I, SQLitePreparedStatement.SQLITE_BLOB)
+		          Value = CType(Mem.Data, Global.MemoryBlock).StringValue(0, Mem.Size)
+		        End Select
+		      Else
+		        Statement.BindType(I, SQLitePreparedStatement.SQLITE_TEXT)
+		      End Select
+		      
+		      Statement.Bind(I, Value)
+		    Next
+		    
+		    RS = Statement.SQLSelect()
+		    Err = Self.CheckError(SQLString)
 		    Self.mLock.Leave
 		    If Err <> Nil Then
 		      Raise Err
 		    End If
 		    Return RS
-		  End If
-		  
-		  Dim Statement As SQLitePreparedStatement = Self.mBase.Prepare(SQLString)
-		  Dim Err As RuntimeException = Self.CheckError(SQLString)
-		  If Err <> Nil Then
-		    Self.mLock.Leave
-		    Raise Err
-		  End If
-		  
-		  For I As Integer = 0 To Values.Ubound
-		    Dim Value As Variant = Values(I)
-		    Select Case Value.Type
-		    Case Variant.TypeInteger, Variant.TypeInt32
-		      Statement.BindType(I, SQLitePreparedStatement.SQLITE_INTEGER)
-		    Case Variant.TypeInt64
-		      Statement.BindType(I, SQLitePreparedStatement.SQLITE_INT64)
-		    Case Variant.TypeCurrency, Variant.TypeDouble, Variant.TypeSingle
-		      Statement.BindType(I, SQLitePreparedStatement.SQLITE_DOUBLE)
-		    Case Variant.TypeText
-		      Statement.BindType(I, SQLitePreparedStatement.SQLITE_TEXT)
-		      Dim StringValue As String = Value.TextValue
-		      Value = StringValue
-		    Case Variant.TypeNil
-		      Statement.BindType(I, SQLitePreparedStatement.SQLITE_NULL)
-		    Case Variant.TypeBoolean
-		      Statement.BindType(I, SQLitePreparedStatement.SQLITE_BOOLEAN)
-		    Case Variant.TypeObject
-		      Dim Obj As Object = Value.ObjectValue
-		      Select Case Obj
-		      Case IsA Xojo.Core.MemoryBlock
-		        Dim Mem As Xojo.Core.MemoryBlock = Value
-		        Statement.BindType(I, SQLitePreparedStatement.SQLITE_BLOB)
-		        Value = CType(Mem.Data, Global.MemoryBlock).StringValue(0, Mem.Size)
-		      End Select
-		    Else
-		      Statement.BindType(I, SQLitePreparedStatement.SQLITE_TEXT)
-		    End Select
-		    
-		    Statement.Bind(I, Value)
-		  Next
-		  
-		  RS = Statement.SQLSelect()
-		  Err = Self.CheckError(SQLString)
-		  Self.mLock.Leave
-		  If Err <> Nil Then
-		    Raise Err
-		  End If
-		  Return RS
+		  #endif
 		End Function
 	#tag EndMethod
 
