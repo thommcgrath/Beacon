@@ -466,7 +466,18 @@ Protected Module FrameworkExtensions
 		    Else
 		      Stream = BinaryStream.Create(File, True)
 		    End If
-		    Stream.Write(Contents)
+		    
+		    Dim CurrentThread As Thread = App.CurrentThread
+		    If CurrentThread = Nil Then
+		      Stream.Write(Contents)
+		    Else
+		      Const ChunkSize = 2048
+		      For I As Integer = 0 To Contents.Size - 1 Step ChunkSize
+		        Dim Chunk As String = Contents.StringValue(I, Min(ChunkSize, Contents.Size - I))
+		        Stream.Write(Chunk)
+		        CurrentThread.Sleep(10)
+		      Next
+		    End If
 		    Stream.Close
 		    Return True
 		  Catch Err As RuntimeException
