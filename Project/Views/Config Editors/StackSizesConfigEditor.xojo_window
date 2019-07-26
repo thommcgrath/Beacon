@@ -260,7 +260,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim OtherConfig As BeaconConfigs.StackSizes = BeaconConfigs.StackSizes.FromImport(ParsedData, New Xojo.Core.Dictionary, Self.Document.MapCompatibility, Self.Document.DifficultyValue)
+		  Dim OtherConfig As BeaconConfigs.StackSizes = BeaconConfigs.StackSizes.FromImport(ParsedData, New Xojo.Core.Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
 		  If OtherConfig = Nil Or OtherConfig.Count = 0 Then
 		    Return
 		  End If

@@ -1101,7 +1101,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Dim HasExperimentalSources As Boolean = LocalData.SharedInstance.HasExperimentalLootSources(Self.mDocument.Mods)
+		  Dim HasExperimentalSources As Boolean = LocalData.SharedInstance.HasExperimentalLootSources(Self.mMods)
 		  If HasExperimentalSources Then
 		    Self.SelectionExperimentalCheck.Value = Preferences.ShowExperimentalLootSources
 		  Else
@@ -1133,11 +1133,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BuildSourceList()
-		  Dim CurrentSources() As Beacon.LootSource = Self.mDocument.LootSources
-		  Dim AllowedLootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.mDocument.Mods, Preferences.ShowExperimentalLootSources)
-		  Dim Mask As UInt64 = Self.mDocument.MapCompatibility
+		  Dim CurrentSources() As Beacon.LootSource = Self.mConfig.DefinedSources
+		  Dim AllowedLootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.mMods, Preferences.ShowExperimentalLootSources)
 		  For X As Integer = AllowedLootSources.Ubound DownTo 0
-		    If Not AllowedLootSources(X).ValidForMask(Mask) Then
+		    If Not AllowedLootSources(X).ValidForMask(Self.mMask) Then
 		      AllowedLootSources.Remove(X)
 		    End If
 		  Next
@@ -1171,7 +1170,7 @@ End
 		    If Source.Notes <> "" Then
 		      RowText = RowText + EndOfLine + Source.Notes
 		    Else
-		      Dim ComboMask As UInt64 = Source.Availability And Mask
+		      Dim ComboMask As UInt64 = Source.Availability And Self.mMask
 		      If Not MapLabels.HasKey(ComboMask) Then
 		        MapLabels.Value(ComboMask) = Beacon.Maps.ForMask(ComboMask).Label
 		      End If
@@ -1217,9 +1216,11 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Document As Beacon.Document, Source As Beacon.LootSource, Duplicate As Boolean)
+		Private Sub Constructor(Config As BeaconConfigs.LootDrops, Mask As UInt64, Mods As Beacon.TextList, Source As Beacon.LootSource, Duplicate As Boolean)
 		  // Calling the overridden superclass constructor.
-		  Self.mDocument = Document
+		  Self.mConfig = Config
+		  Self.mMask = Mask
+		  Self.mMods = Mods
 		  Self.mSource = Source
 		  Self.mDuplicateSource = Duplicate
 		  Super.Constructor
@@ -1227,13 +1228,19 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Preset(Parent As Window, Document As Beacon.Document, Source As Beacon.LootSource = Nil, Duplicate As Boolean = False) As Boolean
-		  If Parent = Nil Or Document = Nil Then
+		Shared Function Present(Parent As Window, Config As BeaconConfigs.LootDrops, Mask As UInt64, Mods As Beacon.TextList, Source As Beacon.LootSource = Nil, Duplicate As Boolean = False) As Boolean
+		  If Parent = Nil Or Config = Nil Then
 		    Return False
 		  End If
 		  Parent = Parent.TrueWindow
 		  
-		  Dim Win As New LootSourceWizard(Document, Source, Source <> Nil And Duplicate = True)
+		  Dim Maps() As Beacon.Map = Beacon.Maps.ForMask(Mask)
+		  If Maps.Ubound = -1 Then
+		    Parent.ShowAlert("Beacon does not know which loot sources to show because no maps have been selected.", "Use the menu currently labelled """ + Language.LabelForConfig(BeaconConfigs.LootDrops.ConfigName) + """ to select ""Maps"" and choose tha maps for this file.")
+		    Return False
+		  End If
+		  
+		  Dim Win As New LootSourceWizard(Config, Mask, Mods, Source, Source <> Nil And Duplicate = True)
 		  Win.ShowModalWithin(Parent)
 		  
 		  Dim Cancelled As Boolean = Win.mCancelled
@@ -1257,11 +1264,10 @@ End
 		  Self.CustomizePreventDuplicatesCheck.Value = BasedOn.SetsRandomWithoutReplacement
 		  
 		  Dim Presets() As Beacon.Preset = Beacon.Data.Presets()
-		  Dim Mask As UInt64 = Self.mDocument.MapCompatibility
 		  
 		  Self.CustomizePresetsList.DeleteAllRows()
 		  For Each Preset As Beacon.Preset In Presets
-		    If Preset.ValidForMask(Mask) Then
+		    If Preset.ValidForMask(Self.mMask) Then
 		      Self.CustomizePresetsList.AddRow("", Preset.Label)
 		      Self.CustomizePresetsList.RowTag(Self.CustomizePresetsList.LastIndex) = Preset
 		    End If
@@ -1323,15 +1329,23 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mConfig As BeaconConfigs.LootDrops
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDestinations() As Beacon.MutableLootSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDocument As Beacon.Document
+		Private mDuplicateSource As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDuplicateSource As Boolean
+		Private mMask As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMods As Beacon.TextList
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1453,7 +1467,7 @@ End
 		    
 		    Destination = New Beacon.MutableLootSource(ClassString, False)
 		    Destination.Label = Label
-		    Destination.Availability = Self.mDocument.MapCompatibility
+		    Destination.Availability = Self.mMask
 		    Destination.Multipliers = New Beacon.Range(MinMultiplier, MaxMultiplier)
 		    Destination.IsOfficial = False
 		    Destination.UseBlueprints = False
@@ -1487,8 +1501,6 @@ End
 		  Dim PreventDuplicates As Boolean = Self.CustomizePreventDuplicatesCheck.Value
 		  Dim AppendMode As Boolean = If(Self.mSource <> Nil, Self.mSource.AppendMode, False)
 		  Dim ReconfigurePresets As Boolean = Self.CustomizeReconfigureCheckbox.Value
-		  Dim Mask As UInt64 = Self.mDocument.MapCompatibility
-		  Dim Mods As Beacon.TextList = Self.mDocument.Mods
 		  
 		  Dim AllowedPresets(), AdditionalPresets() As Text
 		  For I As Integer = 0 To Self.CustomizePresetsList.ListCount - 1
@@ -1531,13 +1543,13 @@ End
 		        Continue
 		      End If
 		      
-		      Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Destination, Mask, Mods)
+		      Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Destination, Self.mMask, Self.mMods)
 		      Destination.Append(Set)
 		    Next
 		    
 		    // Rebuild if necessary
 		    If ReconfigurePresets Then
-		      Call Destination.ReconfigurePresets(Mask, Mods)
+		      Call Destination.ReconfigurePresets(Self.mMask, Self.mMods)
 		    End If
 		    
 		    // Apply basic settings
@@ -1546,7 +1558,7 @@ End
 		    Destination.SetsRandomWithoutReplacement = PreventDuplicates
 		    Destination.AppendMode = AppendMode
 		    
-		    Self.mDocument.Add(Destination)
+		    Self.mConfig.Append(Destination)
 		  Next
 		  
 		  Self.mCancelled = False

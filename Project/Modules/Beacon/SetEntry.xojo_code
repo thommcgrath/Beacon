@@ -268,15 +268,15 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromConfig(Dict As Xojo.Core.Dictionary, Multipliers As Beacon.Range, DifficultyValue As Double) As Beacon.SetEntry
+		Shared Function ImportFromConfig(Dict As Xojo.Core.Dictionary, Multipliers As Beacon.Range, Difficulty As BeaconConfigs.Difficulty) As Beacon.SetEntry
 		  Dim Entry As New Beacon.SetEntry
 		  Entry.RawWeight = Dict.Lookup("EntryWeight", 1.0)
 		  
 		  If Dict.HasKey("MinQuality") Then
-		    Entry.MinQuality = Beacon.Qualities.ForValue(Dict.Value("MinQuality"), Multipliers.Min, DifficultyValue)
+		    Entry.MinQuality = Beacon.Qualities.ForValue(Dict.Value("MinQuality"), Multipliers.Min, Difficulty)
 		  End If
 		  If Dict.HasKey("MaxQuality") Then
-		    Entry.MaxQuality = Beacon.Qualities.ForValue(Dict.Value("MaxQuality"), Multipliers.Max, DifficultyValue)
+		    Entry.MaxQuality = Beacon.Qualities.ForValue(Dict.Value("MaxQuality"), Multipliers.Max, Difficulty)
 		  End If
 		  If Dict.HasKey("MinQuantity") Then
 		    Entry.MinQuantity = Dict.Value("MinQuantity")

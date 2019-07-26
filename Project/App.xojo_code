@@ -136,6 +136,8 @@ Implements NotificationKit.Receiver
 		  BeaconUI.RegisterSheetPositionHandler
 		  
 		  Self.AutoQuit = True
+		  
+		  Tests.RunTests()
 		End Sub
 	#tag EndEvent
 

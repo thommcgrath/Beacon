@@ -2,6 +2,45 @@
  Attributes ( OmniVersion = 1 ) Protected Class ExperienceCurves
 Inherits Beacon.ConfigGroup
 	#tag Event
+		Sub DetectIssues(Document As Beacon.Document, Issues() As Beacon.Issue)
+		  #Pragma Unused Document
+		  
+		  Dim ConfigName As Text = ConfigKey
+		  Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Current
+		  
+		  If Self.mPlayerLevels.Ubound = -1 And Self.mDinoLevels.Ubound > -1 Then
+		    Issues.Append(New Beacon.Issue(ConfigName, "Ark requires player experience to be defined if editing dino experience."))
+		  ElseIf Self.PlayerLevelCap <= Self.AscensionLevels Then
+		    Issues.Append(New Beacon.Issue(ConfigName, "Must define at least " + Self.AscensionLevels.ToText(Locale) + " player levels to handle ascension correctly."))
+		  End If
+		  
+		  For I As Integer = 0 To Self.mPlayerLevels.Ubound
+		    Dim Level As Integer = I + 2
+		    Dim XP As Integer = Self.mPlayerLevels(I)
+		    Dim LastXP As UInt64 = If(I > 0, Self.mPlayerLevels(I - 1), 0)
+		    If XP < LastXP Then
+		      Issues.Append(New Beacon.Issue(ConfigName, "Player level " + Level.ToText(Locale) + " required experience is lower than the previous level.", "Player:" + Level.ToText))
+		    End If
+		    If XP > Self.MaxSupportedXP Then
+		      Issues.Append(New Beacon.Issue(ConfigName, "Player level " + Level.ToText(Locale) + " required experience is greater than Ark's limit of " + Format(Self.MaxSupportedXP, "0,").ToText + ".", "Player:" + Level.ToText))
+		    End If
+		  Next
+		  
+		  For I As Integer = 0 To Self.mDinoLevels.Ubound
+		    Dim Level As Integer = I + 2
+		    Dim XP As Integer = Self.mDinoLevels(I)
+		    Dim LastXP As UInt64 = If(I > 0, Self.mDinoLevels(I - 1), 0)
+		    If XP < LastXP Then
+		      Issues.Append(New Beacon.Issue(ConfigName, "Dino level " + Level.ToText(Locale) + " required experience is lower than the previous level.", "Dino:" + Level.ToText))
+		    End If
+		    If XP > Self.MaxSupportedXP Then
+		      Issues.Append(New Beacon.Issue(ConfigName, "Dino level " + Level.ToText(Locale) + " required experience is greater than Ark's limit of " + Format(Self.MaxSupportedXP, "0,").ToText + ".", "Dino:" + Level.ToText))
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
@@ -112,7 +151,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Shared Function ConfigName() As Text
-		  Return "ExperienceCurves"
+		  Return ConfigKey
 		End Function
 	#tag EndMethod
 
@@ -210,10 +249,10 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.ExperienceCurves
+		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.ExperienceCurves
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
-		  #Pragma Unused QualityMultiplier
+		  #Pragma Unused Difficulty
 		  
 		  If Not ParsedData.HasKey("LevelExperienceRampOverrides") Then
 		    Return Nil
@@ -285,48 +324,6 @@ Inherits Beacon.ConfigGroup
 		    End If
 		  Next
 		  Return Config
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Issues(Document As Beacon.Document) As Beacon.Issue()
-		  #Pragma Unused Document
-		  
-		  Dim Issues() As Beacon.Issue
-		  Dim ConfigName As Text = "ExperienceCurves"
-		  Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Current
-		  
-		  If Self.mPlayerLevels.Ubound = -1 And Self.mDinoLevels.Ubound > -1 Then
-		    Issues.Append(New Beacon.Issue(ConfigName, "Ark requires player experience to be defined if editing dino experience."))
-		  ElseIf Self.PlayerLevelCap <= Self.AscensionLevels Then
-		    Issues.Append(New Beacon.Issue(ConfigName, "Must define at least " + Self.AscensionLevels.ToText(Locale) + " player levels to handle ascension correctly."))
-		  End If
-		  
-		  For I As Integer = 0 To Self.mPlayerLevels.Ubound
-		    Dim Level As Integer = I + 2
-		    Dim XP As Integer = Self.mPlayerLevels(I)
-		    Dim LastXP As UInt64 = If(I > 0, Self.mPlayerLevels(I - 1), 0)
-		    If XP < LastXP Then
-		      Issues.Append(New Beacon.Issue(ConfigName, "Player level " + Level.ToText(Locale) + " required experience is lower than the previous level.", "Player:" + Level.ToText))
-		    End If
-		    If XP > Self.MaxSupportedXP Then
-		      Issues.Append(New Beacon.Issue(ConfigName, "Player level " + Level.ToText(Locale) + " required experience is greater than Ark's limit of " + Format(Self.MaxSupportedXP, "0,").ToText + ".", "Player:" + Level.ToText))
-		    End If
-		  Next
-		  
-		  For I As Integer = 0 To Self.mDinoLevels.Ubound
-		    Dim Level As Integer = I + 2
-		    Dim XP As Integer = Self.mDinoLevels(I)
-		    Dim LastXP As UInt64 = If(I > 0, Self.mDinoLevels(I - 1), 0)
-		    If XP < LastXP Then
-		      Issues.Append(New Beacon.Issue(ConfigName, "Dino level " + Level.ToText(Locale) + " required experience is lower than the previous level.", "Dino:" + Level.ToText))
-		    End If
-		    If XP > Self.MaxSupportedXP Then
-		      Issues.Append(New Beacon.Issue(ConfigName, "Dino level " + Level.ToText(Locale) + " required experience is greater than Ark's limit of " + Format(Self.MaxSupportedXP, "0,").ToText + ".", "Dino:" + Level.ToText))
-		    End If
-		  Next
-		  
-		  Return Issues
 		End Function
 	#tag EndMethod
 
@@ -477,6 +474,9 @@ Inherits Beacon.ConfigGroup
 		PlayerSoftLevelCap As Integer
 	#tag EndComputedProperty
 
+
+	#tag Constant, Name = ConfigKey, Type = Text, Dynamic = False, Default = \"ExperienceCurves", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = MaxSupportedXP, Type = Double, Dynamic = False, Default = \"2147483647", Scope = Public
 	#tag EndConstant

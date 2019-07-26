@@ -389,7 +389,11 @@ End
 		  Else
 		    Self.Autosave()
 		    
-		    If Self.Document.IsValid = False Then
+		    If Not Self.ContinueWithoutExcludedConfigs() Then
+		      Return
+		    End If
+		    
+		    If Self.Document.IsValid(App.IdentityManager.CurrentIdentity) = False Then
 		      Self.ShowIssues()
 		      Return
 		    End If
@@ -407,7 +411,11 @@ End
 		Private Sub BeginExport()
 		  Self.Autosave()
 		  
-		  If Self.Document.IsValid = False Then
+		  If Not Self.ContinueWithoutExcludedConfigs() Then
+		    Return
+		  End If
+		  
+		  If Self.Document.IsValid(App.IdentityManager.CurrentIdentity) = False Then
 		    Self.ShowIssues()
 		    Return
 		  End If
@@ -455,6 +463,33 @@ End
 		  
 		  Self.Panels = New Dictionary
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ContinueWithoutExcludedConfigs() As Boolean
+		  Dim ExcludedConfigs() As Beacon.ConfigGroup = Self.Document.UsesOmniFeaturesWithoutOmni(App.IdentityManager.CurrentIdentity)
+		  If ExcludedConfigs.Ubound = -1 Then
+		    Return True
+		  End If
+		  
+		  Dim HumanNames() As String
+		  For Each Config As Beacon.ConfigGroup In ExcludedConfigs
+		    HumanNames.Append("""" + Language.LabelForConfig(Config) + """")
+		  Next
+		  HumanNames.Sort
+		  
+		  Dim Message, Explanation As String
+		  If HumanNames.Ubound = 0 Then
+		    Message = "You are using an editor that will not be included in your config files."
+		    Explanation = "The " + HumanNames(0) + " editor requires Beacon Omni, which you have not purchased. Beacon will not generate its content for your config files. Do you still want to continue?"
+		  Else
+		    Dim GroupList As String = HumanNames.EnglishOxfordList()
+		    Message = "You are using editors that will not be included in your config files."
+		    Explanation = "The " + GroupList + " editors require Beacon Omni, which you have not purchased. Beacon will not generate their content for your config files. Do you still want to continue?"
+		  End If
+		  
+		  Return Self.ShowConfirm(Message, Explanation, "Continue", "Cancel")
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

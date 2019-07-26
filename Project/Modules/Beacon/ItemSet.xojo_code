@@ -283,7 +283,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromConfig(Dict As Xojo.Core.Dictionary, Multipliers As Beacon.Range, DifficultyValue As Double) As Beacon.ItemSet
+		Shared Function ImportFromConfig(Dict As Xojo.Core.Dictionary, Multipliers As Beacon.Range, Difficulty As BeaconConfigs.Difficulty) As Beacon.ItemSet
 		  Dim Set As New Beacon.ItemSet
 		  If Dict.HasKey("NumItemsPower") Then
 		    Set.NumItemsPower = Dict.Value("NumItemsPower")
@@ -303,7 +303,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Children = Dict.Value("ItemEntries")
 		  End If
 		  For Each Child As Xojo.Core.Dictionary In Children
-		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromConfig(Child, Multipliers, DifficultyValue)
+		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromConfig(Child, Multipliers, Difficulty)
 		    If Entry <> Nil Then
 		      Set.Append(Entry)
 		    End If

@@ -2,6 +2,27 @@
  Attributes ( OmniVersion = 1 ) Protected Class CraftingCosts
 Inherits Beacon.ConfigGroup
 	#tag Event
+		Sub DetectIssues(Document As Beacon.Document, Issues() As Beacon.Issue)
+		  #Pragma Unused Document
+		  
+		  Dim ConfigName As Text = ConfigKey
+		  For I As Integer = 0 To Self.mCosts.Ubound
+		    If Self.mCosts(I).IsValid Then
+		      Continue
+		    End If
+		    
+		    If Self.mCosts(I).Engram = Nil Then
+		      Issues.Append(New Beacon.Issue(ConfigName, "Crafting cost has no engram", Self.mCosts(I)))
+		    End If
+		    
+		    If Self.mCosts(I).Ubound = -1 Then
+		      Issues.Append(New Beacon.Issue(ConfigName, "Crafting cost override of """ + Self.mCosts(I).Label + """ has no resources.", Self.mCosts(I)))
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
@@ -58,15 +79,15 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Shared Function ConfigName() As Text
-		  Return "CraftingCosts"
+		  Return ConfigKey
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.CraftingCosts
+		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.CraftingCosts
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
-		  #Pragma Unused QualityMultiplier
+		  #Pragma Unused Difficulty
 		  
 		  If Not ParsedData.HasKey("ConfigOverrideItemCraftingCosts") Then
 		    Return Nil
@@ -123,29 +144,6 @@ Inherits Beacon.ConfigGroup
 		    Self.Modified = True
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Issues(Document As Beacon.Document) As Beacon.Issue()
-		  #Pragma Unused Document
-		  
-		  Dim Issues() As Beacon.Issue
-		  Dim ConfigName As Text = "CraftingCosts"
-		  For I As Integer = 0 To Self.mCosts.Ubound
-		    If Self.mCosts(I).IsValid Then
-		      Continue
-		    End If
-		    
-		    If Self.mCosts(I).Engram = Nil Then
-		      Issues.Append(New Beacon.Issue(ConfigName, "Crafting cost has no engram", Self.mCosts(I)))
-		    End If
-		    
-		    If Self.mCosts(I).Ubound = -1 Then
-		      Issues.Append(New Beacon.Issue(ConfigName, "Crafting cost override of """ + Self.mCosts(I).Label + """ has no resources.", Self.mCosts(I)))
-		    End If
-		  Next
-		  Return Issues
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -223,6 +221,10 @@ Inherits Beacon.ConfigGroup
 	#tag Property, Flags = &h21
 		Private mCosts() As Beacon.CraftingCost
 	#tag EndProperty
+
+
+	#tag Constant, Name = ConfigKey, Type = Text, Dynamic = False, Default = \"CraftingCosts", Scope = Private
+	#tag EndConstant
 
 
 	#tag ViewBehavior

@@ -447,12 +447,10 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub AddLootSources(Sources() As Beacon.LootSource, Silent As Boolean = False)
+		Private Sub AddLootSources(Sources() As Beacon.LootSource)
 		  If Sources.Ubound = -1 Then
 		    Return
 		  End If
-		  
-		  Dim IgnoredSources() As Beacon.LootSource
 		  
 		  For Each Source As Beacon.LootSource In Sources
 		    If Source.Experimental And Not Preferences.HasShownExperimentalWarning Then
@@ -465,33 +463,44 @@ End
 		    End If
 		  Next
 		  
+		  Dim Config As BeaconConfigs.LootDrops = Self.Config(True)
 		  For Each Source As Beacon.LootSource In Sources
-		    If Self.Document.HasLootSource(Source) Then
-		      Self.Document.Remove(Source)
+		    If Config.HasLootSource(Source) Then
+		      Config.Remove(Source)
 		    End If
 		    
-		    If Self.Document.SupportsLootSource(Source) Then
-		      Self.Document.Add(Source)
-		    Else
-		      IgnoredSources.Append(Source)
-		    End If
+		    Config.Append(Source)
 		    Self.ContentsChanged = Self.Document.Modified
 		  Next
 		  
 		  Self.UpdateSourceList(Sources)
-		  
-		  If IgnoredSources.Ubound > -1 And Not Silent Then
-		    Dim SourcesList() As Text
-		    For Each IgnoredSource As Beacon.LootSource In IgnoredSources
-		      SourcesList.Append(IgnoredSource.Label)
-		    Next
-		    
-		    Dim IgnoredCount As Integer = IgnoredSources.Ubound + 1
-		    Self.ShowAlert(IgnoredCount.ToText + if(IgnoredCount = 1, " loot source was", " loot sources were") + " not added because " + if(IgnoredCount = 1, "it is", "they are") + " not compatible with the selected maps.", "The following " + if(IgnoredCount = 1, "loot source was", "loot sources were") + " skipped: " + SourcesList.Join(", "))
-		  End If
-		  
 		  Self.List.EnsureSelectionIsVisible()
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.LootDrops
+		  Static ConfigName As Text = BeaconConfigs.LootDrops.ConfigName
+		  
+		  Dim Document As Beacon.Document = Self.Document
+		  Dim Config As BeaconConfigs.LootDrops
+		  
+		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
+		    Config = BeaconConfigs.LootDrops(Self.mConfigRef.Value)
+		  ElseIf Document.HasConfigGroup(ConfigName) Then
+		    Config = BeaconConfigs.LootDrops(Document.ConfigGroup(ConfigName))
+		    Self.mConfigRef = New WeakRef(Config)
+		  Else
+		    Config = New BeaconConfigs.LootDrops
+		    Self.mConfigRef = New WeakRef(Config)
+		  End If
+		  
+		  If ForWriting And Not Document.HasConfigGroup(ConfigName) Then
+		    Document.AddConfigGroup(Config)
+		  End If
+		  
+		  Return Config
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -520,7 +529,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RebuildAllItemSets()
-		  Dim NumChanges As UInteger = Self.Document.ReconfigurePresets()
+		  Dim NumChanges As UInteger = Self.Config(True).ReconfigurePresets(Self.Document.MapCompatibility, Self.Document.Mods)
 		  If NumChanges = 0 Then
 		    Self.ShowAlert("No item sets changed", "All item sets are already configured according to their presets.")
 		    Return
@@ -563,7 +572,7 @@ End
 		  
 		  For I As Integer = Self.List.ListCount - 1 DownTo 0
 		    If Self.List.Selected(I) Then
-		      Self.Document.Remove(Beacon.LootSource(Self.List.RowTag(I)))
+		      Self.Config(True).Remove(Beacon.LootSource(Self.List.RowTag(I)))
 		      Self.List.RemoveRow(I)
 		    End If
 		  Next
@@ -601,7 +610,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim CurrentSources() As Beacon.LootSource = Self.Document.LootSources
+		  Dim Config As BeaconConfigs.LootDrops = Self.Config(False)
+		  Dim CurrentSources() As Beacon.LootSource = Config.DefinedSources
 		  Dim Map As New Xojo.Core.Dictionary
 		  For Each Source As Beacon.LootSource In CurrentSources
 		    Map.Value(Source.ClassString) = True
@@ -612,8 +622,9 @@ End
 		    DuplicateSource = Self.List.RowTag(Self.List.ListIndex)
 		  End If
 		  
-		  If LootSourceWizard.Preset(Self, Self.Document, DuplicateSource, DuplicateSelected) Then
-		    CurrentSources = Self.Document.LootSources
+		  If LootSourceWizard.Present(Self, Config, Self.Document.MapCompatibility, Self.Document.Mods, DuplicateSource, DuplicateSelected) Then
+		    Call Self.Config(True) // Actually saves the config to the document 
+		    CurrentSources = Config.DefinedSources
 		    Dim NewSources() As Beacon.LootSource
 		    For Each Source As Beacon.LootSource In CurrentSources
 		      If Not Map.HasKey(Source.ClassString) Then
@@ -628,7 +639,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateSourceList(SelectedSources() As Beacon.LootSource = Nil)
-		  Dim VisibleSources() As Beacon.LootSource = Self.Document.LootSources
+		  Dim VisibleSources() As Beacon.LootSource = Self.Config(False).DefinedSources
 		  Beacon.Sort(VisibleSources)
 		  
 		  Dim SelectedClasses() As Text
@@ -692,6 +703,10 @@ End
 		Private mBlockSelectionChanged As Boolean
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mConfigRef As WeakRef
+	#tag EndProperty
+
 
 	#tag Constant, Name = HelpExplanation, Type = String, Dynamic = False, Default = \"Fill This In", Scope = Private
 	#tag EndConstant
@@ -715,7 +730,7 @@ End
 		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
 		  DuplicateButton.HelpTag = "Duplicate the selected loot source."
 		  
-		  Dim RebuildButton As New BeaconToolbarItem("Rebuild", IconToolbarRebuild, Self.Document.LootSourceCount > 0)
+		  Dim RebuildButton As New BeaconToolbarItem("Rebuild", IconToolbarRebuild, Self.Config(False).UBound > -1)
 		  RebuildButton.HelpTag = "Rebuild all item sets using their presets."
 		  
 		  Me.LeftItems.Append(AddButton)
@@ -747,17 +762,27 @@ End
 		  Case "AddSource"
 		    Dim LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.Document.Mods, Preferences.ShowExperimentalLootSources)
 		    Dim HasExperimentalSources As Boolean = LocalData.SharedInstance.HasExperimentalLootSources(Self.Document.Mods)
-		    For I As Integer = LootSources.Ubound DownTo 0
-		      If Self.Document.HasLootSource(LootSources(I)) Then
-		        LootSources.Remove(I)
-		        Continue For I
-		      End If
-		      If Not Self.Document.SupportsLootSource(LootSources(I)) Then
-		        LootSources.Remove(I)
-		      End If
-		    Next
+		    Dim Config As BeaconConfigs.LootDrops = Self.Config(False)
+		    Dim Mask As UInt64 = Self.Document.MapCompatibility
+		    If Config <> Nil Then
+		      For I As Integer = LootSources.Ubound DownTo 0
+		        Dim Source As Beacon.LootSource = LootSources(I)
+		        If Config.HasLootSource(Source) Or Source.ValidForMask(Mask) = False Then
+		          LootSources.Remove(I)
+		          Continue For I
+		        End If
+		      Next
+		    End If
 		    
 		    If LootSources.Ubound = -1 Then
+		      Dim Warning As MenuItem
+		      If Mask = 0 Then
+		        Warning = New MenuItem("List is empty because no maps have been selected.")
+		      Else
+		        Warning = New MenuItem("List is empty because all drops have been implemented.")
+		      End If
+		      Warning.Enabled = False
+		      Menu.Append(Warning)
 		      Return
 		    End If
 		    
@@ -950,7 +975,9 @@ End
 		      Continue
 		    End If
 		    
-		    If LootSourceWizard.Preset(Self, Self.Document, Me.RowTag(I)) Then
+		    Dim Config As BeaconConfigs.LootDrops = Self.Config(False)
+		    If LootSourceWizard.Present(Self, Config, Self.Document.MapCompatibility, Self.Document.Mods, Me.RowTag(I)) Then
+		      Call Self.Config(True) // Actually saves the config to the document
 		      Self.UpdateSourceList()
 		      Self.ContentsChanged = True
 		    End If
@@ -968,7 +995,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PresentLootSourceEditor(Source As Beacon.LootSource)
-		  If LootSourceWizard.Preset(Self, Self.Document, Source) Then
+		  Dim Config As BeaconConfigs.LootDrops = Self.Config(False)
+		  If LootSourceWizard.Present(Self, Config, Self.Document.MapCompatibility, Self.Document.Mods, Source) Then
+		    Call Self.Config(True) // Actually saves the config to the document
 		    Self.UpdateSourceList()
 		    Self.ContentsChanged = True
 		  End If
