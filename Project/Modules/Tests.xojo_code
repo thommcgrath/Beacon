@@ -45,13 +45,13 @@ Protected Module Tests
 		    Dim ExtremeQualityMin As Beacon.Quality = Beacon.Qualities.ForValue(QualityExtremeMin, Source.Multipliers.Min, ExtremeDifficulty)
 		    Dim ExtremeQualityMax As Beacon.Quality = Beacon.Qualities.ForValue(QualityExtremeMax, Source.Multipliers.Max, ExtremeDifficulty)
 		    
-		    
-		    Assert(StandardQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + " but got " + Language.LabelForQuality(StandardQualityMin) + " for difficulty 5")
-		    Assert(StandardQualityMax = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + " but got " + Language.LabelForQuality(StandardQualityMax) + " for difficulty 5")
-		    Assert(HighQualityMin <> Quality, "Expected quality min " + Language.LabelForQuality(Quality) + " but got " + Language.LabelForQuality(HighQualityMin) + " for difficulty 15")
-		    Assert(HighQualityMax <> Quality, "Expected quality max " + Language.LabelForQuality(Quality) + " but got " + Language.LabelForQuality(HighQualityMax) + " for difficulty 15")
-		    Assert(ExtremeQualityMin <> Quality, "Expected quality min " + Language.LabelForQuality(Quality) + " but got " + Language.LabelForQuality(ExtremeQualityMin) + " for difficulty 100")
-		    Assert(ExtremeQualityMin <> Quality, "Expected quality max " + Language.LabelForQuality(Quality) + " but got " + Language.LabelForQuality(ExtremeQualityMax) + " for difficulty 100")
+		    Const Formatter = "-0.0000"
+		    Assert(StandardQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(StandardQualityMin) + "(" + Str(StandardQualityMin.BaseValue, Formatter) + ") for difficulty 5")
+		    Assert(StandardQualityMax = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(StandardQualityMax) + "(" + Str(StandardQualityMax.BaseValue, Formatter) + ") for difficulty 5")
+		    Assert(HighQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(HighQualityMin) + "(" + Str(HighQualityMax.BaseValue, Formatter) + ") for difficulty 15")
+		    Assert(HighQualityMax = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(HighQualityMax) + "(" + Str(HighQualityMax.BaseValue, Formatter) + ") for difficulty 15")
+		    Assert(ExtremeQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(ExtremeQualityMin) + "(" + Str(ExtremeQualityMax.BaseValue, Formatter) + ") for difficulty 100")
+		    Assert(ExtremeQualityMin = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(ExtremeQualityMax) + "(" + Str(ExtremeQualityMax.BaseValue, Formatter) + ") for difficulty 100")
 		  #endif
 		End Sub
 	#tag EndMethod
