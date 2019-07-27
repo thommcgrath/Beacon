@@ -6,7 +6,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.BeginTransaction()
 		  Dim Results As RowSet = Self.SQLSelect("SELECT mod_id FROM preset_modifiers WHERE object_id = ?1;", Modifier.ModifierID)
 		  If Results.RecordCount = 1 Then
-		    If Results.Field("mod_id").StringValue = Self.UserModID Then
+		    If Results.Column("mod_id").StringValue = Self.UserModID Then
 		      Self.SQLExecute("UPDATE preset_modifiers SET label = ?2, pattern = ?3 WHERE object_id = ?1;", Modifier.ModifierID, Modifier.Label, Modifier.Pattern)
 		    End If
 		  Else
@@ -21,8 +21,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dim Mods() As Beacon.ModDetails
 		  Dim Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe FROM mods ORDER BY name;")
 		  While Not Results.IsAfterLastRow
-		    Mods.Append(New Beacon.ModDetails(Results.Field("mod_id").StringValue.ToText, Results.Field("name").StringValue.ToText, Results.Field("console_safe").BooleanValue))
-		    Results.MoveNext
+		    Mods.Append(New Beacon.ModDetails(Results.Column("mod_id").StringValue.ToText, Results.Column("name").StringValue.ToText, Results.Column("console_safe").BooleanValue))
+		    Results.MoveToNextRow
 		  Wend
 		  Return Mods
 		End Function
@@ -34,16 +34,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dim Modifiers() As Beacon.PresetModifier
 		  While Not Results.IsAfterLastRow
 		    Dim Dict As New Xojo.Core.Dictionary
-		    Dict.Value("ModifierID") = Results.Field("object_id").StringValue.ToText
-		    Dict.Value("Pattern") = Results.Field("pattern").StringValue.ToText
-		    Dict.Value("Label") = Results.Field("label").StringValue.ToText
+		    Dict.Value("ModifierID") = Results.Column("object_id").StringValue.ToText
+		    Dict.Value("Pattern") = Results.Column("pattern").StringValue.ToText
+		    Dict.Value("Label") = Results.Column("label").StringValue.ToText
 		    
 		    Dim Modifier As Beacon.PresetModifier = Beacon.PresetModifier.FromDictionary(Dict)
 		    If Modifier <> Nil Then
 		      Modifiers.Append(Modifier)
 		    End If
 		    
-		    Results.MoveNext
+		    Results.MoveToNextRow
 		  Wend
 		  Return Modifiers
 		End Function
@@ -59,13 +59,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  Dim Dict As New Dictionary
 		  While Not Results.IsAfterLastRow
-		    Dim Tags() As String = Results.Field("tags").StringValue.Split(",")
+		    Dim Tags() As String = Results.Column("tags").StringValue.Split(",")
 		    For Each Tag As String In Tags
 		      If Tag <> "object" Then
 		        Dict.Value(Tag) = True
 		      End If
 		    Next
-		    Results.MoveNext
+		    Results.MoveToNextRow
 		  Wend
 		  
 		  Dim Keys() As Variant = Dict.Keys
@@ -197,8 +197,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dim Results As RowSet = Self.SQLSelect("SELECT mod_id FROM mods WHERE console_safe = 1;")
 		  Dim Mods() As Text
 		  While Not Results.IsAfterLastRow
-		    Mods.Append(Results.Field("mod_id").StringValue.ToText)
-		    Results.MoveNext
+		    Mods.Append(Results.Column("mod_id").StringValue.ToText)
+		    Results.MoveToNextRow
 		  Wend
 		  Return Mods
 		End Function
@@ -345,7 +345,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function DeleteCreature(Creature As Beacon.Creature) As Boolean
 		  Try
 		    Dim Results As RowSet = Self.SQLSelect("SELECT mod_id FROM creatures WHERE LOWER(path) = LOWER(?1);", Creature.Path)
-		    If Results.RecordCount = 1 And Results.Field("mod_id").StringValue <> Self.UserModID Then
+		    If Results.RecordCount = 1 And Results.Column("mod_id").StringValue <> Self.UserModID Then
 		      Return False
 		    End If
 		    
@@ -367,7 +367,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function DeleteEngram(Engram As Beacon.Engram) As Boolean
 		  Try
 		    Dim Results As RowSet = Self.SQLSelect("SELECT mod_id FROM engrams WHERE LOWER(path) = LOWER(?1);", Engram.Path)
-		    If Results.RecordCount = 1 And Results.Field("mod_id").StringValue <> Self.UserModID Then
+		    If Results.RecordCount = 1 And Results.Column("mod_id").StringValue <> Self.UserModID Then
 		      Return False
 		    End If
 		    
@@ -427,8 +427,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return Nil
 		  End If
 		  
-		  Dim Path As Text = Results.Field("path").StringValue.ToText
-		  Select Case Results.Field("category").StringValue.ToText
+		  Dim Path As Text = Results.Column("path").StringValue.ToText
+		  Select Case Results.Column("category").StringValue.ToText
 		  Case Beacon.CategoryEngrams
 		    Return Self.GetEngramByPath(Path)
 		  Case Beacon.CategoryCreatures
@@ -441,7 +441,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function GetBooleanVariable(Key As Text) As Boolean
 		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RecordCount = 1 Then
-		    Return Results.Field("value").BooleanValue
+		    Return Results.Column("value").BooleanValue
 		  Else
 		    Return False
 		  End If
@@ -455,9 +455,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return False
 		  End If
 		  
-		  Title = Results.Field("title").StringValue
-		  Body = Results.Field("body").StringValue
-		  DetailURL = If(Results.Field("detail_url").Value <> Nil, Results.Field("detail_url").StringValue, "")
+		  Title = Results.Column("title").StringValue
+		  Body = Results.Column("body").StringValue
+		  DetailURL = If(Results.Column("detail_url").Value <> Nil, Results.Column("detail_url").StringValue, "")
 		  
 		  Return True
 		End Function
@@ -536,7 +536,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function GetDoubleVariable(Key As Text) As Double
 		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RecordCount = 1 Then
-		    Return Results.Field("value").DoubleValue
+		    Return Results.Column("value").DoubleValue
 		  Else
 		    Return 0.0
 		  End If
@@ -597,7 +597,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function GetIntegerVariable(Key As Text) As Integer
 		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RecordCount = 1 Then
-		    Return Results.Field("value").IntegerValue
+		    Return Results.Column("value").IntegerValue
 		  Else
 		    Return 0
 		  End If
@@ -628,15 +628,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dim Results As RowSet = Self.SQLSelect("SELECT * FROM notifications WHERE deleted = 0 ORDER BY moment DESC;")
 		  While Not Results.IsAfterLastRow
 		    Dim Notification As New Beacon.UserNotification
-		    Notification.Message = Results.Field("message").StringValue.ToText
-		    Notification.SecondaryMessage = Results.Field("secondary_message").StringValue.ToText
-		    Notification.ActionURL = Results.Field("action_url").StringValue.ToText
-		    Notification.Read = Results.Field("read").BooleanValue
-		    Notification.Timestamp = Self.TextToDate(Results.Field("moment").StringValue.ToText)
-		    Notification.UserData = Xojo.Data.ParseJSON(Results.Field("user_data").StringValue.ToText)
+		    Notification.Message = Results.Column("message").StringValue.ToText
+		    Notification.SecondaryMessage = Results.Column("secondary_message").StringValue.ToText
+		    Notification.ActionURL = Results.Column("action_url").StringValue.ToText
+		    Notification.Read = Results.Column("read").BooleanValue
+		    Notification.Timestamp = Self.TextToDate(Results.Column("moment").StringValue.ToText)
+		    Notification.UserData = Xojo.Data.ParseJSON(Results.Column("user_data").StringValue.ToText)
 		    Notifications.Append(Notification)
 		    
-		    Results.MoveNext
+		    Results.MoveToNextRow
 		  Wend
 		  Return Notifications
 		End Function
@@ -660,9 +660,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Dim Dict As New Xojo.Core.Dictionary
-		  Dict.Value("ModifierID") = Results.Field("object_id").StringValue.ToText
-		  Dict.Value("Pattern") = Results.Field("pattern").StringValue.ToText
-		  Dict.Value("Label") = Results.Field("label").StringValue.ToText
+		  Dict.Value("ModifierID") = Results.Column("object_id").StringValue.ToText
+		  Dict.Value("Pattern") = Results.Column("pattern").StringValue.ToText
+		  Dict.Value("Label") = Results.Column("label").StringValue.ToText
 		  Return Beacon.PresetModifier.FromDictionary(Dict)
 		End Function
 	#tag EndMethod
@@ -671,7 +671,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function GetTextVariable(Key As Text) As Text
 		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RecordCount = 1 Then
-		    Dim StringValue As String = Results.Field("value").StringValue
+		    Dim StringValue As String = Results.Column("value").StringValue
 		    If StringValue.Encoding = Nil Then
 		      If Encodings.UTF8.IsValidData(StringValue) Then
 		        StringValue = StringValue.DefineEncoding(Encodings.UTF8)
@@ -731,12 +731,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dim Results As RowSet = Self.SQLSelect("SELECT loot_source_icons.icon_id, loot_source_icons.icon_data, loot_sources.experimental FROM loot_sources INNER JOIN loot_source_icons ON (loot_sources.icon = loot_source_icons.icon_id) WHERE loot_sources.class_string = ?1;", Source.ClassString)
 		  Dim SpriteSheet, BadgeSheet As Picture
 		  If Results.RecordCount = 1 Then
-		    SpriteSheet = Results.Field("icon_data").PictureValue
-		    If IncludeExperimentalBadge And Results.Field("experimental").BooleanValue Then
+		    SpriteSheet = Results.Column("icon_data").PictureValue
+		    If IncludeExperimentalBadge And Results.Column("experimental").BooleanValue Then
 		      BadgeSheet = IconExperimentalBadge
 		      IconID = IconID + "exp"
 		    End If
-		    IconID = Results.Field("icon_id").StringValue
+		    IconID = Results.Column("icon_id").StringValue
 		    PrimaryColor = Source.UIColor
 		  Else
 		    SpriteSheet = IconLootStandard
@@ -1003,7 +1003,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      
 		      Dim Results As RowSet = Self.SQLSelect("SELECT name, console_safe FROM mods WHERE mod_id = ?1;", ModID)
 		      If Results.RecordCount = 1 Then
-		        If ModName.Compare(Results.Field("name").StringValue.ToText, Text.CompareCaseSensitive) <> 0 Or ConsoleSafe <> Results.Field("console_safe").BooleanValue Then
+		        If ModName.Compare(Results.Column("name").StringValue.ToText, Text.CompareCaseSensitive) <> 0 Or ConsoleSafe <> Results.Column("console_safe").BooleanValue Then
 		          Self.SQLExecute("UPDATE mods SET name = ?2, console_safe = ?3 WHERE mod_id = ?1;", ModID, ModName, ConsoleSafe)
 		        End If
 		      Else
@@ -1014,11 +1014,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Next
 		    Dim ModResults As RowSet = Self.SQLSelect("SELECT mod_id FROM mods;")
 		    While Not ModResults.IsAfterLastRow
-		      Dim ModID As Text = ModResults.Field("mod_id").StringValue.ToText.Lowercase
+		      Dim ModID As Text = ModResults.Column("mod_id").StringValue.ToText.Lowercase
 		      If RetainMods.IndexOf(ModID) = -1 Then
 		        Self.SQLExecute("DELETE FROM mods WHERE mod_id = ?1;", ModID)
 		      End If
-		      ModResults.MoveNext
+		      ModResults.MoveToNextRow
 		    Wend
 		    
 		    // When deleting, loot_source_icons must be done after loot_sources
@@ -1082,11 +1082,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      IconID = IconID.Lowercase
 		      
 		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM loot_sources WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID, Path.Lowercase)
-		      If Results.RecordCount = 1 And ObjectID = Results.Field("object_id").StringValue Then
+		      If Results.RecordCount = 1 And ObjectID = Results.Column("object_id").StringValue Then
 		        Self.SQLExecute("UPDATE loot_sources SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, multiplier_min = ?7, multiplier_max = ?8, uicolor = ?9, sort_order = ?10, icon = ?11, experimental = ?12, notes = ?13, requirements = ?14 WHERE object_id = ?1;", ObjectID, ModID, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, IconID, Experimental, Notes, Requirements)
 		      Else
 		        If Results.RecordCount = 1 Then
-		          Self.SQLExecute("DELETE FROM loot_sources WHERE object_id = ?1;", Results.Field("object_id").StringValue)
+		          Self.SQLExecute("DELETE FROM loot_sources WHERE object_id = ?1;", Results.Column("object_id").StringValue)
 		        End If
 		        Self.SQLExecute("INSERT INTO loot_sources (object_id, mod_id, label, availability, path, class_string, multiplier_min, multiplier_max, uicolor, sort_order, icon, experimental, notes, requirements) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14);", ObjectID, ModID, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, IconID, Experimental, Notes, Requirements)
 		      End If
@@ -1119,13 +1119,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      ModID = ModID.Lowercase
 		      
 		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM engrams WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID, Path.Lowercase)
-		      If Results.RecordCount = 1 And ObjectID = Results.Field("object_id").StringValue Then
+		      If Results.RecordCount = 1 And ObjectID = Results.Column("object_id").StringValue Then
 		        Self.SQLExecute("UPDATE engrams SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, tags = ?7 WHERE object_id = ?1;", ObjectID, ModID, Label, Availability, Path, ClassString, TagString)
 		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?2 WHERE object_id = ?1 AND source_table = 'engrams';", ObjectID, TagStringForSearching)
 		      Else
 		        If Results.RecordCount = 1 Then
-		          Self.SQLExecute("DELETE FROM engrams WHERE object_id = ?1;", Results.Field("object_id").StringValue)
-		          Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id = ?1 AND source_table = 'engrams';", Results.Field("object_id").StringValue)
+		          Self.SQLExecute("DELETE FROM engrams WHERE object_id = ?1;", Results.Column("object_id").StringValue)
+		          Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id = ?1 AND source_table = 'engrams';", Results.Column("object_id").StringValue)
 		        End If
 		        Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID, ModID, Label, Availability, Path, ClassString, TagString)
 		        Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, 'engrams');", ObjectID, TagStringForSearching)
@@ -1161,13 +1161,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      ModID = ModID.Lowercase
 		      
 		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM creatures WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID, Path.Lowercase)
-		      If Results.RecordCount = 1 And ObjectID = Results.Field("object_id").StringValue Then
+		      If Results.RecordCount = 1 And ObjectID = Results.Column("object_id").StringValue Then
 		        Self.SQLExecute("UPDATE creatures SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, tags = ?7, incubation_time = ?8, mature_time = ?9 WHERE object_id = ?1;", ObjectID, ModID, Label, Availability, Path, ClassString, TagString, IncubationTime, MatureTime)
 		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?2 WHERE object_id = ?1 AND source_table = 'creatures';", ObjectID, TagStringForSearching)
 		      Else
 		        If Results.RecordCount = 1 Then
-		          Self.SQLExecute("DELETE FROM creatures WHERE object_id = ?1;", Results.Field("object_id").StringValue)
-		          Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id = ?1 AND source_table = 'creatures';", Results.Field("object_id").StringValue)
+		          Self.SQLExecute("DELETE FROM creatures WHERE object_id = ?1;", Results.Column("object_id").StringValue)
+		          Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id = ?1 AND source_table = 'creatures';", Results.Column("object_id").StringValue)
 		        End If
 		        Self.SQLExecute("INSERT INTO creatures (object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", ObjectID, ModID, Label, Availability, Path, ClassString, TagString, IncubationTime, MatureTime)
 		        Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, 'creatures');", ObjectID, TagStringForSearching)
@@ -1369,21 +1369,21 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Sub LoadPresets(Results As RowSet, Type As Beacon.Preset.Types)
 		  While Not Results.IsAfterLastRow
-		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Results.Field("contents").StringValue.ToText)
+		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Results.Column("contents").StringValue.ToText)
 		    Dim Preset As Beacon.Preset = Beacon.Preset.FromDictionary(Dict)
 		    If Preset <> Nil Then
-		      If Type <> Beacon.Preset.Types.BuiltIn And Preset.PresetID <> Results.Field("object_id").StringValue Then
+		      If Type <> Beacon.Preset.Types.BuiltIn And Preset.PresetID <> Results.Column("object_id").StringValue Then
 		        // To work around https://github.com/thommcgrath/Beacon/issues/64
 		        Dim Contents As Text = Xojo.Data.GenerateJSON(Preset.ToDictionary)
 		        Self.BeginTransaction()
-		        Self.SQLExecute("UPDATE custom_presets SET LOWER(object_id) = LOWER(?2), contents = ?3 WHERE object_id = ?1;", Results.Field("object_id").StringValue, Preset.PresetID, Contents)
+		        Self.SQLExecute("UPDATE custom_presets SET LOWER(object_id) = LOWER(?2), contents = ?3 WHERE object_id = ?1;", Results.Column("object_id").StringValue, Preset.PresetID, Contents)
 		        Self.Commit()
 		      End If
 		      
 		      Preset.Type = Type
 		      Self.mPresets.Append(Preset)
 		    End If
-		    Results.MoveNext
+		    Results.MoveToNextRow
 		  Wend
 		End Sub
 	#tag EndMethod
@@ -1483,8 +1483,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      While Not Results.IsAfterLastRow
 		        Try
 		          Dim ObjectID As String = Beacon.CreateUUID
-		          Dim Tags As String = If(Results.Field("can_blueprint").BooleanValue, "object,blueprintable", "object")
-		          Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, path, class_string, label, availability, tags) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID, Self.UserModID, Results.Field("path").StringValue, Results.Field("class_string").StringValue, Results.Field("label").StringValue, Results.Field("availability").IntegerValue, Tags)
+		          Dim Tags As String = If(Results.Column("can_blueprint").BooleanValue, "object,blueprintable", "object")
+		          Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, path, class_string, label, availability, tags) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID, Self.UserModID, Results.Column("path").StringValue, Results.Column("class_string").StringValue, Results.Column("label").StringValue, Results.Column("availability").IntegerValue, Tags)
 		          Self.SQLExecute("INSERT INTO searchable_tags (object_id, source_table, tags) VALUES (?1, ?2, ?3);", ObjectID, "engrams", Tags)
 		        Catch Err As UnsupportedOperationException
 		          Self.Rollback()
@@ -1493,7 +1493,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Return False
 		        End Try
 		        
-		        Results.MoveNext
+		        Results.MoveToNextRow
 		      Wend
 		    End If
 		    
@@ -1541,8 +1541,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Dim Extension As String = BeaconFileTypes.BeaconPreset.PrimaryExtension
 		    Dim Results As RowSet = Self.SQLSelect("SELECT object_id, contents FROM custom_presets;")
 		    While Not Results.IsAfterLastRow
-		      Call UserCloud.Write("/Presets/" + Lowercase(Results.Field("object_id").StringValue) + Extension, Results.Field("contents").StringValue)
-		      Results.MoveNext
+		      Call UserCloud.Write("/Presets/" + Lowercase(Results.Column("object_id").StringValue) + Extension, Results.Column("contents").StringValue)
+		      Results.MoveToNextRow
 		    Wend
 		    
 		    Self.SyncUserEngrams()
@@ -1672,22 +1672,22 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Shared Function RowSetToCreature(Results As RowSet) As Beacon.Creature()
 		  Dim Creatures() As Beacon.Creature
 		  While Not Results.IsAfterLastRow
-		    Dim Creature As New Beacon.MutableCreature(Results.Field("path").StringValue.ToText, Results.Field("object_id").StringValue.ToText)
-		    Creature.Label = Results.Field("label").StringValue.ToText
-		    Creature.Availability = Results.Field("availability").IntegerValue
-		    Creature.TagString = Results.Field("tags").StringValue.ToText
-		    Creature.ModID = Results.Field("mod_id").StringValue.ToText
-		    Creature.ModName = Results.Field("mod_name").StringValue.ToText
+		    Dim Creature As New Beacon.MutableCreature(Results.Column("path").StringValue.ToText, Results.Column("object_id").StringValue.ToText)
+		    Creature.Label = Results.Column("label").StringValue.ToText
+		    Creature.Availability = Results.Column("availability").IntegerValue
+		    Creature.TagString = Results.Column("tags").StringValue.ToText
+		    Creature.ModID = Results.Column("mod_id").StringValue.ToText
+		    Creature.ModName = Results.Column("mod_name").StringValue.ToText
 		    
-		    If Results.Field("incubation_time").Value <> Nil Then
-		      Creature.IncubationTime = Beacon.SecondsToInterval(Results.Field("incubation_time").IntegerValue)
+		    If Results.Column("incubation_time").Value <> Nil Then
+		      Creature.IncubationTime = Beacon.SecondsToInterval(Results.Column("incubation_time").IntegerValue)
 		    End If
-		    If Results.Field("mature_time").Value <> Nil Then
-		      Creature.MatureTime = Beacon.SecondsToInterval(Results.Field("mature_time").IntegerValue)
+		    If Results.Column("mature_time").Value <> Nil Then
+		      Creature.MatureTime = Beacon.SecondsToInterval(Results.Column("mature_time").IntegerValue)
 		    End If
 		    
 		    Creatures.Append(Creature)
-		    Results.MoveNext
+		    Results.MoveToNextRow
 		  Wend
 		  Return Creatures
 		End Function
@@ -1697,14 +1697,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Shared Function RowSetToEngram(Results As RowSet) As Beacon.Engram()
 		  Dim Engrams() As Beacon.Engram
 		  While Not Results.IsAfterLastRow
-		    Dim Engram As New Beacon.MutableEngram(Results.Field("path").StringValue.ToText, Results.Field("object_id").StringValue.ToText)
-		    Engram.Label = Results.Field("label").StringValue.ToText
-		    Engram.Availability = Results.Field("availability").IntegerValue
-		    Engram.TagString = Results.Field("tags").StringValue.ToText
-		    Engram.ModID = Results.Field("mod_id").StringValue.ToText
-		    Engram.ModName = Results.Field("mod_name").StringValue.ToText
+		    Dim Engram As New Beacon.MutableEngram(Results.Column("path").StringValue.ToText, Results.Column("object_id").StringValue.ToText)
+		    Engram.Label = Results.Column("label").StringValue.ToText
+		    Engram.Availability = Results.Column("availability").IntegerValue
+		    Engram.TagString = Results.Column("tags").StringValue.ToText
+		    Engram.ModID = Results.Column("mod_id").StringValue.ToText
+		    Engram.ModName = Results.Column("mod_name").StringValue.ToText
 		    Engrams.Append(Engram)
-		    Results.MoveNext
+		    Results.MoveToNextRow
 		  Wend
 		  Return Engrams
 		End Function
@@ -1714,7 +1714,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Shared Function RowSetToLootSource(Results As RowSet) As Beacon.LootSource()
 		  Dim Sources() As Beacon.LootSource
 		  While Not Results.IsAfterLastRow
-		    Dim HexColor As String = Results.Field("uicolor").StringValue
+		    Dim HexColor As String = Results.Column("uicolor").StringValue
 		    Dim RedHex, GreenHex, BlueHex, AlphaHex As String = "00"
 		    If Len(HexColor) = 3 Then
 		      RedHex = Mid(HexColor, 1, 1) + Mid(HexColor, 1, 1)
@@ -1739,21 +1739,21 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Dim Requirements As Xojo.Core.Dictionary
 		    #Pragma BreakOnExceptions Off
 		    Try
-		      Requirements = Xojo.Data.ParseJSON(Results.Field("requirements").StringValue.ToText)
+		      Requirements = Xojo.Data.ParseJSON(Results.Column("requirements").StringValue.ToText)
 		    Catch Err As Xojo.Data.InvalidJSONException
 		      
 		    End Try
 		    #Pragma BreakOnExceptions Default
 		    
-		    Dim Source As New Beacon.MutableLootSource(Results.Field("class_string").StringValue.ToText, True)
-		    Source.Label = Results.Field("label").StringValue.ToText
-		    Source.Availability = Results.Field("availability").IntegerValue
-		    Source.Multipliers = New Beacon.Range(Results.Field("multiplier_min").DoubleValue, Results.Field("multiplier_max").DoubleValue)
+		    Dim Source As New Beacon.MutableLootSource(Results.Column("class_string").StringValue.ToText, True)
+		    Source.Label = Results.Column("label").StringValue.ToText
+		    Source.Availability = Results.Column("availability").IntegerValue
+		    Source.Multipliers = New Beacon.Range(Results.Column("multiplier_min").DoubleValue, Results.Column("multiplier_max").DoubleValue)
 		    Source.UIColor = RGB(Integer.FromHex(RedHex.ToText), Integer.FromHex(GreenHex.ToText), Integer.FromHex(BlueHex.ToText), Integer.FromHex(AlphaHex.ToText))
-		    Source.SortValue = Results.Field("sort_order").IntegerValue
+		    Source.SortValue = Results.Column("sort_order").IntegerValue
 		    Source.UseBlueprints = False
-		    Source.Experimental = Results.Field("experimental").BooleanValue
-		    Source.Notes = Results.Field("notes").StringValue.ToText
+		    Source.Experimental = Results.Column("experimental").BooleanValue
+		    Source.Notes = Results.Column("notes").StringValue.ToText
 		    
 		    If Requirements.HasKey("mandatory_item_sets") Then
 		      Dim SetDicts() As Auto = Requirements.Value("mandatory_item_sets")
@@ -1772,7 +1772,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    
 		    Sources.Append(New Beacon.LootSource(Source))
-		    Results.MoveNext
+		    Results.MoveToNextRow
 		  Wend
 		  Return Sources
 		End Function
@@ -1797,13 +1797,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Dim ObjectID As String
 		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id, mod_id FROM blueprints WHERE object_id = ?1 OR LOWER(path) = ?2;", Blueprint.ObjectID, Blueprint.Path.Lowercase)
 		      If Results.RecordCount = 1 Then
-		        ObjectID = Results.Field("object_id").StringValue
+		        ObjectID = Results.Column("object_id").StringValue
 		        
 		        If Replace = False Or ObjectID <> Blueprint.ObjectID Then
 		          Continue
 		        End If
 		        
-		        Dim ModID As String = Results.Field("mod_id").StringValue
+		        Dim ModID As String = Results.Column("mod_id").StringValue
 		        If ModID <> Self.UserModID Then
 		          Continue
 		        End If
@@ -1873,8 +1873,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Self.BeginTransaction()
 		  Dim Results As RowSet = Self.SQLSelect("SELECT deleted, read FROM notifications WHERE notification_id = ?1;", Notification.Identifier)
-		  Dim Deleted As Boolean = Results.RecordCount = 1 And Results.Field("deleted").BooleanValue = True
-		  Dim Read As Boolean = Results.RecordCount = 1 And Results.Field("read").BooleanValue
+		  Dim Deleted As Boolean = Results.RecordCount = 1 And Results.Column("deleted").BooleanValue = True
+		  Dim Read As Boolean = Results.RecordCount = 1 And Results.Column("read").BooleanValue
 		  If Notification.DoNotResurrect And (Deleted Or Read)  Then
 		    Self.Rollback
 		    Return
@@ -2042,7 +2042,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    mInstance = New LocalData
 		    Beacon.Data = mInstance
 		    Dim Results As RowSet = mInstance.SQLSelect("SELECT EXISTS(SELECT 1 FROM blueprints) AS populated;")
-		    If Results.Field("populated").BooleanValue = False Then
+		    If Results.Column("populated").BooleanValue = False Then
 		      mInstance.ImportLocalClasses()
 		    End If
 		    If Preferences.OnlineEnabled Then
@@ -2309,16 +2309,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dim Dicts() As Xojo.Core.Dictionary
 		  While Not Results.IsAfterLastRow
 		    Dim Dict As New Xojo.Core.Dictionary  
-		    Dict.Value("class_string") = Results.Field("class_string").StringValue  
-		    Dict.Value("path") = Results.Field("path").StringValue  
-		    Dict.Value("tags") = Results.Field("tags").StringValue
-		    Dict.Value("object_id") = Results.Field("object_id").StringValue
-		    Dict.Value("label") = Results.Field("label").StringValue
-		    Dict.Value("availability") = Results.Field("availability").IntegerValue
-		    Dict.Value("category") = Results.Field("category").StringValue
+		    Dict.Value("class_string") = Results.Column("class_string").StringValue  
+		    Dict.Value("path") = Results.Column("path").StringValue  
+		    Dict.Value("tags") = Results.Column("tags").StringValue
+		    Dict.Value("object_id") = Results.Column("object_id").StringValue
+		    Dict.Value("label") = Results.Column("label").StringValue
+		    Dict.Value("availability") = Results.Column("availability").IntegerValue
+		    Dict.Value("category") = Results.Column("category").StringValue
 		    Dicts.Append(Dict)
 		    
-		    Results.MoveNext()
+		    Results.MoveToNextRow()
 		  Wend
 		  
 		  Dim Content As Text = Xojo.Data.GenerateJSON(Dicts)
@@ -2337,7 +2337,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Try
 		    Dim Results As RowSet = Self.SQLSelect("SELECT value FROM variables WHERE LOWER(key) = LOWER(?1);", Key)
 		    If Results.RecordCount = 1 Then
-		      Return Results.Field("value").StringValue
+		      Return Results.Column("value").StringValue
 		    End If
 		  Catch Err As RuntimeException
 		    Return ""
