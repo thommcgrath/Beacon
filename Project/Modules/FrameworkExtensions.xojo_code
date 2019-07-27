@@ -457,7 +457,21 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function Write(Extends File As FolderItem, Contents As MemoryBlock) As Boolean
+		  Static Locks As Dictionary
+		  If Locks = Nil Then
+		    Locks = New Dictionary
+		  End If
+		  Dim Lock As CriticalSection
+		  If Locks.HasKey(File.NativePath) Then
+		    Lock = Locks.Value(File.NativePath)
+		  Else
+		    Lock = New CriticalSection
+		    Locks.Value(File.NativePath) = Lock
+		  End If
+		  
 		  Try
+		    Lock.Enter
+		    
 		    Dim Stream As BinaryStream
 		    If File.Exists Then
 		      Stream = BinaryStream.Open(File, True)
@@ -479,8 +493,11 @@ Protected Module FrameworkExtensions
 		      Next
 		    End If
 		    Stream.Close
+		    
+		    Lock.Leave
 		    Return True
 		  Catch Err As RuntimeException
+		    Lock.Leave
 		    Return False
 		  End Try
 		End Function
