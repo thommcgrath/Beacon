@@ -540,6 +540,19 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function GenerateJSON(Source As Variant, Pretty As Boolean) As String
+		  Const UseMBS = True
+		  
+		  #if UseMBS
+		    Dim Temp As JSONMBS = JSONMBS.Convert(Source)
+		    Return Temp.ToString(Pretty)
+		  #else
+		    Return Xojo.GenerateJSON(Source)
+		  #endif
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function GetLastValueAsType(Values() As Auto, FullName As Text, Default As Auto) As Auto
 		  For I As Integer = Values.Ubound DownTo 0
@@ -878,6 +891,12 @@ Protected Module Beacon
 		  #else
 		    #Pragma Error "Not implemented"
 		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ParseJSON(Source As String) As Variant
+		  Return Xojo.ParseJSON(Source)
 		End Function
 	#tag EndMethod
 
