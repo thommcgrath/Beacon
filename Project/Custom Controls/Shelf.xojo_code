@@ -100,8 +100,8 @@ Implements ObservationKit.Observer
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
-		  RaiseEvent Open
+		Sub Opening()
+		  RaiseEvent Opening
 		  Self.Transparent = True
 		End Sub
 	#tag EndEvent
@@ -320,7 +320,7 @@ Implements ObservationKit.Observer
 		  Value = Max(Min(Self.mItems.Ubound, Value), If(Self.RequiresSelection, 0, -1))
 		  If Self.mSelectedIndex <> Value Then
 		    Self.mSelectedIndex = Value
-		    RaiseEvent Change
+		    RaiseEvent Pressed
 		    Self.Invalidate
 		  End If
 		End Sub
@@ -373,15 +373,15 @@ Implements ObservationKit.Observer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Change()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
 		Event Deactivate()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Pressed()
 	#tag EndHook
 
 

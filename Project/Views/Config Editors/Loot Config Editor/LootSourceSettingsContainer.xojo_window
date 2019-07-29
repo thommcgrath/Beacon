@@ -31,7 +31,6 @@ Begin ContainerControl LootSourceSettingsContainer
       AllowFocus      =   False
       AutoDeactivate  =   True
       Enabled         =   True
-      Facing          =   0
       Facing          =   "0"
       FacingDirection =   "0"
       Height          =   18
@@ -453,7 +452,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SetupUI()
 		  Self.mSettingUp = False
 		End Sub
@@ -534,7 +533,7 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event Changed()
+		Event SettingsChanged()
 	#tag EndHook
 
 
@@ -558,14 +557,14 @@ End
 
 #tag Events DisclosureTriangle1
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.SetupUI
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events MinItemSetsField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -579,7 +578,7 @@ End
 		  For I As Integer = 0 To Sources.Ubound
 		    Sources(I).MinItemSets = Value
 		  Next
-		  RaiseEvent Changed
+		  RaiseEvent SettingsChanged
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -606,7 +605,7 @@ End
 #tag EndEvents
 #tag Events MaxItemSetsField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -620,7 +619,7 @@ End
 		  For I As Integer = 0 To Sources.Ubound
 		    Sources(I).MaxItemSets = Value
 		  Next
-		  RaiseEvent Changed
+		  RaiseEvent SettingsChanged
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -647,7 +646,7 @@ End
 #tag EndEvents
 #tag Events NoDuplicatesCheck
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -657,7 +656,7 @@ End
 		    Sources(I).SetsRandomWithoutReplacement = Me.Value
 		  Next
 		  
-		  RaiseEvent Changed
+		  RaiseEvent SettingsChanged
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -703,7 +702,7 @@ End
 #tag EndEvents
 #tag Events AppendModeCheck
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -713,7 +712,7 @@ End
 		    Sources(I).AppendMode = Me.Value
 		  Next
 		  
-		  RaiseEvent Changed
+		  RaiseEvent SettingsChanged
 		End Sub
 	#tag EndEvent
 #tag EndEvents

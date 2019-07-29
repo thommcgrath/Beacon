@@ -398,7 +398,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.UpdateUI()
 		  Self.GoToButton.Visible = (Self.GoToIssueHandler <> Nil)
 		End Sub
@@ -522,28 +522,28 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Close
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events IssuesList
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.GoToButton.Enabled = ResolutionSpinner.Visible = False And Self.GoToIssueHandler <> Nil And Me.SelectedIndex > -1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events BlueprintsField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.ExtractButton.Enabled = Trim(Me.Value) <> ""
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ExtractButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  ResolutionSpinner.Visible = True
 		  ActionButton.Enabled = False
 		  GoToButton.Enabled = False
@@ -562,7 +562,7 @@ End
 #tag EndEvents
 #tag Events GoToButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.IssuesList.SelectedIndex = -1 Or Self.GoToIssueHandler = Nil Then
 		    Return
 		  End If

@@ -327,14 +327,14 @@ End
 
 #tag Events ModIDField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  ActionButton.Enabled = Trim(Me.Value) <> ""
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Dim ModID As String = Trim(ModIDField.Value)
 		  If Left(ModID, 4) = "http" Then
 		    Dim Regex As New Regex
@@ -361,7 +361,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mRegistered = False
 		  Self.Hide
 		End Sub

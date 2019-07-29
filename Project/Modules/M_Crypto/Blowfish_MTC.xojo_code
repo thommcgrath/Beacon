@@ -1691,6 +1691,48 @@ Implements BcryptInterface
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="BlockSize"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="CurrentVector"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="PaddingMethod"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Padding"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - NullsOnly"
+				"1 - NullsWithCount"
+				"2 - PKCS"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="UseFunction"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Functions"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Default"
+				"1 - ECB"
+				"2 - CBC"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"

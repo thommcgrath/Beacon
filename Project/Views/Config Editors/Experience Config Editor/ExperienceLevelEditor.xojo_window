@@ -504,7 +504,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.LevelField.Value = Format(Self.mEditingLevel, "0,")
 		  Self.MinXPField.Value = Format(Self.mMinXP, "0,")
 		  Self.MaxXPField.Value = Format(Self.mMaxXP, "0,")
@@ -573,14 +573,14 @@ End
 
 #tag Events XPField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckActionEnabled()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = False
 		  Self.Hide
 		End Sub
@@ -588,7 +588,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub

@@ -60,9 +60,9 @@ Begin BeaconWindow UpdateWindow
       SelectedPanelIndex=   1
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
       Value           =   1
       Visible         =   True
       Width           =   600
@@ -127,6 +127,7 @@ Begin BeaconWindow UpdateWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
+         TabStop         =   True
          Top             =   52
          Transparent     =   False
          Value           =   0.0
@@ -377,6 +378,7 @@ Begin BeaconWindow UpdateWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
+         TabStop         =   True
          Top             =   52
          Transparent     =   False
          Value           =   0.0
@@ -500,12 +502,15 @@ Begin BeaconWindow UpdateWindow
       End
    End
    Begin UpdateChecker Checker
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin URLConnection Downloader
+      AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -626,7 +631,7 @@ End
 
 #tag Events ViewPanel
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.ViewCheck
 		    Self.Height = Self.HeightCheck
@@ -643,7 +648,7 @@ End
 #tag EndEvents
 #tag Events CheckCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Checker.Cancel
 		  Self.Close
 		End Sub
@@ -660,7 +665,7 @@ End
 #tag EndEvents
 #tag Events ResultsActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.mFile = Nil Then
 		    Dim Dialog As New SaveFileDialog
 		    Dialog.SuggestedFileName = Self.mFilename
@@ -691,14 +696,14 @@ End
 #tag EndEvents
 #tag Events ResultsCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Close
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DownloadCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Downloader.Disconnect
 		  Self.Close
 		End Sub
@@ -706,7 +711,7 @@ End
 #tag EndEvents
 #tag Events ResultsNotesButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  ShowURL(Self.mNotesURL)
 		End Sub
 	#tag EndEvent

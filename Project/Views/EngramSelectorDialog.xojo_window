@@ -472,7 +472,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.Picker.Tags = LocalData.SharedInstance.AllTags(Self.mCategory)
 		  Self.Picker.Spec = Preferences.SelectedTag(Self.mCategory, Self.mSubgroup)
 		  Self.UpdateFilter()
@@ -707,14 +707,14 @@ End
 
 #tag Events FilterField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  If Not Self.mAllowMultipleSelection Then
 		    Self.MakeSelection()
 		  End If
@@ -723,7 +723,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub DoubleClick()
+		Sub DoubleClicked()
 		  Self.MakeSelection()
 		  
 		  If Not Self.mAllowMultipleSelection Then
@@ -735,7 +735,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = False
 		  Self.Hide()
 		End Sub
@@ -743,7 +743,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide()
 		End Sub
@@ -751,7 +751,7 @@ End
 #tag EndEvents
 #tag Events SelectedList
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.RemoveFromSelectionsButton.Enabled = Me.SelectedRowCount > 0
 		End Sub
 	#tag EndEvent
@@ -761,7 +761,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub DoubleClick()
+		Sub DoubleClicked()
 		  Self.UnmakeSelection
 		End Sub
 	#tag EndEvent
@@ -775,21 +775,21 @@ End
 #tag EndEvents
 #tag Events AddToSelectionsButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.MakeSelection()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events RemoveFromSelectionsButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.UnmakeSelection()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Picker
 	#tag Event
-		Sub Change()
+		Sub TagsChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If

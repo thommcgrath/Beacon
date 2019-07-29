@@ -219,7 +219,7 @@ End
 
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.mCancelAction <> Nil Then
 		    Self.mCancelAction.Invoke()
 		  End If

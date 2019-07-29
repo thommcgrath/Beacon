@@ -205,7 +205,6 @@ Begin DiscoveryView NitradoDiscoveryView
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowCount        =   "0"
          RowSelectionType=   "0"
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -382,10 +381,10 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.AuthClient.Provider = Beacon.OAuth2Client.ProviderNitrado
 		  Self.SwapButtons()
-		  RaiseEvent Open
+		  RaiseEvent Opening
 		  Self.CheckActionEnabled
 		End Sub
 	#tag EndEvent
@@ -505,7 +504,7 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 
@@ -529,14 +528,14 @@ End
 
 #tag Events FindingCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ShouldCancel()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.List.ColumnType(0) = Listbox.TypeCheckbox
 		End Sub
 	#tag EndEvent
@@ -551,14 +550,14 @@ End
 #tag EndEvents
 #tag Events ListCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ShouldCancel()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ListActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Dim Engines() As Beacon.NitradoDiscoveryEngine
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.CellCheck(I, 0) Then
@@ -611,7 +610,7 @@ End
 #tag EndEvents
 #tag Events LookupStartTimer
 	#tag Event
-		Sub Action()
+		Sub Run()
 		  Self.AuthClient.Authenticate(App.IdentityManager.CurrentIdentity)
 		End Sub
 	#tag EndEvent

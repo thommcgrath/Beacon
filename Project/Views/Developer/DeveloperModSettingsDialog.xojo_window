@@ -360,7 +360,7 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.WorkshopMod.PullURL = Self.PullURLField.Value
 		  Dim Payload As String = Beacon.GenerateJSON(Self.WorkshopMod.AsDictionary, False)
 		  
@@ -372,14 +372,14 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Close
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events PullURLField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Dim URL As String = Trim(Me.Value)
 		  ActionButton.Enabled = URL = "" Or Left(URL, 8) = "https://" Or Left(URL, 7) = "http://"
 		End Sub

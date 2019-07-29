@@ -1,7 +1,7 @@
 #tag Class
 Protected Class LootDrops
 Inherits Beacon.ConfigGroup
-Implements  Iterable
+Implements Iterable
 	#tag Event
 		Sub DetectIssues(Document As Beacon.Document, Issues() As Beacon.Issue)
 		  Dim ConfigName As String = ConfigKey

@@ -759,7 +759,7 @@ End
 
 #tag Events Header
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Dim AddButton As New BeaconToolbarItem("AddSource", IconAdd)
 		  AddButton.HasMenu = True
 		  AddButton.HelpTag = "Define an additional loot source. Hold to quickly add a source from a menu."
@@ -782,7 +782,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddSource"
 		    Self.ShowAddLootSource()
@@ -975,7 +975,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Header.Duplicate.Enabled = Me.SelectedRowCount = 1
 		  
 		  If Self.mBlockSelectionChanged Then
@@ -1006,7 +1006,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub DoubleClick()
+		Sub DoubleClicked()
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue

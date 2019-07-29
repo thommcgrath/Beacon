@@ -884,7 +884,7 @@ End
 
 #tag Events BuildButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Dim Path As String = PathField.Value
 		  Dim Method As String = MethodMenu.Value
 		  Dim Body As String = BodyField.Value
@@ -918,7 +918,7 @@ End
 #tag EndEvents
 #tag Events MethodMenu
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  BodyField.Enabled = Me.SelectedRowIndex > 0
 		  BodyLabel.Enabled = BodyField.Enabled
 		  ContentTypeField.Enabled = BodyField.Enabled

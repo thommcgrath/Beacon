@@ -728,7 +728,7 @@ End
 
 #tag Events List
 	#tag Event
-		Sub DoubleClick()
+		Sub DoubleClicked()
 		  For I As Integer = Self.List.RowCount - 1 DownTo 0
 		    If Not Self.List.Selected(I) Then
 		      Continue
@@ -739,7 +739,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function RowCompared(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Select Case Column
 		  Case 0
 		    Dim Row1URL As Beacon.DocumentURL = Me.RowTag(Row1)
@@ -893,7 +893,7 @@ End
 #tag EndEvents
 #tag Events Header
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.LeftItems.Append(New BeaconToolbarItem("Add", IconToolbarAdd, "Start a new Beacon document."))
 		End Sub
 	#tag EndEvent
@@ -903,7 +903,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "Add"
 		    Self.NewDocument()
@@ -913,7 +913,7 @@ End
 #tag EndEvents
 #tag Events Switcher
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.Add(IconRecentDocuments, "Recent", "recent")
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
@@ -925,7 +925,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub Pressed()
 		  Self.View = Me.SelectedIndex
 		End Sub
 	#tag EndEvent

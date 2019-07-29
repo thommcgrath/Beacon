@@ -170,7 +170,7 @@ End
 
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mClient.Cancel
 		  Me.Enabled = False
 		End Sub

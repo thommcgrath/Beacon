@@ -295,7 +295,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
@@ -343,7 +343,7 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Dim NewURL As String = Beacon.DocumentURL.TypeCloud + "://" + BeaconAPI.URL("/document.php/" + Self.mController.Document.DocumentID).Middle(8)
 		  Self.mController.Document.Title = Self.TitleField.Value
 		  Self.mController.SaveAs(NewURL)
@@ -354,7 +354,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mResponseState = Self.StateCancelled
 		  Self.Hide
 		End Sub
@@ -362,7 +362,7 @@ End
 #tag EndEvents
 #tag Events SaveLocalButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mResponseState = Self.StateSaveLocal
 		  Self.Hide
 		End Sub

@@ -1372,7 +1372,7 @@ End
 
 #tag Events Header
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddEntries"
 		    Self.ShowAddDialog()
@@ -1384,7 +1384,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.LeftItems.Append(New BeaconToolbarItem("AddEntries", IconAdd))
 		  Me.LeftItems.Append(New BeaconToolbarItem("EditEntries", IconToolbarEdit, False))
 		  Me.LeftItems.Append(New BeaconToolbarItem("DeleteEntries", IconRemove, False))
@@ -1393,7 +1393,7 @@ End
 #tag EndEvents
 #tag Events ViewSelector
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.Add(IconPresetSettings, "General", "settings")
 		  Me.Add(IconPresetContents, "Contents", "contents")
@@ -1403,18 +1403,12 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub Pressed()
 		  Self.Pages.SelectedPanelIndex = Me.SelectedIndex - 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events MapSelector
-	#tag Event
-		Sub Open()
-		  Me.Width = Me.SegmentCount * 110 // Because the design-time size is not being respected
-		  Me.ResizeCells
-		End Sub
-	#tag EndEvent
 	#tag Event
 		Sub Pressed(segmentedIndex as integer)
 		  #Pragma Unused segmentedIndex
@@ -1436,10 +1430,16 @@ End
 		  Self.mUpdating = False
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.Width = Me.SegmentCount * 110 // Because the design-time size is not being respected
+		  Me.ResizeCells
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events ContentsList
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.ColumnType(Self.ColumnIncluded) = Listbox.TypeCheckbox
 		  Me.ColumnType(Self.ColumnQuantity) = Listbox.TypeCheckbox
 		  Me.ColumnType(Self.ColumnQuality) = Listbox.TypeCheckbox
@@ -1632,19 +1632,19 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub DoubleClick()
-		  Self.EditSelectedEntries()
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Function CanCopy() As Boolean
 		  Return False
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Header.EditEntries.Enabled = Me.SelectedRowCount > 0
 		  Header.DeleteEntries.Enabled = Me.SelectedRowCount > 0
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub DoubleClicked()
+		  Self.EditSelectedEntries()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1674,7 +1674,7 @@ End
 #tag EndEvents
 #tag Events MaxItemsField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mUpdating Then
 		    Return
 		  End If
@@ -1698,7 +1698,7 @@ End
 #tag EndEvents
 #tag Events MinItemsField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mUpdating Then
 		    Return
 		  End If
@@ -1722,7 +1722,7 @@ End
 #tag EndEvents
 #tag Events GroupingField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mUpdating Then
 		    Return
 		  End If
@@ -1737,7 +1737,7 @@ End
 #tag EndEvents
 #tag Events NameField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mUpdating Then
 		    Return
 		  End If
@@ -1752,13 +1752,13 @@ End
 #tag EndEvents
 #tag Events ModifiersList
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  EditModifierButton.Enabled = Me.SelectedRowCount = 1
 		  DeleteModifierButton.Enabled = Me.SelectedRowCount > 0
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub DoubleClick()
+		Sub DoubleClicked()
 		  Self.ShowModifierEditor(True)
 		End Sub
 	#tag EndEvent
@@ -1854,21 +1854,21 @@ End
 #tag EndEvents
 #tag Events AddModifierButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ShowModifierEditor(False)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events EditModifierButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ShowModifierEditor(True)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DeleteModifierButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ModifiersList.DoClear()
 		End Sub
 	#tag EndEvent

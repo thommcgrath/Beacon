@@ -35,9 +35,7 @@ Begin BeaconSubview BlueprintEditor
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "New Object"
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -70,9 +68,7 @@ Begin BeaconSubview BlueprintEditor
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -770,7 +766,7 @@ End
 
 #tag Events Header
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "SaveButton"
 		    Self.Save()
@@ -780,7 +776,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.LeftItems.Append(New BeaconToolbarItem("SaveButton", IconToolbarSave, False, "Save Object"))
 		  Me.LeftItems.Append(New BeaconToolbarItem("RevertButton", IconToolbarRevert, False, "Revert Changes"))
 		End Sub
@@ -788,21 +784,21 @@ End
 #tag EndEvents
 #tag Events PathField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events TypeMenu
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events NameField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Trim(Me.Value) = "" Then
 		    Header.Caption = "New Object"
 		  Else
@@ -814,14 +810,14 @@ End
 #tag EndEvents
 #tag Events MapCheckboxes
 	#tag Event
-		Sub Action(index as Integer)
+		Sub ValueChanged(index as Integer)
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events TagsField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent

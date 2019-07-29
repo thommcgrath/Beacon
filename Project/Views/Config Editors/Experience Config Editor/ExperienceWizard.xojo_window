@@ -936,7 +936,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.mSettingUp = False
 		  
 		  Self.Designer.Curve = New Beacon.Curve(0, 0, 1, 1)
@@ -1022,7 +1022,7 @@ End
 
 #tag Events LevelCountField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mSettingUp Or Self.Focus <> Me Then
 		    Return
 		  End If
@@ -1033,7 +1033,7 @@ End
 #tag EndEvents
 #tag Events XPField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mSettingUp Or Self.Focus <> Me Then
 		    Return
 		  End If
@@ -1063,7 +1063,7 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.ColumnAlignment(0) = Listbox.AlignRight
 		  Me.ColumnAlignment(1) = Listbox.AlignRight
 		End Sub
@@ -1071,7 +1071,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = False
 		  Self.Hide()
 		End Sub
@@ -1079,7 +1079,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide()
 		End Sub
@@ -1087,7 +1087,7 @@ End
 #tag EndEvents
 #tag Events PointFields
 	#tag Event
-		Sub TextChange(index as Integer)
+		Sub TextChanged(index as Integer)
 		  If Self.mSettingUp Or Self.Focus <> Me Then
 		    Return
 		  End If

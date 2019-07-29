@@ -53,8 +53,8 @@ Inherits Canvas
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
-		  RaiseEvent Open
+		Sub Opening()
+		  RaiseEvent Opening
 		  
 		  #if XojoVersion >= 2018.01
 		    Self.Transparent = True
@@ -151,7 +151,7 @@ Inherits Canvas
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

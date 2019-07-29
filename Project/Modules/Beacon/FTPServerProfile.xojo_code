@@ -306,24 +306,24 @@ Inherits Beacon.ServerProfile
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="GameUserSettingsIniPath"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Host"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -354,8 +354,8 @@ Inherits Beacon.ServerProfile
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Port"
@@ -386,16 +386,16 @@ Inherits Beacon.ServerProfile
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Mode"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

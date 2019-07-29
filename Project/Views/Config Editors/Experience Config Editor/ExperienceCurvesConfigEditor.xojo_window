@@ -487,7 +487,7 @@ End
 
 #tag Events LeftButtons
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddButton"
 		    Self.ShowAddExperience()
@@ -505,7 +505,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.LeftItems.Append(New BeaconToolbarItem("AddButton", IconToolbarAdd, "Add a level"))
 		  Me.LeftItems.Append(New BeaconToolbarItem("WizardButton", IconToolbarWizard, "Add multiple levels using a configuration wizard"))
 		  Me.LeftItems.Append(New BeaconToolbarItem("EditButton", IconToolbarEdit, False, "Edit the selected level"))
@@ -515,7 +515,7 @@ End
 #tag EndEvents
 #tag Events Switcher
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.Add(IconPlayers, "Players", "players")
 		  Me.Add(IconTames, "Tames", "tames")
@@ -524,7 +524,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub Pressed()
 		  Dim SettingUp As Boolean = Self.SettingUp
 		  Self.SettingUp = True
 		  Dim SelectedLevels() As Integer
@@ -535,7 +535,7 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.ColumnAlignment(0) = Listbox.AlignRight
 		  Me.ColumnAlignment(1) = Listbox.AlignRight
 		  Me.ColumnAlignment(2) = Listbox.AlignCenter
@@ -589,12 +589,12 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.LeftButtons.EditButton.Enabled = Me.SelectedRowCount = 1
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub DoubleClick()
+		Sub DoubleClicked()
 		  If Me.SelectedRowCount = 1 Then
 		    Self.ShowEditExperience()
 		  End If

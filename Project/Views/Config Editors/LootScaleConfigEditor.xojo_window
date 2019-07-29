@@ -193,7 +193,7 @@ End
 
 #tag Events LootScaleField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If

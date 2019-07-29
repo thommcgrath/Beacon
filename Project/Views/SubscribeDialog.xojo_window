@@ -610,6 +610,8 @@ Begin Window SubscribeDialog
       Width           =   110
    End
    Begin URLConnection SubscribeSocket
+      AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -621,13 +623,13 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  App.NextLaunchQueueTask()
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
@@ -645,7 +647,7 @@ End
 
 #tag Events AddressField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Dim Regex As New RegEx
 		  Regex.SearchPattern = "^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|""(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$"
 		  
@@ -657,7 +659,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Hide()
 		  
 		  Dim FormString As String = "email=" + EncodeURLComponent(Trim(AddressField.Value)) + "&first_name=" + EncodeURLComponent(Trim(FirstNameField.Value)) + "&last_name=" + EncodeURLComponent(Trim(LastNameField.Value))
@@ -670,14 +672,14 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Close
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events PrivacyPolicyButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  ShowURL(Beacon.WebURL("/privacy.php"))
 		End Sub
 	#tag EndEvent

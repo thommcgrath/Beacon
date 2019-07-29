@@ -1139,13 +1139,6 @@ End
 
 #tag Events ChanceField
 	#tag Event
-		Sub TextChange()
-		  If Self.Focus = Me Then
-		    ChanceSlider.Value = Max(Min(Val(Me.Value), ChanceSlider.MaximumValue), ChanceSlider.MinimumValue)
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Sub LostFocus()
 		  Me.Value = Str(ChanceSlider.Value, "-0")
 		  ChanceSlider.Enabled = True
@@ -1154,6 +1147,13 @@ End
 	#tag Event
 		Sub GotFocus()
 		  ChanceSlider.Enabled = False
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub TextChanged()
+		  If Self.Focus = Me Then
+		    ChanceSlider.Value = Max(Min(Val(Me.Value), ChanceSlider.MaximumValue), ChanceSlider.MinimumValue)
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1173,19 +1173,7 @@ End
 #tag EndEvents
 #tag Events QualityMenus
 	#tag Event
-		Sub Open(index as Integer)
-		  Me.DeleteAllRows()
-		  
-		  Dim Qualities() As Beacon.Quality = Beacon.Qualities.All
-		  For Each Quality As Beacon.Quality In Qualities
-		    Me.AddRow(Language.LabelForQuality(Quality), Quality.BaseValue)
-		  Next
-		  
-		  Me.SelectedRowIndex = 0
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Change(index as Integer)
+		Sub SelectionChanged(index as Integer)
 		  If Not Self.mIgnoreChanges Then
 		    Select Case Index
 		    Case 0 // Min
@@ -1197,10 +1185,22 @@ End
 		  End If
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub Opening(index as Integer)
+		  Me.DeleteAllRows()
+		  
+		  Dim Qualities() As Beacon.Quality = Beacon.Qualities.All
+		  For Each Quality As Beacon.Quality In Qualities
+		    Me.AddRow(Language.LabelForQuality(Quality), Quality.BaseValue)
+		  Next
+		  
+		  Me.SelectedRowIndex = 0
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events MaxQuantityField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Not Self.mIgnoreChanges Then
 		    EditMaxQuantityCheck.Value = True
 		    RaiseEvent Changed
@@ -1210,7 +1210,7 @@ End
 #tag EndEvents
 #tag Events MinQuantityField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Not Self.mIgnoreChanges Then
 		    EditMinQuantityCheck.Value = True
 		    RaiseEvent Changed
@@ -1234,13 +1234,6 @@ End
 #tag EndEvents
 #tag Events WeightField
 	#tag Event
-		Sub TextChange()
-		  If Self.Focus = Me Then
-		    WeightSlider.Value = Round(Me.DoubleValue)
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Sub LostFocus()
 		  WeightSlider.Enabled = True
 		End Sub
@@ -1254,6 +1247,13 @@ End
 		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
 		  MinValue = 0.00001
 		  MaxValue = 1000000
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub TextChanged()
+		  If Self.Focus = Me Then
+		    WeightSlider.Value = Round(Me.DoubleValue)
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

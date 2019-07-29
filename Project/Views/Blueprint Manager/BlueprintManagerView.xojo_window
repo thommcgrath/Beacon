@@ -35,9 +35,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Objects"
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -70,9 +68,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   552
       HelpTag         =   ""
       Index           =   -2147483648
@@ -114,9 +110,9 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       SelectedPanelIndex=   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
+      Value           =   "0"
       Value           =   2
       Visible         =   True
       Width           =   510
@@ -129,9 +125,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
-         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   "True"
          Height          =   1
          HelpTag         =   ""
          Index           =   -2147483648
@@ -163,9 +157,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   ""
-         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   "False"
          Height          =   40
          HelpTag         =   ""
          Index           =   -2147483648
@@ -202,12 +194,10 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
          HasBackColor    =   False
          HasBackgroundColor=   False
          Height          =   592
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   296
          LockBottom      =   True
@@ -243,12 +233,10 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
          HasBackColor    =   False
          HasBackgroundColor=   False
          Height          =   592
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   296
          LockBottom      =   True
@@ -320,7 +308,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   "0"
       RowSelectionType=   "1"
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -353,9 +340,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -378,7 +363,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Width           =   295
    End
    Begin Beacon.EngramSearcherThread Searcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -387,7 +371,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       TabPanelIndex   =   0
    End
    Begin Timer ClipboardWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   "0"
@@ -699,7 +682,7 @@ End
 
 #tag Events ListHeader
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddObject"
 		    Self.AddObject()
@@ -713,7 +696,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.LeftItems.Append(New BeaconToolbarItem("AddObject", IconToolbarAdd, "Define a new creature or engram"))
 		  
 		  Me.RightItems.Append(New BeaconToolbarItem("ImportFile", IconToolbarFile, "Import from file"))
@@ -724,7 +707,7 @@ End
 #tag EndEvents
 #tag Events Pages
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageEmpty
 		    Self.Changed = False
@@ -756,7 +739,7 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  If Not Self.mSettingUp Then
 		    Self.UpdateEditorWithSelection()
 		  End If
@@ -830,7 +813,7 @@ End
 #tag EndEvents
 #tag Events ClipboardWatcher
 	#tag Event
-		Sub Action()
+		Sub Run()
 		  Self.ListHeader.ImportClipboard.Enabled = Self.ClipboardHasCodes
 		End Sub
 	#tag EndEvent

@@ -802,7 +802,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons
 		  Self.Reset
 		End Sub
@@ -1114,7 +1114,7 @@ End
 
 #tag Events Views
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageSources
 		    RaiseEvent ShouldResize(Self.SourcesPageHeight)
@@ -1132,7 +1132,7 @@ End
 #tag EndEvents
 #tag Events SourceRadio
 	#tag Event
-		Sub Action(index as Integer)
+		Sub Pressed(index as Integer)
 		  SourceActionButton.Enabled = SourceRadio(0).Value Or SourceRadio(1).Value Or SourceRadio(2).Value Or (SourceRadio(3).Value And SourceRadio(3).Enabled And Self.mOtherDocuments.Ubound > -1)
 		  SourceActionButton.Default = SourceActionButton.Enabled
 		End Sub
@@ -1140,14 +1140,14 @@ End
 #tag EndEvents
 #tag Events SourceCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  RaiseEvent ShouldDismiss
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SourceActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Select Case True
 		  Case SourceRadio(0).Value
 		    Views.SelectedPanelIndex = Self.PageNitrado
@@ -1234,7 +1234,7 @@ End
 #tag EndEvents
 #tag Events StatusCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.QuickCancel Then
 		    Self.Close
 		  Else
@@ -1245,7 +1245,7 @@ End
 #tag EndEvents
 #tag Events OtherDocsActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Redim Self.mDocuments(-1)
 		  For I As Integer = 0 To OtherDocsList.RowCount - 1
 		    If Not OtherDocsList.CellCheck(I, 0) Then
@@ -1261,7 +1261,7 @@ End
 #tag EndEvents
 #tag Events OtherDocsCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Views.SelectedPanelIndex = Self.PageSources
 		End Sub
 	#tag EndEvent
@@ -1289,7 +1289,7 @@ End
 #tag EndEvents
 #tag Events DiscoveryWatcher
 	#tag Event
-		Sub Action()
+		Sub Run()
 		  Dim AllFinished As Boolean = True
 		  Dim SuccessCount As Integer
 		  Dim Errors As Boolean

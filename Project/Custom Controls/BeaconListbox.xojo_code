@@ -140,17 +140,6 @@ Inherits Listbox
 	#tag EndEvent
 
 	#tag Event
-		Sub Change()
-		  If Self.mBlockSelectionChangeCount > 0 Then
-		    Self.mFireChangeWhenUnlocked = True
-		    Return
-		  End If
-		  
-		  RaiseEvent Change
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
 		  Dim Board As New Clipboard
 		  Dim CanCopy As Boolean = RaiseEvent CanCopy()
@@ -213,7 +202,18 @@ Inherits Listbox
 	#tag EndEvent
 
 	#tag Event
-		Sub EnableMenuItems()
+		Function KeyDown(Key As String) As Boolean
+		  If (Key = Chr(8) Or Key = Chr(127)) And CanDelete() Then
+		    RaiseEvent PerformClear(True)
+		    Return True
+		  Else
+		    Return RaiseEvent KeyDown(Key)
+		  End If
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub MenuSelected()
 		  If Self.Window = Nil Or Self.Window.Focus <> Self Then
 		    Return
 		  End If
@@ -228,29 +228,29 @@ Inherits Listbox
 		  EditClear.Enabled = CanDelete
 		  EditPaste.Enabled = CanPaste
 		  
-		  RaiseEvent EnableMenuItems()
+		  RaiseEvent MenuSelected()
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Function KeyDown(Key As String) As Boolean
-		  If (Key = Chr(8) Or Key = Chr(127)) And CanDelete() Then
-		    RaiseEvent PerformClear(True)
-		    Return True
-		  Else
-		    Return RaiseEvent KeyDown(Key)
-		  End If
-		End Function
-	#tag EndEvent
-
-	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.FontName = "SmallSystem"
 		  Self.DefaultRowHeight = Max(26, Self.DefaultRowHeight)
 		  
-		  RaiseEvent Open
+		  RaiseEvent Opening
 		  
 		  Self.mPostOpenInvalidateCallbackKey = CallLater.Schedule(0, WeakAddressOf PostOpenInvalidate)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub SelectionChanged()
+		  If Self.mBlockSelectionChangeCount > 0 Then
+		    Self.mFireChangeWhenUnlocked = True
+		    Return
+		  End If
+		  
+		  RaiseEvent SelectionChanged
 		End Sub
 	#tag EndEvent
 
@@ -435,10 +435,6 @@ Inherits Listbox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Change()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
 		Event ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
 	#tag EndHook
 
@@ -447,15 +443,15 @@ Inherits Listbox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event EnableMenuItems()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
 		Event KeyDown(Key As String) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event MenuSelected()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -472,6 +468,10 @@ Inherits Listbox
 
 	#tag Hook, Flags = &h0
 		Event RowIsInvalid(Row As Integer) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event SelectionChanged()
 	#tag EndHook
 
 
@@ -506,7 +506,7 @@ Inherits Listbox
 			  End If
 			  
 			  If Self.mBlockSelectionChangeCount = 0 And Self.mFireChangeWhenUnlocked Then
-			    RaiseEvent Change
+			    RaiseEvent SelectionChanged
 			    Self.mFireChangeWhenUnlocked = False
 			  End If
 			End Set

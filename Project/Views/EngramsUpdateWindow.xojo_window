@@ -160,13 +160,13 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  NotificationKit.Ignore(Self, LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  NotificationKit.Watch(Self, LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed)
 		End Sub
 	#tag EndEvent
@@ -224,14 +224,14 @@ End
 
 #tag Events RevealTimer
 	#tag Event
-		Sub Action()
+		Sub Run()
 		  Self.Show()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  // Doesn't really cancel, just dismisses the window
 		  
 		  Self.Close()

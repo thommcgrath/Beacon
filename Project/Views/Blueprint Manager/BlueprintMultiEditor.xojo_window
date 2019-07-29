@@ -522,7 +522,7 @@ End
 
 #tag Events Header
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "SaveButton"
 		    Self.Save()
@@ -532,7 +532,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.LeftItems.Append(New BeaconToolbarItem("SaveButton", IconToolbarSave, False, "Save Object"))
 		  Me.LeftItems.Append(New BeaconToolbarItem("RevertButton", IconToolbarRevert, False, "Revert Changes"))
 		End Sub
@@ -540,7 +540,7 @@ End
 #tag EndEvents
 #tag Events Picker
 	#tag Event
-		Sub Change()
+		Sub TagsChanged()
 		  If Not Self.mSettingUp Then
 		    Self.Modified = True
 		  End If
@@ -567,7 +567,7 @@ End
 #tag EndEvents
 #tag Events MapCheckboxes
 	#tag Event
-		Sub Action(index as Integer)
+		Sub ValueChanged(index as Integer)
 		  If Self.mSettingUp Then
 		    Return
 		  End If

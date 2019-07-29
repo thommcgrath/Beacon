@@ -89,8 +89,8 @@ Inherits AnimationKit.Task
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"

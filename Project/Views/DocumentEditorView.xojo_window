@@ -61,9 +61,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "Select A Config To Begin"
-         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   "True"
          Height          =   487
          HelpTag         =   ""
          Index           =   -2147483648
@@ -94,9 +92,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
-         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   "True"
          Height          =   31
          HelpTag         =   ""
          Index           =   -2147483648
@@ -127,9 +123,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -161,9 +155,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   ""
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -199,9 +191,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Body            =   ""
       Borders         =   8
       DetailURL       =   ""
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   487
       HelpTag         =   ""
       Index           =   -2147483648
@@ -276,7 +266,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Activate()
+		Sub Activated()
 		  Self.Changed = Self.Document.Modified
 		End Sub
 	#tag EndEvent
@@ -962,7 +952,7 @@ End
 #tag EndEvents
 #tag Events BeaconToolbar1
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Dim ImportButton As New BeaconToolbarItem("ImportButton", IconToolbarImport, "Import config files…")
 		  Dim ExportButton As New BeaconToolbarItem("ExportButton", IconToolbarExport, Self.ReadyToExport, "Save new config files…")
 		  #if DeployEnabled
@@ -983,7 +973,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "ImportButton"
 		    If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
@@ -1021,14 +1011,14 @@ End
 #tag EndEvents
 #tag Events AutosaveTimer
 	#tag Event
-		Sub Action()
+		Sub Run()
 		  Self.Autosave()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigMenu
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Dim Labels(), Tags() As String
 		  Labels.Append("Maps")
 		  Tags.Append("maps")
@@ -1051,7 +1041,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Dim Tag As Variant
 		  If Me.SelectedRowIndex > -1 Then
 		    Tag = Me.RowTag(Me.SelectedRowIndex)

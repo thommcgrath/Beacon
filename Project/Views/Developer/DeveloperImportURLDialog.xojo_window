@@ -277,6 +277,8 @@ Begin BeaconDialog DeveloperImportURLDialog
       Width           =   16
    End
    Begin URLConnection Socket
+      AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -312,14 +314,14 @@ End
 
 #tag Events URLField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.ActionButton.Enabled = Trim(Me.Value).Left(4) = "http"
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Dim URL As String = Trim(URLField.Value)
 		  If URL.IndexOf("pasted.co/") > -1 Then
 		    Self.ShowAlert("Can't import from this url", "TinyPaste/pasted.co prevent pulling content from their pages. Instead, copy and paste the spawn codes into a text file and import that.")
@@ -335,7 +337,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Socket.Disconnect
 		  Self.Hide
 		End Sub

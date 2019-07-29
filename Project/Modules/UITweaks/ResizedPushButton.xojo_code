@@ -2,16 +2,16 @@
 Protected Class ResizedPushButton
 Inherits PushButton
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.ResizeForPlatform(Self.IdealHeight)
 		  
-		  RaiseEvent Open
+		  RaiseEvent Opening
 		End Sub
 	#tag EndEvent
 
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 

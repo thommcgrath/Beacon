@@ -387,7 +387,7 @@ End
 #tag EndEvents
 #tag Events Lists
 	#tag Event
-		Sub Change(index as Integer)
+		Sub SelectionChanged(index as Integer)
 		  If Self.mUpdating Then
 		    Return
 		  End If

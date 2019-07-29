@@ -280,7 +280,7 @@ End
 
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		End Sub
 	#tag EndEvent

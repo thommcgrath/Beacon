@@ -35,9 +35,7 @@ Begin ServerViewContainer FTPServerView
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Untitled"
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -70,9 +68,7 @@ Begin ServerViewContainer FTPServerView
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -1013,7 +1009,7 @@ End
 
 #tag Events ServerNameField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.mProfile.Name = Me.Value
 		  Self.Header.Caption = Me.Value
 		  Self.Changed = Self.mProfile.Modified
@@ -1022,7 +1018,7 @@ End
 #tag EndEvents
 #tag Events HostField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.mProfile.Host = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
@@ -1030,7 +1026,7 @@ End
 #tag EndEvents
 #tag Events PortField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.mProfile.Port = Integer.FromString(Me.Value)
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
@@ -1038,7 +1034,7 @@ End
 #tag EndEvents
 #tag Events UserField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.mProfile.Username = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
@@ -1046,7 +1042,7 @@ End
 #tag EndEvents
 #tag Events PassField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.mProfile.Password = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
@@ -1054,7 +1050,7 @@ End
 #tag EndEvents
 #tag Events GameIniPathField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.mProfile.GameIniPath = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
@@ -1062,7 +1058,7 @@ End
 #tag EndEvents
 #tag Events GameUserSettingsIniPathField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.mProfile.GameUserSettingsIniPath = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
@@ -1070,7 +1066,7 @@ End
 #tag EndEvents
 #tag Events ModeMenu
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.DeleteAllRows
 		  Me.AddRow("Autodetect", Beacon.FTPServerProfile.ModeAuto)
 		  Me.AddRow("FTP", Beacon.FTPServerProfile.ModeFTP)
@@ -1079,7 +1075,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.mProfile.Mode = Me.Tag
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
@@ -1087,7 +1083,7 @@ End
 #tag EndEvents
 #tag Events MapMenu
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.AddRow("All Maps", Beacon.Maps.All.Mask)
 		  
 		  Dim Maps() As Beacon.Map = Beacon.Maps.All
@@ -1097,7 +1093,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Dim Mask As UInt64
 		  If Me.SelectedRowIndex = -1 Then
 		    Mask = Beacon.Maps.All.Mask

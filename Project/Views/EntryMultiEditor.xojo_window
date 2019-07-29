@@ -53,7 +53,6 @@ Begin Window EntryMultiEditor
       BackgroundColor =   &cFFFFFF00
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       HasBackColor    =   False
       HasBackgroundColor=   False
       Height          =   209
@@ -155,7 +154,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
@@ -192,7 +191,7 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = False
 		  Self.Hide
 		End Sub
@@ -200,7 +199,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub

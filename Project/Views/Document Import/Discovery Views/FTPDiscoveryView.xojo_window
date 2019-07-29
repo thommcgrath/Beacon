@@ -1075,8 +1075,8 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
-		  RaiseEvent Open
+		Sub Opening()
+		  RaiseEvent Opening
 		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
@@ -1161,7 +1161,7 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 
@@ -1184,35 +1184,35 @@ End
 
 #tag Events ServerHostField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckServerActionButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ServerPortField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckServerActionButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ServerUserField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckServerActionButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ServerPassField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckServerActionButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events BrowseActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Dim GameIniPath As String = Self.Browser.CurrentPath
 		  Dim Components() As String = GameIniPath.Split("/")
 		  If Components.Ubound <= 2 Then
@@ -1233,7 +1233,7 @@ End
 #tag EndEvents
 #tag Events BrowseCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ViewPanel.SelectedPanelIndex = Self.PageGeneral
 		End Sub
 	#tag EndEvent
@@ -1264,14 +1264,14 @@ End
 #tag EndEvents
 #tag Events ServerCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ShouldCancel()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ServerActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mProfile = New Beacon.FTPServerProfile()
 		  Self.mProfile.Host = Self.ServerHostField.Value
 		  Self.mProfile.Port = Val(Self.ServerPortField.Value)

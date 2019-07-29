@@ -64,7 +64,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
          HasBackColor    =   False
          HasBackgroundColor=   False
          Height          =   468
@@ -105,7 +104,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
          HasBackColor    =   False
          HasBackgroundColor=   False
          Height          =   468
@@ -145,7 +143,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
          HasBackColor    =   False
          HasBackgroundColor=   False
          Height          =   468
@@ -185,7 +182,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
          HasBackColor    =   False
          HasBackgroundColor=   False
          Height          =   468
@@ -225,7 +221,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
          HasBackColor    =   False
          HasBackgroundColor=   False
          Height          =   468
@@ -265,7 +260,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
          HasBackColor    =   False
          HasBackgroundColor=   False
          Height          =   468
@@ -305,7 +299,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
          HasBackColor    =   False
          HasBackgroundColor=   False
          Height          =   468
@@ -342,10 +335,8 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       DrawCaptions    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   468
       HelpTag         =   ""
       Index           =   -2147483648
@@ -374,14 +365,14 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  NotificationKit.Ignore(Self, Self.Notification_CloseDrawer, Self.Notification_ShowPane)
-		  RaiseEvent Close
+		  RaiseEvent Closing
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub EnableMenuItems()
+		Sub MenuSelected()
 		  Self.CurrentView.EnableMenuItems()
 		End Sub
 	#tag EndEvent
@@ -396,9 +387,9 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.CurrentView.SwitchedTo()
-		  RaiseEvent Open
+		  RaiseEvent Opening
 		  NotificationKit.Watch(Self, Self.Notification_CloseDrawer, Self.Notification_ShowPane)
 		End Sub
 	#tag EndEvent
@@ -573,11 +564,11 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Close()
+		Event Closing()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -786,7 +777,7 @@ End
 #tag EndEvents
 #tag Events ViewShelf
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Add(Self.mMenuButton)
 		  Me.Add(Self.mNotificationsButton)
 		  Me.Add(ShelfItem.NewSpacer)
@@ -798,7 +789,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub Pressed()
 		  If Me.SelectedItem = Nil Then
 		    Self.ShowPage(-1)
 		    Return

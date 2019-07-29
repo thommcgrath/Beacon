@@ -94,7 +94,7 @@ Inherits Beacon.Thread
 		  Self.mUpdateTimer = New Timer
 		  Self.mUpdateTimer.RunMode = Timer.RunModes.Off
 		  Self.mUpdateTimer.Period = 0
-		  AddHandler Self.mUpdateTimer.Action, WeakAddressOf Self.mUpdateTimer_Action
+		  AddHandler Self.mUpdateTimer.Run, WeakAddressOf Self.mUpdateTimer_Run
 		End Sub
 	#tag EndMethod
 
@@ -145,7 +145,7 @@ Inherits Beacon.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mUpdateTimer_Action(Sender As Timer)
+		Private Sub mUpdateTimer_Run(Sender As Timer)
 		  #Pragma Unused Sender
 		  
 		  RaiseEvent UpdateUI
@@ -377,16 +377,16 @@ Inherits Beacon.Thread
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="GameUserSettingsIniContent"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

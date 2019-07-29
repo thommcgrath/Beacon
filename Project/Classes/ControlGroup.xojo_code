@@ -112,12 +112,6 @@ Implements  Iterable
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "LastRowIndex" )  Function UBound() As Integer
-		  Return Self.mMembers.LastRowIndex
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub UpdateBounds()
 		  Dim Top, Left, Bottom, Right As Integer

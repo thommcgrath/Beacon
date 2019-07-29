@@ -230,7 +230,6 @@ Begin BeaconDialog LootSourceWizard
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowCount        =   "0"
          RowSelectionType=   "1"
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -1202,7 +1201,6 @@ Begin BeaconDialog LootSourceWizard
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowCount        =   "0"
          RowSelectionType=   "0"
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -1349,7 +1347,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Dim HasExperimentalSources As Boolean = LocalData.SharedInstance.HasExperimentalLootSources(Self.mMods)
 		  If HasExperimentalSources Then
 		    Self.SelectionExperimentalCheck.Value = Preferences.ShowExperimentalLootSources
@@ -1616,14 +1614,14 @@ End
 
 #tag Events SelectionActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ChooseSelectedLootSources()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SelectionCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
@@ -1631,7 +1629,7 @@ End
 #tag EndEvents
 #tag Events SourceList
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  SelectionActionButton.Enabled = Me.SelectedIndex > -1
 		End Sub
 	#tag EndEvent
@@ -1657,7 +1655,12 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Sub DoubleClicked()
+		  Self.ChooseSelectedLootSources()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function RowCompared(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  If Column <> 0 Then
 		    Return False
 		  End If
@@ -1674,22 +1677,17 @@ End
 		  Return True
 		End Function
 	#tag EndEvent
-	#tag Event
-		Sub DoubleClick()
-		  Self.ChooseSelectedLootSources()
-		End Sub
-	#tag EndEvent
 #tag EndEvents
 #tag Events SelectionCustomButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ShowDefine(Nil)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DefineActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Dim ClassString As String = Self.DefineClassField.Value.Trim
 		  If Not ClassString.EndsWith("_C") Then
 		    Self.ShowAlert("Invalid class string", "Ark class strings always end in _C. Check your class string and try again.")
@@ -1731,7 +1729,7 @@ End
 #tag EndEvents
 #tag Events DefineCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Me.Caption = "Cancel" Then
 		    Self.mCancelled = True
 		    Self.Hide
@@ -1744,7 +1742,7 @@ End
 #tag EndEvents
 #tag Events CustomizeActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Dim MinItemSets As Integer = Floor(CDbl(Self.CustomizeMinSetsField.Value))
 		  Dim MaxItemSets As Integer = Floor(CDbl(Self.CustomizeMaxSetsField.Value))
 		  Dim PreventDuplicates As Boolean = Self.CustomizePreventDuplicatesCheck.Value
@@ -1817,7 +1815,7 @@ End
 #tag EndEvents
 #tag Events CustomizeCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Me.Caption = "Cancel" Then
 		    Self.mCancelled = True
 		    Self.Hide
@@ -1834,14 +1832,14 @@ End
 #tag EndEvents
 #tag Events CustomizePresetsList
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.ColumnType(0) = ListBox.TypeCheckbox
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SelectionExperimentalCheck
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Preferences.ShowExperimentalLootSources = Me.Value Then
 		    Return
 		  End If

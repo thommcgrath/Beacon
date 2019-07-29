@@ -424,14 +424,14 @@ End
 
 #tag Events NewFileButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  MainWindow.Documents.NewDocument()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events OpenFileButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  MainWindow.Documents.ShowOpenDocument()
 		End Sub
 	#tag EndEvent
@@ -447,14 +447,14 @@ End
 #tag EndEvents
 #tag Events VersionLabel
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Value = "Version " + App.BuildVersion
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SyncLabel
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Dim LastSync As Date = LocalData.SharedInstance.LastSync
 		  If LastSync = Nil Then
 		    Me.Value = "No engram data available"
@@ -481,12 +481,12 @@ End
 #tag EndEvents
 #tag Events WebsiteLink
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Value = Beacon.WebURL()
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  ShowURL(Me.Value)
 		End Sub
 	#tag EndEvent

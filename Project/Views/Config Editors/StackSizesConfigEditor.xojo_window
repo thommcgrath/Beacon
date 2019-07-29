@@ -133,9 +133,7 @@ Begin ConfigEditor StackSizesConfigEditor
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Stack Size Overrides"
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -168,9 +166,7 @@ Begin ConfigEditor StackSizesConfigEditor
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -241,7 +237,6 @@ Begin ConfigEditor StackSizesConfigEditor
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   "0"
       RowSelectionType=   "1"
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -274,9 +269,7 @@ Begin ConfigEditor StackSizesConfigEditor
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -511,7 +504,7 @@ End
 
 #tag Events GlobalMultiplierField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -526,7 +519,7 @@ End
 #tag EndEvents
 #tag Events Header
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Dim AddButton As New BeaconToolbarItem("AddEngram", IconAdd)
 		  AddButton.HelpTag = "Override the stack size of an engram."
 		  
@@ -538,7 +531,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddEngram"
 		    Self.ShowAddOverride()
@@ -550,13 +543,13 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.ColumnAlignment(Self.ColumnStackSize) = Listbox.AlignRight
 		  Me.ColumnType(Self.ColumnStackSize) = Listbox.TypeEditable
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.Header.Duplicate.Enabled = Me.SelectedRowCount = 1
 		End Sub
 	#tag EndEvent

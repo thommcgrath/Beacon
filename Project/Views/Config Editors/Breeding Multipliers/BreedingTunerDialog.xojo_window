@@ -385,7 +385,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.CreaturesList.ColumnType(Self.ColumnChecked) = Listbox.TypeCheckbox
 		  
 		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.StringList)
@@ -489,7 +489,7 @@ End
 
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mChosenMultiplier = 0
 		  Self.Hide
 		End Sub
@@ -497,7 +497,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Const Threshold = 0.95
 		  
 		  Dim Creatures() As Beacon.Creature
@@ -549,21 +549,21 @@ End
 #tag EndEvents
 #tag Events MajorCreaturesButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.CheckCreatures(LocalData.SharedInstance.GetStringVariable("Major Imprint Creatures"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events AllCreaturesButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.CheckCreatures("*")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ClearCreaturesButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.CheckCreatures("")
 		End Sub
 	#tag EndEvent

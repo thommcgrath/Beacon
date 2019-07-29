@@ -62,9 +62,7 @@ Begin ContainerControl ItemSetSettingsContainer
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -637,8 +635,8 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
-		  RaiseEvent Open
+		Sub Opening()
+		  RaiseEvent Opening
 		  Self.SetupUI()
 		  Self.mSettingUp = False
 		End Sub
@@ -690,11 +688,11 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Updated()
+		Event SettingsChanged()
 	#tag EndHook
 
 
@@ -754,14 +752,14 @@ End
 
 #tag Events DisclosureTriangle1
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.SetupUI
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events NameField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -771,13 +769,13 @@ End
 		  End If
 		  
 		  Self.ItemSet.Label = Me.Value
-		  RaiseEvent Updated
+		  RaiseEvent SettingsChanged
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events PreventDuplicatesCheck
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -789,13 +787,13 @@ End
 		  Self.ItemSet.ItemsRandomWithoutReplacement = Me.Value
 		  Self.MaxEntriesField.CheckValue
 		  Self.MinEntriesField.CheckValue
-		  RaiseEvent Updated
+		  RaiseEvent SettingsChanged
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events MinEntriesField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -806,7 +804,7 @@ End
 		  End If
 		  
 		  Self.ItemSet.MinNumItems = Value
-		  RaiseEvent Updated
+		  RaiseEvent SettingsChanged
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -826,7 +824,7 @@ End
 #tag EndEvents
 #tag Events MaxEntriesField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -837,7 +835,7 @@ End
 		  End If
 		  
 		  Self.ItemSet.MaxNumItems = Value
-		  RaiseEvent Updated
+		  RaiseEvent SettingsChanged
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -857,7 +855,7 @@ End
 #tag EndEvents
 #tag Events WeightField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -868,7 +866,7 @@ End
 		  End If
 		  
 		  Self.ItemSet.RawWeight = Value
-		  RaiseEvent Updated
+		  RaiseEvent SettingsChanged
 		End Sub
 	#tag EndEvent
 	#tag Event

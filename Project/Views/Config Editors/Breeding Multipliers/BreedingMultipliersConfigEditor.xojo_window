@@ -1821,7 +1821,7 @@ End
 
 #tag Events MatureSpeedField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1841,7 +1841,7 @@ End
 #tag EndEvents
 #tag Events IncubationSpeedField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1861,7 +1861,7 @@ End
 #tag EndEvents
 #tag Events EggLayPeriodField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1880,7 +1880,7 @@ End
 #tag EndEvents
 #tag Events FoodConsumptionField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1899,7 +1899,7 @@ End
 #tag EndEvents
 #tag Events ImprintPeriodField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1919,7 +1919,7 @@ End
 #tag EndEvents
 #tag Events ImprintStatScaleField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1938,7 +1938,7 @@ End
 #tag EndEvents
 #tag Events ImprintGracePeriodField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1957,7 +1957,7 @@ End
 #tag EndEvents
 #tag Events ImprintLossSpeedField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1976,7 +1976,7 @@ End
 #tag EndEvents
 #tag Events CreaturesList
 	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function RowCompared(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  If Column = Self.ColumnIncubationTime Or Column = Self.ColumnMatureTime Then
 		    Dim Period1 As UInt64 = Me.CellTag(Row1, Column)
 		    Dim Period2 As UInt64 = Me.CellTag(Row2, Column)
@@ -1996,7 +1996,7 @@ End
 #tag EndEvents
 #tag Events Header
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AutoTuneButton"
 		    Dim Interval As Double = BreedingTunerDialog.Present(Self, Self.Config(False).BabyMatureSpeedMultiplier)
@@ -2008,14 +2008,14 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.LeftItems.Append(New BeaconToolbarItem("AutoTuneButton", IconToolbarWizard, "Automatically compute imprint interval to give at least a specified imprinting on all creatures."))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events MatingSpeedField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -2034,7 +2034,7 @@ End
 #tag EndEvents
 #tag Events MatingIntervalField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If

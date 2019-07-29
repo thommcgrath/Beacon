@@ -179,7 +179,6 @@ Begin BeaconDialog EntryEditor
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowCount        =   "0"
          RowSelectionType=   "0"
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -274,9 +273,7 @@ Begin BeaconDialog EntryEditor
          AutoDeactivate  =   True
          Backdrop        =   0
          Border          =   15
-         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   "True"
          Height          =   67
          HelpTag         =   ""
          Index           =   -2147483648
@@ -345,7 +342,6 @@ Begin BeaconDialog EntryEditor
          BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
          HasBackColor    =   False
          HasBackgroundColor=   False
          Height          =   209
@@ -450,7 +446,6 @@ Begin BeaconDialog EntryEditor
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowCount        =   "0"
          RowSelectionType=   "0"
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -593,7 +588,6 @@ Begin BeaconDialog EntryEditor
       Priority        =   5
       Scope           =   2
       StackSize       =   0
-      State           =   ""
       TabPanelIndex   =   0
    End
 End
@@ -601,13 +595,13 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  Self.EngramSearcher.Cancel
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Dim PreferredSize As Size = Preferences.EntryEditorSize
 		  
 		  Self.Picker.Tags = LocalData.SharedInstance.AllTags(Beacon.CategoryEngrams)
@@ -879,7 +873,7 @@ End
 
 #tag Events FilterField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent
@@ -920,14 +914,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
-		  Me.ColumnType(Self.ColumnIncluded) = Listbox.TypeCheckbox
-		  Me.ColumnType(Self.ColumnWeight) = Listbox.TypeEditable
-		  Me.ColumnAlignment(Self.ColumnWeight) = Listbox.AlignRight
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function RowCompared(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Select Case Column
 		  Case Self.ColumnIncluded
 		    If Me.CellCheck(Row1, Column) = True And Me.CellCheck(Row2, Column) = False Then
@@ -957,17 +944,24 @@ End
 		  Return True
 		End Function
 	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.ColumnType(Self.ColumnIncluded) = Listbox.TypeCheckbox
+		  Me.ColumnType(Self.ColumnWeight) = Listbox.TypeEditable
+		  Me.ColumnAlignment(Self.ColumnWeight) = Listbox.AlignRight
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events SingleEntryCheck
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Self.UpdateSimulation()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Picker
 	#tag Event
-		Sub Change()
+		Sub TagsChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -997,14 +991,15 @@ End
 #tag EndEvents
 #tag Events SimulateButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.UpdateSimulation()
+		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.mSelectedEngrams.KeyCount = 0 Then
 		    Return
 		  End If
@@ -1055,7 +1050,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Hide
 		End Sub
 	#tag EndEvent

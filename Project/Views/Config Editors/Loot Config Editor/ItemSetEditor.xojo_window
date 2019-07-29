@@ -583,7 +583,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function RowCompared(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Dim Entry1 As Beacon.SetEntry = Me.RowTag(Row1)
 		  Dim Entry2 As Beacon.SetEntry = Me.RowTag(Row2)
 		  
@@ -623,12 +623,12 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub DoubleClick()
+		Sub DoubleClicked()
 		  Self.EditSelectedEntries()
 		End Sub
 	#tag EndEvent
@@ -675,7 +675,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.Header.EditEntry.Enabled = Me.SelectedRowCount > 0
 		  Self.UpdateStatus()
 		End Sub
@@ -689,7 +689,7 @@ End
 #tag EndEvents
 #tag Events Header
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddEntry"
 		    Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.Mods)
@@ -709,7 +709,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Dim AddButton As New BeaconToolbarItem("AddEntry", IconAdd)
 		  AddButton.HelpTag = "Add engrams to this item set."
 		  
@@ -735,7 +735,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Updated()
+		Sub SettingsChanged()
 		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent

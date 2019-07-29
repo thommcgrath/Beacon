@@ -249,7 +249,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Function CancelClose(appQuitting as Boolean) As Boolean
+		Function CancelClosing(appQuitting as Boolean) As Boolean
 		  #Pragma Unused AppQuitting
 		  
 		  Dim ModifiedViews() As BeaconSubview
@@ -731,7 +731,7 @@ End
 
 #tag Events TabBar1
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Count = 1
 		End Sub
 	#tag EndEvent
@@ -858,7 +858,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Visible = False
 		  Me.Left = 0
 		  Me.Top = 0

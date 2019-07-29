@@ -327,7 +327,7 @@ End
 
 #tag Events MapCheckboxes
 	#tag Event
-		Sub Action(index as Integer)
+		Sub ValueChanged(index as Integer)
 		  If Self.SettingUp Then
 		    Return
 		  End If

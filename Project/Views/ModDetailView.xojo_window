@@ -565,7 +565,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  Self.Searcher.Cancel
 		End Sub
 	#tag EndEvent
@@ -955,7 +955,7 @@ End
 
 #tag Events CopyButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Dim C As New Clipboard
 		  C.Text = ConfirmField.Value
 		  
@@ -966,7 +966,7 @@ End
 #tag EndEvents
 #tag Events ConfirmButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Panel.SelectedPanelIndex = PageLoading
 		  
 		  Dim Request As New BeaconAPI.Request(Self.CurrentMod.ConfirmURL, "GET", AddressOf APICallback_ConfirmMod)
@@ -977,7 +977,7 @@ End
 #tag EndEvents
 #tag Events EngramList
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.ColumnType(0) = Listbox.TypeEditableTextField
 		  Me.ColumnType(1) = Listbox.TypeEditableTextField
 		  Me.ColumnType(2) = Listbox.TypeCheckbox
@@ -1031,14 +1031,14 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Header.RemoveButton.Enabled = Me.SelectedIndex > -1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Header
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddButton"
 		    Dim Engram As New BeaconAPI.Engram
@@ -1066,7 +1066,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.LeftItems.Append(New BeaconToolbarItem("AddButton", IconAdd, "Add new engram."))
 		  Me.LeftItems.Append(New BeaconToolbarItem("RemoveButton", IconRemove, False, "Delete selected engrams."))
 		  

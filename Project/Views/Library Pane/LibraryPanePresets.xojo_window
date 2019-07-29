@@ -500,7 +500,7 @@ End
 
 #tag Events Header
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.LeftItems.Append(New BeaconToolbarItem("Add", IconToolbarAdd))
 		  Me.LeftItems.Append(New BeaconToolbarItem("Duplicate", IconToolbarClone, False))
 		  Me.RightItems.Append(New BeaconToolbarItem("Export", IconToolbarExport, False))
@@ -516,7 +516,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "Export"
 		    Self.ExportSelected()
@@ -530,13 +530,13 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Header.Duplicate.Enabled = Me.SelectedRowCount > 0
 		  Header.Export.Enabled = Me.SelectedRowCount > 0
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub DoubleClick()
+		Sub DoubleClicked()
 		  If Me.SelectedIndex > -1 Then
 		    Dim Preset As Beacon.Preset = Me.RowTag(Me.SelectedIndex)
 		    Self.OpenPreset(Preset)
@@ -544,7 +544,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.ColumnAlignment(1) = Listbox.AlignRight
 		End Sub
 	#tag EndEvent

@@ -308,9 +308,7 @@ Begin BeaconDialog DocumentExportWindow
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -442,9 +440,7 @@ Begin BeaconDialog DocumentExportWindow
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -475,10 +471,8 @@ Begin BeaconDialog DocumentExportWindow
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       DrawCaptions    =   True
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   60
       HelpTag         =   ""
       Index           =   -2147483648
@@ -543,7 +537,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  Self.ClipboardRewriter.Cancel
 		  Self.FileRewriter.Cancel
 		  Self.GameIniRewriter.Cancel
@@ -850,14 +844,14 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Close()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SaveButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Dim Dialog As New SaveFileDialog
 		  Dialog.Filter = BeaconFileTypes.IniFile
 		  Dialog.SuggestedFileName = Self.CurrentFilename
@@ -878,7 +872,7 @@ End
 #tag EndEvents
 #tag Events CopyButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Dim Board As New Clipboard
 		  Board.Text = Self.ContentArea.Value
 		  Self.mLastRewrittenHash = EncodeHex(MD5(Board.Text))
@@ -889,7 +883,7 @@ End
 #tag EndEvents
 #tag Events RewriteClipboardButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Dim Board As New Clipboard
 		  Self.ClipboardRewriter.Rewrite(Board.Text, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, True, Self.mCurrentProfile)
 		  
@@ -900,14 +894,14 @@ End
 #tag EndEvents
 #tag Events ClipboardWatcher
 	#tag Event
-		Sub Action()
+		Sub Run()
 		  Self.CheckClipboard()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events RewriteFileButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Dim Mode As String = Self.CurrentMode
 		  Dim RequiredHeader As String
 		  Select Case Mode
@@ -954,14 +948,14 @@ End
 #tag EndEvents
 #tag Events MapMenu
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.Setup()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Switcher
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.Add(IconGameUserSettingsIni, "GameUserSettings.ini", "gameusersettings.ini")
 		  Me.Add(IconGameIni, "Game.ini", "game.ini")
@@ -971,7 +965,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub Pressed()
 		  Self.RefreshContentArea()
 		  Self.CheckButtons()
 		End Sub

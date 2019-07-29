@@ -326,9 +326,9 @@ Begin BeaconDialog DinoAdjustmentDialog
       SelectedPanelIndex=   0
       TabIndex        =   8
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   158
       Transparent     =   False
+      Value           =   "0"
       Value           =   0
       Visible         =   True
       Width           =   626
@@ -1360,7 +1360,7 @@ End
 
 #tag Events ModeMultipliersRadio
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Me.Value Then
 		    Self.Pages.SelectedPanelIndex = Self.PageMultipliers
 		  End If
@@ -1369,7 +1369,7 @@ End
 #tag EndEvents
 #tag Events ModeReplaceRadio
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Me.Value Then
 		    Self.Pages.SelectedPanelIndex = Self.PageReplace
 		  End If
@@ -1378,7 +1378,7 @@ End
 #tag EndEvents
 #tag Events ModeDisableRadio
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Me.Value Then
 		    Self.Pages.SelectedPanelIndex = Self.PageDisable
 		  End If
@@ -1387,7 +1387,7 @@ End
 #tag EndEvents
 #tag Events Pages
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  Dim OriginalHeight As Integer = Me.Height
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageMultipliers
@@ -1404,7 +1404,7 @@ End
 #tag EndEvents
 #tag Events ChooseReplacementButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Dim Exclude() As Beacon.Creature
 		  Dim SelectedCreature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Self.mSelectedClass)
 		  If SelectedCreature <> Nil Then
@@ -1427,7 +1427,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.SelectedClass = "" Then
 		    Self.ShowAlert("You haven't selected a creature", "That's an important step, right?")
 		    Return
@@ -1461,7 +1461,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Cancelled = True
 		  Self.Hide
 		End Sub
@@ -1469,7 +1469,7 @@ End
 #tag EndEvents
 #tag Events ChooseTargetButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Dim Exclude() As Beacon.Creature
 		  For Each ClassString As String In Self.ConfiguredClasses
 		    Dim Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)

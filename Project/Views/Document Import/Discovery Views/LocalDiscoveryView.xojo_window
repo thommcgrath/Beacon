@@ -381,8 +381,8 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
-		  RaiseEvent Open
+		Sub Opening()
+		  RaiseEvent Opening
 		  Self.AcceptFileDrop(BeaconFileTypes.IniFile)
 		  Self.ConfigArea.AcceptFileDrop(BeaconFileTypes.IniFile)
 		  Self.SwapButtons()
@@ -564,7 +564,7 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 
@@ -599,7 +599,7 @@ End
 
 #tag Events ConfigArea
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Not Self.mSettingUp Then
 		    Select Case Self.Switcher.SelectedIndex
 		    Case Self.GameIniIndex
@@ -621,7 +621,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Dim Engines(0) As Beacon.DiscoveryEngine
 		  Engines(0) = New Beacon.LocalDiscoveryEngine(Self.mGameIniContent, Self.mGameUserSettingsIniContent)
 		  Self.ShouldFinish(Engines)
@@ -630,14 +630,14 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ShouldCancel()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ChooseFileButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.mGameIniContent.Len > 0 And Self.mGameUserSettingsIniContent.Len > 0 And Self.ShowConfirm("Both files are already selected", "You can select another file if you really want to, but both Game.ini and GameUserSettings.ini files are already present.", "Add Another", "Cancel") = False Then
 		    Return
 		  End If
@@ -655,7 +655,7 @@ End
 #tag EndEvents
 #tag Events Switcher
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.Add(IconGameUserSettingsIni, "GameUserSettings.ini", "gameusersettings.ini")
 		  Me.Add(IconGameIni, "Game.ini", "game.ini")
@@ -664,7 +664,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub Pressed()
 		  Dim SettingUp As Boolean = Self.mSettingUp
 		  Self.mSettingUp = True
 		  Select Case Me.SelectedIndex

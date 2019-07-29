@@ -901,7 +901,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		  
 		  Self.MinQualityField.DoubleValue = Self.mPreset.MinQualityModifier(Self.mEditID)
@@ -1016,7 +1016,7 @@ End
 
 #tag Events GroupMenu
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Dim Modifiers() As Beacon.PresetModifier = LocalData.SharedInstance.AllPresetModifiers
 		  Dim Actives() As String = Self.mPreset.ActiveModifierIDs()
 		  For Each Modifier As Beacon.PresetModifier In Modifiers
@@ -1041,7 +1041,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  If Me.SelectedRowIndex = -1 Then
 		    Return
 		  End If
@@ -1066,7 +1066,7 @@ End
 #tag EndEvents
 #tag Events GroupPatternField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Dim Modifier As New Beacon.PresetModifier("", Self.GroupPatternField.Value)
 		  Dim Matches() As Beacon.LootSource = Modifier.Matches(Self.mSources)
 		  
@@ -1079,7 +1079,7 @@ End
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.MinQualityField.CheckValue
 		  Self.MaxQualityField.CheckValue
 		  Dim MinQualityModifier As Integer = Self.MinQualityField.DoubleValue
@@ -1124,7 +1124,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub

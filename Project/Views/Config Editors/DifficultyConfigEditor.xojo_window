@@ -592,7 +592,7 @@ End
 
 #tag Events MaxDinoLevelField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If

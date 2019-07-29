@@ -236,19 +236,21 @@ Begin BeaconDialog LibraryEngramsURLDialog
       Width           =   16
    End
    Begin URLConnection Downloader
+      AllowCertificateValidation=   False
       Enabled         =   True
+      HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
-      ValidateCertificates=   False
+      ValidateCertificates=   "False"
    End
 End
 #tag EndWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		  
 		  Dim Board As New Clipboard
@@ -279,7 +281,7 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Spinner.Visible = True
 		  ActionButton.Enabled = False
 		  URLField.Enabled = False
@@ -292,7 +294,7 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Downloader.Disconnect
 		  Self.mContent = ""
 		  Self.Hide
@@ -301,7 +303,7 @@ End
 #tag EndEvents
 #tag Events URLField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Dim URL As String = Trim(Me.Value)
 		  ActionButton.Enabled = Spinner.Visible = False And (URL.Left(7) = "http://" Or URL.Left(8) = "https://")
 		End Sub

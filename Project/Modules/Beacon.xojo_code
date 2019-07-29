@@ -857,7 +857,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h21
-		Private Delegate Function ValueAdapter(ByRef Value As Variant, Info As Introspection.TypeInfo) As Boolean
+		Private Delegate Function ValueAdapter(ByRef Value As Variant, Info As Introspection . TypeInfo) As Boolean
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h1

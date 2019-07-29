@@ -129,12 +129,14 @@ Begin LibrarySubview LibraryPaneSearch
       TabPanelIndex   =   0
    End
    Begin URLConnection SearchSocket
+      AllowCertificateValidation=   False
       Enabled         =   True
+      HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
-      ValidateCertificates=   False
+      ValidateCertificates=   "False"
    End
    Begin ControlCanvas Area
       AcceptFocus     =   False
@@ -350,14 +352,14 @@ End
 #tag EndEvents
 #tag Events SearchField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.SearchTimer.RunMode = Timer.RunModes.Single
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SearchTimer
 	#tag Event
-		Sub Action()
+		Sub Run()
 		  Dim Terms As String = Self.SearchField.Value.Trim
 		  
 		  If Terms = "" Then

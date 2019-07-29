@@ -558,7 +558,7 @@ End
 
 #tag Events Header
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "ExportIdentity"
 		    Self.ShowExportIdentity()
@@ -568,7 +568,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.LeftItems.Append(New BeaconToolbarItem("ExportIdentity", IconToolbarExport, "Create a backup of your identity file."))
 		  Me.LeftItems.Append(New BeaconToolbarItem("ImportIdentity", IconToolbarImport, "Restore an indentity file backup."))
 		End Sub

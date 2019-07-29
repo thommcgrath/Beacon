@@ -98,6 +98,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       _ScrollWidth    =   -1
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       GameIniContent  =   ""
       GameUserSettingsIniContent=   ""
       Index           =   -2147483648
@@ -161,9 +162,9 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       SelectedPanelIndex=   0
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
       Value           =   0
       Visible         =   True
       Width           =   347
@@ -184,6 +185,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          HasBackgroundColor=   False
          Height          =   464
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -315,6 +317,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       HasBackgroundColor=   False
       Height          =   183
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -380,6 +383,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       HasBackgroundColor=   False
       Height          =   23
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -447,6 +451,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       HasBackgroundColor=   False
       Height          =   76
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -484,7 +489,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub EnableMenuItems()
+		Sub MenuSelected()
 		  Self.BuildPresetMenu(DocumentAddItemSet)
 		  If Self.SetList.SelectedRowCount > 0 Then
 		    DocumentRemoveItemSet.Enable
@@ -1120,7 +1125,7 @@ End
 
 #tag Events SetList
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  If Self.mSorting = True Then
 		    Return
 		  End If
@@ -1515,7 +1520,7 @@ End
 #tag EndEvents
 #tag Events Header
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Dim AddButton As New BeaconToolbarItem("AddSet", IconAdd)
 		  AddButton.HasMenu = True
 		  AddButton.HelpTag = "Add a new empty item set. Hold to add a preset from a menu."
@@ -1529,7 +1534,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddSet"
 		    Self.ShowNewSet()
@@ -1664,7 +1669,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Changed()
+		Sub SettingsChanged()
 		  RaiseEvent Updated
 		  
 		  If Self.SimulatorVisible Then

@@ -342,7 +342,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "Refresh"
 		    Self.Simulate()
@@ -352,7 +352,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.LeftItems.Append(New BeaconToolbarItem("Refresh", IconToolbarRefresh, "Re-run the simulator"))
 		  Me.RightItems.Append(New BeaconToolbarItem("Close", IconToolbarClose, "Close the simulator"))
 		End Sub

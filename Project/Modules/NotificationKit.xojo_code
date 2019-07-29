@@ -28,7 +28,7 @@ Protected Module NotificationKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mQueueTimer_Action(Sender As Timer)
+		Private Sub mQueueTimer_Run(Sender As Timer)
 		  If UBound(mPendingNotifications) = -1 Then
 		    Sender.RunMode = Timer.RunModes.Off
 		    Return
@@ -68,7 +68,7 @@ Protected Module NotificationKit
 		    mQueueTimer = New Timer
 		    mQueueTimer.RunMode = Timer.RunModes.Multiple
 		    mQueueTimer.Period = 1
-		    AddHandler mQueueTimer.Action, AddressOf mQueueTimer_Action
+		    AddHandler mQueueTimer.Run, AddressOf mQueueTimer_Run
 		  End If
 		  
 		  If mQueueTimer.RunMode = Timer.RunModes.Off Then

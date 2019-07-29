@@ -188,7 +188,7 @@ End
 
 #tag Events Labels
 	#tag Event
-		Sub Action(index as Integer)
+		Sub Pressed(index as Integer)
 		  Dim URL As String = Self.Labels(Index).URL
 		  If URL = "" Then
 		    Return

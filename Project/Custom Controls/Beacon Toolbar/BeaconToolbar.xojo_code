@@ -162,7 +162,7 @@ Implements ObservationKit.Observer
 		    Dim Item As BeaconToolbarItem = Self.ItemWithName(Self.mMouseDownName)
 		    If Item <> Nil And Item.Rect.Contains(New REALbasic.Point(X, Y)) And Not Self.mMouseHeld Then
 		      // Action
-		      RaiseEvent Action(Item)
+		      RaiseEvent Pressed(Item)
 		    End If
 		    Self.mPressedName = ""
 		    Self.mMouseDownName = ""
@@ -173,8 +173,8 @@ Implements ObservationKit.Observer
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
-		  RaiseEvent Open
+		Sub Opening()
+		  RaiseEvent Opening
 		  Self.Transparent = True
 		End Sub
 	#tag EndEvent
@@ -198,7 +198,7 @@ Implements ObservationKit.Observer
 		  Self.mHoldTimer = New Timer
 		  Self.mHoldTimer.RunMode = Timer.RunModes.Off
 		  Self.mHoldTimer.Period = 250
-		  AddHandler Self.mHoldTimer.Action, WeakAddressOf Self.mHoldTimer_Action
+		  AddHandler Self.mHoldTimer.Run, WeakAddressOf Self.mHoldTimer_Run
 		End Sub
 	#tag EndMethod
 
@@ -347,7 +347,7 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mHoldTimer_Action(Sender As Timer)
+		Private Sub mHoldTimer_Run(Sender As Timer)
 		  #Pragma Unused Sender
 		  
 		  If Self.mMouseHeld Or Self.mPressedName = "" Then
@@ -496,10 +496,6 @@ Implements ObservationKit.Observer
 
 
 	#tag Hook, Flags = &h0
-		Event Action(Item As BeaconToolbarItem)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
 		Event Activate()
 	#tag EndHook
 
@@ -516,7 +512,11 @@ Implements ObservationKit.Observer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Pressed(Item As BeaconToolbarItem)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

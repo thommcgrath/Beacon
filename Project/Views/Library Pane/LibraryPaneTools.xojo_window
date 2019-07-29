@@ -259,7 +259,7 @@ End
 
 #tag Events ToolsList
 	#tag Event
-		Sub DoubleClick()
+		Sub DoubleClicked()
 		  If Me.SelectedIndex = -1 Then
 		    Return
 		  End If

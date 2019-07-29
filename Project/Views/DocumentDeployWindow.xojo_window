@@ -548,7 +548,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		  
 		  Self.ServerSelectionList.ColumnType(0) = Listbox.TypeCheckbox
@@ -814,7 +814,7 @@ End
 #tag EndEvents
 #tag Events ServerSelectionActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Const RestartSupportedUnknown = -1
 		  Const RestartSupportedNone = 0
 		  Const RestartSupportedMixed = 1
@@ -879,21 +879,21 @@ End
 #tag EndEvents
 #tag Events ServerSelectionCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Close
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events FinishedButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.CLose
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DeployingCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Dim AnyFinished As Boolean
 		  
 		  For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
@@ -951,7 +951,7 @@ End
 #tag EndEvents
 #tag Events DeployingWatchTimer
 	#tag Event
-		Sub Action()
+		Sub Run()
 		  Dim Finished As Boolean = True
 		  For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
 		    Finished = Finished And DeploymentEngine.Finished

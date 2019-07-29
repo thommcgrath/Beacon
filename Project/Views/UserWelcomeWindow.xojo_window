@@ -1864,9 +1864,7 @@ Begin Window UserWelcomeWindow
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   360
       HelpTag         =   ""
       Index           =   -2147483648
@@ -1946,7 +1944,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  RemoveHandler App.IdentityManager.Finished, AddressOf IdentityManager_Finished
 		  
 		  If App.IdentityManager.CurrentIdentity = Nil Then
@@ -1958,7 +1956,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  AddHandler App.IdentityManager.Finished, AddressOf IdentityManager_Finished
 		  
 		  If Self.mLoginOnly Then
@@ -1966,24 +1964,6 @@ End
 		  Else
 		    Preferences.OnlineEnabled = False
 		  End If
-		  
-		  #if false
-		    Self.mBaseURL = Beacon.WebURL("inapp/")
-		    Dim Fields() As String
-		    If Self.mLoginOnly Then
-		      Fields.Append("login_only=true")
-		    Else
-		      Preferences.OnlineEnabled = False
-		    End If
-		    If SystemColors.IsDarkMode Then
-		      Fields.Append("dark")
-		    End If
-		    Dim Path As String = Self.mBaseURL + "welcome.php"
-		    If Fields.Ubound > -1 Then
-		      Path = Path + "?" + Fields.Join("&")
-		    End If
-		    Self.ContentView.LoadURL(Path)
-		  #endif
 		End Sub
 	#tag EndEvent
 
@@ -2247,7 +2227,7 @@ End
 
 #tag Events PagePanel1
 	#tag Event
-		Sub Change()
+		Sub PanelChanged()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageLogin
 		    Self.LoginRevealCheckbox.Value = False
@@ -2267,42 +2247,42 @@ End
 #tag EndEvents
 #tag Events PrivacyPolicyLabel
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  ShowURL(Beacon.WebURL("/privacy.php"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ContinueAnonymousButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.HandleAnonymous()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ContinueAuthenticatedButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.PagePanel1.SelectedPanelIndex = Self.PageLogin
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DisableOnlineButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.HandleDisableOnline()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events QuitButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Quit
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events LoginActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.SetLoginStatus("Logging in…")
 		  
 		  Self.LoginSocket.Send("POST", BeaconAPI.URL("session.php"))
@@ -2311,7 +2291,7 @@ End
 #tag EndEvents
 #tag Events LoginCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.SetLoginStatus("")
 		  Self.LoginSocket.Disconnect()
 		  
@@ -2325,28 +2305,28 @@ End
 #tag EndEvents
 #tag Events LoginEmailField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckLoginButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events LoginPasswordField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckLoginButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events LoginRevealCheckbox
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Self.LoginPasswordField.Password = Not Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfirmActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.mConfirmedAddress = Self.ConfirmAddressField.Value.Trim And Self.mConfirmedCode <> "" Then
 		    Self.PagePanel1.SelectedPanelIndex = Self.PageIdentity
 		    Return
@@ -2395,7 +2375,7 @@ End
 #tag EndEvents
 #tag Events ConfirmCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.PagePanel1.SelectedPanelIndex = Self.PageLogin
 		  Self.ResetConfirmUI()
 		  Self.ConfirmCodeCreationSocket.Disconnect()
@@ -2410,28 +2390,28 @@ End
 #tag EndEvents
 #tag Events ConfirmAddressField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckConfirmButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfirmCodeField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckConfirmButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events IdentityUsernameField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckIdentityActionButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events IdentityRandomNameButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.IdentitySuggestionSocket.Send("GET", Beacon.WebURL("/account/login/suggest.php"))
 		  Me.Enabled = False
 		End Sub
@@ -2439,21 +2419,21 @@ End
 #tag EndEvents
 #tag Events IdentityPasswordField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckIdentityActionButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events IdentityPasswordConfirmField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.CheckIdentityActionButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events IdentityRevealCheckbox
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  Self.IdentityPasswordField.Password = Not Me.Value
 		  Self.IdentityPasswordConfirmField.Password = Not Me.Value
 		End Sub
@@ -2461,14 +2441,14 @@ End
 #tag EndEvents
 #tag Events IdentityActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.SubmitIdentity(False)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events IdentityCancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.ResetConfirmUI()
 		  Self.PagePanel1.SelectedPanelIndex = Self.PageConfirm
 		  Self.SubmitIdentitySocket.Disconnect()
@@ -2479,7 +2459,7 @@ End
 #tag EndEvents
 #tag Events LoginSignupButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  If Self.ConfirmAddressField.Value.Trim = "" Then
 		    Self.ConfirmAddressField.Value = Self.LoginEmailField.Value.Trim
 		  End If

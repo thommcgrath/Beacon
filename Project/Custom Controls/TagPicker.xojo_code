@@ -52,7 +52,7 @@ Inherits ControlCanvas
 		      Self.mRequireTags.Append(Tag)
 		    End If
 		    
-		    RaiseEvent Change
+		    RaiseEvent TagsChanged
 		  End If
 		  
 		  Self.mMousePressedIndex = -1
@@ -312,7 +312,7 @@ Inherits ControlCanvas
 		  Self.mExcludeTags = ExcludedTags.Clone
 		  
 		  If App.CurrentThread = Nil Then
-		    RaiseEvent Change
+		    RaiseEvent TagsChanged
 		    Self.Invalidate
 		  Else
 		    Call CallLater.Schedule(0, AddressOf TriggerChange)
@@ -366,7 +366,7 @@ Inherits ControlCanvas
 		    
 		    If FireChangeEvent Then
 		      If App.CurrentThread = Nil Then
-		        RaiseEvent Change
+		        RaiseEvent TagsChanged
 		      Else
 		        Call CallLater.Schedule(0, AddressOf TriggerChange)
 		      End If
@@ -379,18 +379,18 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h21
 		Private Sub TriggerChange()
-		  RaiseEvent Change
+		  RaiseEvent TagsChanged
 		  Self.Invalidate
 		End Sub
 	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
-		Event Change()
+		Event ShouldAdjustHeight(Delta As Integer)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ShouldAdjustHeight(Delta As Integer)
+		Event TagsChanged()
 	#tag EndHook
 
 

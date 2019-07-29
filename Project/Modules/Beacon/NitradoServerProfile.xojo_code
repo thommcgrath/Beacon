@@ -237,16 +237,16 @@ Inherits Beacon.ServerProfile
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ConfigPath"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ServiceID"
@@ -261,8 +261,8 @@ Inherits Beacon.ServerProfile
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

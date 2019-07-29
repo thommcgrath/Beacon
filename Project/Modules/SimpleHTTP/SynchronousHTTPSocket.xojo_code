@@ -85,6 +85,22 @@ Inherits URLConnection
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="AllowCertificateValidation"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HTTPStatusCode"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -122,14 +138,6 @@ Inherits URLConnection
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ValidateCertificates"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

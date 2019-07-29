@@ -163,7 +163,7 @@ Begin ConfigEditor MetaDataConfigEditor
       LockTop         =   True
       Mask            =   ""
       MaximumCharactersAllowed=   0
-      Multiline       =   True
+      MultiLine       =   True
       ReadOnly        =   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -315,7 +315,6 @@ Begin ConfigEditor MetaDataConfigEditor
       LockRight       =   True
       LockTop         =   False
       RequiresSelection=   False
-      RowCount        =   "0"
       RowSelectionType=   "0"
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -514,7 +513,7 @@ End
 
 #tag Events TitleField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -529,7 +528,7 @@ End
 #tag EndEvents
 #tag Events DescriptionArea
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.PublicFileCheckbox.Enabled = Trim(Me.Value).Len > 32
 		  
 		  If Self.SettingUp Then
@@ -546,7 +545,7 @@ End
 #tag EndEvents
 #tag Events PublicFileCheckbox
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -561,7 +560,7 @@ End
 #tag EndEvents
 #tag Events ModsList
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.ColumnType(0) = Listbox.TypeCheckbox
 		  Me.ColumnAlignment(2) = Listbox.AlignCenter
 		End Sub
@@ -600,7 +599,7 @@ End
 #tag EndEvents
 #tag Events UncompressedCheckbox
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If

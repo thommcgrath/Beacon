@@ -258,7 +258,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.SwapButtons()
 		  Self.ActionButton.Enabled = False
 		End Sub
@@ -300,7 +300,7 @@ End
 
 #tag Events ActionButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  // No trim. Trailing or leading whitespace is perfectly valid for the password.
 		  Dim Password As String = Self.PasswordField.Value
 		  
@@ -317,14 +317,14 @@ End
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
-		Sub Action()
+		Sub Pressed()
 		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events PasswordField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  // No trim. Trailing or leading whitespace is perfectly valid for the password.
 		  Self.ActionButton.Enabled = Me.Value <> ""
 		End Sub

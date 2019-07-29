@@ -666,7 +666,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Dim AddButton As New BeaconToolbarItem("AddEngram", IconAdd)
 		  AddButton.HelpTag = "Change the crafting cost for a new item."
 		  
@@ -678,7 +678,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddEngram"
 		    Self.ShowAddEngram()
@@ -690,7 +690,7 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  If Me.SelectedRowCount = 1 Then
 		    Self.Editor.Target = Me.RowTag(Me.SelectedIndex)
 		  Else

@@ -34,10 +34,8 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       DrawCaptions    =   True
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   60
       HelpTag         =   ""
       Index           =   -2147483648
@@ -134,9 +132,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -168,9 +164,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   ""
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -425,7 +419,7 @@ End
 
 #tag Events Switcher
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.Add(IconGameUserSettingsIni, "GameUserSettings.ini", "gameusersettings.ini")
 		  Me.Add(IconGameIni, "Game.ini", "game.ini")
@@ -434,7 +428,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub Pressed()
 		  Dim SettingUp As Boolean = Self.SettingUp
 		  Self.SettingUp = True
 		  Select Case Me.SelectedIndex
@@ -453,7 +447,12 @@ End
 #tag EndEvents
 #tag Events ConfigArea
 	#tag Event
-		Sub TextChange()
+		Sub SelectionChanged()
+		  Self.UpdateEncryptButton()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub TextChanged()
 		  Self.UpdateTextColors()
 		  
 		  If Self.SettingUp Then
@@ -479,15 +478,10 @@ End
 		  End Select
 		End Sub
 	#tag EndEvent
-	#tag Event
-		Sub SelChange()
-		  Self.UpdateEncryptButton()
-		End Sub
-	#tag EndEvent
 #tag EndEvents
 #tag Events LeftButtons
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "EncryptButton"
 		    Self.ToggleEncryption
@@ -495,7 +489,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.LeftItems.Append(New BeaconToolbarItem("EncryptButton", IconToolbarLock, "Encrypt the selected text when saving."))
 		End Sub
 	#tag EndEvent

@@ -891,7 +891,7 @@ End
 
 #tag Events HarvestAmountMultiplierField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -907,7 +907,7 @@ End
 #tag EndEvents
 #tag Events Header
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Dim AddButton As New BeaconToolbarItem("AddEngram", IconAdd)
 		  AddButton.HelpTag = "Override the harvest rate of an engram."
 		  
@@ -919,7 +919,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddEngram"
 		    Self.ShowAddOverride()
@@ -931,14 +931,14 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.ColumnAlignment(Self.ColumnRate) = Listbox.AlignRight
 		  Me.ColumnAlignment(Self.ColumnEffectiveRate) = Listbox.AlignRight
 		  Me.ColumnType(Self.ColumnRate) = Listbox.TypeEditable
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  Self.Header.Duplicate.Enabled = Me.SelectedRowCount = 1
 		End Sub
 	#tag EndEvent
@@ -1058,7 +1058,7 @@ End
 #tag EndEvents
 #tag Events UseOptimizedRatesCheck
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1073,7 +1073,7 @@ End
 #tag EndEvents
 #tag Events HarvestHealthMultiplierField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1089,7 +1089,7 @@ End
 #tag EndEvents
 #tag Events PlayerHarvestDamageMultiplierField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1105,7 +1105,7 @@ End
 #tag EndEvents
 #tag Events DinoHarvestDamageMultiplierField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1121,7 +1121,7 @@ End
 #tag EndEvents
 #tag Events ClampHarvestDamageCheck
 	#tag Event
-		Sub Action()
+		Sub ValueChanged()
 		  If Self.SettingUp Then
 		    Return
 		  End If

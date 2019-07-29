@@ -330,7 +330,7 @@ End
 
 #tag Events ServerList
 	#tag Event
-		Sub Change()
+		Sub SelectionChanged()
 		  If Me.SelectedIndex = -1 Then
 		    Self.CurrentProfileID = ""
 		    Return

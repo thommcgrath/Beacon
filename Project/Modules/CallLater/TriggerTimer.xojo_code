@@ -2,7 +2,7 @@
 Private Class TriggerTimer
 Inherits Timer
 	#tag Event
-		Sub Action()
+		Sub Run()
 		  If Self.Callback <> Nil Then
 		    Self.Callback.Invoke()
 		  ElseIf Self.CallbackWithArg <> Nil Then

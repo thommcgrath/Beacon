@@ -521,7 +521,7 @@ End
 #tag EndEvents
 #tag Events Controls
 	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
+		Sub Pressed(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "PowerButton"
 		    Dim Headers As New Dictionary
@@ -545,21 +545,21 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Me.LeftItems.Append(New BeaconToolbarItem("PowerButton", IconToolbarPower, False, "Start or stop the server."))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events RefreshTimer
 	#tag Event
-		Sub Action()
+		Sub Run()
 		  Self.RefreshServerStatus()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ServerNameField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  Self.mProfile.Name = Me.Value
 		  Self.Controls.Caption = Me.Value
 		  Self.Changed = Self.mProfile.Modified
