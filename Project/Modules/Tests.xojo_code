@@ -12,7 +12,56 @@ Protected Module Tests
 		Protected Sub RunTests()
 		  #if DebugBuild
 		    TestQualities()
+		    TestMemoryBlockExtensions()
 		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestMemoryBlockExtensions()
+		  Dim Original As MemoryBlock = "Frog blast the vent core!"
+		  Original.LittleEndian = True
+		  Dim Clone As MemoryBlock = Original.Clone
+		  Assert(EncodeHex(Original) = EncodeHex(Clone) And Original.LittleEndian = Clone.LittleEndian, "Cloning MemoryBlocks does not work")
+		  
+		  Dim LeftRead As MemoryBlock = Original.Left(4)
+		  Dim RightRead As MemoryBlock = Original.Right(5)
+		  Dim MidRead As MemoryBlock = Original.Middle(5, 5)
+		  Assert(LeftRead = "Frog", "Incorrect MemoryBlock.Left read result.")
+		  Assert(RightRead = "core!", "Incorrect MemoryBlock.Right read result.")
+		  Assert(MidRead = "blast", "Incorrect MemoryBlock.Middle read result.")
+		  
+		  Clone.Left(4) = "Lion"
+		  Assert(Clone = "Lion blast the vent core!", "Incorrect MemoryBlock.Left assignment when lengths are equal.")
+		  Clone = Original.Clone
+		  Clone.Left(4) = "Cat"
+		  Assert(Clone = "Cat blast the vent core!", "Incorrect MemoryBlock.Left assignment when new length is shorter.")
+		  Clone = Original.Clone
+		  Clone.Left(4) = "Bobcat"
+		  Assert(Clone = "Bobcat blast the vent core!", "Incorrect MemoryBlock.Left assignment when new length is longer.")
+		  
+		  Clone = Original.Clone
+		  Clone.Right(5) = "tube!"
+		  Assert(Clone = "Frog blast the vent tube!", "Incorrect MemoryBlock.Right assignment when lengths are equal.")
+		  Clone = Original.Clone
+		  Clone.Right(5) = "bar!"
+		  Assert(Clone = "Frog blast the vent bar!", "Incorrect MemoryBlock.Right assignment when new length is shorter.")
+		  Clone = Original.Clone
+		  Clone.Right(5) = "grill!"
+		  Assert(Clone = "Frog blast the vent grill!", "Incorrect MemoryBlock.Right assignment when new length is longer.")
+		  
+		  Clone = Original.Clone
+		  Clone.Middle(5, 5) = "taste"
+		  Assert(Clone = "Frog taste the vent core!", "Incorrect MemoryBlock.Middle assignment when lengths are equal.")
+		  Clone = Original.Clone
+		  Clone.Middle(5, 5) = "grab"
+		  Assert(Clone = "Frog grab the vent core!", "Incorrect MemoryBlock.Middle assignment when new length is shorter.")
+		  Clone = Original.Clone
+		  Clone.Middle(5, 5) = "annihilate"
+		  Assert(Clone = "Frog annihilate the vent core!", "Incorrect MemoryBlock.Middle assignment when new length is longer.")
+		  
+		  MidRead = Original.Middle(5, 200)
+		  Assert(MidRead = "blast the vent core!", "Incorrect MemoryBlock.Middle read when length is greater than size.")
 		End Sub
 	#tag EndMethod
 
@@ -53,12 +102,6 @@ Protected Module Tests
 		    Assert(ExtremeQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(ExtremeQualityMin) + "(" + Str(ExtremeQualityMax.BaseValue, Formatter) + ") for difficulty 100")
 		    Assert(ExtremeQualityMin = Quality, "Expected quality max " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(ExtremeQualityMax) + "(" + Str(ExtremeQualityMax.BaseValue, Formatter) + ") for difficulty 100")
 		  #endif
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub TextMemoryBlockExtensions()
-		  Assert(False, "You didn't test MemoryBlock")
 		End Sub
 	#tag EndMethod
 

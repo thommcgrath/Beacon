@@ -345,9 +345,11 @@ Protected Module FrameworkExtensions
 		    If Delta < 0 Then
 		      Source.Size = Source.Size + Delta
 		    End If
+		  ElseIf Delta <> 0 Then
+		    Source.Size = Source.Size + Delta
 		  End If
 		  
-		  Source.StringValue(Offset, Length) = NewData.StringValue(0, NewData.Size)
+		  Source.StringValue(Offset, NewData.Size) = NewData.StringValue(0, NewData.Size)
 		End Sub
 	#tag EndMethod
 
