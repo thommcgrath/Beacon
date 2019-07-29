@@ -14,12 +14,12 @@ Inherits Beacon.Preset
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub BlueprintMultiplier(ModifierID As Text, Assigns Value As Double)
+		Sub BlueprintMultiplier(ModifierID As String, Assigns Value As Double)
 		  If Self.mModifierValues = Nil Then
-		    Self.mModifierValues = New Xojo.Core.Dictionary
+		    Self.mModifierValues = New Dictionary
 		  End If
 		  
-		  Dim Dict As Xojo.Core.Dictionary = Self.mModifierValues.Lookup(ModifierID, New Xojo.Core.Dictionary)
+		  Dim Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
 		  Dict.Value("Blueprint") = Value
 		  Self.mModifierValues.Value(ModifierID) = Dict
 		End Sub
@@ -32,7 +32,7 @@ Inherits Beacon.Preset
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ClearModifier(ModifierID As Text)
+		Sub ClearModifier(ModifierID As String)
 		  If Self.mModifierValues <> Nil And Self.mModifierValues.HasKey(ModifierID) Then
 		    Self.mModifierValues.Remove(ModifierID)
 		  End If
@@ -52,7 +52,7 @@ Inherits Beacon.Preset
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Grouping(Assigns Value As Text)
+		Sub Grouping(Assigns Value As String)
 		  Self.mGrouping = Value
 		End Sub
 	#tag EndMethod
@@ -64,7 +64,7 @@ Inherits Beacon.Preset
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Label(Assigns Value As Text)
+		Sub Label(Assigns Value As String)
 		  Self.mLabel = Value
 		End Sub
 	#tag EndMethod
@@ -82,12 +82,12 @@ Inherits Beacon.Preset
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub MaxQualityModifier(ModifierID As Text, Assigns Value As Integer)
+		Sub MaxQualityModifier(ModifierID As String, Assigns Value As Integer)
 		  If Self.mModifierValues = Nil Then
-		    Self.mModifierValues = New Xojo.Core.Dictionary
+		    Self.mModifierValues = New Dictionary
 		  End If
 		  
-		  Dim Dict As Xojo.Core.Dictionary = Self.mModifierValues.Lookup(ModifierID, New Xojo.Core.Dictionary)
+		  Dim Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
 		  Dict.Value("MaxQuality") = Value
 		  Self.mModifierValues.Value(ModifierID) = Dict
 		End Sub
@@ -106,12 +106,12 @@ Inherits Beacon.Preset
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub MinQualityModifier(ModifierID As Text, Assigns Value As Integer)
+		Sub MinQualityModifier(ModifierID As String, Assigns Value As Integer)
 		  If Self.mModifierValues = Nil Then
-		    Self.mModifierValues = New Xojo.Core.Dictionary
+		    Self.mModifierValues = New Dictionary
 		  End If
 		  
-		  Dim Dict As Xojo.Core.Dictionary = Self.mModifierValues.Lookup(ModifierID, New Xojo.Core.Dictionary)
+		  Dim Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
 		  Dict.Value("MinQuality") = Value
 		  Self.mModifierValues.Value(ModifierID) = Dict
 		End Sub
@@ -142,12 +142,12 @@ Inherits Beacon.Preset
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub QuantityMultiplier(ModifierID As Text, Assigns Value As Double)
+		Sub QuantityMultiplier(ModifierID As String, Assigns Value As Double)
 		  If Self.mModifierValues = Nil Then
-		    Self.mModifierValues = New Xojo.Core.Dictionary
+		    Self.mModifierValues = New Dictionary
 		  End If
 		  
-		  Dim Dict As Xojo.Core.Dictionary = Self.mModifierValues.Lookup(ModifierID, New Xojo.Core.Dictionary)
+		  Dim Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
 		  Dict.Value("Quantity") = Value
 		  Self.mModifierValues.Value(ModifierID) = Dict
 		End Sub
@@ -167,6 +167,7 @@ Inherits Beacon.Preset
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -174,18 +175,23 @@ Inherits Beacon.Preset
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -193,10 +199,13 @@ Inherits Beacon.Preset
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Type"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Beacon.Preset.Types"
 			EditorType="Enum"
 			#tag EnumValues

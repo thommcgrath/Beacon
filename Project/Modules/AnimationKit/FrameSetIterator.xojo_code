@@ -1,6 +1,6 @@
 #tag Class
 Private Class FrameSetIterator
-Implements xojo.Core.Iterator
+Implements  Iterator
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As AnimationKit.FrameSet)
 		  Self.Index = 0
@@ -10,9 +10,9 @@ Implements xojo.Core.Iterator
 
 	#tag Method, Flags = &h0
 		Function MoveNext() As Boolean
-		  // Part of the xojo.Core.Iterator interface.
+		  // Part of the Iterator interface.
 		  
-		  If Self.Index < UBound(Self.Frames) Then
+		  If Self.Index < Self.Frames.LastRowIndex Then
 		    Self.Index = Self.Index + 1
 		    Return True
 		  End If
@@ -20,8 +20,8 @@ Implements xojo.Core.Iterator
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Value() As Auto
-		  // Part of the xojo.Core.Iterator interface.
+		Function Value() As Variant
+		  // Part of the Iterator interface.
 		  
 		  Return Self.Frames(Self.Index)
 		End Function
@@ -42,7 +42,9 @@ Implements xojo.Core.Iterator
 			Name="Index"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -50,18 +52,23 @@ Implements xojo.Core.Iterator
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -69,6 +76,7 @@ Implements xojo.Core.Iterator
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

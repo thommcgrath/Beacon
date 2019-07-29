@@ -418,7 +418,7 @@ End
 		Private Shared Function DescribeIssues(Document As Beacon.Document) As Beacon.Issue()
 		  Dim DocumentIssues() As Beacon.Issue
 		  
-		  Dim UniqueIssues As New Xojo.Core.Dictionary
+		  Dim UniqueIssues As New Dictionary
 		  If Document.MapCompatibility = 0 Then
 		    Dim Issue As New Beacon.Issue("Maps", "No maps have been selected. Use the ""Maps"" config editor to choose maps.")
 		    UniqueIssues.Value(Issue.Description) = Issue
@@ -550,7 +550,7 @@ End
 		  Me.Enabled = False
 		  BlueprintsField.ReadOnly = True
 		  
-		  Dim Content As Text = BlueprintsField.Value.ToText
+		  Dim Content As String = BlueprintsField.Value
 		  Dim Configs() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
 		  Dim Callback As Beacon.ConfigGroup.ResolveIssuesCallback = AddressOf ResolvingFinished
 		  Self.ConfigsWaitingToResolve = Configs.Ubound + 1

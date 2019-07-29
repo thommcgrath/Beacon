@@ -10,7 +10,7 @@ Inherits Thread
 		    Self.mLock.Enter
 		  #endif
 		  Try
-		    Dim Source As Xojo.Core.Dictionary
+		    Dim Source As Dictionary
 		    Dim Compress As Boolean = False
 		    If Self.mSource <> Nil Then
 		      Source = Self.mSource
@@ -59,7 +59,7 @@ Inherits Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target32Bit or Target64Bit))
-		Sub Constructor(Source As Xojo.Core.Dictionary, Destination As FolderItem)
+		Sub Constructor(Source As Dictionary, Destination As FolderItem)
 		  Self.Constructor()
 		  Self.mSource = Source
 		  Self.mDestination = Destination
@@ -73,92 +73,25 @@ Inherits Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function PrettyPrint(JSON As Text) As Text
-		  Const Indent = &h09
-		  Const EndOfLine = &h0A
-		  
-		  Dim Bytes() As UInt8
-		  Dim Indents As UInteger
-		  
-		  Dim AddAsIs, InQuote As Boolean
-		  
-		  Dim Mem As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(JSON)
-		  Dim Bound As UInteger = Mem.Size - 1
-		  Dim Pointer As Ptr = Mem.Data
-		  For Offset As UInteger = 0 To Bound
-		    Dim Char As UInt8 = Pointer.UInt8(Offset)
-		    
-		    If AddAsIs Then
-		      Bytes.Append(Char)
-		      AddAsIs = False
-		    ElseIf Char = &h22 Then
-		      Bytes.Append(Char)
-		      InQuote = Not InQuote
-		    ElseIf InQuote Then
-		      Bytes.Append(Char)
-		      If Char = &h5C Then
-		        AddAsIs = True
-		      End If
-		    ElseIf Char = &h7B Or Char = &h5B Then
-		      Indents = Indents + 1
-		      Bytes.Append(Char)
-		      Bytes.Append(EndOfLine)
-		      For I As UInteger = 1 To Indents
-		        Bytes.Append(Indent)
-		      Next
-		    ElseIf Char = &h7D Or Char = &h5D Then
-		      Indents = Indents - 1
-		      Bytes.Append(EndOfLine)
-		      For I As UInteger = 1 To Indents
-		        Bytes.Append(Indent)
-		      Next
-		      Bytes.Append(Char)
-		    ElseIf Char = &h2C Then
-		      Bytes.Append(Char)
-		      Bytes.Append(EndOfLine)
-		      For I As UInteger = 1 To Indents
-		        Bytes.Append(Indent)
-		      Next
-		    ElseIf Char = &h3A Then
-		      Bytes.Append(Char)
-		      Bytes.Append(&h20)
-		    ElseIf Char = &h0A Or Char = &h0D Or Char = &h20 Or Char = &h09 Then
-		      // Skip it
-		    Else
-		      Bytes.Append(Char)
-		    End If
-		  Next
-		  
-		  Return Xojo.Core.TextEncoding.UTF8.ConvertDataToText(New Xojo.Core.MemoryBlock(Bytes))
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub RaiseFinished()
 		  RaiseEvent Finished(Self.mDestination)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target32Bit or Target64Bit))
-		Shared Function WriteSynchronous(Source As Xojo.Core.Dictionary, File As FolderItem, Compress As Boolean) As Boolean
-		  // Prepare
-		  Dim Content As Text = Xojo.Data.GenerateJSON(Source)
-		  
-		  #if TargetiOS
-		    Content = PrettyPrint(Content)
-		    Return File.Write(Content, Xojo.Core.TextEncoding.UTF8)
-		  #else
-		    If Compress Then
-		      Dim Compressor As New _GZipString
-		      Compressor.UseHeaders = True
-		      
-		      Dim Bytes As MemoryBlock = Compressor.Compress(Content, _GZipString.DefaultCompression)
-		      Return File.Write(Bytes)
-		    Else
-		      Content = PrettyPrint(Content)
-		      Return File.Write(Content, Xojo.Core.TextEncoding.UTF8)
-		    End If
-		  #endif
+		Shared Function WriteSynchronous(Source As Dictionary, File As FolderItem, Compress As Boolean) As Boolean
+		  If Compress Then
+		    Dim Content As String = Beacon.GenerateJSON(Source, False)
+		    
+		    Dim Compressor As New _GZipString
+		    Compressor.UseHeaders = True
+		    
+		    Dim Bytes As MemoryBlock = Compressor.Compress(Content, _GZipString.DefaultCompression)
+		    Return File.Write(Bytes)
+		  Else
+		    Dim Content As String = Beacon.GenerateJSON(Source, True)
+		    Return File.Write(Content)
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -211,7 +144,7 @@ Inherits Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSource As Xojo.Core.Dictionary
+		Private mSource As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

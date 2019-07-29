@@ -1,10 +1,10 @@
 #tag Class
 Protected Class BeaconToolbarItemIterator
-Implements Xojo.Core.Iterator
+Implements  Iterator
 	#tag Method, Flags = &h0
 		Sub Constructor(Source() As BeaconToolbarItem)
-		  Redim Self.mItems(UBound(Source))
-		  For I As Integer = 0 To UBound(Self.mItems)
+		  Redim Self.mItems(Source.LastRowIndex)
+		  For I As Integer = 0 To Self.mItems.LastRowIndex
 		    Self.mItems(I) = Source(I)
 		  Next
 		  Self.mIndex = -1
@@ -13,16 +13,16 @@ Implements Xojo.Core.Iterator
 
 	#tag Method, Flags = &h0
 		Function MoveNext() As Boolean
-		  // Part of the xojo.Core.Iterator interface.
+		  // Part of the Iterator interface.
 		  
 		  Self.mIndex = Self.mIndex + 1
-		  Return Self.mIndex <= UBound(Self.mItems)
+		  Return Self.mIndex <= Self.mItems.LastRowIndex
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Value() As Auto
-		  // Part of the xojo.Core.Iterator interface.
+		Function Value() As Variant
+		  // Part of the Iterator interface.
 		  
 		  Return Self.mItems(Self.mIndex)
 		End Function
@@ -45,6 +45,7 @@ Implements Xojo.Core.Iterator
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -52,18 +53,23 @@ Implements Xojo.Core.Iterator
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -71,6 +77,7 @@ Implements Xojo.Core.Iterator
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

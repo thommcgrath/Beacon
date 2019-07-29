@@ -1,21 +1,8 @@
 #tag Class
 Protected Class SynchronousHTTPSocket
-Inherits Xojo.Net.HTTPSocket
+Inherits URLConnection
 	#tag Event
-		Sub Error(err as RuntimeException)
-		  Self.mLastContent = Nil
-		  Self.mLastHTTPStatus = 0
-		  Self.mLastException = Err
-		  RaiseEvent Error(Err)
-		  If Self.mOriginThread <> Nil Then
-		    Self.mOriginThread.Resume
-		  End If
-		  Self.mOriginThread = Nil
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
 		  Self.mLastContent = Content
 		  Self.mLastHTTPStatus = HTTPStatus
 		  Self.mLastException = Nil
@@ -27,9 +14,22 @@ Inherits Xojo.Net.HTTPSocket
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Error(e As RuntimeException)
+		  Self.mLastContent = Nil
+		  Self.mLastHTTPStatus = 0
+		  Self.mLastException = e
+		  RaiseEvent Error(e)
+		  If Self.mOriginThread <> Nil Then
+		    Self.mOriginThread.Resume
+		  End If
+		  Self.mOriginThread = Nil
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h0
-		Function LastContent() As Xojo.Core.MemoryBlock
+		Function LastContent() As MemoryBlock
 		  Return Self.mLastContent
 		End Function
 	#tag EndMethod
@@ -47,7 +47,7 @@ Inherits Xojo.Net.HTTPSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Send(Method as Text, URL as Text)
+		Sub Send(Method As String, URL As String)
 		  Self.mOriginThread = App.CurrentThread
 		  Super.Send(Method, URL)
 		  If Self.mOriginThread <> Nil Then
@@ -62,12 +62,12 @@ Inherits Xojo.Net.HTTPSocket
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
+		Event PageReceived(URL As String, HTTPStatus As Integer, Content As MemoryBlock)
 	#tag EndHook
 
 
 	#tag Property, Flags = &h21
-		Private mLastContent As Xojo.Core.MemoryBlock
+		Private mLastContent As MemoryBlock
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

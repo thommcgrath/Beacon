@@ -1,8 +1,8 @@
 #tag Module
 Protected Module BeaconConfigs
 	#tag Method, Flags = &h1
-		Protected Function AllConfigNames(Human As Boolean = False) As Text()
-		  Static Names() As Text
+		Protected Function AllConfigNames(Human As Boolean = False) As String()
+		  Static Names() As String
 		  If Names.Ubound = -1 Then
 		    Names.Append(BeaconConfigs.Difficulty.ConfigName)
 		    Names.Append(BeaconConfigs.LootDrops.ConfigName)
@@ -17,7 +17,7 @@ Protected Module BeaconConfigs
 		    Names.Append(BeaconConfigs.DinoAdjustments.ConfigName)
 		  End If
 		  If Human = True Then
-		    Static HumanNames() As Text
+		    Static HumanNames() As String
 		    If HumanNames.Ubound = -1 Then
 		      Redim HumanNames(Names.Ubound)
 		      For I As Integer = 0 To Names.Ubound
@@ -39,14 +39,14 @@ Protected Module BeaconConfigs
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ConfigPurchased(ConfigName As Text, PurchasedVersion As Integer) As Boolean
-		  Dim Info As Xojo.Introspection.TypeInfo = TypeInfoForConfigName(ConfigName)
+		Protected Function ConfigPurchased(ConfigName As String, PurchasedVersion As Integer) As Boolean
+		  Dim Info As Introspection.TypeInfo = TypeInfoForConfigName(ConfigName)
 		  If Info = Nil Then
 		    Return True
 		  End If
 		  
-		  Dim ConfigAttributes() As Xojo.Introspection.AttributeInfo = Info.GetAttributes
-		  For Each ConfigAttribute As Xojo.Introspection.AttributeInfo In ConfigAttributes
+		  Dim ConfigAttributes() As Introspection.AttributeInfo = Info.GetAttributes
+		  For Each ConfigAttribute As Introspection.AttributeInfo In ConfigAttributes
 		    If ConfigAttribute.Name <> "OmniVersion" Then
 		      Continue
 		    End If
@@ -60,15 +60,15 @@ Protected Module BeaconConfigs
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function CreateInstance(GroupName As Text) As Beacon.ConfigGroup
-		  Dim Info As Xojo.Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
+		Protected Function CreateInstance(GroupName As String) As Beacon.ConfigGroup
+		  Dim Info As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
 		  If Info = Nil Or Info.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) = False Then
 		    Return Nil
 		  End If 
 		  
-		  Dim Constructors() As Xojo.Introspection.ConstructorInfo = Info.Constructors
-		  For Each Signature As Xojo.Introspection.ConstructorInfo In Constructors
-		    Dim Params() As Xojo.Introspection.ParameterInfo = Signature.Parameters
+		  Dim Constructors() As Introspection.ConstructorInfo = Info.GetConstructors
+		  For Each Signature As Introspection.ConstructorInfo In Constructors
+		    Dim Params() As Introspection.ParameterInfo = Signature.GetParameters
 		    If Params.Ubound = -1 Then
 		      Return Signature.Invoke()
 		    End If
@@ -77,17 +77,17 @@ Protected Module BeaconConfigs
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function CreateInstance(GroupName As Text, GroupData As Xojo.Core.Dictionary, Identity As Beacon.Identity) As Beacon.ConfigGroup
-		  Dim Info As Xojo.Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
+		Protected Function CreateInstance(GroupName As String, GroupData As Dictionary, Identity As Beacon.Identity) As Beacon.ConfigGroup
+		  Dim Info As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
 		  If Info = Nil Or Info.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) = False Then
 		    Return Nil
 		  End If 
 		  
-		  Dim Constructors() As Xojo.Introspection.ConstructorInfo = Info.Constructors
-		  For Each Signature As Xojo.Introspection.ConstructorInfo In Constructors
-		    Dim Params() As Xojo.Introspection.ParameterInfo = Signature.Parameters
-		    If Params.Ubound = 1 And Params(0).IsByRef = False And Params(0).ParameterType.FullName = "Xojo.Core.Dictionary" And Params(1).IsByRef = False And Params(1).ParameterType.FullName = "Beacon.Identity" Then
-		      Dim Values(1) As Auto
+		  Dim Constructors() As Introspection.ConstructorInfo = Info.GetConstructors
+		  For Each Signature As Introspection.ConstructorInfo In Constructors
+		    Dim Params() As Introspection.ParameterInfo = Signature.GetParameters
+		    If Params.Ubound = 1 And Params(0).IsByRef = False And Params(0).ParameterType.FullName = "Dictionary" And Params(1).IsByRef = False And Params(1).ParameterType.FullName = "Beacon.Identity" Then
+		      Dim Values(1) As Variant
 		      Values(0) = GroupData
 		      Values(1) = Identity
 		      Return Signature.Invoke(Values)
@@ -103,7 +103,7 @@ Protected Module BeaconConfigs
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function TypeInfoForConfigName(ConfigName As Text) As Xojo.Introspection.TypeInfo
+		Protected Function TypeInfoForConfigName(ConfigName As String) As Introspection.TypeInfo
 		  Select Case ConfigName
 		  Case BeaconConfigs.Difficulty.ConfigName
 		    Return GetTypeInfo(BeaconConfigs.Difficulty)

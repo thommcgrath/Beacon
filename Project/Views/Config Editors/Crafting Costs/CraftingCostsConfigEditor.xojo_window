@@ -377,12 +377,12 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub ParsingFinished(ParsedData As Xojo.Core.Dictionary)
+		Sub ParsingFinished(ParsedData As Dictionary)
 		  If ParsedData = Nil Then
 		    Return
 		  End If
 		  
-		  Dim OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts.FromImport(ParsedData, New Xojo.Core.Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
+		  Dim OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
 		  If OtherConfig = Nil Or OtherConfig.Ubound = -1 Then
 		    Return
 		  End If
@@ -448,7 +448,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.CraftingCosts
-		  Static ConfigName As Text = BeaconConfigs.CraftingCosts.ConfigName
+		  Static ConfigName As String = BeaconConfigs.CraftingCosts.ConfigName
 		  
 		  Dim Document As Beacon.Document = Self.Document
 		  Dim Config As BeaconConfigs.CraftingCosts
@@ -472,7 +472,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigLabel() As Text
+		Function ConfigLabel() As String
 		  Return Language.LabelForConfig(BeaconConfigs.CraftingCosts.ConfigName)
 		End Function
 	#tag EndMethod
@@ -587,7 +587,7 @@ End
 		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.SelectionChangeBlocked = True
 		  
-		  Dim ObjectIDs() As Text
+		  Dim ObjectIDs() As String
 		  For Each Item As Beacon.CraftingCost In SelectItems
 		    ObjectIDs.Append(Item.ObjectID)
 		  Next
@@ -764,7 +764,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Dicts() As Xojo.Core.Dictionary
+		  Dim Dicts() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
@@ -774,25 +774,25 @@ End
 		    Dicts.Append(Cost.Export)
 		  Next
 		  
-		  Board.AddRawData(Xojo.Data.GenerateJSON(Dicts), Self.kClipboardType)
+		  Board.AddRawData(Beacon.GenerateJSON(Dicts, False), Self.kClipboardType)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
 		  If Board.TextAvailable And Board.Text.IndexOf("ConfigOverrideItemCraftingCosts") > -1 Then
 		    Dim ImportText As String = Board.Text.GuessEncoding
-		    Self.Parse(ImportText.ToText, "Clipboard")
+		    Self.Parse(ImportText, "Clipboard")
 		    Return
 		  End If
 		  
 		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
-		    Dim Dicts() As Auto
+		    Dim Dicts() As Variant
 		    Try
 		      Dim Contents As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
-		      Dicts = Xojo.Data.ParseJSON(Contents.ToText)
+		      Dicts = Beacon.ParseJSON(Contents)
 		      
 		      Dim Costs() As Beacon.CraftingCost
-		      For Each Dict As Xojo.Core.Dictionary In Dicts
+		      For Each Dict As Dictionary In Dicts
 		        Dim Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(Dict)
 		        If Cost <> Nil Then
 		          Self.Config(False).Append(Cost)
@@ -825,7 +825,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function GetActiveMods() As Beacon.TextList
+		Function GetActiveMods() As Beacon.StringList
 		  If Self.Document <> Nil Then
 		    Return Self.Document.Mods
 		  End If

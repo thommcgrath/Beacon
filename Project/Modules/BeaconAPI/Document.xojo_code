@@ -1,11 +1,11 @@
 #tag Class
 Protected Class Document
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Xojo.Core.Dictionary)
+		Sub Constructor(Source As Dictionary)
 		  Self.mDescription = Source.Value("description")
 		  Self.mDocumentID = Source.Value("document_id")
 		  Self.mDownloadCount = Source.Value("download_count")
-		  Self.mLastUpdated = Beacon.ParseSQLDate(Source.Value("last_updated"))
+		  Self.mLastUpdated = NewDateFromSQLDateTime(Source.Value("last_updated"))
 		  Self.mName = Source.Value("name")
 		  Self.mResourceURL = Source.Value("resource_url")
 		  Self.mRevision = Source.Value("revision")
@@ -14,13 +14,13 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Description() As Text
+		Function Description() As String
 		  Return Self.mDescription
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DocumentID() As Text
+		Function DocumentID() As String
 		  Return Self.mDocumentID
 		End Function
 	#tag EndMethod
@@ -32,13 +32,13 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LastUpdated() As Xojo.Core.Date
+		Function LastUpdated() As Date
 		  Return Self.mLastUpdated
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Name() As Text
+		Function Name() As String
 		  Return Self.mName
 		End Function
 	#tag EndMethod
@@ -54,7 +54,7 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ResourceURL() As Text
+		Function ResourceURL() As String
 		  Return Self.mResourceURL
 		End Function
 	#tag EndMethod
@@ -66,7 +66,7 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UserID() As Text
+		Function UserID() As String
 		  Return Self.mUserID
 		End Function
 	#tag EndMethod
@@ -79,11 +79,11 @@ Protected Class Document
 
 
 	#tag Property, Flags = &h21
-		Private mDescription As Text
+		Private mDescription As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDocumentID As Text
+		Private mDocumentID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -91,15 +91,15 @@ Protected Class Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLastUpdated As Xojo.Core.Date
+		Private mLastUpdated As Date
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mName As Text
+		Private mName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mResourceURL As Text
+		Private mResourceURL As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -107,7 +107,7 @@ Protected Class Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUserID As Text
+		Private mUserID As String
 	#tag EndProperty
 
 
@@ -118,6 +118,7 @@ Protected Class Document
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -125,18 +126,23 @@ Protected Class Document
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -144,6 +150,7 @@ Protected Class Document
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

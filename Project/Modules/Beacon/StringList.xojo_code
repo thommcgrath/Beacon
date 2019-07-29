@@ -1,8 +1,8 @@
 #tag Class
-Protected Class TextList
-Implements Xojo.Core.Iterable
+Protected Class StringList
+Implements  Iterable
 	#tag Method, Flags = &h0
-		Sub Append(Item As Text)
+		Sub Append(Item As String)
 		  If Self.mItems.IndexOf(Item) = -1 Then
 		    Self.mItems.Append(Item)
 		    Self.Modified = True
@@ -11,7 +11,7 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Beacon.TextList)
+		Sub Constructor(Source As Beacon.StringList)
 		  Redim Self.mItems(Source.mItems.Ubound)
 		  For I As Integer = 0 To Source.mItems.Ubound
 		    Self.mItems(I) = Source.mItems(I)
@@ -33,16 +33,16 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromAuto(Source As Auto) As Beacon.TextList
-		  Dim SourceArray() As Auto
+		Shared Function FromVariant(Source As Variant) As Beacon.StringList
+		  Dim SourceArray() As Variant
 		  Try
 		    SourceArray = Source
 		  Catch Err As TypeMismatchException
 		    Return Nil
 		  End Try
 		  
-		  Dim List As New Beacon.TextList
-		  For Each Item As Auto In SourceArray
+		  Dim List As New Beacon.StringList
+		  For Each Item As Variant In SourceArray
 		    Try
 		      List.Append(Item)
 		    Catch Err As TypeMismatchException
@@ -54,21 +54,13 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetIterator() As Xojo.Core.Iterator
-		  // Part of the Xojo.Core.Iterable interface.
-		  
-		  Return New Beacon.TextListIterator(Self)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IndexOf(Item As Text) As Integer
+		Function IndexOf(Item As String) As Integer
 		  Return Self.mItems.IndexOf(Item)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Insert(Index As Integer, Item As Text)
+		Sub Insert(Index As Integer, Item As String)
 		  If Self.mItems.IndexOf(Item) = -1 Then
 		    Self.mItems.Insert(Index, Item)
 		    Self.Modified = True
@@ -77,13 +69,13 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Item(Index As Integer) As Text
+		Function Item(Index As Integer) As String
 		  Return Self.mItems(Index)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Item(Index As Integer, Assigns Value As Text)
+		Sub Item(Index As Integer, Assigns Value As String)
 		  If Self.mItems.IndexOf(Value) = -1 Then
 		    Self.mItems(Index) = Value
 		    Self.Modified = True
@@ -92,13 +84,21 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Join(Delimiter As Text) As Text
-		  Return Self.mItems.Join(Delimiter)
+		Function Iterator() As Iterator
+		  // Part of the Iterable interface.
+		  
+		  Return New Beacon.StringArrayIterator(Self.mItems)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Compare(Other As Beacon.TextList) As Integer
+		Function Join(Delimiter As String) As String
+		  Return Join(Self.mItems, Delimiter)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Operator_Compare(Other As Beacon.StringList) As Integer
 		  If Other = Nil Then
 		    Return 1
 		  End If
@@ -108,16 +108,16 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Compare(Others() As Text) As Integer
-		  Dim CompareLeft As Text = Self.mItems.Join("|")
-		  Dim CompareRight As Text = Others.Join("|")
+		Function Operator_Compare(Others() As String) As Integer
+		  Dim CompareLeft As String = Join(Self.mItems, "|")
+		  Dim CompareRight As String = Join(Others, "|")
 		  Return CompareLeft.Compare(CompareRight)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Convert() As Text()
-		  Dim Items() As Text
+		Function Operator_Convert() As String()
+		  Dim Items() As String
 		  Redim Items(Self.mItems.Ubound)
 		  For I As Integer = 0 To Self.mItems.Ubound
 		    Items(I) = Self.mItems(I)
@@ -127,7 +127,7 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Operator_Convert(Source() As Text)
+		Sub Operator_Convert(Source() As String)
 		  Redim Self.mItems(Source.Ubound)
 		  For I As Integer = 0 To Source.Ubound
 		    Self.mItems(I) = Source(I)
@@ -143,13 +143,13 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Subscript(Index As Integer) As Text
+		Function Operator_Subscript(Index As Integer) As String
 		  Return Self.Item(Index)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Operator_Subscript(Index As Integer, Assigns Item As Text)
+		Sub Operator_Subscript(Index As Integer, Assigns Item As String)
 		  Self.Item(Index) = Item
 		End Sub
 	#tag EndMethod
@@ -162,7 +162,7 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Remove(Item As Text)
+		Sub Remove(Item As String)
 		  Dim Idx As Integer = Self.mItems.IndexOf(Item)
 		  If Idx > -1 Then
 		    Self.mItems.Remove(Idx)
@@ -186,7 +186,7 @@ Implements Xojo.Core.Iterable
 
 
 	#tag Property, Flags = &h21
-		Private mItems() As Text
+		Private mItems() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -199,7 +199,9 @@ Implements Xojo.Core.Iterable
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -207,12 +209,15 @@ Implements Xojo.Core.Iterable
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -220,6 +225,7 @@ Implements Xojo.Core.Iterable
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -227,11 +233,15 @@ Implements Xojo.Core.Iterable
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="mItems()"
+			Name="Modified"
+			Visible=false
 			Group="Behavior"
-			Type="Integer"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

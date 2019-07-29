@@ -6,14 +6,14 @@ Protected Class Coordinator
 		  Self.Tasks.Append(Task)
 		  RaiseEvent TaskAdded(Task)
 		  
-		  If Self.Animator.Mode = Xojo.Core.Timer.Modes.Off Then
-		    Self.Animator.Mode = Xojo.Core.Timer.Modes.Multiple
+		  If Self.Animator.RunMode = Timer.RunModes.Off Then
+		    Self.Animator.RunMode = Timer.RunModes.Multiple
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Animator_Action(Sender As Xojo.Core.Timer)
+		Private Sub Animator_Action(Sender As Timer)
 		  Dim AddedTasks(), RemovedTasks() As AnimationKit.Task
 		  For I As Integer = UBound(Self.Tasks) DownTo 0
 		    If Self.Tasks(I).Cancelled Then
@@ -44,7 +44,7 @@ Protected Class Coordinator
 		  Next
 		  
 		  If UBound(Self.Tasks) = -1 Then
-		    Sender.Mode = Xojo.Core.Timer.Modes.Off
+		    Sender.RunMode = Timer.RunModes.Off
 		  End If
 		  
 		  For Each Task As AnimationKit.Task In RemovedTasks
@@ -58,8 +58,8 @@ Protected Class Coordinator
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.Animator = New Xojo.Core.Timer
-		  Self.Animator.Mode = Xojo.Core.Timer.Modes.Off
+		  Self.Animator = New Timer
+		  Self.Animator.RunMode = Timer.RunModes.Off
 		  Self.Animator.Period = 10
 		  AddHandler Self.Animator.Action, WeakAddressOf Self.Animator_Action
 		End Sub
@@ -82,7 +82,7 @@ Protected Class Coordinator
 
 
 	#tag Property, Flags = &h21
-		Private Animator As Xojo.Core.Timer
+		Private Animator As Timer
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -97,9 +97,11 @@ Protected Class Coordinator
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="FramesPerSecond"
+			Visible=false
 			Group="Behavior"
 			InitialValue="60"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -107,6 +109,7 @@ Protected Class Coordinator
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -114,18 +117,23 @@ Protected Class Coordinator
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -133,6 +141,7 @@ Protected Class Coordinator
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

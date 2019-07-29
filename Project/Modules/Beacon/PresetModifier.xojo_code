@@ -15,7 +15,7 @@ Protected Class PresetModifier
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Label As Text, Pattern As Text)
+		Sub Constructor(Label As String, Pattern As String)
 		  Self.mModifierID = Beacon.CreateUUID
 		  Self.mLabel = Label
 		  Self.mPattern = Pattern
@@ -23,7 +23,7 @@ Protected Class PresetModifier
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromDictionary(Source As Xojo.Core.Dictionary) As Beacon.PresetModifier
+		Shared Function FromDictionary(Source As Dictionary) As Beacon.PresetModifier
 		  If Source = Nil Or Not Source.HasAllKeys("ModifierID", "Pattern", "Label") Then
 		    Return Nil
 		  End If
@@ -37,7 +37,7 @@ Protected Class PresetModifier
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Label() As Text
+		Function Label() As String
 		  Return Self.mLabel
 		End Function
 	#tag EndMethod
@@ -88,19 +88,19 @@ Protected Class PresetModifier
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModifierID() As Text
+		Function ModifierID() As String
 		  Return Self.mModifierID
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Pattern() As Text
+		Function Pattern() As String
 		  Return Self.mPattern
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TestPattern(ByRef Message As Text) As Boolean
+		Function TestPattern(ByRef Message As String) As Boolean
 		  #if TargetiOS
 		    #Pragma Error "Not Yet Implemented"
 		  #else
@@ -114,7 +114,7 @@ Protected Class PresetModifier
 		      Message = ""
 		      Return True
 		    Catch Err As RegexException
-		      Message = Err.Message.ToText
+		      Message = Err.Message
 		      Return False
 		    End Try
 		    #Pragma BreakOnExceptions Default
@@ -123,8 +123,8 @@ Protected Class PresetModifier
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ToDictionary() As Xojo.Core.Dictionary
-		  Dim Dict As New Xojo.Core.Dictionary
+		Function ToDictionary() As Dictionary
+		  Dim Dict As New Dictionary
 		  Dict.Value("ModifierID") = Self.mModifierID
 		  Dict.Value("Pattern") = Self.mPattern
 		  Dict.Value("Label") = Self.mLabel
@@ -134,15 +134,15 @@ Protected Class PresetModifier
 
 
 	#tag Property, Flags = &h21
-		Private mLabel As Text
+		Private mLabel As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mModifierID As Text
+		Private mModifierID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPattern As Text
+		Private mPattern As String
 	#tag EndProperty
 
 
@@ -181,6 +181,7 @@ Protected Class PresetModifier
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -188,23 +189,23 @@ Protected Class PresetModifier
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mPattern"
-			Group="Behavior"
-			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -212,6 +213,7 @@ Protected Class PresetModifier
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

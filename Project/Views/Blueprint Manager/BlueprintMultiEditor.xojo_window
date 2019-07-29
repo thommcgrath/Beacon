@@ -426,8 +426,8 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Save()
-		  Dim AddTags() As Text = Self.Picker.RequiredTags.ToText
-		  Dim RemoveTags() As Text = Self.Picker.ExcludedTags.ToText
+		  Dim AddTags() As String = Self.Picker.RequiredTags
+		  Dim RemoveTags() As String = Self.Picker.ExcludedTags
 		  
 		  Dim AddMask, ClearMask As UInt64
 		  For Each Check As Checkbox In Self.mMapCheckboxes
@@ -468,7 +468,7 @@ End
 		      End If
 		    Next
 		    
-		    Dim BlueprintTags() As Text = Blueprint.Tags
+		    Dim BlueprintTags() As String = Blueprint.Tags
 		    For Each Tag As String In BlueprintTags
 		      Tags.Value(Tag) = Tags.Lookup(Tag, 0) + 1
 		    Next

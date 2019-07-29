@@ -10,7 +10,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
 		  If Dict.HasKey("Title") Then
@@ -26,7 +26,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
+		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
 		  Dict.Value("Title") = Self.Title
@@ -37,20 +37,20 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As Text
+		Shared Function ConfigName() As String
 		  Return "Metadata"
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.Metadata
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.Metadata
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
 		  If ParsedData.HasKey("SessionName") Then
-		    Dim SessionNames() As Auto = ParsedData.AutoArrayValue("SessionName")
-		    For Each SessionName As Auto In SessionNames
+		    Dim SessionNames() As Variant = ParsedData.AutoArrayValue("SessionName")
+		    For Each SessionName As Variant In SessionNames
 		      Try
 		        Dim Config As New BeaconConfigs.Metadata
 		        Config.Title = SessionName
@@ -83,7 +83,7 @@ Inherits Beacon.ConfigGroup
 			  End If
 			End Set
 		#tag EndSetter
-		Description As Text
+		Description As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -104,7 +104,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mDescription As Text
+		Private mDescription As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -112,7 +112,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mTitle As Text
+		Private mTitle As String
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -129,7 +129,7 @@ Inherits Beacon.ConfigGroup
 			  End If
 			End Set
 		#tag EndSetter
-		Title As Text
+		Title As String
 	#tag EndComputedProperty
 
 

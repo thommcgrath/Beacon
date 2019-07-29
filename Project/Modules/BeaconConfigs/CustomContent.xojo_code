@@ -2,14 +2,14 @@
 Protected Class CustomContent
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  Self.mGameIniContent = Self.ReadContent(Dict.Lookup("Game.ini", ""), Identity)
 		  Self.mGameUserSettingsIniContent = Self.ReadContent(Dict.Lookup("GameUserSettings.ini", ""), Identity)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
+		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  Dict.Value("Game.ini") = Self.WriteContent(Self.mGameIniContent, Identity)
 		  Dict.Value("GameUserSettings.ini") = Self.WriteContent(Self.mGameUserSettingsIniContent, Identity)
 		End Sub
@@ -17,7 +17,7 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As Text
+		Shared Function ConfigName() As String
 		  Return "CustomContent"
 		End Function
 	#tag EndMethod
@@ -25,7 +25,7 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h21
 		Private Function Decrypt(Input As String, Identity As Beacon.Identity) As String
 		  Try
-		    Dim SecureDict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Input.ToText)
+		    Dim SecureDict As Dictionary = Beacon.ParseJSON(Input)
 		    If Not SecureDict.HasAllKeys("Key", "Vector", "Content", "Hash") Then
 		      Return ""
 		    End If
@@ -98,13 +98,13 @@ Inherits Beacon.ConfigGroup
 		      AES.SetInitialVector(Vector)
 		      Dim Encrypted As Global.MemoryBlock = AES.EncryptCBC(Input)
 		      
-		      Dim SecureDict As New Xojo.Core.Dictionary
+		      Dim SecureDict As New Dictionary
 		      SecureDict.Value("Key") = EncodeHex(Identity.Encrypt(Key))
 		      SecureDict.Value("Vector") = EncodeHex(Vector)
 		      SecureDict.Value("Content") = EncodeHex(Encrypted)
 		      SecureDict.Value("Hash") = Hash
 		      
-		      Dim JSON As String = Xojo.Data.GenerateJSON(SecureDict)
+		      Dim JSON As String = Beacon.GenerateJSON(SecureDict, False)
 		      If Self.mEncryptedValues = Nil Then
 		        Self.mEncryptedValues = New Dictionary
 		      End If
@@ -210,7 +210,7 @@ Inherits Beacon.ConfigGroup
 		  If SupportedConfigs <> Nil Then
 		    Dim ConfigValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ServerSettingsHeader, Value, SupportedConfigs, Nil)
 		    
-		    Dim ProtectedKeys As New Xojo.Core.Dictionary
+		    Dim ProtectedKeys As New Dictionary
 		    ProtectedKeys.Value("ServerSettings.ServerAdminPassword") = True
 		    ProtectedKeys.Value("ServerSettings.ServerPassword") = True
 		    ProtectedKeys.Value("AuctionHouse.MarketID") = True
@@ -271,7 +271,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function IniValues(InitialHeader As Text, Source As String, ExistingConfigs As Dictionary, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
+		Private Function IniValues(InitialHeader As String, Source As String, ExistingConfigs As Dictionary, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  Source = Source.ReplaceAll(Self.EncryptedTag, "")
 		  Source = ReplaceLineEndings(Source, Encodings.ASCII.Chr(10))
 		  

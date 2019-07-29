@@ -1,7 +1,7 @@
 #tag Class
 Protected Class ConfigValue
 	#tag Method, Flags = &h0
-		Sub Constructor(Header As Text, Key As Text, Value As Text)
+		Sub Constructor(Header As String, Key As String, Value As String)
 		  Self.mHeader = Header
 		  Self.mKey = Key
 		  Self.mValue = Value
@@ -44,7 +44,7 @@ Protected Class ConfigValue
 			  Return Self.mHeader
 			End Get
 		#tag EndGetter
-		Header As Text
+		Header As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -53,19 +53,19 @@ Protected Class ConfigValue
 			  Return Self.mKey
 			End Get
 		#tag EndGetter
-		Key As Text
+		Key As String
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mHeader As Text
+		Private mHeader As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mKey As Text
+		Private mKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mValue As Text
+		Private mValue As String
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -79,7 +79,7 @@ Protected Class ConfigValue
 			  End If
 			End Get
 		#tag EndGetter
-		SimplifiedKey As Text
+		SimplifiedKey As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -88,7 +88,7 @@ Protected Class ConfigValue
 			  Return Self.mValue
 			End Get
 		#tag EndGetter
-		Value As Text
+		Value As String
 	#tag EndComputedProperty
 
 
@@ -97,7 +97,9 @@ Protected Class ConfigValue
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -105,12 +107,15 @@ Protected Class ConfigValue
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -118,6 +123,7 @@ Protected Class ConfigValue
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -125,26 +131,39 @@ Protected Class ConfigValue
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Key"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Text"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Value"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Text"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Header"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Text"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="SimplifiedKey"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Text"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

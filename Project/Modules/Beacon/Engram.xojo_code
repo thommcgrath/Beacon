@@ -8,24 +8,24 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function BlueprintPath() As Text
+		Function BlueprintPath() As String
 		  Return "Blueprint'" + Self.mPath + "'"
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Category() As Text
+		Function Category() As String
 		  Return Beacon.CategoryEngrams
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ClassString() As Text
+		Function ClassString() As String
 		  If Self.IsValid Then
-		    Dim Components() As Text = Self.mPath.Split("/")
-		    Dim Tail As Text = Components(UBound(Components))
+		    Dim Components() As String = Self.mPath.Split("/")
+		    Dim Tail As String = Components(Components.Ubound)
 		    Components = Tail.Split(".")
-		    Return Components(UBound(Components)) + "_C"
+		    Return Components(Components.Ubound) + "_C"
 		  Else
 		    If Self.mPath.Length > 2 And Self.mPath.Right(2) = "_C" Then
 		      Return Self.mPath
@@ -61,14 +61,14 @@ Implements Beacon.Blueprint
 		  Self.mModName = Source.mModName
 		  
 		  Redim Self.mTags(-1)
-		  For Each Tag As Text In Source.mTags
+		  For Each Tag As String In Source.mTags
 		    Self.mTags.Append(Tag)
 		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateUnknownEngram(Path As Text) As Beacon.Engram
+		Shared Function CreateUnknownEngram(Path As String) As Beacon.Engram
 		  Dim Engram As New Beacon.Engram
 		  If Path.Length > 6 And Path.Left(6) = "/Game/" Then
 		    If Path.Right(2) = "_C" Then
@@ -78,20 +78,20 @@ Implements Beacon.Blueprint
 		    Engram.mIsValid = True
 		  End If
 		  Engram.mPath = Path
-		  Engram.mObjectID = Beacon.CreateUUID(Xojo.Crypto.MD5(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Path.Lowercase)))
+		  Engram.mObjectID = Beacon.CreateUUID(Crypto.MD5(Path.Lowercase))
 		  Engram.mTags.Append("blueprintable")
 		  Return Engram
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GeneratedClassBlueprintPath() As Text
+		Function GeneratedClassBlueprintPath() As String
 		  Return "BlueprintGeneratedClass'" + Self.mPath + "_C'"
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsTagged(Tag As Text) As Boolean
+		Function IsTagged(Tag As String) As Boolean
 		  Return Self.mTags.IndexOf(Beacon.NormalizeTag(Tag)) > -1
 		End Function
 	#tag EndMethod
@@ -103,7 +103,7 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Label() As Text
+		Function Label() As String
 		  If Self.mLabel = "" Then
 		    Self.mLabel = Beacon.LabelFromClassString(Self.ClassString)
 		  End If
@@ -113,13 +113,13 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModID() As Text
+		Function ModID() As String
 		  Return Self.mModID
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModName() As Text
+		Function ModName() As String
 		  If Self.mModID <> LocalData.UserModID Then
 		    Return Self.mModName
 		  End If
@@ -132,7 +132,7 @@ Implements Beacon.Blueprint
 		  If Idx = -1 Then
 		    Return "Unknown"
 		  End If
-		  Dim Name As Text = Self.mPath.Mid(6, Idx - 6)
+		  Dim Name As String = Self.mPath.Middle(6, Idx - 6)
 		  Select Case Name
 		  Case "PrimalEarth"
 		    Return "Ark Prime"
@@ -144,7 +144,7 @@ Implements Beacon.Blueprint
 		    If EndAt = -1 Then
 		      EndAt = Self.mPath.Length
 		    End If
-		    Return Beacon.MakeHumanReadable(Self.mPath.Mid(StartAt, EndAt - StartAt))
+		    Return Beacon.MakeHumanReadable(Self.mPath.Middle(StartAt, EndAt - StartAt))
 		  Else
 		    Return Beacon.MakeHumanReadable(Name)
 		  End Select
@@ -158,7 +158,7 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As Text
+		Function ObjectID() As String
 		  Return Self.mObjectID
 		End Function
 	#tag EndMethod
@@ -169,14 +169,14 @@ Implements Beacon.Blueprint
 		    Return 1
 		  End If
 		  
-		  Dim SelfPath As Text = Self.Path
-		  Dim OtherPath As Text = Other.Path
+		  Dim SelfPath As String = Self.Path
+		  Dim OtherPath As String = Other.Path
 		  Return SelfPath.Compare(OtherPath)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Path() As Text
+		Function Path() As String
 		  If Self.IsValid Then
 		    Return Self.mPath
 		  Else
@@ -186,8 +186,8 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Tags() As Text()
-		  Dim Clone() As Text
+		Function Tags() As String()
+		  Dim Clone() As String
 		  Redim Clone(Self.mTags.Ubound)
 		  For I As Integer = 0 To Self.mTags.Ubound
 		    Clone(I) = Self.mTags(I)
@@ -206,27 +206,27 @@ Implements Beacon.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mLabel As Text
+		Protected mLabel As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mModID As Text
+		Protected mModID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mModName As Text
+		Protected mModName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mObjectID As Text
+		Protected mObjectID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mPath As Text
+		Protected mPath As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mTags() As Text
+		Protected mTags() As String
 	#tag EndProperty
 
 
@@ -237,6 +237,7 @@ Implements Beacon.Blueprint
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -244,18 +245,23 @@ Implements Beacon.Blueprint
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -263,6 +269,7 @@ Implements Beacon.Blueprint
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

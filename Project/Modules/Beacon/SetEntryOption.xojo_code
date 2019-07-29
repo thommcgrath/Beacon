@@ -26,7 +26,7 @@ Implements Beacon.DocumentItem
 		    Return
 		  End If
 		  
-		  Dim ClassString As Text = Self.mEngram.ClassString
+		  Dim ClassString As String = Self.mEngram.ClassString
 		  For Each Engram As Beacon.Engram In Engrams
 		    If Engram.ClassString = ClassString Then
 		      Self.mEngram = New Beacon.Engram(Engram)
@@ -44,10 +44,10 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Export() As Xojo.Core.Dictionary
-		  Dim Path As Text = Self.Engram.Path
+		Function Export() As Dictionary
+		  Dim Path As String = Self.Engram.Path
 		  
-		  Dim Keys As New Xojo.Core.Dictionary
+		  Dim Keys As New Dictionary
 		  If Path <> "" Then
 		    Keys.Value("Path") = Path
 		  End If
@@ -58,16 +58,16 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Hash() As Text
+		Function Hash() As String
 		  If Self.HashIsStale Then
-		    Dim Path As Text
+		    Dim Path As String
 		    If Self.mEngram = Nil Then
 		      Path = ""
 		    Else
 		      Path = If(Self.mEngram.Path <> "", Self.mEngram.Path, Self.mEngram.ClassString)
 		    End If
 		    
-		    Self.mHash = Beacon.MD5(Path.Lowercase + "@" + Self.mWeight.ToText(Xojo.Core.Locale.Raw, "0.0000")).Lowercase
+		    Self.mHash = Beacon.MD5(Path.Lowercase + "@" + Self.mWeight.ToString(Locale.Raw, "0.0000")).Lowercase
 		    Self.mLastHashTime = Microseconds
 		  End If
 		  
@@ -82,7 +82,7 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromBeacon(Dict As Xojo.Core.Dictionary) As Beacon.SetEntryOption
+		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.SetEntryOption
 		  Dim Weight As Double = Dict.Value("Weight")
 		  Dim Engram, BackupEngram As Beacon.Engram
 		  
@@ -141,8 +141,8 @@ Implements Beacon.DocumentItem
 		    Return 1
 		  End If
 		  
-		  Dim SelfHash As Text = Self.Hash
-		  Dim OtherHash As Text = Other.Hash
+		  Dim SelfHash As String = Self.Hash
+		  Dim OtherHash As String = Other.Hash
 		  
 		  Return SelfHash.Compare(OtherHash, 0)
 		End Function
@@ -160,7 +160,7 @@ Implements Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHash As Text
+		Private mHash As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -187,6 +187,7 @@ Implements Beacon.DocumentItem
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -194,18 +195,23 @@ Implements Beacon.DocumentItem
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -213,6 +219,7 @@ Implements Beacon.DocumentItem
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

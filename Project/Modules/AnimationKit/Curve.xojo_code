@@ -26,17 +26,17 @@ Protected Class Curve
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(P1X As Single, P1Y As Single, P2X As Single, P2Y As Single)
-		  Self.Constructor(New Xojo.Core.Point(P1X, P1Y), New Xojo.Core.Point(P2X, P2Y))
+		Sub Constructor(P1 As Point, P2 As Point)
+		  Self.C0 = New Point(0, 0)
+		  Self.C1 = New Point(P1.X, P1.Y)
+		  Self.C2 = New Point(P2.X, P2.Y)
+		  Self.C3 = New Point(1, 1)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(P1 As Xojo.Core.Point, P2 As Xojo.Core.Point)
-		  Self.C0 = New Xojo.Core.Point(0, 0)
-		  Self.C1 = New Xojo.Core.Point(P1.X, P1.Y)
-		  Self.C2 = New Xojo.Core.Point(P2.X, P2.Y)
-		  Self.C3 = New Xojo.Core.Point(1, 1)
+		Sub Constructor(P1X As Single, P1Y As Single, P2X As Single, P2Y As Single)
+		  Self.Constructor(New Point(P1X, P1Y), New Point(P2X, P2Y))
 		End Sub
 	#tag EndMethod
 
@@ -153,19 +153,19 @@ Protected Class Curve
 
 
 	#tag Property, Flags = &h21
-		Private C0 As Xojo.Core.Point
+		Private C0 As Point
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private C1 As Xojo.Core.Point
+		Private C1 As Point
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private C2 As Xojo.Core.Point
+		Private C2 As Point
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private C3 As Xojo.Core.Point
+		Private C3 As Point
 	#tag EndProperty
 
 
@@ -208,6 +208,7 @@ Protected Class Curve
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -215,18 +216,23 @@ Protected Class Curve
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -234,6 +240,7 @@ Protected Class Curve
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

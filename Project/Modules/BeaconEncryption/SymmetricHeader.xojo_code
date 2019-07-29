@@ -13,22 +13,22 @@ Private Class SymmetricHeader
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Payload As Xojo.Core.MemoryBlock)
+		Sub Constructor(Payload As MemoryBlock)
 		  Self.mVersion = 2
-		  Self.mVector = Xojo.Crypto.GenerateRandomBytes(16)
+		  Self.mVector = Crypto.GenerateRandomBytes(16)
 		  Self.mLength = Payload.Size
 		  Self.mChecksum = Beacon.CRC32(Payload)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Encoded() As Xojo.Core.MemoryBlock
+		Function Encoded() As MemoryBlock
 		  Dim VectorSize As UInt8 = Self.mVector.Size
-		  Dim Header As New Xojo.Core.MutableMemoryBlock(Self.Size)
+		  Dim Header As New MemoryBlock(Self.Size)
 		  Header.LittleEndian = False
 		  Header.UInt8Value(0) = MagicByte
 		  Header.UInt8Value(1) = Self.mVersion
-		  Header.Mid(2, VectorSize) = Self.mVector
+		  Header.Middle(2, VectorSize) = Self.mVector
 		  Header.UInt32Value(2 + VectorSize) = Self.mLength
 		  Header.UInt32Value(6 + VectorSize) = Self.mChecksum
 		  Return Header
@@ -36,13 +36,13 @@ Private Class SymmetricHeader
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromMemoryBlock(Source As Xojo.Core.MemoryBlock) As SymmetricHeader
+		Shared Function FromMemoryBlock(Source As MemoryBlock) As SymmetricHeader
 		  If Source.Size < 18 Then
 		    // Not enough data
 		    Return Nil
 		  End If
 		  
-		  Dim Clone As New Xojo.Core.MemoryBlock(Source)
+		  Dim Clone As MemoryBlock = Source.Clone
 		  Clone.LittleEndian = False
 		  
 		  Dim MagicByte As UInt8 = Clone.UInt8Value(0)
@@ -64,7 +64,7 @@ Private Class SymmetricHeader
 		    VectorSize = 16
 		  End Select
 		  
-		  Dim Vector As Xojo.Core.MemoryBlock = Clone.Mid(2, VectorSize)
+		  Dim Vector As MemoryBlock = Clone.Middle(2, VectorSize)
 		  Dim Length As UInt32 = Clone.UInt32Value(2 + VectorSize)
 		  Dim Checksum As UInt32 = Clone.UInt32Value(6 + VectorSize)
 		  
@@ -90,7 +90,7 @@ Private Class SymmetricHeader
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Vector() As Xojo.Core.MemoryBlock
+		Function Vector() As MemoryBlock
 		  Return Self.mVector
 		End Function
 	#tag EndMethod
@@ -111,7 +111,7 @@ Private Class SymmetricHeader
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mVector As Xojo.Core.MemoryBlock
+		Private mVector As MemoryBlock
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -128,7 +128,9 @@ Private Class SymmetricHeader
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -136,12 +138,15 @@ Private Class SymmetricHeader
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -149,6 +154,7 @@ Private Class SymmetricHeader
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -156,11 +162,7 @@ Private Class SymmetricHeader
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mVersion"
-			Group="Behavior"
-			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

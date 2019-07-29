@@ -382,7 +382,7 @@ End
 		    If Self.mDownRect <> Nil And Self.mDownIndex <= Self.mNotifications.Ubound And Self.mDownRect.Contains(X, Y) Then
 		      Dim OldUnreadCount As Integer = Self.UnreadCount
 		      If Not Self.mPressedOnClose Then
-		        Dim URL As Text = Self.mNotifications(Self.mDownIndex).ActionURL
+		        Dim URL As String = Self.mNotifications(Self.mDownIndex).ActionURL
 		        If Beacon.IsBeaconURL(URL) Then
 		          Call App.HandleURL(URL, True)
 		        ElseIf URL.BeginsWith("https://") Then

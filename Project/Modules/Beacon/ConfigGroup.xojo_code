@@ -13,17 +13,17 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigName() As Text
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Self)
-		  Dim Methods() As Xojo.Introspection.MethodInfo = Info.Methods
-		  For Each Signature As Xojo.Introspection.MethodInfo In Methods
-		    If Signature.IsShared And Signature.Name = "ConfigName" And Signature.Parameters.Ubound = -1 And Signature.ReturnType.Name = "Text" Then
+		Function ConfigName() As String
+		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Self)
+		  Dim Methods() As Introspection.MethodInfo = Info.GetMethods
+		  For Each Signature As Introspection.MethodInfo In Methods
+		    If Signature.IsShared And Signature.Name = "ConfigName" And Signature.GetParameters.LastRowIndex = -1 And Signature.ReturnType.Name = "String" Then
 		      Return Signature.Invoke(Self)
 		    End If
 		  Next
 		  
 		  Dim Err As New UnsupportedOperationException
-		  Err.Reason = "Class " + Info.FullName + " is missing its ConfigName() As Text shared method."
+		  Err.Message = "Class " + Info.FullName + " is missing its ConfigName() As String shared method."
 		  Raise Err
 		End Function
 	#tag EndMethod
@@ -35,7 +35,7 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Xojo.Core.Dictionary, Identity As Beacon.Identity)
+		Sub Constructor(Source As Dictionary, Identity As Beacon.Identity)
 		  Self.Constructor
 		  Self.mIsImplicit = Source.Lookup("Implicit", False)
 		  RaiseEvent ReadDictionary(Source, Identity)
@@ -99,8 +99,8 @@ Protected Class ConfigGroup
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
-		Function ToDictionary(Identity As Beacon.Identity) As Xojo.Core.Dictionary
-		  Dim Dict As New Xojo.Core.Dictionary
+		Function ToDictionary(Identity As Beacon.Identity) As Dictionary
+		  Dim Dict As New Dictionary
 		  Dict.Value("Implicit") = Self.mIsImplicit
 		  RaiseEvent WriteDictionary(Dict, Identity)
 		  Return Dict
@@ -108,7 +108,7 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub TryToResolveIssues(InputContent As Text, Callback As Beacon.ConfigGroup.ResolveIssuesCallback)
+		Sub TryToResolveIssues(InputContent As String, Callback As Beacon.ConfigGroup.ResolveIssuesCallback)
 		  #Pragma Unused InputContent
 		  
 		  If Callback <> Nil Then
@@ -141,11 +141,11 @@ Protected Class ConfigGroup
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
+		Event ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
+		Event WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 	#tag EndHook
 
 
@@ -180,7 +180,9 @@ Protected Class ConfigGroup
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -188,12 +190,15 @@ Protected Class ConfigGroup
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -201,6 +206,7 @@ Protected Class ConfigGroup
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -208,11 +214,15 @@ Protected Class ConfigGroup
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="IsImplicit"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -95,14 +95,14 @@ Protected Class Task
 			    Return
 			  End If
 			  
-			  Self.ItemRef = Xojo.Core.WeakRef.Create(Value)
+			  Self.ItemRef = New WeakRef(Value)
 			End Set
 		#tag EndSetter
 		Item As Object
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private ItemRef As Xojo.Core.WeakRef
+		Private ItemRef As WeakRef
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -166,8 +166,11 @@ Protected Class Task
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="Cancelled"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -175,11 +178,15 @@ Protected Class Task
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="LastFrameTime"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Double"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -187,23 +194,31 @@ Protected Class Task
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Started"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -211,6 +226,7 @@ Protected Class Task
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

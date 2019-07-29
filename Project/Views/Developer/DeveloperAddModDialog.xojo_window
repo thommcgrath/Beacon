@@ -349,9 +349,9 @@ End
 		    ModID = Matches.SubExpressionString(1)
 		  End If
 		  
-		  Dim Dict As New Xojo.Core.Dictionary
-		  Dict.Value("mod_id") = ModID.ToText
-		  Dim Payload As Text = Xojo.Data.GenerateJSON(Dict)
+		  Dim Dict As New Dictionary
+		  Dict.Value("mod_id") = ModID
+		  Dim Payload As String = Beacon.GenerateJSON(Dict, False)
 		  
 		  Dim Request As New BeaconAPI.Request("mod.php", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)
 		  Request.Sign(App.IdentityManager.CurrentIdentity)

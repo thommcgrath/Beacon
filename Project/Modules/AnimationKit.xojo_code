@@ -11,7 +11,7 @@ Protected Module AnimationKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Animate(Extends Target As AnimationKit.ValueAnimator, Identifier As Text, StartValue As Double, EndValue As Double, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
+		Sub Animate(Extends Target As AnimationKit.ValueAnimator, Identifier As String, StartValue As Double, EndValue As Double, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
 		  Dim Task As New AnimationKit.ValueTask(Target, Identifier, StartValue, EndValue)
 		  Task.DurationInSeconds = DurationInSeconds
 		  If Curve <> Nil Then
@@ -34,7 +34,7 @@ Protected Module AnimationKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI)
-		Sub Animate(Extends Target As RectControl, Destination As Xojo.Core.Rect, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
+		Sub Animate(Extends Target As RectControl, Destination As Rect, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
 		  Dim Task As New AnimationKit.MoveTask(Target)
 		  Task.DurationInSeconds = DurationInSeconds
 		  Task.SetDestination(Destination)
@@ -58,7 +58,7 @@ Protected Module AnimationKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI)
-		Sub Animate(Extends Target As Window, Destination As Xojo.Core.Rect, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
+		Sub Animate(Extends Target As Window, Destination As Rect, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
 		  Dim Task As New AnimationKit.MoveTask(Target)
 		  Task.DurationInSeconds = DurationInSeconds
 		  Task.SetDestination(Destination)
@@ -70,8 +70,8 @@ Protected Module AnimationKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function CloneRect(Source As Xojo.Core.Rect) As Xojo.Core.Rect
-		  Return New Xojo.Core.Rect(Source.Left, Source.Top, Source.Width, Source.Height)
+		Private Function CloneRect(Source As Rect) As Rect
+		  Return New Rect(Source.Left, Source.Top, Source.Width, Source.Height)
 		End Function
 	#tag EndMethod
 
@@ -105,7 +105,7 @@ Protected Module AnimationKit
 
 	#tag Method, Flags = &h0
 		Function UBound(Frames As AnimationKit.FrameSet) As Integer
-		  Return Frames.UBound
+		  Return Frames.LastRowIndex
 		End Function
 	#tag EndMethod
 

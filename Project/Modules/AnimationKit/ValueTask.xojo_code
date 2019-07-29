@@ -36,7 +36,7 @@ Inherits AnimationKit.Task
 	#tag EndMethod
 
 	#tag Method, Flags = &h1000
-		Sub Constructor(Target As AnimationKit.ValueAnimator, Identifier As Text, StartValue As Double, EndValue As Double)
+		Sub Constructor(Target As AnimationKit.ValueAnimator, Identifier As String, StartValue As Double, EndValue As Double)
 		  Self.Constructor()
 		  Self.StartValue = StartValue
 		  Self.EndValue = EndValue
@@ -59,7 +59,7 @@ Inherits AnimationKit.Task
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Identifier As Text
+		Identifier As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h0

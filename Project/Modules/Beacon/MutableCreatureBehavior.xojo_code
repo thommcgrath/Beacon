@@ -24,7 +24,7 @@ Inherits Beacon.CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ReplacementClass(Assigns Value As Text)
+		Sub ReplacementClass(Assigns Value As String)
 		  If Self.mReplacementClass = Value Then
 		    Return
 		  End If
@@ -83,7 +83,9 @@ Inherits Beacon.CreatureBehavior
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -91,12 +93,15 @@ Inherits Beacon.CreatureBehavior
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -104,6 +109,7 @@ Inherits Beacon.CreatureBehavior
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -111,6 +117,7 @@ Inherits Beacon.CreatureBehavior
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

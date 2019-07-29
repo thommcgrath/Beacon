@@ -6,12 +6,6 @@ Protected Module Language
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function EnglishOxfordList(Extends Items() As Text) As Text
-		  Return EnglishOxfordList(Items)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Function EnglishOxfordList(Items() As String) As String
 		  If Items.Ubound = -1 Then
@@ -31,17 +25,6 @@ Protected Module Language
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function EnglishOxfordList(Items() As Text) As Text
-		  Dim Converted() As String
-		  Redim Converted(Items.Ubound)
-		  For I As Integer = 0 To Items.Ubound
-		    Converted(I) = Items(I)
-		  Next
-		  Return EnglishOxfordList(Converted).ToText
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function FolderItemErrorReason(ErrorCode As Integer) As String
 		  Select Case ErrorCode
 		  Case FolderItem.DestDoesNotExistError
@@ -57,19 +40,19 @@ Protected Module Language
 		  Case FolderItem.InvalidName
 		    Return "Filename is invalid"
 		  Else
-		    Return "Other error #" + ErrorCode.ToText
+		    Return "Other error #" + ErrorCode.ToString
 		  End Select
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function LabelForConfig(Config As Beacon.ConfigGroup) As Text
+		Protected Function LabelForConfig(Config As Beacon.ConfigGroup) As String
 		  Return Language.LabelForConfig(Config.ConfigName)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function LabelForConfig(ConfigName As Text) As Text
+		Protected Function LabelForConfig(ConfigName As String) As String
 		  Select Case ConfigName
 		  Case BeaconConfigs.Difficulty.ConfigName
 		    Return "Difficulty"
@@ -229,6 +212,7 @@ Protected Module Language
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -236,18 +220,23 @@ Protected Module Language
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -255,6 +244,7 @@ Protected Module Language
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Module

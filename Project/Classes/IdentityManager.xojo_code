@@ -9,15 +9,15 @@ Protected Class IdentityManager
 		  // UserID and PublicKey match what we're saving, then manually consider it a success
 		  Dim Success As Boolean = Response.Success
 		  Try
-		    If Success = False And Response.JSON IsA Xojo.Core.Dictionary Then
-		      Dim Dict As Xojo.Core.Dictionary = Response.JSON
-		      Dim PublicKey As Text = Dict.Value("public_key")
-		      Dim UserID As Text = Dict.Value("user_id")
+		    If Success = False And Response.JSON IsA Dictionary Then
+		      Dim Dict As Dictionary = Response.JSON
+		      Dim PublicKey As String = Dict.Value("public_key")
+		      Dim UserID As String = Dict.Value("user_id")
 		      
-		      Dim ConvertedPublicKey As Xojo.Core.MemoryBlock = BeaconEncryption.PEMDecodePublicKey(PublicKey)
-		      Dim TestValue As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(12)
-		      Dim Encrypted As Xojo.Core.MemoryBlock = Xojo.Crypto.RSAEncrypt(TestValue, ConvertedPublicKey)
-		      Dim Decrypted As Xojo.Core.MemoryBlock = Xojo.Crypto.RSADecrypt(Encrypted, Self.mPendingIdentity.PrivateKey)
+		      Dim ConvertedPublicKey As MemoryBlock = BeaconEncryption.PEMDecodePublicKey(PublicKey)
+		      Dim TestValue As MemoryBlock = Crypto.GenerateRandomBytes(12)
+		      Dim Encrypted As MemoryBlock = Crypto.RSAEncrypt(TestValue, ConvertedPublicKey)
+		      Dim Decrypted As MemoryBlock = Crypto.RSADecrypt(Encrypted, Self.mPendingIdentity.PrivateKey)
 		      
 		      If Self.mPendingIdentity.Identifier = UserID And TestValue = Decrypted Then
 		        Success = True
@@ -42,8 +42,8 @@ Protected Class IdentityManager
 		  
 		  If Response.Success Then
 		    Try
-		      Dim Dict As Xojo.Core.Dictionary = Response.JSON
-		      Dim Token As Text = Dict.Value("session_id")
+		      Dim Dict As Dictionary = Response.JSON
+		      Dim Token As String = Dict.Value("session_id")
 		      Preferences.OnlineToken = Token
 		      
 		      Self.RefreshUserDetails()
@@ -114,11 +114,12 @@ Protected Class IdentityManager
 		  End If
 		  
 		  Try
-		    Dim Stream As TextInputStream = TextInputStream.Open(Self.mFile)
-		    Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
-		    Stream.Close
+		    Dim Contents As String = Self.mFile.Read(Encodings.UTF8)
+		    If Contents = "" Then
+		      Return
+		    End If
 		    
-		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Contents.ToText)
+		    Dim Dict As Dictionary = Beacon.ParseJSON(Contents)
 		    Self.mCurrentIdentity = Beacon.Identity.Import(Dict)
 		  Catch Err As RuntimeException
 		  End Try
@@ -141,11 +142,11 @@ Protected Class IdentityManager
 		  Self.StartProcess()
 		  Self.mPendingIdentity = New Beacon.Identity()
 		  
-		  Dim Params As New Xojo.Core.Dictionary
+		  Dim Params As New Dictionary
 		  Params.Value("user_id") = Self.mPendingIdentity.Identifier
-		  Params.Value("public_key") = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Self.mPendingIdentity.PublicKey)
+		  Params.Value("public_key") = Self.mPendingIdentity.PublicKey
 		  
-		  Dim Body As Text = Xojo.Data.GenerateJSON(Params)
+		  Dim Body As String = Beacon.GenerateJSON(Params, False)
 		  Dim Request As New BeaconAPI.Request("user", "POST", Body, "application/json", AddressOf APICallback_CreateUser)
 		  BeaconAPI.Send(Request)
 		End Sub
@@ -171,7 +172,7 @@ Protected Class IdentityManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LastError() As Text
+		Function LastError() As String
 		  Return Self.mLastError
 		End Function
 	#tag EndMethod
@@ -189,23 +190,23 @@ Protected Class IdentityManager
 		  
 		  Self.StartProcess()
 		  
-		  Dim SignedValue As Text = Beacon.CreateUUID
-		  Dim Signature As Text = Beacon.EncodeHex(Source.Sign(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(SignedValue)))
+		  Dim SignedValue As String = Beacon.CreateUUID
+		  Dim Signature As String = EncodeHex(Source.Sign(SignedValue))
 		  
-		  Dim MergeKeys As New Xojo.Core.Dictionary
+		  Dim MergeKeys As New Dictionary
 		  MergeKeys.Value("user_id") = Destination.Identifier
 		  MergeKeys.Value("login_key") = Destination.LoginKey
 		  MergeKeys.Value("signed_value") = SignedValue
 		  MergeKeys.Value("signature") = Signature
 		  
-		  Dim Request As New BeaconAPI.Request("user", "POST", Xojo.Data.GenerateJSON(MergeKeys), "application/json", AddressOf APICallback_MergeUser)
+		  Dim Request As New BeaconAPI.Request("user", "POST", Beacon.GenerateJSON(MergeKeys, False), "application/json", AddressOf APICallback_MergeUser)
 		  Request.Sign(Destination)
 		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RefreshUserDetails(UserPassword As Text = "")
+		Sub RefreshUserDetails(UserPassword As String = "")
 		  If Preferences.OnlineEnabled = False Then
 		    Return
 		  End If
@@ -218,7 +219,7 @@ Protected Class IdentityManager
 		  Self.StartProcess()
 		  Self.mUserPassword = UserPassword
 		  
-		  Dim Fields As New Xojo.Core.Dictionary
+		  Dim Fields As New Dictionary
 		  Fields.Value("hardware_id") = Beacon.HardwareID
 		  
 		  Dim Request As New BeaconAPI.Request("user", "GET", Fields, AddressOf APICallback_RefreshUserDetails)
@@ -275,8 +276,8 @@ Protected Class IdentityManager
 			    Return
 			  End If
 			  
-			  Dim OldUserID As Text = If(Self.mCurrentIdentity <> Nil, Self.mCurrentIdentity.Identifier, "")
-			  Dim NewUserID As Text = If(Value <> Nil, Value.Identifier, "")
+			  Dim OldUserID As String = If(Self.mCurrentIdentity <> Nil, Self.mCurrentIdentity.Identifier, "")
+			  Dim NewUserID As String = If(Value <> Nil, Value.Identifier, "")
 			  Dim ReplaceToken As Boolean = OldUserID <> NewUserID
 			  
 			  Self.MergeIdentities(Value, Self.mCurrentIdentity)
@@ -307,7 +308,7 @@ Protected Class IdentityManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLastError As Text
+		Private mLastError As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -319,7 +320,7 @@ Protected Class IdentityManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUserPassword As Text
+		Private mUserPassword As String
 	#tag EndProperty
 
 

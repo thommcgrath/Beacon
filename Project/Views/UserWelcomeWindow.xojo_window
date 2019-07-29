@@ -1969,7 +1969,7 @@ End
 		  
 		  #if false
 		    Self.mBaseURL = Beacon.WebURL("inapp/")
-		    Dim Fields() As Text
+		    Dim Fields() As String
 		    If Self.mLoginOnly Then
 		      Fields.Append("login_only=true")
 		    Else
@@ -2047,7 +2047,7 @@ End
 		Private Sub IdentityManager_Finished(Sender As IdentityManager)
 		  If Sender.CurrentIdentity = Nil Then
 		    // Error
-		    Dim Message As Text = Sender.LastError
+		    Dim Message As String = Sender.LastError
 		    If Message = "" Then
 		      Message = "Please try again. If the problem persists help, see " + Beacon.WebURL("/help") + " for more help options."
 		    End If
@@ -2539,10 +2539,10 @@ End
 		    // Success
 		    
 		    Try
-		      Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content.DefineEncoding(Encodings.UTF8).ToText)
+		      Dim Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
 		      Dim Verified As Boolean = Dict.Value("verified")
 		      If Verified Then
-		        Dim Code As Text = Dict.Value("code")
+		        Dim Code As String = Dict.Value("code")
 		        Self.ConfirmCodeField.Value = Code
 		        Self.mConfirmedAddress = Dict.Value("email")
 		        Self.mConfirmedCode = Dict.Value("code")
@@ -2557,7 +2557,7 @@ End
 		        Self.PagePanel1.SelectedPanelIndex = Self.PageIdentity
 		        Return
 		      End If
-		    Catch Err As Xojo.Data.InvalidJSONException
+		    Catch Err As RuntimeException
 		      Self.ShowError("You will need to enter your confirmation code manually because there was an error checking for it automatically.", Err)
 		      Return
 		    End Try
@@ -2584,7 +2584,7 @@ End
 		    // Success
 		    
 		    Try
-		      Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content.DefineEncoding(Encodings.UTF8).ToText)
+		      Dim Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
 		      Dim Verified As Boolean = Dict.Value("verified")
 		      If Verified Then
 		        If Self.mConfirmedEmailScheduleKey <> "" Then
@@ -2606,7 +2606,7 @@ End
 		      Else
 		        Self.ShowAlert("Your confirmation code is not correct.", "Try using copy and paste, the code is case-sensitive.")
 		      End If
-		    Catch Err As Xojo.Data.InvalidJSONException
+		    Catch Err As RuntimeException
 		      Self.ShowError("There was an error reading the confirmation response from the connector.", Err)
 		    End Try
 		    
@@ -2637,10 +2637,10 @@ End
 		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
 		    Try
-		      Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content.DefineEncoding(Encodings.UTF8).ToText)
-		      Dim Username As Text = Dict.Value("username")
+		      Dim Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
+		      Dim Username As String = Dict.Value("username")
 		      Self.IdentityUsernameField.Value = Username
-		    Catch Err As Xojo.Data.InvalidJSONException
+		    Catch Err As RuntimeException
 		      Self.ShowError("Cannot get a username suggestion.", Err)
 		      Return
 		    End Try
@@ -2667,15 +2667,15 @@ End
 		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
 		    Try
-		      Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content.DefineEncoding(Encodings.UTF8).ToText)
-		      Dim SessionID As Text = Dict.Value("session_id")
+		      Dim Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
+		      Dim SessionID As String = Dict.Value("session_id")
 		      
 		      Preferences.OnlineToken = SessionID
 		      Preferences.OnlineEnabled = True
 		      
-		      App.IdentityManager.RefreshUserDetails(Self.IdentityPasswordField.Value.ToText)
+		      App.IdentityManager.RefreshUserDetails(Self.IdentityPasswordField.Value)
 		      Self.SetSubmitIdentityStatus("Downloading keys…")
-		    Catch Err As Xojo.Data.InvalidJSONException
+		    Catch Err As RuntimeException
 		      Self.ShowError("There was an error reading the response from the connector.", Err)
 		    End Try
 		    
@@ -2714,15 +2714,15 @@ End
 		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
 		    Try
-		      Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content.DefineEncoding(Encodings.UTF8).ToText)
-		      Dim SessionID As Text = Dict.Value("session_id")
+		      Dim Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
+		      Dim SessionID As String = Dict.Value("session_id")
 		      
 		      Preferences.OnlineToken = SessionID
 		      Preferences.OnlineEnabled = True
 		      
-		      App.IdentityManager.RefreshUserDetails(Self.LoginPasswordField.Value.ToText)
+		      App.IdentityManager.RefreshUserDetails(Self.LoginPasswordField.Value)
 		      Self.SetLoginStatus("Downloading keys…")
-		    Catch Err As Xojo.Data.InvalidJSONException
+		    Catch Err As RuntimeException
 		      Self.ShowError("There was an error reading the response from the connector.", Err)
 		    End Try
 		    

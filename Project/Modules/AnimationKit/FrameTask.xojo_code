@@ -12,7 +12,7 @@ Inherits AnimationKit.Task
 		  Dim Duration As Double = Self.DurationInSeconds * 1000000
 		  Dim LoopElapsed As Double = Self.ElapsedTime(Time) Mod Duration
 		  Dim PercentComplete As Double = LoopElapsed / Duration
-		  Dim Frame As Integer = Round(Self.Frames.UBound * PercentComplete)
+		  Dim Frame As Integer = Round(Self.Frames.LastRowIndex * PercentComplete)
 		  
 		  If Frame <> Self.CurrentFrame Then
 		    Self.CurrentFrame = Frame
@@ -68,7 +68,7 @@ Inherits AnimationKit.Task
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Identifier As Text
+		Identifier As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h0

@@ -1,10 +1,10 @@
 #tag Class
 Protected Class LootDrops
 Inherits Beacon.ConfigGroup
-Implements Xojo.Core.Iterable
+Implements  Iterable
 	#tag Event
 		Sub DetectIssues(Document As Beacon.Document, Issues() As Beacon.Issue)
-		  Dim ConfigName As Text = ConfigKey
+		  Dim ConfigName As String = ConfigKey
 		  
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    If Source.IsValid(Document) Then
@@ -12,7 +12,7 @@ Implements Xojo.Core.Iterable
 		    End If
 		    
 		    If Source.Count < Source.RequiredItemSets Then
-		      Issues.Append(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " needs at least " +Source.RequiredItemSets.ToText + " " + if(Source.RequiredItemSets = 1, "item set", "item sets") + " to work correctly.", Source))
+		      Issues.Append(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " needs at least " +Source.RequiredItemSets.ToString + " " + if(Source.RequiredItemSets = 1, "item set", "item sets") + " to work correctly.", Source))
 		    Else
 		      For Each Set As Beacon.ItemSet In Source
 		        If Set.IsValid(Document) Then
@@ -67,21 +67,21 @@ Implements Xojo.Core.Iterable
 		      Continue
 		    End If
 		    
-		    Dim TextValue As Text = Source.TextValue(DifficultyConfig)
+		    Dim TextValue As String = Source.TextValue(DifficultyConfig)
 		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideSupplyCrateItems", TextValue))
 		  Next
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
 		  If Dict.HasKey("Contents") Then
 		    // Only keep the most recent of the duplicates
-		    Dim Contents() As Auto = Dict.Value("Contents")
-		    Dim UniqueClasses As New Xojo.Core.Dictionary
-		    For Each DropDict As Xojo.Core.Dictionary In Contents
+		    Dim Contents() As Variant = Dict.Value("Contents")
+		    Dim UniqueClasses As New Dictionary
+		    For Each DropDict As Dictionary In Contents
 		      Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(DropDict)
 		      If Source <> Nil Then
 		        Dim Idx As Integer = UniqueClasses.Lookup(Source.ClassString, -1)
@@ -98,10 +98,10 @@ Implements Xojo.Core.Iterable
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
+		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
-		  Dim Contents() As Xojo.Core.Dictionary
+		  Dim Contents() As Dictionary
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    Contents.Append(Source.Export)
 		  Next
@@ -118,8 +118,8 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function AssembleLocationDict(Source As Beacon.LootSource, ItemSet As Beacon.ItemSet = Nil, Entry As Beacon.SetEntry = Nil, Option As Beacon.SetEntryOption = Nil) As Xojo.Core.Dictionary
-		  Dim Dict As New Xojo.Core.Dictionary
+		Private Shared Function AssembleLocationDict(Source As Beacon.LootSource, ItemSet As Beacon.ItemSet = Nil, Entry As Beacon.SetEntry = Nil, Option As Beacon.SetEntryOption = Nil) As Dictionary
+		  Dim Dict As New Dictionary
 		  Dict.Value("LootSource") = Source
 		  If ItemSet <> Nil Then
 		    Dict.Value("ItemSet") = ItemSet
@@ -135,7 +135,7 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As Text
+		Shared Function ConfigName() As String
 		  Return ConfigKey
 		End Function
 	#tag EndMethod
@@ -151,7 +151,7 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.LootDrops
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.LootDrops
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  
@@ -159,7 +159,7 @@ Implements Xojo.Core.Iterable
 		    Return Nil
 		  End If
 		  
-		  Dim Dicts() As Auto
+		  Dim Dicts() As Variant
 		  Try
 		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
 		  Catch Err As TypeMismatchException
@@ -168,8 +168,8 @@ Implements Xojo.Core.Iterable
 		  
 		  // Only keep the most recent of the duplicates
 		  Dim LootDrops As New BeaconConfigs.LootDrops
-		  Dim UniqueClasses As New Xojo.Core.Dictionary
-		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
+		  Dim UniqueClasses As New Dictionary
+		  For Each ConfigDict As Dictionary In Dicts
 		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Difficulty)
 		    If Source <> Nil Then
 		      Dim Idx As Integer = UniqueClasses.Lookup(Source.ClassString, -1)
@@ -184,14 +184,6 @@ Implements Xojo.Core.Iterable
 		  If LootDrops.UBound > -1 Then
 		    Return LootDrops
 		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetIterator() As Xojo.Core.Iterator
-		  // Part of the Xojo.Core.Iterable interface.
-		  
-		  Return New BeaconConfigs.LootDropIterator(Self)
 		End Function
 	#tag EndMethod
 
@@ -217,6 +209,20 @@ Implements Xojo.Core.Iterable
 		  Self.mSources.Insert(Index, Source)
 		  Self.Modified = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Iterator() As Iterator
+		  // Part of the Iterable interface.
+		  
+		  Dim Items() As Variant
+		  Redim Items(Self.mSources.LastRowIndex)
+		  For I As Integer = Items.FirstRowIndex To Items.LastRowIndex
+		    Items(I) = Self.mSources(I)
+		  Next
+		  
+		  Return New Beacon.GenericIterator(Items)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -268,7 +274,7 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ReconfigurePresets(Mask As UInt64, Mods As Beacon.TextList) As UInteger
+		Function ReconfigurePresets(Mask As UInt64, Mods As Beacon.StringList) As UInteger
 		  If Mask = 0 Then
 		    Return 0
 		  End If
@@ -326,7 +332,7 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub TryToResolveIssues(InputContent As Text, Callback As Beacon.ConfigGroup.ResolveIssuesCallback)
+		Sub TryToResolveIssues(InputContent As String, Callback As Beacon.ConfigGroup.ResolveIssuesCallback)
 		  Self.mResolveIssuesCallback = Callback
 		  
 		  Dim Searcher As New Beacon.EngramSearcherThread

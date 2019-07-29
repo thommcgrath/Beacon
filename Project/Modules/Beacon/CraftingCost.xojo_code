@@ -42,20 +42,20 @@ Protected Class CraftingCost
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Export() As Xojo.Core.Dictionary
-		  Dim Dict As New Xojo.Core.Dictionary
+		Function Export() As Dictionary
+		  Dim Dict As New Dictionary
 		  
 		  If Self.mEngram <> Nil Then
 		    Dict.Value("Engram") = Self.mEngram.ClassString
 		  End If
 		  
-		  Dim Resources() As Xojo.Core.Dictionary
+		  Dim Resources() As Dictionary
 		  For I As Integer = 0 To Self.mResources.Ubound
 		    Dim Engram As Beacon.Engram = Self.mResources(I)
 		    Dim Quantity As Integer = Self.mQuantities(I)
 		    Dim RequireExact As Boolean = Self.mRequireExacts(I)
 		    
-		    Dim Resource As New Xojo.Core.Dictionary
+		    Dim Resource As New Dictionary
 		    Resource.Value("Class") = Engram.ClassString
 		    Resource.Value("Quantity") = Quantity
 		    Resource.Value("Exact") = RequireExact
@@ -69,11 +69,11 @@ Protected Class CraftingCost
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromBeacon(Dict As Xojo.Core.Dictionary) As Beacon.CraftingCost
+		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.CraftingCost
 		  Dim Cost As New Beacon.CraftingCost
 		  
 		  If Dict.HasKey("Engram") Then
-		    Dim ClassString As Text = Dict.Value("Engram")
+		    Dim ClassString As String = Dict.Value("Engram")
 		    Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
 		    If Engram = Nil Then
 		      Engram = Beacon.Engram.CreateUnknownEngram(ClassString)
@@ -82,9 +82,9 @@ Protected Class CraftingCost
 		  End If
 		  
 		  If Dict.HasKey("Resources") Then
-		    Dim Resources() As Auto = Dict.Value("Resources")
-		    For Each Resource As Xojo.Core.Dictionary In Resources
-		      Dim ClassString As Text = Resource.Lookup("Class", "")
+		    Dim Resources() As Variant = Dict.Value("Resources")
+		    For Each Resource As Dictionary In Resources
+		      Dim ClassString As String = Resource.Lookup("Class", "")
 		      Dim Quantity As Integer = Resource.Lookup("Quantity", 1)
 		      Dim RequireExact As Boolean = Resource.Lookup("Exact", False)
 		      Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
@@ -102,9 +102,9 @@ Protected Class CraftingCost
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromConfig(Dict As Xojo.Core.Dictionary) As Beacon.CraftingCost
+		Shared Function ImportFromConfig(Dict As Dictionary) As Beacon.CraftingCost
 		  Try
-		    Dim ClassString As Text = Dict.Lookup("ItemClassString", "")
+		    Dim ClassString As String = Dict.Lookup("ItemClassString", "")
 		    If ClassString = "" Then
 		      Return Nil
 		    End If
@@ -116,9 +116,9 @@ Protected Class CraftingCost
 		    
 		    Dim Cost As New Beacon.CraftingCost(Engram)
 		    If Dict.HasKey("BaseCraftingResourceRequirements") Then
-		      Dim Resources() As Auto = Dict.Value("BaseCraftingResourceRequirements")
-		      For Each Resource As Xojo.Core.Dictionary In Resources
-		        Dim ResourceClass As Text = Resource.Lookup("ResourceItemTypeString", "")
+		      Dim Resources() As Variant = Dict.Value("BaseCraftingResourceRequirements")
+		      For Each Resource As Dictionary In Resources
+		        Dim ResourceClass As String = Resource.Lookup("ResourceItemTypeString", "")
 		        If ResourceClass = "" Then
 		          Continue
 		        End If
@@ -174,7 +174,7 @@ Protected Class CraftingCost
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Label() As Text
+		Function Label() As String
 		  If Self.mEngram = Nil Then
 		    Return ""
 		  End If
@@ -202,7 +202,7 @@ Protected Class CraftingCost
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As Text
+		Function ObjectID() As String
 		  Return Self.mObjectID
 		End Function
 	#tag EndMethod
@@ -218,8 +218,8 @@ Protected Class CraftingCost
 		  End If
 		  
 		  // Try to sort by name first, otherwise sort by object id for lack of a better option
-		  Dim SelfName As Text = If(Self.mEngram <> Nil, Self.mEngram.Label, "")
-		  Dim OtherName As Text = If(Other.mEngram <> Nil, Other.mEngram.Label, "")
+		  Dim SelfName As String = If(Self.mEngram <> Nil, Self.mEngram.Label, "")
+		  Dim OtherName As String = If(Other.mEngram <> Nil, Other.mEngram.Label, "")
 		  Dim Result As Integer = SelfName.Compare(OtherName)
 		  If Result = 0 Then
 		    Result = Self.mObjectID.Compare(Other.mObjectID)
@@ -294,19 +294,19 @@ Protected Class CraftingCost
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue() As Text
-		  Dim Components() As Text
+		Function StringValue() As String
+		  Dim Components() As String
 		  For I As Integer = 0 To Self.mResources.Ubound
-		    Dim ClassString As Text = Self.mResources(I).ClassString
-		    Dim QuantityString As Text = Self.mQuantities(I).ToText(Xojo.Core.Locale.Raw, "0")
-		    Dim RequireExactString As Text = If(Self.mRequireExacts(I), "true", "false")
+		    Dim ClassString As String = Self.mResources(I).ClassString
+		    Dim QuantityString As String = Self.mQuantities(I).ToString(Locale.Raw, "0")
+		    Dim RequireExactString As String = If(Self.mRequireExacts(I), "true", "false")
 		    Components.Append("(ResourceItemTypeString=""" + ClassString + """,BaseResourceRequirement=" + QuantityString + ",bCraftingRequireExactResourceType=" + RequireExactString + ")")
 		  Next
 		  
-		  Dim Pieces() As Text
+		  Dim Pieces() As String
 		  Pieces.Append("ItemClassString=""" + If(Self.mEngram <> Nil, Self.mEngram.ClassString, "") + """")
-		  Pieces.Append("BaseCraftingResourceRequirements=(" + Components.Join(",") + ")")
-		  Return "(" + Pieces.Join(",") + ")"
+		  Pieces.Append("BaseCraftingResourceRequirements=(" + Join(Components, ",") + ")")
+		  Return "(" + Join(Pieces, ",") + ")"
 		End Function
 	#tag EndMethod
 
@@ -349,7 +349,7 @@ Protected Class CraftingCost
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mObjectID As Text
+		Private mObjectID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -370,7 +370,9 @@ Protected Class CraftingCost
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -378,12 +380,15 @@ Protected Class CraftingCost
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -391,6 +396,7 @@ Protected Class CraftingCost
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -398,6 +404,7 @@ Protected Class CraftingCost
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

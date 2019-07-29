@@ -1,7 +1,7 @@
 #tag Class
 Protected Class CreatureBehavior
 	#tag Method, Flags = &h0
-		Function Clone(NewTarget As Text) As Beacon.CreatureBehavior
+		Function Clone(NewTarget As String) As Beacon.CreatureBehavior
 		  Dim Result As New Beacon.CreatureBehavior(Self)
 		  Result.mTargetClass = NewTarget
 		  Return Result
@@ -28,7 +28,7 @@ Protected Class CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ClassString As Text)
+		Sub Constructor(ClassString As String)
 		  Self.mTargetClass = ClassString
 		  Self.mDamageMultiplier = 1.0
 		  Self.mResistanceMultiplier = 1.0
@@ -46,12 +46,12 @@ Protected Class CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromDictionary(Dict As Xojo.Core.Dictionary) As Beacon.CreatureBehavior
+		Shared Function FromDictionary(Dict As Dictionary) As Beacon.CreatureBehavior
 		  If Not Dict.HasKey("Class") Then
 		    Return Nil
 		  End If
 		  
-		  Dim ClassString As Text = Dict.Value("Class")
+		  Dim ClassString As String = Dict.Value("Class")
 		  Dim Behavior As New Beacon.CreatureBehavior(ClassString)
 		  If Dict.HasKey("Prohibit Spawning") Then
 		    Behavior.mProhibitSpawning = Dict.Value("Prohibit Spawning")
@@ -87,7 +87,7 @@ Protected Class CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ReplacementClass() As Text
+		Function ReplacementClass() As String
 		  Return Self.mReplacementClass
 		End Function
 	#tag EndMethod
@@ -117,7 +117,7 @@ Protected Class CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TargetClass() As Text
+		Function TargetClass() As String
 		  Return Self.mTargetClass
 		End Function
 	#tag EndMethod
@@ -129,8 +129,8 @@ Protected Class CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ToDictionary() As Xojo.Core.Dictionary
-		  Dim Dict As New Xojo.Core.Dictionary
+		Function ToDictionary() As Dictionary
+		  Dim Dict As New Dictionary
 		  Dict.Value("Class") = Self.mTargetClass
 		  If Self.mProhibitSpawning Then
 		    Dict.Value("Prohibit Spawning") = True
@@ -168,7 +168,7 @@ Protected Class CreatureBehavior
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mReplacementClass As Text
+		Protected mReplacementClass As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -184,7 +184,7 @@ Protected Class CreatureBehavior
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mTargetClass As Text
+		Protected mTargetClass As String
 	#tag EndProperty
 
 
@@ -193,7 +193,9 @@ Protected Class CreatureBehavior
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -201,12 +203,15 @@ Protected Class CreatureBehavior
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -214,6 +219,7 @@ Protected Class CreatureBehavior
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -221,6 +227,7 @@ Protected Class CreatureBehavior
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

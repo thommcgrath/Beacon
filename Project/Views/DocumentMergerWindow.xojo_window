@@ -251,7 +251,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As Window, SourceDocuments() As Beacon.Document, DestinationDocument As Beacon.Document, Callback As MergeFinishedCallback = Nil)
-		  Dim OAuthData As New Xojo.Core.Dictionary
+		  Dim OAuthData As New Dictionary
 		  For Each Document As Beacon.Document In SourceDocuments
 		    For I As Integer = 0 To Document.ServerProfileCount - 1
 		      Dim Profile As Beacon.ServerProfile = Document.ServerProfile(I)
@@ -352,7 +352,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOAuthData As Xojo.Core.Dictionary
+		Private mOAuthData As Dictionary
 	#tag EndProperty
 
 
@@ -383,7 +383,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim PreviousMods As New Beacon.TextList(Self.mDestination.Mods)
+		  Dim PreviousMods As New Beacon.StringList(Self.mDestination.Mods)
 		  
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.CellCheck(I, 0) Or Self.List.RowTag(I) = Nil Then
@@ -402,7 +402,7 @@ End
 		        Self.mDestination.Add(Profile)
 		        
 		        If Profile.OAuthProvider <> "" And Self.mOAuthData.HasKey(Profile.OAuthProvider) Then
-		          Dim OAuthData As Xojo.Core.Dictionary = Self.mOAuthData.Value(Profile.OAuthProvider)
+		          Dim OAuthData As Dictionary = Self.mOAuthData.Value(Profile.OAuthProvider)
 		          If OAuthData <> Nil Then
 		            Self.mDestination.OAuthData(Profile.OAuthProvider) = OAuthData
 		          End If
@@ -411,8 +411,8 @@ End
 		    Case Variant.TypeString
 		      Dim StringValue As String = Tag.StringValue
 		      If StringValue.BeginsWith("Map") Then
-		        Dim Operator As String = StringValue.Mid(4, 1)
-		        Dim Mask As UInt64 = Val(StringValue.Mid(5))
+		        Dim Operator As String = StringValue.Middle(4, 1)
+		        Dim Mask As UInt64 = Val(StringValue.Middle(5))
 		        If Operator = "+" Then
 		          Self.mDestination.MapCompatibility = Self.mDestination.MapCompatibility Or Mask
 		        Else

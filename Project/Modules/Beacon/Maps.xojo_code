@@ -44,7 +44,7 @@ Protected Module Maps
 	#tag Method, Flags = &h1
 		Protected Function GuessMap(Sources() As Beacon.LootSource) As UInt64
 		  Dim List() As Beacon.Map = All
-		  Dim Counts As New Xojo.Core.Dictionary
+		  Dim Counts As New Dictionary
 		  
 		  For Each Map As Beacon.Map In List
 		    For Each Source As Beacon.LootSource In Sources
@@ -59,7 +59,7 @@ Protected Module Maps
 		  
 		  Dim BestMask As UInt64
 		  Dim MaxCount As UInteger
-		  For Each Entry As Xojo.Core.DictionaryEntry In Counts
+		  For Each Entry As DictionaryEntry In Counts
 		    Dim Mask As UInt64 = Entry.Key
 		    Dim Count As UInteger = Entry.Value
 		    
@@ -78,7 +78,7 @@ Protected Module Maps
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function MaskForIdentifier(Identifier As Text) As UInt64
+		Protected Function MaskForIdentifier(Identifier As String) As UInt64
 		  Dim Possibles() As Beacon.Map = All
 		  For Each Map As Beacon.Map In Possibles
 		    If Map.Identifier = Identifier Then
@@ -128,6 +128,7 @@ Protected Module Maps
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -135,18 +136,23 @@ Protected Module Maps
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -154,6 +160,7 @@ Protected Module Maps
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Module

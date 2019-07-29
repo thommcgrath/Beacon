@@ -56,6 +56,12 @@ Protected Module Tests
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub TextMemoryBlockExtensions()
+		  Assert(False, "You didn't test MemoryBlock")
+		End Sub
+	#tag EndMethod
+
 
 End Module
 #tag EndModule

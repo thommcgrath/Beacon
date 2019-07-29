@@ -9,7 +9,7 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As Text, ObjectID As Text)
+		Sub Constructor(Path As String, ObjectID As String)
 		  Super.Constructor()
 		  Self.mPath = Path
 		  Self.mObjectID = ObjectID
@@ -18,7 +18,7 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub IncubationTime(Assigns Value As Xojo.Core.DateInterval)
+		Sub IncubationTime(Assigns Value As DateInterval)
 		  If Value <> Nil Then
 		    Self.mIncubationTime = Value.Clone
 		  Else
@@ -28,7 +28,7 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub IsTagged(Tag As Text, Assigns Value As Boolean)
+		Sub IsTagged(Tag As String, Assigns Value As Boolean)
 		  Tag = Beacon.NormalizeTag(Tag)
 		  Dim Idx As Integer = Self.mTags.IndexOf(Tag)
 		  If Idx > -1 And Value = False Then
@@ -41,13 +41,13 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Label(Assigns Value As Text)
+		Sub Label(Assigns Value As String)
 		  Self.mLabel = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub MatureTime(Assigns Value As Xojo.Core.DateInterval)
+		Sub MatureTime(Assigns Value As DateInterval)
 		  If Value <> Nil Then
 		    Self.mMatureTime = Value.Clone
 		  Else
@@ -57,28 +57,28 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ModID(Assigns Value As Text)
+		Sub ModID(Assigns Value As String)
 		  Self.mModID = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ModName(Assigns Value As Text)
+		Sub ModName(Assigns Value As String)
 		  Self.mModName = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Path(Assigns Value As Text)
+		Sub Path(Assigns Value As String)
 		  Self.mPath = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Tags(Assigns Tags() As Text)
+		Sub Tags(Assigns Tags() As String)
 		  Redim Self.mTags(-1)
 		  
-		  For Each Tag As Text In Tags
+		  For Each Tag As String In Tags
 		    Tag = Beacon.NormalizeTag(Tag)
 		    Self.mTags.Append(Tag)
 		  Next

@@ -497,7 +497,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Category As Text, Subgroup As Text, Exclude() As Beacon.Blueprint, Mods As Beacon.TextList, AllowMultipleSelection As Boolean)
+		Private Sub Constructor(Category As String, Subgroup As String, Exclude() As Beacon.Blueprint, Mods As Beacon.StringList, AllowMultipleSelection As Boolean)
 		  Self.mSettingUp = True
 		  For Each Blueprint As Beacon.Blueprint In Exclude
 		    Self.mExcluded.Append(Blueprint.Path)
@@ -553,7 +553,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Subgroup As Text, Exclude() As Beacon.Creature, Mods As Beacon.TextList = Nil, AllowMultipleSelection As Boolean) As Beacon.Creature()
+		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Creature, Mods As Beacon.StringList = Nil, AllowMultipleSelection As Boolean) As Beacon.Creature()
 		  Dim ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Creature As Beacon.Creature In Exclude
 		    ExcludeBlueprints.Append(Creature)
@@ -571,7 +571,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Subgroup As Text, Exclude() As Beacon.Engram, Mods As Beacon.TextList = Nil, AllowMultipleSelection As Boolean) As Beacon.Engram()
+		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Engram, Mods As Beacon.StringList = Nil, AllowMultipleSelection As Boolean) As Beacon.Engram()
 		  Dim ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Engram As Beacon.Engram In Exclude
 		    ExcludeBlueprints.Append(Engram)
@@ -589,14 +589,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Category As Text, Subgroup As Text, Exclude() As Beacon.Blueprint, Mods As Beacon.TextList = Nil, AllowMultipleSelection As Boolean) As Beacon.Blueprint()
+		Shared Function Present(Parent As Window, Category As String, Subgroup As String, Exclude() As Beacon.Blueprint, Mods As Beacon.StringList = Nil, AllowMultipleSelection As Boolean) As Beacon.Blueprint()
 		  Dim Blueprints() As Beacon.Blueprint
 		  If Parent = Nil Then
 		    Return Blueprints
 		  End If
 		  
 		  If Mods = Nil Then
-		    Mods = New Beacon.TextList
+		    Mods = New Beacon.StringList
 		  End If
 		  
 		  Dim Win As New EngramSelectorDialog(Category, Subgroup, Exclude, Mods, AllowMultipleSelection)
@@ -626,7 +626,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UnmakeSelection()
-		  Dim SelectPaths() As Text
+		  Dim SelectPaths() As String
 		  For I As Integer = Self.SelectedList.RowCount - 1 DownTo 0
 		    If Not Self.SelectedList.Selected(I) Then
 		      Continue
@@ -656,9 +656,9 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
 		  Dim SearchText As String = Self.FilterField.Value
-		  Dim Tags As Text = Self.Picker.Spec.ToText
+		  Dim Tags As String = Self.Picker.Spec
 		  
-		  Dim Blueprints() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints(Self.mCategory, SearchText.ToText, Self.mMods, Tags)
+		  Dim Blueprints() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)
 		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.DeleteAllRows
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
@@ -683,15 +683,15 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCategory As Text
+		Private mCategory As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mExcluded() As Text
+		Private mExcluded() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMods As Beacon.TextList
+		Private mMods As Beacon.StringList
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -699,7 +699,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSubgroup As Text
+		Private mSubgroup As String
 	#tag EndProperty
 
 
@@ -794,7 +794,7 @@ End
 		    Return
 		  End If
 		  
-		  Preferences.SelectedTag(Self.mCategory, Self.mSubgroup) = Me.Spec.ToText
+		  Preferences.SelectedTag(Self.mCategory, Self.mSubgroup) = Me.Spec
 		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent

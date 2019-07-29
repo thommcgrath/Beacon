@@ -388,7 +388,7 @@ End
 		Sub Open()
 		  Self.CreaturesList.ColumnType(Self.ColumnChecked) = Listbox.TypeCheckbox
 		  
-		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.TextList)
+		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.StringList)
 		  For Each Creature As Beacon.Creature In Creatures
 		    If Creature.IncubationTime = Nil Or Creature.MatureTime = Nil Then
 		      Continue
@@ -510,7 +510,7 @@ End
 		  // Get fastest maturing creature
 		  Dim FastestMature As UInt64
 		  For Each Creature As Beacon.Creature In Creatures
-		    Dim MatureSeconds As UInt64 = Beacon.IntervalToSeconds(Creature.MatureTime) / Self.mMatureSpeedMultiplier
+		    Dim MatureSeconds As UInt64 = Creature.MatureTime.TotalSeconds / Self.mMatureSpeedMultiplier
 		    If FastestMature = 0 Or MatureSeconds < FastestMature Then
 		      FastestMature = MatureSeconds
 		    End If
@@ -521,7 +521,7 @@ End
 		  Dim OfficialCuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period")
 		  Dim ImprintMultiplier As Double = TargetCuddleSeconds / OfficialCuddlePeriod
 		  
-		  Preferences.BreedingTunerCreatures = Self.mLastCheckedList.ToText
+		  Preferences.BreedingTunerCreatures = Self.mLastCheckedList
 		  Self.mChosenMultiplier = ImprintMultiplier
 		  Self.Hide
 		End Sub
@@ -550,7 +550,7 @@ End
 #tag Events MajorCreaturesButton
 	#tag Event
 		Sub Action()
-		  Self.CheckCreatures(LocalData.SharedInstance.GetTextVariable("Major Imprint Creatures"))
+		  Self.CheckCreatures(LocalData.SharedInstance.GetStringVariable("Major Imprint Creatures"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

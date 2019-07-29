@@ -31,17 +31,17 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
-		  Self.mBehaviors = New Xojo.Core.Dictionary
+		  Self.mBehaviors = New Dictionary
 		  
 		  If Not Dict.HasKey("Creatures") Then
 		    Return
 		  End If
 		  
-		  Dim Dicts() As Auto = Dict.Value("Creatures")
-		  For Each CreatureDict As Xojo.Core.Dictionary In Dicts
+		  Dim Dicts() As Variant = Dict.Value("Creatures")
+		  For Each CreatureDict As Dictionary In Dicts
 		    Dim Behavior As Beacon.CreatureBehavior = Beacon.CreatureBehavior.FromDictionary(CreatureDict)
 		    If Behavior = Nil Then
 		      Return
@@ -53,11 +53,11 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
+		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
-		  Dim Dicts() As Xojo.Core.Dictionary
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mBehaviors
+		  Dim Dicts() As Dictionary
+		  For Each Entry As DictionaryEntry In Self.mBehaviors
 		    Dim Behavior As Beacon.CreatureBehavior = Entry.Value
 		    Dicts.Append(Behavior.ToDictionary)
 		  Next
@@ -70,7 +70,7 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Function All() As Beacon.CreatureBehavior()
 		  Dim Behaviors() As Beacon.CreatureBehavior
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mBehaviors
+		  For Each Entry As DictionaryEntry In Self.mBehaviors
 		    Dim Behavior As Beacon.CreatureBehavior = Entry.Value
 		    Behaviors.Append(New Beacon.CreatureBehavior(Behavior))
 		  Next
@@ -79,7 +79,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Behavior(TargetClass As Text) As Beacon.CreatureBehavior
+		Function Behavior(TargetClass As String) As Beacon.CreatureBehavior
 		  If Not Self.mBehaviors.HasKey(TargetClass) Then
 		    Return Nil
 		  End If
@@ -90,44 +90,44 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Behavior(TargetClass As Text, Assigns Behavior As Beacon.CreatureBehavior)
+		Sub Behavior(TargetClass As String, Assigns Behavior As Beacon.CreatureBehavior)
 		  Self.mBehaviors.Value(TargetClass) = New Beacon.CreatureBehavior(Behavior)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As Text
+		Shared Function ConfigName() As String
 		  Return "DinoAdjustments"
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mBehaviors = New Xojo.Core.Dictionary
+		  Self.mBehaviors = New Dictionary
 		  Super.Constructor
 		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.DinoAdjustments
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.DinoAdjustments
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
 		  Dim Config As New BeaconConfigs.DinoAdjustments()
 		  
-		  Dim Replacements() As Auto = ParsedData.AutoArrayValue("NPCReplacements")
-		  For Each Entry As Auto In Replacements
+		  Dim Replacements() As Variant = ParsedData.AutoArrayValue("NPCReplacements")
+		  For Each Entry As Variant In Replacements
 		    Try
-		      Dim Dict As Xojo.Core.Dictionary = Entry
+		      Dim Dict As Dictionary = Entry
 		      If Dict.HasKey("FromClassName") = False Or Dict.HasKey("ToClassName") = False Then
 		        Continue
 		      End If
 		      
-		      Dim TargetClass As Text = Dict.Value("FromClassName")
-		      Dim ReplacementClass As Text = Dict.Value("ToClassName")
+		      Dim TargetClass As String = Dict.Value("FromClassName")
+		      Dim ReplacementClass As String = Dict.Value("ToClassName")
 		      
 		      Dim Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
 		      If ReplacementClass = "" Then
@@ -140,15 +140,15 @@ Inherits Beacon.ConfigGroup
 		    End Try
 		  Next
 		  
-		  Dim WildDamageMultipliers() As Auto = ParsedData.AutoArrayValue("DinoClassDamageMultipliers")
-		  For Each Entry As Auto In WildDamageMultipliers
+		  Dim WildDamageMultipliers() As Variant = ParsedData.AutoArrayValue("DinoClassDamageMultipliers")
+		  For Each Entry As Variant In WildDamageMultipliers
 		    Try
-		      Dim Dict As Xojo.Core.Dictionary = Entry
+		      Dim Dict As Dictionary = Entry
 		      If Dict.HasKey("ClassName") = False Or Dict.HasKey("Multiplier") = False Then
 		        Continue
 		      End If
 		      
-		      Dim TargetClass As Text = Dict.Value("ClassName")
+		      Dim TargetClass As String = Dict.Value("ClassName")
 		      Dim Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
 		      
 		      Dim Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
@@ -158,15 +158,15 @@ Inherits Beacon.ConfigGroup
 		    End Try
 		  Next
 		  
-		  Dim WildResistanceMultipliers() As Auto = ParsedData.AutoArrayValue("DinoClassResistanceMultipliers")
-		  For Each Entry As Auto In WildResistanceMultipliers
+		  Dim WildResistanceMultipliers() As Variant = ParsedData.AutoArrayValue("DinoClassResistanceMultipliers")
+		  For Each Entry As Variant In WildResistanceMultipliers
 		    Try
-		      Dim Dict As Xojo.Core.Dictionary = Entry
+		      Dim Dict As Dictionary = Entry
 		      If Dict.HasKey("ClassName") = False Or Dict.HasKey("Multiplier") = False Then
 		        Continue
 		      End If
 		      
-		      Dim TargetClass As Text = Dict.Value("ClassName")
+		      Dim TargetClass As String = Dict.Value("ClassName")
 		      Dim Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
 		      
 		      Dim Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
@@ -176,15 +176,15 @@ Inherits Beacon.ConfigGroup
 		    End Try
 		  Next
 		  
-		  Dim TamedDamageMultipliers() As Auto = ParsedData.AutoArrayValue("TamedDinoClassDamageMultipliers")
-		  For Each Entry As Auto In TamedDamageMultipliers
+		  Dim TamedDamageMultipliers() As Variant = ParsedData.AutoArrayValue("TamedDinoClassDamageMultipliers")
+		  For Each Entry As Variant In TamedDamageMultipliers
 		    Try
-		      Dim Dict As Xojo.Core.Dictionary = Entry
+		      Dim Dict As Dictionary = Entry
 		      If Dict.HasKey("ClassName") = False Or Dict.HasKey("Multiplier") = False Then
 		        Continue
 		      End If
 		      
-		      Dim TargetClass As Text = Dict.Value("ClassName")
+		      Dim TargetClass As String = Dict.Value("ClassName")
 		      Dim Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
 		      
 		      Dim Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
@@ -194,15 +194,15 @@ Inherits Beacon.ConfigGroup
 		    End Try
 		  Next
 		  
-		  Dim TamedResistanceMultipliers() As Auto = ParsedData.AutoArrayValue("TamedDinoClassResistanceMultipliers")
-		  For Each Entry As Auto In TamedResistanceMultipliers
+		  Dim TamedResistanceMultipliers() As Variant = ParsedData.AutoArrayValue("TamedDinoClassResistanceMultipliers")
+		  For Each Entry As Variant In TamedResistanceMultipliers
 		    Try
-		      Dim Dict As Xojo.Core.Dictionary = Entry
+		      Dim Dict As Dictionary = Entry
 		      If Dict.HasKey("ClassName") = False Or Dict.HasKey("Multiplier") = False Then
 		        Continue
 		      End If
 		      
-		      Dim TargetClass As Text = Dict.Value("ClassName")
+		      Dim TargetClass As String = Dict.Value("ClassName")
 		      Dim Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
 		      
 		      Dim Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
@@ -224,7 +224,7 @@ Inherits Beacon.ConfigGroup
 		    Return True
 		  End If
 		  
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mBehaviors
+		  For Each Entry As DictionaryEntry In Self.mBehaviors
 		    Dim Behavior As Beacon.CreatureBehavior = Entry.Value
 		    If Behavior.Modified Then
 		      Return True
@@ -238,7 +238,7 @@ Inherits Beacon.ConfigGroup
 		  Super.Modified = Value
 		  
 		  If Not Value Then
-		    For Each Entry As Xojo.Core.DictionaryEntry In Self.mBehaviors
+		    For Each Entry As DictionaryEntry In Self.mBehaviors
 		      Dim Behavior As Beacon.CreatureBehavior = Entry.Value
 		      Behavior.Modified = False
 		    Next
@@ -247,7 +247,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Shared Function MutableBehavior(Config As BeaconConfigs.DinoAdjustments, ClassString As Text) As Beacon.MutableCreatureBehavior
+		Protected Shared Function MutableBehavior(Config As BeaconConfigs.DinoAdjustments, ClassString As String) As Beacon.MutableCreatureBehavior
 		  Dim Behavior As Beacon.CreatureBehavior = Config.Behavior(ClassString)
 		  If Behavior <> Nil Then
 		    Return New Beacon.MutableCreatureBehavior(Behavior)
@@ -258,7 +258,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveBehavior(TargetClass As Text)
+		Sub RemoveBehavior(TargetClass As String)
 		  If Self.mBehaviors.HasKey(TargetClass) Then
 		    Self.mBehaviors.Remove(TargetClass)
 		    Self.Modified = True
@@ -268,7 +268,7 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Property, Flags = &h21
-		Private mBehaviors As Xojo.Core.Dictionary
+		Private mBehaviors As Dictionary
 	#tag EndProperty
 
 

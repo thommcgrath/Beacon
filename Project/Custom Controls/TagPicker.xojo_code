@@ -270,7 +270,7 @@ Inherits ControlCanvas
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ResizeBy(Delta As Auto)
+		Private Sub ResizeBy(Delta As Variant)
 		  Try
 		    Dim OriginalHeight As Integer = Self.Height
 		    RaiseEvent ShouldAdjustHeight(Delta)
@@ -328,53 +328,6 @@ Inherits ControlCanvas
 		    Clone(I) = Self.mTags(I)
 		  Next
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Tags(Assigns Values As Beacon.TextList)
-		  If Values = Nil Then
-		    Return
-		  End If
-		  
-		  Dim Changed As Boolean
-		  If Self.mTags.Ubound <> Values.Ubound Then
-		    Redim Self.mTags(Values.Ubound)
-		    Changed = True
-		  End If
-		  For I As Integer = 0 To Values.Ubound
-		    If StrComp(Self.mTags(I), Values(I), 0) <> 0 Then
-		      Self.mTags(I) = Values(I)
-		      Changed = True
-		    End If
-		  Next
-		  
-		  If Changed Then
-		    Redim Self.mCells(-1)
-		    Redim Self.mCells(Self.mTags.Ubound)
-		    
-		    Dim FireChangeEvent As Boolean
-		    For I As Integer = Self.mRequireTags.Ubound DownTo 0
-		      If Self.mTags.IndexOf(Self.mRequireTags(I)) = -1 Then
-		        Self.mRequireTags.Remove(I)
-		        FireChangeEvent = True
-		      End
-		      If Self.mTags.IndexOf(Self.mExcludeTags(I)) = -1 Then
-		        Self.mExcludeTags.Remove(I)
-		        FireChangeEvent = True
-		      End If
-		    Next
-		    
-		    If FireChangeEvent Then
-		      If App.CurrentThread = Nil Then
-		        RaiseEvent Change
-		      Else
-		        Call CallLater.Schedule(0, AddressOf TriggerChange)
-		      End If
-		    End If
-		    
-		    Self.Invalidate()
-		  End If
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

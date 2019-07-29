@@ -31,6 +31,7 @@ Begin ContainerControl LootSourceSettingsContainer
       AllowFocus      =   False
       AutoDeactivate  =   True
       Enabled         =   True
+      Facing          =   0
       Facing          =   "0"
       FacingDirection =   "0"
       Height          =   18
@@ -62,9 +63,7 @@ Begin ContainerControl LootSourceSettingsContainer
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648

@@ -145,7 +145,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.LootScale
-		  Static ConfigName As Text = BeaconConfigs.LootScale.ConfigName
+		  Static ConfigName As String = BeaconConfigs.LootScale.ConfigName
 		  
 		  Dim Document As Beacon.Document = Self.Document
 		  Dim Config As BeaconConfigs.LootScale
@@ -169,7 +169,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigLabel() As Text
+		Function ConfigLabel() As String
 		  Return Language.LabelForConfig(BeaconConfigs.LootScale.ConfigName)
 		End Function
 	#tag EndMethod

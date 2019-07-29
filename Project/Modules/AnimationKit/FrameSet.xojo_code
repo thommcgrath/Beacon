@@ -1,6 +1,6 @@
 #tag Class
 Protected Class FrameSet
-Implements xojo.Core.Iterable
+Implements  Iterable
 	#tag Method, Flags = &h0
 		Sub Append(Frame As AnimationKit.Frame)
 		  Self.VerifyFrame(Frame)
@@ -106,14 +106,6 @@ Implements xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetIterator() As Xojo.Core.Iterator
-		  // Part of the xojo.Core.Iterable interface.
-		  
-		  Return New AnimationKit.FrameSetIterator(Self)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function IndexOf(Frame As AnimationKit.Frame) As Integer
 		  For I As Integer = 0 To UBound(Self.Frames)
 		    If Self.Frames(I) = Frame Then
@@ -133,10 +125,24 @@ Implements xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Iterator() As Iterator
+		  // Part of the Iterable interface.
+		  
+		  Return New AnimationKit.FrameSetIterator(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function LastFrame() As AnimationKit.Frame
 		  If Self.Count > 0 Then
 		    Return Self.Frames(UBound(Self.Frames))
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LastRowIndex() As Integer
+		  Return Self.Frames.LastRowIndex
 		End Function
 	#tag EndMethod
 
@@ -217,12 +223,6 @@ Implements xojo.Core.Iterable
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function UBound() As Integer
-		  Return UBound(Self.Frames)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub VerifyFrame(Frame As AnimationKit.Frame)
 		  If Frame = Nil Or Self.Width = -1 Or Self.Height = -1 Then
@@ -258,6 +258,7 @@ Implements xojo.Core.Iterable
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -265,18 +266,23 @@ Implements xojo.Core.Iterable
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -284,6 +290,7 @@ Implements xojo.Core.Iterable
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

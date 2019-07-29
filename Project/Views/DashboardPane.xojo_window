@@ -108,9 +108,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   128
       HelpTag         =   ""
       Index           =   -2147483648
@@ -264,9 +262,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   30
       HelpTag         =   ""
       Index           =   -2147483648
@@ -394,25 +390,19 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DashboardURL() As Text
-		  Return Beacon.WebURL("/inapp/dashboard.php/" + Beacon.EncodeURLComponent(Preferences.OnlineToken) + "?build=" + App.BuildNumber.ToText)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
 		  Case LocalData.Notification_DatabaseUpdated
-		    Dim LastSync As Xojo.Core.Date = Notification.UserData
+		    Dim LastSync As Date = Notification.UserData
 		    If LastSync = Nil Then
 		      LastSync = LocalData.SharedInstance.LastSync
 		    End If
 		    If LastSync = Nil Then
 		      Self.SyncLabel.Value = "No engram data available"
 		    Else
-		      Self.SyncLabel.Value = "Engrams updated " + LastSync.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Long, Xojo.Core.Date.FormatStyles.Short) + " UTC"
+		      Self.SyncLabel.Value = "Engrams updated " + LastSync.ToString(Locale.Current, Date.FormatStyles.Long, Date.FormatStyles.Short) + " UTC"
 		    End If
 		  Case IdentityManager.Notification_IdentityChanged
 		    Self.TitleCanvas.Invalidate
@@ -465,11 +455,11 @@ End
 #tag Events SyncLabel
 	#tag Event
 		Sub Open()
-		  Dim LastSync As Xojo.Core.Date = LocalData.SharedInstance.LastSync
+		  Dim LastSync As Date = LocalData.SharedInstance.LastSync
 		  If LastSync = Nil Then
 		    Me.Value = "No engram data available"
 		  Else
-		    Me.Value = "Engrams updated " + LastSync.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Long, Xojo.Core.Date.FormatStyles.Short) + " UTC"
+		    Me.Value = "Engrams updated " + LastSync.ToString(Locale.Current, Date.FormatStyles.Long, Date.FormatStyles.Short) + " UTC"
 		  End If
 		End Sub
 	#tag EndEvent

@@ -31,8 +31,8 @@ Protected Module Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function LastUsedConfigName(DocumentID As Text) As Text
-		  Dim Dict As Xojo.Core.Dictionary = mManager.AutoValue("Last Used Config", New Xojo.Core.Dictionary)
+		Protected Function LastUsedConfigName(DocumentID As String) As String
+		  Dim Dict As Dictionary = mManager.DictionaryValue("Last Used Config", New Dictionary)
 		  If Dict.HasKey(DocumentID) Then
 		    Return Dict.Value(DocumentID)
 		  Else
@@ -42,10 +42,10 @@ Protected Module Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub LastUsedConfigName(DocumentID As Text, Assigns ConfigName As Text)
-		  Dim Dict As Xojo.Core.Dictionary = mManager.AutoValue("Last Used Config", New Xojo.Core.Dictionary)
+		Protected Sub LastUsedConfigName(DocumentID As String, Assigns ConfigName As String)
+		  Dim Dict As Dictionary = mManager.DictionaryValue("Last Used Config", New Dictionary)
 		  Dict.Value(DocumentID) = ConfigName
-		  mManager.AutoValue("Last Used Config") = Dict
+		  mManager.DictionaryValue("Last Used Config") = Dict
 		End Sub
 	#tag EndMethod
 
@@ -56,17 +56,17 @@ Protected Module Preferences
 		  // When used with a freshly parsed file, the return type will be Auto()
 		  // Once the array is updated, the local copy will return Text()
 		  
-		  Dim Temp As Auto = mManager.AutoValue("Documents")
-		  Dim StoredData() As Text
+		  Dim Temp As Variant = mManager.VariantValue("Documents")
+		  Dim StoredData() As String
 		  If Temp <> Nil Then
-		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Temp)
-		    If Info.Name = "Text()" Then
+		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Temp)
+		    If Info.Name = "String()" Then
 		      StoredData = Temp
-		    ElseIf Info.Name = "Text" Then
+		    ElseIf Info.Name = "String" Then
 		      StoredData.Append(Temp)
-		    ElseIf Info.Name = "Auto()" Then
-		      Dim Arr() As Auto = Temp
-		      For Each Item As Auto In Arr
+		    ElseIf Info.Name = "Variant()" Then
+		      Dim Arr() As Variant = Temp
+		      For Each Item As Variant In Arr
 		        Try
 		          StoredData.Append(Item)
 		        Catch Err As TypeMismatchException
@@ -77,7 +77,7 @@ Protected Module Preferences
 		  End If
 		  
 		  Dim Values() As Beacon.DocumentURL
-		  For Each Value As Text In StoredData
+		  For Each Value As String In StoredData
 		    Try
 		      Values.Append(New Beacon.DocumentURL(Value))
 		    Catch Err As RuntimeException
@@ -90,27 +90,27 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Sub RecentDocuments(Assigns Values() As Beacon.DocumentURL)
-		  Dim URLs() As Text
+		  Dim URLs() As String
 		  Redim URLs(Values.Ubound)
 		  For I As Integer = 0 To Values.Ubound
 		    URLs(I) = Values(I).URL
 		  Next
 		  
 		  Init
-		  mManager.AutoValue("Documents") = URLs
+		  mManager.VariantValue("Documents") = URLs
 		  NotificationKit.Post(Notification_RecentsChanged, Values)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function SelectedTag(Category As Text, Subgroup As Text) As Text
-		  Dim Key As Text = "Selected " + Category.TitleCase
+		Protected Function SelectedTag(Category As String, Subgroup As String) As String
+		  Dim Key As String = "Selected " + Category.TitleCase
 		  If Subgroup <> "" Then
 		    Key = Key + "." + Subgroup.TitleCase
 		  End If
 		  Key = Key + " Tag"
 		  
-		  Dim Default As Text
+		  Dim Default As String
 		  
 		  Select Case Category
 		  Case Beacon.CategoryEngrams
@@ -129,19 +129,19 @@ Protected Module Preferences
 		  End Select
 		  
 		  Init
-		  Return mManager.TextValue(Key, Default)
+		  Return mManager.StringValue(Key, Default)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub SelectedTag(Category As Text, Subgroup As Text, Assigns Value As Text)
-		  Dim Key As Text = "Selected " + Category.TitleCase
+		Protected Sub SelectedTag(Category As String, Subgroup As String, Assigns Value As String)
+		  Dim Key As String = "Selected " + Category.TitleCase
 		  If Subgroup <> "" Then
 		    Key = Key + "." + Subgroup.TitleCase
 		  End If
 		  Key = Key + " Tag"
 		  
-		  mManager.TextValue(Key) = Value
+		  mManager.StringValue(Key) = Value
 		End Sub
 	#tag EndMethod
 
@@ -150,7 +150,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.TextValue("Breeding Tuner Creatures", "*")
+			  Return mManager.StringValue("Breeding Tuner Creatures", "*")
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -159,10 +159,10 @@ Protected Module Preferences
 			    Return
 			  End If
 			  
-			  mManager.TextValue("Breeding Tuner Creatures") = Value
+			  mManager.StringValue("Breeding Tuner Creatures") = Value
 			End Set
 		#tag EndSetter
-		Protected BreedingTunerCreatures As Text
+		Protected BreedingTunerCreatures As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -185,7 +185,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.SizeValue("Entry Editor Size", New Xojo.Core.Size(900, 500))
+			  Return mManager.SizeValue("Entry Editor Size", New Size(900, 500))
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -194,7 +194,7 @@ Protected Module Preferences
 			  mManager.SizeValue("Entry Editor Size") = Value
 			End Set
 		#tag EndSetter
-		Protected EntryEditorSize As Xojo.Core.Size
+		Protected EntryEditorSize As Size
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -274,7 +274,7 @@ Protected Module Preferences
 			  mManager.RectValue("Main Window Size") = Value
 			End Set
 		#tag EndSetter
-		Protected MainWindowPosition As Xojo.Core.Rect
+		Protected MainWindowPosition As Rect
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
@@ -305,7 +305,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.TextValue("Online Token", "")
+			  Return mManager.StringValue("Online Token", "")
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -314,11 +314,11 @@ Protected Module Preferences
 			    Return
 			  End If
 			  
-			  mManager.TextValue("Online Token") = Value
+			  mManager.StringValue("Online Token") = Value
 			  NotificationKit.Post(Notification_OnlineTokenChanged, Value)
 			End Set
 		#tag EndSetter
-		Protected OnlineToken As Text
+		Protected OnlineToken As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1
@@ -406,6 +406,7 @@ Protected Module Preferences
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -413,18 +414,23 @@ Protected Module Preferences
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -432,6 +438,7 @@ Protected Module Preferences
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Module

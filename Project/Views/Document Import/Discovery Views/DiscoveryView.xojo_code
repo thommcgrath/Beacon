@@ -54,7 +54,7 @@ Inherits ContainerControl
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ShouldFinish(Engines() As Beacon.DiscoveryEngine, OAuthProvider As Text, OAuthData As Xojo.Core.Dictionary)
+		Protected Sub ShouldFinish(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
 		  RaiseEvent Finished(Engines, OAuthProvider, OAuthData)
 		End Sub
 	#tag EndMethod
@@ -65,7 +65,7 @@ Inherits ContainerControl
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As Text, OAuthData As Xojo.Core.Dictionary)
+		Event Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

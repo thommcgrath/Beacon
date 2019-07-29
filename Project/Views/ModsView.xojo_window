@@ -280,7 +280,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Shown(UserData As Auto = Nil)
+		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
 		  Self.RefreshMods()
@@ -317,8 +317,8 @@ End
 		  
 		  ModList.DeleteAllRows()
 		  
-		  Dim Arr() As Auto = Response.JSON
-		  For Each Dict As Xojo.Core.Dictionary In Arr
+		  Dim Arr() As Variant = Response.JSON
+		  For Each Dict As Dictionary In Arr
 		    Dim UserMod As New BeaconAPI.WorkshopMod(Dict)
 		    
 		    ModList.AddRow(UserMod.Name)

@@ -144,9 +144,9 @@ Begin BeaconSubview PresetEditorView
       SelectedPanelIndex=   2
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   61
       Transparent     =   False
-      Value           =   "0"
       Value           =   2
       Visible         =   True
       Width           =   740
@@ -167,6 +167,7 @@ Begin BeaconSubview PresetEditorView
          SelectionStyle  =   "0"
          TabIndex        =   0
          TabPanelIndex   =   2
+         TabStop         =   True
          Top             =   81
          Transparent     =   False
          Visible         =   True
@@ -1053,7 +1054,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim NewEntries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, New Beacon.TextList, Entries)
+		  Dim NewEntries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, New Beacon.StringList, Entries)
 		  If NewEntries = Nil Then
 		    Return
 		  End If
@@ -1062,7 +1063,7 @@ End
 		  For Each NewEntry As Beacon.SetEntry In NewEntries
 		    Dim OriginalEntry As Beacon.PresetEntry
 		    Dim OriginalIndex As Integer = -1
-		    For I As Integer = 0 To UBound(Self.mPreset)
+		    For I As Integer = 0 To Self.mPreset.LastRowIndex
 		      If Self.mPreset(I).UniqueID = NewEntry.UniqueID Then
 		        OriginalEntry = Self.mPreset(I)
 		        OriginalIndex = I
@@ -1201,7 +1202,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddDialog()
-		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, New Beacon.TextList)
+		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, New Beacon.StringList)
 		  If Entries = Nil Or Entries.Ubound = -1 Then
 		    Return
 		  End If
@@ -1221,7 +1222,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowModifierEditor(Edit As Boolean)
-		  Dim EditID As Text
+		  Dim EditID As String
 		  If Edit And Self.ModifiersList.SelectedRowCount = 1 Then
 		    EditID = Self.ModifiersList.RowTag(Self.ModifiersList.SelectedIndex)
 		  End If
@@ -1266,7 +1267,7 @@ End
 		  Self.MapSelector.SegmentValueAt(6).IsSelected = (Mask And Beacon.Maps.Valguero.Mask) = Beacon.Maps.Valguero.Mask
 		  
 		  Dim Maps() As Beacon.Map = Self.FilteredMaps()
-		  Dim SelectedEntries() As Text
+		  Dim SelectedEntries() As String
 		  For I As Integer = 0 To Self.ContentsList.RowCount - 1
 		    If Self.ContentsList.Selected(I) Then
 		      Dim Entry As Beacon.PresetEntry = Self.ContentsList.RowTag(I)
@@ -1283,7 +1284,7 @@ End
 		  Self.GroupingField.Value = Self.mPreset.Grouping
 		  Self.UpdateMinAndMaxFields
 		  
-		  Dim AppliedModifiers() As Text = Self.mPreset.ActiveModifierIDs
+		  Dim AppliedModifiers() As String = Self.mPreset.ActiveModifierIDs
 		  Dim Modifiers() As Beacon.PresetModifier = LocalData.SharedInstance.AllPresetModifiers
 		  Self.ModifiersList.DeleteAllRows()
 		  For Each Modifier As Beacon.PresetModifier In Modifiers
@@ -1296,18 +1297,18 @@ End
 		    Dim MaxQualityModifier As Integer = Self.mPreset.MaxQualityModifier(Modifier)
 		    Dim BlueprintMultiplier As Double = Self.mPreset.BlueprintMultiplier(Modifier)
 		    
-		    Dim QuantityLabel As Text = "x " + QuantityMultiplier.ToText(Xojo.Core.Locale.Current)
-		    Dim BlueprintLabel As Text = "x " + BlueprintMultiplier.ToText(Xojo.Core.Locale.Current)
-		    Dim MinQualityLabel, MaxQualityLabel As Text
+		    Dim QuantityLabel As String = "x " + QuantityMultiplier.ToString(Locale.Current)
+		    Dim BlueprintLabel As String = "x " + BlueprintMultiplier.ToString(Locale.Current)
+		    Dim MinQualityLabel, MaxQualityLabel As String
 		    If MinQualityModifier = 0 Then
 		      MinQualityLabel = "No Change"
 		    Else
-		      MinQualityLabel = MinQualityModifier.ToText(Xojo.Core.Locale.Current, "+0;-0") + " Tier" + If(Xojo.Math.Abs(MinQualityModifier) <> 1, "s", "")
+		      MinQualityLabel = MinQualityModifier.ToString(Locale.Current, "+0;-0") + " Tier" + If(Abs(MinQualityModifier) <> 1, "s", "")
 		    End If
 		    If MaxQualityModifier = 0 Then
 		      MaxQualityLabel = "No Change"
 		    Else
-		      MaxQualityLabel = MaxQualityModifier.ToText(Xojo.Core.Locale.Current, "+0;-0") + " Tier" + If(Xojo.Math.Abs(MaxQualityModifier) <> 1, "s", "")
+		      MaxQualityLabel = MaxQualityModifier.ToString(Locale.Current, "+0;-0") + " Tier" + If(Abs(MaxQualityModifier) <> 1, "s", "")
 		    End If
 		    
 		    Self.ModifiersList.AddRow(Modifier.Label, MinQualityLabel, MaxQualityLabel, QuantityLabel, BlueprintLabel)
@@ -1319,9 +1320,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ViewID() As Text
+		Function ViewID() As String
 		  If Self.mSaveFile <> Nil Then
-		    Return EncodeHex(Crypto.MD5(Self.mSaveFile.NativePath)).ToText
+		    Return EncodeHex(Crypto.MD5(Self.mSaveFile.NativePath))
 		  Else
 		    Return Self.mPreset.PresetID
 		  End If
@@ -1563,7 +1564,7 @@ End
 		  Select Case hitItem.Tag
 		  Case "createblueprintentry"
 		    Dim Maps() As Beacon.Map = Beacon.Maps.All
-		    Dim NewEntries As New Xojo.Core.Dictionary
+		    Dim NewEntries As New Dictionary
 		    For Each Map As Beacon.Map In Maps
 		      Dim Entries() As Beacon.PresetEntry
 		      For I As Integer = 0 To Me.RowCount - 1
@@ -1579,7 +1580,7 @@ End
 		      
 		      Dim BlueprintEntry As Beacon.SetEntry = Beacon.SetEntry.CreateBlueprintEntry(Entries)
 		      If BlueprintEntry <> Nil Then
-		        Dim Hash As Text = BlueprintEntry.Hash
+		        Dim Hash As String = BlueprintEntry.Hash
 		        If NewEntries.HasKey(Hash) Then
 		          Dim Entry As Beacon.PresetEntry = NewEntries.Value(Hash)
 		          Entry.ValidForMap(Map) = True
@@ -1593,7 +1594,7 @@ End
 		      End If
 		    Next
 		    
-		    If NewEntries.Count = 0 Then
+		    If NewEntries.KeyCount = 0 Then
 		      Beep
 		      Return True
 		    End If
@@ -1606,7 +1607,7 @@ End
 		    Me.SelectedIndex = -1
 		    
 		    Dim SelectedMaps() As Beacon.Map = Self.FilteredMaps()
-		    For Each Entry As Xojo.Core.DictionaryEntry In NewEntries
+		    For Each Entry As DictionaryEntry In NewEntries
 		      Dim Item As Beacon.PresetEntry = Entry.Value
 		      Item.RespectQualityModifier = False
 		      Item.RespectQuantityMultiplier = False
@@ -1728,7 +1729,7 @@ End
 		  
 		  Dim Value As String = Trim(Me.Value)
 		  If Value <> "" And StrComp(Self.mPreset.Grouping, Value, 0) <> 0 Then
-		    Self.mPreset.Grouping = Value.ToText
+		    Self.mPreset.Grouping = Value
 		    Self.Changed = True
 		  End If
 		End Sub
@@ -1743,7 +1744,7 @@ End
 		  
 		  Dim Value As String = Trim(Me.Value)
 		  If Value <> "" And StrComp(Self.mPreset.Label, Value, 0) <> 0 Then
-		    Self.mPreset.Label = Value.ToText
+		    Self.mPreset.Label = Value
 		    Self.Changed = True
 		  End If
 		End Sub
@@ -1787,7 +1788,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim ModifierID As Text = Self.ModifiersList.RowTag(I)
+		    Dim ModifierID As String = Self.ModifiersList.RowTag(I)
 		    Self.mPreset.ClearModifier(ModifierID)
 		    Self.ModifiersList.RemoveRow(I)
 		    Self.Changed = True
@@ -1796,14 +1797,14 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Modifiers As New Xojo.Core.Dictionary
+		  Dim Modifiers As New Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Dim ModifierID As Text = Me.RowTag(I)
-		    Dim Dict As New Xojo.Core.Dictionary
+		    Dim ModifierID As String = Me.RowTag(I)
+		    Dim Dict As New Dictionary
 		    Dict.Value("Quantity") = Self.mPreset.QuantityMultiplier(ModifierID)
 		    Dict.Value("MinQuality") = Self.mPreset.MinQualityModifier(ModifierID)
 		    Dict.Value("MaxQuality") = Self.mPreset.MaxQualityModifier(ModifierID)
@@ -1811,7 +1812,7 @@ End
 		    Modifiers.Value(ModifierID) = Dict
 		  Next
 		  
-		  Board.AddRawData(Xojo.Data.GenerateJSON(Modifiers), Self.ModifierClipboardType)
+		  Board.AddRawData(Beacon.GenerateJSON(Modifiers, False), Self.ModifierClipboardType)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1821,12 +1822,12 @@ End
 		  End If
 		  
 		  Try
-		    Dim Data As Text = Board.RawData(Self.ModifierClipboardType).DefineEncoding(Encodings.UTF8).ToText
-		    Dim Modifiers As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Data)
+		    Dim Data As String = Board.RawData(Self.ModifierClipboardType).DefineEncoding(Encodings.UTF8)
+		    Dim Modifiers As Dictionary = Beacon.ParseJSON(Data)
 		    
-		    For Each Entry As Xojo.Core.DictionaryEntry In Modifiers
-		      Dim ModifierID As Text = Entry.Key
-		      Dim Dict As Xojo.Core.Dictionary = Entry.Value
+		    For Each Entry As DictionaryEntry In Modifiers
+		      Dim ModifierID As String = Entry.Key
+		      Dim Dict As Dictionary = Entry.Value
 		      
 		      If Dict.HasKey("Quantity") Then
 		        Self.mPreset.QuantityMultiplier(ModifierID) = Dict.Value("Quantity")

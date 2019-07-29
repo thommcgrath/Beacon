@@ -596,14 +596,14 @@ End
 		    Next
 		    
 		    For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
-		      DeploymentEngine.Begin(Self.mDeployLabel.ToText, Self.mDocument, App.IdentityManager.CurrentIdentity)
+		      DeploymentEngine.Begin(Self.mDeployLabel, Self.mDocument, App.IdentityManager.CurrentIdentity)
 		    Next
 		    
 		    Self.DeployingWatchTimer.RunMode = Timer.RunModes.Multiple
 		    Return
 		  End If
 		  
-		  Dim Provider As Text = Self.mOAuthQueue(0)
+		  Dim Provider As String = Self.mOAuthQueue(0)
 		  Self.mOAuthQueue.Remove(0)
 		  
 		  Self.Auth.Provider = Provider
@@ -628,8 +628,8 @@ End
 		    Return True
 		  End If
 		  
-		  Dim GameIniContent As Text = Engine.BackupGameIni.Trim
-		  Dim GameUserSettingsIniContent As Text = Engine.BackupGameUserSettingsIni.Trim
+		  Dim GameIniContent As String = Engine.BackupGameIni.Trim
+		  Dim GameUserSettingsIniContent As String = Engine.BackupGameUserSettingsIni.Trim
 		  If GameIniContent = "" And GameUserSettingsIniContent = "" Then
 		    Return True
 		  End If
@@ -675,7 +675,7 @@ End
 		    If GameIniFile = Nil Then
 		      App.Log("Unable to backup Game.ini for " + Engine.Name + ": Could not get path to Game.ini")
 		      BackedUp = False
-		    ElseIf GameIniFile.Write(GameIniContent, Xojo.Core.TextEncoding.UTF8) = False Then
+		    ElseIf GameIniFile.Write(GameIniContent) = False Then
 		      App.Log("Unable to backup Game.ini for " + Engine.Name + " to " + GameIniFile.NativePath)
 		      BackedUp = False
 		    End If
@@ -685,7 +685,7 @@ End
 		    If GameUserSettingsIniFile = Nil Then
 		      App.Log("Unable to backup Game.ini for " + Engine.Name + ": Could not get path to GameUserSettings.ini")
 		      BackedUp = False
-		    ElseIf GameUserSettingsIniFile.Write(GameUserSettingsIniContent, Xojo.Core.TextEncoding.UTF8) = False Then
+		    ElseIf GameUserSettingsIniFile.Write(GameUserSettingsIniContent) = False Then
 		      App.Log("Unable to backup Game.ini for " + Engine.Name + " to " + GameUserSettingsIniFile.NativePath)
 		      BackedUp = False
 		    End If
@@ -758,7 +758,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mCurrentProvider As Text
+		Private mCurrentProvider As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -774,7 +774,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOAuthQueue() As Text
+		Private mOAuthQueue() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -867,7 +867,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Provider As Text = Profile.OAuthProvider
+		    Dim Provider As String = Profile.OAuthProvider
 		    If Provider <> "" And Self.mOAuthQueue.IndexOf(Provider) = -1 Then
 		      Self.mOAuthQueue.Append(Provider)
 		    End If
@@ -965,7 +965,7 @@ End
 		    
 		    For Each Engine As Beacon.DeploymentEngine In Self.mDeploymentEngines
 		      If Not Self.Backup(Engine, BackupsFolder) Then
-		        LocalData.SharedInstance.SaveNotification(New Beacon.UserNotification("Beacon was unable to create a backup of your ini files for server " + Engine.Name + ", deploy label " + Self.mDeployLabel.ToText + "."))
+		        LocalData.SharedInstance.SaveNotification(New Beacon.UserNotification("Beacon was unable to create a backup of your ini files for server " + Engine.Name + ", deploy label " + Self.mDeployLabel + "."))
 		      End If
 		    Next
 		    

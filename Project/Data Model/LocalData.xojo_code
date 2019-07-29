@@ -21,7 +21,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dim Mods() As Beacon.ModDetails
 		  Dim Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe FROM mods ORDER BY name;")
 		  While Not Results.IsAfterLastRow
-		    Mods.Append(New Beacon.ModDetails(Results.Column("mod_id").StringValue.ToText, Results.Column("name").StringValue.ToText, Results.Column("console_safe").BooleanValue))
+		    Mods.Append(New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue))
 		    Results.MoveToNextRow
 		  Wend
 		  Return Mods
@@ -33,10 +33,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dim Results As RowSet = Self.SQLSelect("SELECT object_id, label, pattern FROM preset_modifiers ORDER BY label;")
 		  Dim Modifiers() As Beacon.PresetModifier
 		  While Not Results.IsAfterLastRow
-		    Dim Dict As New Xojo.Core.Dictionary
-		    Dict.Value("ModifierID") = Results.Column("object_id").StringValue.ToText
-		    Dict.Value("Pattern") = Results.Column("pattern").StringValue.ToText
-		    Dict.Value("Label") = Results.Column("label").StringValue.ToText
+		    Dim Dict As New Dictionary
+		    Dict.Value("ModifierID") = Results.Column("object_id").StringValue
+		    Dict.Value("Pattern") = Results.Column("pattern").StringValue
+		    Dict.Value("Label") = Results.Column("label").StringValue
 		    
 		    Dim Modifier As Beacon.PresetModifier = Beacon.PresetModifier.FromDictionary(Dict)
 		    If Modifier <> Nil Then
@@ -116,9 +116,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts5(tags, object_id, source_table);")
 		  
 		  Self.SQLExecute("CREATE VIEW blueprints AS SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryEngrams + "' AS category FROM engrams UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryCreatures + "' AS category FROM creatures;")
-		  Dim Categories() As Text = Array(Beacon.CategoryCreatures, Beacon.CategoryEngrams)
+		  Dim Categories() As String = Array(Beacon.CategoryCreatures, Beacon.CategoryEngrams)
 		  Dim DeleteStatements() As String
-		  For Each Category As Text In Categories
+		  For Each Category As String In Categories
 		    DeleteStatements.Append("DELETE FROM " + Category + " WHERE object_id = OLD.object_id;")
 		  Next
 		  Self.SQLExecute("CREATE TRIGGER blueprints_delete_trigger INSTEAD OF DELETE ON blueprints FOR EACH ROW BEGIN " + DeleteStatements.Join(" ") + " DELETE FROM searchable_tags WHERE object_id = OLD.object_id; END;")
@@ -142,31 +142,31 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  If Self.mUpdater = Nil Then
-		    Self.mUpdater = New Xojo.Net.HTTPSocket
-		    Self.mUpdater.ValidateCertificates = True
+		    Self.mUpdater = New URLConnection
+		    Self.mUpdater.AllowCertificateValidation = True
 		    Self.mUpdater.RequestHeader("Cache-Control") = "no-cache"
-		    AddHandler Self.mUpdater.PageReceived, WeakAddressOf Self.mUpdater_PageReceived
+		    AddHandler Self.mUpdater.ContentReceived, WeakAddressOf Self.mUpdater_ContentReceived
 		    AddHandler Self.mUpdater.Error, WeakAddressOf Self.mUpdater_Error
 		  End If
 		  
 		  Self.mCheckingForUpdates = True
-		  Dim CheckURL As Text = Self.ClassesURL()
+		  Dim CheckURL As String = Self.ClassesURL()
 		  App.Log("Checking for engram updates from " + CheckURL)
 		  Self.mUpdater.Send("GET", CheckURL)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ClassesURL() As Text
+		Function ClassesURL() As String
 		  Dim Version As Integer = App.BuildNumber
 		  
 		  Dim LastSync As String = Self.Variable("sync_time")
-		  Dim CheckURL As Text = Beacon.WebURL("/download/classes.php?version=" + Version.ToText)
+		  Dim CheckURL As String = Beacon.WebURL("/download/classes.php?version=" + Version.ToString)
 		  If LastSync <> "" Then
-		    CheckURL = CheckURL + "&changes_since=" + EncodeURLComponent(LastSync).ToText
+		    CheckURL = CheckURL + "&changes_since=" + EncodeURLComponent(LastSync)
 		  End If
 		  If App.IdentityManager <> Nil And App.IdentityManager.CurrentIdentity <> Nil Then
-		    CheckURL = CheckURL + "&user_id=" + EncodeURLComponent(App.IdentityManager.CurrentIdentity.Identifier).ToText
+		    CheckURL = CheckURL + "&user_id=" + EncodeURLComponent(App.IdentityManager.CurrentIdentity.Identifier)
 		  End If
 		  Return CheckURL
 		End Function
@@ -193,11 +193,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConsoleSafeMods() As Text()
+		Function ConsoleSafeMods() As String()
 		  Dim Results As RowSet = Self.SQLSelect("SELECT mod_id FROM mods WHERE console_safe = 1;")
-		  Dim Mods() As Text
+		  Dim Mods() As String
 		  While Not Results.IsAfterLastRow
-		    Mods.Append(Results.Column("mod_id").StringValue.ToText)
+		    Mods.Append(Results.Column("mod_id").StringValue)
 		    Results.MoveToNextRow
 		  Wend
 		  Return Mods
@@ -273,7 +273,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Versions.Append(1)
 		        ElseIf Filename.BeginsWith(SearchPrefix) And Filename.EndsWith(SearchSuffix) Then
 		          Candidates.Append(SearchFolder.Item(I))
-		          Versions.Append(Val(Filename.Mid(SearchPrefix.Length + 2, Filename.Length - (SearchPrefix.Length + SearchSuffix.Length))))
+		          Versions.Append(Val(Filename.Middle(SearchPrefix.Length + 2, Filename.Length - (SearchPrefix.Length + SearchSuffix.Length))))
 		        End If
 		      Next
 		      
@@ -421,14 +421,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBlueprintByObjectID(ObjectID As Text) As Beacon.Blueprint
+		Function GetBlueprintByObjectID(ObjectID As String) As Beacon.Blueprint
 		  Dim Results As RowSet = Self.SQLSelect("SELECT path, category FROM blueprints WHERE object_id = ?1;", ObjectID)
 		  If Results.RecordCount <> 1 Then
 		    Return Nil
 		  End If
 		  
-		  Dim Path As Text = Results.Column("path").StringValue.ToText
-		  Select Case Results.Column("category").StringValue.ToText
+		  Dim Path As String = Results.Column("path").StringValue
+		  Select Case Results.Column("category").StringValue
 		  Case Beacon.CategoryEngrams
 		    Return Self.GetEngramByPath(Path)
 		  Case Beacon.CategoryCreatures
@@ -438,7 +438,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBooleanVariable(Key As Text) As Boolean
+		Function GetBooleanVariable(Key As String) As Boolean
 		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RecordCount = 1 Then
 		    Return Results.Column("value").BooleanValue
@@ -464,7 +464,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCreatureByClass(ClassString As Text) As Beacon.Creature
+		Function GetCreatureByClass(ClassString As String) As Beacon.Creature
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Try
@@ -489,7 +489,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetCreatureByPath(Path As Text) As Beacon.Creature
+		Function GetCreatureByPath(Path As String) As Beacon.Creature
 		  // Part of the Beacon.DataSource interface.
 		  
 		  If Self.mCreatureCache.HasKey(Path) Then
@@ -533,7 +533,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetDoubleVariable(Key As Text) As Double
+		Function GetDoubleVariable(Key As String) As Double
 		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RecordCount = 1 Then
 		    Return Results.Column("value").DoubleValue
@@ -544,7 +544,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramByClass(ClassString As Text) As Beacon.Engram
+		Function GetEngramByClass(ClassString As String) As Beacon.Engram
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Try
@@ -569,7 +569,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramByPath(Path As Text) As Beacon.Engram
+		Function GetEngramByPath(Path As String) As Beacon.Engram
 		  // Part of the Beacon.DataSource interface.
 		  
 		  If Self.mEngramCache.HasKey(Path) Then
@@ -594,7 +594,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetIntegerVariable(Key As Text) As Integer
+		Function GetIntegerVariable(Key As String) As Integer
 		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RecordCount = 1 Then
 		    Return Results.Column("value").IntegerValue
@@ -605,7 +605,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetLootSource(ClassString As Text) As Beacon.LootSource
+		Function GetLootSource(ClassString As String) As Beacon.LootSource
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Try
@@ -628,12 +628,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dim Results As RowSet = Self.SQLSelect("SELECT * FROM notifications WHERE deleted = 0 ORDER BY moment DESC;")
 		  While Not Results.IsAfterLastRow
 		    Dim Notification As New Beacon.UserNotification
-		    Notification.Message = Results.Column("message").StringValue.ToText
-		    Notification.SecondaryMessage = Results.Column("secondary_message").StringValue.ToText
-		    Notification.ActionURL = Results.Column("action_url").StringValue.ToText
+		    Notification.Message = Results.Column("message").StringValue
+		    Notification.SecondaryMessage = Results.Column("secondary_message").StringValue
+		    Notification.ActionURL = Results.Column("action_url").StringValue
 		    Notification.Read = Results.Column("read").BooleanValue
-		    Notification.Timestamp = Self.TextToDate(Results.Column("moment").StringValue.ToText)
-		    Notification.UserData = Xojo.Data.ParseJSON(Results.Column("user_data").StringValue.ToText)
+		    Notification.Timestamp = NewDateFromSQLDateTime(Results.Column("moment").StringValue)
+		    Try
+		      Notification.UserData = Beacon.ParseJSON(Results.Column("user_data").StringValue)
+		    Catch Err As RuntimeException
+		    End Try
 		    Notifications.Append(Notification)
 		    
 		    Results.MoveToNextRow
@@ -643,7 +646,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetPreset(PresetID As Text) As Beacon.Preset
+		Function GetPreset(PresetID As String) As Beacon.Preset
 		  For Each Preset As Beacon.Preset In Self.mPresets
 		    If Preset.PresetID = PresetID Then
 		      Return Preset
@@ -653,22 +656,22 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetPresetModifier(ModifierID As Text) As Beacon.PresetModifier
+		Function GetPresetModifier(ModifierID As String) As Beacon.PresetModifier
 		  Dim Results As RowSet = Self.SQLSelect("SELECT object_id, label, pattern FROM preset_modifiers WHERE LOWER(object_id) = LOWER(?1);", ModifierID)
 		  If Results.RecordCount <> 1 Then
 		    Return Nil
 		  End If
 		  
-		  Dim Dict As New Xojo.Core.Dictionary
-		  Dict.Value("ModifierID") = Results.Column("object_id").StringValue.ToText
-		  Dict.Value("Pattern") = Results.Column("pattern").StringValue.ToText
-		  Dict.Value("Label") = Results.Column("label").StringValue.ToText
+		  Dim Dict As New Dictionary
+		  Dict.Value("ModifierID") = Results.Column("object_id").StringValue
+		  Dict.Value("Pattern") = Results.Column("pattern").StringValue
+		  Dict.Value("Label") = Results.Column("label").StringValue
 		  Return Beacon.PresetModifier.FromDictionary(Dict)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetTextVariable(Key As Text) As Text
+		Function GetStringVariable(Key As String) As String
 		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RecordCount = 1 Then
 		    Dim StringValue As String = Results.Column("value").StringValue
@@ -679,7 +682,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Return ""
 		      End If
 		    End If
-		    Return StringValue.ToText
+		    Return StringValue
 		  Else
 		    Return ""
 		  End If
@@ -687,7 +690,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasExperimentalLootSources(Mods As Beacon.TextList) As Boolean
+		Function HasExperimentalLootSources(Mods As Beacon.StringList) As Boolean
 		  Try
 		    Dim Clauses(0) As String
 		    Clauses(0) = "experimental = 1"
@@ -696,7 +699,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Dim NextPlaceholder As Integer = 1
 		    If Mods.Ubound > -1 Then
 		      Dim Placeholders() As String
-		      For Each ModID As Text In Mods
+		      For Each ModID As String In Mods
 		        Placeholders.Append("?" + Str(NextPlaceholder))
 		        Values.Value(NextPlaceholder) = ModID
 		        NextPlaceholder = NextPlaceholder + 1
@@ -823,7 +826,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Import(Content As Text)
+		Sub Import(Content As String)
 		  Self.mPendingImports.Append(Content)
 		  
 		  If Self.mImportThread = Nil Then
@@ -844,12 +847,18 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  If EngramsContent = Nil Then
 		    Return False
 		  End If
-		  Dim Blueprints() As Auto = Xojo.Data.ParseJSON(EngramsContent.StringValue(0, EngramsContent.Size).DefineEncoding(Encodings.UTF8).ToText)
+		  Dim Blueprints() As Variant
+		  Try
+		    Dim StringContent As String = EngramsContent
+		    Blueprints = Beacon.ParseJSON(StringContent.DefineEncoding(Encodings.UTF8))
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
 		  Self.BeginTransaction()
 		  Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id IN (SELECT object_id FROM engrams WHERE mod_id = ?1 UNION SELECT object_id FROM creatures WHERE mod_id = ?1);", Self.UserModID)
 		  Self.SQLExecute("DELETE FROM engrams WHERE mod_id = ?1;", Self.UserModID)
 		  Self.SQLExecute("DELETE FROM creatures WHERE mod_id = ?1;", Self.UserModID)
-		  For Each Dict As Xojo.Core.Dictionary In Blueprints
+		  For Each Dict As Dictionary In Blueprints
 		    Try
 		      Dim Category As String = Dict.Value("category")
 		      Dim Path As String = Dict.Value("path") 
@@ -941,17 +950,17 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function ImportInner(Content As Text) As Boolean
-		  Dim ChangeDict As Xojo.Core.Dictionary
+		Private Function ImportInner(Content As String) As Boolean
+		  Dim ChangeDict As Dictionary
 		  Try
-		    ChangeDict = Xojo.Data.ParseJSON(Content)
-		  Catch Err As Xojo.Data.InvalidJSONException
+		    ChangeDict = Beacon.ParseJSON(Content)
+		  Catch Err As RuntimeException
 		    App.Log("Cannot import classes because the data is not valid JSON.")
 		    Return False
 		  End Try
 		  
-		  Dim RequiredKeys() As Text = Array("mods", "loot_source_icons", "loot_sources", "engrams", "presets", "preset_modifiers", "timestamp", "is_full", "beacon_version")
-		  For Each RequiredKey As Text In RequiredKeys
+		  Dim RequiredKeys() As String = Array("mods", "loot_source_icons", "loot_sources", "engrams", "presets", "preset_modifiers", "timestamp", "is_full", "beacon_version")
+		  For Each RequiredKey As String In RequiredKeys
 		    If Not ChangeDict.HasKey(RequiredKey) Then
 		      App.Log("Cannot import classes because key '" + RequiredKey + "' is missing.")
 		      Return False
@@ -964,8 +973,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return False
 		  End If
 		  
-		  Dim PayloadTimestamp As Xojo.Core.Date = Self.TextToDate(ChangeDict.Value("timestamp"))
-		  Dim LastSync As Xojo.Core.Date = Self.LastSync
+		  Dim PayloadTimestamp As Date = NewDateFromSQLDateTime(ChangeDict.Value("timestamp"))
+		  Dim LastSync As Date = Self.LastSync
 		  If LastSync <> Nil And LastSync.SecondsFrom1970 >= PayloadTimestamp.SecondsFrom1970 Then
 		    Return False
 		  End If
@@ -991,19 +1000,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    
 		    // Caution!! This field always contains all mods.
-		    Dim Mods() As Auto = ChangeDict.Value("mods")
-		    Dim RetainMods() As Text
-		    RetainMods.Append(Self.UserModID.ToText)
-		    For Each ModData As Xojo.Core.Dictionary In Mods
-		      Dim ModID As Text = ModData.Value("mod_id")
-		      Dim ModName As Text = ModData.Value("name")
+		    Dim Mods() As Variant = ChangeDict.Value("mods")
+		    Dim RetainMods() As String
+		    RetainMods.Append(Self.UserModID)
+		    For Each ModData As Dictionary In Mods
+		      Dim ModID As String = ModData.Value("mod_id")
+		      Dim ModName As String = ModData.Value("name")
 		      Dim ConsoleSafe As Boolean = ModData.Value("console_safe")
 		      
 		      ModID = ModID.Lowercase
 		      
 		      Dim Results As RowSet = Self.SQLSelect("SELECT name, console_safe FROM mods WHERE mod_id = ?1;", ModID)
 		      If Results.RecordCount = 1 Then
-		        If ModName.Compare(Results.Column("name").StringValue.ToText, Text.CompareCaseSensitive) <> 0 Or ConsoleSafe <> Results.Column("console_safe").BooleanValue Then
+		        If ModName.Compare(Results.Column("name").StringValue) <> 0 Or ConsoleSafe <> Results.Column("console_safe").BooleanValue Then
 		          Self.SQLExecute("UPDATE mods SET name = ?2, console_safe = ?3 WHERE mod_id = ?1;", ModID, ModName, ConsoleSafe)
 		        End If
 		      Else
@@ -1014,7 +1023,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Next
 		    Dim ModResults As RowSet = Self.SQLSelect("SELECT mod_id FROM mods;")
 		    While Not ModResults.IsAfterLastRow
-		      Dim ModID As Text = ModResults.Column("mod_id").StringValue.ToText.Lowercase
+		      Dim ModID As String = ModResults.Column("mod_id").StringValue.Lowercase
 		      If RetainMods.IndexOf(ModID) = -1 Then
 		        Self.SQLExecute("DELETE FROM mods WHERE mod_id = ?1;", ModID)
 		      End If
@@ -1022,10 +1031,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Wend
 		    
 		    // When deleting, loot_source_icons must be done after loot_sources
-		    Dim Deletions() As Auto = ChangeDict.Value("deletions")
-		    Dim DeleteIcons() As Text
-		    For Each Deletion As Xojo.Core.Dictionary In Deletions
-		      Dim ObjectID As Text = Deletion.Value("object_id")
+		    Dim Deletions() As Variant = ChangeDict.Value("deletions")
+		    Dim DeleteIcons() As String
+		    For Each Deletion As Dictionary In Deletions
+		      Dim ObjectID As String = Deletion.Value("object_id")
 		      ObjectID = ObjectID.Lowercase
 		      Select Case Deletion.Value("group")
 		      Case "loot_sources"
@@ -1038,14 +1047,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.SQLExecute("DELETE FROM official_presets WHERE object_id = ?1;", ObjectID)
 		      End Select
 		    Next
-		    For Each IconID As Text In DeleteIcons
+		    For Each IconID As String In DeleteIcons
 		      Self.SQLExecute("DELETE FROM loot_source_icons WHERE icon_id = ?1;", IconID)
 		    Next
 		    
-		    Dim LootSourceIcons() As Auto = ChangeDict.Value("loot_source_icons")
-		    For Each Dict As Xojo.Core.Dictionary In LootSourceIcons
-		      Dim IconID As Text = Dict.Value("id")
-		      Dim IconData As Xojo.Core.MemoryBlock = Beacon.DecodeBase64(Dict.Value("icon_data"))
+		    Dim LootSourceIcons() As Variant = ChangeDict.Value("loot_source_icons")
+		    For Each Dict As Dictionary In LootSourceIcons
+		      Dim IconID As String = Dict.Value("id")
+		      Dim IconData As MemoryBlock = DecodeBase64(Dict.Value("icon_data"))
 		      
 		      IconID = IconID.Lowercase
 		      
@@ -1060,22 +1069,22 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Self.IconCache = Nil
 		    End If
 		    
-		    Dim LootSources() As Auto = ChangeDict.Value("loot_sources")
-		    For Each Dict As Xojo.Core.Dictionary In LootSources
-		      Dim ObjectID As Text = Dict.Value("id")
-		      Dim Label As Text = Dict.Value("label")
-		      Dim ModID As Text = Xojo.Core.Dictionary(Dict.Value("mod")).Value("id")
+		    Dim LootSources() As Variant = ChangeDict.Value("loot_sources")
+		    For Each Dict As Dictionary In LootSources
+		      Dim ObjectID As String = Dict.Value("id")
+		      Dim Label As String = Dict.Value("label")
+		      Dim ModID As String = Dictionary(Dict.Value("mod")).Value("id")
 		      Dim Availability As Integer = Dict.Value("availability")
-		      Dim Path As Text = Dict.Value("path")
-		      Dim ClassString As Text = Dict.Value("class_string")
-		      Dim MultiplierMin As Double = Xojo.Core.Dictionary(Dict.Value("multipliers")).Value("min")
-		      Dim MultiplierMax As Double = Xojo.Core.Dictionary(Dict.Value("multipliers")).Value("max")
-		      Dim UIColor As Text = Dict.Value("ui_color")
+		      Dim Path As String = Dict.Value("path")
+		      Dim ClassString As String = Dict.Value("class_string")
+		      Dim MultiplierMin As Double = Dictionary(Dict.Value("multipliers")).Value("min")
+		      Dim MultiplierMax As Double = Dictionary(Dict.Value("multipliers")).Value("max")
+		      Dim UIColor As String = Dict.Value("ui_color")
 		      Dim SortOrder As Integer = Dict.Value("sort_order")
 		      Dim Experimental As Boolean = Dict.Value("experimental")
-		      Dim Notes As Text = Dict.Value("notes")
-		      Dim IconID As Text = Dict.Value("icon")
-		      Dim Requirements As Text = Dict.Lookup("requirements", "{}")
+		      Dim Notes As String = Dict.Value("notes")
+		      Dim IconID As String = Dict.Value("icon")
+		      Dim Requirements As String = Dict.Lookup("requirements", "{}")
 		      
 		      ObjectID = ObjectID.Lowercase
 		      ModID = ModID.Lowercase
@@ -1093,24 +1102,24 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      EngramsChanged = True
 		    Next
 		    
-		    Dim Engrams() As Auto = ChangeDict.Value("engrams")
-		    For Each Dict As Xojo.Core.Dictionary In Engrams
-		      Dim ObjectID As Text = Dict.Value("id")
-		      Dim Label As Text = Dict.Value("label")
-		      Dim ModID As Text = Xojo.Core.Dictionary(Dict.Value("mod")).Value("id")
+		    Dim Engrams() As Variant = ChangeDict.Value("engrams")
+		    For Each Dict As Dictionary In Engrams
+		      Dim ObjectID As String = Dict.Value("id")
+		      Dim Label As String = Dict.Value("label")
+		      Dim ModID As String = Dictionary(Dict.Value("mod")).Value("id")
 		      Dim Availability As Integer = Dict.Value("availability")
-		      Dim Path As Text = Dict.Value("path")
-		      Dim ClassString As Text = Dict.Value("class_string")
+		      Dim Path As String = Dict.Value("path")
+		      Dim ClassString As String = Dict.Value("class_string")
 		      Dim TagString, TagStringForSearching As String
 		      Try
-		        Dim Tags() As Text
-		        Dim Temp() As Auto = Dict.Value("tags")
-		        For Each Tag As Text In Temp
+		        Dim Tags() As String
+		        Dim Temp() As Variant = Dict.Value("tags")
+		        For Each Tag As String In Temp
 		          Tags.Append(Tag)
 		        Next
-		        TagString = Text.Join(Tags, ",")
+		        TagString = Tags.Join(",")
 		        Tags.Insert(0, "object")
-		        TagStringForSearching = Text.Join(Tags, ",")
+		        TagStringForSearching = Tags.Join(",")
 		      Catch Err As TypeMismatchException
 		        
 		      End Try
@@ -1133,26 +1142,26 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      EngramsChanged = True
 		    Next
 		    
-		    Dim Creatures() As Auto = ChangeDict.Value("creatures")
-		    For Each Dict As Xojo.Core.Dictionary In Creatures
-		      Dim ObjectID As Text = Dict.Value("id")
-		      Dim Label As Text = Dict.Value("label")
-		      Dim ModID As Text = Xojo.Core.Dictionary(Dict.Value("mod")).Value("id")
+		    Dim Creatures() As Variant = ChangeDict.Value("creatures")
+		    For Each Dict As Dictionary In Creatures
+		      Dim ObjectID As String = Dict.Value("id")
+		      Dim Label As String = Dict.Value("label")
+		      Dim ModID As String = Dictionary(Dict.Value("mod")).Value("id")
 		      Dim Availability As Integer = Dict.Value("availability")
-		      Dim Path As Text = Dict.Value("path")
-		      Dim ClassString As Text = Dict.Value("class_string")
-		      Dim IncubationTime As Auto = Dict.Value("incubation_time")
-		      Dim MatureTime As Auto = Dict.Value("mature_time")
+		      Dim Path As String = Dict.Value("path")
+		      Dim ClassString As String = Dict.Value("class_string")
+		      Dim IncubationTime As Variant = Dict.Value("incubation_time")
+		      Dim MatureTime As Variant = Dict.Value("mature_time")
 		      Dim TagString, TagStringForSearching As String
 		      Try
-		        Dim Tags() As Text
-		        Dim Temp() As Auto = Dict.Value("tags")
-		        For Each Tag As Text In Temp
+		        Dim Tags() As String
+		        Dim Temp() As Variant = Dict.Value("tags")
+		        For Each Tag As String In Temp
 		          Tags.Append(Tag)
 		        Next
-		        TagString = Text.Join(Tags, ",")
+		        TagString = Tags.Join(",")
 		        Tags.Insert(0, "object")
-		        TagStringForSearching = Text.Join(Tags, ",")
+		        TagStringForSearching = Tags.Join(",")
 		      Catch Err As TypeMismatchException
 		        
 		      End Try
@@ -1176,11 +1185,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Next
 		    
 		    Dim ReloadPresets As Boolean
-		    Dim Presets() As Auto = ChangeDict.Value("presets")
-		    For Each Dict As Xojo.Core.Dictionary In Presets
-		      Dim ObjectID As Text = Dict.Value("id")
-		      Dim Label As Text = Dict.Value("label")
-		      Dim Contents As Text = Dict.Value("contents")
+		    Dim Presets() As Variant = ChangeDict.Value("presets")
+		    For Each Dict As Dictionary In Presets
+		      Dim ObjectID As String = Dict.Value("id")
+		      Dim Label As String = Dict.Value("label")
+		      Dim Contents As String = Dict.Value("contents")
 		      
 		      ObjectID = ObjectID.Lowercase
 		      
@@ -1193,12 +1202,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      End If
 		    Next
 		    
-		    Dim PresetModifiers() As Auto = ChangeDict.Value("preset_modifiers")
-		    For Each Dict As Xojo.Core.Dictionary In PresetModifiers
-		      Dim ObjectID As Text = Dict.Value("id")
-		      Dim Label As Text = Dict.Value("label")
-		      Dim Pattern As Text = Dict.Value("pattern")
-		      Dim ModID As Text = Xojo.Core.Dictionary(Dict.Value("mod")).Value("id")
+		    Dim PresetModifiers() As Variant = ChangeDict.Value("preset_modifiers")
+		    For Each Dict As Dictionary In PresetModifiers
+		      Dim ObjectID As String = Dict.Value("id")
+		      Dim Label As String = Dict.Value("label")
+		      Dim Pattern As String = Dict.Value("pattern")
+		      Dim ModID As String = Dictionary(Dict.Value("mod")).Value("id")
 		      
 		      ObjectID = ObjectID.Lowercase
 		      
@@ -1212,12 +1221,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Next
 		    
 		    If ChangeDict.HasKey("help_topics") Then
-		      Dim HelpTopics() As Auto = ChangeDict.Value("help_topics")
-		      For Each Dict As Xojo.Core.Dictionary In HelpTopics
-		        Dim ConfigName As Text = Dict.Value("topic")
-		        Dim Title As Text = Dict.Value("title")
-		        Dim Body As Text = Dict.Value("body")
-		        Dim DetailURL As Text
+		      Dim HelpTopics() As Variant = ChangeDict.Value("help_topics")
+		      For Each Dict As Dictionary In HelpTopics
+		        Dim ConfigName As String = Dict.Value("topic")
+		        Dim Title As String = Dict.Value("title")
+		        Dim Body As String = Dict.Value("body")
+		        Dim DetailURL As String
 		        If Dict.Value("detail_url") <> Nil Then
 		          DetailURL = Dict.Value("detail_url")
 		        End If
@@ -1234,10 +1243,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    
 		    If ChangeDict.HasKey("game_variables") Then
-		      Dim HelpTopics() As Auto = ChangeDict.Value("game_variables")
-		      For Each Dict As Xojo.Core.Dictionary In HelpTopics
-		        Dim Key As Text = Dict.Value("key")
-		        Dim Value As Text = Dict.Value("value")
+		      Dim HelpTopics() As Variant = ChangeDict.Value("game_variables")
+		      For Each Dict As Dictionary In HelpTopics
+		        Dim Key As String = Dict.Value("key")
+		        Dim Value As String = Dict.Value("value")
 		        
 		        Dim Results As RowSet = Self.SQLSelect("SELECT key FROM game_variables WHERE key = ?1;", Key)
 		        If Results.RecordCount = 1 Then
@@ -1254,14 +1263,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
 		    Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
 		    
-		    Self.Variable("sync_time") = PayloadTimestamp.ToText()
+		    Self.Variable("sync_time") = PayloadTimestamp.SQLDateTimeWithOffset
 		    Self.Commit()
 		    
 		    If ReloadPresets Then
 		      Self.LoadPresets()
 		    End If
 		    
-		    App.Log("Imported classes. Engrams date is " + PayloadTimestamp.ToText())
+		    App.Log("Imported classes. Engrams date is " + PayloadTimestamp.SQLDateTimeWithOffset)
 		    
 		    If EngramsChanged Then
 		      NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
@@ -1283,11 +1292,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Sub ImportLocalClasses()
 		  Dim File As FolderItem = App.ResourcesFolder.Child("Classes.json")
 		  If File.Exists Then
-		    Dim Stream As TextInputStream = TextInputStream.Open(File)
-		    Dim Content As String = Stream.ReadAll(Encodings.UTF8)
-		    Stream.Close
-		    
-		    Self.Import(Content.ToText)
+		    Dim Content As MemoryBlock = File.Read(Encodings.UTF8)
+		    If Content <> Nil Then
+		      Self.Import(Content)
+		    End If
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1298,7 +1306,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dim Preset As Beacon.Preset
 		  Dim PresetID As String
 		  Try
-		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Contents.ToText)
+		    Dim Dict As Dictionary = Beacon.ParseJSON(Contents)
 		    Preset = Beacon.Preset.FromDictionary(Dict)
 		    PresetID = Preset.PresetID
 		  Catch Err As RuntimeException
@@ -1344,13 +1352,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LastSync() As Xojo.Core.Date
+		Function LastSync() As Date
 		  Dim LastSync As String = Self.Variable("sync_time")
 		  If LastSync = "" Then
 		    Return Nil
 		  End If
 		  
-		  Return Self.TextToDate(LastSync.ToText)
+		  Return NewDateFromSQLDateTime(LastSync)
 		End Function
 	#tag EndMethod
 
@@ -1369,12 +1377,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Sub LoadPresets(Results As RowSet, Type As Beacon.Preset.Types)
 		  While Not Results.IsAfterLastRow
-		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Results.Column("contents").StringValue.ToText)
+		    Dim Dict As Dictionary = Beacon.ParseJSON(Results.Column("contents").StringValue)
 		    Dim Preset As Beacon.Preset = Beacon.Preset.FromDictionary(Dict)
 		    If Preset <> Nil Then
 		      If Type <> Beacon.Preset.Types.BuiltIn And Preset.PresetID <> Results.Column("object_id").StringValue Then
 		        // To work around https://github.com/thommcgrath/Beacon/issues/64
-		        Dim Contents As Text = Xojo.Data.GenerateJSON(Preset.ToDictionary)
+		        Dim Contents As String = Beacon.GenerateJSON(Preset.ToDictionary, False)
 		        Self.BeginTransaction()
 		        Self.SQLExecute("UPDATE custom_presets SET LOWER(object_id) = LOWER(?2), contents = ?3 WHERE object_id = ?1;", Results.Column("object_id").StringValue, Preset.PresetID, Contents)
 		        Self.Commit()
@@ -1513,12 +1521,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Continue
 		        End If
 		        
-		        Dim Content As Text = File.Read(Encodings.UTF8).ToText
+		        Dim Content As String = File.Read(Encodings.UTF8)
 		        
 		        Try
-		          Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content)
-		          Dim PresetID As Text = Dict.Value("ID")
-		          Dim Label As Text = Dict.Value("Label")
+		          Dim Dict As Dictionary = Beacon.ParseJSON(Content)
+		          Dim PresetID As String = Dict.Value("ID")
+		          Dim Label As String = Dict.Value("Label")
 		          
 		          Self.BeginTransaction()
 		          Self.SQLExecute("INSERT OR REPLACE INTO custom_presets (object_id, label, contents) VALUES (LOWER(?1), ?2, ?3);", PresetID, Label, Content)
@@ -1561,15 +1569,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Dim SyncOriginal As Xojo.Core.Date = Self.LastSync
+		  Dim SyncOriginal As Date = Self.LastSync
 		  Dim Success As Boolean
 		  For I As Integer = 0 To Self.mPendingImports.Ubound
-		    Dim Content As Text = Self.mPendingImports(I)
+		    Dim Content As String = Self.mPendingImports(I)
 		    Self.mPendingImports.Remove(I)
 		    
 		    Success = Self.ImportInner(Content) Or Success
 		  Next
-		  Dim SyncNew As Xojo.Core.Date = Self.LastSync
+		  Dim SyncNew As Date = Self.LastSync
 		  
 		  If SyncOriginal <> SyncNew Then
 		    NotificationKit.Post(Self.Notification_DatabaseUpdated, SyncNew)
@@ -1584,18 +1592,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mUpdater_Error(Sender As Xojo.Net.HTTPSocket, Error As RuntimeException)
-		  #Pragma Unused Sender
-		  
-		  App.Log("Engram check error: " + Error.Reason)
-		  NotificationKit.Post(Self.Notification_ImportFailed, Self.LastSync)
-		  
-		  Self.mCheckingForUpdates = False
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mUpdater_PageReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
+		Private Sub mUpdater_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  
@@ -1605,9 +1602,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
-		  Dim ExpectedHash As Text = Sender.ResponseHeader("Content-MD5")
-		  Dim ComputedHash As Text = EncodeHex(Crypto.MD5(TextContent)).ToText
+		  Dim ExpectedHash As String = Sender.ResponseHeader("Content-MD5")
+		  Dim ComputedHash As String = EncodeHex(Crypto.MD5(Content))
 		  
 		  If ComputedHash <> ExpectedHash Then
 		    App.Log("Engram update hash mismatch. Expected " + ExpectedHash + ", computed " + ComputedHash + ".")
@@ -1615,7 +1611,18 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Self.Import(TextContent)
+		  Self.Import(Content)
+		  
+		  Self.mCheckingForUpdates = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mUpdater_Error(Sender As URLConnection, Error As RuntimeException)
+		  #Pragma Unused Sender
+		  
+		  App.Log("Engram check error: " + Error.Reason)
+		  NotificationKit.Post(Self.Notification_ImportFailed, Self.LastSync)
 		  
 		  Self.mCheckingForUpdates = False
 		End Sub
@@ -1672,12 +1679,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Shared Function RowSetToCreature(Results As RowSet) As Beacon.Creature()
 		  Dim Creatures() As Beacon.Creature
 		  While Not Results.IsAfterLastRow
-		    Dim Creature As New Beacon.MutableCreature(Results.Column("path").StringValue.ToText, Results.Column("object_id").StringValue.ToText)
-		    Creature.Label = Results.Column("label").StringValue.ToText
+		    Dim Creature As New Beacon.MutableCreature(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
+		    Creature.Label = Results.Column("label").StringValue
 		    Creature.Availability = Results.Column("availability").IntegerValue
-		    Creature.TagString = Results.Column("tags").StringValue.ToText
-		    Creature.ModID = Results.Column("mod_id").StringValue.ToText
-		    Creature.ModName = Results.Column("mod_name").StringValue.ToText
+		    Creature.TagString = Results.Column("tags").StringValue
+		    Creature.ModID = Results.Column("mod_id").StringValue
+		    Creature.ModName = Results.Column("mod_name").StringValue
 		    
 		    If Results.Column("incubation_time").Value <> Nil Then
 		      Creature.IncubationTime = Beacon.SecondsToInterval(Results.Column("incubation_time").IntegerValue)
@@ -1697,12 +1704,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Shared Function RowSetToEngram(Results As RowSet) As Beacon.Engram()
 		  Dim Engrams() As Beacon.Engram
 		  While Not Results.IsAfterLastRow
-		    Dim Engram As New Beacon.MutableEngram(Results.Column("path").StringValue.ToText, Results.Column("object_id").StringValue.ToText)
-		    Engram.Label = Results.Column("label").StringValue.ToText
+		    Dim Engram As New Beacon.MutableEngram(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
+		    Engram.Label = Results.Column("label").StringValue
 		    Engram.Availability = Results.Column("availability").IntegerValue
-		    Engram.TagString = Results.Column("tags").StringValue.ToText
-		    Engram.ModID = Results.Column("mod_id").StringValue.ToText
-		    Engram.ModName = Results.Column("mod_name").StringValue.ToText
+		    Engram.TagString = Results.Column("tags").StringValue
+		    Engram.ModID = Results.Column("mod_id").StringValue
+		    Engram.ModName = Results.Column("mod_name").StringValue
 		    Engrams.Append(Engram)
 		    Results.MoveToNextRow
 		  Wend
@@ -1736,29 +1743,29 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      AlphaHex = Mid(HexColor, 7, 2)
 		    End If
 		    
-		    Dim Requirements As Xojo.Core.Dictionary
+		    Dim Requirements As Dictionary
 		    #Pragma BreakOnExceptions Off
 		    Try
-		      Requirements = Xojo.Data.ParseJSON(Results.Column("requirements").StringValue.ToText)
-		    Catch Err As Xojo.Data.InvalidJSONException
+		      Requirements = Beacon.ParseJSON(Results.Column("requirements").StringValue)
+		    Catch Err As RuntimeException
 		      
 		    End Try
 		    #Pragma BreakOnExceptions Default
 		    
-		    Dim Source As New Beacon.MutableLootSource(Results.Column("class_string").StringValue.ToText, True)
-		    Source.Label = Results.Column("label").StringValue.ToText
+		    Dim Source As New Beacon.MutableLootSource(Results.Column("class_string").StringValue, True)
+		    Source.Label = Results.Column("label").StringValue
 		    Source.Availability = Results.Column("availability").IntegerValue
 		    Source.Multipliers = New Beacon.Range(Results.Column("multiplier_min").DoubleValue, Results.Column("multiplier_max").DoubleValue)
-		    Source.UIColor = RGB(Integer.FromHex(RedHex.ToText), Integer.FromHex(GreenHex.ToText), Integer.FromHex(BlueHex.ToText), Integer.FromHex(AlphaHex.ToText))
+		    Source.UIColor = RGB(Integer.FromHex(RedHex), Integer.FromHex(GreenHex), Integer.FromHex(BlueHex), Integer.FromHex(AlphaHex))
 		    Source.SortValue = Results.Column("sort_order").IntegerValue
 		    Source.UseBlueprints = False
 		    Source.Experimental = Results.Column("experimental").BooleanValue
-		    Source.Notes = Results.Column("notes").StringValue.ToText
+		    Source.Notes = Results.Column("notes").StringValue
 		    
 		    If Requirements.HasKey("mandatory_item_sets") Then
-		      Dim SetDicts() As Auto = Requirements.Value("mandatory_item_sets")
+		      Dim SetDicts() As Variant = Requirements.Value("mandatory_item_sets")
 		      Dim Sets() As Beacon.ItemSet
-		      For Each Dict As Xojo.Core.Dictionary In SetDicts
+		      For Each Dict As Dictionary In SetDicts
 		        Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Dict)
 		        If Set <> Nil Then
 		          Sets.Append(Set)
@@ -1831,8 +1838,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Dim Creature As Beacon.Creature = Beacon.Creature(Blueprint)
 		        Dim IncubationSeconds, MatureSeconds As Variant
 		        If Creature.IncubationTime <> Nil And Creature.MatureTime <> Nil Then
-		          IncubationSeconds = Beacon.IntervalToSeconds(Creature.IncubationTime)
-		          MatureSeconds = Beacon.IntervalToSeconds(Creature.MatureTime)
+		          IncubationSeconds = Creature.IncubationTime.TotalSeconds
+		          MatureSeconds = Creature.MatureTime.TotalSeconds
 		        End If
 		        If Update Then
 		          Self.SQLExecute("UPDATE creatures SET path = ?2, class_string = ?3, label = ?4, tags = ?5, availability = ?6, incubation_time = ?7, mature_time = ?8 WHERE object_id = ?1;", ObjectID, Creature.Path, Creature.ClassString, Creature.Label, Creature.TagString, Creature.Availability, IncubationSeconds, MatureSeconds)
@@ -1881,7 +1888,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Dim Notify As Boolean = Results.RecordCount = 0 Or Deleted Or Read
-		  Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification_id, message, secondary_message, moment, read, action_url, user_data, deleted) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.ToText, If(Notification.Read Or Notification.Severity = Beacon.UserNotification.Severities.Elevated, 1, 0), Notification.ActionURL, If(Notification.UserData <> Nil, Xojo.Data.GenerateJSON(Notification.UserData), "{}"))
+		  Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification_id, message, secondary_message, moment, read, action_url, user_data, deleted) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.SQLDateTimeWithOffset, If(Notification.Read Or Notification.Severity = Beacon.UserNotification.Severities.Elevated, 1, 0), Notification.ActionURL, If(Notification.UserData <> Nil, Beacon.GenerateJSON(Notification.UserData, False), "{}"))
 		  Self.Commit
 		  
 		  If Notify Then
@@ -1898,7 +1905,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub SavePreset(Preset As Beacon.Preset, Reload As Boolean)
-		  Dim Content As Text = Xojo.Data.GenerateJSON(Preset.ToDictionary)
+		  Dim Content As String = Beacon.GenerateJSON(Preset.ToDictionary, False)
 		  
 		  Self.BeginTransaction()
 		  Self.SQLExecute("INSERT OR REPLACE INTO custom_presets (object_id, label, contents) VALUES (LOWER(?1), ?2, ?3);", Preset.PresetID, Preset.Label, Content)
@@ -1913,7 +1920,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForBlueprints(Category As Text, SearchText As Text, Mods As Beacon.TextList, Tags As Text) As Beacon.Blueprint()
+		Function SearchForBlueprints(Category As String, SearchText As String, Mods As Beacon.StringList, Tags As String) As Beacon.Blueprint()
 		  Dim Blueprints() As Beacon.Blueprint
 		  
 		  Try
@@ -1938,7 +1945,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    If Mods <> Nil And Mods.Ubound > -1 Then
 		      Dim Placeholders() As String
-		      For Each ModID As Text In Mods
+		      For Each ModID As String In Mods
 		        Placeholders.Append("?" + Str(NextPlaceholder))
 		        Values.Value(NextPlaceholder) = ModID
 		        NextPlaceholder = NextPlaceholder + 1
@@ -1987,7 +1994,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForLootSources(SearchText As Text, Mods As Beacon.TextList, IncludeExperimental As Boolean) As Beacon.LootSource()
+		Function SearchForLootSources(SearchText As String, Mods As Beacon.StringList, IncludeExperimental As Boolean) As Beacon.LootSource()
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Dim Sources() As Beacon.LootSource
@@ -1998,7 +2005,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Dim NextPlaceholder As Integer = 1
 		    If Mods.Ubound > -1 Then
 		      Dim Placeholders() As String
-		      For Each ModID As Text In Mods
+		      For Each ModID As String In Mods
 		        Placeholders.Append("?" + Str(NextPlaceholder))
 		        Values.Value(NextPlaceholder) = ModID
 		        NextPlaceholder = NextPlaceholder + 1
@@ -2078,9 +2085,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Continue
 		    End If
 		    Select Case Value.ObjectValue
-		    Case IsA Xojo.Core.MemoryBlock
-		      Dim Mem As Xojo.Core.MemoryBlock = Value
-		      Values(I) = Mem.Convert.StringValue(0, Mem.Size)
 		    Case IsA MemoryBlock
 		      Dim Mem As MemoryBlock = Value
 		      Values(I) = Mem.StringValue(0, Mem.Size)
@@ -2136,8 +2140,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Case Variant.TypeObject
 		        Dim Obj As Object = Value.ObjectValue
 		        Select Case Obj
-		        Case IsA Xojo.Core.MemoryBlock
-		          Dim Mem As Xojo.Core.MemoryBlock = Value
+		        Case IsA MemoryBlock
+		          Dim Mem As MemoryBlock = Value
 		          Statement.BindType(I, SQLitePreparedStatement.SQLITE_BLOB)
 		          Value = CType(Mem.Data, Global.MemoryBlock).StringValue(0, Mem.Size)
 		        End Select
@@ -2183,9 +2187,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Continue
 		    End If
 		    Select Case Value.ObjectValue
-		    Case IsA Xojo.Core.MemoryBlock
-		      Dim Mem As Xojo.Core.MemoryBlock = Value
-		      Values(I) = Mem.Convert.StringValue(0, Mem.Size)
 		    Case IsA MemoryBlock
 		      Dim Mem As MemoryBlock = Value
 		      Values(I) = Mem.StringValue(0, Mem.Size)
@@ -2260,8 +2261,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Case Variant.TypeObject
 		        Dim Obj As Object = Value.ObjectValue
 		        Select Case Obj
-		        Case IsA Xojo.Core.MemoryBlock
-		          Dim Mem As Xojo.Core.MemoryBlock = Value
+		        Case IsA MemoryBlock
+		          Dim Mem As MemoryBlock = Value
 		          Statement.BindType(I, SQLitePreparedStatement.SQLITE_BLOB)
 		          Value = CType(Mem.Data, Global.MemoryBlock).StringValue(0, Mem.Size)
 		        End Select
@@ -2306,9 +2307,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Sub SyncUserEngramsActual()
 		  Dim Results As RowSet = Self.SQLSelect("SELECT class_string, path, tags, object_id, label, availability, '" + Beacon.CategoryEngrams + "' AS category FROM engrams WHERE mod_id = ?1 UNION SELECT class_string, path, tags, object_id, label, availability, '" + Beacon.CategoryCreatures + "' AS category FROM creatures WHERE mod_id = ?1;", Self.UserModID)
-		  Dim Dicts() As Xojo.Core.Dictionary
+		  Dim Dicts() As Dictionary
 		  While Not Results.IsAfterLastRow
-		    Dim Dict As New Xojo.Core.Dictionary  
+		    Dim Dict As New Dictionary  
 		    Dict.Value("class_string") = Results.Column("class_string").StringValue  
 		    Dict.Value("path") = Results.Column("path").StringValue  
 		    Dict.Value("tags") = Results.Column("tags").StringValue
@@ -2321,15 +2322,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Results.MoveToNextRow()
 		  Wend
 		  
-		  Dim Content As Text = Xojo.Data.GenerateJSON(Dicts)
+		  Dim Content As String = Beacon.GenerateJSON(Dicts, False)
 		  Call UserCloud.Write("Engrams.json", Content)
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Shared Function TextToDate(Source As Text) As Xojo.Core.Date
-		  Return NewDateFromSQLDateTime(Source).Convert
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -2399,7 +2394,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPendingImports() As Text
+		Private mPendingImports() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -2415,7 +2410,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUpdater As Xojo.Net.HTTPSocket
+		Private mUpdater As URLConnection
 	#tag EndProperty
 
 
@@ -2428,19 +2423,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = LootSourcesSelectColumns, Type = String, Dynamic = False, Default = \"class_string\x2C label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = Notification_DatabaseUpdated, Type = Text, Dynamic = False, Default = \"Database Updated", Scope = Public
+	#tag Constant, Name = Notification_DatabaseUpdated, Type = String, Dynamic = False, Default = \"Database Updated", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = Notification_EngramsChanged, Type = Text, Dynamic = False, Default = \"Engrams Changed", Scope = Public
+	#tag Constant, Name = Notification_EngramsChanged, Type = String, Dynamic = False, Default = \"Engrams Changed", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = Notification_ImportFailed, Type = Text, Dynamic = False, Default = \"Import Failed", Scope = Public
+	#tag Constant, Name = Notification_ImportFailed, Type = String, Dynamic = False, Default = \"Import Failed", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = Notification_ImportSuccess, Type = Text, Dynamic = False, Default = \"Import Success", Scope = Public
+	#tag Constant, Name = Notification_ImportSuccess, Type = String, Dynamic = False, Default = \"Import Success", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = Notification_NewAppNotification, Type = Text, Dynamic = False, Default = \"New App Notification", Scope = Public
+	#tag Constant, Name = Notification_NewAppNotification, Type = String, Dynamic = False, Default = \"New App Notification", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"9", Scope = Private

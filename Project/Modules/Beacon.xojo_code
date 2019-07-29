@@ -1,17 +1,17 @@
 #tag Module
 Protected Module Beacon
 	#tag Method, Flags = &h0
-		Sub AddTag(Extends Blueprint As Beacon.MutableBlueprint, ParamArray TagsToAdd() As Text)
+		Sub AddTag(Extends Blueprint As Beacon.MutableBlueprint, ParamArray TagsToAdd() As String)
 		  Blueprint.AddTags(TagsToAdd)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddTags(Extends Blueprint As Beacon.MutableBlueprint, TagsToAdd() As Text)
-		  Dim Tags() As Text = Blueprint.Tags
+		Sub AddTags(Extends Blueprint As Beacon.MutableBlueprint, TagsToAdd() As String)
+		  Dim Tags() As String = Blueprint.Tags
 		  Dim Changed As Boolean
 		  For I As Integer = 0 To TagsToAdd.Ubound
-		    Dim Tag As Text  = Beacon.NormalizeTag(TagsToAdd(I))
+		    Dim Tag As String  = Beacon.NormalizeTag(TagsToAdd(I))
 		    
 		    If Tag = "object" Then
 		      Continue
@@ -35,11 +35,11 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function AutoArrayValue(Extends Dict As Xojo.Core.Dictionary, Key As Text) As Auto()
-		  Dim Entries() As Auto
+		Function AutoArrayValue(Extends Dict As Dictionary, Key As String) As Variant()
+		  Dim Entries() As Variant
 		  If Dict.HasKey(Key) Then
-		    Dim Value As Auto = Dict.Value(Key)
-		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
+		    Dim Value As Variant = Dict.Value(Key)
+		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
 		    If Info.FullName = "Auto()" Then
 		      Entries = Value
 		    Else
@@ -51,42 +51,24 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function BooleanValue(Extends Dict As Xojo.Core.Dictionary, Key As Auto, Default As Boolean, AllowArray As Boolean = False) As Boolean
+		Function BooleanValue(Extends Dict As Dictionary, Key As Variant, Default As Boolean, AllowArray As Boolean = False) As Boolean
 		  Return GetValueAsType(Dict, Key, "Boolean", Default, AllowArray, AddressOf CoerceToBoolean)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Clone(Extends Source As Xojo.Core.DateInterval) As Xojo.Core.DateInterval
-		  Return New Xojo.Core.DateInterval(Source.Years, Source.Months, Source.Days, Source.Hours, Source.Minutes, Source.Seconds, Source.NanoSeconds)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function Clone(Source As Xojo.Core.Dictionary) As Xojo.Core.Dictionary
-		  // This method only exists because the built-in clone method causes crashes.
-		  // However, this only handles basic cases.
-		  
-		  If Source = Nil Then
-		    // That was easy
-		    Return Nil
-		  End If
-		  
-		  Dim Clone As New Xojo.Core.Dictionary
-		  For Each Entry As Xojo.Core.DictionaryEntry In Source
-		    Clone.Value(Entry.Key) = Entry.Value
-		  Next
-		  Return Clone
+		Function Clone(Extends Source As DateInterval) As DateInterval
+		  Return New DateInterval(Source.Years, Source.Months, Source.Days, Source.Hours, Source.Minutes, Source.Seconds, Source.NanoSeconds)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function CoerceToBoolean(ByRef Value As Auto, Info As Xojo.Introspection.TypeInfo) As Boolean
+		Private Function CoerceToBoolean(ByRef Value As Variant, Info As Introspection.TypeInfo) As Boolean
 		  Select Case Info.FullName
 		  Case "Boolean"
 		    Return True
 		  Case "Text"
-		    Dim TextValue As Text = Value
+		    Dim TextValue As String = Value
 		    Value = If(TextValue = "true", True, False)
 		    Return True
 		  Case "String"
@@ -116,7 +98,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function CoerceToDouble(ByRef Value As Auto, Info As Xojo.Introspection.TypeInfo) As Boolean
+		Private Function CoerceToDouble(ByRef Value As Variant, Info As Introspection.TypeInfo) As Boolean
 		  #Pragma Unused Info
 		  
 		  #Pragma BreakOnExceptions False
@@ -134,7 +116,7 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Sub ComputeDifficultySettings(BaseDifficulty As Double, DesiredDinoLevel As Integer, ByRef DifficultyValue As Double, ByRef DifficultyOffset As Double, ByRef OverrideOfficialDifficulty As Double)
 		  OverrideOfficialDifficulty = Max(Ceil(DesiredDinoLevel / 30), BaseDifficulty)
-		  DifficultyOffset = Xojo.Math.Max((DesiredDinoLevel - 15) / ((OverrideOfficialDifficulty * 30) - 15), 0.001)
+		  DifficultyOffset = Max((DesiredDinoLevel - 15) / ((OverrideOfficialDifficulty * 30) - 15), 0.001)
 		  DifficultyValue = (DifficultyOffset * (OverrideOfficialDifficulty - 0.5)) + 0.5
 		End Sub
 	#tag EndMethod
@@ -153,19 +135,6 @@ Protected Module Beacon
 		Protected Function ComputeMaxDinoLevel(Offset As Double, Steps As Integer) As Integer
 		  Dim DifficultyValue As Double = (Offset * (Steps - 0.5)) + 0.5
 		  Return DifficultyValue * 30
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Attributes( Deprecated = "MemoryBlock.Convert" ) Protected Function ConvertMemoryBlock(Source As Global.MemoryBlock) As Xojo.Core.MemoryBlock
-		  Dim Temp As New Xojo.Core.MemoryBlock(Source)
-		  Return Temp.Left(Source.Size)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Attributes( Deprecated = "MemoryBlock.Convert" ) Protected Function ConvertMemoryBlock(Source As Xojo.Core.MemoryBlock) As Global.MemoryBlock
-		  Return CType(Source.Data, Global.MemoryBlock).StringValue(0, Source.Size)
 		End Function
 	#tag EndMethod
 
@@ -201,42 +170,36 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function CRC32(Data As Xojo.Core.MemoryBlock) As UInt32
-		  Return Beacon.CRC32(Data.Convert)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function CreateCSV(Blueprints() As Beacon.Blueprint) As Text
-		  Dim Columns(4) As Text
+		Protected Function CreateCSV(Blueprints() As Beacon.Blueprint) As String
+		  Dim Columns(4) As String
 		  Columns(0) = """Path"""
 		  Columns(1) = """Label"""
 		  Columns(2) = """Availability Mask"""
 		  Columns(3) = """Tags"""
 		  Columns(4) = """Group"""
 		  
-		  Dim Lines(0) As Text
-		  Lines(0) = Columns.Join(",")
+		  Dim Lines(0) As String
+		  Lines(0) = Join(Columns, ",")
 		  
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    Columns(0) = """" + Blueprint.Path + """"
 		    Columns(1) = """" + Blueprint.Label + """"
-		    Columns(2) = Blueprint.Availability.ToText(Xojo.Core.Locale.Raw)
+		    Columns(2) = Blueprint.Availability.ToString(Locale.Raw)
 		    Columns(3) = """" + Blueprint.Tags.Join(",") + """"
 		    Columns(4) = """" + Blueprint.Category + """"
-		    Lines.Append(Columns.Join(","))
+		    Lines.Append(Join(Columns, ","))
 		  Next
 		  
-		  Return Lines.Join(Text.FromUnicodeCodepoint(13) + Text.FromUnicodeCodepoint(10))
+		  Return Join(Lines, Encodings.ASCII.Chr(13) + Encodings.ASCII.Chr(10))
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function CreateUUID(Bytes As Xojo.Core.MemoryBlock = Nil) As Text
+		Protected Function CreateUUID(Bytes As MemoryBlock = Nil) As String
 		  If Bytes = Nil Or Bytes.Size <> 16 Then
-		    Bytes = Xojo.Crypto.GenerateRandomBytes(16)
+		    Bytes = Crypto.GenerateRandomBytes(16)
 		  End If
-		  Dim Id As New Xojo.Core.MutableMemoryBlock(Bytes)
+		  Dim Id As MemoryBlock = Bytes.StringValue(0, Bytes.Size)
 		  Dim Value As UInt8
 		  
 		  Value = Id.UInt8Value(6)
@@ -249,7 +212,7 @@ Protected Module Beacon
 		  Value = Value Or CType(&b10000000, UInt8)
 		  Id.UInt8Value(8) = Value
 		  
-		  Dim Chars() As Text
+		  Dim Chars() As String
 		  For I As Integer = 0 To Id.Size - 1
 		    Chars.Append(Id.UInt8Value(I).ToHex(2))
 		  Next
@@ -259,7 +222,7 @@ Protected Module Beacon
 		  Chars.Insert( 6, "-")
 		  Chars.Insert( 4, "-")
 		  
-		  Return Chars.Join("").Lowercase
+		  Return Join(Chars, "").Lowercase
 		End Function
 	#tag EndMethod
 
@@ -290,83 +253,6 @@ Protected Module Beacon
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Attributes( Deprecated = "DecodeBase64" ) Protected Function DecodeBase64(Source As Text) As Xojo.Core.MemoryBlock
-		  #if TargetiOS
-		    
-		  #else
-		    Dim StringValue As String = Source
-		    Dim Block As Global.MemoryBlock = DecodeBase64(StringValue)
-		    Dim Temp As New Xojo.Core.MemoryBlock(Block)
-		    Return Temp.Left(Block.Size)
-		  #endif
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Attributes( Deprecated = "DecodeHex" ) Protected Function DecodeHex(Source As Text) As Xojo.Core.MemoryBlock
-		  #if TargetiOS
-		    Dim Mem As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Source)
-		    Dim Size As UInt64 = Mem.Size\2-1
-		    Static Lookup() As Integer = Array(0,1,2,3,4,5,6,7,8,9,_
-		    0,0,0,0,0,0,0,10,11,12,13,14,15,0,0,0,0,0,0,0,0,0,0,_
-		    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,12,13,14,15)
-		    Dim Bytes() As UInt8
-		    Redim Bytes(Size)
-		    For I As UInt64 = 0 To Size
-		      Dim Index As UInt64 = I + I
-		      Bytes(I) = (Lookup(Mem.UInt8Value(Index) - 48) * 16) + Lookup(Mem.UInt8Value(Index + 1) - 48)
-		    Next
-		    
-		    Return New Xojo.Core.MemoryBlock(Bytes)
-		  #else
-		    Dim Mem As MemoryBlock = REALbasic.DecodeHex(Source)
-		    Return Mem.Convert
-		  #endif
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Attributes( Deprecated = "DecodeURLComponent" ) Protected Function DecodeURLComponent(Value As Text) As Text
-		  #if TargetiOS
-		    Dim Chars(), HexChars() As Text
-		    Dim HexMode, UnicodeMode As Boolean
-		    For Each Character As Text In Value.Characters
-		      If HexMode Then
-		        HexChars.Append(Character)
-		        If HexChars.Ubound = 0 And Character = "u" Then
-		          UnicodeMode = True
-		          HexChars.Remove(0)
-		        ElseIf (UnicodeMode = False And HexChars.Ubound = 1) Or (UnicodeMode = True And HexChars.Ubound = 3) Then
-		          Dim Encoded As Text = HexChars.Join("")
-		          Redim HexChars(-1)
-		          HexMode = False
-		          UnicodeMode = False
-		          
-		          Chars.Append(Text.FromUnicodeCodepoint(UInt32.FromHex(Encoded)))
-		        End If
-		        
-		        Continue
-		      End If
-		      
-		      If Character = "%" Then
-		        HexMode = True
-		        Continue
-		      ElseIf Character = "+" Then
-		        Character = " "
-		      End If
-		      
-		      Chars.Append(Character)
-		    Next
-		    Return Chars.Join("")
-		  #else
-		    Dim StringValue As String = Value
-		    StringValue = StringValue.ReplaceAll("+", " ")
-		    Return DefineEncoding(DecodeURLComponent(StringValue), Encodings.UTF8).ToText
-		  #endif
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function DetectLineEnding(Extends Source As String) As String
 		  Const CR = &u0D
@@ -383,21 +269,14 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DetectLineEnding(Extends Source As Text) As Text
-		  Dim StringValue As String = Source
-		  Return StringValue.DetectLineEnding.ToText
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function DictionaryValue(Extends Dict As Xojo.Core.Dictionary, Key As Auto, Default As Xojo.Core.Dictionary, AllowArray As Boolean = False) As Xojo.Core.Dictionary
-		  Return GetValueAsType(Dict, Key, "Xojo.Core.Dictionary", Default, AllowArray)
+		Function DictionaryValue(Extends Dict As Dictionary, Key As Variant, Default As Dictionary, AllowArray As Boolean = False) As Dictionary
+		  Return GetValueAsType(Dict, Key, "Dictionary", Default, AllowArray)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function DifficultyOffset(Value As Double, Scale As Double) As Double
-		  Return Xojo.Math.Min((Value - 0.5) / (Scale - 0.5), 1.0)
+		  Return Min((Value - 0.5) / (Scale - 0.5), 1.0)
 		End Function
 	#tag EndMethod
 
@@ -405,7 +284,7 @@ Protected Module Beacon
 		Function DifficultyScale(Extends Maps() As Beacon.Map) As Double
 		  Dim Scale As Double
 		  For Each Map As Beacon.Map In Maps
-		    Scale = Xojo.Math.Max(Scale, Map.DifficultyScale)
+		    Scale = Max(Scale, Map.DifficultyScale)
 		  Next
 		  Return Scale
 		End Function
@@ -413,118 +292,14 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function DifficultyValue(Offset As Double, Scale As Double) As Double
-		  Offset = Xojo.Math.Max(Offset, 0.0001)
+		  Offset = Max(Offset, 0.0001)
 		  Return (Offset * (Scale - 0.5)) + 0.5
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DoubleValue(Extends Dict As Xojo.Core.Dictionary, Key As Auto, Default As Double, AllowArray As Boolean = False) As Double
+		Function DoubleValue(Extends Dict As Dictionary, Key As Variant, Default As Double, AllowArray As Boolean = False) As Double
 		  Return GetValueAsType(Dict, Key, "Double", Default, AllowArray, AddressOf CoerceToDouble)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Attributes( Deprecated = "EncodeBase64" ) Protected Function EncodeBase64(Source As Text, Encoding As Xojo.Core.TextEncoding) As Text
-		  Dim Bytes As Xojo.Core.MemoryBlock = Encoding.ConvertTextToData(Source)
-		  Return Beacon.EncodeBase64(Bytes)
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Attributes( Deprecated = "EncodeBase64" ) Protected Function EncodeBase64(Source As Xojo.Core.MemoryBlock) As Text
-		  #if TargetiOS
-		    Dim Chars As Text = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-		    
-		    Dim Remainder As Integer = (Source.Size Mod 3)
-		    Dim Padding As Integer
-		    If Remainder > 0 Then
-		      Padding = 3 - Remainder
-		      If Padding > 0 Then
-		        Dim Clone As New Xojo.Core.MutableMemoryBlock(Source)
-		        Clone.Append(New Xojo.Core.MemoryBlock(Padding))
-		        Source = New Xojo.Core.MemoryBlock(Clone)
-		      End If
-		    End If
-		    
-		    Dim Output() As Text
-		    
-		    For I As Integer = 0 To Source.Size - 3 Step 3
-		      Dim N As Integer = Beacon.ShiftLeft(Source.UInt8Value(I), 16) + Beacon.ShiftLeft(Source.UInt8Value(I + 1), 8) + Source.UInt8Value(I + 2)
-		      
-		      Dim Offsets(3) As UInt8
-		      Offsets(0) = Beacon.ShiftRight(N, 18) And 63
-		      Offsets(1) = Beacon.ShiftRight(N, 12) And 63
-		      Offsets(2) = Beacon.ShiftRight(N, 6) And 63
-		      Offsets(3) = N And 63
-		      
-		      Output.Append(Chars.Mid(Offsets(0), 1))
-		      Output.Append(Chars.Mid(Offsets(1), 1))
-		      Output.Append(Chars.Mid(Offsets(2), 1))
-		      Output.Append(Chars.Mid(Offsets(3), 1))
-		    Next
-		    
-		    For I As Integer = 0 To Padding - 1
-		      Output(UBound(Output) - I) = "="
-		    Next
-		    
-		    Return Output.Join("")
-		  #else
-		    Return EncodeBase64(Beacon.ConvertMemoryBlock(Source), 0).ToText
-		  #endif
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Attributes( Deprecated = "EncodeBase64" ) Protected Function EncodeHex(Block As Global.MemoryBlock) As Text
-		  Return REALbasic.EncodeHex(Block).ToText
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Attributes( Deprecated = "EncodeHex" ) Protected Function EncodeHex(Value As Text, Encoding As Xojo.Core.TextEncoding = Nil) As Text
-		  If Encoding = Nil Then
-		    Encoding = Xojo.Core.TextEncoding.UTF8
-		  End If
-		  
-		  Dim Bytes As Xojo.Core.MemoryBlock = Encoding.ConvertTextToData(Value)
-		  Return Beacon.EncodeHex(Bytes)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Attributes( Deprecated = "EncodeHex" ) Protected Function EncodeHex(Block As Xojo.Core.MemoryBlock) As Text
-		  #if TargetiOS
-		    Dim Chars() As Text
-		    For I As Integer = 0 To Block.Size - 1
-		      Dim Value As UInt8 = Block.UInt8Value(I)
-		      Chars.Append(Value.ToHex(2))
-		    Next
-		    Return Chars.Join("")
-		  #else
-		    Return REALbasic.EncodeHex(Beacon.ConvertMemoryBlock(Block)).ToText
-		  #endif
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Attributes( Deprecated = "EncodeURLComponent" ) Protected Function EncodeURLComponent(Value As Text) As Text
-		  #if TargetiOS
-		    Dim Encoded() As Text
-		    For Each CodePoint As UInt32 In Value.Codepoints
-		      Select Case CodePoint
-		      Case &h21, &h23, &h24, &h26, &h27, &h28, &h29, &h2A, &h2B, &h2C, &h2F, &h3A, &h3B, &h3D, &h3F, &h40, &h5B, &h5D
-		        Encoded.Append("%" + CodePoint.ToHex(2))
-		      Else
-		        Encoded.Append(Text.FromUnicodeCodepoint(CodePoint))
-		      End Select
-		    Next
-		    Return Encoded.Join("")
-		  #else
-		    Dim StringValue As String = Value
-		    Return EncodeURLComponent(StringValue).ReplaceAll(" ", "%20").ToText
-		  #endif
 		End Function
 	#tag EndMethod
 
@@ -544,6 +319,10 @@ Protected Module Beacon
 		Protected Function GenerateJSON(Source As Variant, Pretty As Boolean) As String
 		  Const UseMBS = True
 		  
+		  #if Not DebugBuild
+		    #Pragma Error "This method needs to be finished"
+		  #endif
+		  
 		  #if UseMBS
 		    Dim Temp As JSONMBS = JSONMBS.Convert(Source)
 		    Return Temp.ToString(Pretty)
@@ -554,9 +333,9 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetLastValueAsType(Values() As Auto, FullName As Text, Default As Auto) As Auto
+		Private Function GetLastValueAsType(Values() As Variant, FullName As String, Default As Variant) As Variant
 		  For I As Integer = Values.Ubound DownTo 0
-		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Values(I))
+		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Values(I))
 		    If Info.FullName = FullName Then
 		      Return Values(I)
 		    End If
@@ -566,18 +345,18 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetValueAsType(Dict As Xojo.Core.Dictionary, Key As Auto, FullName As Text, Default As Auto, AllowArray As Boolean = False, Adapter As ValueAdapter = Nil) As Auto
+		Private Function GetValueAsType(Dict As Dictionary, Key As Variant, FullName As String, Default As Variant, AllowArray As Boolean = False, Adapter As ValueAdapter = Nil) As Variant
 		  If Not Dict.HasKey(Key) Then
 		    Return Default
 		  End If
 		  
-		  Dim Value As Auto = Dict.Value(Key)
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
+		  Dim Value As Variant = Dict.Value(Key)
+		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
 		  If Info = Nil Then
 		    Return Default
 		  End If
 		  If Info.FullName = "Auto()" And AllowArray Then
-		    Dim Arr() As Auto = Value
+		    Dim Arr() As Variant = Value
 		    Return GetLastValueAsType(Arr, FullName, Default)
 		  ElseIf Info.FullName = FullName Then
 		    Return Value
@@ -594,7 +373,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
-		Function GlobalPosition(Extends Target As Window) As Xojo.Core.Point
+		Function GlobalPosition(Extends Target As Window) As Point
 		  Dim Left As Integer = Target.Left
 		  Dim Top As Integer = Target.Top
 		  
@@ -604,7 +383,7 @@ Protected Module Beacon
 		    Top = Top + Target.Top
 		  Wend
 		  
-		  Return New Xojo.Core.Point(Left, Top)
+		  Return New Point(Left, Top)
 		End Function
 	#tag EndMethod
 
@@ -653,7 +432,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function HardwareID() As Text
+		Protected Function HardwareID() As String
 		  #if TargetDesktop
 		    Dim Root As Global.FolderItem = Volume(0)
 		    If Root = Nil Or Root.Exists = False Then
@@ -668,99 +447,53 @@ Protected Module Beacon
 		    End If
 		    Created = New Date(Created.SecondsFrom1970, New TimeZone(0))
 		    
-		    Return REALbasic.EncodeHex(Crypto.SHA256(Str(Created.SecondsFrom1970 + 2082844800, "-0"))).Lowercase.ToText
+		    Return REALbasic.EncodeHex(Crypto.SHA256(Str(Created.SecondsFrom1970 + 2082844800, "-0"))).Lowercase
 		  #endif
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function HasAllKeys(Extends Dict As Xojo.Core.Dictionary, ParamArray Keys() As Auto) As Boolean
-		  For Each Key As Auto In Keys
-		    If Not Dict.HasKey(Key) Then
-		      Return False
-		    End If
-		  Next
-		  Return True
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Protected Function Hash(Block As Global.MemoryBlock) As Text
-		  Dim Temp As New Xojo.Core.MemoryBlock(Block)
-		  Return Beacon.Hash(Temp.Left(Block.Size))
+		Protected Function Hash(Block As MemoryBlock) As String
+		  Return REALbasic.EncodeHex(Crypto.SHA512(Block)).DefineEncoding(Encodings.UTF8)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function Hash(Value As Text, Encoding As Xojo.Core.TextEncoding = Nil) As Text
-		  If Encoding = Nil Then
-		    Encoding = Xojo.Core.TextEncoding.UTF8
-		  End If
-		  
-		  Return Beacon.Hash(Encoding.ConvertTextToData(Value))
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function Hash(Block As Xojo.Core.MemoryBlock) As Text
-		  Return Beacon.EncodeHex(Xojo.Crypto.SHA512(Block))
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function IntervalToSeconds(Interval As Xojo.Core.DateInterval) As UInt64
-		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
-		  Dim Future As Xojo.Core.Date = Now + Interval
-		  Return Future.SecondsFrom1970 - Now.SecondsFrom1970
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function IntervalToString(Interval As Xojo.Core.DateInterval) As Text
-		  Dim Parts() As Text
+		Protected Function IntervalToString(Interval As DateInterval) As String
+		  Dim Parts() As String
 		  If Interval.Years > 0 Then
-		    Parts.Append(Interval.Years.ToText + "y")
+		    Parts.Append(Str(Interval.Years, "-0") + "y")
 		  End If
 		  If Interval.Months > 0 Then
-		    Parts.Append(Interval.Months.ToText + "m")
+		    Parts.Append(Str(Interval.Months, "-0") + "m")
 		  End If
 		  If Interval.Days > 0 Then
-		    Parts.Append(Interval.Days.ToText + "d")
+		    Parts.Append(Str(Interval.Days, "-0") + "d")
 		  End If
 		  If Interval.Hours > 0 Then
-		    Parts.Append(Interval.Hours.ToText + "h")
+		    Parts.Append(Str(Interval.Hours, "-0") + "h")
 		  End If
 		  If Interval.Minutes > 0 Then
-		    Parts.Append(Interval.Minutes.ToText + "m")
+		    Parts.Append(Str(Interval.Minutes, "-0") + "m")
 		  End If
 		  If Interval.Seconds > 0 Then
-		    Parts.Append(Interval.Seconds.ToText + "s")
+		    Parts.Append(Str(Interval.Seconds, "-0") + "s")
 		  End If
-		  Return Parts.Join(" ")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function IsBeaconURL(ByRef Value As String) As Boolean
-		  Dim TextValue As Text = Value.ToText
-		  If Beacon.IsBeaconURL(TextValue) Then
-		    Value = TextValue
-		    Return True
-		  End If
+		  Return Join(Parts, " ")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsBeaconURL(ByRef Value As Text) As Boolean
-		  Dim PossiblePrefixes() As Text
+		Function IsBeaconURL(ByRef Value As String) As Boolean
+		  Dim PossiblePrefixes() As String
 		  PossiblePrefixes.Append(Beacon.URLScheme + "://")
 		  PossiblePrefixes.Append("https://app.beaconapp.cc/")
 		  
 		  Dim URLLength As Integer = Value.Length
-		  For Each PossiblePrefix As Text In PossiblePrefixes
+		  For Each PossiblePrefix As String In PossiblePrefixes
 		    Dim PrefixLength As Integer = PossiblePrefix.Length
 		    If URLLength > PrefixLength And Value.Left(PrefixLength) = PossiblePrefix Then
-		      Value = Value.Mid(PrefixLength)
+		      Value = Value.Middle(PrefixLength)
 		      Return True
 		    End If
 		  Next
@@ -768,8 +501,8 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Label(Extends Maps() As Beacon.Map) As Text
-		  Dim Names() As Text
+		Function Label(Extends Maps() As Beacon.Map) As String
+		  Dim Names() As String
 		  For Each Map As Beacon.Map In Maps
 		    Names.Append(Map.Name)
 		  Next
@@ -781,16 +514,16 @@ Protected Module Beacon
 		  ElseIf Names.Ubound = 1 Then
 		    Return Names(0) + " & " + Names(1)
 		  Else
-		    Dim Tail As Text = Names(UBound(Names))
-		    Names.Remove(UBound(Names))
-		    Return Names.Join(", ") + ", & " + Tail
+		    Dim Tail As String = Names(Names.Ubound)
+		    Names.Remove(Names.Ubound)
+		    Return Join(Names, ", ") + ", & " + Tail
 		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function LabelFromClassString(ClassString As Text) As Text
-		  Dim Parts() As Text = ClassString.Split("_")
+		Protected Function LabelFromClassString(ClassString As String) As String
+		  Dim Parts() As String = Split(ClassString, "_")
 		  If Parts.Ubound <= 1 Then
 		    Return ClassString
 		  End If
@@ -804,53 +537,38 @@ Protected Module Beacon
 		      End If
 		    Next
 		  End If
-		  Return Beacon.MakeHumanReadable(Parts.Join(" "))
+		  Return Beacon.MakeHumanReadable(Join(Parts, " "))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LastRowIndex(Extends Target As Beacon.Countable) As Integer
+		  Return Target.Count - 1
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function MakeHumanReadable(Source As Text) As Text
-		  #if Not TargetIOS
-		    Dim SourceChars() As String = Split(Source, "")
-		    Dim Chars() As String
-		    For Each Char As String In SourceChars
-		      Dim Codepoint As Integer = Asc(Char)
-		      If Codepoint = 32 Or (Codepoint >= 48 And Codepoint <= 57) Or (Codepoint >= 97 And Codepoint <= 122) Then
-		        Chars.Append(Char)
-		      ElseIf Codepoint >= 65 And Codepoint <= 99 Then
-		        Chars.Append(" ")
-		        Chars.Append(Char)
-		      ElseIf Codepoint = 95 Then
-		        Chars.Append(" ")
-		      End If
-		    Next
-		    Dim StrVer As String = Join(Chars, "")
-		    
-		    While InStr(StrVer, "  ") > 0
-		      StrVer = StrVer.ReplaceAll("  ", " ")
-		    Wend
-		    
-		    Return Trim(StrVer).ToText
-		  #else
-		    Dim Chars() As Text
-		    For Each Codepoint As Integer In Source.Codepoints
-		      If Codepoint = 32 Or (Codepoint >= 48 And Codepoint <= 57) Or (Codepoint >= 97 And Codepoint <= 122) Then
-		        Chars.Append(Text.FromUnicodeCodepoint(Codepoint))
-		      ElseIf CodePoint >= 65 And Codepoint <= 90 Then
-		        Chars.Append(" ")
-		        Chars.Append(Text.FromUnicodeCodepoint(Codepoint))
-		      ElseIf CodePoint = 95 Then
-		        Chars.Append(" ")
-		      End If
-		    Next
-		    Source = Chars.Join("")
-		    
-		    While Source.IndexOf("  ") > -1
-		      Source = Source.ReplaceAll("  ", " ")
-		    Wend
-		    
-		    Return Source.Trim
-		  #endif
+		Protected Function MakeHumanReadable(Source As String) As String
+		  Dim Chars() As String
+		  Dim SourceChars() As String = Source.Split("")
+		  For Each Char As String In SourceChars
+		    Dim Codepoint As Integer = Asc(Char)
+		    If Codepoint = 32 Or (Codepoint >= 48 And Codepoint <= 57) Or (Codepoint >= 97 And Codepoint <= 122) Then
+		      Chars.Append(Char)
+		    ElseIf CodePoint >= 65 And Codepoint <= 90 Then
+		      Chars.Append(" ")
+		      Chars.Append(Char)
+		    ElseIf CodePoint = 95 Then
+		      Chars.Append(" ")
+		    End If
+		  Next
+		  Source = Chars.Join("")
+		  
+		  While Source.IndexOf("  ") > -1
+		    Source = Source.ReplaceAll("  ", " ")
+		  Wend
+		  
+		  Return Source.Trim
 		End Function
 	#tag EndMethod
 
@@ -865,32 +583,26 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function MD5(Value As Text) As Text
-		  Dim Bytes As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Value)
-		  Dim Hash As Xojo.Core.MemoryBlock = Xojo.Crypto.MD5(Bytes)
-		  Return Beacon.EncodeHex(Hash)
+		Protected Function MD5(Value As MemoryBlock) As String
+		  Return EncodeHex(Crypto.MD5(Value))
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function NormalizeTag(Tag As Text) As Text
-		  #if Not TargetiOS
-		    Dim TagString As String = Tag.Lowercase.Trim
-		    
-		    Dim Sanitizer As New RegEx
-		    Sanitizer.Options.ReplaceAllMatches = True
-		    Sanitizer.SearchPattern = "\s+"
-		    Sanitizer.ReplacementPattern = "_"
-		    TagString = Sanitizer.Replace(TagString)
-		    
-		    Sanitizer.SearchPattern = "[^\w]"
-		    Sanitizer.ReplacementPattern = ""
-		    TagString = Sanitizer.Replace(TagString)
-		    
-		    Return TagString.ToText
-		  #else
-		    #Pragma Error "Not implemented"
-		  #endif
+		Protected Function NormalizeTag(Tag As String) As String
+		  Dim TagString As String = Tag.Lowercase.Trim
+		  
+		  Dim Sanitizer As New RegEx
+		  Sanitizer.Options.ReplaceAllMatches = True
+		  Sanitizer.SearchPattern = "\s+"
+		  Sanitizer.ReplacementPattern = "_"
+		  TagString = Sanitizer.Replace(TagString)
+		  
+		  Sanitizer.SearchPattern = "[^\w]"
+		  Sanitizer.ReplacementPattern = ""
+		  TagString = Sanitizer.Replace(TagString)
+		  
+		  Return TagString
 		End Function
 	#tag EndMethod
 
@@ -901,53 +613,14 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ParseSQLDate(Value As Text) As Xojo.Core.Date
-		  Value = Value.Trim
-		  
-		  Dim Year, Month, Day, Hour, Minute, Second, Offset As Integer
-		  
-		  If Value.Length >= 10 Then
-		    Year = Integer.FromText(Value.Mid(0, 4))
-		    Month = Integer.FromText(Value.Mid(5, 2))
-		    Day = Integer.FromText(Value.Mid(8, 2))
-		    Value = Value.Mid(10)
-		  End If
-		  
-		  If Value.Length >= 1 And Value.Left(1) = " " Then
-		    Value = Value.Mid(1)
-		  End If
-		  
-		  If Value.Length >= 8 Then
-		    Hour = Integer.FromText(Value.Mid(0, 2))
-		    Minute = Integer.FromText(Value.Mid(3, 2))
-		    Second = Integer.FromText(Value.Mid(6, 2))
-		    Value = Value.Mid(8)
-		  End If
-		  
-		  If Value.Length >= 3 Then
-		    Dim Multiplier As Integer = if(Value.Left(1) = "-", -1, 1)
-		    Dim OffsetHours As Integer = Integer.FromText(Value.Mid(1, 2))
-		    Dim OffsetMinutes As Integer
-		    If Value.Length >= 5 Then
-		      OffsetMinutes = Integer.FromText(Value.Mid(3, 2))
-		    End If
-		    
-		    Offset = ((OffsetHours * 3600) + (OffsetMinutes + 60)) * Multiplier
-		  End If
-		  
-		  Return New Xojo.Core.Date(Year, Month, Day, Hour, Minute, Second, 0, New Xojo.Core.TimeZone(Offset))
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function PrettyText(Value As Double, DecimalPlaces As Integer = 6) As Text
+		Protected Function PrettyText(Value As Double, DecimalPlaces As Integer = 6) As String
 		  Dim Multiplier As UInteger = 1
 		  Dim Places As Integer = 0
-		  Dim Format As Text = "0"
+		  Dim Format As String = "0"
 		  
 		  While Places < DecimalPlaces
 		    Dim TestValue As Double = Value * Multiplier
-		    If Xojo.Math.Floor(TestValue) = TestValue Then
+		    If Floor(TestValue) = TestValue Then
 		      Exit
 		    End If
 		    Multiplier = Multiplier * 10
@@ -956,16 +629,16 @@ Protected Module Beacon
 		  Wend
 		  
 		  If Format.Length > 1 Then
-		    Format = Format.Left(1) + "." + Format.Mid(1)
+		    Format = Format.Left(1) + "." + Format.Middle(1)
 		  End If
 		  
 		  Dim RoundedValue As Double = Round(Value * Multiplier) / Multiplier
-		  Return RoundedValue.ToText(Xojo.Core.Locale.Raw, Format)
+		  Return RoundedValue.ToString(Locale.Raw, Format)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function PrettyText(Extends Value As Double, DecimalPlaces As Integer = 6) As Text
+		Function PrettyText(Extends Value As Double, DecimalPlaces As Integer = 6) As String
 		  Return PrettyText(Value, DecimalPlaces)
 		End Function
 	#tag EndMethod
@@ -987,17 +660,17 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveTag(Extends Blueprint As Beacon.MutableBlueprint, ParamArray TagsToRemove() As Text)
+		Sub RemoveTag(Extends Blueprint As Beacon.MutableBlueprint, ParamArray TagsToRemove() As String)
 		  Blueprint.RemoveTags(TagsToRemove)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveTags(Extends Blueprint As Beacon.MutableBlueprint, TagsToRemove() As Text)
-		  Dim Tags() As Text = Blueprint.Tags
+		Sub RemoveTags(Extends Blueprint As Beacon.MutableBlueprint, TagsToRemove() As String)
+		  Dim Tags() As String = Blueprint.Tags
 		  Dim Changed As Boolean
 		  For I As Integer = 0 To TagsToRemove.Ubound
-		    Dim Tag As Text  = Beacon.NormalizeTag(TagsToRemove(I))
+		    Dim Tag As String  = Beacon.NormalizeTag(TagsToRemove(I))
 		    
 		    If Tag = "object" Then
 		      Continue
@@ -1021,27 +694,6 @@ Protected Module Beacon
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function ReplaceLineEndings(Extends Source As Text, ReplaceWith As Text) As Text
-		  Return Beacon.ReplaceLineEndings(Source, ReplaceWith)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function ReplaceLineEndings(Source As Text, ReplaceWith As Text) As Text
-		  #if Not TargetiOS
-		    Return REALbasic.ReplaceLineEndings(Source, ReplaceWith).ToText
-		  #else
-		    Dim CR As Text = Text.FromUnicodeCodepoint(13)
-		    Dim LR As Text = Text.FromUnicodeCodepoint(10)
-		    
-		    Source = Source.ReplaceAll(CR + LF, CR)
-		    Source = Source.ReplaceAll(LF, CR)
-		    Return Source.ReplaceAll(CR, ReplaceWith)
-		  #endif
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Function SanitizeFilename(Filename As String) As String
 		  Filename = Filename.ReplaceAll("/", "-")
@@ -1058,9 +710,9 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForCreatures(Extends Source As Beacon.DataSource, SearchText As Text = "", Mods As Beacon.TextList = Nil, Tags As Text = "") As Beacon.Creature()
+		Function SearchForCreatures(Extends Source As Beacon.DataSource, SearchText As String = "", Mods As Beacon.StringList = Nil, Tags As String = "") As Beacon.Creature()
 		  If Mods = Nil Then
-		    Mods = New Beacon.TextList
+		    Mods = New Beacon.StringList
 		  End If
 		  Dim Blueprints() As Beacon.Blueprint = Source.SearchForBlueprints(CategoryCreatures, SearchText, Mods, Tags)
 		  Dim Creatures() As Beacon.Creature
@@ -1074,9 +726,9 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForEngrams(Extends Source As Beacon.DataSource, SearchText As Text = "", Mods As Beacon.TextList = Nil, Tags As Text = "") As Beacon.Engram()
+		Function SearchForEngrams(Extends Source As Beacon.DataSource, SearchText As String = "", Mods As Beacon.StringList = Nil, Tags As String = "") As Beacon.Engram()
 		  If Mods = Nil Then
-		    Mods = New Beacon.TextList
+		    Mods = New Beacon.StringList
 		  End If
 		  Dim Blueprints() As Beacon.Blueprint = Source.SearchForBlueprints(CategoryEngrams, SearchText, Mods, Tags)
 		  Dim Engrams() As Beacon.Engram
@@ -1090,24 +742,8 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function SecondsToInterval(Seconds As UInt64) As Xojo.Core.DateInterval
-		  #if false
-		    Dim Days As Integer = Xojo.Math.Floor(Seconds / 86400)
-		    Seconds = Seconds - (Days * 86400)
-		    
-		    Dim Hours As Integer = Xojo.Math.Floor(Seconds / 3600)
-		    Seconds = Seconds - (Hours * 3600)
-		    
-		    Dim Minutes As Integer = Xojo.Math.Floor(Seconds / 60)
-		    Seconds = Seconds - (Minutes * 60)
-		    
-		    Return New Xojo.Core.DateInterval(0, 0, Days, Hours, Minutes, Seconds, 0)
-		  #endif
-		  
-		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
-		  Dim Future As New Xojo.Core.Date(Now.SecondsFrom1970 + Seconds, Now.TimeZone)
-		  Return Future - Now
-		  
+		Protected Function SecondsToInterval(Seconds As UInt64) As DateInterval
+		  Return New DateInterval(0, 0, 0, 0, 0, Seconds, 0)
 		End Function
 	#tag EndMethod
 
@@ -1162,18 +798,18 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TagString(Extends Blueprint As Beacon.Blueprint) As Text
-		  Dim Tags() As Text = Blueprint.Tags
+		Function TagString(Extends Blueprint As Beacon.Blueprint) As String
+		  Dim Tags() As String = Blueprint.Tags
 		  If Tags.IndexOf("object") = -1 Then
 		    Tags.Insert(0, "object")
 		  End If
-		  Return Text.Join(Tags, ",")
+		  Return Join(Tags, ",")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub TagString(Extends Blueprint As Beacon.MutableBlueprint, Assigns Value As Text)
-		  Dim Tags() As Text = Value.Split(",")
+		Sub TagString(Extends Blueprint As Beacon.MutableBlueprint, Assigns Value As String)
+		  Dim Tags() As String = Value.Split(",")
 		  Dim Idx As Integer = Tags.IndexOf("object")
 		  If Idx > -1 Then
 		    Tags.Remove(Idx)
@@ -1182,26 +818,8 @@ Protected Module Beacon
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function TotalSeconds(Extends Interval As Xojo.Core.DateInterval) As UInt64
-		  Return IntervalToSeconds(Interval)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function UBound(Item As Beacon.Countable) As Integer
-		  Return Item.Count - 1
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function UBound(Extends Item As Beacon.Countable) As Integer
-		  Return Item.Count - 1
-		End Function
-	#tag EndMethod
-
 	#tag DelegateDeclaration, Flags = &h1
-		Protected Delegate Function URLHandler(URL As Text) As Boolean
+		Protected Delegate Function URLHandler(URL As String) As Boolean
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
@@ -1239,15 +857,15 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h21
-		Private Delegate Function ValueAdapter(ByRef Value As Auto, Info As Xojo . Introspection . TypeInfo) As Boolean
+		Private Delegate Function ValueAdapter(ByRef Value As Variant, Info As Introspection.TypeInfo) As Boolean
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h1
-		Protected Function WebURL(Path As Text = "/") As Text
+		Protected Function WebURL(Path As String = "/") As String
 		  #if DebugBuild
-		    Dim Domain As Text = "https://lab.beaconapp.cc"
+		    Dim Domain As String = "https://lab.beaconapp.cc"
 		  #else
-		    Dim Domain As Text = "https://beaconapp.cc"
+		    Dim Domain As String = "https://beaconapp.cc"
 		  #endif
 		  If Path.Length = 0 Or Path.Left(1) <> "/" Then
 		    Path = "/" + Path
@@ -1272,28 +890,28 @@ Protected Module Beacon
 	#tag EndProperty
 
 
-	#tag Constant, Name = CategoryCreatures, Type = Text, Dynamic = False, Default = \"creatures", Scope = Protected
+	#tag Constant, Name = CategoryCreatures, Type = String, Dynamic = False, Default = \"creatures", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = CategoryEngrams, Type = Text, Dynamic = False, Default = \"engrams", Scope = Protected
+	#tag Constant, Name = CategoryEngrams, Type = String, Dynamic = False, Default = \"engrams", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = OmniVersion, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = RewriteModeGameIni, Type = Text, Dynamic = False, Default = \"Game.ini", Scope = Protected
+	#tag Constant, Name = RewriteModeGameIni, Type = String, Dynamic = False, Default = \"Game.ini", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = RewriteModeGameUserSettingsIni, Type = Text, Dynamic = False, Default = \"GameUserSettings.ini", Scope = Protected
+	#tag Constant, Name = RewriteModeGameUserSettingsIni, Type = String, Dynamic = False, Default = \"GameUserSettings.ini", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = ServerSettingsHeader, Type = Text, Dynamic = False, Default = \"ServerSettings", Scope = Protected
+	#tag Constant, Name = ServerSettingsHeader, Type = String, Dynamic = False, Default = \"ServerSettings", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = ShooterGameHeader, Type = Text, Dynamic = False, Default = \"/script/shootergame.shootergamemode", Scope = Protected
+	#tag Constant, Name = ShooterGameHeader, Type = String, Dynamic = False, Default = \"/script/shootergame.shootergamemode", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = URLScheme, Type = Text, Dynamic = False, Default = \"beacon", Scope = Protected
+	#tag Constant, Name = URLScheme, Type = String, Dynamic = False, Default = \"beacon", Scope = Protected
 	#tag EndConstant
 
 

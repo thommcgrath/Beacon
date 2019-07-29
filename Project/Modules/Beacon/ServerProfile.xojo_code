@@ -15,7 +15,7 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Dict As Xojo.Core.Dictionary)
+		Sub Constructor(Dict As Dictionary)
 		  If Not Dict.HasAllKeys("Name", "Profile ID", "Enabled") Then
 		    Dim Err As New KeyNotFoundException
 		    Err.Reason = "Incomplete server profile"
@@ -34,7 +34,7 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromDictionary(Dict As Xojo.Core.Dictionary) As Beacon.ServerProfile
+		Shared Function FromDictionary(Dict As Dictionary) As Beacon.ServerProfile
 		  // This isn't a great design because the factory needs to know about all its subclasses, but
 		  // there aren't better alternatives. Xojo's dead code stripping prevents a lookup from working.
 		  
@@ -42,7 +42,7 @@ Protected Class ServerProfile
 		    Return Nil
 		  End If
 		  
-		  Dim Provider As Text = Dict.Value("Provider")
+		  Dim Provider As String = Dict.Value("Provider")
 		  Select Case Provider
 		  Case "Nitrado"
 		    Return New Beacon.NitradoServerProfile(Dict)
@@ -59,7 +59,7 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function OAuthProvider() As Text
+		Function OAuthProvider() As String
 		  
 		End Function
 	#tag EndMethod
@@ -94,7 +94,7 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ProfileID() As Text
+		Function ProfileID() As String
 		  If Self.mProfileID = "" Then
 		    Self.mProfileID = Beacon.CreateUUID
 		  End If
@@ -103,7 +103,7 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SecondaryName() As Text
+		Function SecondaryName() As String
 		  
 		End Function
 	#tag EndMethod
@@ -115,8 +115,8 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ToDictionary() As Xojo.Core.Dictionary
-		  Dim Dict As New Xojo.Core.Dictionary
+		Function ToDictionary() As Dictionary
+		  Dim Dict As New Dictionary
 		  RaiseEvent WriteToDictionary(Dict)
 		  If Not Dict.HasKey("Provider") Then
 		    Dim Err As New KeyNotFoundException
@@ -133,11 +133,11 @@ Protected Class ServerProfile
 
 
 	#tag Hook, Flags = &h0
-		Event ReadFromDictionary(Dict As Xojo.Core.Dictionary)
+		Event ReadFromDictionary(Dict As Dictionary)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event WriteToDictionary(Dict As Xojo.Core.Dictionary)
+		Event WriteToDictionary(Dict As Dictionary)
 	#tag EndHook
 
 
@@ -172,7 +172,7 @@ Protected Class ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mName As Text
+		Private mName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -184,7 +184,7 @@ Protected Class ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mProfileID As Text
+		Private mProfileID As String
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -199,13 +199,13 @@ Protected Class ServerProfile
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mName.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
+			  If Self.mName.Compare(Value) <> 0 Then
 			    Self.mName = Value
 			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter
-		Name As Text
+		Name As String
 	#tag EndComputedProperty
 
 
@@ -230,7 +230,9 @@ Protected Class ServerProfile
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -238,6 +240,7 @@ Protected Class ServerProfile
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -245,12 +248,15 @@ Protected Class ServerProfile
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -258,21 +264,31 @@ Protected Class ServerProfile
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Modified"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="IsConsole"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

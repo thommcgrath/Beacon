@@ -8,37 +8,37 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub IsTagged(Tag As Text, Assigns Value As Boolean)
+		Sub IsTagged(Tag As String, Assigns Value As Boolean)
 		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Label(Assigns Value As Text)
+		Sub Label(Assigns Value As String)
 		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ModID(Assigns Value As Text)
+		Sub ModID(Assigns Value As String)
 		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ModName(Assigns Value As Text)
+		Sub ModName(Assigns Value As String)
 		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Path(Assigns Value As Text)
+		Sub Path(Assigns Value As String)
 		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Tags(Assigns Tags() As Text)
+		Sub Tags(Assigns Tags() As String)
 		  
 		End Sub
 	#tag EndMethod

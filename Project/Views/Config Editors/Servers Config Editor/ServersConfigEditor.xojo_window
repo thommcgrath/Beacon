@@ -249,14 +249,14 @@ End
 
 
 	#tag Method, Flags = &h0
-		Function ConfigLabel() As Text
+		Function ConfigLabel() As String
 		  Return "Servers"
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Controller As Beacon.DocumentController)
-		  Self.mViews = New Xojo.Core.Dictionary
+		  Self.mViews = New Dictionary
 		  Super.Constructor(Controller)
 		End Sub
 	#tag EndMethod
@@ -303,7 +303,7 @@ End
 			  Self.mCurrentProfileID = Value
 			End Set
 		#tag EndSetter
-		CurrentProfileID As Text
+		CurrentProfileID As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -318,11 +318,11 @@ End
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mCurrentProfileID As Text
+		Private mCurrentProfileID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mViews As Xojo.Core.Dictionary
+		Private mViews As Dictionary
 	#tag EndProperty
 
 
@@ -337,7 +337,7 @@ End
 		  End If
 		  
 		  Dim Profile As Beacon.ServerProfile = Me.RowTag(Me.SelectedIndex)
-		  Dim ProfileID As Text = Profile.ProfileID
+		  Dim ProfileID As String = Profile.ProfileID
 		  If Not Self.mViews.HasKey(ProfileID) Then
 		    // Create the view
 		    Dim View As ServerViewContainer
@@ -372,7 +372,7 @@ End
 		  
 		  If Warn Then
 		    Dim Subject As String = If(SelCount = 1, "server", "servers")
-		    Dim DemonstrativeAdjective As String = If(SelCount = 1, "this", "these " + SelCount.ToText)
+		    Dim DemonstrativeAdjective As String = If(SelCount = 1, "this", "these " + SelCount.ToString)
 		    If Not Self.ShowConfirm("Are you sure you want to delete " + DemonstrativeAdjective + " " + Subject + "?", "The " + Subject + " can be added again later using the ""Import"" feature next to the ""Config Type"" menu.", "Delete", "Cancel") Then
 		      Return
 		    End If
@@ -440,7 +440,7 @@ End
 		    End If
 		    App.ShowFile(Folder)
 		  Case "Copy Profile ID"
-		    Dim ProfileID As Text = HitItem.Tag
+		    Dim ProfileID As String = HitItem.Tag
 		    Dim Board As New Clipboard
 		    Board.Text = ProfileID
 		  End Select
@@ -695,7 +695,7 @@ End
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
-		Type="Text"
-		EditorType=""
+		Type="String"
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 #tag EndViewBehavior

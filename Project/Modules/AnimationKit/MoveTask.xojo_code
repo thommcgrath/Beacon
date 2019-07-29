@@ -16,7 +16,7 @@ Inherits AnimationKit.Task
 		  Dim RectWidth As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartBounds.Width, Self.EndBounds.Width)
 		  Dim RectHeight As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartBounds.Height, Self.EndBounds.Height)
 		  
-		  Self.ApplyRect(New Xojo.Core.Rect(Floor(RectLeft), Floor(RectTop), Ceil(RectWidth), Ceil(RectHeight)))
+		  Self.ApplyRect(New Rect(Floor(RectLeft), Floor(RectTop), Ceil(RectWidth), Ceil(RectHeight)))
 		End Sub
 	#tag EndEvent
 
@@ -28,7 +28,7 @@ Inherits AnimationKit.Task
 
 
 	#tag Method, Flags = &h21, CompatibilityFlags = (TargetIOS)
-		Private Sub ApplyRect(Target As iOSControl, Rect As Xojo.Core.Rect)
+		Private Sub ApplyRect(Target As iOSControl, Rect As Rect)
 		  // This is left in as a stub. iOSControl cannot move, so this entire
 		  // task is useless on iOS.
 		  
@@ -47,42 +47,8 @@ Inherits AnimationKit.Task
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21, CompatibilityFlags = (TargetHasGUI)
-		Private Sub ApplyRect(Target As RectControl, Rect As Xojo.Core.Rect)
-		  If Self.AnimateLeft Then
-		    Target.Left = Rect.Left
-		  End If
-		  If Self.AnimateTop Then
-		    Target.Top = Rect.Top
-		  End If
-		  If Self.AnimateWidth Then
-		    Target.Width = Rect.Width
-		  End If
-		  If Self.AnimateHeight Then
-		    Target.Height = Rect.Height
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21, CompatibilityFlags = (TargetHasGUI)
-		Private Sub ApplyRect(Target As Window, Rect As Xojo.Core.Rect)
-		  If Self.AnimateLeft Then
-		    Target.Left = Rect.Left
-		  End If
-		  If Self.AnimateTop Then
-		    Target.Top = Rect.Top
-		  End If
-		  If Self.AnimateWidth Then
-		    Target.Width = Rect.Width
-		  End If
-		  If Self.AnimateHeight Then
-		    Target.Height = Rect.Height
-		  End If
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21, CompatibilityFlags = (not TargetHasGUI and not TargetWeb and not TargetIOS) or  (TargetWeb) or  (TargetHasGUI) or  (TargetIOS)
-		Private Sub ApplyRect(Rect As Xojo.Core.Rect)
+		Private Sub ApplyRect(Rect As Rect)
 		  Dim Item As Object = Self.Item
 		  
 		  If Item = Nil Then
@@ -111,6 +77,40 @@ Inherits AnimationKit.Task
 		    Err.Reason = "Item for AnimationKit.MoveTask must be an iOSControl."
 		  #endif
 		  Raise Err
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21, CompatibilityFlags = (TargetHasGUI)
+		Private Sub ApplyRect(Target As RectControl, Rect As Rect)
+		  If Self.AnimateLeft Then
+		    Target.Left = Rect.Left
+		  End If
+		  If Self.AnimateTop Then
+		    Target.Top = Rect.Top
+		  End If
+		  If Self.AnimateWidth Then
+		    Target.Width = Rect.Width
+		  End If
+		  If Self.AnimateHeight Then
+		    Target.Height = Rect.Height
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21, CompatibilityFlags = (TargetHasGUI)
+		Private Sub ApplyRect(Target As Window, Rect As Rect)
+		  If Self.AnimateLeft Then
+		    Target.Left = Rect.Left
+		  End If
+		  If Self.AnimateTop Then
+		    Target.Top = Rect.Top
+		  End If
+		  If Self.AnimateWidth Then
+		    Target.Width = Rect.Width
+		  End If
+		  If Self.AnimateHeight Then
+		    Target.Height = Rect.Height
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -155,7 +155,7 @@ Inherits AnimationKit.Task
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, CompatibilityFlags = (not TargetHasGUI and not TargetWeb and not TargetIOS) or  (TargetWeb) or  (TargetHasGUI) or  (TargetIOS)
-		Private Function CurrentRect() As Xojo.Core.Rect
+		Private Function CurrentRect() As Rect
 		  Dim Item As Object = Self.Item
 		  
 		  If Item = Nil Then
@@ -185,20 +185,20 @@ Inherits AnimationKit.Task
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, CompatibilityFlags = (TargetIOS)
-		Private Function CurrentRect(Target As iOSControl) As Xojo.Core.Rect
-		  Return New Xojo.Core.Rect(Target.Left, Target.Top, Target.Width, Target.Height)
+		Private Function CurrentRect(Target As iOSControl) As Rect
+		  Return New Rect(Target.Left, Target.Top, Target.Width, Target.Height)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, CompatibilityFlags = (TargetHasGUI)
-		Private Function CurrentRect(Target As RectControl) As Xojo.Core.Rect
-		  Return New Xojo.Core.Rect(Target.Left, Target.Top, Target.Width, Target.Height)
+		Private Function CurrentRect(Target As RectControl) As Rect
+		  Return New Rect(Target.Left, Target.Top, Target.Width, Target.Height)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, CompatibilityFlags = (TargetHasGUI)
-		Private Function CurrentRect(Target As Window) As Xojo.Core.Rect
-		  Return New Xojo.Core.Rect(Target.Left, Target.Top, Target.Width, Target.Height)
+		Private Function CurrentRect(Target As Window) As Rect
+		  Return New Rect(Target.Left, Target.Top, Target.Width, Target.Height)
 		End Function
 	#tag EndMethod
 
@@ -219,7 +219,7 @@ Inherits AnimationKit.Task
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI) or  (TargetIOS)
-		Function OriginalRect() As Xojo.Core.Rect
+		Function OriginalRect() As Rect
 		  If Self.StartBounds <> Nil Then
 		    Return CloneRect(Self.StartBounds)
 		  End If
@@ -228,14 +228,14 @@ Inherits AnimationKit.Task
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI)
 		Sub SetDestination(Source As REALbasic.Rect)
-		  Self.SetDestination(New Xojo.Core.Rect(Source.Left, Source.Top, Source.Width, Source.Height))
+		  Self.SetDestination(New Rect(Source.Left, Source.Top, Source.Width, Source.Height))
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI) or  (TargetIOS)
-		Sub SetDestination(Source As Xojo.Core.Rect)
-		  Dim CurrentBounds As Xojo.Core.Rect = Self.CurrentRect()
-		  Self.EndBounds = New Xojo.Core.Rect(Source.Left, Source.Top, Source.Width, Source.Height)
+		Sub SetDestination(Source As Rect)
+		  Dim CurrentBounds As Rect = Self.CurrentRect()
+		  Self.EndBounds = New Rect(Source.Left, Source.Top, Source.Width, Source.Height)
 		  Self.AnimationKeys = 0
 		  If Self.EndBounds.Left <> CurrentBounds.Left Then
 		    Self.EnableValues(Self.KeyLeft)
@@ -338,7 +338,7 @@ Inherits AnimationKit.Task
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private EndBounds As Xojo.Core.Rect
+		Private EndBounds As Rect
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -349,7 +349,7 @@ Inherits AnimationKit.Task
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.EndBounds = New Xojo.Core.Rect(Self.EndBounds.Left, Self.EndBounds.Top, Self.EndBounds.Width, Value)
+			  Self.EndBounds = New Rect(Self.EndBounds.Left, Self.EndBounds.Top, Self.EndBounds.Width, Value)
 			  Self.EnableValues(Self.KeyHeight)
 			End Set
 		#tag EndSetter
@@ -364,7 +364,7 @@ Inherits AnimationKit.Task
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.EndBounds = New Xojo.Core.Rect(Value, Self.EndBounds.Top, Self.EndBounds.Width, Self.EndBounds.Height)
+			  Self.EndBounds = New Rect(Value, Self.EndBounds.Top, Self.EndBounds.Width, Self.EndBounds.Height)
 			  Self.EnableValues(Self.KeyLeft)
 			End Set
 		#tag EndSetter
@@ -372,7 +372,7 @@ Inherits AnimationKit.Task
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private StartBounds As Xojo.Core.Rect
+		Private StartBounds As Rect
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -383,7 +383,7 @@ Inherits AnimationKit.Task
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.EndBounds = New Xojo.Core.Rect(Self.EndBounds.Left, Value, Self.EndBounds.Width, Self.EndBounds.Height)
+			  Self.EndBounds = New Rect(Self.EndBounds.Left, Value, Self.EndBounds.Width, Self.EndBounds.Height)
 			  Self.EnableValues(Self.KeyTop)
 			End Set
 		#tag EndSetter
@@ -398,7 +398,7 @@ Inherits AnimationKit.Task
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.EndBounds = New Xojo.Core.Rect(Self.EndBounds.Left, Self.EndBounds.Top, Value, Self.EndBounds.Height)
+			  Self.EndBounds = New Rect(Self.EndBounds.Left, Self.EndBounds.Top, Value, Self.EndBounds.Height)
 			  Self.EnableValues(Self.KeyWidth)
 			End Set
 		#tag EndSetter

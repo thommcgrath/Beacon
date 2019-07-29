@@ -16,7 +16,7 @@ Protected Class Document
 		  
 		  Self.mServerProfiles.Append(Profile.Clone)
 		  If Profile.IsConsole Then
-		    Dim SafeMods() As Text = Beacon.Data.ConsoleSafeMods
+		    Dim SafeMods() As String = Beacon.Data.ConsoleSafeMods
 		    If Self.mMods = Nil Or Self.mMods.Ubound = -1 Then
 		      Self.mMods = SafeMods
 		    Else
@@ -39,7 +39,7 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigGroup(GroupName As Text, Create As Boolean = False) As Beacon.ConfigGroup
+		Function ConfigGroup(GroupName As String, Create As Boolean = False) As Beacon.ConfigGroup
 		  If Self.mConfigGroups.HasKey(GroupName) Then
 		    Return Self.mConfigGroups.Value(GroupName)
 		  End If
@@ -59,42 +59,41 @@ Protected Class Document
 		Sub Constructor()
 		  Self.mIdentifier = Beacon.CreateUUID
 		  Self.mMapCompatibility = Beacon.Maps.TheIsland.Mask
-		  Self.mConfigGroups = New Xojo.Core.Dictionary
+		  Self.mConfigGroups = New Dictionary
 		  Self.AddConfigGroup(New BeaconConfigs.Difficulty)
 		  Self.Difficulty.IsImplicit = True
 		  Self.mModified = False
-		  Self.mMods = New Beacon.TextList
+		  Self.mMods = New Beacon.StringList
 		  Self.UseCompression = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Difficulty() As BeaconConfigs.Difficulty
-		  Static GroupName As Text = BeaconConfigs.Difficulty.ConfigName
+		  Static GroupName As String = BeaconConfigs.Difficulty.ConfigName
 		  Return BeaconConfigs.Difficulty(Self.ConfigGroup(GroupName, True))
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DocumentID() As Text
+		Function DocumentID() As String
 		  Return Self.mIdentifier
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromText(Contents As Text, Identity As Beacon.Identity) As Beacon.Document
-		  Dim Parsed As Auto
+		Shared Function FromString(Contents As String, Identity As Beacon.Identity) As Beacon.Document
+		  Dim Parsed As Variant
 		  Try
-		    Parsed = Xojo.Data.ParseJSON(Contents)
-		  Catch Err As Xojo.Data.InvalidJSONException
+		    Parsed = Beacon.ParseJSON(Contents)
+		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
 		  
 		  Dim Doc As New Beacon.Document
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Parsed)
 		  Dim Version As Integer = 1
-		  Dim Dict As Xojo.Core.Dictionary
-		  If Info.FullName = "Xojo.Core.Dictionary" Then
+		  Dim Dict As Dictionary
+		  If Parsed IsA Dictionary Then
 		    Dict = Parsed
 		    Version = Dict.Lookup("Version", 0)
 		    If Dict.HasKey("Identifier") Then
@@ -104,15 +103,15 @@ Protected Class Document
 		    End If
 		  End If
 		  If Version < 3 Then
-		    Return FromTextLegacy(Parsed, Identity)
+		    Return Nil
 		  End If
 		  
 		  // New config system
 		  If Dict.HasKey("Configs") Then
-		    Dim Groups As Xojo.Core.Dictionary = Dict.Value("Configs")
-		    For Each Entry As Xojo.Core.DictionaryEntry In Groups
-		      Dim GroupName As Text = Entry.Key
-		      Dim GroupData As Xojo.Core.Dictionary = Entry.Value
+		    Dim Groups As Dictionary = Dict.Value("Configs")
+		    For Each Entry As DictionaryEntry In Groups
+		      Dim GroupName As String = Entry.Key
+		      Dim GroupData As Dictionary = Entry.Value
 		      Dim Instance As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName, GroupData, Identity)
 		      If Instance <> Nil Then
 		        Doc.mConfigGroups.Value(GroupName) = Instance
@@ -121,7 +120,7 @@ Protected Class Document
 		  End If
 		  
 		  If Dict.HasKey("Mods") Then
-		    Dim Mods As Beacon.TextList = Beacon.TextList.FromAuto(Dict.Value("Mods"))
+		    Dim Mods As Beacon.StringList = Beacon.StringList.FromVariant(Dict.Value("Mods"))
 		    If Mods <> Nil Then
 		      Doc.mMods = Mods
 		    End If
@@ -144,13 +143,13 @@ Protected Class Document
 		    Doc.UseCompression = True
 		  End If
 		  If Dict.HasKey("Secure") Then
-		    Dim SecureDict As Xojo.Core.Dictionary = ReadSecureData(Dict.Value("Secure"), Identity)
+		    Dim SecureDict As Dictionary = ReadSecureData(Dict.Value("Secure"), Identity)
 		    If SecureDict <> Nil Then
 		      Doc.mLastSecureDict = Dict.Value("Secure")
 		      Doc.mLastSecureHash = Doc.mLastSecureDict.Value("Hash")
 		      
-		      Dim ServerDicts() As Auto = SecureDict.Value("Servers")
-		      For Each ServerDict As Xojo.Core.Dictionary In ServerDicts
+		      Dim ServerDicts() As Variant = SecureDict.Value("Servers")
+		      For Each ServerDict As Dictionary In ServerDicts
 		        Dim Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
 		        If Profile <> Nil Then
 		          Doc.mServerProfiles.Append(Profile)
@@ -167,22 +166,7 @@ Protected Class Document
 		  End If
 		  
 		  If Dict.HasKey("Timestamp") Then
-		    Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
-		    Dim TextValue As Text = Dict.Value("Timestamp")
-		    Dim Year, Month, Day, Hour, Minute, Second As Integer
-		    Year = Integer.FromText(TextValue.Mid(0, 4), Locale)
-		    Month = Integer.FromText(TextValue.Mid(5, 2), Locale)
-		    Day = Integer.FromText(TextValue.Mid(8, 2), Locale)
-		    Hour = Integer.FromText(TextValue.Mid(11, 2), Locale)
-		    Minute = Integer.FromText(TextValue.Mid(14, 2), Locale)
-		    Second = Integer.FromText(TextValue.Mid(17, 2), Locale)
-		    Dim GMTOffset As Double = 0
-		    
-		    #if TargetiOS
-		      Doc.mLastSaved = New Xojo.Core.Date(Year, Month, Day, Hour, Minute, Second, 0, New Xojo.Core.TimeZone(GMTOffset))
-		    #else
-		      Doc.mLastSavedLegacy = New Global.Date(Year, Month, Day, Hour, Minute, Second, 0, New TimeZone(GMTOffset))
-		    #endif
+		    Doc.mLastSaved = NewDateFromSQLDateTime(Dict.Value("Timestamp"))
 		  End If
 		  
 		  Doc.Modified = Version < Beacon.Document.DocumentVersion
@@ -191,160 +175,8 @@ Protected Class Document
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Shared Function FromTextLegacy(Parsed As Auto, Identity As Beacon.Identity) As Beacon.Document
-		  Dim Doc As New Beacon.Document
-		  Dim LootSources() As Auto
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Parsed)
-		  Dim Version As Integer
-		  If Info.FullName = "Xojo.Core.Dictionary" Then
-		    // New style document
-		    Dim Dict As Xojo.Core.Dictionary = Parsed
-		    Try
-		      If Dict.HasKey("LootSources") Then
-		        LootSources = Dict.Value("LootSources")
-		      Else
-		        LootSources = Dict.Value("Beacons")
-		      End If
-		      Doc.mIdentifier = Dict.Value("Identifier")
-		      Doc.mUseCompression = True
-		      Version = Dict.Lookup("Version", 0)
-		      
-		      If Dict.HasKey("Title") Then
-		        Doc.Title = Dict.Value("Title")
-		      End If
-		      If Dict.HasKey("Description") Then
-		        Doc.Description = Dict.Value("Description")
-		      End If
-		      If Dict.HasKey("Public") Then
-		        Doc.IsPublic = Dict.Value("Public")
-		      End If
-		      If Dict.HasKey("Map") Then
-		        Doc.mMapCompatibility = Dict.Value("Map")
-		      ElseIf Dict.HasKey("MapPreference") Then
-		        Doc.mMapCompatibility = Dict.Value("MapPreference")
-		      Else
-		        Doc.mMapCompatibility = 0
-		      End If
-		      Dim DifficultyConfig As New BeaconConfigs.Difficulty
-		      If Dict.HasKey("DifficultyValue") Then
-		        DifficultyConfig.MaxDinoLevel = Dict.Value("DifficultyValue") * 30
-		      End If
-		      Doc.AddConfigGroup(DifficultyConfig)
-		      If Dict.HasKey("ConsoleModsOnly") Then
-		        Dim ConsoleModsOnly As Boolean = Dict.Value("ConsoleModsOnly")
-		        If ConsoleModsOnly Then
-		          Doc.mMods = Beacon.Data.ConsoleSafeMods()
-		        End If
-		      End If
-		      If Dict.HasKey("Secure") Then
-		        Dim SecureDict As Xojo.Core.Dictionary = ReadSecureData(Dict.Value("Secure"), Identity)
-		        If SecureDict <> Nil Then
-		          Doc.mLastSecureDict = Dict.Value("Secure")
-		          Doc.mLastSecureHash = Doc.mLastSecureDict.Value("Hash")
-		          
-		          Dim ServerDicts() As Auto = SecureDict.Value("Servers")
-		          For Each ServerDict As Xojo.Core.Dictionary In ServerDicts
-		            Dim Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
-		            If Profile <> Nil Then
-		              Doc.mServerProfiles.Append(Profile)
-		            End If
-		          Next
-		          
-		          If SecureDict.HasKey("OAuth") Then
-		            Doc.mOAuthDicts = SecureDict.Value("OAuth")
-		          End If
-		        End If
-		      ElseIf Dict.HasKey("FTPServers") Then
-		        Dim ServerDicts() As Auto = Dict.Value("FTPServers")
-		        For Each ServerDict As Xojo.Core.Dictionary In ServerDicts
-		          Dim FTPInfo As Xojo.Core.Dictionary = ReadSecureData(ServerDict, Identity, True)
-		          If FTPInfo <> Nil And FTPInfo.HasAllKeys("Description", "Host", "Port", "User", "Pass", "Path") Then
-		            Dim Profile As New Beacon.FTPServerProfile
-		            Profile.Name = FTPInfo.Value("Description")
-		            Profile.Host = FTPInfo.Value("Host")
-		            Profile.Port = FTPInfo.Value("Port")
-		            Profile.Username = FTPInfo.Value("User")
-		            Profile.Password = FTPInfo.Value("Pass")
-		            
-		            Dim Path As Text = FTPInfo.Value("Path")
-		            Dim Components() As Text = Path.Split("/")
-		            If Components.Ubound > -1 Then
-		              Dim LastComponent As Text = Components(Components.Ubound)
-		              If LastComponent.Length > 4 And LastComponent.Right(4) = ".ini" Then
-		                Components.Remove(Components.Ubound)
-		              End If
-		            End If
-		            Components.Append("Game.ini")
-		            Profile.GameIniPath = Components.Join("/")
-		            
-		            Components(Components.Ubound) = "GameUserSettings.ini"
-		            Profile.GameUserSettingsIniPath = Components.Join("/")
-		            
-		            Doc.mServerProfiles.Append(Profile)
-		          End If
-		        Next
-		      End If
-		    Catch Err As RuntimeException
-		      // Likely a KeyNotFoundException or TypeMismatchException, either way, we can't handle it
-		      Return Nil
-		    End Try
-		  ElseIf Info.FullName = "Auto()" Then
-		    // Old style document
-		    LootSources = Parsed
-		  Else
-		    // What on earth is this?
-		    Return Nil
-		  End If
-		  
-		  Dim Presets() As Beacon.Preset
-		  If Version < 2 Then
-		    // Will need this in a few lines
-		    Presets = Beacon.Data.Presets
-		  End If
-		  If LootSources.Ubound > -1 Then
-		    Dim Drops As New BeaconConfigs.LootDrops
-		    For Each LootSource As Xojo.Core.Dictionary In LootSources
-		      Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(LootSource)
-		      If Source <> Nil Then
-		        If Version < 2 Then
-		          // Match item set names to presets
-		          For Each Set As Beacon.ItemSet In Source
-		            For Each Preset As Beacon.Preset In Presets
-		              If Set.Label = Preset.Label Then
-		                // Here's a hack to make assigning a preset possible: save current entries
-		                Dim Entries() As Beacon.SetEntry
-		                For Each Entry As Beacon.SetEntry In Set
-		                  Entries.Append(New Beacon.SetEntry(Entry))
-		                Next
-		                
-		                // Reconfigure
-		                Call Set.ReconfigureWithPreset(Preset, Source, Beacon.Maps.TheIsland.Mask, Doc.Mods)
-		                
-		                // Now "deconfigure" it
-		                Redim Set(Entries.Ubound)
-		                For I As Integer = 0 To Entries.Ubound
-		                  Set(I) = Entries(I)
-		                Next
-		                Continue For Set
-		              End If
-		            Next
-		          Next
-		        End If
-		        Drops.Append(Source)
-		      End If
-		    Next
-		    Doc.AddConfigGroup(Drops)
-		  End If
-		  
-		  Doc.mModified = Version < Beacon.Document.DocumentVersion
-		  
-		  Return Doc
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
-		Function HasConfigGroup(GroupName As Text) As Boolean
+		Function HasConfigGroup(GroupName As String) As Boolean
 		  Return Self.mConfigGroups.HasKey(GroupName)
 		End Function
 	#tag EndMethod
@@ -352,7 +184,7 @@ Protected Class Document
 	#tag Method, Flags = &h0
 		Function ImplementedConfigs() As Beacon.ConfigGroup()
 		  Dim Groups() As Beacon.ConfigGroup
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mConfigGroups
+		  For Each Entry As DictionaryEntry In Self.mConfigGroups
 		    Groups.Append(Entry.Value)
 		  Next
 		  Return Groups
@@ -381,14 +213,10 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function LastSaved() As Global.Date
-		  Return Self.mLastSavedLegacy
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
-		Function LastSaved() As Xojo.Core.Date
-		  Return Self.mLastSaved
+		Function LastSaved() As Date
+		  If Self.mLastSaved <> Nil Then
+		    Return New Date(Self.mLastSaved)
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -407,7 +235,7 @@ Protected Class Document
 
 	#tag Method, Flags = &h0
 		Function Metadata(Create As Boolean = False) As BeaconConfigs.Metadata
-		  Static GroupName As Text = BeaconConfigs.Metadata.ConfigName
+		  Static GroupName As String = BeaconConfigs.Metadata.ConfigName
 		  Dim Group As Beacon.ConfigGroup = Self.ConfigGroup(GroupName, Create)
 		  If Group <> Nil Then
 		    Return BeaconConfigs.Metadata(Group)
@@ -425,7 +253,7 @@ Protected Class Document
 		    Return True
 		  End If
 		  
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mConfigGroups
+		  For Each Entry As DictionaryEntry In Self.mConfigGroups
 		    Dim Group As Beacon.ConfigGroup = Entry.Value
 		    If Group.Modified Then
 		      Return True
@@ -445,7 +273,7 @@ Protected Class Document
 		  Self.mModified = Value
 		  
 		  If Value = False Then
-		    For Each Entry As Xojo.Core.DictionaryEntry In Self.mConfigGroups
+		    For Each Entry As DictionaryEntry In Self.mConfigGroups
 		      Dim Group As Beacon.ConfigGroup = Entry.Value
 		      Group.Modified = False
 		    Next
@@ -460,7 +288,7 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Mods() As Beacon.TextList
+		Function Mods() As Beacon.StringList
 		  Return Self.mMods
 		End Function
 	#tag EndMethod
@@ -473,17 +301,17 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function OAuthData(Provider As Text) As Xojo.Core.Dictionary
+		Function OAuthData(Provider As String) As Dictionary
 		  If Self.mOAuthDicts <> Nil And Self.mOAuthDicts.HasKey(Provider) Then
-		    Return Beacon.Clone(Self.mOAuthDicts.Value(Provider))
+		    Return Dictionary(Self.mOAuthDicts.Value(Provider)).Clone
 		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OAuthData(Provider As Text, Assigns Dict As Xojo.Core.Dictionary)
+		Sub OAuthData(Provider As String, Assigns Dict As Dictionary)
 		  If Self.mOAuthDicts = Nil Then
-		    Self.mOAuthDicts = New Xojo.Core.Dictionary
+		    Self.mOAuthDicts = New Dictionary
 		  End If
 		  If Dict = Nil Then
 		    If Self.mOAuthDicts.HasKey(Provider) Then
@@ -493,14 +321,14 @@ Protected Class Document
 		  Else
 		    If Self.mOAuthDicts.HasKey(Provider) Then
 		      // Need to compare
-		      Dim OldJSON As Text = Xojo.Data.GenerateJSON(Self.mOAuthDicts.Value(Provider))
-		      Dim NewJSON As Text = Xojo.Data.GenerateJSON(Dict)
+		      Dim OldJSON As String = Beacon.GenerateJSON(Self.mOAuthDicts.Value(Provider), False)
+		      Dim NewJSON As String = Beacon.GenerateJSON(Dict, False)
 		      If OldJSON = NewJSON Then
 		        Return
 		      End If
 		    End If
 		    
-		    Self.mOAuthDicts.Value(Provider) = Beacon.Clone(Dict)  
+		    Self.mOAuthDicts.Value(Provider) = Dict.Clone
 		    Self.mModified = True
 		  End If
 		End Sub
@@ -517,32 +345,32 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Private Shared Function ReadSecureData(SecureDict As Xojo.Core.Dictionary, Identity As Beacon.Identity, SkipHashVerification As Boolean = False) As Xojo.Core.Dictionary
+		Private Shared Function ReadSecureData(SecureDict As Dictionary, Identity As Beacon.Identity, SkipHashVerification As Boolean = False) As Dictionary
 		  If Not SecureDict.HasAllKeys("Key", "Vector", "Content", "Hash") Then
 		    Return Nil
 		  End If
 		  
-		  Dim Key As Xojo.Core.MemoryBlock = Identity.Decrypt(Beacon.DecodeHex(SecureDict.Value("Key")))
+		  Dim Key As MemoryBlock = Identity.Decrypt(DecodeHex(SecureDict.Value("Key")))
 		  If Key = Nil Then
 		    Return Nil
 		  End If
 		  
-		  Dim ExpectedHash As Text = SecureDict.Lookup("Hash", "")
-		  Dim Vector As Xojo.Core.MemoryBlock = Beacon.DecodeHex(SecureDict.Value("Vector"))
-		  Dim Encrypted As Xojo.Core.MemoryBlock = Beacon.DecodeHex(SecureDict.Value("Content"))
+		  Dim ExpectedHash As String = SecureDict.Lookup("Hash", "")
+		  Dim Vector As MemoryBlock = DecodeHex(SecureDict.Value("Vector"))
+		  Dim Encrypted As MemoryBlock = DecodeHex(SecureDict.Value("Content"))
 		  Dim AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
-		  AES.SetKey(CType(Key.Data, MemoryBlock).StringValue(0, Key.Size))
-		  AES.SetInitialVector(CType(Vector.Data, MemoryBlock).StringValue(0, Vector.Size))
+		  AES.SetKey(Key)
+		  AES.SetInitialVector(Vector)
 		  
 		  Dim Decrypted As String
 		  Try
-		    Decrypted = AES.DecryptCBC(CType(Encrypted.Data, MemoryBlock).StringValue(0, Encrypted.Size))
+		    Decrypted = AES.DecryptCBC(Encrypted)
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
 		  
 		  If SkipHashVerification = False Then
-		    Dim ComputedHash As Text = Beacon.Hash(Decrypted)
+		    Dim ComputedHash As String = Beacon.Hash(Decrypted)
 		    If ComputedHash <> ExpectedHash Then
 		      Return Nil
 		    End If
@@ -553,10 +381,10 @@ Protected Class Document
 		  End If
 		  Decrypted = Decrypted.DefineEncoding(Encodings.UTF8)
 		  
-		  Dim DecryptedDict As Xojo.Core.Dictionary
+		  Dim DecryptedDict As Dictionary
 		  Try
-		    DecryptedDict = Xojo.Data.ParseJSON(Decrypted.ToText)
-		  Catch Err As Xojo.Data.InvalidJSONException
+		    DecryptedDict = Beacon.ParseJSON(Decrypted)
+		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
 		  
@@ -583,7 +411,7 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveConfigGroup(GroupName As Text)
+		Sub RemoveConfigGroup(GroupName As String)
 		  If Self.mConfigGroups.HasKey(GroupName) Then
 		    Self.mConfigGroups.Remove(GroupName)
 		    Self.mModified = True
@@ -627,34 +455,26 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ToDictionary(Identity As Beacon.Identity) As Xojo.Core.Dictionary
-		  Dim Document As New Xojo.Core.Dictionary
+		Function ToDictionary(Identity As Beacon.Identity) As Dictionary
+		  Dim Document As New Dictionary
 		  Document.Value("Version") = Self.DocumentVersion
 		  Document.Value("Identifier") = Self.DocumentID
 		  Document.Value("Trust") = Self.TrustKey
 		  
-		  Dim ModsList() As Text = Self.Mods
+		  Dim ModsList() As String = Self.Mods
 		  Document.Value("Mods") = ModsList
 		  Document.Value("UseCompression") = Self.UseCompression
+		  Document.Value("Timestamp") = Date.Now.SQLDateTimeWithOffset
 		  
-		  Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
-		  #if TargetiOS
-		    Dim Now As New Xojo.Core.Date(Xojo.Core.Date.Now, New Xojo.Core.TimeZone(0))
-		    Document.Value("Timestamp") = Now.Year.ToText(Locale, "0000") + "-" + Now.Month.ToText(Locale, "00") + "-" + Now.Day.ToText(Locale, "00") + " " + Now.Hour.ToText(Locale, "00") + ":" + Now.Minute.ToText(Locale, "00") + ":" + Now.Second.ToText(Locale, "00")
-		  #else
-		    Dim Now As New Date(Date.Now.SecondsFrom1970, New TimeZone(0))
-		    Document.Value("Timestamp") = Now.Year.ToText(Locale, "0000") + "-" + Now.Month.ToText(Locale, "00") + "-" + Now.Day.ToText(Locale, "00") + " " + Now.Hour.ToText(Locale, "00") + ":" + Now.Minute.ToText(Locale, "00") + ":" + Now.Second.ToText(Locale, "00")
-		  #endif
-		  
-		  Dim Groups As New Xojo.Core.Dictionary
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mConfigGroups
+		  Dim Groups As New Dictionary
+		  For Each Entry As DictionaryEntry In Self.mConfigGroups
 		    Dim Group As Beacon.ConfigGroup = Entry.Value
-		    Dim GroupData As Xojo.Core.Dictionary = Group.ToDictionary(Identity)
+		    Dim GroupData As Dictionary = Group.ToDictionary(Identity)
 		    If GroupData = Nil Then
-		      GroupData = New Xojo.Core.Dictionary
+		      GroupData = New Dictionary
 		    End If
 		    
-		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Group)
+		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Group)
 		    Groups.Value(Info.Name) = GroupData
 		  Next
 		  Document.Value("Configs") = Groups
@@ -663,8 +483,8 @@ Protected Class Document
 		    Document.Value("Map") = Self.mMapCompatibility
 		  End If
 		  
-		  Dim EncryptedData As New Xojo.Core.Dictionary
-		  Dim Profiles() As Xojo.Core.Dictionary
+		  Dim EncryptedData As New Dictionary
+		  Dim Profiles() As Dictionary
 		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
 		    Profiles.Append(Profile.ToDictionary)
 		  Next
@@ -673,26 +493,26 @@ Protected Class Document
 		    EncryptedData.Value("OAuth") = Self.mOAuthDicts
 		  End If
 		  
-		  Dim Content As Text = Xojo.Data.GenerateJSON(EncryptedData)
-		  Dim Hash As Text = Beacon.Hash(Content)
+		  Dim Content As String = Beacon.GenerateJSON(EncryptedData, False)
+		  Dim Hash As String = Beacon.Hash(Content)
 		  If Hash <> Self.mLastSecureHash Then
 		    Dim AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
-		    Dim Key As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(128)
-		    Dim Vector As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(16)
-		    AES.SetKey(CType(Key.Data, MemoryBlock).StringValue(0, Key.Size))
-		    AES.SetInitialVector(CType(Vector.Data, MemoryBlock).StringValue(0, Vector.Size))
-		    Dim Encrypted As Global.MemoryBlock = AES.EncryptCBC(Content)
+		    Dim Key As MemoryBlock = Crypto.GenerateRandomBytes(128)
+		    Dim Vector As MemoryBlock = Crypto.GenerateRandomBytes(16)
+		    AES.SetKey(Key)
+		    AES.SetInitialVector(Vector)
+		    Dim Encrypted As MemoryBlock = AES.EncryptCBC(Content)
 		    
-		    Dim SecureDict As New Xojo.Core.Dictionary
-		    SecureDict.Value("Key") = Beacon.EncodeHex(Identity.Encrypt(Key))
-		    SecureDict.Value("Vector") = Beacon.EncodeHex(Vector)
-		    SecureDict.Value("Content") = Beacon.EncodeHex(Encrypted)
+		    Dim SecureDict As New Dictionary
+		    SecureDict.Value("Key") = EncodeHex(Identity.Encrypt(Key))
+		    SecureDict.Value("Vector") = EncodeHex(Vector)
+		    SecureDict.Value("Content") = EncodeHex(Encrypted)
 		    SecureDict.Value("Hash") = Hash
 		    
 		    Self.mLastSecureHash = Hash
 		    Self.mLastSecureDict = SecureDict
 		  End If
-		  Document.Value("Secure") = Beacon.Clone(Self.mLastSecureDict)
+		  Document.Value("Secure") = Self.mLastSecureDict.Clone
 		  
 		  Return Document
 		End Function
@@ -727,7 +547,7 @@ Protected Class Document
 			  Self.Metadata(True).Description = Value
 			End Set
 		#tag EndSetter
-		Description As Text
+		Description As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -788,27 +608,23 @@ Protected Class Document
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mConfigGroups As Xojo.Core.Dictionary
+		Private mConfigGroups As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mIdentifier As Text
+		Private mIdentifier As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h21, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
-		Private mLastSaved As Xojo.Core.Date
-	#tag EndProperty
-
-	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Private mLastSavedLegacy As Global.Date
+	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit))
+		Private mLastSaved As Date
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLastSecureDict As Xojo.Core.Dictionary
+		Private mLastSecureDict As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLastSecureHash As Text
+		Private mLastSecureHash As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -820,11 +636,11 @@ Protected Class Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMods As Beacon.TextList
+		Private mMods As Beacon.StringList
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOAuthDicts As Xojo.Core.Dictionary
+		Private mOAuthDicts As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -832,7 +648,7 @@ Protected Class Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mTrustKey As Text
+		Private mTrustKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -853,20 +669,20 @@ Protected Class Document
 			  Self.Metadata(True).Title = Value
 			End Set
 		#tag EndSetter
-		Title As Text
+		Title As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
 			  If Self.mTrustKey = "" Then
-			    Self.mTrustKey = Beacon.EncodeHex(Xojo.Crypto.GenerateRandomBytes(6))
+			    Self.mTrustKey = EncodeHex(Crypto.GenerateRandomBytes(6))
 			    Self.mModified = True
 			  End If
 			  Return Self.mTrustKey
 			End Get
 		#tag EndGetter
-		TrustKey As Text
+		TrustKey As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0

@@ -1,6 +1,6 @@
 #tag Class
 Protected Class ControlGroupIterator
-Implements Xojo.Core.Iterator
+Implements  Iterator
 	#tag Method, Flags = &h0
 		Sub Constructor(Group As ControlGroup)
 		  Self.mGroup = Group
@@ -10,16 +10,16 @@ Implements Xojo.Core.Iterator
 
 	#tag Method, Flags = &h0
 		Function MoveNext() As Boolean
-		  // Part of the Xojo.Core.Iterator interface.
+		  // Part of the Iterator interface.
 		  
 		  Self.mIndex = Self.mIndex + 1
-		  Return Self.mIndex <= Self.mGroup.UBound
+		  Return Self.mIndex <= Self.mGroup.LastRowIndex
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Value() As Auto
-		  // Part of the Xojo.Core.Iterator interface.
+		Function Value() As Variant
+		  // Part of the Iterator interface.
 		  
 		  Return Self.mGroup.Member(Self.mIndex)
 		End Function
@@ -42,6 +42,7 @@ Implements Xojo.Core.Iterator
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -49,23 +50,23 @@ Implements Xojo.Core.Iterator
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mGroup"
-			Group="Behavior"
-			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -73,6 +74,7 @@ Implements Xojo.Core.Iterator
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

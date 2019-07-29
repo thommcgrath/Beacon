@@ -9,7 +9,7 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As Text, ObjectID As Text)
+		Sub Constructor(Path As String, ObjectID As String)
 		  Super.Constructor()
 		  
 		  Self.mPath = Path
@@ -19,7 +19,7 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub IsTagged(Tag As Text, Assigns Value As Boolean)
+		Sub IsTagged(Tag As String, Assigns Value As Boolean)
 		  Tag = Beacon.NormalizeTag(Tag)
 		  Dim Idx As Integer = Self.mTags.IndexOf(Tag)
 		  If Idx > -1 And Value = False Then
@@ -32,35 +32,35 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Label(Assigns Value As Text)
+		Sub Label(Assigns Value As String)
 		  Self.mLabel = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ModID(Assigns Value As Text)
+		Sub ModID(Assigns Value As String)
 		  Self.mModID = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ModName(Assigns Value As Text)
+		Sub ModName(Assigns Value As String)
 		  Self.mModName = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Path(Assigns Value As Text)
+		Sub Path(Assigns Value As String)
 		  Self.mPath = Value
 		  Self.mIsValid = Self.mPath.Length > 6 And Self.mPath.Left(6) = "/Game/"
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Tags(Assigns Tags() As Text)
+		Sub Tags(Assigns Tags() As String)
 		  Redim Self.mTags(-1)
 		  
-		  For Each Tag As Text In Tags
+		  For Each Tag As String In Tags
 		    Tag = Beacon.NormalizeTag(Tag)
 		    Self.mTags.Append(Tag)
 		  Next
@@ -76,6 +76,7 @@ Implements Beacon.MutableBlueprint
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -83,18 +84,23 @@ Implements Beacon.MutableBlueprint
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -102,6 +108,7 @@ Implements Beacon.MutableBlueprint
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

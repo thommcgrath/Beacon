@@ -10,15 +10,15 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CommandLineOptions() As Xojo.Core.DIctionary
+		Function CommandLineOptions() As DIctionary
 		  // Part of the Beacon.DiscoveryEngine interface.
 		  
-		  Return New Xojo.Core.Dictionary
+		  Return New Dictionary
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(GameIniContent As Text, GameUserSettingsIniContent As Text)
+		Sub Constructor(GameIniContent As String, GameUserSettingsIniContent As String)
 		  Self.mGameIniContent = GameIniContent
 		  Self.mGameUserSettingsIniContent = GameUserSettingsIniContent
 		End Sub
@@ -41,7 +41,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameIniContent() As Text
+		Function GameIniContent() As String
 		  // Part of the Beacon.DiscoveryEngine interface.
 		  
 		  Return Self.mGameIniContent
@@ -49,7 +49,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameUserSettingsIniContent() As Text
+		Function GameUserSettingsIniContent() As String
 		  // Part of the Beacon.DiscoveryEngine interface.
 		  
 		  Return Self.mGameUserSettingsIniContent
@@ -65,7 +65,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Name() As Text
+		Function Name() As String
 		  Return "Local Content"
 		End Function
 	#tag EndMethod
@@ -77,7 +77,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Status() As Text
+		Function Status() As String
 		  Return "Finished"
 		End Function
 	#tag EndMethod
@@ -90,11 +90,11 @@ Implements Beacon.DiscoveryEngine
 
 
 	#tag Property, Flags = &h21
-		Private mGameIniContent As Text
+		Private mGameIniContent As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameUserSettingsIniContent As Text
+		Private mGameUserSettingsIniContent As String
 	#tag EndProperty
 
 
@@ -103,7 +103,9 @@ Implements Beacon.DiscoveryEngine
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -111,12 +113,15 @@ Implements Beacon.DiscoveryEngine
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -124,6 +129,7 @@ Implements Beacon.DiscoveryEngine
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -131,6 +137,7 @@ Implements Beacon.DiscoveryEngine
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -47,7 +47,7 @@ Inherits Global.Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUserData As Auto
+		Private mUserData As Variant
 	#tag EndProperty
 
 	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
@@ -76,7 +76,7 @@ Inherits Global.Thread
 			  Self.UnlockUserData()
 			End Set
 		#tag EndSetter
-		UserData As Auto
+		UserData As Variant
 	#tag EndComputedProperty
 
 

@@ -8,15 +8,15 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Category() As Text
+		Function Category() As String
 		  Return Beacon.CategoryCreatures
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ClassString() As Text
-		  Dim Components() As Text = Self.mPath.Split("/")
-		  Dim Tail As Text = Components(Components.Ubound)
+		Function ClassString() As String
+		  Dim Components() As String = Self.mPath.Split("/")
+		  Dim Tail As String = Components(Components.Ubound)
 		  Components = Tail.Split(".")
 		  Return Components(Components.Ubound) + "_C"
 		End Function
@@ -52,44 +52,44 @@ Implements Beacon.Blueprint
 		  End If
 		  
 		  Redim Self.mTags(-1)
-		  For Each Tag As Text In Source.mTags
+		  For Each Tag As String In Source.mTags
 		    Self.mTags.Append(Tag)
 		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IncubationTime() As Xojo.Core.DateInterval
+		Function IncubationTime() As DateInterval
 		  Return Self.mIncubationTime
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsTagged(Tag As Text) As Boolean
+		Function IsTagged(Tag As String) As Boolean
 		  Return Self.mTags.IndexOf(Beacon.NormalizeTag(Tag)) > -1
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Label() As Text
+		Function Label() As String
 		  Return Self.mLabel
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MatureTime() As Xojo.Core.DateInterval
+		Function MatureTime() As DateInterval
 		  Return Self.mMatureTime
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModID() As Text
+		Function ModID() As String
 		  Return Self.mModID
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModName() As Text
+		Function ModName() As String
 		  Return Self.mModName
 		End Function
 	#tag EndMethod
@@ -101,7 +101,7 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As Text
+		Function ObjectID() As String
 		  Return Self.mObjectID
 		End Function
 	#tag EndMethod
@@ -112,21 +112,21 @@ Implements Beacon.Blueprint
 		    Return 1
 		  End If
 		  
-		  Dim SelfPath As Text = Self.Path
-		  Dim OtherPath As Text = Other.Path
+		  Dim SelfPath As String = Self.Path
+		  Dim OtherPath As String = Other.Path
 		  Return SelfPath.Compare(OtherPath)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Path() As Text
+		Function Path() As String
 		  Return Self.mPath
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Tags() As Text()
-		  Dim Clone() As Text
+		Function Tags() As String()
+		  Dim Clone() As String
 		  Redim Clone(Self.mTags.Ubound)
 		  For I As Integer = 0 To Self.mTags.Ubound
 		    Clone(I) = Self.mTags(I)
@@ -141,35 +141,35 @@ Implements Beacon.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mIncubationTime As Xojo.Core.DateInterval
+		Protected mIncubationTime As DateInterval
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mLabel As Text
+		Protected mLabel As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mMatureTime As Xojo.Core.DateInterval
+		Protected mMatureTime As DateInterval
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mModID As Text
+		Protected mModID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mModName As Text
+		Protected mModName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mObjectID As Text
+		Protected mObjectID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mPath As Text
+		Protected mPath As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mTags() As Text
+		Protected mTags() As String
 	#tag EndProperty
 
 
@@ -178,7 +178,9 @@ Implements Beacon.Blueprint
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -186,12 +188,15 @@ Implements Beacon.Blueprint
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -199,6 +204,7 @@ Implements Beacon.Blueprint
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -206,6 +212,7 @@ Implements Beacon.Blueprint
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

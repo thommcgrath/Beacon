@@ -23,13 +23,13 @@ Implements BcryptInterface
 		Sub Decrypt(type As Functions, data As Xojo.Core.MutableMemoryBlock, isFinalBlock As Boolean)
 		  select case type
 		  case Functions.Default
-		    Decrypt data
+		    DecryptMb data
 		    
 		  case Functions.ECB
-		    DecryptECB data 
+		    DecryptMbECB data 
 		    
 		  case Functions.CBC
-		    DecryptCBC data, isFinalBlock
+		    DecryptMbCBC data, isFinalBlock
 		    
 		  case else
 		    raise new M_Crypto.UnsupportedFunctionException
@@ -39,17 +39,124 @@ Implements BcryptInterface
 		End Sub
 	#tag EndEvent
 
+	#tag Event , Description = 506572666F726D20612073656C662D74657374206F6E2074686520636C6173732E20496620636F646520697320696D706C656D656E7465642C206D7573742072657475726E20547275652E
+		Function DoSelfTest(ByRef returnErrorMessage As String) As Boolean
+		  const kKey as string = "password"
+		  const kData as string = "1234567890ABCD"
+		  
+		  //
+		  // Set up an initial state
+		  //
+		  dim initialVector as Xojo.Core.MutableMemoryBlock = self.InitialVector
+		  self.InitialVector = nil
+		  dim initialPadding as Padding = self.PaddingMethod
+		  Constructor( Padding.PKCS )
+		  
+		  //
+		  // Set up the keys
+		  //
+		  dim mbKey as Xojo.Core.MutableMemoryBlock = M_Crypto.StringToMutableMemoryBlock( kKey )
+		  dim mbData as Xojo.Core.MutableMemoryBlock = M_Crypto.StringToMutableMemoryBlock( kData )
+		  dim result as string
+		  
+		  //
+		  // Test ExpandState
+		  //
+		  if returnErrorMessage = "" then
+		    ExpandState mbData, mbKey
+		    result = SelfTestMemoryBlockHash( P, 18 * 4 )
+		    System.DebugLog "ExpandState P = " + result
+		    if result <> "335546B718798929DB286BF431347578131297FB7C0DCF7FBED4200637ADEAED" then
+		      returnErrorMessage = "P mismatch after ExpandState"
+		    else
+		      result = SelfTestMemoryBlockHash( S, 1024 * 4 )
+		      System.DebugLog "ExpandState S = " + result
+		      if result <> "1D7B1CE92B99533B95F9676756461EB8BEEFF07A7DDD60C5BE8EE62F47CF7952" then
+		        returnErrorMessage = "S mismatch after ExpandState"
+		      end if
+		    end if
+		  end if
+		  
+		  //
+		  // Test Expand0State
+		  //
+		  if returnErrorMessage = "" then
+		    Expand0State 1, mbData, mbKey
+		    result = SelfTestMemoryBlockHash( P, 18 * 4 )
+		    System.DebugLog "Expand0State P = " + result
+		    if result <> "88D7DA0BA674E47208673DD308D731D3D299A1E3746D7D4A8AED88325B08E70C" then
+		      returnErrorMessage = "P mismatch after ExpandState"
+		    else
+		      result = SelfTestMemoryBlockHash( S, 1024 * 4 )
+		      System.DebugLog "Expand0State S = " + result
+		      if result <> "0D8B54D47B7E0B0527060F749B9F15A17CF7207538B15287990F550ACB5F121E" then
+		        returnErrorMessage = "S mismatch after ExpandState"
+		      end if
+		    end if
+		  end if
+		  
+		  if returnErrorMessage = "" then
+		    EncryptMb( mbData )
+		    result = SelfTestMemoryBlockHash( mbData, mbData.Size )
+		    System.DebugLog "Encrypt Data = " + result
+		    if result <> "935FAE939D95AAEF2EF71C35C0D3187CC04957A450E80230AB46C8428B550BDF" then
+		      returnErrorMessage = "Data mismatch after Encrypt"
+		    end if
+		  end if
+		  
+		  if returnErrorMessage = "" then
+		    EncryptMbECB( mbData )
+		    result = SelfTestMemoryBlockHash( mbData, mbData.Size )
+		    System.DebugLog "EncryptECB Data = " + result
+		    if result <> "F39CAB4DD928508085C4AD58A40F8C698C00A2502A1DBE503527FA519140A812" then
+		      returnErrorMessage = "Data mismatch after EncryptECB"
+		    end if
+		  end if
+		  
+		  if returnErrorMessage = "" then
+		    EncryptMbCBC( mbData )
+		    result = SelfTestMemoryBlockHash( mbData, mbData.Size )
+		    System.DebugLog "EncryptCBC Data = " + result
+		    if result <> "3809E69D2EFC2B9C747640516C70E43999B9BEA77462FC31845EDD5BAD850107" then
+		      returnErrorMessage = "Data mismatch after EncryptCBC"
+		    end if
+		  end if
+		  
+		  if returnErrorMessage = "" then
+		    dim d0 as UInt32 = 1
+		    dim d1 as UInt32 = 126
+		    Encipher( d0, d1 )
+		    if d0 <> CType( 1759095662, UInt32 ) or d1 <> CType( 231467629, UInt32 ) then
+		      returnErrorMessage = "Encipher fail"
+		    else
+		      Decipher( d0, d1 )
+		      if d0 <> 1 or d1 <> 126 then
+		        returnErrorMessage = "Decipher fail"
+		      end if
+		    end if
+		  end if
+		  
+		  //
+		  // Finish
+		  //
+		  Constructor( "", initialPadding )
+		  self.InitialVector = initialVector
+		  return true
+		  
+		End Function
+	#tag EndEvent
+
 	#tag Event
 		Sub Encrypt(type As Functions, data As Xojo.Core.MutableMemoryBlock, isFinalBlock As Boolean)
 		  select case type
 		  case Functions.Default
-		    Encrypt data
+		    EncryptMb data
 		    
 		  case Functions.ECB
-		    EncryptECB data
+		    EncryptMbECB data
 		    
 		  case Functions.CBC
-		    EncryptCBC data, isFinalBlock
+		    EncryptMbCBC data, isFinalBlock
 		    
 		  case else
 		    raise new M_Crypto.UnsupportedFunctionException
@@ -62,12 +169,10 @@ Implements BcryptInterface
 	#tag Event
 		Sub KeyChanged(key As String)
 		  InitKeyValues
-		  dim streamBuffer as new Xojo.Core.MutableMemoryBlock( 4 )
-		  streamBuffer.LittleEndian = false
 		  
 		  dim temp as MemoryBlock = key
 		  dim keyMB as new Xojo.Core.MutableMemoryBlock( temp, temp.Size )
-		  Expand0State keyMB, streamBuffer, streamBuffer.Data
+		  Expand0State 1, keyMB
 		End Sub
 	#tag EndEvent
 
@@ -163,7 +268,7 @@ Implements BcryptInterface
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Decrypt(data As Xojo.Core.MutableMemoryBlock)
+		Private Sub DecryptMb(data As Xojo.Core.MutableMemoryBlock)
 		  #if not DebugBuild
 		    #pragma BackgroundTasks False
 		    #pragma BoundsChecking False
@@ -192,7 +297,7 @@ Implements BcryptInterface
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DecryptCBC(data As Xojo.Core.MutableMemoryBlock, isFinalBlock As Boolean = True)
+		Private Sub DecryptMbCBC(data As Xojo.Core.MutableMemoryBlock, isFinalBlock As Boolean = True)
 		  #if not DebugBuild
 		    #pragma BackgroundTasks False
 		    #pragma BoundsChecking False
@@ -248,7 +353,7 @@ Implements BcryptInterface
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DecryptECB(data As Xojo.Core.MutableMemoryBlock)
+		Private Sub DecryptMbECB(data As Xojo.Core.MutableMemoryBlock)
 		  #if not DebugBuild
 		    #pragma BackgroundTasks False
 		    #pragma BoundsChecking False
@@ -290,6 +395,11 @@ Implements BcryptInterface
 		    #pragma StackOverflowChecking False
 		  #endif
 		  
+		  const kFF as UInt32 = &hFF
+		  const kShiftRight3 as UInt32 = 256 ^ 3
+		  const kShiftRight2 as UInt32 = 256 ^ 2
+		  const kShiftRight1 as UInt32 = 256
+		  
 		  dim mySPtr as Ptr = SPtr
 		  dim myPPtr as Ptr = PPtr
 		  
@@ -298,17 +408,12 @@ Implements BcryptInterface
 		  
 		  xl = xl Xor myPPtr.UInt32( 0 )
 		  
-		  const kFF as UInt32 = &hFF
-		  const kShiftRight3 as UInt32 = 256 ^ 3
-		  const kShiftRight2 as UInt32 = 256 ^ 2
-		  const kShiftRight1 as UInt32 = 256
-		  
 		  dim a, b, c, d as integer
 		  dim j as UInt32
 		  for i as integer = 1 to 16 step 2
 		    j = xl
 		    
-		    a = ( j \ kShiftRight3 ) and kFF
+		    a = ( j \ kShiftRight3 )
 		    b = ( j \ kShiftRight2 ) and kFF
 		    c = ( j \ kShiftRight1 ) and kFF
 		    d = j and kFF
@@ -321,7 +426,7 @@ Implements BcryptInterface
 		    
 		    j = xr
 		    
-		    a = ( j \ kShiftRight3 ) and kFF
+		    a = ( j \ kShiftRight3 ) 
 		    b = ( j \ kShiftRight2 ) and kFF
 		    c = ( j \ kShiftRight1 ) and kFF
 		    d = j and kFF
@@ -342,7 +447,7 @@ Implements BcryptInterface
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Encrypt(data As Xojo.Core.MutableMemoryBlock)
+		Private Sub EncryptMb(data As Xojo.Core.MutableMemoryBlock)
 		  #if not DebugBuild
 		    #pragma BackgroundTasks False
 		    #pragma BoundsChecking False
@@ -350,27 +455,90 @@ Implements BcryptInterface
 		    #pragma StackOverflowChecking False
 		  #endif
 		  
-		  dim dataPtr as Ptr = data.Data
-		  dim blocks as integer = data.Size \ 8
-		  dim byteIndex as integer
-		  dim x0 as UInt32
-		  dim x1 as UInt32
+		  const kShift3 as UInt32 = 256 ^ 3
+		  const kShift2 as UInt32 = 256 ^ 2
+		  const kShift1 as UInt32 = 256 ^ 1
 		  
-		  for thisBlock as integer = 1 to blocks
-		    x0 = dataPtr.UInt32( byteIndex )
-		    x1 = dataPtr.UInt32( byteIndex + 4 )
-		    Encipher( x0, x1 )
-		    dataPtr.UInt32( byteIndex ) = x0
-		    dataPtr.UInt32( byteIndex + 4 ) = x1
+		  const kMask1 as UInt32 = &h00FF0000
+		  const kMask2 as UInt32 = &h0000FF00
+		  const kMask3 as UInt32 = &h000000FF
+		  
+		  const kPLastByte as integer = ( 18 * 4 ) - 1
+		  const kPLastInnerByte as integer = kPLastByte - 7
+		  
+		  dim dataPtr as Ptr = data.Data
+		  dim lastDataByte as integer = data.Size - 1
+		  dim d0 as UInt32
+		  dim d1 as UInt32
+		  
+		  dim a, b, c, d as integer // Used as indexes
+		  dim pptrEncoderIndex as integer
+		  dim xl as UInt32 
+		  dim xr as UInt32 
+		  dim j1 as UInt32
+		  
+		  dim myPPtr as ptr = PPtr
+		  dim mySPtr as ptr = SPtr
+		  
+		  dim firstPPtrValue as UInt32 = myPPtr.UInt32( 0 )
+		  for byteIndex as integer = 0 to lastDataByte step 8
+		    d0 = dataPtr.UInt32( byteIndex )
+		    d1 = dataPtr.UInt32( byteIndex + 4 )
 		    
-		    byteIndex = byteIndex + 8
-		  next thisBlock
+		    //
+		    // Encipher is inlined here since this sub
+		    // is used by bcrypt
+		    //
+		    'Encipher( x0, x1 )
+		    
+		    xl = d0
+		    xr = d1
+		    
+		    xl = xl xor firstPPtrValue
+		    
+		    for pptrEncoderIndex = 4 to kPLastInnerByte step 8
+		      j1 = xl
+		      
+		      a = ( j1 \ kShift3 )
+		      b = ( j1 \ kShift2 ) and kMask3
+		      c = ( j1 \ kShift1 ) and kMask3
+		      d = j1 and kMask3
+		      
+		      j1 = ( ( mySPtr.UInt32( a * 4 ) + mySPtr.UInt32( ( 256 + b ) * 4 ) ) _
+		      xor mySPtr.UInt32( ( 512 + c ) * 4 ) ) _
+		      + mySPtr.UInt32( ( 768 + d ) * 4 )
+		      
+		      xr = xr xor ( j1 xor myPPtr.UInt32( pptrEncoderIndex ) )
+		      
+		      j1 = xr
+		      
+		      a = ( j1 \ kShift3 ) 
+		      b = ( j1 \ kShift2 ) and kMask3
+		      c = ( j1 \ kShift1 ) and kMask3
+		      d = j1 and kMask3
+		      
+		      j1 = ( ( mySPtr.UInt32( a * 4 ) + mySPtr.UInt32( ( 256 + b ) * 4 ) ) _
+		      xor mySPtr.UInt32( ( 512 + c ) * 4 ) ) _
+		      + mySPtr.UInt32( ( 768 + d ) * 4 )
+		      
+		      xl = xl xor ( j1 xor myPPtr.UInt32( pptrEncoderIndex + 4 ) )
+		    next pptrEncoderIndex
+		    
+		    xr = xr xor myPPtr.UInt32( kPLastByte - 3 )
+		    
+		    d0 = xr
+		    d1 = xl
+		    
+		    
+		    dataPtr.UInt32( byteIndex ) = d0
+		    dataPtr.UInt32( byteIndex + 4 ) = d1
+		  next byteIndex
 		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub EncryptCBC(data As Xojo.Core.MutableMemoryBlock, isFinalBlock As Boolean = True)
+		Private Sub EncryptMbCBC(data As Xojo.Core.MutableMemoryBlock, isFinalBlock As Boolean = True)
 		  #pragma unused isFinalBlock
 		  
 		  #if not DebugBuild
@@ -418,7 +586,7 @@ Implements BcryptInterface
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub EncryptECB(data As Xojo.Core.MutableMemoryBlock)
+		Private Sub EncryptMbECB(data As Xojo.Core.MutableMemoryBlock)
 		  #if not DebugBuild
 		    #pragma BackgroundTasks False
 		    #pragma BoundsChecking False
@@ -447,12 +615,7 @@ Implements BcryptInterface
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Expand0State(key As Xojo.Core.MutableMemoryBlock, streamBuffer As Xojo.Core.MutableMemoryBlock, streamBufferPtr As Ptr)
-		  if key.Size = 0 then
-		    RaiseErrorIf( true, kErrorKeyCannotBeEmpty )
-		  end if
-		  WasKeySet = true
-		  
+		Private Sub Expand0State(repetitions As Integer, ParamArray keys() As Xojo.Core.MutableMemoryBlock)
 		  #if not DebugBuild
 		    #pragma BackgroundTasks False
 		    #pragma BoundsChecking False
@@ -460,38 +623,264 @@ Implements BcryptInterface
 		    #pragma StackOverflowChecking False
 		  #endif
 		  
-		  dim j as Integer
-		  dim i, k, arrIndex, arrIndexMajor as integer
-		  dim temp as UInt32
-		  dim d0, d1 as UInt32
+		  const kZero as UInt32 = 0
+		  
+		  const kShift3 as UInt32 = 256 ^ 3
+		  const kShift2 as UInt32 = 256 ^ 2
+		  const kShift1 as UInt32 = 256 ^ 1
+		  
+		  const kMask0 as UInt32 = &hFF000000
+		  const kMask1 as UInt32 = &h00FF0000
+		  const kMask2 as UInt32 = &h0000FF00
+		  const kMask3 as UInt32 = &h000000FF
+		  
+		  const kSLastByte as integer = 4095
+		  const kPLastByte as integer = ( 18 * 4 ) - 1
+		  const kPLastInnerByte as integer = kPLastByte - 7
+		  
 		  dim myPPtr as ptr = PPtr
 		  dim mySPtr as ptr = SPtr
 		  
-		  const kLastIndex as integer = BLF_N + 1
-		  for i = 0 to kLastIndex
-		    temp = Stream2Word( key, j, streamBuffer, streamBufferPtr )
-		    arrIndex = i * 4
-		    myPPtr.UInt32( arrIndex ) = myPPtr.UInt32( arrIndex ) Xor temp
-		  next i
+		  //
+		  // Create the stream keys
+		  //
+		  const kStreamWordSize as integer = 8
 		  
-		  j = 0
-		  for i = 0 to kLastIndex step 2
-		    self.Encipher( d0, d1 )
-		    arrIndex = i * 4
-		    myPPtr.UInt32( arrIndex ) = d0
-		    myPPtr.Uint32( arrIndex + 4 ) = d1
-		  next i
+		  #if kDebug then
+		    dim startMs, elapsedMs as Double
+		    dim logPrefix as string = CurrentMethodName + ": "
+		  #endif
 		  
-		  for i = 0 to 3
-		    arrIndexMajor = i * 256
-		    for k = 0 to 255 step 2
-		      self.Encipher( d0, d1 )
+		  #if kDebug then
+		    System.DebugLog logPrefix + "Rounds = " + format( repetitions, "#,0" )
+		  #endif
+		  
+		  #if kDebug then
+		    startMs = Microseconds
+		  #endif
+		  for keyIndex as integer = 0 to keys.Ubound
+		    dim key as Xojo.Core.MutableMemoryBlock = keys( keyIndex )
+		    dim keySize as integer = key.Size
+		    
+		    if keySize = 0 then
+		      RaiseErrorIf( true, kErrorKeyCannotBeEmpty )
+		    end if
+		    WasKeySet = true
+		    
+		    dim streamKey as Xojo.Core.MutableMemoryBlock
+		    dim streamKeySize as integer = keySize
+		    if ( keySize mod kStreamWordSize ) = 0 then
+		      streamKey = new Xojo.Core.MutableMemoryBlock( keySize )
+		      streamKey.Left( keySize ) = key
+		    else
+		      streamKeySize = streamKeySize * kStreamWordSize
 		      
-		      arrIndex = ( arrIndexMajor + k ) * 4
-		      mySPtr.UInt32( arrIndex ) = d0
-		      mySPtr.UInt32( arrIndex + 4 ) = d1
-		    next k
-		  next i
+		      streamKey = new Xojo.Core.MutableMemoryBlock( streamKeySize )
+		      dim lastByte as integer = streamKeySize - 1
+		      for thisByte as integer = 0 to lastByte step keySize
+		        streamKey.Mid( thisByte, keySize ) = key
+		      next
+		    end if
+		    
+		    #if TargetLittleEndian then
+		      //
+		      // Swap the bytes
+		      //
+		      dim streamKeyPtr as ptr = streamKey.Data
+		      dim swapIndex as integer
+		      while swapIndex < streamKeySize
+		        dim temp as UInt32 = streamKeyPtr.UInt32( swapIndex )
+		        streamKeyPtr.UInt32( swapIndex ) = _
+		        ( temp \ kShift3 ) or _
+		        ( ( temp and kMask1 ) \ kShift1 ) or _
+		        ( ( temp and kMask2 ) * kShift1 ) or _
+		        ( temp * kShift3 )
+		        
+		        swapIndex = swapIndex + 4
+		      wend
+		    #endif
+		    
+		    keys( keyIndex ) = streamKey
+		  next
+		  
+		  #if kDebug then
+		    elapsedMs = Microseconds - startMs
+		    System.DebugLog logPrefix + "Stream keys took " + format( elapsedMs, "#,0.0##" ) + " µs"
+		  #endif
+		  
+		  //
+		  // Encoding starts here
+		  //
+		  
+		  dim a, b, c, d as integer // Used as indexes
+		  dim s1, s2, s3, s4 as UInt32
+		  dim pValue1, pValue2 as UInt32
+		  dim xl as UInt32 
+		  dim xr as UInt32 
+		  dim temp as UInt32
+		  dim barrier as integer
+		  dim pptrEncoderIndex as integer
+		  
+		  dim key as Xojo.Core.MutableMemoryBlock
+		  dim keyPtr as ptr
+		  dim keySize as integer
+		  
+		  dim streamIndex as integer
+		  dim sByteIndex, pByteIndex as integer
+		  dim keyIndex as integer
+		  
+		  for rep as integer = 1 to repetitions
+		    
+		    for keyIndex = 0 to keys.Ubound
+		      
+		      #if kDebug then
+		        startMs = Microseconds
+		      #endif
+		      
+		      key = keys( keyIndex )
+		      keyPtr = key.Data
+		      keySize = key.Size
+		      
+		      barrier = keySize - kStreamWordSize
+		      streamIndex = 0
+		      for pByteIndex = 0 to kPLastByte step kStreamWordSize // Two words at a time
+		        'temp = Stream2Word( key, streamIndex, streamBuffer, streamBufferPtr )
+		        
+		        myPPtr.UInt64( pByteIndex ) = myPPtr.UInt64( pByteIndex ) xor keyPtr.UInt64( streamIndex )
+		        if streamIndex = barrier then
+		          streamIndex = 0
+		        else
+		          streamIndex = streamIndex + kStreamWordSize
+		        end if
+		      next pByteIndex
+		      
+		      xl = kZero
+		      xr = kZero
+		      
+		      //
+		      // Update P
+		      //
+		      for pByteIndex = 0 to kPLastByte step 8
+		        'self.Encipher( d0, d1 )
+		        
+		        temp = xl
+		        xl = xr xor myPPtr.UInt32( 0 )
+		        xr = temp
+		        
+		        for pptrEncoderIndex = 4 to kPLastInnerByte step 8
+		          a = xl \ kShift3
+		          b = ( xl and kMask1 ) \ kShift2
+		          c = ( xl and kMask2 ) \ kShift1
+		          d = xl and kMask3
+		          
+		          a = a * 4
+		          b = ( 256 + b ) * 4
+		          c = ( 512 + c ) * 4
+		          d = ( 768 + d ) * 4
+		          
+		          s1 = mySPtr.UInt32( a )
+		          s2 = mySPtr.UInt32( b )
+		          s3 = mySPtr.UInt32( c )
+		          s4 = mySPtr.UInt32( d )
+		          temp = ( ( s1 + s2 ) xor s3 ) + s4 
+		          
+		          pValue1 = myPPtr.UInt32( pptrEncoderIndex )
+		          xr = xr xor ( temp xor pValue1 )
+		          
+		          a = xr \ kShift3
+		          b = ( xr and kMask1 ) \ kShift2
+		          c = ( xr and kMask2 ) \ kShift1
+		          d = xr and kMask3
+		          
+		          a = a * 4
+		          b = ( 256 + b ) * 4
+		          c = ( 512 + c ) * 4
+		          d = ( 768 + d ) * 4
+		          
+		          s1 = mySPtr.UInt32( a )
+		          s2 = mySPtr.UInt32( b )
+		          s3 = mySPtr.UInt32( c )
+		          s4 = mySPtr.UInt32( d )
+		          temp = ( ( s1 + s2 ) xor s3 ) + s4 
+		          
+		          pValue2 = myPPtr.UInt32( pptrEncoderIndex + 4 )
+		          xl = xl xor ( temp xor pValue2 )
+		        next pptrEncoderIndex
+		        
+		        xr = xr xor myPPtr.UInt32( kPLastByte - 3 )
+		        
+		        
+		        myPPtr.UInt32( pByteIndex ) = xr
+		        myPPtr.UInt32( pByteIndex + 4 ) = xl
+		      next pByteIndex
+		      
+		      //
+		      // Update S
+		      //
+		      for sByteIndex = 0 to kSLastByte step 8
+		        'self.Encipher( d0, d1 )
+		        
+		        temp = xl
+		        xl = xr xor myPPtr.UInt32( 0 )
+		        xr = temp
+		        
+		        for pptrEncoderIndex = 4 to kPLastInnerByte step 8
+		          a = xl \ kShift3
+		          b = ( xl and kMask1 ) \ kShift2
+		          c = ( xl and kMask2 ) \ kShift1
+		          d = xl and kMask3
+		          
+		          a = a * 4
+		          b = ( 256 + b ) * 4
+		          c = ( 512 + c ) * 4
+		          d = ( 768 + d ) * 4
+		          
+		          s1 = mySPtr.UInt32( a )
+		          s2 = mySPtr.UInt32( b )
+		          s3 = mySPtr.UInt32( c )
+		          s4 = mySPtr.UInt32( d )
+		          temp = ( ( s1 + s2 ) xor s3 ) + s4 
+		          
+		          pValue1 = myPPtr.UInt32( pptrEncoderIndex )
+		          xr = xr xor ( temp xor pValue1 )
+		          
+		          a = xr \ kShift3
+		          b = ( xr and kMask1 ) \ kShift2
+		          c = ( xr and kMask2 ) \ kShift1
+		          d = xr and kMask3
+		          
+		          a = a * 4
+		          b = ( 256 + b ) * 4
+		          c = ( 512 + c ) * 4
+		          d = ( 768 + d ) * 4
+		          
+		          s1 = mySPtr.UInt32( a )
+		          s2 = mySPtr.UInt32( b )
+		          s3 = mySPtr.UInt32( c )
+		          s4 = mySPtr.UInt32( d )
+		          temp = ( ( s1 + s2 ) xor s3 ) + s4 
+		          
+		          pValue2 = myPPtr.UInt32( pptrEncoderIndex + 4 )
+		          xl = xl xor ( temp xor pValue2 )
+		        next pptrEncoderIndex
+		        
+		        xr = xr xor myPPtr.UInt32( kPLastByte - 3 )
+		        
+		        
+		        mySPtr.UInt32( sByteIndex ) = xr
+		        mySPtr.UInt32( sByteIndex + 4 ) = xl
+		        
+		        #if DebugBuild then
+		          sByteIndex = sByteIndex // A place to break
+		        #endif
+		      next sByteIndex
+		      
+		      #if kDebug then
+		        elapsedMs = Microseconds - startMs
+		        System.DebugLog logPrefix + "Key index " + str( keyIndex ) + " took " + format( elapsedMs, "#,0.0##" ) + " µs"
+		      #endif
+		    next keyIndex
+		  next rep
 		  
 		End Sub
 	#tag EndMethod
@@ -508,47 +897,251 @@ Implements BcryptInterface
 		    #pragma StackOverflowChecking False
 		  #endif
 		  
-		  dim j as Integer
-		  dim i, k, arrIndexMajor, arrIndex as Integer
+		  const kShift3 as UInt32 = 256 ^ 3
+		  const kShift2 as UInt32 = 256 ^ 2
+		  const kShift1 as UInt32 = 256 ^ 1
+		  
+		  const kMask0 as UInt32 = &hFF000000
+		  const kMask1 as UInt32 = &h00FF0000
+		  const kMask2 as UInt32 = &h0000FF00
+		  const kMask3 as UInt32 = &h000000FF
+		  
+		  const kSLastByte as integer = 4095
+		  const kPLastByte as integer = ( 18 * 4 ) - 1
+		  const kPLastInnerByte as integer = kPLastByte - 7
+		  
+		  dim streamIndex as integer
+		  dim pByteIndex as integer
+		  dim sByteIndex as integer
 		  dim temp as UInt32
-		  dim x0 as UInt32
-		  dim x1 as UInt32
-		  dim streamBuffer as new Xojo.Core.MutableMemoryBlock( 4 )
-		  streamBuffer.LittleEndian = false
-		  dim streamBufferPtr as ptr = streamBuffer.Data
+		  dim d0 as UInt32
+		  dim d1 as UInt32
 		  
-		  const kLastIndex as Integer = BLF_N + 1
-		  for i = 0 to kLastIndex
-		    temp = Stream2Word( key, j, streamBuffer, streamBufferPtr )
-		    arrIndex = i * 4
-		    self.PPtr.UInt32( arrIndex ) = self.PPtr.UInt32( arrIndex ) Xor temp
-		  next i
+		  dim myPPtr as ptr = PPtr
+		  dim mySPtr as ptr = SPtr
 		  
-		  j = 0
-		  for i = 0 to kLastIndex step 2
-		    x0 = x0 Xor Stream2Word( data, j, streamBuffer, streamBufferPtr )
-		    x1 = x1 Xor Stream2Word( data, j, streamBuffer, streamBufferPtr )
+		  //
+		  // Create the streams
+		  //
+		  const kStreamWordSize as integer = 8
+		  
+		  dim streamData as Xojo.Core.MutableMemoryBlock
+		  dim dataSize as integer = data.Size
+		  dim streamDataSize as integer = dataSize
+		  
+		  if ( streamDataSize mod kStreamWordSize ) = 0 then
+		    streamData = new Xojo.Core.MutableMemoryBlock( streamDataSize )
+		    streamData.Left( streamDataSize ) = data
+		  else
+		    streamDataSize = dataSize * kStreamWordSize
+		    streamData = new Xojo.Core.MutableMemoryBlock( streamDataSize )
 		    
-		    Encipher( x0, x1 )
-		    
-		    arrIndex = i * 4
-		    self.PPtr.UInt32( arrIndex ) = x0
-		    self.PPtr.UInt32( arrIndex + 4 ) = x1
-		  next i
+		    dim lastByte as integer = streamDataSize - 1
+		    for thisByte as integer = 0 to lastByte step dataSize
+		      streamData.Mid( thisByte, dataSize ) = data
+		    next
+		  end if
 		  
-		  for i = 0 to 3
-		    arrIndexMajor = i * 256
-		    for k = 0 to 255 step 2
-		      x0 = x0 Xor Stream2Word( data, j, streamBuffer, streamBufferPtr )
-		      x1 = x1 Xor Stream2Word( data, j, streamBuffer, streamBufferPtr )
+		  dim streamDataPtr as ptr = streamData.Data
+		  
+		  #if TargetLittleEndian then
+		    dim copyIndex as integer
+		    while copyIndex < streamDataSize
+		      temp = streamDataPtr.UInt32( copyIndex )
+		      streamDataPtr.UInt32( copyIndex ) = _
+		      ( temp \ kShift3 ) or _
+		      ( ( temp and kMask1 ) \ kShift1 ) or _
+		      ( ( temp and kMask2 ) * kShift1 ) or _
+		      ( temp * kShift3 )
 		      
-		      Encipher( x0, x1 )
+		      copyIndex = copyIndex + 4
+		    wend
+		  #endif
+		  
+		  dim streamKey as Xojo.Core.MutableMemoryBlock
+		  dim keySize as integer = key.Size
+		  dim streamKeySize as integer = keySize
+		  
+		  if ( streamKeySize mod kStreamWordSize ) = 0 then
+		    streamKey = new Xojo.Core.MutableMemoryBlock( keySize )
+		    streamKey.Left( keySize ) = key
+		  else
+		    streamKeySize = keySize * kStreamWordSize
+		    streamKey = new Xojo.Core.MutableMemoryBlock( streamKeySize )
+		    
+		    dim lastByte as integer = streamKeySize - 1
+		    for thisByte as integer = 0 to lastByte step keySize
+		      streamKey.Mid( thisByte, keySize ) = key
+		    next
+		  end if
+		  
+		  dim streamKeyPtr as ptr = streamKey.Data
+		  
+		  #if TargetLittleEndian then
+		    copyIndex = 0
+		    while copyIndex < streamKeySize
+		      temp = streamKeyPtr.UInt32( copyIndex )
+		      streamKeyPtr.UInt32( copyIndex ) = _
+		      ( temp \ kShift3 ) or _
+		      ( ( temp and kMask1 ) \ kShift1 ) or _
+		      ( ( temp and kMask2 ) * kShift1 ) or _
+		      ( temp * kShift3 )
 		      
-		      arrIndex = ( arrIndexMajor + k ) * 4
-		      self.SPtr.UInt32( arrIndex ) = x0
-		      self.SPtr.Uint32( arrIndex + 4 ) = x1
-		    next k
-		  next i
+		      copyIndex = copyIndex + 4
+		    wend
+		  #endif
+		  
+		  //
+		  // Encoding starts here
+		  //
+		  
+		  streamIndex = 0
+		  dim barrier as integer = streamKeySize - kStreamWordSize
+		  for pByteIndex = 0 to kPLastByte step kStreamWordSize // Two words at a time
+		    'temp = Stream2Word( key, streamIndex, streamBuffer, streamBufferPtr )
+		    
+		    myPPtr.UInt64( pByteIndex ) = myPPtr.UInt64( pByteIndex ) xor streamKeyPtr.UInt64( streamIndex )
+		    if streamIndex = barrier then
+		      streamIndex = 0
+		    else
+		      streamIndex = streamIndex + kStreamWordSize
+		    end if
+		  next pByteIndex
+		  
+		  dim a, b, c, d as integer // Used as indexes
+		  dim xl as UInt32 
+		  dim xr as UInt32 
+		  dim j1 as UInt32
+		  dim pptrEncoderIndex as integer
+		  
+		  barrier = streamDataSize - 4
+		  streamIndex = 0
+		  for pByteIndex = 0 to kPLastByte step 8
+		    'd0 = d0 Xor Stream2Word( data, streamIndex, streamBuffer, streamBufferPtr )
+		    'd1 = d1 Xor Stream2Word( data, streamIndex, streamBuffer, streamBufferPtr )
+		    
+		    d0 = d0 xor streamDataPtr.UInt32( streamIndex )
+		    if streamIndex = barrier then
+		      streamIndex = 0
+		    else
+		      streamIndex = streamIndex + 4
+		    end if
+		    
+		    d1 = d1 xor streamDataPtr.UInt32( streamIndex )
+		    if streamIndex = barrier then
+		      streamIndex = 0
+		    else
+		      streamIndex = streamIndex + 4
+		    end if
+		    
+		    
+		    'Encipher( d0, d1 )
+		    
+		    xl = d0
+		    xr = d1
+		    
+		    xl = xl xor myPPtr.UInt32( 0 )
+		    
+		    for pptrEncoderIndex = 4 to kPLastInnerByte step 8
+		      j1 = xl
+		      
+		      a = ( j1 \ kShift3 )
+		      b = ( j1 \ kShift2 ) and kMask3
+		      c = ( j1 \ kShift1 ) and kMask3
+		      d = j1 and kMask3
+		      
+		      j1 = ( ( mySPtr.UInt32( a * 4 ) + mySPtr.UInt32( ( 256 + b ) * 4 ) ) _
+		      xor mySPtr.UInt32( ( 512 + c ) * 4 ) ) _
+		      + mySPtr.UInt32( ( 768 + d ) * 4 )
+		      
+		      xr = xr xor ( j1 xor myPPtr.UInt32( pptrEncoderIndex ) )
+		      
+		      j1 = xr
+		      
+		      a = ( j1 \ kShift3 ) 
+		      b = ( j1 \ kShift2 ) and kMask3
+		      c = ( j1 \ kShift1 ) and kMask3
+		      d = j1 and kMask3
+		      
+		      j1 = ( ( mySPtr.UInt32( a * 4 ) + mySPtr.UInt32( ( 256 + b ) * 4 ) ) _
+		      xor mySPtr.UInt32( ( 512 + c ) * 4 ) ) _
+		      + mySPtr.UInt32( ( 768 + d ) * 4 )
+		      
+		      xl = xl xor ( j1 xor myPPtr.UInt32( pptrEncoderIndex + 4 ) )
+		    next pptrEncoderIndex
+		    
+		    xr = xr xor myPPtr.UInt32( kPLastByte - 3 )
+		    
+		    d0 = xr
+		    d1 = xl
+		    
+		    
+		    myPPtr.UInt32( pByteIndex ) = d0
+		    myPPtr.UInt32( pByteIndex + 4 ) = d1
+		  next pByteIndex
+		  
+		  dim firstPPtr as UInt32 = myPPtr.UInt32( 0 )
+		  for sByteIndex = 0 to kSLastByte step 8
+		    'd0 = d0 Xor Stream2Word( data, streamIndex, streamBuffer, streamBufferPtr )
+		    'd1 = d1 Xor Stream2Word( data, streamIndex, streamBuffer, streamBufferPtr )
+		    
+		    if streamIndex = streamDataSize then
+		      streamIndex = 0
+		    end if
+		    d0 = d0 xor streamDataPtr.UInt32( streamIndex )
+		    streamIndex = streamIndex + 4
+		    
+		    if streamIndex = streamDataSize then
+		      streamIndex = 0
+		    end if
+		    d1 = d1 xor streamDataPtr.UInt32( streamIndex )
+		    streamIndex = streamIndex + 4
+		    
+		    
+		    'Encipher( d0, d1 )
+		    
+		    xl = d0
+		    xr = d1
+		    
+		    xl = xl xor firstPPtr
+		    
+		    for pptrEncoderIndex = 4 to kPLastInnerByte step 8
+		      j1 = xl
+		      
+		      a = ( j1 \ kShift3 )
+		      b = ( j1 \ kShift2 ) and kMask3
+		      c = ( j1 \ kShift1 ) and kMask3
+		      d = j1 and kMask3
+		      
+		      j1 = ( ( mySPtr.UInt32( a * 4 ) + mySPtr.UInt32( ( 256 + b ) * 4 ) ) _
+		      xor mySPtr.UInt32( ( 512 + c ) * 4 ) ) _
+		      + mySPtr.UInt32( ( 768 + d ) * 4 )
+		      
+		      xr = xr xor ( j1 xor myPPtr.UInt32( pptrEncoderIndex ) )
+		      
+		      j1 = xr
+		      
+		      a = ( j1 \ kShift3 ) 
+		      b = ( j1 \ kShift2 ) and kMask3
+		      c = ( j1 \ kShift1 ) and kMask3
+		      d = j1 and kMask3
+		      
+		      j1 = ( ( mySPtr.UInt32( a * 4 ) + mySPtr.UInt32( ( 256 + b ) * 4 ) ) _
+		      xor mySPtr.UInt32( ( 512 + c ) * 4 ) ) _
+		      + mySPtr.UInt32( ( 768 + d ) * 4 )
+		      
+		      xl = xl xor ( j1 xor myPPtr.UInt32( pptrEncoderIndex + 4 ) )
+		    next pptrEncoderIndex
+		    
+		    xr = xr xor myPPtr.UInt32( pptrEncoderIndex )
+		    
+		    d0 = xr
+		    d1 = xl
+		    
+		    
+		    mySPtr.UInt32( sByteIndex ) = d0
+		    mySPtr.Uint32( sByteIndex + 4 ) = d1
+		  next sByteIndex
 		  
 		End Sub
 	#tag EndMethod
@@ -560,37 +1153,65 @@ Implements BcryptInterface
 		  S = new Xojo.Core.MutableMemoryBlock( 4 * 256 * 4 )
 		  SPtr = S.Data
 		  
-		  dim x as integer
-		  for i as integer = 0 to 3
-		    dim arr() as UInt32
-		    select case i
-		    case 0
-		      arr = S0
-		    case 1
-		      arr = S1
-		    case 2
-		      arr = S2
-		    case 3
-		      arr = S3
-		    end
+		  static defaultS as Xojo.Core.MutableMemoryBlock
+		  
+		  if defaultS is nil then
 		    
-		    for i1 as Integer = 0 to arr.Ubound
-		      SPtr.UInt32( x ) = arr( i1 )
-		      x = x + 4
-		    next i1
-		  next i
+		    dim mySPtr as ptr = SPtr
+		    
+		    dim x as integer
+		    for i as integer = 0 to 3
+		      dim arr() as UInt32
+		      select case i
+		      case 0
+		        arr = S0
+		      case 1
+		        arr = S1
+		      case 2
+		        arr = S2
+		      case 3
+		        arr = S3
+		      end
+		      
+		      for i1 as Integer = 0 to arr.Ubound
+		        mySPtr.UInt32( x ) = arr( i1 )
+		        x = x + 4
+		      next i1
+		    next i
+		    
+		    defaultS = new Xojo.Core.MutableMemoryBlock( S.Size )
+		    defaultS.Left( S.Size ) = S
+		    
+		  else
+		    S.Left( S.Size ) = defaultS
+		    
+		  end if
 		  
-		  dim vals() as UInt32 = UInt32Array( _
-		  &h243f6a88, &h85a308d3, &h13198a2e, &h03707344, _
-		  &ha4093822, &h299f31d0, &h082efa98, &hec4e6c89, _
-		  &h452821e6, &h38d01377, &hbe5466cf, &h34e90c6c, _
-		  &hc0ac29b7, &hc97c50dd, &h3f84d5b5, &hb5470917, _
-		  &h9216d5d9, &h8979fb1b _
-		  )
+		  static defaultP as Xojo.Core.MutableMemoryBlock
 		  
-		  for i as integer = 0 to vals.Ubound
-		    PPtr.UInt32( i * 4 ) = vals( i )
-		  next i
+		  if defaultP is nil then
+		    dim myPPtr as ptr = PPtr
+		    
+		    dim vals() as UInt32 = UInt32Array( _
+		    &h243f6a88, &h85a308d3, &h13198a2e, &h03707344, _
+		    &ha4093822, &h299f31d0, &h082efa98, &hec4e6c89, _
+		    &h452821e6, &h38d01377, &hbe5466cf, &h34e90c6c, _
+		    &hc0ac29b7, &hc97c50dd, &h3f84d5b5, &hb5470917, _
+		    &h9216d5d9, &h8979fb1b _
+		    )
+		    
+		    for i as integer = 0 to vals.Ubound
+		      myPPtr.UInt32( i * 4 ) = vals( i )
+		    next i
+		    
+		    defaultP = new Xojo.Core.MutableMemoryBlock( P.Size )
+		    defaultP.Left( P.Size ) = P
+		    
+		  else
+		    P.Left( P.Size ) = defaultP
+		    
+		  end if
+		  
 		End Sub
 	#tag EndMethod
 
@@ -879,7 +1500,47 @@ Implements BcryptInterface
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Attributes( Hidden ) Private Shared Function SelfTestMemoryBlockHash(mbIn As Xojo.Core.MutableMemoryBlock, expectedSize As Integer) As String
+		  dim pIn as ptr = mbIn.Data
+		  dim mbOut as new MemoryBlock( expectedSize )
+		  dim pOut as ptr = mbOut
+		  
+		  dim mbWordSize as integer
+		  select case true
+		  case expectedSize = mbIn.Size
+		    mbWordSize = 4
+		  case ( expectedSize * 2 ) = mbIn.Size
+		    mbWordSize = 8
+		  case else
+		    raise new RuntimeException
+		  end select
+		  
+		  dim mbOutIndex as integer
+		  dim mbInLastByte as integer = mbIn.Size - 1
+		  for mbInIndex as integer = 0 to mbInLastByte step mbWordSize
+		    if mbWordSize = 8 then
+		      pOut.UInt32( mbOutIndex ) = pIn.UInt64( mbInIndex )
+		    else
+		      pOut.UInt32( mbOutIndex ) = pIn.UInt32( mbInIndex )
+		    end if
+		    mbOutIndex = mbOutIndex + 4
+		  next
+		  
+		  return EncodeHex( Crypto.SHA256( mbOut ) )
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21, CompatibilityFlags = false
 		Private Shared Function Stream2Word(data As Xojo.Core.MemoryBlock, ByRef current As Integer, buffer As Xojo.Core.MutableMemoryBlock, bufferPtr As Ptr) As UInt32
+		  // ################################################################
+		  // #                                                              #
+		  // #                         Legacy code                          #
+		  // #                                                              #
+		  // #             This has been inlined wherever needed            #
+		  // #                                                              #
+		  // ################################################################
+		  
 		  #if not DebugBuild
 		    #pragma BackgroundTasks False
 		    #pragma BoundsChecking False
@@ -898,6 +1559,7 @@ Implements BcryptInterface
 		  end if
 		  
 		  data.LittleEndian = false
+		  buffer.LittleEndian = false
 		  
 		  if dataSize >= 4 and j <= ( dataSize - 4 ) then
 		    
@@ -1020,53 +1682,14 @@ Implements BcryptInterface
 	#tag Constant, Name = BLF_N, Type = Double, Dynamic = False, Default = \"16", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = kVersion, Type = String, Dynamic = False, Default = \"1.5", Scope = Public
+	#tag Constant, Name = kDebug, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = kVersion, Type = String, Dynamic = False, Default = \"2.5.2", Scope = Public
 	#tag EndConstant
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="BlockSize"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="CurrentVector"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="PaddingMethod"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Padding"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - NullsOnly"
-				"1 - NullsWithCount"
-				"2 - PKCS"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="UseFunction"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Functions"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Default"
-				"1 - ECB"
-				"2 - CBC"
-			#tag EndEnumValues
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true

@@ -440,7 +440,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Shown(UserData As Auto = Nil)
+		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
 		  Self.ClipboardWatcher.RunMode = Timer.RunModes.Multiple
@@ -505,8 +505,8 @@ End
 		  
 		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File <> Nil Then
-		    Dim Mods As New Beacon.TextList
-		    Mods.Append(LocalData.UserModID.ToText)
+		    Dim Mods As New Beacon.StringList
+		    Mods.Append(LocalData.UserModID)
 		    
 		    Dim Engrams() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategoryEngrams, "", Mods, "")
 		    Dim Creatures() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategoryCreatures, "", Mods, "")
@@ -518,7 +518,7 @@ End
 		      Blueprints.Append(Creature)
 		    Next
 		    
-		    Dim CSV As Text = Beacon.CreateCSV(Blueprints)
+		    Dim CSV As String = Beacon.CreateCSV(Blueprints)
 		    Dim Stream As TextOutputStream = TextOutputStream.Create(File)
 		    Stream.Write(CSV)
 		    Stream.Close
@@ -585,13 +585,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SetupUI()
-		  Dim Mods As New Beacon.TextList(0)
-		  Mods(0) = LocalData.UserModID.ToText
+		  Dim Mods As New Beacon.StringList(0)
+		  Mods(0) = LocalData.UserModID
 		  
 		  Dim Engrams() As Beacon.Engram = LocalData.SharedInstance.SearchForEngrams("", Mods)
 		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", Mods)
 		  Dim Blueprints() As Beacon.Blueprint
-		  Dim Labels() As Text
+		  Dim Labels() As String
 		  For Each Engram As Beacon.Engram In Engrams
 		    Blueprints.Append(Engram)
 		    Labels.Append(Engram.Label)
@@ -602,7 +602,7 @@ End
 		  Next
 		  Labels.SortWith(Blueprints)
 		  
-		  Dim SelectedPaths() As Text
+		  Dim SelectedPaths() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
 		      SelectedPaths.Append(Beacon.Blueprint(Self.List.RowTag(I)).Path)

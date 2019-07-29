@@ -277,7 +277,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Shown(UserData As Auto = Nil)
+		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
 		  Self.ClipboardWatcher.RunMode = Timer.RunModes.Multiple

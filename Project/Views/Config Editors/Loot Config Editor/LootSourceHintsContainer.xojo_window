@@ -65,7 +65,7 @@ Begin ContainerControl LootSourceHintsContainer
       LockTop         =   True
       Mask            =   ""
       MaximumCharactersAllowed=   0
-      Multiline       =   True
+      MultiLine       =   True
       ReadOnly        =   True
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -98,9 +98,7 @@ Begin ContainerControl LootSourceHintsContainer
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648

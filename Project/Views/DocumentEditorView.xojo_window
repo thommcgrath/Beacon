@@ -321,8 +321,8 @@ End
 	#tag Event
 		Sub Open()
 		  If Self.mController.Document <> Nil Then
-		    Dim DocumentID As Text = Self.mController.Document.DocumentID
-		    Dim ConfigName As Text = Preferences.LastUsedConfigName(DocumentID)
+		    Dim DocumentID As String = Self.mController.Document.DocumentID
+		    Dim ConfigName As String = Preferences.LastUsedConfigName(DocumentID)
 		    For I As Integer = 0 To Self.ConfigMenu.RowCount - 1
 		      Dim Tag As Variant = Self.ConfigMenu.RowTag(I)
 		      If (Tag.Type = Variant.TypeText And Tag.TextValue = ConfigName) Or (Tag.Type = Variant.TypeString And Tag.StringValue = ConfigName) Then
@@ -522,7 +522,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub CopyFromDocuments(SourceDocuments As Auto)
+		Private Sub CopyFromDocuments(SourceDocuments As Variant)
 		  Dim Documents() As Beacon.Document = SourceDocuments
 		  DocumentMergerWindow.Present(Self, Documents, Self.Document, WeakAddressOf MergeCallback)
 		End Sub
@@ -553,7 +553,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim ConfigName As Text = Issue.ConfigName
+		  Dim ConfigName As String = Issue.ConfigName
 		  For I As Integer = 0 To Self.ConfigMenu.RowCount - 1
 		    If Self.ConfigMenu.RowTag(I) = ConfigName Then
 		      Self.ConfigMenu.SelectedRowIndex = I
@@ -607,14 +607,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mController_WriteError(Sender As Beacon.DocumentController, Reason As Text)
+		Private Sub mController_WriteError(Sender As Beacon.DocumentController, Reason As String)
 		  If Not Self.Closed Then
 		    Self.Progress = BeaconSubview.ProgressNone
 		  End If
 		  
 		  Dim Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save!", Beacon.UserNotification.Severities.Elevated)
 		  Notification.SecondaryMessage = Reason
-		  Notification.UserData = New Xojo.Core.Dictionary
+		  Notification.UserData = New Dictionary
 		  Notification.UserData.Value("DocumentID") = If(Sender.Document <> Nil, Sender.Document.DocumentID, "")
 		  Notification.UserData.Value("DocumentURL") = Sender.URL.URL // To force convert to text
 		  Notification.UserData.Value("Reason") = Reason
@@ -682,7 +682,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, Value As Variant)
 		  // Part of the ObservationKit.Observer interface.
 		  
 		  #Pragma Unused Source
@@ -742,8 +742,8 @@ End
 		    End If
 		    
 		    If Self.Document.Title.BeginsWith("Untitled Document") Then
-		      Dim Filename As Text = File.Name.ToText
-		      Dim Extension As Text = BeaconFileTypes.BeaconDocument.PrimaryExtension.ToText
+		      Dim Filename As String = File.Name
+		      Dim Extension As String = BeaconFileTypes.BeaconDocument.PrimaryExtension
 		      If Filename.EndsWith(Extension) Then
 		        Filename = Filename.Left(Filename.Length - Extension.Length).Trim
 		      End If
@@ -834,7 +834,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ViewID() As Text
+		Function ViewID() As String
 		  Return Self.mController.URL.Hash
 		End Function
 	#tag EndMethod
@@ -1029,7 +1029,7 @@ End
 #tag Events ConfigMenu
 	#tag Event
 		Sub Open()
-		  Dim Labels(), Tags() As Text
+		  Dim Labels(), Tags() As String
 		  Labels.Append("Maps")
 		  Tags.Append("maps")
 		  #if DeployEnabled
@@ -1037,8 +1037,8 @@ End
 		    Tags.Append("deployments")
 		  #endif
 		  
-		  Dim Names() As Text = BeaconConfigs.AllConfigNames
-		  For Each Name As Text In Names
+		  Dim Names() As String = BeaconConfigs.AllConfigNames
+		  For Each Name As String In Names
 		    Labels.Append(Language.LabelForConfig(Name))
 		    Tags.Append(Name)
 		  Next
@@ -1062,7 +1062,7 @@ End
 		    Self.UpdateHelpForConfig(Tag.StringValue)
 		    
 		    If Self.mController.Document <> Nil Then
-		      Preferences.LastUsedConfigName(Self.mController.Document.DocumentID) = Tag.StringValue.ToText
+		      Preferences.LastUsedConfigName(Self.mController.Document.DocumentID) = Tag.StringValue
 		    End If
 		    
 		    If Self.Panels.HasKey(Tag.StringValue) Then

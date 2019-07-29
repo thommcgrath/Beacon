@@ -1,10 +1,28 @@
 #tag Module
 Protected Module SimpleHTTP
 	#tag Method, Flags = &h1
-		Protected Sub Delete(URL As Text, Handler As SimpleHTTP.ResponseCallback, Tag As Auto, Headers As Xojo.Core.Dictionary = Nil)
+		Protected Function BuildFormData(Fields As Dictionary) As String
+		  If Fields = Nil Then
+		    Fields = New Dictionary
+		  End If
+		  
+		  Dim Parts() As String
+		  Dim Keys() As Variant = Fields.Keys
+		  For Each Key As Variant In Keys
+		    Dim Value As Variant = Fields.Value(Key)
+		    
+		    Parts.Append(EncodeURLComponent(Key) + "=" + EncodeURLComponent(Value))
+		  Next
+		  
+		  Return Join(Parts, "&")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub Delete(URL As String, Handler As SimpleHTTP.ResponseCallback, Tag As Variant, Headers As Dictionary = Nil)
 		  Dim Socket As SimpleHTTP.SimpleHTTPSocket = GetSocket()
 		  If Headers <> Nil Then
-		    For Each Entry As Xojo.Core.DictionaryEntry In Headers
+		    For Each Entry As DictionaryEntry In Headers
 		      Socket.RequestHeader(Entry.Key) = Entry.Value
 		    Next
 		  End If
@@ -15,10 +33,10 @@ Protected Module SimpleHTTP
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Get(URL As Text, Handler As SimpleHTTP.ResponseCallback, Tag As Auto, Headers As Xojo.Core.Dictionary = Nil)
+		Protected Sub Get(URL As String, Handler As SimpleHTTP.ResponseCallback, Tag As Variant, Headers As Dictionary = Nil)
 		  Dim Socket As SimpleHTTP.SimpleHTTPSocket = GetSocket()
 		  If Headers <> Nil Then
-		    For Each Entry As Xojo.Core.DictionaryEntry In Headers
+		    For Each Entry As DictionaryEntry In Headers
 		      Socket.RequestHeader(Entry.Key) = Entry.Value
 		    Next
 		  End If
@@ -43,11 +61,17 @@ Protected Module SimpleHTTP
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Post(URL As Text, ContentType As Text, Content As Xojo.Core.MemoryBlock, Handler As SimpleHTTP.ResponseCallback, Tag As Auto, Headers As Xojo.Core.Dictionary = Nil)
+		Protected Sub Post(URL As String, Fields As Dictionary, Handler As SimpleHTTP.ResponseCallback, Tag As Variant, Headers As Dictionary = Nil)
+		  Post(URL, "application/x-www-form-urlencoded", BuildFormData(Fields), Handler, Tag, Headers)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub Post(URL As String, ContentType As String, Content As MemoryBlock, Handler As SimpleHTTP.ResponseCallback, Tag As Variant, Headers As Dictionary = Nil)
 		  Dim Socket As SimpleHTTP.SimpleHTTPSocket = GetSocket()
 		  Socket.SetRequestContent(Content, ContentType)
 		  If Headers <> Nil Then
-		    For Each Entry As Xojo.Core.DictionaryEntry In Headers
+		    For Each Entry As DictionaryEntry In Headers
 		      Socket.RequestHeader(Entry.Key) = Entry.Value
 		    Next
 		  End If
@@ -57,40 +81,13 @@ Protected Module SimpleHTTP
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub Post(URL As Text, Fields As Xojo.Core.Dictionary, Handler As SimpleHTTP.ResponseCallback, Tag As Auto, Headers As Xojo.Core.Dictionary = Nil)
-		  Dim Parts() As Text
-		  For Each Entry As Xojo.Core.DictionaryEntry In Fields
-		    Dim Key As Text = Entry.Key
-		    Dim Value As Text = Entry.Value
-		    
-		    Parts.Append(Beacon.EncodeURLComponent(Key) + "=" + Beacon.EncodeURLComponent(Value))
-		  Next
-		  
-		  Dim Content As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Parts.Join("&"))
-		  Post(URL, "application/x-www-form-urlencoded", Content, Handler, Tag, Headers)
-		End Sub
-	#tag EndMethod
-
 	#tag DelegateDeclaration, Flags = &h1
-		Protected Delegate Sub ResponseCallback(URL As Text, Status As Integer, Content As Xojo . Core . MemoryBlock, Tag As Auto)
+		Protected Delegate Sub ResponseCallback(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
 		Sub SetFormData(Extends Socket As URLConnection, Fields As Dictionary)
-		  If Fields = Nil Then
-		    Fields = New Dictionary
-		  End If
-		  
-		  Dim Parts() As String
-		  Dim Keys() As Variant = Fields.Keys
-		  For Each Key As Variant In Keys
-		    Dim Value As Variant = Fields.Value(Key)
-		    
-		    Parts.Append(EncodeURLComponent(Key) + "=" + EncodeURLComponent(Value))
-		  Next
-		  
-		  Socket.SetRequestContent(Join(Parts, "&"), "application/x-www-form-urlencoded")
+		  Socket.SetRequestContent(BuildFormData(Fields), "application/x-www-form-urlencoded")
 		End Sub
 	#tag EndMethod
 

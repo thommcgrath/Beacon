@@ -266,14 +266,14 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(InputDict As Xojo.Core.Dictionary)
+		Private Sub Constructor(InputDict As Dictionary)
 		  Self.mInputDictionary = InputDict
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ShowDecryptIdentityDict(Parent As Window, Dict As Xojo.Core.Dictionary) As Beacon.Identity
+		Shared Function ShowDecryptIdentityDict(Parent As Window, Dict As Dictionary) As Beacon.Identity
 		  If Parent = Nil Then
 		    Return Nil
 		  End If
@@ -288,7 +288,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mInputDictionary As Xojo.Core.Dictionary
+		Private mInputDictionary As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -304,7 +304,7 @@ End
 		  // No trim. Trailing or leading whitespace is perfectly valid for the password.
 		  Dim Password As String = Self.PasswordField.Value
 		  
-		  Dim Identity As Beacon.Identity = Beacon.Identity.FromUserDictionary(Self.mInputDictionary, Password.ToText)
+		  Dim Identity As Beacon.Identity = Beacon.Identity.FromUserDictionary(Self.mInputDictionary, Password)
 		  If Identity <> Nil Then
 		    Self.mOutputIdentity = Identity
 		    Self.Hide

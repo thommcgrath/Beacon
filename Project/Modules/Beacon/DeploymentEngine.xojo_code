@@ -1,19 +1,19 @@
 #tag Interface
 Protected Interface DeploymentEngine
 	#tag Method, Flags = &h0
-		Function BackupGameIni() As Text
+		Function BackupGameIni() As String
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function BackupGameUserSettingsIni() As Text
+		Function BackupGameUserSettingsIni() As String
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Begin(Label As Text, Document As Beacon.Document, Identity As Beacon.Identity)
+		Sub Begin(Label As String, Document As Beacon.Document, Identity As Beacon.Identity)
 		  
 		End Sub
 	#tag EndMethod
@@ -37,7 +37,7 @@ Protected Interface DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Name() As Text
+		Function Name() As String
 		  
 		End Function
 	#tag EndMethod
@@ -49,7 +49,7 @@ Protected Interface DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Status() As Text
+		Function Status() As String
 		  
 		End Function
 	#tag EndMethod
@@ -60,7 +60,9 @@ Protected Interface DeploymentEngine
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -68,12 +70,15 @@ Protected Interface DeploymentEngine
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -81,6 +86,7 @@ Protected Interface DeploymentEngine
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -88,6 +94,7 @@ Protected Interface DeploymentEngine
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Interface

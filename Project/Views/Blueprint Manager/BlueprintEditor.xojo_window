@@ -622,7 +622,7 @@ End
 		  
 		  Self.Modified = False
 		  
-		  Dim ObjID As Text = Self.ObjectID
+		  Dim ObjID As String = Self.ObjectID
 		  Self.ObjectID = ""
 		  Self.ObjectID = ObjID
 		End Sub
@@ -630,8 +630,8 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Save()
-		  Dim Label As Text = Trim(Self.NameField.Value).ToText
-		  Dim Path As Text = Trim(Self.PathField.Value).ToText
+		  Dim Label As String = Trim(Self.NameField.Value)
+		  Dim Path As String = Trim(Self.PathField.Value)
 		  If Label = "" Then
 		    Self.ShowAlert("This object has no name", "You'll want to correct this, it will be hard to find this object again without a name.")
 		    Return
@@ -641,7 +641,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Tags() As Text = Self.TagsField.Value.ToText.Split(",")
+		  Dim Tags() As String = Self.TagsField.Value.Split(",")
 		  For I As Integer = Tags.Ubound DownTo 0
 		    Tags(I) = Tags(I).Trim
 		    If Tags(I) = "" Then
@@ -696,7 +696,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mObjectID As Text
+		Private mObjectID As String
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -762,7 +762,7 @@ End
 			  Self.Modified = False
 			End Set
 		#tag EndSetter
-		ObjectID As Text
+		ObjectID As String
 	#tag EndComputedProperty
 
 
@@ -1072,7 +1072,7 @@ End
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
-		Type="Text"
-		EditorType=""
+		Type="String"
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 #tag EndViewBehavior

@@ -128,7 +128,7 @@ Begin LibrarySubview LibraryPaneSearch
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin Xojo.Net.HTTPSocket SearchSocket
+   Begin URLConnection SearchSocket
       Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
@@ -180,7 +180,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Shown(UserData As Auto = Nil)
+		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
 		  Self.SearchField.SetFocus()
@@ -190,13 +190,13 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Function DrawResult(G As Graphics, Top As Integer, Dict As Xojo.Core.Dictionary, Selected As Boolean) As REALbasic.Rect
+		Private Function DrawResult(G As Graphics, Top As Integer, Dict As Dictionary, Selected As Boolean) As REALbasic.Rect
 		  Const FontSizePoints = 14.0
 		  Dim SmallFontSizePoints As Double = FontSizePoints * 0.8
 		  
-		  Dim Type As Text = Dict.Lookup("type", "")
-		  Dim Title As Text = Dict.Lookup("title", "")
-		  Dim Summary As Text = Dict.Lookup("summary", "")
+		  Dim Type As String = Dict.Lookup("type", "")
+		  Dim Title As String = Dict.Lookup("title", "")
+		  Dim Summary As String = Dict.Lookup("summary", "")
 		  
 		  G.FontName = "System"
 		  G.FontSize = FontSizePoints
@@ -273,8 +273,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SelectDict(Dict As Xojo.Core.Dictionary)
-		  Dim URL As Text = Dict.Lookup("url", "")
+		Private Sub SelectDict(Dict As Dictionary)
+		  Dim URL As String = Dict.Lookup("url", "")
 		  If URL = "" Then
 		    Self.ShowAlert("Unable to show search result", "Something is wrong, the result has no url.")
 		    Return
@@ -306,7 +306,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mResultDicts() As Xojo.Core.Dictionary
+		Private mResultDicts() As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -318,11 +318,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSearchTerms As Text
+		Private mSearchTerms As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectedURL As Text
+		Private mSelectedURL As String
 	#tag EndProperty
 
 
@@ -358,7 +358,7 @@ End
 #tag Events SearchTimer
 	#tag Event
 		Sub Action()
-		  Dim Terms As Text = Self.SearchField.Value.Trim.ToText
+		  Dim Terms As String = Self.SearchField.Value.Trim
 		  
 		  If Terms = "" Then
 		    Self.Reset()
@@ -369,13 +369,13 @@ End
 		  Self.SearchSocket.ClearRequestHeaders
 		  
 		  Self.SearchSocket.RequestHeader("Accept") = "application/json"
-		  Self.SearchSocket.Send("GET", Beacon.WebURL("/search/?query=" + Beacon.EncodeURLComponent(Terms)))
+		  Self.SearchSocket.Send("GET", Beacon.WebURL("/search/?query=" + EncodeURLComponent(Terms)))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SearchSocket
 	#tag Event
-		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
 		  #Pragma Unused URL
 		  
 		  Self.Reset()
@@ -384,21 +384,14 @@ End
 		    Return
 		  End If
 		  
-		  Dim TextContent As Text
+		  Dim Details As Dictionary
 		  Try
-		    TextContent = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
+		    Details = Beacon.ParseJSON(Content)
 		  Catch Err As RuntimeException
 		    Return
 		  End Try
 		  
-		  Dim Details As Xojo.Core.Dictionary
-		  Try
-		    Details = Xojo.Data.ParseJSON(TextContent)
-		  Catch Err As Xojo.Data.InvalidJSONException
-		    Return
-		  End Try
-		  
-		  Dim Results() As Auto
+		  Dim Results() As Variant
 		  Try
 		    Results = Details.Value("results")
 		    Self.mSearchTerms = Details.Value("terms")
@@ -406,7 +399,7 @@ End
 		    Return
 		  End Try
 		  
-		  For Each ResultDict As Xojo.Core.Dictionary In Results
+		  For Each ResultDict As Dictionary In Results
 		    Self.mResultDicts.Append(ResultDict)
 		    Self.mResultRects.Append(Nil)
 		  Next
@@ -438,7 +431,7 @@ End
 		  Self.mContentHeight = Self.ResultSpacing
 		  Dim NextTop As Integer = Self.ResultSpacing - Self.mScrollPosition
 		  For I As Integer = 0 To Self.mResultDicts.Ubound
-		    Dim Dict As Xojo.Core.Dictionary = Self.mResultDicts(I)
+		    Dim Dict As Dictionary = Self.mResultDicts(I)
 		    Dim Rect As REALbasic.Rect = Self.DrawResult(G, NextTop, Dict, Self.mMousePressIndex = I)
 		    If Rect <> Nil Then
 		      Self.mResultRects(I) = Rect

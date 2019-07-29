@@ -1169,7 +1169,7 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Sub Constructor(ConfiguredClasses() As Text, DisabledClasses() As Text, Mods As Beacon.TextList)
+		Private Sub Constructor(ConfiguredClasses() As String, DisabledClasses() As String, Mods As Beacon.StringList)
 		  Self.ConfiguredClasses = ConfiguredClasses
 		  Self.DisabledClasses = DisabledClasses
 		  Self.Mods = Mods
@@ -1178,7 +1178,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, EditClass As Text, Config As BeaconConfigs.DinoAdjustments, Mods As Beacon.TextList) As Boolean
+		Shared Function Present(Parent As Window, EditClass As String, Config As BeaconConfigs.DinoAdjustments, Mods As Beacon.StringList) As Boolean
 		  // This one needs the whole config because there are a lot of factors to showing the creatures in the menus
 		  
 		  If Parent = Nil Or Config = Nil Then
@@ -1186,7 +1186,7 @@ End
 		  End If
 		  
 		  Dim ConfiguredBehaviors() As Beacon.CreatureBehavior = Config.All
-		  Dim ConfiguredClasses(), DisabledClasses() As Text
+		  Dim ConfiguredClasses(), DisabledClasses() As String
 		  For Each Behavior As Beacon.CreatureBehavior In ConfiguredBehaviors
 		    If Behavior.TargetClass = EditClass Then
 		      Continue
@@ -1223,7 +1223,7 @@ End
 		    Return False
 		  End If
 		  
-		  Dim TargetClass As Text = Win.SelectedClass
+		  Dim TargetClass As String = Win.SelectedClass
 		  Dim Behavior As New Beacon.MutableCreatureBehavior(TargetClass)
 		  If Win.ModeDisableRadio.Value Then
 		    Behavior.ProhibitSpawning = True
@@ -1251,23 +1251,23 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private ConfiguredClasses() As Text
+		Private ConfiguredClasses() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private DisabledClasses() As Text
+		Private DisabledClasses() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private Mods As Beacon.TextList
+		Private Mods As Beacon.StringList
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectedClass As Text
+		Private mSelectedClass As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectedReplacement As Text
+		Private mSelectedReplacement As String
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h21
@@ -1302,7 +1302,7 @@ End
 			  End If
 			End Set
 		#tag EndSetter
-		Private SelectedClass As Text
+		Private SelectedClass As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h21
@@ -1333,7 +1333,7 @@ End
 			  End If
 			End Set
 		#tag EndSetter
-		Private SelectedReplacement As Text
+		Private SelectedReplacement As String
 	#tag EndComputedProperty
 
 
@@ -1410,7 +1410,7 @@ End
 		  If SelectedCreature <> Nil Then
 		    Exclude.Append(SelectedCreature)
 		  End If
-		  For Each ClassString As Text In Self.DisabledClasses
+		  For Each ClassString As String In Self.DisabledClasses
 		    Dim Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)
 		    If Creature <> Nil Then
 		      Exclude.Append(Creature)
@@ -1471,7 +1471,7 @@ End
 	#tag Event
 		Sub Action()
 		  Dim Exclude() As Beacon.Creature
-		  For Each ClassString As Text In Self.ConfiguredClasses
+		  For Each ClassString As String In Self.ConfiguredClasses
 		    Dim Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)
 		    If Creature <> Nil Then
 		      Exclude.Append(Creature)

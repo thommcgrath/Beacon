@@ -79,7 +79,7 @@ Protected Class ColorProfile
 		        Continue
 		      End If
 		      
-		      Dim Difference As Double = Xojo.Math.Abs(TestGray - DesiredGray)
+		      Dim Difference As Double = Abs(TestGray - DesiredGray)
 		      Grays.Append(TestGray)
 		      Differences.Append(Difference)
 		    Next
@@ -214,6 +214,7 @@ Protected Class ColorProfile
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -221,18 +222,23 @@ Protected Class ColorProfile
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -240,6 +246,7 @@ Protected Class ColorProfile
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -770,7 +770,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.ItemSet.Label = Me.Value.ToText
+		  Self.ItemSet.Label = Me.Value
 		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent

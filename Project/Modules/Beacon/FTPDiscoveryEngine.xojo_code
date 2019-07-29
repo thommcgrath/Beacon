@@ -8,8 +8,8 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function BuildFTPParameters(File As Text = "") As Xojo.Core.Dictionary
-		  Dim Fields As Xojo.Core.Dictionary = Self.mProfile.AsFormData
+		Private Function BuildFTPParameters(File As String = "") As Dictionary
+		  Dim Fields As Dictionary = Self.mProfile.AsFormData
 		  If File <> "" Then
 		    Fields.Value("path") = File
 		  End If
@@ -26,7 +26,7 @@ Implements Beacon.DiscoveryEngine
 		    Return
 		  End If
 		  
-		  Dim Dict As Xojo.Core.Dictionary = Response.JSON
+		  Dim Dict As Dictionary = Response.JSON
 		  If Not Dict.HasAllKeys("Game.ini", "GameUserSettings.ini") Then
 		    Self.SetError("Unable to find Game.ini and GameUserSettings.ini files")
 		    Return
@@ -35,12 +35,12 @@ Implements Beacon.DiscoveryEngine
 		  If Dict.HasKey("Options") Then
 		    Self.mCommandLineOptions = Dict.Value("Options")
 		  Else
-		    Self.mCommandLineOptions = New Xojo.Core.Dictionary
+		    Self.mCommandLineOptions = New Dictionary
 		  End If
 		  
 		  If Dict.HasKey("Maps") Then
-		    Dim Maps() As Auto = Dict.Value("Maps")
-		    For Each Map As Text In Maps
+		    Dim Maps() As Variant = Dict.Value("Maps")
+		    For Each Map As String In Maps
 		      Self.mMap = Self.mMap Or Beacon.Maps.MaskForIdentifier(Map)
 		    Next
 		  Else
@@ -67,10 +67,9 @@ Implements Beacon.DiscoveryEngine
 		  End If
 		  
 		  Try
-		    Dim Dict As Xojo.Core.Dictionary = Response.JSON
+		    Dim Dict As Dictionary = Response.JSON
 		    
-		    Dim TextContent As Text = Dict.Value("content")
-		    Self.mGameIniContent = TextContent.Trim
+		    Self.mGameIniContent = Trim(Dict.Value("content"))
 		    
 		    Self.DownloadGameUserSettingsIni()
 		  Catch Err As RuntimeException
@@ -90,10 +89,9 @@ Implements Beacon.DiscoveryEngine
 		  End If
 		  
 		  Try
-		    Dim Dict As Xojo.Core.Dictionary = Response.JSON
+		    Dim Dict As Dictionary = Response.JSON
 		    
-		    Dim TextContent As Text = Dict.Value("content")
-		    Self.mGameUserSettingsIniContent = TextContent.Trim
+		    Self.mGameUserSettingsIniContent = Trim(Dict.Value("content"))
 		    
 		    Self.mFinished = True
 		    Self.mErrored = False
@@ -106,13 +104,13 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CommandLineOptions() As Xojo.Core.DIctionary
+		Function CommandLineOptions() As DIctionary
 		  Return Self.mCommandLineOptions
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Profile As Beacon.FTPServerProfile, InitialPath As Text, Identity As Beacon.Identity)
+		Sub Constructor(Profile As Beacon.FTPServerProfile, InitialPath As String, Identity As Beacon.Identity)
 		  Self.mProfile = Profile
 		  Self.mInitialPath = InitialPath
 		  Self.mIdentity = Identity
@@ -156,13 +154,13 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameIniContent() As Text
+		Function GameIniContent() As String
 		  Return Self.mGameIniContent
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameUserSettingsIniContent() As Text
+		Function GameUserSettingsIniContent() As String
 		  Return Self.mGameUserSettingsIniContent
 		End Function
 	#tag EndMethod
@@ -174,7 +172,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Name() As Text
+		Function Name() As String
 		  Return Self.mProfile.Name
 		End Function
 	#tag EndMethod
@@ -187,12 +185,12 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub SetError(Err As RuntimeException)
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Err)
-		  Dim Reason As Text
+		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		  Dim Reason As String
 		  If Err.Reason <> "" Then
 		    Reason = Err.Reason
 		  ElseIf Err.Message <> "" Then
-		    Reason = Err.Message.ToText
+		    Reason = Err.Message
 		  Else
 		    Reason = "No details available"
 		  End If
@@ -202,7 +200,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SetError(Message As Text)
+		Private Sub SetError(Message As String)
 		  Self.mStatus = "Error: " + Message
 		  Self.mFinished = True
 		  Self.mErrored = True
@@ -210,14 +208,14 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Status() As Text
+		Function Status() As String
 		  Return Self.mStatus
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mCommandLineOptions As Xojo.Core.Dictionary
+		Private mCommandLineOptions As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -229,11 +227,11 @@ Implements Beacon.DiscoveryEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameIniContent As Text
+		Private mGameIniContent As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameUserSettingsIniContent As Text
+		Private mGameUserSettingsIniContent As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -241,7 +239,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mInitialPath As Text
+		Private mInitialPath As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -253,7 +251,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mStatus As Text
+		Private mStatus As String
 	#tag EndProperty
 
 
@@ -262,7 +260,9 @@ Implements Beacon.DiscoveryEngine
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -270,12 +270,15 @@ Implements Beacon.DiscoveryEngine
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -283,6 +286,7 @@ Implements Beacon.DiscoveryEngine
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -290,6 +294,7 @@ Implements Beacon.DiscoveryEngine
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

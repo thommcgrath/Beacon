@@ -232,7 +232,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.CustomContent
-		  Static ConfigName As Text = BeaconConfigs.CustomContent.ConfigName
+		  Static ConfigName As String = BeaconConfigs.CustomContent.ConfigName
 		  
 		  Dim Document As Beacon.Document = Self.Document
 		  Dim Config As BeaconConfigs.CustomContent
@@ -256,7 +256,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigLabel() As Text
+		Function ConfigLabel() As String
 		  Return Language.LabelForConfig(BeaconConfigs.CustomContent.ConfigName)
 		End Function
 	#tag EndMethod
@@ -306,7 +306,7 @@ End
 		  If Self.SelectionIsEncrypted Then
 		    Dim StartPos As Integer = Self.ConfigArea.SelectionStart
 		    For I As Integer = StartPos DownTo TagLen
-		      If Source.Mid((I - TagLen) + 1, TagLen) = Tag Then
+		      If Source.Middle((I - TagLen) + 1, TagLen) = Tag Then
 		        StartPos = I
 		        Exit For I
 		      End If
@@ -319,8 +319,8 @@ End
 		    
 		    Dim ContentLen As Integer = EndPos - StartPos
 		    Dim Prefix As String = Source.Left(StartPos - TagLen)
-		    Dim Content As String = Source.Mid(StartPos + 1, ContentLen)
-		    Dim Suffix As String = Source.Mid(EndPos + TagLen + 1)
+		    Dim Content As String = Source.Middle(StartPos + 1, ContentLen)
+		    Dim Suffix As String = Source.Middle(EndPos + TagLen + 1)
 		    
 		    Self.ConfigArea.Value = Prefix + Content + Suffix
 		    Self.ConfigArea.SelectionStart = Prefix.Length
@@ -329,7 +329,7 @@ End
 		    Dim Start As Integer = Self.ConfigArea.SelectionStart
 		    Dim Length As Integer = Self.ConfigArea.SelectionLength
 		    Dim Prefix As String = Source.Left(Start)
-		    Dim Content As String = Source.Mid(Start + 1, Length)
+		    Dim Content As String = Source.Middle(Start + 1, Length)
 		    Dim Suffix As String = Source.Right(Source.Length - (Start + Length))
 		    
 		    Self.ConfigArea.Value = Prefix + Tag + Content + Tag + Suffix

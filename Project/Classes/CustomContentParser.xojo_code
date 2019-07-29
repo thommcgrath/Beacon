@@ -39,7 +39,7 @@ Protected Class CustomContentParser
 		    Self.mDiscardNestedParser = True
 		    If Self.mProfile <> Nil Then
 		      For Each ProfileID As String In ProfileIDs
-		        If Self.mProfile.ProfileID.BeginsWith(ProfileID.Trim.ToText) Then
+		        If Self.mProfile.ProfileID.BeginsWith(ProfileID.Trim) Then
 		          Self.mDiscardNestedParser = False
 		        End If
 		      Next
@@ -62,7 +62,7 @@ Protected Class CustomContentParser
 		  End If
 		  
 		  Dim Value As String = Line.SubString(KeyPos + 1).Trim
-		  Self.mValues.Append(New Beacon.ConfigValue(Self.mCurrentHeader.ToText, Key.ToText, Value.ToText))
+		  Self.mValues.Append(New Beacon.ConfigValue(Self.mCurrentHeader, Key, Value))
 		  Return Nil
 		End Function
 	#tag EndMethod

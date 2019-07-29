@@ -745,19 +745,19 @@ End
 		Private Sub BeginChecking()
 		  Self.Pages.SelectedPanelIndex = Self.PageStart
 		  
-		  Dim Trace() As Xojo.Core.StackFrame = Self.mExceptionDetails.Value("Trace")
-		  Dim Lines() As Text
-		  For Each Frame As Xojo.Core.StackFrame In Trace
+		  Dim Trace() As StackFrame = Self.mExceptionDetails.Value("Trace")
+		  Dim Lines() As String
+		  For Each Frame As StackFrame In Trace
 		    Lines.Append(Frame.Name)
 		  Next
 		  
-		  Dim Fields As New Xojo.Core.Dictionary
-		  Fields.Value("build") = App.BuildNumber.ToText
+		  Dim Fields As New Dictionary
+		  Fields.Value("build") = App.BuildNumber.ToString
 		  Fields.Value("hash") = Self.mExceptionHash
 		  Fields.Value("type") = Self.mExceptionDetails.Value("Type")
 		  Fields.Value("reason") = Self.mExceptionDetails.Value("Reason")
 		  Fields.Value("location") = Self.mExceptionDetails.Value("Location")
-		  Fields.Value("trace") = Lines.Join(Text.FromUnicodeCodepoint(10))
+		  Fields.Value("trace") = Lines.Join(Encodings.UTF8.Chr(10))
 		  If Self.mExceptionDetails.HasKey("UserID") Then
 		    Fields.Value("user_id") = Self.mExceptionDetails.Value("UserID")
 		  End If
@@ -767,17 +767,17 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub Present(Dict As Xojo.Core.Dictionary)
-		  Dim Trace() As Xojo.Core.StackFrame = Dict.Value("Trace")
-		  Dim Lines() As Text
+		Shared Sub Present(Dict As Dictionary)
+		  Dim Trace() As StackFrame = Dict.Value("Trace")
+		  Dim Lines() As String
 		  Lines.Append(Dict.Value("Type"))
 		  Lines.Append(Dict.Value("Reason"))
-		  For Each Frame As Xojo.Core.StackFrame In Trace
+		  For Each Frame As StackFrame In Trace
 		    Lines.Append(Frame.Name)
 		  Next
 		  
-		  Dim HashContent As Text = Lines.Join(Text.FromUnicodeCodepoint(10))
-		  Dim Hash As Text = Beacon.EncodeHex(Xojo.Crypto.SHA1(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(HashContent)))
+		  Dim HashContent As String = Lines.Join(Encodings.UTF8.Chr(10))
+		  Dim Hash As String = EncodeHex(Crypto.SHA1(HashContent))
 		  
 		  Dim Win As New ExceptionWindow
 		  Win.mExceptionHash = Hash.Lowercase
@@ -787,7 +787,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Reporter_Callback(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Reporter_Callback(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -797,8 +797,7 @@ End
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, True)
-		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
+		    Dim Dict As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Dict.HasKey("solution") And Dict.Value("solution") <> Nil Then
 		      Self.Pages.SelectedPanelIndex = Self.PageSolutionFound
@@ -828,15 +827,15 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mExceptionDetails As Xojo.Core.Dictionary
+		Private mExceptionDetails As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mExceptionHash As Text
+		Private mExceptionHash As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSolutionURL As Text
+		Private mSolutionURL As String
 	#tag EndProperty
 
 

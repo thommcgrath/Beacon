@@ -172,19 +172,19 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub ParsingFinished(ParsedData As Xojo.Core.Dictionary)
+		Sub ParsingFinished(ParsedData As Dictionary)
 		  If ParsedData = Nil Then
 		    Return
 		  End If
 		  
-		  Dim OtherConfig As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments.FromImport(ParsedData, New Xojo.Core.Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
+		  Dim OtherConfig As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
 		  If OtherConfig = Nil Then
 		    Return
 		  End If
 		  
 		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
 		  Dim Behaviors() As Beacon.CreatureBehavior = OtherConfig.All
-		  Dim Classes() As Text
+		  Dim Classes() As String
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
 		    Config.Behavior(Behavior.TargetClass) = Behavior
 		    Classes.Append(Behavior.TargetClass)
@@ -209,7 +209,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.DinoAdjustments
-		  Static ConfigName As Text = BeaconConfigs.DinoAdjustments.ConfigName
+		  Static ConfigName As String = BeaconConfigs.DinoAdjustments.ConfigName
 		  
 		  Dim Document As Beacon.Document = Self.Document
 		  Dim Config As BeaconConfigs.DinoAdjustments
@@ -233,7 +233,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigLabel() As Text
+		Function ConfigLabel() As String
 		  Return Language.LabelForConfig(BeaconConfigs.DinoAdjustments.ConfigName)
 		End Function
 	#tag EndMethod
@@ -245,7 +245,7 @@ End
 		  End If
 		  
 		  // See the comment in ShowAdd
-		  Dim ClassString As Text = Self.List.RowTag(Self.List.SelectedIndex)
+		  Dim ClassString As String = Self.List.RowTag(Self.List.SelectedIndex)
 		  If DinoAdjustmentDialog.Present(Self, ClassString, Self.Config(False), Self.Document.Mods) Then
 		    Call Self.Config(True)
 		    Self.UpdateList()
@@ -275,7 +275,7 @@ End
 		  End If
 		  
 		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(False)
-		  Dim SelectedClass As Text = Self.List.RowTag(Self.List.SelectedIndex)
+		  Dim SelectedClass As String = Self.List.RowTag(Self.List.SelectedIndex)
 		  Dim SelectedBehavior As Beacon.CreatureBehavior = Config.Behavior(SelectedClass)
 		  If SelectedBehavior = Nil Then
 		    Return
@@ -295,7 +295,7 @@ End
 		    Return
 		  End If
 		  Config = Self.Config(True)
-		  Dim SelectClasses() As Text
+		  Dim SelectClasses() As String
 		  For Each Creature As Beacon.Creature In Creatures
 		    Dim Behavior As Beacon.CreatureBehavior = SelectedBehavior.Clone(Creature.ClassString)
 		    Config.Behavior(Behavior.TargetClass) = Behavior
@@ -308,7 +308,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Dim Classes() As Text
+		  Dim Classes() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
 		      Classes.Append(Self.List.RowTag(I))
@@ -319,7 +319,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateList(SelectClasses() As Text)
+		Private Sub UpdateList(SelectClasses() As String)
 		  Self.List.DeleteAllRows
 		  
 		  Dim Behaviors() As Beacon.CreatureBehavior = Self.Config(False).All
@@ -454,7 +454,7 @@ End
 		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
 		  For I As Integer = Me.RowCount - 1 DownTo 0
 		    If Me.Selected(I) Then
-		      Dim ClassString As Text = Me.RowTag(I)
+		      Dim ClassString As String = Me.RowTag(I)
 		      Config.RemoveBehavior(ClassString)
 		      Self.Changed = True
 		    End If
@@ -464,14 +464,14 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Dicts() As Xojo.Core.Dictionary
+		  Dim Dicts() As Dictionary
 		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(False)
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Dim ClassString As Text = Me.RowTag(I)
+		    Dim ClassString As String = Me.RowTag(I)
 		    Dim Behavior As Beacon.CreatureBehavior = Config.Behavior(ClassString)
 		    If Behavior = Nil Then
 		      Continue
@@ -480,16 +480,16 @@ End
 		    Dicts.Append(Behavior.ToDictionary)
 		  Next
 		  
-		  Board.AddRawData(Xojo.Data.GenerateJSON(Dicts), Self.kClipboardType)
+		  Board.AddRawData(Beacon.GenerateJSON(Dicts, False), Self.kClipboardType)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
 		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Dim JSON As Text = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8).ToText
-		    Dim Items() As Auto
+		    Dim JSON As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
+		    Dim Items() As Variant
 		    Try
-		      Items = Xojo.Data.ParseJSON(JSON)
+		      Items = Beacon.ParseJSON(JSON)
 		    Catch Err As RuntimeException
 		    End Try
 		    
@@ -498,8 +498,8 @@ End
 		    End If
 		    
 		    Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
-		    Dim SelectClasses() As Text
-		    For Each Entry As Xojo.Core.Dictionary In Items
+		    Dim SelectClasses() As String
+		    For Each Entry As Dictionary In Items
 		      Dim Behavior As Beacon.CreatureBehavior = Beacon.CreatureBehavior.FromDictionary(Entry)
 		      If Behavior = Nil Then
 		        Continue
@@ -514,7 +514,7 @@ End
 		  
 		  If Board.TextAvailable Then
 		    Dim ImportText As String = Board.Text.GuessEncoding
-		    Self.Parse(ImportText.ToText, "Clipboard")
+		    Self.Parse(ImportText, "Clipboard")
 		    Return
 		  End If
 		End Sub

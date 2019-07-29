@@ -495,7 +495,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Shown(UserData As Auto = Nil)
+		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
 		  Self.SetupUI()
@@ -504,7 +504,7 @@ End
 
 
 	#tag Method, Flags = &h0
-		Function ConfigLabel() As Text
+		Function ConfigLabel() As String
 		  Return Language.LabelForConfig(BeaconConfigs.Metadata.ConfigName)
 		End Function
 	#tag EndMethod
@@ -520,7 +520,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Document.Title = Trim(Me.Value).ToText
+		  Self.Document.Title = Trim(Me.Value)
 		  Self.Document.Metadata.IsImplicit = False
 		  Self.Changed = True
 		  Self.SettingUp = False
@@ -537,7 +537,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Document.Description = Self.SanitizeText(Trim(Me.Value), False).ToText
+		  Self.Document.Description = Self.SanitizeText(Trim(Me.Value), False)
 		  Self.Document.Metadata.IsImplicit = False
 		  Self.Changed = True
 		  Self.SettingUp = False

@@ -9,30 +9,30 @@ Inherits Thread
 		    Return
 		  End If
 		  
-		  Dim Content As Xojo.Core.MemoryBlock = Self.mResponse.Content
+		  Dim Content As MemoryBlock = Self.mResponse.Content
 		  If BeaconEncryption.IsEncrypted(Content) Then
 		    Try
 		      Content = BeaconEncryption.SymmetricDecrypt(App.IdentityManager.CurrentIdentity.UserCloudKey, Content)
-		    Catch Err As Xojo.Crypto.CryptoException
+		    Catch Err As CryptoException
 		      // Ok?
 		      CleanupRequest(Self.mRequest)
 		      Return
 		    End Try
 		    
 		    Dim Decompressor As New _GZipString
-		    Content = Beacon.ConvertMemoryBlock(Decompressor.Decompress(Beacon.ConvertMemoryBlock(Content)))
+		    Content = Decompressor.Decompress(Content)
 		  End If
 		  
 		  // So where do we put the file now?
-		  Dim URL As Text = Self.mResponse.URL
-		  Dim BaseURL As Text = BeaconAPI.URL("/file")
+		  Dim URL As String = Self.mResponse.URL
+		  Dim BaseURL As String = BeaconAPI.URL("/file")
 		  If Not URL.BeginsWith(BaseURL) Then
 		    // What the hell is going on here?
 		    CleanupRequest(Self.mRequest)
 		    Return
 		  End If
 		  
-		  Dim RemotePath As Text = URL.Mid(BaseURL.Length)
+		  Dim RemotePath As String = URL.Middle(BaseURL.Length)
 		  Dim LocalFile As FolderItem = LocalFile(RemotePath)
 		  If LocalFile.Exists Then
 		    Dim CreationDate As Date = LocalFile.CreationDate
@@ -40,13 +40,13 @@ Inherits Thread
 		    Dim Stream As BinaryStream = BinaryStream.Open(LocalFile, True)
 		    Stream.BytePosition = 0
 		    Stream.Length = 0
-		    Stream.Write(Beacon.ConvertMemoryBlock(Content))
+		    Stream.Write(Content)
 		    Stream.Close
 		    LocalFile.CreationDate = CreationDate
 		    LocalFile.ModificationDate = ModificationDate
 		  Else
 		    Dim Stream As BinaryStream = BinaryStream.Create(LocalFile, True)
-		    Stream.Write(Beacon.ConvertMemoryBlock(Content))
+		    Stream.Write(Content)
 		    Stream.Close
 		  End If
 		  

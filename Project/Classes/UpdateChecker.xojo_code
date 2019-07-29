@@ -20,29 +20,29 @@ Protected Class UpdateChecker
 		  Self.mSilent = Silent
 		  Self.mChecking = True
 		  
-		  Self.mSocket = New Xojo.Net.HTTPSocket
-		  Self.mSocket.ValidateCertificates = True
+		  Self.mSocket = New URLConnection
+		  Self.mSocket.AllowCertificateValidation = True
 		  AddHandler Self.mSocket.Error, WeakAddressOf Self.mSocket_Error
 		  AddHandler Self.mSocket.HeadersReceived, WeakAddressOf Self.mSocket_HeadersReceived
-		  AddHandler Self.mSocket.PageReceived, WeakAddressOf Self.mSocket_PageReceived
+		  AddHandler Self.mSocket.ContentReceived, WeakAddressOf Self.mSocket_ContentReceived
 		  Self.mSocket.RequestHeader("Cache-Control") = "no-cache"
 		  
-		  Dim Params As New Xojo.Core.Dictionary
-		  Params.Value("build") = App.BuildNumber.ToText
-		  Params.Value("stage") = App.StageCode.ToText
+		  Dim Params As New Dictionary
+		  Params.Value("build") = App.BuildNumber.ToString
+		  Params.Value("stage") = App.StageCode.ToString
 		  If Self.Is64Bit Then
 		    Params.Value("arch") = "x86_64"
 		  Else
 		    Params.Value("arch") = "x86"
 		  End If
-		  Params.Value("osversion") = OSVersion.ToText
+		  Params.Value("osversion") = OSVersion
 		  #if TargetMacOS
 		    Params.Value("platform") = "mac"
 		  #elseif TargetWin32
 		    Params.Value("platform") = "win"
 		  #endif
 		  
-		  Self.mSocket.Send("GET", Beacon.WebURL("/updates.php?" + BeaconAPI.Request.URLEncodeFormData(Params)))
+		  Self.mSocket.Send("GET", Beacon.WebURL("/updates.php?" + SimpleHTTP.BuildFormData(Params)))
 		End Sub
 	#tag EndMethod
 
@@ -81,37 +81,7 @@ Protected Class UpdateChecker
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mSocket_Error(Sender As Xojo.Net.HTTPSocket, Error As RuntimeException)
-		  Sender.Disconnect
-		  Self.mChecking = False
-		  
-		  If Self.mSocket <> Nil Then
-		    Self.mSocket = Nil
-		  End If
-		  
-		  If Not Self.mSilent Then
-		    RaiseEvent CheckError(Error.Reason)
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mSocket_HeadersReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer)
-		  #Pragma Unused URL
-		  
-		  If HTTPStatus <> 200 Then
-		    Self.mChecking = False
-		    Sender.Disconnect
-		    If Not Self.mSilent Then
-		      RaiseEvent CheckError("The update definition was not found.")
-		    End If
-		    Return
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mSocket_PageReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
+		Private Sub mSocket_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  #Pragma Unused HTTPStatus
@@ -122,11 +92,10 @@ Protected Class UpdateChecker
 		  
 		  Self.mChecking = False
 		  
-		  Dim Body As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
-		  Dim Dict As Xojo.Core.Dictionary
+		  Dim Dict As Dictionary
 		  Try
-		    Dict = Xojo.Data.ParseJSON(Body)
-		  Catch Err As Xojo.Data.InvalidJSONException
+		    Dict = Beacon.ParseJSON(Content)
+		  Catch Err As RuntimeException
 		    If Not Self.mSilent Then
 		      RaiseEvent CheckError("Invalid definition file.")
 		    End If
@@ -134,10 +103,10 @@ Protected Class UpdateChecker
 		  End Try
 		  
 		  If Dict.HasKey("notices") Then
-		    Dim Notices() As Auto = Dict.Value("notices")
+		    Dim Notices() As Variant = Dict.Value("notices")
 		    Dict.Remove("notices")
 		    
-		    For Each Notice As Xojo.Core.Dictionary In Notices
+		    For Each Notice As Dictionary In Notices
 		      Dim Notification As New Beacon.UserNotification(Notice.Value("message"))
 		      Notification.SecondaryMessage = Notice.Value("secondary_message")
 		      Notification.ActionURL = Notice.Value("action_url")
@@ -146,7 +115,7 @@ Protected Class UpdateChecker
 		    Next
 		  End If
 		  
-		  If Dict.Count = 0 Then
+		  If Dict.KeyCount = 0 Then
 		    // No update
 		    If Not Self.mSilent Then
 		      RaiseEvent NoUpdate()
@@ -163,18 +132,18 @@ Protected Class UpdateChecker
 		      Return
 		    End If
 		    
-		    Dim Version As Text = Dict.Value("version")
-		    Dim NotesHTML As Text = Dict.Value("notes")
-		    Dim NotesURL As Text = Dict.Lookup("notes_url", "")
-		    Dim PreviewText As Text = Dict.Lookup("preview", "")
-		    Dim Location As Xojo.Core.Dictionary
+		    Dim Version As String = Dict.Value("version")
+		    Dim NotesHTML As String = Dict.Value("notes")
+		    Dim NotesURL As String = Dict.Lookup("notes_url", "")
+		    Dim PreviewText As String = Dict.Lookup("preview", "")
+		    Dim Location As Dictionary
 		    #if TargetMacOS
 		      Location = Dict.Value("mac")
 		    #elseif TargetWin32
 		      Location = Dict.Value("win")
 		    #endif
-		    Dim PackageURL As Text = Location.Value("url")
-		    Dim Signature As Text = Location.Value("signature")
+		    Dim PackageURL As String = Location.Value("url")
+		    Dim Signature As String = Location.Value("signature")
 		    
 		    RaiseEvent UpdateAvailable(Version, PreviewText, NotesHTML, NotesURL, PackageURL, Signature)
 		  Catch Err As KeyNotFoundException
@@ -182,6 +151,36 @@ Protected Class UpdateChecker
 		      RaiseEvent CheckError("Invalid definition file.")
 		    End If
 		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mSocket_Error(Sender As URLConnection, Error As RuntimeException)
+		  Sender.Disconnect
+		  Self.mChecking = False
+		  
+		  If Self.mSocket <> Nil Then
+		    Self.mSocket = Nil
+		  End If
+		  
+		  If Not Self.mSilent Then
+		    RaiseEvent CheckError(Error.Reason)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mSocket_HeadersReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer)
+		  #Pragma Unused URL
+		  
+		  If HTTPStatus <> 200 Then
+		    Self.mChecking = False
+		    Sender.Disconnect
+		    If Not Self.mSilent Then
+		      RaiseEvent CheckError("The update definition was not found.")
+		    End If
+		    Return
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -243,7 +242,7 @@ Protected Class UpdateChecker
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSocket As Xojo.Net.HTTPSocket
+		Private mSocket As URLConnection
 	#tag EndProperty
 
 
@@ -279,6 +278,7 @@ Protected Class UpdateChecker
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -286,18 +286,23 @@ Protected Class UpdateChecker
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -305,6 +310,7 @@ Protected Class UpdateChecker
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

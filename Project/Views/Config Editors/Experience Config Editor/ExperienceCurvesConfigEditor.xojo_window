@@ -234,9 +234,9 @@ End
 		    Return
 		  End If
 		  
-		  Dim Tag As Text = Issue.UserData
-		  Dim Parts() As Text = Tag.Split(":")
-		  Dim Level As Integer = Integer.FromText(Parts(1))
+		  Dim Tag As String = Issue.UserData
+		  Dim Parts() As String = Tag.Split(":")
+		  Dim Level As Integer = Integer.FromString(Parts(1))
 		  Select Case Parts(0)
 		  Case "Player"
 		    Self.Switcher.SelectedIndex = 1
@@ -253,7 +253,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.ExperienceCurves
-		  Static ConfigName As Text = BeaconConfigs.ExperienceCurves.ConfigName
+		  Static ConfigName As String = BeaconConfigs.ExperienceCurves.ConfigName
 		  
 		  Dim Document As Beacon.Document = Self.Document
 		  Dim Config As BeaconConfigs.ExperienceCurves
@@ -277,7 +277,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigLabel() As Text
+		Function ConfigLabel() As String
 		  Return Language.LabelForConfig(BeaconConfigs.ExperienceCurves.ConfigName)
 		End Function
 	#tag EndMethod
@@ -291,10 +291,10 @@ End
 		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(True)
 		  Config.DinoLevelCap = LocalData.SharedInstance.GetIntegerVariable("Dino Level Cap")
 		  
-		  Dim TextList As Text = LocalData.SharedInstance.GetTextVariable("Dino Default Experience")
-		  Dim List() As Text = TextList.Split(",")
+		  Dim TextList As String = LocalData.SharedInstance.GetStringVariable("Dino Default Experience")
+		  Dim List() As String = TextList.Split(",")
 		  For I As Integer = 0 To List.Ubound
-		    Config.DinoExperience(I) = UInt64.FromText(List(I))
+		    Config.DinoExperience(I) = UInt64.FromString(List(I))
 		  Next
 		  
 		  Self.UpdateList()
@@ -311,10 +311,10 @@ End
 		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(True)
 		  Config.PlayerLevelCap = LocalData.SharedInstance.GetIntegerVariable("Player Level Cap")
 		  
-		  Dim TextList As Text = LocalData.SharedInstance.GetTextVariable("Player Default Experience")
-		  Dim List() As Text = TextList.Split(",")
+		  Dim TextList As String = LocalData.SharedInstance.GetStringVariable("Player Default Experience")
+		  Dim List() As String = TextList.Split(",")
 		  For I As Integer = 0 To List.Ubound
-		    Config.PlayerExperience(I) = UInt64.FromText(List(I))
+		    Config.PlayerExperience(I) = UInt64.FromString(List(I))
 		  Next
 		  
 		  Self.UpdateList()

@@ -572,7 +572,7 @@ End
 
 	#tag Event
 		Sub Open()
-		  Self.mEngramSets = New Xojo.Core.Dictionary
+		  Self.mEngramSets = New Dictionary
 		End Sub
 	#tag EndEvent
 
@@ -683,7 +683,7 @@ End
 		  
 		  Panel.SelectedPanelIndex = PageLoading
 		  
-		  Dim UIDs() As Text
+		  Dim UIDs() As String
 		  For Each Engram As BeaconAPI.Engram In DeletedEngrams
 		    UIDs.Append(Engram.UID)
 		  Next
@@ -703,11 +703,11 @@ End
 		  End If
 		  
 		  If Self.mEngramSets = Nil Then
-		    Self.mEngramSets = New Xojo.Core.Dictionary
+		    Self.mEngramSets = New Dictionary
 		  End If
 		  
 		  If Not Self.mEngramSets.HasKey(Self.mCurrentMod.ModID) Then
-		    Dim Placeholder() As Auto
+		    Dim Placeholder() As Variant
 		    Self.mEngramSets.Value(Self.mCurrentMod.ModID) = New BeaconAPI.EngramSet(Placeholder)
 		  End If
 		  
@@ -790,12 +790,12 @@ End
 		  
 		  Panel.SelectedPanelIndex = PageLoading
 		  
-		  Dim Dicts() As Xojo.Core.Dictionary
+		  Dim Dicts() As Dictionary
 		  For Each Engram As BeaconAPI.Engram In NewEngrams
 		    Dicts.Append(Engram.AsDictionary)
 		  Next
 		  
-		  Dim Content As Text = Xojo.Data.GenerateJSON(Dicts)
+		  Dim Content As String = Beacon.GenerateJSON(Dicts, False)
 		  Dim Request As New BeaconAPI.Request("engram.php", "POST", Content, "application/json", AddressOf APICallback_EngramsPost)
 		  Request.Sign(App.IdentityManager.CurrentIdentity)
 		  Self.Socket.Start(Request)
@@ -862,7 +862,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowURLImport()
-		  Dim Contents As Text = DeveloperImportURLDialog.Present(Self)
+		  Dim Contents As String = DeveloperImportURLDialog.Present(Self)
 		  If Contents <> "" Then
 		    Self.ImportText(Contents)
 		  End If
@@ -930,7 +930,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEngramSets As Xojo.Core.Dictionary
+		Private mEngramSets As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1005,9 +1005,9 @@ End
 		  
 		  Select Case Column
 		  Case 0
-		    Engram.Path = Me.Cell(Row, Column).ToText
+		    Engram.Path = Me.Cell(Row, Column)
 		  Case 1
-		    Engram.Label = Me.Cell(Row, Column).ToText
+		    Engram.Label = Me.Cell(Row, Column)
 		  Case 2
 		    Engram.CanBeBlueprint = Me.CellCheck(Row, Column)
 		  Case 3
@@ -1099,7 +1099,7 @@ End
 		  
 		  Dim Set As BeaconAPI.EngramSet = Self.EngramSet
 		  Dim CurrentEngrams() As BeaconAPI.Engram = Set.ActiveEngrams
-		  Dim EngramDict As New Xojo.Core.Dictionary
+		  Dim EngramDict As New Dictionary
 		  For Each Engram As BeaconAPI.Engram In CurrentEngrams
 		    EngramDict.Value(Engram.Path) = True
 		  Next

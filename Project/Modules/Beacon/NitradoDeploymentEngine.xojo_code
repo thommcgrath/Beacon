@@ -14,19 +14,19 @@ Implements Beacon.DeploymentEngine
 
 
 	#tag Method, Flags = &h0
-		Function BackupGameIni() As Text
+		Function BackupGameIni() As String
 		  Return Self.mGameIniOriginal
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function BackupGameUserSettingsIni() As Text
+		Function BackupGameUserSettingsIni() As String
 		  Return Self.mGameUserSettingsIniOriginal
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Begin(Label As Text, Document As Beacon.Document, Identity As Beacon.Identity)
+		Sub Begin(Label As String, Document As Beacon.Document, Identity As Beacon.Identity)
 		  Self.mLabel = Label
 		  Self.mDocument = Document
 		  Self.mIdentity = Identity
@@ -36,7 +36,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DownloadGameIni(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_DownloadGameIni(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -45,8 +45,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
-		    Dim Response As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
+		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.mErrored = True
@@ -54,10 +53,10 @@ Implements Beacon.DeploymentEngine
 		      Return
 		    End If
 		    
-		    Dim Data As Xojo.Core.Dictionary = Response.Value("data")
-		    Dim TokenDict As Xojo.Core.Dictionary = Data.Value("token")
+		    Dim Data As Dictionary = Response.Value("data")
+		    Dim TokenDict As Dictionary = Data.Value("token")
 		    
-		    Dim Headers As New Xojo.Core.Dictionary
+		    Dim Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		    
 		    SimpleHTTP.Get(TokenDict.Value("url"), AddressOf Callback_DownloadGameIni_Content, Nil, Headers)
@@ -69,7 +68,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DownloadGameIni_Content(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_DownloadGameIni_Content(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -78,7 +77,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Content.ToText
+		    Dim TextContent As String = Content
 		    Self.mGameIniOriginal = TextContent
 		    Self.RunNextTask()
 		  Catch Err As RuntimeException
@@ -89,7 +88,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DownloadGameUserSettingsIni(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_DownloadGameUserSettingsIni(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -98,8 +97,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
-		    Dim Response As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
+		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.mErrored = True
@@ -107,10 +105,10 @@ Implements Beacon.DeploymentEngine
 		      Return
 		    End If
 		    
-		    Dim Data As Xojo.Core.Dictionary = Response.Value("data")
-		    Dim TokenDict As Xojo.Core.Dictionary = Data.Value("token")
+		    Dim Data As Dictionary = Response.Value("data")
+		    Dim TokenDict As Dictionary = Data.Value("token")
 		    
-		    Dim Headers As New Xojo.Core.Dictionary
+		    Dim Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		    
 		    SimpleHTTP.Get(TokenDict.Value("url"), AddressOf Callback_DownloadGameUserSettingsIni_Content, Nil, Headers)
@@ -122,7 +120,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DownloadGameUserSettingsIni_Content(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_DownloadGameUserSettingsIni_Content(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -131,8 +129,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Content.ToText
-		    Self.mGameUserSettingsIniOriginal = TextContent
+		    Self.mGameUserSettingsIniOriginal = Content
 		    Self.RunNextTask()
 		  Catch Err As RuntimeException
 		    Self.SetError(Err)
@@ -142,7 +139,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DownloadLogFile(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_DownloadLogFile(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -153,30 +150,29 @@ Implements Beacon.DeploymentEngine
 		  // If the log file cannot be downloaded for any reason, assume a stop time of now
 		  
 		  If Self.CheckError(Status) Then
-		    Self.mServerStopTime = Xojo.Core.Date.Now
+		    Self.mServerStopTime = Date.Now
 		    Self.RunNextTask()
 		    Return
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
-		    Dim Response As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
+		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
-		      Self.mServerStopTime = Xojo.Core.Date.Now
+		      Self.mServerStopTime = Date.Now
 		      Self.RunNextTask()
 		      Return
 		    End If
 		    
-		    Dim Data As Xojo.Core.Dictionary = Response.Value("data")
-		    Dim TokenDict As Xojo.Core.Dictionary = Data.Value("token")
+		    Dim Data As Dictionary = Response.Value("data")
+		    Dim TokenDict As Dictionary = Data.Value("token")
 		    
-		    Dim Headers As New Xojo.Core.Dictionary
+		    Dim Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		    
 		    SimpleHTTP.Get(TokenDict.Value("url"), AddressOf Callback_DownloadLogFile_Content, Nil, Headers)
 		  Catch Err As RuntimeException
-		    Self.mServerStopTime = Xojo.Core.Date.Now
+		    Self.mServerStopTime = Date.Now
 		    Self.RunNextTask()
 		    Return
 		  End Try
@@ -184,7 +180,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DownloadLogFile_Content(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_DownloadLogFile_Content(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -193,15 +189,14 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  If Self.CheckError(Status) Then
-		    Self.mServerStopTime = Xojo.Core.Date.Now
+		    Self.mServerStopTime = Date.Now
 		    Self.RunNextTask()
 		    Return
 		  End If
 		  
 		  Try
 		    Dim EOL As String = Encodings.ASCII.Chr(10)
-		    Dim StringContent As String = Beacon.ConvertMemoryBlock(Content)
-		    Dim Lines() As String = ReplaceLineEndings(StringContent, EOL).Split(EOL)
+		    Dim Lines() As String = ReplaceLineEndings(Content, EOL).Split(EOL)
 		    Dim TimestampFound As Boolean
 		    For I As Integer = Lines.Ubound DownTo 0
 		      Dim Line As String = Lines(I)
@@ -217,16 +212,16 @@ Implements Beacon.DeploymentEngine
 		      Dim Second As Integer = Val(Line.SubString(18, 2))
 		      Dim Nanosecond As Integer = (Val(Line.SubString(21, 3)) / 1000) * 1000000000
 		      
-		      Self.mServerStopTime = New Xojo.Core.Date(Year, Month, Day, Hour, Minute, Second, Nanosecond, New Xojo.Core.TimeZone(0))
+		      Self.mServerStopTime = New Date(Year, Month, Day, Hour, Minute, Second, Nanosecond, New TimeZone(0))
 		      TimestampFound = True
 		      Exit For I
 		    Next
 		    
 		    If Not TimestampFound Then
-		      Self.mServerStopTime = Xojo.Core.Date.Now
+		      Self.mServerStopTime = Date.Now
 		    End If
 		  Catch Err As RuntimeException
-		    Self.mServerStopTime = Xojo.Core.Date.Now
+		    Self.mServerStopTime = Date.Now
 		  End Try
 		  
 		  Self.RunNextTask()
@@ -234,7 +229,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_EnableExpertMode(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_EnableExpertMode(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -243,8 +238,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
-		    Dim Response As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
+		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.mErrored = True
@@ -262,7 +256,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_MakeConfigBackup(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_MakeConfigBackup(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -271,8 +265,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
-		    Dim Response As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
+		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.mErrored = True
@@ -289,7 +282,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_ServerStart(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_ServerStart(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -298,8 +291,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
-		    Dim Response As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
+		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.mErrored = True
@@ -320,7 +312,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_ServerStatus(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_ServerStatus(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -329,16 +321,15 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
-		    Dim Response As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
-		    Dim Data As Xojo.Core.Dictionary = Response.Value("data")
-		    Dim GameServer As Xojo.Core.Dictionary = Data.Value("gameserver")
+		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
+		    Dim Data As Dictionary = Response.Value("data")
+		    Dim GameServer As Dictionary = Data.Value("gameserver")
 		    
 		    If Self.mMask = 0 Then
-		      Dim Settings As Xojo.Core.Dictionary = GameServer.Value("settings")
-		      Dim Config As Xojo.Core.Dictionary = Settings.Value("config")
-		      Dim MapText As Text = Config.Value("map")
-		      Dim MapParts() As Text = MapText.Split(",")
+		      Dim Settings As Dictionary = GameServer.Value("settings")
+		      Dim Config As Dictionary = Settings.Value("config")
+		      Dim MapText As String = Config.Value("map")
+		      Dim MapParts() As String = MapText.Split(",")
 		      Self.mMask = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.Ubound))
 		    End If
 		    
@@ -355,8 +346,8 @@ Implements Beacon.DeploymentEngine
 		      Self.mWatchForStatusStopCallbackKey = CallLater.Schedule(5000, AddressOf WatchStatusForStop)
 		    Case "stopped"
 		      // Ok to continue... maybe
-		      Dim Settings As Xojo.Core.Dictionary = GameServer.Value("settings")
-		      Dim GeneralSettings As Xojo.Core.Dictionary = Settings.Value("general")
+		      Dim Settings As Dictionary = GameServer.Value("settings")
+		      Dim GeneralSettings As Dictionary = Settings.Value("general")
 		      Self.mExpertMode = GeneralSettings.Value("expertMode") = "true"
 		      
 		      If Self.mDidRebuildStart = False And Self.mExpertMode = False Then
@@ -379,10 +370,10 @@ Implements Beacon.DeploymentEngine
 		        Next
 		      Next
 		      
-		      Dim StartParams As Xojo.Core.Dictionary = Settings.Value("start-param")
+		      Dim StartParams As Dictionary = Settings.Value("start-param")
 		      For Each ConfigValue As Beacon.ConfigValue In CommandLineOptions
-		        Dim Key As Text = ConfigValue.Key
-		        Dim Value As Text = ConfigValue.Value
+		        Dim Key As String = ConfigValue.Key
+		        Dim Value As String = ConfigValue.Value
 		        
 		        If Not StartParams.HasKey(Key) Then
 		          Continue
@@ -393,7 +384,7 @@ Implements Beacon.DeploymentEngine
 		        End If
 		      Next
 		      
-		      Dim GameSpecific As Xojo.Core.Dictionary = GameServer.Value("game_specific")
+		      Dim GameSpecific As Dictionary = GameServer.Value("game_specific")
 		      Self.mLogFilePath = GameSpecific.Value("path") + "ShooterGame/Saved/Logs/ShooterGame.log"
 		      Self.mConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
 		      
@@ -412,7 +403,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_ServerStop(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_ServerStop(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -421,8 +412,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
-		    Dim Response As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
+		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.mErrored = True
@@ -439,7 +429,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_SetNextCommandLineParam(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_SetNextCommandLineParam(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -448,8 +438,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
-		    Dim Response As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
+		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.mErrored = True
@@ -467,7 +456,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_UploadGameIni(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_UploadGameIni(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -476,8 +465,8 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
-		    Dim Response As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
+		    
+		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.mErrored = True
@@ -485,18 +474,15 @@ Implements Beacon.DeploymentEngine
 		      Return
 		    End If
 		    
-		    Dim Data As Xojo.Core.Dictionary = Response.Value("data")
-		    Dim TokenDict As Xojo.Core.Dictionary = Data.Value("token")
-		    Dim Token As Text = TokenDict.Value("token")
+		    Dim Data As Dictionary = Response.Value("data")
+		    Dim TokenDict As Dictionary = Data.Value("token")
+		    Dim Token As String = TokenDict.Value("token")
 		    
-		    Dim Headers As New Xojo.Core.Dictionary
+		    Dim Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		    Headers.Value("token") = Token
 		    
-		    Dim NewTextContent As Text = Self.mGameIniRewritten
-		    Dim NewContent As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(NewTextContent)
-		    
-		    SimpleHTTP.Post(TokenDict.Value("url"), "text/plain", NewContent, AddressOf Callback_UploadGameIni_Content, Nil, Headers)
+		    SimpleHTTP.Post(TokenDict.Value("url"), "text/plain", Self.mGameIniRewritten, AddressOf Callback_UploadGameIni_Content, Nil, Headers)
 		  Catch Err As RuntimeException
 		    Self.SetError(Err)
 		    Return
@@ -505,7 +491,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_UploadGameIni_Content(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_UploadGameIni_Content(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Content
 		  #Pragma Unused Tag
@@ -518,13 +504,13 @@ Implements Beacon.DeploymentEngine
 		    Self.RunNextTask()
 		  Else
 		    Self.mErrored = True
-		    Self.mStatus = "Error: Could not upload Game.ini, server said " + Status.ToText
+		    Self.mStatus = "Error: Could not upload Game.ini, server said " + Status.ToString
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_UploadGameUserSettingsIni(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_UploadGameUserSettingsIni(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -533,8 +519,8 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
-		    Dim Response As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
+		    
+		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.mErrored = True
@@ -542,18 +528,15 @@ Implements Beacon.DeploymentEngine
 		      Return
 		    End If
 		    
-		    Dim Data As Xojo.Core.Dictionary = Response.Value("data")
-		    Dim TokenDict As Xojo.Core.Dictionary = Data.Value("token")
-		    Dim Token As Text = TokenDict.Value("token")
+		    Dim Data As Dictionary = Response.Value("data")
+		    Dim TokenDict As Dictionary = Data.Value("token")
+		    Dim Token As String = TokenDict.Value("token")
 		    
-		    Dim Headers As New Xojo.Core.Dictionary
+		    Dim Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		    Headers.Value("token") = Token
 		    
-		    Dim NewTextContent As Text = Self.mGameUserSettingsIniRewritten
-		    Dim NewContent As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(NewTextContent)
-		    
-		    SimpleHTTP.Post(TokenDict.Value("url"), "text/plain", NewContent, AddressOf Callback_UploadGameUserSettingsIni_Content, Nil, Headers)
+		    SimpleHTTP.Post(TokenDict.Value("url"), "text/plain", Self.mGameUserSettingsIniRewritten, AddressOf Callback_UploadGameUserSettingsIni_Content, Nil, Headers)
 		  Catch Err As RuntimeException
 		    Self.SetError(Err)
 		    Return
@@ -562,7 +545,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_UploadGameUserSettingsIni_Content(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_UploadGameUserSettingsIni_Content(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Content
 		  #Pragma Unused Tag
@@ -575,7 +558,7 @@ Implements Beacon.DeploymentEngine
 		    Self.RunNextTask()
 		  Else
 		    Self.mErrored = True
-		    Self.mStatus = "Error: Could not upload GameUserSettings.ini, server said " + Status.ToText
+		    Self.mStatus = "Error: Could not upload GameUserSettings.ini, server said " + Status.ToString
 		  End If
 		End Sub
 	#tag EndMethod
@@ -609,7 +592,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Profile As Beacon.NitradoServerProfile, OAuthData As Xojo.Core.Dictionary)
+		Sub Constructor(Profile As Beacon.NitradoServerProfile, OAuthData As Dictionary)
 		  Self.mProfile = Profile
 		  Self.mAccessToken = OAuthData.Value("Access Token")
 		  
@@ -627,12 +610,12 @@ Implements Beacon.DeploymentEngine
 		Private Sub DownloadGameIni()
 		  Self.mStatus = "Downloading Game.ini…"
 		  
-		  Dim Headers As New Xojo.Core.Dictionary
+		  Dim Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim FilePath As Text = Self.mConfigPath + "/Game.ini"
+		  Dim FilePath As String = Self.mConfigPath + "/Game.ini"
 		  
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/file_server/download?file=" + Beacon.EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameIni, Nil, Headers)
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString() + "/gameservers/file_server/download?file=" + EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameIni, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -640,12 +623,12 @@ Implements Beacon.DeploymentEngine
 		Private Sub DownloadGameUserSettingsIni()
 		  Self.mStatus = "Downloading GameUserSettings.ini…"
 		  
-		  Dim Headers As New Xojo.Core.Dictionary
+		  Dim Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim FilePath As Text = Self.mConfigPath + "/GameUserSettings.ini"
+		  Dim FilePath As String = Self.mConfigPath + "/GameUserSettings.ini"
 		  
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/file_server/download?file=" + Beacon.EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameUserSettingsIni, Nil, Headers)
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString() + "/gameservers/file_server/download?file=" + EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameUserSettingsIni, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -653,10 +636,10 @@ Implements Beacon.DeploymentEngine
 		Private Sub DownloadLogFile()
 		  Self.mStatus = "Downloading Log File…"
 		  
-		  Dim Headers As New Xojo.Core.Dictionary
+		  Dim Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/file_server/download?file=" + Beacon.EncodeURLComponent(Self.mLogFilePath), AddressOf Callback_DownloadLogFile, Nil, Headers)
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/file_server/download?file=" + EncodeURLComponent(Self.mLogFilePath), AddressOf Callback_DownloadLogFile, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -670,15 +653,15 @@ Implements Beacon.DeploymentEngine
 		  
 		  Self.mStatus = "Enabling expert mode…"
 		  
-		  Dim Headers As New Xojo.Core.Dictionary
+		  Dim Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim FormData As New Xojo.Core.Dictionary
+		  Dim FormData As New Dictionary
 		  FormData.Value("category") = "general"
 		  FormData.Value("key") = "expertMode"
 		  FormData.Value("value") = "true"
 		  
-		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/settings", FormData, AddressOf Callback_EnableExpertMode, Nil, Headers)
+		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/settings", FormData, AddressOf Callback_EnableExpertMode, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -712,13 +695,13 @@ Implements Beacon.DeploymentEngine
 		Private Sub MakeConfigBackup()
 		  Self.mStatus = "Making config backup…"
 		  
-		  Dim Headers As New Xojo.Core.Dictionary
+		  Dim Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim FormData As New Xojo.Core.Dictionary
+		  Dim FormData As New Dictionary
 		  FormData.Value("name") = "Beacon " + Self.mLabel
 		  
-		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/settings/sets", FormData, AddressOf Callback_MakeConfigBackup, Nil, Headers)
+		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/settings/sets", FormData, AddressOf Callback_MakeConfigBackup, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -731,7 +714,7 @@ Implements Beacon.DeploymentEngine
 		    Return
 		  End If
 		  
-		  Self.mGameIniRewritten = Sender.UpdatedContent.ToText
+		  Self.mGameIniRewritten = Sender.UpdatedContent
 		  Self.RunNextTask()
 		End Sub
 	#tag EndMethod
@@ -745,13 +728,13 @@ Implements Beacon.DeploymentEngine
 		    Return
 		  End If
 		  
-		  Self.mGameUserSettingsIniRewritten = Sender.UpdatedContent.ToText
+		  Self.mGameUserSettingsIniRewritten = Sender.UpdatedContent
 		  Self.RunNextTask()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Name() As Text
+		Function Name() As String
 		  Return Self.mProfile.Name
 		End Function
 	#tag EndMethod
@@ -764,12 +747,12 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub SetError(Err As RuntimeException)
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Err)
-		  Dim Reason As Text
+		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		  Dim Reason As String
 		  If Err.Reason <> "" Then
 		    Reason = Err.Reason
 		  ElseIf Err.Message <> "" Then
-		    Reason = Err.Message.ToText
+		    Reason = Err.Message
 		  Else
 		    Reason = "No details available"
 		  End If
@@ -790,15 +773,15 @@ Implements Beacon.DeploymentEngine
 		  
 		  Self.mStatus = "Setting command line parameters…"
 		  
-		  Dim Headers As New Xojo.Core.Dictionary
+		  Dim Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim FormData As New Xojo.Core.Dictionary
+		  Dim FormData As New Dictionary
 		  FormData.Value("category") = "start-param"
 		  FormData.Value("key") = Self.mCommandLineChanges(0).Key
 		  FormData.Value("value") = Self.mCommandLineChanges(0).Value
 		  
-		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/settings", FormData, AddressOf Callback_SetNextCommandLineParam, Nil, Headers)
+		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/settings", FormData, AddressOf Callback_SetNextCommandLineParam, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -811,13 +794,13 @@ Implements Beacon.DeploymentEngine
 		  
 		  Self.mStatus = "Starting server…"
 		  
-		  Dim Headers As New Xojo.Core.Dictionary
+		  Dim Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim FormData As New Xojo.Core.Dictionary
+		  Dim FormData As New Dictionary
 		  FormData.Value("message") = "Server started by Beacon (https://beaconapp.cc)"
 		  
-		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/restart", FormData, AddressOf Callback_ServerStart, Nil, Headers)
+		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/restart", FormData, AddressOf Callback_ServerStart, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -828,7 +811,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Status() As Text
+		Function Status() As String
 		  Return Self.mStatus
 		End Function
 	#tag EndMethod
@@ -837,14 +820,14 @@ Implements Beacon.DeploymentEngine
 		Private Sub StopServer()
 		  Self.mStatus = "Stopping server…"
 		  
-		  Dim Headers As New Xojo.Core.Dictionary
+		  Dim Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim FormData As New Xojo.Core.Dictionary
+		  Dim FormData As New Dictionary
 		  FormData.Value("message") = "Server is being updated by Beacon (https://beaconapp.cc)"
 		  FormData.Value("stop_message") = "Server is now stopping for a few minutes for changes."
 		  
-		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/stop", FormData, AddressOf Callback_ServerStop, Nil, Headers)
+		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/stop", FormData, AddressOf Callback_ServerStop, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -852,14 +835,14 @@ Implements Beacon.DeploymentEngine
 		Private Sub UploadGameIni()
 		  Self.mStatus = "Uploading Game.ini…"
 		  
-		  Dim Headers As New Xojo.Core.Dictionary
+		  Dim Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim Fields As New Xojo.Core.Dictionary
+		  Dim Fields As New Dictionary
 		  Fields.Value("path") = Self.mConfigPath
 		  Fields.Value("file") = "Game.ini"
 		  
-		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/file_server/upload", Fields, AddressOf Callback_UploadGameIni, Nil, Headers)
+		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/file_server/upload", Fields, AddressOf Callback_UploadGameIni, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -867,30 +850,30 @@ Implements Beacon.DeploymentEngine
 		Private Sub UploadGameUserSettingsIni()
 		  Self.mStatus = "Uploading GameUserSettings.ini…"
 		  
-		  Dim Headers As New Xojo.Core.Dictionary
+		  Dim Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim Fields As New Xojo.Core.Dictionary
+		  Dim Fields As New Dictionary
 		  Fields.Value("path") = Self.mConfigPath
 		  Fields.Value("file") = "GameUserSettings.ini"
 		  
-		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/file_server/upload", Fields, AddressOf Callback_UploadGameUserSettingsIni, Nil, Headers)
+		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/file_server/upload", Fields, AddressOf Callback_UploadGameUserSettingsIni, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub WaitNitradoIdle()
-		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
-		  Dim SecondsToWait As Double = Double.FromText(Beacon.Data.GetTextVariable("Nitrado Wait Seconds"))
+		  Dim Now As New Date
+		  Dim SecondsToWait As Double = Double.FromString(Beacon.Data.GetStringVariable("Nitrado Wait Seconds"))
 		  SecondsToWait = SecondsToWait - (Now.SecondsFrom1970 - Self.mServerStopTime.SecondsFrom1970)
 		  If SecondsToWait < 10 Then // Don't need to be THAT precise
 		    Self.RunNextTask()
 		    Return
 		  End If
 		  
-		  Dim ResumeTime As Xojo.Core.Date = Now + New Xojo.Core.DateInterval(0, 0, 0, 0, 0, Floor(SecondsToWait), (SecondsToWait - Floor(SecondsToWait)) * 1000000000)
+		  Dim ResumeTime As Date = Now.AddInterval(New DateInterval(0, 0, 0, 0, 0, Floor(SecondsToWait), (SecondsToWait - Floor(SecondsToWait)) * 1000000000))
 		  
-		  Self.mStatus = "Waiting per Nitrado recommendations. Will resume at " + ResumeTime.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.None, Xojo.Core.Date.FormatStyles.Medium) + "…"
+		  Self.mStatus = "Waiting per Nitrado recommendations. Will resume at " + ResumeTime.ToString(Locale.Current, Date.FormatStyles.None, Date.FormatStyles.Medium) + "…"
 		  Self.mWaitNitradoCallbackKey = CallLater.Schedule(SecondsToWait * 1000, AddressOf WaitNitradoIdle)
 		End Sub
 	#tag EndMethod
@@ -903,9 +886,9 @@ Implements Beacon.DeploymentEngine
 		    Self.mStatus = "Stopping server…"
 		  End If
 		  
-		  Dim Headers As New Xojo.Core.Dictionary
+		  Dim Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers", AddressOf Callback_ServerStatus, Nil, Headers)
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers", AddressOf Callback_ServerStatus, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -916,7 +899,7 @@ Implements Beacon.DeploymentEngine
 
 
 	#tag Property, Flags = &h21
-		Private mAccessToken As Text
+		Private mAccessToken As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -928,7 +911,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mConfigPath As Text
+		Private mConfigPath As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -952,7 +935,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameIniOriginal As Text
+		Private mGameIniOriginal As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -960,11 +943,11 @@ Implements Beacon.DeploymentEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameIniRewritten As Text
+		Private mGameIniRewritten As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameUserSettingsIniOriginal As Text
+		Private mGameUserSettingsIniOriginal As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -972,7 +955,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameUserSettingsIniRewritten As Text
+		Private mGameUserSettingsIniRewritten As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -984,15 +967,15 @@ Implements Beacon.DeploymentEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mInitialServerStatus As Text
+		Private mInitialServerStatus As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLabel As Text
+		Private mLabel As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLogFilePath As Text
+		Private mLogFilePath As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1004,15 +987,15 @@ Implements Beacon.DeploymentEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mServerStatus As Text
+		Private mServerStatus As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mServerStopTime As Xojo.Core.Date
+		Private mServerStopTime As Date
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mStatus As Text
+		Private mStatus As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

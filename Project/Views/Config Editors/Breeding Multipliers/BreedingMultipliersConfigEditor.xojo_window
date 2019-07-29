@@ -1716,7 +1716,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.BreedingMultipliers
-		  Static ConfigName As Text = BeaconConfigs.BreedingMultipliers.ConfigName
+		  Static ConfigName As String = BeaconConfigs.BreedingMultipliers.ConfigName
 		  
 		  Dim Document As Beacon.Document = Self.Document
 		  Dim Config As BeaconConfigs.BreedingMultipliers
@@ -1740,7 +1740,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigLabel() As Text
+		Function ConfigLabel() As String
 		  Return Language.LabelForConfig(BeaconConfigs.BreedingMultipliers.ConfigName)
 		End Function
 	#tag EndMethod
@@ -1748,8 +1748,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateStats()
 		  Dim CuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period") * Self.Config(False).BabyCuddleIntervalMultiplier
-		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.TextList)
-		  Dim SelectedClass As Text
+		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.StringList)
+		  Dim SelectedClass As String
 		  If CreaturesList.SelectedIndex > -1 Then
 		    SelectedClass = CreaturesList.RowTag(CreaturesList.SelectedIndex)
 		  End If
@@ -1764,10 +1764,10 @@ End
 		      Continue
 		    End If
 		    
-		    Dim IncubationPeriod As Xojo.Core.DateInterval = Creature.IncubationTime
-		    Dim IncubationSeconds As UInt64 = Beacon.IntervalToSeconds(IncubationPeriod) / IncubationMultiplier
-		    Dim MaturePeriod As Xojo.Core.DateInterval = Creature.MatureTime
-		    Dim MatureSeconds As UInt64 = Beacon.IntervalToSeconds(MaturePeriod) / MatureMultiplier
+		    Dim IncubationPeriod As DateInterval = Creature.IncubationTime
+		    Dim IncubationSeconds As UInt64 = IncubationPeriod.TotalSeconds / IncubationMultiplier
+		    Dim MaturePeriod As DateInterval = Creature.MatureTime
+		    Dim MatureSeconds As UInt64 = MaturePeriod.TotalSeconds / MatureMultiplier
 		    
 		    Dim MaxCuddles As Integer = Floor(MatureSeconds / CuddlePeriod)
 		    Dim PerCuddle As Double = 0

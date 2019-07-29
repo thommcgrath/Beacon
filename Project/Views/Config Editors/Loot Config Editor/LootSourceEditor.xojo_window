@@ -74,7 +74,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   "0"
       RowSelectionType=   "1"
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -99,7 +98,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       _ScrollWidth    =   -1
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       GameIniContent  =   ""
       GameUserSettingsIniContent=   ""
       Index           =   -2147483648
@@ -107,7 +105,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Priority        =   0
       Scope           =   0
       StackSize       =   0
-      State           =   ""
       TabPanelIndex   =   0
    End
    Begin BeaconToolbar Header
@@ -120,9 +117,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Item Sets"
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -166,9 +161,9 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       SelectedPanelIndex=   0
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
+      Value           =   "0"
       Value           =   0
       Visible         =   True
       Width           =   347
@@ -185,12 +180,10 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   False
-         EraseBackground =   "True"
          HasBackColor    =   False
          HasBackgroundColor=   False
          Height          =   464
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -218,9 +211,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "No Selection"
-         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   "True"
          Height          =   443
          HelpTag         =   ""
          Index           =   -2147483648
@@ -253,9 +244,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          Backdrop        =   0
          Borders         =   1
          Caption         =   ""
-         DoubleBuffer    =   "False"
          Enabled         =   True
-         EraseBackground =   "True"
          Height          =   21
          HelpTag         =   ""
          Index           =   -2147483648
@@ -287,9 +276,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   464
       HelpTag         =   ""
       Index           =   -2147483648
@@ -324,12 +311,10 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       BackgroundColor =   &cFFFFFF00
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       HasBackColor    =   False
       HasBackgroundColor=   False
       Height          =   183
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -356,9 +341,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -393,12 +376,10 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       BackgroundColor =   &cFFFFFF00
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       HasBackColor    =   False
       HasBackgroundColor=   False
       Height          =   23
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -427,9 +408,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
-      DoubleBuffer    =   "False"
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   21
       HelpTag         =   ""
       Index           =   -2147483648
@@ -464,12 +443,10 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       BackgroundColor =   &cFFFFFF00
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       HasBackColor    =   False
       HasBackgroundColor=   False
       Height          =   76
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -567,7 +544,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AnimationStep(Identifier As Text, Value As Double)
+		Sub AnimationStep(Identifier As String, Value As Double)
 		  // Part of the AnimationKit.ValueAnimator interface.
 		  
 		  Select Case Identifier
@@ -581,7 +558,7 @@ End
 		Private Sub BuildPresetMenu(Parent As MenuItem)
 		  Dim Presets() As Beacon.Preset = Beacon.Data.Presets
 		  Dim Groups As New Dictionary
-		  Dim GroupNames() As Text
+		  Dim GroupNames() As String
 		  For Each Preset As Beacon.Preset In Presets
 		    Dim Arr() As Beacon.Preset
 		    If Groups.HasKey(Preset.Grouping) Then
@@ -606,7 +583,7 @@ End
 		  
 		  Dim HasTarget As Boolean = Self.mSources.Ubound > -1
 		  
-		  For Each Group As Text In GroupNames
+		  For Each Group As String In GroupNames
 		    Dim Arr() As Beacon.Preset = Groups.Value(Group)
 		    Dim Names() As String
 		    Dim Items() As Beacon.Preset
@@ -761,7 +738,7 @@ End
 		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
 		  Self.ImportProgress.ShowWithin(Self.TrueWindow)
 		  Self.Importer.Clear
-		  Self.Importer.GameIniContent = Content.ToText
+		  Self.Importer.GameIniContent = Content
 		  Self.Importer.Run
 		End Sub
 	#tag EndMethod
@@ -827,7 +804,7 @@ End
 		  #if false
 		    If Self.mSources.Ubound > -1 Then
 		      Dim DuplicatesState As CheckBox.CheckedStates = if(Self.mSources(0).SetsRandomWithoutReplacement, CheckBox.CheckedStates.Checked, CheckBox.CheckedStates.Unchecked)
-		      Dim Label As Text = Self.mSources(0).Label
+		      Dim Label As String = Self.mSources(0).Label
 		      Dim MinSets As Integer = Self.mSources(0).MinItemSets
 		      Dim MaxSets As Integer = Self.mSources(0).MaxItemSets
 		      
@@ -1178,14 +1155,14 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Dicts() As Xojo.Core.Dictionary
+		  Dim Dicts() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
 		    
 		    Dim Set As Beacon.ItemSet = Me.RowTag(I)
-		    Dim Dict As Xojo.Core.Dictionary = Set.Export
+		    Dim Dict As Dictionary = Set.Export
 		    If Dict <> Nil Then
 		      Dicts.Append(Dict)
 		    End If
@@ -1194,11 +1171,11 @@ End
 		    Return
 		  End If
 		  
-		  Dim Contents As Text
+		  Dim Contents As String
 		  If UBound(Dicts) = 0 Then
-		    Contents = Xojo.Data.GenerateJSON(Dicts(0))
+		    Contents = Beacon.GenerateJSON(Dicts(0), False)
 		  Else
-		    Contents = Xojo.Data.GenerateJSON(Dicts)
+		    Contents = Beacon.GenerateJSON(Dicts, False)
 		  End If
 		  
 		  Board.AddRawData(Contents, Self.kClipboardType)
@@ -1212,21 +1189,21 @@ End
 		  
 		  If Board.RawDataAvailable(Self.kClipboardType) Then
 		    Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		    Dim Parsed As Auto
+		    Dim Parsed As Variant
 		    Try
-		      Parsed = Xojo.Data.ParseJSON(Contents.ToText)
-		    Catch Err As Xojo.Data.InvalidJSONException
+		      Parsed = Beacon.ParseJSON(Contents)
+		    Catch Err As RuntimeException
 		      Beep
 		      Return
 		    End Try
 		    
-		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Parsed)
-		    Dim Dicts() As Xojo.Core.Dictionary
-		    If Info.FullName = "Xojo.Core.Dictionary" Then
+		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
+		    Dim Dicts() As Dictionary
+		    If Info.FullName = "Dictionary" Then
 		      Dicts.Append(Parsed)
 		    ElseIf Info.FullName = "Auto()" Then
-		      Dim Values() As Auto = Parsed
-		      For Each Dict As Xojo.Core.Dictionary In Values
+		      Dim Values() As Variant = Parsed
+		      For Each Dict As Dictionary In Values
 		        Dicts.Append(Dict)
 		      Next
 		    Else
@@ -1237,7 +1214,7 @@ End
 		    Dim Updated As Boolean
 		    Dim SetNames() As String
 		    For Each Source As Beacon.LootSource In Self.mSources
-		      For Each Dict As Xojo.Core.Dictionary In Dicts
+		      For Each Dict As Dictionary In Dicts
 		        Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Dict)
 		        If Set <> Nil Then
 		          Source.Append(Set)
@@ -1430,16 +1407,16 @@ End
 		    End If
 		  Case "copyjson"
 		    If Targets.Ubound = 0 Then
-		      Dim Dict As Xojo.Core.Dictionary = Targets(0).Export()
+		      Dim Dict As Dictionary = Targets(0).Export()
 		      Dim Board As New Clipboard
-		      Board.Text = Xojo.Data.GenerateJSON(Dict)
+		      Board.Text = Beacon.GenerateJSON(Dict, False)
 		    Else
-		      Dim Arr() As Xojo.Core.Dictionary
+		      Dim Arr() As Dictionary
 		      For Each Target As Beacon.ItemSet In Targets
 		        Arr.Append(Target.Export())
 		      Next
 		      Dim Board As New Clipboard
-		      Board.Text = Xojo.Data.GenerateJSON(Arr)
+		      Board.Text = Beacon.GenerateJSON(Arr, False)
 		    End If
 		  Case "copyconfig"
 		    Dim Multipliers As Beacon.Range
@@ -1453,7 +1430,7 @@ End
 		      UseBlueprints = False
 		    End If
 		    
-		    Dim Parts() As Text
+		    Dim Parts() As String
 		    For Each Target As Beacon.ItemSet In Targets
 		      Parts.Append(Target.TextValue(Multipliers, UseBlueprints, Difficulty))
 		    Next
@@ -1485,13 +1462,13 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(ParsedData As Xojo.Core.Dictionary)
+		Sub Finished(ParsedData As Dictionary)
 		  If Self.ImportProgress <> Nil Then
 		    Self.ImportProgress.Close
 		    Self.ImportProgress = Nil
 		  End If
 		  
-		  Dim Dicts() As Auto
+		  Dim Dicts() As Variant
 		  Try
 		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
 		  Catch Err As TypeMismatchException
@@ -1501,7 +1478,7 @@ End
 		  Dim Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
 		  
 		  Dim SourceLootSources() As Beacon.LootSource
-		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
+		  For Each ConfigDict As Dictionary In Dicts
 		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Difficulty)
 		    If Source <> Nil Then
 		      SourceLootSources.Append(Source)

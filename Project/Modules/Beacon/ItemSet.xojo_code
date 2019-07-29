@@ -9,9 +9,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Sub ComputeSimulationFigures(Pool() As Beacon.SetEntry, WeightScale As Integer, ByRef WeightSum As Double, ByRef Weights() As Double, ByRef WeightLookup As Xojo.Core.Dictionary)
+		Private Shared Sub ComputeSimulationFigures(Pool() As Beacon.SetEntry, WeightScale As Integer, ByRef WeightSum As Double, ByRef Weights() As Double, ByRef WeightLookup As Dictionary)
 		  Redim Weights(-1)
-		  WeightLookup = New Xojo.Core.Dictionary
+		  WeightLookup = New Dictionary
 		  WeightSum = 0
 		  
 		  For Each Entry As Beacon.SetEntry In Pool
@@ -75,13 +75,13 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Export() As Xojo.Core.Dictionary
-		  Dim Children() As Xojo.Core.Dictionary
+		Function Export() As Dictionary
+		  Dim Children() As Dictionary
 		  For Each Entry As Beacon.SetEntry In Self.mEntries
 		    Children.Append(Entry.Export)
 		  Next
 		  
-		  Dim Keys As New Xojo.Core.Dictionary
+		  Dim Keys As New Dictionary
 		  Keys.Value("ItemEntries") = Children
 		  Keys.Value("bItemsRandomWithoutReplacement") = Self.ItemsRandomWithoutReplacement
 		  Keys.Value("Label") = Self.Label // Write "Label" so older versions of Beacon can read it
@@ -98,18 +98,18 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource, Mask As UInt64, Mods As Beacon.TextList) As Beacon.ItemSet
+		Shared Function FromPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource, Mask As UInt64, Mods As Beacon.StringList) As Beacon.ItemSet
 		  Dim Set As New Beacon.ItemSet
 		  Set.Label = Preset.Label
 		  // Weight is intentionally skipped, as that is relative to the source, no reason for a preset to alter that.
 		  Set.mSourcePresetID = Preset.PresetID
 		  
-		  Dim ActiveModifiers() As Text = Preset.ActiveModifierIDs
+		  Dim ActiveModifiers() As String = Preset.ActiveModifierIDs
 		  Dim QuantityMultipliers() As Double
 		  Dim MinQualityModifiers() As Integer
 		  Dim MaxQualityModifiers() As Integer
 		  Dim BlueprintMultipliers() As Double
-		  For Each ModifierID As Text In ActiveModifiers
+		  For Each ModifierID As String In ActiveModifiers
 		    Dim Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
 		    If Modifier <> Nil And Modifier.Matches(ForLootSource) Then
 		      QuantityMultipliers.Append(Preset.QuantityMultiplier(ModifierID))
@@ -180,33 +180,27 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetIterator() As Xojo.Core.Iterator
-		  Return New Beacon.ItemSetIterator(Self)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Hash(ForPreset As Boolean = False) As Text
+		Function Hash(ForPreset As Boolean = False) As String
 		  If Self.HashIsStale Or ForPreset Then
-		    Dim Entries() As Text
+		    Dim Entries() As String
 		    Redim Entries(Self.mEntries.Ubound)
 		    For I As Integer = 0 To Entries.Ubound
 		      Entries(I) = Self.mEntries(I).Hash
 		    Next
 		    Entries.Sort
 		    
-		    Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
-		    Dim Format As Text = "0.000"
+		    Dim Locale As Locale = Locale.Raw
+		    Dim Format As String = "0.000"
 		    
-		    Dim Parts(6) As Text
+		    Dim Parts(6) As String
 		    Parts(0) = Beacon.MD5(Entries.Join(",")).Lowercase
-		    Parts(1) = Self.MaxNumItems.ToText(Locale, Format)
-		    Parts(2) = Self.MinNumItems.ToText(Locale, Format)
+		    Parts(1) = Self.MaxNumItems.ToString(Locale, Format)
+		    Parts(2) = Self.MinNumItems.ToString(Locale, Format)
 		    If ForPreset Then
 		      Return Beacon.MD5(Parts.Join(",")).Lowercase
 		    End If
-		    Parts(3) = Self.NumItemsPower.ToText(Locale, Format)
-		    Parts(4) = Self.RawWeight.ToText(Locale, Format)
+		    Parts(3) = Self.NumItemsPower.ToString(Locale, Format)
+		    Parts(4) = Self.RawWeight.ToString(Locale, Format)
 		    Parts(5) = Self.Label.Lowercase  
 		    Parts(6) = if(Self.ItemsRandomWithoutReplacement, "1", "0")
 		    
@@ -232,7 +226,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromBeacon(Dict As Xojo.Core.Dictionary) As Beacon.ItemSet
+		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.ItemSet
 		  Dim Set As New Beacon.ItemSet
 		  If Dict.HasKey("NumItemsPower") Then
 		    Set.NumItemsPower = Dict.Value("NumItemsPower")
@@ -253,13 +247,13 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Set.Label = Dict.Value("SetName")
 		  End If
 		  
-		  Dim Children() As Auto
+		  Dim Children() As Variant
 		  If Dict.HasKey("ItemEntries") Then
 		    Children = Dict.Value("ItemEntries")
 		  ElseIf Dict.HasKey("Items") Then
 		    Children = Dict.Value("Items")
 		  End If
-		  For Each Child As Xojo.Core.Dictionary In Children
+		  For Each Child As Dictionary In Children
 		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Child)
 		    If Entry <> Nil Then
 		      Set.Append(Entry)
@@ -283,7 +277,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromConfig(Dict As Xojo.Core.Dictionary, Multipliers As Beacon.Range, Difficulty As BeaconConfigs.Difficulty) As Beacon.ItemSet
+		Shared Function ImportFromConfig(Dict As Dictionary, Multipliers As Beacon.Range, Difficulty As BeaconConfigs.Difficulty) As Beacon.ItemSet
 		  Dim Set As New Beacon.ItemSet
 		  If Dict.HasKey("NumItemsPower") Then
 		    Set.NumItemsPower = Dict.Value("NumItemsPower")
@@ -298,11 +292,11 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Set.Label = Dict.Value("SetName")
 		  End If
 		  
-		  Dim Children() As Auto
+		  Dim Children() As Variant
 		  If Dict.HasKey("ItemEntries") Then
 		    Children = Dict.Value("ItemEntries")
 		  End If
-		  For Each Child As Xojo.Core.Dictionary In Children
+		  For Each Child As Dictionary In Children
 		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromConfig(Child, Multipliers, Difficulty)
 		    If Entry <> Nil Then
 		      Set.Append(Entry)
@@ -355,8 +349,19 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Join(Sets() As Beacon.ItemSet, Separator As Text, Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As Text
-		  Dim Values() As Text
+		Function Iterator() As Iterator
+		  Dim Entries() As Variant
+		  Redim Entries(Self.mEntries.LastRowIndex)
+		  For I As Integer = 0 To Self.mEntries.LastRowIndex
+		    Entries(I) = Self.mEntries(I)
+		  Next
+		  Return New Beacon.GenericIterator(Entries)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Join(Sets() As Beacon.ItemSet, Separator As String, Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As String
+		  Dim Values() As String
 		  For Each Set As Beacon.ItemSet In Sets
 		    Values.Append(Set.TextValue(Multipliers, UseBlueprints, Difficulty))
 		  Next
@@ -401,8 +406,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Return 1
 		  End If
 		  
-		  Dim SelfHash As Text = Self.Hash
-		  Dim OtherHash As Text = Other.Hash
+		  Dim SelfHash As String = Self.Hash
+		  Dim OtherHash As String = Other.Hash
 		  
 		  Return SelfHash.Compare(OtherHash, 0)
 		End Function
@@ -435,7 +440,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ReconfigureWithPreset(Preset As Beacon.Preset = Nil, ForLootSource As Beacon.LootSource, Mask As UInt64, Mods As Beacon.TextList) As Boolean
+		Function ReconfigureWithPreset(Preset As Beacon.Preset = Nil, ForLootSource As Beacon.LootSource, Mask As UInt64, Mods As Beacon.StringList) As Boolean
 		  If Preset = Nil And Self.mSourcePresetID <> "" Then
 		    Preset = Beacon.Data.GetPreset(Self.mSourcePresetID)
 		  End If
@@ -495,9 +500,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Next
 		    
 		    Dim RecomputeFigures As Boolean = True
-		    Dim ChooseEntries As Integer = Xojo.Math.RandomInt(MinEntries, MaxEntries)
+		    Dim ChooseEntries As Integer = System.Random.InRange(MinEntries, MaxEntries)
 		    Dim WeightSum, Weights() As Double
-		    Dim WeightLookup As Xojo.Core.Dictionary
+		    Dim WeightLookup As Dictionary
 		    For I As Integer = 1 To ChooseEntries
 		      If Pool.Ubound = -1 Then
 		        Exit For I
@@ -509,7 +514,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      End If
 		      
 		      Do
-		        Dim Decision As Double = Xojo.Math.RandomInt(WeightScale, WeightScale + (WeightSum * WeightScale)) - WeightScale
+		        Dim Decision As Double = System.Random.InRange(WeightScale, WeightScale + (WeightSum * WeightScale)) - WeightScale
 		        Dim SelectedEntry As Beacon.SetEntry
 		        
 		        For X As Integer = 0 To Weights.Ubound
@@ -551,17 +556,17 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SourcePresetID() As Text
+		Function SourcePresetID() As String
 		  Return Self.mSourcePresetID
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As Text
-		  Dim Values() As Text
+		Function TextValue(Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As String
+		  Dim Values() As String
 		  Values.Append("SetName=""" + Self.Label + """")
-		  Values.Append("MinNumItems=" + Self.MinNumItems.ToText)
-		  Values.Append("MaxNumItems=" + Self.MaxNumItems.ToText)
+		  Values.Append("MinNumItems=" + Self.MinNumItems.ToString)
+		  Values.Append("MaxNumItems=" + Self.MaxNumItems.ToString)
 		  Values.Append("NumItemsPower=" + Self.mNumItemsPower.PrettyText)
 		  Values.Append("SetWeight=" + Self.mSetWeight.PrettyText)
 		  Values.Append("bItemsRandomWithoutReplacement=" + if(Self.mItemsRandomWithoutReplacement, "true", "false"))
@@ -616,7 +621,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			  Self.Modified = True
 			End Set
 		#tag EndSetter
-		Label As Text
+		Label As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -644,7 +649,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHash As Text
+		Private mHash As String
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -672,7 +677,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLabel As Text
+		Private mLabel As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -704,7 +709,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSourcePresetID As Text
+		Private mSourcePresetID As String
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -755,16 +760,23 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ItemsRandomWithoutReplacement"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Label"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Text"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -772,33 +784,47 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MaxNumItems"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MinNumItems"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="NumItemsPower"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Double"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -806,11 +832,15 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="RawWeight"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="Double"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

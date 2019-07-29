@@ -7,7 +7,7 @@ Protected Class Response
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
+		Sub Constructor(URL As String, HTTPStatus As Integer, Content As MemoryBlock)
 		  Self.mURL = URL
 		  Self.mContent = Content
 		  Self.mHTTPStatus = HTTPStatus
@@ -17,12 +17,11 @@ Protected Class Response
 		  
 		  Try
 		    #Pragma BreakOnExceptions False
-		    Dim TextValue As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
-		    Dim JSON As Auto = Xojo.Data.ParseJSON(TextValue)  
+		    Dim JSON As Variant = Beacon.ParseJSON(Content)  
 		    Self.mJSONParsed = True
 		    Self.mJSON = JSON
 		    
-		    Dim Dict As Xojo.Core.Dictionary = JSON
+		    Dim Dict As Dictionary = JSON
 		    If Dict.HasKey("message") And Dict.HasKey("details") Then
 		      Self.mMessage = Dict.Value("message")
 		      Self.mJSON = Dict.Value("details")
@@ -34,7 +33,7 @@ Protected Class Response
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Content() As Xojo.Core.MemoryBlock
+		Function Content() As MemoryBlock
 		  Return Self.mContent
 		End Function
 	#tag EndMethod
@@ -46,7 +45,7 @@ Protected Class Response
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function JSON() As Auto
+		Function JSON() As Variant
 		  Return Self.mJSON
 		End Function
 	#tag EndMethod
@@ -58,7 +57,7 @@ Protected Class Response
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Message() As Text
+		Function Message() As String
 		  Return Self.mMessage
 		End Function
 	#tag EndMethod
@@ -70,14 +69,14 @@ Protected Class Response
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function URL() As Text
+		Function URL() As String
 		  Return Self.mURL
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mContent As Xojo.Core.MemoryBlock
+		Private mContent As MemoryBlock
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -85,7 +84,7 @@ Protected Class Response
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mJSON As Auto
+		Private mJSON As Variant
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -93,11 +92,11 @@ Protected Class Response
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMessage As Text
+		Private mMessage As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mURL As Text
+		Private mURL As String
 	#tag EndProperty
 
 
@@ -106,7 +105,9 @@ Protected Class Response
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -114,12 +115,15 @@ Protected Class Response
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -127,6 +131,7 @@ Protected Class Response
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -134,11 +139,7 @@ Protected Class Response
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mURL"
-			Group="Behavior"
-			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

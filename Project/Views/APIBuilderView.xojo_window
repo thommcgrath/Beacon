@@ -750,8 +750,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function BuildCURLCode(Request As BeaconAPI.Request) As Text
-		  Dim Cmd As Text = "curl"
+		Private Shared Function BuildCURLCode(Request As BeaconAPI.Request) As String
+		  Dim Cmd As String = "curl"
 		  If Request.Method <> "GET" Then
 		    Cmd = Cmd + " --request '" + Request.Method + "'"
 		    If Request.Query <> "" Then
@@ -773,17 +773,17 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function BuildHTTPCode(Request As BeaconAPI.Request) As Text
+		Private Shared Function BuildHTTPCode(Request As BeaconAPI.Request) As String
 		  Dim StringEOL As String = EndOfLine
-		  Dim EOL As Text = StringEOL.ToText // Really hate that it takes 2 lines of code to do this
+		  Dim EOL As String = StringEOL // Really hate that it takes 2 lines of code to do this
 		  
-		  Dim URL As Text = Request.URL
+		  Dim URL As String = Request.URL
 		  Dim SchemeEnd As Integer = URL.IndexOf("://")
-		  URL = URL.Mid(SchemeEnd + 3)
+		  URL = URL.Middle(SchemeEnd + 3)
 		  
 		  Dim HostEnd As Integer = URL.IndexOf("/")
-		  Dim Host As Text = URL.Left(HostEnd)
-		  Dim Path As Text = URL.Mid(HostEnd)
+		  Dim Host As String = URL.Left(HostEnd)
+		  Dim Path As String = URL.Middle(HostEnd)
 		  
 		  If Request.Method = "GET" Then
 		    If Request.Query <> "" Then
@@ -791,7 +791,7 @@ End
 		    End If
 		  End If
 		  
-		  Dim Lines() As Text
+		  Dim Lines() As String
 		  Lines.Append(Request.Method + " " + Path + " HTTP/1.1")
 		  Lines.Append("Host: " + Host)
 		  
@@ -812,14 +812,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function BuildPHPCode(Request As BeaconAPI.Request) As Text
+		Private Shared Function BuildPHPCode(Request As BeaconAPI.Request) As String
 		  Dim StringEOL As String = EndOfLine
-		  Dim EOL As Text = StringEOL.ToText // Really hate that it takes 2 lines of code to do this
+		  Dim EOL As String = StringEOL // Really hate that it takes 2 lines of code to do this
 		  Dim Authenticated As Boolean = Request.Authenticated
 		  
-		  Dim Lines() As Text
+		  Dim Lines() As String
 		  
-		  Dim URL As Text = Request.URL
+		  Dim URL As String = Request.URL
 		  If Request.Method = "GET" Then
 		    If Request.Query <> "" Then
 		      URL = URL + "?" + Request.Query
@@ -885,10 +885,10 @@ End
 #tag Events BuildButton
 	#tag Event
 		Sub Action()
-		  Dim Path As Text = PathField.Value.ToText
-		  Dim Method As Text = MethodMenu.Value.ToText
-		  Dim Body As Text = BodyField.Value.ToText
-		  Dim ContentType As Text = ContentTypeField.Value.ToText
+		  Dim Path As String = PathField.Value
+		  Dim Method As String = MethodMenu.Value
+		  Dim Body As String = BodyField.Value
+		  Dim ContentType As String = ContentTypeField.Value
 		  
 		  Dim Request As BeaconAPI.Request
 		  Try

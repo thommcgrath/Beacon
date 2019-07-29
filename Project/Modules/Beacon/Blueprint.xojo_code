@@ -7,7 +7,7 @@ Protected Interface Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Category() As Text
+		Function Category() As String
 		  
 		End Function
 	#tag EndMethod
@@ -19,25 +19,25 @@ Protected Interface Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsTagged(Tag As Text) As Boolean
+		Function IsTagged(Tag As String) As Boolean
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Label() As Text
+		Function Label() As String
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModID() As Text
+		Function ModID() As String
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModName() As Text
+		Function ModName() As String
 		  
 		End Function
 	#tag EndMethod
@@ -49,19 +49,19 @@ Protected Interface Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As Text
+		Function ObjectID() As String
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Path() As Text
+		Function Path() As String
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Tags() As Text()
+		Function Tags() As String()
 		  
 		End Function
 	#tag EndMethod

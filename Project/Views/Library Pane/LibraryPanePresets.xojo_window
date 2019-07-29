@@ -215,7 +215,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Shown(UserData As Auto = Nil)
+		Sub Shown(UserData As Variant = Nil)
 		  NotificationKit.Watch(Self, "Preset Saved")
 		  
 		  If UserData <> Nil Then
@@ -234,8 +234,8 @@ End
 		  Clone.Grouping = Source.Grouping
 		  Clone.MaxItems = Source.MaxItems
 		  Clone.MinItems = Source.MinItems
-		  Dim Modifiers() As Text = Clone.ActiveModifierIDs
-		  For Each ModifierID As Text In Modifiers
+		  Dim Modifiers() As String = Clone.ActiveModifierIDs
+		  For Each ModifierID As String In Modifiers
 		    Clone.MinQualityModifier(ModifierID) = Source.MinQualityModifier(ModifierID)
 		    Clone.MaxQualityModifier(ModifierID) = Source.MaxQualityModifier(ModifierID)
 		    Clone.QuantityMultiplier(ModifierID) = Source.QuantityMultiplier(ModifierID)
@@ -421,7 +421,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim ViewID As Text = EncodeHex(Crypto.MD5(File.NativePath)).ToText
+		  Dim ViewID As String = EncodeHex(Crypto.MD5(File.NativePath))
 		  Dim View As BeaconSubview = Self.View(ViewID)
 		  If View = Nil Then
 		    View = New PresetEditorView(Preset, File)
@@ -446,7 +446,7 @@ End
 		    Next
 		  End If
 		  
-		  Dim SelectIDs() As Text
+		  Dim SelectIDs() As String
 		  For Each Preset As Beacon.Preset In SelectPresets
 		    SelectIDs.Append(Preset.PresetID)
 		  Next

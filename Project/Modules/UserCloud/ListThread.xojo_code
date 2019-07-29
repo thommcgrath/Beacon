@@ -10,10 +10,9 @@ Inherits Thread
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Self.mResponse.Content)
-		    Dim List() As Auto = Xojo.Data.ParseJSON(TextContent)
+		    Dim List() As Variant = Beacon.ParseJSON(Self.mResponse.Content)
 		    Dim SyncedPaths As New Dictionary
-		    For Each Dict As Xojo.Core.Dictionary In List
+		    For Each Dict As Dictionary In List
 		      Dim RemotePath As String = Dict.Value("path")
 		      SyncedPaths.Value(RemotePath) = True
 		      
@@ -26,7 +25,7 @@ Inherits Thread
 		        LocalFile = LocalFile(RemotePath, True)
 		      End If
 		      
-		      Dim ServerModifiedText As Text = Dict.Value("modified")
+		      Dim ServerModifiedText As String = Dict.Value("modified")
 		      Dim ServerModified As Date = NewDateFromSQLDateTime(ServerModifiedText).LocalTime
 		      
 		      If LocalFile.Exists And LocalFile.ModificationDate <> Nil Then

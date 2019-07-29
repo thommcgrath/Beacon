@@ -1,6 +1,6 @@
 #tag Class
 Protected Class ControlGroup
-Implements Xojo.Core.Iterable
+Implements  Iterable
 	#tag Method, Flags = &h0
 		Sub Append(Ctl As RectControl)
 		  If Self.IndexOf(Ctl) = -1 Then
@@ -21,15 +21,7 @@ Implements Xojo.Core.Iterable
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return Self.UBound + 1
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetIterator() As Xojo.Core.Iterator
-		  // Part of the Xojo.Core.Iterable interface.
-		  
-		  Return New ControlGroupIterator(Self)
+		  Return Self.LastRowIndex + 1
 		End Function
 	#tag EndMethod
 
@@ -52,6 +44,20 @@ Implements Xojo.Core.Iterable
 		    Self.UpdateBounds()
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Iterator() As Iterator
+		  // Part of the Iterable interface.
+		  
+		  Return New ControlGroupIterator(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LastRowIndex() As Integer
+		  Return Self.mMembers.LastRowIndex
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -107,8 +113,8 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UBound() As Integer
-		  Return Self.mMembers.Ubound
+		Attributes( Deprecated = "LastRowIndex" )  Function UBound() As Integer
+		  Return Self.mMembers.LastRowIndex
 		End Function
 	#tag EndMethod
 
@@ -235,6 +241,7 @@ Implements Xojo.Core.Iterable
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -242,18 +249,23 @@ Implements Xojo.Core.Iterable
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -261,6 +273,39 @@ Implements Xojo.Core.Iterable
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Bottom"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Height"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Right"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Width"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

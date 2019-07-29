@@ -270,7 +270,7 @@ End
 		    
 		    Dim Dialog As New MessageDialog
 		    Dialog.Title = ""
-		    Dialog.Message = "You have " + NumChanges.ToText + " documents with unsaved changes. Do you want to review these changes before quitting?"
+		    Dialog.Message = "You have " + NumChanges.ToString + " documents with unsaved changes. Do you want to review these changes before quitting?"
 		    Dialog.Explanation = "If you don't review your documents, all your changes will be lost."
 		    Dialog.ActionButton.Caption = "Review Changes…"
 		    Dialog.CancelButton.Visible = True
@@ -312,22 +312,22 @@ End
 		Sub Moved()
 		  If Self.mOpened Then
 		    Dim Bounds As REALbasic.Rect = Self.Bounds
-		    Preferences.MainWindowPosition = New Xojo.Core.Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
+		    Preferences.MainWindowPosition = New Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
 		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Open()
-		  Dim Bounds As Xojo.Core.Rect = Preferences.MainWindowPosition
+		  Dim Bounds As Rect = Preferences.MainWindowPosition
 		  If Bounds <> Nil Then
 		    // Find the best screen
 		    Dim IdealScreen As Screen = Screen(0)
 		    If ScreenCount > 1 Then
 		      Dim MaxArea As Integer
 		      For I As Integer = 0 To ScreenCount - 1
-		        Dim ScreenBounds As New Xojo.Core.Rect(Screen(I).AvailableLeft, Screen(I).AvailableTop, Screen(I).AvailableWidth, Screen(I).AvailableHeight)
-		        Dim Intersection As Xojo.Core.Rect = ScreenBounds.Intersection(Bounds)
+		        Dim ScreenBounds As New Rect(Screen(I).AvailableLeft, Screen(I).AvailableTop, Screen(I).AvailableWidth, Screen(I).AvailableHeight)
+		        Dim Intersection As Rect = ScreenBounds.Intersection(Bounds)
 		        If Intersection = Nil Then
 		          Continue
 		        End If
@@ -342,7 +342,7 @@ End
 		      Next
 		    End If
 		    
-		    Dim AvailableBounds As New Xojo.Core.Rect(IdealScreen.AvailableLeft, IdealScreen.AvailableTop, IdealScreen.AvailableWidth, IdealScreen.AvailableHeight)
+		    Dim AvailableBounds As New Rect(IdealScreen.AvailableLeft, IdealScreen.AvailableTop, IdealScreen.AvailableWidth, IdealScreen.AvailableHeight)
 		    
 		    Dim Width As Integer = Min(Max(Bounds.Width, Self.MinimumWidth), Self.MaximumWidth, AvailableBounds.Width)
 		    Dim Height As Integer = Min(Max(Bounds.Height, Self.MinimumHeight), Self.MaximumHeight, AvailableBounds.Height)
@@ -363,7 +363,7 @@ End
 		Sub Resized()
 		  If Self.mOpened Then
 		    Dim Bounds As REALbasic.Rect = Self.Bounds
-		    Preferences.MainWindowPosition = New Xojo.Core.Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
+		    Preferences.MainWindowPosition = New Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -435,7 +435,7 @@ End
 
 
 	#tag Method, Flags = &h0
-		Sub AnimationStep(Identifier As Text, Value As Double)
+		Sub AnimationStep(Identifier As String, Value As Double)
 		  // Part of the AnimationKit.ValueAnimator interface.
 		  
 		  Select Case Identifier
@@ -504,7 +504,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, Value As Variant)
 		  // Part of the ObservationKit.Observer interface.
 		  
 		  #Pragma Unused Source
@@ -530,8 +530,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub SetupUpdateUI()
 		  If App.UpdateAvailable Then
-		    Dim Data As Xojo.Core.Dictionary = App.UpdateDetails
-		    Dim Preview As Text = Data.Value("Preview")
+		    Dim Data As Dictionary = App.UpdateDetails
+		    Dim Preview As String = Data.Value("Preview")
 		    If Preview <> "" Then
 		      Self.mUpdateText = Preview + " Click here to update."
 		    Else

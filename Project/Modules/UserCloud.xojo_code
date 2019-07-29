@@ -31,19 +31,19 @@ Protected Module UserCloud
 		  End If
 		  
 		  // So where do we put the file now?
-		  Dim URL As Text = Response.URL
-		  Dim BaseURL As Text = BeaconAPI.URL("/file")
+		  Dim URL As String = Response.URL
+		  Dim BaseURL As String = BeaconAPI.URL("/file")
 		  If Not URL.BeginsWith(BaseURL) Then
 		    // What the hell is going on here?
 		    CleanupRequest(Request)
 		    Return
 		  End If
 		  
-		  Dim RemotePath As Text = URL.Mid(BaseURL.Length)
+		  Dim RemotePath As String = URL.Middle(BaseURL.Length)
 		  Dim LocalFile As FolderItem = LocalFile(RemotePath)
 		  If LocalFile.Exists Then
 		    Try
-		      Dim Details As Xojo.Core.Dictionary = Response.JSON
+		      Dim Details As Dictionary = Response.JSON
 		      LocalFile.ModificationDate = NewDateFromSQLDateTime(Details.Value("modified")).LocalTime
 		    Catch Err As RuntimeException
 		      
@@ -106,7 +106,7 @@ Protected Module UserCloud
 		Protected Function Delete(RemotePath As String) As Boolean
 		  Dim LocalFile As FolderItem = LocalFile(RemotePath, False)
 		  If LocalFile <> Nil And LocalFile.DeepDelete Then
-		    SendRequest(New BeaconAPI.Request("file" + RemotePath.ToText, "DELETE", AddressOf Callback_DeleteFile))
+		    SendRequest(New BeaconAPI.Request("file" + RemotePath, "DELETE", AddressOf Callback_DeleteFile))
 		    Sync()
 		    Return True
 		  End If
@@ -170,7 +170,7 @@ Protected Module UserCloud
 		  End If
 		  
 		  If RemotePath.Left(1) = "/" Then
-		    RemotePath = RemotePath.Mid(2)
+		    RemotePath = RemotePath.Middle(2)
 		  End If
 		  
 		  Dim LocalFolder As FolderItem = App.ApplicationSupport
@@ -215,7 +215,7 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h21
 		Private Sub RequestFileFrom(LocalFile As FolderItem, RemotePath As String, ModificationDate As Date)
-		  SendRequest(New BeaconAPI.Request("file" + RemotePath.ToText, "GET", AddressOf Callback_GetFile))
+		  SendRequest(New BeaconAPI.Request("file" + RemotePath, "GET", AddressOf Callback_GetFile))
 		  
 		  If Not LocalFile.Exists Then
 		    Dim Stream As BinaryStream = BinaryStream.Create(LocalFile, True)
@@ -296,9 +296,9 @@ Protected Module UserCloud
 		  Dim Compressor As New _GZipString
 		  Contents = Compressor.Compress(Contents, _GZipString.DefaultCompression)
 		  
-		  Dim EncryptedContents As Xojo.Core.MemoryBlock = BeaconEncryption.SymmetricEncrypt(App.IdentityManager.CurrentIdentity.UserCloudKey, Beacon.ConvertMemoryBlock(Contents))
+		  Dim EncryptedContents As MemoryBlock = BeaconEncryption.SymmetricEncrypt(App.IdentityManager.CurrentIdentity.UserCloudKey, Contents)
 		  
-		  SendRequest(New BeaconAPI.Request("file" + RemotePath.ToText, "PUT", EncryptedContents, "application/octet-stream", AddressOf Callback_PutFile))
+		  SendRequest(New BeaconAPI.Request("file" + RemotePath, "PUT", EncryptedContents, "application/octet-stream", AddressOf Callback_PutFile))
 		  
 		  Dim ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "PUT"

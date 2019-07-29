@@ -3,7 +3,7 @@ Private Class Invocation
 	#tag Method, Flags = &h0
 		Sub Constructor(Notification As NotificationKit.Notification, Receiver As NotificationKit.Receiver)
 		  Self.mNotification = Notification
-		  Self.mReceiver = Xojo.Core.WeakRef.Create(Receiver)
+		  Self.mReceiver = New WeakRef(Receiver)
 		End Sub
 	#tag EndMethod
 
@@ -22,7 +22,7 @@ Private Class Invocation
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mReceiver As Xojo.Core.WeakRef
+		Private mReceiver As WeakRef
 	#tag EndProperty
 
 
@@ -33,6 +33,7 @@ Private Class Invocation
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -40,18 +41,23 @@ Private Class Invocation
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -59,6 +65,7 @@ Private Class Invocation
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

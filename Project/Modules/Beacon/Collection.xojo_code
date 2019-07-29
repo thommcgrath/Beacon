@@ -1,18 +1,9 @@
 #tag Class
 Protected Class Collection
-Implements  Countable
+Implements Countable, Beacon.Countable, Iterable
 	#tag Method, Flags = &h0
-		Sub Append(Item As Auto)
+		Sub Append(Item As Variant)
 		  Self.mItems.Append(Item)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(Items() As Auto)
-		  Self.Constructor(Items.Ubound)
-		  For I As Integer = 0 To Items.Ubound
-		    Self.mItems(I) = Items(I)
-		  Next
 		End Sub
 	#tag EndMethod
 
@@ -23,10 +14,19 @@ Implements  Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Xojo.Core.Iterable)
+		Sub Constructor(Source As Iterable)
 		  Self.Constructor(-1)
-		  For Each Item As Auto In Source
+		  For Each Item As Variant In Source
 		    Self.mItems.Append(Item)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Items() As Variant)
+		  Self.Constructor(Items.Ubound)
+		  For I As Integer = 0 To Items.Ubound
+		    Self.mItems(I) = Items(I)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -38,15 +38,7 @@ Implements  Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetIterator() As Xojo.Core.Iterator
-		  // Part of the Xojo.Core.Iterable interface.
-		  
-		  Return New Beacon.CollectionIterator(Self)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IndexOf(Item As Auto) As Integer
+		Function IndexOf(Item As Variant) As Integer
 		  For I As Integer = 0 To Self.mItems.Ubound
 		    If Self.mItems(I) = Item Then
 		      Return I
@@ -57,9 +49,17 @@ Implements  Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Insert(Index As Integer, Item As Auto)
+		Sub Insert(Index As Integer, Item As Variant)
 		  Self.mItems.Insert(Index, Item)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Iterator() As Iterator
+		  // Part of the Iterable interface.
+		  
+		  Return New Beacon.GenericIterator(Self.mItems)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -69,13 +69,13 @@ Implements  Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Subscript(Index As Integer) As Auto
+		Function Operator_Subscript(Index As Integer) As Variant
 		  Return Self.mItems(Index)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Operator_Subscript(Index As Integer, Assigns Value As Auto)
+		Sub Operator_Subscript(Index As Integer, Assigns Value As Variant)
 		  Self.mItems(Index) = Value
 		End Sub
 	#tag EndMethod
@@ -94,11 +94,51 @@ Implements  Countable
 
 
 	#tag Property, Flags = &h1
-		Protected mItems() As Auto
+		Protected mItems() As Variant
 	#tag EndProperty
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
 #tag EndClass

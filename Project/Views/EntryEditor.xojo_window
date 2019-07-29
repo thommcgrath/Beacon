@@ -608,7 +608,7 @@ End
 
 	#tag Event
 		Sub Open()
-		  Dim PreferredSize As Xojo.Core.Size = Preferences.EntryEditorSize
+		  Dim PreferredSize As Size = Preferences.EntryEditorSize
 		  
 		  Self.Picker.Tags = LocalData.SharedInstance.AllTags(Beacon.CategoryEngrams)
 		  Self.Picker.Spec = Preferences.SelectedTag(Beacon.CategoryEngrams, "Looting")
@@ -623,7 +623,7 @@ End
 
 	#tag Event
 		Sub Resized()
-		  Preferences.EntryEditorSize = New Xojo.Core.Size(Self.Width, Self.Height)
+		  Preferences.EntryEditorSize = New Size(Self.Width, Self.Height)
 		End Sub
 	#tag EndEvent
 
@@ -635,8 +635,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Mods As Beacon.TextList)
-		  Self.mSelectedEngrams = New Xojo.Core.Dictionary
+		Private Sub Constructor(Mods As Beacon.StringList)
+		  Self.mSelectedEngrams = New Dictionary
 		  Self.mMods = Mods
 		  Self.mSettingUp = True
 		  Super.Constructor
@@ -646,15 +646,15 @@ End
 	#tag Method, Flags = &h21
 		Private Sub EnableButtons()
 		  Dim Enabled As Boolean = Self.EngramSearcher.ThreadState = Thread.ThreadStates.NotRunning
-		  Self.ActionButton.Enabled = Enabled And Self.mSelectedEngrams.Count >= 1
+		  Self.ActionButton.Enabled = Enabled And Self.mSelectedEngrams.KeyCount >= 1
 		  Self.CancelButton.Enabled = Enabled
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub ListUnknownEngrams()
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mSelectedEngrams
-		    Dim Path As Text = Entry.Key
+		  For Each Entry As DictionaryEntry In Self.mSelectedEngrams
+		    Dim Path As String = Entry.Key
 		    Dim Option As Beacon.SetEntryOption = Entry.Value
 		    
 		    Dim Idx As Integer = Self.mEngramRowIndexes.Lookup(Path, -1)
@@ -673,7 +673,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Mods As Beacon.TextList, Sources() As Beacon.SetEntry = Nil, Prefilter As String = "") As Beacon.SetEntry()
+		Shared Function Present(Parent As Window, Mods As Beacon.StringList, Sources() As Beacon.SetEntry = Nil, Prefilter As String = "") As Beacon.SetEntry()
 		  If Sources <> Nil And UBound(Sources) > 0 Then
 		    // Need to use the multi-edit window
 		    Return EntryMultiEditor.Present(Parent, Sources)
@@ -709,7 +709,7 @@ End
 		  
 		  Self.FilterField.Value = Prefilter
 		  Self.UpdateFilter()
-		  SingleEntryCheck.Value = Self.mSelectedEngrams.Count > 1
+		  SingleEntryCheck.Value = Self.mSelectedEngrams.KeyCount > 1
 		  
 		  For I As Integer = 0 To EngramList.RowCount - 1
 		    If EngramList.CellCheck(I, 0) Then
@@ -726,13 +726,13 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
 		  Dim SearchText As String = Self.FilterField.Value
-		  Dim Tags As Text = Self.Picker.Spec.ToText
+		  Dim Tags As String = Self.Picker.Spec
 		  
-		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText.ToText, Self.mMods, Tags)
+		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText, Self.mMods, Tags)
 		  EngramList.DeleteAllRows
 		  
 		  Dim PerfectMatch As Boolean
-		  Self.mEngramRowIndexes = New Xojo.Core.Dictionary
+		  Self.mEngramRowIndexes = New Dictionary
 		  For Each Engram As Beacon.Engram In Engrams
 		    Dim Weight As String = ""
 		    If Self.mSelectedEngrams.HasKey(Engram.Path) Then
@@ -760,7 +760,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateSelectionUI()
-		  If Self.mSelectedEngrams.Count > 1 And Self.AllowMultipleEntries Then
+		  If Self.mSelectedEngrams.KeyCount > 1 And Self.AllowMultipleEntries Then
 		    Self.SingleEntryCheck.Visible = True
 		    Self.EngramList.Height = Self.SingleEntryCheck.Top - (12 + Self.EngramList.Top)
 		  Else
@@ -775,14 +775,14 @@ End
 		Private Sub UpdateSimulation()
 		  SimulationGroup.Caption = "Simulation"
 		  SimulatedResultsList.DeleteAllRows
-		  If Self.mSelectedEngrams.Count = 0 Then
+		  If Self.mSelectedEngrams.KeyCount = 0 Then
 		    Return
 		  End If
 		  
-		  Dim FullSimulation As Boolean = Self.mSelectedEngrams.Count = 1 Or Self.AllowMultipleEntries = False Or (Self.SingleEntryCheck.Value And Self.SingleEntryCheck.Visible)
+		  Dim FullSimulation As Boolean = Self.mSelectedEngrams.KeyCount = 1 Or Self.AllowMultipleEntries = False Or (Self.SingleEntryCheck.Value And Self.SingleEntryCheck.Visible)
 		  
 		  Dim Entry As New Beacon.SetEntry
-		  For Each Item As Xojo.Core.DictionaryEntry In Self.mSelectedEngrams
+		  For Each Item As DictionaryEntry In Self.mSelectedEngrams
 		    Dim Option As Beacon.SetEntryOption = Item.Value
 		    Entry.Append(Option)
 		    If Not FullSimulation Then
@@ -794,9 +794,9 @@ End
 		  EntryPropertiesEditor1.ApplyTo(Entry)
 		  
 		  Dim Selections() As Beacon.SimulatedSelection = Entry.Simulate
-		  Dim GroupedItems As New Xojo.Core.Dictionary
+		  Dim GroupedItems As New Dictionary
 		  For Each Selection As Beacon.SimulatedSelection In Selections
-		    Dim Description As Text = Selection.Description
+		    Dim Description As String = Selection.Description
 		    Dim Quantity As Integer
 		    If GroupedItems.HasKey(Description) Then
 		      Quantity = GroupedItems.Value(Description)
@@ -804,8 +804,8 @@ End
 		    GroupedItems.Value(Description) = Quantity + 1
 		  Next
 		  
-		  For Each Item As Xojo.Core.DictionaryEntry In GroupedItems
-		    Dim Description As Text = Item.Key
+		  For Each Item As DictionaryEntry In GroupedItems
+		    Dim Description As String = Item.Key
 		    Dim Quantity As Integer = Item.Value
 		    SimulatedResultsList.AddRow(Str(Quantity, "0") + "x " + Description)
 		  Next
@@ -818,11 +818,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		mEngramRowIndexes As Xojo.Core.Dictionary
+		mEngramRowIndexes As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMods As Beacon.TextList
+		Private mMods As Beacon.StringList
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -830,7 +830,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectedEngrams As Xojo.Core.Dictionary
+		Private mSelectedEngrams As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -972,7 +972,7 @@ End
 		    Return
 		  End If
 		  
-		  Preferences.SelectedTag(Beacon.CategoryEngrams, "Looting") = Me.Spec.ToText
+		  Preferences.SelectedTag(Beacon.CategoryEngrams, "Looting") = Me.Spec
 		  Self.UpdateFilter
 		End Sub
 	#tag EndEvent
@@ -1005,12 +1005,12 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  If Self.mSelectedEngrams.Count = 0 Then
+		  If Self.mSelectedEngrams.KeyCount = 0 Then
 		    Return
 		  End If
 		  
 		  Dim Options() As Beacon.SetEntryOption
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mSelectedEngrams
+		  For Each Entry As DictionaryEntry In Self.mSelectedEngrams
 		    Options.Append(Entry.Value)
 		  Next
 		  

@@ -15,8 +15,8 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mOverrides
-		    Dim ClassString As Text = Entry.Key
+		  For Each Entry As DictionaryEntry In Self.mOverrides
+		    Dim ClassString As String = Entry.Key
 		    Dim Rate As Double = Entry.Value
 		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "HarvestResourceItemAmountClassMultipliers", "(ClassName=""" + ClassString + """,Multiplier=" + Rate.PrettyText + ")"))
 		  Next
@@ -38,7 +38,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
 		  // There is a slight performance impact here, since DoubleValue will check HasKey too,
@@ -55,12 +55,12 @@ Inherits Beacon.ConfigGroup
 		  Self.mPlayerHarvestingDamageMultiplier = Dict.DoubleValue("Player Harvesting Damage Multiplier", 1.0)
 		  Self.mDinoHarvestingDamageMultiplier = Dict.DoubleValue("Dino Harvesting Damage Multiplier", 1.0)
 		  
-		  Self.mOverrides = Dict.DictionaryValue("Overrides", New Xojo.Core.Dictionary)
+		  Self.mOverrides = Dict.DictionaryValue("Overrides", New Dictionary)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
+		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
 		  Dict.Value("Harvest Amount Multiplier") = Self.mHarvestAmountMultiplier
@@ -75,9 +75,9 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Function Classes() As Text()
-		  Dim Results() As Text
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mOverrides
+		Function Classes() As String()
+		  Dim Results() As String
+		  For Each Entry As DictionaryEntry In Self.mOverrides
 		    Results.Append(Entry.Key)
 		  Next
 		  Return Results
@@ -85,7 +85,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As Text
+		Shared Function ConfigName() As String
 		  Return "HarvestRates"
 		End Function
 	#tag EndMethod
@@ -99,18 +99,18 @@ Inherits Beacon.ConfigGroup
 		  Self.mHarvestHealthMultiplier = 1.0
 		  Self.mPlayerHarvestingDamageMultiplier = 1.0
 		  Self.mUseOptimizedRates = False
-		  Self.mOverrides = New Xojo.Core.Dictionary
+		  Self.mOverrides = New Dictionary
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Count() As UInteger
-		  Return Self.mOverrides.Count
+		  Return Self.mOverrides.KeyCount
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.HarvestRates
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.HarvestRates
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
@@ -121,7 +121,7 @@ Inherits Beacon.ConfigGroup
 		  Dim DinoHarvestingDamageMultiplier As Double = ParsedData.DoubleValue("DinoHarvestingDamageMultiplier", 1.0, True)
 		  Dim ClampResourceHarvestDamage As Boolean = ParsedData.BooleanValue("ClampResourceHarvestDamage", False, True)
 		  Dim UseOptimizedRates As Boolean = False
-		  Dim Overrides As New Xojo.Core.Dictionary
+		  Dim Overrides As New Dictionary
 		  
 		  If CommandLineOptions <> Nil And CommandLineOptions.HasKey("UseOptimizedHarvestingHealth") Then
 		    Try
@@ -131,26 +131,26 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  
 		  If ParsedData.HasKey("HarvestResourceItemAmountClassMultipliers") Then
-		    Dim AutoValue As Auto = ParsedData.Value("HarvestResourceItemAmountClassMultipliers")
-		    Dim Dicts() As Xojo.Core.Dictionary
-		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(AutoValue)
+		    Dim AutoValue As Variant = ParsedData.Value("HarvestResourceItemAmountClassMultipliers")
+		    Dim Dicts() As Dictionary
+		    Dim Info As Introspection.TypeInfo = Introspection.GetType(AutoValue)
 		    Select Case Info.FullName
-		    Case "Xojo.Core.Dictionary"
+		    Case "Dictionary"
 		      Dicts.Append(AutoValue)
 		    Case "Auto()"
-		      Dim ArrayValue() As Auto = AutoValue
-		      For Each Dict As Xojo.Core.Dictionary In ArrayValue
+		      Dim ArrayValue() As Variant = AutoValue
+		      For Each Dict As Dictionary In ArrayValue
 		        Dicts.Append(Dict)
 		      Next
 		    End Select
 		    
-		    For Each Dict As Xojo.Core.Dictionary In Dicts
+		    For Each Dict As Dictionary In Dicts
 		      If Not Dict.HasAllKeys("ClassName", "Multiplier") Then
 		        Continue
 		      End If   
 		      
 		      Dim Multiplier As Double = Dict.Value("Multiplier")
-		      Dim ClassString As Text = Dict.Value("ClassName")
+		      Dim ClassString As String = Dict.Value("ClassName")
 		      
 		      If ClassString <> "" And ClassString.EndsWith("_C") And Multiplier > 0 Then
 		        Overrides.Value(ClassString) = Multiplier
@@ -169,7 +169,7 @@ Inherits Beacon.ConfigGroup
 		  Config.mOverrides = Overrides
 		  
 		  // ... so it can be checked here to determine if any of the values are non-default
-		  If Config.Modified Or Config.mOverrides.Count > 0 Then
+		  If Config.Modified Or Config.mOverrides.KeyCount > 0 Then
 		    Config.Modified = False
 		    Return Config
 		  End If
@@ -177,13 +177,13 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Override(ClassString As Text) As Double
+		Function Override(ClassString As String) As Double
 		  Return Self.mOverrides.Lookup(ClassString, 0)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Override(ClassString As Text, Assigns Rate As Double)
+		Sub Override(ClassString As String, Assigns Rate As Double)
 		  If Rate <= 0 And Self.mOverrides.HasKey(ClassString) Then
 		    Self.mOverrides.Remove(ClassString)
 		    Self.Modified = True
@@ -196,7 +196,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function UBound() As Integer
-		  Return Self.mOverrides.Count - 1
+		  Return Self.mOverrides.KeyCount - 1
 		End Function
 	#tag EndMethod
 
@@ -286,7 +286,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOverrides As Xojo.Core.Dictionary
+		Private mOverrides As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

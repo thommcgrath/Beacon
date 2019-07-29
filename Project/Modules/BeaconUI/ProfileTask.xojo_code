@@ -36,7 +36,7 @@ Inherits AnimationKit.Task
 	#tag EndMethod
 
 	#tag Method, Flags = &h1000
-		Sub Constructor(Target As BeaconUI.ProfileAnimator, Identifier As Text, StartProfile As BeaconUI.ColorProfile, EndProfile As BeaconUI.ColorProfile)
+		Sub Constructor(Target As BeaconUI.ProfileAnimator, Identifier As String, StartProfile As BeaconUI.ColorProfile, EndProfile As BeaconUI.ColorProfile)
 		  Self.Constructor()
 		  Self.StartProfile = StartProfile
 		  Self.EndProfile = EndProfile
@@ -59,7 +59,7 @@ Inherits AnimationKit.Task
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Identifier As Text
+		Identifier As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h0

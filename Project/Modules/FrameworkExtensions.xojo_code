@@ -17,16 +17,16 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function AddSuffix(Extends Title As Text, Suffix As Text) As Text
-		  Dim Words() As Text = Title.Split(" ")
+		Function AddSuffix(Extends Title As String, Suffix As String) As String
+		  Dim Words() As String = Title.Split(" ")
 		  If Words.Ubound >= 0 And Words(Words.Ubound) = Suffix Then
 		    Words.Append("2")
 		  ElseIf Words.Ubound >= 1 And Words(Words.Ubound - 1) = Suffix Then
 		    Dim CopyNum As Integer
 		    #Pragma BreakOnExceptions Off
 		    Try
-		      CopyNum = Integer.FromText(Words(Words.Ubound), Xojo.Core.Locale.Raw) + 1
-		      Words(Words.Ubound) = CopyNum.ToText(Xojo.Core.Locale.Raw, "0")
+		      CopyNum = Integer.FromString(Words(Words.Ubound), Locale.Raw) + 1
+		      Words(Words.Ubound) = CopyNum.ToString(Locale.Raw, "0")
 		    Catch Err As RuntimeException
 		      Words.Append(Suffix)
 		    End Try
@@ -38,16 +38,27 @@ Protected Module FrameworkExtensions
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Append(Extends Target As MemoryBlock, NewData As MemoryBlock)
+		  If NewData = Nil Then
+		    Return
+		  End If
+		  
+		  Target.Size = Target.Size + NewData.Size
+		  Target.StringValue(Target.Size - NewData.Size, NewData.Size) = NewData.StringValue(0, NewData.Size)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
-		Private Function AutoToDouble(Value As Auto, ResolveWithFirst As Boolean = False) As Double
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
+		Private Function AutoToDouble(Value As Variant, ResolveWithFirst As Boolean = False) As Double
+		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
 		  Select Case Info.FullName
 		  Case "Text"
-		    Dim TextValue As Text = Value
+		    Dim TextValue As String = Value
 		    If TextValue = "" Then
 		      Return 0
 		    Else
-		      Return Double.FromText(TextValue)
+		      Return Double.FromString(TextValue)
 		    End If
 		  Case "Double"
 		    Dim DoubleValue As Double = Value
@@ -62,9 +73,9 @@ Protected Module FrameworkExtensions
 		    Dim UIntegerValue As UInt64 = Value
 		    Return UIntegerValue
 		  Case "Auto()"
-		    Dim Arr() As Auto = Value
+		    Dim Arr() As Variant = Value
 		    Dim Possibles() As Double
-		    For Each Possible As Auto In Arr
+		    For Each Possible As Variant In Arr
 		      Dim Decoded As Double = AutoToDouble(Possible, ResolveWithFirst)
 		      Possibles.Append(Decoded)
 		    Next
@@ -116,7 +127,38 @@ Protected Module FrameworkExtensions
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag Method, Flags = &h0
+		Function Clone(Source As Dictionary) As Dictionary
+		  // This method only exists because the built-in clone method causes crashes.
+		  // However, this only handles basic cases.
+		  
+		  If Source = Nil Then
+		    // That was easy
+		    Return Nil
+		  End If
+		  
+		  Dim Clone As New Dictionary
+		  For Each Entry As DictionaryEntry In Source
+		    If Entry.Value <> Nil And Entry.Value IsA Dictionary Then
+		      Clone.Value(Entry.Key) = Dictionary(Entry.Value).Clone()
+		    Else
+		      Clone.Value(Entry.Key) = Entry.Value
+		    End If
+		  Next
+		  Return Clone
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Clone(Extends Source As MemoryBlock) As MemoryBlock
+		  Dim Replica As New MemoryBlock(Source.Size)
+		  Replica.LittleEndian = Source.LittleEndian
+		  Replica.StringValue(0, Replica.Size) = Source.StringValue(0, Source.Size)
+		  Return Replica
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Clone(Extends Source() As String) As String()
 		  Dim Result() As String
 		  Redim Result(Source.Ubound)
@@ -128,38 +170,8 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Clone(Extends Source() As Text) As Text()
-		  Dim Result() As Text
-		  Redim Result(Source.Ubound)
-		  For I As Integer = 0 To Source.Ubound
-		    Result(I) = Source(I)
-		  Next
-		  Return Result
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Convert(Extends Source As Date) As Xojo.Core.Date
-		  Return New Xojo.Core.Date(Source.SecondsFrom1970, New Xojo.Core.TimeZone(Source.Timezone.SecondsFromGMT))
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Convert(Extends Source As MemoryBlock) As Xojo.Core.MemoryBlock
-		  Dim Temp As New Xojo.Core.MemoryBlock(Source)
-		  Return Temp.Left(Source.Size)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Convert(Extends Source As Xojo.Core.Date) As Date
-		  Return New Date(Source.SecondsFrom1970, New TimeZone(Source.TimeZone.SecondsFromGMT))
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Convert(Extends Source As Xojo.Core.MemoryBlock) As MemoryBlock
-		  Return CType(Source.Data, MemoryBlock).StringValue(0, Source.Size)
+		Function Compare(Extends LeftString As String, RightString As String, CompareMode As Integer = 0) As Integer
+		  Return StrComp(LeftString, RightString, CompareMode)
 		End Function
 	#tag EndMethod
 
@@ -207,18 +219,18 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DoubleValue(Extends Dict As Xojo.Core.Dictionary, Key As Auto, ResolveWithFirst As Boolean = False) As Double
-		  Dim Value As Auto = Dict.Value(Key)
+		Function DoubleValue(Extends Dict As Dictionary, Key As Variant, ResolveWithFirst As Boolean = False) As Double
+		  Dim Value As Variant = Dict.Value(Key)
 		  Return AutoToDouble(Value, ResolveWithFirst)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Explanation(Extends Err As RuntimeException) As Text
+		Function Explanation(Extends Err As RuntimeException) As String
 		  If Err.Reason <> "" Then
 		    Return Err.Reason
 		  ElseIf Err.Message <> "" Then
-		    Return Err.Message.ToText
+		    Return Err.Message
 		  Else
 		    Return ""
 		  End If
@@ -238,8 +250,19 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IntegerValue(Extends Value As Auto) As Integer
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
+		Function HasAllKeys(Extends Dict As Dictionary, ParamArray Keys() As Variant) As Boolean
+		  For Each Key As Variant In Keys
+		    If Dict.HasKey(Key) = False Then
+		      Return False
+		    End If
+		  Next
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IntegerValue(Extends Value As Variant) As Integer
+		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
 		  Select Case Info.Name
 		  Case "Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64"
 		    Return Value
@@ -250,8 +273,8 @@ Protected Module FrameworkExtensions
 		    Dim StringValue As String = Value
 		    Return Val(StringValue)
 		  Case "Text"
-		    Dim TextValue As Text = Value
-		    Return Integer.FromText(TextValue)
+		    Dim TextValue As String = Value
+		    Return Integer.FromString(TextValue)
 		  Else
 		    Return 0
 		  End Select
@@ -271,31 +294,15 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Join(Extends Source() As Text, Delimiter As Text) As Text
-		  #if TargetWin32
-		    // Thanks to bug <feedback://showreport?report_id=54183>
-		    Dim Arr() As String
-		    Redim Arr(Source.Ubound)
-		    For I As Integer = 0 To Source.Ubound
-		      Arr(I) = Source(I)
-		    Next
-		    Return Arr.Join(Delimiter).ToText
-		  #endif
-		  
-		  Return Text.Join(Source, Delimiter)
+		Function Left(Extends Source As MemoryBlock, Length As UInteger) As MemoryBlock
+		  Return Source.Middle(0, Length)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Localize(Extends Rect As Xojo.Core.Rect, Point As Xojo.Core.Point) As Xojo.Core.Point
-		  Return New Xojo.Core.Point(Point.X - Rect.Origin.X, Point.Y - Rect.Origin.Y)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Localize(Extends Rect As Xojo.Core.Rect, OtherRect As Xojo.Core.Rect) As Xojo.Core.Rect
-		  Return New Xojo.Core.Rect(Rect.Localize(OtherRect.Origin), OtherRect.Size)
-		End Function
+		Sub Left(Extends Target As MemoryBlock, Length As UInteger, Assigns NewData As MemoryBlock)
+		  Target.Middle(0, Length) = NewData
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -303,6 +310,45 @@ Protected Module FrameworkExtensions
 		  Dim Now As New Date
 		  Return New Date(Source.SecondsFrom1970, Now.Timezone)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Middle(Extends Source As MemoryBlock, Offset As UInteger, Length As UInteger) As MemoryBlock
+		  Offset = Min(Offset, Source.Size)
+		  Dim Bound As UInteger = Min(Offset + Length, Source.Size)
+		  Length = Bound - Offset
+		  
+		  Dim Mem As New MemoryBlock(Length)
+		  Mem.LittleEndian = Source.LittleEndian
+		  Mem.StringValue(0, Length) = Source.StringValue(Offset, Length)
+		  Return Mem
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Middle(Extends Source As MemoryBlock, Offset As UInteger, Length As UInteger, Assigns NewData As MemoryBlock)
+		  If NewData = Nil Then
+		    Return
+		  End If
+		  
+		  Offset = Min(Offset, Source.Size)
+		  Dim Bound As UInteger = Min(Offset + Length, Source.Size)
+		  Dim TailLength As UInteger = Source.Size - Bound
+		  Length = Bound - Offset
+		  Dim Delta As Integer = NewData.Size - Length
+		  
+		  If TailLength > 0 Then
+		    If Delta > 0 Then
+		      Source.Size = Source.Size + Delta
+		    End If
+		    Source.StringValue(Bound + Delta, TailLength) = Source.StringValue(Bound, TailLength)
+		    If Delta < 0 Then
+		      Source.Size = Source.Size + Delta
+		    End If
+		  End If
+		  
+		  Source.StringValue(Offset, Length) = NewData.StringValue(0, NewData.Size)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -346,12 +392,27 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function Read(Extends File As FolderItem, Encoding As TextEncoding) As String
-		  Dim Mem As MemoryBlock = File.Read
-		  If Mem = Nil Then
+		  Try
+		    Dim Stream As TextInputStream = TextInputStream.Open(File)
+		    Dim Contents As String = Stream.ReadAll(Encoding)
+		    Stream.Close
+		    Return Contents
+		  Catch Err As RuntimeException
 		    Return ""
-		  End If
-		  Return Mem.StringValue(0, Mem.Size).DefineEncoding(Encoding)
+		  End Try
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Right(Extends Source As MemoryBlock, Length As UInteger) As MemoryBlock
+		  Return Source.Middle(Source.Size - Length, Length)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Right(Extends Target As MemoryBlock, Length As UInteger, Assigns NewData As MemoryBlock)
+		  Target.Middle(Target.Size - Length, Length) = NewData
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -420,13 +481,13 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ToHex(Extends Source As Color) As Text
+		Function ToHex(Extends Source As Color) As String
 		  Return Source.Red.ToHex(2).Lowercase + Source.Green.ToHex(2).Lowercase + Source.Blue.ToHex(2).Lowercase + Source.Alpha.ToHex(2).Lowercase
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function ToString(Extends Source() As Text) As String()
+		Function ToString(Extends Source() As String) As String()
 		  Dim Result() As String
 		  Redim Result(Source.Ubound)
 		  For I As Integer = 0 To Source.Ubound
@@ -436,22 +497,11 @@ Protected Module FrameworkExtensions
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function ToText(Extends Source() As String) As Text()
-		  Dim Result() As Text
-		  Redim Result(Source.Ubound)
-		  For I As Integer = 0 To Source.Ubound
-		    Result(I) = Source(I).ToText
-		  Next
-		  Return Result
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
-		Function ToText(Extends Source As Xojo.Core.MemoryBlock) As Text
-		  Dim Content As String = CType(Source.Data, Global.MemoryBlock).StringValue(0, Source.Size)
-		  Content = Content.GuessEncoding
-		  Return Content.ToText
+		Function TotalSeconds(Extends Interval As DateInterval) As UInt64
+		  Dim Now As New Date
+		  Dim Future As Date = Now.AddInterval(Interval)
+		  Return Future.SecondsFrom1970 - Now.SecondsFrom1970
 		End Function
 	#tag EndMethod
 
@@ -500,24 +550,6 @@ Protected Module FrameworkExtensions
 		    Lock.Leave
 		    Return False
 		  End Try
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Write(Extends File As FolderItem, Source As Text, Encoding As Xojo.Core.TextEncoding) As Boolean
-		  Dim Mem As Xojo.Core.MemoryBlock
-		  Try
-		    Mem = Encoding.ConvertTextToData(Source, False)
-		  Catch Err As RuntimeException
-		    Return False
-		  End Try
-		  Return File.Write(Mem.Convert)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Write(Extends File As FolderItem, Contents As Xojo.Core.MemoryBlock) As Boolean
-		  Return File.Write(Contents.Convert)
 		End Function
 	#tag EndMethod
 

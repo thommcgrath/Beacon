@@ -52,8 +52,8 @@ Protected Class Frame
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Dimensions() As Xojo.Core.Size
-		  Return New Xojo.Core.Size(Self.Image.Width, Self.Image.Height)
+		Function Dimensions() As Size
+		  Return New Size(Self.Image.Width, Self.Image.Height)
 		End Function
 	#tag EndMethod
 
@@ -114,8 +114,11 @@ Protected Class Frame
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="Image"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="iOSImage"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -123,6 +126,7 @@ Protected Class Frame
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -130,23 +134,31 @@ Protected Class Frame
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="RetinaImage"
+			Visible=false
 			Group="Behavior"
+			InitialValue=""
 			Type="iOSImage"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -154,6 +166,7 @@ Protected Class Frame
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

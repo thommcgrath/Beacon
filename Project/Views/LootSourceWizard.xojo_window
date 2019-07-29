@@ -1400,7 +1400,7 @@ End
 		  Next
 		  Beacon.Sort(AllowedLootSources)
 		  
-		  Dim Selections() As Text
+		  Dim Selections() As String
 		  For I As Integer = 0 To Self.SourceList.RowCount - 1
 		    If Not Self.SourceList.Selected(I) Then
 		      Continue
@@ -1465,7 +1465,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Config As BeaconConfigs.LootDrops, Mask As UInt64, Mods As Beacon.TextList, Source As Beacon.LootSource, Duplicate As Boolean)
+		Private Sub Constructor(Config As BeaconConfigs.LootDrops, Mask As UInt64, Mods As Beacon.StringList, Source As Beacon.LootSource, Duplicate As Boolean)
 		  // Calling the overridden superclass constructor.
 		  Self.mConfig = Config
 		  Self.mMask = Mask
@@ -1477,7 +1477,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Config As BeaconConfigs.LootDrops, Mask As UInt64, Mods As Beacon.TextList, Source As Beacon.LootSource = Nil, Duplicate As Boolean = False) As Boolean
+		Shared Function Present(Parent As Window, Config As BeaconConfigs.LootDrops, Mask As UInt64, Mods As Beacon.StringList, Source As Beacon.LootSource = Nil, Duplicate As Boolean = False) As Boolean
 		  If Parent = Nil Or Config = Nil Then
 		    Return False
 		  End If
@@ -1594,7 +1594,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMods As Beacon.TextList
+		Private mMods As Beacon.StringList
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1690,7 +1690,7 @@ End
 #tag Events DefineActionButton
 	#tag Event
 		Sub Action()
-		  Dim ClassString As Text = Self.DefineClassField.Value.ToText.Trim
+		  Dim ClassString As String = Self.DefineClassField.Value.Trim
 		  If Not ClassString.EndsWith("_C") Then
 		    Self.ShowAlert("Invalid class string", "Ark class strings always end in _C. Check your class string and try again.")
 		    Return
@@ -1701,7 +1701,7 @@ End
 		  If Source <> Nil Then
 		    Destination = New Beacon.MutableLootSource(Source)
 		  Else
-		    Dim Label As Text = Self.DefineNameField.Value.ToText.Trim
+		    Dim Label As String = Self.DefineNameField.Value.Trim
 		    If Label = "" Then
 		      Self.ShowAlert("No label provided", "A loot source without a name isn't very useful is it? Enter a name and try again.")
 		      Return
@@ -1751,7 +1751,7 @@ End
 		  Dim AppendMode As Boolean = If(Self.mSource <> Nil, Self.mSource.AppendMode, False)
 		  Dim ReconfigurePresets As Boolean = Self.CustomizeReconfigureCheckbox.Value
 		  
-		  Dim AllowedPresets(), AdditionalPresets() As Text
+		  Dim AllowedPresets(), AdditionalPresets() As String
 		  For I As Integer = 0 To Self.CustomizePresetsList.RowCount - 1
 		    If Not Self.CustomizePresetsList.CellCheck(I, 0) Then
 		      Continue
@@ -1786,7 +1786,7 @@ End
 		    Next
 		    
 		    // Add newly selected presets
-		    For Each PresetID As Text In AdditionalPresets
+		    For Each PresetID As String In AdditionalPresets
 		      Dim Preset As Beacon.Preset = LocalData.SharedInstance.GetPreset(PresetID)
 		      If Preset = Nil Then
 		        Continue

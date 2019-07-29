@@ -17,7 +17,7 @@ Inherits Timer
 
 
 	#tag Property, Flags = &h0
-		Argument As Auto
+		Argument As Variant
 	#tag EndProperty
 
 	#tag Property, Flags = &h0

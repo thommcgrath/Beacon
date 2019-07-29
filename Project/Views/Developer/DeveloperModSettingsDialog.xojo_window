@@ -361,8 +361,8 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Self.WorkshopMod.PullURL = Self.PullURLField.Value.ToText
-		  Dim Payload As Text = Xojo.Data.GenerateJSON(Self.WorkshopMod.AsDictionary)
+		  Self.WorkshopMod.PullURL = Self.PullURLField.Value
+		  Dim Payload As String = Beacon.GenerateJSON(Self.WorkshopMod.AsDictionary, False)
 		  
 		  Dim Request As New BeaconAPI.Request("mod.php", "POST", Payload, "application/json", AddressOf APICallback_SaveMod)
 		  Request.Sign(App.IdentityManager.CurrentIdentity)

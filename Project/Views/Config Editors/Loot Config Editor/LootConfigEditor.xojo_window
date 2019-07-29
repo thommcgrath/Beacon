@@ -409,13 +409,13 @@ End
 		    Return
 		  End If
 		  
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Issue.UserData)
+		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Issue.UserData)
 		  Select Case Info.FullName
 		  Case "Beacon.LootSource"
 		    Dim Source As Beacon.LootSource = Issue.UserData
 		    Call Self.GoToChild(Source)
-		  Case "Xojo.Core.Dictionary"
-		    Dim Dict As Xojo.Core.Dictionary = Issue.UserData
+		  Case "Dictionary"
+		    Dim Dict As Dictionary = Issue.UserData
 		    Dim Source As Beacon.LootSource
 		    Dim Set As Beacon.ItemSet
 		    Dim Entry As Beacon.SetEntry
@@ -517,7 +517,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.LootDrops
-		  Static ConfigName As Text = BeaconConfigs.LootDrops.ConfigName
+		  Static ConfigName As String = BeaconConfigs.LootDrops.ConfigName
 		  
 		  Dim Document As Beacon.Document = Self.Document
 		  Dim Config As BeaconConfigs.LootDrops
@@ -541,7 +541,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigLabel() As Text
+		Function ConfigLabel() As String
 		  Return Language.LabelForConfig(BeaconConfigs.LootDrops.ConfigName)
 		End Function
 	#tag EndMethod
@@ -649,7 +649,7 @@ End
 		  
 		  Dim Config As BeaconConfigs.LootDrops = Self.Config(False)
 		  Dim CurrentSources() As Beacon.LootSource = Config.DefinedSources
-		  Dim Map As New Xojo.Core.Dictionary
+		  Dim Map As New Dictionary
 		  For Each Source As Beacon.LootSource In CurrentSources
 		    Map.Value(Source.ClassString) = True
 		  Next
@@ -679,7 +679,7 @@ End
 		  Dim VisibleSources() As Beacon.LootSource = Self.Config(False).DefinedSources
 		  Beacon.Sort(VisibleSources)
 		  
-		  Dim SelectedClasses() As Text
+		  Dim SelectedClasses() As String
 		  If SelectedSources <> Nil Then
 		    For Each Source As Beacon.LootSource In SelectedSources
 		      SelectedClasses.Append(Source.ClassString)
@@ -917,8 +917,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim Lines() As Text
-		  Dim Dicts() As Xojo.Core.Dictionary
+		  Dim Lines() As String
+		  Dim Dicts() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
 		      Dim Source As Beacon.LootSource = Me.RowTag(I)
@@ -929,36 +929,36 @@ End
 		    End If
 		  Next
 		  
-		  Dim RawData As Text
+		  Dim RawData As String
 		  If UBound(Dicts) = 0 Then
-		    RawData = Xojo.Data.GenerateJSON(Dicts(0))
+		    RawData = Beacon.GenerateJSON(Dicts(0), False)
 		  Else
-		    RawData = Xojo.Data.GenerateJSON(Dicts)
+		    RawData = Beacon.GenerateJSON(Dicts, False)
 		  End If
 		  
 		  Board.AddRawData(RawData, Self.kClipboardType)
-		  Board.Text = Lines.Join(Text.FromUnicodeCodepoint(10))
+		  Board.Text = Lines.Join(Encodings.UTF8.Chr(10))
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
 		  If Board.RawDataAvailable(Self.kClipboardType) Then
 		    Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		    Dim Parsed As Auto
+		    Dim Parsed As Variant
 		    Try
-		      Parsed = Xojo.Data.ParseJSON(Contents.ToText)
-		    Catch Err As Xojo.Data.InvalidJSONException
+		      Parsed = Beacon.ParseJSON(Contents)
+		    Catch Err As RuntimeException
 		      Beep
 		      Return
 		    End Try
 		    
-		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Parsed)
-		    Dim Dicts() As Xojo.Core.Dictionary
-		    If Info.FullName = "Xojo.Core.Dictionary" Then
+		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
+		    Dim Dicts() As Dictionary
+		    If Info.FullName = "Dictionary" Then
 		      Dicts.Append(Parsed)
 		    ElseIf Info.FullName = "Auto()" Then
-		      Dim Values() As Auto = Parsed
-		      For Each Dict As Xojo.Core.Dictionary In Values
+		      Dim Values() As Variant = Parsed
+		      For Each Dict As Dictionary In Values
 		        Dicts.Append(Dict)
 		      Next
 		    Else
@@ -967,7 +967,7 @@ End
 		    End If
 		    
 		    Dim Sources() As Beacon.LootSource
-		    For Each Dict As Xojo.Core.Dictionary In Dicts
+		    For Each Dict As Dictionary In Dicts
 		      Sources.Append(Beacon.LootSource.ImportFromBeacon(Dict))
 		    Next
 		    Self.AddLootSources(Sources)

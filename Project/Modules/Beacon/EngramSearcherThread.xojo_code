@@ -94,17 +94,17 @@ Inherits Beacon.Thread
 		          Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		        End If
 		        
-		        Dim Path As Text = Columns(PathColumnIdx).ToText
-		        Dim Label As Text = Columns(LabelColumnIdx).ToText
+		        Dim Path As String = Columns(PathColumnIdx)
+		        Dim Label As String = Columns(LabelColumnIdx)
 		        Dim Availability As UInt64
-		        Dim Tags() As Text
+		        Dim Tags() As String
 		        If MaskColumnIdx > -1 Then
-		          Availability = UInt64.FromText(Columns(MaskColumnIdx).ToText)
+		          Availability = UInt64.FromString(Columns(MaskColumnIdx))
 		        Else
 		          Availability = AllAvailabilityMask
 		        End If
 		        If TagsColumnIndx > -1 Then
-		          Tags = Columns(TagsColumnIndx).ToText.Split(",")
+		          Tags = Columns(TagsColumnIndx).Split(",")
 		        ElseIf BlueprintColumnIdx > -1 Then
 		          Dim CanBlueprint As Boolean = If(Columns(BlueprintColumnIdx) = "True", True, False)
 		          If CanBlueprint Then
@@ -112,9 +112,9 @@ Inherits Beacon.Thread
 		          End If
 		        End If
 		        
-		        Dim Category As Text = "engrams"
+		        Dim Category As String = "engrams"
 		        If GroupColumnIdx > -1 Then
-		          Category = Columns(GroupColumnIdx).ToText
+		          Category = Columns(GroupColumnIdx)
 		        End If
 		        
 		        Dim Blueprint As Beacon.MutableBlueprint
@@ -220,7 +220,7 @@ Inherits Beacon.Thread
 		    End If
 		    
 		    Dim Command As String = Paths.Value(Key)
-		    Dim Path As Text = Key.ToText
+		    Dim Path As String = Key
 		    Dim Blueprint As Beacon.Blueprint
 		    Select Case Command
 		    Case "giveitem"

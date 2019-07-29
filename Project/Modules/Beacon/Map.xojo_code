@@ -1,7 +1,7 @@
 #tag Class
 Protected Class Map
 	#tag Method, Flags = &h0
-		Sub Constructor(HumanName As Text, Identifier As Text, Mask As UInt64, DifficultyScale As Double, Official As Boolean, ProvidedByModID As Text)
+		Sub Constructor(HumanName As String, Identifier As String, Mask As UInt64, DifficultyScale As Double, Official As Boolean, ProvidedByModID As String)
 		  Self.mName = HumanName
 		  Self.mIdentifier = Identifier
 		  Self.mMask = Mask
@@ -31,7 +31,7 @@ Protected Class Map
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Identifier() As Text
+		Function Identifier() As String
 		  Return Self.mIdentifier
 		End Function
 	#tag EndMethod
@@ -49,7 +49,7 @@ Protected Class Map
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Name() As Text
+		Function Name() As String
 		  Return Self.mName
 		End Function
 	#tag EndMethod
@@ -83,7 +83,7 @@ Protected Class Map
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ProvidedByModID() As Text
+		Function ProvidedByModID() As String
 		  Return Self.mProvidedByModID
 		End Function
 	#tag EndMethod
@@ -94,7 +94,7 @@ Protected Class Map
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mIdentifier As Text
+		Private mIdentifier As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -102,7 +102,7 @@ Protected Class Map
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mName As Text
+		Private mName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -110,7 +110,7 @@ Protected Class Map
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mProvidedByModID As Text
+		Private mProvidedByModID As String
 	#tag EndProperty
 
 
@@ -121,6 +121,7 @@ Protected Class Map
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -128,18 +129,23 @@ Protected Class Map
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -147,6 +153,7 @@ Protected Class Map
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

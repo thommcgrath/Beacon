@@ -13,9 +13,9 @@ Private Class SimpleHTTPSocket
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  #if UseNewSocket
-		    Self.mSocket = New Xojo.Net.HTTPSocket
+		    Self.mSocket = New URLConnection
 		    AddHandler Self.mSocket.Error, WeakAddressOf mSocket_Error
-		    AddHandler Self.mSocket.PageReceived, WeakAddressOf mSocket_PageReceived
+		    AddHandler Self.mSocket.ContentReceived, WeakAddressOf mSocket_ContentReceived
 		  #else
 		    Self.mLegacySocket = New HTTPSecureSocket
 		    Self.mLegacySocket.Secure = True
@@ -37,7 +37,7 @@ Private Class SimpleHTTPSocket
 		  #Pragma Unused Sender
 		  
 		  If Self.Handler <> Nil Then
-		    Dim Reason As Text
+		    Dim Reason As String
 		    Select Case ErrorNum
 		    Case SocketCore.OpenDriverError
 		      Reason = "Open driver error"
@@ -54,9 +54,9 @@ Private Class SimpleHTTPSocket
 		    Case SocketCore.OutOfMemoryError
 		      Reason = "Out of memory"
 		    Else
-		      Reason = "Other error " + ErrorNum.ToText
+		      Reason = "Other error " + ErrorNum.ToString
 		    End Select
-		    Self.Handler.Invoke(Self.mURL, 0, Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Reason, True), Self.Tag)
+		    Self.Handler.Invoke(Self.mURL, 0, Reason, Self.Tag)
 		    Self.Handler = Nil
 		  Else
 		    Break
@@ -72,7 +72,7 @@ Private Class SimpleHTTPSocket
 		  #Pragma Unused Headers
 		  
 		  If Self.Handler <> Nil Then
-		    Self.Handler.Invoke(URL.ToText, HTTPStatus, Beacon.ConvertMemoryBlock(Content), Self.Tag)
+		    Self.Handler.Invoke(URL, HTTPStatus, Content, Self.Tag)
 		    Self.Handler = Nil
 		  End If
 		  Self.ClearRequestHeaders()
@@ -81,22 +81,7 @@ Private Class SimpleHTTPSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mSocket_Error(Sender As Xojo.Net.HTTPSocket, Err As RuntimeException)
-		  #Pragma Unused Sender
-		  
-		  If Self.Handler <> Nil Then
-		    Self.Handler.Invoke(Self.mURL, 0, Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Err.Reason, True), Self.Tag)
-		    Self.Handler = Nil
-		  Else
-		    Break
-		  End If
-		  Self.ClearRequestHeaders()
-		  Self.mWorking = False
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mSocket_PageReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
+		Private Sub mSocket_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused Sender
 		  
 		  If Self.Handler <> Nil Then
@@ -108,8 +93,23 @@ Private Class SimpleHTTPSocket
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub mSocket_Error(Sender As URLConnection, Err As RuntimeException)
+		  #Pragma Unused Sender
+		  
+		  If Self.Handler <> Nil Then
+		    Self.Handler.Invoke(Self.mURL, 0, Err.Reason, Self.Tag)
+		    Self.Handler = Nil
+		  Else
+		    Break
+		  End If
+		  Self.ClearRequestHeaders()
+		  Self.mWorking = False
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
-		Sub RequestHeader(Key As Text, Assigns Value As Text)
+		Sub RequestHeader(Key As String, Assigns Value As String)
 		  #if UseNewSocket
 		    Self.mSocket.RequestHeader(Key) = Value
 		  #else
@@ -119,7 +119,7 @@ Private Class SimpleHTTPSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Send(Method as Text, URL as Text)
+		Sub Send(Method As String, URL As String)
 		  Self.mWorking = True
 		  Self.mURL = URL
 		  #if UseNewSocket
@@ -131,11 +131,11 @@ Private Class SimpleHTTPSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SetRequestContent(Content As Xojo.Core.MemoryBlock, ContentType As Text)
+		Sub SetRequestContent(Content As MemoryBlock, ContentType As String)
 		  #if UseNewSocket
 		    Self.mSocket.SetRequestContent(Content, ContentType)
 		  #else
-		    Self.mLegacySocket.SetRequestContent(Beacon.ConvertMemoryBlock(Content), ContentType)
+		    Self.mLegacySocket.SetRequestContent(Content, ContentType)
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -150,11 +150,11 @@ Private Class SimpleHTTPSocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSocket As Xojo.Net.HTTPSocket
+		Private mSocket As URLConnection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mURL As Text
+		Private mURL As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -162,12 +162,11 @@ Private Class SimpleHTTPSocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Tag As Auto
+		Tag As Variant
 	#tag EndProperty
 
 
-	#tag Constant, Name = UseNewSocket, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
-		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"True"
+	#tag Constant, Name = UseNewSocket, Type = Boolean, Dynamic = False, Default = \"True", Scope = Private
 	#tag EndConstant
 
 

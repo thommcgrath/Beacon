@@ -1,7 +1,7 @@
 #tag Interface
 Protected Interface ValueAnimator
 	#tag Method, Flags = &h0
-		Sub AnimationStep(Identifier As Text, Value As Double)
+		Sub AnimationStep(Identifier As String, Value As Double)
 		  
 		End Sub
 	#tag EndMethod
@@ -14,6 +14,7 @@ Protected Interface ValueAnimator
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -21,18 +22,23 @@ Protected Interface ValueAnimator
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -40,6 +46,7 @@ Protected Interface ValueAnimator
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Interface

@@ -363,7 +363,7 @@ Implements ObservationKit.Observer
 		    Return
 		  End If
 		  
-		  Dim Position As Xojo.Core.Point = Self.Window.GlobalPosition
+		  Dim Position As Point = Self.Window.GlobalPosition
 		  Dim Choice As MenuItem = Menu.PopUp(Position.X + Self.Left + Item.Rect.Left, Position.Y + Self.Top + Item.Rect.Bottom)
 		  If Choice <> Nil Then
 		    RaiseEvent HandleMenuAction(Item, Choice)
@@ -372,7 +372,7 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, Value As Variant)
 		  // Part of the ObservationKit.Observer interface.
 		  
 		  #Pragma Unused Source

@@ -174,7 +174,7 @@ Inherits Global.Thread
 		              
 		              Dim ArrayPos As Integer = KeyLine.IndexOf(HeaderEndPos, "(") + 1
 		              Dim ArrayEndPos As Integer = KeyLine.IndexOf(ArrayPos, ")")
-		              ArrayTextContent = KeyLine.Mid(ArrayPos, ArrayEndPos - ArrayPos)
+		              ArrayTextContent = KeyLine.Middle(ArrayPos, ArrayEndPos - ArrayPos)
 		            End If
 		            
 		            Dim ManagedKeys() As String = ArrayTextContent.Split(",")

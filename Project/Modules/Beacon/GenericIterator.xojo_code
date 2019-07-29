@@ -1,11 +1,11 @@
 #tag Class
-Protected Class PresetIterator
-Implements xojo.Core.Iterator
+Protected Class GenericIterator
+Implements Iterator
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Beacon.Preset)
-		  Redim Self.mItems(UBound(Source))
-		  For I As Integer = 0 To UBound(Self.mItems)
-		    Self.mItems(I) = Source(I)
+		Sub Constructor(Items() As Variant)
+		  Redim Self.mItems(Items.Ubound)
+		  For I As Integer = 0 To Self.mItems.LastRowIndex
+		    Self.mItems(I) = Items(I)
 		  Next
 		  Self.mIndex = -1
 		End Sub
@@ -13,16 +13,16 @@ Implements xojo.Core.Iterator
 
 	#tag Method, Flags = &h0
 		Function MoveNext() As Boolean
-		  // Part of the xojo.Core.Iterator interface.
+		  // Part of the Iterator interface.
 		  
 		  Self.mIndex = Self.mIndex + 1
-		  Return Self.mIndex <= UBound(Self.mItems)
+		  Return Self.mIndex <= Self.mItems.LastRowIndex
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Value() As Auto
-		  // Part of the xojo.Core.Iterator interface.
+		Function Value() As Variant
+		  // Part of the Iterator interface.
 		  
 		  Return Self.mItems(Self.mIndex)
 		End Function
@@ -34,17 +34,34 @@ Implements xojo.Core.Iterator
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mItems() As Beacon.SetEntry
+		Private mItems() As Variant
 	#tag EndProperty
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -52,18 +69,7 @@ Implements xojo.Core.Iterator
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Name"
-			Visible=true
-			Group="ID"
-			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Super"
-			Visible=true
-			Group="ID"
-			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -71,6 +77,7 @@ Implements xojo.Core.Iterator
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
