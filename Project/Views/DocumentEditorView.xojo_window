@@ -288,7 +288,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  NotificationKit.Ignore(Self, IdentityManager.Notification_IdentityChanged)
 		  
 		  If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
@@ -299,7 +299,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub EnableMenuItems()
+		Sub MenuSelected()
 		  FileSaveAs.Enable
 		  
 		  If Self.ReadyToDeploy Then
@@ -319,7 +319,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  If Self.mController.Document <> Nil Then
 		    Dim DocumentID As String = Self.mController.Document.DocumentID
 		    Dim ConfigName As String = Preferences.LastUsedConfigName(DocumentID)

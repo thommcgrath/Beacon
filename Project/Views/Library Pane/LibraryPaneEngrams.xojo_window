@@ -271,7 +271,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.ToolbarCaption = "Engrams"
 		End Sub
 	#tag EndEvent

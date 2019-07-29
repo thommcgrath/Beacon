@@ -295,7 +295,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Dim Maps() As Beacon.Map = Beacon.Maps.All
 		  Dim OfficialMaps(), ThirdPartyMaps() As Beacon.Map
 		  Dim OfficialMasks(), ThirdPartyMasks() As UInt64

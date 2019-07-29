@@ -274,7 +274,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.ToolbarCaption = "Mods"
 		End Sub
 	#tag EndEvent

@@ -2,8 +2,8 @@
 Protected Class BeaconContainer
 Inherits ContainerControl
 	#tag Event
-		Sub Open()
-		  RaiseEvent Open
+		Sub Opening()
+		  RaiseEvent Opening
 		  
 		  If Self.Window <> Nil And Self.Window IsA BeaconContainer Then
 		    BeaconContainer(Self.Window).mChildren.Append(New WeakRef(Self))
@@ -94,7 +94,7 @@ Inherits ContainerControl
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

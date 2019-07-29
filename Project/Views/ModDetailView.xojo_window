@@ -571,7 +571,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.mEngramSets = New Dictionary
 		End Sub
 	#tag EndEvent

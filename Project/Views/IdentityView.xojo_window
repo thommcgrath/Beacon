@@ -488,13 +488,13 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  NotificationKit.Ignore(Self, IdentityManager.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.ToolbarCaption = "Identity"
 		  Self.UpdateUI(App.IdentityManager.CurrentIdentity)
 		  NotificationKit.Watch(Self, IdentityManager.Notification_IdentityChanged)

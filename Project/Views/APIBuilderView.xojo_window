@@ -736,7 +736,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.ToolbarCaption = "API Builder"
 		End Sub
 	#tag EndEvent

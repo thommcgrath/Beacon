@@ -1684,7 +1684,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.MinimumWidth = 744
 		  Self.MinimumHeight = 544
 		End Sub

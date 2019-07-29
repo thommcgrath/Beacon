@@ -30,7 +30,18 @@ Implements NotificationKit.Receiver
 	#tag EndEvent
 
 	#tag Event
-		Sub EnableMenuItems()
+		Function HandleAppleEvent(theEvent As AppleEvent, eventClass As String, eventID As String) As Boolean
+		  If eventClass = "GURL" And eventID = "GURL" Then
+		    Dim URL As String = theEvent.StringParam("----")
+		    Return Self.HandleURL(URL)
+		  Else
+		    Return False
+		  End If
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub MenuSelected()
 		  FileNew.Enable
 		  FileNewPreset.Enable
 		  FileOpen.Enable
@@ -48,18 +59,13 @@ Implements NotificationKit.Receiver
 	#tag EndEvent
 
 	#tag Event
-		Function HandleAppleEvent(theEvent As AppleEvent, eventClass As String, eventID As String) As Boolean
-		  If eventClass = "GURL" And eventID = "GURL" Then
-		    Dim URL As String = theEvent.StringParam("----")
-		    Return Self.HandleURL(URL)
-		  Else
-		    Return False
-		  End If
-		End Function
+		Sub OpenDocument(item As FolderItem)
+		  Self.OpenFile(Item, False)
+		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  #If TargetMacOS
 		    Self.Log("Beacon " + Str(Self.BuildNumber, "-0") + " for Mac.")
 		  #ElseIf TargetWin32
@@ -138,12 +144,6 @@ Implements NotificationKit.Receiver
 		  Self.AutoQuit = True
 		  
 		  Tests.RunTests()
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub OpenDocument(item As FolderItem)
-		  Self.OpenFile(Item, False)
 		End Sub
 	#tag EndEvent
 

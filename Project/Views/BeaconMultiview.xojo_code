@@ -2,8 +2,8 @@
 Protected Class BeaconMultiview
 Inherits BeaconWindow
 	#tag Event
-		Sub Open()
-		  RaiseEvent Open
+		Sub Opening()
+		  RaiseEvent Opening
 		  Self.CurrentView.SwitchedTo()
 		End Sub
 	#tag EndEvent
@@ -56,7 +56,7 @@ Inherits BeaconWindow
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

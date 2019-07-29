@@ -172,13 +172,13 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  NotificationKit.Ignore(Self, Preferences.Notification_OnlineStateChanged)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.ToolbarCaption = "Tools"
 		  
 		  NotificationKit.Watch(Self, Preferences.Notification_OnlineStateChanged)

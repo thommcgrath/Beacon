@@ -919,7 +919,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub EnableMenuItems()
+		Sub MenuSelected()
 		  If Self.Changed Then
 		    FileSave.Enable
 		    If Self.mSaveFile <> Nil Then
@@ -933,7 +933,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.UpdateUI()
 		End Sub
 	#tag EndEvent

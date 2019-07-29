@@ -982,7 +982,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.Header.Caption = Self.mProfile.Name
 		  Self.ServerNameField.Value = Self.mProfile.Name
 		  Self.HostField.Value = Self.mProfile.Host

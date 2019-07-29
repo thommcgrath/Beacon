@@ -2,8 +2,8 @@
 Protected Class BeaconWindow
 Inherits Window
 	#tag Event
-		Sub Close()
-		  RaiseEvent Close
+		Sub Closing()
+		  RaiseEvent Closing
 		  
 		  If Self.mWindowMenuItem <> Nil Then
 		    Dim WindowMenu As MenuItem = MainMenuBar.Child("WindowMenu")
@@ -24,7 +24,7 @@ Inherits Window
 	#tag EndEvent
 
 	#tag Event
-		Sub EnableMenuItems()
+		Sub MenuSelected()
 		  If Self.HasCloseButton Then
 		    FileClose.Enable
 		  End If
@@ -38,7 +38,7 @@ Inherits Window
 		    Self.mWindowMenuItem.Enable
 		  End If
 		  
-		  RaiseEvent EnableMenuItems
+		  RaiseEvent MenuSelected
 		End Sub
 	#tag EndEvent
 
@@ -51,7 +51,7 @@ Inherits Window
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Dim InitialWidth As Integer = Self.Width
 		  // Dumb workaround because contents are sizing 1 pixels too short.
 		  // A resize causes them to find their correct positions.
@@ -68,7 +68,7 @@ Inherits Window
 		    MainMenuBar.Child("WindowMenu").Append(MenuItem)
 		  End If
 		  
-		  RaiseEvent Open
+		  RaiseEvent Opening
 		  
 		  Self.mOpened = True
 		  Self.Invalidate
@@ -152,11 +152,11 @@ Inherits Window
 
 
 	#tag Hook, Flags = &h0
-		Event Close()
+		Event Closing()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event EnableMenuItems()
+		Event MenuSelected()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -164,7 +164,7 @@ Inherits Window
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
+		Event Opening()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

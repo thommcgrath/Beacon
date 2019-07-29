@@ -401,16 +401,8 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
+		Sub Closing()
 		  NotificationKit.Ignore(Self, LocalData.Notification_EngramsChanged)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub EnableMenuItems()
-		  If Self.List.RowCount > 0 Then
-		    FileExport.Enable
-		  End If
 		End Sub
 	#tag EndEvent
 
@@ -421,7 +413,15 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub MenuSelected()
+		  If Self.List.RowCount > 0 Then
+		    FileExport.Enable
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Opening()
 		  NotificationKit.Watch(Self, LocalData.Notification_EngramsChanged)
 		  
 		  Self.SetupUI()

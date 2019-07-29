@@ -359,7 +359,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub EnableMenuItems()
+		Sub MenuSelected()
 		  DocumentAddBeacon.Enable
 		  
 		  If Self.List.SelectedRowCount > 0 Then
@@ -373,7 +373,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
+		Sub Opening()
 		  Self.MinimumWidth = Self.FadedSeparator1.Width + Self.ListMinWidth + LootSourceEditor.MinimumWidth
 		  Self.MinimumHeight = 547
 		End Sub
