@@ -1558,7 +1558,12 @@ End
 		    Destination.SetsRandomWithoutReplacement = PreventDuplicates
 		    Destination.AppendMode = AppendMode
 		    
-		    Self.mConfig.Append(Destination)
+		    Dim Idx As Integer = Self.mConfig.IndexOf(Destination)
+		    If Idx = -1 Then
+		      Self.mConfig.Append(Destination)
+		    Else
+		      Self.mConfig(Idx) = Destination
+		    End If
 		  Next
 		  
 		  Self.mCancelled = False
