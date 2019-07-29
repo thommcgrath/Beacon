@@ -1,6 +1,6 @@
 Type=Desktop
 RBProjectVersion=2019.02
-MinIDEVersion=20070100
+MinIDEVersion=20150400
 OrigIDEVersion=20190200
 Class=App;App.xojo_code;&h00000000283BFFFF;&h0000000000000000;false
 MenuBar=MainMenuBar;MainMenuBar.xojo_menu;&h0000000030BBA7FF;&h0000000000000000;false
