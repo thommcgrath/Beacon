@@ -186,7 +186,7 @@ Protected Class Identity
 		    Return Nil
 		  End If
 		  
-		  Dim PublicKey, PrivateKey As MemoryBlock
+		  Dim PublicKey, PrivateKey As String
 		  If Source.HasKey("Version") Then
 		    Select Case Source.Value("Version")
 		    Case 2
