@@ -3,7 +3,7 @@ Protected Class TagPicker
 Inherits ControlCanvas
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  For I As Integer = 0 To Self.mCells.Ubound
+		  For I As Integer = 0 To Self.mCells.LastRowIndex
 		    If Self.mCells(I) <> Nil And Self.mCells(I).Contains(X, Y) Then
 		      Self.mMouseDownCellIndex = I
 		      Self.mMousePressedIndex = I
@@ -109,7 +109,7 @@ Inherits ControlCanvas
 		    ExcludedBackgroundColor = SystemColors.SystemBrownColor
 		  End If
 		  
-		  For I As Integer = 0 To Self.mTags.Ubound
+		  For I As Integer = 0 To Self.mTags.LastRowIndex
 		    Dim Tag As String = Self.mTags(I)
 		    Dim Required As Boolean = Self.mRequireTags.IndexOf(Tag) > -1
 		    Dim Excluded As Boolean = Self.mExcludeTags.IndexOf(Tag) > -1
@@ -323,8 +323,8 @@ Inherits ControlCanvas
 	#tag Method, Flags = &h0
 		Function Tags() As String()
 		  Dim Clone() As String
-		  Redim Clone(Self.mTags.Ubound)
-		  For I As Integer = 0 To Self.mTags.Ubound
+		  Redim Clone(Self.mTags.LastRowIndex)
+		  For I As Integer = 0 To Self.mTags.LastRowIndex
 		    Clone(I) = Self.mTags(I)
 		  Next
 		End Function
@@ -337,11 +337,11 @@ Inherits ControlCanvas
 		  End If
 		  
 		  Dim Changed As Boolean
-		  If Self.mTags.Ubound <> Values.Ubound Then
-		    Redim Self.mTags(Values.Ubound)
+		  If Self.mTags.LastRowIndex <> Values.LastRowIndex Then
+		    Redim Self.mTags(Values.LastRowIndex)
 		    Changed = True
 		  End If
-		  For I As Integer = 0 To Values.Ubound
+		  For I As Integer = 0 To Values.LastRowIndex
 		    If StrComp(Self.mTags(I), Values(I), 0) <> 0 Then
 		      Self.mTags(I) = Values(I)
 		      Changed = True
@@ -350,10 +350,10 @@ Inherits ControlCanvas
 		  
 		  If Changed Then
 		    Redim Self.mCells(-1)
-		    Redim Self.mCells(Self.mTags.Ubound)
+		    Redim Self.mCells(Self.mTags.LastRowIndex)
 		    
 		    Dim FireChangeEvent As Boolean
-		    For I As Integer = Self.mRequireTags.Ubound DownTo 0
+		    For I As Integer = Self.mRequireTags.LastRowIndex DownTo 0
 		      If Self.mTags.IndexOf(Self.mRequireTags(I)) = -1 Then
 		        Self.mRequireTags.Remove(I)
 		        FireChangeEvent = True
@@ -462,10 +462,10 @@ Inherits ControlCanvas
 		#tag Getter
 			Get
 			  Dim Value As String
-			  If Self.mRequireTags.Ubound > -1 Then
+			  If Self.mRequireTags.LastRowIndex > -1 Then
 			    Value = "(""" + Join(Self.mRequireTags, """ AND """) + """)"
 			  End If
-			  If Self.mExcludeTags.Ubound > -1 Then
+			  If Self.mExcludeTags.LastRowIndex > -1 Then
 			    If Value = "" Then
 			      Value = "object"
 			    End If

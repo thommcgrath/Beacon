@@ -137,7 +137,7 @@ Implements Beacon.DiscoveryEngine
 		    Dim MapText As String = Config.Value("map")
 		    Dim MapParts() As String = MapText.Split(",")
 		    
-		    Self.mMap = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.Ubound))
+		    Self.mMap = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.LastRowIndex))
 		    Self.mProfile.GameShortcode = GameServer.Value("game")
 		    
 		    Self.DownloadGameIni()

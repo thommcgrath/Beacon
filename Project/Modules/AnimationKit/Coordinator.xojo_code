@@ -15,7 +15,7 @@ Protected Class Coordinator
 	#tag Method, Flags = &h21
 		Private Sub Animator_Action(Sender As Timer)
 		  Dim AddedTasks(), RemovedTasks() As AnimationKit.Task
-		  For I As Integer = UBound(Self.Tasks) DownTo 0
+		  For I As Integer = Self.Tasks.LastRowIndex DownTo 0
 		    If Self.Tasks(I).Cancelled Then
 		      RemovedTasks.Append(Self.Tasks(I))
 		      Self.Tasks.Remove(I)
@@ -30,7 +30,7 @@ Protected Class Coordinator
 		    End If
 		  Next
 		  
-		  For I As Integer = UBound(Self.Tasks) DownTo 0
+		  For I As Integer = Self.Tasks.LastRowIndex DownTo 0
 		    Dim Task As AnimationKit.Task = Self.Tasks(I)
 		    If Task.Completed(Now) Then
 		      RemovedTasks.Append(Task)
@@ -43,7 +43,7 @@ Protected Class Coordinator
 		    End If
 		  Next
 		  
-		  If UBound(Self.Tasks) = -1 Then
+		  If Self.Tasks.LastRowIndex = -1 Then
 		    Sender.RunMode = Timer.RunModes.Off
 		  End If
 		  

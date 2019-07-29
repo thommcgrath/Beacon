@@ -27,7 +27,7 @@ Protected Class CraftingCost
 		Sub Constructor(Source As Beacon.CraftingCost)
 		  Self.Constructor()
 		  Self.Engram = Source.Engram
-		  For I As Integer = 0 To Source.Ubound
+		  For I As Integer = 0 To Source.LastRowIndex
 		    Self.Append(Source.Resource(I), Source.Quantity(I), Source.RequireExactResource(I))
 		  Next
 		  Self.Modified = Source.Modified
@@ -50,7 +50,7 @@ Protected Class CraftingCost
 		  End If
 		  
 		  Dim Resources() As Dictionary
-		  For I As Integer = 0 To Self.mResources.Ubound
+		  For I As Integer = 0 To Self.mResources.LastRowIndex
 		    Dim Engram As Beacon.Engram = Self.mResources(I)
 		    Dim Quantity As Integer = Self.mQuantities(I)
 		    Dim RequireExact As Boolean = Self.mRequireExacts(I)
@@ -141,7 +141,7 @@ Protected Class CraftingCost
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Resource As Beacon.Engram) As Integer
-		  For I As Integer = 0 To Self.mResources.Ubound
+		  For I As Integer = 0 To Self.mResources.LastRowIndex
 		    If Self.mResources(I) = Resource Then
 		      Return I
 		    End If
@@ -169,7 +169,7 @@ Protected Class CraftingCost
 
 	#tag Method, Flags = &h0
 		Function IsValid() As Boolean
-		  Return Self.mEngram <> Nil And Self.Ubound > -1
+		  Return Self.mEngram <> Nil And Self.LastRowIndex > -1
 		End Function
 	#tag EndMethod
 
@@ -180,6 +180,12 @@ Protected Class CraftingCost
 		  End If
 		  
 		  Return Self.mEngram.Label
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LastRowIndex() As Integer
+		  Return Self.mResources.LastRowIndex
 		End Function
 	#tag EndMethod
 
@@ -296,7 +302,7 @@ Protected Class CraftingCost
 	#tag Method, Flags = &h0
 		Function StringValue() As String
 		  Dim Components() As String
-		  For I As Integer = 0 To Self.mResources.Ubound
+		  For I As Integer = 0 To Self.mResources.LastRowIndex
 		    Dim ClassString As String = Self.mResources(I).ClassString
 		    Dim QuantityString As String = Self.mQuantities(I).ToString(Locale.Raw, "0")
 		    Dim RequireExactString As String = If(Self.mRequireExacts(I), "true", "false")
@@ -307,12 +313,6 @@ Protected Class CraftingCost
 		  Pieces.Append("ItemClassString=""" + If(Self.mEngram <> Nil, Self.mEngram.ClassString, "") + """")
 		  Pieces.Append("BaseCraftingResourceRequirements=(" + Join(Components, ",") + ")")
 		  Return "(" + Join(Pieces, ",") + ")"
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Ubound() As Integer
-		  Return Self.mResources.Ubound
 		End Function
 	#tag EndMethod
 

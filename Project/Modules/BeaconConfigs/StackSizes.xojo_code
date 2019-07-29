@@ -121,6 +121,12 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function LastRowIndex() As Integer
+		  Return Self.mOverrides.KeyCount - 1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Override(ClassString As String) As Integer
 		  Return Self.mOverrides.Lookup(ClassString, 0)
 		End Function
@@ -136,12 +142,6 @@ Inherits Beacon.ConfigGroup
 		    Self.Modified = True
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function UBound() As Integer
-		  Return Self.mOverrides.KeyCount - 1
-		End Function
 	#tag EndMethod
 
 

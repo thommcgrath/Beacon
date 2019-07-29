@@ -232,7 +232,7 @@ End
 		    
 		    // Don't use IndexOf as it doesn't utilize Operator_Compare
 		    Dim Selected As Boolean
-		    For X As Integer = 0 To SelectedProfiles.Ubound
+		    For X As Integer = 0 To SelectedProfiles.LastRowIndex
 		      If SelectedProfiles(X) = Profile Then
 		        Selected = True
 		        SelectedProfiles.Remove(X)

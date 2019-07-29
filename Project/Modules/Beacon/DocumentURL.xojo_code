@@ -89,7 +89,7 @@ Protected Class DocumentURL
 		  If Name = "" Then
 		    // Get the last path component
 		    Dim Components() As String = Self.Path.Split("/")
-		    Name = Components(Components.Ubound)
+		    Name = Components(Components.LastRowIndex)
 		    
 		    If Name.EndsWith(".beacon") Then
 		      Name = Name.Left(Name.Length - 7)

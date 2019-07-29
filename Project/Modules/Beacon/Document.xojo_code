@@ -6,7 +6,7 @@ Protected Class Document
 		    Return
 		  End If
 		  
-		  For I As Integer = 0 To Self.mServerProfiles.Ubound
+		  For I As Integer = 0 To Self.mServerProfiles.LastRowIndex
 		    If Self.mServerProfiles(I) = Profile Then
 		      Self.mServerProfiles(I) = Profile.Clone
 		      Self.mModified = True
@@ -17,10 +17,10 @@ Protected Class Document
 		  Self.mServerProfiles.Append(Profile.Clone)
 		  If Profile.IsConsole Then
 		    Dim SafeMods() As String = Beacon.Data.ConsoleSafeMods
-		    If Self.mMods = Nil Or Self.mMods.Ubound = -1 Then
+		    If Self.mMods = Nil Or Self.mMods.LastRowIndex = -1 Then
 		      Self.mMods = SafeMods
 		    Else
-		      For I As Integer = Self.mMods.Ubound DownTo 0
+		      For I As Integer = Self.mMods.LastRowIndex DownTo 0
 		        If SafeMods.IndexOf(Self.mMods(I)) = -1 Then
 		          Self.mMods.Remove(I)
 		        End If
@@ -203,7 +203,7 @@ Protected Class Document
 		  Dim Configs() As Beacon.ConfigGroup = Self.ImplementedConfigs()
 		  For Each Config As Beacon.ConfigGroup In Configs
 		    Dim Issues() As Beacon.Issue = Config.Issues(Self, Identity)
-		    If Issues <> Nil And Issues.Ubound > -1 Then
+		    If Issues <> Nil And Issues.LastRowIndex > -1 Then
 		      Return False
 		    End If
 		  Next
@@ -394,7 +394,7 @@ Protected Class Document
 
 	#tag Method, Flags = &h0
 		Sub Remove(Profile As Beacon.ServerProfile)
-		  For I As Integer = 0 To Self.mServerProfiles.Ubound
+		  For I As Integer = 0 To Self.mServerProfiles.LastRowIndex
 		    If Self.mServerProfiles(I) = Profile Then
 		      Self.mServerProfiles.Remove(I)
 		      Self.Modified = True
@@ -434,7 +434,7 @@ Protected Class Document
 
 	#tag Method, Flags = &h0
 		Function ServerProfileCount() As Integer
-		  Return Self.mServerProfiles.Ubound + 1
+		  Return Self.mServerProfiles.LastRowIndex + 1
 		End Function
 	#tag EndMethod
 
@@ -713,8 +713,8 @@ Protected Class Document
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DifficultyValue"
@@ -777,8 +777,8 @@ Protected Class Document
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -801,8 +801,8 @@ Protected Class Document
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

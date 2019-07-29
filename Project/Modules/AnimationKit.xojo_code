@@ -76,6 +76,12 @@ Protected Module AnimationKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Frames() As AnimationKit.FrameSet
+		  Return Frames
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function NewFrameTask(Extends Target As AnimationKit.FrameTarget) As AnimationKit.FrameTask
 		  Return New AnimationKit.FrameTask(Target, New AnimationKit.FrameSet)
 		End Function
@@ -100,12 +106,6 @@ Protected Module AnimationKit
 		  End If
 		  
 		  Return SharedCoordinatorRef
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function UBound(Frames As AnimationKit.FrameSet) As Integer
-		  Return Frames.LastRowIndex
 		End Function
 	#tag EndMethod
 

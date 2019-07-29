@@ -14,7 +14,7 @@ Implements ObservationKit.Observable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = UBound(Refs) DownTo 0
+		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Then
 		      Refs.Remove(I)
 		      Continue
@@ -78,7 +78,7 @@ Implements ObservationKit.Observable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = UBound(Refs) DownTo 0
+		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Then
 		      Refs.Remove(I)
 		      Continue
@@ -103,7 +103,7 @@ Implements ObservationKit.Observable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = UBound(Refs) DownTo 0
+		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Or Refs(I).Value = Observer Then
 		      Refs.Remove(I)
 		      Continue
@@ -424,7 +424,19 @@ Implements ObservationKit.Observable
 			Group="Behavior"
 			InitialValue=""
 			Type="BeaconToolbarItem.IconColors"
-			EditorType=""
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Standard"
+				"1 - Blue"
+				"2 - Brown"
+				"3 - Gray"
+				"4 - Green"
+				"5 - Orange"
+				"6 - Pink"
+				"7 - Purple"
+				"8 - Red"
+				"9 - Yellow"
+			#tag EndEnumValues
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -1,6 +1,6 @@
 #tag Class
 Protected Class ControlGroup
-Implements  Iterable
+Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Append(Ctl As RectControl)
 		  If Self.IndexOf(Ctl) = -1 Then
@@ -27,7 +27,7 @@ Implements  Iterable
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Ctl As RectControl) As Integer
-		  For I As Integer = 0 To Self.mMembers.Ubound
+		  For I As Integer = 0 To Self.mMembers.LastRowIndex
 		    If Self.mMembers(I).Value = Ctl Then
 		      Return I
 		    End If
@@ -116,7 +116,7 @@ Implements  Iterable
 		Private Sub UpdateBounds()
 		  Dim Top, Left, Bottom, Right As Integer
 		  Dim First As Boolean = True
-		  For I As Integer = 0 To Self.mMembers.Ubound
+		  For I As Integer = 0 To Self.mMembers.LastRowIndex
 		    Dim Ctl As RectControl = RectControl(Self.mMembers(I).Value)
 		    If Ctl = Nil Then
 		      Continue

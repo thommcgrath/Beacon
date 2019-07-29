@@ -301,13 +301,13 @@ Protected Module SystemColors
 		Protected Function RowColors() As Color()
 		  Dim Results() As SystemColors.NSColor = SystemColors.NSColor.GetAlternatingRowColors
 		  Dim Colors() As Color
-		  Redim Colors(Results.Ubound)
+		  Redim Colors(Results.LastRowIndex)
 		  
-		  For I As Integer = 0 To Results.Ubound
+		  For I As Integer = 0 To Results.LastRowIndex
 		    Colors(I) = Results(I).ColorValue
 		  Next
 		  
-		  If Colors.Ubound = -1 Then
+		  If Colors.LastRowIndex = -1 Then
 		    Redim Colors(1)
 		    Colors(0) = If(SystemColors.IsDarkMode, &c1E1E1E00, &cFFFFFF00)
 		    Colors(1) = If(SystemColors.IsDarkMode, &cFFFFFFF3, &cF4F5F500)
@@ -626,7 +626,9 @@ Protected Module SystemColors
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -634,12 +636,15 @@ Protected Module SystemColors
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -647,6 +652,7 @@ Protected Module SystemColors
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -654,6 +660,7 @@ Protected Module SystemColors
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Module

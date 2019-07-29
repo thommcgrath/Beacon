@@ -87,7 +87,7 @@ Implements Iterable
 		        Dim Idx As Integer = UniqueClasses.Lookup(Source.ClassString, -1)
 		        If Idx = -1 Then
 		          Self.mSources.Append(Source)
-		          UniqueClasses.Value(Source.ClassString) = Self.mSources.Ubound
+		          UniqueClasses.Value(Source.ClassString) = Self.mSources.LastRowIndex
 		        Else
 		          Self.mSources(Idx) = Source
 		        End If
@@ -175,13 +175,13 @@ Implements Iterable
 		      Dim Idx As Integer = UniqueClasses.Lookup(Source.ClassString, -1)
 		      If Idx = -1 Then
 		        LootDrops.Append(Source)
-		        UniqueClasses.Value(Source.ClassString) = LootDrops.UBound
+		        UniqueClasses.Value(Source.ClassString) = LootDrops.LastRowIndex
 		      Else
 		        LootDrops(Idx) = Source
 		      End If
 		    End If
 		  Next
-		  If LootDrops.UBound > -1 Then
+		  If LootDrops.LastRowIndex > -1 Then
 		    Return LootDrops
 		  End If
 		End Function
@@ -195,7 +195,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Source As Beacon.LootSource) As Integer
-		  For I As Integer = 0 To Self.mSources.Ubound
+		  For I As Integer = 0 To Self.mSources.LastRowIndex
 		    If Self.mSources(I).ClassString = Source.ClassString Then
 		      Return I
 		    End If
@@ -222,6 +222,12 @@ Implements Iterable
 		  Next
 		  
 		  Return New Beacon.GenericIterator(Items)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LastRowIndex() As Integer
+		  Return Self.mSources.LastRowIndex
 		End Function
 	#tag EndMethod
 
@@ -253,7 +259,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Operator_Redim(NewUBound As Integer)
-		  If NewUBound <> Self.mSources.Ubound Then
+		  If NewUBound <> Self.mSources.LastRowIndex Then
 		    Redim Self.mSources(NewUBound)
 		    Self.Modified = True
 		  End If
@@ -340,12 +346,6 @@ Implements Iterable
 		  AddHandler Searcher.Finished, AddressOf Searcher_Finished
 		  Searcher.Search(InputContent, False)
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function UBound() As Integer
-		  Return Self.mSources.Ubound
-		End Function
 	#tag EndMethod
 
 

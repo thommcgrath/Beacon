@@ -485,7 +485,7 @@ End
 		    Self.ModsList.AddRow("", Details.Name, If(Details.ConsoleSafe, "Yes", "No"))
 		    Dim Idx As Integer = Self.ModsList.LastAddedRowIndex
 		    Self.ModsList.RowTag(Idx) = Details
-		    Self.ModsList.CellCheck(Idx, 0) = Self.Document.Mods.Ubound = -1 Or Self.Document.Mods.IndexOf(Details.ModID) > -1
+		    Self.ModsList.CellCheck(Idx, 0) = Self.Document.Mods.LastRowIndex = -1 Or Self.Document.Mods.IndexOf(Details.ModID) > -1
 		  Next
 		  Self.ModsList.Sort
 		  Self.ModsList.ScrollPosition = ScrollPosition

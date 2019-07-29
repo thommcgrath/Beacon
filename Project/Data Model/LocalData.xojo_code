@@ -83,7 +83,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Sub BeginTransaction()
 		  Self.mLock.Enter
 		  
-		  If UBound(Self.mTransactions) = -1 Then
+		  If Self.mTransactions.LastRowIndex = -1 Then
 		    Self.mTransactions.Insert(0, "")
 		    Self.SQLExecute("BEGIN TRANSACTION;")
 		  Else
@@ -174,7 +174,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub Commit()
-		  If UBound(Self.mTransactions) = -1 Then
+		  If Self.mTransactions.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -277,10 +277,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        End If
 		      Next
 		      
-		      If Candidates.Ubound > -1 Then
+		      If Candidates.LastRowIndex > -1 Then
 		        Versions.SortWith(Candidates)
 		        
-		        Dim RestoreFile As FolderItem = Candidates(Candidates.Ubound)
+		        Dim RestoreFile As FolderItem = Candidates(Candidates.LastRowIndex)
 		        RestoreFile.MoveFileTo(AppSupport.Child("Library.sqlite"))
 		        
 		        Self.mBase = New SQLiteDatabase
@@ -697,7 +697,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    Dim Values As New Dictionary
 		    Dim NextPlaceholder As Integer = 1
-		    If Mods.Ubound > -1 Then
+		    If Mods.LastRowIndex > -1 Then
 		      Dim Placeholders() As String
 		      For Each ModID As String In Mods
 		        Placeholders.Append("?" + Str(NextPlaceholder))
@@ -1065,7 +1065,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.SQLExecute("INSERT INTO loot_source_icons (icon_id, icon_data) VALUES (?1, ?2);", IconID, IconData)
 		      End If
 		    Next
-		    If LootSourceIcons.Ubound > -1 Then
+		    If LootSourceIcons.LastRowIndex > -1 Then
 		      Self.IconCache = Nil
 		    End If
 		    
@@ -1473,7 +1473,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Commands.Append("INSERT INTO searchable_tags SELECT * FROM legacy.searchable_tags;")
 		  End If
 		  
-		  If Commands.Ubound > -1 Then
+		  If Commands.LastRowIndex > -1 Then
 		    Self.BeginTransaction()
 		    Try
 		      For Each Command As String In Commands
@@ -1534,7 +1534,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          
 		          File.Delete
 		        Catch Err As RuntimeException
-		          While Self.mTransactions.Ubound > -1
+		          While Self.mTransactions.LastRowIndex > -1
 		            Self.Rollback()
 		          Wend
 		          Continue
@@ -1565,13 +1565,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Sub mImportThread_Run(Sender As Thread)
 		  #Pragma Unused Sender
 		  
-		  If Self.mPendingImports.Ubound = -1 Then
+		  If Self.mPendingImports.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
 		  Dim SyncOriginal As Date = Self.LastSync
 		  Dim Success As Boolean
-		  For I As Integer = 0 To Self.mPendingImports.Ubound
+		  For I As Integer = 0 To Self.mPendingImports.LastRowIndex
 		    Dim Content As String = Self.mPendingImports(I)
 		    Self.mPendingImports.Remove(I)
 		    
@@ -1657,7 +1657,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub Rollback()
-		  If UBound(Self.mTransactions) = -1 Then
+		  If Self.mTransactions.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -1943,7 +1943,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Return Blueprints
 		    End Select
 		    
-		    If Mods <> Nil And Mods.Ubound > -1 Then
+		    If Mods <> Nil And Mods.LastRowIndex > -1 Then
 		      Dim Placeholders() As String
 		      For Each ModID As String In Mods
 		        Placeholders.Append("?" + Str(NextPlaceholder))
@@ -1959,7 +1959,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
 		    
-		    If Clauses.Ubound > -1 Then
+		    If Clauses.LastRowIndex > -1 Then
 		      SQL = SQL + " WHERE (" + Join(Clauses, ") AND (") + ")"
 		    End If
 		    SQL = SQL + " ORDER BY label;"
@@ -2003,7 +2003,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Dim Clauses() As String
 		    Dim Values As New Dictionary
 		    Dim NextPlaceholder As Integer = 1
-		    If Mods.Ubound > -1 Then
+		    If Mods.LastRowIndex > -1 Then
 		      Dim Placeholders() As String
 		      For Each ModID As String In Mods
 		        Placeholders.Append("?" + Str(NextPlaceholder))
@@ -2022,7 +2022,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    
 		    Dim SQL As String = "SELECT " + Self.LootSourcesSelectColumns + ", mods.mod_id, mods.name AS mod_name FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id)"
-		    If Clauses.Ubound > -1 Then
+		    If Clauses.LastRowIndex > -1 Then
 		      SQL = SQL + " WHERE (" + Join(Clauses, ") AND (") + ")"
 		    End If
 		    SQL = SQL + " ORDER BY label;"
@@ -2064,7 +2064,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Sub SQLExecute(SQLString As String, ParamArray Values() As Variant)
 		  Self.mLock.Enter
 		  
-		  If Values.Ubound = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
+		  If Values.LastRowIndex = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
 		    // Dictionary keys are placeholder values, values are... values
 		    Dim Dict As Dictionary = Values(0)
 		    Redim Values(-1)
@@ -2079,7 +2079,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End Try
 		  End If
 		  
-		  For I As Integer = 0 To Values.Ubound
+		  For I As Integer = 0 To Values.LastRowIndex
 		    Dim Value As Variant = Values(I)
 		    If Value.Type <> Variant.TypeObject Then
 		      Continue
@@ -2102,7 +2102,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End Try
 		  
 		  #if false
-		    If Values.Ubound = -1 Then
+		    If Values.LastRowIndex = -1 Then
 		      
 		      Self.mBase.SQLExecute(SQLString)
 		      Dim Err As RuntimeException = Self.CheckError(SQLString)
@@ -2120,7 +2120,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Raise Err
 		    End If
 		    
-		    For I As Integer = 0 To Values.Ubound
+		    For I As Integer = 0 To Values.LastRowIndex
 		      Dim Value As Variant = Values(I)
 		      Select Case Value.Type
 		      Case Variant.TypeInteger, Variant.TypeInt32
@@ -2166,7 +2166,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Function SQLSelect(SQLString As String, ParamArray Values() As Variant) As RowSet
 		  Self.mLock.Enter
 		  
-		  If Values.Ubound = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
+		  If Values.LastRowIndex = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
 		    // Dictionary keys are placeholder values, values are... values
 		    Dim Dict As Dictionary = Values(0)
 		    Redim Values(-1)
@@ -2181,7 +2181,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End Try
 		  End If
 		  
-		  For I As Integer = 0 To Values.Ubound
+		  For I As Integer = 0 To Values.LastRowIndex
 		    Dim Value As Variant = Values(I)
 		    If Value.Type <> Variant.TypeObject Then
 		      Continue
@@ -2209,7 +2209,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    Dim RS As RowSet
 		    
-		    If Values.Ubound = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
+		    If Values.LastRowIndex = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
 		      // Dictionary keys are placeholder values, values are... values
 		      Dim Dict As Dictionary = Values(0)
 		      Redim Values(-1)
@@ -2224,7 +2224,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      End Try
 		    End If
 		    
-		    If Values.Ubound = -1 Then
+		    If Values.LastRowIndex = -1 Then
 		      RS = Self.mBase.SQLSelect(SQLString)
 		      Dim Err As RuntimeException = Self.CheckError(SQLString)
 		      Self.mLock.Leave
@@ -2241,7 +2241,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Raise Err
 		    End If
 		    
-		    For I As Integer = 0 To Values.Ubound
+		    For I As Integer = 0 To Values.LastRowIndex
 		      Dim Value As Variant = Values(I)
 		      Select Case Value.Type
 		      Case Variant.TypeInteger, Variant.TypeInt32

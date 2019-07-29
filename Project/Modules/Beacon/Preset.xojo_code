@@ -55,8 +55,8 @@ Implements Beacon.Countable
 		    Self.mModifierValues.Value(Entry.Key) = Dict.Clone
 		  Next
 		  
-		  Redim Self.mContents(Source.mContents.Ubound)
-		  For I As Integer = 0 To Self.mContents.Ubound
+		  Redim Self.mContents(Source.mContents.LastRowIndex)
+		  For I As Integer = 0 To Self.mContents.LastRowIndex
 		    Self.mContents(I) = New Beacon.PresetEntry(Source.mContents(I))
 		  Next
 		End Sub
@@ -64,7 +64,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return Self.mContents.Ubound + 1
+		  Return Self.mContents.LastRowIndex + 1
 		End Function
 	#tag EndMethod
 
@@ -151,7 +151,7 @@ Implements Beacon.Countable
 		      End If
 		      
 		      Dim IDs() As String = SourceKindToModifierID(ModifierID)
-		      If IDs.Ubound = -1 Then
+		      If IDs.LastRowIndex = -1 Then
 		        IDs.Append(ModifierID)
 		      End If
 		      
@@ -202,7 +202,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Entry As Beacon.PresetEntry) As Integer
-		  For I As Integer = 0 To UBound(Self.mContents)
+		  For I As Integer = 0 To Self.mContents.LastRowIndex
 		    If Self.mContents(I) = Entry Then
 		      Return I
 		    End If

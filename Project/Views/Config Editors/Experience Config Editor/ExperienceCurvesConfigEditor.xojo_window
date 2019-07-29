@@ -293,7 +293,7 @@ End
 		  
 		  Dim TextList As String = LocalData.SharedInstance.GetStringVariable("Dino Default Experience")
 		  Dim List() As String = TextList.Split(",")
-		  For I As Integer = 0 To List.Ubound
+		  For I As Integer = 0 To List.LastRowIndex
 		    Config.DinoExperience(I) = UInt64.FromString(List(I))
 		  Next
 		  
@@ -313,7 +313,7 @@ End
 		  
 		  Dim TextList As String = LocalData.SharedInstance.GetStringVariable("Player Default Experience")
 		  Dim List() As String = TextList.Split(",")
-		  For I As Integer = 0 To List.Ubound
+		  For I As Integer = 0 To List.LastRowIndex
 		    Config.PlayerExperience(I) = UInt64.FromString(List(I))
 		  Next
 		  
@@ -373,7 +373,7 @@ End
 		  End If
 		  
 		  Dim Levels() As UInt64 = ExperienceWizard.Present(Self, Level, MinXP)
-		  If Levels.Ubound = -1 Then
+		  If Levels.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -458,7 +458,7 @@ End
 		    IndexOffset = 1
 		  End If
 		  
-		  For I As Integer = 0 To Levels.Ubound
+		  For I As Integer = 0 To Levels.LastRowIndex
 		    Dim Level As Integer = I + IndexOffset
 		    Dim XP As UInt64 = Levels(I)
 		    Dim IsAscensionLevel As Boolean = Level > (MaxLevel - AscensionLevels)

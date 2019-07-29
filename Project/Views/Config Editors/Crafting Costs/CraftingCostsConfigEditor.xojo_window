@@ -383,13 +383,13 @@ End
 		  End If
 		  
 		  Dim OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
-		  If OtherConfig = Nil Or OtherConfig.Ubound = -1 Then
+		  If OtherConfig = Nil Or OtherConfig.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
 		  Dim Config As BeaconConfigs.CraftingCosts = Self.Config(True)
 		  Dim NewCosts() As Beacon.CraftingCost
-		  For I As Integer = 0 To OtherConfig.Ubound
+		  For I As Integer = 0 To OtherConfig.LastRowIndex
 		    Dim CraftingCost As Beacon.CraftingCost = OtherConfig(I)
 		    Dim Idx As Integer = Config.IndexOf(CraftingCost)
 		    If Idx > -1 Then
@@ -504,7 +504,7 @@ End
 		Private Sub ShowAddEngram()
 		  Dim CurrentEngrams() As Beacon.Engram
 		  Dim Config As BeaconConfigs.CraftingCosts = Self.Config(False)
-		  For I As Integer = 0 To Config.Ubound
+		  For I As Integer = 0 To Config.LastRowIndex
 		    If Config(I).Engram = Nil Then
 		      Continue
 		    End If
@@ -513,7 +513,7 @@ End
 		  Next
 		  
 		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, False)
-		  If NewEngrams = Nil Or NewEngrams.Ubound = -1 Then
+		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -539,7 +539,7 @@ End
 		  
 		  Dim CurrentEngrams() As Beacon.Engram
 		  Dim Config As BeaconConfigs.CraftingCosts = Self.Config(False)
-		  For I As Integer = 0 To Config.Ubound
+		  For I As Integer = 0 To Config.LastRowIndex
 		    If Config(I).Engram = Nil Then
 		      Continue
 		    End If
@@ -548,7 +548,7 @@ End
 		  Next
 		  
 		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, True)
-		  If NewEngrams = Nil Or NewEngrams.Ubound = -1 Then
+		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -594,7 +594,7 @@ End
 		  
 		  Self.List.DeleteAllRows
 		  Dim Config As BeaconConfigs.CraftingCosts = Self.Config(False)
-		  For I As Integer = 0 To Config.Ubound
+		  For I As Integer = 0 To Config.LastRowIndex
 		    Dim Cost As Beacon.CraftingCost = Config(I)
 		    Self.List.AddRow(If(Cost.Engram <> Nil, Cost.Engram.Label, "No Engram Selected"))
 		    Self.List.RowTag(Self.List.LastAddedRowIndex) = Cost

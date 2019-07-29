@@ -504,7 +504,7 @@ Inherits M_Crypto.Encrypter
 		    'dim ptrs() as ptr = array( MultiplyH9Ptr, MultiplyHBPtr, MultiplyHDPtr, MultiplyHEPtr )
 		    'dim values() as integer = array( kH9, kHB, kHD, kHE )
 		    '
-		    'for i as integer = 0 to ptrs.Ubound
+		    'for i as integer = 0 to ptrs.LastRowIndex
 		    'dim p as ptr = ptrs( i )
 		    'dim v as integer = values( i )
 		    '

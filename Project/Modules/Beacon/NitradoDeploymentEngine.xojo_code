@@ -198,7 +198,7 @@ Implements Beacon.DeploymentEngine
 		    Dim EOL As String = Encodings.ASCII.Chr(10)
 		    Dim Lines() As String = ReplaceLineEndings(Content, EOL).Split(EOL)
 		    Dim TimestampFound As Boolean
-		    For I As Integer = Lines.Ubound DownTo 0
+		    For I As Integer = Lines.LastRowIndex DownTo 0
 		      Dim Line As String = Lines(I)
 		      If Line.IndexOf("Log file closed") = -1 Then
 		        Continue
@@ -330,7 +330,7 @@ Implements Beacon.DeploymentEngine
 		      Dim Config As Dictionary = Settings.Value("config")
 		      Dim MapText As String = Config.Value("map")
 		      Dim MapParts() As String = MapText.Split(",")
-		      Self.mMask = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.Ubound))
+		      Self.mMask = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.LastRowIndex))
 		    End If
 		    
 		    Self.mServerStatus = GameServer.Value("status")
@@ -765,7 +765,7 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub SetNextCommandLineParam()
-		  If Self.mCommandLineChanges.Ubound = -1 Then
+		  If Self.mCommandLineChanges.LastRowIndex = -1 Then
 		    // Move on
 		    Self.RunNextTask()
 		    Return

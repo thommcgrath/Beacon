@@ -485,7 +485,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub AddLootSources(Sources() As Beacon.LootSource)
-		  If Sources.Ubound = -1 Then
+		  If Sources.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -693,11 +693,11 @@ End
 		    Next
 		  End If
 		  
-		  Self.List.RowCount = VisibleSources.Ubound + 1
+		  Self.List.RowCount = VisibleSources.LastRowIndex + 1
 		  
 		  Self.mBlockSelectionChanged = True
 		  Dim Selection() As Beacon.LootSource
-		  For I As Integer = 0 To VisibleSources.Ubound
+		  For I As Integer = 0 To VisibleSources.LastRowIndex
 		    Self.List.RowTag(I) = VisibleSources(I)
 		    Self.List.Cell(I, 0) = "" // Causes a redraw of the cell
 		    Self.List.Cell(I, 1) = VisibleSources(I).Label
@@ -711,13 +711,13 @@ End
 		  Self.mBlockSelectionChanged = False
 		  
 		  Editor.Sources = Selection
-		  If Selection.Ubound = -1 Then
+		  If Selection.LastRowIndex = -1 Then
 		    Panel.SelectedPanelIndex = 0
 		  Else
 		    Panel.SelectedPanelIndex = 1
 		  End If
 		  
-		  Self.Header.Rebuild.Enabled = VisibleSources.Ubound > -1
+		  Self.Header.Rebuild.Enabled = VisibleSources.LastRowIndex > -1
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndMethod
@@ -767,7 +767,7 @@ End
 		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
 		  DuplicateButton.HelpTag = "Duplicate the selected loot source."
 		  
-		  Dim RebuildButton As New BeaconToolbarItem("Rebuild", IconToolbarRebuild, Self.Config(False).UBound > -1)
+		  Dim RebuildButton As New BeaconToolbarItem("Rebuild", IconToolbarRebuild, Self.Config(False).LastRowIndex > -1)
 		  RebuildButton.HelpTag = "Rebuild all item sets using their presets."
 		  
 		  Me.LeftItems.Append(AddButton)
@@ -802,7 +802,7 @@ End
 		    Dim Config As BeaconConfigs.LootDrops = Self.Config(False)
 		    Dim Mask As UInt64 = Self.Document.MapCompatibility
 		    If Config <> Nil Then
-		      For I As Integer = LootSources.Ubound DownTo 0
+		      For I As Integer = LootSources.LastRowIndex DownTo 0
 		        Dim Source As Beacon.LootSource = LootSources(I)
 		        If Config.HasLootSource(Source) Or Source.ValidForMask(Mask) = False Then
 		          LootSources.Remove(I)
@@ -811,7 +811,7 @@ End
 		      Next
 		    End If
 		    
-		    If LootSources.Ubound = -1 Then
+		    If LootSources.LastRowIndex = -1 Then
 		      Dim Warning As MenuItem
 		      If Mask = 0 Then
 		        Warning = New MenuItem("List is empty because no maps have been selected.")
@@ -930,7 +930,7 @@ End
 		  Next
 		  
 		  Dim RawData As String
-		  If UBound(Dicts) = 0 Then
+		  If Dicts.LastRowIndex = 0 Then
 		    RawData = Beacon.GenerateJSON(Dicts(0), False)
 		  Else
 		    RawData = Beacon.GenerateJSON(Dicts, False)
@@ -990,7 +990,7 @@ End
 		  Next
 		  
 		  Editor.Sources = Sources
-		  If Sources.Ubound = -1 Then
+		  If Sources.LastRowIndex = -1 Then
 		    Panel.SelectedPanelIndex = 0
 		  Else
 		    Panel.SelectedPanelIndex = 1

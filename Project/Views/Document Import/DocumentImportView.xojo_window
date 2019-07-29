@@ -817,11 +817,11 @@ End
 		  
 		  // Make sure the importers and engines stay in order because they need to be matched up later
 		  Redim Self.mImporters(-1) // To empty the array
-		  Redim Self.mImporters(Engines.Ubound)
+		  Redim Self.mImporters(Engines.LastRowIndex)
 		  Redim Self.mParsedData(-1)
-		  Redim Self.mParsedData(Engines.Ubound)
+		  Redim Self.mParsedData(Engines.LastRowIndex)
 		  Redim Self.mDocuments(-1)
-		  Redim Self.mDocuments(Engines.Ubound)
+		  Redim Self.mDocuments(Engines.LastRowIndex)
 		  
 		  Self.DiscoveryWatcher.RunMode = Timer.RunModes.Multiple
 		  
@@ -840,12 +840,12 @@ End
 	#tag Method, Flags = &h21
 		Private Sub Finish()
 		  Dim Documents() As Beacon.Document
-		  For I As Integer = 0 To Self.mDocuments.Ubound
+		  For I As Integer = 0 To Self.mDocuments.LastRowIndex
 		    If Self.mDocuments(I) <> Nil Then
 		      Documents.Append(Self.mDocuments(I))
 		    End If
 		  Next
-		  If Documents.Ubound > -1 Then
+		  If Documents.LastRowIndex > -1 Then
 		    RaiseEvent DocumentsImported(Documents)
 		  End If
 		  RaiseEvent ShouldDismiss
@@ -863,7 +863,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub Importer_ThreadedParseFinished(Sender As Beacon.ImportThread, ParsedData As Dictionary)
 		  Dim Idx As Integer = -1
-		  For I As Integer = 0 To Self.mImporters.Ubound
+		  For I As Integer = 0 To Self.mImporters.LastRowIndex
 		    If Self.mImporters(I) = Sender Then
 		      Self.mParsedData(I) = ParsedData
 		      Idx = I
@@ -885,14 +885,14 @@ End
 		  
 		  Try
 		    Dim Maps() As Beacon.Map = Beacon.Maps.ForMask(Engine.Map)
-		    If Maps.Ubound = -1 Then
+		    If Maps.LastRowIndex = -1 Then
 		      Maps.Append(Beacon.Maps.TheIsland)
 		    End If
 		    Dim DifficultyTotal, DifficultyScale As Double
 		    For Each Map As Beacon.Map In Maps
 		      DifficultyTotal = DifficultyTotal + Map.DifficultyScale
 		    Next
-		    DifficultyScale = DifficultyTotal / (Maps.Ubound + 1)
+		    DifficultyScale = DifficultyTotal / (Maps.LastRowIndex + 1)
 		    
 		    Dim DifficultyValue As Double
 		    If CommandLineOptions.HasKey("OverrideOfficialDifficulty") And CommandLineOptions.DoubleValue("OverrideOfficialDifficulty") > 0 Then
@@ -1011,7 +1011,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Reset()
-		  For I As Integer = 0 To Self.mImporters.Ubound
+		  For I As Integer = 0 To Self.mImporters.LastRowIndex
 		    If Self.mImporters(I) <> Nil And Not Self.mImporters(I).Finished Then
 		      Self.mImporters(I).Cancel
 		    End If
@@ -1033,7 +1033,7 @@ End
 	#tag Method, Flags = &h0
 		Sub SetOtherDocuments(Documents() As Beacon.Document)
 		  Self.mOtherDocuments = Documents
-		  Self.SourceRadio(3).Enabled = Documents.Ubound > -1
+		  Self.SourceRadio(3).Enabled = Documents.LastRowIndex > -1
 		  Self.SourceRadio(3).Caption = "Other Beacon Document" + If(Self.SourceRadio(3).Enabled, "", " (No Other Documents Open)")
 		End Sub
 	#tag EndMethod
@@ -1133,7 +1133,7 @@ End
 #tag Events SourceRadio
 	#tag Event
 		Sub Pressed(index as Integer)
-		  SourceActionButton.Enabled = SourceRadio(0).Value Or SourceRadio(1).Value Or SourceRadio(2).Value Or (SourceRadio(3).Value And SourceRadio(3).Enabled And Self.mOtherDocuments.Ubound > -1)
+		  SourceActionButton.Enabled = SourceRadio(0).Value Or SourceRadio(1).Value Or SourceRadio(2).Value Or (SourceRadio(3).Value And SourceRadio(3).Enabled And Self.mOtherDocuments.LastRowIndex > -1)
 		  SourceActionButton.Default = SourceActionButton.Enabled
 		End Sub
 	#tag EndEvent
@@ -1293,7 +1293,7 @@ End
 		  Dim AllFinished As Boolean = True
 		  Dim SuccessCount As Integer
 		  Dim Errors As Boolean
-		  For I As Integer = 0 To Self.mEngines.Ubound
+		  For I As Integer = 0 To Self.mEngines.LastRowIndex
 		    Dim Engine As Beacon.DiscoveryEngine = Self.mEngines(I)
 		    Dim Finished As Boolean
 		    Dim Status As String

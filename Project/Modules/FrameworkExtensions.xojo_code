@@ -19,14 +19,14 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function AddSuffix(Extends Title As String, Suffix As String) As String
 		  Dim Words() As String = Title.Split(" ")
-		  If Words.Ubound >= 0 And Words(Words.Ubound) = Suffix Then
+		  If Words.LastRowIndex >= 0 And Words(Words.LastRowIndex) = Suffix Then
 		    Words.Append("2")
-		  ElseIf Words.Ubound >= 1 And Words(Words.Ubound - 1) = Suffix Then
+		  ElseIf Words.LastRowIndex >= 1 And Words(Words.LastRowIndex - 1) = Suffix Then
 		    Dim CopyNum As Integer
 		    #Pragma BreakOnExceptions Off
 		    Try
-		      CopyNum = Integer.FromString(Words(Words.Ubound), Locale.Raw) + 1
-		      Words(Words.Ubound) = CopyNum.ToString(Locale.Raw, "0")
+		      CopyNum = Integer.FromString(Words(Words.LastRowIndex), Locale.Raw) + 1
+		      Words(Words.LastRowIndex) = CopyNum.ToString(Locale.Raw, "0")
 		    Catch Err As RuntimeException
 		      Words.Append(Suffix)
 		    End Try
@@ -79,13 +79,13 @@ Protected Module FrameworkExtensions
 		      Dim Decoded As Double = AutoToDouble(Possible, ResolveWithFirst)
 		      Possibles.Append(Decoded)
 		    Next
-		    If Possibles.Ubound = -1 Then
+		    If Possibles.LastRowIndex = -1 Then
 		      Return 0
 		    End If
 		    If ResolveWithFirst Then
 		      Return Possibles(0)
 		    Else
-		      Return Possibles(Possibles.Ubound)
+		      Return Possibles(Possibles.LastRowIndex)
 		    End If
 		  Else
 		    Break
@@ -161,8 +161,8 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function Clone(Extends Source() As String) As String()
 		  Dim Result() As String
-		  Redim Result(Source.Ubound)
-		  For I As Integer = 0 To Source.Ubound
+		  Redim Result(Source.LastRowIndex)
+		  For I As Integer = 0 To Source.LastRowIndex
 		    Result(I) = Source(I)
 		  Next
 		  Return Result
@@ -245,7 +245,7 @@ Protected Module FrameworkExtensions
 		  End If
 		  
 		  Dim Parts() As String = Name.Split(".")
-		  Return Parts(Parts.Ubound)
+		  Return Parts(Parts.LastRowIndex)
 		End Function
 	#tag EndMethod
 
@@ -489,8 +489,8 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ToString(Extends Source() As String) As String()
 		  Dim Result() As String
-		  Redim Result(Source.Ubound)
-		  For I As Integer = 0 To Source.Ubound
+		  Redim Result(Source.LastRowIndex)
+		  For I As Integer = 0 To Source.LastRowIndex
 		    Result(I) = Source(I)
 		  Next
 		  Return Result

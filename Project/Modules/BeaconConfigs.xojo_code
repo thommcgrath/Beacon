@@ -3,7 +3,7 @@ Protected Module BeaconConfigs
 	#tag Method, Flags = &h1
 		Protected Function AllConfigNames(Human As Boolean = False) As String()
 		  Static Names() As String
-		  If Names.Ubound = -1 Then
+		  If Names.LastRowIndex = -1 Then
 		    Names.Append(BeaconConfigs.Difficulty.ConfigName)
 		    Names.Append(BeaconConfigs.LootDrops.ConfigName)
 		    Names.Append(BeaconConfigs.LootScale.ConfigName)
@@ -18,9 +18,9 @@ Protected Module BeaconConfigs
 		  End If
 		  If Human = True Then
 		    Static HumanNames() As String
-		    If HumanNames.Ubound = -1 Then
-		      Redim HumanNames(Names.Ubound)
-		      For I As Integer = 0 To Names.Ubound
+		    If HumanNames.LastRowIndex = -1 Then
+		      Redim HumanNames(Names.LastRowIndex)
+		      For I As Integer = 0 To Names.LastRowIndex
 		        HumanNames(I) = Language.LabelForConfig(Names(I))
 		      Next
 		      HumanNames.Sort
@@ -69,7 +69,7 @@ Protected Module BeaconConfigs
 		  Dim Constructors() As Introspection.ConstructorInfo = Info.GetConstructors
 		  For Each Signature As Introspection.ConstructorInfo In Constructors
 		    Dim Params() As Introspection.ParameterInfo = Signature.GetParameters
-		    If Params.Ubound = -1 Then
+		    If Params.LastRowIndex = -1 Then
 		      Return Signature.Invoke()
 		    End If
 		  Next
@@ -86,7 +86,7 @@ Protected Module BeaconConfigs
 		  Dim Constructors() As Introspection.ConstructorInfo = Info.GetConstructors
 		  For Each Signature As Introspection.ConstructorInfo In Constructors
 		    Dim Params() As Introspection.ParameterInfo = Signature.GetParameters
-		    If Params.Ubound = 1 And Params(0).IsByRef = False And Params(0).ParameterType.FullName = "Dictionary" And Params(1).IsByRef = False And Params(1).ParameterType.FullName = "Beacon.Identity" Then
+		    If Params.LastRowIndex = 1 And Params(0).IsByRef = False And Params(0).ParameterType.FullName = "Dictionary" And Params(1).IsByRef = False And Params(1).ParameterType.FullName = "Beacon.Identity" Then
 		      Dim Values(1) As Variant
 		      Values(0) = GroupData
 		      Values(1) = Identity

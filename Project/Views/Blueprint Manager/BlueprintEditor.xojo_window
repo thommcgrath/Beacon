@@ -638,7 +638,7 @@ End
 		  End If
 		  
 		  Dim Tags() As String = Self.TagsField.Value.Split(",")
-		  For I As Integer = Tags.Ubound DownTo 0
+		  For I As Integer = Tags.LastRowIndex DownTo 0
 		    Tags(I) = Tags(I).Trim
 		    If Tags(I) = "" Then
 		      Tags.Remove(I)

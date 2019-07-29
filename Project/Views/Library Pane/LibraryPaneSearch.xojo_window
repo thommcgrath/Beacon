@@ -415,7 +415,7 @@ End
 		  
 		  G.ForeColor = SystemColors.LabelColor
 		  
-		  If Self.mResultDicts.Ubound = -1 Then
+		  If Self.mResultDicts.LastRowIndex = -1 Then
 		    If Self.mSearchTerms = "" Then
 		      G.FontName = "System"
 		      G.FontSize = 0
@@ -432,7 +432,7 @@ End
 		  
 		  Self.mContentHeight = Self.ResultSpacing
 		  Dim NextTop As Integer = Self.ResultSpacing - Self.mScrollPosition
-		  For I As Integer = 0 To Self.mResultDicts.Ubound
+		  For I As Integer = 0 To Self.mResultDicts.LastRowIndex
 		    Dim Dict As Dictionary = Self.mResultDicts(I)
 		    Dim Rect As REALbasic.Rect = Self.DrawResult(G, NextTop, Dict, Self.mMousePressIndex = I)
 		    If Rect <> Nil Then
@@ -461,7 +461,7 @@ End
 		  Dim Point As New REALbasic.Point(X, Y)
 		  
 		  Self.mMouseDownIndex = -1
-		  For I As Integer = 0 To Self.mResultRects.Ubound
+		  For I As Integer = 0 To Self.mResultRects.LastRowIndex
 		    If Self.mResultRects(I) <> Nil And Self.mResultRects(I).Contains(Point) Then
 		      Self.mMouseDownIndex = I
 		      Exit For I

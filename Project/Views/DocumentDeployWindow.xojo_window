@@ -567,7 +567,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub AuthenticateNext()
-		  If Self.mOAuthQueue.Ubound = -1 Then
+		  If Self.mOAuthQueue.LastRowIndex = -1 Then
 		    // Move to the next step
 		    Self.DeployingList.DeleteAllRows
 		    
@@ -734,7 +734,7 @@ End
 		      Report.Append(DeploymentEngine.Name + ": Finished successfully. " + If(DeploymentEngine.ServerIsStarting, "The server is starting up now.", "You may start the server when you are ready."))
 		    End If
 		  Next
-		  TotalCount = Self.mDeploymentEngines.Ubound + 1
+		  TotalCount = Self.mDeploymentEngines.LastRowIndex + 1
 		  
 		  If SuccessCount = 0 Then
 		    If TotalCount = 1 Then

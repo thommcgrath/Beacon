@@ -291,7 +291,7 @@ End
 		  Next
 		  
 		  Dim Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", CurrentCreatures, True)
-		  If Creatures.Ubound = -1 Then
+		  If Creatures.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  Config = Self.Config(True)
@@ -493,7 +493,7 @@ End
 		    Catch Err As RuntimeException
 		    End Try
 		    
-		    If Items.Ubound = -1 Then
+		    If Items.LastRowIndex = -1 Then
 		      Return
 		    End If
 		    

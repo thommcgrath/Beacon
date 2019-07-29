@@ -260,13 +260,13 @@ End
 		    End If
 		  Next
 		  
-		  Select Case ModifiedViews.Ubound
+		  Select Case ModifiedViews.LastRowIndex
 		  Case -1
 		    Return False
 		  Case 0
 		    Return Not Self.DiscardView(ModifiedViews(0))
 		  Else
-		    Dim NumChanges As Integer = ModifiedViews.Ubound + 1
+		    Dim NumChanges As Integer = ModifiedViews.LastRowIndex + 1
 		    
 		    Dim Dialog As New MessageDialog
 		    Dialog.Title = ""
@@ -467,7 +467,7 @@ End
 		  
 		  Self.mSubviews.Remove(ViewIndex)
 		  View.Close
-		  Self.TabBar1.Count = Self.mSubviews.Ubound + 2
+		  Self.TabBar1.Count = Self.mSubviews.LastRowIndex + 2
 		  Self.LibraryPane1.CleanupClosedViews()
 		  
 		  Return True
@@ -579,8 +579,8 @@ End
 		  Dim ViewIndex As Integer = Self.mSubviews.IndexOf(View)
 		  If ViewIndex = -1 Then
 		    Self.mSubviews.Append(View)
-		    ViewIndex = Self.mSubviews.Ubound
-		    Self.TabBar1.Count = Self.mSubviews.Ubound + 2
+		    ViewIndex = Self.mSubviews.LastRowIndex
+		    Self.TabBar1.Count = Self.mSubviews.LastRowIndex + 2
 		    View.EmbedWithinPanel(Self.Views, 1, 0, 0, Self.Views.Width, Self.Views.Height)
 		    
 		    AddHandler View.OwnerModifiedHook, WeakAddressOf Subview_ContentsChanged
@@ -643,7 +643,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ViewCount() As UInteger
-		  Return Self.mSubviews.Ubound + 1
+		  Return Self.mSubviews.LastRowIndex + 1
 		End Function
 	#tag EndMethod
 
@@ -741,7 +741,7 @@ End
 		    Return DashboardPane1
 		  Else
 		    TabIndex = TabIndex - 1
-		    If TabIndex >= 0 And TabIndex <= Self.mSubviews.Ubound Then
+		    If TabIndex >= 0 And TabIndex <= Self.mSubviews.LastRowIndex Then
 		      Return Self.mSubviews(TabIndex)
 		    End If
 		  End If
@@ -754,7 +754,7 @@ End
 		  End If
 		  
 		  ViewIndex = ViewIndex - 1
-		  If ViewIndex <= Self.mSubviews.Ubound Then
+		  If ViewIndex <= Self.mSubviews.LastRowIndex Then
 		    Call Self.DiscardView(Self.mSubviews(ViewIndex))
 		  End If
 		End Sub
@@ -767,7 +767,7 @@ End
 		  End If
 		  
 		  ViewIndex = ViewIndex - 1
-		  If ViewIndex <= Self.mSubviews.Ubound Then
+		  If ViewIndex <= Self.mSubviews.LastRowIndex Then
 		    Self.ShowView(Self.mSubviews(ViewIndex))
 		  End If
 		End Sub

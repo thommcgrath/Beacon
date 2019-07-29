@@ -586,7 +586,7 @@ End
 		  AddHandler EmptySetItem.Action, WeakAddressOf Self.HandlePresetMenu
 		  Parent.Append(EmptySetItem)
 		  
-		  Dim HasTarget As Boolean = Self.mSources.Ubound > -1
+		  Dim HasTarget As Boolean = Self.mSources.LastRowIndex > -1
 		  
 		  For Each Group As String In GroupNames
 		    Dim Arr() As Beacon.Preset = Groups.Value(Group)
@@ -598,7 +598,7 @@ End
 		        Items.Append(Preset)
 		      End If
 		    Next
-		    If Names.Ubound = -1 Then
+		    If Names.LastRowIndex = -1 Then
 		      Continue For Group
 		    End If
 		    
@@ -774,7 +774,7 @@ End
 		  // Find sets that are common to all sources
 		  Dim Sets As New Dictionary
 		  Dim Weights As New Dictionary
-		  Dim MatchWeight As Integer = Self.mSources.Ubound + 1
+		  Dim MatchWeight As Integer = Self.mSources.LastRowIndex + 1
 		  
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    For Each Set As Beacon.ItemSet In Source
@@ -794,7 +794,7 @@ End
 		  Next
 		  
 		  Self.mTotalSetCount = Sets.KeyCount
-		  Self.mVisibleSetCount = CommonSets.Ubound + 1
+		  Self.mVisibleSetCount = CommonSets.LastRowIndex + 1
 		  
 		  SetList.DeleteAllRows
 		  For Each Set As Beacon.ItemSet In CommonSets
@@ -807,13 +807,13 @@ End
 		  Self.mSorting = False
 		  
 		  #if false
-		    If Self.mSources.Ubound > -1 Then
+		    If Self.mSources.LastRowIndex > -1 Then
 		      Dim DuplicatesState As CheckBox.CheckedStates = if(Self.mSources(0).SetsRandomWithoutReplacement, CheckBox.CheckedStates.Checked, CheckBox.CheckedStates.Unchecked)
 		      Dim Label As String = Self.mSources(0).Label
 		      Dim MinSets As Integer = Self.mSources(0).MinItemSets
 		      Dim MaxSets As Integer = Self.mSources(0).MaxItemSets
 		      
-		      For I As Integer = 1 To Self.mSources.Ubound
+		      For I As Integer = 1 To Self.mSources.LastRowIndex
 		        MinSets = Min(MinSets, Self.mSources(I).MinItemSets)
 		        MaxSets = Max(MaxSets, Self.mSources(I).MaxItemSets)
 		        
@@ -1001,11 +1001,11 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Sources(Assigns Values() As Beacon.LootSource)
-		  Redim Self.mSources(Values.Ubound)
-		  For I As Integer = 0 To Self.mSources.Ubound
+		  Redim Self.mSources(Values.LastRowIndex)
+		  For I As Integer = 0 To Self.mSources.LastRowIndex
 		    Self.mSources(I) = Values(I)
 		  Next
-		  If Self.mSources.Ubound = 0 Then
+		  If Self.mSources.LastRowIndex = 0 Then
 		    Self.Header.Simulate.Enabled = True
 		    Self.Simulator.Simulate(Self.mSources(0))
 		  Else
@@ -1014,9 +1014,9 @@ End
 		  End If
 		  
 		  Dim CommonNotes As String
-		  If Self.mSources.Ubound > -1 Then
+		  If Self.mSources.LastRowIndex > -1 Then
 		    CommonNotes = Self.mSources(0).Notes
-		    For I As Integer = 1 To Self.mSources.Ubound
+		    For I As Integer = 1 To Self.mSources.LastRowIndex
 		      If Self.mSources(I).Notes <> CommonNotes Then
 		        CommonNotes = ""
 		        Exit For I
@@ -1172,12 +1172,12 @@ End
 		      Dicts.Append(Dict)
 		    End If
 		  Next
-		  If UBound(Dicts) = -1 Then
+		  If Dicts.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
 		  Dim Contents As String
-		  If UBound(Dicts) = 0 Then
+		  If Dicts.LastRowIndex = 0 Then
 		    Contents = Beacon.GenerateJSON(Dicts(0), False)
 		  Else
 		    Contents = Beacon.GenerateJSON(Dicts, False)
@@ -1188,7 +1188,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If UBound(Self.mSources) = -1 Then
+		  If Self.mSources.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -1275,7 +1275,7 @@ End
 		    Next
 		  End If
 		  
-		  If UBound(Targets) = -1 Then
+		  If Targets.LastRowIndex = -1 Then
 		    Return False
 		  End If
 		  
@@ -1286,11 +1286,11 @@ End
 		      Continue
 		    End If
 		    
-		    If UBound(Presets) = -1 Then
+		    If Presets.LastRowIndex = -1 Then
 		      Presets = Beacon.Data.Presets
 		    End If
 		    
-		    For I As Integer = 0 To UBound(Presets)
+		    For I As Integer = 0 To Presets.LastRowIndex
 		      If Presets(I).PresetID = Set.SourcePresetID Then
 		        Preset = Presets(I)
 		        PresetFound = True
@@ -1301,7 +1301,7 @@ End
 		  
 		  Dim CreateItem As New MenuItem("Create Preset…", Targets)
 		  CreateItem.Name = "createpreset"
-		  CreateItem.Enabled = UBound(Targets) = 0
+		  CreateItem.Enabled = Targets.LastRowIndex = 0
 		  If PresetFound And CreateItem.Enabled Then
 		    CreateItem.Value = "Update """ + Preset.Label + """ Preset…"
 		  End If
@@ -1311,7 +1311,7 @@ End
 		  ReconfigureItem.Name = "reconfigure"
 		  ReconfigureItem.Enabled = PresetFound
 		  If ReconfigureItem.Enabled Then
-		    If UBound(Targets) = 0 Then
+		    If Targets.LastRowIndex = 0 Then
 		      ReconfigureItem.Value = "Rebuild From """ + Preset.Label + """ Preset"
 		    Else
 		      ReconfigureItem.Value = "Rebuild From Presets"
@@ -1346,7 +1346,7 @@ End
 		  
 		  Select Case HitItem.Name
 		  Case "createpreset"
-		    If Targets.Ubound = 0 Then
+		    If Targets.LastRowIndex = 0 Then
 		      Dim Target As Beacon.ItemSet = Targets(0)
 		      Dim NewPreset As Beacon.Preset = MainWindow.Presets.CreatePreset(Target)
 		      Dim Updated As Boolean
@@ -1395,7 +1395,7 @@ End
 		    Next
 		    
 		    If Not Updated Then
-		      If Targets.Ubound = 0 Then
+		      If Targets.LastRowIndex = 0 Then
 		        Self.ShowAlert("No changes made", "This item set is already identical to the preset.")
 		      Else
 		        Self.ShowAlert("No changes made", "All item sets already match their preset.")
@@ -1406,12 +1406,12 @@ End
 		    Self.RebuildSetList()
 		    RaiseEvent Updated
 		    
-		    If Targets.Ubound > 0 Then
+		    If Targets.LastRowIndex > 0 Then
 		      // Editor will be disabled, so it won't be obvious something happened.
 		      Self.ShowAlert("Rebuild complete", "All selected item sets have been rebuilt according to their preset.")
 		    End If
 		  Case "copyjson"
-		    If Targets.Ubound = 0 Then
+		    If Targets.LastRowIndex = 0 Then
 		      Dim Dict As Dictionary = Targets(0).Export()
 		      Dim Board As New Clipboard
 		      Board.Text = Beacon.GenerateJSON(Dict, False)
@@ -1427,7 +1427,7 @@ End
 		    Dim Multipliers As Beacon.Range
 		    Dim UseBlueprints As Boolean
 		    Dim Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
-		    If Self.mSources.Ubound = 0 Then
+		    If Self.mSources.LastRowIndex = 0 Then
 		      Multipliers = Self.mSources(0).Multipliers
 		      UseBlueprints = Self.mSources(0).UseBlueprints
 		    Else
@@ -1441,7 +1441,7 @@ End
 		    Next
 		    
 		    Dim Board As New Clipboard
-		    If Parts.Ubound = 0 Then
+		    If Parts.LastRowIndex = 0 Then
 		      Board.Text = Parts(0)
 		    Else
 		      Board.Text = "ItemSets=(" + Parts.Join(",") + ")"
@@ -1494,7 +1494,7 @@ End
 		  Dim SetNames() As String
 		  For Each SourceLootSource As Beacon.LootSource In SourceLootSources
 		    Dim DestinationLootSource As Beacon.LootSource
-		    For I As Integer = 0 To UBound(Self.mSources)
+		    For I As Integer = 0 To Self.mSources.LastRowIndex
 		      If SourceLootSource.ClassString = Self.mSources(I).ClassString Then
 		        DestinationLootSource = Self.mSources(I)
 		        Exit For I

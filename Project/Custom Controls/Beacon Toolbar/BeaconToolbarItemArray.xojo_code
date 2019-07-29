@@ -1,6 +1,6 @@
 #tag Class
 Protected Class BeaconToolbarItemArray
-Implements ObservationKit.Observable, ObservationKit.Observer,  Iterable
+Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 	#tag Method, Flags = &h0
 		Sub AddObserver(Observer As ObservationKit.Observer, Key As String)
 		  // Part of the ObservationKit.Observable interface.
@@ -14,7 +14,7 @@ Implements ObservationKit.Observable, ObservationKit.Observer,  Iterable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = UBound(Refs) DownTo 0
+		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Then
 		      Refs.Remove(I)
 		      Continue
@@ -46,13 +46,13 @@ Implements ObservationKit.Observable, ObservationKit.Observer,  Iterable
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return Self.mItems.Ubound + 1
+		  Return Self.mItems.LastRowIndex + 1
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Item As BeaconToolbarItem) As Integer
-		  For I As Integer = 0 To Self.mItems.Ubound
+		  For I As Integer = 0 To Self.mItems.LastRowIndex
 		    If Self.mItems(I) = Item Then
 		      Return I
 		    End If
@@ -82,6 +82,12 @@ Implements ObservationKit.Observable, ObservationKit.Observer,  Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function LastRowIndex() As Integer
+		  Return Self.mItems.LastRowIndex
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub NotifyObservers(Key As String, Value As Variant)
 		  // Part of the ObservationKit.Observable interface.
 		  
@@ -94,7 +100,7 @@ Implements ObservationKit.Observable, ObservationKit.Observer,  Iterable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = UBound(Refs) DownTo 0
+		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Then
 		      Refs.Remove(I)
 		      Continue
@@ -118,11 +124,11 @@ Implements ObservationKit.Observable, ObservationKit.Observer,  Iterable
 
 	#tag Method, Flags = &h0
 		Sub Operator_Redim(NewBound As Integer)
-		  If NewBound = Self.mItems.Ubound Then
+		  If NewBound = Self.mItems.LastRowIndex Then
 		    Return
 		  End If
 		  
-		  For I As Integer = Self.mItems.Ubound DownTo NewBound + 1
+		  For I As Integer = Self.mItems.LastRowIndex DownTo NewBound + 1
 		    Dim OldValue As BeaconToolbarItem = Self.mItems(I)
 		    If OldValue <> Nil Then
 		      OldValue.RemoveObserver(Self, BeaconToolbarItem.KeyChanged)
@@ -184,7 +190,7 @@ Implements ObservationKit.Observable, ObservationKit.Observer,  Iterable
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = UBound(Refs) DownTo 0
+		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Or Refs(I).Value = Observer Then
 		      Refs.Remove(I)
 		      Continue
@@ -194,12 +200,6 @@ Implements ObservationKit.Observable, ObservationKit.Observer,  Iterable
 		  Self.mObservers.Value(Key) = Refs
 		  
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function UBound() As Integer
-		  Return Self.mItems.Ubound
-		End Function
 	#tag EndMethod
 
 

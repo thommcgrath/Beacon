@@ -84,7 +84,7 @@ Protected Class ColorProfile
 		      Differences.Append(Difference)
 		    Next
 		    
-		    If Grays.Ubound = -1 Then
+		    If Grays.LastRowIndex = -1 Then
 		      // Give up
 		      SelectedGray = DesiredGray
 		    Else

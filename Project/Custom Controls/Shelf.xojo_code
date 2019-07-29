@@ -20,7 +20,7 @@ Implements ObservationKit.Observer
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
 		  Dim Point As New BeaconUI.Point(X,Y)
 		  
-		  For I As Integer = 0 To Self.mHitRects.Ubound
+		  For I As Integer = 0 To Self.mHitRects.LastRowIndex
 		    If Self.mHitRects(I) = Nil Then
 		      Continue
 		    End If
@@ -66,7 +66,7 @@ Implements ObservationKit.Observer
 	#tag Event
 		Sub MouseMove(X As Integer, Y As Integer)
 		  Dim Point As New BeaconUI.Point(X,Y)
-		  For I As Integer = 0 To Self.mHitRects.Ubound
+		  For I As Integer = 0 To Self.mHitRects.LastRowIndex
 		    If Self.mHitRects(I) = Nil Then
 		      Continue
 		    End If
@@ -127,7 +127,7 @@ Implements ObservationKit.Observer
 		  CellPadding = CellSpacing
 		  
 		  Dim FlexibleSpaceCount, StaticSpaceCount As Integer
-		  For I As Integer = 0 To Self.mItems.Ubound
+		  For I As Integer = 0 To Self.mItems.LastRowIndex
 		    Select Case Self.mItems(I).Type
 		    Case ShelfItem.TypeNormal, ShelfItem.TypeSpacer
 		      StaticSpaceCount = StaticSpaceCount + 1
@@ -150,7 +150,7 @@ Implements ObservationKit.Observer
 		  Dim CellHeight As Double = CellWidth
 		  
 		  Dim MaxCaptionWidth As Double
-		  For I As Integer = 0 To Self.mItems.Ubound
+		  For I As Integer = 0 To Self.mItems.LastRowIndex
 		    If Self.mItems(I).Type <> ShelfItem.TypeNormal Then
 		      Continue
 		    End If
@@ -173,8 +173,8 @@ Implements ObservationKit.Observer
 		  End If
 		  
 		  Dim NextPos As Double = CellSpacing
-		  Redim Self.mHitRects(Self.mItems.Ubound)
-		  For I As Integer = 0 To Self.mItems.Ubound
+		  Redim Self.mHitRects(Self.mItems.LastRowIndex)
+		  For I As Integer = 0 To Self.mItems.LastRowIndex
 		    If Self.mItems(I).Type = ShelfItem.TypeSpacer Then
 		      Self.mHitRects(I) = Nil
 		      NextPos = NextPos + If(Self.IsVertical, CellHeight, CellWidth) + CellSpacing
@@ -277,7 +277,7 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h0
 		Function Count() As UInteger
-		  Return Self.mItems.Ubound + 1
+		  Return Self.mItems.LastRowIndex + 1
 		End Function
 	#tag EndMethod
 
@@ -317,7 +317,7 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h0
 		Sub SelectedIndex(Assigns Value As Integer)
-		  Value = Max(Min(Self.mItems.Ubound, Value), If(Self.RequiresSelection, 0, -1))
+		  Value = Max(Min(Self.mItems.LastRowIndex, Value), If(Self.RequiresSelection, 0, -1))
 		  If Self.mSelectedIndex <> Value Then
 		    Self.mSelectedIndex = Value
 		    RaiseEvent Pressed
@@ -343,7 +343,7 @@ Implements ObservationKit.Observer
 		    Return
 		  End If
 		  
-		  For I As Integer = 0 To Self.mItems.Ubound
+		  For I As Integer = 0 To Self.mItems.LastRowIndex
 		    If Self.mItems(I).Tag = Value.Tag Then
 		      Self.SelectedIndex = I
 		      Return
@@ -355,7 +355,7 @@ Implements ObservationKit.Observer
 	#tag Method, Flags = &h21
 		Private Sub ShowHoverToolTip()
 		  Dim Point As New BeaconUI.Point(Self.MouseX, Self.MouseY)
-		  For I As Integer = 0 To Self.mHitRects.Ubound
+		  For I As Integer = 0 To Self.mHitRects.LastRowIndex
 		    If Self.mHitRects(I) = Nil Then
 		      Continue
 		    End If

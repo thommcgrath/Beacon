@@ -187,18 +187,18 @@ Protected Module UserCloud
 		  End If
 		  
 		  Dim Components() As String = RemotePath.Split("/")
-		  If Components.Ubound = -1 Then
+		  If Components.LastRowIndex = -1 Then
 		    Return LocalFolder
 		  End If
 		  
-		  For I As Integer = 0 To Components.Ubound - 1
+		  For I As Integer = 0 To Components.LastRowIndex - 1
 		    LocalFolder = LocalFolder.Child(DecodeURLComponent(Components(I)).DefineEncoding(Encodings.UTF8))
 		    If Not LocalFolder.CheckIsFolder(Create) Then
 		      Return Nil
 		    End If
 		  Next
 		  
-		  Return LocalFolder.Child(DecodeURLComponent(Components(Components.Ubound)).DefineEncoding(Encodings.UTF8))
+		  Return LocalFolder.Child(DecodeURLComponent(Components(Components.LastRowIndex)).DefineEncoding(Encodings.UTF8))
 		End Function
 	#tag EndMethod
 

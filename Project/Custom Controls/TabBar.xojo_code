@@ -5,7 +5,7 @@ Implements ObservationKit.Observer
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
 		  Dim Point As New REALbasic.Point(X, Y)
-		  For I As Integer = 0 To Self.mTabRects.Ubound
+		  For I As Integer = 0 To Self.mTabRects.LastRowIndex
 		    If Self.mTabRects(I) = Nil Then
 		      Continue
 		    End If
@@ -225,7 +225,7 @@ Implements ObservationKit.Observer
 		Private Sub MouseMove(X As Integer, Y As Integer)
 		  Dim HoverRect As REALbasic.Rect
 		  Dim Point As New REALbasic.Point(X, Y)
-		  For I As Integer = 0 To Self.mCloseBoxes.Ubound
+		  For I As Integer = 0 To Self.mCloseBoxes.LastRowIndex
 		    If Self.mCloseBoxes(I) = Nil Then
 		      Continue
 		    End If
@@ -288,7 +288,7 @@ Implements ObservationKit.Observer
 			  If Self.mCount <> Value Then
 			    Self.mCount = Value
 			    
-			    Dim OldBound As Integer = Self.mTabRects.Ubound
+			    Dim OldBound As Integer = Self.mTabRects.LastRowIndex
 			    Dim NewBound As Integer = Value - 1
 			    For I As Integer = OldBound + 1 To NewBound
 			      Dim View As BeaconSubview = RaiseEvent ViewAtIndex(I)

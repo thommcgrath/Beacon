@@ -6,7 +6,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Document
 		  
 		  Dim ConfigName As String = ConfigKey
-		  For I As Integer = 0 To Self.mCosts.Ubound
+		  For I As Integer = 0 To Self.mCosts.LastRowIndex
 		    If Self.mCosts(I).IsValid Then
 		      Continue
 		    End If
@@ -15,7 +15,7 @@ Inherits Beacon.ConfigGroup
 		      Issues.Append(New Beacon.Issue(ConfigName, "Crafting cost has no engram", Self.mCosts(I)))
 		    End If
 		    
-		    If Self.mCosts(I).Ubound = -1 Then
+		    If Self.mCosts(I).LastRowIndex = -1 Then
 		      Issues.Append(New Beacon.Issue(ConfigName, "Crafting cost override of """ + Self.mCosts(I).Label + """ has no resources.", Self.mCosts(I)))
 		    End If
 		  Next
@@ -111,7 +111,7 @@ Inherits Beacon.ConfigGroup
 		      Config.Append(Cost)
 		    End If
 		  Next
-		  If Config.Ubound > -1 Then
+		  If Config.LastRowIndex > -1 Then
 		    Return Config
 		  End If
 		End Function
@@ -123,7 +123,7 @@ Inherits Beacon.ConfigGroup
 		    Return -1
 		  End If
 		  
-		  For I As Integer = 0 To Self.mCosts.Ubound
+		  For I As Integer = 0 To Self.mCosts.LastRowIndex
 		    If Self.mCosts(I).Engram = Cost.Engram Or Self.mCosts(I) = Cost Then
 		      Return I
 		    End If
@@ -147,12 +147,18 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function LastRowIndex() As Integer
+		  Return Self.mCosts.LastRowIndex
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  If Super.Modified Then
 		    Return True
 		  End If
 		  
-		  For I As Integer = 0 To Self.mCosts.Ubound
+		  For I As Integer = 0 To Self.mCosts.LastRowIndex
 		    If Self.mCosts(I).Modified Then
 		      Return True
 		    End If
@@ -165,7 +171,7 @@ Inherits Beacon.ConfigGroup
 		  Super.Modified = Value
 		  
 		  If Not Value Then
-		    For I As Integer = 0 To Self.mCosts.Ubound
+		    For I As Integer = 0 To Self.mCosts.LastRowIndex
 		      Self.mCosts(I).Modified = False
 		    Next
 		  End If
@@ -209,12 +215,6 @@ Inherits Beacon.ConfigGroup
 		  Self.mCosts.Remove(Index)
 		  Self.Modified = True
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Ubound() As Integer
-		  Return Self.mCosts.Ubound
-		End Function
 	#tag EndMethod
 
 

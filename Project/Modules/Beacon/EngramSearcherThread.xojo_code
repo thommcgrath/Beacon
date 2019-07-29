@@ -65,7 +65,7 @@ Inherits Beacon.Thread
 		      Dim FoundSinceLastPush As Boolean
 		      
 		      Dim HeaderColumns() As String
-		      If Lines.Ubound >= 0 Then
+		      If Lines.LastRowIndex >= 0 Then
 		        HeaderColumns = Lines(0)
 		        Lines.Remove(0)
 		      End If
@@ -146,7 +146,7 @@ Inherits Beacon.Thread
 		        End If
 		      Next
 		      
-		      If Self.mBlueprints.Ubound > -1 Then
+		      If Self.mBlueprints.LastRowIndex > -1 Then
 		        Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
 		      End If
 		      Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFinished))
@@ -267,11 +267,11 @@ Inherits Beacon.Thread
 	#tag Method, Flags = &h0
 		Function Blueprints(ClearList As Boolean) As Beacon.Blueprint()
 		  Dim Arr() As Beacon.Blueprint
-		  Redim Arr(Self.mBlueprints.Ubound)
+		  Redim Arr(Self.mBlueprints.LastRowIndex)
 		  
 		  Self.mBlueprintsLock.Enter
 		  
-		  For I As Integer = 0 To Self.mBlueprints.Ubound
+		  For I As Integer = 0 To Self.mBlueprints.LastRowIndex
 		    Arr(I) = Self.mBlueprints(I).Clone
 		  Next
 		  
@@ -287,7 +287,7 @@ Inherits Beacon.Thread
 
 	#tag Method, Flags = &h0
 		Sub Cancel()
-		  For I As Integer = Self.mPendingTriggers.Ubound DownTo 0
+		  For I As Integer = Self.mPendingTriggers.LastRowIndex DownTo 0
 		    CallLater.Cancel(Self.mPendingTriggers(I))
 		    Self.mPendingTriggers.Remove(I)
 		  Next

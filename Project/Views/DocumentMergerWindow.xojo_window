@@ -266,13 +266,13 @@ End
 		    MapMask = MapMask Or Document.MapCompatibility
 		  Next
 		  Dim NewMaps() As Beacon.Map = Beacon.Maps.ForMask(MapMask)
-		  For I As Integer = NewMaps.Ubound DownTo 0
+		  For I As Integer = NewMaps.LastRowIndex DownTo 0
 		    If DestinationDocument.SupportsMap(NewMaps(I)) Then
 		      NewMaps.Remove(I)
 		    End If
 		  Next
 		  Dim OldMaps() As Beacon.Map = DestinationDocument.Maps
-		  For I As Integer = OldMaps.Ubound DownTo 0
+		  For I As Integer = OldMaps.LastRowIndex DownTo 0
 		    If OldMaps(I).Matches(MapMask) Then
 		      OldMaps.Remove(I)
 		    End If
@@ -283,7 +283,7 @@ End
 		  Win.mOAuthData = OAuthData
 		  Win.mCallback = Callback
 		  Dim Enabled As Boolean
-		  Dim UsePrefixes As Boolean = SourceDocuments.Ubound > 0
+		  Dim UsePrefixes As Boolean = SourceDocuments.LastRowIndex > 0
 		  For Each Document As Beacon.Document In SourceDocuments
 		    Dim Prefix As String = If(UsePrefixes, Document.Title + ": ", "")
 		    Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs

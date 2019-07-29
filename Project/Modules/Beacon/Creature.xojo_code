@@ -16,9 +16,9 @@ Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
 		Function ClassString() As String
 		  Dim Components() As String = Self.mPath.Split("/")
-		  Dim Tail As String = Components(Components.Ubound)
+		  Dim Tail As String = Components(Components.LastRowIndex)
 		  Components = Tail.Split(".")
-		  Return Components(Components.Ubound) + "_C"
+		  Return Components(Components.LastRowIndex) + "_C"
 		End Function
 	#tag EndMethod
 
@@ -127,8 +127,8 @@ Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
 		Function Tags() As String()
 		  Dim Clone() As String
-		  Redim Clone(Self.mTags.Ubound)
-		  For I As Integer = 0 To Self.mTags.Ubound
+		  Redim Clone(Self.mTags.LastRowIndex)
+		  For I As Integer = 0 To Self.mTags.LastRowIndex
 		    Clone(I) = Self.mTags(I)
 		  Next
 		  Return Clone

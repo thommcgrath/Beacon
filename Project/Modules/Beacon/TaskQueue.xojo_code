@@ -8,7 +8,7 @@ Protected Class TaskQueue
 
 	#tag Method, Flags = &h1
 		Protected Sub AppendTask(Tasks() As Beacon.TaskQueue.QueueItem)
-		  For I As Integer = 0 To Tasks.Ubound
+		  For I As Integer = 0 To Tasks.LastRowIndex
 		    Self.mTasks.Append(Tasks(I))
 		  Next
 		End Sub
@@ -23,7 +23,7 @@ Protected Class TaskQueue
 
 	#tag Method, Flags = &h0
 		Function Finished() As Boolean
-		  Return Self.mNextIndex > Self.mTasks.Ubound
+		  Return Self.mNextIndex > Self.mTasks.LastRowIndex
 		End Function
 	#tag EndMethod
 
@@ -51,7 +51,7 @@ Protected Class TaskQueue
 
 	#tag Method, Flags = &h1
 		Protected Sub RunNextTask()
-		  If Self.mNextIndex > Self.mTasks.Ubound Then
+		  If Self.mNextIndex > Self.mTasks.LastRowIndex Then
 		    RaiseEvent Finished
 		    Return
 		  End If
@@ -64,7 +64,7 @@ Protected Class TaskQueue
 
 	#tag Method, Flags = &h0
 		Function TaskCount() As Integer
-		  Return Self.mTasks.Ubound + 1
+		  Return Self.mTasks.LastRowIndex + 1
 		End Function
 	#tag EndMethod
 
@@ -94,7 +94,9 @@ Protected Class TaskQueue
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -102,12 +104,15 @@ Protected Class TaskQueue
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -115,6 +120,7 @@ Protected Class TaskQueue
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -122,11 +128,7 @@ Protected Class TaskQueue
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mTasks()"
-			Group="Behavior"
-			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

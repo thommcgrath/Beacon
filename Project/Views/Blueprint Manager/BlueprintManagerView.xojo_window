@@ -110,9 +110,9 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       SelectedPanelIndex=   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
       Value           =   2
       Visible         =   True
       Width           =   510
@@ -198,6 +198,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          HasBackgroundColor=   False
          Height          =   592
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   296
          LockBottom      =   True
@@ -237,6 +238,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          HasBackgroundColor=   False
          Height          =   592
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   296
          LockBottom      =   True
@@ -363,6 +365,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Width           =   295
    End
    Begin Beacon.EngramSearcherThread Searcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -371,6 +374,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       TabPanelIndex   =   0
    End
    Begin Timer ClipboardWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   "0"
@@ -593,8 +597,8 @@ End
 		  Next
 		  
 		  Self.mSettingUp = True
-		  Self.List.RowCount = Blueprints.Ubound + 1
-		  For I As Integer = 0 To Blueprints.Ubound
+		  Self.List.RowCount = Blueprints.LastRowIndex + 1
+		  For I As Integer = 0 To Blueprints.LastRowIndex
 		    Dim Blueprint As Beacon.Blueprint = Blueprints(I)
 		    
 		    Self.List.RowTag(I) = Blueprint
@@ -783,7 +787,7 @@ End
 		  
 		  Dim Blueprints() As Beacon.Blueprint = Me.Blueprints(True)
 		  Dim ImportedCount As Integer = LocalData.SharedInstance.SaveBlueprints(Blueprints, False)
-		  Dim SkippedCount As Integer = (Blueprints.Ubound + 1) - ImportedCount
+		  Dim SkippedCount As Integer = (Blueprints.LastRowIndex + 1) - ImportedCount
 		  
 		  Self.SetupUI()
 		  

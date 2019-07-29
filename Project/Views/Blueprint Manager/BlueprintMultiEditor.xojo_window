@@ -342,8 +342,8 @@ End
 	#tag Method, Flags = &h0
 		Function Blueprints() As Beacon.Blueprint()
 		  Dim Blueprints() As Beacon.Blueprint
-		  Redim Blueprints(Self.mBlueprints.Ubound)
-		  For I As Integer = 0 To Self.mBlueprints.Ubound
+		  Redim Blueprints(Self.mBlueprints.LastRowIndex)
+		  For I As Integer = 0 To Self.mBlueprints.LastRowIndex
 		    Blueprints(I) = Self.mBlueprints(I).Clone
 		  Next
 		  Return Blueprints
@@ -375,8 +375,8 @@ End
 		  End If
 		  
 		  If Blueprints <> Nil Then
-		    Redim Self.mBlueprints(Blueprints.Ubound)
-		    For I As Integer = 0 To Blueprints.Ubound
+		    Redim Self.mBlueprints(Blueprints.LastRowIndex)
+		    For I As Integer = 0 To Blueprints.LastRowIndex
 		      Self.mBlueprints(I) = Blueprints(I).MutableClone
 		    Next
 		  Else
@@ -444,7 +444,7 @@ End
 		    Blueprint.RemoveTags(RemoveTags)
 		  Next
 		  
-		  If LocalData.SharedInstance.SaveBlueprints(Self.mBlueprints) <> (Self.mBlueprints.Ubound + 1) Then
+		  If LocalData.SharedInstance.SaveBlueprints(Self.mBlueprints) <> (Self.mBlueprints.LastRowIndex + 1) Then
 		    Break
 		  Else
 		    Self.Modified = False
@@ -474,7 +474,7 @@ End
 		    Next
 		  Next
 		  
-		  Dim BlueprintCount As Integer = Self.mBlueprints.Ubound + 1
+		  Dim BlueprintCount As Integer = Self.mBlueprints.LastRowIndex + 1
 		  For Each Check As Checkbox In Self.mMapCheckboxes
 		    Dim Count As Integer = Masks.Lookup(Check.Index, 0)
 		    If Count = 0 Then

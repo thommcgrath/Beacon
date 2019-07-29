@@ -398,7 +398,7 @@ Implements NotificationKit.Receiver
 		    Args.Append(Arg)
 		  End If
 		  
-		  If Args.Ubound > 0 Then
+		  If Args.LastRowIndex > 0 Then
 		    Dim Path As String = DefineEncoding(Args(1), Encodings.UTF8)
 		    If Beacon.IsBeaconURL(Path) Then
 		      // Given a url
@@ -422,12 +422,12 @@ Implements NotificationKit.Receiver
 		  
 		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Error)
 		  Dim Stack() As StackFrame = Error.StackFrames
-		  While Stack.Ubound >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
+		  While Stack.LastRowIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
 		    Stack.Remove(0)
 		  Wend
 		  
 		  Dim Location As String = "Unknown"
-		  If Stack.Ubound >= 0 Then
+		  If Stack.LastRowIndex >= 0 Then
 		    Location = Stack(0).Name
 		  End If
 		  Dim Reason As String = Error.Reason
@@ -700,7 +700,7 @@ Implements NotificationKit.Receiver
 		      
 		      Dim LogFile As FolderItem = Self.ApplicationSupport.Child("Events.log")
 		      Dim Stream As TextOutputStream = TextOutputStream.Append(LogFile)
-		      While Self.mQueuedLogMessages.Ubound > -1
+		      While Self.mQueuedLogMessages.LastRowIndex > -1
 		        Stream.WriteLine(Self.mQueuedLogMessages(0))
 		        Self.mQueuedLogMessages.Remove(0)
 		      Wend
@@ -788,7 +788,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub NextLaunchQueueTask()
-		  If Self.mLaunchQueue.Ubound = -1 Then
+		  If Self.mLaunchQueue.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -883,7 +883,7 @@ Implements NotificationKit.Receiver
 		    AddHandler Item.Action, WeakAddressOf mOpenRecent_OpenFile
 		    FileOpenRecent.Append(Item)
 		  Next
-		  If Documents.Ubound > -1 Then
+		  If Documents.LastRowIndex > -1 Then
 		    FileOpenRecent.Append(New MenuItem(MenuItem.TextSeparator))
 		    
 		    Dim Item As New MenuItem("Clear Menu")

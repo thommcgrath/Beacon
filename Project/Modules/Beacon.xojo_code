@@ -10,7 +10,7 @@ Protected Module Beacon
 		Sub AddTags(Extends Blueprint As Beacon.MutableBlueprint, TagsToAdd() As String)
 		  Dim Tags() As String = Blueprint.Tags
 		  Dim Changed As Boolean
-		  For I As Integer = 0 To TagsToAdd.Ubound
+		  For I As Integer = 0 To TagsToAdd.LastRowIndex
 		    Dim Tag As String  = Beacon.NormalizeTag(TagsToAdd(I))
 		    
 		    If Tag = "object" Then
@@ -334,7 +334,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h21
 		Private Function GetLastValueAsType(Values() As Variant, FullName As String, Default As Variant) As Variant
-		  For I As Integer = Values.Ubound DownTo 0
+		  For I As Integer = Values.LastRowIndex DownTo 0
 		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Values(I))
 		    If Info.FullName = FullName Then
 		      Return Values(I)
@@ -407,7 +407,7 @@ Protected Module Beacon
 		    
 		    Const TestValue = "/script/"
 		    Static EncodingsList() As TextEncoding
-		    If EncodingsList.Ubound = -1 Then
+		    If EncodingsList.LastRowIndex = -1 Then
 		      EncodingsList = Array(Encodings.UTF8, Encodings.UTF16LE, Encodings.UTF16BE)
 		      Dim Bound As Integer = Encodings.Count - 1
 		      For I As Integer = 0 To Bound
@@ -507,15 +507,15 @@ Protected Module Beacon
 		    Names.Append(Map.Name)
 		  Next
 		  
-		  If Names.Ubound = -1 Then
+		  If Names.LastRowIndex = -1 Then
 		    Return "No Maps"
-		  ElseIf Names.Ubound = 0 Then
+		  ElseIf Names.LastRowIndex = 0 Then
 		    Return Names(0)
-		  ElseIf Names.Ubound = 1 Then
+		  ElseIf Names.LastRowIndex = 1 Then
 		    Return Names(0) + " & " + Names(1)
 		  Else
-		    Dim Tail As String = Names(Names.Ubound)
-		    Names.Remove(Names.Ubound)
+		    Dim Tail As String = Names(Names.LastRowIndex)
+		    Names.Remove(Names.LastRowIndex)
 		    Return Join(Names, ", ") + ", & " + Tail
 		  End If
 		End Function
@@ -524,14 +524,14 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function LabelFromClassString(ClassString As String) As String
 		  Dim Parts() As String = Split(ClassString, "_")
-		  If Parts.Ubound <= 1 Then
+		  If Parts.LastRowIndex <= 1 Then
 		    Return ClassString
 		  End If
 		  If ClassString.IndexOf("PrimalItem") > -1 Then
 		    Parts.Remove(0)
-		    Parts.Remove(Parts.Ubound)
+		    Parts.Remove(Parts.LastRowIndex)
 		  ElseIf ClassString.IndexOf("Character") > -1 Then
-		    For I As Integer = Parts.Ubound DownTo 0
+		    For I As Integer = Parts.LastRowIndex DownTo 0
 		      If Parts(I) = "C" Or Parts(I) = "BP" Or Parts(I) = "Character" Then
 		        Parts.Remove(I)
 		      End If
@@ -646,7 +646,7 @@ Protected Module Beacon
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 		Function PrimaryExtension(Extends Type As FileType) As String
 		  Dim Extensions() As String = Split(Type.Extensions, ";")
-		  If UBound(Extensions) = -1 Then
+		  If Extensions.LastRowIndex = -1 Then
 		    Return ""
 		  End If
 		  
@@ -669,7 +669,7 @@ Protected Module Beacon
 		Sub RemoveTags(Extends Blueprint As Beacon.MutableBlueprint, TagsToRemove() As String)
 		  Dim Tags() As String = Blueprint.Tags
 		  Dim Changed As Boolean
-		  For I As Integer = 0 To TagsToRemove.Ubound
+		  For I As Integer = 0 To TagsToRemove.LastRowIndex
 		    Dim Tag As String  = Beacon.NormalizeTag(TagsToRemove(I))
 		    
 		    If Tag = "object" Then
@@ -765,7 +765,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Sub Sort(Sources() As Beacon.LootSource)
-		  Dim Bound As Integer = Sources.Ubound
+		  Dim Bound As Integer = Sources.LastRowIndex
 		  If Bound = -1 Then
 		    Return
 		  End If
@@ -782,7 +782,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Sub Sort(Qualities() As Beacon.Quality)
-		  Dim Bound As Integer = Qualities.Ubound
+		  Dim Bound As Integer = Qualities.LastRowIndex
 		  If Bound = -1 Then
 		    Return
 		  End If

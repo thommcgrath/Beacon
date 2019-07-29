@@ -1050,7 +1050,7 @@ End
 		    Entries.Append(Entry)
 		  Next
 		  
-		  If Entries.Ubound = -1 Then
+		  If Entries.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -1203,7 +1203,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ShowAddDialog()
 		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, New Beacon.StringList)
-		  If Entries = Nil Or Entries.Ubound = -1 Then
+		  If Entries = Nil Or Entries.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  Self.ContentsList.SelectedIndex = -1

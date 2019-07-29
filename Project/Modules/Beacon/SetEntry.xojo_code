@@ -20,18 +20,18 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function ClassesLabel() As String
-		  If UBound(Self.mOptions) = -1 Then
+		  If Self.mOptions.LastRowIndex = -1 Then
 		    Return "No Items"
-		  ElseIf UBound(Self.mOptions) = 0 Then
+		  ElseIf Self.mOptions.LastRowIndex = 0 Then
 		    Return Self.mOptions(0).Engram.ClassString
-		  ElseIf UBound(Self.mOptions) = 1 Then
+		  ElseIf Self.mOptions.LastRowIndex = 1 Then
 		    Return Self.mOptions(0).Engram.ClassString + " or " + Self.mOptions(1).Engram.ClassString
 		  Else
 		    Dim Labels() As String
-		    For I As Integer = 0 To UBound(Self.mOptions) - 1
+		    For I As Integer = 0 To Self.mOptions.LastRowIndex - 1
 		      Labels.Append(Self.mOptions(I).Engram.ClassString)
 		    Next
-		    Labels.Append("or " + Self.mOptions(UBound(Self.mOptions)).Engram.ClassString)
+		    Labels.Append("or " + Self.mOptions(Self.mOptions.LastRowIndex).Engram.ClassString)
 		    
 		    Return Labels.Join(", ")
 		  End If
@@ -54,7 +54,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Sub Constructor(Source As Beacon.SetEntry)
 		  Self.Constructor()
 		  
-		  Redim Self.mOptions(UBound(Source.mOptions))
+		  Redim Self.mOptions(Source.mOptions.LastRowIndex)
 		  
 		  Self.mChanceToBeBlueprint = Source.mChanceToBeBlueprint
 		  Self.mMaxQuality = Source.mMaxQuality
@@ -68,7 +68,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mLastModifiedTime = Source.mLastModifiedTime
 		  Self.mLastSaveTime = Source.mLastSaveTime
 		  
-		  For I As Integer = 0 To UBound(Source.mOptions)
+		  For I As Integer = 0 To Source.mOptions.LastRowIndex
 		    Self.mOptions(I) = New Beacon.SetEntryOption(Source.mOptions(I))
 		  Next
 		End Sub
@@ -81,7 +81,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Next
 		  
 		  ' Dim Modified As Boolean
-		  ' For I As Integer = 0 To UBound(Self.mOptions)
+		  ' For I As Integer = 0 To Self.mOptions.LastRowIndex
 		  ' Dim Option As Beacon.SetEntryOption = Self.mOptions(I)
 		  ' For Each Engram As Beacon.Engram In Engrams
 		  ' If Option.Engram <> Nil And Option.Engram.IsValid = False And Option.Engram.ClassString = Engram.ClassString Then
@@ -96,13 +96,13 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return UBound(Self.mOptions) + 1
+		  Return Self.mOptions.LastRowIndex + 1
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Shared Function CreateBlueprintEntry(Entries() As Beacon.SetEntry) As Beacon.SetEntry
-		  If UBound(Entries) = -1 Then
+		  If Entries.LastRowIndex = -1 Then
 		    Return Nil
 		  End If
 		  
@@ -139,7 +139,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  For Each Entry As DictionaryEntry In Options
 		    Dim Path As String = Entry.Key
 		    Dim Arr() As Beacon.SetEntryOption = Entry.Value
-		    Dim Count As Integer = UBound(Arr) + 1
+		    Dim Count As Integer = Arr.LastRowIndex + 1
 		    Dim WeightSum As Double
 		    For Each Option As Beacon.SetEntryOption In Arr
 		      WeightSum = WeightSum + Option.Weight
@@ -188,8 +188,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Function Hash() As String
 		  If Self.HashIsStale Then
 		    Dim Items() As String
-		    Redim Items(Self.mOptions.Ubound)
-		    For I As Integer = 0 To Items.Ubound
+		    Redim Items(Self.mOptions.LastRowIndex)
+		    For I As Integer = 0 To Items.LastRowIndex
 		      Items(I) = Self.mOptions(I).Hash
 		    Next
 		    Items.Sort
@@ -341,17 +341,17 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Next
 		  End If
 		  
-		  If UBound(ClassWeights) < UBound(Engrams) Then
+		  If ClassWeights.LastRowIndex < Engrams.LastRowIndex Then
 		    // Add more values
-		    While UBound(ClassWeights) < UBound(Engrams)
+		    While ClassWeights.LastRowIndex < Engrams.LastRowIndex
 		      ClassWeights.Append(1)
 		    Wend
-		  ElseIf UBound(ClassWeights) > UBound(Engrams) Then
+		  ElseIf ClassWeights.LastRowIndex > Engrams.LastRowIndex Then
 		    // Just truncate
-		    Redim ClassWeights(UBound(Engrams))
+		    Redim ClassWeights(Engrams.LastRowIndex)
 		  End If
 		  
-		  For I As Integer = 0 To UBound(Engrams)
+		  For I As Integer = 0 To Engrams.LastRowIndex
 		    Try
 		      Dim Engram As Beacon.Engram = Engrams(I)
 		      Dim ClassWeight As Double = ClassWeights(I)
@@ -368,7 +368,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Item As Beacon.SetEntryOption) As Integer
-		  For I As Integer = 0 To UBound(Self.mOptions)
+		  For I As Integer = 0 To Self.mOptions.LastRowIndex
 		    If Self.mOptions(I) = Item Then
 		      Return I
 		    End If
@@ -391,7 +391,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      Return False
 		    End If
 		  Next
-		  Return Self.mOptions.Ubound > -1
+		  Return Self.mOptions.LastRowIndex > -1
 		End Function
 	#tag EndMethod
 
@@ -418,18 +418,18 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Label() As String
-		  If UBound(Self.mOptions) = -1 Then
+		  If Self.mOptions.LastRowIndex = -1 Then
 		    Return "No Items"
-		  ElseIf UBound(Self.mOptions) = 0 Then
+		  ElseIf Self.mOptions.LastRowIndex = 0 Then
 		    Return Self.mOptions(0).Engram.Label
-		  ElseIf UBound(Self.mOptions) = 1 Then
+		  ElseIf Self.mOptions.LastRowIndex = 1 Then
 		    Return Self.mOptions(0).Engram.Label + " or " + Self.mOptions(1).Engram.Label
 		  Else
 		    Dim Labels() As String
-		    For I As Integer = 0 To UBound(Self.mOptions) - 1
+		    For I As Integer = 0 To Self.mOptions.LastRowIndex - 1
 		      Labels.Append(Self.mOptions(I).Engram.Label)
 		    Next
-		    Labels.Append("or " + Self.mOptions(UBound(Self.mOptions)).Engram.Label)
+		    Labels.Append("or " + Self.mOptions(Self.mOptions.LastRowIndex).Engram.Label)
 		    
 		    Return Labels.Join(", ")
 		  End If
@@ -508,7 +508,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function SafeForMods(Mods As Beacon.StringList) As Boolean
-		  If Mods.Ubound = -1 Then
+		  If Mods.LastRowIndex = -1 Then
 		    Return True
 		  End If
 		  
@@ -559,7 +559,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Dim ClassDecision As Double = System.Random.InRange(100000, 100000 + (Sum * 100000)) - 100000
 		    Dim Selection As New Beacon.SimulatedSelection
 		    
-		    For X As Integer = 0 To UBound(Weights)
+		    For X As Integer = 0 To Weights.LastRowIndex
 		      If Weights(X) >= ClassDecision Then
 		        Dim SelectedWeight As Double = Weights(X)
 		        Dim SelectedEntry As Beacon.SetEntryOption = WeightLookup.Value(SelectedWeight)
@@ -583,14 +583,14 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function TextValue(Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As String
 		  Dim Paths(), Weights(), Classes() As String
-		  Redim Paths(UBound(Self.mOptions))
-		  Redim Weights(UBound(Self.mOptions))
-		  Redim Classes(UBound(Self.mOptions))
+		  Redim Paths(Self.mOptions.LastRowIndex)
+		  Redim Weights(Self.mOptions.LastRowIndex)
+		  Redim Classes(Self.mOptions.LastRowIndex)
 		  Dim SumOptionWeights As Double
-		  For I As Integer = 0 To UBound(Self.mOptions)
+		  For I As Integer = 0 To Self.mOptions.LastRowIndex
 		    SumOptionWeights = SumOptionWeights + Self.mOptions(I).Weight
 		  Next
-		  For I As Integer = 0 To UBound(Self.mOptions)
+		  For I As Integer = 0 To Self.mOptions.LastRowIndex
 		    Dim RelativeWeight As Integer = Round((Self.mOptions(I).Weight / SumOptionWeights) * 1000)
 		    Paths(I) = Self.mOptions(I).Engram.GeneratedClassBlueprintPath()
 		    Classes(I) = """" + Self.mOptions(I).Engram.ClassString + """"

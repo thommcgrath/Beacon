@@ -20,7 +20,7 @@ Protected Module Qualities
 	#tag Method, Flags = &h1
 		Protected Function ForBaseValue(BaseValue As Double) As Beacon.Quality
 		  Dim List() As Beacon.Quality = All
-		  For I As Integer = 0 To UBound(List)
+		  For I As Integer = 0 To List.LastRowIndex
 		    If BaseValue < List(I).BaseValue Then
 		      If I = 0 Then
 		        Return List(0)
@@ -29,7 +29,7 @@ Protected Module Qualities
 		      End If
 		    End If
 		  Next
-		  Return List(UBound(List))
+		  Return List(List.LastRowIndex)
 		End Function
 	#tag EndMethod
 

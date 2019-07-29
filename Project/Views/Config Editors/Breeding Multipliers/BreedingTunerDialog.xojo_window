@@ -412,7 +412,7 @@ End
 		    Next
 		  Else
 		    Dim Creatures() As String = List.Split(",")
-		    For I As Integer = 0 To Creatures.Ubound
+		    For I As Integer = 0 To Creatures.LastRowIndex
 		      Creatures(I) = Creatures(I).Trim
 		    Next
 		    

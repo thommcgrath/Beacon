@@ -20,14 +20,14 @@ Protected Module BeaconEncryption
 		  Key = Key.ReplaceAll(Encodings.UTF8.Chr(13), Encodings.UTF8.Chr(10))
 		  
 		  Dim Lines() As String = Key.Split(Encodings.UTF8.Chr(10))
-		  If (Lines(0).IndexOf("BEGIN PRIVATE KEY") = -1 Or Lines(Lines.Ubound).IndexOf("END PRIVATE KEY") = -1) And (Lines(0).IndexOf("BEGIN RSA PRIVATE KEY") = -1 Or Lines(Lines.Ubound).IndexOf("END RSA PRIVATE KEY") = -1) Then
+		  If (Lines(0).IndexOf("BEGIN PRIVATE KEY") = -1 Or Lines(Lines.LastRowIndex).IndexOf("END PRIVATE KEY") = -1) And (Lines(0).IndexOf("BEGIN RSA PRIVATE KEY") = -1 Or Lines(Lines.LastRowIndex).IndexOf("END RSA PRIVATE KEY") = -1) Then
 		    Dim Err As New CryptoException
 		    Err.Reason = "Text does not appear to be a PEM-encoded private key"
 		    Raise Err
 		  End If
 		  
 		  Lines.Remove(0)
-		  Lines.Remove(Lines.Ubound)
+		  Lines.Remove(Lines.LastRowIndex)
 		  
 		  Key = Lines.Join(Encodings.UTF8.Chr(10))
 		  
@@ -49,14 +49,14 @@ Protected Module BeaconEncryption
 		  Key = Key.ReplaceAll(Encodings.UTF8.Chr(13), Encodings.UTF8.Chr(10))
 		  
 		  Dim Lines() As String = Key.Split(Encodings.UTF8.Chr(10))
-		  If Lines(0).IndexOf("BEGIN PUBLIC KEY") = -1 Or Lines(Lines.Ubound).IndexOf("END PUBLIC KEY") = -1 Then
+		  If Lines(0).IndexOf("BEGIN PUBLIC KEY") = -1 Or Lines(Lines.LastRowIndex).IndexOf("END PUBLIC KEY") = -1 Then
 		    Dim Err As New CryptoException
 		    Err.Reason = "Text does not appear to be a PEM-encoded public key"
 		    Raise Err
 		  End If
 		  
 		  Lines.Remove(0)
-		  Lines.Remove(Lines.Ubound)
+		  Lines.Remove(Lines.LastRowIndex)
 		  
 		  Key = Lines.Join(Encodings.UTF8.Chr(10))
 		  

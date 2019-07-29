@@ -128,7 +128,7 @@ Inherits Beacon.ConfigGroup
 		  Dim InsideBeaconSection As Boolean
 		  Dim Lines() As String = Input.Split(EOL)
 		  Dim FilteredLines() As String
-		  For I As Integer = 0 To Lines.Ubound
+		  For I As Integer = 0 To Lines.LastRowIndex
 		    Dim Line As String = Lines(I).Trim
 		    If Line = "[Beacon]" Then
 		      InsideBeaconSection = True
@@ -216,7 +216,7 @@ Inherits Beacon.ConfigGroup
 		    ProtectedKeys.Value("AuctionHouse.MarketID") = True
 		    
 		    // Make sure passwords get encrypted on save
-		    For I As Integer = ConfigValues.Ubound DownTo 0
+		    For I As Integer = ConfigValues.LastRowIndex DownTo 0
 		      Dim ConfigValue As Beacon.ConfigValue = ConfigValues(I)
 		      If ConfigValue.Value = "" Then
 		        Continue

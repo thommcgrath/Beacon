@@ -260,11 +260,11 @@ End
 		  Next
 		  
 		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.Mods, Sources, Prefilter)
-		  If Entries = Nil Or Entries.Ubound <> Sources.Ubound Then
+		  If Entries = Nil Or Entries.LastRowIndex <> Sources.LastRowIndex Then
 		    Return
 		  End If
 		  
-		  For I As Integer = 0 To Entries.Ubound
+		  For I As Integer = 0 To Entries.LastRowIndex
 		    Dim Source As Beacon.SetEntry = Sources(I)
 		    Dim Idx As Integer = Self.mSet.IndexOf(Source)
 		    If Idx > -1 Then
@@ -521,12 +521,12 @@ End
 		    End If
 		  Next
 		  
-		  If UBound(Entries) = -1 Then
+		  If Entries.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
 		  Dim Contents As String
-		  If UBound(Entries) = 0 Then
+		  If Entries.LastRowIndex = 0 Then
 		    Contents = Beacon.GenerateJSON(Entries(0), False)
 		  Else
 		    Contents = Beacon.GenerateJSON(Entries, False)

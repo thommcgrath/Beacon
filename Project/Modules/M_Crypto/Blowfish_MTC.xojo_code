@@ -658,7 +658,7 @@ Implements BcryptInterface
 		  #if kDebug then
 		    startMs = Microseconds
 		  #endif
-		  for keyIndex as integer = 0 to keys.Ubound
+		  for keyIndex as integer = 0 to keys.LastRowIndex
 		    dim key as Xojo.Core.MutableMemoryBlock = keys( keyIndex )
 		    dim keySize as integer = key.Size
 		    
@@ -731,7 +731,7 @@ Implements BcryptInterface
 		  
 		  for rep as integer = 1 to repetitions
 		    
-		    for keyIndex = 0 to keys.Ubound
+		    for keyIndex = 0 to keys.LastRowIndex
 		      
 		      #if kDebug then
 		        startMs = Microseconds
@@ -1173,7 +1173,7 @@ Implements BcryptInterface
 		        arr = S3
 		      end
 		      
-		      for i1 as Integer = 0 to arr.Ubound
+		      for i1 as Integer = 0 to arr.LastRowIndex
 		        mySPtr.UInt32( x ) = arr( i1 )
 		        x = x + 4
 		      next i1
@@ -1200,7 +1200,7 @@ Implements BcryptInterface
 		    &h9216d5d9, &h8979fb1b _
 		    )
 		    
-		    for i as integer = 0 to vals.Ubound
+		    for i as integer = 0 to vals.LastRowIndex
 		      myPPtr.UInt32( i * 4 ) = vals( i )
 		    next i
 		    

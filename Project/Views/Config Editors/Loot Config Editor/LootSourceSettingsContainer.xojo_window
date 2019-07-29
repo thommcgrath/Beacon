@@ -462,7 +462,7 @@ End
 	#tag Method, Flags = &h0
 		Function LootSources() As Beacon.LootSource()
 		  Dim Results() As Beacon.LootSource
-		  For I As Integer = 0 To Self.mSources.Ubound
+		  For I As Integer = 0 To Self.mSources.LastRowIndex
 		    If Self.mSources(I).Value <> Nil Then
 		      Results.Append(Beacon.LootSource(Self.mSources(I).Value))
 		    End If
@@ -475,9 +475,9 @@ End
 		Sub LootSources(Assigns Sources() As Beacon.LootSource)
 		  Self.mSettingUp = True
 		  
-		  Redim Self.mSources(Sources.Ubound)
+		  Redim Self.mSources(Sources.LastRowIndex)
 		  
-		  If Sources.Ubound = -1 Then
+		  If Sources.LastRowIndex = -1 Then
 		    Self.MinItemSetsField.Value = ""
 		    Self.MaxItemSetsField.Value = ""
 		    Self.NoDuplicatesCheck.VisualState = CheckBox.VisualStates.Unchecked
@@ -488,7 +488,7 @@ End
 		    Dim CommonNoDuplicates As CheckBox.VisualStates = If(Sources(0).SetsRandomWithoutReplacement, CheckBox.VisualStates.Checked, Checkbox.VisualStates.Unchecked)
 		    Dim CommonAppendMode As CheckBox.VisualStates = If(Sources(0).AppendMode, CheckBox.VisualStates.Checked, CheckBox.VisualStates.Unchecked)
 		    
-		    For I As Integer = 0 To Sources.Ubound
+		    For I As Integer = 0 To Sources.LastRowIndex
 		      Self.mSources(I) = New WeakRef(Sources(I))
 		      
 		      If Sources(I).MinItemSets <> CommonMinItemSets Then
@@ -575,7 +575,7 @@ End
 		  End If
 		  
 		  Dim Sources() As Beacon.LootSource = Self.LootSources
-		  For I As Integer = 0 To Sources.Ubound
+		  For I As Integer = 0 To Sources.LastRowIndex
 		    Sources(I).MinItemSets = Value
 		  Next
 		  RaiseEvent SettingsChanged
@@ -583,7 +583,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function AllowContents(Value As String) As Boolean
-		  If Value.Trim = "" And Self.mSources.Ubound > 0 Then
+		  If Value.Trim = "" And Self.mSources.LastRowIndex > 0 Then
 		    Return True
 		  End If
 		End Function
@@ -616,7 +616,7 @@ End
 		  End If
 		  
 		  Dim Sources() As Beacon.LootSource = Self.LootSources
-		  For I As Integer = 0 To Sources.Ubound
+		  For I As Integer = 0 To Sources.LastRowIndex
 		    Sources(I).MaxItemSets = Value
 		  Next
 		  RaiseEvent SettingsChanged
@@ -624,7 +624,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function AllowContents(Value As String) As Boolean
-		  If Value.Trim = "" And Self.mSources.Ubound > 0 Then
+		  If Value.Trim = "" And Self.mSources.LastRowIndex > 0 Then
 		    Return True
 		  End If
 		End Function
@@ -652,7 +652,7 @@ End
 		  End If
 		  
 		  Dim Sources() As Beacon.LootSource = Self.LootSources
-		  For I As Integer = 0 To Sources.Ubound
+		  For I As Integer = 0 To Sources.LastRowIndex
 		    Sources(I).SetsRandomWithoutReplacement = Me.Value
 		  Next
 		  
@@ -708,7 +708,7 @@ End
 		  End If
 		  
 		  Dim Sources() As Beacon.LootSource = Self.LootSources
-		  For I As Integer = 0 To Sources.Ubound
+		  For I As Integer = 0 To Sources.LastRowIndex
 		    Sources(I).AppendMode = Me.Value
 		  Next
 		  

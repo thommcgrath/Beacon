@@ -7,14 +7,14 @@ Protected Module Preferences
 		  End If
 		  
 		  Dim Recents() As Beacon.DocumentURL = RecentDocuments
-		  For I As Integer = Recents.Ubound DownTo 0
+		  For I As Integer = Recents.LastRowIndex DownTo 0
 		    If Recents(I) = URL Then
 		      Recents.Remove(I)
 		    End If
 		  Next
 		  Recents.Insert(0, URL)
 		  
-		  While Recents.Ubound > 19
+		  While Recents.LastRowIndex > 19
 		    Recents.Remove(20)
 		  Wend
 		  
@@ -91,8 +91,8 @@ Protected Module Preferences
 	#tag Method, Flags = &h1
 		Protected Sub RecentDocuments(Assigns Values() As Beacon.DocumentURL)
 		  Dim URLs() As String
-		  Redim URLs(Values.Ubound)
-		  For I As Integer = 0 To Values.Ubound
+		  Redim URLs(Values.LastRowIndex)
+		  For I As Integer = 0 To Values.LastRowIndex
 		    URLs(I) = Values(I).URL
 		  Next
 		  

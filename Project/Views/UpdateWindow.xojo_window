@@ -564,9 +564,9 @@ End
 		  Self.ResultsNotesButton.Enabled = NotesURL.BeginsWith("https://")
 		  
 		  Dim PathComponents() As String = Split(NthField(URL, "?", 1), "/")
-		  Dim Filename As String = NthField(PathComponents(UBound(PathComponents)), "#", 1)
+		  Dim Filename As String = NthField(PathComponents(PathComponents.LastRowIndex), "#", 1)
 		  Dim FilenameParts() As String = Split(Filename, ".")
-		  Dim Extension As String = FilenameParts(UBound(FilenameParts))
+		  Dim Extension As String = FilenameParts(FilenameParts.LastRowIndex)
 		  
 		  Self.mFilename = "Beacon " + Version + "." + Extension
 		  

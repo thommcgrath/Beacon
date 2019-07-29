@@ -39,9 +39,9 @@ Protected Class Engram
 		Function ClassString() As String
 		  If Self.mPath.IndexOf("/") > -1 And Self.mPath.IndexOf(".") > -1 Then
 		    Dim Components() As String = Self.mPath.Split("/")
-		    Dim Tail As String = Components(Components.Ubound)
+		    Dim Tail As String = Components(Components.LastRowIndex)
 		    Components = Tail.Split(".")
-		    Return Components(Components.Ubound) + "_C"
+		    Return Components(Components.LastRowIndex) + "_C"
 		  End If
 		End Function
 	#tag EndMethod
@@ -279,8 +279,8 @@ Protected Class Engram
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -295,8 +295,8 @@ Protected Class Engram
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -311,8 +311,8 @@ Protected Class Engram
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

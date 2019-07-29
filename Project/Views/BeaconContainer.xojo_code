@@ -75,7 +75,7 @@ Inherits ContainerControl
 
 	#tag Method, Flags = &h21
 		Private Sub TriggerEmbeddingFinished()
-		  For I As Integer = Self.mChildren.Ubound DownTo 0
+		  For I As Integer = Self.mChildren.LastRowIndex DownTo 0
 		    Dim Ref As WeakRef = Self.mChildren(I)
 		    If Ref = Nil Or Ref.Value = Nil Then
 		      Self.mChildren.Remove(I)

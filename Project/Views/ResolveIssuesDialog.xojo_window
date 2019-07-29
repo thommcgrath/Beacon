@@ -447,7 +447,7 @@ End
 	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As Window, Document As Beacon.Document, Handler As ResolveIssuesDialog.GoToIssueCallback = Nil)
 		  Dim Issues() As Beacon.Issue = DescribeIssues(Document)
-		  If Issues.Ubound = -1 Then
+		  If Issues.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -465,13 +465,13 @@ End
 		  End If
 		  
 		  Dim Issues() As Beacon.Issue = Self.DescribeIssues(Self.Document)
-		  If Issues.Ubound = -1 Then
+		  If Issues.LastRowIndex = -1 Then
 		    BeaconUI.ShowAlert("All issues resolved.", "Great! All issues have been resolved.")
 		    Self.Close
 		    Return
 		  End If
 		  
-		  Dim SomeResolved As Boolean = Issues.Ubound < Self.Issues.Ubound
+		  Dim SomeResolved As Boolean = Issues.LastRowIndex < Self.Issues.LastRowIndex
 		  
 		  Self.Issues = Issues
 		  Self.UpdateUI
@@ -553,7 +553,7 @@ End
 		  Dim Content As String = BlueprintsField.Value
 		  Dim Configs() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
 		  Dim Callback As Beacon.ConfigGroup.ResolveIssuesCallback = AddressOf ResolvingFinished
-		  Self.ConfigsWaitingToResolve = Configs.Ubound + 1
+		  Self.ConfigsWaitingToResolve = Configs.LastRowIndex + 1
 		  For Each Config As Beacon.ConfigGroup In Configs
 		    Config.TryToResolveIssues(Content, Callback)
 		  Next

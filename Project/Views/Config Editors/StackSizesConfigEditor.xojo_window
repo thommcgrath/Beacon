@@ -378,7 +378,7 @@ End
 		  Next
 		  
 		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Stackables", CurrentEngrams, Self.Document.Mods, False)
-		  If NewEngrams = Nil Or NewEngrams.Ubound = -1 Then
+		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -412,7 +412,7 @@ End
 		  Next
 		  
 		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Stackables", CurrentEngrams, Self.Document.Mods, True)
-		  If NewEngrams = Nil Or NewEngrams.Ubound = -1 Then
+		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  

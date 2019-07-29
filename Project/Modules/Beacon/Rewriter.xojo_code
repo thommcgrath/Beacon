@@ -20,7 +20,7 @@ Inherits Global.Thread
 		    Self.Kill
 		  End If
 		  
-		  For I As Integer = Self.mTriggers.Ubound DownTo 0
+		  For I As Integer = Self.mTriggers.LastRowIndex DownTo 0
 		    CallLater.Cancel(Self.mTriggers(I))
 		    Self.mTriggers.Remove(I)
 		  Next
@@ -29,7 +29,7 @@ Inherits Global.Thread
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
-		  For I As Integer = Self.mTriggers.Ubound DownTo 0
+		  For I As Integer = Self.mTriggers.LastRowIndex DownTo 0
 		    CallLater.Cancel(Self.mTriggers(I))
 		    Self.mTriggers.Remove(I)
 		  Next
@@ -59,7 +59,7 @@ Inherits Global.Thread
 		    Dim Lines() As String = InitialContent.Split(Chr(10))
 		    Dim UntouchedConfigs As New Dictionary
 		    Dim LastGroupHeader As String
-		    For I As Integer = 0 To Lines.Ubound
+		    For I As Integer = 0 To Lines.LastRowIndex
 		      Dim Line As String = Lines(I).Trim
 		      If Line.Length = 0 Then
 		        Continue
@@ -258,7 +258,7 @@ Inherits Global.Thread
 		    Dim NewLines() As String
 		    AllSectionHeaders.Sort
 		    For Each Header As String In AllSectionHeaders
-		      If NewLines.Ubound > -1 Then
+		      If NewLines.LastRowIndex > -1 Then
 		        NewLines.Append("")
 		      End If
 		      NewLines.Append("[" + Header + "]")
@@ -350,7 +350,7 @@ Inherits Global.Thread
 		      Case Beacon.RewriteModeGameUserSettingsIni
 		        Options = Group.GameUserSettingsIniValues(Document, Identity, Profile)
 		      End Select
-		      If Options <> Nil And Options.Ubound > -1 Then
+		      If Options <> Nil And Options.LastRowIndex > -1 Then
 		        Beacon.ConfigValue.FillConfigDict(ConfigDict, Options)
 		      End If
 		    Next
@@ -363,7 +363,7 @@ Inherits Global.Thread
 		      Case Beacon.RewriteModeGameUserSettingsIni
 		        Options = CustomContentGroup.GameUserSettingsIniValues(Document, ConfigDict, Profile)
 		      End Select
-		      If Options <> Nil And Options.Ubound > -1 Then
+		      If Options <> Nil And Options.LastRowIndex > -1 Then
 		        Beacon.ConfigValue.FillConfigDict(ConfigDict, Options)
 		      End If
 		    End If

@@ -253,7 +253,7 @@ End
 		  Self.mUpdating = True
 		  
 		  List.DeleteAllRows
-		  For I As Integer = 0 To Children.Ubound  
+		  For I As Integer = 0 To Children.LastRowIndex  
 		    Dim Child As String = Children(I)
 		    If Child.EndsWith("/") Then
 		      Child = Child.Left(Child.Length - 1)

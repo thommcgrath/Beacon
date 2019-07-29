@@ -1,6 +1,6 @@
 #tag Class
 Protected Class StringList
-Implements  Iterable
+Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Append(Item As String)
 		  If Self.mItems.IndexOf(Item) = -1 Then
@@ -12,8 +12,8 @@ Implements  Iterable
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.StringList)
-		  Redim Self.mItems(Source.mItems.Ubound)
-		  For I As Integer = 0 To Source.mItems.Ubound
+		  Redim Self.mItems(Source.mItems.LastRowIndex)
+		  For I As Integer = 0 To Source.mItems.LastRowIndex
 		    Self.mItems(I) = Source.mItems(I)
 		  Next
 		  Self.Modified = Source.Modified
@@ -28,7 +28,7 @@ Implements  Iterable
 
 	#tag Method, Flags = &h0
 		Function Count() As UInteger
-		  Return Self.mItems.Ubound + 1
+		  Return Self.mItems.LastRowIndex + 1
 		End Function
 	#tag EndMethod
 
@@ -98,6 +98,12 @@ Implements  Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function LastRowIndex() As Integer
+		  Return Self.mItems.LastRowIndex
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.StringList) As Integer
 		  If Other = Nil Then
 		    Return 1
@@ -118,8 +124,8 @@ Implements  Iterable
 	#tag Method, Flags = &h0
 		Function Operator_Convert() As String()
 		  Dim Items() As String
-		  Redim Items(Self.mItems.Ubound)
-		  For I As Integer = 0 To Self.mItems.Ubound
+		  Redim Items(Self.mItems.LastRowIndex)
+		  For I As Integer = 0 To Self.mItems.LastRowIndex
 		    Items(I) = Self.mItems(I)
 		  Next
 		  Return Items
@@ -128,8 +134,8 @@ Implements  Iterable
 
 	#tag Method, Flags = &h0
 		Sub Operator_Convert(Source() As String)
-		  Redim Self.mItems(Source.Ubound)
-		  For I As Integer = 0 To Source.Ubound
+		  Redim Self.mItems(Source.LastRowIndex)
+		  For I As Integer = 0 To Source.LastRowIndex
 		    Self.mItems(I) = Source(I)
 		  Next
 		End Sub
@@ -176,12 +182,6 @@ Implements  Iterable
 		  Self.mItems.Sort
 		  Self.Modified = True
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Ubound() As Integer
-		  Return Self.mItems.Ubound
-		End Function
 	#tag EndMethod
 
 

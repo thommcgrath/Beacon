@@ -303,7 +303,7 @@ Implements ObservationKit.Observer
 	#tag Method, Flags = &h0
 		Function ItemAtPoint(Point As REALbasic.Point) As BeaconToolbarItem
 		  If Self.mLeftItems <> Nil Then
-		    For I As Integer = 0 To Self.mLeftItems.UBound
+		    For I As Integer = 0 To Self.mLeftItems.LastRowIndex
 		      Try
 		        If Self.mLeftItems(I) <> Nil And Self.mLeftItems(I).Rect.Contains(Point) Then
 		          Return Self.mLeftItems(I)
@@ -315,7 +315,7 @@ Implements ObservationKit.Observer
 		  End If
 		  
 		  If Self.mRightItems <> Nil Then
-		    For I As Integer = 0 To Self.mRightItems.UBound
+		    For I As Integer = 0 To Self.mRightItems.LastRowIndex
 		      Try
 		        If Self.mRightItems(I) <> Nil And Self.mRightItems(I).Rect.Contains(Point) Then
 		          Return Self.mRightItems(I)
@@ -333,12 +333,12 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h0
 		Function ItemWithName(Name As String) As BeaconToolbarItem
-		  For I As Integer = 0 To Self.mLeftItems.UBound
+		  For I As Integer = 0 To Self.mLeftItems.LastRowIndex
 		    If Self.mLeftItems(I).Name = Name Then
 		      Return Self.mLeftItems(I)
 		    End If
 		  Next
-		  For I As Integer = 0 To Self.mRightItems.UBound
+		  For I As Integer = 0 To Self.mRightItems.LastRowIndex
 		    If Self.mRightItems(I).Name = Name Then
 		      Return Self.mRightItems(I)
 		    End If
@@ -436,7 +436,7 @@ Implements ObservationKit.Observer
 		  ContentRect.Left = ContentRect.Left + (ItemsPerSide * (ButtonSize + CellPadding))
 		  ContentRect.Width = ContentRect.Width - ((ItemsPerSide * 2) * (ButtonSize + CellPadding))
 		  
-		  For I As Integer = 0 To Self.mLeftItems.UBound
+		  For I As Integer = 0 To Self.mLeftItems.LastRowIndex
 		    Dim Item As BeaconToolbarItem = Self.mLeftItems(I)
 		    Dim Mode As ButtonModes = ButtonModes.Normal
 		    If Self.mPressedName = Item.Name Then
@@ -451,7 +451,7 @@ Implements ObservationKit.Observer
 		    NextLeft = Item.Rect.Right + CellPadding
 		  Next
 		  
-		  For I As Integer = 0 To Self.mRightItems.UBound
+		  For I As Integer = 0 To Self.mRightItems.LastRowIndex
 		    Dim Item As BeaconToolbarItem = Self.mRightItems(I)
 		    Dim Mode As ButtonModes = ButtonModes.Normal
 		    If Self.mPressedName = Item.Name Then

@@ -45,7 +45,7 @@ Private Class ConfigParser
 		  Case Self.TypeIntrinsic
 		    Select Case Char
 		    Case "("
-		      If Self.Buffer.Ubound = -1 Then
+		      If Self.Buffer.LastRowIndex = -1 Then
 		        Self.SubParser = New Beacon.ConfigParser(Self.Level + 1)
 		        Self.Type = Self.TypeArray
 		        

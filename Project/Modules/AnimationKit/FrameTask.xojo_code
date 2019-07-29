@@ -4,7 +4,7 @@ Inherits AnimationKit.Task
 	#tag Event
 		Sub Perform(Final As Boolean, Time As Double)
 		  If Final Then
-		    Self.CurrentFrame = UBound(Self.Frames)
+		    Self.CurrentFrame = Self.Frames.LastRowIndex
 		    AnimationKit.FrameTarget(Self.Item).AnimationStep(Self.Identifier, Self.Frames.LastFrame)
 		    Return
 		  End If

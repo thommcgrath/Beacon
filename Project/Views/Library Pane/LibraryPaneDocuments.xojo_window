@@ -332,14 +332,14 @@ End
 		  
 		  Select Case URL.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
-		    For I As Integer = Self.mCloudDocuments.Ubound DownTo 0
+		    For I As Integer = Self.mCloudDocuments.LastRowIndex DownTo 0
 		      If Self.mCloudDocuments(I) = URL Then
 		        Self.mCloudDocuments.Remove(I)
 		        Exit For I
 		      End If
 		    Next
 		  Case Beacon.DocumentURL.TypeWeb
-		    For I As Integer = Self.mCommunityDocuments.Ubound DownTo 0
+		    For I As Integer = Self.mCommunityDocuments.LastRowIndex DownTo 0
 		      If Self.mCommunityDocuments(I) = URL Then
 		        Self.mCommunityDocuments.Remove(I)
 		        Exit For I
@@ -348,7 +348,7 @@ End
 		  End Select
 		  
 		  Dim Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
-		  For I As Integer = Recents.Ubound DownTo 0
+		  For I As Integer = Recents.LastRowIndex DownTo 0
 		    If Recents(I) = URL Then
 		      Recents.Remove(I)
 		      Exit For I
@@ -399,7 +399,7 @@ End
 		  
 		  Dim RecentIdx As Integer = -1
 		  Dim Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
-		  For I As Integer = 0 To Recents.Ubound
+		  For I As Integer = 0 To Recents.LastRowIndex
 		    If Recents(I) = Sender.URL Then
 		      RecentIdx = I
 		      Exit For I
@@ -623,9 +623,9 @@ End
 		    End If
 		  Next
 		  
-		  Self.List.RowCount = Documents.Ubound + 1
+		  Self.List.RowCount = Documents.LastRowIndex + 1
 		  
-		  For I As Integer = 0 To Documents.Ubound
+		  For I As Integer = 0 To Documents.LastRowIndex
 		    Dim URL As Beacon.DocumentURL = Documents(I)
 		    Self.List.Cell(I, Self.ColumnName) = URL.Name
 		    Self.List.RowTag(I) = URL
@@ -791,7 +791,7 @@ End
 		      End If
 		      
 		      Dim SelectedURL As Beacon.DocumentURL = Me.RowTag(I)
-		      For X As Integer = Recents.Ubound DownTo 0
+		      For X As Integer = Recents.LastRowIndex DownTo 0
 		        If Recents(X) = SelectedURL Then
 		          Changed = True
 		          Recents.Remove(X)
@@ -820,10 +820,10 @@ End
 		  
 		  If Warn Then
 		    Dim Message, Explanation As String
-		    If Controllers.Ubound = 0 Then
+		    If Controllers.LastRowIndex = 0 Then
 		      Message = "Are you sure you want to delete the document """ + Controllers(0).Name + """?"
 		    Else
-		      Message = "Are you sure you want to delete these " + Str(Controllers.Ubound + 1, "-0") + " documents?"
+		      Message = "Are you sure you want to delete these " + Str(Controllers.LastRowIndex + 1, "-0") + " documents?"
 		    End If
 		    Explanation = "Files will be deleted immediately and cannot be recovered."
 		    

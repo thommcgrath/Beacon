@@ -209,12 +209,12 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ShowAddResources()
 		  Dim Engrams() As Beacon.Engram
-		  For I As Integer = 0 To Self.mTarget.Ubound
+		  For I As Integer = 0 To Self.mTarget.LastRowIndex
 		    Engrams.Append(Self.mTarget.Resource(I))
 		  Next
 		  
 		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Resources", Engrams, RaiseEvent GetActiveMods, True)
-		  If NewEngrams = Nil Or NewEngrams.Ubound = -1 Then
+		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
@@ -239,7 +239,7 @@ End
 		  Next
 		  
 		  Self.List.DeleteAllRows
-		  For I As Integer = 0 To Self.mTarget.Ubound
+		  For I As Integer = 0 To Self.mTarget.LastRowIndex
 		    Self.List.AddRow(Self.mTarget.Resource(I).Label, Str(Self.mTarget.Quantity(I), "-0"))
 		    Self.List.CellCheck(Self.List.LastAddedRowIndex, Self.ColumnRequireExact) = Self.mTarget.RequireExactResource(I)
 		    Self.List.Selected(Self.List.LastAddedRowIndex) = Paths.IndexOf(Self.mTarget.Resource(I).Path) > -1

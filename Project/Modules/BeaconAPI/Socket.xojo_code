@@ -2,7 +2,7 @@
 Protected Class Socket
 	#tag Method, Flags = &h1
 		Protected Sub AdvanceQueue()
-		  If UBound(Self.Queue) = -1 Then
+		  If Self.Queue.LastRowIndex = -1 Then
 		    Self.Working = False
 		    Return
 		  End If
@@ -97,7 +97,7 @@ Protected Class Socket
 	#tag Method, Flags = &h0
 		Sub Start(Request As BeaconAPI.Request)
 		  Self.Queue.Append(Request)
-		  If Self.Queue.Ubound = 0 And Self.Working = False Then
+		  If Self.Queue.LastRowIndex = 0 And Self.Working = False Then
 		    Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)
 		    Self.Working = True
 		  End If

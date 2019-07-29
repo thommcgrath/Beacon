@@ -171,8 +171,8 @@ End
 		  End If
 		  
 		  Dim Entries() As Beacon.SetEntry
-		  Redim Entries(UBound(Sources))
-		  For I As Integer = 0 To UBound(Sources)
+		  Redim Entries(Sources.LastRowIndex)
+		  For I As Integer = 0 To Sources.LastRowIndex
 		    Entries(I) = New Beacon.SetEntry(Sources(I))
 		  Next
 		  Win.Editor.ApplyTo(Entries)

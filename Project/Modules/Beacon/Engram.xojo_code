@@ -23,9 +23,9 @@ Implements Beacon.Blueprint
 		Function ClassString() As String
 		  If Self.IsValid Then
 		    Dim Components() As String = Self.mPath.Split("/")
-		    Dim Tail As String = Components(Components.Ubound)
+		    Dim Tail As String = Components(Components.LastRowIndex)
 		    Components = Tail.Split(".")
-		    Return Components(Components.Ubound) + "_C"
+		    Return Components(Components.LastRowIndex) + "_C"
 		  Else
 		    If Self.mPath.Length > 2 And Self.mPath.Right(2) = "_C" Then
 		      Return Self.mPath
@@ -188,8 +188,8 @@ Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
 		Function Tags() As String()
 		  Dim Clone() As String
-		  Redim Clone(Self.mTags.Ubound)
-		  For I As Integer = 0 To Self.mTags.Ubound
+		  Redim Clone(Self.mTags.LastRowIndex)
+		  For I As Integer = 0 To Self.mTags.LastRowIndex
 		    Clone(I) = Self.mTags(I)
 		  Next
 		  Return Clone

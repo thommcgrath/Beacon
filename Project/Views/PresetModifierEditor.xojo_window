@@ -938,7 +938,7 @@ End
 		      If Document.HasConfigGroup(BeaconConfigs.LootDrops.ConfigName) Then
 		        Dim Config As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.LootDrops.ConfigName))
 		        Dim Sources As Beacon.LootSourceCollection = Config.DefinedSources
-		        Dim SourcesBound As Integer = Sources.UBound
+		        Dim SourcesBound As Integer = Sources.LastRowIndex
 		        For X As Integer = 0 To SourcesBound
 		          Dim Source As Beacon.LootSource = Sources(X)
 		          If Source.IsOfficial = False And Classes.IndexOf(Source.ClassString) = -1 Then

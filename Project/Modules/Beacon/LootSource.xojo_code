@@ -4,7 +4,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Append(Item As Beacon.ItemSet)
 		  // Check for duplicates and rename if necessary.
-		  For I As Integer = 0 To Self.mSets.Ubound
+		  For I As Integer = 0 To Self.mSets.LastRowIndex
 		    If Self.mSets(I) = Item Then
 		      Item.Label = Item.Label.AddSuffix("Copy")
 		      
@@ -51,7 +51,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub ComputeWeightStatistics(ByRef TotalWeight As Double, ByRef AverageWeight As Double, ByRef MinWeight As Double, ByRef MaxWeight As Double)
-		  Dim NumSets As Integer = Self.mSets.Ubound + 1
+		  Dim NumSets As Integer = Self.mSets.LastRowIndex + 1
 		  If NumSets = 0 Then
 		    Return
 		  End If
@@ -60,7 +60,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  MinWeight = Self.mSets(0).RawWeight
 		  MaxWeight = Self.mSets(0).RawWeight
 		  
-		  For I As Integer = 1 To Self.mSets.Ubound
+		  For I As Integer = 1 To Self.mSets.LastRowIndex
 		    TotalWeight = TotalWeight + Self.mSets(I).RawWeight
 		    MinWeight = Min(MinWeight, Self.mSets(I).RawWeight)
 		    MaxWeight = Max(MaxWeight, Self.mSets(I).RawWeight)
@@ -94,8 +94,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Raise Err
 		  End If
 		  
-		  Redim Self.mSets(Source.mSets.Ubound)
-		  Redim Self.mMandatoryItemSets(Source.mMandatoryItemSets.Ubound)
+		  Redim Self.mSets(Source.mSets.LastRowIndex)
+		  Redim Self.mMandatoryItemSets(Source.mMandatoryItemSets.LastRowIndex)
 		  
 		  Self.mMaxItemSets = Source.mMaxItemSets
 		  Self.mMinItemSets = Source.mMinItemSets
@@ -113,11 +113,11 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mExperimental = Source.mExperimental
 		  Self.mNotes = Source.mNotes
 		  
-		  For I As Integer = 0 To Source.mSets.Ubound
+		  For I As Integer = 0 To Source.mSets.LastRowIndex
 		    Self.mSets(I) = New Beacon.ItemSet(Source.mSets(I))
 		  Next
 		  
-		  For I As Integer = 0 To Source.mMandatoryItemSets.Ubound
+		  For I As Integer = 0 To Source.mMandatoryItemSets.LastRowIndex
 		    Self.mMandatoryItemSets(I) = New Beacon.ItemSet(Source.mMandatoryItemSets(I))
 		  Next
 		End Sub
@@ -133,7 +133,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return UBound(Self.mSets) + 1
+		  Return Self.mSets.LastRowIndex + 1
 		End Function
 	#tag EndMethod
 
@@ -323,7 +323,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Item As Beacon.ItemSet) As Integer
-		  For I As Integer = 0 To UBound(Self.mSets)
+		  For I As Integer = 0 To Self.mSets.LastRowIndex
 		    If Self.mSets(I) = Item Then
 		      Return I
 		    End If
@@ -352,7 +352,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      Return False
 		    End If
 		  Next
-		  Return Self.mSets.Ubound > -1
+		  Return Self.mSets.LastRowIndex > -1
 		End Function
 	#tag EndMethod
 
@@ -391,8 +391,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function MandatoryItemSets() As Beacon.ItemSet()
 		  Dim Arr() As Beacon.ItemSet
-		  Redim Arr(Self.mMandatoryItemSets.Ubound)
-		  For I As Integer = 0 To Self.mMandatoryItemSets.Ubound
+		  Redim Arr(Self.mMandatoryItemSets.LastRowIndex)
+		  For I As Integer = 0 To Self.mMandatoryItemSets.LastRowIndex
 		    Arr(I) = New Beacon.ItemSet(Self.mMandatoryItemSets(I))
 		  Next
 		  Return Arr
@@ -512,7 +512,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function Simulate() As Beacon.SimulatedSelection()
 		  Dim Selections() As Beacon.SimulatedSelection
-		  Dim NumSets As Integer = Self.mSets.Ubound + Self.mMandatoryItemSets.Ubound + 2
+		  Dim NumSets As Integer = Self.mSets.LastRowIndex + Self.mMandatoryItemSets.LastRowIndex + 2
 		  If NumSets = 0 Then
 		    Return Selections
 		  End If
@@ -532,10 +532,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Else
 		    Const WeightScale = 100000
 		    Dim ItemSetPool() As Beacon.ItemSet
-		    For I As Integer = 0 To Self.mSets.Ubound
+		    For I As Integer = 0 To Self.mSets.LastRowIndex
 		      ItemSetPool.Append(Self.mSets(I))
 		    Next
-		    For I As Integer = 0 To Self.mMandatoryItemSets.Ubound
+		    For I As Integer = 0 To Self.mMandatoryItemSets.LastRowIndex
 		      ItemSetPool.Append(Self.mMandatoryItemSets(I))
 		    Next
 		    
@@ -544,7 +544,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Dim WeightSum, Weights() As Double
 		    Dim WeightLookup As Dictionary
 		    For I As Integer = 1 To ChooseSets
-		      If ItemSetPool.Ubound = -1 Then
+		      If ItemSetPool.LastRowIndex = -1 Then
 		        Exit For I
 		      End If
 		      
@@ -557,7 +557,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		        Dim Decision As Double = System.Random.InRange(WeightScale, WeightScale + (WeightSum * WeightScale)) - WeightScale
 		        Dim SelectedSet As Beacon.ItemSet
 		        
-		        For X As Integer = 0 To Weights.Ubound
+		        For X As Integer = 0 To Weights.LastRowIndex
 		          If Weights(X) >= Decision Then
 		            Dim SelectedWeight As Double = Weights(X)
 		            SelectedSet = WeightLookup.Value(SelectedWeight)
@@ -571,7 +571,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		        
 		        SelectedSets.Append(SelectedSet)
 		        If Self.SetsRandomWithoutReplacement Then
-		          For X As Integer = 0 To ItemSetPool.Ubound
+		          For X As Integer = 0 To ItemSetPool.LastRowIndex
 		            If ItemSetPool(X) = SelectedSet Then
 		              ItemSetPool.Remove(X)
 		              Exit For X
@@ -625,7 +625,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  End If
 		  
 		  Dim Sets() As Beacon.ItemSet
-		  If Self.mMandatoryItemSets.Ubound = -1 Or Self.mAppendMode Then
+		  If Self.mMandatoryItemSets.LastRowIndex = -1 Or Self.mAppendMode Then
 		    // Don't include the mandatory sets in append mode
 		    Sets = Self.mSets
 		  Else

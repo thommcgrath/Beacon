@@ -150,10 +150,10 @@ End
 		  Dim CellWidth As Double = G.Width - (CellPadding * 2)
 		  Dim Pos As Double = VerticalOffset
 		  Dim ContentHeight As Integer
-		  Redim Self.mNotificationRects(Self.mNotifications.Ubound)
-		  Redim Self.mCloseRects(Self.mNotifications.Ubound)
-		  For I As Integer = 0 To Self.mNotifications.Ubound
-		    Dim DrawBottomBorder As Boolean = I < Self.mNotifications.Ubound
+		  Redim Self.mNotificationRects(Self.mNotifications.LastRowIndex)
+		  Redim Self.mCloseRects(Self.mNotifications.LastRowIndex)
+		  For I As Integer = 0 To Self.mNotifications.LastRowIndex
+		    Dim DrawBottomBorder As Boolean = I < Self.mNotifications.LastRowIndex
 		    
 		    Dim Message As String = Self.mNotifications(I).Message
 		    Dim MessageTop As Double = Pos + CellPadding
@@ -221,8 +221,8 @@ End
 		  Dim OldUnreadCount As Integer = Self.UnreadCount
 		  
 		  Self.mNotifications = LocalData.SharedInstance.GetNotifications
-		  Redim Self.mNotificationRects(Self.mNotifications.Ubound)
-		  Redim Self.mCloseRects(Self.mNotifications.Ubound)
+		  Redim Self.mNotificationRects(Self.mNotifications.LastRowIndex)
+		  Redim Self.mCloseRects(Self.mNotifications.LastRowIndex)
 		  Self.DrawCanvas.Invalidate
 		  
 		  Dim NewUnreadCount As Integer = Self.UnreadCount
@@ -319,7 +319,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  For I As Integer = 0 To Self.mNotificationRects.Ubound
+		  For I As Integer = 0 To Self.mNotificationRects.LastRowIndex
 		    Try
 		      If Self.mNotificationRects(I).Contains(X, Y) Then
 		        If Self.mCloseRects(I).Contains(X, Y) Then
@@ -379,7 +379,7 @@ End
 		  End If
 		  
 		  Try
-		    If Self.mDownRect <> Nil And Self.mDownIndex <= Self.mNotifications.Ubound And Self.mDownRect.Contains(X, Y) Then
+		    If Self.mDownRect <> Nil And Self.mDownIndex <= Self.mNotifications.LastRowIndex And Self.mDownRect.Contains(X, Y) Then
 		      Dim OldUnreadCount As Integer = Self.UnreadCount
 		      If Not Self.mPressedOnClose Then
 		        Dim URL As String = Self.mNotifications(Self.mDownIndex).ActionURL

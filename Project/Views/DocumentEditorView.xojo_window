@@ -487,7 +487,7 @@ End
 	#tag Method, Flags = &h21
 		Private Function ContinueWithoutExcludedConfigs() As Boolean
 		  Dim ExcludedConfigs() As Beacon.ConfigGroup = Self.Document.UsesOmniFeaturesWithoutOmni(App.IdentityManager.CurrentIdentity)
-		  If ExcludedConfigs.Ubound = -1 Then
+		  If ExcludedConfigs.LastRowIndex = -1 Then
 		    Return True
 		  End If
 		  
@@ -498,7 +498,7 @@ End
 		  HumanNames.Sort
 		  
 		  Dim Message, Explanation As String
-		  If HumanNames.Ubound = 0 Then
+		  If HumanNames.LastRowIndex = 0 Then
 		    Message = "You are using an editor that will not be included in your config files."
 		    Explanation = "The " + HumanNames(0) + " editor requires Beacon Omni, which you have not purchased. Beacon will not generate its content for your config files. Do you still want to continue?"
 		  Else
@@ -1035,7 +1035,7 @@ End
 		  
 		  Labels.SortWith(Tags)
 		  
-		  For I As Integer = 0 To Labels.Ubound
+		  For I As Integer = 0 To Labels.LastRowIndex
 		    Me.AddRow(Labels(I), Tags(I))
 		  Next
 		End Sub

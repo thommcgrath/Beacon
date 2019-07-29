@@ -1,6 +1,6 @@
 #tag Class
 Protected Class Collection
-Implements Countable, Beacon.Countable, Iterable
+Implements Countable,Beacon.Countable,Iterable
 	#tag Method, Flags = &h0
 		Sub Append(Item As Variant)
 		  Self.mItems.Append(Item)
@@ -24,8 +24,8 @@ Implements Countable, Beacon.Countable, Iterable
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Items() As Variant)
-		  Self.Constructor(Items.Ubound)
-		  For I As Integer = 0 To Items.Ubound
+		  Self.Constructor(Items.LastRowIndex)
+		  For I As Integer = 0 To Items.LastRowIndex
 		    Self.mItems(I) = Items(I)
 		  Next
 		End Sub
@@ -33,13 +33,13 @@ Implements Countable, Beacon.Countable, Iterable
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return Self.mItems.Ubound + 1
+		  Return Self.mItems.LastRowIndex + 1
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Item As Variant) As Integer
-		  For I As Integer = 0 To Self.mItems.Ubound
+		  For I As Integer = 0 To Self.mItems.LastRowIndex
 		    If Self.mItems(I) = Item Then
 		      Return I
 		    End If
@@ -59,6 +59,12 @@ Implements Countable, Beacon.Countable, Iterable
 		  // Part of the Iterable interface.
 		  
 		  Return New Beacon.GenericIterator(Self.mItems)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LastRowIndex() As Integer
+		  Return Self.mItems.LastRowIndex
 		End Function
 	#tag EndMethod
 
@@ -84,12 +90,6 @@ Implements Countable, Beacon.Countable, Iterable
 		Sub Remove(Index As Integer)
 		  Self.mItems.Remove(Index)
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function UBound() As Integer
-		  Return Self.mItems.Ubound
-		End Function
 	#tag EndMethod
 
 
