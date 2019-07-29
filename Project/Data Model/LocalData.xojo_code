@@ -975,7 +975,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Dim PayloadTimestamp As Date = NewDateFromSQLDateTime(ChangeDict.Value("timestamp"))
 		  Dim LastSync As Date = Self.LastSync
-		  If LastSync <> Nil And LastSync.SecondsFrom1970 >= PayloadTimestamp.SecondsFrom1970 Then
+		  If IsNull(LastSync) = False And LastSync.SecondsFrom1970 >= PayloadTimestamp.SecondsFrom1970 Then
 		    Return False
 		  End If
 		  

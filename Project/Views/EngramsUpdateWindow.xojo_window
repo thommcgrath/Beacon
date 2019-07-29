@@ -197,12 +197,12 @@ End
 		    
 		    Dim Dialog As New MessageDialog
 		    Dialog.Title = ""
-		    If ImportDate <> Nil Then
-		      Dialog.Message = "Engram definitions have been updated"
-		      Dialog.Explanation = "Engrams, loot sources, and presets are current as of " + ImportDate.ToString(Locale.Current, Date.FormatStyles.Long, Date.FormatStyles.Short) + " UTC."
-		    Else
+		    If IsNull(ImportDate) Then
 		      Dialog.Message = "Engram definitions have not been updated"
 		      Dialog.Explanation = "No engram definitions are currently loaded into Beacon. Try relaunching Beacon. If the problem persists, see the website at " + Beacon.WebURL("/help/") + " for more support options."
+		    Else
+		      Dialog.Message = "Engram definitions have been updated"
+		      Dialog.Explanation = "Engrams, loot sources, and presets are current as of " + ImportDate.ToString(Locale.Current, Date.FormatStyles.Long, Date.FormatStyles.Short) + " UTC."
 		    End If
 		    Call Dialog.ShowModal
 		    
