@@ -17,12 +17,11 @@ Protected Class PreferencesManager
 		  End If
 		  
 		  Dim Value As Variant = Self.mValues.Value(Key)
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
-		  If Info.FullName <> "Text" Then
+		  If IsNull(Value) Or Value.Type <> Variant.TypeString Then
 		    Return Default
 		  End If
 		  
-		  Return DecodeHex(Value)
+		  Return DecodeHex(Value.StringValue)
 		End Function
 	#tag EndMethod
 
@@ -41,12 +40,11 @@ Protected Class PreferencesManager
 		  End If
 		  
 		  Dim Value As Variant = Self.mValues.Value(Key)
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
-		  If Info.FullName <> "Boolean" Then
+		  If IsNull(Value) Or Value.Type <> Variant.TypeBoolean Then
 		    Return Default
 		  End If
 		  
-		  Return Value
+		  Return Value.BooleanValue
 		End Function
 	#tag EndMethod
 
@@ -96,20 +94,19 @@ Protected Class PreferencesManager
 		  End If
 		  
 		  Dim Value As Variant = Self.mValues.Value(Key)
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
-		  If Info.FullName <> "Text" Then
+		  If IsNull(Value) Or Value.Type <> Variant.TypeString Then
 		    Return Default
 		  End If
 		  
-		  Dim TextValue As String = Value
-		  If TextValue.Length < 8 Then
+		  Dim StringValue As String = Value.StringValue
+		  If StringValue.Length < 8 Then
 		    Return Default
 		  End If
 		  
-		  Dim RedHex As String = TextValue.Middle(0, 2)
-		  Dim GreenHex As String = TextValue.Middle(2, 2)
-		  Dim BlueHex As String = TextValue.Middle(4, 2)
-		  Dim AlphaHex As String = TextValue.Middle(6, 2)
+		  Dim RedHex As String = StringValue.Middle(0, 2)
+		  Dim GreenHex As String = StringValue.Middle(2, 2)
+		  Dim BlueHex As String = StringValue.Middle(4, 2)
+		  Dim AlphaHex As String = StringValue.Middle(6, 2)
 		  
 		  Return Color.RGBA(Integer.FromHex(RedHex), Integer.FromHex(GreenHex), Integer.FromHex(BlueHex), Integer.FromHex(AlphaHex))
 		End Function
@@ -165,12 +162,11 @@ Protected Class PreferencesManager
 		  End If
 		  
 		  Dim Value As Variant = Self.mValues.Value(Key)
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
-		  If Info.FullName <> "Dictionary" Then
+		  If IsNull(Value) Or (Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary) = False Then
 		    Return Default
 		  End If
 		  
-		  Return Dictionary(Value).Clone
+		  Return Dictionary(Value.ObjectValue).Clone
 		End Function
 	#tag EndMethod
 
@@ -189,12 +185,11 @@ Protected Class PreferencesManager
 		  End If
 		  
 		  Dim Value As Variant = Self.mValues.Value(Key)
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
-		  If Info.FullName <> "Double" Then
+		  If IsNull(Value) Or Value.Type <> Variant.TypeDouble Then
 		    Return Default
 		  End If
 		  
-		  Return Value
+		  Return Value.DoubleValue
 		End Function
 	#tag EndMethod
 
@@ -213,12 +208,11 @@ Protected Class PreferencesManager
 		  End If
 		  
 		  Dim Value As Variant = Self.mValues.Value(Key)
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
-		  If Info.FullName <> "Int32" Then
+		  If IsNull(Value) Or Value.Type <> Variant.TypeInteger Then
 		    Return Default
 		  End If
 		  
-		  Return Value
+		  Return Value.IntegerValue
 		End Function
 	#tag EndMethod
 
@@ -237,8 +231,7 @@ Protected Class PreferencesManager
 		  End If
 		  
 		  Dim Value As Variant = Self.mValues.Value(Key)
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
-		  If Info.FullName <> "Dictionary" Then
+		  If IsNull(Value) Or (Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary) = False Then
 		    Return Default
 		  End If
 		  
@@ -266,8 +259,7 @@ Protected Class PreferencesManager
 		  End If
 		  
 		  Dim Value As Variant = Self.mValues.Value(Key)
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
-		  If Info.FullName <> "Dictionary" Then
+		  If IsNull(Value) Or (Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary) = False Then
 		    Return Default
 		  End If
 		  
@@ -308,8 +300,7 @@ Protected Class PreferencesManager
 		  End If
 		  
 		  Dim Value As Variant = Self.mValues.Value(Key)
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
-		  If Info.FullName <> "Dictionary" Then
+		  If IsNull(Value) Or (Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary) = False Then
 		    Return Default
 		  End If
 		  
@@ -337,8 +328,7 @@ Protected Class PreferencesManager
 		  End If
 		  
 		  Dim Value As Variant = Self.mValues.Value(Key)
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
-		  If Info.FullName <> "String" Then
+		  If IsNull(Value) Or Value.Type <> Variant.TypeString Then
 		    Return Default
 		  End If
 		  
