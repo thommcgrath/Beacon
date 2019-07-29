@@ -396,10 +396,10 @@ End
 		  Select Case Notification.Name
 		  Case LocalData.Notification_DatabaseUpdated
 		    Dim LastSync As Date = Notification.UserData
-		    If LastSync = Nil Then
+		    If IsNull(LastSync) Then
 		      LastSync = LocalData.SharedInstance.LastSync
 		    End If
-		    If LastSync = Nil Then
+		    If IsNull(LastSync) Then
 		      Self.SyncLabel.Value = "No engram data available"
 		    Else
 		      Self.SyncLabel.Value = "Engrams updated " + LastSync.ToString(Locale.Current, Date.FormatStyles.Long, Date.FormatStyles.Short) + " UTC"
@@ -456,7 +456,7 @@ End
 	#tag Event
 		Sub Opening()
 		  Dim LastSync As Date = LocalData.SharedInstance.LastSync
-		  If LastSync = Nil Then
+		  If IsNull(LastSync) Then
 		    Me.Value = "No engram data available"
 		  Else
 		    Me.Value = "Engrams updated " + LastSync.ToString(Locale.Current, Date.FormatStyles.Long, Date.FormatStyles.Short) + " UTC"
