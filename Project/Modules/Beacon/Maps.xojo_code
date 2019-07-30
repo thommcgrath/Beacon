@@ -8,7 +8,7 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Function All() As Beacon.Map()
-		  Dim Maps(6) As Beacon.Map
+		  Dim Maps(7) As Beacon.Map
 		  Maps(0) = Beacon.Maps.TheIsland
 		  Maps(1) = Beacon.Maps.ScorchedEarth
 		  Maps(2) = Beacon.Maps.Aberration
@@ -16,6 +16,7 @@ Protected Module Maps
 		  Maps(4) = Beacon.Maps.TheCenter
 		  Maps(5) = Beacon.Maps.Ragnarok
 		  Maps(6) = Beacon.Maps.Valguero
+		  Maps(7) = Beacon.Maps.Genesis
 		  Return Maps
 		  
 		End Function
@@ -38,6 +39,12 @@ Protected Module Maps
 		  Next
 		  
 		  Return Matches
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Genesis() As Beacon.Map
+		  Return New Beacon.Map("Genesis", "Genesis_P", 128, 4.0, True, "abbc2e33-f7c9-4b31-b906-bfdc8adc3685")
 		End Function
 	#tag EndMethod
 
