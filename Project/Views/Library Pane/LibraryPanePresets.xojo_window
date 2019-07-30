@@ -11,7 +11,6 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
    Enabled         =   True
    HasBackgroundColor=   False
    Height          =   300
-   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -21,6 +20,7 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    Visible         =   True
@@ -55,6 +55,7 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -125,6 +126,7 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   41
       Transparent     =   False
       Underline       =   False
@@ -161,6 +163,7 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
@@ -620,6 +623,14 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Tooltip"
+		Visible=true
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="AllowAutoDeactivate"
 		Visible=true
 		Group="Appearance"
@@ -721,14 +732,6 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

@@ -74,6 +74,7 @@ Begin Window SubscribeDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   True
       Underline       =   False
@@ -115,6 +116,7 @@ Begin Window SubscribeDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   True
       Underline       =   False
@@ -170,6 +172,7 @@ Begin Window SubscribeDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   120
       Transparent     =   False
       Underline       =   False
@@ -227,6 +230,7 @@ Begin Window SubscribeDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   154
       Transparent     =   False
       Underline       =   False
@@ -284,6 +288,7 @@ Begin Window SubscribeDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   188
       Transparent     =   False
       Underline       =   False
@@ -327,6 +332,7 @@ Begin Window SubscribeDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   120
       Transparent     =   True
       Underline       =   False
@@ -368,6 +374,7 @@ Begin Window SubscribeDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   154
       Transparent     =   True
       Underline       =   False
@@ -409,6 +416,7 @@ Begin Window SubscribeDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   188
       Transparent     =   True
       Underline       =   False
@@ -450,6 +458,7 @@ Begin Window SubscribeDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   188
       Transparent     =   True
       Underline       =   False
@@ -491,6 +500,7 @@ Begin Window SubscribeDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   154
       Transparent     =   True
       Underline       =   False
@@ -529,6 +539,7 @@ Begin Window SubscribeDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   230
       Transparent     =   False
       Underline       =   False
@@ -566,6 +577,7 @@ Begin Window SubscribeDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   230
       Transparent     =   False
       Underline       =   False
@@ -603,6 +615,7 @@ Begin Window SubscribeDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   230
       Transparent     =   False
       Underline       =   False

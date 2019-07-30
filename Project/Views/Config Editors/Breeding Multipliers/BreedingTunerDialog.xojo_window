@@ -74,6 +74,7 @@ Begin BeaconDialog BreedingTunerDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -115,6 +116,7 @@ Begin BeaconDialog BreedingTunerDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
@@ -153,6 +155,7 @@ Begin BeaconDialog BreedingTunerDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   360
       Transparent     =   False
       Underline       =   False
@@ -190,6 +193,7 @@ Begin BeaconDialog BreedingTunerDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   360
       Transparent     =   False
       Underline       =   False
@@ -260,6 +264,7 @@ Begin BeaconDialog BreedingTunerDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   132
       Transparent     =   False
       Underline       =   False
@@ -300,6 +305,7 @@ Begin BeaconDialog BreedingTunerDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   100
       Transparent     =   False
       Underline       =   False
@@ -337,6 +343,7 @@ Begin BeaconDialog BreedingTunerDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   100
       Transparent     =   False
       Underline       =   False
@@ -374,6 +381,7 @@ Begin BeaconDialog BreedingTunerDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   100
       Transparent     =   False
       Underline       =   False

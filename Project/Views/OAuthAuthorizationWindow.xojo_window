@@ -58,6 +58,7 @@ Begin BeaconDialog OAuthAuthorizationWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   22
       Transparent     =   False
       Visible         =   True
@@ -97,6 +98,7 @@ Begin BeaconDialog OAuthAuthorizationWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -135,6 +137,7 @@ Begin BeaconDialog OAuthAuthorizationWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False

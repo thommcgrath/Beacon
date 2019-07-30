@@ -71,6 +71,7 @@ Begin Window DocumentImportWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
       UseFocusRing    =   False

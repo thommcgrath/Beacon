@@ -74,6 +74,7 @@ Begin BeaconDialog DocumentMergerWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -145,6 +146,7 @@ Begin BeaconDialog DocumentMergerWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
@@ -185,6 +187,7 @@ Begin BeaconDialog DocumentMergerWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   360
       Transparent     =   False
       Underline       =   False
@@ -222,6 +225,7 @@ Begin BeaconDialog DocumentMergerWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   360
       Transparent     =   False
       Underline       =   False

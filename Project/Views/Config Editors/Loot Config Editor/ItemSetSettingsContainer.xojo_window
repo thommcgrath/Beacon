@@ -11,7 +11,6 @@ Begin ContainerControl ItemSetSettingsContainer
    Enabled         =   True
    HasBackgroundColor=   False
    Height          =   154
-   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   False
@@ -21,6 +20,7 @@ Begin ContainerControl ItemSetSettingsContainer
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    Visible         =   True
@@ -47,6 +47,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   2
       Transparent     =   False
       Value           =   False
@@ -78,6 +79,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   153
       Transparent     =   True
       UseFocusRing    =   True
@@ -118,6 +120,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   2
       Transparent     =   False
       Underline       =   False
@@ -173,6 +176,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   32
       Transparent     =   False
       Underline       =   False
@@ -216,6 +220,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   32
       Transparent     =   False
       Underline       =   False
@@ -257,6 +262,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   56
       Transparent     =   False
       Underline       =   False
@@ -298,6 +304,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   80
       Transparent     =   False
       Underline       =   False
@@ -339,6 +346,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   104
       Transparent     =   False
       Underline       =   False
@@ -376,6 +384,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   128
       Transparent     =   False
       Underline       =   False
@@ -433,6 +442,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   56
       Transparent     =   False
       Underline       =   False
@@ -491,6 +501,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   80
       Transparent     =   False
       Underline       =   False
@@ -549,6 +560,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   104
       Transparent     =   False
       Underline       =   False
@@ -577,6 +589,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   104
       Transparent     =   False
       Visible         =   True
@@ -601,6 +614,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   80
       Transparent     =   False
       Visible         =   True
@@ -625,6 +639,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   56
       Transparent     =   False
       Visible         =   True
@@ -946,6 +961,14 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Tooltip"
+		Visible=true
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="AllowAutoDeactivate"
 		Visible=true
 		Group="Appearance"
@@ -1120,14 +1143,6 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"

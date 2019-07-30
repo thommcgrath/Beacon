@@ -11,7 +11,6 @@ Begin BeaconContainer EntryPropertiesEditor
    Enabled         =   True
    HasBackgroundColor=   False
    Height          =   209
-   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -21,6 +20,7 @@ Begin BeaconContainer EntryPropertiesEditor
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    Visible         =   True
@@ -55,6 +55,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   142
       Transparent     =   False
       Underline       =   False
@@ -93,6 +94,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   110
       Transparent     =   False
       Underline       =   False
@@ -131,6 +133,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   78
       Transparent     =   False
       Underline       =   False
@@ -169,6 +172,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   44
       Transparent     =   False
       Underline       =   False
@@ -207,6 +211,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   10
       Transparent     =   False
       Underline       =   False
@@ -249,6 +254,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   142
       Transparent     =   True
       Underline       =   False
@@ -305,6 +311,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   142
       Transparent     =   False
       Underline       =   False
@@ -342,6 +349,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabStop         =   True
       TickMarkStyle   =   "0"
       TickStyle       =   "0"
+      Tooltip         =   "Items with a higher weight will be selected more frequently than items with a smaller weight. Two items with the same weight will be selected at the same frequency."
       Top             =   142
       Transparent     =   False
       Value           =   25
@@ -382,6 +390,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   142
       Transparent     =   True
       Underline       =   False
@@ -420,6 +429,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   110
       Transparent     =   False
       Underline       =   False
@@ -460,6 +470,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   110
       Transparent     =   True
       Underline       =   False
@@ -498,6 +509,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   78
       Transparent     =   False
       Underline       =   False
@@ -538,6 +550,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   78
       Transparent     =   True
       Underline       =   False
@@ -594,6 +607,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   44
       Transparent     =   False
       Underline       =   False
@@ -637,6 +651,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   44
       Transparent     =   True
       Underline       =   False
@@ -693,6 +708,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   10
       Transparent     =   False
       Underline       =   False
@@ -736,6 +752,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   10
       Transparent     =   True
       Underline       =   False
@@ -777,6 +794,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   176
       Transparent     =   True
       Underline       =   False
@@ -812,6 +830,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabStop         =   True
       TickMarkStyle   =   "0"
       TickStyle       =   "0"
+      Tooltip         =   "Items with a higher weight will be selected more frequently than items with a smaller weight. Two items with the same weight will be selected at the same frequency."
       Top             =   176
       Transparent     =   False
       Value           =   250
@@ -867,6 +886,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   176
       Transparent     =   False
       Underline       =   False
@@ -910,6 +930,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   176
       Transparent     =   True
       Underline       =   False
@@ -947,6 +968,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   176
       Transparent     =   False
       Underline       =   False
@@ -1259,6 +1281,14 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Tooltip"
+		Visible=true
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="AllowAutoDeactivate"
 		Visible=true
 		Group="Appearance"
@@ -1336,14 +1366,6 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

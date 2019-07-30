@@ -71,6 +71,7 @@ Begin BeaconDialog LibraryEngramsURLDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   86
       Transparent     =   False
       Underline       =   False
@@ -108,6 +109,7 @@ Begin BeaconDialog LibraryEngramsURLDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   86
       Transparent     =   False
       Underline       =   False
@@ -148,6 +150,7 @@ Begin BeaconDialog LibraryEngramsURLDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   True
       Underline       =   False
@@ -203,6 +206,7 @@ Begin BeaconDialog LibraryEngramsURLDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
@@ -230,6 +234,7 @@ Begin BeaconDialog LibraryEngramsURLDialog
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   90
       Transparent     =   False
       Visible         =   False

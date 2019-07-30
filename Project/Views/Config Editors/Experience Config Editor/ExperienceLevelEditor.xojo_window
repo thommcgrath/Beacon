@@ -74,6 +74,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -115,6 +116,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
@@ -156,6 +158,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
@@ -197,6 +200,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   84
       Transparent     =   False
       Underline       =   False
@@ -238,6 +242,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   84
       Transparent     =   False
       Underline       =   False
@@ -279,6 +284,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   116
       Transparent     =   False
       Underline       =   False
@@ -320,6 +326,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   116
       Transparent     =   False
       Underline       =   False
@@ -375,6 +382,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   148
       Transparent     =   False
       Underline       =   False
@@ -418,6 +426,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   148
       Transparent     =   False
       Underline       =   False
@@ -456,6 +465,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   190
       Transparent     =   False
       Underline       =   False
@@ -493,6 +503,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   190
       Transparent     =   False
       Underline       =   False

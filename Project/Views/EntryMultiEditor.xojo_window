@@ -69,6 +69,7 @@ Begin Window EntryMultiEditor
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   10
       Transparent     =   True
       UseFocusRing    =   False
@@ -106,6 +107,7 @@ Begin Window EntryMultiEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   221
       Transparent     =   False
       Underline       =   False
@@ -143,6 +145,7 @@ Begin Window EntryMultiEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   221
       Transparent     =   False
       Underline       =   False

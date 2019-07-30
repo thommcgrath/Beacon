@@ -61,6 +61,7 @@ Begin BeaconDialog DocumentDeployWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -100,6 +101,7 @@ Begin BeaconDialog DocumentDeployWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          Underline       =   False
@@ -171,6 +173,7 @@ Begin BeaconDialog DocumentDeployWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   60
          Transparent     =   False
          Underline       =   False
@@ -211,6 +214,7 @@ Begin BeaconDialog DocumentDeployWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -248,6 +252,7 @@ Begin BeaconDialog DocumentDeployWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -288,6 +293,7 @@ Begin BeaconDialog DocumentDeployWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          Underline       =   False
@@ -329,6 +335,7 @@ Begin BeaconDialog DocumentDeployWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          Underline       =   False
@@ -367,6 +374,7 @@ Begin BeaconDialog DocumentDeployWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -437,6 +445,7 @@ Begin BeaconDialog DocumentDeployWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   60
          Transparent     =   False
          Underline       =   False
@@ -477,6 +486,7 @@ Begin BeaconDialog DocumentDeployWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -517,6 +527,7 @@ Begin BeaconDialog DocumentDeployWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   60
          Transparent     =   False
          Underline       =   False

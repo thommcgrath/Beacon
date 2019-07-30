@@ -11,7 +11,6 @@ Begin ConfigEditor MetaDataConfigEditor
    Enabled         =   True
    HasBackgroundColor=   False
    Height          =   374
-   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -21,6 +20,7 @@ Begin ConfigEditor MetaDataConfigEditor
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    Visible         =   True
@@ -73,6 +73,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -116,6 +117,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -178,6 +180,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   54
       Transparent     =   False
       Underline       =   False
@@ -221,6 +224,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   54
       Transparent     =   False
       Underline       =   False
@@ -258,6 +262,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   302
       Transparent     =   False
       Underline       =   False
@@ -329,6 +334,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   170
       Transparent     =   False
       Underline       =   False
@@ -372,6 +378,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   170
       Transparent     =   False
       Underline       =   False
@@ -413,6 +420,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   204
       Transparent     =   False
       Underline       =   False
@@ -450,6 +458,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   "Document compression can be disabled when the plain text version is needed, such as when storing the file in a version control system."
       Top             =   334
       Transparent     =   False
       Underline       =   False
@@ -613,6 +622,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Tooltip"
+		Visible=true
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
 		Visible=true
@@ -820,14 +837,6 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"

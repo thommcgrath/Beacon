@@ -11,7 +11,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    Enabled         =   True
    HasBackgroundColor=   False
    Height          =   544
-   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -21,6 +20,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    Visible         =   True
@@ -73,6 +73,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
@@ -116,6 +117,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
@@ -171,6 +173,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   125
       Transparent     =   False
       Underline       =   False
@@ -214,6 +217,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   125
       Transparent     =   False
       Underline       =   False
@@ -269,6 +273,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   189
       Transparent     =   False
       Underline       =   False
@@ -312,6 +317,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   189
       Transparent     =   False
       Underline       =   False
@@ -367,6 +373,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   253
       Transparent     =   False
       Underline       =   False
@@ -410,6 +417,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   253
       Transparent     =   False
       Underline       =   False
@@ -465,6 +473,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
@@ -508,6 +517,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
@@ -563,6 +573,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   125
       Transparent     =   False
       Underline       =   False
@@ -606,6 +617,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   125
       Transparent     =   False
       Underline       =   False
@@ -661,6 +673,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   189
       Transparent     =   False
       Underline       =   False
@@ -704,6 +717,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   189
       Transparent     =   False
       Underline       =   False
@@ -759,6 +773,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   253
       Transparent     =   False
       Underline       =   False
@@ -802,6 +817,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   253
       Transparent     =   False
       Underline       =   False
@@ -873,6 +889,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   431
       Transparent     =   False
       Underline       =   False
@@ -900,6 +917,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabIndex        =   32
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   381
       Transparent     =   False
       Visible         =   True
@@ -954,6 +972,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   397
       Transparent     =   False
       Underline       =   False
@@ -997,6 +1016,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   397
       Transparent     =   False
       Underline       =   False
@@ -1038,6 +1058,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   95
       Transparent     =   False
       Underline       =   False
@@ -1079,6 +1100,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   159
       Transparent     =   False
       Underline       =   False
@@ -1120,6 +1142,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   223
       Transparent     =   False
       Underline       =   False
@@ -1161,6 +1184,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   287
       Transparent     =   False
       Underline       =   False
@@ -1202,6 +1226,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   95
       Transparent     =   False
       Underline       =   False
@@ -1243,6 +1268,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   159
       Transparent     =   False
       Underline       =   False
@@ -1284,6 +1310,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   223
       Transparent     =   False
       Underline       =   False
@@ -1325,6 +1352,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   287
       Transparent     =   False
       Underline       =   False
@@ -1362,6 +1390,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -1395,6 +1424,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
@@ -1449,6 +1479,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   317
       Transparent     =   False
       Underline       =   False
@@ -1492,6 +1523,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   317
       Transparent     =   False
       Underline       =   False
@@ -1547,6 +1579,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   317
       Transparent     =   False
       Underline       =   False
@@ -1590,6 +1623,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   317
       Transparent     =   False
       Underline       =   False
@@ -1631,6 +1665,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   351
       Transparent     =   False
       Underline       =   False
@@ -1672,6 +1707,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   351
       Transparent     =   False
       Underline       =   False
@@ -2053,6 +2089,14 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Tooltip"
+		Visible=true
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="AllowAutoDeactivate"
 		Visible=true
 		Group="Appearance"
@@ -2259,14 +2303,6 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"

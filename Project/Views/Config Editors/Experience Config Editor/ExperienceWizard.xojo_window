@@ -74,6 +74,7 @@ Begin BeaconDialog ExperienceWizard
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -115,6 +116,7 @@ Begin BeaconDialog ExperienceWizard
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
@@ -156,6 +158,7 @@ Begin BeaconDialog ExperienceWizard
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   144
       Transparent     =   False
       Underline       =   False
@@ -197,6 +200,7 @@ Begin BeaconDialog ExperienceWizard
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   144
       Transparent     =   False
       Underline       =   False
@@ -252,6 +256,7 @@ Begin BeaconDialog ExperienceWizard
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   176
       Transparent     =   False
       Underline       =   False
@@ -295,6 +300,7 @@ Begin BeaconDialog ExperienceWizard
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   210
       Transparent     =   False
       Underline       =   False
@@ -336,6 +342,7 @@ Begin BeaconDialog ExperienceWizard
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   210
       Transparent     =   False
       Underline       =   False
@@ -391,6 +398,7 @@ Begin BeaconDialog ExperienceWizard
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   242
       Transparent     =   False
       Underline       =   False
@@ -434,6 +442,7 @@ Begin BeaconDialog ExperienceWizard
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   242
       Transparent     =   False
       Underline       =   False
@@ -475,6 +484,7 @@ Begin BeaconDialog ExperienceWizard
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   176
       Transparent     =   False
       Underline       =   False
@@ -509,6 +519,7 @@ Begin BeaconDialog ExperienceWizard
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   144
       Transparent     =   True
       UseFocusRing    =   True
@@ -579,6 +590,7 @@ Begin BeaconDialog ExperienceWizard
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   276
       Transparent     =   False
       Underline       =   False
@@ -619,6 +631,7 @@ Begin BeaconDialog ExperienceWizard
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   470
       Transparent     =   False
       Underline       =   False
@@ -656,6 +669,7 @@ Begin BeaconDialog ExperienceWizard
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   470
       Transparent     =   False
       Underline       =   False
@@ -710,6 +724,7 @@ Begin BeaconDialog ExperienceWizard
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   428
       Transparent     =   False
       Underline       =   False
@@ -767,6 +782,7 @@ Begin BeaconDialog ExperienceWizard
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   428
       Transparent     =   False
       Underline       =   False
@@ -824,6 +840,7 @@ Begin BeaconDialog ExperienceWizard
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   428
       Transparent     =   False
       Underline       =   False
@@ -881,6 +898,7 @@ Begin BeaconDialog ExperienceWizard
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   428
       Transparent     =   False
       Underline       =   False
@@ -924,6 +942,7 @@ Begin BeaconDialog ExperienceWizard
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   470
       Transparent     =   False
       Underline       =   False

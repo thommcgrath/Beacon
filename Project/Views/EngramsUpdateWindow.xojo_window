@@ -61,6 +61,7 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Value           =   0.0
@@ -101,6 +102,7 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -149,6 +151,7 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   84
       Transparent     =   False
       Underline       =   False

@@ -61,6 +61,7 @@ Begin Window UserWelcomeWindow
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -100,6 +101,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          Underline       =   False
@@ -141,6 +143,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Underline       =   False
@@ -183,6 +186,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   100
          Transparent     =   False
          Underline       =   True
@@ -222,6 +226,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   160
          Transparent     =   False
          Underline       =   False
@@ -259,6 +264,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   192
          Transparent     =   False
          Underline       =   False
@@ -296,6 +302,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   224
          Transparent     =   False
          Underline       =   False
@@ -333,6 +340,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   256
          Transparent     =   False
          Underline       =   False
@@ -370,6 +378,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   320
          Transparent     =   False
          Underline       =   False
@@ -407,6 +416,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   320
          Transparent     =   False
          Underline       =   False
@@ -447,6 +457,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          Underline       =   False
@@ -488,6 +499,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Underline       =   False
@@ -544,6 +556,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   136
          Transparent     =   False
          Underline       =   False
@@ -587,6 +600,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   136
          Transparent     =   False
          Underline       =   False
@@ -643,6 +657,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   169
          Transparent     =   False
          Underline       =   False
@@ -686,6 +701,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   170
          Transparent     =   False
          Underline       =   False
@@ -723,6 +739,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   203
          Transparent     =   False
          Underline       =   False
@@ -765,6 +782,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          Underline       =   False
@@ -806,6 +824,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Underline       =   False
@@ -844,6 +863,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   320
          Transparent     =   False
          Underline       =   False
@@ -881,6 +901,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   320
          Transparent     =   False
          Underline       =   False
@@ -936,6 +957,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   136
          Transparent     =   False
          Underline       =   False
@@ -979,6 +1001,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   136
          Transparent     =   False
          Underline       =   False
@@ -1035,6 +1058,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   170
          Transparent     =   False
          Underline       =   False
@@ -1078,6 +1102,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   170
          Transparent     =   False
          Underline       =   False
@@ -1103,6 +1128,7 @@ Begin Window UserWelcomeWindow
          TabIndex        =   8
          TabPanelIndex   =   3
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   324
          Transparent     =   False
          Visible         =   False
@@ -1142,6 +1168,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   324
          Transparent     =   False
          Underline       =   False
@@ -1183,6 +1210,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          Underline       =   False
@@ -1224,6 +1252,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Underline       =   False
@@ -1280,6 +1309,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   154
          Transparent     =   False
          Underline       =   False
@@ -1324,6 +1354,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   180
          Transparent     =   False
          Underline       =   True
@@ -1381,6 +1412,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   212
          Transparent     =   False
          Underline       =   False
@@ -1439,6 +1471,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   246
          Transparent     =   False
          Underline       =   False
@@ -1482,6 +1515,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   154
          Transparent     =   True
          Underline       =   False
@@ -1523,6 +1557,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   212
          Transparent     =   True
          Underline       =   False
@@ -1564,6 +1599,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   246
          Transparent     =   True
          Underline       =   False
@@ -1601,6 +1637,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   280
          Transparent     =   False
          Underline       =   False
@@ -1640,6 +1677,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   320
          Transparent     =   False
          Underline       =   False
@@ -1677,6 +1715,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   320
          Transparent     =   False
          Underline       =   False
@@ -1701,6 +1740,7 @@ Begin Window UserWelcomeWindow
          TabIndex        =   12
          TabPanelIndex   =   4
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   324
          Transparent     =   False
          Visible         =   False
@@ -1740,6 +1780,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   324
          Transparent     =   False
          Underline       =   False
@@ -1782,6 +1823,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   235
          Transparent     =   False
          Underline       =   True
@@ -1808,6 +1850,7 @@ Begin Window UserWelcomeWindow
          TabIndex        =   10
          TabPanelIndex   =   2
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   324
          Transparent     =   False
          Visible         =   False
@@ -1847,6 +1890,7 @@ Begin Window UserWelcomeWindow
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   324
          Transparent     =   False
          Underline       =   False
@@ -1879,6 +1923,7 @@ Begin Window UserWelcomeWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
       UseFocusRing    =   True

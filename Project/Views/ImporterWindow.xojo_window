@@ -71,6 +71,7 @@ Begin BeaconDialog ImporterWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   84
       Transparent     =   False
       Underline       =   False
@@ -98,6 +99,7 @@ Begin BeaconDialog ImporterWindow
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Value           =   0.0
@@ -138,6 +140,7 @@ Begin BeaconDialog ImporterWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   True
       Underline       =   False

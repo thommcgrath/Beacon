@@ -11,7 +11,6 @@ Begin BeaconContainer ItemSetEditor
    Enabled         =   True
    HasBackgroundColor=   False
    Height          =   428
-   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -21,6 +20,7 @@ Begin BeaconContainer ItemSetEditor
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    Visible         =   True
@@ -89,6 +89,7 @@ Begin BeaconContainer ItemSetEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   64
       Transparent     =   True
       Underline       =   False
@@ -128,6 +129,7 @@ Begin BeaconContainer ItemSetEditor
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -161,6 +163,7 @@ Begin BeaconContainer ItemSetEditor
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
@@ -197,6 +200,7 @@ Begin BeaconContainer ItemSetEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   41
       Transparent     =   True
       UseFocusRing    =   False
@@ -232,6 +236,7 @@ Begin BeaconContainer ItemSetEditor
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   407
       Transparent     =   True
       UseFocusRing    =   True
@@ -742,6 +747,14 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Tooltip"
+		Visible=true
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="AllowAutoDeactivate"
 		Visible=true
 		Group="Appearance"
@@ -819,14 +832,6 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

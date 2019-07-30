@@ -71,6 +71,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   156
       Transparent     =   False
       Underline       =   False
@@ -126,6 +127,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -169,6 +171,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -224,6 +227,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   88
       Transparent     =   False
       Underline       =   False
@@ -267,6 +271,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   88
       Transparent     =   False
       Underline       =   False
@@ -308,6 +313,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   156
       Transparent     =   False
       Underline       =   False
@@ -363,6 +369,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   188
       Transparent     =   False
       Underline       =   False
@@ -420,6 +427,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   222
       Transparent     =   False
       Underline       =   False
@@ -463,6 +471,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   188
       Transparent     =   False
       Underline       =   False
@@ -504,6 +513,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   222
       Transparent     =   False
       Underline       =   False
@@ -575,6 +585,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   256
       Transparent     =   False
       Underline       =   False
@@ -618,6 +629,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   256
       Transparent     =   False
       Underline       =   False
@@ -656,6 +668,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   426
       Transparent     =   False
       Underline       =   False
@@ -693,6 +706,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   426
       Transparent     =   False
       Underline       =   False
@@ -733,6 +747,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   122
       Transparent     =   False
       Underline       =   False
@@ -788,6 +803,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   122
       Transparent     =   False
       Underline       =   False
@@ -831,6 +847,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   54
       Transparent     =   False
       Underline       =   False
@@ -887,6 +904,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   54
       Transparent     =   False
       Underline       =   False

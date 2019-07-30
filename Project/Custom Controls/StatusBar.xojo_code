@@ -71,7 +71,7 @@ Inherits ControlCanvas
 			Set
 			  If StrComp(Self.mCaption, Value, 0) <> 0 Then
 			    Self.mCaption = Value
-			    Self.HelpTag = Self.mCaption
+			    Self.Tooltip = Self.mCaption
 			    Self.Invalidate
 			  End If
 			End Set
@@ -89,6 +89,14 @@ Inherits ControlCanvas
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Tooltip"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AllowAutoDeactivate"
 			Visible=true
@@ -160,14 +168,6 @@ Inherits ControlCanvas
 			InitialValue="21"
 			Type="Integer"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HelpTag"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"

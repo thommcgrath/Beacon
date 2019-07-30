@@ -69,6 +69,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
       UseFocusRing    =   True
@@ -96,6 +97,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   25
       Transparent     =   False
       Value           =   0
@@ -135,6 +137,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          TabPanelIndex   =   1
          TabStop         =   True
          ToolbarCaption  =   ""
+         Tooltip         =   ""
          Top             =   25
          Transparent     =   True
          UseFocusRing    =   False
@@ -169,6 +172,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   -169
       Transparent     =   True
       UseFocusRing    =   True
@@ -202,6 +206,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   445
       Transparent     =   True
       UseFocusRing    =   True
@@ -238,6 +243,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
       UseFocusRing    =   False

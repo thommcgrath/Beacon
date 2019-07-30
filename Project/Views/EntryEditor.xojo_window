@@ -67,6 +67,7 @@ Begin BeaconDialog EntryEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -121,6 +122,7 @@ Begin BeaconDialog EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   56
          Transparent     =   False
          Underline       =   False
@@ -193,6 +195,7 @@ Begin BeaconDialog EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   169
          Transparent     =   False
          Underline       =   False
@@ -232,6 +235,7 @@ Begin BeaconDialog EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   442
          Transparent     =   False
          Underline       =   False
@@ -258,6 +262,7 @@ Begin BeaconDialog EntryEditor
          TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   59
          Transparent     =   False
          Visible         =   True
@@ -290,6 +295,7 @@ Begin BeaconDialog EntryEditor
          TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   90
          Transparent     =   True
          UseFocusRing    =   True
@@ -324,6 +330,7 @@ Begin BeaconDialog EntryEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -358,6 +365,7 @@ Begin BeaconDialog EntryEditor
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   46
          Transparent     =   True
          UseFocusRing    =   False
@@ -392,6 +400,7 @@ Begin BeaconDialog EntryEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   277
       Transparent     =   False
       Underline       =   False
@@ -460,6 +469,7 @@ Begin BeaconDialog EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   313
          Transparent     =   False
          Underline       =   False
@@ -500,6 +510,7 @@ Begin BeaconDialog EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   442
          Transparent     =   False
          Underline       =   False
@@ -538,6 +549,7 @@ Begin BeaconDialog EntryEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   494
       Transparent     =   False
       Underline       =   False
@@ -575,6 +587,7 @@ Begin BeaconDialog EntryEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   494
       Transparent     =   False
       Underline       =   False

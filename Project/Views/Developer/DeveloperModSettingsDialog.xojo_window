@@ -71,6 +71,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   153
       Transparent     =   False
       Underline       =   False
@@ -108,6 +109,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   153
       Transparent     =   False
       Underline       =   False
@@ -148,6 +150,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   True
       Underline       =   False
@@ -203,6 +206,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
@@ -246,6 +250,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   53
       Transparent     =   True
       Underline       =   False
@@ -287,6 +292,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   86
       Transparent     =   True
       Underline       =   False
@@ -312,6 +318,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   157
       Transparent     =   False
       Visible         =   False

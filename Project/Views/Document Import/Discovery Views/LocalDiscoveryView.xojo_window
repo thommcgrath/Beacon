@@ -11,7 +11,6 @@ Begin DiscoveryView LocalDiscoveryView
    Enabled         =   True
    HasBackgroundColor=   False
    Height          =   396
-   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -21,6 +20,7 @@ Begin DiscoveryView LocalDiscoveryView
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    Visible         =   True
@@ -59,6 +59,7 @@ Begin DiscoveryView LocalDiscoveryView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   6
       Transparent     =   True
       Underline       =   False
@@ -122,6 +123,7 @@ Begin DiscoveryView LocalDiscoveryView
       TextFont        =   "Source Code Pro"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   151
       Transparent     =   False
       Underline       =   False
@@ -162,6 +164,7 @@ Begin DiscoveryView LocalDiscoveryView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   356
       Transparent     =   False
       Underline       =   False
@@ -199,6 +202,7 @@ Begin DiscoveryView LocalDiscoveryView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   356
       Transparent     =   False
       Underline       =   False
@@ -236,6 +240,7 @@ Begin DiscoveryView LocalDiscoveryView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   356
       Transparent     =   False
       Underline       =   False
@@ -272,6 +277,7 @@ Begin DiscoveryView LocalDiscoveryView
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   28
       Transparent     =   False
       UseFocusRing    =   True
@@ -305,6 +311,7 @@ Begin DiscoveryView LocalDiscoveryView
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   88
       Transparent     =   True
       UseFocusRing    =   True
@@ -345,6 +352,7 @@ Begin DiscoveryView LocalDiscoveryView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   101
       Transparent     =   True
       Underline       =   False
@@ -689,6 +697,14 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Tooltip"
+		Visible=true
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="AllowAutoDeactivate"
 		Visible=true
 		Group="Appearance"
@@ -766,14 +782,6 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

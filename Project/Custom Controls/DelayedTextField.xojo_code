@@ -52,6 +52,14 @@ Inherits UITweaks.ResizedTextField
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Tooltip"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="AllowAutoDeactivate"
 			Visible=true
 			Group="Appearance"
@@ -231,14 +239,6 @@ Inherits UITweaks.ResizedTextField
 			InitialValue="22"
 			Type="Integer"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HelpTag"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"

@@ -74,6 +74,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -115,6 +116,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
@@ -156,6 +158,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   100
       Transparent     =   False
       Underline       =   False
@@ -190,6 +193,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   132
       Transparent     =   False
       Underline       =   False
@@ -224,6 +228,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   132
       Transparent     =   False
       Underline       =   False
@@ -258,6 +263,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   132
       Transparent     =   False
       Underline       =   False
@@ -299,6 +305,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   132
       Transparent     =   False
       Underline       =   False
@@ -327,6 +334,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   158
       Transparent     =   False
       Value           =   0
@@ -381,6 +389,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   164
          Transparent     =   False
          Underline       =   False
@@ -424,6 +433,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   164
          Transparent     =   False
          Underline       =   False
@@ -480,6 +490,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   198
          Transparent     =   False
          Underline       =   False
@@ -523,6 +534,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   198
          Transparent     =   False
          Underline       =   False
@@ -564,6 +576,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   164
          Transparent     =   False
          Underline       =   False
@@ -605,6 +618,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   198
          Transparent     =   False
          Underline       =   False
@@ -661,6 +675,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   232
          Transparent     =   False
          Underline       =   False
@@ -704,6 +719,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   232
          Transparent     =   False
          Underline       =   False
@@ -760,6 +776,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   266
          Transparent     =   False
          Underline       =   False
@@ -803,6 +820,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   266
          Transparent     =   False
          Underline       =   False
@@ -844,6 +862,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   232
          Transparent     =   False
          Underline       =   False
@@ -885,6 +904,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   266
          Transparent     =   False
          Underline       =   False
@@ -926,6 +946,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   164
          Transparent     =   False
          Underline       =   False
@@ -964,6 +985,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   164
          Transparent     =   False
          Underline       =   False
@@ -1004,6 +1026,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   164
          Transparent     =   False
          Underline       =   False
@@ -1043,6 +1066,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   306
       Transparent     =   False
       Underline       =   False
@@ -1080,6 +1104,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   306
       Transparent     =   False
       Underline       =   False
@@ -1117,6 +1142,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   100
       Transparent     =   False
       Underline       =   False
@@ -1157,6 +1183,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   100
       Transparent     =   False
       Underline       =   False

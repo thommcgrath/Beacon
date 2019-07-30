@@ -71,6 +71,7 @@ Begin BeaconDialog DocumentExportWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   635
       Transparent     =   False
       Underline       =   False
@@ -132,6 +133,7 @@ Begin BeaconDialog DocumentExportWindow
       TextFont        =   "Source Code Pro"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
@@ -172,6 +174,7 @@ Begin BeaconDialog DocumentExportWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   635
       Transparent     =   False
       Underline       =   False
@@ -209,6 +212,7 @@ Begin BeaconDialog DocumentExportWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   635
       Transparent     =   False
       Underline       =   False
@@ -246,6 +250,7 @@ Begin BeaconDialog DocumentExportWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   635
       Transparent     =   False
       Underline       =   False
@@ -293,6 +298,7 @@ Begin BeaconDialog DocumentExportWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   635
       Transparent     =   False
       Underline       =   False
@@ -324,6 +330,7 @@ Begin BeaconDialog DocumentExportWindow
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   60
       Transparent     =   True
       UseFocusRing    =   True
@@ -361,6 +368,7 @@ Begin BeaconDialog DocumentExportWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -385,6 +393,7 @@ Begin BeaconDialog DocumentExportWindow
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   22
       Transparent     =   False
       Visible         =   False
@@ -424,6 +433,7 @@ Begin BeaconDialog DocumentExportWindow
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   22
       Transparent     =   False
       Underline       =   False
@@ -456,6 +466,7 @@ Begin BeaconDialog DocumentExportWindow
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   614
       Transparent     =   True
       UseFocusRing    =   True
@@ -490,6 +501,7 @@ Begin BeaconDialog DocumentExportWindow
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True

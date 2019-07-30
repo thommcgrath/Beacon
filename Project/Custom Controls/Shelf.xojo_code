@@ -360,7 +360,7 @@ Implements ObservationKit.Observer
 		      Continue
 		    End If
 		    If Self.mHitRects(I).Contains(Point) Then
-		      Tooltip.Show(Self.mItems(I).Caption, System.MouseX, System.MouseY + 16)
+		      Global.Tooltip.Show(Self.mItems(I).Caption, System.MouseX, System.MouseY + 16)
 		      Return
 		    End If
 		  Next
@@ -455,6 +455,14 @@ Implements ObservationKit.Observer
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Tooltip"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AllowAutoDeactivate"
 			Visible=true
@@ -622,14 +630,6 @@ Implements ObservationKit.Observer
 			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HelpTag"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Visible"

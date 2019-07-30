@@ -71,6 +71,7 @@ Begin BeaconDialog DocumentDownloadWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   116
       Transparent     =   False
       Underline       =   False
@@ -111,6 +112,7 @@ Begin BeaconDialog DocumentDownloadWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   True
       Underline       =   False
@@ -152,6 +154,7 @@ Begin BeaconDialog DocumentDownloadWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   True
       Underline       =   False
@@ -180,6 +183,7 @@ Begin BeaconDialog DocumentDownloadWindow
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   84
       Transparent     =   False
       Value           =   0.0

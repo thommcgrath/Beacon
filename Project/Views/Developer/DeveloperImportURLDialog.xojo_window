@@ -74,6 +74,7 @@ Begin BeaconDialog DeveloperImportURLDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   True
       Underline       =   False
@@ -115,6 +116,7 @@ Begin BeaconDialog DeveloperImportURLDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   True
       Underline       =   False
@@ -170,6 +172,7 @@ Begin BeaconDialog DeveloperImportURLDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   118
       Transparent     =   False
       Underline       =   False
@@ -210,6 +213,7 @@ Begin BeaconDialog DeveloperImportURLDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   152
       Transparent     =   False
       Underline       =   False
@@ -247,6 +251,7 @@ Begin BeaconDialog DeveloperImportURLDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   152
       Transparent     =   False
       Underline       =   False
@@ -271,6 +276,7 @@ Begin BeaconDialog DeveloperImportURLDialog
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   156
       Transparent     =   False
       Visible         =   False

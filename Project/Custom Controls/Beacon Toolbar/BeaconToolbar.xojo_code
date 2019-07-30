@@ -26,7 +26,7 @@ Implements ObservationKit.Observer
 		  Self.mMouseX = X
 		  Self.mMouseY = Y
 		  
-		  Tooltip.Hide
+		  Global.Tooltip.Hide
 		  CallLater.Cancel(Self.mHoverCallbackKey)
 		  
 		  If Self.mResizerEnabled And Self.mResizerRect <> Nil And Self.mResizerRect.Contains(Point) Then
@@ -285,7 +285,7 @@ Implements ObservationKit.Observer
 		  
 		  Self.mHoverItem = Item
 		  
-		  Tooltip.Hide
+		  Global.Tooltip.Hide
 		  CallLater.Cancel(Self.mHoverCallbackKey)
 		  
 		  If Item <> Nil And Item.HelpTag <> "" Then
@@ -490,7 +490,7 @@ Implements ObservationKit.Observer
 		    Return
 		  End If
 		  
-		  Tooltip.Show(Self.mHoverItem.HelpTag, System.MouseX, System.MouseY + 16)
+		  Global.Tooltip.Show(Self.mHoverItem.HelpTag, System.MouseX, System.MouseY + 16)
 		End Sub
 	#tag EndMethod
 
@@ -697,6 +697,14 @@ Implements ObservationKit.Observer
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Tooltip"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="AllowAutoDeactivate"
 			Visible=true
 			Group="Appearance"
@@ -863,14 +871,6 @@ Implements ObservationKit.Observer
 			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HelpTag"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Visible"

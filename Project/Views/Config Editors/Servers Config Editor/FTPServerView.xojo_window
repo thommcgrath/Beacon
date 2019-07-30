@@ -11,7 +11,6 @@ Begin ServerViewContainer FTPServerView
    Enabled         =   True
    HasBackgroundColor=   False
    Height          =   600
-   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -21,6 +20,7 @@ Begin ServerViewContainer FTPServerView
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    Visible         =   True
@@ -53,6 +53,7 @@ Begin ServerViewContainer FTPServerView
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -84,6 +85,7 @@ Begin ServerViewContainer FTPServerView
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
@@ -138,6 +140,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
@@ -181,6 +184,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
@@ -236,6 +240,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   127
       Transparent     =   False
       Underline       =   False
@@ -279,6 +284,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   127
       Transparent     =   False
       Underline       =   False
@@ -334,6 +340,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   161
       Transparent     =   False
       Underline       =   False
@@ -377,6 +384,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   161
       Transparent     =   False
       Underline       =   False
@@ -432,6 +440,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   195
       Transparent     =   False
       Underline       =   False
@@ -475,6 +484,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   195
       Transparent     =   False
       Underline       =   False
@@ -530,6 +540,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   229
       Transparent     =   False
       Underline       =   False
@@ -573,6 +584,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   229
       Transparent     =   False
       Underline       =   False
@@ -628,6 +640,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   295
       Transparent     =   False
       Underline       =   False
@@ -671,6 +684,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   295
       Transparent     =   False
       Underline       =   False
@@ -726,6 +740,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   329
       Transparent     =   False
       Underline       =   False
@@ -769,6 +784,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   329
       Transparent     =   False
       Underline       =   False
@@ -807,6 +823,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   263
       Transparent     =   False
       Underline       =   False
@@ -847,6 +864,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   263
       Transparent     =   False
       Underline       =   False
@@ -885,6 +903,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   95
       Transparent     =   False
       Underline       =   False
@@ -925,6 +944,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   95
       Transparent     =   False
       Underline       =   False
@@ -966,6 +986,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   95
       Transparent     =   False
       Underline       =   False
@@ -1106,6 +1127,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Tooltip"
+		Visible=true
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
 		Visible=true
@@ -1313,14 +1342,6 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"

@@ -11,7 +11,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
    Enabled         =   True
    HasBackgroundColor=   False
    Height          =   592
-   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -21,6 +20,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    Visible         =   True
@@ -53,6 +53,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -84,6 +85,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
@@ -111,6 +113,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       Value           =   2
@@ -141,6 +144,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   40
          Transparent     =   True
          UseFocusRing    =   True
@@ -175,6 +179,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   False
          UseFocusRing    =   True
@@ -215,6 +220,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          TabPanelIndex   =   2
          TabStop         =   True
          ToolbarCaption  =   ""
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -254,6 +260,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          TabPanelIndex   =   3
          TabStop         =   True
          ToolbarCaption  =   ""
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -324,6 +331,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   41
       Transparent     =   False
       Underline       =   False
@@ -358,6 +366,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
@@ -824,6 +833,14 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Tooltip"
+		Visible=true
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="AllowAutoDeactivate"
 		Visible=true
 		Group="Appearance"
@@ -1030,14 +1047,6 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"

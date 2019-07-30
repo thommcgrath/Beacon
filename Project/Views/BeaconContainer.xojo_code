@@ -113,6 +113,14 @@ Inherits ContainerControl
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Tooltip"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="AllowAutoDeactivate"
 			Visible=true
 			Group="Appearance"
@@ -255,14 +263,6 @@ Inherits ContainerControl
 			InitialValue="True"
 			Type="Boolean"
 			EditorType="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HelpTag"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Backdrop"

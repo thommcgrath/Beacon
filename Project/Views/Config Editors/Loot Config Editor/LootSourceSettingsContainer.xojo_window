@@ -11,7 +11,6 @@ Begin ContainerControl LootSourceSettingsContainer
    Enabled         =   True
    HasBackgroundColor=   False
    Height          =   130
-   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   False
@@ -21,6 +20,7 @@ Begin ContainerControl LootSourceSettingsContainer
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    Visible         =   True
@@ -47,6 +47,7 @@ Begin ContainerControl LootSourceSettingsContainer
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   2
       Transparent     =   False
       Value           =   False
@@ -78,6 +79,7 @@ Begin ContainerControl LootSourceSettingsContainer
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   129
       Transparent     =   True
       UseFocusRing    =   True
@@ -118,6 +120,7 @@ Begin ContainerControl LootSourceSettingsContainer
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   2
       Transparent     =   False
       Underline       =   False
@@ -174,6 +177,7 @@ Begin ContainerControl LootSourceSettingsContainer
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   32
       Transparent     =   False
       Underline       =   False
@@ -217,6 +221,7 @@ Begin ContainerControl LootSourceSettingsContainer
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   32
       Transparent     =   False
       Underline       =   False
@@ -273,6 +278,7 @@ Begin ContainerControl LootSourceSettingsContainer
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   56
       Transparent     =   False
       Underline       =   False
@@ -316,6 +322,7 @@ Begin ContainerControl LootSourceSettingsContainer
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   56
       Transparent     =   False
       Underline       =   False
@@ -353,6 +360,7 @@ Begin ContainerControl LootSourceSettingsContainer
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   80
       Transparent     =   False
       Underline       =   False
@@ -380,6 +388,7 @@ Begin ContainerControl LootSourceSettingsContainer
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   32
       Transparent     =   False
       Visible         =   True
@@ -404,6 +413,7 @@ Begin ContainerControl LootSourceSettingsContainer
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   56
       Transparent     =   False
       Visible         =   True
@@ -439,6 +449,7 @@ Begin ContainerControl LootSourceSettingsContainer
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   "When checked, the item sets are added to the default loot source contents. When unchecked, the item sets completely replace the loot source contents."
       Top             =   104
       Transparent     =   False
       Underline       =   False
@@ -718,6 +729,14 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Tooltip"
+		Visible=true
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="AllowAutoDeactivate"
 		Visible=true
 		Group="Appearance"
@@ -892,14 +911,6 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"

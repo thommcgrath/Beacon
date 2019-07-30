@@ -60,9 +60,10 @@ Begin BeaconDialog LootSourceWizard
       SelectedPanelIndex=   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
+      Value           =   "0"
       Value           =   2
       Visible         =   True
       Width           =   550
@@ -97,6 +98,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -134,6 +136,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -174,6 +177,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
@@ -244,6 +248,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   54
          Transparent     =   False
          Underline       =   False
@@ -284,6 +289,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -324,6 +330,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
@@ -362,6 +369,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -399,6 +407,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -436,6 +445,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -473,6 +483,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -513,6 +524,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
@@ -554,6 +566,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   156
          Transparent     =   True
          Underline       =   False
@@ -595,6 +608,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   122
          Transparent     =   True
          Underline       =   False
@@ -636,6 +650,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   54
          Transparent     =   True
          Underline       =   False
@@ -677,6 +692,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   88
          Transparent     =   True
          Underline       =   False
@@ -733,6 +749,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   156
          Transparent     =   False
          Underline       =   False
@@ -791,6 +808,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   122
          Transparent     =   False
          Underline       =   False
@@ -849,6 +867,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   88
          Transparent     =   False
          Underline       =   False
@@ -907,6 +926,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   54
          Transparent     =   False
          Underline       =   False
@@ -965,6 +985,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   54
          Transparent     =   False
          Underline       =   False
@@ -1008,6 +1029,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   54
          Transparent     =   True
          Underline       =   False
@@ -1064,6 +1086,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   88
          Transparent     =   False
          Underline       =   False
@@ -1107,6 +1130,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   88
          Transparent     =   True
          Underline       =   False
@@ -1144,6 +1168,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   122
          Transparent     =   False
          Underline       =   False
@@ -1215,6 +1240,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   154
          Transparent     =   False
          Underline       =   False
@@ -1258,6 +1284,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   154
          Transparent     =   True
          Underline       =   False
@@ -1295,6 +1322,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   "When enabled, the existing item sets will be emptied and refilled according to their original preset."
          Top             =   328
          Transparent     =   False
          Underline       =   False
@@ -1333,6 +1361,7 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   328
          Transparent     =   False
          Underline       =   False

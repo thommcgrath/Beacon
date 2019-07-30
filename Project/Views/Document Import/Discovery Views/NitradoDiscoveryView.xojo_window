@@ -11,7 +11,6 @@ Begin DiscoveryView NitradoDiscoveryView
    Enabled         =   True
    HasBackgroundColor=   False
    Height          =   400
-   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -21,6 +20,7 @@ Begin DiscoveryView NitradoDiscoveryView
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    Visible         =   True
@@ -46,6 +46,7 @@ Begin DiscoveryView NitradoDiscoveryView
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -82,6 +83,7 @@ Begin DiscoveryView NitradoDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -122,6 +124,7 @@ Begin DiscoveryView NitradoDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   190
          Transparent     =   True
          Underline       =   False
@@ -150,6 +153,7 @@ Begin DiscoveryView NitradoDiscoveryView
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   222
          Transparent     =   False
          Value           =   0.0
@@ -219,6 +223,7 @@ Begin DiscoveryView NitradoDiscoveryView
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Underline       =   False
@@ -262,6 +267,7 @@ Begin DiscoveryView NitradoDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
@@ -300,6 +306,7 @@ Begin DiscoveryView NitradoDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -337,6 +344,7 @@ Begin DiscoveryView NitradoDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -617,6 +625,14 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Tooltip"
+		Visible=true
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="AllowAutoDeactivate"
 		Visible=true
 		Group="Appearance"
@@ -694,14 +710,6 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

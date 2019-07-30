@@ -11,7 +11,6 @@ Begin ConfigEditor StackSizesConfigEditor
    Enabled         =   True
    HasBackgroundColor=   False
    Height          =   468
-   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -21,6 +20,7 @@ Begin ConfigEditor StackSizesConfigEditor
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    Visible         =   True
@@ -73,6 +73,7 @@ Begin ConfigEditor StackSizesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   "1.0 = Normal. Higher values increase stack sizes, smaller values decrease stack sizes."
       Top             =   53
       Transparent     =   False
       Underline       =   False
@@ -116,6 +117,7 @@ Begin ConfigEditor StackSizesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   53
       Transparent     =   False
       Underline       =   False
@@ -151,6 +153,7 @@ Begin ConfigEditor StackSizesConfigEditor
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -182,6 +185,7 @@ Begin ConfigEditor StackSizesConfigEditor
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   87
       Transparent     =   True
       UseFocusRing    =   True
@@ -251,6 +255,7 @@ Begin ConfigEditor StackSizesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   88
       Transparent     =   False
       Underline       =   False
@@ -285,6 +290,7 @@ Begin ConfigEditor StackSizesConfigEditor
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
@@ -665,6 +671,14 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Tooltip"
+		Visible=true
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="AllowAutoDeactivate"
 		Visible=true
 		Group="Appearance"
@@ -871,14 +885,6 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"

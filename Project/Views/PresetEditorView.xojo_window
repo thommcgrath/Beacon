@@ -11,7 +11,6 @@ Begin BeaconSubview PresetEditorView
    Enabled         =   True
    HasBackgroundColor=   False
    Height          =   556
-   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -21,6 +20,7 @@ Begin BeaconSubview PresetEditorView
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    Visible         =   True
@@ -53,6 +53,7 @@ Begin BeaconSubview PresetEditorView
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   10
       Transparent     =   False
       UseFocusRing    =   True
@@ -84,6 +85,7 @@ Begin BeaconSubview PresetEditorView
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   60
       Transparent     =   True
       UseFocusRing    =   True
@@ -118,6 +120,7 @@ Begin BeaconSubview PresetEditorView
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -145,6 +148,7 @@ Begin BeaconSubview PresetEditorView
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Value           =   2
@@ -236,6 +240,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   125
          Transparent     =   True
          Underline       =   False
@@ -279,6 +284,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   516
          Transparent     =   True
          Underline       =   False
@@ -305,6 +311,7 @@ Begin BeaconSubview PresetEditorView
          TabIndex        =   9
          TabPanelIndex   =   1
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   183
          Transparent     =   False
          Visible         =   True
@@ -329,6 +336,7 @@ Begin BeaconSubview PresetEditorView
          TabIndex        =   6
          TabPanelIndex   =   1
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   149
          Transparent     =   False
          Visible         =   True
@@ -383,6 +391,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   183
          Transparent     =   False
          Underline       =   False
@@ -426,6 +435,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   183
          Transparent     =   True
          Underline       =   False
@@ -482,6 +492,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   149
          Transparent     =   False
          Underline       =   False
@@ -525,6 +536,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   149
          Transparent     =   True
          Underline       =   False
@@ -566,6 +578,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   115
          Transparent     =   True
          Underline       =   False
@@ -607,6 +620,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   81
          Transparent     =   True
          Underline       =   False
@@ -663,6 +677,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   115
          Transparent     =   False
          Underline       =   False
@@ -721,6 +736,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   81
          Transparent     =   False
          Underline       =   False
@@ -793,6 +809,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   121
          Transparent     =   False
          Underline       =   False
@@ -833,6 +850,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   81
          Transparent     =   False
          Underline       =   False
@@ -870,6 +888,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   81
          Transparent     =   False
          Underline       =   False
@@ -907,6 +926,7 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   81
          Transparent     =   False
          Underline       =   False
@@ -1875,6 +1895,14 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Tooltip"
+		Visible=true
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="AllowAutoDeactivate"
 		Visible=true
 		Group="Appearance"
@@ -1976,14 +2004,6 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

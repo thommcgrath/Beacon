@@ -74,6 +74,7 @@ Begin BeaconDialog ResolveIssuesDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   True
       Underline       =   False
@@ -112,6 +113,7 @@ Begin BeaconDialog ResolveIssuesDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   507
       Transparent     =   False
       Underline       =   False
@@ -182,6 +184,7 @@ Begin BeaconDialog ResolveIssuesDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
@@ -225,6 +228,7 @@ Begin BeaconDialog ResolveIssuesDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   224
       Transparent     =   True
       Underline       =   False
@@ -287,6 +291,7 @@ Begin BeaconDialog ResolveIssuesDialog
       TextFont        =   "Source Code Pro"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   275
       Transparent     =   False
       Underline       =   False
@@ -327,6 +332,7 @@ Begin BeaconDialog ResolveIssuesDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   507
       Transparent     =   False
       Underline       =   False
@@ -364,6 +370,7 @@ Begin BeaconDialog ResolveIssuesDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   507
       Transparent     =   False
       Underline       =   False
@@ -388,6 +395,7 @@ Begin BeaconDialog ResolveIssuesDialog
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   509
       Transparent     =   False
       Visible         =   False

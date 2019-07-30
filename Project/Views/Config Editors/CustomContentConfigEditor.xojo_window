@@ -11,7 +11,6 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
    Enabled         =   True
    HasBackgroundColor=   False
    Height          =   382
-   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -21,6 +20,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    Visible         =   True
@@ -53,6 +53,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -114,6 +115,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       TextFont        =   "Source Code Pro"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
@@ -148,6 +150,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   60
       Transparent     =   True
       UseFocusRing    =   True
@@ -182,6 +185,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   10
       Transparent     =   False
       UseFocusRing    =   True
@@ -496,6 +500,14 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Tooltip"
+		Visible=true
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="AllowAutoDeactivate"
 		Visible=true
 		Group="Appearance"
@@ -702,14 +714,6 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"

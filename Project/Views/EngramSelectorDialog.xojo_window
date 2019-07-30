@@ -74,6 +74,7 @@ Begin BeaconDialog EngramSelectorDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -129,6 +130,7 @@ Begin BeaconDialog EngramSelectorDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
@@ -202,6 +204,7 @@ Begin BeaconDialog EngramSelectorDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   165
       Transparent     =   False
       Underline       =   False
@@ -242,6 +245,7 @@ Begin BeaconDialog EngramSelectorDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   431
       Transparent     =   False
       Underline       =   False
@@ -279,6 +283,7 @@ Begin BeaconDialog EngramSelectorDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   431
       Transparent     =   False
       Underline       =   False
@@ -349,6 +354,7 @@ Begin BeaconDialog EngramSelectorDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   165
       Transparent     =   False
       Underline       =   False
@@ -389,6 +395,7 @@ Begin BeaconDialog EngramSelectorDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   266
       Transparent     =   False
       Underline       =   False
@@ -426,6 +433,7 @@ Begin BeaconDialog EngramSelectorDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   298
       Transparent     =   False
       Underline       =   False
@@ -461,6 +469,7 @@ Begin BeaconDialog EngramSelectorDialog
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   86
       Transparent     =   True
       UseFocusRing    =   True

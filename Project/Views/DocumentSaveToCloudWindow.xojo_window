@@ -74,6 +74,7 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -129,6 +130,7 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   60
       Transparent     =   False
       Underline       =   False
@@ -172,6 +174,7 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   60
       Transparent     =   False
       Underline       =   False
@@ -210,6 +213,7 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   102
       Transparent     =   False
       Underline       =   False
@@ -247,6 +251,7 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   102
       Transparent     =   False
       Underline       =   False
@@ -284,6 +289,7 @@ Begin BeaconDialog DocumentSaveToCloudWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   102
       Transparent     =   False
       Underline       =   False

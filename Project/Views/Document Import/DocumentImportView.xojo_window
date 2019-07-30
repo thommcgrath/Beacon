@@ -11,7 +11,6 @@ Begin ContainerControl DocumentImportView
    Enabled         =   True
    HasBackgroundColor=   False
    Height          =   456
-   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   False
@@ -21,6 +20,7 @@ Begin ContainerControl DocumentImportView
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    Visible         =   True
@@ -46,6 +46,7 @@ Begin ContainerControl DocumentImportView
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       Value           =   4
@@ -78,6 +79,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Underline       =   False
@@ -119,6 +121,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
@@ -153,6 +156,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   84
          Transparent     =   False
          Underline       =   False
@@ -187,6 +191,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   116
          Transparent     =   False
          Underline       =   False
@@ -225,6 +230,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   180
          Transparent     =   False
          Underline       =   False
@@ -262,6 +268,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   180
          Transparent     =   False
          Underline       =   False
@@ -298,6 +305,7 @@ Begin ContainerControl DocumentImportView
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -334,6 +342,7 @@ Begin ContainerControl DocumentImportView
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -370,6 +379,7 @@ Begin ContainerControl DocumentImportView
          TabIndex        =   0
          TabPanelIndex   =   4
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -410,6 +420,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          Underline       =   False
@@ -448,6 +459,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   416
          Transparent     =   False
          Underline       =   False
@@ -518,6 +530,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   60
          Transparent     =   False
          Underline       =   False
@@ -558,6 +571,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   416
          Transparent     =   False
          Underline       =   False
@@ -591,6 +605,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   148
          Transparent     =   False
          Underline       =   False
@@ -632,6 +647,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          Underline       =   False
@@ -670,6 +686,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   416
          Transparent     =   False
          Underline       =   False
@@ -707,6 +724,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   416
          Transparent     =   False
          Underline       =   False
@@ -777,6 +795,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   60
          Transparent     =   False
          Underline       =   False
@@ -1368,6 +1387,14 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Tooltip"
+		Visible=true
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="AllowAutoDeactivate"
 		Visible=true
 		Group="Appearance"
@@ -1445,14 +1472,6 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

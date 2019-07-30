@@ -67,6 +67,7 @@ Begin Window ExceptionWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   True
       UseFocusRing    =   True
@@ -107,6 +108,7 @@ Begin Window ExceptionWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -148,6 +150,7 @@ Begin Window ExceptionWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
@@ -186,6 +189,7 @@ Begin Window ExceptionWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   360
       Transparent     =   False
       Underline       =   False
@@ -219,6 +223,7 @@ Begin Window ExceptionWindow
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   102
       Transparent     =   True
       UseFocusRing    =   True
@@ -252,6 +257,7 @@ Begin Window ExceptionWindow
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   103
       Transparent     =   True
       UseFocusRing    =   True
@@ -285,6 +291,7 @@ Begin Window ExceptionWindow
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   339
       Transparent     =   True
       UseFocusRing    =   True
@@ -318,6 +325,7 @@ Begin Window ExceptionWindow
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   103
       Transparent     =   True
       UseFocusRing    =   True
@@ -345,6 +353,7 @@ Begin Window ExceptionWindow
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   103
       Transparent     =   False
       Value           =   3
@@ -384,6 +393,7 @@ Begin Window ExceptionWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   123
          Transparent     =   False
          Underline       =   False
@@ -412,6 +422,7 @@ Begin Window ExceptionWindow
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   155
          Transparent     =   False
          Value           =   0.0
@@ -452,6 +463,7 @@ Begin Window ExceptionWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   123
          Transparent     =   False
          Underline       =   False
@@ -490,6 +502,7 @@ Begin Window ExceptionWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   205
          Transparent     =   False
          Underline       =   False
@@ -531,6 +544,7 @@ Begin Window ExceptionWindow
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   237
          Transparent     =   False
          Underline       =   True
@@ -573,6 +587,7 @@ Begin Window ExceptionWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   123
          Transparent     =   False
          Underline       =   False
@@ -611,6 +626,7 @@ Begin Window ExceptionWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   173
          Transparent     =   False
          Underline       =   False
@@ -651,6 +667,7 @@ Begin Window ExceptionWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   123
          Transparent     =   False
          Underline       =   False
@@ -689,6 +706,7 @@ Begin Window ExceptionWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   225
          Transparent     =   False
          Underline       =   False
@@ -730,6 +748,7 @@ Begin Window ExceptionWindow
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   361
       Transparent     =   False
       Underline       =   False

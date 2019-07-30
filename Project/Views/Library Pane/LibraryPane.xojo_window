@@ -11,7 +11,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
    Enabled         =   True
    HasBackgroundColor=   False
    Height          =   468
-   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -21,6 +20,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    Visible         =   True
@@ -46,6 +46,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       Value           =   1
@@ -84,6 +85,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   4
          TabStop         =   True
          ToolbarCaption  =   ""
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -124,6 +126,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   5
          TabStop         =   True
          ToolbarCaption  =   ""
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -163,6 +166,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   6
          TabStop         =   True
          ToolbarCaption  =   ""
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -202,6 +206,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   7
          TabStop         =   True
          ToolbarCaption  =   ""
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -241,6 +246,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   8
          TabStop         =   True
          ToolbarCaption  =   ""
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -280,6 +286,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   1
          TabStop         =   True
          ToolbarCaption  =   ""
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -319,6 +326,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   2
          TabStop         =   True
          ToolbarCaption  =   ""
+         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -354,6 +362,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
       UseFocusRing    =   True
@@ -818,6 +827,14 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Tooltip"
+		Visible=true
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="AllowAutoDeactivate"
 		Visible=true
 		Group="Appearance"
@@ -895,14 +912,6 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

@@ -11,7 +11,6 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
    Enabled         =   True
    HasBackgroundColor=   False
    Height          =   460
-   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -21,6 +20,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    Visible         =   True
@@ -55,6 +55,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -88,6 +89,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
@@ -127,6 +129,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   97
          Transparent     =   True
          Underline       =   False
@@ -190,6 +193,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   273
       Transparent     =   False
       Underline       =   False
@@ -233,6 +237,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   273
       Transparent     =   True
       Underline       =   False
@@ -295,6 +300,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   95
       Transparent     =   False
       Underline       =   False
@@ -338,6 +344,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   95
       Transparent     =   True
       Underline       =   False
@@ -400,6 +407,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
@@ -443,6 +451,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   61
       Transparent     =   True
       Underline       =   False
@@ -477,6 +486,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
@@ -575,6 +585,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Tooltip"
+		Visible=true
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
 		Visible=true
@@ -677,14 +695,6 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

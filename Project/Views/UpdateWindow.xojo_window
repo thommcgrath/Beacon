@@ -61,6 +61,7 @@ Begin BeaconWindow UpdateWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       Value           =   1
@@ -100,6 +101,7 @@ Begin BeaconWindow UpdateWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
@@ -128,6 +130,7 @@ Begin BeaconWindow UpdateWindow
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Value           =   0.0
@@ -165,6 +168,7 @@ Begin BeaconWindow UpdateWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   84
          Transparent     =   False
          Underline       =   False
@@ -196,6 +200,7 @@ Begin BeaconWindow UpdateWindow
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          UseFocusRing    =   True
@@ -236,6 +241,7 @@ Begin BeaconWindow UpdateWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
@@ -274,6 +280,7 @@ Begin BeaconWindow UpdateWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   92
          Transparent     =   False
          Underline       =   False
@@ -311,6 +318,7 @@ Begin BeaconWindow UpdateWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   92
          Transparent     =   False
          Underline       =   False
@@ -351,6 +359,7 @@ Begin BeaconWindow UpdateWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
@@ -379,6 +388,7 @@ Begin BeaconWindow UpdateWindow
          TabIndex        =   1
          TabPanelIndex   =   3
          TabStop         =   True
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Value           =   0.0
@@ -416,6 +426,7 @@ Begin BeaconWindow UpdateWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   84
          Transparent     =   False
          Underline       =   False
@@ -453,6 +464,7 @@ Begin BeaconWindow UpdateWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   92
          Transparent     =   False
          Underline       =   False
@@ -493,6 +505,7 @@ Begin BeaconWindow UpdateWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
+         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Underline       =   False

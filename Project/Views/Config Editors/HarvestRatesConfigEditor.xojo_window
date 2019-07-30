@@ -11,7 +11,6 @@ Begin ConfigEditor HarvestRatesConfigEditor
    Enabled         =   True
    HasBackgroundColor=   False
    Height          =   468
-   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -21,6 +20,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
+   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    Visible         =   True
@@ -73,6 +73,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   "1.0 = Normal. Higher values increase harvest yields, smaller values decrease harvest yields."
       Top             =   53
       Transparent     =   False
       Underline       =   False
@@ -116,6 +117,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   53
       Transparent     =   False
       Underline       =   False
@@ -153,6 +155,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -186,6 +189,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   189
       Transparent     =   True
       UseFocusRing    =   True
@@ -256,6 +260,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   190
       Transparent     =   False
       Underline       =   False
@@ -292,6 +297,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Tooltip         =   ""
       Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
@@ -328,6 +334,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   "Significantly reduces lag at higher harvest amount values, but reduces number of rare resources granted."
       Top             =   54
       Transparent     =   False
       Underline       =   False
@@ -384,6 +391,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   "1.0 = Normal. Higher values will require more damage to break, smaller values reduced required damage."
       Top             =   87
       Transparent     =   False
       Underline       =   False
@@ -427,6 +435,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   87
       Transparent     =   False
       Underline       =   False
@@ -482,6 +491,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   "1.0 = Normal. Higher values increase damage players do to harvestable resources, smaller values decrease player damage."
       Top             =   121
       Transparent     =   False
       Underline       =   False
@@ -525,6 +535,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   121
       Transparent     =   False
       Underline       =   False
@@ -580,6 +591,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   "1.0 = Normal. Higher values increase damage creatures do to harvestable resources, smaller values decrease creature damage."
       Top             =   155
       Transparent     =   False
       Underline       =   False
@@ -623,6 +635,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   155
       Transparent     =   False
       Underline       =   False
@@ -660,6 +673,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   "Limits the amount of possible damage that can be done to resources during each harvest action."
       Top             =   88
       Transparent     =   False
       Underline       =   False
@@ -1136,6 +1150,14 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Tooltip"
+		Visible=true
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="AllowAutoDeactivate"
 		Visible=true
 		Group="Appearance"
@@ -1342,14 +1364,6 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
