@@ -1032,7 +1032,7 @@ Begin BeaconDialog LootSourceWizard
       Begin CheckBox CustomizeReconfigureCheckbox
          AutoDeactivate  =   True
          Bold            =   False
-         Caption         =   "Rebuild Exiting Presets"
+         Caption         =   "Rebuild Existing Presets"
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
