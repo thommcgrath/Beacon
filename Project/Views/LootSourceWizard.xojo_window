@@ -1296,7 +1296,7 @@ Begin BeaconDialog LootSourceWizard
          AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
-         Caption         =   "Rebuild Exiting Presets"
+         Caption         =   "Rebuild Existing Presets"
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
@@ -1450,7 +1450,7 @@ End
 		      If Not MapLabels.HasKey(ComboMask) Then
 		        MapLabels.Value(ComboMask) = Beacon.Maps.ForMask(ComboMask).Label
 		      End If
-		      RowText = RowText + EndOfLine + "Used by " + MapLabels.Value(ComboMask)
+		      RowText = RowText + EndOfLine + "Spawns on " + MapLabels.Value(ComboMask)
 		    End If
 		    Self.SourceList.AddRow("", RowText)
 		    Self.SourceList.RowTag(Self.SourceList.LastAddedRowIndex) = Source

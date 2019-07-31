@@ -23,7 +23,8 @@ class BeaconGenerator {
 	}
 	
 	public function Generate(string $input = '') {
-		$contents = $this->document->Content();
+		$contents = $this->document->Content(false, true);
+		
 		$version = $contents['Version'];
 		if ($version >= 3) {
 			if (isset($contents['Configs']['LootDrops']['Contents'])) {

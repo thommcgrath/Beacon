@@ -43,7 +43,7 @@ case 'GET':
 		} else {
 			$clauses[] = 'published = \'Approved\'';
 		}
-		$sql = 'SELECT ' . implode(', ', BeaconDocumentMetadata::DatabaseColumns()) . ' FROM documents WHERE ' . implode(' AND ', $clauses);
+		$sql = 'SELECT ' . implode(', ', BeaconDocument::DatabaseColumns()) . ' FROM documents WHERE ' . implode(' AND ', $clauses);
 		
 		$sort_column = 'last_update';
 		$sort_direction = 'DESC';
@@ -74,17 +74,13 @@ case 'GET':
 		}
 		
 		$results = $database->Query($sql, $values);
-		$documents = BeaconDocumentMetadata::GetFromResults($results);
+		$documents = BeaconDocument::GetFromResults($results);
 		BeaconAPI::ReplySuccess($documents);
 	} else {
 		$simple = isset($_GET['simple']);
 		
 		// specific document(s)
-		if ($simple) {
-			$documents = BeaconDocumentMetadata::GetByDocumentID($document_id);
-		} else {
-			$documents = BeaconDocument::GetByDocumentID($document_id);
-		}
+		$documents = BeaconDocument::GetByDocumentID($document_id);
 		if (count($documents) === 0) {
 			BeaconAPI::ReplyError('No document found', null, 404);
 		}
@@ -126,12 +122,11 @@ case 'GET':
 					}
 				}
 				
-				if ($best_option == 'gzip') {
+				$compressed = ($best_option == 'gzip');
+				if ($compressed) {
 					header('Content-Encoding: gzip');
-					echo gzencode(json_encode($documents[0]));
-				} else {
-					echo json_encode($documents[0], JSON_PRETTY_PRINT);
 				}
+				echo $documents[0]->Content($compressed, false);
 				exit;
 			}
 		} else {
@@ -160,151 +155,22 @@ case 'POST':
 		$single_mode = false;
 	}
 	
+	$user_id = strtolower(BeaconAPI::UserID());
 	$documents = array();
 	$database->BeginTransaction();
 	foreach ($items as $document) {
-		if (!BeaconCommon::HasAllKeys($document, 'Version', 'Identifier')) {
-			$database->Rollback();
-			BeaconAPI::ReplyError('Not all keys are present.', $document);
-		}
-		if ($single_mode && is_null(BeaconAPI::ObjectID()) == false && strtolower($document['Identifier']) !== strtolower(BeaconAPI::ObjectID())) {
-			$database->Rollback();
-			BeaconAPI::ReplyError('Document UUID of ' . strtolower($document['Identifier']) . ' in content does not match the resource UUID of ' . strtolower(BeaconAPI::ObjectID()) . '.');
-		}
-		
-		$document_version = intval($document['Version']);
-		if ($document_version < 2) {
-			$database->Rollback();
-			BeaconAPI::ReplyError('Version 1 documents are no longer not accepted.');
-		}
-		
-		$document_id = $document['Identifier'];
-		$contents = json_encode($document);
-		
-		// make sure this document is either new or owner by the server
-		try {
-			$results = $database->Query('SELECT user_id FROM documents WHERE document_id = $1;', $document_id);
-			if ($results->RecordCount() == 1) {
-				if (strtolower($results->Field('user_id')) !== strtolower(BeaconAPI::UserID())) {
-					$database->Rollback();
-					BeaconAPI::ReplyError('Document ' . $document_id . ' does not belong to you.');
-				}
-				
-				$database->Query('UPDATE documents SET contents = $2 WHERE document_id = $1;', $document_id, $contents);
-			} else {
-				$database->Query('INSERT INTO documents (user_id, contents) VALUES ($1, $2);', BeaconAPI::UserID(), $contents);
-			}
-		} catch (Exception $e) {
-			$database->Rollback();
-			
-			$reason = $e->getMessage();
-			$user_id = BeaconAPI::UserID();
-			$user = BeaconUser::GetByUserID($user_id);
-			if (is_null($user)) {
-				$username = $user_id;
-			} else {
-				$username = $user->Username() . '#' . $user->Suffix();
-			}
-			
-			$comment = "User $username had trouble saving this document: $reason";
-			$compressed = gzencode($contents, 9);
-			
-			$database->BeginTransaction();
-			$results = $database->Query('INSERT INTO corrupt_files (contents) VALUES ($1) RETURNING file_id;', '\x' . bin2hex($compressed));
-			$database->Commit();
-			$file_id = $results->Field('file_id');
-			$url = BeaconCommon::AbsoluteURL('/corruptfile.php?file_id=' . urlencode($file_id));
-			
-			BeaconCommon::PostSlackMessage("User $username had trouble saving a document: $reason\n\nDownload the file: $url");
-			
-			BeaconAPI::ReplyError('There was a database error while saving the document.');
-		}
-		
-		// see if a publish request is needed
-		$results = $database->Query('SELECT published FROM documents WHERE document_id = $1;', $document_id);
-		$current_status = $results->Field('published');
-		$new_status = $current_status;
-		if ($document_version >= 3) {
-			if (isset($document['Configs']['Metadata'])) {
-				$metadata = $document['Configs']['Metadata'];
-				$wants_publish = BeaconCommon::HasAllKeys($metadata, 'Description', 'Title', 'Public') && boolval($metadata['Public']) == true;
-				$document_title = $metadata['Title'];
-				$document_description = $metadata['Description'];
-			} else {
-				$wants_publish = false;
-			}
+		if ($single_mode) {
+			$this_document_id = $document_id;
 		} else {
-			$wants_publish = BeaconCommon::HasAllKeys($document, 'Description', 'Title', 'Public') && boolval($document['Public']) == true;
-			$document_title = $document['Title'];
-			$document_description = $document['Description'];
+			$this_document_id = $document['Identifier'];
 		}
-		if ($wants_publish) {
-			if ($current_status == BeaconDocumentMetadata::PUBLISH_STATUS_APPROVED_PRIVATE) {
-				$new_status = BeaconDocumentMetadata::PUBLISH_STATUS_APPROVED;
-			} elseif ($current_status == BeaconDocumentMetadata::PUBLISH_STATUS_PRIVATE) {
-				$new_status = BeaconDocumentMetadata::PUBLISH_STATUS_REQUESTED;
-				
-				$attachment = array(
-					'title' => $document_title,
-					'text' => $document_description,
-					'fallback' => 'Unable to show response buttons.',
-					'callback_id' => 'publish_document:' . $document_id,
-					'actions' => array(
-						array(
-							'name' => 'status',
-							'text' => 'Approve',
-							'type' => 'button',
-							'value' => BeaconDocumentMetadata::PUBLISH_STATUS_APPROVED,
-							'confirm' => array(
-								'text' => 'Are you sure you want to approve this document?',
-								'ok_text' => 'Approve'
-							)
-						),
-						array(
-							'name' => 'status',
-							'text' => 'Deny',
-							'type' => 'button',
-							'value' => BeaconDocumentMetadata::PUBLISH_STATUS_DENIED,
-							'confirm' => array(
-								'text' => 'Are you sure you want to reject this document?',
-								'ok_text' => 'Deny'
-							)
-						)
-					),
-					'fields' => array()
-				);
-				
-				$user = BeaconUser::GetByUserID(BeaconAPI::UserID());
-				if (is_null($user) === false) {
-					if ($user->IsAnonymous()) {
-						$username = 'Anonymous';
-					} else {
-						$username = $user->Username() . '#' . $user->Suffix();
-					}
-					$attachment['fields'][] = array(
-						'title' => 'Author',
-						'value' => $username
-					);
-				}
-				
-				$obj = array(
-					'text' => 'Request to publish document',
-					'attachments' => array($attachment)
-				);
-				BeaconCommon::PostSlackRaw(json_encode($obj));	
-			}
-		} else {
-			if ($current_status == BeaconDocumentMetadata::PUBLISH_STATUS_APPROVED) {
-				$new_status = BeaconDocumentMetadata::PUBLISH_STATUS_APPROVED_PRIVATE;
-			} elseif ($current_status == BeaconDocumentMetadata::PUBLISH_STATUS_REQUESTED) {
-				$new_status = BeaconDocumentMetadata::PUBLISH_STATUS_PRIVATE;
-			}
+		$reason = '';
+		$saved = BeaconDocument::SaveFromContent($this_document_id, $user_id, $document, $reason);
+		if ($saved === false) {
+			$database->Rollback();
+			BeaconAPI::ReplyError($reason, $document);
 		}
-		if ($new_status != $current_status) {
-			$database->Query('UPDATE documents SET published = $2 WHERE document_id = $1;', $document_id, $new_status);
-		}
-		
-		$documents[] = BeaconDocumentMetadata::GetByDocumentID($document_id)[0];
+		$documents[] = BeaconDocument::GetByDocumentID($this_document_id)[0];
 	}
 	$database->Commit();
 	
@@ -320,17 +186,23 @@ case 'DELETE':
 		BeaconAPI::ReplyError('No document specified');
 	}
 	
+	$paths = array();
 	$results = $database->Query('SELECT user_id, document_id FROM documents WHERE document_id = ANY($1);', '{' . $document_id . '}');
 	while (!$results->EOF()) {
 		if ($results->Field('user_id') !== BeaconAPI::UserID()) {
 			BeaconAPI::ReplyError('Document ' . $results->Field('document_id') . ' does not belong to you.');
 		}
+		$paths[] = BeaconDocument::GenerateCloudStoragePath($results->Field('user_id'), $results->Field('document_id'));
 		$results->MoveNext();
 	}
 		
 	$database->BeginTransaction();
 	$database->Query('DELETE FROM documents WHERE document_id = ANY($1);', '{' . $document_id . '}');
 	$database->Commit();
+	
+	foreach ($paths as $path) {
+		BeaconCloudStorage::DeleteFile($path);
+	}
 	
 	BeaconAPI::ReplySuccess();
 	

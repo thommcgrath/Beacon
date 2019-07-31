@@ -46,8 +46,8 @@ if (array_key_exists('console_safe', $_GET)) {
 }
 
 $start_time = microtime(true);
-$document_count = BeaconDocumentMetadata::Search($search_keys, $sort_order, $limit, $offset, true);
-$documents = BeaconDocumentMetadata::Search($search_keys, $sort_order, $limit, $offset, false);
+$document_count = BeaconDocument::Search($search_keys, $sort_order, $limit, $offset, true);
+$documents = BeaconDocument::Search($search_keys, $sort_order, $limit, $offset, false);
 $end_time = microtime(true);
 
 ?><h1>Browse Documents</h1>

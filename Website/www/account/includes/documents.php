@@ -70,7 +70,7 @@ BeaconTemplate::FinishStyles();
 $keys = array(
 	'user_id' => $user->UserID()
 );
-$documents = BeaconDocumentMetadata::Search($keys);
+$documents = BeaconDocument::Search($keys);
 if (count($documents) > 0) {
 	echo '<table class="generic">';
 	echo '<thead><tr><th>Name</th><th class="low-priority">Downloads</th><th class="low-priority">Revision</th><th class="text-center low-priority">Published</th><th class="low-priority">Delete</th></tr></thead>';

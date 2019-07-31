@@ -14,7 +14,7 @@ $search_keys = array(
 );
 	
 
-$documents = BeaconDocumentMetadata::Search($search_keys);
+$documents = BeaconDocument::Search($search_keys);
 if (count($documents) != 1) {
 	http_response_code(404);
 	BeaconTemplate::SetTitle('Document Not Found');
@@ -57,25 +57,60 @@ if (count($map_names) >= 3) {
 }
 ?></p>
 	<p>Platforms: <span class="platform_tag pc">PC</span><?php if ($document->ConsoleSafe()) {?><span class="platform_tag xbox">Xbox</span><span class="platform_tag playstation">PlayStation</span><?php } ?></p>
-	<p>Uses Mods: <?php
-	
-	$mods = $document->LookupRequiredMods();
-	$mod_links = array();
+	<?php
+		
+	$database = BeaconCommon::Database();
+	$mod_ids = $document->RequiredMods(false);
+	$results = $database->Query('SELECT workshop_id, name FROM mods WHERE array_position($1, mod_id) IS NOT NULL;', $mod_ids);
 	$unknown_mods = false;
-	foreach ($mods as $mod) {
-		if (is_null($mod)) {
-			$unknown_mods = true;
-		} else {
-			$mod_links[] = '<a href="/mods/info.php?mod_id=' . $mod->ModID() . '">' . htmlentities($mod->Name()) . '</a>';
-		}
+	$mod_links = array();
+	while (!$results->EOF()) {
+		$mod_links[] = '<a href="/mods/' . abs($results->Field('workshop_id')) . '">' . htmlentities($results->Field('name')) . '</a>';
+		$results->MoveNext();
 	}
-	if ($unknown_mods) {
+	if (count($mod_links) != count($document->RequiredMods(true))) {
 		$mod_links[] = 'one or more mods not listed with Beacon';
 	}
 	
-	echo ucfirst(BeaconCommon::ArrayToEnglish($mod_links)) . '.';
+	if (count($mod_links) > 0) {
+		echo '<p>Uses Mods: ' . ucfirst(BeaconCommon::ArrayToEnglish($mod_links)) . '.</p>';
+	}
+	
+	$editors = $document->ImplementedConfigs(true);
+	$editor_names = array();
+	foreach ($editors as $name) {
+		switch ($name) {
+		case 'LootDrops':
+			$editor_names[] = 'Loot Drop Contents';
+			break;
+		case 'LootScale':
+			$editor_names[] = 'Loot Quality Scaling';
+			break;
+		case 'ExperienceCurves':
+			$editor_names[] = 'Player and Tame Levels';
+			break;
+		case 'CraftingCosts':
+			$editor_names[] = 'Crafting Costs';
+			break;
+		case 'StackSizes':
+			$editor_names[] = 'Stack Sizes';
+			break;
+		case 'BreedingMultipliers':
+			$editor_names[] = 'Breeding Multipliers';
+			break;
+		case 'HarvestRates':
+			$editor_names[] = 'Harvest Rates';
+			break;
+		case 'DinoAdjustments':
+			$editor_names[] = 'Creature Adjustments';
+			break;
+		}
+	}
+	if (count($editor_names) > 0) {
+		echo '<p>Contains Configs: ' . BeaconCommon::ArrayToEnglish($editor_names) . '</p>';
+	}
 		
-	?></p>
+	?>
 </div>
 <h3>Download</h3>
 <div class="indent">
