@@ -217,7 +217,7 @@ class BeaconDocument extends BeaconDocumentMetadata {
 				if ($as_migration) {
 					$database->Query('UPDATE documents SET title = $3, description = $4, map = $5, difficulty = $6, console_safe = $7, mods = $8, included_editors = $9, contents = NULL WHERE document_id = $1 AND user_id = $2;', $document_id, $user_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
 				} else {
-					$database->Query('UPDATE documents SET revision = revision + 1, title = $3, description = $4, map = $5, difficulty = $6, console_safe = $7, mods = $8, included_editors = $9, last_update = CURRENT_TIMESTAMP WHERE document_id = $1 AND user_id = $2;', $document_id, $user_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
+					$database->Query('UPDATE documents SET revision = revision + 1, title = $3, description = $4, map = $5, difficulty = $6, console_safe = $7, mods = $8, included_editors = $9, last_update = CURRENT_TIMESTAMP, contents = NULL WHERE document_id = $1 AND user_id = $2;', $document_id, $user_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
 				}
 			}
 			$database->Commit();
