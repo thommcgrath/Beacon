@@ -289,7 +289,7 @@ class BeaconDocument implements JsonSerializable {
 		return '/' . strtolower($user_id) . '/Documents/' . strtolower($document_id) . '.beacon';
 	}
 	
-	public static function SaveFromContent(string $document_id, string $user_id, $content, string &$reason, bool $as_migration = false) {
+	public static function SaveFromContent(string $document_id, string $user_id, $content, string &$reason) {
 		if (is_array($content)) {
 			$document = $content;
 		} elseif (is_string($content)) {
@@ -457,11 +457,7 @@ class BeaconDocument implements JsonSerializable {
 			if ($new_document) {
 				$database->Query('INSERT INTO documents (document_id, user_id, title, description, map, difficulty, console_safe, mods, included_editors, last_update) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, CURRENT_TIMESTAMP);', $document_id, $user_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
 			} else {
-				if ($as_migration) {
-					$database->Query('UPDATE documents SET title = $3, description = $4, map = $5, difficulty = $6, console_safe = $7, mods = $8, included_editors = $9, contents = NULL WHERE document_id = $1 AND user_id = $2;', $document_id, $user_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
-				} else {
-					$database->Query('UPDATE documents SET revision = revision + 1, title = $3, description = $4, map = $5, difficulty = $6, console_safe = $7, mods = $8, included_editors = $9, last_update = CURRENT_TIMESTAMP, contents = NULL WHERE document_id = $1 AND user_id = $2;', $document_id, $user_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
-				}
+				$database->Query('UPDATE documents SET revision = revision + 1, title = $3, description = $4, map = $5, difficulty = $6, console_safe = $7, mods = $8, included_editors = $9, last_update = CURRENT_TIMESTAMP WHERE document_id = $1 AND user_id = $2;', $document_id, $user_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
 			}
 			$database->Commit();
 		} catch (Exception $err) {

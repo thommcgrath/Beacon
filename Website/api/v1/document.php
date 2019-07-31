@@ -165,7 +165,7 @@ case 'POST':
 			$this_document_id = $document['Identifier'];
 		}
 		$reason = '';
-		$saved = BeaconDocument::SaveFromContent($this_document_id, $user_id, $document, $reason, false);
+		$saved = BeaconDocument::SaveFromContent($this_document_id, $user_id, $document, $reason);
 		if ($saved === false) {
 			$database->Rollback();
 			BeaconAPI::ReplyError($reason, $document);
