@@ -20,7 +20,7 @@ class BeaconDocument implements JsonSerializable {
 	protected $console_safe = true;
 	protected $mod_ids = '{}';
 	protected $editors = '{}';
-	protected $content = '';
+	protected $content = null;
 	
 	public function DocumentID() {
 		return $this->document_id;
@@ -72,7 +72,7 @@ class BeaconDocument implements JsonSerializable {
 	
 	public function Content(bool $compressed = false, bool $parsed = true) {
 		if (is_null($this->content)) {
-			$this->contents = BeaconCloudStorage::GetFile($this->CloudStoragePath());
+			$this->content = BeaconCloudStorage::GetFile($this->CloudStoragePath());
 		}
 		
 		$content = $this->content;
