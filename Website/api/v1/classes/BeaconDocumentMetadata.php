@@ -18,7 +18,8 @@ class BeaconDocumentMetadata implements JsonSerializable {
 	protected $map_mask = 0;
 	protected $difficulty_value = 0;
 	protected $console_safe = true;
-	protected $version = 2;
+	protected $mod_ids = '{}';
+	protected $editors = '{}';
 	
 	public function DocumentID() {
 		return $this->document_id;
@@ -68,24 +69,28 @@ class BeaconDocumentMetadata implements JsonSerializable {
 		return $this->console_safe;
 	}
 	
-	public function LookupRequiredMods() {
-		$database = BeaconCommon::Database();
-		if ($this->version >= 3) {
-			$results = $database->Query('SELECT DISTINCT mods.mod_id FROM (SELECT DISTINCT jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(contents->\'Configs\'->\'LootDrops\'->\'Contents\')->\'ItemSets\')->\'ItemEntries\')->\'Items\')->>\'Path\' AS path FROM documents WHERE document_id = $1) AS items LEFT JOIN (engrams INNER JOIN mods ON (engrams.mod_id = mods.mod_id)) ON (items.path = engrams.path);', $this->document_id);
-		} else {
-			$results = $database->Query('SELECT DISTINCT mods.mod_id FROM (SELECT DISTINCT jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(contents->\'LootSources\')->\'ItemSets\')->\'ItemEntries\')->\'Items\')->>\'Path\' AS path FROM documents WHERE document_id = $1) AS items LEFT JOIN (engrams INNER JOIN mods ON (engrams.mod_id = mods.mod_id)) ON (items.path = engrams.path);', $this->document_id);
-		}
-		$mods = array();
-		while (!$results->EOF()) {
-			$mod_id = $results->Field('mod_id');
-			if (is_null($mod_id)) {
-				$mods[] = null; // yes
+	public function RequiredMods(bool $as_array) {
+		if ($as_array) {
+			if ($this->mod_ids === '{}') {
+				return array();
 			} else {
-				$mods[] = BeaconMod::GetByModID($mod_id);
+				return explode(',', substr($this->mod_ids, 1, strlen($this->mod_ids) - 2));
 			}
-			$results->MoveNext();
+		} else {
+			return $this->mod_ids;
 		}
-		return $mods;
+	}
+	
+	public function ImplementedConfigs(bool $as_array) {
+		if ($as_array) {
+			if ($this->editors === '{}') {
+				return array();
+			} else {
+				return explode(',', substr($this->editors, 1, strlen($this->editors) - 2));
+			}
+		} else {
+			return $this->editors;
+		}
 	}
 	
 	public function ResourceURL() {
@@ -198,7 +203,8 @@ class BeaconDocumentMetadata implements JsonSerializable {
 		$document->map_mask = intval($results->Field('map'));
 		$document->difficulty_value = floatval($results->Field('difficulty'));
 		$document->console_safe = boolval($results->Field('console_safe'));
-		$document->version = intval($results->Field('document_version'));
+		$document->mod_ids = is_null($results->Field('mods')) ? '{}' : $results->Field('mods');
+		$document->editors = is_null($results->Field('included_editors')) ? '{}' : $results->Field('included_editors');
 		return $document;
 	}
 	
@@ -233,7 +239,8 @@ class BeaconDocumentMetadata implements JsonSerializable {
 			'map',
 			'difficulty',
 			'console_safe',
-			'coalesce((contents->>\'Version\')::numeric, 2) AS document_version'
+			'mods',
+			'included_editors'
 		);
 	}
 	
@@ -251,6 +258,14 @@ class BeaconDocumentMetadata implements JsonSerializable {
 			'console_safe' => $this->console_safe,
 			'resource_url' => $this->ResourceURL()
 		);
+	}
+	
+	public function CloudStoragePath() {
+		return static::GenerateCloudStoragePath($this->UserID(), $this->DocumentID());
+	}
+	
+	public static function GenerateCloudStoragePath(string $user_id, string $document_id) {
+		return '/' . strtolower($user_id) . '/Documents/' . strtolower($document_id) . '.beacon';
 	}
 }
 

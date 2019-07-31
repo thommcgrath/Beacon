@@ -481,6 +481,11 @@ abstract class BeaconCommon {
 			return $url;
 		}
 	}
+	
+	public static function IsCompressed(string $content) {
+		$arr = unpack('C*', substr($content, 0, 2));
+		return count($arr) == 2 && $arr[1] == 0x1f && $arr[2] == 0x8b;
+	}
 }
 
 ?>
