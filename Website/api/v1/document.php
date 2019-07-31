@@ -190,17 +190,23 @@ case 'DELETE':
 		BeaconAPI::ReplyError('No document specified');
 	}
 	
+	$paths = array();
 	$results = $database->Query('SELECT user_id, document_id FROM documents WHERE document_id = ANY($1);', '{' . $document_id . '}');
 	while (!$results->EOF()) {
 		if ($results->Field('user_id') !== BeaconAPI::UserID()) {
 			BeaconAPI::ReplyError('Document ' . $results->Field('document_id') . ' does not belong to you.');
 		}
+		$paths[] = BeaconDocument::GenerateCloudStoragePath($results->Field('user_id'), $results->Field('document_id'));
 		$results->MoveNext();
 	}
 		
 	$database->BeginTransaction();
 	$database->Query('DELETE FROM documents WHERE document_id = ANY($1);', '{' . $document_id . '}');
 	$database->Commit();
+	
+	foreach ($paths as $path) {
+		BeaconCloudStorage::DeleteFile($path);
+	}
 	
 	BeaconAPI::ReplySuccess();
 	
