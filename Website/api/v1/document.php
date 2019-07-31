@@ -43,7 +43,7 @@ case 'GET':
 		} else {
 			$clauses[] = 'published = \'Approved\'';
 		}
-		$sql = 'SELECT ' . implode(', ', BeaconDocumentMetadata::DatabaseColumns()) . ' FROM documents WHERE ' . implode(' AND ', $clauses);
+		$sql = 'SELECT ' . implode(', ', BeaconDocument::DatabaseColumns()) . ' FROM documents WHERE ' . implode(' AND ', $clauses);
 		
 		$sort_column = 'last_update';
 		$sort_direction = 'DESC';
@@ -74,17 +74,13 @@ case 'GET':
 		}
 		
 		$results = $database->Query($sql, $values);
-		$documents = BeaconDocumentMetadata::GetFromResults($results);
+		$documents = BeaconDocument::GetFromResults($results);
 		BeaconAPI::ReplySuccess($documents);
 	} else {
 		$simple = isset($_GET['simple']);
 		
 		// specific document(s)
-		if ($simple) {
-			$documents = BeaconDocumentMetadata::GetByDocumentID($document_id);
-		} else {
-			$documents = BeaconDocument::GetByDocumentID($document_id);
-		}
+		$documents = BeaconDocument::GetByDocumentID($document_id);
 		if (count($documents) === 0) {
 			BeaconAPI::ReplyError('No document found', null, 404);
 		}
@@ -174,7 +170,7 @@ case 'POST':
 			$database->Rollback();
 			BeaconAPI::ReplyError($reason, $document);
 		}
-		$documents[] = BeaconDocumentMetadata::GetByDocumentID($this_document_id)[0];
+		$documents[] = BeaconDocument::GetByDocumentID($this_document_id)[0];
 	}
 	$database->Commit();
 	

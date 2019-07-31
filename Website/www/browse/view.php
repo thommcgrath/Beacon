@@ -14,7 +14,7 @@ $search_keys = array(
 );
 	
 
-$documents = BeaconDocumentMetadata::Search($search_keys);
+$documents = BeaconDocument::Search($search_keys);
 if (count($documents) != 1) {
 	http_response_code(404);
 	BeaconTemplate::SetTitle('Document Not Found');
