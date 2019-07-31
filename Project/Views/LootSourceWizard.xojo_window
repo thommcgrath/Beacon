@@ -44,6 +44,7 @@ Begin BeaconDialog LootSourceWizard
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   2
@@ -1174,7 +1175,7 @@ End
 		      If Not MapLabels.HasKey(ComboMask) Then
 		        MapLabels.Value(ComboMask) = Beacon.Maps.ForMask(ComboMask).Label
 		      End If
-		      RowText = RowText + EndOfLine + "Used by " + MapLabels.Value(ComboMask)
+		      RowText = RowText + EndOfLine + "Spawns on " + MapLabels.Value(ComboMask)
 		    End If
 		    Self.SourceList.AddRow("", RowText)
 		    Self.SourceList.RowTag(Self.SourceList.LastIndex) = Source
