@@ -402,10 +402,10 @@ Inherits Listbox
 		  End If
 		  
 		  #if TargetWindows
-			Dim ScrollerVisible As Boolean = Self.HasVerticalScrollbar
-			If ScrollerVisible Then
-			  Self.HasVerticalScrollbar = False
-			End If
+		    Dim ScrollerVisible As Boolean = Self.HasVerticalScrollbar
+		    If ScrollerVisible Then
+		      Self.HasVerticalScrollbar = False
+		    End If
 		  #endif
 		  
 		  Dim Count As Integer = Self.RowCount
@@ -414,14 +414,14 @@ Inherits Listbox
 		    Count = Count + 1
 		  Wend
 		  While Count > Value
-		    Self.RemoveRow(Count - 1)
+		    Self.RemoveRowAt(Count - 1)
 		    Count = Count - 1
 		  Wend
 		  
 		  #if TargetWindows
-			If ScrollerVisible Then
-			  Self.HasVerticalScrollbar = True
-			End If
+		    If ScrollerVisible Then
+		      Self.HasVerticalScrollbar = True
+		    End If
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -1008,10 +1008,6 @@ Inherits Listbox
 			InitialValue=""
 			Type="Boolean"
 			EditorType=""
-		#tag EndViewProperty
-			Name="SelectionChangeBlocked"
-			Group="Behavior"
-			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

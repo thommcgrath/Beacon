@@ -294,14 +294,14 @@ Inherits ControlCanvas
 		    ExcludedTags = Temp
 		  End If
 		  
-		  For I As Integer = RequiredTags.Ubound DownTo 0
+		  For I As Integer = RequiredTags.LastRowIndex DownTo RequiredTags.FirstRowIndex
 		    If RequiredTags(I) <> "object" And Self.mTags.IndexOf(RequiredTags(I)) = -1 Then
-		      RequiredTags.Remove(I)
+		      RequiredTags.RemoveRowAt(I)
 		    End If
 		  Next
-		  For I As Integer = ExcludedTags.Ubound DownTo 0
+		  For I As Integer = ExcludedTags.LastRowIndex DownTo ExcludedTags.FirstRowIndex
 		    If Self.mTags.IndexOf(ExcludedTags(I)) = -1 Then
-		      ExcludedTags.Remove(I)
+		      ExcludedTags.RemoveRowAt(I)
 		    End If
 		  Next
 		  
