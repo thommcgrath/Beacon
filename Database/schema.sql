@@ -185,67 +185,6 @@ $_$;
 ALTER FUNCTION public.compute_class_trigger() OWNER TO thommcgrath;
 
 --
--- Name: documents_maintenance_function(); Type: FUNCTION; Schema: public; Owner: thommcgrath
---
-
-CREATE FUNCTION public.documents_maintenance_function() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-DECLARE
-	p_update_meta BOOLEAN;
-	p_console_safe_known BOOLEAN;
-	p_rec RECORD;
-BEGIN
-	IF TG_OP = 'INSERT' THEN
-		NEW.document_id = (NEW.contents->>'Identifier')::UUID;
-		p_update_meta = TRUE;
-	ELSIF TG_OP = 'UPDATE' THEN
-		IF NEW.document_id != OLD.document_id OR NEW.contents->>'Identifier' != OLD.contents->>'Identifier' THEN
-			RAISE EXCEPTION 'Cannot change document identifier';
-		END IF;
-		IF NEW.contents != OLD.contents THEN
-			NEW.last_update = clock_timestamp();
-			NEW.revision = NEW.revision + 1;
-			p_update_meta = TRUE;
-		ELSE
-			IF NEW.title != OLD.title OR NEW.description != OLD.description OR NEW.map != OLD.map OR NEW.difficulty != OLD.difficulty OR NEW.console_safe != OLD.console_safe THEN
-				RAISE EXCEPTION 'Do not change meta properties. Change the contents JSON instead.';
-			END IF;
-		END IF;
-	END IF;
-	IF p_update_meta = TRUE THEN
-		NEW.map = coalesce((NEW.contents->>'Map')::integer, 1);
-		NEW.console_safe = TRUE;
-		p_console_safe_known = FALSE;
-		IF coalesce((NEW.contents->>'Version')::numeric, 2) = 3 THEN
-			NEW.title = coalesce(NEW.contents->'Configs'->'Metadata'->>'Title', 'Untitled Document');
-			NEW.description = coalesce(NEW.contents->'Configs'->'Metadata'->>'Description', '');
-			NEW.difficulty = coalesce((NEW.contents->'Configs'->'Difficulty'->>'MaxDinoLevel')::numeric, 150) / 30;
-			FOR p_rec IN SELECT DISTINCT mods.console_safe FROM (SELECT DISTINCT jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(NEW.contents->'Configs'->'LootDrops'->'Contents')->'ItemSets')->'ItemEntries')->'Items')->>'Path' AS path) AS items LEFT JOIN (engrams INNER JOIN mods ON (engrams.mod_id = mods.mod_id)) ON (items.path = engrams.path) LOOP
-				NEW.console_safe = NEW.console_safe AND coalesce(p_rec.console_safe, FALSE);
-				p_console_safe_known = TRUE;
-			END LOOP;
-		ELSE
-			NEW.title = coalesce(NEW.contents->>'Title', 'Untitled Document');
-			NEW.description = coalesce(NEW.contents->>'Description', '');
-			NEW.difficulty = coalesce((NEW.contents->>'DifficultyValue')::numeric, 4.0);
-			FOR p_rec IN SELECT DISTINCT mods.console_safe FROM (SELECT DISTINCT jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(NEW.contents->'LootSources')->'ItemSets')->'ItemEntries')->'Items')->>'Path' AS path) AS items LEFT JOIN (engrams INNER JOIN mods ON (engrams.mod_id = mods.mod_id)) ON (items.path = engrams.path) LOOP
-				NEW.console_safe = NEW.console_safe AND coalesce(p_rec.console_safe, FALSE);
-				p_console_safe_known = TRUE;
-			END LOOP;
-		END IF;
-		IF NOT p_console_safe_known THEN
-			NEW.console_safe = FALSE;
-		END IF;
-	END IF;
-	RETURN NEW;
-END;
-$$;
-
-
-ALTER FUNCTION public.documents_maintenance_function() OWNER TO thommcgrath;
-
---
 -- Name: enforce_mod_owner(); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
@@ -909,13 +848,14 @@ CREATE TABLE public.documents (
     title text NOT NULL,
     description text NOT NULL,
     map integer NOT NULL,
-    difficulty numeric(8,4) NOT NULL,
+    difficulty numeric(12,4) NOT NULL,
     console_safe boolean NOT NULL,
     last_update timestamp with time zone DEFAULT clock_timestamp() NOT NULL,
     revision integer DEFAULT 1 NOT NULL,
     download_count integer DEFAULT 0 NOT NULL,
-    contents jsonb NOT NULL,
-    published public.publish_status DEFAULT 'Private'::public.publish_status
+    published public.publish_status DEFAULT 'Private'::public.publish_status NOT NULL,
+    mods uuid[] NOT NULL,
+    included_editors text[] NOT NULL
 );
 
 
@@ -1067,6 +1007,20 @@ CREATE TABLE public.mods (
 
 
 ALTER TABLE public.mods OWNER TO thommcgrath;
+
+--
+-- Name: oauth_requests; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.oauth_requests (
+    request_id uuid NOT NULL,
+    encrypted_payload text NOT NULL,
+    encrypted_symmetric_key text NOT NULL,
+    expiration timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.oauth_requests OWNER TO thommcgrath;
 
 --
 -- Name: oauth_tokens; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -1965,6 +1919,14 @@ ALTER TABLE ONLY public.mods
 
 
 --
+-- Name: oauth_requests oauth_requests_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.oauth_requests
+    ADD CONSTRAINT oauth_requests_pkey PRIMARY KEY (request_id);
+
+
+--
 -- Name: oauth_tokens oauth_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -2382,13 +2344,6 @@ CREATE TRIGGER diets_before_insert_trigger BEFORE INSERT ON public.diets FOR EAC
 --
 
 CREATE TRIGGER diets_before_update_trigger BEFORE UPDATE ON public.diets FOR EACH ROW EXECUTE PROCEDURE public.object_update_trigger();
-
-
---
--- Name: documents documents_maintenance_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
---
-
-CREATE TRIGGER documents_maintenance_trigger BEFORE INSERT OR UPDATE ON public.documents FOR EACH ROW EXECUTE PROCEDURE public.documents_maintenance_function();
 
 
 --
@@ -3029,6 +2984,13 @@ GRANT SELECT ON TABLE public.loot_source_icons TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.mods TO thezaz_website;
+
+
+--
+-- Name: TABLE oauth_requests; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE ON TABLE public.oauth_requests TO thezaz_website;
 
 
 --
