@@ -294,6 +294,17 @@ Inherits ControlCanvas
 		    ExcludedTags = Temp
 		  End If
 		  
+		  For I As Integer = RequiredTags.Ubound DownTo 0
+		    If RequiredTags(I) <> "object" And Self.mTags.IndexOf(RequiredTags(I)) = -1 Then
+		      RequiredTags.Remove(I)
+		    End If
+		  Next
+		  For I As Integer = ExcludedTags.Ubound DownTo 0
+		    If Self.mTags.IndexOf(ExcludedTags(I)) = -1 Then
+		      ExcludedTags.Remove(I)
+		    End If
+		  Next
+		  
 		  Dim RequireCurrentString As String = Self.ArrayToString(Self.mRequireTags)
 		  Dim RequireNewString As String = Self.ArrayToString(RequiredTags)
 		  Dim Changed As Boolean = RequireCurrentString <> RequireNewString
