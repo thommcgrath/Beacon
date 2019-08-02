@@ -170,7 +170,7 @@ Protected Module UserCloud
 		  End If
 		  
 		  If RemotePath.Left(1) = "/" Then
-		    RemotePath = RemotePath.Middle(2)
+		    RemotePath = RemotePath.Middle(1)
 		  End If
 		  
 		  Dim LocalFolder As FolderItem = App.ApplicationSupport
