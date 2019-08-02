@@ -105,6 +105,10 @@ Protected Module BeaconEncryption
 
 	#tag Method, Flags = &h1
 		Protected Function SymmetricDecrypt(Key As MemoryBlock, Data As String) As String
+		  If Data = "" Then
+		    Return ""
+		  End If
+		  
 		  Dim Header As BeaconEncryption.SymmetricHeader = BeaconEncryption.SymmetricHeader.FromMemoryBlock(Data)
 		  If Header = Nil Then
 		    Dim Err As New CryptoException
@@ -141,6 +145,10 @@ Protected Module BeaconEncryption
 
 	#tag Method, Flags = &h1
 		Protected Function SymmetricEncrypt(Key As MemoryBlock, Data As String) As String
+		  If Data = "" Then
+		    Return ""
+		  End If
+		  
 		  Dim Header As New BeaconEncryption.SymmetricHeader(Data)
 		  
 		  Dim Crypt As New M_Crypto.AES_MTC(Key, M_Crypto.AES_MTC.EncryptionBits.Bits256)
