@@ -1407,7 +1407,8 @@ CREATE TABLE public.usercloud_queue (
     hostname public.citext NOT NULL,
     request_method public.citext NOT NULL,
     queue_time timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    http_status integer
+    http_status integer,
+    attempts integer DEFAULT 0 NOT NULL
 );
 
 
