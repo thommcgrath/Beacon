@@ -154,7 +154,7 @@ Begin BeaconSubview PresetEditorView
       Value           =   2
       Visible         =   True
       Width           =   740
-      BeginSegmented SegmentedButton MapSelector
+      BeginSegmentedButton SegmentedButton MapSelector
          Enabled         =   True
          Height          =   24
          Index           =   -2147483648
