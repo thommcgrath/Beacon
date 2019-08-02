@@ -67,10 +67,6 @@ Protected Module Beacon
 		  Select Case Info.FullName
 		  Case "Boolean"
 		    Return True
-		  Case "Text"
-		    Dim TextValue As String = Value
-		    Value = If(TextValue = "true", True, False)
-		    Return True
 		  Case "String"
 		    Dim StringValue As String = Value
 		    Value = If(StringValue = "true", True, False)
@@ -140,6 +136,10 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function CRC32(Data As MemoryBlock) As UInt32
+		  If Data = Nil Or Data.Size = 0 Then
+		    Return 0
+		  End If
+		  
 		  Try
 		    Dim crcg, c, t, x,b As UInt32
 		    Dim ch As UInt8

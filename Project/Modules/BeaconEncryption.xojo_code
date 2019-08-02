@@ -14,7 +14,7 @@ Protected Module BeaconEncryption
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function PEMDecodePrivateKey(Key As String) As MemoryBlock
+		Protected Function PEMDecodePrivateKey(Key As String) As String
 		  Key = Key.Trim
 		  Key = Key.ReplaceAll(Encodings.UTF8.Chr(13) + Encodings.UTF8.Chr(10), Encodings.UTF8.Chr(10))
 		  Key = Key.ReplaceAll(Encodings.UTF8.Chr(13), Encodings.UTF8.Chr(10))
@@ -31,7 +31,7 @@ Protected Module BeaconEncryption
 		  
 		  Key = Lines.Join(Encodings.UTF8.Chr(10))
 		  
-		  Dim Decoded As MemoryBlock = DecodeBase64(Key)
+		  Dim Decoded As String = DecodeBase64(Key)
 		  #Pragma BreakOnExceptions Off
 		  Try
 		    Return Crypto.BERDecodePrivateKey(Decoded)
@@ -43,7 +43,7 @@ Protected Module BeaconEncryption
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function PEMDecodePublicKey(Key As String) As MemoryBlock
+		Protected Function PEMDecodePublicKey(Key As String) As String
 		  Key = Key.Trim
 		  Key = Key.ReplaceAll(Encodings.UTF8.Chr(13) + Encodings.UTF8.Chr(10), Encodings.UTF8.Chr(10))
 		  Key = Key.ReplaceAll(Encodings.UTF8.Chr(13), Encodings.UTF8.Chr(10))
@@ -60,7 +60,7 @@ Protected Module BeaconEncryption
 		  
 		  Key = Lines.Join(Encodings.UTF8.Chr(10))
 		  
-		  Dim Decoded As MemoryBlock = DecodeBase64(Key)
+		  Dim Decoded As String = DecodeBase64(Key)
 		  #Pragma BreakOnExceptions Off
 		  Try
 		    Return Crypto.BERDecodePublicKey(Decoded)
@@ -72,7 +72,7 @@ Protected Module BeaconEncryption
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function PEMEncodePrivateKey(Key As MemoryBlock) As String
+		Protected Function PEMEncodePrivateKey(Key As String) As String
 		  Dim Base64 As String = EncodeBase64(Crypto.DEREncodePrivateKey(Key), 0)
 		  Dim Lines() As String = Array("-----BEGIN PRIVATE KEY-----")
 		  While Base64.Length > 64
@@ -88,7 +88,7 @@ Protected Module BeaconEncryption
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function PEMEncodePublicKey(Key As MemoryBlock) As String
+		Protected Function PEMEncodePublicKey(Key As String) As String
 		  Dim Base64 As String = EncodeBase64(DecodeHex(Key), 0)
 		  Dim Lines() As String = Array("-----BEGIN PUBLIC KEY-----")
 		  While Base64.Length > 64

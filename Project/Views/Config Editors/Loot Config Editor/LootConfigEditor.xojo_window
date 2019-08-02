@@ -933,7 +933,7 @@ End
 		      Dim Source As Beacon.LootSource = Me.RowTag(I)
 		      Dicts.Append(Source.Export)
 		      If Source.IsValid(Self.Document) Then
-		        Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.TextValue(Self.Document.Difficulty))
+		        Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.StringValue(Self.Document.Difficulty))
 		      End If
 		    End If
 		  Next

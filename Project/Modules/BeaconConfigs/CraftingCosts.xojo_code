@@ -28,8 +28,8 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused SourceDocument
 		  
 		  For Each Cost As Beacon.CraftingCost In Self.mCosts
-		    Dim TextValue As String = Cost.StringValue
-		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts", TextValue))
+		    Dim StringValue As String = Cost.StringValue
+		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts", StringValue))
 		  Next
 		End Sub
 	#tag EndEvent

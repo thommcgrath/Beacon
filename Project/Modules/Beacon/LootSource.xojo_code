@@ -602,7 +602,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Difficulty As BeaconConfigs.Difficulty) As String
+		Function StringValue(Difficulty As BeaconConfigs.Difficulty) As String
 		  Dim Values() As String
 		  
 		  // This is terrible, but Ark uses the same code for both Scorched Desert Crates and Island Sea Crates

@@ -139,7 +139,7 @@ Protected Class Identity
 	#tag Method, Flags = &h0
 		Shared Function FromUserDictionary(Dict As Dictionary, Password As String) As Beacon.Identity
 		  Try
-		    Dim PrivateKey As MemoryBlock
+		    Dim PrivateKey As String
 		    
 		    If Password = "" Then
 		      Return Nil
@@ -155,7 +155,7 @@ Protected Class Identity
 		      Return Nil
 		    End Try
 		    
-		    Dim PublicKey As MemoryBlock = BeaconEncryption.PEMDecodePublicKey(Dict.Value("public_key"))
+		    Dim PublicKey As String = BeaconEncryption.PEMDecodePublicKey(Dict.Value("public_key"))
 		    Dim UserID As String = Dict.Value("user_id")
 		    
 		    If Not VerifyKeyPair(PublicKey, PrivateKey) Then
@@ -327,13 +327,13 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function PrivateKey() As MemoryBlock
+		Function PrivateKey() As String
 		  Return Self.mPrivateKey
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function PublicKey() As MemoryBlock
+		Function PublicKey() As String
 		  Return Self.mPublicKey
 		End Function
 	#tag EndMethod
@@ -369,8 +369,8 @@ Protected Class Identity
 		      End If
 		    End If
 		    
-		    Dim PublicKey As MemoryBlock = BeaconAPI.PublicKey
-		    Dim CheckData As MemoryBlock = Fields.Join(" ")
+		    Dim PublicKey As String = BeaconAPI.PublicKey
+		    Dim CheckData As String = Fields.Join(" ")
 		    If Crypto.RSAVerifySignature(CheckData, Self.mSignature, PublicKey) Then
 		      // It is valid, now return so the reset code below does not fire
 		      Return
@@ -390,8 +390,8 @@ Protected Class Identity
 		  
 		  Try
 		    Dim Original As MemoryBlock = Crypto.GenerateRandomBytes(12)
-		    Dim Encrypted As MemoryBlock = Crypto.RSAEncrypt(Original, PublicKey)
-		    Dim Decrypted As MemoryBlock = Crypto.RSADecrypt(Encrypted, PrivateKey)
+		    Dim Encrypted As String = Crypto.RSAEncrypt(Original, PublicKey)
+		    Dim Decrypted As String = Crypto.RSADecrypt(Encrypted, PrivateKey)
 		    If Decrypted <> Original Then
 		      Return False
 		    End If
@@ -418,11 +418,11 @@ Protected Class Identity
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPrivateKey As MemoryBlock
+		Private mPrivateKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPublicKey As MemoryBlock
+		Private mPublicKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -67,8 +67,8 @@ Implements Iterable
 		      Continue
 		    End If
 		    
-		    Dim TextValue As String = Source.TextValue(DifficultyConfig)
-		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideSupplyCrateItems", TextValue))
+		    Dim StringValue As String = Source.StringValue(DifficultyConfig)
+		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideSupplyCrateItems", StringValue))
 		  Next
 		End Sub
 	#tag EndEvent

@@ -194,22 +194,14 @@ Inherits Beacon.Thread
 		      Next
 		      Return Items
 		    End If
-		  Case "Text", "String"
-		    Dim StringValue As String
-		    If Info.FullName = "Text" Then
-		      Dim TextValue As String = Input
-		      StringValue = TextValue
-		    Else
-		      StringValue = Input
-		    End If
+		  Case "String"
+		    Dim StringValue As String = Input
 		    If StringValue = "true" Then
 		      Return True
 		    ElseIf StringValue = "false" Then
 		      Return False
 		    ElseIf StringValue = "" Then
-		      // Want to ensure this returns text instead of string
-		      Dim TextValue As String = ""
-		      Return TextValue
+		      Return ""
 		    Else
 		      Dim IsNumeric As Boolean = True
 		      Dim DecimalPoints As Integer

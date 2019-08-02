@@ -322,7 +322,7 @@ End
 		    Dim ConfigName As String = Preferences.LastUsedConfigName(DocumentID)
 		    For I As Integer = 0 To Self.ConfigMenu.RowCount - 1
 		      Dim Tag As Variant = Self.ConfigMenu.RowTag(I)
-		      If (Tag.Type = Variant.TypeText And Tag.TextValue = ConfigName) Or (Tag.Type = Variant.TypeString And Tag.StringValue = ConfigName) Then
+		      If (Tag.Type = Variant.TypeText And Tag.StringValue = ConfigName) Or (Tag.Type = Variant.TypeString And Tag.StringValue = ConfigName) Then
 		        Self.ConfigMenu.SelectedRowIndex = I
 		        Exit For I
 		      End If
@@ -1119,7 +1119,7 @@ End
 		  If Self.CurrentPanel <> Nil Then
 		    Dim RequiresPurchase As Boolean
 		    If Tag <> Nil And (Tag.Type = Variant.TypeString Or Tag.Type = Variant.TypeText) Then
-		      RequiresPurchase = Not BeaconConfigs.ConfigPurchased(Tag.TextValue, If(App.IdentityManager.CurrentIdentity <> Nil, App.IdentityManager.CurrentIdentity.OmniVersion, 0))
+		      RequiresPurchase = Not BeaconConfigs.ConfigPurchased(Tag.StringValue, If(App.IdentityManager.CurrentIdentity <> Nil, App.IdentityManager.CurrentIdentity.OmniVersion, 0))
 		    End If
 		    Dim TopOffset As Integer
 		    If RequiresPurchase Then

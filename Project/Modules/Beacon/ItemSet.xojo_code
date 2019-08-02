@@ -363,7 +363,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Shared Function Join(Sets() As Beacon.ItemSet, Separator As String, Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As String
 		  Dim Values() As String
 		  For Each Set As Beacon.ItemSet In Sets
-		    Values.Append(Set.TextValue(Multipliers, UseBlueprints, Difficulty))
+		    Values.Append(Set.StringValue(Multipliers, UseBlueprints, Difficulty))
 		  Next
 		  
 		  Return Values.Join(Separator)
@@ -562,7 +562,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As String
+		Function StringValue(Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As String
 		  Dim Values() As String
 		  Values.Append("SetName=""" + Self.Label + """")
 		  Values.Append("MinNumItems=" + Self.MinNumItems.ToString)

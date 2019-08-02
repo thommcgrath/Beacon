@@ -1449,7 +1449,7 @@ End
 		    
 		    Dim Parts() As String
 		    For Each Target As Beacon.ItemSet In Targets
-		      Parts.Append(Target.TextValue(Multipliers, UseBlueprints, Difficulty))
+		      Parts.Append(Target.StringValue(Multipliers, UseBlueprints, Difficulty))
 		    Next
 		    
 		    Dim Board As New Clipboard

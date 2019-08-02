@@ -53,12 +53,12 @@ Protected Module FrameworkExtensions
 		Private Function AutoToDouble(Value As Variant, ResolveWithFirst As Boolean = False) As Double
 		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
 		  Select Case Info.FullName
-		  Case "Text"
-		    Dim TextValue As String = Value
-		    If TextValue = "" Then
+		  Case "String"
+		    Dim StringValue As String = Value
+		    If StringValue = "" Then
 		      Return 0
 		    Else
-		      Return Double.FromString(TextValue)
+		      Return Double.FromString(StringValue)
 		    End If
 		  Case "Double"
 		    Dim DoubleValue As Double = Value
@@ -266,9 +266,6 @@ Protected Module FrameworkExtensions
 		  Case "String"
 		    Dim StringValue As String = Value
 		    Return Val(StringValue)
-		  Case "Text"
-		    Dim TextValue As String = Value
-		    Return Integer.FromString(TextValue)
 		  Else
 		    Return 0
 		  End Select

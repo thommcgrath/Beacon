@@ -410,7 +410,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Shared Function Join(Entries() As Beacon.SetEntry, Separator As String, Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As String
 		  Dim Values() As String
 		  For Each Entry As Beacon.SetEntry In Entries
-		    Values.Append(Entry.TextValue(Multipliers, UseBlueprints, Difficulty))
+		    Values.Append(Entry.StringValue(Multipliers, UseBlueprints, Difficulty))
 		  Next
 		  Return Values.Join(Separator)
 		End Function
@@ -581,7 +581,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As String
+		Function StringValue(Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As String
 		  Dim Paths(), Weights(), Classes() As String
 		  Redim Paths(Self.mOptions.LastRowIndex)
 		  Redim Weights(Self.mOptions.LastRowIndex)
