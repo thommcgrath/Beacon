@@ -559,7 +559,7 @@ End
 		Function GoToChild(Source As Beacon.LootSource, ItemSet As Beacon.ItemSet = Nil, Entry As Beacon.SetEntry = Nil, Option As Beacon.SetEntryOption = Nil) As Boolean
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.RowTag(I) = Source Then
-		      Self.List.SelectedIndex = I
+		      Self.List.SelectedRowIndex = I
 		      Self.List.EnsureSelectionIsVisible()
 		      If ItemSet <> Nil Then
 		        Return Self.Editor.GoToChild(ItemSet, Entry, Option)
@@ -568,7 +568,7 @@ End
 		      End If
 		    End If
 		  Next
-		  Self.List.SelectedIndex = -1
+		  Self.List.SelectedRowIndex = -1
 		  Return False
 		End Function
 	#tag EndMethod
@@ -665,7 +665,7 @@ End
 		  
 		  Dim DuplicateSource As Beacon.LootSource
 		  If DuplicateSelected Then
-		    DuplicateSource = Self.List.RowTag(Self.List.SelectedIndex)
+		    DuplicateSource = Self.List.RowTag(Self.List.SelectedRowIndex)
 		  End If
 		  
 		  If LootSourceWizard.Present(Self, Config, Self.Document.MapCompatibility, Self.Document.Mods, DuplicateSource, DuplicateSelected) Then

@@ -73,7 +73,7 @@ Protected Class ServerProfile
 		  If Other.ProfileID = Self.ProfileID Then
 		    Return 0
 		  Else
-		    Return Self.Name.Compare(Other.Name)
+		    Return Self.Name.Compare(Other.Name, ComparisonOptions.CaseSensitive)
 		  End If
 		End Function
 	#tag EndMethod
@@ -199,7 +199,7 @@ Protected Class ServerProfile
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mName.Compare(Value) <> 0 Then
+			  If Self.mName.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mName = Value
 			    Self.Modified = True
 			  End If

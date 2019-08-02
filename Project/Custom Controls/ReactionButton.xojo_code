@@ -85,7 +85,6 @@ Inherits UITweaks.ResizedPushButton
 			#tag EnumValues
 				"0 - Push"
 				"1 - Gradient"
-				"2 - Rounded"
 				"3 - Recessed"
 				"4 - Textured"
 				"5 - Rounded Textured"

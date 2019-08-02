@@ -542,7 +542,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowDuplicateSelection()
-		  If Self.List.SelectedRowCount <> 1 Or Self.List.SelectedIndex < 0 Or Self.List.SelectedIndex >= Self.List.RowCount Then
+		  If Self.List.SelectedRowCount <> 1 Or Self.List.SelectedRowIndex < 0 Or Self.List.SelectedRowIndex >= Self.List.RowCount Then
 		    Return
 		  End If
 		  
@@ -561,7 +561,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim SourceCost As Beacon.CraftingCost = Self.List.RowTag(Self.List.SelectedIndex)
+		  Dim SourceCost As Beacon.CraftingCost = Self.List.RowTag(Self.List.SelectedRowIndex)
 		  Config = Self.Config(True)
 		  
 		  Dim NewCosts() As Beacon.CraftingCost
@@ -701,7 +701,7 @@ End
 	#tag Event
 		Sub SelectionChanged()
 		  If Me.SelectedRowCount = 1 Then
-		    Self.Editor.Target = Me.RowTag(Me.SelectedIndex)
+		    Self.Editor.Target = Me.RowTag(Me.SelectedRowIndex)
 		  Else
 		    Self.Editor.Target = Nil
 		  End If
@@ -729,7 +729,7 @@ End
 		  If Warn Then
 		    Dim Message As String
 		    If Me.SelectedRowCount = 1 Then
-		      Message = "Are you sure you want to delete the """ + Me.Cell(Me.SelectedIndex, 0) + """ crafting cost override?"
+		      Message = "Are you sure you want to delete the """ + Me.Cell(Me.SelectedRowIndex, 0) + """ crafting cost override?"
 		    Else
 		      Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " crafting cost overrides?"
 		    End If
@@ -827,7 +827,7 @@ End
 	#tag Event
 		Sub ContentsChanged()
 		  If Self.List.SelectedRowCount = 1 Then
-		    Self.List.Cell(Self.List.SelectedIndex, 0) = Me.Target.Label
+		    Self.List.Cell(Self.List.SelectedRowIndex, 0) = Me.Target.Label
 		    Self.List.Sort
 		    Self.Changed = True
 		  End If

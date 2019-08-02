@@ -49,7 +49,7 @@ Protected Class Document
 		    Return 1
 		  End If
 		  
-		  Return Self.mDocumentID.Compare(Other.mDocumentID)
+		  Return Self.mDocumentID.Compare(Other.mDocumentID, ComparisonOptions.CaseSensitive)
 		End Function
 	#tag EndMethod
 

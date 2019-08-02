@@ -77,7 +77,7 @@ Inherits Beacon.ConfigGroup
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mDescription.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
+			  If Self.mDescription.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mDescription = Value
 			    Self.Modified = True
 			  End If
@@ -123,7 +123,7 @@ Inherits Beacon.ConfigGroup
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mTitle.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
+			  If Self.mTitle.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mTitle = Value
 			    Self.Modified = True
 			  End If

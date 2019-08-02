@@ -475,7 +475,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim SelfHash As String = Self.Hash
 		  Dim OtherHash As String = Other.Hash
 		  
-		  Return SelfHash.Compare(OtherHash, 0)
+		  Return SelfHash.Compare(OtherHash, ComparisonOptions.CaseSensitive)
 		End Function
 	#tag EndMethod
 

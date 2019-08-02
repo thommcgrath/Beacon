@@ -145,7 +145,7 @@ Protected Class Engram
 		    Return 1
 		  End If
 		  
-		  Return Self.mID.Compare(Other.mID)
+		  Return Self.mID.Compare(Other.mID, ComparisonOptions.CaseSensitive)
 		End Function
 	#tag EndMethod
 

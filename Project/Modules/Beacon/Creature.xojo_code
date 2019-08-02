@@ -114,7 +114,7 @@ Implements Beacon.Blueprint
 		  
 		  Dim SelfPath As String = Self.Path
 		  Dim OtherPath As String = Other.Path
-		  Return SelfPath.Compare(OtherPath)
+		  Return SelfPath.Compare(OtherPath, ComparisonOptions.CaseSensitive)
 		End Function
 	#tag EndMethod
 

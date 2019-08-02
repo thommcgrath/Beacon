@@ -317,7 +317,7 @@ End
 		  End If
 		  
 		  Dim SelectedMod As BeaconAPI.WorkshopMod
-		  If ModList.SelectedIndex > -1 Then
+		  If ModList.SelectedRowIndex > -1 Then
 		    SelectedMod = Self.SelectedMod()
 		  End If
 		  
@@ -335,7 +335,7 @@ End
 		    End If
 		    
 		    If UserMod = SelectedMod Then
-		      ModList.SelectedIndex = ModList.LastAddedRowIndex
+		      ModList.SelectedRowIndex = ModList.LastAddedRowIndex
 		    End If
 		  Next
 		End Sub
@@ -351,11 +351,11 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function SelectedMod() As BeaconAPI.WorkshopMod
-		  If ModList.SelectedIndex = -1 Then
+		  If ModList.SelectedRowIndex = -1 Then
 		    Return Nil
 		  End If
 		  
-		  Return ModList.RowTag(ModList.SelectedIndex)
+		  Return ModList.RowTag(ModList.SelectedRowIndex)
 		End Function
 	#tag EndMethod
 
@@ -365,8 +365,8 @@ End
 #tag Events ModList
 	#tag Event
 		Sub SelectionChanged()
-		  Header.RemoveButton.Enabled = Me.SelectedIndex > -1
-		  Header.SettingsButton.Enabled = Me.SelectedIndex > -1
+		  Header.RemoveButton.Enabled = Me.SelectedRowIndex > -1
+		  Header.SettingsButton.Enabled = Me.SelectedRowIndex > -1
 		  ModView.CurrentMod = Self.SelectedMod()
 		End Sub
 	#tag EndEvent

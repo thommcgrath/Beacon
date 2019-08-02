@@ -292,7 +292,7 @@ End
 		Function GoToChild(Entry As Beacon.SetEntry, Option As Beacon.SetEntryOption = Nil) As Boolean
 		  For I As Integer = 0 To Self.EntryList.RowCount - 1
 		    If Self.EntryList.RowTag(I) = Entry Then
-		      Self.EntryList.SelectedIndex = I
+		      Self.EntryList.SelectedRowIndex = I
 		      Self.EntryList.EnsureSelectionIsVisible()
 		      If Option <> Nil And Option.Engram <> Nil Then
 		        Self.EditSelectedEntries(Option.Engram.ClassString)
@@ -300,7 +300,7 @@ End
 		      Return True
 		    End If
 		  Next
-		  Self.EntryList.SelectedIndex = -1
+		  Self.EntryList.SelectedRowIndex = -1
 		  Return False
 		End Function
 	#tag EndMethod
@@ -502,7 +502,7 @@ End
 #tag Events EntryList
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.SelectedIndex > -1
+		  Return Me.SelectedRowIndex > -1
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -584,7 +584,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelectedIndex > -1
+		  Return Me.SelectedRowIndex > -1
 		End Function
 	#tag EndEvent
 	#tag Event

@@ -551,7 +551,7 @@ End
 		  If Added Then
 		    SetList.AddRow(Set.Label)
 		    SetList.RowTag(SetList.LastAddedRowIndex) = Set
-		    SetList.SelectedIndex = SetList.LastAddedRowIndex
+		    SetList.SelectedRowIndex = SetList.LastAddedRowIndex
 		    Self.mSorting = True
 		    SetList.Sort
 		    Self.mSorting = False
@@ -694,7 +694,7 @@ End
 		Function GoToChild(ItemSet As Beacon.ItemSet, Entry As Beacon.SetEntry = Nil, Option As Beacon.SetEntryOption = Nil) As Boolean
 		  For I As Integer = 0 To Self.SetList.RowCount - 1
 		    If Self.SetList.RowTag(I) = ItemSet Then
-		      Self.SetList.SelectedIndex = I
+		      Self.SetList.SelectedRowIndex = I
 		      Self.SetList.EnsureSelectionIsVisible()
 		      If Entry <> Nil Then
 		        Return Self.Editor.GoToChild(Entry, Option)
@@ -703,7 +703,7 @@ End
 		      End If
 		    End If
 		  Next
-		  Self.SetList.SelectedIndex = -1
+		  Self.SetList.SelectedRowIndex = -1
 		  Return False
 		End Function
 	#tag EndMethod
@@ -733,7 +733,7 @@ End
 		      Dim Set As Beacon.ItemSet = SetList.RowTag(I)
 		      If Set.SourcePresetID = SelectedPreset.PresetID Then
 		        Found = True
-		        SetList.SelectedIndex = I
+		        SetList.SelectedRowIndex = I
 		        Exit
 		      End If
 		    Next
@@ -1143,7 +1143,7 @@ End
 		  End If
 		  
 		  If Me.SelectedRowCount = 1 Then
-		    Editor.Set = New Beacon.ItemSet(Me.RowTag(Me.SelectedIndex))
+		    Editor.Set = New Beacon.ItemSet(Me.RowTag(Me.SelectedRowIndex))
 		    Editor.Enabled = True
 		    Panel.SelectedPanelIndex = 1
 		  Else
@@ -1588,7 +1588,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim SelIndex As Integer = SetList.SelectedIndex
+		  Dim SelIndex As Integer = SetList.SelectedRowIndex
 		  Dim OriginalSet As Beacon.ItemSet = SetList.RowTag(SelIndex)
 		  Dim NewSet As Beacon.ItemSet = Editor.Set
 		  

@@ -401,7 +401,7 @@ End
 		  Dim LevelXP, MinXP, MaxXP As UInt64
 		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(False)
 		  
-		  Index = Self.List.SelectedIndex
+		  Index = Self.List.SelectedRowIndex
 		  Level = Index + 2
 		  
 		  If Self.ViewingPlayerStats Then

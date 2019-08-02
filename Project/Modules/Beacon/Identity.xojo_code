@@ -285,13 +285,13 @@ Protected Class Identity
 		  If Self.mExpirationString <> "" Then
 		    SelfExpiration = NewDateFromSQLDateTime(Self.mExpirationString)
 		  Else
-		    SelfExpiration = Now.AddInterval(Period)
+		    SelfExpiration = Now + Period
 		  End If
 		  Dim OtherExpiration As Date
 		  If Other.mExpirationString <> "" Then
 		    OtherExpiration = NewDateFromSQLDateTime(Other.mExpirationString)
 		  Else
-		    OtherExpiration = Now.AddInterval(Period)
+		    OtherExpiration = Now + Period
 		  End If
 		  If SelfExpiration.SecondsFrom1970 = OtherExpiration.SecondsFrom1970 Then
 		  ElseIf SelfExpiration.SecondsFrom1970 > OtherExpiration.SecondsFrom1970 Then

@@ -210,7 +210,7 @@ End
 	#tag Method, Flags = &h0
 		Sub AppendChildren(Children() As String)
 		  // Create new list if there is a selection
-		  Dim NewList As Boolean = Self.Lists(Self.mListBound).SelectedIndex > -1
+		  Dim NewList As Boolean = Self.Lists(Self.mListBound).SelectedRowIndex > -1
 		  Dim TargetList As BeaconListbox
 		  
 		  If NewList Then
@@ -280,7 +280,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Reset()
-		  Self.Lists(0).SelectedIndex = -1
+		  Self.Lists(0).SelectedRowIndex = -1
 		  
 		  Dim DefaultChildren() As String
 		  Self.AppendChildren(DefaultChildren)
@@ -397,12 +397,12 @@ End
 		  
 		  Dim NewPath As String
 		  Dim TriggerEvent As Boolean
-		  If Me.SelectedIndex > -1 Then
-		    NewPath = Me.RowTag(Me.SelectedIndex)
+		  If Me.SelectedRowIndex > -1 Then
+		    NewPath = Me.RowTag(Me.SelectedRowIndex)
 		    TriggerEvent = True
 		  Else
 		    If Index > 0 Then
-		      NewPath = Self.Lists(Index - 1).RowTag(Self.Lists(Index - 1).SelectedIndex)
+		      NewPath = Self.Lists(Index - 1).RowTag(Self.Lists(Index - 1).SelectedRowIndex)
 		    Else
 		      NewPath = "/"
 		    End If

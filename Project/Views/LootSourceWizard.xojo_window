@@ -60,10 +60,10 @@ Begin BeaconDialog LootSourceWizard
       SelectedPanelIndex=   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   "0"
       Value           =   2
       Visible         =   True
       Width           =   550
@@ -1659,7 +1659,7 @@ End
 #tag Events SourceList
 	#tag Event
 		Sub SelectionChanged()
-		  SelectionActionButton.Enabled = Me.SelectedIndex > -1
+		  SelectionActionButton.Enabled = Me.SelectedRowIndex > -1
 		End Sub
 	#tag EndEvent
 	#tag Event

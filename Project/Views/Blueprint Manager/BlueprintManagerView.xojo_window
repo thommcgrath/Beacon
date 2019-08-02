@@ -642,7 +642,7 @@ End
 		      End If
 		    End If
 		    
-		    Dim Blueprint As Beacon.Blueprint = Self.List.RowTag(Self.List.SelectedIndex)
+		    Dim Blueprint As Beacon.Blueprint = Self.List.RowTag(Self.List.SelectedRowIndex)
 		    Self.Editor.ObjectID = Blueprint.ObjectID
 		    
 		    If Self.Pages.SelectedPanelIndex <> Self.PageEditor Then

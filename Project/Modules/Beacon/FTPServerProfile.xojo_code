@@ -79,7 +79,7 @@ Inherits Beacon.ServerProfile
 		    Return Super.Operator_Compare(Other)
 		  End If
 		  
-		  Return Self.ServerID.Compare(Beacon.FTPServerProfile(Other).ServerID)
+		  Return Self.ServerID.Compare(Beacon.FTPServerProfile(Other).ServerID, ComparisonOptions.CaseSensitive)
 		End Function
 	#tag EndMethod
 
@@ -104,7 +104,7 @@ Inherits Beacon.ServerProfile
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mGameIniPath.Compare(Value) <> 0 Then
+			  If Self.mGameIniPath.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mGameIniPath = Value
 			    Self.Modified = True
 			  End If
@@ -121,7 +121,7 @@ Inherits Beacon.ServerProfile
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mGameUserSettingsIniPath.Compare(Value) <> 0 Then
+			  If Self.mGameUserSettingsIniPath.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mGameUserSettingsIniPath = Value
 			    Self.Modified = True
 			  End If
@@ -138,7 +138,7 @@ Inherits Beacon.ServerProfile
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mHost.Compare(Value) <> 0 Then
+			  If Self.mHost.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mHost = Value
 			    Self.Modified = True
 			  End If
@@ -182,7 +182,7 @@ Inherits Beacon.ServerProfile
 			    Value = Self.ModeAuto
 			  End Select
 			  
-			  If Self.mMode.Compare(Value) = 0 Then
+			  If Self.mMode.Compare(Value, ComparisonOptions.CaseSensitive) = 0 Then
 			    Return
 			  End If
 			  
@@ -213,7 +213,7 @@ Inherits Beacon.ServerProfile
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mPassword.Compare(Value) <> 0 Then
+			  If Self.mPassword.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mPassword = Value
 			    Self.Modified = True
 			  End If
@@ -253,7 +253,7 @@ Inherits Beacon.ServerProfile
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mUsername.Compare(Value) <> 0 Then
+			  If Self.mUsername.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mUsername = Value
 			    Self.Modified = True
 			  End If

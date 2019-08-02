@@ -488,7 +488,7 @@ End
 		  
 		  Dim Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
 		  Dim ScrollPosition As Integer = Self.ModsList.ScrollPosition
-		  Dim ListIndex As Integer = Self.ModsList.SelectedIndex
+		  Dim ListIndex As Integer = Self.ModsList.SelectedRowIndex
 		  Self.ModsList.DeleteAllRows()
 		  For Each Details As Beacon.ModDetails In Mods
 		    Self.ModsList.AddRow("", Details.Name, If(Details.ConsoleSafe, "Yes", "No"))
@@ -498,7 +498,7 @@ End
 		  Next
 		  Self.ModsList.Sort
 		  Self.ModsList.ScrollPosition = ScrollPosition
-		  Self.ModsList.SelectedIndex = ListIndex
+		  Self.ModsList.SelectedRowIndex = ListIndex
 		End Sub
 	#tag EndEvent
 

@@ -246,7 +246,7 @@ Protected Class DocumentController
 		      If Self.mDocumentURL.HasParam("saveinfo") Then
 		        File = BookmarkedFolderItem.FromSaveInfo(Self.mDocumentURL.Param("saveinfo"))
 		      Else
-		        File = New BookmarkedFolderItem(Self.mDocumentURL.URL, FolderItem.PathTypeURL)
+		        File = New BookmarkedFolderItem(Self.mDocumentURL.URL, FolderItem.PathModes.URL)
 		      End If
 		      If File <> Nil And File.Exists Then
 		        FileContent = File.Read()
@@ -447,7 +447,7 @@ Protected Class DocumentController
 		    AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Upload
 		    Self.mActiveThread.Run
 		  Case Beacon.DocumentURL.TypeLocal
-		    Dim Writer As New Beacon.JSONWriter(Self.mDocument, Self.mIdentity, New BookmarkedFolderItem(Destination.URL, FolderItem.PathTypeURL))
+		    Dim Writer As New Beacon.JSONWriter(Self.mDocument, Self.mIdentity, New BookmarkedFolderItem(Destination.URL, FolderItem.PathModes.URL))
 		    AddHandler Writer.Finished, AddressOf Writer_Finished
 		    Writer.Run
 		  End Select

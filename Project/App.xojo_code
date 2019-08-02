@@ -405,7 +405,11 @@ Implements NotificationKit.Receiver
 		      Call Self.HandleURL(Path, True)
 		    ElseIf URLOnly = False Then
 		      // Given a file
-		      Dim File As FolderItem = GetFolderItem(Path, FolderItem.PathTypeNative)
+		      Dim File As FolderItem
+		      Try
+		        File = New FolderItem(Path, FolderItem.PathModes.Native)
+		      Catch Err As RuntimeException
+		      End Try
 		      If File <> Nil And File.Exists Then
 		        Self.OpenFile(File, False)
 		      End If

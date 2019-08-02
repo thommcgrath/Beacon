@@ -1045,7 +1045,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub SelectionChanged()
-		  Header.RemoveButton.Enabled = Me.SelectedIndex > -1
+		  Header.RemoveButton.Enabled = Me.SelectedRowIndex > -1
 		End Sub
 	#tag EndEvent
 #tag EndEvents

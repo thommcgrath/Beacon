@@ -226,9 +226,9 @@ Protected Class CraftingCost
 		  // Try to sort by name first, otherwise sort by object id for lack of a better option
 		  Dim SelfName As String = If(Self.mEngram <> Nil, Self.mEngram.Label, "")
 		  Dim OtherName As String = If(Other.mEngram <> Nil, Other.mEngram.Label, "")
-		  Dim Result As Integer = SelfName.Compare(OtherName)
+		  Dim Result As Integer = SelfName.Compare(OtherName, ComparisonOptions.CaseSensitive)
 		  If Result = 0 Then
-		    Result = Self.mObjectID.Compare(Other.mObjectID)
+		    Result = Self.mObjectID.Compare(Other.mObjectID, ComparisonOptions.CaseSensitive)
 		  End If
 		  Return Result
 		End Function

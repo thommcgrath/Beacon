@@ -1387,7 +1387,7 @@ End
 
 #tag Events ModeMultipliersRadio
 	#tag Event
-		Sub Pressed()
+		Sub ValueChanged()
 		  If Me.Value Then
 		    Self.Pages.SelectedPanelIndex = Self.PageMultipliers
 		  End If
@@ -1396,7 +1396,7 @@ End
 #tag EndEvents
 #tag Events ModeReplaceRadio
 	#tag Event
-		Sub Pressed()
+		Sub ValueChanged()
 		  If Me.Value Then
 		    Self.Pages.SelectedPanelIndex = Self.PageReplace
 		  End If
@@ -1405,7 +1405,7 @@ End
 #tag EndEvents
 #tag Events ModeDisableRadio
 	#tag Event
-		Sub Pressed()
+		Sub ValueChanged()
 		  If Me.Value Then
 		    Self.Pages.SelectedPanelIndex = Self.PageDisable
 		  End If

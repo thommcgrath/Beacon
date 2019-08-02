@@ -409,7 +409,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim SelfHash As String = Self.Hash
 		  Dim OtherHash As String = Other.Hash
 		  
-		  Return SelfHash.Compare(OtherHash, 0)
+		  Return SelfHash.Compare(OtherHash, ComparisonOptions.CaseInsensitive)
 		End Function
 	#tag EndMethod
 
@@ -613,7 +613,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mLabel.Compare(Value, Text.CompareCaseSensitive) = 0 Then
+			  If Self.mLabel.Compare(Value, ComparisonOptions.CaseSensitive) = 0 Then
 			    Return
 			  End If
 			  

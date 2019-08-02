@@ -487,7 +487,7 @@ End
 		  Self.ActionButton.Enabled = True
 		  Self.ExtractButton.Enabled = BlueprintsField.Value.Len > 0
 		  Self.ResolutionSpinner.Visible = False
-		  Self.GoToButton.Enabled = Self.GoToIssueHandler <> Nil And Self.IssuesList.SelectedIndex > -1
+		  Self.GoToButton.Enabled = Self.GoToIssueHandler <> Nil And Self.IssuesList.SelectedRowIndex > -1
 		  Self.BlueprintsField.ReadOnly = False
 		  
 		  If SomeResolved Then
@@ -538,7 +538,7 @@ End
 #tag Events IssuesList
 	#tag Event
 		Sub SelectionChanged()
-		  Self.GoToButton.Enabled = ResolutionSpinner.Visible = False And Self.GoToIssueHandler <> Nil And Me.SelectedIndex > -1
+		  Self.GoToButton.Enabled = ResolutionSpinner.Visible = False And Self.GoToIssueHandler <> Nil And Me.SelectedRowIndex > -1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -571,11 +571,11 @@ End
 #tag Events GoToButton
 	#tag Event
 		Sub Pressed()
-		  If Self.IssuesList.SelectedIndex = -1 Or Self.GoToIssueHandler = Nil Then
+		  If Self.IssuesList.SelectedRowIndex = -1 Or Self.GoToIssueHandler = Nil Then
 		    Return
 		  End If
 		  
-		  Dim Issue As Beacon.Issue = Self.IssuesList.RowTag(Self.IssuesList.SelectedIndex)
+		  Dim Issue As Beacon.Issue = Self.IssuesList.RowTag(Self.IssuesList.SelectedRowIndex)
 		  Self.Hide()
 		  Self.GoToIssueHandler.Invoke(Issue)
 		  Self.Close()

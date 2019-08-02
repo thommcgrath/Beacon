@@ -549,11 +549,11 @@ End
 		      End If
 		    Next
 		  ElseIf Self.List.SelectedRowCount = 1 Then
-		    Self.SelectedList.AddRow(Self.List.Cell(Self.List.SelectedIndex, 0))
-		    Self.SelectedList.RowTag(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTag(Self.List.SelectedIndex)
+		    Self.SelectedList.AddRow(Self.List.Cell(Self.List.SelectedRowIndex, 0))
+		    Self.SelectedList.RowTag(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTag(Self.List.SelectedRowIndex)
 		    If Self.mAllowMultipleSelection Then
-		      Self.mExcluded.Append(Beacon.Blueprint(Self.List.RowTag(Self.List.SelectedIndex)).Path)
-		      Self.List.RemoveRow(Self.List.SelectedIndex)
+		      Self.mExcluded.Append(Beacon.Blueprint(Self.List.RowTag(Self.List.SelectedRowIndex)).Path)
+		      Self.List.RemoveRow(Self.List.SelectedRowIndex)
 		    End If
 		  End If
 		  

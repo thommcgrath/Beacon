@@ -263,11 +263,11 @@ End
 #tag Events ToolsList
 	#tag Event
 		Sub DoubleClicked()
-		  If Me.SelectedIndex = -1 Then
+		  If Me.SelectedRowIndex = -1 Then
 		    Return
 		  End If
 		  
-		  Dim Item As String = Me.Cell(Me.SelectedIndex, 0)
+		  Dim Item As String = Me.Cell(Me.SelectedRowIndex, 0)
 		  Select Case Item
 		  Case "API Guide"
 		    Self.ShowAPIGuide()

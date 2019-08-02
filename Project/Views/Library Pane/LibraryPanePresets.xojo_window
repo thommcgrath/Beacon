@@ -342,7 +342,7 @@ End
 		  End If
 		  
 		  If List.SelectedRowCount = 1 Then
-		    Dim Preset As Beacon.Preset = List.RowTag(List.SelectedIndex)
+		    Dim Preset As Beacon.Preset = List.RowTag(List.SelectedRowIndex)
 		    Dim Dialog As New SaveFileDialog
 		    Dialog.Filter = BeaconFileTypes.BeaconPreset
 		    Dialog.SuggestedFileName = Preset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension
@@ -540,8 +540,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub DoubleClicked()
-		  If Me.SelectedIndex > -1 Then
-		    Dim Preset As Beacon.Preset = Me.RowTag(Me.SelectedIndex)
+		  If Me.SelectedRowIndex > -1 Then
+		    Dim Preset As Beacon.Preset = Me.RowTag(Me.SelectedRowIndex)
 		    Self.OpenPreset(Preset)
 		  End If
 		End Sub

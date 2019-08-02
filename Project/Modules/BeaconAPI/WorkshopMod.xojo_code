@@ -69,7 +69,7 @@ Protected Class WorkshopMod
 		    Return 1
 		  End If
 		  
-		  Return Self.mModID.Compare(Other.mModID)
+		  Return Self.mModID.Compare(Other.mModID, ComparisonOptions.CaseSensitive)
 		End Function
 	#tag EndMethod
 
@@ -186,8 +186,8 @@ Protected Class WorkshopMod
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

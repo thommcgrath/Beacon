@@ -456,7 +456,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Return 1
 		  End If
 		  
-		  Return Self.mClassString.Compare(Other.mClassString, Text.CompareCaseSensitive)
+		  Return Self.mClassString.Compare(Other.mClassString, ComparisonOptions.CaseSensitive)
 		End Function
 	#tag EndMethod
 

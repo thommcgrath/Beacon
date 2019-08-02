@@ -20,7 +20,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function AllMods() As Beacon.ModDetails()
 		  Dim Mods() As Beacon.ModDetails
 		  Dim Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe FROM mods ORDER BY name;")
-		  While Not Results.IsAfterLastRow
+		  While Not Results.AfterLastRow
 		    Mods.Append(New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue))
 		    Results.MoveToNextRow
 		  Wend
@@ -32,7 +32,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function AllPresetModifiers() As Beacon.PresetModifier()
 		  Dim Results As RowSet = Self.SQLSelect("SELECT object_id, label, pattern FROM preset_modifiers ORDER BY label;")
 		  Dim Modifiers() As Beacon.PresetModifier
-		  While Not Results.IsAfterLastRow
+		  While Not Results.AfterLastRow
 		    Dim Dict As New Dictionary
 		    Dict.Value("ModifierID") = Results.Column("object_id").StringValue
 		    Dict.Value("Pattern") = Results.Column("pattern").StringValue
@@ -58,7 +58,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Results = Self.SQLSelect("SELECT DISTINCT tags FROM searchable_tags WHERE tags != '';")
 		  End If
 		  Dim Dict As New Dictionary
-		  While Not Results.IsAfterLastRow
+		  While Not Results.AfterLastRow
 		    Dim Tags() As String = Results.Column("tags").StringValue.Split(",")
 		    For Each Tag As String In Tags
 		      If Tag <> "object" Then
@@ -196,7 +196,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function ConsoleSafeMods() As String()
 		  Dim Results As RowSet = Self.SQLSelect("SELECT mod_id FROM mods WHERE console_safe = 1;")
 		  Dim Mods() As String
-		  While Not Results.IsAfterLastRow
+		  While Not Results.AfterLastRow
 		    Mods.Append(Results.Column("mod_id").StringValue)
 		    Results.MoveToNextRow
 		  Wend
@@ -626,7 +626,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function GetNotifications() As Beacon.UserNotification()
 		  Dim Notifications() As Beacon.UserNotification
 		  Dim Results As RowSet = Self.SQLSelect("SELECT * FROM notifications WHERE deleted = 0 ORDER BY moment DESC;")
-		  While Not Results.IsAfterLastRow
+		  While Not Results.AfterLastRow
 		    Dim Notification As New Beacon.UserNotification
 		    Notification.Message = Results.Column("message").StringValue
 		    Notification.SecondaryMessage = Results.Column("secondary_message").StringValue
@@ -1012,7 +1012,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      
 		      Dim Results As RowSet = Self.SQLSelect("SELECT name, console_safe FROM mods WHERE mod_id = ?1;", ModID)
 		      If Results.RecordCount = 1 Then
-		        If ModName.Compare(Results.Column("name").StringValue) <> 0 Or ConsoleSafe <> Results.Column("console_safe").BooleanValue Then
+		        If ModName.Compare(Results.Column("name").StringValue, ComparisonOptions.CaseSensitive) <> 0 Or ConsoleSafe <> Results.Column("console_safe").BooleanValue Then
 		          Self.SQLExecute("UPDATE mods SET name = ?2, console_safe = ?3 WHERE mod_id = ?1;", ModID, ModName, ConsoleSafe)
 		        End If
 		      Else
@@ -1022,7 +1022,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      RetainMods.Append(ModID)
 		    Next
 		    Dim ModResults As RowSet = Self.SQLSelect("SELECT mod_id FROM mods;")
-		    While Not ModResults.IsAfterLastRow
+		    While Not ModResults.AfterLastRow
 		      Dim ModID As String = ModResults.Column("mod_id").StringValue.Lowercase
 		      If RetainMods.IndexOf(ModID) = -1 Then
 		        Self.SQLExecute("DELETE FROM mods WHERE mod_id = ?1;", ModID)
@@ -1376,7 +1376,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub LoadPresets(Results As RowSet, Type As Beacon.Preset.Types)
-		  While Not Results.IsAfterLastRow
+		  While Not Results.AfterLastRow
 		    Dim Dict As Dictionary = Beacon.ParseJSON(Results.Column("contents").StringValue)
 		    Dim Preset As Beacon.Preset = Beacon.Preset.FromDictionary(Dict)
 		    If Preset <> Nil Then
@@ -1488,7 +1488,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    If MigrateLegacyCustomEngrams Then
 		      Dim Results As RowSet = Self.SQLSelect("SELECT path, class_string, label, availability, can_blueprint FROM legacy.engrams WHERE built_in = 0;")
-		      While Not Results.IsAfterLastRow
+		      While Not Results.AfterLastRow
 		        Try
 		          Dim ObjectID As String = Beacon.CreateUUID
 		          Dim Tags As String = If(Results.Column("can_blueprint").BooleanValue, "object,blueprintable", "object")
@@ -1548,7 +1548,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  If FromSchemaVersion < 9 Then
 		    Dim Extension As String = BeaconFileTypes.BeaconPreset.PrimaryExtension
 		    Dim Results As RowSet = Self.SQLSelect("SELECT object_id, contents FROM custom_presets;")
-		    While Not Results.IsAfterLastRow
+		    While Not Results.AfterLastRow
 		      Call UserCloud.Write("/Presets/" + Lowercase(Results.Column("object_id").StringValue) + Extension, Results.Column("contents").StringValue)
 		      Results.MoveToNextRow
 		    Wend
@@ -1678,7 +1678,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Shared Function RowSetToCreature(Results As RowSet) As Beacon.Creature()
 		  Dim Creatures() As Beacon.Creature
-		  While Not Results.IsAfterLastRow
+		  While Not Results.AfterLastRow
 		    Dim Creature As New Beacon.MutableCreature(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
 		    Creature.Label = Results.Column("label").StringValue
 		    Creature.Availability = Results.Column("availability").IntegerValue
@@ -1703,7 +1703,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Shared Function RowSetToEngram(Results As RowSet) As Beacon.Engram()
 		  Dim Engrams() As Beacon.Engram
-		  While Not Results.IsAfterLastRow
+		  While Not Results.AfterLastRow
 		    Dim Engram As New Beacon.MutableEngram(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
 		    Engram.Label = Results.Column("label").StringValue
 		    Engram.Availability = Results.Column("availability").IntegerValue
@@ -1720,7 +1720,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Shared Function RowSetToLootSource(Results As RowSet) As Beacon.LootSource()
 		  Dim Sources() As Beacon.LootSource
-		  While Not Results.IsAfterLastRow
+		  While Not Results.AfterLastRow
 		    Dim HexColor As String = Results.Column("uicolor").StringValue
 		    Dim RedHex, GreenHex, BlueHex, AlphaHex As String = "00"
 		    If Len(HexColor) = 3 Then
@@ -2308,7 +2308,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Sub SyncUserEngramsActual()
 		  Dim Results As RowSet = Self.SQLSelect("SELECT class_string, path, tags, object_id, label, availability, '" + Beacon.CategoryEngrams + "' AS category FROM engrams WHERE mod_id = ?1 UNION SELECT class_string, path, tags, object_id, label, availability, '" + Beacon.CategoryCreatures + "' AS category FROM creatures WHERE mod_id = ?1;", Self.UserModID)
 		  Dim Dicts() As Dictionary
-		  While Not Results.IsAfterLastRow
+		  While Not Results.AfterLastRow
 		    Dim Dict As New Dictionary  
 		    Dict.Value("class_string") = Results.Column("class_string").StringValue  
 		    Dict.Value("path") = Results.Column("path").StringValue  

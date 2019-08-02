@@ -128,7 +128,7 @@ Protected Class DocumentURL
 		    Return 1
 		  End If
 		  
-		  Return Self.mHash.Compare(Other.mHash)
+		  Return Self.mHash.Compare(Other.mHash, ComparisonOptions.CaseSensitive)
 		End Function
 	#tag EndMethod
 

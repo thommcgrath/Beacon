@@ -1151,7 +1151,7 @@ End
 #tag EndEvents
 #tag Events SourceRadio
 	#tag Event
-		Sub Pressed(index as Integer)
+		Sub ValueChanged(index as Integer)
 		  SourceActionButton.Enabled = SourceRadio(0).Value Or SourceRadio(1).Value Or SourceRadio(2).Value Or (SourceRadio(3).Value And SourceRadio(3).Enabled And Self.mOtherDocuments.LastRowIndex > -1)
 		  SourceActionButton.Default = SourceActionButton.Enabled
 		End Sub

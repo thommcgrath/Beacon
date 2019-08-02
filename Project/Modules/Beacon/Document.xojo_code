@@ -340,7 +340,7 @@ Protected Class Document
 		    Return 1
 		  End If
 		  
-		  Return Self.mIdentifier.Compare(Other.mIdentifier)
+		  Return Self.mIdentifier.Compare(Other.mIdentifier, ComparisonOptions.CaseSensitive)
 		End Function
 	#tag EndMethod
 

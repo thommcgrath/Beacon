@@ -147,10 +147,10 @@ Begin BeaconSubview PresetEditorView
       SelectedPanelIndex=   2
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   61
       Transparent     =   False
+      Value           =   "1"
       Value           =   2
       Visible         =   True
       Width           =   740
@@ -171,7 +171,6 @@ Begin BeaconSubview PresetEditorView
          SelectionStyle  =   "0"
          TabIndex        =   0
          TabPanelIndex   =   2
-         TabStop         =   True
          Top             =   81
          Transparent     =   False
          Visible         =   True
@@ -1119,7 +1118,7 @@ End
 		Private Function FilteredMaps() As Beacon.Map()
 		  Dim Maps() As Beacon.Map
 		  For I As Integer = 0 To Self.MapSelector.SegmentCount - 1
-		    Dim Cell As Segment = Self.MapSelector.SegmentValueAt(I)
+		    Dim Cell As Segment = Self.MapSelector.SegmentAt(I)
 		    If Not Cell.IsSelected Then
 		      Continue
 		    End If
@@ -1226,7 +1225,7 @@ End
 		  If Entries = Nil Or Entries.LastRowIndex = -1 Then
 		    Return
 		  End If
-		  Self.ContentsList.SelectedIndex = -1
+		  Self.ContentsList.SelectedRowIndex = -1
 		  Dim Maps() As Beacon.Map = Self.FilteredMaps
 		  For Each Entry As Beacon.SetEntry In Entries
 		    Dim Item As New Beacon.PresetEntry(Entry)
@@ -1244,7 +1243,7 @@ End
 		Private Sub ShowModifierEditor(Edit As Boolean)
 		  Dim EditID As String
 		  If Edit And Self.ModifiersList.SelectedRowCount = 1 Then
-		    EditID = Self.ModifiersList.RowTag(Self.ModifiersList.SelectedIndex)
+		    EditID = Self.ModifiersList.RowTag(Self.ModifiersList.SelectedRowIndex)
 		  End If
 		  If PresetModifierEditor.Present(Self, Self.mPreset, EditID) Then
 		    Self.UpdateUI
@@ -1278,13 +1277,13 @@ End
 		  Self.Changed = False
 		  
 		  Dim Mask As UInt64 = Preferences.LastPresetMapFilter
-		  Self.MapSelector.SegmentValueAt(0).IsSelected = (Mask And Beacon.Maps.TheIsland.Mask) = Beacon.Maps.TheIsland.Mask
-		  Self.MapSelector.SegmentValueAt(1).IsSelected = (Mask And Beacon.Maps.ScorchedEarth.Mask) = Beacon.Maps.ScorchedEarth.Mask
-		  Self.MapSelector.SegmentValueAt(2).IsSelected = (Mask And Beacon.Maps.Aberration.Mask) = Beacon.Maps.Aberration.Mask
-		  Self.MapSelector.SegmentValueAt(3).IsSelected = (Mask And Beacon.Maps.Extinction.Mask) = Beacon.Maps.Extinction.Mask
-		  Self.MapSelector.SegmentValueAt(4).IsSelected = (Mask And Beacon.Maps.TheCenter.Mask) = Beacon.Maps.TheCenter.Mask
-		  Self.MapSelector.SegmentValueAt(5).IsSelected = (Mask And Beacon.Maps.Ragnarok.Mask) = Beacon.Maps.Ragnarok.Mask
-		  Self.MapSelector.SegmentValueAt(6).IsSelected = (Mask And Beacon.Maps.Valguero.Mask) = Beacon.Maps.Valguero.Mask
+		  Self.MapSelector.SegmentAt(0).IsSelected = (Mask And Beacon.Maps.TheIsland.Mask) = Beacon.Maps.TheIsland.Mask
+		  Self.MapSelector.SegmentAt(1).IsSelected = (Mask And Beacon.Maps.ScorchedEarth.Mask) = Beacon.Maps.ScorchedEarth.Mask
+		  Self.MapSelector.SegmentAt(2).IsSelected = (Mask And Beacon.Maps.Aberration.Mask) = Beacon.Maps.Aberration.Mask
+		  Self.MapSelector.SegmentAt(3).IsSelected = (Mask And Beacon.Maps.Extinction.Mask) = Beacon.Maps.Extinction.Mask
+		  Self.MapSelector.SegmentAt(4).IsSelected = (Mask And Beacon.Maps.TheCenter.Mask) = Beacon.Maps.TheCenter.Mask
+		  Self.MapSelector.SegmentAt(5).IsSelected = (Mask And Beacon.Maps.Ragnarok.Mask) = Beacon.Maps.Ragnarok.Mask
+		  Self.MapSelector.SegmentAt(6).IsSelected = (Mask And Beacon.Maps.Valguero.Mask) = Beacon.Maps.Valguero.Mask
 		  
 		  Dim Maps() As Beacon.Map = Self.FilteredMaps()
 		  Dim SelectedEntries() As String
@@ -1624,7 +1623,7 @@ End
 		        Beacon.PresetEntry(Me.RowTag(I)).ChanceToBeBlueprint = 0.0
 		      End If
 		    Next
-		    Me.SelectedIndex = -1
+		    Me.SelectedRowIndex = -1
 		    
 		    Dim SelectedMaps() As Beacon.Map = Self.FilteredMaps()
 		    For Each Entry As DictionaryEntry In NewEntries

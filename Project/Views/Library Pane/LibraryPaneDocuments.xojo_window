@@ -749,7 +749,7 @@ End
 		    Dim Row1URL As Beacon.DocumentURL = Me.RowTag(Row1)
 		    Dim Row2URL As Beacon.DocumentURL = Me.RowTag(Row2)
 		    
-		    Result = Row1URL.Name.Compare(Row2URL.Name)
+		    Result = Row1URL.Name.Compare(Row2URL.Name, ComparisonOptions.CaseSensitive)
 		    
 		    Return True
 		  End Select

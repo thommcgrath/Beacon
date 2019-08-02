@@ -392,7 +392,7 @@ Protected Module BeaconUI
 		      CellWidth = CellWidth + 1
 		    End If
 		    
-		    Dim Cell As Segment = Target.SegmentValueAt(I)
+		    Dim Cell As Segment = Target.SegmentAt(I)
 		    Cell.Width = CellWidth
 		  Next
 		End Sub

@@ -104,7 +104,7 @@ Inherits ControlCanvas
 		  
 		  Dim Viewport As Rect = Self.Viewport
 		  
-		  Dim YLegend As New StringShape
+		  Dim YLegend As New TextShape
 		  YLegend.Text = "Level"
 		  YLegend.Rotation = -1.5708
 		  YLegend.X = Viewport.Left - 6
@@ -114,7 +114,7 @@ Inherits ControlCanvas
 		  YLegend.FillColor = SystemColors.LabelColor
 		  G.DrawObject(YLegend)
 		  
-		  Dim XLegend As New StringShape
+		  Dim XLegend As New TextShape
 		  XLegend.Text = "Experience"
 		  XLegend.X = Viewport.Left + (Viewport.Width / 2)
 		  XLegend.Y = Viewport.Bottom + 6 + G.CapHeight

@@ -357,7 +357,7 @@ Inherits Listbox
 		    If Animated Then
 		      Dim Task As New AnimationKit.ScrollTask(Self)
 		      Task.DurationInSeconds = 0.4
-		      Task.Position = Self.SelectedIndex
+		      Task.Position = Self.SelectedRowIndex
 		      Task.Curve = AnimationKit.Curve.CreateEaseOut
 		      
 		      If Self.mScrollTask <> Nil Then
@@ -368,7 +368,7 @@ Inherits Listbox
 		      Self.mScrollTask = Task
 		      Task.Run
 		    Else
-		      Self.ScrollPosition = Self.SelectedIndex
+		      Self.ScrollPosition = Self.SelectedRowIndex
 		    End If
 		  End If
 		End Sub

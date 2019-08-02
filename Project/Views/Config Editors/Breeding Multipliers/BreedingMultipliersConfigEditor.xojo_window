@@ -1786,8 +1786,8 @@ End
 		  Dim CuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period") * Self.Config(False).BabyCuddleIntervalMultiplier
 		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.StringList)
 		  Dim SelectedClass As String
-		  If CreaturesList.SelectedIndex > -1 Then
-		    SelectedClass = CreaturesList.RowTag(CreaturesList.SelectedIndex)
+		  If CreaturesList.SelectedRowIndex > -1 Then
+		    SelectedClass = CreaturesList.RowTag(CreaturesList.SelectedRowIndex)
 		  End If
 		  Dim Position As Integer = Self.CreaturesList.ScrollPosition
 		  Self.CreaturesList.DeleteAllRows
@@ -1820,7 +1820,7 @@ End
 		    CreaturesList.CellTag(CreaturesList.LastAddedRowIndex, Self.ColumnMatureTime) = MatureSeconds
 		    CreaturesList.RowTag(CreaturesList.LastAddedRowIndex) = Creature.ClassString
 		    If Creature.ClassString = SelectedClass Then
-		      CreaturesList.SelectedIndex = CreaturesList.LastAddedRowIndex
+		      CreaturesList.SelectedRowIndex = CreaturesList.LastAddedRowIndex
 		    End If
 		  Next
 		  

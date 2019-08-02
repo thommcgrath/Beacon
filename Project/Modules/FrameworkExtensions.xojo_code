@@ -170,12 +170,6 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Compare(Extends LeftString As String, RightString As String, CompareMode As Integer = 0) As Integer
-		  Return StrComp(LeftString, RightString, CompareMode)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub CorrectWindowPlacement(Extends Win As Window, Parent As Window)
 		  #if TargetWin32
 		    If Win = Nil Or Parent = Nil Then
@@ -502,7 +496,7 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function TotalSeconds(Extends Interval As DateInterval) As UInt64
 		  Dim Now As New Date
-		  Dim Future As Date = Now.AddInterval(Interval)
+		  Dim Future As Date = Now + Interval
 		  Return Future.SecondsFrom1970 - Now.SecondsFrom1970
 		End Function
 	#tag EndMethod

@@ -243,12 +243,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub EditSelected()
-		  If Self.List.SelectedIndex = -1 Then
+		  If Self.List.SelectedRowIndex = -1 Then
 		    Return
 		  End If
 		  
 		  // See the comment in ShowAdd
-		  Dim ClassString As String = Self.List.RowTag(Self.List.SelectedIndex)
+		  Dim ClassString As String = Self.List.RowTag(Self.List.SelectedRowIndex)
 		  If DinoAdjustmentDialog.Present(Self, ClassString, Self.Config(False), Self.Document.Mods) Then
 		    Call Self.Config(True)
 		    Self.UpdateList()
@@ -278,7 +278,7 @@ End
 		  End If
 		  
 		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(False)
-		  Dim SelectedClass As String = Self.List.RowTag(Self.List.SelectedIndex)
+		  Dim SelectedClass As String = Self.List.RowTag(Self.List.SelectedRowIndex)
 		  Dim SelectedBehavior As Beacon.CreatureBehavior = Config.Behavior(SelectedClass)
 		  If SelectedBehavior = Nil Then
 		    Return
@@ -444,7 +444,7 @@ End
 		  If Warn Then
 		    Dim Message As String
 		    If Me.SelectedRowCount = 1 Then
-		      Message = "Are you sure you want to delete the """ + NthField(Me.Cell(Me.SelectedIndex, Self.ColumnName), EndOfLine, 1) + """ creature adjustment?"
+		      Message = "Are you sure you want to delete the """ + NthField(Me.Cell(Me.SelectedRowIndex, Self.ColumnName), EndOfLine, 1) + """ creature adjustment?"
 		    Else
 		      Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " creature adjustments?"
 		    End If

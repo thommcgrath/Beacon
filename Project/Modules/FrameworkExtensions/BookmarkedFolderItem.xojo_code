@@ -41,7 +41,7 @@ Inherits FolderItem
 		      Call Retain(FileURL)
 		      
 		      Dim Path As String = AbsoluteString(FileURL)
-		      Dim File As New BookmarkedFolderItem(Path, FolderItem.PathTypeURL)
+		      Dim File As New BookmarkedFolderItem(Path, FolderItem.PathModes.URL)
 		      File.mBookmark = FileURL
 		      Return File
 		    Else

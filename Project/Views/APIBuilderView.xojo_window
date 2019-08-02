@@ -902,7 +902,7 @@ End
 	#tag Event
 		Sub Pressed()
 		  Dim Path As String = PathField.Value
-		  Dim Method As String = MethodMenu.Value
+		  Dim Method As String = MethodMenu.SelectedRowValue
 		  Dim Body As String = BodyField.Value
 		  Dim ContentType As String = ContentTypeField.Value
 		  

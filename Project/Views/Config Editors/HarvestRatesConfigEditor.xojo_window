@@ -813,7 +813,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim SourceClass As String = Self.List.RowTag(Self.List.SelectedIndex)
+		  Dim SourceClass As String = Self.List.RowTag(Self.List.SelectedRowIndex)
 		  Dim Rate As Double = Config.Override(SourceClass)
 		  
 		  Config = Self.Config(True)
@@ -994,7 +994,7 @@ End
 		  If Warn Then
 		    Dim Message As String
 		    If Me.SelectedRowCount = 1 Then
-		      Message = "Are you sure you want to delete the """ + Me.Cell(Me.SelectedIndex, 0) + """ harvest rate override?"
+		      Message = "Are you sure you want to delete the """ + Me.Cell(Me.SelectedRowIndex, 0) + """ harvest rate override?"
 		    Else
 		      Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " harvest rate overrides?"
 		    End If

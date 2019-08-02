@@ -117,7 +117,7 @@ Implements Iterable
 		Function Operator_Compare(Others() As String) As Integer
 		  Dim CompareLeft As String = Join(Self.mItems, "|")
 		  Dim CompareRight As String = Join(Others, "|")
-		  Return CompareLeft.Compare(CompareRight)
+		  Return CompareLeft.Compare(CompareRight, ComparisonOptions.CaseSensitive)
 		End Function
 	#tag EndMethod
 

@@ -371,7 +371,7 @@ End
 		  If Warn Then
 		    Dim Message As String
 		    If Me.SelectedRowCount = 1 Then
-		      Message = "Are you sure you want to remove """ + Me.Cell(Me.SelectedIndex, 0) + """ from the required resources?"
+		      Message = "Are you sure you want to remove """ + Me.Cell(Me.SelectedRowIndex, 0) + """ from the required resources?"
 		    Else
 		      Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " resources from the crafting cost?"
 		    End If

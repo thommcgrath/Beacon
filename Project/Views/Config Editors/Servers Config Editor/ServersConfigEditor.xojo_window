@@ -335,12 +335,12 @@ End
 #tag Events ServerList
 	#tag Event
 		Sub SelectionChanged()
-		  If Me.SelectedIndex = -1 Then
+		  If Me.SelectedRowIndex = -1 Then
 		    Self.CurrentProfileID = ""
 		    Return
 		  End If
 		  
-		  Dim Profile As Beacon.ServerProfile = Me.RowTag(Me.SelectedIndex)
+		  Dim Profile As Beacon.ServerProfile = Me.RowTag(Me.SelectedRowIndex)
 		  Dim ProfileID As String = Profile.ProfileID
 		  If Not Self.mViews.HasKey(ProfileID) Then
 		    // Create the view

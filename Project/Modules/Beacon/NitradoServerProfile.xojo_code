@@ -75,7 +75,7 @@ Inherits Beacon.ServerProfile
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mAddress.Compare(Value) <> 0 Then
+			  If Self.mAddress.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mAddress = Value
 			    Self.Modified = True
 			  End If
@@ -92,7 +92,7 @@ Inherits Beacon.ServerProfile
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mConfigPath.Compare(Value) <> 0 Then
+			  If Self.mConfigPath.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mConfigPath = Value
 			    Self.Modified = True
 			  End If

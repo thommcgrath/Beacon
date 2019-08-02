@@ -871,7 +871,7 @@ Implements Beacon.DeploymentEngine
 		    Return
 		  End If
 		  
-		  Dim ResumeTime As Date = Now.AddInterval(New DateInterval(0, 0, 0, 0, 0, Floor(SecondsToWait), (SecondsToWait - Floor(SecondsToWait)) * 1000000000))
+		  Dim ResumeTime As Date = Now + New DateInterval(0, 0, 0, 0, 0, Floor(SecondsToWait), (SecondsToWait - Floor(SecondsToWait)) * 1000000000)
 		  
 		  Self.mStatus = "Waiting per Nitrado recommendations. Will resume at " + ResumeTime.ToString(Locale.Current, Date.FormatStyles.None, Date.FormatStyles.Medium) + "…"
 		  Self.mWaitNitradoCallbackKey = CallLater.Schedule(SecondsToWait * 1000, AddressOf WaitNitradoIdle)
