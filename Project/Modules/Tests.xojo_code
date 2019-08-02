@@ -14,7 +14,73 @@ Protected Module Tests
 		    TestQualities()
 		    TestMemoryBlockExtensions()
 		    TestStrings()
+		    TestEncryption()
 		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestEncryption()
+		  Dim Identity As New Beacon.Identity
+		  Dim PublicKey As String = Identity.PublicKey
+		  Dim PrivateKey As String = Identity.PrivateKey
+		  Assert(Crypto.RSAVerifyKey(PublicKey), "Unable to validate public key")
+		  Assert(Crypto.RSAVerifyKey(PrivateKey), "Unable to validate private key")
+		  
+		  Dim PEMPublic As String = BeaconEncryption.PEMEncodePublicKey(PublicKey)
+		  Assert(PEMPublic.BeginsWith("-----BEGIN PUBLIC KEY-----"), "Public key was not PEM encoded")
+		  Assert(BeaconEncryption.PEMDecodePublicKey(PEMPublic) = PublicKey, "PEM public key was not decoded")
+		  
+		  Dim PEMPrivate As String = BeaconEncryption.PEMEncodePrivateKey(PrivateKey)
+		  Assert(PEMPrivate.BeginsWith("-----BEGIN PRIVATE KEY-----"), "Private key was not PEM encoded")
+		  Assert(BeaconEncryption.PEMDecodePrivateKey(PEMPrivate) = PrivateKey, "PEM private key was not decoded")
+		  
+		  Dim TestValue As MemoryBlock = Crypto.GenerateRandomBytes(24)
+		  Dim Encrypted, Decrypted As MemoryBlock
+		  
+		  Try
+		    Encrypted = Identity.Encrypt(TestValue)
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to encrypt test value")
+		  End Try
+		  
+		  Try
+		    Decrypted = Identity.Decrypt(Encrypted)
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to decrypt encrypted test value")
+		  End Try
+		  
+		  Assert(TestValue = Decrypted, "Decrypted value does not match original")
+		  
+		  Dim Key As MemoryBlock = Crypto.GenerateRandomBytes(24)
+		  
+		  Try
+		    Encrypted = BeaconEncryption.SymmetricEncrypt(Key, TestValue, 2)
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to symmetric encrypt test value")
+		  End Try
+		  
+		  Try
+		    Decrypted = BeaconEncryption.SymmetricDecrypt(Key, Encrypted)
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to symmetric decrypt encrypted test value")
+		  End Try
+		  
+		  Assert(TestValue = Decrypted, "Symmetric decrypted value does not match original")
+		  
+		  Try
+		    Encrypted = BeaconEncryption.SymmetricEncrypt(Key, TestValue, 1)
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to symmetric(legacy) encrypt test value")
+		  End Try
+		  
+		  Try
+		    Decrypted = BeaconEncryption.SymmetricDecrypt(Key, Encrypted)
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to symmetric(legacy) decrypt encrypted test value")
+		  End Try
+		  
+		  Assert(TestValue = Decrypted, "Symmetric(legacy) decrypted value does not match original")
 		End Sub
 	#tag EndMethod
 

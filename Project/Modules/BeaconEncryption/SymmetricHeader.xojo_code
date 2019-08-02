@@ -13,9 +13,9 @@ Private Class SymmetricHeader
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Payload As MemoryBlock)
-		  Self.mVersion = 2
-		  Self.mVector = Crypto.GenerateRandomBytes(16)
+		Sub Constructor(Payload As MemoryBlock, Version As Integer = 2)
+		  Self.mVersion = Version
+		  Self.mVector = Crypto.GenerateRandomBytes(If(Version = 2, 16, 8))
 		  Self.mLength = Payload.Size
 		  Self.mChecksum = Beacon.CRC32(Payload)
 		End Sub

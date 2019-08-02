@@ -1,12 +1,6 @@
 #tag Module
 Protected Module BeaconEncryption
 	#tag Method, Flags = &h1
-		Protected Sub GenerateKeyPair()
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function IsEncrypted(Data As MemoryBlock) As Boolean
 		  Dim Header As BeaconEncryption.SymmetricHeader = BeaconEncryption.SymmetricHeader.FromMemoryBlock(Data)
 		  Return Header <> Nil
@@ -144,17 +138,27 @@ Protected Module BeaconEncryption
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function SymmetricEncrypt(Key As MemoryBlock, Data As String) As String
+		Protected Function SymmetricEncrypt(Key As MemoryBlock, Data As String, Version As Integer = 2) As String
 		  If Data = "" Then
 		    Return ""
 		  End If
 		  
-		  Dim Header As New BeaconEncryption.SymmetricHeader(Data)
+		  Dim Header As New BeaconEncryption.SymmetricHeader(Data, Version)
 		  
-		  Dim Crypt As New M_Crypto.AES_MTC(Key, M_Crypto.AES_MTC.EncryptionBits.Bits256)
-		  Crypt.SetInitialVector(Header.Vector)
-		  
-		  Return Header.Encoded + Crypt.EncryptCBC(Data)
+		  Select Case Version
+		  Case 2
+		    Dim Crypt As New M_Crypto.AES_MTC(Key, M_Crypto.AES_MTC.EncryptionBits.Bits256)
+		    Crypt.SetInitialVector(Header.Vector)
+		    Return Header.Encoded + Crypt.EncryptCBC(Data)
+		  Case 1
+		    Dim Crypt As New M_Crypto.Blowfish_MTC(Key)
+		    Crypt.SetInitialVector(Header.Vector)
+		    Return Header.Encoded + Crypt.EncryptCBC(Data)
+		  Else
+		    Dim Err As New CryptoException
+		    Err.Message = "Unknown symmetric version " + Version.ToString
+		    Raise Err
+		  End Select
 		End Function
 	#tag EndMethod
 
