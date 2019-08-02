@@ -96,7 +96,7 @@ Protected Class DocumentURL
 		    End If
 		  End If
 		  
-		  Return DecodeURLComponent(Name)
+		  Return DecodeURLComponent(Name.ReplaceAll("+", " "))
 		End Function
 	#tag EndMethod
 
