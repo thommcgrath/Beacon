@@ -13,7 +13,7 @@ Protected Class Coordinator
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Animator_Action(Sender As Timer)
+		Private Sub Animator_Run(Sender As Timer)
 		  Dim AddedTasks(), RemovedTasks() As AnimationKit.Task
 		  For I As Integer = Self.Tasks.LastRowIndex DownTo 0
 		    If Self.Tasks(I).Cancelled Then
@@ -61,7 +61,7 @@ Protected Class Coordinator
 		  Self.Animator = New Timer
 		  Self.Animator.RunMode = Timer.RunModes.Off
 		  Self.Animator.Period = 10
-		  AddHandler Self.Animator.Action, WeakAddressOf Self.Animator_Action
+		  AddHandler Self.Animator.Run, WeakAddressOf Self.Animator_Run
 		End Sub
 	#tag EndMethod
 
