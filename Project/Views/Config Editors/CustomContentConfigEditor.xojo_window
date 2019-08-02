@@ -304,7 +304,7 @@ End
 		  If Self.SelectionIsEncrypted Then
 		    Dim StartPos As Integer = Self.ConfigArea.SelectionStart
 		    For I As Integer = StartPos DownTo TagLen
-		      If Source.Middle((I - TagLen) + 1, TagLen) = Tag Then
+		      If Source.Middle((I - TagLen), TagLen) = Tag Then
 		        StartPos = I
 		        Exit For I
 		      End If
@@ -317,8 +317,8 @@ End
 		    
 		    Dim ContentLen As Integer = EndPos - StartPos
 		    Dim Prefix As String = Source.Left(StartPos - TagLen)
-		    Dim Content As String = Source.Middle(StartPos + 1, ContentLen)
-		    Dim Suffix As String = Source.Middle(EndPos + TagLen + 1)
+		    Dim Content As String = Source.Middle(StartPos, ContentLen)
+		    Dim Suffix As String = Source.Middle(EndPos + TagLen)
 		    
 		    Self.ConfigArea.Value = Prefix + Content + Suffix
 		    Self.ConfigArea.SelectionStart = Prefix.Length
@@ -327,7 +327,7 @@ End
 		    Dim Start As Integer = Self.ConfigArea.SelectionStart
 		    Dim Length As Integer = Self.ConfigArea.SelectionLength
 		    Dim Prefix As String = Source.Left(Start)
-		    Dim Content As String = Source.Middle(Start + 1, Length)
+		    Dim Content As String = Source.Middle(Start, Length)
 		    Dim Suffix As String = Source.Right(Source.Length - (Start + Length))
 		    
 		    Self.ConfigArea.Value = Prefix + Tag + Content + Tag + Suffix

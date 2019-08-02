@@ -375,7 +375,7 @@ Implements NotificationKit.Receiver
 		  Dim Args() As String
 		  
 		  BreakChar = " "
-		  For I As Integer = 1 To Data.Len
+		  For I As Integer = 0 To Data.Len - 1
 		    Char = Data.Middle(I, 1)
 		    If Char = """" Then
 		      If BreakChar = " " Then
@@ -466,12 +466,10 @@ Implements NotificationKit.Receiver
 		  End If
 		  
 		  If URL.Left(7) = "action/" Then
-		    Dim Instructions As String = Mid(URL, 8)
-		    Dim ParamsPos As Integer = InStr(Instructions, "?") - 1
-		    Dim Params As String
+		    Dim Instructions As String = URL.Middle(7)
+		    Dim ParamsPos As Integer = Instructions.IndexOf("?")
 		    If ParamsPos > -1 Then
-		      Params = Mid(Instructions, ParamsPos + 1)
-		      Instructions = Left(Instructions, ParamsPos)
+		      Instructions = Instructions.Left(ParamsPos)
 		    End If
 		    
 		    Select Case Instructions

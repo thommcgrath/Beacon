@@ -273,7 +273,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Versions.Append(1)
 		        ElseIf Filename.BeginsWith(SearchPrefix) And Filename.EndsWith(SearchSuffix) Then
 		          Candidates.Append(SearchFolder.Item(I))
-		          Versions.Append(Val(Filename.Middle(SearchPrefix.Length + 2, Filename.Length - (SearchPrefix.Length + SearchSuffix.Length))))
+		          Versions.Append(Integer.FromString(Filename.Middle(SearchPrefix.Length + 2, Filename.Length - (SearchPrefix.Length + SearchSuffix.Length))))
 		        End If
 		      Next
 		      
@@ -1723,24 +1723,24 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  While Not Results.AfterLastRow
 		    Dim HexColor As String = Results.Column("uicolor").StringValue
 		    Dim RedHex, GreenHex, BlueHex, AlphaHex As String = "00"
-		    If Len(HexColor) = 3 Then
-		      RedHex = Mid(HexColor, 1, 1) + Mid(HexColor, 1, 1)
-		      GreenHex = Mid(HexColor, 2, 1) + Mid(HexColor, 2, 1)
-		      BlueHex = Mid(HexColor, 3, 1) + Mid(HexColor, 3, 1)
-		    ElseIf Len(HexColor) = 4 Then
-		      RedHex = Mid(HexColor, 1, 1) + Mid(HexColor, 1, 1)
-		      GreenHex = Mid(HexColor, 2, 1) + Mid(HexColor, 2, 1)
-		      BlueHex = Mid(HexColor, 3, 1) + Mid(HexColor, 3, 1)
-		      AlphaHex = Mid(HexColor, 4, 1) + Mid(HexColor, 4, 1)
-		    ElseIf Len(HexColor) = 6 Then
-		      RedHex = Mid(HexColor, 1, 2)
-		      GreenHex = Mid(HexColor, 3, 2)
-		      BlueHex = Mid(HexColor, 5, 2)
-		    ElseIf Len(HexColor) = 8 Then
-		      RedHex = Mid(HexColor, 1, 2)
-		      GreenHex = Mid(HexColor, 3, 2)
-		      BlueHex = Mid(HexColor, 5, 2)
-		      AlphaHex = Mid(HexColor, 7, 2)
+		    If HexColor.Length = 3 Then
+		      RedHex = HexColor.Middle(0, 1) + HexColor.Middle(0, 1)
+		      GreenHex = HexColor.Middle(1, 1) + HexColor.Middle(1, 1)
+		      BlueHex = HexColor.Middle(2, 1) + HexColor.Middle(2, 1)
+		    ElseIf HexColor.Length = 4 Then
+		      RedHex = HexColor.Middle(0, 1) + HexColor.Middle(0, 1)
+		      GreenHex = HexColor.Middle(1, 1) + HexColor.Middle(1, 1)
+		      BlueHex = HexColor.Middle(2, 1) + HexColor.Middle(2, 1)
+		      AlphaHex = HexColor.Middle(3, 1) + HexColor.Middle(3, 1)
+		    ElseIf HexColor.Length = 6 Then
+		      RedHex = HexColor.Middle(0, 2)
+		      GreenHex = HexColor.Middle(2, 2)
+		      BlueHex = HexColor.Middle(4, 2)
+		    ElseIf HexColor.Length = 8 Then
+		      RedHex = HexColor.Middle(1, 2)
+		      GreenHex = HexColor.Middle(3, 2)
+		      BlueHex = HexColor.Middle(5, 2)
+		      AlphaHex = HexColor.Middle(7, 2)
 		    End If
 		    
 		    Dim Requirements As Dictionary

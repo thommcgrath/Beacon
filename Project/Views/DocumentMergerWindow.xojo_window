@@ -415,8 +415,8 @@ End
 		    Case Variant.TypeString
 		      Dim StringValue As String = Tag.StringValue
 		      If StringValue.BeginsWith("Map") Then
-		        Dim Operator As String = StringValue.Middle(4, 1)
-		        Dim Mask As UInt64 = Val(StringValue.Middle(5))
+		        Dim Operator As String = StringValue.Middle(3, 1)
+		        Dim Mask As UInt64 = Val(StringValue.Middle(4))
 		        If Operator = "+" Then
 		          Self.mDestination.MapCompatibility = Self.mDestination.MapCompatibility Or Mask
 		        Else
