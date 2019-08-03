@@ -26,6 +26,19 @@ Protected Module UserCloud
 		Private Sub Callback_PutFile(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  If Not Response.Success Then
 		    // Do what?
+		    If Response.HTTPStatus = 446 Then
+		      // This response means the path is not allowed, so we're going to delete the local file
+		      Dim URL As String = Response.URL
+		      Dim BaseURL As String = BeaconAPI.URL("/file")
+		      Dim RemotePath As String = URL.Middle(BaseURL.Length)
+		      Dim LocalFile As FolderItem = LocalFile(RemotePath)
+		      Try
+		        If LocalFile.Exists Then
+		          LocalFile.Delete
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
 		    CleanupRequest(Request)
 		    Return
 		  End If
