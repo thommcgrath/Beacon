@@ -81,6 +81,156 @@ Protected Class Document
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Function FromLegacy(Parsed As Variant, Identity As Beacon.Identity) As Beacon.Document
+		  Dim Doc As new Beacon.Document
+		  Dim LootSources() As Variant
+		  Dim Version As Integer
+		  
+		  If Parsed.Type = Variant.TypeObject And Parsed.ObjectValue IsA Dictionary Then
+		    Dim Dict As Dictionary = Parsed
+		    Try
+		      If Dict.HasKey("LootSources") Then
+		        LootSources = Dict.Value("LootSources")
+		      Else
+		        LootSources = Dict.Value("Beacons")
+		      End If
+		      
+		      Doc.mIdentifier = Dict.Value("Identifier")
+		      Doc.mUseCompression = True
+		      Version = Dict.Lookup("Version", 0)
+		      
+		      If Dict.HasKey("Title") Then
+		        Doc.Title = Dict.Value("Title")
+		      End If
+		      If Dict.HasKey("Description") Then
+		        Doc.Description = Dict.Value("Description")
+		      End If
+		      If Dict.HasKey("Public") Then
+		        Doc.IsPublic = Dict.Value("Public")
+		      End If
+		      If Dict.HasKey("Map") Then
+		        Doc.mMapCompatibility = Dict.Value("Map")
+		      ElseIf Dict.HasKey("MapPreference") Then
+		        Doc.mMapCompatibility = Dict.Value("MapPreference")
+		      Else
+		        Doc.mMapCompatibility = 0
+		      End If
+		      Dim DifficultyConfig As New BeaconConfigs.Difficulty
+		      If Dict.HasKey("DifficultyValue") Then
+		        DifficultyConfig.MaxDinoLevel = Dict.Value("DifficultyValue") * 30
+		      End If
+		      Doc.AddConfigGroup(DifficultyConfig)
+		      If Dict.HasKey("ConsoleModsOnly") Then
+		        Dim ConsoleModsOnly As Boolean = Dict.Value("ConsoleModsOnly")
+		        If ConsoleModsOnly Then
+		          Doc.mMods = Beacon.Data.ConsoleSafeMods()
+		        End If
+		      End If
+		      
+		      If Dict.HasKey("Secure") Then
+		        Dim SecureDict As Dictionary = ReadSecureData(Dict.Value("Secure"), Identity)
+		        If SecureDict <> Nil Then
+		          Doc.mLastSecureDict = Dict.Value("Secure")
+		          Doc.mLastSecureHash = Doc.mLastSecureDict.Value("Hash")
+		          
+		          Dim ServerDicts() As Variant = SecureDict.Value("Servers")
+		          For Each ServerDict As Dictionary In ServerDicts
+		            Dim Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
+		            If Profile <> Nil Then
+		              Doc.mServerProfiles.AddRow(Profile)
+		            End If
+		          Next
+		          
+		          If SecureDict.HasKey("OAuth") Then
+		            Doc.mOAuthDicts = SecureDict.Value("OAuth")
+		          End If
+		        End If
+		      ElseIf Dict.HasKey("FTPServers") Then
+		        Dim ServerDicts() As Variant = Dict.Value("FTPServers")
+		        For Each ServerDict As Dictionary In ServerDicts
+		          Dim FTPInfo As Dictionary = ReadSecureData(ServerDict, Identity, True)
+		          If FTPInfo <> Nil And FTPInfo.HasAllKeys("Description", "Host", "Port", "User", "Pass", "Path") Then
+		            Dim Profile As New Beacon.FTPServerProfile
+		            Profile.Name = FTPInfo.Value("Description")
+		            Profile.Host = FTPInfo.Value("Host")
+		            Profile.Port = FTPInfo.Value("Port")
+		            Profile.Username = FTPInfo.Value("User")
+		            Profile.Password = FTPInfo.Value("Pass")
+		            
+		            Dim Path As String = FTPInfo.Value("Path")
+		            Dim Components() As String = Path.Split("/")
+		            If Components.LastRowIndex > -1 Then
+		              Dim LastComponent As String = Components(Components.Ubound)
+		              If LastComponent.Length > 4 And LastComponent.Right(4) = ".ini" Then
+		                Components.RemoveRowAt(Components.LastRowIndex)
+		              End If
+		            End If
+		            Components.AddRow("Game.ini")
+		            Profile.GameIniPath = Components.Join("/")
+		            
+		            Components(Components.LastRowIndex) = "GameUserSettings.ini"
+		            Profile.GameUserSettingsIniPath = Components.Join("/")
+		            
+		            Doc.mServerProfiles.AddRow(Profile)
+		          End If
+		        Next
+		      End If
+		    Catch Err As RuntimeException
+		      Return Nil
+		    End Try
+		  ElseIf Parsed.IsArray And Parsed.ArrayElementType = Variant.TypeObject Then
+		    LootSources = Parsed
+		  Else
+		    Return Nil
+		  End If
+		  
+		  Dim Presets() As Beacon.Preset
+		  If Version < 2 Then
+		    // Will need this in a few lines
+		    Presets = Beacon.Data.Presets
+		  End If
+		  If LootSources.LastRowIndex > -1 Then
+		    Dim Drops As New BeaconConfigs.LootDrops
+		    For Each LootSource As Dictionary In LootSources
+		      Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(LootSource)
+		      If Source <> Nil Then
+		        If Version < 2 Then
+		          // Match item set names to presets
+		          For Each Set As Beacon.ItemSet In Source
+		            For Each Preset As Beacon.Preset In Presets
+		              If Set.Label = Preset.Label Then
+		                // Here's a hack to make assigning a preset possible: save current entries
+		                Dim Entries() As Beacon.SetEntry
+		                For Each Entry As Beacon.SetEntry In Set
+		                  Entries.AddRow(New Beacon.SetEntry(Entry))
+		                Next
+		                
+		                // Reconfigure
+		                Call Set.ReconfigureWithPreset(Preset, Source, Beacon.Maps.TheIsland.Mask, Doc.Mods)
+		                
+		                // Now "deconfigure" it
+		                Redim Set(Entries.LastRowIndex)
+		                For I As Integer = 0 To Entries.LastRowIndex
+		                  Set(I) = Entries(I)
+		                Next
+		                Continue For Set
+		              End If
+		            Next
+		          Next
+		        End If
+		        Drops.Append(Source)
+		      End If
+		    Next
+		    Doc.AddConfigGroup(Drops)
+		  End If
+		  
+		  Doc.mModified = Version < Beacon.Document.DocumentVersion
+		  
+		  Return Doc
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Shared Function FromString(Contents As String, Identity As Beacon.Identity) As Beacon.Document
 		  Dim Parsed As Variant
@@ -103,7 +253,7 @@ Protected Class Document
 		    End If
 		  End If
 		  If Version < 3 Then
-		    Return Nil
+		    Return Beacon.Document.FromLegacy(Parsed, Identity)
 		  End If
 		  
 		  // New config system
