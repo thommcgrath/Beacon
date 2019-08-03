@@ -62,10 +62,7 @@ Protected Module Preferences
 		    If Temp.IsArray Then
 		      Select Case Temp.ArrayElementType
 		      Case Variant.TypeString
-		        Dim Strings() As Variant = Temp
-		        For Each Element As String In Strings
-		          StoredData.AddRow(Element)
-		        Next
+		        StoredData = Temp
 		      Case Variant.TypeObject
 		        Dim Objects() As Variant = Temp
 		        For Each Element As Variant In Objects
