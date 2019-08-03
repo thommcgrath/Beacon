@@ -59,20 +59,28 @@ Protected Module Preferences
 		  Dim Temp As Variant = mManager.VariantValue("Documents")
 		  Dim StoredData() As String
 		  If Temp <> Nil Then
-		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Temp)
-		    If Info.Name = "String()" Then
-		      StoredData = Temp
-		    ElseIf Info.Name = "String" Then
-		      StoredData.Append(Temp)
-		    ElseIf Info.Name = "Variant()" Then
-		      Dim Arr() As Variant = Temp
-		      For Each Item As Variant In Arr
-		        Try
-		          StoredData.Append(Item)
-		        Catch Err As TypeMismatchException
-		          Continue
-		        End Try
-		      Next
+		    If Temp.IsArray Then
+		      Select Case Temp.ArrayElementType
+		      Case Variant.TypeString
+		        Dim Strings() As Variant = Temp
+		        For Each Element As String In Strings
+		          StoredData.AddRow(Element)
+		        Next
+		      Case Variant.TypeObject
+		        Dim Objects() As Variant = Temp
+		        For Each Element As Variant In Objects
+		          Try
+		            StoredData.AddRow(Element.StringValue)
+		          Catch Err As RuntimeException
+		            Continue
+		          End Try
+		        Next
+		      End Select
+		    Else
+		      Try
+		        StoredData.AddRow(Temp.StringValue)
+		      Catch Err As RuntimeException
+		      End Try
 		    End If
 		  End If
 		  
