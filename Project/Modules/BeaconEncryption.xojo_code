@@ -98,7 +98,7 @@ Protected Module BeaconEncryption
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function SymmetricDecrypt(Key As MemoryBlock, Data As String) As String
+		Protected Function SymmetricDecrypt(Key As MemoryBlock, Data As MemoryBlock) As MemoryBlock
 		  If Data = "" Then
 		    Return ""
 		  End If
@@ -110,7 +110,7 @@ Protected Module BeaconEncryption
 		    Raise Err
 		  End If
 		  
-		  Data = Data.Middle(Header.Size)
+		  Data = Data.Middle(Header.Size, Data.Size - Header.Size)
 		  
 		  Select Case Header.Version
 		  Case 1
@@ -122,7 +122,7 @@ Protected Module BeaconEncryption
 		    Crypt.SetInitialVector(Header.Vector)
 		    Data = Crypt.DecryptCBC(Data)
 		  End Select
-		  If Data.Length > Header.Length Then
+		  If Data.Size > Header.Length Then
 		    Data = Data.Left(Header.Length)
 		  End If
 		  
@@ -138,7 +138,7 @@ Protected Module BeaconEncryption
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function SymmetricEncrypt(Key As MemoryBlock, Data As String, Version As Integer = 2) As String
+		Protected Function SymmetricEncrypt(Key As MemoryBlock, Data As MemoryBlock, Version As Integer = 2) As MemoryBlock
 		  If Data = "" Then
 		    Return ""
 		  End If
