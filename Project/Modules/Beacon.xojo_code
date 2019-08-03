@@ -319,16 +319,89 @@ Protected Module Beacon
 		Protected Function GenerateJSON(Source As Variant, Pretty As Boolean) As String
 		  Const UseMBS = True
 		  
-		  #if Not DebugBuild
-		    #Pragma Error "This method needs to be finished"
-		  #endif
-		  
+		  Dim JSON As String
 		  #if UseMBS
 		    Dim Temp As JSONMBS = JSONMBS.Convert(Source)
-		    Return Temp.ToString(Pretty)
+		    JSON = Temp.ToString(False)
 		  #else
-		    Return Xojo.GenerateJSON(Source)
+		    JSON = Xojo.GenerateJSON(Source)
 		  #endif
+		  If Pretty Then
+		    Const Indent = &h09
+		    Const EOL = &h0A
+		    
+		    Dim Indents As UInteger
+		    Dim AddAsIs, InQuote As Boolean
+		    
+		    Dim Mem As MemoryBlock = JSON
+		    Dim Out As New MemoryBlock(0)
+		    Dim Bound As UInteger = Mem.Size - 1
+		    Dim Offset As UInteger
+		    For Pos As UInteger = 0 To Bound
+		      Dim Char As UInt8 = Mem.UInt8Value(Pos)
+		      If Out.Size < Offset + 512 Then
+		        Out.Size = Out.Size + 1024
+		      End If
+		      
+		      If AddAsIs Then
+		        Out.UInt8Value(Offset) = Char
+		        Offset = Offset + 1
+		        AddAsIs = False
+		      ElseIf Char = &h22 Then
+		        Out.UInt8Value(Offset) = Char
+		        Offset = Offset + 1
+		        InQuote = Not InQuote
+		      ElseIf InQuote Then
+		        Out.UInt8Value(Offset) = Char
+		        Offset = Offset + 1
+		        If Char = &h5C Then
+		          AddAsIs = True
+		        End If
+		      ElseIf Char = &h7B Or Char = &h5B Then
+		        Indents = Indents + 1
+		        Out.UInt8Value(Offset) = Char
+		        Offset = Offset + 1
+		        Out.UInt8Value(Offset) = EOL
+		        Offset = Offset + 1
+		        For I As UInteger = 1 To Indents
+		          Out.UInt8Value(Offset) = Indent
+		          Offset = Offset + 1
+		        Next
+		      ElseIf Char = &h7D Or Char = &h5D Then
+		        Indents = Indents - 1
+		        Out.UInt8Value(Offset) = EOL
+		        Offset = Offset + 1
+		        For I As UInteger = 1 To Indents
+		          Out.UInt8Value(Offset) = Indent
+		          Offset = Offset + 1
+		        Next
+		        Out.UInt8Value(Offset) = Char
+		        Offset = Offset + 1
+		      ElseIf Char = &h2C Then
+		        Out.UInt8Value(Offset) = Char
+		        Offset = Offset + 1
+		        Out.UInt8Value(Offset) = EOL
+		        Offset = Offset + 1
+		        For I As UInteger = 1 To Indents
+		          Out.UInt8Value(Offset) = Indent
+		          Offset = Offset + 1
+		        Next
+		      ElseIf Char = &h3A Then
+		        Out.UInt8Value(Offset) = Char
+		        Offset = Offset + 1
+		        Out.UInt8Value(Offset) = &h20
+		        Offset = Offset + 1
+		      ElseIf Char = &h0A Or Char = &h0D Or Char = &h20 Or Char = &h09 Then
+		        // Skip it
+		      Else
+		        Out.UInt8Value(Offset) = Char
+		        Offset = Offset + 1
+		      End If
+		    Next
+		    
+		    JSON = Out.StringValue(0, Offset).DefineEncoding(Encodings.UTF8).ReplaceLineEndings(EndOfLine)
+		  End If
+		  Return JSON
 		End Function
 	#tag EndMethod
 
