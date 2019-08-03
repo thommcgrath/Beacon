@@ -67,7 +67,7 @@ Inherits Global.Thread
 		      
 		      If Line.BeginsWith("[") And Line.EndsWith("]") Then
 		        // This is a group header
-		        LastGroupHeader = Line.SubString(1, Line.Length - 2)
+		        LastGroupHeader = Line.Middle(1, Line.Length - 2)
 		        Continue
 		      End If
 		      
@@ -127,9 +127,9 @@ Inherits Global.Thread
 		        Dim BuildLines() As String = BeaconDict.Value("Build")
 		        Dim BuildLine As String = BuildLines(0)
 		        Dim ValuePos As Integer = BuildLine.IndexOf("=") + 1
-		        Dim Value As String = BuildLine.SubString(ValuePos)
+		        Dim Value As String = BuildLine.Middle(ValuePos)
 		        If Value.BeginsWith("""") And Value.EndsWith("""") Then
-		          Value = Value.SubString(1, Value.Length - 2)
+		          Value = Value.Middle(1, Value.Length - 2)
 		        End If
 		        BeaconGroupVersion = Val(Value)
 		      End If
@@ -156,18 +156,18 @@ Inherits Global.Thread
 		            If BeaconGroupVersion > 10103300 Then
 		              Dim HeaderStartPos As Integer = KeyLine.IndexOf(13, "Section=""") + 9
 		              Dim HeaderEndPos As Integer = KeyLine.IndexOf(HeaderStartPos, """")
-		              Header = KeyLine.SubString(HeaderStartPos, HeaderEndPos - HeaderStartPos)
+		              Header = KeyLine.Middle(HeaderStartPos, HeaderEndPos - HeaderStartPos)
 		              If Not UntouchedConfigs.HasKey(Header) Then
 		                Continue
 		              End If
 		              
 		              Dim ArrayStartPos As Integer = KeyLine.IndexOf(13, "Keys=(") + 6
 		              Dim ArrayEndPos As Integer = KeyLine.IndexOf(ArrayStartPos, ")")
-		              ArrayTextContent = KeyLine.SubString(ArrayStartPos, ArrayEndPos - ArrayStartPos)
+		              ArrayTextContent = KeyLine.Middle(ArrayStartPos, ArrayEndPos - ArrayStartPos)
 		            Else
 		              Dim HeaderPos As Integer = KeyLine.IndexOf("['") + 2
 		              Dim HeaderEndPos As Integer = KeyLine.IndexOf(HeaderPos, "']")
-		              Header = KeyLine.SubString(HeaderPos, HeaderEndPos - HeaderPos)
+		              Header = KeyLine.Middle(HeaderPos, HeaderEndPos - HeaderPos)
 		              If Not UntouchedConfigs.HasKey(Header) Then
 		                Continue
 		              End If

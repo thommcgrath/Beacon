@@ -258,9 +258,9 @@ Protected Module Beacon
 		  Const CR = &u0D
 		  Const LF = &u0A
 		  
-		  If Source.InStr(CR + LF) > 0 Then
+		  If Source.IndexOf(CR + LF) > -1 Then
 		    Return CR + LF
-		  ElseIf Source.InStr(CR) > 0 Then
+		  ElseIf Source.IndexOf(CR) > -1 Then
 		    Return CR
 		  Else
 		    Return LF
@@ -420,7 +420,7 @@ Protected Module Beacon
 		    
 		    For Each Encoding As TextEncoding In EncodingsList
 		      Dim TestVersion As String = Value.DefineEncoding(Encoding)
-		      If TestVersion.InStr(TestValue) > 0 Then
+		      If TestVersion.IndexOf(TestValue) > -1 Then
 		        Return TestVersion.ConvertEncoding(Encodings.UTF8)
 		      End If
 		    Next

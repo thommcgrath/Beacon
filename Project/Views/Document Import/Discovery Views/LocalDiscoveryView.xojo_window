@@ -495,12 +495,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function DetectConfigType(Content As String, File As FolderItem = Nil) As ConfigFileType
-		  Dim GameIniPos As Integer = Content.InStr(Beacon.ShooterGameHeader)
-		  Dim SettingsIniPos As Integer = Content.InStr(Beacon.ServerSettingsHeader)
+		  Dim GameIniPos As Integer = Content.IndexOf(Beacon.ShooterGameHeader)
+		  Dim SettingsIniPos As Integer = Content.IndexOf(Beacon.ServerSettingsHeader)
 		  
-		  If GameIniPos > 0 And SettingsIniPos = 0 Then
+		  If GameIniPos > -1 And SettingsIniPos = -1 Then
 		    Return ConfigFileType.GameIni
-		  ElseIf SettingsIniPos > 0 And GameIniPos = 0 Then
+		  ElseIf SettingsIniPos > -1 And GameIniPos = -1 Then
 		    Return ConfigFileType.GameUserSettingsIni
 		  ElseIf File <> Nil Then
 		    Select Case File.Name

@@ -599,7 +599,7 @@ End
 		    Return
 		  End Select
 		  
-		  If Board.Text.InStr(SearchingFor) <= 0 Then
+		  If Board.Text.IndexOf(SearchingFor) <= -1 Then
 		    Self.SetClipboardButtonCaption(False, Self.RewriteClipboard)
 		    Return
 		  End If
@@ -946,7 +946,7 @@ End
 		  End Try
 		  Content = Content.GuessEncoding
 		  
-		  If Content.InStr(RequiredHeader) <= 0 Then
+		  If Content.IndexOf(RequiredHeader) <= -1 Then
 		    Self.ShowAlert("Incorrect ini file detected.", "Beacon is expecting to find the " + RequiredHeader + " header in this file before rewriting, but cannot find it. Make sure you select the correct file config file.")
 		    Return
 		  End If

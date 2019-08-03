@@ -204,13 +204,13 @@ Implements Beacon.DeploymentEngine
 		        Continue
 		      End If
 		      
-		      Dim Year As Integer = Val(Line.SubString(1, 4))
-		      Dim Month As Integer = Val(Line.SubString(6, 2))
-		      Dim Day As Integer = Val(Line.SubString(9, 2))
-		      Dim Hour As Integer = Val(Line.SubString(12, 2))
-		      Dim Minute As Integer = Val(Line.SubString(15, 2))
-		      Dim Second As Integer = Val(Line.SubString(18, 2))
-		      Dim Nanosecond As Integer = (Val(Line.SubString(21, 3)) / 1000) * 1000000000
+		      Dim Year As Integer = Val(Line.Middle(1, 4))
+		      Dim Month As Integer = Val(Line.Middle(6, 2))
+		      Dim Day As Integer = Val(Line.Middle(9, 2))
+		      Dim Hour As Integer = Val(Line.Middle(12, 2))
+		      Dim Minute As Integer = Val(Line.Middle(15, 2))
+		      Dim Second As Integer = Val(Line.Middle(18, 2))
+		      Dim Nanosecond As Integer = (Val(Line.Middle(21, 3)) / 1000) * 1000000000
 		      
 		      Self.mServerStopTime = New Date(Year, Month, Day, Hour, Minute, Second, Nanosecond, New TimeZone(0))
 		      TimestampFound = True

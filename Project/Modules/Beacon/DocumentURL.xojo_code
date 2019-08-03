@@ -193,7 +193,7 @@ Protected Class DocumentURL
 
 	#tag Method, Flags = &h0
 		Function WithScheme(NewScheme As String) As Beacon.DocumentURL
-		  Return NewScheme + Self.mOriginalURL.SubString(Self.mScheme.Length)
+		  Return NewScheme + Self.mOriginalURL.Middle(Self.mScheme.Length)
 		End Function
 	#tag EndMethod
 

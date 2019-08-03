@@ -308,7 +308,7 @@ Inherits Beacon.ConfigGroup
 		    
 		    Dim Prefix As String = Input.Left(StartPos)
 		    Dim Suffix As String = Input.Right(Input.Length - EndPos)
-		    Dim EncryptedContent As String = Input.SubString(StartPos, EndPos - StartPos)
+		    Dim EncryptedContent As String = Input.Middle(StartPos, EndPos - StartPos)
 		    Dim DecryptedContent As String = Self.Decrypt(EncryptedContent, Identity)
 		    
 		    If DecryptedContent = "" Then
@@ -348,7 +348,7 @@ Inherits Beacon.ConfigGroup
 		    
 		    Dim Prefix As String = Input.Left(StartPos)
 		    Dim Suffix As String = Input.Right(Input.Length - EndPos)
-		    Dim DecryptedContent As String = Input.SubString(StartPos, EndPos - StartPos)
+		    Dim DecryptedContent As String = Input.Middle(StartPos, EndPos - StartPos)
 		    Dim EncryptedContent As String = Self.Encrypt(DecryptedContent, Identity)
 		    
 		    Input = Prefix + EncryptedContent + Suffix

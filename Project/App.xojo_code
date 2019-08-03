@@ -719,13 +719,13 @@ Implements NotificationKit.Receiver
 		Private Sub mHandoffSocket_DataAvailable(Sender As IPCSocket)
 		  Do
 		    Dim Buffer As String = DefineEncoding(Sender.Lookahead, Encodings.UTF8)
-		    Dim Pos As Integer = Buffer.InStr(Chr(0))
-		    If Pos = 0 Then
+		    Dim Pos As Integer = Buffer.IndexOf(Chr(0))
+		    If Pos = -1 Then
 		      Exit
 		    End If
 		    
 		    Dim Command As String = DefineEncoding(Sender.Read(Pos), Encodings.UTF8)
-		    Command = Command.Left(Command.Len - 1) // Drop the null byte
+		    Command = Command.Left(Command.Len) // Drop the null byte
 		    Self.Log("Received command line data: " + Command)
 		    Self.HandleCommandLineData(Command, False)
 		  Loop

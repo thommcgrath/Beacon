@@ -923,7 +923,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        EngramsUpdated = Self.ImportCloudEngrams() Or EngramsUpdated
 		      End Select
 		    ElseIf RemotePath.BeginsWith("/Presets") Then
-		      Dim PresetID As String = RemotePath.SubString(8, 36)
+		      Dim PresetID As String = RemotePath.Middle(8, 36)
 		      Select Case Action.Value("Action")
 		      Case "DELETE"
 		        Self.BeginTransaction()

@@ -492,13 +492,13 @@ Inherits ControlCanvas
 			  Try
 			    Dim RequireStartPos As Integer = Value.IndexOf("(")
 			    Dim RequireEndPos As Integer = Value.IndexOf(RequireStartPos, ")")
-			    RequirePhrase = Value.SubString(RequireStartPos + 2, RequireEndPos - (RequireStartPos + 3))
+			    RequirePhrase = Value.Middle(RequireStartPos + 2, RequireEndPos - (RequireStartPos + 3))
 			    
 			    If RequireStartPos > -1 And RequireEndPos > -1 Then
 			      Dim ExcludeStartPos As Integer = Value.IndexOf(RequireEndPos, "(")
 			      If ExcludeStartPos > -1 Then
 			        Dim ExcludeEndPos As Integer = Value.IndexOf(ExcludeStartPos, ")")
-			        ExcludePhrase = Value.SubString(ExcludeStartPos + 2, ExcludeEndPos - (ExcludeStartPos + 3))
+			        ExcludePhrase = Value.Middle(ExcludeStartPos + 2, ExcludeEndPos - (ExcludeStartPos + 3))
 			      End If
 			      
 			      RequiredTags = RequirePhrase.Split(""" AND """)

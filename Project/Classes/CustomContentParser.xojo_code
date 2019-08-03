@@ -24,7 +24,7 @@ Protected Class CustomContentParser
 		  End If
 		  
 		  If Line.BeginsWith("[") And Line.EndsWith("]") Then
-		    Self.mCurrentHeader = Line.SubString(1, Line.Length - 2)
+		    Self.mCurrentHeader = Line.Middle(1, Line.Length - 2)
 		    Self.mSkippedKeys = Self.GetSkippedKeys(Self.mCurrentHeader, Self.mExistingConfigs)
 		  End If
 		  
@@ -34,7 +34,7 @@ Protected Class CustomContentParser
 		  
 		  If Line.BeginsWith("#Server ") Or Line.BeginsWith("#Servers ") Then
 		    Dim Pos As Integer = Line.IndexOf(7, " ") + 1
-		    Dim Def As String = Line.SubString(Pos).Trim
+		    Dim Def As String = Line.Middle(Pos).Trim
 		    Dim ProfileIDs() As String = Def.Split(",")
 		    Self.mDiscardNestedParser = True
 		    If Self.mProfile <> Nil Then
@@ -61,7 +61,7 @@ Protected Class CustomContentParser
 		    Return Nil
 		  End If
 		  
-		  Dim Value As String = Line.SubString(KeyPos + 1).Trim
+		  Dim Value As String = Line.Middle(KeyPos + 1).Trim
 		  Self.mValues.Append(New Beacon.ConfigValue(Self.mCurrentHeader, Key, Value))
 		  Return Nil
 		End Function
