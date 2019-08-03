@@ -13,7 +13,7 @@ foreach ($components as $component) {
 $prohibited_path = '/' . BeaconAPI::UserID() . '/Documents/';
 $prohibited_path_len = strlen($prohibited_path);
 if (substr($remote_path, 0, $prohibited_path_len) === $prohibited_path) {
-	BeaconAPI::ReplyError('Use the document API for accessing documents');
+	BeaconAPI::ReplyError('Use the document API for accessing documents', null, 446);
 }
 
 switch ($method) {
