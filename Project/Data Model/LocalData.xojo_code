@@ -1737,10 +1737,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      GreenHex = HexColor.Middle(2, 2)
 		      BlueHex = HexColor.Middle(4, 2)
 		    ElseIf HexColor.Length = 8 Then
-		      RedHex = HexColor.Middle(1, 2)
-		      GreenHex = HexColor.Middle(3, 2)
-		      BlueHex = HexColor.Middle(5, 2)
-		      AlphaHex = HexColor.Middle(7, 2)
+		      RedHex = HexColor.Middle(0, 2)
+		      GreenHex = HexColor.Middle(2, 2)
+		      BlueHex = HexColor.Middle(4, 2)
+		      AlphaHex = HexColor.Middle(6, 2)
 		    End If
 		    
 		    Dim Requirements As Dictionary
