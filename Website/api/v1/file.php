@@ -10,16 +10,28 @@ foreach ($components as $component) {
 	$remote_path .= '/' . urlencode($component);
 }
 
+$prohibited_path = '/' . BeaconAPI::UserID() . '/Documents/';
+$prohibited_path_len = strlen($prohibited_path);
+if (substr($remote_path, 0, $prohibited_path_len) === $prohibited_path) {
+	BeaconAPI::ReplyError('Use the document API for accessing documents');
+}
+
 switch ($method) {
 case 'GET':
 	$dir = substr($remote_path, -1, 1) === '/';
 	if ($dir) {
 		$prefix_len = strlen('/' . BeaconAPI::UserID());
 		$list = BeaconCloudStorage::ListFiles($remote_path);
-		for ($i = 0; $i < count($list); $i++) {
-			$list[$i]['path'] = substr($list[$i]['path'], $prefix_len);
+		$filtered = array();
+		foreach ($list as $file) {
+			if (substr($file['path'], 0, $prohibited_path_len) === $prohibited_path) {
+				continue;
+			}
+			
+			$file['path'] = substr($file['path'], $prefix_len);
+			$filtered[] = $file;
 		}
-		BeaconAPI::ReplySuccess($list);
+		BeaconAPI::ReplySuccess($filtered);
 	} else {
 		BeaconCloudStorage::StreamFile($remote_path);
 	}
