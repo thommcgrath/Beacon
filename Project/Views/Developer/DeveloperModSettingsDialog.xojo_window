@@ -372,7 +372,7 @@ End
 		  Dim Payload As String = Beacon.GenerateJSON(Self.WorkshopMod.AsDictionary, False)
 		  
 		  Dim Request As New BeaconAPI.Request("mod.php", "POST", Payload, "application/json", AddressOf APICallback_SaveMod)
-		  Request.Sign(App.IdentityManager.CurrentIdentity)
+		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndEvent

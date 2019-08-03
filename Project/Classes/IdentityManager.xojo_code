@@ -200,7 +200,7 @@ Protected Class IdentityManager
 		  MergeKeys.Value("signature") = Signature
 		  
 		  Dim Request As New BeaconAPI.Request("user", "POST", Beacon.GenerateJSON(MergeKeys, False), "application/json", AddressOf APICallback_MergeUser)
-		  Request.Sign(Destination)
+		  Request.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndMethod

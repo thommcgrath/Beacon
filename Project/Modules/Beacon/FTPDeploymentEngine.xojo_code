@@ -143,7 +143,7 @@ Implements Beacon.DeploymentEngine
 		  Self.mStatus = "Downloading Game.ini…"
 		  
 		  Dim Request As New BeaconAPI.Request("ftp", "GET", Self.BuildFTPParameters(Self.mProfile.GameIniPath), AddressOf Callback_DownloadGameIni)
-		  Request.Sign(Self.mIdentity)
+		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.mSocket.Start(Request)
 		End Sub
 	#tag EndMethod
@@ -153,7 +153,7 @@ Implements Beacon.DeploymentEngine
 		  Self.mStatus = "Downloading GameUserSettings.ini…"
 		  
 		  Dim Request As New BeaconAPI.Request("ftp", "GET", Self.BuildFTPParameters(Self.mProfile.GameUserSettingsIniPath), AddressOf Callback_DownloadGameUserSettingsIni)
-		  Request.Sign(Self.mIdentity)
+		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.mSocket.Start(Request)
 		End Sub
 	#tag EndMethod
@@ -183,7 +183,7 @@ Implements Beacon.DeploymentEngine
 		  
 		  Self.mStatus = "Uploading Game.ini"
 		  Dim Request As New BeaconAPI.Request("ftp?" + SimpleHTTP.BuildFormData(Self.BuildFTPParameters(Self.mProfile.GameIniPath)), "POST", Content, "text/plain", AddressOf Callback_UploadGameIni)
-		  Request.Sign(Self.mIdentity)
+		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.mSocket.Start(Request)
 		End Sub
 	#tag EndMethod
@@ -199,7 +199,7 @@ Implements Beacon.DeploymentEngine
 		  
 		  Self.mStatus = "Uploading GameUserSettings.ini"
 		  Dim Request As New BeaconAPI.Request("ftp?" + SimpleHTTP.BuildFormData(Self.BuildFTPParameters(Self.mProfile.GameUserSettingsIniPath)), "POST", Content, "text/plain", AddressOf Callback_UploadGameUserSettingsIni)
-		  Request.Sign(Self.mIdentity)
+		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.mSocket.Start(Request)
 		End Sub
 	#tag EndMethod

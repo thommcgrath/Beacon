@@ -702,7 +702,7 @@ End
 		  Next
 		  
 		  Dim Request As New BeaconAPI.Request("engram.php", "DELETE", UIDs.Join(","), "text/plain", AddressOf APICallback_EngramsDelete)
-		  Request.Sign(App.IdentityManager.CurrentIdentity)
+		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.Socket.Start(Request)
 		  
 		  Return True
@@ -810,7 +810,7 @@ End
 		  
 		  Dim Content As String = Beacon.GenerateJSON(Dicts, False)
 		  Dim Request As New BeaconAPI.Request("engram.php", "POST", Content, "application/json", AddressOf APICallback_EngramsPost)
-		  Request.Sign(App.IdentityManager.CurrentIdentity)
+		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.Socket.Start(Request)
 		  
 		  Return True
@@ -983,7 +983,7 @@ End
 		  Panel.SelectedPanelIndex = PageLoading
 		  
 		  Dim Request As New BeaconAPI.Request(Self.CurrentMod.ConfirmURL, "GET", AddressOf APICallback_ConfirmMod)
-		  Request.Sign(App.IdentityManager.CurrentIdentity)
+		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndEvent

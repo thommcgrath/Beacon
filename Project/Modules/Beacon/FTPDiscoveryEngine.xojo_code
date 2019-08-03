@@ -120,7 +120,7 @@ Implements Beacon.DiscoveryEngine
 	#tag Method, Flags = &h21
 		Private Sub DiscoverServer()
 		  Dim DiscoveryRequest As New BeaconAPI.Request("ftp/discover", "GET", Self.BuildFTPParameters(Self.mInitialPath), AddressOf Callback_DiscoverServer)
-		  DiscoveryRequest.Sign(Self.mIdentity)
+		  DiscoveryRequest.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(DiscoveryRequest)
 		End Sub
 	#tag EndMethod
@@ -128,7 +128,7 @@ Implements Beacon.DiscoveryEngine
 	#tag Method, Flags = &h21
 		Private Sub DownloadGameIni()
 		  Dim SettingsRequest As New BeaconAPI.Request("ftp", "GET", Self.BuildFTPParameters(Self.mProfile.GameIniPath), AddressOf Callback_DownloadGameIni)
-		  SettingsRequest.Sign(Self.mIdentity)
+		  SettingsRequest.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(SettingsRequest)
 		End Sub
 	#tag EndMethod
@@ -136,7 +136,7 @@ Implements Beacon.DiscoveryEngine
 	#tag Method, Flags = &h21
 		Private Sub DownloadGameUserSettingsIni()
 		  Dim SettingsRequest As New BeaconAPI.Request("ftp", "GET", Self.BuildFTPParameters(Self.mProfile.GameUserSettingsIniPath), AddressOf Callback_DownloadGameUserSettingsIni)
-		  SettingsRequest.Sign(Self.mIdentity)
+		  SettingsRequest.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(SettingsRequest)
 		End Sub
 	#tag EndMethod

@@ -344,7 +344,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub RefreshMods()
 		  Dim Request As New BeaconAPI.Request("mod", "GET", AddressOf APICallback_ListMods)
-		  Request.Sign(App.IdentityManager.CurrentIdentity)
+		  Request.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndMethod
@@ -402,7 +402,7 @@ End
 		    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
 		    If Choice = Dialog.ActionButton Then
 		      Dim Request As New BeaconAPI.Request(Self.SelectedMod.ResourceURL, "DELETE", AddressOf APICallback_DeleteMod)
-		      Request.Sign(App.IdentityManager.CurrentIdentity)
+		      Request.Authenticate(Preferences.OnlineToken)
 		      BeaconAPI.Send(Request)
 		    End If
 		  Case "SettingsButton"

@@ -578,8 +578,8 @@ End
 		    Dim Params As New Dictionary
 		    Params.Value("user_id") = App.IdentityManager.CurrentIdentity.Identifier
 		    
-		    Dim Request As New BeaconAPI.Request("document.php", "GET", Params, AddressOf APICallback_CloudDocumentsList)
-		    Request.Sign(App.IdentityManager.CurrentIdentity)
+		    Dim Request As New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_CloudDocumentsList)
+		    Request.Authenticate(Preferences.OnlineToken)
 		    Self.APISocket.Start(Request)
 		  Else
 		    Redim Self.mCloudDocuments(-1)

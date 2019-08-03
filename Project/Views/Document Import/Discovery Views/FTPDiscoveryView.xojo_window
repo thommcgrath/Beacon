@@ -1278,7 +1278,7 @@ End
 		  Me.AppendChildren(Empty)
 		  
 		  Dim Request As New BeaconAPI.Request("ftp", "GET", Fields, WeakAddressOf APICallback_ListPath)
-		  Request.Sign(App.IdentityManager.CurrentIdentity)
+		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.BrowseSocket.Start(Request)
 		End Sub
 	#tag EndEvent
@@ -1319,7 +1319,7 @@ End
 		  
 		  Dim Fields As Dictionary = Self.FormDataFromProfile()
 		  Dim Request As New BeaconAPI.Request("ftp/path", "GET", Fields, WeakAddressOf APICallback_DetectPath)
-		  Request.Sign(App.IdentityManager.CurrentIdentity)
+		  Request.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndEvent

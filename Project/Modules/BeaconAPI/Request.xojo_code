@@ -118,7 +118,7 @@ Protected Class Request
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub ReplyCallback(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		Delegate Sub ReplyCallback(Request As BeaconAPI . Request, Response As BeaconAPI . Response)
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
