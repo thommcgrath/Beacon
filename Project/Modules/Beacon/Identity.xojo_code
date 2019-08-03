@@ -149,7 +149,7 @@ Protected Class Identity
 		      Dim Salt As MemoryBlock = DecodeHex(Dict.Value("private_key_salt"))
 		      Dim Iterations As Integer = Dict.Value("private_key_iterations")
 		      Dim Key As MemoryBlock = Crypto.PBKDF2(Salt, Password, Iterations, 56, Crypto.Algorithm.SHA512)
-		      Dim Decrypted As MemoryBlock = BeaconEncryption.SymmetricDecrypt(Key, Dict.Value("private_key"))
+		      Dim Decrypted As MemoryBlock = BeaconEncryption.SymmetricDecrypt(Key, DecodeHex(Dict.Value("private_key")))
 		      PrivateKey = BeaconEncryption.PEMDecodePrivateKey(Decrypted)
 		    Catch Err As RuntimeException
 		      Return Nil
