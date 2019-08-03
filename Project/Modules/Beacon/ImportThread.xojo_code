@@ -33,8 +33,7 @@ Inherits Beacon.Thread
 		      If Value = Nil Then
 		        Continue
 		      End If
-		      Dim ValueInfo As Introspection.TypeInfo = Introspection.GetType(Value)
-		      If ValueInfo.FullName <> "Beacon.Pair" Then
+		      If Value.Type <> Variant.TypeObject Or Value IsA Beacon.Pair = False Then
 		        Continue
 		      End If
 		      
@@ -43,15 +42,14 @@ Inherits Beacon.Thread
 		      
 		      If Self.mParsedData.HasKey(Key) Then
 		        Dim ExistingValue As Variant = Self.mParsedData.Value(Key)
-		        Dim TypeInfo As Introspection.TypeInfo = Introspection.GetType(ExistingValue)
 		        
 		        Dim ValueArray() As Variant
-		        If TypeInfo.IsArray Then
+		        If ExistingValue.IsArray Then
 		          ValueArray = ExistingValue
 		        Else
-		          ValueArray.Append(ExistingValue)
+		          ValueArray.AddRow(ExistingValue)
 		        End If
-		        ValueArray.Append(Value)
+		        ValueArray.AddRow(Value)
 		        Self.mParsedData.Value(Key) = ValueArray
 		      Else
 		        Self.mParsedData.Value(Key) = Value
@@ -169,17 +167,11 @@ Inherits Beacon.Thread
 		    Return Nil
 		  End If
 		  
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Input)
-		  Select Case Info.FullName
-		  Case "Beacon.Pair"
-		    Dim Original As Beacon.Pair = Input
-		    Return New Beacon.Pair(Original.Key, ToXojoType(Original.Value))
-		  Case "Auto()"
+		  If Input.IsArray And Input.ArrayElementType = Variant.TypeObject Then
 		    Dim ArrayValue() As Variant = Input
 		    Dim IsDict As Boolean = True
 		    For Each Item As Variant In ArrayValue
-		      Dim ItemInfo As Introspection.TypeInfo = Introspection.GetType(Item)
-		      IsDict = IsDict And ItemInfo.FullName = "Beacon.Pair"
+		      IsDict = IsDict And Item.Type = Variant.TypeObject And Item.ObjectValue IsA Beacon.Pair
 		    Next
 		    If IsDict Then
 		      Dim Dict As New Dictionary
@@ -194,14 +186,22 @@ Inherits Beacon.Thread
 		      Next
 		      Return Items
 		    End If
-		  Case "String"
-		    Dim StringValue As String = Input
+		  End If
+		  
+		  Select Case Input.Type
+		  Case Variant.TypeObject
+		    Dim ObjectValue As Object = Input.ObjectValue
+		    Select Case ObjectValue
+		    Case IsA Beacon.Pair
+		      Dim Original As Beacon.Pair = Input
+		      Return New Beacon.Pair(Original.Key, ToXojoType(Original.Value))
+		    End Select
+		  Case Variant.TypeString
+		    Dim StringValue As String = Input.StringValue
 		    If StringValue = "true" Then
 		      Return True
 		    ElseIf StringValue = "false" Then
 		      Return False
-		    ElseIf StringValue = "" Then
-		      Return ""
 		    Else
 		      Dim IsNumeric As Boolean = True
 		      Dim DecimalPoints As Integer
@@ -224,15 +224,80 @@ Inherits Beacon.Thread
 		      Next
 		      If IsNumeric Then
 		        // Number
-		        Return Val(StringValue)
+		        Return Double.FromString(StringValue)
 		      Else
-		        // Probably Text
+		        // Probably String
 		        Return StringValue
 		      End If
 		    End If
-		  Else
-		    Break
 		  End Select
+		  
+		  #if false
+		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Input)
+		    Select Case Info.FullName
+		    Case "Beacon.Pair"
+		      Dim Original As Beacon.Pair = Input
+		      Return New Beacon.Pair(Original.Key, ToXojoType(Original.Value))
+		    Case "Auto()"
+		      Dim ArrayValue() As Variant = Input
+		      Dim IsDict As Boolean = True
+		      For Each Item As Variant In ArrayValue
+		        Dim ItemInfo As Introspection.TypeInfo = Introspection.GetType(Item)
+		        IsDict = IsDict And ItemInfo.FullName = "Beacon.Pair"
+		      Next
+		      If IsDict Then
+		        Dim Dict As New Dictionary
+		        For Each Item As Beacon.Pair In ArrayValue
+		          Dict.Value(Item.Key) = ToXojoType(Item.Value)
+		        Next
+		        Return Dict
+		      Else
+		        Dim Items() As Variant
+		        For Each Item As Variant In ArrayValue
+		          Items.Append(ToXojoType(Item))
+		        Next
+		        Return Items
+		      End If
+		    Case "String"
+		      Dim StringValue As String = Input
+		      If StringValue = "true" Then
+		        Return True
+		      ElseIf StringValue = "false" Then
+		        Return False
+		      ElseIf StringValue = "" Then
+		        Return ""
+		      Else
+		        Dim IsNumeric As Boolean = True
+		        Dim DecimalPoints As Integer
+		        Dim Characters() As String = StringValue.Split("")
+		        For Each Char As String In Characters
+		          Select Case Char
+		          Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
+		            // Still a Number
+		          Case "."
+		            If DecimalPoints = 1 Then
+		              IsNumeric = False
+		              Exit
+		            Else
+		              DecimalPoints = 1
+		            End If
+		          Else
+		            IsNumeric = False
+		            Exit
+		          End Select
+		        Next
+		        If IsNumeric Then
+		          // Number
+		          Return Val(StringValue)
+		        Else
+		          // Probably Text
+		          Return StringValue
+		        End If
+		      End If
+		    Else
+		      Break
+		    End Select
+		  #endif
 		End Function
 	#tag EndMethod
 

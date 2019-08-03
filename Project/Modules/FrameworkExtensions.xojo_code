@@ -49,53 +49,6 @@ Protected Module FrameworkExtensions
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function AutoToDouble(Value As Variant, ResolveWithFirst As Boolean = False) As Double
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
-		  Select Case Info.FullName
-		  Case "String"
-		    Dim StringValue As String = Value
-		    If StringValue = "" Then
-		      Return 0
-		    Else
-		      Return Double.FromString(StringValue)
-		    End If
-		  Case "Double"
-		    Dim DoubleValue As Double = Value
-		    Return DoubleValue
-		  Case "Single"
-		    Dim SingleValue As Single = Value
-		    Return SingleValue
-		  Case "Int8", "Int16", "Int32", "Int64"
-		    Dim IntegerValue As Int64 = Value
-		    Return IntegerValue
-		  Case "UInt8", "UInt16", "UInt32", "UInt64"
-		    Dim UIntegerValue As UInt64 = Value
-		    Return UIntegerValue
-		  Case "Auto()"
-		    Dim Arr() As Variant = Value
-		    Dim Possibles() As Double
-		    For Each Possible As Variant In Arr
-		      Dim Decoded As Double = AutoToDouble(Possible, ResolveWithFirst)
-		      Possibles.Append(Decoded)
-		    Next
-		    If Possibles.LastRowIndex = -1 Then
-		      Return 0
-		    End If
-		    If ResolveWithFirst Then
-		      Return Possibles(0)
-		    Else
-		      Return Possibles(Possibles.LastRowIndex)
-		    End If
-		  Else
-		    Break
-		  End Select
-		  
-		  Exception Err As TypeMismatchException
-		    Return 0
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function Characters(Extends Source As String) As String()
 		  Return Split(Source, "")
@@ -215,7 +168,7 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function DoubleValue(Extends Dict As Dictionary, Key As Variant, ResolveWithFirst As Boolean = False) As Double
 		  Dim Value As Variant = Dict.Value(Key)
-		  Return AutoToDouble(Value, ResolveWithFirst)
+		  Return VariantToDouble(Value, ResolveWithFirst)
 		End Function
 	#tag EndMethod
 
@@ -485,6 +438,58 @@ Protected Module FrameworkExtensions
 		  Dim Now As New Date
 		  Dim Future As Date = Now + Interval
 		  Return Future.SecondsFrom1970 - Now.SecondsFrom1970
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function VariantToDouble(Value As Variant, ResolveWithFirst As Boolean = False) As Double
+		  If Value = Nil Then
+		    Return 0
+		  End If
+		  
+		  If Value.IsArray Then
+		    Dim Elements() As Variant
+		    Try
+		      Elements = Value
+		    Catch Err As RuntimeException
+		    End Try
+		    
+		    Dim Possibles() As Double
+		    For Each Possible As Variant In Elements
+		      Dim Decoded As Double = VariantToDouble(Possible, ResolveWithFirst)
+		      Possibles.Append(Decoded)
+		    Next
+		    If Possibles.LastRowIndex = -1 Then
+		      Return 0
+		    End If
+		    If ResolveWithFirst Then
+		      Return Possibles(0)
+		    Else
+		      Return Possibles(Possibles.LastRowIndex)
+		    End If
+		    
+		    Return 0
+		  End If
+		  
+		  // Try the simple thing
+		  Try
+		    Return Value.DoubleValue
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Select Case Value.Type
+		  Case Variant.TypeText
+		    Return Double.FromText(Value.TextValue)
+		  Case Variant.TypeString
+		    Return Double.FromString(Value.TextValue)
+		  Case Variant.TypeInteger
+		    Return Value.IntegerValue
+		  Case Variant.TypeSingle
+		    Return Value.SingleValue
+		  End Select
+		  
+		  Exception Err As TypeMismatchException
+		    Return 0
 		End Function
 	#tag EndMethod
 
