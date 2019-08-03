@@ -74,12 +74,12 @@ Protected Class IdentityManager
 		      Dim Identity As Beacon.Identity
 		      If Self.mUserPassword <> "" Then
 		        Identity = Beacon.Identity.FromUserDictionary(Response.JSON, Self.mUserPassword)
-		        Self.CurrentIdentity = Identity
+		        Self.CurrentIdentity(False) = Identity
 		      ElseIf Self.CurrentIdentity <> Nil Then
 		        Identity = Self.CurrentIdentity.Clone
 		        If Identity.ConsumeUserDictionary(Response.JSON) Then
 		          Identity.Validate()
-		          Self.CurrentIdentity = Identity
+		          Self.CurrentIdentity(False) = Identity
 		        End If
 		      End If
 		      UserCloud.Sync() // Will only trigger is necessary
@@ -152,6 +152,45 @@ Protected Class IdentityManager
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function CurrentIdentity() As Beacon.Identity
+		  Return Self.mCurrentIdentity
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub CurrentIdentity(Assigns Value As Beacon.Identity)
+		  Self.CurrentIdentity(True) = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub CurrentIdentity(CheckSessionToken As Boolean, Assigns Value As Beacon.Identity)
+		  If Self.mCurrentIdentity = Value Then
+		    Return
+		  End If
+		  
+		  Dim OldUserID As String = If(Self.mCurrentIdentity <> Nil, Self.mCurrentIdentity.Identifier, "")
+		  Dim NewUserID As String = If(Value <> Nil, Value.Identifier, "")
+		  Dim ReplaceToken As Boolean = CheckSessionToken And OldUserID <> NewUserID
+		  
+		  Self.MergeIdentities(Value, Self.mCurrentIdentity)
+		  Self.mCurrentIdentity = Value
+		  Self.Write()
+		  NotificationKit.Post(Self.Notification_IdentityChanged, Self.mCurrentIdentity)
+		  
+		  If ReplaceToken Then
+		    Preferences.OnlineToken = ""
+		    
+		    If Not Preferences.OnlineEnabled Then
+		      Return
+		    End If
+		    
+		    Self.GetSessionToken()
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub FinishProcess()
 		  Self.mProcessCount = Self.mProcessCount - 1
@@ -165,8 +204,14 @@ Protected Class IdentityManager
 		Private Sub GetSessionToken()
 		  Self.StartProcess()
 		  
+		  Dim Identity As Beacon.Identity = Self.CurrentIdentity
+		  If Identity = Nil Then
+		    RaiseEvent NeedsLogin()
+		    Return
+		  End If
+		  
 		  Dim Request As New BeaconAPI.Request("session", "POST", AddressOf APICallback_GetSessionToken)
-		  Request.Sign(CurrentIdentity)
+		  Request.Sign(Identity)
 		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndMethod
@@ -260,44 +305,13 @@ Protected Class IdentityManager
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event NeedsLogin()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Started()
 	#tag EndHook
 
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mCurrentIdentity
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mCurrentIdentity = Value Then
-			    Return
-			  End If
-			  
-			  Dim OldUserID As String = If(Self.mCurrentIdentity <> Nil, Self.mCurrentIdentity.Identifier, "")
-			  Dim NewUserID As String = If(Value <> Nil, Value.Identifier, "")
-			  Dim ReplaceToken As Boolean = OldUserID <> NewUserID
-			  
-			  Self.MergeIdentities(Value, Self.mCurrentIdentity)
-			  Self.mCurrentIdentity = Value
-			  Self.Write()
-			  NotificationKit.Post(Self.Notification_IdentityChanged, Self.mCurrentIdentity)
-			  
-			  If ReplaceToken Then
-			    Preferences.OnlineToken = ""
-			    
-			    If Not Preferences.OnlineEnabled Then
-			      Return
-			    End If
-			    
-			    Self.GetSessionToken()
-			  End If
-			End Set
-		#tag EndSetter
-		CurrentIdentity As Beacon.Identity
-	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mCurrentIdentity As Beacon.Identity

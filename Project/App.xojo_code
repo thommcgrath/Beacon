@@ -118,6 +118,7 @@ Implements NotificationKit.Receiver
 		  
 		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
 		  Self.mIdentityManager = New IdentityManager(IdentityFile)
+		  AddHandler mIdentityManager.NeedsLogin, WeakAddressOf mIdentityManager_NeedsLogin
 		  
 		  Try
 		    Self.TemporarilyInstallFont(Self.ResourcesFolder.Child("Fonts").Child("SourceCodePro").Child("SourceCodePro-Regular.otf"))
@@ -739,6 +740,17 @@ Implements NotificationKit.Receiver
 		    Call CallLater.Schedule(100, AddressOf Sender.Listen)
 		  Else
 		    App.Log("IPC error " + Str(Code, "-0"))
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mIdentityManager_NeedsLogin(Sender As IdentityManager)
+		  #Pragma Unused Sender
+		  
+		  If Self.CurrentThread = Nil Then
+		    Dim WelcomeWindow As New UserWelcomeWindow
+		    WelcomeWindow.ShowModal()
 		  End If
 		End Sub
 	#tag EndMethod
