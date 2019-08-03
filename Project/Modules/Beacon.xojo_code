@@ -681,7 +681,14 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function ParseJSON(Source As String) As Variant
-		  Return Xojo.ParseJSON(Source)
+		  Const UseMBS = True
+		  
+		  #if UseMBS
+		    Dim Temp As New JSONMBS(Source)
+		    Return Temp.Convert
+		  #else
+		    Return Xojo.ParseJSON(Source)
+		  #endif
 		End Function
 	#tag EndMethod
 
