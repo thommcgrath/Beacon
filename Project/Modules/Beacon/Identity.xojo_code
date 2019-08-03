@@ -279,7 +279,7 @@ Protected Class Identity
 		  End If
 		  
 		  // Compare expirations
-		  Dim Now As New Date
+		  Dim Now As Date = Date.Now
 		  Dim Period As New DateInterval(30) // Yes, this says 30 years
 		  Dim SelfExpiration As Date
 		  If Self.mExpirationString <> "" Then
@@ -362,7 +362,7 @@ Protected Class Identity
 		    
 		    If Self.mExpirationString <> "" Then
 		      Dim Expires As Date = NewDateFromSQLDateTime(Self.mExpirationString)
-		      Dim Now As New Date
+		      Dim Now As Date = Date.Now
 		      If Now.SecondsFrom1970 < Expires.SecondsFrom1970 Then
 		        // Not Expired
 		        Fields.Append(Self.mExpirationString)

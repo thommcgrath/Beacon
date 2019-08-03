@@ -251,7 +251,7 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function LocalTime(Extends Source As Date) As Date
-		  Dim Now As New Date
+		  Dim Now As Date = Date.Now
 		  Return New Date(Source.SecondsFrom1970, Now.Timezone)
 		End Function
 	#tag EndMethod
@@ -317,7 +317,7 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function NewDateFromSQLDateTime(SQLDateTime As String) As Date
-		  Dim Now As New Date
+		  Dim Now As Date = Date.Now
 		  Now.SQLDateTimeWithOffset = SQLDateTime
 		  Return Now
 		End Function
@@ -435,7 +435,7 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function TotalSeconds(Extends Interval As DateInterval) As UInt64
-		  Dim Now As New Date
+		  Dim Now As Date = Date.Now
 		  Dim Future As Date = Now + Interval
 		  Return Future.SecondsFrom1970 - Now.SecondsFrom1970
 		End Function
