@@ -187,9 +187,16 @@ abstract class BeaconCloudStorage {
 		if ($curl === false) {
 			throw new Exception('Unable to get curl handle');
 		}
+		
+		$results = $database->Query('SELECT COUNT(attempts) AS objects_delayed FROM usercloud_queue WHERE attempts = 3;');
+		$objects_delayed = intval($results->Field('objects_delayed'));
+		
+		$database->BeginTransaction();
+		$database->Query('UPDATE usercloud_queue SET http_status = NULL WHERE http_status IS NOT NULL AND attempts < 3;');
+		$database->Commit();
 		while (true) {
 			$database->BeginTransaction();
-			$results = $database->Query('SELECT usercloud_queue.remote_path, usercloud_queue.request_method, usercloud.content_type FROM usercloud_queue LEFT JOIN usercloud ON (usercloud_queue.remote_path = usercloud.remote_path) WHERE usercloud_queue.hostname = $1 AND usercloud_queue.http_status IS NULL ORDER BY usercloud_queue.queue_time ASC LIMIT 1 FOR UPDATE OF usercloud_queue SKIP LOCKED;', $hostname);
+			$results = $database->Query('SELECT usercloud_queue.remote_path, usercloud_queue.request_method, usercloud.content_type FROM usercloud_queue LEFT JOIN usercloud ON (usercloud_queue.remote_path = usercloud.remote_path) WHERE usercloud_queue.hostname = $1 AND usercloud_queue.http_status IS NULL AND usercloud_queue.attempts < 3 ORDER BY usercloud_queue.queue_time ASC LIMIT 1 FOR UPDATE OF usercloud_queue SKIP LOCKED;', $hostname);
 			if ($results->RecordCount() == 0) {
 				$database->Rollback();
 				break;
@@ -238,19 +245,20 @@ abstract class BeaconCloudStorage {
 			if ($success) {
 				$database->Query('DELETE FROM usercloud_queue WHERE remote_path = $1 AND hostname = $2;', $remote_path, $hostname);
 			} else {
-				$database->Query('UPDATE usercloud_queue SET http_status = $3 WHERE remote_path = $1 AND hostname = $2;', $remote_path, $hostname, $http_status);
-				if ($http_status != 403) {
-					BeaconCommon::PostSlackMessage('Unable to ' . $request_method . ' ' . $remote_path . ', http status ' . $http_status);
-				}
+				$database->Query('UPDATE usercloud_queue SET http_status = $3, attempts = attempts + 1 WHERE remote_path = $1 AND hostname = $2;', $remote_path, $hostname, $http_status);
 			}
 			
 			$database->Commit();
+			
+			usleep(10000);
 		}
 		curl_close($curl);
 		
-		$database->BeginTransaction();
-		$database->Query('UPDATE usercloud_queue SET http_status = NULL WHERE http_status = 403;');
-		$database->Commit();
+		$results = $database->Query('SELECT COUNT(attempts) AS objects_delayed FROM usercloud_queue WHERE attempts = 3;');
+		$new_objects_delayed = intval($results->Field('objects_delayed')) - $objects_delayed;
+		if ($new_objects_delayed > 0) {
+			BeaconCommon::PostSlackMessage('There ' . ($new_objects_delayed == 1 ? 'is 1 new object' : 'are ' . $new_objects_delayed . ' new objects') . ' in the usercloud queue that failed to upload after multiple attempts.');
+		}
 		
 		static::CleanupLocalCache(0);
 	}
