@@ -106,22 +106,26 @@ abstract class BeaconCloudStorage {
 		if ($results->RecordCount() == 0) {
 			return static::FILE_NOT_FOUND;
 		}
+		$local_path = static::LocalPath($remote_path);
+		$local_exists = file_exists($local_path);
+		$local_handle = fopen($local_path, 'cb');
+		$locked = flock($local_handle, LOCK_EX);
 		$correct_hash = $results->Field('hash');
 		$filesize = $results->Field('size_in_bytes');
 		$hostname = gethostname();
-		$results = $database->Query('SELECT cache_id, hash FROM usercloud_cache WHERE remote_path = $1 AND hostname = $2;', $remote_path, $hostname);
+		$results = $database->Query('SELECT cache_id, hash, size_in_bytes FROM usercloud_cache WHERE remote_path = $1 AND hostname = $2;', $remote_path, $hostname);
 		$is_cached = false;
 		$cache_id = null;
 		if ($results->RecordCount() == 1) {
 			$cache_id = $results->Field('cache_id');
 			$cached_hash = $results->Field('hash');
-			if ($cached_hash === $correct_hash) {
+			$cached_size = $results->Field('size_in_bytes');
+			if ($cached_hash === $correct_hash && $cached_size === $filesize) {
 				$is_cached = true;
 			}
 		}
 		
-		$local_path = static::LocalPath($remote_path);
-		if (file_exists($local_path) === false || $is_cached === false) {
+		if ($local_exists === false || $is_cached === false) {
 			static::CleanupLocalCache($filesize);
 			
 			$parent = dirname($local_path);
@@ -135,14 +139,17 @@ abstract class BeaconCloudStorage {
 			$url = static::BuildSignedURL($remote_path, 'GET');
 			$remote_handle = @fopen($url, 'rb');
 			if (!$remote_handle) {
+				if ($locked) {
+					flock($local_handle, LOCK_UN);
+				}
+				fclose($local_handle);
 				return static::FAILED_TO_WARM_CACHE;
 			}
-			$local_handle = fopen($local_path, 'wb');
+			ftruncate($local_handle, 0);
 			while (!feof($remote_handle)) {
 				$chunk = fread($remote_handle, 1024);
 				fwrite($local_handle, $chunk);
 			}
-			fclose($local_handle);
 			fclose($remote_handle);
 			
 			chmod($local_path, 0660);
@@ -157,6 +164,11 @@ abstract class BeaconCloudStorage {
 			$database->Query('INSERT INTO usercloud_cache (hostname, remote_path, size_in_bytes, hash) VALUES ($1, $2, $3, $4)', $hostname, $remote_path, $filesize, $correct_hash);
 		}
 		$database->Commit();
+		
+		if ($locked) {
+			flock($local_handle, LOCK_UN);
+		}
+		fclose($local_handle);
 		
 		return $local_path;
 	}
