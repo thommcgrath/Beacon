@@ -37,7 +37,7 @@ abstract class BeaconCloudStorage {
 			$local_path = static::LocalPath($remote_path);
 			
 			if (file_exists($local_path)) {
-				unlink($local_path);
+				static::DeleteLocalPath($local_path);
 				$database->Query('DELETE FROM usercloud_cache WHERE cache_id = $1;', $cache_id);
 			}
 			
@@ -59,7 +59,7 @@ abstract class BeaconCloudStorage {
 			$size_in_bytes = $results->Field('size_in_bytes');
 			
 			if (file_exists($local_path)) {
-				unlink($local_path);
+				static::DeleteLocalPath($local_path);
 				$database->Query('DELETE FROM usercloud_cache WHERE cache_id = $1;', $cache_id);
 				$consumed_bytes = max($consumed_bytes - $size_in_bytes, 0);
 			}
@@ -67,6 +67,34 @@ abstract class BeaconCloudStorage {
 			$results->MoveNext();
 		}
 		$database->Commit();
+	}
+	
+	private static function DeleteLocalPath(string $local_path, bool $is_dir = false, string $root = '') {
+		if (empty($root)) {
+			$root = static::LocalPath('/');
+		}
+		
+		$parent_path = dirname($local_path);
+		if ($is_dir) {
+			rmdir($local_path);
+		} else {
+			unlink($local_path);
+		}
+		if (substr($parent_path, 0, strlen($root)) !== $root) {
+			return;
+		}
+		
+		// if the parent is not empty, this block will end the function early
+		$handle = opendir($parent_path);
+		while (($entry = readdir($handle)) !== false) {
+			if ($entry == '.' || $entry == '..') {
+				continue;
+			}
+			closedir($handle);
+			return;
+		}
+		
+		static::DeleteLocalPath($parent_path, true, $root);
 	}
 	
 	private static function MimeForPath(string $local_path) {
@@ -423,7 +451,7 @@ abstract class BeaconCloudStorage {
 		$remote_path = static::CleanupRemotePath($remote_path);
 		$local_path = static::LocalPath($remote_path);
 		if (file_exists($local_path)) {
-			unlink($local_path);
+			static::DeleteLocalPath($local_path);
 		}
 		
 		$hostname = gethostname();
