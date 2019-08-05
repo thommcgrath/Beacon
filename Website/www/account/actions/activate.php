@@ -46,7 +46,7 @@ $user_id = strtolower($user->UserID());
 $content = file_get_contents($_FILES['file']['tmp_name']);
 $json = json_decode($content, true);
 if (is_null($json) || BeaconCommon::HasAllKeys($json, 'UserID', 'Signed', 'Device') === false) {
-	ExitWithError(400, 'Uploaded file is not valid authorization file.')
+	ExitWithError(400, 'Uploaded file is not valid authorization file.');
 }
 $sent_user_id = strtolower($json['UserID']);
 if (BeaconCommon::IsUUID($sent_user_id) === false) {

@@ -37,7 +37,7 @@ abstract class BeaconCloudStorage {
 			$local_path = static::LocalPath($remote_path);
 			
 			if (file_exists($local_path)) {
-				unlink($local_path);
+				static::DeleteLocalPath($local_path);
 				$database->Query('DELETE FROM usercloud_cache WHERE cache_id = $1;', $cache_id);
 			}
 			
@@ -59,7 +59,7 @@ abstract class BeaconCloudStorage {
 			$size_in_bytes = $results->Field('size_in_bytes');
 			
 			if (file_exists($local_path)) {
-				unlink($local_path);
+				static::DeleteLocalPath($local_path);
 				$database->Query('DELETE FROM usercloud_cache WHERE cache_id = $1;', $cache_id);
 				$consumed_bytes = max($consumed_bytes - $size_in_bytes, 0);
 			}
@@ -67,6 +67,34 @@ abstract class BeaconCloudStorage {
 			$results->MoveNext();
 		}
 		$database->Commit();
+	}
+	
+	private static function DeleteLocalPath(string $local_path, bool $is_dir = false, string $root = '') {
+		if (empty($root)) {
+			$root = static::LocalPath('/');
+		}
+		
+		$parent_path = dirname($local_path);
+		if ($is_dir) {
+			rmdir($local_path);
+		} else {
+			unlink($local_path);
+		}
+		if (substr($parent_path, 0, strlen($root)) !== $root) {
+			return;
+		}
+		
+		// if the parent is not empty, this block will end the function early
+		$handle = opendir($parent_path);
+		while (($entry = readdir($handle)) !== false) {
+			if ($entry == '.' || $entry == '..') {
+				continue;
+			}
+			closedir($handle);
+			return;
+		}
+		
+		static::DeleteLocalPath($parent_path, true, $root);
 	}
 	
 	private static function MimeForPath(string $local_path) {
@@ -106,23 +134,28 @@ abstract class BeaconCloudStorage {
 		if ($results->RecordCount() == 0) {
 			return static::FILE_NOT_FOUND;
 		}
+		$local_path = static::LocalPath($remote_path);
+		$lock_path = $local_path . '.lock';
+		$lock_handle = fopen($lock_path, 'c');
+		$locked = flock($lock_handle, LOCK_EX);
+		$local_exists = file_exists($local_path);
 		$correct_hash = $results->Field('hash');
-		$filesize = $results->Field('size_in_bytes');
+		$correct_filesize = $results->Field('size_in_bytes');
 		$hostname = gethostname();
-		$results = $database->Query('SELECT cache_id, hash FROM usercloud_cache WHERE remote_path = $1 AND hostname = $2;', $remote_path, $hostname);
+		$results = $database->Query('SELECT cache_id, hash, size_in_bytes FROM usercloud_cache WHERE remote_path = $1 AND hostname = $2;', $remote_path, $hostname);
 		$is_cached = false;
 		$cache_id = null;
 		if ($results->RecordCount() == 1) {
 			$cache_id = $results->Field('cache_id');
 			$cached_hash = $results->Field('hash');
-			if ($cached_hash === $correct_hash) {
+			$cached_size = $results->Field('size_in_bytes');
+			if ($cached_hash === $correct_hash && $cached_size === $correct_filesize) {
 				$is_cached = true;
 			}
 		}
 		
-		$local_path = static::LocalPath($remote_path);
-		if (file_exists($local_path) === false || $is_cached === false) {
-			static::CleanupLocalCache($filesize);
+		if ($local_exists === false || $is_cached === false) {
+			static::CleanupLocalCache($correct_filesize);
 			
 			$parent = dirname($local_path);
 			if (file_exists($parent) == false) {
@@ -135,6 +168,11 @@ abstract class BeaconCloudStorage {
 			$url = static::BuildSignedURL($remote_path, 'GET');
 			$remote_handle = @fopen($url, 'rb');
 			if (!$remote_handle) {
+				if ($locked) {
+					flock($lock_handle, LOCK_UN);
+					fclose($lock_handle);
+					static::DeleteLocalPath($lock_path);
+				}
 				return static::FAILED_TO_WARM_CACHE;
 			}
 			$local_handle = fopen($local_path, 'wb');
@@ -146,17 +184,40 @@ abstract class BeaconCloudStorage {
 			fclose($remote_handle);
 			
 			chmod($local_path, 0660);
+			
+			$cached_size = filesize($local_path);
+			$cached_hash = hash_file('sha256', $local_path);
+			
+			if ($cached_size != $correct_filesize || $cached_hash != $correct_hash) {
+				static::DeleteLocalPath($local_path);
+				if (is_null($cache_id) == false) {
+					$database->BeginTransaction();
+					$database->Query('DELETE FROM usercloud_cache WHERE cache_id = $1;', $cache_id);
+					$database->Commit();
+				}
+				if ($locked) {
+					flock($lock_handle, LOCK_UN);
+					fclose($lock_handle);
+					static::DeleteLocalPath($lock_path);
+				}
+				return static::FAILED_TO_WARM_CACHE;
+			}
 		}
 		
-		$filesize = filesize($local_path);
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		if (!is_null($cache_id)) {
-			$database->Query('UPDATE usercloud_cache SET size_in_bytes = $2, hash = $3, last_accessed = CURRENT_TIMESTAMP WHERE cache_id = $1;', $cache_id, $filesize, $correct_hash);
+			$database->Query('UPDATE usercloud_cache SET size_in_bytes = $2, hash = $3, last_accessed = CURRENT_TIMESTAMP WHERE cache_id = $1;', $cache_id, $cached_size, $cached_hash);
 		} else {
-			$database->Query('INSERT INTO usercloud_cache (hostname, remote_path, size_in_bytes, hash) VALUES ($1, $2, $3, $4)', $hostname, $remote_path, $filesize, $correct_hash);
+			$database->Query('INSERT INTO usercloud_cache (hostname, remote_path, size_in_bytes, hash) VALUES ($1, $2, $3, $4)', $hostname, $remote_path, $cached_size, $cached_hash);
 		}
 		$database->Commit();
+		
+		if ($locked) {
+			flock($lock_handle, LOCK_UN);
+			fclose($lock_handle);
+			static::DeleteLocalPath($lock_path);
+		}
 		
 		return $local_path;
 	}
@@ -411,7 +472,7 @@ abstract class BeaconCloudStorage {
 		$remote_path = static::CleanupRemotePath($remote_path);
 		$local_path = static::LocalPath($remote_path);
 		if (file_exists($local_path)) {
-			unlink($local_path);
+			static::DeleteLocalPath($local_path);
 		}
 		
 		$hostname = gethostname();
