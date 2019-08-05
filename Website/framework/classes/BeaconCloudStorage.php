@@ -183,7 +183,6 @@ abstract class BeaconCloudStorage {
 			chmod($local_path, 0660);
 		}
 		
-		$filesize = filesize($local_path);
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
 		if (!is_null($cache_id)) {
