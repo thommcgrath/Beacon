@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	
 	var recoverForm = document.getElementById('login_recover_form');
 	var recoverEmailField = document.getElementById('recover_email_field');
+	var recoverActionButton = document.getElementById('recover_action_button');
 	var recoverCancelButton = document.getElementById('recover_cancel_button');
 	
 	var verifyForm = document.getElementById('login_verify_form');
@@ -236,6 +237,9 @@ document.addEventListener('DOMContentLoaded', function() {
 	if (recoverForm) {
 		recoverForm.addEventListener('submit', function(event) {
 			event.preventDefault();
+			if (recoverActionButton) {
+				recoverActionButton.disabled = true;
+			}
 			
 			var recoverEmail = '';
 			if (recoverEmailField) {
@@ -243,6 +247,10 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 			
 			request.post('/account/login/email.php', {'email': recoverEmail}, function(obj) {
+				if (recoverActionButton) {
+					recoverActionButton.disabled = false;
+				}
+				
 				if (obj.verified) {
 					if (passwordEmailField) {
 						passwordEmailField.value = obj.email;
@@ -257,6 +265,9 @@ document.addEventListener('DOMContentLoaded', function() {
 					focus_first([verifyCodeField, verifyActionButton]);
 				}
 			}, function(http_status) {
+				if (recoverActionButton) {
+					recoverActionButton.disabled = false;
+				}
 				show_page('recover');
 				dialog.show('Unable to continue', 'There was a ' + http_status + ' error while trying to send the verification email.');
 			});
