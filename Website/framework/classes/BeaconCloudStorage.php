@@ -135,9 +135,10 @@ abstract class BeaconCloudStorage {
 			return static::FILE_NOT_FOUND;
 		}
 		$local_path = static::LocalPath($remote_path);
-		$lock_path = $local_path . '.lock';
-		$lock_handle = fopen($lock_path, 'c');
-		$locked = flock($lock_handle, LOCK_EX);
+		$file_id = crc32($remote_path);
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query('SELECT pg_advisory_xact_lock($1);', $file_id);
 		$local_exists = file_exists($local_path);
 		$correct_hash = $results->Field('hash');
 		$correct_filesize = $results->Field('size_in_bytes');
@@ -168,11 +169,7 @@ abstract class BeaconCloudStorage {
 			$url = static::BuildSignedURL($remote_path, 'GET');
 			$remote_handle = @fopen($url, 'rb');
 			if (!$remote_handle) {
-				if ($locked) {
-					flock($lock_handle, LOCK_UN);
-					fclose($lock_handle);
-					static::DeleteLocalPath($lock_path);
-				}
+				$database->Rollback();
 				return static::FAILED_TO_WARM_CACHE;
 			}
 			$local_handle = fopen($local_path, 'wb');
@@ -191,33 +188,19 @@ abstract class BeaconCloudStorage {
 			if ($cached_size != $correct_filesize || $cached_hash != $correct_hash) {
 				static::DeleteLocalPath($local_path);
 				if (is_null($cache_id) == false) {
-					$database->BeginTransaction();
 					$database->Query('DELETE FROM usercloud_cache WHERE cache_id = $1;', $cache_id);
-					$database->Commit();
 				}
-				if ($locked) {
-					flock($lock_handle, LOCK_UN);
-					fclose($lock_handle);
-					static::DeleteLocalPath($lock_path);
-				}
+				$database->Commit();
 				return static::FAILED_TO_WARM_CACHE;
 			}
 		}
 		
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
 		if (!is_null($cache_id)) {
 			$database->Query('UPDATE usercloud_cache SET size_in_bytes = $2, hash = $3, last_accessed = CURRENT_TIMESTAMP WHERE cache_id = $1;', $cache_id, $cached_size, $cached_hash);
 		} else {
 			$database->Query('INSERT INTO usercloud_cache (hostname, remote_path, size_in_bytes, hash) VALUES ($1, $2, $3, $4)', $hostname, $remote_path, $cached_size, $cached_hash);
 		}
 		$database->Commit();
-		
-		if ($locked) {
-			flock($lock_handle, LOCK_UN);
-			fclose($lock_handle);
-			static::DeleteLocalPath($lock_path);
-		}
 		
 		return $local_path;
 	}
