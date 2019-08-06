@@ -7,7 +7,7 @@ Begin BeaconWindow UpdateWindow
    Compatibility   =   ""
    Composite       =   True
    DefaultLocation =   "2"
-   Frame           =   "0"
+   Frame           =   0
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -32,7 +32,7 @@ Begin BeaconWindow UpdateWindow
    MinimumHeight   =   132
    MinimumWidth    =   600
    MinWidth        =   600
-   Placement       =   "2"
+   Placement       =   2
    Resizable       =   True
    Resizeable      =   "True"
    SystemUIVisible =   True

@@ -418,10 +418,10 @@ End
 #tag Events List
 	#tag Event
 		Sub Opening()
-		  Me.ColumnAlignment(Self.ColumnWildDamage) = Listbox.AlignCenter
-		  Me.ColumnAlignment(Self.ColumnWildResistance) = Listbox.AlignCenter
-		  Me.ColumnAlignment(Self.ColumnTamedDamage) = Listbox.AlignCenter
-		  Me.ColumnAlignment(Self.ColumnTamedResistance) = Listbox.AlignCenter
+		  Me.ColumnAlignmentAt(Self.ColumnWildDamage) = Listbox.Alignments.Center
+		  Me.ColumnAlignmentAt(Self.ColumnWildResistance) = Listbox.Alignments.Center
+		  Me.ColumnAlignmentAt(Self.ColumnTamedDamage) = Listbox.Alignments.Center
+		  Me.ColumnAlignmentAt(Self.ColumnTamedResistance) = Listbox.Alignments.Center
 		End Sub
 	#tag EndEvent
 	#tag Event

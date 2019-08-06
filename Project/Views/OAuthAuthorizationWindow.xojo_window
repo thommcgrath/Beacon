@@ -7,7 +7,7 @@ Begin BeaconDialog OAuthAuthorizationWindow
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "1"
-   Frame           =   "0"
+   Frame           =   0
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -32,7 +32,7 @@ Begin BeaconDialog OAuthAuthorizationWindow
    MinimumHeight   =   64
    MinimumWidth    =   64
    MinWidth        =   64
-   Placement       =   "1"
+   Placement       =   1
    Resizable       =   True
    Resizeable      =   "False"
    SystemUIVisible =   True

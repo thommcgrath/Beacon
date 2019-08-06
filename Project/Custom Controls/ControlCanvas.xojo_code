@@ -69,14 +69,14 @@ Inherits Canvas
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  If Not Self.Transparent Then
-		    Dim TempColor As Color = G.ForeColor
+		    Dim TempColor As Color = G.DrawingColor
 		    If Self.Window.HasBackgroundColor Then
-		      G.ForeColor = Self.Window.BackgroundColor
+		      G.DrawingColor = Self.Window.BackgroundColor
 		    Else
-		      G.ForeColor = SystemColors.WindowBackgroundColor
+		      G.DrawingColor = SystemColors.WindowBackgroundColor
 		    End If
 		    G.FillRect(0, 0, G.Width, G.Height)
-		    G.ForeColor = TempColor
+		    G.DrawingColor = TempColor
 		  End If
 		  
 		  RaiseEvent Paint(g, areas)

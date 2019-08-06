@@ -21,7 +21,7 @@ Inherits ControlCanvas
 		  Dim CaptionWidth As Integer = Min(Ceil(G.StringWidth(Self.mCaption)), G.Width - 40)
 		  Dim CaptionLeft As Integer = (G.Width - CaptionWidth) / 2
 		  
-		  G.ForeColor = ForeColor
+		  G.DrawingColor = ForeColor
 		  G.DrawString(Self.mCaption, CaptionLeft, CaptionBase, CaptionWidth, False)
 		End Sub
 	#tag EndEvent

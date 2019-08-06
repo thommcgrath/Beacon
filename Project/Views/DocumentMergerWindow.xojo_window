@@ -7,7 +7,7 @@ Begin BeaconDialog DocumentMergerWindow
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "1"
-   Frame           =   "8"
+   Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -32,7 +32,7 @@ Begin BeaconDialog DocumentMergerWindow
    MinimumHeight   =   400
    MinimumWidth    =   600
    MinWidth        =   600
-   Placement       =   "1"
+   Placement       =   1
    Resizable       =   True
    Resizeable      =   "False"
    SystemUIVisible =   True
@@ -365,7 +365,7 @@ End
 #tag Events List
 	#tag Event
 		Sub Opening()
-		  Me.ColumnType(0) = Listbox.TypeCheckbox
+		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
 		End Sub
 	#tag EndEvent
 	#tag Event

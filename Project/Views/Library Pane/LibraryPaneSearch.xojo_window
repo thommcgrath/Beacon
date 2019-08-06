@@ -246,21 +246,21 @@ End
 		    SummaryColor = SystemColors.LabelColor
 		  End If
 		  
-		  G.ForeColor = BackgroundColor
+		  G.DrawingColor = BackgroundColor
 		  G.FillRoundRect(Rect.Left, Rect.Top, Rect.Width, Rect.Height, 12, 12)
-		  G.ForeColor = TypeFrameColor
+		  G.DrawingColor = TypeFrameColor
 		  G.FillRoundRect(TypeLeft, TypeTop, TypeWidth, TypeHeight, 6, 6)
 		  G.FontSize = FontSizePoints
-		  G.ForeColor = LinkColor
+		  G.DrawingColor = LinkColor
 		  G.Underline = True
 		  G.DrawString(Title, Rect.Left + 1 + Self.ResultPadding, TitleBaseline, TitleMaxWidth, True)
 		  G.FontSize = SmallFontSizePoints
 		  G.Underline = False
 		  If Summary <> "" Then
-		    G.ForeColor = SummaryColor
+		    G.DrawingColor = SummaryColor
 		    G.DrawString(Summary, Rect.Left + 1 + Self.ResultPadding, TitlebaseLine + 4 + Self.ResultPadding + TypeCapHeight, MaxTextWidth, False)
 		  End If
-		  G.ForeColor = TypeTextColor
+		  G.DrawingColor = TypeTextColor
 		  G.DrawString(Type, TypeLeft + 4, TitleBaseline)
 		  
 		  Return Rect
@@ -416,7 +416,7 @@ End
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  G.ForeColor = SystemColors.LabelColor
+		  G.DrawingColor = SystemColors.LabelColor
 		  
 		  If Self.mResultDicts.LastRowIndex = -1 Then
 		    If Self.mSearchTerms = "" Then

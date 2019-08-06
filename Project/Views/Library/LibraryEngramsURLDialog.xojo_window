@@ -7,7 +7,7 @@ Begin BeaconDialog LibraryEngramsURLDialog
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "1"
-   Frame           =   "8"
+   Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -32,7 +32,7 @@ Begin BeaconDialog LibraryEngramsURLDialog
    MinimumHeight   =   126
    MinimumWidth    =   520
    MinWidth        =   520
-   Placement       =   "1"
+   Placement       =   1
    Resizable       =   True
    Resizeable      =   "False"
    SystemUIVisible =   True

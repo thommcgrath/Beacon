@@ -147,10 +147,10 @@ Begin BeaconSubview PresetEditorView
       SelectedPanelIndex=   2
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   61
       Transparent     =   False
-      Value           =   "1"
       Value           =   2
       Visible         =   True
       Width           =   740
@@ -171,6 +171,7 @@ Begin BeaconSubview PresetEditorView
          SelectionStyle  =   "0"
          TabIndex        =   0
          TabPanelIndex   =   2
+         TabStop         =   True
          Top             =   81
          Transparent     =   False
          Visible         =   True
@@ -1459,10 +1460,10 @@ End
 #tag Events ContentsList
 	#tag Event
 		Sub Opening()
-		  Me.ColumnType(Self.ColumnIncluded) = Listbox.TypeCheckbox
-		  Me.ColumnType(Self.ColumnQuantity) = Listbox.TypeCheckbox
-		  Me.ColumnType(Self.ColumnQuality) = Listbox.TypeCheckbox
-		  Me.ColumnType(Self.ColumnBlueprint) = Listbox.TypeCheckbox
+		  Me.ColumnTypeAt(Self.ColumnIncluded) = Listbox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(Self.ColumnQuantity) = Listbox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(Self.ColumnQuality) = Listbox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(Self.ColumnBlueprint) = Listbox.CellTypes.CheckBox
 		End Sub
 	#tag EndEvent
 	#tag Event

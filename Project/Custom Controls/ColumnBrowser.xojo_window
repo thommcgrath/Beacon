@@ -192,7 +192,7 @@ End
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  G.ForeColor = SystemColors.UnderPageBackgroundColor
+		  G.DrawingColor = SystemColors.UnderPageBackgroundColor
 		  G.FillRect(0, 0, G.Width, G.Height)
 		End Sub
 	#tag EndEvent

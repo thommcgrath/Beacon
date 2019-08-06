@@ -5,7 +5,7 @@ Inherits ControlCanvas
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  G.ForeColor = SystemColors.SeparatorColor
+		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.FillRect(0, 0, G.Width, G.Height)
 		End Sub
 	#tag EndEvent

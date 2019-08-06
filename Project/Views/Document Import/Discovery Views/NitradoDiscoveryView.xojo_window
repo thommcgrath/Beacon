@@ -544,7 +544,7 @@ End
 #tag Events List
 	#tag Event
 		Sub Opening()
-		  Self.List.ColumnType(0) = Listbox.TypeCheckbox
+		  Self.List.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
 		End Sub
 	#tag EndEvent
 	#tag Event

@@ -7,7 +7,7 @@ Begin BeaconDialog ResolveIssuesDialog
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "1"
-   Frame           =   "8"
+   Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -32,7 +32,7 @@ Begin BeaconDialog ResolveIssuesDialog
    MinimumHeight   =   500
    MinimumWidth    =   600
    MinWidth        =   600
-   Placement       =   "1"
+   Placement       =   1
    Resizable       =   True
    Resizeable      =   "True"
    SystemUIVisible =   True

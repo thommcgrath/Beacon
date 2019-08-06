@@ -7,7 +7,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    Compatibility   =   ""
    Composite       =   True
    DefaultLocation =   "2"
-   Frame           =   "0"
+   Frame           =   0
    FullScreen      =   False
    FullScreenButton=   True
    HasBackColor    =   False
@@ -32,7 +32,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    MinimumHeight   =   400
    MinimumWidth    =   800
    MinWidth        =   800
-   Placement       =   "2"
+   Placement       =   2
    Resizable       =   True
    Resizeable      =   "True"
    SystemUIVisible =   True
@@ -784,9 +784,9 @@ End
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  G.ForeColor = SystemColors.SelectedContentBackgroundColor
+		  G.DrawingColor = SystemColors.SelectedContentBackgroundColor
 		  G.FillRect(0, 0, G.Width, G.Height)
-		  G.ForeColor = SystemColors.SeparatorColor
+		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.FillRect(0, G.Height - 1, G.Width, 1)
 		  
 		  Dim Caption As String = Self.mUpdateText
@@ -795,11 +795,11 @@ End
 		  Dim CaptionLeft As Integer = Round((G.Width - CaptionWidth) / 2)
 		  Dim CaptionBaseline As Double = ((G.Height - 1) / 2) + (G.CapHeight / 2)
 		  
-		  G.ForeColor = SystemColors.AlternateSelectedControlTextColor
+		  G.DrawingColor = SystemColors.AlternateSelectedControlTextColor
 		  G.DrawString(Caption, CaptionLeft, CaptionBaseline, MaxCaptionWidth, True)
 		  
 		  If Self.mUpdateBarPressed Then
-		    G.ForeColor = &c00000080
+		    G.DrawingColor = &c00000080
 		    G.FillRect(0, 0, G.Width, G.Height)
 		  End If
 		End Sub
@@ -852,7 +852,7 @@ End
 		    G.DrawPicture(Self.mOverlayPic, 0, 0)
 		  End If
 		  
-		  G.ForeColor = SystemColors.ShadowColor.AtOpacity(Self.mOverlayFillOpacity)
+		  G.DrawingColor = SystemColors.ShadowColor.AtOpacity(Self.mOverlayFillOpacity)
 		  G.FillRect(0, 0, G.Width, G.Height)
 		End Sub
 	#tag EndEvent

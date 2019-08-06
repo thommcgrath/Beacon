@@ -570,8 +570,8 @@ End
 #tag Events ModsList
 	#tag Event
 		Sub Opening()
-		  Me.ColumnType(0) = Listbox.TypeCheckbox
-		  Me.ColumnAlignment(2) = Listbox.AlignCenter
+		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
+		  Me.ColumnAlignmentAt(2) = Listbox.Alignments.Center
 		End Sub
 	#tag EndEvent
 	#tag Event

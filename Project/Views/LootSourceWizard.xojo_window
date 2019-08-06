@@ -7,7 +7,7 @@ Begin BeaconDialog LootSourceWizard
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "1"
-   Frame           =   "8"
+   Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -32,7 +32,7 @@ Begin BeaconDialog LootSourceWizard
    MinimumHeight   =   300
    MinimumWidth    =   450
    MinWidth        =   450
-   Placement       =   "1"
+   Placement       =   1
    Resizable       =   True
    Resizeable      =   "True"
    SystemUIVisible =   True
@@ -1867,7 +1867,7 @@ End
 #tag Events CustomizePresetsList
 	#tag Event
 		Sub Opening()
-		  Me.ColumnType(0) = ListBox.TypeCheckbox
+		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
 		End Sub
 	#tag EndEvent
 #tag EndEvents

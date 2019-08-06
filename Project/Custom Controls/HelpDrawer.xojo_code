@@ -68,7 +68,7 @@ Inherits ControlCanvas
 		    InsetLeft = 1
 		  End If
 		  
-		  G.ForeColor = SystemColors.SeparatorColor
+		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.FillRect(0, 0, G.Width, InsetTop)
 		  G.FillRect(0, G.Height - InsetBottom, G.Width, InsetBottom)
 		  G.FillRect(0, InsetTop, InsetLeft, G.Height - (InsetTop + InsetBottom))
@@ -76,9 +76,9 @@ Inherits ControlCanvas
 		  
 		  Dim Clip As Graphics = G.Clip(InsetLeft, InsetTop, G.Width - (InsetLeft + InsetRight), G.Height - (InsetTop + InsetBottom))
 		  #if false
-		    Clip.ForeColor = SystemColors.UnderPageBackgroundColor
+		    Clip.DrawingColor = SystemColors.UnderPageBackgroundColor
 		    Clip.FillRect(0, 0, Clip.Width, Clip.Height)
-		    Clip.ForeColor = SystemColors.ControlBackgroundColor
+		    Clip.DrawingColor = SystemColors.ControlBackgroundColor
 		    Clip.FillRect(0, 0, Clip.Width, Clip.Height)
 		  #endif
 		  
@@ -99,7 +99,7 @@ Inherits ControlCanvas
 		  Self.mScrollPosition = Max(Min(Self.mScrollPosition, Self.mContentOverflow), 0)
 		  
 		  Dim TitleBaseline As Double = (20 + Clip.CapHeight) - Self.mScrollPosition
-		  Clip.ForeColor = SystemColors.LabelColor
+		  Clip.DrawingColor = SystemColors.LabelColor
 		  Clip.Bold = False
 		  Clip.DrawString(Self.mBody, 20, TitleBaseline + 20 + Clip.CapHeight, ViewportWidth, False)
 		  
@@ -116,17 +116,17 @@ Inherits ControlCanvas
 		    Dim CaptionLeft As Double = ButtonLeft + 20
 		    Dim CaptionBaseline As Double = ButtonTop + ((ButtonHeight / 2) + (Clip.CapHeight / 2))
 		    
-		    Clip.ForeColor = SystemColors.ControlTextColor.AtOpacity(0.1)
+		    Clip.DrawingColor = SystemColors.ControlTextColor.AtOpacity(0.1)
 		    Clip.FillRoundRect(ButtonLeft, ButtonTop, ButtonWidth, ButtonHeight, 6, 6)
-		    Clip.ForeColor = SystemColors.ControlTextColor.AtOpacity(0.5)
+		    Clip.DrawingColor = SystemColors.ControlTextColor.AtOpacity(0.5)
 		    Clip.DrawRoundRect(ButtonLeft, ButtonTop, ButtonWidth, ButtonHeight, 6, 6)
-		    Clip.ForeColor = SystemColors.ControlTextColor
+		    Clip.DrawingColor = SystemColors.ControlTextColor
 		    Clip.DrawString("More Details", CaptionLeft, CaptionBaseline)
 		    
 		    Self.mButtonRect = New BeaconUI.Rect(ButtonLeft, ButtonTop, ButtonWidth, ButtonHeight)
 		    
 		    If Self.mPressed Then
-		      Clip.ForeColor = &c00000080
+		      Clip.DrawingColor = &c00000080
 		      Clip.FillRoundRect(ButtonLeft, ButtonTop, ButtonWidth, ButtonHeight, 6, 6)
 		    End If
 		  Else

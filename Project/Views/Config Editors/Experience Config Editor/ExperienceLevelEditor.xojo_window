@@ -7,7 +7,7 @@ Begin BeaconDialog ExperienceLevelEditor
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "1"
-   Frame           =   "8"
+   Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -32,7 +32,7 @@ Begin BeaconDialog ExperienceLevelEditor
    MinimumHeight   =   230
    MinimumWidth    =   382
    MinWidth        =   382
-   Placement       =   "1"
+   Placement       =   1
    Resizable       =   True
    Resizeable      =   "False"
    SystemUIVisible =   True

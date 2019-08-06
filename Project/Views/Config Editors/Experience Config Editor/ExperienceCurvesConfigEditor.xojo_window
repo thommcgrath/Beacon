@@ -540,9 +540,9 @@ End
 #tag Events List
 	#tag Event
 		Sub Opening()
-		  Me.ColumnAlignment(0) = Listbox.AlignRight
-		  Me.ColumnAlignment(1) = Listbox.AlignRight
-		  Me.ColumnAlignment(2) = Listbox.AlignCenter
+		  Me.ColumnAlignmentAt(0) = Listbox.Alignments.Right
+		  Me.ColumnAlignmentAt(1) = Listbox.Alignments.Right
+		  Me.ColumnAlignmentAt(2) = Listbox.Alignments.Center
 		End Sub
 	#tag EndEvent
 	#tag Event

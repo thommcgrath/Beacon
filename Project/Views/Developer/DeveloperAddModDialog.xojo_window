@@ -7,7 +7,7 @@ Begin BeaconDialog DeveloperAddModDialog
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "1"
-   Frame           =   "8"
+   Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -32,7 +32,7 @@ Begin BeaconDialog DeveloperAddModDialog
    MinimumHeight   =   64
    MinimumWidth    =   64
    MinWidth        =   64
-   Placement       =   "1"
+   Placement       =   1
    Resizable       =   True
    Resizeable      =   "True"
    SystemUIVisible =   True

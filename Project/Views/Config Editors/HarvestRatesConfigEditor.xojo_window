@@ -946,9 +946,9 @@ End
 #tag Events List
 	#tag Event
 		Sub Opening()
-		  Me.ColumnAlignment(Self.ColumnRate) = Listbox.AlignRight
-		  Me.ColumnAlignment(Self.ColumnEffectiveRate) = Listbox.AlignRight
-		  Me.ColumnType(Self.ColumnRate) = Listbox.TypeEditable
+		  Me.ColumnAlignmentAt(Self.ColumnRate) = Listbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.ColumnEffectiveRate) = Listbox.Alignments.Right
+		  Me.ColumnTypeAt(Self.ColumnRate) = Listbox.CellTypes.TextField
 		End Sub
 	#tag EndEvent
 	#tag Event

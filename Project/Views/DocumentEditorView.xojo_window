@@ -911,19 +911,19 @@ End
 		  Dim TextColor As Color = SystemColors.LabelColor
 		  Dim BorderColor As Color = SystemColors.SeparatorColor
 		  
-		  G.ForeColor = BackgroundColor
+		  G.DrawingColor = BackgroundColor
 		  G.FillRect(0, 0, G.Width, G.Height - 1)
-		  G.ForeColor = BorderColor
+		  G.DrawingColor = BorderColor
 		  G.DrawLine(0, G.Height - 1, G.Width, G.Height - 1)
 		  
 		  Dim TextWidth As Double = G.StringWidth(Self.OmniWarningText)
 		  Dim TextLeft As Double = (G.Width - TextWidth) / 2
 		  Dim TextBaseline As Double = (G.Height / 2) + (G.CapHeight / 2)
-		  G.ForeColor = TextColor
+		  G.DrawingColor = TextColor
 		  G.DrawString(Self.OmniWarningText, TextLeft, TextBaseline, G.Width - 40, True)
 		  
 		  If Self.mDrawOmniBannerPressed Then
-		    G.ForeColor = &c00000080
+		    G.DrawingColor = &c00000080
 		    G.FillRect(0, 0, G.Width, G.Height - 1)
 		  End If
 		End Sub

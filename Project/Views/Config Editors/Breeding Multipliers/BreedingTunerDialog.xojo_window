@@ -7,7 +7,7 @@ Begin BeaconDialog BreedingTunerDialog
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "1"
-   Frame           =   "8"
+   Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -32,7 +32,7 @@ Begin BeaconDialog BreedingTunerDialog
    MinimumHeight   =   64
    MinimumWidth    =   64
    MinWidth        =   64
-   Placement       =   "1"
+   Placement       =   1
    Resizable       =   True
    Resizeable      =   "False"
    SystemUIVisible =   True
@@ -394,7 +394,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Opening()
-		  Self.CreaturesList.ColumnType(Self.ColumnChecked) = Listbox.TypeCheckbox
+		  Self.CreaturesList.ColumnTypeAt(Self.ColumnChecked) = Listbox.CellTypes.CheckBox
 		  
 		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.StringList)
 		  For Each Creature As Beacon.Creature In Creatures

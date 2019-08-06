@@ -5,7 +5,7 @@ Inherits ControlCanvas
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  G.ForeColor = SystemColors.SeparatorColor
+		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.FillRect(0, 0, G.Width, G.Height)
 		  
 		  Dim ContentLeft As Integer = 0
@@ -36,7 +36,7 @@ Inherits ControlCanvas
 		  Dim CaptionLeft As Double = (CaptionSpace - CaptionWidth) / 2
 		  Dim CaptionBottom As Double = (Clip.Height / 2) + (Clip.CapHeight / 2)
 		  
-		  Clip.ForeColor = SystemColors.LabelColor
+		  Clip.DrawingColor = SystemColors.LabelColor
 		  Clip.DrawString(Self.mCaption, CaptionLeft, CaptionBottom, CaptionSpace, True)
 		End Sub
 	#tag EndEvent

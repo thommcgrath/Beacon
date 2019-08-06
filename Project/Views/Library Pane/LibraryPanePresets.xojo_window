@@ -548,7 +548,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Opening()
-		  Me.ColumnAlignment(1) = Listbox.AlignRight
+		  Me.ColumnAlignmentAt(1) = Listbox.Alignments.Right
 		End Sub
 	#tag EndEvent
 	#tag Event

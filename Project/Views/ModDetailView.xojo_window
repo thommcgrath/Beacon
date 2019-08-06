@@ -991,25 +991,25 @@ End
 #tag Events EngramList
 	#tag Event
 		Sub Opening()
-		  Me.ColumnType(0) = Listbox.TypeEditableTextField
-		  Me.ColumnType(1) = Listbox.TypeEditableTextField
-		  Me.ColumnType(2) = Listbox.TypeCheckbox
-		  Me.ColumnType(3) = Listbox.TypeCheckbox
-		  Me.ColumnType(4) = Listbox.TypeCheckbox
-		  Me.ColumnType(5) = Listbox.TypeCheckbox
-		  Me.ColumnType(6) = Listbox.TypeCheckbox
-		  Me.ColumnType(7) = Listbox.TypeCheckbox
-		  Me.ColumnType(8) = Listbox.TypeCheckbox
-		  Me.ColumnType(9) = Listbox.TypeCheckbox
+		  Me.ColumnTypeAt(0) = Listbox.CellTypes.TextField
+		  Me.ColumnTypeAt(1) = Listbox.CellTypes.TextField
+		  Me.ColumnTypeAt(2) = Listbox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(3) = Listbox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(4) = Listbox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(5) = Listbox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(6) = Listbox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(7) = Listbox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(8) = Listbox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(9) = Listbox.CellTypes.CheckBox
 		  
-		  Me.ColumnAlignment(2) = Listbox.AlignCenter
-		  Me.ColumnAlignment(3) = Listbox.AlignCenter
-		  Me.ColumnAlignment(4) = Listbox.AlignCenter
-		  Me.ColumnAlignment(5) = Listbox.AlignCenter
-		  Me.ColumnAlignment(6) = Listbox.AlignCenter
-		  Me.ColumnAlignment(7) = Listbox.AlignCenter
-		  Me.ColumnAlignment(8) = Listbox.AlignCenter
-		  Me.ColumnAlignment(9) = Listbox.AlignCenter
+		  Me.ColumnAlignmentAt(2) = Listbox.Alignments.Center
+		  Me.ColumnAlignmentAt(3) = Listbox.Alignments.Center
+		  Me.ColumnAlignmentAt(4) = Listbox.Alignments.Center
+		  Me.ColumnAlignmentAt(5) = Listbox.Alignments.Center
+		  Me.ColumnAlignmentAt(6) = Listbox.Alignments.Center
+		  Me.ColumnAlignmentAt(7) = Listbox.Alignments.Center
+		  Me.ColumnAlignmentAt(8) = Listbox.Alignments.Center
+		  Me.ColumnAlignmentAt(9) = Listbox.Alignments.Center
 		End Sub
 	#tag EndEvent
 	#tag Event

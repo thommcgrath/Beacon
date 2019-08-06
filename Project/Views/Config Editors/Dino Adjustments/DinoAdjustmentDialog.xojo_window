@@ -7,7 +7,7 @@ Begin BeaconDialog DinoAdjustmentDialog
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "1"
-   Frame           =   "8"
+   Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -32,7 +32,7 @@ Begin BeaconDialog DinoAdjustmentDialog
    MinimumHeight   =   64
    MinimumWidth    =   64
    MinWidth        =   64
-   Placement       =   "1"
+   Placement       =   1
    Resizable       =   True
    Resizeable      =   "False"
    SystemUIVisible =   True

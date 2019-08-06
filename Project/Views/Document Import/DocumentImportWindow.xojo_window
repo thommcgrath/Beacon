@@ -7,7 +7,7 @@ Begin Window DocumentImportWindow
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "2"
-   Frame           =   "0"
+   Frame           =   0
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -32,7 +32,7 @@ Begin Window DocumentImportWindow
    MinimumHeight   =   64
    MinimumWidth    =   64
    MinWidth        =   64
-   Placement       =   "2"
+   Placement       =   2
    Resizable       =   True
    Resizeable      =   "False"
    SystemUIVisible =   True

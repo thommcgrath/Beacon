@@ -7,7 +7,7 @@ Begin Window EntryMultiEditor
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "1"
-   Frame           =   "8"
+   Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -32,7 +32,7 @@ Begin Window EntryMultiEditor
    MinimumHeight   =   261
    MinimumWidth    =   550
    MinWidth        =   550
-   Placement       =   "1"
+   Placement       =   1
    Resizable       =   True
    Resizeable      =   "False"
    SystemUIVisible =   True

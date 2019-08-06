@@ -7,7 +7,7 @@ Begin BeaconDialog ExperienceWizard
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "1"
-   Frame           =   "8"
+   Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -32,7 +32,7 @@ Begin BeaconDialog ExperienceWizard
    MinimumHeight   =   64
    MinimumWidth    =   64
    MinWidth        =   64
-   Placement       =   "1"
+   Placement       =   1
    Resizable       =   True
    Resizeable      =   "False"
    SystemUIVisible =   True
@@ -1083,8 +1083,8 @@ End
 #tag Events List
 	#tag Event
 		Sub Opening()
-		  Me.ColumnAlignment(0) = Listbox.AlignRight
-		  Me.ColumnAlignment(1) = Listbox.AlignRight
+		  Me.ColumnAlignmentAt(0) = Listbox.Alignments.Right
+		  Me.ColumnAlignmentAt(1) = Listbox.Alignments.Right
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -7,7 +7,7 @@ Begin BeaconDialog DocumentExportWindow
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "1"
-   Frame           =   "8"
+   Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -32,7 +32,7 @@ Begin BeaconDialog DocumentExportWindow
    MinimumHeight   =   400
    MinimumWidth    =   848
    MinWidth        =   848
-   Placement       =   "1"
+   Placement       =   1
    Resizable       =   True
    Resizeable      =   "True"
    SystemUIVisible =   True

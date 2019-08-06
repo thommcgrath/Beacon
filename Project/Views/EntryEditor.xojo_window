@@ -7,7 +7,7 @@ Begin BeaconDialog EntryEditor
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "1"
-   Frame           =   "8"
+   Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -32,7 +32,7 @@ Begin BeaconDialog EntryEditor
    MinimumHeight   =   534
    MinimumWidth    =   900
    MinWidth        =   900
-   Placement       =   "1"
+   Placement       =   1
    Resizable       =   True
    Resizeable      =   "True"
    SystemUIVisible =   True
@@ -959,9 +959,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Opening()
-		  Me.ColumnType(Self.ColumnIncluded) = Listbox.TypeCheckbox
-		  Me.ColumnType(Self.ColumnWeight) = Listbox.TypeEditable
-		  Me.ColumnAlignment(Self.ColumnWeight) = Listbox.AlignRight
+		  Me.ColumnTypeAt(Self.ColumnIncluded) = Listbox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(Self.ColumnWeight) = Listbox.CellTypes.TextField
+		  Me.ColumnAlignmentAt(Self.ColumnWeight) = Listbox.Alignments.Center
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -550,8 +550,8 @@ End
 #tag Events List
 	#tag Event
 		Sub Opening()
-		  Me.ColumnAlignment(Self.ColumnStackSize) = Listbox.AlignRight
-		  Me.ColumnType(Self.ColumnStackSize) = Listbox.TypeEditable
+		  Me.ColumnAlignmentAt(Self.ColumnStackSize) = Listbox.Alignments.Right
+		  Me.ColumnTypeAt(Self.ColumnStackSize) = Listbox.CellTypes.TextField
 		End Sub
 	#tag EndEvent
 	#tag Event

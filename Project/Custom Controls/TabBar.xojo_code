@@ -98,9 +98,9 @@ Implements ObservationKit.Observer
 		    
 		    Dim Clip As Graphics = G.Clip(LeftPos, 0, TabWidth, G.Height)
 		    If Self.mSelectedIndex <> I Then
-		      Clip.ForeColor = SystemColors.ControlBackgroundColor
+		      Clip.DrawingColor = SystemColors.ControlBackgroundColor
 		      Clip.FillRect(0, 0, Clip.Width, Clip.Height - 1)
-		      Clip.ForeColor = SystemColors.SeparatorColor
+		      Clip.DrawingColor = SystemColors.SeparatorColor
 		      Clip.FillRect(0, Clip.Height - 1, Clip.Width, 1)
 		    End If
 		    
@@ -131,7 +131,7 @@ Implements ObservationKit.Observer
 		      Dim Progress As Graphics = G.Clip(Self.mTabRects(I).Left, Self.mTabRects(I).Top, Self.mTabRects(I).Width, Self.ProgressHeight)
 		      
 		      Dim ProgressBackColor As Color = SystemColors.QuaternaryLabelColor
-		      Progress.ForeColor = ProgressBackColor
+		      Progress.DrawingColor = ProgressBackColor
 		      Progress.FillRect(0, 0, Progress.Width, Progress.Height)
 		      
 		      If View.Progress = BeaconSubview.ProgressIndeterminate Then
@@ -154,21 +154,21 @@ Implements ObservationKit.Observer
 		        Self.mUpdateIndeterminateKey = CallLater.Schedule(10, WeakAddressOf UpdateIndeterminate)
 		      Else
 		        Dim FillWidth As Integer = Self.mTabRects(I).Width * View.Progress
-		        Progress.ForeColor = SystemColors.SelectedContentBackgroundColor
+		        Progress.DrawingColor = SystemColors.SelectedContentBackgroundColor
 		        Progress.FillRect(0, 0, FillWidth, Progress.Height)
 		      End If
 		    End If
 		    
 		    LeftPos = LeftPos + TabWidth
 		    G.ClearRect(LeftPos, 0, 1, G.Height - 1)
-		    G.ForeColor = SystemColors.SeparatorColor
+		    G.DrawingColor = SystemColors.SeparatorColor
 		    G.FillRect(LeftPos, 0, 1, G.Height)
 		    LeftPos = LeftPos + 1
 		  Next
 		  
-		  G.ForeColor = SystemColors.ControlBackgroundColor
+		  G.DrawingColor = SystemColors.ControlBackgroundColor
 		  G.FillRect(LeftPos, 0, G.Width - LeftPos, G.Height - 1)
-		  G.ForeColor = SystemColors.SeparatorColor
+		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.FillRect(LeftPos, G.Height - 1, G.Width - LeftPos, 1)
 		End Sub
 	#tag EndEvent
@@ -192,20 +192,20 @@ Implements ObservationKit.Observer
 		  Dim CaptionLeft As Double = (G.Width - CaptionWidth) / 2
 		  Dim CaptionBottom As Double = (G.Height / 2) + (G.CapHeight / 2)
 		  
-		  G.ForeColor = SystemColors.ControlTextColor
+		  G.DrawingColor = SystemColors.ControlTextColor
 		  G.DrawString(Caption, CaptionLeft, CaptionBottom, MaxCaptionWidth, True)
 		  
 		  Dim ButtonTop As Double = (G.Height - ButtonSize) / 2
 		  
 		  If View.Changed Then
-		    Dim ModifiedIcon As Picture = BeaconUI.IconWithColor(IconModified, G.ForeColor.AtOpacity(0.5))
+		    Dim ModifiedIcon As Picture = BeaconUI.IconWithColor(IconModified, G.DrawingColor.AtOpacity(0.5))
 		    G.DrawPicture(ModifiedIcon, CellPadding, ButtonTop, ButtonSize, ButtonSize, 0, 0, ModifiedIcon.Width, ModifiedIcon.Height)
 		  End If
 		  
 		  If View.CanBeClosed Then
-		    Dim IconColor As Color = G.ForeColor.AtOpacity(0.5)
+		    Dim IconColor As Color = G.DrawingColor.AtOpacity(0.5)
 		    If BoxState <> CloseBoxState.Normal Then
-		      IconColor = G.ForeColor
+		      IconColor = G.DrawingColor
 		    End If
 		    
 		    CloseRect = New REALbasic.Rect(G.Width - (ButtonSize + CellPadding), ButtonTop, ButtonSize, ButtonSize)
@@ -214,7 +214,7 @@ Implements ObservationKit.Observer
 		    G.DrawPicture(CloseIcon, CloseRect.Left, CloseRect.Top, CloseRect.Width, CloseRect.Height, 0, 0, CloseIcon.Width, CloseIcon.Height)
 		    
 		    If BoxState = CloseBoxState.Pressed Then
-		      G.ForeColor = &c00000080
+		      G.DrawingColor = &c00000080
 		      G.FillRoundRect(CloseRect.Left, CloseRect.Top, CloseRect.Width, CloseRect.Height, 4, 4)
 		    End If
 		  End If

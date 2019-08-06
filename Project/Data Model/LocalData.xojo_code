@@ -776,7 +776,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  If BadgeSheet <> Nil Then
 		    Dim Badges As Picture = New Picture(BadgeSheet.Width, BadgeSheet.Height, 32)
-		    Badges.Graphics.ForeColor = &cFFFFFF
+		    Badges.Graphics.DrawingColor = &cFFFFFF
 		    Badges.Graphics.FillRect(0, 0, Badges.Graphics.Width, Badges.Graphics.Height)
 		    Badges.Mask.Graphics.DrawPicture(BadgeSheet, 0, 0)
 		    
@@ -785,7 +785,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Sprites.Graphics.DrawPicture(Badges.Piece(0, 0, Width, Height), 0, Height)
 		    Sprites.Graphics.DrawPicture(Badges.Piece(Width, 0, Width * 2, Height * 2), Width, Height * 2)
 		    Sprites.Graphics.DrawPicture(Badges.Piece(Width * 3, 0, Width * 3, Height * 3), Width * 3, Height * 3)
-		    Badges.Graphics.ForeColor = &c000000
+		    Badges.Graphics.DrawingColor = &c000000
 		    Badges.Graphics.FillRect(0, 0, Badges.Graphics.Width, Badges.Graphics.Height)
 		    Sprites.Graphics.DrawPicture(Badges, 0, 0)
 		    

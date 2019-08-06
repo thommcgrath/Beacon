@@ -7,7 +7,7 @@ Begin BeaconDialog DocumentDeployWindow
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "1"
-   Frame           =   "0"
+   Frame           =   0
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -32,7 +32,7 @@ Begin BeaconDialog DocumentDeployWindow
    MinimumHeight   =   400
    MinimumWidth    =   600
    MinWidth        =   600
-   Placement       =   "1"
+   Placement       =   1
    Resizable       =   True
    Resizeable      =   "True"
    SystemUIVisible =   True
@@ -562,7 +562,7 @@ End
 		Sub Opening()
 		  Self.SwapButtons()
 		  
-		  Self.ServerSelectionList.ColumnType(0) = Listbox.TypeCheckbox
+		  Self.ServerSelectionList.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
 		  
 		  For I As Integer = 0 To Self.mDocument.ServerProfileCount - 1
 		    Dim Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(I)

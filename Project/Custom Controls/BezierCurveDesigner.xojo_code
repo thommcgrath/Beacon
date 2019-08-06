@@ -93,10 +93,10 @@ Inherits ControlCanvas
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  G.ForeColor = SystemColors.ControlBackgroundColor
+		  G.DrawingColor = SystemColors.ControlBackgroundColor
 		  G.FillRect(1, 1, G.Width - 2, G.Height - 2)
 		  
-		  G.ForeColor = SystemColors.SeparatorColor
+		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.DrawRect(0, 0, G.Width, G.Height)
 		  
 		  G.FontName = "SmallSystem"
@@ -123,10 +123,10 @@ Inherits ControlCanvas
 		  XLegend.FillColor = SystemColors.LabelColor
 		  G.DrawObject(XLegend)
 		  
-		  G.ForeColor = SystemColors.SecondaryLabelColor
+		  G.DrawingColor = SystemColors.SecondaryLabelColor
 		  G.DrawLine(Viewport.Left - 1, Viewport.Top - 1, Viewport.Left - 1, Viewport.Bottom)
 		  G.DrawLine(Viewport.Left, Viewport.Bottom, Viewport.Right, Viewport.Bottom)
-		  G.ForeColor = SystemColors.QuaternaryLabelColor
+		  G.DrawingColor = SystemColors.QuaternaryLabelColor
 		  G.DrawLine(Viewport.Left, Viewport.Top - 1, Viewport.Right, Viewport.Top - 1)
 		  G.DrawLine(Viewport.Right, Viewport.Top, Viewport.Right, Viewport.Bottom - 1)
 		  

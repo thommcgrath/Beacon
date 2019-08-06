@@ -407,10 +407,10 @@ End
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  G.ForeColor = SystemColors.ControlBackgroundColor
+		  G.DrawingColor = SystemColors.ControlBackgroundColor
 		  G.FillRect(0, 0, G.Width - 1, G.Height)
 		  
-		  G.ForeColor = SystemColors.SeparatorColor
+		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.FillRect(Self.Views.Width, 0, 1, G.Height)
 		  G.FillRect(Self.ViewShelf.Left + Self.ViewShelf.Width, 0, 1, G.Height)
 		End Sub

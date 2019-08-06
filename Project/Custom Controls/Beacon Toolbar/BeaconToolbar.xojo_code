@@ -252,7 +252,7 @@ Implements ObservationKit.Observer
 		    End If
 		    
 		    If Button.Toggled Then
-		      G.ForeColor = If(UseAccent, AccentColor, SystemColors.SelectedContentBackgroundColor)
+		      G.DrawingColor = If(UseAccent, AccentColor, SystemColors.SelectedContentBackgroundColor)
 		      G.FillRoundRect(NearestMultiple(Rect.Left, PrecisionX), NearestMultiple(Rect.Top, PrecisionY), NearestMultiple(Rect.Width, PrecisionX), NearestMultiple(Rect.Height, PrecisionY), 4, 4)
 		    End If
 		    
@@ -265,7 +265,7 @@ Implements ObservationKit.Observer
 		  End If
 		  
 		  If Mode = ButtonModes.Pressed Then
-		    G.ForeColor = &c00000080
+		    G.DrawingColor = &c00000080
 		    G.FillRoundRect(NearestMultiple(Rect.Left, PrecisionX), NearestMultiple(Rect.Top, PrecisionY), NearestMultiple(Rect.Width, PrecisionX), NearestMultiple(Rect.Height, PrecisionY), 4, 4)
 		  End If
 		End Sub
@@ -478,7 +478,7 @@ Implements ObservationKit.Observer
 		    Dim CaptionLeft As Integer = ContentRect.Left + ((ContentRect.Width - CaptionWidth) / 2)
 		    Dim CaptionBottom As Integer = ContentRect.Top + (ContentRect.Height / 2) + ((G.FontAscent * 0.8) / 2)
 		    
-		    G.ForeColor = SystemColors.LabelColor
+		    G.DrawingColor = SystemColors.LabelColor
 		    G.DrawString(Self.Caption, CaptionLeft, CaptionBottom, CaptionWidth, True)
 		  End If
 		End Sub

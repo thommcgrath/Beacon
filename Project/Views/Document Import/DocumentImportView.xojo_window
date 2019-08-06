@@ -1176,7 +1176,7 @@ End
 		    Views.SelectedPanelIndex = Self.PageLocal
 		  Case SourceRadio(3).Value
 		    OtherDocsList.DeleteAllRows
-		    OtherDocsList.ColumnType(0) = ListBox.TypeCheckbox
+		    OtherDocsList.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
 		    For Each Doc As Beacon.Document In Self.mOtherDocuments
 		      OtherDocsList.AddRow("", Doc.Title)
 		      OtherDocsList.RowTag(OtherDocsList.LastAddedRowIndex) = Doc

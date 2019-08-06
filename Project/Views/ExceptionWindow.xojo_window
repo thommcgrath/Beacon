@@ -7,7 +7,7 @@ Begin Window ExceptionWindow
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "2"
-   Frame           =   "1"
+   Frame           =   1
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -32,7 +32,7 @@ Begin Window ExceptionWindow
    MinimumHeight   =   64
    MinimumWidth    =   64
    MinWidth        =   64
-   Placement       =   "2"
+   Placement       =   2
    Resizable       =   True
    Resizeable      =   "False"
    SystemUIVisible =   True

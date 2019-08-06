@@ -25,11 +25,11 @@ Inherits Listbox
 		    If Self.Transparent And OSMajor >= 10 And OSMinor >= 14 Then
 		      Clip.ClearRect(0, 0, Clip.Width, Clip.Height)
 		    Else
-		      Clip.ForeColor = SystemColors.UnderPageBackgroundColor
+		      Clip.DrawingColor = SystemColors.UnderPageBackgroundColor
 		      Clip.FillRect(0, 0, Clip.Width, Clip.Height)
 		    End If
 		  #else
-		    Clip.ForeColor = SystemColors.UnderPageBackgroundColor
+		    Clip.DrawingColor = SystemColors.UnderPageBackgroundColor
 		    Clip.FillRect(0, 0, Clip.Width, Clip.Height)
 		  #endif
 		  
@@ -50,7 +50,7 @@ Inherits Listbox
 		    SecondaryTextColor = If(RowInvalid, TextColor, SystemColors.SecondaryLabelColor)
 		  End If
 		  
-		  Clip.ForeColor = BackgroundColor
+		  Clip.DrawingColor = BackgroundColor
 		  Clip.FillRect(0, 0, G.Width, G.Height)
 		  
 		  Call CellBackgroundPaint(Clip, Row, Column, BackgroundColor, TextColor, IsHighlighted)
@@ -72,7 +72,7 @@ Inherits Listbox
 		    Return True
 		  End If
 		  
-		  Dim IsChecked As Boolean = Self.ColumnType(Column) = Listbox.TypeCheckbox Or Self.CellType(Row, Column) = Listbox.TypeCheckbox
+		  Dim IsChecked As Boolean = Self.ColumnTypeAt(Column) = Listbox.CellTypes.CheckBox Or Self.CellTypeAt(Row, Column) = Listbox.CellTypes.CheckBox
 		  If IsChecked Then
 		    MaxDrawWidth = MaxDrawWidth - 20
 		  End If
@@ -94,16 +94,19 @@ Inherits Listbox
 		    Dim LineWidth As Integer = Min(Ceil(Clip.StringWidth(Lines(I))), MaxDrawWidth)
 		    
 		    Dim DrawLeft As Integer
-		    Dim Align As Integer = Self.CellAlignment(Row, Column)
-		    If Align = Listbox.AlignDefault Then
-		      Align = Self.ColumnAlignment(Column)
+		    Dim Align As Listbox.Alignments = CType(Self.CellAlignmentAt(Row, Column), Listbox.Alignments)
+		    #if Not DebugBuild
+		      #Pragma Error "Don't ship with this CType"
+		    #endif
+		    If Align = Listbox.Alignments.Default Then
+		      Align = Self.ColumnAlignmentAt(Column)
 		    End If
 		    Select Case Align
-		    Case Listbox.AlignLeft, Listbox.AlignDefault
+		    Case Listbox.Alignments.Left, Listbox.Alignments.Default
 		      DrawLeft = CellPadding + If(IsChecked, 20, 0)
-		    Case Listbox.AlignCenter
+		    Case Listbox.Alignments.Center
 		      DrawLeft = CellPadding + If(IsChecked, 20, 0) + ((MaxDrawWidth - LineWidth) / 2)
-		    Case Listbox.AlignRight, Listbox.AlignDecimal
+		    Case Listbox.Alignments.Right, Listbox.Alignments.Decimal
 		      DrawLeft = Clip.Width - (LineWidth + CellPadding)
 		    End Select
 		    
@@ -111,7 +114,7 @@ Inherits Listbox
 		    Dim LinePosition As Integer = Round(DrawTop + LineHeight)
 		    
 		    If Not CellTextPaint(Clip, Row, Column, Lines(I), TextColor, DrawLeft, LinePosition, IsHighlighted) Then
-		      Clip.ForeColor = If(I = 0, TextColor, SecondaryTextColor)
+		      Clip.DrawingColor = If(I = 0, TextColor, SecondaryTextColor)
 		      Clip.DrawString(Lines(I), DrawLeft, LinePosition, MaxDrawWidth, True)
 		    End If
 		    

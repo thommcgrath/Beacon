@@ -167,10 +167,10 @@ Protected Module BeaconUI
 		  ' Pic.HorizontalResolution = 72 * Scale
 		  ' Pic.VerticalResolution = 72 * Scale
 		  
-		  Pic.Graphics.ForeColor = &c000000
+		  Pic.Graphics.DrawingColor = &c000000
 		  Pic.Graphics.FillRect(0, 0, Pic.Width, Pic.Height)
 		  
-		  Pic.Graphics.ForeColor = &cFFFFFF
+		  Pic.Graphics.DrawingColor = &cFFFFFF
 		  Pic.Graphics.FillOval(2 * Scale, 2 * Scale, Pic.Width - (4 * Scale) , Pic.Height - (4 * Scale))
 		  
 		  Dim CenterPoint As New REALbasic.Point(Pic.Width / 2, Pic.Height / 2)
@@ -195,11 +195,11 @@ Protected Module BeaconUI
 		    Points.Append(Round(LegY))
 		  Next
 		  
-		  Pic.Graphics.ForeColor = &c000000
+		  Pic.Graphics.DrawingColor = &c000000
 		  Pic.Graphics.FillPolygon(Points)
 		  
 		  Dim Mask As New Picture(Pic.Width, Pic.Height, 32)
-		  Mask.Graphics.ForeColor = &c000000
+		  Mask.Graphics.DrawingColor = &c000000
 		  Mask.Graphics.FillOval(0, 0, Mask.Width, Mask.Height)
 		  Pic.ApplyMask(Mask)
 		  
@@ -308,7 +308,7 @@ Protected Module BeaconUI
 		    Dim Pic As New Picture(Width * Factor, Height * Factor, 32)
 		    Pic.VerticalResolution = 72 * Factor
 		    Pic.HorizontalResolution = 72 * Factor
-		    Pic.Graphics.ForeColor = RGB(FillColor.Red, FillColor.Green, FillColor.Blue)
+		    Pic.Graphics.DrawingColor = RGB(FillColor.Red, FillColor.Green, FillColor.Blue)
 		    Pic.Graphics.FillRect(0, 0, Pic.Width, Pic.Height)
 		    Pic.Mask.Graphics.ClearRect(0, 0, Pic.Width, Pic.Height)
 		    Pic.Mask.Graphics.DrawPicture(Mask, 0, 0, Mask.Width, Mask.Height, 0, 0, Mask.Width, Mask.Height)
@@ -318,7 +318,7 @@ Protected Module BeaconUI
 		      Pic.Mask.Graphics.DrawPicture(OverlayMask, 0, 0, Mask.Width, Mask.Height, 0, 0, OverlayMask.Width, OverlayMask.Height)
 		    End If
 		    
-		    Pic.Mask.Graphics.ForeColor = RGB(255, 255, 255, 255 - FillColor.Alpha)
+		    Pic.Mask.Graphics.DrawingColor = RGB(255, 255, 255, 255 - FillColor.Alpha)
 		    Pic.Mask.Graphics.FillRect(0, 0, Pic.Width, Pic.Height)
 		    
 		    Bitmaps.Append(Pic)

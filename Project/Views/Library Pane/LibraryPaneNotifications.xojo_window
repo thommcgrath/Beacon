@@ -161,7 +161,7 @@ End
 		    Dim MessageTop As Double = Pos + CellPadding
 		    Dim MessageHeight As Double = G.ActualStringHeight(Message, CellWidth)
 		    Dim MessageBaseline As Double = MessageTop + G.FontAscent
-		    G.ForeColor = SystemColors.LabelColor
+		    G.DrawingColor = SystemColors.LabelColor
 		    G.DrawString(Message, CellPadding, MessageBaseline, CellWidth, False)
 		    
 		    Dim CellHeight As Double = CellPadding + MessageHeight + CellPadding
@@ -171,7 +171,7 @@ End
 		      Dim SecondaryMessageTop As Double = MessageTop + MessageHeight + (CellPadding / 2)
 		      Dim SecondaryMessageHeight As Double = G.ActualStringHeight(SecondaryMessage, CellWidth)
 		      Dim SecondaryMessageBaseline As Double = SecondaryMessageTop + G.FontAscent
-		      G.ForeColor = SystemColors.SecondaryLabelColor
+		      G.DrawingColor = SystemColors.SecondaryLabelColor
 		      G.DrawString(SecondaryMessage, CellPadding, SecondaryMessageBaseline, CellWidth, False)
 		      CellHeight = CellHeight + SecondaryMessageHeight + (CellPadding / 2)
 		    End If
@@ -185,7 +185,7 @@ End
 		    Self.mCloseRects(I) = New BeaconUI.Rect(NotificationRect.Right - CloseHitBox, NotificationRect.Top, CloseHitBox, CloseHitBox)
 		    G.DrawPicture(CloseIcon, Self.mCloseRects(I).Left + ((Self.mCloseRects(I).Width - CloseIcon.Width) / 2), Self.mCloseRects(I).Top + ((Self.mCloseRects(I).Height - CloseIcon.Height) / 2))
 		    If Self.mPressed And Self.mDownIndex = I Then
-		      G.ForeColor = &c00000080
+		      G.DrawingColor = &c00000080
 		      If Self.mPressedOnClose Then
 		        G.FillRoundRect(Self.mCloseRects(I).Left, Self.mCloseRects(I).Top, Self.mCloseRects(I).Width, Self.mCloseRects(I).Height, 2, 2)
 		      Else
@@ -201,7 +201,7 @@ End
 		      LocalData.SharedInstance.SaveNotification(Self.mNotifications(I))
 		    End If
 		    If DrawBottomBorder Then
-		      G.ForeColor = SystemColors.SeparatorColor
+		      G.DrawingColor = SystemColors.SeparatorColor
 		      G.FillRect(0, Pos, G.Width, 1)
 		      Pos = Pos + 1
 		      ContentHeight = ContentHeight + 1
@@ -298,7 +298,7 @@ End
 		  #Pragma Unused Areas
 		  
 		  If Self.mScrollPosition > 0 Then
-		    G.ForeColor = SystemColors.SeparatorColor
+		    G.DrawingColor = SystemColors.SeparatorColor
 		    G.FillRect(0, 0, G.Width, 1)
 		    Self.PaintInto(G.Clip(0, 1, G.Width, G.Height - 1), (Self.mScrollPosition * -1) - 1)
 		  Else

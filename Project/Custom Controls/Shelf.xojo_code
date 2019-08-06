@@ -190,7 +190,7 @@ Implements ObservationKit.Observer
 		    Self.mHitRects(I) = CellRect
 		    
 		    If Self.mSelectedIndex = I Then
-		      G.ForeColor = SystemColors.SelectedContentBackgroundColor
+		      G.DrawingColor = SystemColors.SelectedContentBackgroundColor
 		      G.FillRoundRect(NearestMultiple(CellRect.Left, PrecisionX), NearestMultiple(CellRect.Top, PrecisionY), NearestMultiple(CellRect.Width, PrecisionX), NearestMultiple(CellRect.Height, PrecisionY), CellCornerRadius, CellCornerRadius)
 		      IconColor = SystemColors.AlternateSelectedControlTextColor
 		    End If
@@ -229,12 +229,12 @@ Implements ObservationKit.Observer
 		      Dim PulseAmount As Double = Self.mItems(I).PulseAmount
 		      Dim DotRect As New BeaconUI.Rect(IconRect.Right - Self.NotificationDotSize, IconRect.Top, Self.NotificationDotSize, Self.NotificationDotSize)
 		      
-		      G.ForeColor = PulseColor
+		      G.DrawingColor = PulseColor
 		      G.FillOval(DotRect.Left, DotRect.Top, DotRect.Width, DotRect.Height)
 		      If PulseAmount > 0 Then
 		        Dim PrecisePulseSize As Double = Self.NotificationDotSize + ((Self.NotificationDotSize * 2) * PulseAmount)
 		        Dim PulseSize As Double = NearestMultiple(PrecisePulseSize, PrecisionX * 2)
-		        G.ForeColor = PulseColor.AtOpacity(1.0 - PulseAmount)
+		        G.DrawingColor = PulseColor.AtOpacity(1.0 - PulseAmount)
 		        G.DrawOval(DotRect.Left - ((PulseSize - Self.NotificationDotSize) / 2), DotRect.Top - ((PulseSize - Self.NotificationDotSize) / 2), PulseSize, PulseSize)
 		      End If
 		    End If
@@ -246,12 +246,12 @@ Implements ObservationKit.Observer
 		      CaptionWidth = Min(CaptionWidth, CellRect.Width - (CellPadding * 2))
 		      Dim CaptionX As Double = CellRect.Left + ((CellRect.Width - CaptionWidth) / 2)
 		      
-		      G.ForeColor = IconColor
+		      G.DrawingColor = IconColor
 		      G.DrawString(Caption, NearestMultiple(CaptionX, PrecisionX), NearestMultiple(CaptionY, PrecisionY), NearestMultiple(CellRect.Width, PrecisionX), True)
 		    End If
 		    
 		    If Self.mPressed And Self.mMouseDownItem = I Then
-		      G.ForeColor = &c000000CC
+		      G.DrawingColor = &c000000CC
 		      G.FillRoundRect(NearestMultiple(CellRect.Left, PrecisionX), NearestMultiple(CellRect.Top, PrecisionY), NearestMultiple(CellRect.Width, PrecisionX), NearestMultiple(CellRect.Height, PrecisionY), CellCornerRadius, CellCornerRadius)
 		    End If
 		    

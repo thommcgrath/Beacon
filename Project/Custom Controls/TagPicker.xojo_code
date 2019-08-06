@@ -81,9 +81,9 @@ Inherits ControlCanvas
 		  #Pragma Unused Areas
 		  
 		  Dim ContentArea As REALbasic.Rect = Self.ContentArea
-		  G.ForeColor = SystemColors.SeparatorColor
+		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.DrawRect(ContentArea.Left - 1, ContentArea.Top - 1, ContentArea.Width + 2, ContentArea.Height + 2)
-		  G.ForeColor = SystemColors.ControlBackgroundColor
+		  G.DrawingColor = SystemColors.ControlBackgroundColor
 		  G.FillRect(ContentArea.Left, ContentArea.Top, ContentArea.Width, ContentArea.Height)
 		  
 		  Const VerticalSpacing = 6
@@ -140,16 +140,16 @@ Inherits ControlCanvas
 		      CellColor = NeutralBackgroundColor
 		      CellTextColor = NeutralTextColor
 		    End If
-		    Clip.ForeColor = CellColor
+		    Clip.DrawingColor = CellColor
 		    Clip.FillRoundRect(CellRect.Left - ContentArea.Left, CellRect.Top - ContentArea.Top, CellRect.Width, CellRect.Height, CellRect.Height, CellRect.Height)
-		    Clip.ForeColor = CellTextColor
+		    Clip.DrawingColor = CellTextColor
 		    Clip.DrawString(Tag, CaptionLeft - ContentArea.Left, CaptionBottom - ContentArea.Top, CellWidth - (HorizontalPadding * 2), True)
 		    If Excluded Then
 		      Clip.FillRect(CaptionLeft - ContentArea.Left, CellRect.VerticalCenter - ContentArea.Top, CellRect.Width - (HorizontalPadding * 2), 2)
 		    End If
 		    
 		    If Pressed Then
-		      Clip.ForeColor = &c00000080
+		      Clip.DrawingColor = &c00000080
 		      Clip.FillRoundRect(CellRect.Left - ContentArea.Left, CellRect.Top - ContentArea.Top, CellRect.Width, CellRect.Height, CellRect.Height, CellRect.Height)
 		    End If
 		    
@@ -171,7 +171,7 @@ Inherits ControlCanvas
 		    Dim ThumbHeight As Integer = Round(TrackHeight * (ContentArea.Height / Self.mContentHeight))
 		    Dim ThumbTop As Integer = 5 + ((TrackHeight - ThumbHeight) * (Self.mScrollPosition / Self.mOverflowHeight))
 		    
-		    G.ForeColor = SystemColors.LabelColor.AtOpacity(0.1)
+		    G.DrawingColor = SystemColors.LabelColor.AtOpacity(0.1)
 		    G.FillRoundRect(ContentArea.Right - 10, ThumbTop, 5, ThumbHeight, 5, 5)
 		  End If
 		End Sub

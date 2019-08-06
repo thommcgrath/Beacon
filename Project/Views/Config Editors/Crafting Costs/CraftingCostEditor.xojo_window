@@ -346,9 +346,9 @@ End
 #tag Events List
 	#tag Event
 		Sub Opening()
-		  Me.ColumnAlignment(Self.ColumnQuantity) = Listbox.AlignRight
-		  Me.ColumnType(Self.ColumnQuantity) = Listbox.TypeEditable
-		  Me.ColumnType(Self.ColumnRequireExact) = Listbox.TypeCheckbox
+		  Me.ColumnAlignmentAt(Self.ColumnQuantity) = Listbox.Alignments.Right
+		  Me.ColumnTypeAt(Self.ColumnQuantity) = Listbox.CellTypes.TextField
+		  Me.ColumnTypeAt(Self.ColumnRequireExact) = Listbox.CellTypes.CheckBox
 		End Sub
 	#tag EndEvent
 	#tag Event

@@ -7,7 +7,7 @@ Begin Window UserWelcomeWindow
    Compatibility   =   ""
    Composite       =   True
    DefaultLocation =   "2"
-   Frame           =   "1"
+   Frame           =   1
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -32,7 +32,7 @@ Begin Window UserWelcomeWindow
    MinimumHeight   =   360
    MinimumWidth    =   640
    MinWidth        =   640
-   Placement       =   "2"
+   Placement       =   2
    Resizable       =   True
    Resizeable      =   "False"
    SystemUIVisible =   True
@@ -2520,13 +2520,13 @@ End
 		  G.ClearRect(0, 0, G.Width, G.Height)
 		  
 		  If Not SystemColors.IsDarkMode Then
-		    G.ForeColor = &c713a9a
+		    G.DrawingColor = &c713a9a
 		    G.FillRect(0, 0, G.Width, G.Height)
 		  End If
 		  
 		  G.DrawPicture(LoginSidebar, 0, 0)
 		  
-		  G.ForeColor = SystemColors.SeparatorColor
+		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.FillRect(G.Width - 1, 0, G.Width - 1, G.Height)
 		End Sub
 	#tag EndEvent
