@@ -144,7 +144,7 @@ Begin BeaconSubview PresetEditorView
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
-      SelectedPanelIndex=   2
+      SelectedPanelIndex=   1
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
@@ -168,7 +168,7 @@ Begin BeaconSubview PresetEditorView
          MacButtonStyle  =   "0"
          Scope           =   2
          Segments        =   "The Island\n\nFalse\rScorched Earth\n\nFalse\rAberration\n\nFalse\rExtinction\n\nFalse\rGenesis\n\nFalse\rThe Center\n\nFalse\rRagnarok\n\nFalse\rValguero\n\nFalse"
-         SelectionStyle  =   0
+         SelectionStyle  =   "0"
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True

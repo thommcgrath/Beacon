@@ -299,12 +299,16 @@ Begin ConfigEditor MapsConfigEditor
       Width           =   200
    End
    Begin CheckBox MapCheckboxes
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Genesis"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   128
@@ -324,11 +328,13 @@ Begin ConfigEditor MapsConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   148
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
+      VisualState     =   "0"
       Width           =   200
    End
 End

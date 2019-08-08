@@ -523,6 +523,7 @@ Begin BeaconContainer ModDetailView
       End
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -563,6 +564,7 @@ Begin BeaconContainer ModDetailView
       Width           =   864
    End
    Begin Beacon.EngramSearcherThread Searcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -1013,13 +1015,13 @@ End
 #tag Events EngramList
 	#tag Event
 		Sub Open()
-		  Me.ColumnType(0) = Listbox.TypeEditableTextField
-		  Me.ColumnType(1) = Listbox.TypeEditableTextField
-		  Me.ColumnType(2) = Listbox.TypeCheckbox
-		  Me.ColumnAlignment(2) = Listbox.AlignCenter
+		  Me.ColumnTypeAt(0) = Listbox.CellTypes.TextField
+		  Me.ColumnTypeAt(1) = Listbox.CellTypes.TextField
+		  Me.ColumnTypeAt(2) = Listbox.CellTypes.CheckBox
+		  Me.ColumnAlignmentAt(2) = Listbox.Alignments.Center
 		  For I As Integer = Self.ColumnIsland To Self.ColumnValguero
-		    Me.ColumnType(I) = Listbox.TypeCheckbox
-		    Me.ColumnAlignment(I) = Listbox.AlignCenter
+		    Me.ColumnTypeAt(I) = Listbox.CellTypes.CheckBox
+		    Me.ColumnAlignmentAt(I) = Listbox.Alignments.Center
 		  Next
 		End Sub
 	#tag EndEvent
