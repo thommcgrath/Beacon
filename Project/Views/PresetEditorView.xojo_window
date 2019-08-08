@@ -151,7 +151,7 @@ Begin BeaconSubview PresetEditorView
       Tooltip         =   ""
       Top             =   61
       Transparent     =   False
-      Value           =   2
+      Value           =   1
       Visible         =   True
       Width           =   740
       BeginSegmentedButton SegmentedButton MapSelector
@@ -167,8 +167,8 @@ Begin BeaconSubview PresetEditorView
          LockTop         =   True
          MacButtonStyle  =   "0"
          Scope           =   2
-         Segments        =   "The Island\n\nFalse\rScorched Earth\n\nFalse\rAberration\n\nFalse\rExtinction\n\nFalse\rThe Center\n\nFalse\rRagnarok\n\nFalse\rValguero\n\nFalse"
-         SelectionStyle  =   "0"
+         Segments        =   "The Island\n\nFalse\rScorched Earth\n\nFalse\rAberration\n\nFalse\rExtinction\n\nFalse\rGenesis\n\nFalse\rThe Center\n\nFalse\rRagnarok\n\nFalse\rValguero\n\nFalse"
+         SelectionStyle  =   0
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
@@ -1133,10 +1133,12 @@ End
 		    Case 3
 		      Maps.Append(Beacon.Maps.Extinction)
 		    Case 4
-		      Maps.Append(Beacon.Maps.TheCenter)
+		      Maps.Append(Beacon.Maps.Genesis)
 		    Case 5
-		      Maps.Append(Beacon.Maps.Ragnarok)
+		      Maps.Append(Beacon.Maps.TheCenter)
 		    Case 6
+		      Maps.Append(Beacon.Maps.Ragnarok)
+		    Case 7
 		      Maps.Append(Beacon.Maps.Valguero)
 		    End Select
 		  Next
@@ -1282,9 +1284,10 @@ End
 		  Self.MapSelector.SegmentAt(1).IsSelected = (Mask And Beacon.Maps.ScorchedEarth.Mask) = Beacon.Maps.ScorchedEarth.Mask
 		  Self.MapSelector.SegmentAt(2).IsSelected = (Mask And Beacon.Maps.Aberration.Mask) = Beacon.Maps.Aberration.Mask
 		  Self.MapSelector.SegmentAt(3).IsSelected = (Mask And Beacon.Maps.Extinction.Mask) = Beacon.Maps.Extinction.Mask
-		  Self.MapSelector.SegmentAt(4).IsSelected = (Mask And Beacon.Maps.TheCenter.Mask) = Beacon.Maps.TheCenter.Mask
-		  Self.MapSelector.SegmentAt(5).IsSelected = (Mask And Beacon.Maps.Ragnarok.Mask) = Beacon.Maps.Ragnarok.Mask
-		  Self.MapSelector.SegmentAt(6).IsSelected = (Mask And Beacon.Maps.Valguero.Mask) = Beacon.Maps.Valguero.Mask
+		  Self.MapSelector.SegmentAt(4).IsSelected = (Mask And Beacon.Maps.Genesis.Mask) = Beacon.Maps.Genesis.Mask
+		  Self.MapSelector.SegmentAt(5).IsSelected = (Mask And Beacon.Maps.TheCenter.Mask) = Beacon.Maps.TheCenter.Mask
+		  Self.MapSelector.SegmentAt(6).IsSelected = (Mask And Beacon.Maps.Ragnarok.Mask) = Beacon.Maps.Ragnarok.Mask
+		  Self.MapSelector.SegmentAt(7).IsSelected = (Mask And Beacon.Maps.Valguero.Mask) = Beacon.Maps.Valguero.Mask
 		  
 		  Dim Maps() As Beacon.Map = Self.FilteredMaps()
 		  Dim SelectedEntries() As String

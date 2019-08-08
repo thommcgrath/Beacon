@@ -24,6 +24,9 @@ Protected Class Engram
 		  If Self.ValidForMap(Beacon.Maps.Valguero) Then
 		    Environments.Append("Valguero")
 		  End If
+		  If Self.ValidForMap(Beacon.Maps.Genesis) Then
+		    Environments.Append("Genesis")
+		  End If
 		  
 		  Dim Dict As New Dictionary
 		  Dict.Value("path") = Self.Path
@@ -112,6 +115,8 @@ Protected Class Engram
 		      Map = Beacon.Maps.Extinction
 		    Case "valguero"
 		      Map = Beacon.Maps.Valguero
+		    Case "genesis"
+		      Map = Beacon.Maps.Genesis
 		    End Select
 		    If Map <> Nil Then
 		      Self.ValidForMap(Map) = True

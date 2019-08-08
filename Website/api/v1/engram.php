@@ -170,6 +170,9 @@ case 'POST':
 				if ($key === 'valguero') {
 					$availability = $availability | BeaconMaps::Valguero;
 				}
+				if ($key === 'genesis') {
+					$availability = $availability | BeaconMaps::Genesis;
+				}
 			}
 		}
 		if ($availability === 0) {

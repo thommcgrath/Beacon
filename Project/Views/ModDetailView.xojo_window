@@ -311,9 +311,9 @@ Begin BeaconContainer ModDetailView
          AutoHideScrollbars=   True
          Bold            =   False
          Border          =   False
-         ColumnCount     =   10
+         ColumnCount     =   11
          ColumnsResizable=   False
-         ColumnWidths    =   "*,*,100,75,75,75,75,75,75,75"
+         ColumnWidths    =   "*,*,100,75,75,75,75,75,75,75,75"
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
@@ -339,7 +339,7 @@ Begin BeaconContainer ModDetailView
          Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "Panel"
-         InitialValue    =   "Path	Label	Blueprintable	Island	Scorched	Center	Ragnarok	Aberration	Extinction	Valguero"
+         InitialValue    =   "Path	Label	Blueprintable	Island	Scorched	Aberration	Extinction	Genesis	Center	Ragnarok	Valguero"
          Italic          =   False
          Left            =   0
          LockBottom      =   True
@@ -523,7 +523,6 @@ Begin BeaconContainer ModDetailView
       End
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -564,13 +563,11 @@ Begin BeaconContainer ModDetailView
       Width           =   864
    End
    Begin Beacon.EngramSearcherThread Searcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   0
-      State           =   ""
       TabPanelIndex   =   0
    End
 End
@@ -843,13 +840,14 @@ End
 		  EngramList.Cell(Index, 0) = Engram.Path
 		  EngramList.Cell(Index, 1) = Engram.Label
 		  EngramList.CellCheck(Index, 2) = Engram.CanBeBlueprint
-		  EngramList.CellCheck(Index, 3) = Engram.ValidForMap(Beacon.Maps.TheIsland)
-		  EngramList.CellCheck(Index, 4) = Engram.ValidForMap(Beacon.Maps.ScorchedEarth)
-		  EngramList.CellCheck(Index, 5) = Engram.ValidForMap(Beacon.Maps.TheCenter)
-		  EngramList.CellCheck(Index, 6) = Engram.ValidForMap(Beacon.Maps.Ragnarok)
-		  EngramList.CellCheck(Index, 7) = Engram.ValidForMap(Beacon.Maps.Aberration)
-		  EngramList.CellCheck(Index, 8) = Engram.ValidForMap(Beacon.Maps.Extinction)
-		  EngramList.CellCheck(Index, 9) = Engram.ValidForMap(Beacon.Maps.Valguero)
+		  EngramList.CellCheck(Index, Self.ColumnIsland) = Engram.ValidForMap(Beacon.Maps.TheIsland)
+		  EngramList.CellCheck(Index, Self.ColumnScorched) = Engram.ValidForMap(Beacon.Maps.ScorchedEarth)
+		  EngramList.CellCheck(Index, Self.ColumnCenter) = Engram.ValidForMap(Beacon.Maps.TheCenter)
+		  EngramList.CellCheck(Index, Self.ColumnRagnarok) = Engram.ValidForMap(Beacon.Maps.Ragnarok)
+		  EngramList.CellCheck(Index, Self.ColumnAberration) = Engram.ValidForMap(Beacon.Maps.Aberration)
+		  EngramList.CellCheck(Index, Self.ColumnExtinction) = Engram.ValidForMap(Beacon.Maps.Extinction)
+		  EngramList.CellCheck(Index, Self.ColumnValguero) = Engram.ValidForMap(Beacon.Maps.Valguero)
+		  EngramList.CellCheck(Index, Self.ColumnGenesis) = Engram.ValidForMap(Beacon.Maps.Genesis)
 		  
 		  EngramList.RowTag(Index) = Engram
 		End Sub
@@ -951,6 +949,30 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = ColumnAberration, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnCenter, Type = Double, Dynamic = False, Default = \"8", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnExtinction, Type = Double, Dynamic = False, Default = \"6", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnGenesis, Type = Double, Dynamic = False, Default = \"7", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnIsland, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnRagnarok, Type = Double, Dynamic = False, Default = \"9", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnScorched, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnValguero, Type = Double, Dynamic = False, Default = \"10", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PageEngrams, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
@@ -990,26 +1012,15 @@ End
 #tag EndEvents
 #tag Events EngramList
 	#tag Event
-		Sub Opening()
-		  Me.ColumnTypeAt(0) = Listbox.CellTypes.TextField
-		  Me.ColumnTypeAt(1) = Listbox.CellTypes.TextField
-		  Me.ColumnTypeAt(2) = Listbox.CellTypes.CheckBox
-		  Me.ColumnTypeAt(3) = Listbox.CellTypes.CheckBox
-		  Me.ColumnTypeAt(4) = Listbox.CellTypes.CheckBox
-		  Me.ColumnTypeAt(5) = Listbox.CellTypes.CheckBox
-		  Me.ColumnTypeAt(6) = Listbox.CellTypes.CheckBox
-		  Me.ColumnTypeAt(7) = Listbox.CellTypes.CheckBox
-		  Me.ColumnTypeAt(8) = Listbox.CellTypes.CheckBox
-		  Me.ColumnTypeAt(9) = Listbox.CellTypes.CheckBox
-		  
-		  Me.ColumnAlignmentAt(2) = Listbox.Alignments.Center
-		  Me.ColumnAlignmentAt(3) = Listbox.Alignments.Center
-		  Me.ColumnAlignmentAt(4) = Listbox.Alignments.Center
-		  Me.ColumnAlignmentAt(5) = Listbox.Alignments.Center
-		  Me.ColumnAlignmentAt(6) = Listbox.Alignments.Center
-		  Me.ColumnAlignmentAt(7) = Listbox.Alignments.Center
-		  Me.ColumnAlignmentAt(8) = Listbox.Alignments.Center
-		  Me.ColumnAlignmentAt(9) = Listbox.Alignments.Center
+		Sub Open()
+		  Me.ColumnType(0) = Listbox.TypeEditableTextField
+		  Me.ColumnType(1) = Listbox.TypeEditableTextField
+		  Me.ColumnType(2) = Listbox.TypeCheckbox
+		  Me.ColumnAlignment(2) = Listbox.AlignCenter
+		  For I As Integer = Self.ColumnIsland To Self.ColumnValguero
+		    Me.ColumnType(I) = Listbox.TypeCheckbox
+		    Me.ColumnAlignment(I) = Listbox.AlignCenter
+		  Next
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1023,20 +1034,22 @@ End
 		    Engram.Label = Me.Cell(Row, Column)
 		  Case 2
 		    Engram.CanBeBlueprint = Me.CellCheck(Row, Column)
-		  Case 3
+		  Case Self.ColumnIsland
 		    Engram.ValidForMap(Beacon.Maps.TheIsland) = Me.CellCheck(Row, Column)
-		  Case 4
+		  Case Self.ColumnScorched
 		    Engram.ValidForMap(Beacon.Maps.ScorchedEarth) = Me.CellCheck(Row, Column)
-		  Case 5
+		  Case Self.ColumnCenter
 		    Engram.ValidForMap(Beacon.Maps.TheCenter) = Me.CellCheck(Row, Column)
-		  Case 6
+		  Case Self.ColumnRagnarok
 		    Engram.ValidForMap(Beacon.Maps.Ragnarok) = Me.CellCheck(Row, Column)
-		  Case 7
+		  Case Self.ColumnAberration
 		    Engram.ValidForMap(Beacon.Maps.Aberration) = Me.CellCheck(Row, Column)
-		  Case 8
+		  Case Self.ColumnExtinction
 		    Engram.ValidForMap(Beacon.Maps.Extinction) = Me.CellCheck(Row, Column)
-		  Case 9
+		  Case Self.ColumnValguero
 		    Engram.ValidForMap(Beacon.Maps.Valguero) = Me.CellCheck(Row, Column)
+		  Case Self.ColumnGenesis
+		    Engram.ValidForMap(Beacon.Maps.Genesis) = Me.CellCheck(Row, Column)
 		  End Select
 		  
 		  Self.EngramSet.Add(Engram)
