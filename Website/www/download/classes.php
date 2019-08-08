@@ -60,7 +60,8 @@ if (is_null($cached)) {
 			'help_topics' => BeaconHelpTopic::GetAll($since),
 			'game_variables' => BeaconGameVariable::GetAll($since),
 			'mods' => BeaconMod::GetLive(),
-			'deletions' => BeaconObject::Deletions($min_version, $since)
+			'deletions' => BeaconObject::Deletions($min_version, $since),
+			'ini_options' => BeaconConfigLine::GetAll($min_version, $since)
 		);
 	} elseif ($min_version > 33) {
 		$beacon_version = 3;
