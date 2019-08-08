@@ -370,6 +370,13 @@ table.generic {
 	}
 }
 
+:target:before {
+	content: "";
+	display: block;
+	height: 150px;
+	margin: -150px 0 0;
+}
+
 #content_wrapper {
 	margin-top: 136px;
 	line-height: 1.3em;
@@ -1002,6 +1009,11 @@ div.results {
 	
 	#content_wrapper {
 		margin-top: 141px;
+	}
+	
+	:target:before {
+		height: 140px;
+		margin: -140px 0 0;
 	}
 }
 
