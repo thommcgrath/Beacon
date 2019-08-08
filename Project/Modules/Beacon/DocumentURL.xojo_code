@@ -67,6 +67,24 @@ Protected Class DocumentURL
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function File() As BookmarkedFolderItem
+		  // Will return Nil if the scheme is not file
+		  If Self.Scheme <> Self.TypeLocal Then
+		    Return Nil
+		  End If
+		  
+		  Dim Result As BookmarkedFolderItem
+		  If Self.HasParam("saveinfo") Then
+		    Result = BookmarkedFolderItem.FromSaveInfo(Self.Param("saveinfo"))
+		  Else
+		    Result = New BookmarkedFolderItem(Self.Path, FolderItem.PathModes.URL)
+		  End If
+		  
+		  Return Result
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Hash() As String
 		  Return Self.mHash
 		End Function
@@ -178,7 +196,7 @@ Protected Class DocumentURL
 		Shared Function URLForFile(File As BookmarkedFolderItem) As Beacon.DocumentURL
 		  Dim Path As String = File.URLPath
 		  #if TargetMacOS
-		    Dim SaveInfo As String = BookmarkedFolderItem(File).SaveInfo
+		    Dim SaveInfo As String = File.SaveInfo
 		    If SaveInfo <> "" Then
 		      If Path.IndexOf("?") = -1 Then
 		        Path = Path + "?saveinfo=" + SaveInfo

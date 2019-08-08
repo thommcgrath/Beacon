@@ -242,12 +242,7 @@ Protected Class DocumentController
 		    Dim Success As Boolean
 		    Dim Message As String = "Could not load data from file"
 		    Try
-		      Dim File As BookmarkedFolderItem
-		      If Self.mDocumentURL.HasParam("saveinfo") Then
-		        File = BookmarkedFolderItem.FromSaveInfo(Self.mDocumentURL.Param("saveinfo"))
-		      Else
-		        File = New BookmarkedFolderItem(Self.mDocumentURL.URL, FolderItem.PathModes.URL)
-		      End If
+		      Dim File As BookmarkedFolderItem = Self.mDocumentURL.File
 		      If File <> Nil And File.Exists Then
 		        FileContent = File.Read()
 		        Self.mFileRef = File // Just to keep the security scoped bookmark open
@@ -447,7 +442,7 @@ Protected Class DocumentController
 		    AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Upload
 		    Self.mActiveThread.Run
 		  Case Beacon.DocumentURL.TypeLocal
-		    Dim Writer As New Beacon.JSONWriter(Self.mDocument, Self.mIdentity, New BookmarkedFolderItem(Destination.URL, FolderItem.PathModes.URL))
+		    Dim Writer As New Beacon.JSONWriter(Self.mDocument, Self.mIdentity, Destination.File)
 		    AddHandler Writer.Finished, AddressOf Writer_Finished
 		    Writer.Run
 		  End Select

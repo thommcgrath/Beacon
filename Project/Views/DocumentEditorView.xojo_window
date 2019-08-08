@@ -45,7 +45,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       SelectedPanelIndex=   1
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
@@ -221,7 +220,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Width           =   300
    End
    Begin Timer AutosaveTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   "2"
@@ -454,7 +452,11 @@ End
 		Private Sub CleanupAutosave()
 		  Dim AutosaveFile As FolderItem = Self.AutosaveFile()
 		  If AutosaveFile <> Nil And AutosaveFile.Exists Then
-		    AutosaveFile.Delete
+		    Try
+		      AutosaveFile.Delete
+		    Catch Err As IOException
+		      App.Log("Autosave " + AutosaveFile.NativePath + " did not delete: " + Err.Message + " (code: " + Err.ErrorNumber.ToString + ")")
+		    End Try
 		    Self.mAutosaveFile = Nil
 		  End If
 		End Sub
@@ -746,6 +748,7 @@ End
 		      End If
 		      Self.Document.Title = Filename
 		    End If
+		    
 		    Self.mController.SaveAs(Beacon.DocumentURL.URLForFile(New BookmarkedFolderItem(File)))
 		    Self.Title = Self.mController.Name
 		    Self.ToolbarCaption = Self.mController.Name
