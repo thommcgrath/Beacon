@@ -66,6 +66,55 @@ class BeaconConfigLine extends BeaconObject {
 		return $json;
 	}
 	
+	protected function GetColumnValue(string $column) {
+		switch ($column) {
+		case 'native_editor_version':
+			return $this->native_editor_version;
+		case 'file':
+			return $this->file;
+		case 'header':
+			return $this->header;
+		case 'key':
+			return $this->key;
+		case 'value_type':
+			return $this->value_type;
+		case 'max_allowed':
+			return $this->max_allowed;
+		case 'description':
+			return $this->description;
+		case 'default_value':
+			return $this->default_value;
+		default:
+			return parent::GetColumnValue($column);
+		}
+	}
+	
+	public function ConsumeJSON(array $json) {
+		parent::ConsumeJSON($json);
+		
+		if (array_key_exists('file', $json)) {
+			$this->file = $json['file'];
+		}
+		if (array_key_exists('header', $json)) {
+			$this->header = $json['header'];
+		}
+		if (array_key_exists('key', $json)) {
+			$this->key = $json['key'];
+		}
+		if (array_key_exists('value_type', $json)) {
+			$this->value_type = $json['value_type'];
+		}
+		if (array_key_exists('max_allowed', $json)) {
+			$this->max_allowed = intval($json['max_allowed']);
+		}
+		if (array_key_exists('description', $json)) {
+			$this->description = $json['description'];
+		}
+		if (array_key_exists('default_value', $json)) {
+			$this->default_value = $json['default_value'];
+		}
+	}
+	
 	public function NativeEditorInVersion() {
 		return $this->native_editor_version;
 	}
