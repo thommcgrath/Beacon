@@ -105,6 +105,32 @@ CREATE DOMAIN public.hex AS public.citext
 ALTER DOMAIN public.hex OWNER TO thommcgrath;
 
 --
+-- Name: ini_file; Type: TYPE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TYPE public.ini_file AS ENUM (
+    'Game.ini',
+    'GameUserSettings.ini'
+);
+
+
+ALTER TYPE public.ini_file OWNER TO thommcgrath;
+
+--
+-- Name: ini_value_type; Type: TYPE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TYPE public.ini_value_type AS ENUM (
+    'Numeric',
+    'Array',
+    'Structure',
+    'Boolean'
+);
+
+
+ALTER TYPE public.ini_value_type OWNER TO thommcgrath;
+
+--
 -- Name: loot_source_kind; Type: TYPE; Schema: public; Owner: thommcgrath
 --
 
@@ -978,6 +1004,25 @@ CREATE TABLE public.help_topics (
 ALTER TABLE public.help_topics OWNER TO thommcgrath;
 
 --
+-- Name: ini_options; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.ini_options (
+    native_editor_version integer,
+    file public.ini_file NOT NULL,
+    header public.citext NOT NULL,
+    key public.citext NOT NULL,
+    value_type public.ini_value_type NOT NULL,
+    max_allowed integer,
+    description text NOT NULL,
+    default_value text NOT NULL
+)
+INHERITS (public.objects);
+
+
+ALTER TABLE public.ini_options OWNER TO thommcgrath;
+
+--
 -- Name: loot_source_icons; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
@@ -1556,6 +1601,41 @@ ALTER TABLE ONLY public.engrams ALTER COLUMN tags SET DEFAULT '{}'::public.citex
 
 
 --
+-- Name: ini_options object_id; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.ini_options ALTER COLUMN object_id SET DEFAULT public.gen_random_uuid();
+
+
+--
+-- Name: ini_options min_version; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.ini_options ALTER COLUMN min_version SET DEFAULT 0;
+
+
+--
+-- Name: ini_options last_update; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.ini_options ALTER COLUMN last_update SET DEFAULT ('now'::text)::timestamp(0) with time zone;
+
+
+--
+-- Name: ini_options mod_id; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.ini_options ALTER COLUMN mod_id SET DEFAULT '30bbab29-44b2-4f4b-a373-6d4740d9d3b5'::uuid;
+
+
+--
+-- Name: ini_options tags; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.ini_options ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
 -- Name: loot_source_icons object_id; Type: DEFAULT; Schema: public; Owner: thommcgrath
 --
 
@@ -1885,6 +1965,22 @@ ALTER TABLE ONLY public.game_variables
 
 ALTER TABLE ONLY public.help_topics
     ADD CONSTRAINT help_topics_pkey PRIMARY KEY (config_name);
+
+
+--
+-- Name: ini_options ini_options_file_header_key_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.ini_options
+    ADD CONSTRAINT ini_options_file_header_key_key UNIQUE (file, header, key);
+
+
+--
+-- Name: ini_options ini_options_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.ini_options
+    ADD CONSTRAINT ini_options_pkey PRIMARY KEY (object_id);
 
 
 --
@@ -2397,6 +2493,27 @@ CREATE TRIGGER help_topics_before_update_trigger BEFORE INSERT OR UPDATE ON publ
 
 
 --
+-- Name: ini_options ini_options_after_delete_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER ini_options_after_delete_trigger AFTER DELETE ON public.ini_options FOR EACH ROW EXECUTE PROCEDURE public.object_delete_trigger();
+
+
+--
+-- Name: ini_options ini_options_before_insert_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER ini_options_before_insert_trigger BEFORE INSERT ON public.ini_options FOR EACH ROW EXECUTE PROCEDURE public.object_insert_trigger();
+
+
+--
+-- Name: ini_options ini_options_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER ini_options_before_update_trigger BEFORE UPDATE ON public.ini_options FOR EACH ROW EXECUTE PROCEDURE public.object_update_trigger();
+
+
+--
 -- Name: loot_source_icons loot_source_icons_after_delete_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
@@ -2641,6 +2758,14 @@ ALTER TABLE ONLY public.exception_users
 
 ALTER TABLE ONLY public.exception_users
     ADD CONSTRAINT exception_users_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: ini_options ini_options_mod_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.ini_options
+    ADD CONSTRAINT ini_options_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES public.mods(mod_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -2971,6 +3096,13 @@ GRANT SELECT ON TABLE public.game_variables TO thezaz_website;
 --
 
 GRANT SELECT ON TABLE public.help_topics TO thezaz_website;
+
+
+--
+-- Name: TABLE ini_options; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.ini_options TO thezaz_website;
 
 
 --
