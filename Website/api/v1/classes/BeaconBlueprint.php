@@ -28,7 +28,58 @@ class BeaconBlueprint extends BeaconObject {
 		case 'class_string':
 			return $this->class_string;
 		default:
-			parent::GetColumnValue($column);
+			return parent::GetColumnValue($column);
+		}
+	}
+	
+	public function ConsumeJSON(array $json) {
+		parent::ConsumeJSON($json);
+		
+		if (array_key_exists('path', $json)) {
+			$this->path = $json['path'];
+		}
+		if (array_key_exists('availability', $json) && is_int($json['availability'])) {
+			$this->availability = intval($json['availability']);
+		} else {
+			if (array_key_exists('environments', $json)) {
+				$environments = $json['environments'];
+			} elseif (array_key_exists('availability', $json)) {
+				$environments = $json['availability'];
+			}
+			if (isset($environments)) {
+				if (is_array($environments) === false) {
+					throw new Exception('Must supply map availability as an array or integer');
+				}
+				$availability = 0;
+				foreach ($environments as $environment) {
+					$environment = strtolower(trim($environment));
+					if ($environment === 'island') {
+						$availability = $availability | BeaconMaps::TheIsland;
+					}
+					if ($environment === 'scorched') {
+						$availability = $availability | BeaconMaps::ScorchedEarth;
+					}
+					if ($environment === 'center') {
+						$availability = $availability | BeaconMaps::TheCenter;
+					}
+					if ($environment === 'ragnarok') {
+						$availability = $availability | BeaconMaps::Ragnarok;
+					}
+					if (($environment === 'abberation') || ($environment === 'aberration')) {
+						$availability = $availability | BeaconMaps::Aberration;
+					}
+					if ($environment === 'extinction') {
+						$availability = $availability | BeaconMaps::Extinction;
+					}
+					if ($environment === 'valguero') {
+						$availability = $availability | BeaconMaps::Valguero;
+					}
+					if ($environment === 'genesis') {
+						$availability = $availability | BeaconMaps::Genesis;
+					}
+				}
+				$this->availability = $availability;
+			}
 		}
 	}
 	

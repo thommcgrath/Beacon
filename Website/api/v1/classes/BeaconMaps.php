@@ -25,20 +25,20 @@ abstract class BeaconMaps {
 		if (($mask & self::Aberration) == self::Aberration) {
 			$names[] = 'Aberration';
 		}
+		if (($mask & self::Extinction) == self::Extinction) {
+			$names[] = 'Extinction';
+		}
+		if (($mask & self::Genesis) == self::Genesis) {
+			$names[] = 'Genesis';
+		}
 		if (($mask & self::TheCenter) == self::TheCenter) {
 			$names[] = 'The Center';
 		}
 		if (($mask & self::Ragnarok) == self::Ragnarok) {
 			$names[] = 'Ragnarok';
 		}
-		if (($mask & self::Extinction) == self::Extinction) {
-			$names[] = 'Extinction';
-		}
 		if (($mask & self::Valguero) == self::Valguero) {
 			$names[] = 'Valguero';
-		}
-		if (($mask & self::Genesis) == self::Genesis) {
-			$names[] = 'Genesis';
 		}
 		return $names;
 	}

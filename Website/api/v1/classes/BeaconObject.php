@@ -4,11 +4,13 @@ class BeaconObject implements JsonSerializable {
 	private $object_id;
 	private $object_group;
 	private $label;
-	private $min_version;
+	private $min_version = 0;
 	private $mod_id;
 	private $mod_name;
 	private $mod_workshop_id;
 	private $tags = array();
+	
+	const COLUMN_NOT_EXISTS = 'ae3eefbc-6dd0-4f92-ae3d-7cae5c6c9aee';
 	
 	public function __construct($object_id = null) {
 		if ($object_id === null) {
@@ -65,11 +67,30 @@ class BeaconObject implements JsonSerializable {
 		case 'tags':
 			return '{' . implode(',', $this->tags) . '}';
 		default:
-			return null;
+			return self::COLUMN_NOT_EXISTS;
 		}
 	}
 	
-	protected function Save() {
+	public function ConsumeJSON(array $json) {
+		if (array_key_exists('label', $json)) {
+			$this->label = $json['label'];
+		}
+		if (array_key_exists('min_version', $json)) {
+			$this->min_version = $json['min_versoin'];
+		}
+		if (is_null($this->mod_id) && array_key_exists('mod_id', $json)) {
+			$this->mod_id = $json['mod_id'];
+		}
+		if (array_key_exists('tags', $json) && is_array($json['tags'])) {
+			$tags = array();
+			foreach ($json['tags'] as $tag) {
+				$tags[] = static::NormalizeTag($tag);
+			}
+			$this->tags = $tags;
+		}
+	}
+	
+	public function Save() {
 		$table = static::TableName();
 		
 		$database = BeaconCommon::Database();
@@ -86,8 +107,8 @@ class BeaconObject implements JsonSerializable {
 		$set_pairs = array();
 		foreach ($types as $column => $type) {
 			$value = $this->GetColumnValue($column);
-			if ($value !== null) {
-				$type = isset($types[$column]) ? $types[$short_column_name] : 'text';
+			if ($value !== self::COLUMN_NOT_EXISTS) {
+				$type = isset($types[$column]) ? $types[$column] : 'text';
 				$active_columns[] = $column;
 				
 				$placeholder = '$' . $c++;
@@ -110,7 +131,12 @@ class BeaconObject implements JsonSerializable {
 		$values = array_values($values);
 		
 		$database->BeginTransaction();
-		$database->Query('INSERT INTO ' . $table . ' (' . implode(', ', $active_columns) . ') VALUES (' . implode(', ', $placeholders) . ') ON CONFLICT (object_id) DO UPDATE SET ' . implode(', ', $set_pairs) . ';', $values);
+		$results = $database->Query('SELECT object_id FROM objects WHERE object_id = $1;', $this->object_id);
+		if ($results->RecordCount() == 0) {
+			$database->Query('INSERT INTO ' . $table . ' (' . implode(', ', $active_columns) . ') VALUES (' . implode(', ', $placeholders) . ');', $values);
+		} else {
+			$database->Query('UPDATE ' . $table . ' SET ' . implode(', ', $set_pairs) . ' WHERE object_id = ' . $database->EscapeLiteral($results->Field('object_id')) . ';', $values);
+		}
 		$this->SaveChildrenHook($database);
 		$database->Commit();
 	}
@@ -410,6 +436,30 @@ class BeaconObject implements JsonSerializable {
 	
 	public function IsTagged(string $tag) {
 		return in_array(self::NormalizeTag($tag), $this->tags);
+	}
+	
+	public static function DeleteObjects(string $object_id, string $user_id) {
+		$database = BeaconCommon::Database();
+		$escaped_table = $database->EscapeIdentifier(static::TableName());
+		
+		$database->BeginTransaction();
+		$results = $database->Query('SELECT mods.user_id, ' . $escaped_table . '.object_id FROM ' . $escaped_table . ' INNER JOIN mods ON (' . $escaped_table . '.mod_id = mods.mod_id) WHERE ' . $escaped_table . '.object_id = ANY($1) FOR UPDATE OF ' . $escaped_table . ';', '{' . $object_id . '}');
+		$objects = array();
+		while (!$results->EOF()) {
+			if ($results->Field('user_id') !== $user_id) {
+				$database->Rollback();
+				return false;
+			}
+			$objects[] = $results->Field('object_id');
+			$results->MoveNext();
+		}
+		if (count($objects) == 0) {
+			$database->Rollback();
+			return true;
+		}
+		$database->Query('DELETE FROM ' . $escaped_table . ' WHERE object_id = ANY($1);', '{' . implode(',', $objects) . '}');
+		$database->Commit();
+		return true;
 	}
 }
 
