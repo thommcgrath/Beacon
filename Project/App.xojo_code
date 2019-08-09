@@ -716,6 +716,14 @@ Implements NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub LogAPIException(Err As RuntimeException, Location As String, HTTPStatus As Integer, RawContent As MemoryBlock)
+		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		  Dim Base64 As String = EncodeBase64(RawContent, 0)
+		  Self.Log("Unhandled " + Info.FullName + " in " + Location + ": HTTP " + Str(HTTPStatus, "-0") + " " + Base64)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub mHandoffSocket_DataAvailable(Sender As IPCSocket)
 		  Do

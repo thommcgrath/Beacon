@@ -480,7 +480,9 @@ End
 		    Self.DesiredHeight = 400
 		    Self.PagePanel1.SelectedPanelIndex = 1
 		  Catch Err As RuntimeException
-		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
+
+			App.LogAPIException(Err, CurrentMethodName, Status, Content)
+			Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
 		    Self.ShowAlert("Nitrado API Error", "The Nitrado API responded in an unexpected manner. An unhandled " + Info.FullName + " was encountered.")
 		    Self.ShouldCancel()
 		  End Try
