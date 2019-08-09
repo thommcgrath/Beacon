@@ -62,6 +62,7 @@ Implements Beacon.DeploymentEngine
 		    
 		    SimpleHTTP.Get(TokenDict.Value("url"), AddressOf Callback_DownloadGameIni_Content, Nil, Headers)
 		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Beacon.ConvertMemoryBlock(Content))
 		    Self.SetError(Err)
 		    Return
 		  End Try
@@ -82,6 +83,7 @@ Implements Beacon.DeploymentEngine
 		    Self.mGameIniOriginal = TextContent
 		    Self.RunNextTask()
 		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Beacon.ConvertMemoryBlock(Content))
 		    Self.SetError(Err)
 		    Return
 		  End Try
@@ -115,6 +117,7 @@ Implements Beacon.DeploymentEngine
 		    
 		    SimpleHTTP.Get(TokenDict.Value("url"), AddressOf Callback_DownloadGameUserSettingsIni_Content, Nil, Headers)
 		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Beacon.ConvertMemoryBlock(Content))
 		    Self.SetError(Err)
 		    Return
 		  End Try
@@ -135,6 +138,7 @@ Implements Beacon.DeploymentEngine
 		    Self.mGameUserSettingsIniOriginal = TextContent
 		    Self.RunNextTask()
 		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Beacon.ConvertMemoryBlock(Content))
 		    Self.SetError(Err)
 		    Return
 		  End Try
@@ -255,6 +259,7 @@ Implements Beacon.DeploymentEngine
 		    Self.mExpertMode = True
 		    Self.RunNextTask()
 		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Beacon.ConvertMemoryBlock(Content))
 		    Self.SetError(Err)
 		    Return
 		  End Try
@@ -282,6 +287,7 @@ Implements Beacon.DeploymentEngine
 		    
 		    Self.RunNextTask()
 		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Beacon.ConvertMemoryBlock(Content))
 		    Self.SetError(Err)
 		    Return
 		  End Try
@@ -313,6 +319,7 @@ Implements Beacon.DeploymentEngine
 		      Self.RunNextTask()
 		    End If
 		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Beacon.ConvertMemoryBlock(Content))
 		    Self.SetError(Err)
 		    Return
 		  End Try
@@ -405,6 +412,7 @@ Implements Beacon.DeploymentEngine
 		      Return
 		    End Select
 		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Beacon.ConvertMemoryBlock(Content))
 		    Self.SetError(Err)
 		    Return
 		  End Try
@@ -432,6 +440,7 @@ Implements Beacon.DeploymentEngine
 		    
 		    Self.WatchStatusForStop()
 		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Beacon.ConvertMemoryBlock(Content))
 		    Self.SetError(Err)
 		    Return
 		  End Try
@@ -460,6 +469,7 @@ Implements Beacon.DeploymentEngine
 		    Self.mCommandLineChanges.Remove(0)
 		    Self.SetNextCommandLineParam()
 		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Beacon.ConvertMemoryBlock(Content))
 		    Self.SetError(Err)
 		    Return
 		  End Try
@@ -498,6 +508,7 @@ Implements Beacon.DeploymentEngine
 		    
 		    SimpleHTTP.Post(TokenDict.Value("url"), "text/plain", NewContent, AddressOf Callback_UploadGameIni_Content, Nil, Headers)
 		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Beacon.ConvertMemoryBlock(Content))
 		    Self.SetError(Err)
 		    Return
 		  End Try
@@ -555,6 +566,7 @@ Implements Beacon.DeploymentEngine
 		    
 		    SimpleHTTP.Post(TokenDict.Value("url"), "text/plain", NewContent, AddressOf Callback_UploadGameUserSettingsIni_Content, Nil, Headers)
 		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Beacon.ConvertMemoryBlock(Content))
 		    Self.SetError(Err)
 		    Return
 		  End Try

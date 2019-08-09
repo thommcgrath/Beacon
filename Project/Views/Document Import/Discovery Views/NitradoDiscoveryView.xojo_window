@@ -175,6 +175,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -428,6 +429,7 @@ End
 		    Self.DesiredHeight = 400
 		    Self.PagePanel1.Value = 1
 		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Beacon.ConvertMemoryBlock(Content))
 		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Err)
 		    Self.ShowAlert("Nitrado API Error", "The Nitrado API responded in an unexpected manner. An unhandled " + Info.FullName + " was encountered.")
 		    Self.ShouldCancel()

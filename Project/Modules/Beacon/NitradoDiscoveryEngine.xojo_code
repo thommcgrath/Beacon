@@ -33,6 +33,7 @@ Implements Beacon.DiscoveryEngine
 		    
 		    SimpleHTTP.Get(TokenDict.Value("url"), AddressOf Callback_DownloadGameIni_Content, Nil, Headers)
 		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Beacon.ConvertMemoryBlock(Content))
 		    Self.SetError(Err)
 		    Return
 		  End Try
@@ -53,6 +54,7 @@ Implements Beacon.DiscoveryEngine
 		    Self.mGameIniContent = TextContent.Trim
 		    Self.DownloadGameUserSettingsIni
 		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Beacon.ConvertMemoryBlock(Content))
 		    Self.SetError(Err)
 		    Return
 		  End Try
@@ -85,6 +87,7 @@ Implements Beacon.DiscoveryEngine
 		    
 		    SimpleHTTP.Get(TokenDict.Value("url"), AddressOf Callback_DownloadGameUserSettingsIni_Content, Nil, Headers)
 		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Beacon.ConvertMemoryBlock(Content))
 		    Self.SetError(Err)
 		    Return
 		  End Try
@@ -108,6 +111,7 @@ Implements Beacon.DiscoveryEngine
 		    Self.mErrored = False
 		    Self.mFinished = True
 		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Beacon.ConvertMemoryBlock(Content))
 		    Self.SetError(Err)
 		    Return
 		  End Try
@@ -145,6 +149,7 @@ Implements Beacon.DiscoveryEngine
 		    
 		    Self.DownloadGameIni()
 		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Beacon.ConvertMemoryBlock(Content))
 		    Self.SetError(Err)
 		    Return
 		  End Try
