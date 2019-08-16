@@ -794,17 +794,18 @@ End
 		    Return
 		  End If
 		  
-		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
+		  If Board.RawDataAvailable(Self.kClipboardType) Then
 		    Dim Dicts() As Variant
 		    Try
 		      Dim Contents As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
 		      Dicts = Beacon.ParseJSON(Contents)
 		      
 		      Dim Costs() As Beacon.CraftingCost
+		      Dim Config As BeaconConfigs.CraftingCosts = Self.Config(True)
 		      For Each Dict As Dictionary In Dicts
 		        Dim Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(Dict)
 		        If Cost <> Nil Then
-		          Self.Config(False).Append(Cost)
+		          Config.Append(Cost)
 		          Costs.Append(Cost)
 		        End If
 		      Next
@@ -812,6 +813,7 @@ End
 		      Self.UpdateList(Costs)
 		      Self.Changed = True
 		    Catch Err As RuntimeException
+		      Beep
 		    End Try
 		    Return
 		  End If
