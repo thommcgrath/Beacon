@@ -34,8 +34,8 @@ Begin BeaconWindow UpdateWindow
    MinWidth        =   600
    Placement       =   2
    Resizable       =   True
-   Resizeable      =   "True"
-   SystemUIVisible =   True
+   Resizeable      =   True
+   SystemUIVisible =   "True"
    Title           =   "Beacon Updates"
    Type            =   "0"
    Visible         =   True
@@ -184,6 +184,7 @@ Begin BeaconWindow UpdateWindow
          AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   64
          HelpTag         =   ""
@@ -869,6 +870,138 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="MinWidth"
+		Visible=false
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinHeight"
+		Visible=false
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MaxWidth"
+		Visible=false
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MaxHeight"
+		Visible=false
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Frame"
+		Visible=false
+		Group="Frame"
+		InitialValue="0"
+		Type="Integer"
+		EditorType="Enum"
+		#tag EnumValues
+			"0 - Document"
+			"1 - Movable Modal"
+			"2 - Modal Dialog"
+			"3 - Floating Window"
+			"4 - Plain Box"
+			"5 - Shadowed Box"
+			"6 - Rounded Window"
+			"7 - Global Floating Window"
+			"8 - Sheet Window"
+			"9 - Metal Window"
+			"11 - Modeless Dialog"
+		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="CloseButton"
+		Visible=false
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Resizeable"
+		Visible=false
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MaximizeButton"
+		Visible=false
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimizeButton"
+		Visible=false
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="FullScreenButton"
+		Visible=false
+		Group="Frame"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Placement"
+		Visible=false
+		Group="Behavior"
+		InitialValue="0"
+		Type="Integer"
+		EditorType="Enum"
+		#tag EnumValues
+			"0 - Default"
+			"1 - Parent Window"
+			"2 - Main Screen"
+			"3 - Parent Window Screen"
+			"4 - Stagger"
+		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackColor"
+		Visible=false
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackColor"
+		Visible=false
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MenuBarVisible"
+		Visible=true
+		Group="Deprecated"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
 		Group="Size"
@@ -975,14 +1108,6 @@ End
 			"3 - Parent Window Screen"
 			"4 - Stagger"
 		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="SystemUIVisible"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

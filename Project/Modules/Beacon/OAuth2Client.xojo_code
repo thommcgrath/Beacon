@@ -32,7 +32,7 @@ Protected Class OAuth2Client
 		  
 		  Self.mAccessToken = Dict.Value("Access Token")
 		  Self.mRefreshToken = Dict.Value("Refresh Token")
-		  Self.mExpiration = New Date(Dict.Value("Expiration"), New TimeZone(0))
+		  Self.mExpiration = New DateTime(Dict.Value("Expiration"), New TimeZone(0))
 		End Sub
 	#tag EndMethod
 
@@ -117,7 +117,7 @@ Protected Class OAuth2Client
 		    Return False
 		  End If
 		  
-		  Dim Now As Date = Date.Now
+		  Dim Now As DateTime = DateTime.Now
 		  If Self.mExpiration.SecondsFrom1970 <= Now.SecondsFrom1970 Then
 		    #If DebugBuild
 		      System.DebugLog("Not authenticated because expiration has passed")
@@ -159,7 +159,7 @@ Protected Class OAuth2Client
 		    
 		    Self.mRefreshToken = Dict.Value("refresh_token")
 		    Self.mAccessToken = Dict.Value("access_token")
-		    Self.mExpiration = New Date(Date.Now.SecondsFrom1970 + Expires, New TimeZone(0))
+		    Self.mExpiration = New DateTime(DateTime.Now.SecondsFrom1970 + Expires, New TimeZone(0))
 		    
 		    RaiseEvent Authenticated
 		  Catch Err As RuntimeException
@@ -219,7 +219,7 @@ Protected Class OAuth2Client
 		    
 		    Self.mAccessToken = Dict.Value("access_token")
 		    Self.mRefreshToken = Dict.Value("refresh_token")
-		    Self.mExpiration = New Date(Date.Now.SecondsFrom1970 + Dict.Value("expires_in"), New TimeZone(0))
+		    Self.mExpiration = New DateTime(DateTime.Now.SecondsFrom1970 + Dict.Value("expires_in"), New TimeZone(0))
 		    
 		    RaiseEvent Authenticated
 		  Catch Err As RuntimeException
@@ -275,7 +275,7 @@ Protected Class OAuth2Client
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mExpiration As Date
+		Private mExpiration As DateTime
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -371,8 +371,8 @@ Protected Class OAuth2Client
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

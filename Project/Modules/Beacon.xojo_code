@@ -513,12 +513,12 @@ Protected Module Beacon
 		      Return ""
 		    End If
 		    
-		    Dim Created As Date = Root.CreationDate
+		    Dim Created As DateTime = Root.CreationDateTime
 		    If Created = Nil Then
 		      // Seriously?
 		      Return ""
 		    End If
-		    Created = New Date(Created.SecondsFrom1970, New TimeZone(0))
+		    Created = New DateTime(Created.SecondsFrom1970, New TimeZone(0))
 		    
 		    Return REALbasic.EncodeHex(Crypto.SHA256(Str(Created.SecondsFrom1970 + 2082844800, "-0"))).Lowercase
 		  #endif

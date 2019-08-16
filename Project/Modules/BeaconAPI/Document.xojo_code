@@ -32,7 +32,7 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LastUpdated() As Date
+		Function LastUpdated() As DateTime
 		  Return Self.mLastUpdated
 		End Function
 	#tag EndMethod
@@ -91,7 +91,7 @@ Protected Class Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLastUpdated As Date
+		Private mLastUpdated As DateTime
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

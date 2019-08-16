@@ -35,15 +35,15 @@ Inherits Thread
 		  Dim RemotePath As String = URL.Middle(BaseURL.Length)
 		  Dim LocalFile As FolderItem = LocalFile(RemotePath)
 		  If LocalFile.Exists Then
-		    Dim CreationDate As Date = LocalFile.CreationDate
-		    Dim ModificationDate As Date = LocalFile.ModificationDate
+		    Dim CreationDate As DateTime = LocalFile.CreationDateTime
+		    Dim ModificationDate As DateTime = LocalFile.ModificationDateTime
 		    Dim Stream As BinaryStream = BinaryStream.Open(LocalFile, True)
 		    Stream.BytePosition = 0
 		    Stream.Length = 0
 		    Stream.Write(Content)
 		    Stream.Close
-		    LocalFile.CreationDate = CreationDate
-		    LocalFile.ModificationDate = ModificationDate
+		    LocalFile.CreationDateTime = CreationDate
+		    LocalFile.ModificationDateTime = ModificationDate
 		  Else
 		    Dim Stream As BinaryStream = BinaryStream.Create(LocalFile, True)
 		    Stream.Write(Content)

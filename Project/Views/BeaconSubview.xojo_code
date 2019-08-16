@@ -350,6 +350,70 @@ Implements ObservationKit.Observable
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="AutoDeactivate"
+			Visible=false
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HelpTag"
+			Visible=false
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="UseFocusRing"
+			Visible=false
+			Group="Appearance"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BackColor"
+			Visible=false
+			Group="Background"
+			InitialValue="&hFFFFFF"
+			Type="Color"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HasBackColor"
+			Visible=false
+			Group="Background"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AcceptFocus"
+			Visible=false
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AcceptTabs"
+			Visible=false
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="EraseBackground"
+			Visible=false
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Tooltip"
 			Visible=true
 			Group="Appearance"
@@ -363,7 +427,7 @@ Implements ObservationKit.Observable
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType=""
+			EditorType="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AllowFocusRing"

@@ -34,8 +34,8 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
    MinWidth        =   64
    Placement       =   2
    Resizable       =   True
-   Resizeable      =   "False"
-   SystemUIVisible =   True
+   Resizeable      =   False
+   SystemUIVisible =   "True"
    Title           =   ""
    Type            =   "0"
    Visible         =   False
@@ -191,7 +191,7 @@ End
 		  Case LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed
 		    Self.RevealTimer.RunMode = Timer.RunModes.Off
 		    
-		    Dim ImportDate As Date
+		    Dim ImportDate As DateTime
 		    If Notification.UserData <> Nil And Notification.UserData IsA Date Then
 		      ImportDate = Notification.UserData
 		    Else
@@ -205,7 +205,7 @@ End
 		      Dialog.Explanation = "No engram definitions are currently loaded into Beacon. Try relaunching Beacon. If the problem persists, see the website at " + Beacon.WebURL("/help/") + " for more support options."
 		    Else
 		      Dialog.Message = "Engram definitions have been updated"
-		      Dialog.Explanation = "Engrams, loot sources, and presets are current as of " + ImportDate.ToString(Locale.Current, Date.FormatStyles.Long, Date.FormatStyles.Short) + " UTC."
+		      Dialog.Explanation = "Engrams, loot sources, and presets are current as of " + ImportDate.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC."
 		    End If
 		    Call Dialog.ShowModal
 		    

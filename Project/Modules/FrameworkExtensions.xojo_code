@@ -50,6 +50,13 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function BuildDateTime(Extends Target As Application) As DateTime
+		  Dim BuildDate As Date = Target.BuildDate
+		  Return New DateTime(BuildDate.Year, BuildDate.Month, BuildDate.Day, BuildDate.Hour, BuildDate.Minute, BuildDate.Second, 0, New TimeZone(BuildDate.GMTOffset * 3600))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Characters(Extends Source As String) As String()
 		  Return Split(Source, "")
 		End Function
@@ -250,9 +257,9 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LocalTime(Extends Source As Date) As Date
-		  Dim Now As Date = Date.Now
-		  Return New Date(Source.SecondsFrom1970, Now.Timezone)
+		Function LocalTime(Extends Source As DateTime) As DateTime
+		  Dim Now As DateTime = DateTime.Now
+		  Return New DateTime(Source.SecondsFrom1970, Now.Timezone)
 		End Function
 	#tag EndMethod
 
@@ -316,8 +323,8 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NewDateFromSQLDateTime(SQLDateTime As String) As Date
-		  Dim Now As Date = Date.Now
+		Function NewDateFromSQLDateTime(SQLDateTime As String) As DateTime
+		  Dim Now As DateTime = DateTime.Now
 		  Now.SQLDateTimeWithOffset = SQLDateTime
 		  Return Now
 		End Function
@@ -362,7 +369,7 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SQLDateTimeWithOffset(Extends Source As Date) As String
+		Function SQLDateTimeWithOffset(Extends Source As DateTime) As String
 		  Dim Zone As TimeZone = Source.Timezone
 		  Dim Offset As Double = Abs(Zone.SecondsFromGMT / 3600)
 		  Dim Hours As Integer = Floor(Offset)
@@ -373,7 +380,7 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SQLDateTimeWithOffset(Extends Source As Date, Assigns Value As String)
+		Sub SQLDateTimeWithOffset(Extends Source As DateTime, Assigns Value As String)
 		  Dim Validator As New Regex
 		  Validator.SearchPattern = "^(\d{4})-(\d{2})-(\d{2})( (\d{2}):(\d{2}):(\d{2})(\.\d+)?\s*((\+|-)(\d{1,2})(:?(\d{2}))?)?)?$"
 		  
@@ -435,8 +442,8 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function TotalSeconds(Extends Interval As DateInterval) As UInt64
-		  Dim Now As Date = Date.Now
-		  Dim Future As Date = Now + Interval
+		  Dim Now As DateTime = DateTime.Now
+		  Dim Future As DateTime = Now + Interval
 		  Return Future.SecondsFrom1970 - Now.SecondsFrom1970
 		End Function
 	#tag EndMethod

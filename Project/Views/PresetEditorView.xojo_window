@@ -1,16 +1,23 @@
 #tag Window
 Begin BeaconSubview PresetEditorView
+   AcceptFocus     =   False
+   AcceptTabs      =   True
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
+   AutoDeactivate  =   True
+   BackColor       =   &cFFFFFF00
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
+   EraseBackground =   True
+   HasBackColor    =   False
    HasBackgroundColor=   False
    Height          =   556
+   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -23,6 +30,7 @@ Begin BeaconSubview PresetEditorView
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
+   UseFocusRing    =   False
    Visible         =   True
    Width           =   740
    Begin BeaconToolbar Header
@@ -35,6 +43,7 @@ Begin BeaconSubview PresetEditorView
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   ""
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
       HelpTag         =   ""
@@ -69,6 +78,7 @@ Begin BeaconSubview PresetEditorView
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       HelpTag         =   ""
@@ -101,6 +111,7 @@ Begin BeaconSubview PresetEditorView
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      DoubleBuffer    =   False
       DrawCaptions    =   True
       Enabled         =   True
       Height          =   60
@@ -353,7 +364,7 @@ Begin BeaconSubview PresetEditorView
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
          BackgroundColor =   &cFFFFFF00
-         Bold            =   False
+         Bold            =   "False"
          Border          =   True
          CueText         =   ""
          DataField       =   ""
@@ -454,7 +465,7 @@ Begin BeaconSubview PresetEditorView
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
          BackgroundColor =   &cFFFFFF00
-         Bold            =   False
+         Bold            =   "False"
          Border          =   True
          CueText         =   ""
          DataField       =   ""
@@ -639,7 +650,7 @@ Begin BeaconSubview PresetEditorView
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
          BackgroundColor =   &cFFFFFF00
-         Bold            =   False
+         Bold            =   "False"
          Border          =   True
          CueText         =   ""
          DataField       =   ""
@@ -698,7 +709,7 @@ Begin BeaconSubview PresetEditorView
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
          BackgroundColor =   &cFFFFFF00
-         Bold            =   False
+         Bold            =   "False"
          Border          =   True
          CueText         =   ""
          DataField       =   ""
@@ -1120,7 +1131,7 @@ End
 		  Dim Maps() As Beacon.Map
 		  For I As Integer = 0 To Self.MapSelector.SegmentCount - 1
 		    Dim Cell As Segment = Self.MapSelector.SegmentAt(I)
-		    If Not Cell.IsSelected Then
+		    If Not Cell.Selected Then
 		      Continue
 		    End If
 		    Select Case I
@@ -1280,14 +1291,14 @@ End
 		  Self.Changed = False
 		  
 		  Dim Mask As UInt64 = Preferences.LastPresetMapFilter
-		  Self.MapSelector.SegmentAt(0).IsSelected = (Mask And Beacon.Maps.TheIsland.Mask) = Beacon.Maps.TheIsland.Mask
-		  Self.MapSelector.SegmentAt(1).IsSelected = (Mask And Beacon.Maps.ScorchedEarth.Mask) = Beacon.Maps.ScorchedEarth.Mask
-		  Self.MapSelector.SegmentAt(2).IsSelected = (Mask And Beacon.Maps.Aberration.Mask) = Beacon.Maps.Aberration.Mask
-		  Self.MapSelector.SegmentAt(3).IsSelected = (Mask And Beacon.Maps.Extinction.Mask) = Beacon.Maps.Extinction.Mask
-		  Self.MapSelector.SegmentAt(4).IsSelected = (Mask And Beacon.Maps.Genesis.Mask) = Beacon.Maps.Genesis.Mask
-		  Self.MapSelector.SegmentAt(5).IsSelected = (Mask And Beacon.Maps.TheCenter.Mask) = Beacon.Maps.TheCenter.Mask
-		  Self.MapSelector.SegmentAt(6).IsSelected = (Mask And Beacon.Maps.Ragnarok.Mask) = Beacon.Maps.Ragnarok.Mask
-		  Self.MapSelector.SegmentAt(7).IsSelected = (Mask And Beacon.Maps.Valguero.Mask) = Beacon.Maps.Valguero.Mask
+		  Self.MapSelector.SegmentAt(0).Selected = (Mask And Beacon.Maps.TheIsland.Mask) = Beacon.Maps.TheIsland.Mask
+		  Self.MapSelector.SegmentAt(1).Selected = (Mask And Beacon.Maps.ScorchedEarth.Mask) = Beacon.Maps.ScorchedEarth.Mask
+		  Self.MapSelector.SegmentAt(2).Selected = (Mask And Beacon.Maps.Aberration.Mask) = Beacon.Maps.Aberration.Mask
+		  Self.MapSelector.SegmentAt(3).Selected = (Mask And Beacon.Maps.Extinction.Mask) = Beacon.Maps.Extinction.Mask
+		  Self.MapSelector.SegmentAt(4).Selected = (Mask And Beacon.Maps.Genesis.Mask) = Beacon.Maps.Genesis.Mask
+		  Self.MapSelector.SegmentAt(5).Selected = (Mask And Beacon.Maps.TheCenter.Mask) = Beacon.Maps.TheCenter.Mask
+		  Self.MapSelector.SegmentAt(6).Selected = (Mask And Beacon.Maps.Ragnarok.Mask) = Beacon.Maps.Ragnarok.Mask
+		  Self.MapSelector.SegmentAt(7).Selected = (Mask And Beacon.Maps.Valguero.Mask) = Beacon.Maps.Valguero.Mask
 		  
 		  Dim Maps() As Beacon.Map = Self.FilteredMaps()
 		  Dim SelectedEntries() As String
@@ -1898,6 +1909,70 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AutoDeactivate"
+		Visible=false
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HelpTag"
+		Visible=false
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="UseFocusRing"
+		Visible=false
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackColor"
+		Visible=false
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackColor"
+		Visible=false
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AcceptFocus"
+		Visible=false
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AcceptTabs"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EraseBackground"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Tooltip"
 		Visible=true
 		Group="Appearance"
@@ -1911,7 +1986,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType=""
+		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"

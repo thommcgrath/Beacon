@@ -26,10 +26,10 @@ Inherits Thread
 		      End If
 		      
 		      Dim ServerModifiedText As String = Dict.Value("modified")
-		      Dim ServerModified As Date = NewDateFromSQLDateTime(ServerModifiedText).LocalTime
+		      Dim ServerModified As DateTime = NewDateFromSQLDateTime(ServerModifiedText).LocalTime
 		      
 		      If LocalFile.Exists And LocalFile.ModificationDate <> Nil Then
-		        Dim LocalModified As Date = LocalFile.ModificationDate
+		        Dim LocalModified As DateTime = LocalFile.ModificationDateTime
 		        Dim FilesAreDifferent As Boolean = LocalModified <> ServerModified
 		        Dim LocalIsNewer As Boolean = LocalModified > ServerModified
 		        If LocalIsNewer Then

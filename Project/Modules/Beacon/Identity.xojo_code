@@ -279,15 +279,15 @@ Protected Class Identity
 		  End If
 		  
 		  // Compare expirations
-		  Dim Now As Date = Date.Now
+		  Dim Now As DateTime = DateTime.Now
 		  Dim Period As New DateInterval(30) // Yes, this says 30 years
-		  Dim SelfExpiration As Date
+		  Dim SelfExpiration As DateTime
 		  If Self.mExpirationString <> "" Then
 		    SelfExpiration = NewDateFromSQLDateTime(Self.mExpirationString)
 		  Else
 		    SelfExpiration = Now + Period
 		  End If
-		  Dim OtherExpiration As Date
+		  Dim OtherExpiration As DateTime
 		  If Other.mExpirationString <> "" Then
 		    OtherExpiration = NewDateFromSQLDateTime(Other.mExpirationString)
 		  Else
@@ -361,8 +361,8 @@ Protected Class Identity
 		    Fields(2) = Self.mPurchasedOmniVersion.ToString(Locale.Raw)
 		    
 		    If Self.mExpirationString <> "" Then
-		      Dim Expires As Date = NewDateFromSQLDateTime(Self.mExpirationString)
-		      Dim Now As Date = Date.Now
+		      Dim Expires As DateTime = NewDateFromSQLDateTime(Self.mExpirationString)
+		      Dim Now As DateTime = DateTime.Now
 		      If Now.SecondsFrom1970 < Expires.SecondsFrom1970 Then
 		        // Not Expired
 		        Fields.Append(Self.mExpirationString)

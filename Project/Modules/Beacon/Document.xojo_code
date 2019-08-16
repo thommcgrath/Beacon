@@ -363,9 +363,9 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function LastSaved() As Date
+		Function LastSaved() As DateTime
 		  If Self.mLastSaved <> Nil Then
-		    Return New Date(Self.mLastSaved)
+		    Return New DateTime(Self.mLastSaved.SecondsFrom1970, Self.mLastSaved.Timezone)
 		  End If
 		End Function
 	#tag EndMethod
@@ -614,7 +614,7 @@ Protected Class Document
 		  Dim ModsList() As String = Self.Mods
 		  Document.Value("Mods") = ModsList
 		  Document.Value("UseCompression") = Self.UseCompression
-		  Document.Value("Timestamp") = Date.Now.SQLDateTimeWithOffset
+		  Document.Value("Timestamp") = DateTime.Now.SQLDateTimeWithOffset
 		  
 		  Dim Groups As New Dictionary
 		  For Each Entry As DictionaryEntry In Self.mConfigGroups
@@ -766,7 +766,7 @@ Protected Class Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target64Bit))
-		Private mLastSaved As Date
+		Private mLastSaved As DateTime
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -154,7 +154,7 @@ Implements Beacon.DeploymentEngine
 		  // If the log file cannot be downloaded for any reason, assume a stop time of now
 		  
 		  If Self.CheckError(Status) Then
-		    Self.mServerStopTime = Date.Now
+		    Self.mServerStopTime = DateTime.Now
 		    Self.RunNextTask()
 		    Return
 		  End If
@@ -163,7 +163,7 @@ Implements Beacon.DeploymentEngine
 		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
-		      Self.mServerStopTime = Date.Now
+		      Self.mServerStopTime = DateTime.Now
 		      Self.RunNextTask()
 		      Return
 		    End If
@@ -176,7 +176,7 @@ Implements Beacon.DeploymentEngine
 		    
 		    SimpleHTTP.Get(TokenDict.Value("url"), AddressOf Callback_DownloadLogFile_Content, Nil, Headers)
 		  Catch Err As RuntimeException
-		    Self.mServerStopTime = Date.Now
+		    Self.mServerStopTime = DateTime.Now
 		    Self.RunNextTask()
 		    Return
 		  End Try
@@ -193,7 +193,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  If Self.CheckError(Status) Then
-		    Self.mServerStopTime = Date.Now
+		    Self.mServerStopTime = DateTime.Now
 		    Self.RunNextTask()
 		    Return
 		  End If
@@ -216,16 +216,16 @@ Implements Beacon.DeploymentEngine
 		      Dim Second As Integer = Val(Line.Middle(18, 2))
 		      Dim Nanosecond As Integer = (Val(Line.Middle(21, 3)) / 1000) * 1000000000
 		      
-		      Self.mServerStopTime = New Date(Year, Month, Day, Hour, Minute, Second, Nanosecond, New TimeZone(0))
+		      Self.mServerStopTime = New DateTime(Year, Month, Day, Hour, Minute, Second, Nanosecond, New TimeZone(0))
 		      TimestampFound = True
 		      Exit For I
 		    Next
 		    
 		    If Not TimestampFound Then
-		      Self.mServerStopTime = Date.Now
+		      Self.mServerStopTime = DateTime.Now
 		    End If
 		  Catch Err As RuntimeException
-		    Self.mServerStopTime = Date.Now
+		    Self.mServerStopTime = DateTime.Now
 		  End Try
 		  
 		  Self.RunNextTask()
@@ -875,7 +875,7 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub WaitNitradoIdle()
-		  Dim Now As Date = Date.Now
+		  Dim Now As DateTime = DateTime.Now
 		  Dim SecondsToWait As Double = Double.FromString(Beacon.Data.GetStringVariable("Nitrado Wait Seconds"))
 		  SecondsToWait = SecondsToWait - (Now.SecondsFrom1970 - Self.mServerStopTime.SecondsFrom1970)
 		  If SecondsToWait < 10 Then // Don't need to be THAT precise
@@ -883,9 +883,9 @@ Implements Beacon.DeploymentEngine
 		    Return
 		  End If
 		  
-		  Dim ResumeTime As Date = Now + New DateInterval(0, 0, 0, 0, 0, Floor(SecondsToWait), (SecondsToWait - Floor(SecondsToWait)) * 1000000000)
+		  Dim ResumeTime As DateTime = Now + New DateInterval(0, 0, 0, 0, 0, Floor(SecondsToWait), (SecondsToWait - Floor(SecondsToWait)) * 1000000000)
 		  
-		  Self.mStatus = "Waiting per Nitrado recommendations. Will resume at " + ResumeTime.ToString(Locale.Current, Date.FormatStyles.None, Date.FormatStyles.Medium) + "…"
+		  Self.mStatus = "Waiting per Nitrado recommendations. Will resume at " + ResumeTime.ToString(Locale.Current, DateTime.FormatStyles.None, DateTime.FormatStyles.Medium) + "…"
 		  Self.mWaitNitradoCallbackKey = CallLater.Schedule(SecondsToWait * 1000, AddressOf WaitNitradoIdle)
 		End Sub
 	#tag EndMethod
@@ -1003,7 +1003,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mServerStopTime As Date
+		Private mServerStopTime As DateTime
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

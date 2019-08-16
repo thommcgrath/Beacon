@@ -10,7 +10,7 @@ Protected Class UserNotification
 		Sub Constructor(Message As String, Severity As Beacon.UserNotification.Severities = Beacon.UserNotification.Severities.Normal)
 		  Self.Constructor()
 		  Self.Message = Message
-		  Self.Timestamp = New Date(Date.Now.SecondsFrom1970, New TimeZone(0))
+		  Self.Timestamp = New DateTime(DateTime.Now.SecondsFrom1970, New TimeZone(0))
 		  Self.Severity = Severity
 		End Sub
 	#tag EndMethod
@@ -48,7 +48,7 @@ Protected Class UserNotification
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Timestamp As Date
+		Timestamp As DateTime
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -108,16 +108,16 @@ Protected Class UserNotification
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ActionURL"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Read"
@@ -132,8 +132,8 @@ Protected Class UserNotification
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DoNotResurrect"

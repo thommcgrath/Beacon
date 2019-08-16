@@ -1,16 +1,23 @@
 #tag Window
 Begin ContainerControl DocumentImportView
+   AcceptFocus     =   False
+   AcceptTabs      =   True
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
+   AutoDeactivate  =   True
+   BackColor       =   &cFFFFFF00
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
+   EraseBackground =   True
+   HasBackColor    =   False
    HasBackgroundColor=   False
    Height          =   456
+   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   False
@@ -23,6 +30,7 @@ Begin ContainerControl DocumentImportView
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
+   UseFocusRing    =   False
    Visible         =   True
    Width           =   600
    Begin PagePanel Views
@@ -288,7 +296,7 @@ Begin ContainerControl DocumentImportView
          BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
+         EraseBackground =   True
          HasBackColor    =   False
          HasBackgroundColor=   False
          Height          =   456
@@ -325,7 +333,7 @@ Begin ContainerControl DocumentImportView
          BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
+         EraseBackground =   True
          HasBackColor    =   False
          HasBackgroundColor=   False
          Height          =   456
@@ -362,7 +370,7 @@ Begin ContainerControl DocumentImportView
          BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
+         EraseBackground =   True
          HasBackColor    =   False
          HasBackgroundColor=   False
          Height          =   456
@@ -1387,6 +1395,70 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AutoDeactivate"
+		Visible=false
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HelpTag"
+		Visible=false
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="UseFocusRing"
+		Visible=false
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackColor"
+		Visible=false
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackColor"
+		Visible=false
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AcceptFocus"
+		Visible=false
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AcceptTabs"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EraseBackground"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Tooltip"
 		Visible=true
 		Group="Appearance"
@@ -1400,7 +1472,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType=""
+		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"

@@ -596,9 +596,8 @@ Implements NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Dim Limit As New Date(Self.BuildDate)
-		  Limit.Day = Limit.Day + 30
-		  Dim Now As Date = Date.Now
+		  Dim Limit As DateTime = Self.BuildDateTime + New DateInterval(0, 0, 30)
+		  Dim Now As DateTime = DateTime.Now
 		  If Now > Limit Then
 		    BeaconUI.ShowAlert("This beta has expired.", "Please download a new version from " + Beacon.WebURL("/download/"))
 		    Quit
@@ -692,7 +691,7 @@ Implements NotificationKit.Receiver
 		  
 		  Self.mLogLock.Enter
 		  
-		  Dim Now As Date = Date.Now
+		  Dim Now As DateTime = DateTime.Now
 		  Dim DetailedMessage As String = Now.ToString(Locale.Raw) + Str(Now.Nanosecond / 1000000000, ".0000000000") + " " + Now.TimeZone.Abbreviation + Chr(9) + Message
 		  
 		  #if DebugBuild

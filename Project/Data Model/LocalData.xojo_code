@@ -973,8 +973,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return False
 		  End If
 		  
-		  Dim PayloadTimestamp As Date = NewDateFromSQLDateTime(ChangeDict.Value("timestamp"))
-		  Dim LastSync As Date = Self.LastSync
+		  Dim PayloadTimestamp As DateTime = NewDateFromSQLDateTime(ChangeDict.Value("timestamp"))
+		  Dim LastSync As DateTime = Self.LastSync
 		  If IsNull(LastSync) = False And LastSync.SecondsFrom1970 >= PayloadTimestamp.SecondsFrom1970 Then
 		    Return False
 		  End If
@@ -1352,7 +1352,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LastSync() As Date
+		Function LastSync() As DateTime
 		  Dim LastSync As String = Self.Variable("sync_time")
 		  If LastSync = "" Then
 		    Return Nil
@@ -1569,7 +1569,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Dim SyncOriginal As Date = Self.LastSync
+		  Dim SyncOriginal As DateTime = Self.LastSync
 		  Dim Success As Boolean
 		  For I As Integer = 0 To Self.mPendingImports.LastRowIndex
 		    Dim Content As String = Self.mPendingImports(I)
@@ -1577,7 +1577,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    Success = Self.ImportInner(Content) Or Success
 		  Next
-		  Dim SyncNew As Date = Self.LastSync
+		  Dim SyncNew As DateTime = Self.LastSync
 		  
 		  If SyncOriginal <> SyncNew Then
 		    NotificationKit.Post(Self.Notification_DatabaseUpdated, SyncNew)

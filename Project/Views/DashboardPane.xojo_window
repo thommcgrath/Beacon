@@ -1,16 +1,23 @@
 #tag Window
 Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
+   AcceptFocus     =   False
+   AcceptTabs      =   True
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
+   AutoDeactivate  =   True
+   BackColor       =   &cFFFFFF00
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
+   EraseBackground =   True
+   HasBackColor    =   False
    HasBackgroundColor=   False
    Height          =   556
+   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -23,6 +30,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
+   UseFocusRing    =   False
    Visible         =   True
    Width           =   808
    Begin UITweaks.ResizedPushButton NewFileButton
@@ -110,6 +118,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   128
       HelpTag         =   ""
@@ -268,6 +277,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   30
       HelpTag         =   ""
@@ -403,14 +413,14 @@ End
 		  
 		  Select Case Notification.Name
 		  Case LocalData.Notification_DatabaseUpdated
-		    Dim LastSync As Date = Notification.UserData
+		    Dim LastSync As DateTime = Notification.UserData
 		    If IsNull(LastSync) Then
 		      LastSync = LocalData.SharedInstance.LastSync
 		    End If
 		    If IsNull(LastSync) Then
 		      Self.SyncLabel.Value = "No engram data available"
 		    Else
-		      Self.SyncLabel.Value = "Engrams updated " + LastSync.ToString(Locale.Current, Date.FormatStyles.Long, Date.FormatStyles.Short) + " UTC"
+		      Self.SyncLabel.Value = "Engrams updated " + LastSync.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC"
 		    End If
 		  Case IdentityManager.Notification_IdentityChanged
 		    Self.TitleCanvas.Invalidate
@@ -463,11 +473,11 @@ End
 #tag Events SyncLabel
 	#tag Event
 		Sub Opening()
-		  Dim LastSync As Date = LocalData.SharedInstance.LastSync
+		  Dim LastSync As DateTime = LocalData.SharedInstance.LastSync
 		  If IsNull(LastSync) Then
 		    Me.Value = "No engram data available"
 		  Else
-		    Me.Value = "Engrams updated " + LastSync.ToString(Locale.Current, Date.FormatStyles.Long, Date.FormatStyles.Short) + " UTC"
+		    Me.Value = "Engrams updated " + LastSync.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC"
 		  End If
 		End Sub
 	#tag EndEvent
@@ -501,6 +511,70 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AutoDeactivate"
+		Visible=false
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HelpTag"
+		Visible=false
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="UseFocusRing"
+		Visible=false
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackColor"
+		Visible=false
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackColor"
+		Visible=false
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AcceptFocus"
+		Visible=false
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AcceptTabs"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EraseBackground"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Tooltip"
 		Visible=true
 		Group="Appearance"
@@ -514,7 +588,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType=""
+		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"

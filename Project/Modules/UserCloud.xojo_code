@@ -57,7 +57,7 @@ Protected Module UserCloud
 		  If LocalFile.Exists Then
 		    Try
 		      Dim Details As Dictionary = Response.JSON
-		      LocalFile.ModificationDate = NewDateFromSQLDateTime(Details.Value("modified")).LocalTime
+		      LocalFile.ModificationDateTime = NewDateFromSQLDateTime(Details.Value("modified")).LocalTime
 		    Catch Err As RuntimeException
 		      
 		    End Try
@@ -227,16 +227,16 @@ Protected Module UserCloud
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub RequestFileFrom(LocalFile As FolderItem, RemotePath As String, ModificationDate As Date)
+		Private Sub RequestFileFrom(LocalFile As FolderItem, RemotePath As String, ModificationDate As DateTime)
 		  SendRequest(New BeaconAPI.Request("file" + RemotePath, "GET", AddressOf Callback_GetFile))
 		  
 		  If Not LocalFile.Exists Then
 		    Dim Stream As BinaryStream = BinaryStream.Create(LocalFile, True)
 		    Stream.Close // Make a 0 byte file to track the modification date
 		    
-		    LocalFile.CreationDate = ModificationDate
+		    LocalFile.CreationDateTime = ModificationDate
 		  End If
-		  LocalFile.ModificationDate = ModificationDate
+		  LocalFile.ModificationDateTime = ModificationDate
 		  
 		  Dim ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "GET"

@@ -1,16 +1,23 @@
 #tag Window
 Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,NotificationKit.Receiver
+   AcceptFocus     =   False
+   AcceptTabs      =   True
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
+   AutoDeactivate  =   True
+   BackColor       =   &cFFFFFF00
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
+   EraseBackground =   True
+   HasBackColor    =   False
    HasBackgroundColor=   False
    Height          =   528
+   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -23,6 +30,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
+   UseFocusRing    =   False
    Visible         =   True
    Width           =   858
    Begin PagePanel PagePanel1
@@ -61,6 +69,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "Select A Config To Begin"
+         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   487
          HelpTag         =   ""
@@ -93,6 +102,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   31
          HelpTag         =   ""
@@ -111,6 +121,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          Tooltip         =   ""
          Top             =   41
          Transparent     =   True
+         Transparent     =   True
          UseFocusRing    =   True
          Visible         =   False
          Width           =   858
@@ -125,6 +136,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       HelpTag         =   ""
@@ -158,6 +170,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   ""
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
       HelpTag         =   ""
@@ -195,6 +208,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Body            =   ""
       Borders         =   8
       DetailURL       =   ""
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   487
       HelpTag         =   ""
@@ -1151,6 +1165,70 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AutoDeactivate"
+		Visible=false
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HelpTag"
+		Visible=false
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="UseFocusRing"
+		Visible=false
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackColor"
+		Visible=false
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackColor"
+		Visible=false
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AcceptFocus"
+		Visible=false
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AcceptTabs"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EraseBackground"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Tooltip"
 		Visible=true
 		Group="Appearance"
@@ -1164,7 +1242,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType=""
+		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"

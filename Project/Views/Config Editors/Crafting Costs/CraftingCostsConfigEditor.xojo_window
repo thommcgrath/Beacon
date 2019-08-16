@@ -1,16 +1,23 @@
 #tag Window
 Begin ConfigEditor CraftingCostsConfigEditor
+   AcceptFocus     =   False
+   AcceptTabs      =   True
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
    AllowTabs       =   True
+   AutoDeactivate  =   True
+   BackColor       =   &cFFFFFF00
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
+   EraseBackground =   True
+   HasBackColor    =   False
    HasBackgroundColor=   False
    Height          =   396
+   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -23,6 +30,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
    Tooltip         =   ""
    Top             =   0
    Transparent     =   True
+   UseFocusRing    =   False
    Visible         =   True
    Width           =   650
    Begin BeaconToolbar Header
@@ -35,7 +43,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Engrams"
-      DoubleBuffer    =   "False"
+      DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   "False"
       Height          =   40
@@ -71,7 +79,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
+      DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   "True"
       Height          =   1
@@ -107,7 +115,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
-      DoubleBuffer    =   "False"
+      DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   "True"
       Height          =   21
@@ -215,7 +223,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   "False"
+      DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   "True"
       Height          =   396
@@ -277,7 +285,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "No Selection"
-         DoubleBuffer    =   "False"
+         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   "True"
          Height          =   396
@@ -315,7 +323,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
          BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
+         EraseBackground =   True
          HasBackColor    =   False
          HasBackgroundColor=   False
          Height          =   396
@@ -349,7 +357,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "Multiple Selection"
-         DoubleBuffer    =   "False"
+         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   "True"
          Height          =   396
@@ -845,6 +853,70 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="AutoDeactivate"
+		Visible=false
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HelpTag"
+		Visible=false
+		Group="Appearance"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="UseFocusRing"
+		Visible=false
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackColor"
+		Visible=false
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackColor"
+		Visible=false
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AcceptFocus"
+		Visible=false
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AcceptTabs"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="EraseBackground"
+		Visible=false
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="Tooltip"
 		Visible=true
 		Group="Appearance"
@@ -858,7 +930,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType=""
+		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"
