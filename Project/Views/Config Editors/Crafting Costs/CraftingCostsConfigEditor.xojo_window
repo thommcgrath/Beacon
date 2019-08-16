@@ -735,17 +735,18 @@ End
 		    Return
 		  End If
 		  
-		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
+		  If Board.RawDataAvailable(Self.kClipboardType) Then
 		    Dim Dicts() As Auto
 		    Try
 		      Dim Contents As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
 		      Dicts = Xojo.Data.ParseJSON(Contents.ToText)
 		      
 		      Dim Costs() As Beacon.CraftingCost
+		      Dim Config As BeaconConfigs.CraftingCosts = Self.Config(True)
 		      For Each Dict As Xojo.Core.Dictionary In Dicts
 		        Dim Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(Dict)
 		        If Cost <> Nil Then
-		          Self.Config(False).Append(Cost)
+		          Config.Append(Cost)
 		          Costs.Append(Cost)
 		        End If
 		      Next
@@ -753,6 +754,7 @@ End
 		      Self.UpdateList(Costs)
 		      Self.ContentsChanged = True
 		    Catch Err As RuntimeException
+		      Beep
 		    End Try
 		    Return
 		  End If
