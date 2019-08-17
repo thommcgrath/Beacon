@@ -158,14 +158,26 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function ConvertMemoryBlock(Source As Global.MemoryBlock) As Xojo.Core.MemoryBlock
-		  Dim Temp As New Xojo.Core.MemoryBlock(Source)
-		  Return Temp.Left(Source.Size)
+		  If Source = Nil Then
+		    Return Nil
+		  ElseIf Source.Size = 0 Then
+		    Return New Xojo.Core.MemoryBlock(0)
+		  Else
+		    Dim Temp As New Xojo.Core.MemoryBlock(Source)
+		    Return Temp.Left(Source.Size)
+		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function ConvertMemoryBlock(Source As Xojo.Core.MemoryBlock) As Global.MemoryBlock
-		  Return CType(Source.Data, Global.MemoryBlock).StringValue(0, Source.Size)
+		  If Source = Nil Then
+		    Return Nil
+		  ElseIf Source.Size = 0 Then
+		    Return New Global.MemoryBlock(0)
+		  Else
+		    Return CType(Source.Data, Global.MemoryBlock).StringValue(0, Source.Size)
+		  End If
 		End Function
 	#tag EndMethod
 
