@@ -94,10 +94,7 @@ Inherits Listbox
 		    Dim LineWidth As Integer = Min(Ceil(Clip.StringWidth(Lines(I))), MaxDrawWidth)
 		    
 		    Dim DrawLeft As Integer
-		    Dim Align As Listbox.Alignments = CType(Self.CellAlignmentAt(Row, Column), Listbox.Alignments)
-		    #if Not DebugBuild
-		      #Pragma Error "Don't ship with this CType"
-		    #endif
+		    Dim Align As Listbox.Alignments = Self.CellAlignmentAt(Row, Column)
 		    If Align = Listbox.Alignments.Default Then
 		      Align = Self.ColumnAlignmentAt(Column)
 		    End If
