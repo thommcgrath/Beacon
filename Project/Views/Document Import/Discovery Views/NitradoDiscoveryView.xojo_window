@@ -406,6 +406,10 @@ End
 		      End If
 		      
 		      Dim Details As Xojo.Core.Dictionary = Service.Value("details")
+		      If IsNull(Details) Or Details.HasKey("game") = False Then
+		        Continue
+		      End If
+		      
 		      Dim Game As Text = Details.Value("game")
 		      If Not Game.BeginsWith("Ark: Survival Evolved") Then
 		        Continue
