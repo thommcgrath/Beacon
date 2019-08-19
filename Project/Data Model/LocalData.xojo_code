@@ -2265,9 +2265,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Shared Function TextToDate(Source As Text) As Xojo.Core.Date
-		  Dim Now As New Date
-		  Dim TempDate As Xojo.Core.Date = Xojo.Core.Date.FromText(Source)
-		  Return New Xojo.Core.Date(TempDate.SecondsFrom1970 + (Now.GMTOffset * 3600), New Xojo.Core.TimeZone("UTC"))
+		  // Try the "old" way where no timestamp means local time.
+		  // An exception means the timezone was included, so then parse the "new" way.
+		  Try
+		    Dim Now As New Date
+		    Dim TempDate As Xojo.Core.Date = Xojo.Core.Date.FromText(Source)
+		    Return New Xojo.Core.Date(TempDate.SecondsFrom1970 + (Now.GMTOffset * 3600), New Xojo.Core.TimeZone("UTC"))
+		  Catch Err As RuntimeException
+		    Dim Timestamp As Date = NewDateFromSQLDateTime(Source)
+		    If Timestamp = Nil Then
+		      Return Nil
+		    End If
+		    Return Timestamp.Convert
+		  End Try
 		End Function
 	#tag EndMethod
 
