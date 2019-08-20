@@ -476,7 +476,7 @@ abstract class BeaconCommon {
 			$path = substr($url, 29);
 			$expires += time();
 			$token = str_replace('=', '', strtr(base64_encode(md5($key . $path . $expires, true)), '+/', '-_'));
-			return $url . "?token=$token&expires=$expires";
+			return $url . "?token=$token&expires=$expires&bcdn_filename=" . basename($url);
 		} else {
 			return $url;
 		}
