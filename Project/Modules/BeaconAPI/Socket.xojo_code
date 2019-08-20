@@ -14,11 +14,7 @@ Protected Class Socket
 		  
 		  #if TargetWin32
 		    // The socket does not reset itself correctly on Windows, so create a new one
-		    Self.Socket = New URLConnection
-		    Self.Socket.ValidateCertificates = True
-		    AddHandler Self.Socket.Error, WeakAddressOf Socket_Error
-		    AddHandler Self.Socket.PageReceived, WeakAddressOf Socket_PageReceived
-		    AddHandler Self.Socket.ReceiveProgress, WeakAddressOf Socket_ReceiveProgress
+		    Self.Constructor()
 		  #else
 		    Self.Socket.ClearRequestHeaders()
 		  #endif

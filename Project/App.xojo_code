@@ -741,8 +741,8 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mHandoffSocket_Error(Sender As IPCSocket)
-		  Dim Code As Integer = Sender.LastErrorCode
+		Private Sub mHandoffSocket_Error(Sender As IPCSocket, Err As RuntimeException)
+		  Dim Code As Integer = Err.ErrorNumber
 		  If Code = 102 Then
 		    Call CallLater.Schedule(100, AddressOf Sender.Listen)
 		  Else
