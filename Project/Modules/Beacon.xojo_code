@@ -373,7 +373,13 @@ Protected Module Beacon
 		  #else
 		    Dim StringValue As String = Value
 		    StringValue = StringValue.ReplaceAll("+", " ")
-		    Return DefineEncoding(DecodeURLComponent(StringValue), Encodings.UTF8).ToText
+		    
+		    Dim Decoded As String = DefineEncoding(DecodeURLComponent(StringValue), Encodings.UTF8)
+		    Try
+		      Return Decoded.ToText
+		    Catch Err As RuntimeException
+		      Return Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Beacon.ConvertMemoryBlock(Decoded), True)
+		    End Try
 		  #endif
 		End Function
 	#tag EndMethod
