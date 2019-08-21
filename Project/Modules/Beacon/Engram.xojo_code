@@ -169,8 +169,8 @@ Implements Beacon.Blueprint
 		    Return 1
 		  End If
 		  
-		  Dim SelfPath As Text = Self.Path
-		  Dim OtherPath As Text = Other.Path
+		  Dim SelfPath As Text = If(Self.IsValid, Self.Path, Self.ClassString)
+		  Dim OtherPath As Text = If(Other.IsValid, Other.Path, Other.ClassString)
 		  Return SelfPath.Compare(OtherPath)
 		End Function
 	#tag EndMethod
