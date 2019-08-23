@@ -585,6 +585,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SetClipboardButtonCaption(Enabled As Boolean, Caption As String)
+		  If Self.RewriteClipboardButton = Nil Then
+		    Return
+		  End If
+		  
 		  If Self.RewriteClipboardButton.Enabled <> Enabled Then
 		    Self.RewriteClipboardButton.Enabled = Enabled
 		  End If
@@ -707,6 +711,10 @@ End
 	#tag ComputedProperty, Flags = &h21
 		#tag Getter
 			Get
+			  If Self.Switcher = Nil Then
+			    Return ""
+			  End If
+			  
 			  Select Case Self.Switcher.SelectedIndex
 			  Case 1
 			    Return Beacon.RewriteModeGameUserSettingsIni
