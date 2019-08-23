@@ -44,7 +44,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -259,7 +259,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
+      SelectionRequired=   "False"
       SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   13
@@ -362,7 +362,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -462,7 +462,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -562,7 +562,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""

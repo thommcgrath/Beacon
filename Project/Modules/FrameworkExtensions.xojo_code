@@ -50,13 +50,6 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function BuildDateTime(Extends Target As Application) As DateTime
-		  Dim BuildDate As Date = Target.BuildDate
-		  Return New DateTime(BuildDate.Year, BuildDate.Month, BuildDate.Day, BuildDate.Hour, BuildDate.Minute, BuildDate.Second, 0, New TimeZone(BuildDate.GMTOffset * 3600))
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Characters(Extends Source As String) As String()
 		  Return Split(Source, "")
 		End Function
@@ -65,7 +58,7 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function CheckIsFolder(Extends Folder As FolderItem, Create As Boolean = True) As Boolean
 		  If Folder.Exists Then
-		    If Folder.Folder Then
+		    If Folder.IsFolder Then
 		      Return True
 		    Else
 		      If Create = True Then
@@ -153,7 +146,7 @@ Protected Module FrameworkExtensions
 		    Return True
 		  End If
 		  
-		  If File.Folder Then
+		  If File.IsFolder Then
 		    For I As Integer = File.Count DownTo 1
 		      If Not File.Item(I).DeepDelete Then
 		        Return False
@@ -489,8 +482,10 @@ Protected Module FrameworkExtensions
 		    Return Double.FromText(Value.TextValue)
 		  Case Variant.TypeString
 		    Return Double.FromString(Value.TextValue)
-		  Case Variant.TypeInteger
-		    Return Value.IntegerValue
+		  Case Variant.TypeInt32
+		    Return Value.Int32Value
+		  Case Variant.TypeInt64
+		    Return Value.Int64Value
 		  Case Variant.TypeSingle
 		    Return Value.SingleValue
 		  End Select

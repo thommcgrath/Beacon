@@ -44,7 +44,7 @@ Begin ConfigEditor DifficultyConfigEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -177,7 +177,7 @@ Begin ConfigEditor DifficultyConfigEditor
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
          BackgroundColor =   &cFFFFFF00
-         Bold            =   "False"
+         Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
@@ -278,7 +278,7 @@ Begin ConfigEditor DifficultyConfigEditor
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
          BackgroundColor =   &cFFFFFF00
-         Bold            =   "False"
+         Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
@@ -379,7 +379,7 @@ Begin ConfigEditor DifficultyConfigEditor
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
          BackgroundColor =   &cFFFFFF00
-         Bold            =   "False"
+         Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
@@ -480,7 +480,7 @@ Begin ConfigEditor DifficultyConfigEditor
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
          BackgroundColor =   &cFFFFFF00
-         Bold            =   "False"
+         Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""

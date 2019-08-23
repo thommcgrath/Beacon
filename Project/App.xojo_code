@@ -142,7 +142,7 @@ Implements NotificationKit.Receiver
 		  
 		  BeaconUI.RegisterSheetPositionHandler
 		  
-		  Self.AutoQuit = True
+		  Self.AllowAutoQuit = True
 		  
 		  Tests.RunTests()
 		End Sub
@@ -325,7 +325,7 @@ Implements NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Sub CheckFolder(Folder As FolderItem)
 		  If Folder.Exists Then
-		    If Not Folder.Folder Then
+		    If Not Folder.IsFolder Then
 		      Folder.Delete
 		      Folder.CreateAsFolder
 		    End If

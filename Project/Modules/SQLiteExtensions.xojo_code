@@ -15,14 +15,14 @@ Protected Module SQLiteExtensions
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function UserVersion(Extends Source As SQLiteDatabase) As Integer
-		  Dim Results As RowSet = Source.SQLSelect("PRAGMA user_version;")
-		  Return Results.IdxField(1).IntegerValue
+		  Dim Results As RowSet = Source.SelectSQL("PRAGMA user_version;")
+		  Return Results.ColumnAt(0).IntegerValue
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub UserVersion(Extends Source As SQLiteDatabase, Assigns Value As Integer)
-		  Source.SQLExecute("PRAGMA user_version = " + Str(Value, "-0") + ";")
+		  Source.ExecuteSQL("PRAGMA user_version = " + Str(Value, "-0") + ";")
 		End Sub
 	#tag EndMethod
 

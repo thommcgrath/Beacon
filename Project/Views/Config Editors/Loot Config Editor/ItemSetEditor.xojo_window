@@ -595,7 +595,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function RowCompared(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Dim Entry1 As Beacon.SetEntry = Me.RowTag(Row1)
 		  Dim Entry2 As Beacon.SetEntry = Me.RowTag(Row2)
 		  

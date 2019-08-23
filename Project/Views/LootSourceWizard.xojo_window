@@ -60,7 +60,6 @@ Begin BeaconDialog LootSourceWizard
       SelectedPanelIndex=   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
@@ -239,7 +238,6 @@ Begin BeaconDialog LootSourceWizard
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionRequired=   False
          SelectionType   =   "1"
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -711,7 +709,7 @@ Begin BeaconDialog LootSourceWizard
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
          BackgroundColor =   &cFFFFFF00
-         Bold            =   "False"
+         Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
@@ -770,7 +768,7 @@ Begin BeaconDialog LootSourceWizard
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
          BackgroundColor =   &cFFFFFF00
-         Bold            =   "False"
+         Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
@@ -829,7 +827,7 @@ Begin BeaconDialog LootSourceWizard
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
          BackgroundColor =   &cFFFFFF00
-         Bold            =   "False"
+         Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
@@ -888,7 +886,7 @@ Begin BeaconDialog LootSourceWizard
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
          BackgroundColor =   &cFFFFFF00
-         Bold            =   "False"
+         Bold            =   False
          Border          =   True
          CueText         =   "ExampleSourceClass_C"
          DataField       =   ""
@@ -947,7 +945,7 @@ Begin BeaconDialog LootSourceWizard
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
          BackgroundColor =   &cFFFFFF00
-         Bold            =   "False"
+         Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
@@ -1048,7 +1046,7 @@ Begin BeaconDialog LootSourceWizard
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
          BackgroundColor =   &cFFFFFF00
-         Bold            =   "False"
+         Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
@@ -1231,7 +1229,6 @@ Begin BeaconDialog LootSourceWizard
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionRequired=   False
          SelectionType   =   "0"
          ShowDropIndicator=   False
          TabIndex        =   7
@@ -1689,7 +1686,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function RowCompared(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  If Column <> 0 Then
 		    Return False
 		  End If

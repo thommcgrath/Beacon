@@ -52,6 +52,14 @@ Inherits UITweaks.ResizedTextField
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Bold"
+			Visible=true
+			Group="Font"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="AutoDeactivate"
 			Visible=false
 			Group="Appearance"

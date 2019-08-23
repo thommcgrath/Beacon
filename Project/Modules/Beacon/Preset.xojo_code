@@ -172,7 +172,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Shared Function FromFile(File As Global.FolderItem) As Beacon.Preset
-		  If File = Nil Or File.Exists = False Or File.Folder = True Then
+		  If File = Nil Or File.Exists = False Or File.IsFolder = True Then
 		    Return Nil
 		  End If
 		  

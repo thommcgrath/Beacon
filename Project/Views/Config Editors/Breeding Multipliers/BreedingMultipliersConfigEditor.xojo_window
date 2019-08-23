@@ -44,7 +44,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -144,7 +144,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -244,7 +244,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -344,7 +344,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -444,7 +444,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -544,7 +544,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -644,7 +644,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -744,7 +744,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -888,7 +888,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
+      SelectionRequired=   "False"
       SelectionType   =   "0"
       ShowDropIndicator=   False
       TabIndex        =   35
@@ -942,7 +942,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -1450,7 +1450,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -1550,7 +1550,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -2020,7 +2020,7 @@ End
 #tag EndEvents
 #tag Events CreaturesList
 	#tag Event
-		Function RowCompared(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  If Column = Self.ColumnIncubationTime Or Column = Self.ColumnMatureTime Then
 		    Dim Period1 As UInt64 = Me.CellTag(Row1, Column)
 		    Dim Period2 As UInt64 = Me.CellTag(Row2, Column)

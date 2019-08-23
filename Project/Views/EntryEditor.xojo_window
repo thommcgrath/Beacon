@@ -84,7 +84,7 @@ Begin BeaconDialog EntryEditor
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
          BackgroundColor =   &cFFFFFF00
-         Bold            =   "False"
+         Bold            =   False
          Border          =   True
          CueText         =   "Search or Enter Spawn Command"
          DataField       =   ""
@@ -929,7 +929,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function RowCompared(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Select Case Column
 		  Case Self.ColumnIncluded
 		    If Me.CellCheck(Row1, Column) = True And Me.CellCheck(Row2, Column) = False Then

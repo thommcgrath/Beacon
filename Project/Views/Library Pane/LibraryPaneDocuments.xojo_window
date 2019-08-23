@@ -82,13 +82,11 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   "0"
       RowSelectionType=   "1"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
       SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   3
@@ -108,7 +106,6 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -126,7 +123,6 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       Caption         =   "Documents"
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -163,7 +159,6 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       DoubleBuffer    =   False
       DrawCaptions    =   True
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   61
       HelpTag         =   ""
       Index           =   -2147483648
@@ -199,7 +194,6 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -751,7 +745,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function RowCompared(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Select Case Column
 		  Case 0
 		    Dim Row1URL As Beacon.DocumentURL = Me.RowTag(Row1)

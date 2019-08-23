@@ -929,14 +929,6 @@ Inherits Listbox
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="SelectionRequired"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="RowSelectionType"
 			Visible=true
 			Group="Behavior"

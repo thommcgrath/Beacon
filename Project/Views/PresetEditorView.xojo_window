@@ -364,7 +364,7 @@ Begin BeaconSubview PresetEditorView
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
          BackgroundColor =   &cFFFFFF00
-         Bold            =   "False"
+         Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
@@ -465,7 +465,7 @@ Begin BeaconSubview PresetEditorView
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
          BackgroundColor =   &cFFFFFF00
-         Bold            =   "False"
+         Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
@@ -650,7 +650,7 @@ Begin BeaconSubview PresetEditorView
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
          BackgroundColor =   &cFFFFFF00
-         Bold            =   "False"
+         Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
@@ -709,7 +709,7 @@ Begin BeaconSubview PresetEditorView
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
          BackgroundColor =   &cFFFFFF00
-         Bold            =   "False"
+         Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""

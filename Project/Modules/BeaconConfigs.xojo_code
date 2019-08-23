@@ -54,8 +54,10 @@ Protected Module BeaconConfigs
 		    Dim AttributeValue As Variant = ConfigAttribute.Value
 		    Dim RequiredVersion As Integer
 		    Select Case AttributeValue.Type
-		    Case Variant.TypeInteger
-		      RequiredVersion = AttributeValue.IntegerValue
+		    Case Variant.TypeInt32
+		      RequiredVersion = AttributeValue.Int32Value
+		    Case Variant.TypeInt64
+		      RequiredVersion = AttributeValue.Int64Value
 		    Case Variant.TypeString
 		      RequiredVersion = Integer.FromString(AttributeValue.StringValue)
 		    Case Variant.TypeText

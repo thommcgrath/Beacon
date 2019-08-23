@@ -208,11 +208,11 @@ Protected Class PreferencesManager
 		  End If
 		  
 		  Dim Value As Variant = Self.mValues.Value(Key)
-		  If IsNull(Value) Or Value.Type <> Variant.TypeInteger Then
+		  If IsNull(Value) Or Value.Type <> Variant.TypeInt32 Then
 		    Return Default
 		  End If
 		  
-		  Return Value.IntegerValue
+		  Return Value.Int32Value
 		End Function
 	#tag EndMethod
 

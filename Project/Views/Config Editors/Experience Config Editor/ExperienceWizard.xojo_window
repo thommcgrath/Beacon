@@ -219,7 +219,7 @@ Begin BeaconDialog ExperienceWizard
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -361,7 +361,7 @@ Begin BeaconDialog ExperienceWizard
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -581,7 +581,7 @@ Begin BeaconDialog ExperienceWizard
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
+      SelectionRequired=   "False"
       SelectionType   =   "0"
       ShowDropIndicator=   False
       TabIndex        =   11
@@ -687,7 +687,7 @@ Begin BeaconDialog ExperienceWizard
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -745,7 +745,7 @@ Begin BeaconDialog ExperienceWizard
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -803,7 +803,7 @@ Begin BeaconDialog ExperienceWizard
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -861,7 +861,7 @@ Begin BeaconDialog ExperienceWizard
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""

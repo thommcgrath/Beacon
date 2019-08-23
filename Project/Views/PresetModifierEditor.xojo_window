@@ -89,7 +89,7 @@ Begin BeaconDialog PresetModifierEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -190,7 +190,7 @@ Begin BeaconDialog PresetModifierEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -332,7 +332,7 @@ Begin BeaconDialog PresetModifierEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -390,7 +390,7 @@ Begin BeaconDialog PresetModifierEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -576,7 +576,7 @@ Begin BeaconDialog PresetModifierEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
+      SelectionRequired=   "False"
       SelectionType   =   "0"
       ShowDropIndicator=   False
       TabIndex        =   15
@@ -766,7 +766,7 @@ Begin BeaconDialog PresetModifierEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
@@ -866,7 +866,7 @@ Begin BeaconDialog PresetModifierEditor
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
-      Bold            =   "False"
+      Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""

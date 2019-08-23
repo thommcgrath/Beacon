@@ -154,7 +154,7 @@ Protected Class Curve
 		  #else
 		    Dim Results As RowSet = Self.Database.SelectSQL("SELECT y FROM precomputed ORDER BY ABS(x - ?1) LIMIT 1;", X)
 		    If Results <> Nil Then
-		      Return Results.Field("y").DoubleValue
+		      Return Results.Column("y").DoubleValue
 		    Else
 		      Return 0
 		    End If

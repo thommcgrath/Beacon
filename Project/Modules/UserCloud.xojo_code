@@ -69,13 +69,13 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h21
 		Private Sub CleanupEmptyFolders(Folder As FolderItem)
-		  If Folder = Nil Or Folder.Exists = False Or Folder.Folder = False Then
+		  If Folder = Nil Or Folder.Exists = False Or Folder.IsFolder = False Then
 		    Return
 		  End If
 		  
 		  For I As Integer = Folder.Count DownTo 1
 		    Dim Child As FolderItem = Folder.Item(I)
-		    If Not Child.Folder Then
+		    If Not Child.IsFolder Then
 		      Continue
 		    End If
 		    If Child.Count > 0 Then
@@ -128,7 +128,7 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h21
 		Private Sub DiscoverPaths(BasePath As String, Folder As FolderItem, Destination As Dictionary)
-		  If Not Folder.Folder Then
+		  If Not Folder.IsFolder Then
 		    Return
 		  End If
 		  
@@ -138,7 +138,7 @@ Protected Module UserCloud
 		      Continue
 		    End If
 		    
-		    If Child.Folder Then
+		    If Child.IsFolder Then
 		      DiscoverPaths(BasePath + "/" + EncodeURLComponent(Child.Name), Child, Destination)
 		    Else
 		      Destination.Value(BasePath + "/" + EncodeURLComponent(Child.Name)) = Child
