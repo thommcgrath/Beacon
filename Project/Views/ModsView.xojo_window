@@ -306,6 +306,11 @@ End
 		Private Sub APICallback_DeleteMod(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
 		  
+		  If Self.ModList = Nil Then
+		    // This view already closed
+		    Return
+		  End If
+		  
 		  If Response.Success Then
 		    Self.RefreshMods
 		    Return
@@ -319,31 +324,36 @@ End
 		Private Sub APICallback_ListMods(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
 		  
+		  If Self.ModList = Nil Then
+		    // This view already closed
+		    Return
+		  End If
+		  
 		  If Not Response.Success Then
 		    MsgBox("Unable to load mods: " + Response.Message)
 		    Return
 		  End If
 		  
 		  Dim SelectedMod As BeaconAPI.WorkshopMod
-		  If ModList.SelectedRowIndex > -1 Then
+		  If Self.ModList.SelectedRowIndex > -1 Then
 		    SelectedMod = Self.SelectedMod()
 		  End If
 		  
-		  ModList.DeleteAllRows()
+		  Self.ModList.DeleteAllRows()
 		  
 		  Dim Arr() As Variant = Response.JSON
 		  For Each Dict As Dictionary In Arr
 		    Dim UserMod As New BeaconAPI.WorkshopMod(Dict)
 		    
-		    ModList.AddRow(UserMod.Name)
-		    ModList.RowTag(ModList.LastAddedRowIndex) = UserMod
+		    Self.ModList.AddRow(UserMod.Name)
+		    Self.ModList.RowTag(Self.ModList.LastAddedRowIndex) = UserMod
 		    
 		    If Not UserMod.Confirmed Then
-		      ModList.CellItalic(ModList.LastAddedRowIndex, 0) = True
+		      Self.ModList.CellItalic(Self.ModList.LastAddedRowIndex, 0) = True
 		    End If
 		    
 		    If UserMod = SelectedMod Then
-		      ModList.SelectedRowIndex = ModList.LastAddedRowIndex
+		      Self.ModList.SelectedRowIndex = Self.ModList.LastAddedRowIndex
 		    End If
 		  Next
 		End Sub
