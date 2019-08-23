@@ -13,7 +13,7 @@ Inherits Thread
 		  If BeaconEncryption.IsEncrypted(Content) Then
 		    Try
 		      Content = BeaconEncryption.SymmetricDecrypt(App.IdentityManager.CurrentIdentity.UserCloudKey, Content)
-		    Catch Err As Xojo.Crypto.CryptoException
+		    Catch Err As RuntimeException
 		      // Ok?
 		      CleanupRequest(Self.mRequest)
 		      Return
