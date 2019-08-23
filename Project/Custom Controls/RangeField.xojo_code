@@ -21,29 +21,35 @@ Inherits UITweaks.ResizedTextField
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub TextChange()
+		  //
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h0
 		Sub CheckValue()
 		  If RaiseEvent AllowContents(Me.Text) Then
+		    Self.SetValue(Self.Text) // Fires TextChanged only if necessary
 		    Return
 		  End If
 		  
 		  Dim MinValue, MaxValue As Double
 		  RaiseEvent GetRange(MinValue, MaxValue)
 		  
-		  Dim Value As Double = CDbl(Me.Text)
+		  Dim Value As Double = CDbl(Self.Text)
+		  Dim Formatted As String
 		  If Value < MinValue Then
-		    Me.Text = Self.Format(MinValue)
+		    Formatted = Self.Format(MinValue)
 		    RaiseEvent RangeError(Value, MinValue)
 		  ElseIf Value > MaxValue Then
-		    Me.Text = Self.Format(MaxValue)
+		    Formatted = Self.Format(MaxValue)
 		    RaiseEvent RangeError(Value, MaxValue)
 		  Else
-		    Dim Formatted As String = Self.Format(Value)
-		    If Me.Text <> Formatted Then
-		      Me.Text = Formatted
-		    End If
+		    Formatted = Self.Format(Value)
 		  End If
+		  Self.SetValue(Formatted)
 		End Sub
 	#tag EndMethod
 
@@ -57,6 +63,18 @@ Inherits UITweaks.ResizedTextField
 		    Return Format(Value, "-0,.0####")
 		  End If
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SetValue(Value As String)
+		  If Self.Text <> Value Then
+		    Self.Text = Value
+		  End If
+		  If Self.mLastNotifiedValue <> Value Then
+		    Self.mLastNotifiedValue = Value
+		    RaiseEvent TextChanged()
+		  End If
+		End Sub
 	#tag EndMethod
 
 
@@ -80,6 +98,14 @@ Inherits UITweaks.ResizedTextField
 		Event RangeError(DesiredValue As Double, NewValue As Double)
 	#tag EndHook
 
+	#tag Hook, Flags = &h0
+		Event TextChanged()
+	#tag EndHook
+
+
+	#tag Property, Flags = &h21
+		Private mLastNotifiedValue As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mMaxValue As Double
@@ -97,19 +123,22 @@ Inherits UITweaks.ResizedTextField
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If CDbl(Me.Text.Trim) <> Value Then
+			  If CDbl(Self.Text.Trim) <> Value Then
 			    Dim MinValue, MaxValue As Double
 			    RaiseEvent GetRange(MinValue, MaxValue)
 			    
+			    Dim Formatted As String
 			    If Value < MinValue Then
-			      Me.Text = Self.Format(MinValue)
+			      Formatted = Self.Format(MinValue)
 			      RaiseEvent RangeError(Value, MinValue)
 			    ElseIf Value > MaxValue Then
-			      Me.Text = Self.Format(MaxValue)
+			      Formatted = Self.Format(MaxValue)
 			      RaiseEvent RangeError(Value, MaxValue)
 			    Else
-			      Me.Text = Self.Format(Value)
+			      Formatted = Self.Format(Value)
 			    End If
+			    
+			    Self.SetValue(Formatted)
 			  End If
 			End Set
 		#tag EndSetter

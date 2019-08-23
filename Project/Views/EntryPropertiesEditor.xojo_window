@@ -1081,7 +1081,7 @@ End
 #tag EndEvents
 #tag Events WeightField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.Focus = Me Then
 		    WeightSlider.Value = Round(Me.Value)
 		  End If

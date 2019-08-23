@@ -155,7 +155,7 @@ Begin ContainerControl LootSourceSettingsContainer
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      Value           =   0
+      Value           =   0.0
       Visible         =   True
       Width           =   50
    End
@@ -234,7 +234,7 @@ Begin ContainerControl LootSourceSettingsContainer
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      Value           =   0
+      Value           =   0.0
       Visible         =   True
       Width           =   50
    End
@@ -502,7 +502,7 @@ End
 #tag EndEvents
 #tag Events MinItemSetsField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -543,7 +543,7 @@ End
 #tag EndEvents
 #tag Events MaxItemSetsField
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
