@@ -2,6 +2,13 @@
 Protected Class DiscoveryView
 Inherits ContainerControl
 	#tag Event
+		Sub Close()
+		  RaiseEvent Close
+		  Self.mClosed = True
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Resized()
 		  RaiseEvent Resize
 		End Sub
@@ -16,6 +23,10 @@ Inherits ContainerControl
 
 	#tag Method, Flags = &h0
 		Sub Begin()
+		  If Self.mClosed Then
+		    Return
+		  End If
+		  
 		  RaiseEvent Begin
 		End Sub
 	#tag EndMethod
@@ -28,6 +39,10 @@ Inherits ContainerControl
 
 	#tag Method, Flags = &h1
 		Protected Sub DesiredHeight(Assigns Value As Integer)
+		  If Self.mClosed Then
+		    Return
+		  End If
+		  
 		  If Value <> Self.mDesiredHeight Then
 		    Self.mDesiredHeight = Value
 		  End If  
@@ -37,12 +52,20 @@ Inherits ContainerControl
 
 	#tag Method, Flags = &h0
 		Sub PullValuesFromDocument(Document As Beacon.Document)
+		  If Self.mClosed Then
+		    Return
+		  End If
+		  
 		  RaiseEvent GetValuesFromDocument(Document)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub ShouldCancel()
+		  If Self.mClosed Then
+		    Return
+		  End If
+		  
 		  RaiseEvent ShouldCancel()
 		End Sub
 	#tag EndMethod
@@ -55,6 +78,10 @@ Inherits ContainerControl
 
 	#tag Method, Flags = &h1
 		Protected Sub ShouldFinish(Engines() As Beacon.DiscoveryEngine, OAuthProvider As Text, OAuthData As Xojo.Core.Dictionary)
+		  If Self.mClosed Then
+		    Return
+		  End If
+		  
 		  RaiseEvent Finished(Engines, OAuthProvider, OAuthData)
 		End Sub
 	#tag EndMethod
@@ -62,6 +89,10 @@ Inherits ContainerControl
 
 	#tag Hook, Flags = &h0
 		Event Begin()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Close()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -84,6 +115,10 @@ Inherits ContainerControl
 		Event ShouldResize(NewHeight As Integer)
 	#tag EndHook
 
+
+	#tag Property, Flags = &h21
+		Private mClosed As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mDesiredHeight As Integer = 64
