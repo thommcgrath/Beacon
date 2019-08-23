@@ -252,6 +252,11 @@ End
 		Private Sub APICallback_DeleteMod(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
 		  
+		  If Self.ModList = Nil Then
+		    // This view already closed
+		    Return
+		  End If
+		  
 		  If Response.Success Then
 		    Self.RefreshMods
 		    Return
@@ -265,31 +270,36 @@ End
 		Private Sub APICallback_ListMods(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
 		  
+		  If Self.ModList = Nil Then
+		    // This view already closed
+		    Return
+		  End If
+		  
 		  If Not Response.Success Then
 		    MsgBox("Unable to load mods: " + Response.Message)
 		    Return
 		  End If
 		  
 		  Dim SelectedMod As BeaconAPI.WorkshopMod
-		  If ModList.ListIndex > -1 Then
+		  If Self.ModList.ListIndex > -1 Then
 		    SelectedMod = Self.SelectedMod()
 		  End If
 		  
-		  ModList.DeleteAllRows()
+		  Self.ModList.DeleteAllRows()
 		  
 		  Dim Arr() As Auto = Response.JSON
 		  For Each Dict As Xojo.Core.Dictionary In Arr
 		    Dim UserMod As New BeaconAPI.WorkshopMod(Dict)
 		    
-		    ModList.AddRow(UserMod.Name)
-		    ModList.RowTag(ModList.LastIndex) = UserMod
+		    Self.ModList.AddRow(UserMod.Name)
+		    Self.ModList.RowTag(Self.ModList.LastIndex) = UserMod
 		    
 		    If Not UserMod.Confirmed Then
-		      ModList.CellItalic(ModList.LastIndex, 0) = True
+		      Self.ModList.CellItalic(Self.ModList.LastIndex, 0) = True
 		    End If
 		    
 		    If UserMod = SelectedMod Then
-		      ModList.ListIndex = ModList.LastIndex
+		      Self.ModList.ListIndex = Self.ModList.LastIndex
 		    End If
 		  Next
 		End Sub
