@@ -22,7 +22,7 @@ Inherits UITweaks.ResizedTextField
 	#tag EndEvent
 
 	#tag Event
-		Sub TextChange()
+		Sub TextChanged()
 		  //
 		End Sub
 	#tag EndEvent
@@ -31,7 +31,7 @@ Inherits UITweaks.ResizedTextField
 	#tag Method, Flags = &h0
 		Sub CheckValue()
 		  If RaiseEvent AllowContents(Me.Value) Then
-		    Self.SetValue(Self.Text) // Fires TextChanged only if necessary
+		    Self.SetValue(Self.Value) // Fires TextChanged only if necessary
 		    Return
 		  End If
 		  
@@ -67,8 +67,8 @@ Inherits UITweaks.ResizedTextField
 
 	#tag Method, Flags = &h21
 		Private Sub SetValue(Value As String)
-		  If Self.Text <> Value Then
-		    Self.Text = Value
+		  If Self.Value <> Value Then
+		    Self.Value = Value
 		  End If
 		  If Self.mLastNotifiedValue <> Value Then
 		    Self.mLastNotifiedValue = Value
@@ -103,10 +103,6 @@ Inherits UITweaks.ResizedTextField
 	#tag EndHook
 
 
-	#tag Property, Flags = &h21
-		Private mLastNotifiedValue As String
-	#tag EndProperty
-
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -136,6 +132,10 @@ Inherits UITweaks.ResizedTextField
 		#tag EndSetter
 		DoubleValue As Double
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mLastNotifiedValue As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mMaxValue As Double
