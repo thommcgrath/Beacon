@@ -105,6 +105,7 @@ Inherits Beacon.ConfigGroup
 		  Multipliers.mBabyMatureSpeedMultiplier = BabyMatureSpeedMultiplier
 		  Multipliers.mEggHatchSpeedMultiplier = EggHatchSpeedMultiplier
 		  Multipliers.mLayEggIntervalMultiplier = LayEggIntervalMultiplier
+		  Multipliers.mBabyImprintingStatScaleMultiplier = BabyImprintingStatScaleMultiplier
 		  Multipliers.mMatingIntervalMultiplier = MatingIntervalMultiplier
 		  Multipliers.mMatingSpeedMultiplier = MatingSpeedMultiplier
 		  Return Multipliers
