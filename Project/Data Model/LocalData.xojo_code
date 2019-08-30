@@ -183,7 +183,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  If Savepoint = "" Then
 		    Self.SQLExecute("COMMIT TRANSACTION;")
-		    Self.mLastCommitTime = Microseconds
+		    Self.mLastCommitTime = System.Microseconds
 		  Else
 		    Self.SQLExecute("RELEASE SAVEPOINT " + Savepoint + ";")
 		  End If
@@ -215,7 +215,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Dim LegacyFile As FolderItem = AppSupport.Child("Beacon.sqlite")
 		  If LegacyFile.Exists Then
-		    LegacyFile.Delete
+		    LegacyFile.Remove
 		  End If
 		  
 		  Self.mBase = New SQLiteDatabase
@@ -226,9 +226,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Return
 		    End If
 		  Else
-		    If Not Self.mBase.CreateDatabaseFile Then
-		      Return
-		    End If
+		    Self.mBase.CreateDatabase
 		    
 		    Self.BuildSchema()
 		    ShouldImportCloud = True
@@ -267,12 +265,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Dim Candidates() As FolderItem
 		      Dim Versions() As Integer
 		      For I As Integer = 1 To SearchFolder.Count
-		        Dim Filename As String = SearchFolder.Item(I).Name
+		        Dim Filename As String = SearchFolder.ChildAt(I).Name
 		        If Filename = SearchPrefix + SearchSuffix Then
-		          Candidates.Append(SearchFolder.Item(I))
+		          Candidates.Append(SearchFolder.ChildAt(I))
 		          Versions.Append(1)
 		        ElseIf Filename.BeginsWith(SearchPrefix) And Filename.EndsWith(SearchSuffix) Then
-		          Candidates.Append(SearchFolder.Item(I))
+		          Candidates.Append(SearchFolder.ChildAt(I))
 		          Versions.Append(Integer.FromString(Filename.Middle(SearchPrefix.Length + 2, Filename.Length - (SearchPrefix.Length + SearchSuffix.Length))))
 		        End If
 		      Next
@@ -292,12 +290,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    Self.mBase = New SQLiteDatabase
 		    Self.mBase.DatabaseFile = App.ApplicationSupport.Child("Library.sqlite")
-		    Call Self.mBase.CreateDatabaseFile
+		    Call Self.mBase.CreateDatabase
 		    Self.BuildSchema()
 		    ShouldImportCloud = True
 		  End If
 		  
-		  Self.mBase.SQLExecute("PRAGMA cache_size = -100000;")
+		  Self.mBase.ExecuteSQL("PRAGMA cache_size = -100000;")
 		  
 		  // Careful removing this, the commit updates the mLastCommitTime property
 		  Self.BeginTransaction()
@@ -407,7 +405,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("DELETE FROM custom_presets WHERE LOWER(object_id) = LOWER(?1);", Preset.PresetID)
 		  Self.Commit()
 		  
-		  Call UserCloud.Delete("/Presets/" + Lowercase(Preset.PresetID) + BeaconFileTypes.BeaconPreset.PrimaryExtension)
+		  Call UserCloud.Delete("/Presets/" + CType(Preset.PresetID + BeaconFileTypes.BeaconPreset.PrimaryExtension, String).Lowercase())
 		  
 		  Self.LoadPresets()
 		End Sub
@@ -450,7 +448,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetConfigHelp(ConfigName As String, ByRef Title As String, ByRef Body As String, ByRef DetailURL As String) As Boolean
-		  Dim Results As RowSet = Self.SQLSelect("SELECT title, body, detail_url FROM config_help WHERE config_name = ?1;", Lowercase(ConfigName))
+		  Dim Results As RowSet = Self.SQLSelect("SELECT title, body, detail_url FROM config_help WHERE config_name = ?1;", ConfigName.Lowercase)
 		  If Results.RowCount <> 1 Then
 		    Return False
 		  End If
@@ -777,7 +775,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  If BadgeSheet <> Nil Then
 		    Dim Badges As Picture = New Picture(BadgeSheet.Width, BadgeSheet.Height, 32)
 		    Badges.Graphics.DrawingColor = &cFFFFFF
-		    Badges.Graphics.FillRect(0, 0, Badges.Graphics.Width, Badges.Graphics.Height)
+		    Badges.Graphics.FillRectangle(0, 0, Badges.Graphics.Width, Badges.Graphics.Height)
 		    Badges.Mask.Graphics.DrawPicture(BadgeSheet, 0, 0)
 		    
 		    Dim Sprites As Picture = New Picture(SpriteSheet.Width, SpriteSheet.Height, 32)
@@ -786,7 +784,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Sprites.Graphics.DrawPicture(Badges.Piece(Width, 0, Width * 2, Height * 2), Width, Height * 2)
 		    Sprites.Graphics.DrawPicture(Badges.Piece(Width * 3, 0, Width * 3, Height * 3), Width * 3, Height * 3)
 		    Badges.Graphics.DrawingColor = &c000000
-		    Badges.Graphics.FillRect(0, 0, Badges.Graphics.Width, Badges.Graphics.Height)
+		    Badges.Graphics.FillRectangle(0, 0, Badges.Graphics.Width, Badges.Graphics.Height)
 		    Sprites.Graphics.DrawPicture(Badges, 0, 0)
 		    
 		    SpriteSheet = Sprites
@@ -835,7 +833,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  If Self.mImportThread.ThreadState = Thread.ThreadStates.NotRunning Then
-		    Self.mImportThread.Run
+		    Self.mImportThread.Start
 		  End If
 		End Sub
 	#tag EndMethod
@@ -862,7 +860,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Try
 		      Dim Category As String = Dict.Value("category")
 		      Dim Path As String = Dict.Value("path") 
-		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE LOWER(path) = ?1;", Lowercase(Path))
+		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE LOWER(path) = ?1;", Path.Lowercase)
 		      If Results.RowCount <> 0 Then
 		        Continue
 		      End If
@@ -927,7 +925,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Select Case Action.Value("Action")
 		      Case "DELETE"
 		        Self.BeginTransaction()
-		        Self.SQLExecute("DELETE FROM custom_presets WHERE LOWER(object_id) = ?1;", Lowercase(PresetID))
+		        Self.SQLExecute("DELETE FROM custom_presets WHERE LOWER(object_id) = ?1;", PresetID.Lowercase)
 		        Self.Commit()
 		        PresetsUpdated = True
 		      Case "GET"
@@ -1481,7 +1479,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Next
 		    Catch Err As UnsupportedOperationException
 		      Self.Rollback()
-		      Self.mBase.DetachDatabase("legacy")
+		      Self.mBase.RemoveDatabase("legacy")
 		      App.Log("Unable to migrate data: " + Err.Message)
 		      Return False
 		    End Try
@@ -1496,7 +1494,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Self.SQLExecute("INSERT INTO searchable_tags (object_id, source_table, tags) VALUES (?1, ?2, ?3);", ObjectID, "engrams", Tags)
 		        Catch Err As UnsupportedOperationException
 		          Self.Rollback()
-		          Self.mBase.DetachDatabase("legacy")
+		          Self.mBase.RemoveDatabase("legacy")
 		          App.Log("Unable to migrate data: " + Err.Message)
 		          Return False
 		        End Try
@@ -1508,16 +1506,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.Commit()
 		  End If
 		  
-		  Self.mBase.DetachDatabase("legacy")
+		  Self.mBase.RemoveDatabase("legacy")
 		  
 		  If FromSchemaVersion <= 2 Then
 		    Dim SupportFolder As FolderItem = App.ApplicationSupport
 		    Dim PresetsFolder As FolderItem = SupportFolder.Child("Presets")
 		    If PresetsFolder.Exists Then
 		      For I As Integer = PresetsFolder.Count DownTo 1
-		        Dim File As FolderItem = PresetsFolder.Item(I)
+		        Dim File As FolderItem = PresetsFolder.ChildAt(I)
 		        If Not File.IsType(BeaconFileTypes.BeaconPreset) Then
-		          File.Delete
+		          File.Remove
 		          Continue
 		        End If
 		        
@@ -1532,7 +1530,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Self.SQLExecute("INSERT OR REPLACE INTO custom_presets (object_id, label, contents) VALUES (LOWER(?1), ?2, ?3);", PresetID, Label, Content)
 		          Self.Commit()
 		          
-		          File.Delete
+		          File.Remove
 		        Catch Err As RuntimeException
 		          While Self.mTransactions.LastRowIndex > -1
 		            Self.Rollback()
@@ -1541,7 +1539,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        End Try
 		      Next
 		      
-		      PresetsFolder.Delete
+		      PresetsFolder.Remove
 		    End If
 		  End If
 		  
@@ -1549,7 +1547,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Dim Extension As String = BeaconFileTypes.BeaconPreset.PrimaryExtension
 		    Dim Results As RowSet = Self.SQLSelect("SELECT object_id, contents FROM custom_presets;")
 		    While Not Results.AfterLastRow
-		      Call UserCloud.Write("/Presets/" + Lowercase(Results.Column("object_id").StringValue) + Extension, Results.Column("contents").StringValue)
+		      Call UserCloud.Write("/Presets/" + Results.Column("object_id").StringValue.Lowercase + Extension, Results.Column("contents").StringValue)
 		      Results.MoveToNextRow
 		    Wend
 		    
@@ -1911,7 +1909,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("INSERT OR REPLACE INTO custom_presets (object_id, label, contents) VALUES (LOWER(?1), ?2, ?3);", Preset.PresetID, Preset.Label, Content)
 		  Self.Commit()
 		  
-		  Call UserCloud.Write("/Presets/" + Lowercase(Preset.PresetID) + BeaconFileTypes.BeaconPreset.PrimaryExtension, Content)
+		  Call UserCloud.Write("/Presets/" + Preset.PresetID.Lowercase + BeaconFileTypes.BeaconPreset.PrimaryExtension, Content)
 		  
 		  If Reload Then
 		    Self.LoadPresets()

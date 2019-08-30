@@ -60,6 +60,7 @@ Begin BeaconDialog LootSourceWizard
       SelectedPanelIndex=   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
@@ -1430,12 +1431,12 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Source As Beacon.LootSource = Self.SourceList.RowTag(I)
+		    Dim Source As Beacon.LootSource = Self.SourceList.RowTagAt(I)
 		    Selections.Append(Source.ClassString)
 		  Next
 		  
 		  Dim ScrollPosition As Integer = Self.SourceList.ScrollPosition
-		  Self.SourceList.DeleteAllRows
+		  Self.SourceList.RemoveAllRows
 		  
 		  Dim MapLabels As New Dictionary
 		  For Each Source As Beacon.LootSource In AllowedLootSources
@@ -1450,7 +1451,7 @@ End
 		      RowText = RowText + EndOfLine + "Spawns on " + MapLabels.Value(ComboMask)
 		    End If
 		    Self.SourceList.AddRow("", RowText)
-		    Self.SourceList.RowTag(Self.SourceList.LastAddedRowIndex) = Source
+		    Self.SourceList.RowTagAt(Self.SourceList.LastAddedRowIndex) = Source
 		    Self.SourceList.Selected(Self.SourceList.LastAddedRowIndex) = Selections.IndexOf(Source.ClassString) > -1
 		  Next
 		  Self.SourceList.Sort
@@ -1471,7 +1472,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Source As Beacon.LootSource = SourceList.RowTag(I)
+		    Dim Source As Beacon.LootSource = SourceList.RowTagAt(I)
 		    
 		    If Source.Experimental And Not Preferences.HasShownExperimentalWarning Then
 		      If Self.ShowConfirm(Language.ExperimentalWarningMessage, Language.ReplacePlaceholders(Language.ExperimentalWarningExplanation, Source.Label), Language.ExperimentalWarningActionCaption, Language.ExperimentalWarningCancelCaption) Then
@@ -1538,24 +1539,24 @@ End
 		  
 		  Dim Presets() As Beacon.Preset = Beacon.Data.Presets()
 		  
-		  Self.CustomizePresetsList.DeleteAllRows()
+		  Self.CustomizePresetsList.RemoveAllRows()
 		  For Each Preset As Beacon.Preset In Presets
 		    If Preset.ValidForMask(Self.mMask) Then
 		      Self.CustomizePresetsList.AddRow("", Preset.Label)
-		      Self.CustomizePresetsList.RowTag(Self.CustomizePresetsList.LastAddedRowIndex) = Preset
+		      Self.CustomizePresetsList.RowTagAt(Self.CustomizePresetsList.LastAddedRowIndex) = Preset
 		    End If
 		  Next
 		  Self.CustomizePresetsList.Sort
 		  
 		  Dim Scrolled, HasUsedPresets As Boolean
 		  For I As Integer = 0 To Self.CustomizePresetsList.RowCount - 1
-		    Dim Preset As Beacon.Preset = Self.CustomizePresetsList.RowTag(I)
+		    Dim Preset As Beacon.Preset = Self.CustomizePresetsList.RowTagAt(I)
 		    For Each Set As Beacon.ItemSet In BasedOn
 		      If Set.SourcePresetID = Preset.PresetID Then
 		        HasUsedPresets = True
-		        Self.CustomizePresetsList.CellCheck(I, 0) = True
+		        Self.CustomizePresetsList.CellCheckBoxValueAt(I, 0) = True
 		        If Set.Label <> Preset.Label Then
-		          Self.CustomizePresetsList.Cell(I, 1) = Set.Label + " (" + Preset.Label + ")"
+		          Self.CustomizePresetsList.CellValueAt(I, 1) = Set.Label + " (" + Preset.Label + ")"
 		        End If
 		        If Not Scrolled Then
 		          Self.CustomizePresetsList.ScrollPosition = I
@@ -1565,7 +1566,7 @@ End
 		      End If
 		    Next
 		    
-		    Self.CustomizePresetsList.CellCheck(I, 0) = False
+		    Self.CustomizePresetsList.CellCheckBoxValueAt(I, 0) = False
 		  Next
 		  
 		  If HasUsedPresets = False Then
@@ -1672,9 +1673,9 @@ End
 		  Dim PrecisionX As Double = 1 / G.ScaleX
 		  Dim PrecisionY As Double = 1 / G.ScaleY
 		  
-		  Dim Source As Beacon.LootSource = Me.RowTag(Row)
+		  Dim Source As Beacon.LootSource = Me.RowTagAt(Row)
 		  Dim Icon As Picture = LocalData.SharedInstance.IconForLootSource(Source, BackgroundColor)
-		  Dim SpaceWidth As Integer = Me.Column(Column).WidthActual
+		  Dim SpaceWidth As Integer = Me.ColumnAt(Column).WidthActual
 		  Dim SpaceHeight As Integer = Me.DefaultRowHeight
 		  
 		  G.DrawPicture(Icon, NearestMultiple((SpaceWidth - Icon.Width) / 2, PrecisionX), NearestMultiple((SpaceHeight - Icon.Height) / 2, PrecisionY))
@@ -1691,8 +1692,8 @@ End
 		    Return False
 		  End If
 		  
-		  Dim Source1 As Beacon.LootSource = Me.RowTag(Row1)
-		  Dim Source2 As Beacon.LootSource = Me.RowTag(Row2)
+		  Dim Source1 As Beacon.LootSource = Me.RowTagAt(Row1)
+		  Dim Source2 As Beacon.LootSource = Me.RowTagAt(Row2)
 		  
 		  If Source1.SortValue > Source2.SortValue Then
 		    Result = 1
@@ -1777,11 +1778,11 @@ End
 		  
 		  Dim AllowedPresets(), AdditionalPresets() As String
 		  For I As Integer = 0 To Self.CustomizePresetsList.RowCount - 1
-		    If Not Self.CustomizePresetsList.CellCheck(I, 0) Then
+		    If Not Self.CustomizePresetsList.CellCheckBoxValueAt(I, 0) Then
 		      Continue
 		    End If
 		    
-		    Dim Preset As Beacon.Preset = Self.CustomizePresetsList.RowTag(I)
+		    Dim Preset As Beacon.Preset = Self.CustomizePresetsList.RowTagAt(I)
 		    AllowedPresets.Append(Preset.PresetID)
 		    AdditionalPresets.Append(Preset.PresetID)
 		  Next
@@ -1940,7 +1941,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizeable"
@@ -1948,7 +1949,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MaximizeButton"
@@ -1956,7 +1957,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimizeButton"
@@ -1964,7 +1965,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="FullScreenButton"
@@ -1972,7 +1973,7 @@ End
 		Group="Frame"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Placement"
@@ -2011,7 +2012,7 @@ End
 		Group="Deprecated"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -2072,7 +2073,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizable"
@@ -2080,7 +2081,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasMaximizeButton"
@@ -2088,7 +2089,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasMinimizeButton"
@@ -2096,7 +2097,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasFullScreenButton"
@@ -2104,7 +2105,7 @@ End
 		Group="Frame"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DefaultLocation"
@@ -2143,7 +2144,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Composite"
@@ -2159,7 +2160,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -2175,7 +2176,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Interfaces"
@@ -2183,7 +2184,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MacProcID"
@@ -2199,7 +2200,7 @@ End
 		Group="Menus"
 		InitialValue=""
 		Type="MenuBar"
-		EditorType="MenuBar"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -2207,7 +2208,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -2215,7 +2216,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Title"
@@ -2231,7 +2232,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"

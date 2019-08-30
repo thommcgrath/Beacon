@@ -88,7 +88,7 @@ Begin BeaconContainer ItemSetEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
+      SelectionRequired=   "False"
       SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   3
@@ -196,6 +196,7 @@ Begin BeaconContainer ItemSetEditor
       HasBackgroundColor=   False
       Height          =   23
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -268,7 +269,7 @@ End
 		      Continue
 		    End If
 		    
-		    Sources.Append(EntryList.RowTag(I))
+		    Sources.Append(EntryList.RowTagAt(I))
 		  Next
 		  
 		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.Mods, Sources, Prefilter)
@@ -298,7 +299,7 @@ End
 	#tag Method, Flags = &h0
 		Function GoToChild(Entry As Beacon.SetEntry, Option As Beacon.SetEntryOption = Nil) As Boolean
 		  For I As Integer = 0 To Self.EntryList.RowCount - 1
-		    If Self.EntryList.RowTag(I) = Entry Then
+		    If Self.EntryList.RowTagAt(I) = Entry Then
 		      Self.EntryList.SelectedRowIndex = I
 		      Self.EntryList.EnsureSelectionIsVisible()
 		      If Option <> Nil And Option.Engram <> Nil Then
@@ -321,7 +322,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Entry As Beacon.SetEntry = EntryList.RowTag(I)
+		    Dim Entry As Beacon.SetEntry = EntryList.RowTagAt(I)
 		    Dim Idx As Integer = Self.mSet.IndexOf(Entry)
 		    Self.mSet.Remove(Idx)
 		    Changed = True
@@ -357,13 +358,13 @@ End
 		  Else
 		    For I As Integer = 0 To EntryList.RowCount - 1
 		      If EntryList.Selected(I) Then
-		        Dim Entry As Beacon.SetEntry = EntryList.RowTag(I)
+		        Dim Entry As Beacon.SetEntry = EntryList.RowTagAt(I)
 		        Selected.Append(Entry.UniqueID)
 		      End If
 		    Next
 		  End If
 		  
-		  EntryList.DeleteAllRows()
+		  EntryList.RemoveAllRows()
 		  
 		  If Self.mSet = Nil Then
 		    Self.UpdateStatus()
@@ -372,7 +373,7 @@ End
 		  
 		  
 		  If Self.mSet = Nil Then
-		    EntryList.DeleteAllRows
+		    EntryList.RemoveAllRows
 		    Return
 		  End If
 		  
@@ -419,12 +420,12 @@ End
 		    
 		    EntryList.AddRow("")
 		    Dim Idx As Integer = EntryList.LastAddedRowIndex
-		    EntryList.Cell(Idx, Self.ColumnLabel) = Entry.Label
-		    EntryList.Cell(Idx, Self.ColumnQuality) = QualityText
-		    EntryList.Cell(Idx, Self.ColumnQuantity) = QuantityText
-		    EntryList.Cell(Idx, Self.ColumnFigures) = FiguresText
+		    EntryList.CellValueAt(Idx, Self.ColumnLabel) = Entry.Label
+		    EntryList.CellValueAt(Idx, Self.ColumnQuality) = QualityText
+		    EntryList.CellValueAt(Idx, Self.ColumnQuantity) = QuantityText
+		    EntryList.CellValueAt(Idx, Self.ColumnFigures) = FiguresText
 		    
-		    EntryList.RowTag(Idx) = Entry
+		    EntryList.RowTagAt(Idx) = Entry
 		    EntryList.Selected(Idx) = Selected.IndexOf(Entry.UniqueID) > -1
 		  Next
 		  
@@ -529,7 +530,7 @@ End
 		  Dim Entries() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Entries.Append(Beacon.SetEntry(Me.RowTag(I)).Export)
+		      Entries.Append(Beacon.SetEntry(Me.RowTagAt(I)).Export)
 		    End If
 		  Next
 		  
@@ -558,7 +559,7 @@ End
 		  Try
 		    Parsed = Beacon.ParseJSON(Contents)
 		  Catch Err As RuntimeException
-		    Beep
+		    System.Beep
 		    Return
 		  End Try
 		  
@@ -596,8 +597,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
-		  Dim Entry1 As Beacon.SetEntry = Me.RowTag(Row1)
-		  Dim Entry2 As Beacon.SetEntry = Me.RowTag(Row2)
+		  Dim Entry1 As Beacon.SetEntry = Me.RowTagAt(Row1)
+		  Dim Entry2 As Beacon.SetEntry = Me.RowTagAt(Row2)
 		  
 		  Dim Value1, Value2 As Double
 		  Select Case Column
@@ -656,7 +657,7 @@ End
 		  Item.Enabled = Me.SelectedRowCount > 0
 		  Item.Tag = "createblueprintentry"
 		  
-		  Base.Append(Item)
+		  Base.AddMenu(Item)
 		  Return True
 		End Function
 	#tag EndEvent
@@ -667,7 +668,7 @@ End
 		    Dim Entries() As Beacon.SetEntry
 		    For I As Integer = 0 To Me.RowCount - 1
 		      If Me.Selected(I) Then
-		        Entries.Append(Me.RowTag(I))
+		        Entries.Append(Me.RowTagAt(I))
 		      End If
 		    Next
 		    
@@ -694,7 +695,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function RowIsInvalid(Row As Integer) As Boolean
-		  Dim Entry As Beacon.SetEntry = Me.RowTag(Row)
+		  Dim Entry As Beacon.SetEntry = Me.RowTagAt(Row)
 		  Return Not Entry.IsValid(Self.Document)
 		End Function
 	#tag EndEvent
@@ -759,7 +760,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
@@ -767,7 +768,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="UseFocusRing"
@@ -775,7 +776,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackColor"
@@ -799,7 +800,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptTabs"
@@ -807,7 +808,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
@@ -815,7 +816,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -823,7 +824,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
@@ -831,7 +832,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"
@@ -839,7 +840,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackgroundColor"
@@ -863,7 +864,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowTabs"
@@ -871,7 +872,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
@@ -879,7 +880,7 @@ End
 		Group="Windows Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -887,7 +888,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"
@@ -895,7 +896,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -959,7 +960,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -967,7 +968,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -991,7 +992,7 @@ End
 		Group="Position"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
@@ -1007,7 +1008,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -1015,7 +1016,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"

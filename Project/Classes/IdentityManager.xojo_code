@@ -290,10 +290,10 @@ Protected Class IdentityManager
 		  
 		  If Self.mCurrentIdentity <> Nil Then
 		    Dim Writer As New Beacon.JSONWriter(Self.mCurrentIdentity.Export, Self.mFile)
-		    Writer.Run
+		    Writer.Start
 		  Else
 		    If Self.mFile.Exists Then
-		      Self.mFile.Delete
+		      Self.mFile.Remove
 		    End If
 		  End If
 		End Sub

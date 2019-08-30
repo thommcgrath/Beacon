@@ -664,7 +664,7 @@ End
 		  Dim Regex As New RegEx
 		  Regex.SearchPattern = "^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|""(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$"
 		  
-		  Dim Matches As RegExMatch = Regex.Search(Trim(Me.Value))
+		  Dim Matches As RegExMatch = Regex.Search(Me.Value.Trim)
 		  ActionButton.Enabled = Matches <> Nil
 		  
 		End Sub
@@ -675,7 +675,7 @@ End
 		Sub Pressed()
 		  Self.Hide()
 		  
-		  Dim FormString As String = "email=" + EncodeURLComponent(Trim(AddressField.Value)) + "&first_name=" + EncodeURLComponent(Trim(FirstNameField.Value)) + "&last_name=" + EncodeURLComponent(Trim(LastNameField.Value))
+		  Dim FormString As String = "email=" + EncodeURLComponent(AddressField.Value.Trim) + "&first_name=" + EncodeURLComponent(FirstNameField.Value.Trim) + "&last_name=" + EncodeURLComponent(LastNameField.Value.Trim)
 		  
 		  SubscribeSocket.AllowCertificateValidation = True
 		  SubscribeSocket.SetRequestContent(FormString, "application/x-www-form-urlencoded")
@@ -775,7 +775,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizeable"
@@ -783,7 +783,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MaximizeButton"
@@ -791,7 +791,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimizeButton"
@@ -799,7 +799,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="FullScreenButton"
@@ -807,7 +807,7 @@ End
 		Group="Frame"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Placement"
@@ -846,7 +846,7 @@ End
 		Group="Deprecated"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -907,7 +907,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizable"
@@ -915,7 +915,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasMaximizeButton"
@@ -923,7 +923,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasMinimizeButton"
@@ -931,7 +931,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasFullScreenButton"
@@ -939,7 +939,7 @@ End
 		Group="Frame"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DefaultLocation"
@@ -978,7 +978,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Composite"
@@ -994,7 +994,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -1010,7 +1010,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Interfaces"
@@ -1018,7 +1018,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MacProcID"
@@ -1034,7 +1034,7 @@ End
 		Group="Menus"
 		InitialValue=""
 		Type="MenuBar"
-		EditorType="MenuBar"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -1042,7 +1042,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -1050,7 +1050,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Title"
@@ -1066,7 +1066,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"

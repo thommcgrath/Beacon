@@ -125,7 +125,7 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
+      SelectionRequired=   "False"
       SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   2
@@ -267,7 +267,7 @@ End
 		  Dim Clones() As Beacon.Preset
 		  For I As Integer = 0 To List.RowCount - 1
 		    If List.Selected(I) Then
-		      Clones.Append(Self.ClonePreset(List.RowTag(I)))
+		      Clones.Append(Self.ClonePreset(List.RowTagAt(I)))
 		    End If
 		  Next
 		  
@@ -333,7 +333,7 @@ End
 		  
 		  For I As Integer = 0 To List.RowCount - 1
 		    If List.Selected(I) Then
-		      Dim Preset As Beacon.Preset = List.RowTag(I)
+		      Dim Preset As Beacon.Preset = List.RowTagAt(I)
 		      If Self.ClosePreset(Preset) Then
 		        Beacon.Data.DeletePreset(Preset)
 		      End If
@@ -350,7 +350,7 @@ End
 		  End If
 		  
 		  If List.SelectedRowCount = 1 Then
-		    Dim Preset As Beacon.Preset = List.RowTag(List.SelectedRowIndex)
+		    Dim Preset As Beacon.Preset = List.RowTagAt(List.SelectedRowIndex)
 		    Dim Dialog As New SaveFileDialog
 		    Dialog.Filter = BeaconFileTypes.BeaconPreset
 		    Dialog.SuggestedFileName = Preset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension
@@ -376,7 +376,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Preset As Beacon.Preset = List.RowTag(I)
+		    Dim Preset As Beacon.Preset = List.RowTagAt(I)
 		    Preset.ToFile(Folder.Child(Preset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension))
 		  Next
 		  
@@ -452,7 +452,7 @@ End
 		  If SelectPresets.LastRowIndex = -1 Then
 		    For I As Integer = 0 To List.RowCount - 1
 		      If List.Selected(I) Then
-		        SelectPresets.Append(List.RowTag(I))
+		        SelectPresets.Append(List.RowTagAt(I))
 		      End If
 		    Next
 		  End If
@@ -463,29 +463,29 @@ End
 		  Next
 		  
 		  While List.RowCount > PresetCount
-		    List.RemoveRow(0)
+		    List.RemoveRowAt(0)
 		  Wend
 		  While List.RowCount < PresetCount
 		    List.AddRow("")
 		  Wend
 		  
 		  For I As Integer = 0 To List.RowCount - 1
-		    List.Cell(I, 0) = Presets(I).Label
+		    List.CellValueAt(I, 0) = Presets(I).Label
 		    Select Case Presets(I).Type
 		    Case Beacon.Preset.Types.BuiltIn
-		      List.Cell(I, 1) = "Built-In"
+		      List.CellValueAt(I, 1) = "Built-In"
 		    Case Beacon.Preset.Types.Custom
-		      List.Cell(I, 1) = "Custom"
+		      List.CellValueAt(I, 1) = "Custom"
 		    Case Beacon.Preset.Types.CustomizedBuiltIn
-		      List.Cell(I, 1) = "Customized Built-In"
+		      List.CellValueAt(I, 1) = "Customized Built-In"
 		    End Select
-		    List.RowTag(I) = Presets(I)
+		    List.RowTagAt(I) = Presets(I)
 		  Next
 		  
 		  List.Sort
 		  
 		  For I As Integer = 0 To List.RowCount - 1
-		    List.Selected(I) = (SelectIDs.IndexOf(Beacon.Preset(List.RowTag(I)).PresetID) > -1)
+		    List.Selected(I) = (SelectIDs.IndexOf(Beacon.Preset(List.RowTagAt(I)).PresetID) > -1)
 		  Next
 		  List.EnsureSelectionIsVisible()
 		End Sub
@@ -549,7 +549,7 @@ End
 	#tag Event
 		Sub DoubleClicked()
 		  If Me.SelectedRowIndex > -1 Then
-		    Dim Preset As Beacon.Preset = Me.RowTag(Me.SelectedRowIndex)
+		    Dim Preset As Beacon.Preset = Me.RowTagAt(Me.SelectedRowIndex)
 		    Self.OpenPreset(Preset)
 		  End If
 		End Sub
@@ -566,7 +566,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Preset As Beacon.Preset = Me.RowTag(I)
+		    Dim Preset As Beacon.Preset = Me.RowTagAt(I)
 		    If Preset.Type = Beacon.Preset.Types.BuiltIn Then
 		      Continue
 		    End If
@@ -585,7 +585,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Preset As Beacon.Preset = Me.RowTag(I)
+		    Dim Preset As Beacon.Preset = Me.RowTagAt(I)
 		    Select Case Preset.Type
 		    Case Beacon.Preset.Types.BuiltIn
 		      DisallowCount = DisallowCount + 1
@@ -636,7 +636,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="UseFocusRing"
@@ -644,7 +644,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackColor"
@@ -668,7 +668,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptTabs"
@@ -676,7 +676,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
@@ -684,7 +684,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
@@ -692,7 +692,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -700,7 +700,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
@@ -708,7 +708,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"
@@ -716,7 +716,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackgroundColor"
@@ -740,7 +740,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowTabs"
@@ -748,7 +748,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Progress"
@@ -780,7 +780,7 @@ End
 		Group="Windows Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -788,7 +788,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"
@@ -796,7 +796,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -860,7 +860,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -868,7 +868,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -892,7 +892,7 @@ End
 		Group="Position"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
@@ -916,7 +916,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -924,7 +924,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"

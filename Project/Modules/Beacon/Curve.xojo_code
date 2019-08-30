@@ -18,14 +18,14 @@ Protected Class Curve
 		  Const NumFigures = 1000
 		  
 		  #if DebugBuild
-		    Dim Start As Double = Microseconds
+		    Dim Start As Double = System.Microseconds
 		  #endif
 		  #if TargetiOS
 		  #else
 		    Self.Database = New SQLiteDatabase
 		    Call Self.Database.Connect
-		    Self.Database.SQLExecute("BEGIN TRANSACTION")
-		    Self.Database.SQLExecute("CREATE TABLE precomputed (time REAL, x REAL, y REAL)")
+		    Self.Database.ExecuteSQL("BEGIN TRANSACTION")
+		    Self.Database.ExecuteSQL("CREATE TABLE precomputed (time REAL, x REAL, y REAL)")
 		    Dim Statement As SQLitePreparedStatement = Self.Database.Prepare("INSERT INTO precomputed (time, x, y) VALUES (?1, ?2, ?3)")
 		    Statement.BindType(0, SQLitePreparedStatement.SQLITE_DOUBLE)
 		    Statement.BindType(1, SQLitePreparedStatement.SQLITE_DOUBLE)
@@ -36,10 +36,10 @@ Protected Class Curve
 		      Dim Y As Double = Self.YForT(Time)
 		      Statement.SQLExecute(Time, X, Y)
 		    Next
-		    Self.Database.SQLExecute("COMMIT")
+		    Self.Database.ExecuteSQL("COMMIT")
 		  #endif
 		  #if DebugBuild
-		    Dim Elapsed As Double = Microseconds - Start
+		    Dim Elapsed As Double = System.Microseconds - Start
 		    System.DebugLog("Precomputed curve values in " + Str(Elapsed * 0.001, "-0") + "ms")
 		  #endif
 		End Sub

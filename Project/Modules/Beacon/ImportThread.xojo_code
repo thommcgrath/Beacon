@@ -9,7 +9,7 @@ Inherits Beacon.Thread
 		  Dim LineEnding As String = Self.LineEndingChar()
 		  
 		  // Normalize line endings
-		  Dim Content As String = ReplaceLineEndings(Self.mGameUserSettingsIniContent + LineEnding + Self.mGameIniContent, LineEnding)
+		  Dim Content As String = Self.mGameUserSettingsIniContent.ReplaceLineEndings(LineEnding) + LineEnding + Self.mGameIniContent.ReplaceLineEndings(LineEnding)
 		  Self.mCharactersProcessed = 0
 		  Self.mCharactersTotal = Content.Length
 		  
@@ -395,7 +395,7 @@ Inherits Beacon.Thread
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
-			EditorType="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -403,7 +403,7 @@ Inherits Beacon.Thread
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Priority"
@@ -427,7 +427,7 @@ Inherits Beacon.Thread
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="GameIniContent"

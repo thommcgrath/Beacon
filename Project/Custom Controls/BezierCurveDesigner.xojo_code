@@ -94,10 +94,10 @@ Inherits ControlCanvas
 		  #Pragma Unused Areas
 		  
 		  G.DrawingColor = SystemColors.ControlBackgroundColor
-		  G.FillRect(1, 1, G.Width - 2, G.Height - 2)
+		  G.FillRectangle(1, 1, G.Width - 2, G.Height - 2)
 		  
 		  G.DrawingColor = SystemColors.SeparatorColor
-		  G.DrawRect(0, 0, G.Width, G.Height)
+		  G.DrawRectangle(0, 0, G.Width, G.Height)
 		  
 		  G.FontName = "SmallSystem"
 		  G.FontSize = 0
@@ -380,7 +380,7 @@ Inherits ControlCanvas
 			Group="Appearance"
 			InitialValue=""
 			Type="Picture"
-			EditorType="Picture"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
@@ -404,7 +404,7 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="InitialParent"
@@ -460,7 +460,7 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -468,7 +468,7 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabIndex"
@@ -508,7 +508,7 @@ Inherits ControlCanvas
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Visible"

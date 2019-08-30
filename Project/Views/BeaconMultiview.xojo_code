@@ -129,7 +129,7 @@ Inherits BeaconWindow
 			Group="Frame"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Resizeable"
@@ -137,7 +137,7 @@ Inherits BeaconWindow
 			Group="Frame"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MaximizeButton"
@@ -145,7 +145,7 @@ Inherits BeaconWindow
 			Group="Frame"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MinimizeButton"
@@ -153,7 +153,7 @@ Inherits BeaconWindow
 			Group="Frame"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="FullScreenButton"
@@ -161,7 +161,7 @@ Inherits BeaconWindow
 			Group="Frame"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Placement"
@@ -200,7 +200,7 @@ Inherits BeaconWindow
 			Group="Deprecated"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MinimumWidth"
@@ -261,7 +261,7 @@ Inherits BeaconWindow
 			Group="Frame"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Resizable"
@@ -269,7 +269,7 @@ Inherits BeaconWindow
 			Group="Frame"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasMaximizeButton"
@@ -277,7 +277,7 @@ Inherits BeaconWindow
 			Group="Frame"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasMinimizeButton"
@@ -285,7 +285,7 @@ Inherits BeaconWindow
 			Group="Frame"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasFullScreenButton"
@@ -293,7 +293,7 @@ Inherits BeaconWindow
 			Group="Frame"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DefaultLocation"
@@ -332,7 +332,7 @@ Inherits BeaconWindow
 			Group="Background"
 			InitialValue=""
 			Type="Picture"
-			EditorType="Picture"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Composite"
@@ -348,7 +348,7 @@ Inherits BeaconWindow
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Height"
@@ -364,7 +364,7 @@ Inherits BeaconWindow
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Interfaces"
@@ -372,7 +372,7 @@ Inherits BeaconWindow
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MacProcID"
@@ -388,7 +388,7 @@ Inherits BeaconWindow
 			Group="Menus"
 			InitialValue=""
 			Type="MenuBar"
-			EditorType="MenuBar"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -396,7 +396,7 @@ Inherits BeaconWindow
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -404,7 +404,7 @@ Inherits BeaconWindow
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Title"
@@ -420,7 +420,7 @@ Inherits BeaconWindow
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Width"

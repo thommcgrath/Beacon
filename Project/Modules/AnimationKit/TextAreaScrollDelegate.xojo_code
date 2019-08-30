@@ -17,7 +17,7 @@ Implements AnimationKit.Scrollable
 	#tag Method, Flags = &h0
 		Function ScrollMaximum() As Double
 		  If Self.Target <> Nil Then
-		    Return Self.Target.LineNumAtCharPos(Len(Self.Target.Value) - 1)
+		    Return Self.Target.LineNumber(Self.Target.Value.Length - 1)
 		  End If
 		End Function
 	#tag EndMethod
@@ -45,7 +45,7 @@ Implements AnimationKit.Scrollable
 	#tag Method, Flags = &h0
 		Function ScrollPosition() As Double
 		  If Self.Target <> Nil Then
-		    Return Self.Target.ScrollPosition
+		    Return Self.Target.VerticalScrollPosition
 		  End If
 		End Function
 	#tag EndMethod
@@ -53,7 +53,7 @@ Implements AnimationKit.Scrollable
 	#tag Method, Flags = &h0
 		Sub ScrollPosition(Assigns Value As Double)
 		  If Self.Target <> Nil Then
-		    Self.Target.ScrollPosition = Round(Value)
+		    Self.Target.VerticalScrollPosition = Round(Value)
 		  End If
 		End Sub
 	#tag EndMethod

@@ -356,13 +356,11 @@ Begin BeaconContainer ModDetailView
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowCount        =   "0"
          RowSelectionType=   "1"
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionRequired=   False
          SelectionType   =   "1"
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -393,7 +391,6 @@ Begin BeaconContainer ModDetailView
          Caption         =   "Mod Detail"
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "False"
          Height          =   40
          HelpTag         =   ""
          Index           =   -2147483648
@@ -430,7 +427,6 @@ Begin BeaconContainer ModDetailView
          Caption         =   "No Mod Selected"
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "False"
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -467,7 +463,6 @@ Begin BeaconContainer ModDetailView
          Caption         =   "Mod Detail"
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "False"
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -504,7 +499,6 @@ Begin BeaconContainer ModDetailView
          Caption         =   "Untitled"
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "False"
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -548,7 +542,6 @@ Begin BeaconContainer ModDetailView
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -770,7 +763,7 @@ End
 		  
 		  Dim Selected() As String = Dict.Value("Selected")
 		  For I As Integer = 0 To Self.EngramList.RowCount - 1
-		    Dim Engram As BeaconAPI.Engram = Self.EngramList.RowTag(I)
+		    Dim Engram As BeaconAPI.Engram = Self.EngramList.RowTagAt(I)
 		    Self.EngramList.Selected(I) = Selected.IndexOf(Engram.ID) > -1
 		  Next
 		  
@@ -786,7 +779,7 @@ End
 		  
 		  Dim Selected() As String
 		  For I As Integer = 0 To Self.EngramList.RowCount - 1
-		    Dim Engram As BeaconAPI.Engram = Self.EngramList.RowTag(I)
+		    Dim Engram As BeaconAPI.Engram = Self.EngramList.RowTagAt(I)
 		    If Self.EngramList.Selected(I) Then
 		      Selected.Append(Engram.ID)
 		    End If
@@ -826,7 +819,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowCurrentEngrams()
-		  Self.EngramList.DeleteAllRows
+		  Self.EngramList.RemoveAllRows
 		  
 		  If Self.mCurrentMod = Nil Or Self.mEngramSets.HasKey(Self.mCurrentMod.ModID) = False Then
 		    Return
@@ -847,19 +840,19 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowEngramInRow(Index As Integer, Engram As BeaconAPI.Engram)
-		  EngramList.Cell(Index, 0) = Engram.Path
-		  EngramList.Cell(Index, 1) = Engram.Label
-		  EngramList.CellCheck(Index, 2) = Engram.CanBeBlueprint
-		  EngramList.CellCheck(Index, Self.ColumnIsland) = Engram.ValidForMap(Beacon.Maps.TheIsland)
-		  EngramList.CellCheck(Index, Self.ColumnScorched) = Engram.ValidForMap(Beacon.Maps.ScorchedEarth)
-		  EngramList.CellCheck(Index, Self.ColumnCenter) = Engram.ValidForMap(Beacon.Maps.TheCenter)
-		  EngramList.CellCheck(Index, Self.ColumnRagnarok) = Engram.ValidForMap(Beacon.Maps.Ragnarok)
-		  EngramList.CellCheck(Index, Self.ColumnAberration) = Engram.ValidForMap(Beacon.Maps.Aberration)
-		  EngramList.CellCheck(Index, Self.ColumnExtinction) = Engram.ValidForMap(Beacon.Maps.Extinction)
-		  EngramList.CellCheck(Index, Self.ColumnValguero) = Engram.ValidForMap(Beacon.Maps.Valguero)
-		  EngramList.CellCheck(Index, Self.ColumnGenesis) = Engram.ValidForMap(Beacon.Maps.Genesis)
+		  EngramList.CellValueAt(Index, 0) = Engram.Path
+		  EngramList.CellValueAt(Index, 1) = Engram.Label
+		  EngramList.CellCheckBoxValueAt(Index, 2) = Engram.CanBeBlueprint
+		  EngramList.CellCheckBoxValueAt(Index, Self.ColumnIsland) = Engram.ValidForMap(Beacon.Maps.TheIsland)
+		  EngramList.CellCheckBoxValueAt(Index, Self.ColumnScorched) = Engram.ValidForMap(Beacon.Maps.ScorchedEarth)
+		  EngramList.CellCheckBoxValueAt(Index, Self.ColumnCenter) = Engram.ValidForMap(Beacon.Maps.TheCenter)
+		  EngramList.CellCheckBoxValueAt(Index, Self.ColumnRagnarok) = Engram.ValidForMap(Beacon.Maps.Ragnarok)
+		  EngramList.CellCheckBoxValueAt(Index, Self.ColumnAberration) = Engram.ValidForMap(Beacon.Maps.Aberration)
+		  EngramList.CellCheckBoxValueAt(Index, Self.ColumnExtinction) = Engram.ValidForMap(Beacon.Maps.Extinction)
+		  EngramList.CellCheckBoxValueAt(Index, Self.ColumnValguero) = Engram.ValidForMap(Beacon.Maps.Valguero)
+		  EngramList.CellCheckBoxValueAt(Index, Self.ColumnGenesis) = Engram.ValidForMap(Beacon.Maps.Genesis)
 		  
-		  EngramList.RowTag(Index) = Engram
+		  EngramList.RowTagAt(Index) = Engram
 		End Sub
 	#tag EndMethod
 
@@ -1022,44 +1015,32 @@ End
 #tag EndEvents
 #tag Events EngramList
 	#tag Event
-		Sub Open()
-		  Me.ColumnTypeAt(0) = Listbox.CellTypes.TextField
-		  Me.ColumnTypeAt(1) = Listbox.CellTypes.TextField
-		  Me.ColumnTypeAt(2) = Listbox.CellTypes.CheckBox
-		  Me.ColumnAlignmentAt(2) = Listbox.Alignments.Center
-		  For I As Integer = Self.ColumnIsland To Self.ColumnValguero
-		    Me.ColumnTypeAt(I) = Listbox.CellTypes.CheckBox
-		    Me.ColumnAlignmentAt(I) = Listbox.Alignments.Center
-		  Next
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
-		  Dim Engram As BeaconAPI.Engram = Me.RowTag(Row)
+		  Dim Engram As BeaconAPI.Engram = Me.RowTagAt(Row)
 		  
 		  Select Case Column
 		  Case 0
-		    Engram.Path = Me.Cell(Row, Column)
+		    Engram.Path = Me.CellValueAt(Row, Column)
 		  Case 1
-		    Engram.Label = Me.Cell(Row, Column)
+		    Engram.Label = Me.CellValueAt(Row, Column)
 		  Case 2
-		    Engram.CanBeBlueprint = Me.CellCheck(Row, Column)
+		    Engram.CanBeBlueprint = Me.CellCheckBoxValueAt(Row, Column)
 		  Case Self.ColumnIsland
-		    Engram.ValidForMap(Beacon.Maps.TheIsland) = Me.CellCheck(Row, Column)
+		    Engram.ValidForMap(Beacon.Maps.TheIsland) = Me.CellCheckBoxValueAt(Row, Column)
 		  Case Self.ColumnScorched
-		    Engram.ValidForMap(Beacon.Maps.ScorchedEarth) = Me.CellCheck(Row, Column)
+		    Engram.ValidForMap(Beacon.Maps.ScorchedEarth) = Me.CellCheckBoxValueAt(Row, Column)
 		  Case Self.ColumnCenter
-		    Engram.ValidForMap(Beacon.Maps.TheCenter) = Me.CellCheck(Row, Column)
+		    Engram.ValidForMap(Beacon.Maps.TheCenter) = Me.CellCheckBoxValueAt(Row, Column)
 		  Case Self.ColumnRagnarok
-		    Engram.ValidForMap(Beacon.Maps.Ragnarok) = Me.CellCheck(Row, Column)
+		    Engram.ValidForMap(Beacon.Maps.Ragnarok) = Me.CellCheckBoxValueAt(Row, Column)
 		  Case Self.ColumnAberration
-		    Engram.ValidForMap(Beacon.Maps.Aberration) = Me.CellCheck(Row, Column)
+		    Engram.ValidForMap(Beacon.Maps.Aberration) = Me.CellCheckBoxValueAt(Row, Column)
 		  Case Self.ColumnExtinction
-		    Engram.ValidForMap(Beacon.Maps.Extinction) = Me.CellCheck(Row, Column)
+		    Engram.ValidForMap(Beacon.Maps.Extinction) = Me.CellCheckBoxValueAt(Row, Column)
 		  Case Self.ColumnValguero
-		    Engram.ValidForMap(Beacon.Maps.Valguero) = Me.CellCheck(Row, Column)
+		    Engram.ValidForMap(Beacon.Maps.Valguero) = Me.CellCheckBoxValueAt(Row, Column)
 		  Case Self.ColumnGenesis
-		    Engram.ValidForMap(Beacon.Maps.Genesis) = Me.CellCheck(Row, Column)
+		    Engram.ValidForMap(Beacon.Maps.Genesis) = Me.CellCheckBoxValueAt(Row, Column)
 		  End Select
 		  
 		  Self.EngramSet.Add(Engram)
@@ -1069,6 +1050,18 @@ End
 	#tag Event
 		Sub SelectionChanged()
 		  Header.RemoveButton.Enabled = Me.SelectedRowIndex > -1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Opening()
+		  Me.ColumnTypeAt(0) = Listbox.CellTypes.TextField
+		  Me.ColumnTypeAt(1) = Listbox.CellTypes.TextField
+		  Me.ColumnTypeAt(2) = Listbox.CellTypes.CheckBox
+		  Me.ColumnAlignmentAt(2) = Listbox.Alignments.Center
+		  For I As Integer = Self.ColumnIsland To Self.ColumnValguero
+		    Me.ColumnTypeAt(I) = Listbox.CellTypes.CheckBox
+		    Me.ColumnAlignmentAt(I) = Listbox.Alignments.Center
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1081,14 +1074,14 @@ End
 		    Engram.ModID = Self.CurrentMod.ModID
 		    EngramList.AddRow("")
 		    Self.ShowEngramInRow(EngramList.LastAddedRowIndex, Engram)
-		    EngramList.EditCell(EngramList.LastAddedRowIndex, 0)
+		    EngramList.CellEditableAt(EngramList.LastAddedRowIndex, 0)
 		    Self.EngramSet.Add(Engram)
 		  Case "RemoveButton"
 		    For I As Integer = EngramList.RowCount -1 DownTo 0
 		      If EngramList.Selected(I) Then
-		        Dim Engram As BeaconAPI.Engram = EngramList.RowTag(I)
+		        Dim Engram As BeaconAPI.Engram = EngramList.RowTagAt(I)
 		        Self.EngramSet.Remove(Engram)
-		        EngramList.RemoveRow(I)
+		        EngramList.RemoveRowAt(I)
 		      End If
 		    Next
 		    Me.PublishButton.Enabled = Self.EngramSet.Modified
@@ -1164,7 +1157,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
@@ -1172,7 +1165,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="UseFocusRing"
@@ -1180,7 +1173,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackColor"
@@ -1204,7 +1197,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptTabs"
@@ -1212,7 +1205,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
@@ -1220,7 +1213,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -1228,7 +1221,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
@@ -1236,7 +1229,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"
@@ -1244,7 +1237,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackgroundColor"
@@ -1268,7 +1261,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowTabs"
@@ -1276,7 +1269,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
@@ -1284,7 +1277,7 @@ End
 		Group="Windows Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1292,7 +1285,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"
@@ -1300,7 +1293,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -1364,7 +1357,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -1372,7 +1365,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -1396,7 +1389,7 @@ End
 		Group="Position"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
@@ -1412,7 +1405,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -1420,7 +1413,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"

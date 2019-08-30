@@ -4,7 +4,7 @@ Protected Class TextAreaState
 		Sub ApplyTo(Area As TextArea)
 		  Area.SelectionStart = Self.SelStart
 		  Area.SelectionLength = Self.SelLength
-		  Area.ScrollPosition = Self.ScrollPosition
+		  Area.VerticalScrollPosition = Self.ScrollPosition
 		End Sub
 	#tag EndMethod
 
@@ -16,7 +16,7 @@ Protected Class TextAreaState
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Area As TextArea)
-		  Self.ScrollPosition = Area.ScrollPosition
+		  Self.ScrollPosition = Area.VerticalScrollPosition
 		  Self.SelStart = Area.SelectionStart
 		  Self.SelLength = Area.SelectionLength
 		End Sub

@@ -4,7 +4,7 @@ Inherits Beacon.Thread
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
 		Sub Run()
-		  Dim StartTime As Double = Microseconds
+		  Dim StartTime As Double = System.Microseconds
 		  Dim StartTriggered As Boolean
 		  
 		  Const DebugEventDelay = 1
@@ -13,9 +13,9 @@ Inherits Beacon.Thread
 		  If Self.mTryAsCSV Then
 		    #Pragma BreakOnExceptions False
 		    Try
-		      Dim CarriageReturn As String = Chr(13)
+		      Dim CarriageReturn As String = Encodings.UTF8.Chr(13)
 		      
-		      Dim Characters() As String = Split(ReplaceLineEndings(Self.mContents.Trim, CarriageReturn), "")
+		      Dim Characters() As String = Self.mContents.Trim.ReplaceLineEndings(CarriageReturn).Split("")
 		      Dim Lines() As Variant
 		      Dim ColumnBuffer(), Columns() As String
 		      Dim Started, InQuotes As Boolean
@@ -23,7 +23,7 @@ Inherits Beacon.Thread
 		        If Self.ShouldStop Then
 		          Return
 		        End If
-		        If StartTriggered = False And Microseconds - StartTime > 1000000 Then
+		        If StartTriggered = False And System.Microseconds - StartTime > 1000000 Then
 		          StartTriggered = True
 		          Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		        End If
@@ -61,7 +61,7 @@ Inherits Beacon.Thread
 		      Columns.Append(Join(ColumnBuffer, ""))
 		      Lines.Append(Columns)
 		      
-		      Dim LastPushTime As Double = Microseconds
+		      Dim LastPushTime As Double = System.Microseconds
 		      Dim FoundSinceLastPush As Boolean
 		      
 		      Dim HeaderColumns() As String
@@ -89,7 +89,7 @@ Inherits Beacon.Thread
 		        If Self.ShouldStop Then
 		          Return
 		        End If
-		        If StartTriggered = False And Microseconds - StartTime > 1000000 Then
+		        If StartTriggered = False And System.Microseconds - StartTime > 1000000 Then
 		          StartTriggered = True
 		          Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		        End If
@@ -139,9 +139,9 @@ Inherits Beacon.Thread
 		        Self.mBlueprintsLock.Leave
 		        FoundSinceLastPush = True
 		        
-		        If Microseconds - LastPushTime > 1000000 Then
+		        If System.Microseconds - LastPushTime > 1000000 Then
 		          Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
-		          LastPushTime = Microseconds
+		          LastPushTime = System.Microseconds
 		          FoundSinceLastPush = False
 		        End If
 		      Next
@@ -173,7 +173,7 @@ Inherits Beacon.Thread
 		      Continue
 		    End If
 		    
-		    If StartTriggered = False And Microseconds - StartTime > 1000000 Then
+		    If StartTriggered = False And System.Microseconds - StartTime > 1000000 Then
 		      StartTriggered = True
 		      Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		    End If
@@ -207,14 +207,14 @@ Inherits Beacon.Thread
 		  End If
 		  
 		  Dim Keys() As Variant = Paths.Keys
-		  Dim LastPushTime As Double = Microseconds
+		  Dim LastPushTime As Double = System.Microseconds
 		  Dim FoundSinceLastPush As Boolean
 		  For Each Key As String In Keys
 		    If Self.ShouldStop Then
 		      Return
 		    End If
 		    
-		    If StartTriggered = False And Microseconds - StartTime > 1000000 Then
+		    If StartTriggered = False And System.Microseconds - StartTime > 1000000 Then
 		      StartTriggered = True
 		      Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		    End If
@@ -244,9 +244,9 @@ Inherits Beacon.Thread
 		    Self.mBlueprintsLock.Leave
 		    FoundSinceLastPush = True
 		    
-		    If Microseconds - LastPushTime > 1000000 Then
+		    If System.Microseconds - LastPushTime > 1000000 Then
 		      Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
-		      LastPushTime = Microseconds
+		      LastPushTime = System.Microseconds
 		      FoundSinceLastPush = False
 		    End If
 		  Next
@@ -320,7 +320,7 @@ Inherits Beacon.Thread
 		  Self.mBlueprintsLock.Enter
 		  Redim Self.mBlueprints(-1)
 		  Self.mBlueprintsLock.Leave
-		  Self.Run
+		  Self.Start
 		End Sub
 	#tag EndMethod
 
@@ -384,7 +384,7 @@ Inherits Beacon.Thread
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
-			EditorType="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -392,7 +392,7 @@ Inherits Beacon.Thread
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Priority"
@@ -416,7 +416,7 @@ Inherits Beacon.Thread
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

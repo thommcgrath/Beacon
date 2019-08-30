@@ -336,7 +336,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
+      SelectionRequired=   "False"
       SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   3
@@ -616,7 +616,7 @@ End
 		  Dim SelectedPaths() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
-		      SelectedPaths.Append(Beacon.Blueprint(Self.List.RowTag(I)).Path)
+		      SelectedPaths.Append(Beacon.Blueprint(Self.List.RowTagAt(I)).Path)
 		    End If
 		  Next
 		  
@@ -625,8 +625,8 @@ End
 		  For I As Integer = 0 To Blueprints.LastRowIndex
 		    Dim Blueprint As Beacon.Blueprint = Blueprints(I)
 		    
-		    Self.List.RowTag(I) = Blueprint
-		    Self.List.Cell(I, 0) = Blueprint.Label
+		    Self.List.RowTagAt(I) = Blueprint
+		    Self.List.CellValueAt(I, 0) = Blueprint.Label
 		    Self.List.Selected(I) = SelectedPaths.IndexOf(Blueprint.Path) > -1
 		  Next
 		  Self.List.EnsureSelectionIsVisible()
@@ -657,7 +657,7 @@ End
 		      End If
 		    End If
 		    
-		    Dim Blueprint As Beacon.Blueprint = Self.List.RowTag(Self.List.SelectedRowIndex)
+		    Dim Blueprint As Beacon.Blueprint = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		    Self.Editor.ObjectID = Blueprint.ObjectID
 		    
 		    If Self.Pages.SelectedPanelIndex <> Self.PageEditor Then
@@ -674,7 +674,7 @@ End
 		    Dim Blueprints() As Beacon.Blueprint
 		    For I As Integer = 0 To Self.List.RowCount - 1
 		      If Self.List.Selected(I) Then
-		        Blueprints.Append(Beacon.Blueprint(Self.List.RowTag(I)))
+		        Blueprints.Append(Beacon.Blueprint(Self.List.RowTagAt(I)))
 		      End If
 		    Next
 		    Self.MultiEditor.Blueprints = Blueprints
@@ -796,7 +796,7 @@ End
 		  Dim Objects() As Beacon.Blueprint
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Objects.Append(Beacon.Blueprint(Me.RowTag(I)))
+		      Objects.Append(Beacon.Blueprint(Me.RowTagAt(I)))
 		    End If
 		  Next
 		  
@@ -853,7 +853,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
@@ -861,7 +861,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="UseFocusRing"
@@ -869,7 +869,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackColor"
@@ -893,7 +893,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptTabs"
@@ -901,7 +901,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
@@ -909,7 +909,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -917,7 +917,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
@@ -925,7 +925,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"
@@ -933,7 +933,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackgroundColor"
@@ -957,7 +957,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowTabs"
@@ -965,7 +965,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
@@ -1005,7 +1005,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -1013,7 +1013,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"
@@ -1109,7 +1109,7 @@ End
 		Group="Position"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -1117,7 +1117,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"
@@ -1125,7 +1125,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1133,7 +1133,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"
@@ -1141,7 +1141,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
@@ -1149,6 +1149,6 @@ End
 		Group="Windows Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

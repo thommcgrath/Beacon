@@ -7,10 +7,10 @@ Protected Module FrameworkExtensions
 		  // around the issue, and will remain correct even if the bug is fixed.
 		  
 		  Dim ExpectedLineHeight As Double = G.TextHeight
-		  Dim ActualLineHeight As Double = G.StringHeight("A", 100)
+		  Dim ActualLineHeight As Double = G.TextHeight("A", 100)
 		  Dim LineHeightDelta As Double = ExpectedLineHeight - ActualLineHeight
 		  
-		  Dim Height As Double = G.StringHeight(Source, WrapWidth)
+		  Dim Height As Double = G.TextHeight(Source, WrapWidth)
 		  Dim LineCount As Double = Height / ActualLineHeight
 		  Return Height + (LineCount * LineHeightDelta)
 		End Function
@@ -51,7 +51,7 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function Characters(Extends Source As String) As String()
-		  Return Split(Source, "")
+		  Return Source.Split("")
 		End Function
 	#tag EndMethod
 
@@ -62,7 +62,7 @@ Protected Module FrameworkExtensions
 		      Return True
 		    Else
 		      If Create = True Then
-		        Folder.Delete
+		        Folder.Remove
 		        Folder.CreateAsFolder
 		        Return True
 		      Else
@@ -148,14 +148,14 @@ Protected Module FrameworkExtensions
 		  
 		  If File.IsFolder Then
 		    For I As Integer = File.Count DownTo 1
-		      If Not File.Item(I).DeepDelete Then
+		      If Not File.ChildAt(I).DeepDelete Then
 		        Return False
 		      End If
 		    Next
 		  End If
 		  
 		  Try
-		    File.Delete
+		    File.Remove
 		    Return True
 		  Catch Err As RuntimeException
 		    Return False

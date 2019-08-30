@@ -22,7 +22,7 @@ Protected Class Coordinator
 		    End If
 		  Next
 		  
-		  Dim Now As Double = Microseconds
+		  Dim Now As Double = System.Microseconds
 		  
 		  For Each Task As AnimationKit.Task In Self.Tasks
 		    If Task.Completed(Now) Or Now - Task.LastFrameTime >= Self.FramePeriod Then

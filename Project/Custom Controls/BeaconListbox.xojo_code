@@ -5,7 +5,7 @@ Inherits Listbox
 		Function CellBackgroundPaint(g As Graphics, row As Integer, column As Integer) As Boolean
 		  #Pragma Unused Column
 		  
-		  Dim ColumnWidth As Integer = Self.Column(Column).WidthActual
+		  Dim ColumnWidth As Integer = Self.ColumnAt(Column).WidthActual
 		  Dim RowHeight As Integer = Self.DefaultRowHeight
 		  
 		  Dim RowInvalid, RowSelected As Boolean
@@ -26,11 +26,11 @@ Inherits Listbox
 		      Clip.ClearRect(0, 0, Clip.Width, Clip.Height)
 		    Else
 		      Clip.DrawingColor = SystemColors.UnderPageBackgroundColor
-		      Clip.FillRect(0, 0, Clip.Width, Clip.Height)
+		      Clip.FillRectangle(0, 0, Clip.Width, Clip.Height)
 		    End If
 		  #else
 		    Clip.DrawingColor = SystemColors.UnderPageBackgroundColor
-		    Clip.FillRect(0, 0, Clip.Width, Clip.Height)
+		    Clip.FillRectangle(0, 0, Clip.Width, Clip.Height)
 		  #endif
 		  
 		  Dim BackgroundColor, TextColor, SecondaryTextColor As Color
@@ -51,7 +51,7 @@ Inherits Listbox
 		  End If
 		  
 		  Clip.DrawingColor = BackgroundColor
-		  Clip.FillRect(0, 0, G.Width, G.Height)
+		  Clip.FillRectangle(0, 0, G.Width, G.Height)
 		  
 		  Call CellBackgroundPaint(Clip, Row, Column, BackgroundColor, TextColor, IsHighlighted)
 		  
@@ -64,7 +64,7 @@ Inherits Listbox
 		  Const CellPadding = 4
 		  Const LineSpacing = 6
 		  
-		  Dim Contents As String = ReplaceLineEndings(Me.Cell(Row, Column), EndOfLine)
+		  Dim Contents As String = Me.CellValueAt(Row, Column).ReplaceLineEndings(EndOfLine)
 		  Dim Lines() As String = Contents.Split(EndOfLine)
 		  Dim MaxDrawWidth As Integer = ColumnWidth - (CellPadding * 4)
 		  
@@ -91,7 +91,7 @@ Inherits Listbox
 		  
 		  Dim DrawTop As Double = (Clip.Height - TotalTextHeight) / 2
 		  For I As Integer = 0 To Lines.LastRowIndex
-		    Dim LineWidth As Integer = Min(Ceil(Clip.StringWidth(Lines(I))), MaxDrawWidth)
+		    Dim LineWidth As Integer = Min(Ceil(Clip.TextWidth(Lines(I))), MaxDrawWidth)
 		    
 		    Dim DrawLeft As Integer
 		    Dim Align As Listbox.Alignments = Self.CellAlignmentAt(Row, Column)
@@ -112,7 +112,7 @@ Inherits Listbox
 		    
 		    If Not CellTextPaint(Clip, Row, Column, Lines(I), TextColor, DrawLeft, LinePosition, IsHighlighted) Then
 		      Clip.DrawingColor = If(I = 0, TextColor, SecondaryTextColor)
-		      Clip.DrawString(Lines(I), DrawLeft, LinePosition, MaxDrawWidth, True)
+		      Clip.DrawText(Lines(I), DrawLeft, LinePosition, MaxDrawWidth, True)
 		    End If
 		    
 		    DrawTop = DrawTop + LineSpacing + LineHeight
@@ -149,28 +149,28 @@ Inherits Listbox
 		  Dim CutItem As New MenuItem("Cut", "cut")
 		  CutItem.Shortcut = "X"
 		  CutItem.Enabled = CanCopy And CanDelete
-		  Base.Append(CutItem)
+		  Base.AddMenu(CutItem)
 		  
 		  Dim CopyItem As New MenuItem("Copy", "copy")
 		  CopyItem.Shortcut = "C"
 		  CopyItem.Enabled = CanCopy
-		  Base.Append(CopyItem)
+		  Base.AddMenu(CopyItem)
 		  
 		  Dim PasteItem As New MenuItem("Paste", "paste")
 		  PasteItem.Shortcut = "V"
 		  PasteItem.Enabled = CanPaste
-		  Base.Append(PasteItem)
+		  Base.AddMenu(PasteItem)
 		  
 		  Dim DeleteItem As New MenuItem("Delete", "clear")
 		  DeleteItem.Enabled = CanDelete
-		  Base.Append(DeleteItem)
+		  Base.AddMenu(DeleteItem)
 		  
 		  Call ConstructContextualMenu(Base, X, Y)
 		  
 		  Dim Bound As Integer = Base.Count - 1
 		  For I As Integer = 0 To Bound
-		    If Base.Item(I) = DeleteItem And I < Bound Then
-		      Base.Insert(I + 1, New MenuItem(MenuItem.TextSeparator))
+		    If Base.MenuAt(I) = DeleteItem And I < Bound Then
+		      Base.AddMenuAt(I + 1, New MenuItem(MenuItem.TextSeparator))
 		    End If
 		  Next
 		  
@@ -203,7 +203,7 @@ Inherits Listbox
 
 	#tag Event
 		Function KeyDown(Key As String) As Boolean
-		  If (Key = Chr(8) Or Key = Chr(127)) And CanDelete() Then
+		  If (Key = Encodings.UTF8.Chr(8) Or Key = Encodings.UTF8.Chr(127)) And CanDelete() Then
 		    RaiseEvent PerformClear(True)
 		    Return True
 		  Else
@@ -946,7 +946,7 @@ Inherits Listbox
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
-			EditorType="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -954,7 +954,7 @@ Inherits Listbox
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -962,7 +962,7 @@ Inherits Listbox
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Height"
@@ -1066,7 +1066,7 @@ Inherits Listbox
 			Group="Appearance"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ColumnCount"

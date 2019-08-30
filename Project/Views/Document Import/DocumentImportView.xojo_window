@@ -529,7 +529,7 @@ Begin ContainerControl DocumentImportView
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionRequired=   False
+         SelectionRequired=   "False"
          SelectionType   =   "0"
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -794,7 +794,7 @@ Begin ContainerControl DocumentImportView
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionRequired=   False
+         SelectionRequired=   "False"
          SelectionType   =   "0"
          ShowDropIndicator=   False
          TabIndex        =   3
@@ -852,10 +852,10 @@ End
 		  
 		  Self.DiscoveryWatcher.RunMode = Timer.RunModes.Multiple
 		  
-		  Self.StatusList.DeleteAllRows
+		  Self.StatusList.RemoveAllRows
 		  For Each Engine As Beacon.DiscoveryEngine In Engines
 		    Self.StatusList.AddRow(Engine.Name + EndOfLine + Engine.Status)
-		    Self.StatusList.RowTag(Self.StatusList.LastAddedRowIndex) = Engine
+		    Self.StatusList.RowTagAt(Self.StatusList.LastAddedRowIndex) = Engine
 		    
 		    Engine.Begin()
 		  Next
@@ -1183,11 +1183,11 @@ End
 		  Case SourceRadio(2).Value
 		    Views.SelectedPanelIndex = Self.PageLocal
 		  Case SourceRadio(3).Value
-		    OtherDocsList.DeleteAllRows
+		    OtherDocsList.RemoveAllRows
 		    OtherDocsList.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
 		    For Each Doc As Beacon.Document In Self.mOtherDocuments
 		      OtherDocsList.AddRow("", Doc.Title)
-		      OtherDocsList.RowTag(OtherDocsList.LastAddedRowIndex) = Doc
+		      OtherDocsList.RowTagAt(OtherDocsList.LastAddedRowIndex) = Doc
 		    Next
 		    OtherDocsList.Sort()
 		    OtherDocsActionButton.Enabled = False
@@ -1275,11 +1275,11 @@ End
 		Sub Pressed()
 		  Redim Self.mDocuments(-1)
 		  For I As Integer = 0 To OtherDocsList.RowCount - 1
-		    If Not OtherDocsList.CellCheck(I, 0) Then
+		    If Not OtherDocsList.CellCheckBoxValueAt(I, 0) Then
 		      Continue
 		    End If
 		    
-		    Dim Doc As Beacon.Document = OtherDocsList.RowTag(I)
+		    Dim Doc As Beacon.Document = OtherDocsList.RowTagAt(I)
 		    Self.mDocuments.Append(Doc)
 		  Next
 		  Self.Finish()
@@ -1304,7 +1304,7 @@ End
 		  
 		  Dim Enabled As Boolean
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Me.CellCheck(I, Column) Then
+		    If Me.CellCheckBoxValueAt(I, Column) Then
 		      Enabled = True
 		      Exit For I
 		    End If
@@ -1332,7 +1332,7 @@ End
 		        AddHandler Importer.ThreadedParseFinished, WeakAddressOf Importer_ThreadedParseFinished      
 		        Self.mImporters(I) = Importer
 		        Status = "Parsing Config Files…"
-		        Importer.Run
+		        Importer.Start
 		      ElseIf Self.mImporters(I).Finished Then
 		        // Show import finished
 		        Finished = True
@@ -1362,8 +1362,8 @@ End
 		    End If
 		    
 		    Status = Engine.Name + EndOfLine + Status
-		    If Self.StatusList.Cell(I, 0) <> Status Then
-		      Self.StatusList.Cell(I, 0) = Status
+		    If Self.StatusList.CellValueAt(I, 0) <> Status Then
+		      Self.StatusList.CellValueAt(I, 0) = Status
 		    End If
 		    
 		    AllFinished = AllFinished And Finished
@@ -1400,7 +1400,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
@@ -1408,7 +1408,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="UseFocusRing"
@@ -1416,7 +1416,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackColor"
@@ -1440,7 +1440,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptTabs"
@@ -1448,7 +1448,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
@@ -1456,7 +1456,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -1464,7 +1464,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
@@ -1472,7 +1472,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"
@@ -1480,7 +1480,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackgroundColor"
@@ -1504,7 +1504,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowTabs"
@@ -1512,7 +1512,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
@@ -1520,7 +1520,7 @@ End
 		Group="Windows Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1528,7 +1528,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"
@@ -1536,7 +1536,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -1600,7 +1600,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="QuickCancel"
@@ -1616,7 +1616,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -1640,7 +1640,7 @@ End
 		Group="Position"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
@@ -1656,7 +1656,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -1664,7 +1664,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"

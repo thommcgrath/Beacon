@@ -132,7 +132,7 @@ Inherits ContainerControl
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HelpTag"
@@ -140,7 +140,7 @@ Inherits ContainerControl
 			Group="Appearance"
 			InitialValue=""
 			Type="String"
-			EditorType=""
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="UseFocusRing"
@@ -148,7 +148,7 @@ Inherits ContainerControl
 			Group="Appearance"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BackColor"
@@ -172,7 +172,7 @@ Inherits ContainerControl
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AcceptTabs"
@@ -180,7 +180,7 @@ Inherits ContainerControl
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="EraseBackground"
@@ -188,7 +188,7 @@ Inherits ContainerControl
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Tooltip"
@@ -196,7 +196,7 @@ Inherits ContainerControl
 			Group="Appearance"
 			InitialValue=""
 			Type="String"
-			EditorType=""
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AllowAutoDeactivate"
@@ -204,7 +204,7 @@ Inherits ContainerControl
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AllowFocusRing"
@@ -212,7 +212,7 @@ Inherits ContainerControl
 			Group="Appearance"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BackgroundColor"
@@ -236,7 +236,7 @@ Inherits ContainerControl
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AllowTabs"
@@ -244,7 +244,7 @@ Inherits ContainerControl
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DoubleBuffer"
@@ -252,7 +252,7 @@ Inherits ContainerControl
 			Group="Windows Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Backdrop"
@@ -260,7 +260,7 @@ Inherits ContainerControl
 			Group="Background"
 			InitialValue=""
 			Type="Picture"
-			EditorType="Picture"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
@@ -268,7 +268,7 @@ Inherits ContainerControl
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Height"
@@ -332,7 +332,7 @@ Inherits ContainerControl
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -340,7 +340,7 @@ Inherits ContainerControl
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabIndex"
@@ -364,7 +364,7 @@ Inherits ContainerControl
 			Group="Position"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -380,7 +380,7 @@ Inherits ContainerControl
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Visible"
@@ -388,7 +388,7 @@ Inherits ContainerControl
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Width"

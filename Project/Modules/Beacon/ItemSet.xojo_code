@@ -205,7 +205,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Parts(6) = if(Self.ItemsRandomWithoutReplacement, "1", "0")
 		    
 		    Self.mHash = Beacon.MD5(Parts.Join(",")).Lowercase
-		    Self.mLastHashTime = Microseconds
+		    Self.mLastHashTime = System.Microseconds
 		  End If
 		  Return Self.mHash
 		End Function
@@ -387,9 +387,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Modified(Assigns Value As Boolean)
 		  If Value = False Then
-		    Self.mLastSaveTime = Microseconds
+		    Self.mLastSaveTime = System.Microseconds
 		  Else
-		    Self.mLastModifiedTime = Microseconds
+		    Self.mLastModifiedTime = System.Microseconds
 		  End If
 		  
 		  If Not Value Then

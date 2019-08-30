@@ -175,7 +175,7 @@ Begin BeaconDialog ResolveIssuesDialog
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
+      SelectionRequired=   "False"
       SelectionType   =   "0"
       ShowDropIndicator=   False
       TabIndex        =   1
@@ -485,7 +485,7 @@ End
 		  Self.UpdateUI
 		  
 		  Self.ActionButton.Enabled = True
-		  Self.ExtractButton.Enabled = BlueprintsField.Value.Len > 0
+		  Self.ExtractButton.Enabled = BlueprintsField.Value.Length > 0
 		  Self.ResolutionSpinner.Visible = False
 		  Self.GoToButton.Enabled = Self.GoToIssueHandler <> Nil And Self.IssuesList.SelectedRowIndex > -1
 		  Self.BlueprintsField.ReadOnly = False
@@ -500,10 +500,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
-		  Self.IssuesList.DeleteAllRows
+		  Self.IssuesList.RemoveAllRows
 		  For Each Issue As Beacon.Issue In Self.Issues
 		    Self.IssuesList.AddRow(Issue.Description)
-		    Self.IssuesList.RowTag(Self.IssuesList.LastAddedRowIndex) = Issue
+		    Self.IssuesList.RowTagAt(Self.IssuesList.LastAddedRowIndex) = Issue
 		  Next
 		End Sub
 	#tag EndMethod
@@ -545,7 +545,7 @@ End
 #tag Events BlueprintsField
 	#tag Event
 		Sub TextChanged()
-		  Self.ExtractButton.Enabled = Trim(Me.Value) <> ""
+		  Self.ExtractButton.Enabled = Me.Value.Trim <> ""
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -575,7 +575,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Issue As Beacon.Issue = Self.IssuesList.RowTag(Self.IssuesList.SelectedRowIndex)
+		  Dim Issue As Beacon.Issue = Self.IssuesList.RowTagAt(Self.IssuesList.SelectedRowIndex)
 		  Self.Hide()
 		  Self.GoToIssueHandler.Invoke(Issue)
 		  Self.Close()
@@ -642,7 +642,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizeable"
@@ -650,7 +650,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MaximizeButton"
@@ -658,7 +658,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimizeButton"
@@ -666,7 +666,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="FullScreenButton"
@@ -674,7 +674,7 @@ End
 		Group="Frame"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Placement"
@@ -713,7 +713,7 @@ End
 		Group="Deprecated"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -774,7 +774,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizable"
@@ -782,7 +782,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasMaximizeButton"
@@ -790,7 +790,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasMinimizeButton"
@@ -798,7 +798,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasFullScreenButton"
@@ -806,7 +806,7 @@ End
 		Group="Frame"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DefaultLocation"
@@ -845,7 +845,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Composite"
@@ -861,7 +861,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -877,7 +877,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Interfaces"
@@ -885,7 +885,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MacProcID"
@@ -901,7 +901,7 @@ End
 		Group="Menus"
 		InitialValue=""
 		Type="MenuBar"
-		EditorType="MenuBar"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -909,7 +909,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -917,7 +917,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Title"
@@ -933,7 +933,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"

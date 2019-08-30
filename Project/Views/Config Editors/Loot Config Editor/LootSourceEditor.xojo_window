@@ -87,7 +87,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
+      SelectionRequired=   "False"
       SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   5
@@ -568,7 +568,7 @@ End
 		  
 		  If Added Then
 		    SetList.AddRow(Set.Label)
-		    SetList.RowTag(SetList.LastAddedRowIndex) = Set
+		    SetList.RowTagAt(SetList.LastAddedRowIndex) = Set
 		    SetList.SelectedRowIndex = SetList.LastAddedRowIndex
 		    Self.mSorting = True
 		    SetList.Sort
@@ -609,12 +609,12 @@ End
 		  GroupNames.Sort
 		  
 		  For I As Integer = Parent.Count - 1 DownTo 0
-		    Parent.Remove(I)
+		    Parent.RemoveMenuAt(I)
 		  Next
 		  
 		  Dim EmptySetItem As New MenuItem("New Empty Set", Nil)
-		  AddHandler EmptySetItem.Action, WeakAddressOf Self.HandlePresetMenu
-		  Parent.Append(EmptySetItem)
+		  AddHandler EmptySetItem.MenuItemSelected, WeakAddressOf Self.HandlePresetMenu
+		  Parent.AddMenu(EmptySetItem)
 		  
 		  Dim HasTarget As Boolean = Self.mSources.LastRowIndex > -1
 		  
@@ -634,17 +634,17 @@ End
 		    
 		    Names.SortWith(Items)
 		    
-		    Parent.Append(New MenuItem(MenuItem.TextSeparator))
+		    Parent.AddMenu(New MenuItem(MenuItem.TextSeparator))
 		    
 		    Dim Header As New MenuItem(Group)
 		    Header.Enabled = False
-		    Parent.Append(Header)
+		    Parent.AddMenu(Header)
 		    
 		    For Each Preset As Beacon.Preset In Items
 		      Dim PresetItem As New MenuItem(Preset.Label, Preset)
 		      PresetItem.Enabled = HasTarget
-		      AddHandler PresetItem.Action, WeakAddressOf Self.HandlePresetMenu
-		      Parent.Append(PresetItem)
+		      AddHandler PresetItem.MenuItemSelected, WeakAddressOf Self.HandlePresetMenu
+		      Parent.AddMenu(PresetItem)
 		    Next
 		  Next
 		End Sub
@@ -711,7 +711,7 @@ End
 	#tag Method, Flags = &h0
 		Function GoToChild(ItemSet As Beacon.ItemSet, Entry As Beacon.SetEntry = Nil, Option As Beacon.SetEntryOption = Nil) As Boolean
 		  For I As Integer = 0 To Self.SetList.RowCount - 1
-		    If Self.SetList.RowTag(I) = ItemSet Then
+		    If Self.SetList.RowTagAt(I) = ItemSet Then
 		      Self.SetList.SelectedRowIndex = I
 		      Self.SetList.EnsureSelectionIsVisible()
 		      If Entry <> Nil Then
@@ -748,7 +748,7 @@ End
 		    Self.RebuildSetList()
 		    Dim Found As Boolean
 		    For I As Integer = 0 To SetList.RowCount - 1
-		      Dim Set As Beacon.ItemSet = SetList.RowTag(I)
+		      Dim Set As Beacon.ItemSet = SetList.RowTagAt(I)
 		      If Set.SourcePresetID = SelectedPreset.PresetID Then
 		        Found = True
 		        SetList.SelectedRowIndex = I
@@ -774,7 +774,7 @@ End
 		  Self.ImportProgress.ShowWithin(Self.TrueWindow)
 		  Self.Importer.Clear
 		  Self.Importer.GameIniContent = Content
-		  Self.Importer.Run
+		  Self.Importer.Start
 		End Sub
 	#tag EndMethod
 
@@ -789,7 +789,7 @@ End
 		  Dim SelectedSetNames() As String
 		  For I As Integer = 0 To SetList.RowCount - 1
 		    If SetList.Selected(I) Then
-		      SelectedSetNames.Append(SetList.Cell(I, 0))
+		      SelectedSetNames.Append(SetList.CellValueAt(I, 0))
 		    End If
 		  Next
 		  
@@ -826,10 +826,10 @@ End
 		  Self.mTotalSetCount = Sets.KeyCount
 		  Self.mVisibleSetCount = CommonSets.LastRowIndex + 1
 		  
-		  SetList.DeleteAllRows
+		  SetList.RemoveAllRows
 		  For Each Set As Beacon.ItemSet In CommonSets
 		    SetList.AddRow(Set.Label)
-		    SetList.RowTag(SetList.LastAddedRowIndex) = Set
+		    SetList.RowTagAt(SetList.LastAddedRowIndex) = Set
 		    SetList.Selected(SetList.LastAddedRowIndex) = SelectedSetNames.IndexOf(Set.Label) > -1
 		  Next
 		  Self.mSorting = True
@@ -876,7 +876,7 @@ End
 		  Dim Sets() As Beacon.ItemSet
 		  For I As Integer = 0 To SetList.RowCount - 1
 		    If SetList.Selected(I) Then
-		      Sets.Append(SetList.RowTag(I))
+		      Sets.Append(SetList.RowTagAt(I))
 		    End If
 		  Next
 		  
@@ -910,7 +910,7 @@ End
 		  Next
 		  For I As Integer = SetList.RowCount - 1 DownTo 0
 		    If SetList.Selected(I) Then
-		      SetList.RemoveRow(I)
+		      SetList.RemoveRowAt(I)
 		    End If
 		  Next
 		  If Updated Then
@@ -1161,7 +1161,7 @@ End
 		  End If
 		  
 		  If Me.SelectedRowCount = 1 Then
-		    Editor.Set = New Beacon.ItemSet(Me.RowTag(Me.SelectedRowIndex))
+		    Editor.Set = New Beacon.ItemSet(Me.RowTagAt(Me.SelectedRowIndex))
 		    Editor.Enabled = True
 		    Panel.SelectedPanelIndex = 1
 		  Else
@@ -1180,7 +1180,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And Left(Board.Text, 1) = "(")
+		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And Board.Text.Left(1) = "(")
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -1196,7 +1196,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Set As Beacon.ItemSet = Me.RowTag(I)
+		    Dim Set As Beacon.ItemSet = Me.RowTagAt(I)
 		    Dim Dict As Dictionary = Set.Export
 		    If Dict <> Nil Then
 		      Dicts.Append(Dict)
@@ -1228,7 +1228,7 @@ End
 		    Try
 		      Parsed = Beacon.ParseJSON(Contents)
 		    Catch Err As RuntimeException
-		      Beep
+		      System.Beep
 		      Return
 		    End Try
 		    
@@ -1242,7 +1242,7 @@ End
 		        Dicts.Append(Dict)
 		      Next
 		    Else
-		      Beep
+		      System.Beep
 		      Return
 		    End If
 		    
@@ -1265,12 +1265,12 @@ End
 		    If Updated Then
 		      RaiseEvent Updated
 		    End If
-		  ElseIf Board.TextAvailable And Left(Board.Text, 1) = "(" Then
+		  ElseIf Board.TextAvailable And Board.Text.Left(1) = "(" Then
 		    Dim Contents As String = Board.Text
-		    If Left(Contents, 2) = "((" Then
+		    If Contents.Left(2) = "((" Then
 		      // This may be multiple item sets from the dev kit, so wrap it up like a full loot source
 		      // No additional wrapping necessary, but we need to make sure the next clause is not hit
-		    ElseIf Left(Contents, 1) = "(" Then
+		    ElseIf Contents.Left(1) = "(" Then
 		      // This may be a single item set from the dev kit, so wrap it up like a full loot source
 		      Contents = "(" + Contents + ")"
 		    End If
@@ -1296,11 +1296,11 @@ End
 		    If Idx = -1 Then
 		      Return False
 		    End If
-		    Targets.Append(Me.RowTag(Idx))
+		    Targets.Append(Me.RowTagAt(Idx))
 		  Else
 		    For I As Integer = 0 To Me.RowCount - 1
 		      If Me.Selected(I) Then
-		        Targets.Append(Me.RowTag(I))
+		        Targets.Append(Me.RowTagAt(I))
 		      End If
 		    Next
 		  End If
@@ -1335,7 +1335,7 @@ End
 		  If PresetFound And CreateItem.Enabled Then
 		    CreateItem.Value = "Update """ + Preset.Label + """ Preset…"
 		  End If
-		  Base.Append(CreateItem)
+		  Base.AddMenu(CreateItem)
 		  
 		  Dim ReconfigureItem As New MenuItem("Rebuild From Preset", Targets)
 		  ReconfigureItem.Name = "reconfigure"
@@ -1347,20 +1347,20 @@ End
 		      ReconfigureItem.Value = "Rebuild From Presets"
 		    End If
 		  End If
-		  Base.Append(ReconfigureItem)
+		  Base.AddMenu(ReconfigureItem)
 		  
 		  If Keyboard.OptionKey Then
-		    Base.Append(New MenuItem(MenuItem.TextSeparator))
+		    Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
 		    
 		    Dim CopyJSONItem As New MenuItem("Copy JSON", Targets)
 		    CopyJSONItem.Name = "copyjson"
 		    CopyJSONItem.Enabled = True
-		    Base.Append(CopyJSONItem)
+		    Base.AddMenu(CopyJSONItem)
 		    
 		    Dim CopyConfigItem As New MenuItem("Copy Config Part", Targets)
 		    CopyConfigItem.Name = "copyconfig"
 		    CopyConfigItem.Enabled = True
-		    Base.Append(CopyConfigItem)
+		    Base.AddMenu(CopyConfigItem)
 		  End If
 		  
 		  Return True
@@ -1483,7 +1483,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function RowIsInvalid(Row As Integer) As Boolean
-		  Dim Set As Beacon.ItemSet = Me.RowTag(Row)
+		  Dim Set As Beacon.ItemSet = Me.RowTagAt(Row)
 		  Return Not Set.IsValid(Self.Document)
 		End Function
 	#tag EndEvent
@@ -1607,7 +1607,7 @@ End
 		  End If
 		  
 		  Dim SelIndex As Integer = SetList.SelectedRowIndex
-		  Dim OriginalSet As Beacon.ItemSet = SetList.RowTag(SelIndex)
+		  Dim OriginalSet As Beacon.ItemSet = SetList.RowTagAt(SelIndex)
 		  Dim NewSet As Beacon.ItemSet = Editor.Set
 		  
 		  For Each Source As Beacon.LootSource In Self.mSources
@@ -1617,8 +1617,8 @@ End
 		    End If
 		  Next
 		  
-		  SetList.Cell(SelIndex, 0) = NewSet.Label
-		  SetList.RowTag(SelIndex) = New Beacon.ItemSet(NewSet)
+		  SetList.CellValueAt(SelIndex, 0) = NewSet.Label
+		  SetList.RowTagAt(SelIndex) = New Beacon.ItemSet(NewSet)
 		  
 		  Self.mSorting = True
 		  SetList.Sort
@@ -1715,7 +1715,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
@@ -1723,7 +1723,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="UseFocusRing"
@@ -1731,7 +1731,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackColor"
@@ -1755,7 +1755,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptTabs"
@@ -1763,7 +1763,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
@@ -1771,7 +1771,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -1779,7 +1779,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
@@ -1787,7 +1787,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"
@@ -1795,7 +1795,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackgroundColor"
@@ -1819,7 +1819,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowTabs"
@@ -1827,7 +1827,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
@@ -1835,7 +1835,7 @@ End
 		Group="Windows Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1843,7 +1843,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"
@@ -1851,7 +1851,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -1915,7 +1915,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -1923,7 +1923,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -1947,7 +1947,7 @@ End
 		Group="Position"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
@@ -1963,7 +1963,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -1971,7 +1971,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"

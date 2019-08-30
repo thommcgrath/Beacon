@@ -123,7 +123,7 @@ Begin BeaconContainer ColumnBrowser
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
+      SelectionRequired=   "False"
       SelectionType   =   "0"
       ShowDropIndicator=   False
       TabIndex        =   1
@@ -201,7 +201,7 @@ End
 		  #Pragma Unused Areas
 		  
 		  G.DrawingColor = SystemColors.UnderPageBackgroundColor
-		  G.FillRect(0, 0, G.Width, G.Height)
+		  G.FillRectangle(0, 0, G.Width, G.Height)
 		End Sub
 	#tag EndEvent
 
@@ -263,7 +263,7 @@ End
 		  Dim RestoreUpdating As Boolean = Self.mUpdating
 		  Self.mUpdating = True
 		  
-		  List.DeleteAllRows
+		  List.RemoveAllRows
 		  For I As Integer = 0 To Children.LastRowIndex  
 		    Dim Child As String = Children(I)
 		    If Child.EndsWith("/") Then
@@ -271,7 +271,7 @@ End
 		    End If
 		    
 		    List.AddRow("", Child)
-		    List.RowTag(List.LastAddedRowIndex) = Parent + Children(I)
+		    List.RowTagAt(List.LastAddedRowIndex) = Parent + Children(I)
 		  Next
 		  List.Sort
 		  
@@ -406,11 +406,11 @@ End
 		  Dim NewPath As String
 		  Dim TriggerEvent As Boolean
 		  If Me.SelectedRowIndex > -1 Then
-		    NewPath = Me.RowTag(Me.SelectedRowIndex)
+		    NewPath = Me.RowTagAt(Me.SelectedRowIndex)
 		    TriggerEvent = True
 		  Else
 		    If Index > 0 Then
-		      NewPath = Self.Lists(Index - 1).RowTag(Self.Lists(Index - 1).SelectedRowIndex)
+		      NewPath = Self.Lists(Index - 1).RowTagAt(Self.Lists(Index - 1).SelectedRowIndex)
 		    Else
 		      NewPath = "/"
 		    End If
@@ -462,7 +462,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Path As String = Me.RowTag(Row)
+		  Dim Path As String = Me.RowTagAt(Row)
 		  Dim IsDir As Boolean = Path.EndsWith("/")
 		  Dim Mask As Picture
 		  If IsDir Then
@@ -483,7 +483,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
@@ -491,7 +491,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="UseFocusRing"
@@ -499,7 +499,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackColor"
@@ -523,7 +523,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptTabs"
@@ -531,7 +531,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
@@ -539,7 +539,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -547,7 +547,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
@@ -555,7 +555,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"
@@ -563,7 +563,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackgroundColor"
@@ -587,7 +587,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowTabs"
@@ -595,7 +595,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -603,7 +603,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -611,7 +611,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"
@@ -707,7 +707,7 @@ End
 		Group="Position"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -715,7 +715,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"
@@ -723,7 +723,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -731,7 +731,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"
@@ -739,7 +739,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
@@ -747,7 +747,7 @@ End
 		Group="Windows Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="CurrentPath"

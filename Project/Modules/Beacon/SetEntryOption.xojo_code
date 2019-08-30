@@ -5,7 +5,7 @@ Implements Beacon.DocumentItem
 		Sub Constructor(Engram As Beacon.Engram, Weight As Double)
 		  Self.mEngram = New Beacon.Engram(Engram)
 		  Self.mWeight = Weight
-		  Self.mLastModifiedTime = Microseconds
+		  Self.mLastModifiedTime = System.Microseconds
 		End Sub
 	#tag EndMethod
 
@@ -30,7 +30,7 @@ Implements Beacon.DocumentItem
 		  For Each Engram As Beacon.Engram In Engrams
 		    If Engram.ClassString = ClassString Then
 		      Self.mEngram = New Beacon.Engram(Engram)
-		      Self.mLastModifiedTime = Microseconds
+		      Self.mLastModifiedTime = System.Microseconds
 		      Return
 		    End If
 		  Next
@@ -68,7 +68,7 @@ Implements Beacon.DocumentItem
 		    End If
 		    
 		    Self.mHash = Beacon.MD5(Path.Lowercase + "@" + Self.mWeight.ToString(Locale.Raw, "0.0000")).Lowercase
-		    Self.mLastHashTime = Microseconds
+		    Self.mLastHashTime = System.Microseconds
 		  End If
 		  
 		  Return Self.mHash
@@ -128,9 +128,9 @@ Implements Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Modified(Assigns Value As Boolean)
 		  If Value = False Then
-		    Self.mLastSaveTime = Microseconds
+		    Self.mLastSaveTime = System.Microseconds
 		  Else
-		    Self.mLastModifiedTime = Microseconds
+		    Self.mLastModifiedTime = System.Microseconds
 		  End If
 		End Sub
 	#tag EndMethod

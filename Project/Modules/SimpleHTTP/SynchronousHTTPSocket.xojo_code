@@ -51,7 +51,7 @@ Inherits URLConnection
 		  Self.mOriginThread = App.CurrentThread
 		  Super.Send(Method, URL)
 		  If Self.mOriginThread <> Nil Then
-		    Self.mOriginThread.Suspend
+		    Self.mOriginThread.Pause
 		  End If
 		End Sub
 	#tag EndMethod

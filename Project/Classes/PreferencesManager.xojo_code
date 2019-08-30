@@ -365,7 +365,7 @@ Protected Class PreferencesManager
 	#tag Method, Flags = &h1
 		Protected Sub Write()
 		  Dim Writer As New Beacon.JSONWriter(Self.mValues, Self.mFile)
-		  Writer.Run
+		  Writer.Start
 		End Sub
 	#tag EndMethod
 

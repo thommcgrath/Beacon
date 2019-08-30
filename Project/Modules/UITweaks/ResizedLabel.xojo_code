@@ -170,7 +170,7 @@ Inherits Label
 			Group="Database Binding"
 			InitialValue=""
 			Type="String"
-			EditorType="DataField"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DataSource"
@@ -178,7 +178,7 @@ Inherits Label
 			Group="Database Binding"
 			InitialValue=""
 			Type="String"
-			EditorType="DataSource"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
@@ -202,7 +202,7 @@ Inherits Label
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="InitialParent"
@@ -274,7 +274,7 @@ Inherits Label
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Selectable"
@@ -290,7 +290,7 @@ Inherits Label
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabIndex"
@@ -330,7 +330,7 @@ Inherits Label
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Underline"

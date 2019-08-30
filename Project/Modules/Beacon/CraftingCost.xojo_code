@@ -200,9 +200,9 @@ Protected Class CraftingCost
 	#tag Method, Flags = &h0
 		Sub Modified(Assigns Value As Boolean)
 		  If Value = False Then
-		    Self.mLastSaveTime = Microseconds
+		    Self.mLastSaveTime = System.Microseconds
 		  Else
-		    Self.mLastModifiedTime = Microseconds
+		    Self.mLastModifiedTime = System.Microseconds
 		  End If
 		End Sub
 	#tag EndMethod

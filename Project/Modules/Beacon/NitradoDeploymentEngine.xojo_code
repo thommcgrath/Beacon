@@ -200,7 +200,7 @@ Implements Beacon.DeploymentEngine
 		  
 		  Try
 		    Dim EOL As String = Encodings.ASCII.Chr(10)
-		    Dim Lines() As String = ReplaceLineEndings(Content, EOL).Split(EOL)
+		    Dim Lines() As String = CType(Content, String).ReplaceLineEndings(EOL).Split(EOL)
 		    Dim TimestampFound As Boolean
 		    For I As Integer = Lines.LastRowIndex DownTo 0
 		      Dim Line As String = Lines(I)

@@ -355,7 +355,7 @@ Implements ObservationKit.Observable
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HelpTag"
@@ -363,7 +363,7 @@ Implements ObservationKit.Observable
 			Group="Appearance"
 			InitialValue=""
 			Type="String"
-			EditorType=""
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="UseFocusRing"
@@ -371,7 +371,7 @@ Implements ObservationKit.Observable
 			Group="Appearance"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BackColor"
@@ -395,7 +395,7 @@ Implements ObservationKit.Observable
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AcceptTabs"
@@ -403,7 +403,7 @@ Implements ObservationKit.Observable
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="EraseBackground"
@@ -411,7 +411,7 @@ Implements ObservationKit.Observable
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Tooltip"
@@ -419,7 +419,7 @@ Implements ObservationKit.Observable
 			Group="Appearance"
 			InitialValue=""
 			Type="String"
-			EditorType=""
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AllowAutoDeactivate"
@@ -427,7 +427,7 @@ Implements ObservationKit.Observable
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AllowFocusRing"
@@ -435,7 +435,7 @@ Implements ObservationKit.Observable
 			Group="Appearance"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BackgroundColor"
@@ -459,7 +459,7 @@ Implements ObservationKit.Observable
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AllowTabs"
@@ -467,7 +467,7 @@ Implements ObservationKit.Observable
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -475,7 +475,7 @@ Implements ObservationKit.Observable
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -483,7 +483,7 @@ Implements ObservationKit.Observable
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Height"
@@ -571,7 +571,7 @@ Implements ObservationKit.Observable
 			Group="Position"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -587,7 +587,7 @@ Implements ObservationKit.Observable
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Visible"
@@ -595,7 +595,7 @@ Implements ObservationKit.Observable
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Backdrop"
@@ -603,7 +603,7 @@ Implements ObservationKit.Observable
 			Group="Background"
 			InitialValue=""
 			Type="Picture"
-			EditorType="Picture"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ToolbarCaption"
@@ -619,7 +619,7 @@ Implements ObservationKit.Observable
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MinimumWidth"
@@ -651,7 +651,7 @@ Implements ObservationKit.Observable
 			Group="Windows Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

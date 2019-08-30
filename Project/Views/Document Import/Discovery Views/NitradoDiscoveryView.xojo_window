@@ -222,7 +222,7 @@ Begin DiscoveryView NitradoDiscoveryView
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionRequired=   False
+         SelectionRequired=   "False"
          SelectionType   =   "0"
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -454,7 +454,7 @@ End
 		      Return
 		    End If
 		    
-		    Self.List.DeleteAllRows
+		    Self.List.RemoveAllRows
 		    
 		    Dim Data As Dictionary = Reply.Value("data")
 		    Dim Services() As Variant = Data.Value("services")
@@ -465,10 +465,10 @@ End
 		      End If
 		      
 		      Dim Details As Dictionary = Service.Value("details")
-			  If IsNull(Details) Or Details.HasKey("game") = False Then
+		      If IsNull(Details) Or Details.HasKey("game") = False Then
 		        Continue
 		      End If
-			  
+		      
 		      Dim Game As String = Details.Value("game")
 		      If Not Game.BeginsWith("Ark: Survival Evolved") Then
 		        Continue
@@ -485,7 +485,7 @@ End
 		      Profile.ServiceID = Service.Value("id")
 		      
 		      Self.List.AddRow("", Profile.Name, Profile.Address)
-		      Self.List.RowTag(Self.List.LastAddedRowIndex) = Profile
+		      Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Profile
 		    Next
 		    
 		    Self.List.Sort
@@ -504,7 +504,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub CheckActionEnabled()
 		  For I As Integer = 0 To Self.List.RowCount - 1
-		    If Self.List.CellCheck(I, 0) Then
+		    If Self.List.CellCheckBoxValueAt(I, 0) Then
 		      Self.ListActionButton.Enabled = True
 		      Return
 		    End If
@@ -582,11 +582,11 @@ End
 		Sub Pressed()
 		  Dim Engines() As Beacon.NitradoDiscoveryEngine
 		  For I As Integer = 0 To Self.List.RowCount - 1
-		    If Not Self.List.CellCheck(I, 0) Then
+		    If Not Self.List.CellCheckBoxValueAt(I, 0) Then
 		      Continue
 		    End If
 		    
-		    Dim Profile As Beacon.NitradoServerProfile = Self.List.RowTag(I)
+		    Dim Profile As Beacon.NitradoServerProfile = Self.List.RowTagAt(I)
 		    Engines.Append(New Beacon.NitradoDiscoveryEngine(Profile, Self.AuthClient.AccessToken))
 		  Next
 		  Self.ShouldFinish(Engines, "Nitrado", Self.AuthClient.AuthData)
@@ -644,7 +644,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
@@ -652,7 +652,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="UseFocusRing"
@@ -660,7 +660,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackColor"
@@ -684,7 +684,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptTabs"
@@ -692,7 +692,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
@@ -700,7 +700,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -708,7 +708,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
@@ -716,7 +716,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"
@@ -724,7 +724,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackgroundColor"
@@ -748,7 +748,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowTabs"
@@ -756,7 +756,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
@@ -764,7 +764,7 @@ End
 		Group="Windows Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -772,7 +772,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"
@@ -780,7 +780,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -844,7 +844,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -852,7 +852,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -876,7 +876,7 @@ End
 		Group="Position"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
@@ -892,7 +892,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -900,7 +900,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"

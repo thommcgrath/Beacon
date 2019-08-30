@@ -99,9 +99,9 @@ Implements ObservationKit.Observer
 		    Dim Clip As Graphics = G.Clip(LeftPos, 0, TabWidth, G.Height)
 		    If Self.mSelectedIndex <> I Then
 		      Clip.DrawingColor = SystemColors.ControlBackgroundColor
-		      Clip.FillRect(0, 0, Clip.Width, Clip.Height - 1)
+		      Clip.FillRectangle(0, 0, Clip.Width, Clip.Height - 1)
 		      Clip.DrawingColor = SystemColors.SeparatorColor
-		      Clip.FillRect(0, Clip.Height - 1, Clip.Width, 1)
+		      Clip.FillRectangle(0, Clip.Height - 1, Clip.Width, 1)
 		    End If
 		    
 		    Dim View As BeaconSubview = RaiseEvent ViewAtIndex(I)
@@ -132,7 +132,7 @@ Implements ObservationKit.Observer
 		      
 		      Dim ProgressBackColor As Color = SystemColors.QuaternaryLabelColor
 		      Progress.DrawingColor = ProgressBackColor
-		      Progress.FillRect(0, 0, Progress.Width, Progress.Height)
+		      Progress.FillRectangle(0, 0, Progress.Width, Progress.Height)
 		      
 		      If View.Progress = BeaconSubview.ProgressIndeterminate Then
 		        // This is the tricky animated one
@@ -140,10 +140,10 @@ Implements ObservationKit.Observer
 		          IndeterminatePattern = BeaconUI.IconWithColor(IconTabIndeterminatePattern, SystemColors.SelectedContentBackgroundColor)
 		        End If
 		        
-		        If Microseconds - Self.mLastCycleTime > Self.IndeterminateCyclePeriod Then
-		          Self.mLastCycleTime = Microseconds
+		        If System.Microseconds - Self.mLastCycleTime > Self.IndeterminateCyclePeriod Then
+		          Self.mLastCycleTime = System.Microseconds
 		        End If
-		        Dim CycleProgress As Double = (Microseconds - Self.mLastCycleTime) / Self.IndeterminateCyclePeriod
+		        Dim CycleProgress As Double = (System.Microseconds - Self.mLastCycleTime) / Self.IndeterminateCyclePeriod
 		        Dim CycleOffset As Integer = IndeterminatePattern.Width * CycleProgress
 		        
 		        For X As Integer = IndeterminatePattern.Width * -1 To Progress.Width Step IndeterminatePattern.Width
@@ -155,21 +155,21 @@ Implements ObservationKit.Observer
 		      Else
 		        Dim FillWidth As Integer = Self.mTabRects(I).Width * View.Progress
 		        Progress.DrawingColor = SystemColors.SelectedContentBackgroundColor
-		        Progress.FillRect(0, 0, FillWidth, Progress.Height)
+		        Progress.FillRectangle(0, 0, FillWidth, Progress.Height)
 		      End If
 		    End If
 		    
 		    LeftPos = LeftPos + TabWidth
 		    G.ClearRect(LeftPos, 0, 1, G.Height - 1)
 		    G.DrawingColor = SystemColors.SeparatorColor
-		    G.FillRect(LeftPos, 0, 1, G.Height)
+		    G.FillRectangle(LeftPos, 0, 1, G.Height)
 		    LeftPos = LeftPos + 1
 		  Next
 		  
 		  G.DrawingColor = SystemColors.ControlBackgroundColor
-		  G.FillRect(LeftPos, 0, G.Width - LeftPos, G.Height - 1)
+		  G.FillRectangle(LeftPos, 0, G.Width - LeftPos, G.Height - 1)
 		  G.DrawingColor = SystemColors.SeparatorColor
-		  G.FillRect(LeftPos, G.Height - 1, G.Width - LeftPos, 1)
+		  G.FillRectangle(LeftPos, G.Height - 1, G.Width - LeftPos, 1)
 		End Sub
 	#tag EndEvent
 
@@ -188,12 +188,12 @@ Implements ObservationKit.Observer
 		  Dim MaxCaptionWidth As Integer = G.Width - ((ButtonSize * 2) + (CellPadding * 4))
 		  
 		  Dim Caption As String = View.ToolbarCaption
-		  Dim CaptionWidth As Double = Min(G.StringWidth(Caption), MaxCaptionWidth)
+		  Dim CaptionWidth As Double = Min(G.TextWidth(Caption), MaxCaptionWidth)
 		  Dim CaptionLeft As Double = (G.Width - CaptionWidth) / 2
 		  Dim CaptionBottom As Double = (G.Height / 2) + (G.CapHeight / 2)
 		  
 		  G.DrawingColor = SystemColors.ControlTextColor
-		  G.DrawString(Caption, CaptionLeft, CaptionBottom, MaxCaptionWidth, True)
+		  G.DrawText(Caption, CaptionLeft, CaptionBottom, MaxCaptionWidth, True)
 		  
 		  Dim ButtonTop As Double = (G.Height - ButtonSize) / 2
 		  
@@ -215,7 +215,7 @@ Implements ObservationKit.Observer
 		    
 		    If BoxState = CloseBoxState.Pressed Then
 		      G.DrawingColor = &c00000080
-		      G.FillRoundRect(CloseRect.Left, CloseRect.Top, CloseRect.Width, CloseRect.Height, 4, 4)
+		      G.FillRoundRectangle(CloseRect.Left, CloseRect.Top, CloseRect.Width, CloseRect.Height, 4, 4)
 		    End If
 		  End If
 		End Sub
@@ -470,7 +470,7 @@ Implements ObservationKit.Observer
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -478,7 +478,7 @@ Implements ObservationKit.Observer
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -486,7 +486,7 @@ Implements ObservationKit.Observer
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Height"
@@ -590,7 +590,7 @@ Implements ObservationKit.Observer
 			Group="Appearance"
 			InitialValue=""
 			Type="Picture"
-			EditorType="Picture"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
@@ -614,7 +614,7 @@ Implements ObservationKit.Observer
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ScrollSpeed"

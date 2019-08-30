@@ -157,7 +157,7 @@ Begin ConfigEditor LootConfigEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
+      SelectionRequired=   "False"
       SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   4
@@ -573,7 +573,7 @@ End
 	#tag Method, Flags = &h0
 		Function GoToChild(Source As Beacon.LootSource, ItemSet As Beacon.ItemSet = Nil, Entry As Beacon.SetEntry = Nil, Option As Beacon.SetEntryOption = Nil) As Boolean
 		  For I As Integer = 0 To Self.List.RowCount - 1
-		    If Self.List.RowTag(I) = Source Then
+		    If Self.List.RowTagAt(I) = Source Then
 		      Self.List.SelectedRowIndex = I
 		      Self.List.EnsureSelectionIsVisible()
 		      If ItemSet <> Nil Then
@@ -633,8 +633,8 @@ End
 		  
 		  For I As Integer = Self.List.RowCount - 1 DownTo 0
 		    If Self.List.Selected(I) Then
-		      Self.Config(True).Remove(Beacon.LootSource(Self.List.RowTag(I)))
-		      Self.List.RemoveRow(I)
+		      Self.Config(True).Remove(Beacon.LootSource(Self.List.RowTagAt(I)))
+		      Self.List.RemoveRowAt(I)
 		    End If
 		  Next
 		  
@@ -680,7 +680,7 @@ End
 		  
 		  Dim DuplicateSource As Beacon.LootSource
 		  If DuplicateSelected Then
-		    DuplicateSource = Self.List.RowTag(Self.List.SelectedRowIndex)
+		    DuplicateSource = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		  End If
 		  
 		  If LootSourceWizard.Present(Self, Config, Self.Document.MapCompatibility, Self.Document.Mods, DuplicateSource, DuplicateSelected) Then
@@ -712,7 +712,7 @@ End
 		    Dim Bound As Integer = Self.List.RowCount - 1
 		    For I As Integer = 0 To Bound
 		      If Self.List.Selected(I) Then
-		        SelectedClasses.Append(Beacon.LootSource(Self.List.RowTag(I)).ClassString)
+		        SelectedClasses.Append(Beacon.LootSource(Self.List.RowTagAt(I)).ClassString)
 		      End If
 		    Next
 		  End If
@@ -722,9 +722,9 @@ End
 		  Self.mBlockSelectionChanged = True
 		  Dim Selection() As Beacon.LootSource
 		  For I As Integer = 0 To VisibleSources.LastRowIndex
-		    Self.List.RowTag(I) = VisibleSources(I)
-		    Self.List.Cell(I, 0) = "" // Causes a redraw of the cell
-		    Self.List.Cell(I, 1) = VisibleSources(I).Label
+		    Self.List.RowTagAt(I) = VisibleSources(I)
+		    Self.List.CellValueAt(I, 0) = "" // Causes a redraw of the cell
+		    Self.List.CellValueAt(I, 1) = VisibleSources(I).Label
 		    If SelectedClasses.IndexOf(VisibleSources(I).ClassString) > -1 Then
 		      Self.List.Selected(I) = True
 		      Selection.Append(VisibleSources(I))
@@ -843,22 +843,22 @@ End
 		        Warning = New MenuItem("List is empty because all drops have been implemented.")
 		      End If
 		      Warning.Enabled = False
-		      Menu.Append(Warning)
+		      Menu.AddMenu(Warning)
 		      Return
 		    End If
 		    
 		    Beacon.Sort(LootSources)
 		    
 		    For Each LootSource As Beacon.LootSource In LootSources
-		      Menu.Append(New MenuItem(LootSource.Label, LootSource))
+		      Menu.AddMenu(New MenuItem(LootSource.Label, LootSource))
 		    Next
 		    
 		    If HasExperimentalSources Then
-		      Menu.Append(New MenuItem(MenuItem.TextSeparator))
+		      Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
 		      
 		      Dim ExpItem As New MenuItem("Show Experimental Sources", "toggle_experimental")
 		      ExpItem.HasCheckMark = Preferences.ShowExperimentalLootSources
-		      Menu.Append(ExpItem)
+		      Menu.AddMenu(ExpItem)
 		    End If
 		  End Select
 		End Sub
@@ -906,9 +906,9 @@ End
 		  Dim PrecisionY As Double = 1 / G.ScaleY
 		  
 		  If Column = 0 Then
-		    Dim Source As Beacon.LootSource = Me.RowTag(Row)
+		    Dim Source As Beacon.LootSource = Me.RowTagAt(Row)
 		    Dim Icon As Picture = LocalData.SharedInstance.IconForLootSource(Source, BackgroundColor)
-		    Dim SpaceWidth As Integer = Me.Column(Column).WidthActual
+		    Dim SpaceWidth As Integer = Me.ColumnAt(Column).WidthActual
 		    Dim SpaceHeight As Integer = Me.DefaultRowHeight
 		    
 		    G.DrawPicture(Icon, NearestMultiple((SpaceWidth - Icon.Width) / 2, PrecisionX), NearestMultiple((SpaceHeight - Icon.Height) / 2, PrecisionY))
@@ -927,7 +927,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And Left(Board.Text, 30) = "ConfigOverrideSupplyCrateItems")
+		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And Board.Text.Left(30) = "ConfigOverrideSupplyCrateItems")
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -945,7 +945,7 @@ End
 		  Dim Dicts() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Dim Source As Beacon.LootSource = Me.RowTag(I)
+		      Dim Source As Beacon.LootSource = Me.RowTagAt(I)
 		      Dicts.Append(Source.Export)
 		      If Source.IsValid(Self.Document) Then
 		        Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.StringValue(Self.Document.Difficulty))
@@ -972,7 +972,7 @@ End
 		    Try
 		      Parsed = Beacon.ParseJSON(Contents)
 		    Catch Err As RuntimeException
-		      Beep
+		      System.Beep
 		      Return
 		    End Try
 		    
@@ -986,7 +986,7 @@ End
 		        Dicts.Append(Dict)
 		      Next
 		    Else
-		      Beep
+		      System.Beep
 		      Return
 		    End If
 		    
@@ -1009,7 +1009,7 @@ End
 		  Dim Sources() As Beacon.LootSource
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Sources.Append(Me.RowTag(I))
+		      Sources.Append(Me.RowTagAt(I))
 		    End If
 		  Next
 		  
@@ -1025,7 +1025,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function RowIsInvalid(Row As Integer) As Boolean
-		  Dim Source As Beacon.LootSource = Me.RowTag(Row)
+		  Dim Source As Beacon.LootSource = Me.RowTagAt(Row)
 		  Return Not Source.IsValid(Self.Document)
 		End Function
 	#tag EndEvent
@@ -1037,7 +1037,7 @@ End
 		    End If
 		    
 		    Dim Config As BeaconConfigs.LootDrops = Self.Config(False)
-		    If LootSourceWizard.Present(Self, Config, Self.Document.MapCompatibility, Self.Document.Mods, Me.RowTag(I)) Then
+		    If LootSourceWizard.Present(Self, Config, Self.Document.MapCompatibility, Self.Document.Mods, Me.RowTagAt(I)) Then
 		      Call Self.Config(True) // Actually saves the config to the document
 		      Self.UpdateSourceList()
 		      Self.Changed = True
@@ -1077,7 +1077,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
@@ -1085,7 +1085,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="UseFocusRing"
@@ -1093,7 +1093,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackColor"
@@ -1117,7 +1117,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptTabs"
@@ -1125,7 +1125,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
@@ -1133,7 +1133,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -1141,7 +1141,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
@@ -1149,7 +1149,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"
@@ -1157,7 +1157,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackgroundColor"
@@ -1181,7 +1181,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowTabs"
@@ -1189,7 +1189,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Progress"
@@ -1221,7 +1221,7 @@ End
 		Group="Windows Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1229,7 +1229,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"
@@ -1237,7 +1237,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -1301,7 +1301,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -1309,7 +1309,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -1333,7 +1333,7 @@ End
 		Group="Position"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
@@ -1357,7 +1357,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -1365,7 +1365,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"

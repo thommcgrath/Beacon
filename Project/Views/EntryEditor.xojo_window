@@ -186,7 +186,7 @@ Begin BeaconDialog EntryEditor
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionRequired=   False
+         SelectionRequired=   "False"
          SelectionType   =   "0"
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -462,7 +462,7 @@ Begin BeaconDialog EntryEditor
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionRequired=   False
+         SelectionRequired=   "False"
          SelectionType   =   "0"
          ShowDropIndicator=   False
          TabIndex        =   0
@@ -672,10 +672,10 @@ End
 		      Dim Weight As String = WeightValue.PrettyText
 		      
 		      EngramList.AddRow("", Option.Engram.Label, Option.Engram.ModName, Weight)
-		      EngramList.RowTag(EngramList.LastAddedRowIndex) = Option.Engram
+		      EngramList.RowTagAt(EngramList.LastAddedRowIndex) = Option.Engram
 		      Self.mEngramRowIndexes.Value(Path) = EngramList.LastAddedRowIndex
 		      Idx = EngramList.LastAddedRowIndex
-		      EngramList.CellCheck(Idx, Self.ColumnIncluded) = True
+		      EngramList.CellCheckBoxValueAt(Idx, Self.ColumnIncluded) = True
 		    End If
 		  Next
 		End Sub
@@ -721,7 +721,7 @@ End
 		  SingleEntryCheck.Value = Self.mSelectedEngrams.KeyCount > 1
 		  
 		  For I As Integer = 0 To EngramList.RowCount - 1
-		    If EngramList.CellCheck(I, 0) Then
+		    If EngramList.CellCheckBoxValueAt(I, 0) Then
 		      EngramList.ScrollPosition = I
 		      Exit For I
 		    End If
@@ -738,7 +738,7 @@ End
 		  Dim Tags As String = Self.Picker.Spec
 		  
 		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText, Self.mMods, Tags)
-		  EngramList.DeleteAllRows
+		  EngramList.RemoveAllRows
 		  
 		  Dim PerfectMatch As Boolean
 		  Self.mEngramRowIndexes = New Dictionary
@@ -750,9 +750,9 @@ End
 		    End If
 		    
 		    EngramList.AddRow("", Engram.Label, Engram.ModName, Weight)
-		    EngramList.RowTag(EngramList.LastAddedRowIndex) = Engram
+		    EngramList.RowTagAt(EngramList.LastAddedRowIndex) = Engram
 		    Self.mEngramRowIndexes.Value(Engram.Path) = EngramList.LastAddedRowIndex
-		    EngramList.CellCheck(EngramList.LastAddedRowIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.Path)
+		    EngramList.CellCheckBoxValueAt(EngramList.LastAddedRowIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.Path)
 		    If Engram.Path = SearchText Or Engram.Label = SearchText Then
 		      PerfectMatch = True
 		    End If
@@ -783,7 +783,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateSimulation()
 		  SimulationGroup.Caption = "Simulation"
-		  SimulatedResultsList.DeleteAllRows
+		  SimulatedResultsList.RemoveAllRows
 		  If Self.mSelectedEngrams.KeyCount = 0 Then
 		    Return
 		  End If
@@ -896,16 +896,16 @@ End
 #tag Events EngramList
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
-		  Dim Engram As Beacon.Engram = Me.RowTag(Row)
+		  Dim Engram As Beacon.Engram = Me.RowTagAt(Row)
 		  
 		  Select Case Column
 		  Case Self.ColumnIncluded
-		    Dim Checked As Boolean = Me.CellCheck(Row, Column)
+		    Dim Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
 		    If Checked And Not Self.mSelectedEngrams.HasKey(Engram.Path) Then
-		      Dim WeightString As String = Me.Cell(Row, Self.ColumnWeight)
+		      Dim WeightString As String = Me.CellValueAt(Row, Self.ColumnWeight)
 		      If WeightString = "" Then
 		        WeightString = "50"
-		        Me.Cell(Row, Self.ColumnWeight) = WeightString
+		        Me.CellValueAt(Row, Self.ColumnWeight) = WeightString
 		      End
 		      Dim Weight As Double = Max(Min(Val(WeightString) / 100, 1), 0)
 		      Self.mSelectedEngrams.Value(Engram.Path) = New Beacon.SetEntryOption(Engram, Weight)
@@ -918,7 +918,7 @@ End
 		    Self.UpdateSimulation()
 		  Case Self.ColumnWeight
 		    If Self.mSelectedEngrams.HasKey(Engram.Path) Then
-		      Dim Weight As Double = Max(Min(Val(Me.Cell(Row, Column)) / 100, 1), 0)
+		      Dim Weight As Double = Max(Min(Val(Me.CellValueAt(Row, Column)) / 100, 1), 0)
 		      Self.mSelectedEngrams.Value(Engram.Path) = New Beacon.SetEntryOption(Engram, Weight)
 		      Self.UpdateSelectionUI()
 		      Self.UpdateSimulation()
@@ -932,19 +932,19 @@ End
 		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Select Case Column
 		  Case Self.ColumnIncluded
-		    If Me.CellCheck(Row1, Column) = True And Me.CellCheck(Row2, Column) = False Then
+		    If Me.CellCheckBoxValueAt(Row1, Column) = True And Me.CellCheckBoxValueAt(Row2, Column) = False Then
 		      Result = -1
-		    ElseIf Me.CellCheck(Row1, Column) = False And Me.CellCheck(Row2, Column) = True Then
+		    ElseIf Me.CellCheckBoxValueAt(Row1, Column) = False And Me.CellCheckBoxValueAt(Row2, Column) = True Then
 		      Result = 1
 		    Else
-		      Dim Engram1 As Beacon.Engram = Me.RowTag(Row1)
-		      Dim Engram2 As Beacon.Engram = Me.RowTag(Row2)
+		      Dim Engram1 As Beacon.Engram = Me.RowTagAt(Row1)
+		      Dim Engram2 As Beacon.Engram = Me.RowTagAt(Row2)
 		      
 		      Result = StrComp(Engram1.Label, Engram2.Label, 0)
 		    End If
 		  Case Self.ColumnWeight
-		    Dim Weight1 As Double = Val(Me.Cell(Row1, Column))
-		    Dim Weight2 As Double = Val(Me.Cell(Row2, Column))
+		    Dim Weight1 As Double = Val(Me.CellValueAt(Row1, Column))
+		    Dim Weight2 As Double = Val(Me.CellValueAt(Row2, Column))
 		    If Weight1 > Weight2 Then
 		      Result = 1
 		    ElseIf Weight2 > Weight1 Then
@@ -1053,7 +1053,7 @@ End
 		    Entry.Append(Options(0))
 		    Entries.Append(Entry)
 		  Else
-		    Beep
+		    System.Beep
 		    Return
 		  End If
 		  
@@ -1099,9 +1099,9 @@ End
 		    End If
 		    
 		    EngramList.AddRow("", Engram.Label, Engram.ModName, Weight)
-		    EngramList.RowTag(EngramList.SelectedRowIndex) = Engram
+		    EngramList.RowTagAt(EngramList.SelectedRowIndex) = Engram
 		    Self.mEngramRowIndexes.Value(Engram.Path) = EngramList.SelectedRowIndex
-		    EngramList.CellCheck(EngramList.SelectedRowIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.Path)
+		    EngramList.CellCheckBoxValueAt(EngramList.SelectedRowIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.Path)
 		  Next
 		  Self.ListUnknownEngrams()
 		End Sub
@@ -1167,7 +1167,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizeable"
@@ -1175,7 +1175,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MaximizeButton"
@@ -1183,7 +1183,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimizeButton"
@@ -1191,7 +1191,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="FullScreenButton"
@@ -1199,7 +1199,7 @@ End
 		Group="Frame"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Placement"
@@ -1238,7 +1238,7 @@ End
 		Group="Deprecated"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -1299,7 +1299,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizable"
@@ -1307,7 +1307,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasMaximizeButton"
@@ -1315,7 +1315,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasMinimizeButton"
@@ -1323,7 +1323,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasFullScreenButton"
@@ -1331,7 +1331,7 @@ End
 		Group="Frame"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DefaultLocation"
@@ -1370,7 +1370,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Composite"
@@ -1386,7 +1386,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -1402,7 +1402,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Interfaces"
@@ -1410,7 +1410,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MacProcID"
@@ -1426,7 +1426,7 @@ End
 		Group="Menus"
 		InitialValue=""
 		Type="MenuBar"
-		EditorType="MenuBar"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -1434,7 +1434,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -1442,7 +1442,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Title"
@@ -1458,7 +1458,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"

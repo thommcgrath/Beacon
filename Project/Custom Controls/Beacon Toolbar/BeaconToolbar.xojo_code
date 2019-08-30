@@ -3,16 +3,18 @@ Protected Class BeaconToolbar
 Inherits ControlCanvas
 Implements ObservationKit.Observer
 	#tag Event
-		Sub Activate()
-		  RaiseEvent Activate
+		Sub Activated()
+		  RaiseEvent Activated
 		  Self.Invalidate
+		  
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Deactivate()
-		  RaiseEvent Deactivate
+		Sub Deactivated()
+		  RaiseEvent Deactivated
 		  Self.Invalidate
+		  
 		End Sub
 	#tag EndEvent
 
@@ -26,7 +28,7 @@ Implements ObservationKit.Observer
 		  Self.mMouseX = X
 		  Self.mMouseY = Y
 		  
-		  Global.Tooltip.Hide
+		  App.HideTooltip
 		  CallLater.Cancel(Self.mHoverCallbackKey)
 		  
 		  If Self.mResizerEnabled And Self.mResizerRect <> Nil And Self.mResizerRect.Contains(Point) Then
@@ -253,7 +255,7 @@ Implements ObservationKit.Observer
 		    
 		    If Button.Toggled Then
 		      G.DrawingColor = If(UseAccent, AccentColor, SystemColors.SelectedContentBackgroundColor)
-		      G.FillRoundRect(NearestMultiple(Rect.Left, PrecisionX), NearestMultiple(Rect.Top, PrecisionY), NearestMultiple(Rect.Width, PrecisionX), NearestMultiple(Rect.Height, PrecisionY), 4, 4)
+		      G.FillRoundRectangle(NearestMultiple(Rect.Left, PrecisionX), NearestMultiple(Rect.Top, PrecisionY), NearestMultiple(Rect.Width, PrecisionX), NearestMultiple(Rect.Height, PrecisionY), 4, 4)
 		    End If
 		    
 		    Dim Overlay As Picture
@@ -266,7 +268,7 @@ Implements ObservationKit.Observer
 		  
 		  If Mode = ButtonModes.Pressed Then
 		    G.DrawingColor = &c00000080
-		    G.FillRoundRect(NearestMultiple(Rect.Left, PrecisionX), NearestMultiple(Rect.Top, PrecisionY), NearestMultiple(Rect.Width, PrecisionX), NearestMultiple(Rect.Height, PrecisionY), 4, 4)
+		    G.FillRoundRectangle(NearestMultiple(Rect.Left, PrecisionX), NearestMultiple(Rect.Top, PrecisionY), NearestMultiple(Rect.Width, PrecisionX), NearestMultiple(Rect.Height, PrecisionY), 4, 4)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -285,7 +287,7 @@ Implements ObservationKit.Observer
 		  
 		  Self.mHoverItem = Item
 		  
-		  Global.Tooltip.Hide
+		  App.HideTooltip
 		  CallLater.Cancel(Self.mHoverCallbackKey)
 		  
 		  If Item <> Nil And Item.HelpTag <> "" Then
@@ -472,14 +474,14 @@ Implements ObservationKit.Observer
 		    Dim CaptionSize As Double = 0
 		    
 		    G.FontSize = CaptionSize
-		    Dim CaptionWidth As Integer = Ceil(G.StringWidth(Caption))
+		    Dim CaptionWidth As Integer = Ceil(G.TextWidth(Caption))
 		    
 		    CaptionWidth = Min(CaptionWidth, ContentRect.Width)
 		    Dim CaptionLeft As Integer = ContentRect.Left + ((ContentRect.Width - CaptionWidth) / 2)
 		    Dim CaptionBottom As Integer = ContentRect.Top + (ContentRect.Height / 2) + ((G.FontAscent * 0.8) / 2)
 		    
 		    G.DrawingColor = SystemColors.LabelColor
-		    G.DrawString(Self.Caption, CaptionLeft, CaptionBottom, CaptionWidth, True)
+		    G.DrawText(Self.Caption, CaptionLeft, CaptionBottom, CaptionWidth, True)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -490,13 +492,13 @@ Implements ObservationKit.Observer
 		    Return
 		  End If
 		  
-		  Global.Tooltip.Show(Self.mHoverItem.HelpTag, System.MouseX, System.MouseY + 16)
+		  App.ShowTooltip(Self.mHoverItem.HelpTag, System.MouseX, System.MouseY + 16)
 		End Sub
 	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
-		Event Activate()
+		Event Activated()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -504,7 +506,7 @@ Implements ObservationKit.Observer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Deactivate()
+		Event Deactivated()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -790,7 +792,7 @@ Implements ObservationKit.Observer
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -798,7 +800,7 @@ Implements ObservationKit.Observer
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -806,7 +808,7 @@ Implements ObservationKit.Observer
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Height"
@@ -910,7 +912,7 @@ Implements ObservationKit.Observer
 			Group="Appearance"
 			InitialValue=""
 			Type="Picture"
-			EditorType="Picture"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
@@ -963,7 +965,7 @@ Implements ObservationKit.Observer
 			Group="Behavior"
 			InitialValue=""
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ResizerEnabled"

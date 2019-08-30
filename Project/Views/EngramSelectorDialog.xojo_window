@@ -195,7 +195,7 @@ Begin BeaconDialog EngramSelectorDialog
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
+      SelectionRequired=   "False"
       SelectionType   =   "0"
       ShowDropIndicator=   False
       TabIndex        =   2
@@ -345,7 +345,7 @@ Begin BeaconDialog EngramSelectorDialog
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
+      SelectionRequired=   "False"
       SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   5
@@ -532,7 +532,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub MakeSelection()
 		  If Not Self.mAllowMultipleSelection Then
-		    Self.SelectedList.DeleteAllRows()
+		    Self.SelectedList.RemoveAllRows()
 		  End If
 		  
 		  If Self.List.SelectedRowCount > 1 Then
@@ -541,19 +541,19 @@ End
 		        Continue
 		      End If
 		      
-		      Self.SelectedList.AddRow(Self.List.Cell(I, 0))
-		      Self.SelectedList.RowTag(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTag(I)
+		      Self.SelectedList.AddRow(Self.List.CellValueAt(I, 0))
+		      Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTagAt(I)
 		      If Self.mAllowMultipleSelection Then
-		        Self.mExcluded.Append(Beacon.Blueprint(Self.List.RowTag(I)).Path)
-		        Self.List.RemoveRow(I)
+		        Self.mExcluded.Append(Beacon.Blueprint(Self.List.RowTagAt(I)).Path)
+		        Self.List.RemoveRowAt(I)
 		      End If
 		    Next
 		  ElseIf Self.List.SelectedRowCount = 1 Then
-		    Self.SelectedList.AddRow(Self.List.Cell(Self.List.SelectedRowIndex, 0))
-		    Self.SelectedList.RowTag(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTag(Self.List.SelectedRowIndex)
+		    Self.SelectedList.AddRow(Self.List.CellValueAt(Self.List.SelectedRowIndex, 0))
+		    Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		    If Self.mAllowMultipleSelection Then
-		      Self.mExcluded.Append(Beacon.Blueprint(Self.List.RowTag(Self.List.SelectedRowIndex)).Path)
-		      Self.List.RemoveRow(Self.List.SelectedRowIndex)
+		      Self.mExcluded.Append(Beacon.Blueprint(Self.List.RowTagAt(Self.List.SelectedRowIndex)).Path)
+		      Self.List.RemoveRowAt(Self.List.SelectedRowIndex)
 		    End If
 		  End If
 		  
@@ -616,7 +616,7 @@ End
 		  End If
 		  
 		  For I As Integer = 0 To Win.SelectedList.RowCount - 1
-		    Blueprints.Append(Win.SelectedList.RowTag(I))
+		    Blueprints.Append(Win.SelectedList.RowTagAt(I))
 		  Next
 		  
 		  Win.Close
@@ -641,20 +641,20 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Blueprint As Beacon.Blueprint = Self.SelectedList.RowTag(I)
+		    Dim Blueprint As Beacon.Blueprint = Self.SelectedList.RowTagAt(I)
 		    Dim Idx As Integer = Self.mExcluded.IndexOf(Blueprint.Path)
 		    If Idx > -1 Then
 		      Self.mExcluded.Remove(Idx)
 		    End If
 		    SelectPaths.Append(Blueprint.Path)
-		    Self.SelectedList.RemoveRow(I)
+		    Self.SelectedList.RemoveRowAt(I)
 		  Next
 		  Self.ActionButton.Enabled = Self.SelectedList.RowCount > 0
 		  
 		  Self.List.SelectionChangeBlocked = True
 		  Self.UpdateFilter()
 		  For I As Integer = 0 To Self.List.RowCount - 1
-		    Dim Blueprint As Beacon.Blueprint = Self.List.RowTag(I)
+		    Dim Blueprint As Beacon.Blueprint = Self.List.RowTagAt(I)
 		    Self.List.Selected(I) = SelectPaths.IndexOf(Blueprint.Path) > -1
 		  Next
 		  Self.List.EnsureSelectionIsVisible
@@ -669,14 +669,14 @@ End
 		  
 		  Dim Blueprints() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)
 		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
-		  Self.List.DeleteAllRows
+		  Self.List.RemoveAllRows
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Self.mExcluded.IndexOf(Blueprint.Path) > -1 Then
 		      Continue
 		    End If
 		    
 		    Self.List.AddRow(Blueprint.Label, Blueprint.ModName)
-		    Self.List.RowTag(Self.List.LastAddedRowIndex) = Blueprint
+		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Blueprint
 		  Next
 		  Self.List.ScrollPosition = ScrollPosition
 		End Sub
@@ -886,7 +886,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizeable"
@@ -894,7 +894,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MaximizeButton"
@@ -902,7 +902,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimizeButton"
@@ -910,7 +910,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="FullScreenButton"
@@ -918,7 +918,7 @@ End
 		Group="Frame"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Placement"
@@ -957,7 +957,7 @@ End
 		Group="Deprecated"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -1018,7 +1018,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizable"
@@ -1026,7 +1026,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasMaximizeButton"
@@ -1034,7 +1034,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasMinimizeButton"
@@ -1042,7 +1042,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasFullScreenButton"
@@ -1050,7 +1050,7 @@ End
 		Group="Frame"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DefaultLocation"
@@ -1089,7 +1089,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Interfaces"
@@ -1097,7 +1097,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -1105,7 +1105,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"
@@ -1153,7 +1153,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -1161,7 +1161,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="FullScreen"
@@ -1169,7 +1169,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1177,7 +1177,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MenuBar"
@@ -1185,6 +1185,6 @@ End
 		Group="Menus"
 		InitialValue=""
 		Type="MenuBar"
-		EditorType="MenuBar"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

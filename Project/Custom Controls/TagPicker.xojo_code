@@ -82,9 +82,9 @@ Inherits ControlCanvas
 		  
 		  Dim ContentArea As REALbasic.Rect = Self.ContentArea
 		  G.DrawingColor = SystemColors.SeparatorColor
-		  G.DrawRect(ContentArea.Left - 1, ContentArea.Top - 1, ContentArea.Width + 2, ContentArea.Height + 2)
+		  G.DrawRectangle(ContentArea.Left - 1, ContentArea.Top - 1, ContentArea.Width + 2, ContentArea.Height + 2)
 		  G.DrawingColor = SystemColors.ControlBackgroundColor
-		  G.FillRect(ContentArea.Left, ContentArea.Top, ContentArea.Width, ContentArea.Height)
+		  G.FillRectangle(ContentArea.Left, ContentArea.Top, ContentArea.Width, ContentArea.Height)
 		  
 		  Const VerticalSpacing = 6
 		  Const HorizontalSpacing = 6
@@ -116,7 +116,7 @@ Inherits ControlCanvas
 		    Dim Pressed As Boolean = Self.mMousePressedIndex = I
 		    Tag = Tag.ReplaceAll("_", " ").Titlecase
 		    
-		    Dim CaptionWidth As Integer = Ceil(Clip.StringWidth(Tag))
+		    Dim CaptionWidth As Integer = Ceil(Clip.TextWidth(Tag))
 		    Dim CellWidth As Integer = Min(MaxCellWidth, CaptionWidth + (HorizontalPadding * 2))
 		    If XPos + CellWidth > ContentArea.Right - HorizontalSpacing Then
 		      XPos = ContentArea.Left + HorizontalSpacing
@@ -141,16 +141,16 @@ Inherits ControlCanvas
 		      CellTextColor = NeutralTextColor
 		    End If
 		    Clip.DrawingColor = CellColor
-		    Clip.FillRoundRect(CellRect.Left - ContentArea.Left, CellRect.Top - ContentArea.Top, CellRect.Width, CellRect.Height, CellRect.Height, CellRect.Height)
+		    Clip.FillRoundRectangle(CellRect.Left - ContentArea.Left, CellRect.Top - ContentArea.Top, CellRect.Width, CellRect.Height, CellRect.Height, CellRect.Height)
 		    Clip.DrawingColor = CellTextColor
-		    Clip.DrawString(Tag, CaptionLeft - ContentArea.Left, CaptionBottom - ContentArea.Top, CellWidth - (HorizontalPadding * 2), True)
+		    Clip.DrawText(Tag, CaptionLeft - ContentArea.Left, CaptionBottom - ContentArea.Top, CellWidth - (HorizontalPadding * 2), True)
 		    If Excluded Then
-		      Clip.FillRect(CaptionLeft - ContentArea.Left, CellRect.VerticalCenter - ContentArea.Top, CellRect.Width - (HorizontalPadding * 2), 2)
+		      Clip.FillRectangle(CaptionLeft - ContentArea.Left, CellRect.VerticalCenter - ContentArea.Top, CellRect.Width - (HorizontalPadding * 2), 2)
 		    End If
 		    
 		    If Pressed Then
 		      Clip.DrawingColor = &c00000080
-		      Clip.FillRoundRect(CellRect.Left - ContentArea.Left, CellRect.Top - ContentArea.Top, CellRect.Width, CellRect.Height, CellRect.Height, CellRect.Height)
+		      Clip.FillRoundRectangle(CellRect.Left - ContentArea.Left, CellRect.Top - ContentArea.Top, CellRect.Width, CellRect.Height, CellRect.Height, CellRect.Height)
 		    End If
 		    
 		    XPos = XPos + HorizontalSpacing + CellRect.Width
@@ -172,7 +172,7 @@ Inherits ControlCanvas
 		    Dim ThumbTop As Integer = 5 + ((TrackHeight - ThumbHeight) * (Self.mScrollPosition / Self.mOverflowHeight))
 		    
 		    G.DrawingColor = SystemColors.LabelColor.AtOpacity(0.1)
-		    G.FillRoundRect(ContentArea.Right - 10, ThumbTop, 5, ThumbHeight, 5, 5)
+		    G.FillRoundRectangle(ContentArea.Right - 10, ThumbTop, 5, ThumbHeight, 5, 5)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -623,7 +623,7 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -631,7 +631,7 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -639,7 +639,7 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Height"
@@ -727,7 +727,7 @@ Inherits ControlCanvas
 			Group="Appearance"
 			InitialValue=""
 			Type="Picture"
-			EditorType="Picture"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
@@ -751,7 +751,7 @@ Inherits ControlCanvas
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ScrollSpeed"

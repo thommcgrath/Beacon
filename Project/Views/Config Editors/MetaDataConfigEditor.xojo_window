@@ -333,7 +333,7 @@ Begin ConfigEditor MetaDataConfigEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
+      SelectionRequired=   "False"
       SelectionType   =   "0"
       ShowDropIndicator=   False
       TabIndex        =   6
@@ -497,12 +497,12 @@ End
 		  Dim Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
 		  Dim ScrollPosition As Integer = Self.ModsList.ScrollPosition
 		  Dim ListIndex As Integer = Self.ModsList.SelectedRowIndex
-		  Self.ModsList.DeleteAllRows()
+		  Self.ModsList.RemoveAllRows()
 		  For Each Details As Beacon.ModDetails In Mods
 		    Self.ModsList.AddRow("", Details.Name, If(Details.ConsoleSafe, "Yes", "No"))
 		    Dim Idx As Integer = Self.ModsList.LastAddedRowIndex
-		    Self.ModsList.RowTag(Idx) = Details
-		    Self.ModsList.CellCheck(Idx, 0) = Self.Document.Mods.LastRowIndex = -1 Or Self.Document.Mods.IndexOf(Details.ModID) > -1
+		    Self.ModsList.RowTagAt(Idx) = Details
+		    Self.ModsList.CellCheckBoxValueAt(Idx, 0) = Self.Document.Mods.LastRowIndex = -1 Or Self.Document.Mods.IndexOf(Details.ModID) > -1
 		  Next
 		  Self.ModsList.Sort
 		  Self.ModsList.ScrollPosition = ScrollPosition
@@ -536,7 +536,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Document.Title = Trim(Me.Value)
+		  Self.Document.Title = Me.Value.Trim
 		  Self.Document.Metadata.IsImplicit = False
 		  Self.Changed = True
 		  Self.SettingUp = False
@@ -546,14 +546,14 @@ End
 #tag Events DescriptionArea
 	#tag Event
 		Sub TextChanged()
-		  Self.PublicFileCheckbox.Enabled = Trim(Me.Value).Len > 32
+		  Self.PublicFileCheckbox.Enabled = Me.Value.Trim.Length > 32
 		  
 		  If Self.SettingUp Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Document.Description = Self.SanitizeText(Trim(Me.Value), False)
+		  Self.Document.Description = Self.SanitizeText(Me.Value.Trim, False)
 		  Self.Document.Metadata.IsImplicit = False
 		  Self.Changed = True
 		  Self.SettingUp = False
@@ -592,7 +592,7 @@ End
 		  
 		  Dim AllChecked As Boolean = True
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Not Me.CellCheck(I, 0) Then
+		    If Not Me.CellCheckBoxValueAt(I, 0) Then
 		      AllChecked = False
 		      Exit For I
 		    End If
@@ -603,10 +603,10 @@ End
 		    Self.Changed = True
 		  Else
 		    For I As Integer = 0 To Me.RowCount - 1
-		      If Me.CellCheck(I, 0) Then
-		        Self.Document.Mods.Append(Beacon.ModDetails(Me.RowTag(I)).ModID)
+		      If Me.CellCheckBoxValueAt(I, 0) Then
+		        Self.Document.Mods.Append(Beacon.ModDetails(Me.RowTagAt(I)).ModID)
 		      Else
-		        Self.Document.Mods.Remove(Beacon.ModDetails(Me.RowTag(I)).ModID)
+		        Self.Document.Mods.Remove(Beacon.ModDetails(Me.RowTagAt(I)).ModID)
 		      End If
 		    Next
 		    Self.Changed = Self.Changed Or Self.Document.Mods.Modified
@@ -636,7 +636,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
@@ -644,7 +644,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="UseFocusRing"
@@ -652,7 +652,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackColor"
@@ -676,7 +676,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptTabs"
@@ -684,7 +684,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
@@ -692,7 +692,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -700,7 +700,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
@@ -708,7 +708,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"
@@ -716,7 +716,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackgroundColor"
@@ -740,7 +740,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowTabs"
@@ -748,7 +748,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Progress"
@@ -788,7 +788,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -796,7 +796,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"
@@ -892,7 +892,7 @@ End
 		Group="Position"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -900,7 +900,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"
@@ -908,7 +908,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -916,7 +916,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"
@@ -924,7 +924,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
@@ -932,6 +932,6 @@ End
 		Group="Windows Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

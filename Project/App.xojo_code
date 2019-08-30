@@ -9,7 +9,18 @@ Implements NotificationKit.Receiver
 	#tag EndEvent
 
 	#tag Event
-		Sub Close()
+		Function AppleEventReceived(theEvent As AppleEvent, eventClass As String, eventID As String) As Boolean
+		  If eventClass = "GURL" And eventID = "GURL" Then
+		    Dim URL As String = theEvent.StringParam("----")
+		    Return Self.HandleURL(URL)
+		  Else
+		    Return False
+		  End If
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub Closing()
 		  Try
 		    Self.UninstallTemporaryFont(Self.ResourcesFolder.Child("Fonts").Child("SourceCodePro").Child("SourceCodePro-Regular.otf"))
 		  Catch Err As RuntimeException
@@ -30,14 +41,10 @@ Implements NotificationKit.Receiver
 	#tag EndEvent
 
 	#tag Event
-		Function HandleAppleEvent(theEvent As AppleEvent, eventClass As String, eventID As String) As Boolean
-		  If eventClass = "GURL" And eventID = "GURL" Then
-		    Dim URL As String = theEvent.StringParam("----")
-		    Return Self.HandleURL(URL)
-		  Else
-		    Return False
-		  End If
-		End Function
+		Sub DocumentOpened(item As FolderItem)
+		  Self.OpenFile(Item, False)
+		  
+		End Sub
 	#tag EndEvent
 
 	#tag Event
@@ -55,12 +62,6 @@ Implements NotificationKit.Receiver
 		      Counter = Counter + 1
 		    End If
 		  Next
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub OpenDocument(item As FolderItem)
-		  Self.OpenFile(Item, False)
 		End Sub
 	#tag EndEvent
 
@@ -83,7 +84,7 @@ Implements NotificationKit.Receiver
 		        PushSocket.Poll
 		      Loop
 		      If PushSocket.IsConnected Then
-		        PushSocket.Write(System.CommandLine + Chr(0))
+		        PushSocket.Write(System.CommandLine + Encodings.UTF8.Chr(0))
 		        Do Until PushSocket.BytesLeftToSend = 0 Or Microseconds - StartTime > 5000000
 		          PushSocket.Poll
 		        Loop
@@ -326,7 +327,7 @@ Implements NotificationKit.Receiver
 		Private Sub CheckFolder(Folder As FolderItem)
 		  If Folder.Exists Then
 		    If Not Folder.IsFolder Then
-		      Folder.Delete
+		      Folder.Remove
 		      Folder.CreateAsFolder
 		    End If
 		  Else
@@ -376,7 +377,7 @@ Implements NotificationKit.Receiver
 		  Dim Args() As String
 		  
 		  BreakChar = " "
-		  For I As Integer = 0 To Data.Len - 1
+		  For I As Integer = 0 To Data.Length - 1
 		    Char = Data.Middle(I, 1)
 		    If Char = """" Then
 		      If BreakChar = " " Then
@@ -692,7 +693,7 @@ Implements NotificationKit.Receiver
 		  Self.mLogLock.Enter
 		  
 		  Dim Now As DateTime = DateTime.Now
-		  Dim DetailedMessage As String = Now.ToString(Locale.Raw) + Str(Now.Nanosecond / 1000000000, ".0000000000") + " " + Now.TimeZone.Abbreviation + Chr(9) + Message
+		  Dim DetailedMessage As String = Now.ToString(Locale.Raw) + Str(Now.Nanosecond / 1000000000, ".0000000000") + " " + Now.TimeZone.Abbreviation + Encodings.UTF8.Chr(9) + Message
 		  
 		  #if DebugBuild
 		    System.DebugLog(DetailedMessage)
@@ -727,13 +728,13 @@ Implements NotificationKit.Receiver
 		Private Sub mHandoffSocket_DataAvailable(Sender As IPCSocket)
 		  Do
 		    Dim Buffer As String = DefineEncoding(Sender.Lookahead, Encodings.UTF8)
-		    Dim Pos As Integer = Buffer.IndexOf(Chr(0))
+		    Dim Pos As Integer = Buffer.IndexOf(Encodings.UTF8.Chr(0))
 		    If Pos = -1 Then
 		      Exit
 		    End If
 		    
 		    Dim Command As String = DefineEncoding(Sender.Read(Pos), Encodings.UTF8)
-		    Command = Command.Left(Command.Len) // Drop the null byte
+		    Command = Command.Left(Command.Length) // Drop the null byte
 		    Self.Log("Received command line data: " + Command)
 		    Self.HandleCommandLineData(Command, False)
 		  Loop
@@ -893,7 +894,7 @@ Implements NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Sub RebuildRecentMenu()
 		  While FileOpenRecent.Count > 0
-		    FileOpenRecent.Remove(0)
+		    FileOpenRecent.RemoveMenuAt(0)
 		  Wend
 		  
 		  Dim Documents() As Beacon.DocumentURL = Preferences.RecentDocuments
@@ -901,20 +902,20 @@ Implements NotificationKit.Receiver
 		    Dim Item As New MenuItem(Document.Name)
 		    Item.Tag = Document
 		    Item.Enable
-		    AddHandler Item.Action, WeakAddressOf mOpenRecent_OpenFile
-		    FileOpenRecent.Append(Item)
+		    AddHandler Item.MenuItemSelected, WeakAddressOf mOpenRecent_OpenFile
+		    FileOpenRecent.AddMenu(Item)
 		  Next
 		  If Documents.LastRowIndex > -1 Then
-		    FileOpenRecent.Append(New MenuItem(MenuItem.TextSeparator))
+		    FileOpenRecent.AddMenu(New MenuItem(MenuItem.TextSeparator))
 		    
 		    Dim Item As New MenuItem("Clear Menu")
 		    Item.Enable
-		    AddHandler Item.Action, WeakAddressOf mOpenRecent_ClearMenu
-		    FileOpenRecent.Append(Item)
+		    AddHandler Item.MenuItemSelected, WeakAddressOf mOpenRecent_ClearMenu
+		    FileOpenRecent.AddMenu(Item)
 		  Else
 		    Dim Item As New MenuItem("No Items")
 		    Item.Enabled = False
-		    FileOpenRecent.Append(Item)
+		    FileOpenRecent.AddMenu(Item)
 		  End If
 		End Sub
 	#tag EndMethod

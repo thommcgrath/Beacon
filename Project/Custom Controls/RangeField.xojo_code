@@ -7,7 +7,7 @@ Inherits UITweaks.ResizedTextField
 		    Return True
 		  End If
 		  
-		  If Key = Chr(10) Or Key = Chr(13) Then
+		  If Key = Encodings.UTF8.Chr(10) Or Key = Encodings.UTF8.Chr(13) Then
 		    Self.CheckValue()
 		    Return True
 		  End If
@@ -217,9 +217,13 @@ Inherits UITweaks.ResizedTextField
 			Group="Font"
 			InitialValue="0"
 			Type="FontUnits"
-			EditorType="False"
+			EditorType="Enum"
 			#tag EnumValues
-				"Enum - "
+				"0 - Default"
+				"1 - Pixel"
+				"2 - Point"
+				"3 - Inch"
+				"4 - Millimeter"
 			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -236,7 +240,7 @@ Inherits UITweaks.ResizedTextField
 			Group="Initial State"
 			InitialValue=""
 			Type="String"
-			EditorType="False"
+			EditorType="MultiLineEditor"
 			#tag EnumValues
 				"MultiLineEditor - "
 			#tag EndEnumValues
@@ -426,7 +430,7 @@ Inherits UITweaks.ResizedTextField
 			Group="Appearance"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DataField"
@@ -474,7 +478,7 @@ Inherits UITweaks.ResizedTextField
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Italic"
@@ -530,7 +534,7 @@ Inherits UITweaks.ResizedTextField
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Password"
@@ -554,7 +558,7 @@ Inherits UITweaks.ResizedTextField
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabIndex"

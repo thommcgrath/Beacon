@@ -11,14 +11,14 @@ Protected Module UserCloud
 	#tag Method, Flags = &h21
 		Private Sub Callback_GetFile(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  Dim Th As New GetThread(Request, Response)
-		  Th.Run
+		  Th.Start
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_ListFiles(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  Dim Th As New ListThread(Request, Response)
-		  Th.Run
+		  Th.Start
 		End Sub
 	#tag EndMethod
 
@@ -34,7 +34,7 @@ Protected Module UserCloud
 		      Dim LocalFile As FolderItem = LocalFile(RemotePath)
 		      Try
 		        If LocalFile.Exists Then
-		          LocalFile.Delete
+		          LocalFile.Remove
 		        End If
 		      Catch Err As RuntimeException
 		      End Try
@@ -74,7 +74,7 @@ Protected Module UserCloud
 		  End If
 		  
 		  For I As Integer = Folder.Count DownTo 1
-		    Dim Child As FolderItem = Folder.Item(I)
+		    Dim Child As FolderItem = Folder.ChildAt(I)
 		    If Not Child.IsFolder Then
 		      Continue
 		    End If
@@ -82,7 +82,7 @@ Protected Module UserCloud
 		      CleanupEmptyFolders(Child)
 		    End If
 		    If Child.Count = 0 Then
-		      Child.Delete
+		      Child.Remove
 		    End If
 		  Next
 		End Sub
@@ -133,7 +133,7 @@ Protected Module UserCloud
 		  End If
 		  
 		  For I As Integer = 1 To Folder.Count
-		    Dim Child As FolderItem = Folder.Item(I)
+		    Dim Child As FolderItem = Folder.ChildAt(I)
 		    If Child.Name.BeginsWith(".") Then
 		      Continue
 		    End If

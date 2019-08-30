@@ -195,7 +195,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
+      SelectionRequired=   "False"
       SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   3
@@ -569,7 +569,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim SourceCost As Beacon.CraftingCost = Self.List.RowTag(Self.List.SelectedRowIndex)
+		  Dim SourceCost As Beacon.CraftingCost = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		  Config = Self.Config(True)
 		  
 		  Dim NewCosts() As Beacon.CraftingCost
@@ -593,7 +593,7 @@ End
 		      Continue
 		    End If
 		    
-		    Arr.Append(Self.List.RowTag(I))
+		    Arr.Append(Self.List.RowTagAt(I))
 		  Next
 		  Self.UpdateList(Arr)
 		End Sub
@@ -609,12 +609,12 @@ End
 		    ObjectIDs.Append(Item.ObjectID)
 		  Next
 		  
-		  Self.List.DeleteAllRows
+		  Self.List.RemoveAllRows
 		  Dim Config As BeaconConfigs.CraftingCosts = Self.Config(False)
 		  For I As Integer = 0 To Config.LastRowIndex
 		    Dim Cost As Beacon.CraftingCost = Config(I)
 		    Self.List.AddRow(If(Cost.Engram <> Nil, Cost.Engram.Label, "No Engram Selected"))
-		    Self.List.RowTag(Self.List.LastAddedRowIndex) = Cost
+		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Cost
 		    Self.List.Selected(Self.List.LastAddedRowIndex) = ObjectIDs.IndexOf(Cost.ObjectID) > -1
 		  Next
 		  
@@ -709,7 +709,7 @@ End
 	#tag Event
 		Sub SelectionChanged()
 		  If Me.SelectedRowCount = 1 Then
-		    Self.Editor.Target = Me.RowTag(Me.SelectedRowIndex)
+		    Self.Editor.Target = Me.RowTagAt(Me.SelectedRowIndex)
 		  Else
 		    Self.Editor.Target = Nil
 		  End If
@@ -737,7 +737,7 @@ End
 		  If Warn Then
 		    Dim Message As String
 		    If Me.SelectedRowCount = 1 Then
-		      Message = "Are you sure you want to delete the """ + Me.Cell(Me.SelectedRowIndex, 0) + """ crafting cost override?"
+		      Message = "Are you sure you want to delete the """ + Me.CellValueAt(Me.SelectedRowIndex, 0) + """ crafting cost override?"
 		    Else
 		      Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " crafting cost overrides?"
 		    End If
@@ -754,7 +754,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Cost As Beacon.CraftingCost = Me.RowTag(I)
+		    Dim Cost As Beacon.CraftingCost = Me.RowTagAt(I)
 		    Config.Remove(Cost)
 		  Next
 		  Self.UpdateList()
@@ -787,7 +787,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Cost As Beacon.CraftingCost = Me.RowTag(I)
+		    Dim Cost As Beacon.CraftingCost = Me.RowTagAt(I)
 		    Dicts.Append(Cost.Export)
 		  Next
 		  
@@ -821,7 +821,7 @@ End
 		      Self.UpdateList(Costs)
 		      Self.Changed = True
 		    Catch Err As RuntimeException
-		      Beep
+		      System.Beep
 		    End Try
 		    Return
 		  End If
@@ -829,7 +829,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function RowIsInvalid(Row As Integer) As Boolean
-		  Return Not Beacon.CraftingCost(Me.RowTag(Row)).IsValid
+		  Return Not Beacon.CraftingCost(Me.RowTagAt(Row)).IsValid
 		End Function
 	#tag EndEvent
 #tag EndEvents
@@ -837,7 +837,7 @@ End
 	#tag Event
 		Sub ContentsChanged()
 		  If Self.List.SelectedRowCount = 1 Then
-		    Self.List.Cell(Self.List.SelectedRowIndex, 0) = Me.Target.Label
+		    Self.List.CellValueAt(Self.List.SelectedRowIndex, 0) = Me.Target.Label
 		    Self.List.Sort
 		    Self.Changed = True
 		  End If
@@ -858,7 +858,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
@@ -866,7 +866,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="UseFocusRing"
@@ -874,7 +874,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackColor"
@@ -898,7 +898,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptTabs"
@@ -906,7 +906,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
@@ -914,7 +914,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -922,7 +922,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
@@ -930,7 +930,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"
@@ -938,7 +938,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackgroundColor"
@@ -962,7 +962,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowTabs"
@@ -970,7 +970,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Progress"
@@ -1010,7 +1010,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -1018,7 +1018,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"
@@ -1114,7 +1114,7 @@ End
 		Group="Position"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -1122,7 +1122,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"
@@ -1130,7 +1130,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1138,7 +1138,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"
@@ -1146,7 +1146,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
@@ -1154,6 +1154,6 @@ End
 		Group="Windows Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

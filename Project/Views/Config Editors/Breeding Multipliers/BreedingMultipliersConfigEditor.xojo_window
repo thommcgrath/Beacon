@@ -1795,10 +1795,10 @@ End
 		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.StringList)
 		  Dim SelectedClass As String
 		  If CreaturesList.SelectedRowIndex > -1 Then
-		    SelectedClass = CreaturesList.RowTag(CreaturesList.SelectedRowIndex)
+		    SelectedClass = CreaturesList.RowTagAt(CreaturesList.SelectedRowIndex)
 		  End If
 		  Dim Position As Integer = Self.CreaturesList.ScrollPosition
-		  Self.CreaturesList.DeleteAllRows
+		  Self.CreaturesList.RemoveAllRows
 		  
 		  Dim IncubationMultiplier As Double = Self.Config(False).EggHatchSpeedMultiplier
 		  Dim MatureMultiplier As Double = Self.Config(False).BabyMatureSpeedMultiplier
@@ -1824,9 +1824,9 @@ End
 		    MaturePeriod = Beacon.SecondsToInterval(MatureSeconds)
 		    
 		    CreaturesList.AddRow(Creature.Label, Beacon.IntervalToString(IncubationPeriod), Beacon.IntervalToString(MaturePeriod), If(MaxCuddles = 0, "Can't Imprint", Format(PerCuddle, "0%")), If(PerCuddle = 0, "", Format(MaxImprint, "0%")))
-		    CreaturesList.CellTag(CreaturesList.LastAddedRowIndex, Self.ColumnIncubationTime) = IncubationSeconds
-		    CreaturesList.CellTag(CreaturesList.LastAddedRowIndex, Self.ColumnMatureTime) = MatureSeconds
-		    CreaturesList.RowTag(CreaturesList.LastAddedRowIndex) = Creature.ClassString
+		    CreaturesList.CellTagAt(CreaturesList.LastAddedRowIndex, Self.ColumnIncubationTime) = IncubationSeconds
+		    CreaturesList.CellTagAt(CreaturesList.LastAddedRowIndex, Self.ColumnMatureTime) = MatureSeconds
+		    CreaturesList.RowTagAt(CreaturesList.LastAddedRowIndex) = Creature.ClassString
 		    If Creature.ClassString = SelectedClass Then
 		      CreaturesList.SelectedRowIndex = CreaturesList.LastAddedRowIndex
 		    End If
@@ -2022,8 +2022,8 @@ End
 	#tag Event
 		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  If Column = Self.ColumnIncubationTime Or Column = Self.ColumnMatureTime Then
-		    Dim Period1 As UInt64 = Me.CellTag(Row1, Column)
-		    Dim Period2 As UInt64 = Me.CellTag(Row2, Column)
+		    Dim Period1 As UInt64 = Me.CellTagAt(Row1, Column)
+		    Dim Period2 As UInt64 = Me.CellTagAt(Row2, Column)
 		    If Period1 = Period2 Then
 		      Result = 0
 		    ElseIf Period1 > Period2 Then
@@ -2102,7 +2102,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
@@ -2110,7 +2110,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="UseFocusRing"
@@ -2118,7 +2118,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackColor"
@@ -2142,7 +2142,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptTabs"
@@ -2150,7 +2150,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
@@ -2158,7 +2158,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -2166,7 +2166,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
@@ -2174,7 +2174,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"
@@ -2182,7 +2182,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackgroundColor"
@@ -2206,7 +2206,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowTabs"
@@ -2214,7 +2214,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Progress"
@@ -2254,7 +2254,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -2262,7 +2262,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"
@@ -2358,7 +2358,7 @@ End
 		Group="Position"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -2366,7 +2366,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"
@@ -2374,7 +2374,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -2382,7 +2382,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"
@@ -2390,7 +2390,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
@@ -2398,6 +2398,6 @@ End
 		Group="Windows Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

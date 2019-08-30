@@ -8,16 +8,16 @@ Inherits Window
 		  If Self.mWindowMenuItem <> Nil Then
 		    Dim WindowMenu As MenuItem = MainMenuBar.Child("WindowMenu")
 		    For I As Integer = WindowMenu.Count - 1 DownTo 0
-		      If WindowMenu.Item(I) = Self.mWindowMenuItem Then
-		        WindowMenu.Remove(I)
-		        If WindowMenu.Item(WindowMenu.Count - 1) = MainMenuBar.Child("WindowMenu").Child("UntitledSeparator4") Then
+		      If WindowMenu.MenuAt(I) = Self.mWindowMenuItem Then
+		        WindowMenu.RemoveMenuAt(I)
+		        If WindowMenu.MenuAt(WindowMenu.Count - 1) = MainMenuBar.Child("WindowMenu").Child("UntitledSeparator4") Then
 		          MainMenuBar.Child("WindowMenu").Child("UntitledSeparator4").Visible = False
 		        End If
 		        Exit For I
 		      End If
 		    Next
 		    
-		    RemoveHandler Self.mWindowMenuItem.Action, WeakAddressOf Self.mWindowMenuItem_Action
+		    RemoveHandler Self.mWindowMenuItem.MenuItemSelected, WeakAddressOf Self.mWindowMenuItem_Action
 		    Self.mWindowMenuItem = Nil
 		  End If
 		End Sub
@@ -59,13 +59,13 @@ Inherits Window
 		  Self.Width = InitialWidth
 		  
 		  Dim MenuItem As New MenuItem(Self.Title)
-		  AddHandler MenuItem.Action, WeakAddressOf Self.mWindowMenuItem_Action
+		  AddHandler MenuItem.MenuItemSelected, WeakAddressOf Self.mWindowMenuItem_Action
 		  
 		  If MenuItem <> Nil Then
 		    Self.mWindowMenuItem = MenuItem
 		    
 		    MainMenuBar.Child("WindowMenu").Child("UntitledSeparator3").Visible = True
-		    MainMenuBar.Child("WindowMenu").Append(MenuItem)
+		    MainMenuBar.Child("WindowMenu").AddMenu(MenuItem)
 		  End If
 		  
 		  RaiseEvent Opening
@@ -241,7 +241,7 @@ Inherits Window
 			Group="Frame"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Resizeable"
@@ -249,7 +249,7 @@ Inherits Window
 			Group="Frame"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MaximizeButton"
@@ -257,7 +257,7 @@ Inherits Window
 			Group="Frame"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MinimizeButton"
@@ -265,7 +265,7 @@ Inherits Window
 			Group="Frame"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="FullScreenButton"
@@ -273,7 +273,7 @@ Inherits Window
 			Group="Frame"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Placement"
@@ -312,7 +312,7 @@ Inherits Window
 			Group="Deprecated"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MinimumWidth"
@@ -373,7 +373,7 @@ Inherits Window
 			Group="Frame"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Resizable"
@@ -381,7 +381,7 @@ Inherits Window
 			Group="Frame"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasMaximizeButton"
@@ -389,7 +389,7 @@ Inherits Window
 			Group="Frame"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasMinimizeButton"
@@ -397,7 +397,7 @@ Inherits Window
 			Group="Frame"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasFullScreenButton"
@@ -405,7 +405,7 @@ Inherits Window
 			Group="Frame"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DefaultLocation"
@@ -444,7 +444,7 @@ Inherits Window
 			Group="Background"
 			InitialValue=""
 			Type="Picture"
-			EditorType="Picture"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Composite"
@@ -460,7 +460,7 @@ Inherits Window
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Height"
@@ -476,7 +476,7 @@ Inherits Window
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Interfaces"
@@ -484,7 +484,7 @@ Inherits Window
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MacProcID"
@@ -500,7 +500,7 @@ Inherits Window
 			Group="Menus"
 			InitialValue=""
 			Type="MenuBar"
-			EditorType="MenuBar"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -508,7 +508,7 @@ Inherits Window
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -516,7 +516,7 @@ Inherits Window
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Title"
@@ -532,7 +532,7 @@ Inherits Window
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Width"

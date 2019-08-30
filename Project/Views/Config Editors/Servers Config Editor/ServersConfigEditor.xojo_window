@@ -87,7 +87,7 @@ Begin ConfigEditor ServersConfigEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
+      SelectionRequired=   "False"
       SelectionType   =   "0"
       ShowDropIndicator=   False
       TabIndex        =   3
@@ -218,7 +218,7 @@ End
 		    Dim Profile As Beacon.ServerProfile = Self.Document.ServerProfile(I)
 		    
 		    Self.ServerList.AddRow(Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName)
-		    Self.ServerList.RowTag(Self.ServerList.LastAddedRowIndex) = Profile
+		    Self.ServerList.RowTagAt(Self.ServerList.LastAddedRowIndex) = Profile
 		  Next
 		End Sub
 	#tag EndEvent
@@ -236,7 +236,7 @@ End
 		  Dim SelectedProfiles() As Beacon.ServerProfile
 		  For I As Integer = 0 To Self.ServerList.RowCount - 1
 		    If Self.ServerList.Selected(I) Then
-		      SelectedProfiles.Append(Self.ServerList.RowTag(I))
+		      SelectedProfiles.Append(Self.ServerList.RowTagAt(I))
 		    End If
 		  Next
 		  
@@ -255,8 +255,8 @@ End
 		      End If
 		    Next
 		    
-		    Self.ServerList.RowTag(I) = Profile
-		    Self.ServerList.Cell(I, 0) = Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
+		    Self.ServerList.RowTagAt(I) = Profile
+		    Self.ServerList.CellValueAt(I, 0) = Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
 		    Self.ServerList.Selected(I) = Selected
 		  Next
 		End Sub
@@ -281,10 +281,10 @@ End
 		  Self.Changed = Sender.Changed
 		  
 		  For I As Integer = 0 To Self.ServerList.RowCount - 1
-		    Dim Profile As Beacon.ServerProfile = Self.ServerList.RowTag(I)
+		    Dim Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(I)
 		    Dim Status As String = Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
-		    If Self.ServerList.Cell(I, 0) <> Status Then
-		      Self.ServerList.Cell(I, 0) = Status
+		    If Self.ServerList.CellValueAt(I, 0) <> Status Then
+		      Self.ServerList.CellValueAt(I, 0) = Status
 		    End If
 		  Next
 		End Sub
@@ -351,7 +351,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Profile As Beacon.ServerProfile = Me.RowTag(Me.SelectedRowIndex)
+		  Dim Profile As Beacon.ServerProfile = Me.RowTagAt(Me.SelectedRowIndex)
 		  Dim ProfileID As String = Profile.ProfileID
 		  If Not Self.mViews.HasKey(ProfileID) Then
 		    // Create the view
@@ -395,7 +395,7 @@ End
 		  
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Dim Profile As Beacon.ServerProfile = Me.RowTag(I)
+		      Dim Profile As Beacon.ServerProfile = Me.RowTagAt(I)
 		      If Self.mViews.HasKey(Profile.ProfileID) Then
 		        If Self.CurrentProfileID = Profile.ProfileID Then
 		          Self.CurrentProfileID = ""
@@ -407,7 +407,7 @@ End
 		      End If
 		      Self.Document.Remove(Profile)
 		      Self.Changed = True
-		      Me.RemoveRow(I)
+		      Me.RemoveRowAt(I)
 		    End If
 		  Next
 		End Sub
@@ -416,27 +416,27 @@ End
 		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
 		  Dim CopyProfileMenuItem As New MenuItem("Copy Profile ID")
 		  CopyProfileMenuItem.Enabled = False
-		  Base.Append(CopyProfileMenuItem)
+		  Base.AddMenu(CopyProfileMenuItem)
 		  
 		  Dim BackupsRoot As FolderItem = App.ApplicationSupport.Child("Backups")
 		  
 		  Dim RowIndex As Integer = Me.RowFromXY(X, Y)
 		  If RowIndex = -1 Then
-		    Base.Append(New MenuItem("Show Config Backups", BackupsRoot))
+		    Base.AddMenu(New MenuItem("Show Config Backups", BackupsRoot))
 		    Return True
 		  End If
 		  
 		  Try
-		    Dim Profile As Beacon.ServerProfile = Me.RowTag(RowIndex)
+		    Dim Profile As Beacon.ServerProfile = Me.RowTagAt(RowIndex)
 		    CopyProfileMenuItem.Tag = Profile.ProfileID.Left(8)
 		    CopyProfileMenuItem.Enabled = True
 		    
 		    Dim Folder As FolderItem = BackupsRoot.Child(Beacon.SanitizeFilename(Profile.Name))
-		    Base.Append(New MenuItem("Show Config Backups", Folder))
+		    Base.AddMenu(New MenuItem("Show Config Backups", Folder))
 		  Catch Err As RuntimeException
 		    Dim Item As New MenuItem("Show Config Backups", BackupsRoot)
 		    Item.Enabled = False
-		    Base.Append(Item)
+		    Base.AddMenu(Item)
 		  End Try
 		  
 		  Return True
@@ -471,7 +471,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
@@ -479,7 +479,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="UseFocusRing"
@@ -487,7 +487,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackColor"
@@ -511,7 +511,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptTabs"
@@ -519,7 +519,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
@@ -527,7 +527,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -535,7 +535,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
@@ -543,7 +543,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"
@@ -551,7 +551,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackgroundColor"
@@ -575,7 +575,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowTabs"
@@ -583,7 +583,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Progress"
@@ -623,7 +623,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -631,7 +631,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"
@@ -727,7 +727,7 @@ End
 		Group="Position"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -735,7 +735,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"
@@ -743,7 +743,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -751,7 +751,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"
@@ -759,7 +759,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
@@ -767,7 +767,7 @@ End
 		Group="Windows Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="CurrentProfileID"

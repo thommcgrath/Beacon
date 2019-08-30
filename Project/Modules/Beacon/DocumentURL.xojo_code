@@ -8,7 +8,7 @@ Protected Class DocumentURL
 		      // Try as Xojo SaveInfo
 		      Try
 		        Dim StringValue As String = URL
-		        Dim File As FolderItem = Volume(0).GetRelative(DecodeBase64(StringValue))
+		        Dim File As FolderItem = FolderItem.DriveAt(0).FromSaveInfo(DecodeBase64(StringValue))
 		        If File <> Nil Then
 		          URL = URLForFile(New BookmarkedFolderItem(File))
 		          Pos = URL.IndexOf("://")

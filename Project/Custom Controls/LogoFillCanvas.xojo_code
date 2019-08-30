@@ -18,11 +18,11 @@ Inherits ControlCanvas
 		  
 		  Dim CaptionTop As Integer = LogoTop + LogoMask.Height + 8
 		  Dim CaptionBase As Integer = CaptionTop + G.CapHeight
-		  Dim CaptionWidth As Integer = Min(Ceil(G.StringWidth(Self.mCaption)), G.Width - 40)
+		  Dim CaptionWidth As Integer = Min(Ceil(G.TextWidth(Self.mCaption)), G.Width - 40)
 		  Dim CaptionLeft As Integer = (G.Width - CaptionWidth) / 2
 		  
 		  G.DrawingColor = ForeColor
-		  G.DrawString(Self.mCaption, CaptionLeft, CaptionBase, CaptionWidth, False)
+		  G.DrawText(Self.mCaption, CaptionLeft, CaptionBase, CaptionWidth, False)
 		End Sub
 	#tag EndEvent
 
@@ -144,7 +144,7 @@ Inherits ControlCanvas
 			Group="Appearance"
 			InitialValue=""
 			Type="Picture"
-			EditorType="Picture"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Caption"
@@ -176,7 +176,7 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="InitialParent"
@@ -232,7 +232,7 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ScrollSpeed"
@@ -248,7 +248,7 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabIndex"
@@ -288,7 +288,7 @@ Inherits ControlCanvas
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Visible"

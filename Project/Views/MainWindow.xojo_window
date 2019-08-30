@@ -785,22 +785,22 @@ End
 		  #Pragma Unused Areas
 		  
 		  G.DrawingColor = SystemColors.SelectedContentBackgroundColor
-		  G.FillRect(0, 0, G.Width, G.Height)
+		  G.FillRectangle(0, 0, G.Width, G.Height)
 		  G.DrawingColor = SystemColors.SeparatorColor
-		  G.FillRect(0, G.Height - 1, G.Width, 1)
+		  G.FillRectangle(0, G.Height - 1, G.Width, 1)
 		  
 		  Dim Caption As String = Self.mUpdateText
 		  Dim MaxCaptionWidth As Integer = G.Width - 40
-		  Dim CaptionWidth As Integer = Min(Ceil(G.StringWidth(Caption)), MaxCaptionWidth)
+		  Dim CaptionWidth As Integer = Min(Ceil(G.TextWidth(Caption)), MaxCaptionWidth)
 		  Dim CaptionLeft As Integer = Round((G.Width - CaptionWidth) / 2)
 		  Dim CaptionBaseline As Double = ((G.Height - 1) / 2) + (G.CapHeight / 2)
 		  
 		  G.DrawingColor = SystemColors.AlternateSelectedControlTextColor
-		  G.DrawString(Caption, CaptionLeft, CaptionBaseline, MaxCaptionWidth, True)
+		  G.DrawText(Caption, CaptionLeft, CaptionBaseline, MaxCaptionWidth, True)
 		  
 		  If Self.mUpdateBarPressed Then
 		    G.DrawingColor = &c00000080
-		    G.FillRect(0, 0, G.Width, G.Height)
+		    G.FillRectangle(0, 0, G.Width, G.Height)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -853,7 +853,7 @@ End
 		  End If
 		  
 		  G.DrawingColor = SystemColors.ShadowColor.AtOpacity(Self.mOverlayFillOpacity)
-		  G.FillRect(0, 0, G.Width, G.Height)
+		  G.FillRectangle(0, 0, G.Width, G.Height)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -984,7 +984,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizeable"
@@ -992,7 +992,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MaximizeButton"
@@ -1000,7 +1000,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimizeButton"
@@ -1008,7 +1008,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="FullScreenButton"
@@ -1016,7 +1016,7 @@ End
 		Group="Frame"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Placement"
@@ -1055,7 +1055,7 @@ End
 		Group="Deprecated"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -1116,7 +1116,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizable"
@@ -1124,7 +1124,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasMaximizeButton"
@@ -1132,7 +1132,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasMinimizeButton"
@@ -1140,7 +1140,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasFullScreenButton"
@@ -1148,7 +1148,7 @@ End
 		Group="Frame"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DefaultLocation"
@@ -1187,7 +1187,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Composite"
@@ -1203,7 +1203,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -1219,7 +1219,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Interfaces"
@@ -1227,7 +1227,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MacProcID"
@@ -1243,7 +1243,7 @@ End
 		Group="Menus"
 		InitialValue=""
 		Type="MenuBar"
-		EditorType="MenuBar"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -1251,7 +1251,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -1259,7 +1259,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Title"
@@ -1275,7 +1275,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"

@@ -214,7 +214,7 @@ End
 		  G.FontName = "System"
 		  G.FontSize = FontSizePoints
 		  Dim TitleCapHeight As Double = G.CapHeight
-		  Dim TitleWidth As Integer = Ceil(G.StringWidth(Title))
+		  Dim TitleWidth As Integer = Ceil(G.TextWidth(Title))
 		  
 		  G.FontSize = SmallFontSizePoints
 		  Dim TypeCapHeight As Double = G.CapHeight
@@ -222,12 +222,12 @@ End
 		  Dim RectHeight As Integer = ((Self.ResultPadding + 1) * 2) + Max(TitleCapHeight, TypeCapHeight)
 		  Dim MaxTextWidth As Integer = G.Width - ((Self.ResultSpacing + Self.ResultPadding + 1) * 2)
 		  If Summary <> "" Then
-		    RectHeight = RectHeight + Self.ResultPadding + G.StringHeight(Summary, MaxTextWidth)
+		    RectHeight = RectHeight + Self.ResultPadding + G.TextHeight(Summary, MaxTextWidth)
 		  End If
 		  
 		  Dim Rect As New REALbasic.Rect(Self.ResultSpacing, Top, G.Width - (Self.ResultSpacing * 2), RectHeight)
 		  Dim TitleLeft As Integer = Rect.Left + 1 + Self.ResultPadding
-		  Dim TypeWidth As Integer = Ceil(G.StringWidth(Type)) + 8
+		  Dim TypeWidth As Integer = Ceil(G.TextWidth(Type)) + 8
 		  Dim TypeLeft As Integer = Min(TitleLeft + TitleWidth + Self.ResultPadding, (TitleLeft + MaxTextWidth) - TypeWidth)
 		  Dim TitleBaseline As Integer = Rect.Top + 1 + Self.ResultPadding + TitleCapHeight
 		  Dim TypeTop As Integer = TitleBaseline - (TypeCapHeight + 5)
@@ -255,21 +255,21 @@ End
 		  End If
 		  
 		  G.DrawingColor = BackgroundColor
-		  G.FillRoundRect(Rect.Left, Rect.Top, Rect.Width, Rect.Height, 12, 12)
+		  G.FillRoundRectangle(Rect.Left, Rect.Top, Rect.Width, Rect.Height, 12, 12)
 		  G.DrawingColor = TypeFrameColor
-		  G.FillRoundRect(TypeLeft, TypeTop, TypeWidth, TypeHeight, 6, 6)
+		  G.FillRoundRectangle(TypeLeft, TypeTop, TypeWidth, TypeHeight, 6, 6)
 		  G.FontSize = FontSizePoints
 		  G.DrawingColor = LinkColor
 		  G.Underline = True
-		  G.DrawString(Title, Rect.Left + 1 + Self.ResultPadding, TitleBaseline, TitleMaxWidth, True)
+		  G.DrawText(Title, Rect.Left + 1 + Self.ResultPadding, TitleBaseline, TitleMaxWidth, True)
 		  G.FontSize = SmallFontSizePoints
 		  G.Underline = False
 		  If Summary <> "" Then
 		    G.DrawingColor = SummaryColor
-		    G.DrawString(Summary, Rect.Left + 1 + Self.ResultPadding, TitlebaseLine + 4 + Self.ResultPadding + TypeCapHeight, MaxTextWidth, False)
+		    G.DrawText(Summary, Rect.Left + 1 + Self.ResultPadding, TitlebaseLine + 4 + Self.ResultPadding + TypeCapHeight, MaxTextWidth, False)
 		  End If
 		  G.DrawingColor = TypeTextColor
-		  G.DrawString(Type, TypeLeft + 4, TitleBaseline)
+		  G.DrawText(Type, TypeLeft + 4, TitleBaseline)
 		  
 		  Return Rect
 		End Function
@@ -430,13 +430,13 @@ End
 		    If Self.mSearchTerms = "" Then
 		      G.FontName = "System"
 		      G.FontSize = 0
-		      G.DrawString(Self.StringSearchHelp, 10, 20 + G.CapHeight, G.Width - 20, False)
+		      G.DrawText(Self.StringSearchHelp, 10, 20 + G.CapHeight, G.Width - 20, False)
 		    Else
 		      G.Bold = True
-		      Dim CaptionWidth As Integer = Ceil(G.StringWidth(Self.StringNoResults))
+		      Dim CaptionWidth As Integer = Ceil(G.TextWidth(Self.StringNoResults))
 		      Dim CaptionLeft As Integer = (G.Width - CaptionWidth) / 2
 		      Dim CaptionBaseline As Integer = (G.Height / 2) + (G.CapHeight / 2)
-		      G.DrawString(Self.StringNoResults, CaptionLeft, CaptionBaseline, G.Width - 20, True)
+		      G.DrawText(Self.StringNoResults, CaptionLeft, CaptionBaseline, G.Width - 20, True)
 		    End If
 		    Return
 		  End If
@@ -530,7 +530,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="UseFocusRing"
@@ -538,7 +538,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackColor"
@@ -562,7 +562,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptTabs"
@@ -570,7 +570,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
@@ -578,7 +578,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
@@ -586,7 +586,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -594,7 +594,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
@@ -602,7 +602,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"
@@ -610,7 +610,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackgroundColor"
@@ -634,7 +634,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowTabs"
@@ -642,7 +642,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Progress"
@@ -674,7 +674,7 @@ End
 		Group="Windows Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -682,7 +682,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"
@@ -690,7 +690,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -754,7 +754,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -762,7 +762,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -786,7 +786,7 @@ End
 		Group="Position"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
@@ -810,7 +810,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -818,7 +818,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"

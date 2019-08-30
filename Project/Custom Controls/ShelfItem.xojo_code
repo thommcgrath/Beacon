@@ -184,7 +184,7 @@ Implements ObservationKit.Observable
 			Set
 			  If Self.mNotificationColor <> Value Then
 			    Self.mNotificationColor = Value
-			    Self.mLastPulseTime = Microseconds - (Self.PulseTimeout * 1000) // To trigger a pulse immediately
+			    Self.mLastPulseTime = System.Microseconds - (Self.PulseTimeout * 1000) // To trigger a pulse immediately
 			    If Value = ShelfItem.NotificationColors.None And Self.mPulseTimer <> Nil Then
 			      RemoveHandler mPulseTimer.Run, WeakAddressOf mPulseTimer_Run
 			      Self.mPulseTimer = Nil
@@ -204,14 +204,14 @@ Implements ObservationKit.Observable
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If Microseconds - Self.mLastPulseTime < Self.PulseTimeout * 1000 Then
+			  If System.Microseconds - Self.mLastPulseTime < Self.PulseTimeout * 1000 Then
 			    Return 0
 			  End If
 			  
-			  Dim Elapsed As Double = (Microseconds - Self.mLastPulseTime) - (Self.PulseTimeout * 1000)
+			  Dim Elapsed As Double = (System.Microseconds - Self.mLastPulseTime) - (Self.PulseTimeout * 1000)
 			  Dim Amount As Double = Elapsed / (Self.PulseDuration * 1000)
 			  If Amount >= 1.0 Then
-			    Self.mLastPulseTime = Microseconds
+			    Self.mLastPulseTime = System.Microseconds
 			  End If
 			  Return Max(Min(Amount, 1.0), 0.0)
 			End Get

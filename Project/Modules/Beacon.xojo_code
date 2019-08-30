@@ -507,7 +507,7 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function HardwareID() As String
 		  #if TargetDesktop
-		    Dim Root As Global.FolderItem = Volume(0)
+		    Dim Root As Global.FolderItem = FolderItem.DriveAt(0)
 		    If Root = Nil Or Root.Exists = False Then
 		      // What the hell is this?
 		      Return ""
@@ -596,7 +596,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function LabelFromClassString(ClassString As String) As String
-		  Dim Parts() As String = Split(ClassString, "_")
+		  Dim Parts() As String = ClassString.Split("_")
 		  If Parts.LastRowIndex <= 1 Then
 		    Return ClassString
 		  End If
@@ -725,13 +725,13 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 		Function PrimaryExtension(Extends Type As FileType) As String
-		  Dim Extensions() As String = Split(Type.Extensions, ";")
+		  Dim Extensions() As String = Type.Extensions.Split(";")
 		  If Extensions.LastRowIndex = -1 Then
 		    Return ""
 		  End If
 		  
 		  Dim Extension As String = Extensions(0)
-		  If Left(Extension, 1) <> "." Then
+		  If Extension.Left(1) <> "." Then
 		    Extension = "." + Extension
 		  End If
 		  

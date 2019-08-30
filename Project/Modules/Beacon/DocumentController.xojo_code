@@ -47,7 +47,7 @@ Protected Class DocumentController
 		  Self.mActiveThread = New Thread
 		  Self.mActiveThread.Priority = 10
 		  AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Delete
-		  Self.mActiveThread.Run
+		  Self.mActiveThread.Start
 		End Sub
 	#tag EndMethod
 
@@ -105,7 +105,7 @@ Protected Class DocumentController
 		  
 		  Self.mActiveThread = New Thread
 		  AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Load
-		  Self.mActiveThread.Run
+		  Self.mActiveThread.Start
 		  
 		  Self.mLoadStartedCallbackKey = CallLater.Schedule(1500, WeakAddressOf TriggerLoadStarted)
 		End Sub
@@ -191,7 +191,7 @@ Protected Class DocumentController
 		  Case Beacon.DocumentURL.TypeLocal
 		    Try
 		      If Self.mFileRef <> Nil And Self.mFileRef.Exists Then
-		        Self.mFileRef.Delete
+		        Self.mFileRef.Remove
 		      End If
 		      Call CallLater.Schedule(0, AddressOf TriggerDeleteSuccess)
 		    Catch Err As RuntimeException
@@ -440,11 +440,11 @@ Protected Class DocumentController
 		    Self.mActiveThread = New Thread
 		    Self.mActiveThread.Priority = 1
 		    AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Upload
-		    Self.mActiveThread.Run
+		    Self.mActiveThread.Start
 		  Case Beacon.DocumentURL.TypeLocal
 		    Dim Writer As New Beacon.JSONWriter(Self.mDocument, Self.mIdentity, Destination.File)
 		    AddHandler Writer.Finished, AddressOf Writer_Finished
-		    Writer.Run
+		    Writer.Start
 		  End Select
 		End Sub
 	#tag EndMethod

@@ -137,7 +137,7 @@ Begin BeaconDialog DocumentMergerWindow
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
+      SelectionRequired=   "False"
       SelectionType   =   "0"
       ShowDropIndicator=   False
       TabIndex        =   1
@@ -301,9 +301,9 @@ End
 		        CellContent = CellContent + EndOfLine + "This imported config is not perfect. Beacon will make a close approximation."
 		      End If
 		      Win.List.AddRow("", CellContent)
-		      Win.List.CellCheck(Win.List.LastAddedRowIndex, 0) = UsePrefixes = False And Config.DefaultImported And (CurrentConfig = Nil Or CurrentConfig.IsImplicit)
-		      Win.List.RowTag(Win.List.LastAddedRowIndex) = Config
-		      Enabled = Enabled Or Win.List.CellCheck(Win.List.LastAddedRowIndex, 0)
+		      Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0) = UsePrefixes = False And Config.DefaultImported And (CurrentConfig = Nil Or CurrentConfig.IsImplicit)
+		      Win.List.RowTagAt(Win.List.LastAddedRowIndex) = Config
+		      Enabled = Enabled Or Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0)
 		    Next
 		    For I As Integer = 0 To Document.ServerProfileCount - 1
 		      For X As Integer = 0 To DestinationDocument.ServerProfileCount - 1
@@ -312,22 +312,22 @@ End
 		        End If
 		      Next
 		      Win.List.AddRow("", "Server Link: " + Document.ServerProfile(I).Name)
-		      Win.List.CellCheck(Win.List.LastAddedRowIndex, 0) = True
-		      Win.List.RowTag(Win.List.LastAddedRowIndex) = Document.ServerProfile(I)
-		      Enabled = Enabled Or Win.List.CellCheck(Win.List.LastAddedRowIndex, 0)
+		      Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0) = True
+		      Win.List.RowTagAt(Win.List.LastAddedRowIndex) = Document.ServerProfile(I)
+		      Enabled = Enabled Or Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0)
 		    Next
 		  Next
 		  For Each Map As Beacon.Map In NewMaps
 		    Win.List.AddRow("", "Add Map: " + Map.Name)
-		    Win.List.CellCheck(Win.List.LastAddedRowIndex, 0) = True
-		    Win.List.RowTag(Win.List.LastAddedRowIndex) = "Map+" + Str(Map.Mask)
-		    Enabled = Enabled Or Win.List.CellCheck(Win.List.LastAddedRowIndex, 0)
+		    Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0) = True
+		    Win.List.RowTagAt(Win.List.LastAddedRowIndex) = "Map+" + Str(Map.Mask)
+		    Enabled = Enabled Or Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0)
 		  Next
 		  For Each Map As Beacon.Map In OldMaps
 		    Win.List.AddRow("", "Remove Map: " + Map.Name)
-		    Win.List.CellCheck(Win.List.LastAddedRowIndex, 0) = True
-		    Win.List.RowTag(Win.List.LastAddedRowIndex) = "Map-" + Str(Map.Mask)
-		    Enabled = Enabled Or Win.List.CellCheck(Win.List.LastAddedRowIndex, 0)
+		    Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0) = True
+		    Win.List.RowTagAt(Win.List.LastAddedRowIndex) = "Map-" + Str(Map.Mask)
+		    Enabled = Enabled Or Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0)
 		  Next
 		  Win.ActionButton.Enabled = Enabled
 		  
@@ -374,7 +374,7 @@ End
 		  #Pragma Unused Column
 		  
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Me.CellCheck(I, 0) Then
+		    If Me.CellCheckBoxValueAt(I, 0) Then
 		      Self.ActionButton.Enabled = True
 		      Return
 		    End If
@@ -390,11 +390,11 @@ End
 		  Dim PreviousMods As New Beacon.StringList(Self.mDestination.Mods)
 		  
 		  For I As Integer = 0 To Self.List.RowCount - 1
-		    If Not Self.List.CellCheck(I, 0) Or Self.List.RowTag(I) = Nil Then
+		    If Not Self.List.CellCheckBoxValueAt(I, 0) Or Self.List.RowTagAt(I) = Nil Then
 		      Continue
 		    End If
 		    
-		    Dim Tag As Variant = Self.List.RowTag(I)
+		    Dim Tag As Variant = Self.List.RowTagAt(I)
 		    Select Case Tag.Type
 		    Case Variant.TypeObject
 		      Select Case Tag
@@ -508,7 +508,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizeable"
@@ -516,7 +516,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MaximizeButton"
@@ -524,7 +524,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimizeButton"
@@ -532,7 +532,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="FullScreenButton"
@@ -540,7 +540,7 @@ End
 		Group="Frame"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Placement"
@@ -579,7 +579,7 @@ End
 		Group="Deprecated"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -640,7 +640,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizable"
@@ -648,7 +648,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasMaximizeButton"
@@ -656,7 +656,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasMinimizeButton"
@@ -664,7 +664,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasFullScreenButton"
@@ -672,7 +672,7 @@ End
 		Group="Frame"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DefaultLocation"
@@ -711,7 +711,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Interfaces"
@@ -719,7 +719,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -727,7 +727,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"
@@ -775,7 +775,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -783,7 +783,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="FullScreen"
@@ -791,7 +791,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -799,7 +799,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MenuBar"
@@ -807,6 +807,6 @@ End
 		Group="Menus"
 		InitialValue=""
 		Type="MenuBar"
-		EditorType="MenuBar"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

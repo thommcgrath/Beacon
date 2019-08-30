@@ -106,6 +106,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -236,7 +237,7 @@ End
 		  Dim AutosaveFolder As FolderItem = App.AutosaveFolder()
 		  If AutosaveFolder <> Nil Then
 		    For I As Integer = 1 To AutosaveFolder.Count
-		      Dim File As BookmarkedFolderItem = New BookmarkedFolderItem(AutosaveFolder.Item(I))
+		      Dim File As BookmarkedFolderItem = New BookmarkedFolderItem(AutosaveFolder.ChildAt(I))
 		      If Not File.Name.EndsWith(BeaconFileTypes.BeaconDocument.PrimaryExtension) Then
 		        Continue
 		      End If
@@ -331,8 +332,8 @@ End
 		  Dim URL As Beacon.DocumentURL = Sender.URL
 		  
 		  For I As Integer = Self.List.RowCount - 1 DownTo 0
-		    If Self.List.RowTag(I) = URL Then
-		      Self.List.RemoveRow(I)
+		    If Self.List.RowTagAt(I) = URL Then
+		      Self.List.RemoveRowAt(I)
 		    End If
 		  Next
 		  
@@ -531,7 +532,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub SelectDocument(Document As Beacon.DocumentURL)
 		  For I As Integer = Self.List.RowCount - 1 DownTo 0
-		    Self.List.Selected(I) = Beacon.DocumentURL(Self.List.RowTag(I)) = Document
+		    Self.List.Selected(I) = Beacon.DocumentURL(Self.List.RowTagAt(I)) = Document
 		  Next
 		End Sub
 	#tag EndMethod
@@ -541,7 +542,7 @@ End
 		  Dim Documents() As Beacon.DocumentURL
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
-		      Documents.Append(Self.List.RowTag(I))
+		      Documents.Append(Self.List.RowTagAt(I))
 		    End If
 		  Next
 		  Return Documents
@@ -556,7 +557,7 @@ End
 		  Next
 		  
 		  For I As Integer = 0 To Self.List.RowCount - 1
-		    Dim URL As String = Beacon.DocumentURL(Self.List.RowTag(I))
+		    Dim URL As String = Beacon.DocumentURL(Self.List.RowTagAt(I))
 		    Self.List.Selected(I) = Selected.IndexOf(URL) > -1
 		  Next
 		End Sub
@@ -624,7 +625,7 @@ End
 		  Dim SelectedURLs() As String
 		  For I As Integer = 0 To RowBound
 		    If Self.List.Selected(I) Then
-		      Dim URL As Beacon.DocumentURL = Self.List.RowTag(I)
+		      Dim URL As Beacon.DocumentURL = Self.List.RowTagAt(I)
 		      SelectedURLs.Append(URL)
 		    End If
 		  Next
@@ -633,8 +634,8 @@ End
 		  
 		  For I As Integer = 0 To Documents.LastRowIndex
 		    Dim URL As Beacon.DocumentURL = Documents(I)
-		    Self.List.Cell(I, Self.ColumnName) = URL.Name
-		    Self.List.RowTag(I) = URL
+		    Self.List.CellValueAt(I, Self.ColumnName) = URL.Name
+		    Self.List.RowTagAt(I) = URL
 		    Self.List.Selected(I) = SelectedURLs.IndexOf(URL) > -1
 		  Next
 		End Sub
@@ -740,7 +741,7 @@ End
 		      Continue
 		    End If
 		    
-		    Self.OpenURL(Beacon.DocumentURL(Self.List.RowTag(I)))
+		    Self.OpenURL(Beacon.DocumentURL(Self.List.RowTagAt(I)))
 		  Next
 		End Sub
 	#tag EndEvent
@@ -748,8 +749,8 @@ End
 		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Select Case Column
 		  Case 0
-		    Dim Row1URL As Beacon.DocumentURL = Me.RowTag(Row1)
-		    Dim Row2URL As Beacon.DocumentURL = Me.RowTag(Row2)
+		    Dim Row1URL As Beacon.DocumentURL = Me.RowTagAt(Row1)
+		    Dim Row2URL As Beacon.DocumentURL = Me.RowTagAt(Row2)
 		    
 		    Result = Row1URL.Name.Compare(Row2URL.Name, ComparisonOptions.CaseSensitive)
 		    
@@ -771,7 +772,7 @@ End
 		        Continue For I
 		      End If
 		      
-		      Dim Controller As New Beacon.DocumentController(Beacon.DocumentURL(Me.RowTag(I)), App.IdentityManager.CurrentIdentity)
+		      Dim Controller As New Beacon.DocumentController(Beacon.DocumentURL(Me.RowTagAt(I)), App.IdentityManager.CurrentIdentity)
 		      If Not Controller.CanWrite Then
 		        Return False
 		      End If
@@ -796,7 +797,7 @@ End
 		        Continue For I
 		      End If
 		      
-		      Dim SelectedURL As Beacon.DocumentURL = Me.RowTag(I)
+		      Dim SelectedURL As Beacon.DocumentURL = Me.RowTagAt(I)
 		      For X As Integer = Recents.LastRowIndex DownTo 0
 		        If Recents(X) = SelectedURL Then
 		          Changed = True
@@ -817,7 +818,7 @@ End
 		      Continue For I
 		    End If
 		    
-		    Dim URL As Beacon.DocumentURL = Me.RowTag(I)
+		    Dim URL As Beacon.DocumentURL = Me.RowTagAt(I)
 		    Dim Controller As New Beacon.DocumentController(URL, App.IdentityManager.CurrentIdentity)
 		    If Controller.CanWrite() Then
 		      Controllers.Append(Controller)
@@ -875,7 +876,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim URL As Beacon.DocumentURL = Me.RowTag(Row)
+		  Dim URL As Beacon.DocumentURL = Me.RowTagAt(Row)
 		  If URL = Nil Then
 		    Return
 		  End If
@@ -893,7 +894,7 @@ End
 		    Return
 		  End If
 		  
-		  G.DrawPicture(Icon, (Me.Column(Column).WidthActual - Icon.Width) / 2, (Me.DefaultRowHeight - Icon.Height) / 2)
+		  G.DrawPicture(Icon, (Me.ColumnAt(Column).WidthActual - Icon.Width) / 2, (Me.DefaultRowHeight - Icon.Height) / 2)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -943,7 +944,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="UseFocusRing"
@@ -951,7 +952,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackColor"
@@ -975,7 +976,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptTabs"
@@ -983,7 +984,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
@@ -991,7 +992,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
@@ -999,7 +1000,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -1007,7 +1008,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
@@ -1015,7 +1016,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"
@@ -1023,7 +1024,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackgroundColor"
@@ -1047,7 +1048,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowTabs"
@@ -1055,7 +1056,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Progress"
@@ -1087,7 +1088,7 @@ End
 		Group="Windows Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1095,7 +1096,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"
@@ -1103,7 +1104,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Height"
@@ -1167,7 +1168,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -1175,7 +1176,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="TabIndex"
@@ -1199,7 +1200,7 @@ End
 		Group="Position"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
@@ -1223,7 +1224,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="View"
@@ -1239,7 +1240,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"

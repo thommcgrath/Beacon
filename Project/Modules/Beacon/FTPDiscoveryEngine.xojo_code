@@ -69,7 +69,7 @@ Implements Beacon.DiscoveryEngine
 		  Try
 		    Dim Dict As Dictionary = Response.JSON
 		    
-		    Self.mGameIniContent = Trim(Dict.Value("content"))
+		    Self.mGameIniContent = Dict.Value("content").StringValue.Trim
 		    
 		    Self.DownloadGameUserSettingsIni()
 		  Catch Err As RuntimeException
@@ -91,7 +91,7 @@ Implements Beacon.DiscoveryEngine
 		  Try
 		    Dim Dict As Dictionary = Response.JSON
 		    
-		    Self.mGameUserSettingsIniContent = Trim(Dict.Value("content"))
+		    Self.mGameUserSettingsIniContent = Dict.Value("content").StringValue.Trim
 		    
 		    Self.mFinished = True
 		    Self.mErrored = False

@@ -97,7 +97,7 @@ Inherits BeaconSubview
 		  Self.mParserWindows.Value(Parser) = Win
 		  
 		  Parser.GameIniContent = Content
-		  Parser.Run
+		  Parser.Start
 		End Sub
 	#tag EndMethod
 
@@ -190,7 +190,7 @@ Inherits BeaconSubview
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HelpTag"
@@ -198,7 +198,7 @@ Inherits BeaconSubview
 			Group="Appearance"
 			InitialValue=""
 			Type="String"
-			EditorType=""
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="UseFocusRing"
@@ -206,7 +206,7 @@ Inherits BeaconSubview
 			Group="Appearance"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BackColor"
@@ -230,7 +230,7 @@ Inherits BeaconSubview
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AcceptTabs"
@@ -238,7 +238,7 @@ Inherits BeaconSubview
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="EraseBackground"
@@ -246,7 +246,7 @@ Inherits BeaconSubview
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Tooltip"
@@ -254,7 +254,7 @@ Inherits BeaconSubview
 			Group="Appearance"
 			InitialValue=""
 			Type="String"
-			EditorType=""
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AllowAutoDeactivate"
@@ -262,7 +262,7 @@ Inherits BeaconSubview
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AllowFocusRing"
@@ -270,7 +270,7 @@ Inherits BeaconSubview
 			Group="Appearance"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BackgroundColor"
@@ -294,7 +294,7 @@ Inherits BeaconSubview
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AllowTabs"
@@ -302,7 +302,7 @@ Inherits BeaconSubview
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Progress"
@@ -334,7 +334,7 @@ Inherits BeaconSubview
 			Group="Windows Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Backdrop"
@@ -342,7 +342,7 @@ Inherits BeaconSubview
 			Group="Background"
 			InitialValue=""
 			Type="Picture"
-			EditorType="Picture"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
@@ -350,7 +350,7 @@ Inherits BeaconSubview
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Height"
@@ -414,7 +414,7 @@ Inherits BeaconSubview
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -422,7 +422,7 @@ Inherits BeaconSubview
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabIndex"
@@ -446,7 +446,7 @@ Inherits BeaconSubview
 			Group="Position"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ToolbarCaption"
@@ -470,7 +470,7 @@ Inherits BeaconSubview
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Visible"
@@ -478,7 +478,7 @@ Inherits BeaconSubview
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Width"

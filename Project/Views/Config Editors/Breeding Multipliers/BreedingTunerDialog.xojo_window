@@ -255,7 +255,7 @@ Begin BeaconDialog BreedingTunerDialog
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
+      SelectionRequired=   "False"
       SelectionType   =   "0"
       ShowDropIndicator=   False
       TabIndex        =   6
@@ -403,7 +403,7 @@ End
 		    End If
 		    
 		    Self.CreaturesList.AddRow("", Creature.Label)
-		    Self.CreaturesList.RowTag(Self.CreaturesList.LastAddedRowIndex) = Creature
+		    Self.CreaturesList.RowTagAt(Self.CreaturesList.LastAddedRowIndex) = Creature
 		  Next
 		  
 		  Self.CheckCreatures(Preferences.BreedingTunerCreatures)
@@ -416,7 +416,7 @@ End
 		  Self.mAutoCheckingCreatures = True
 		  If List = "*" Then
 		    For I As Integer = 0 To Self.CreaturesList.RowCount - 1
-		      Self.CreaturesList.CellCheck(I, Self.ColumnChecked) = True
+		      Self.CreaturesList.CellCheckBoxValueAt(I, Self.ColumnChecked) = True
 		    Next
 		  Else
 		    Dim Creatures() As String = List.Split(",")
@@ -425,8 +425,8 @@ End
 		    Next
 		    
 		    For I As Integer = 0 To Self.CreaturesList.RowCount - 1
-		      Dim ClassString As String = Beacon.Creature(Self.CreaturesList.RowTag(I)).ClassString
-		      Self.CreaturesList.CellCheck(I, Self.ColumnChecked) = Creatures.IndexOf(ClassString) > -1
+		      Dim ClassString As String = Beacon.Creature(Self.CreaturesList.RowTagAt(I)).ClassString
+		      Self.CreaturesList.CellCheckBoxValueAt(I, Self.ColumnChecked) = Creatures.IndexOf(ClassString) > -1
 		    Next
 		  End If
 		  Self.mAutoCheckingCreatures = False
@@ -510,8 +510,8 @@ End
 		  
 		  Dim Creatures() As Beacon.Creature
 		  For I As Integer = 0 To Self.CreaturesList.RowCount - 1
-		    If Self.CreaturesList.CellCheck(I, Self.ColumnChecked) Then
-		      Creatures.Append(Self.CreaturesList.RowTag(I))
+		    If Self.CreaturesList.CellCheckBoxValueAt(I, Self.ColumnChecked) Then
+		      Creatures.Append(Self.CreaturesList.RowTagAt(I))
 		    End If
 		  Next
 		  
@@ -546,8 +546,8 @@ End
 		  
 		  Dim Classes() As String
 		  For I As Integer = 0 To Self.CreaturesList.RowCount - 1
-		    If Self.CreaturesList.CellCheck(I, Column) Then
-		      Classes.Append(Beacon.Creature(Self.CreaturesList.RowTag(I)).ClassString)
+		    If Self.CreaturesList.CellCheckBoxValueAt(I, Column) Then
+		      Classes.Append(Beacon.Creature(Self.CreaturesList.RowTagAt(I)).ClassString)
 		    End If
 		  Next
 		  Self.mLastCheckedList = Classes.Join(",")
@@ -636,7 +636,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizeable"
@@ -644,7 +644,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MaximizeButton"
@@ -652,7 +652,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimizeButton"
@@ -660,7 +660,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="FullScreenButton"
@@ -668,7 +668,7 @@ End
 		Group="Frame"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Placement"
@@ -707,7 +707,7 @@ End
 		Group="Deprecated"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -768,7 +768,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizable"
@@ -776,7 +776,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasMaximizeButton"
@@ -784,7 +784,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasMinimizeButton"
@@ -792,7 +792,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasFullScreenButton"
@@ -800,7 +800,7 @@ End
 		Group="Frame"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DefaultLocation"
@@ -839,7 +839,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Interfaces"
@@ -847,7 +847,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -855,7 +855,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"
@@ -903,7 +903,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -911,7 +911,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="FullScreen"
@@ -919,7 +919,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -927,7 +927,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MenuBar"
@@ -935,6 +935,6 @@ End
 		Group="Menus"
 		InitialValue=""
 		Type="MenuBar"
-		EditorType="MenuBar"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

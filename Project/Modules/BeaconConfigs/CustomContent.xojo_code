@@ -123,7 +123,7 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h21
 		Private Function FilterIniText(Input As String) As String
 		  Dim EOL As String = Encodings.ASCII.Chr(10)
-		  Input = ReplaceLineEndings(Input, EOL)
+		  Input = Input.ReplaceLineEndings(EOL)
 		  
 		  Dim InsideBeaconSection As Boolean
 		  Dim Lines() As String = Input.Split(EOL)
@@ -273,7 +273,7 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h21
 		Private Function IniValues(InitialHeader As String, Source As String, ExistingConfigs As Dictionary, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  Source = Source.ReplaceAll(Self.EncryptedTag, "")
-		  Source = ReplaceLineEndings(Source, Encodings.ASCII.Chr(10))
+		  Source = Source.ReplaceLineEndings(Encodings.ASCII.Chr(10))
 		  
 		  Dim Lines() As String = Source.Split(Encodings.ASCII.Chr(10))
 		  Dim Parser As New CustomContentParser(InitialHeader, ExistingConfigs, Profile)

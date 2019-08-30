@@ -6,7 +6,7 @@ Inherits ControlCanvas
 		  #Pragma Unused Areas
 		  
 		  G.DrawingColor = SystemColors.SeparatorColor
-		  G.FillRect(0, 0, G.Width, G.Height)
+		  G.FillRectangle(0, 0, G.Width, G.Height)
 		End Sub
 	#tag EndEvent
 
@@ -114,7 +114,7 @@ Inherits ControlCanvas
 			Group="Appearance"
 			InitialValue=""
 			Type="Picture"
-			EditorType="Picture"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
@@ -138,7 +138,7 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="InitialParent"
@@ -194,7 +194,7 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -202,7 +202,7 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabIndex"
@@ -242,7 +242,7 @@ Inherits ControlCanvas
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Visible"

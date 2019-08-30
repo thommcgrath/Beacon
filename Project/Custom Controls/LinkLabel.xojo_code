@@ -229,7 +229,7 @@ Inherits Label
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -237,7 +237,7 @@ Inherits Label
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -245,7 +245,7 @@ Inherits Label
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabStop"
@@ -381,7 +381,7 @@ Inherits Label
 			Group="Appearance"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Visible"
@@ -421,7 +421,7 @@ Inherits Label
 			Group="Database Binding"
 			InitialValue=""
 			Type="String"
-			EditorType="DataField"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DataSource"
@@ -429,7 +429,7 @@ Inherits Label
 			Group="Database Binding"
 			InitialValue=""
 			Type="String"
-			EditorType="DataSource"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ShowAsLink"

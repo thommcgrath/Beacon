@@ -164,7 +164,7 @@ Begin BeaconDialog DocumentDeployWindow
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionRequired=   False
+         SelectionRequired=   "False"
          SelectionType   =   "0"
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -436,7 +436,7 @@ Begin BeaconDialog DocumentDeployWindow
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionRequired=   False
+         SelectionRequired=   "False"
          SelectionType   =   "0"
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -568,8 +568,8 @@ End
 		    Dim Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(I)
 		    
 		    Self.ServerSelectionList.AddRow("", Profile.Name, Profile.SecondaryName)
-		    Self.ServerSelectionList.RowTag(Self.ServerSelectionList.LastAddedRowIndex) = Profile
-		    Self.ServerSelectionList.CellCheck(Self.ServerSelectionList.LastAddedRowIndex, 0) = Profile.Enabled
+		    Self.ServerSelectionList.RowTagAt(Self.ServerSelectionList.LastAddedRowIndex) = Profile
+		    Self.ServerSelectionList.CellCheckBoxValueAt(Self.ServerSelectionList.LastAddedRowIndex, 0) = Profile.Enabled
 		  Next
 		  Self.ServerSelectionList.Sort
 		End Sub
@@ -580,7 +580,7 @@ End
 		Private Sub AuthenticateNext()
 		  If Self.mOAuthQueue.LastRowIndex = -1 Then
 		    // Move to the next step
-		    Self.DeployingList.DeleteAllRows
+		    Self.DeployingList.RemoveAllRows
 		    
 		    Dim Now As New DateTime(DateTime.Now.SecondsFrom1970, New TimeZone(0))
 		    Self.mDeployLabel = Str(Now.Year, "0000") + "-" + Str(Now.Month, "00") + "-" + Str(Now.Day, "00") + " " + Str(Now.Hour, "00") + "." + Str(Now.Minute, "00") + "." + Str(Now.Second, "00") + " GMT"
@@ -603,7 +603,7 @@ End
 		      
 		      Self.mDeploymentEngines.Append(DeploymentEngine)
 		      Self.DeployingList.AddRow(DeploymentEngine.Name + EndOfLine + DeploymentEngine.Status)
-		      Self.DeployingList.RowTag(DeployingList.LastAddedRowIndex) = DeploymentEngine
+		      Self.DeployingList.RowTagAt(DeployingList.LastAddedRowIndex) = DeploymentEngine
 		    Next
 		    
 		    For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
@@ -809,11 +809,11 @@ End
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
 		  If Column = 0 Then
-		    Beacon.ServerProfile(Me.RowTag(Row)).Enabled = Me.CellCheck(Row, Column)
+		    Beacon.ServerProfile(Me.RowTagAt(Row)).Enabled = Me.CellCheckBoxValueAt(Row, Column)
 		  End If
 		  
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Me.CellCheck(I, 0) Then
+		    If Me.CellCheckBoxValueAt(I, 0) Then
 		      Self.ServerSelectionActionButton.Enabled = True
 		      Return
 		    End If
@@ -984,8 +984,8 @@ End
 		    Me.RunMode = Timer.RunModes.Off
 		  Else
 		    For I As Integer = 0 To Self.DeployingList.RowCount - 1
-		      Dim DeploymentEngine As Beacon.DeploymentEngine = Self.DeployingList.RowTag(I)
-		      Self.DeployingList.Cell(I, 0) = DeploymentEngine.Name + EndOfLine + DeploymentEngine.Status
+		      Dim DeploymentEngine As Beacon.DeploymentEngine = Self.DeployingList.RowTagAt(I)
+		      Self.DeployingList.CellValueAt(I, 0) = DeploymentEngine.Name + EndOfLine + DeploymentEngine.Status
 		    Next
 		  End If
 		End Sub
@@ -1051,7 +1051,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizeable"
@@ -1059,7 +1059,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MaximizeButton"
@@ -1067,7 +1067,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimizeButton"
@@ -1075,7 +1075,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="FullScreenButton"
@@ -1083,7 +1083,7 @@ End
 		Group="Frame"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Placement"
@@ -1122,7 +1122,7 @@ End
 		Group="Deprecated"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -1183,7 +1183,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Resizable"
@@ -1191,7 +1191,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasMaximizeButton"
@@ -1199,7 +1199,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasMinimizeButton"
@@ -1207,7 +1207,7 @@ End
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasFullScreenButton"
@@ -1215,7 +1215,7 @@ End
 		Group="Frame"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DefaultLocation"
@@ -1254,7 +1254,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Interfaces"
@@ -1262,7 +1262,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -1270,7 +1270,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"
@@ -1318,7 +1318,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -1326,7 +1326,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="FullScreen"
@@ -1334,7 +1334,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -1342,7 +1342,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MenuBar"
@@ -1350,6 +1350,6 @@ End
 		Group="Menus"
 		InitialValue=""
 		Type="MenuBar"
-		EditorType="MenuBar"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

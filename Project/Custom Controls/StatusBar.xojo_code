@@ -6,7 +6,7 @@ Inherits ControlCanvas
 		  #Pragma Unused Areas
 		  
 		  G.DrawingColor = SystemColors.SeparatorColor
-		  G.FillRect(0, 0, G.Width, G.Height)
+		  G.FillRectangle(0, 0, G.Width, G.Height)
 		  
 		  Dim ContentLeft As Integer = 0
 		  Dim ContentTop As Integer = 0
@@ -32,12 +32,12 @@ Inherits ControlCanvas
 		  Clip.FontSize = 0
 		  
 		  Dim CaptionSpace As Double = Clip.Width - 10
-		  Dim CaptionWidth As Double = Min(CaptionSpace, Clip.StringWidth(Self.Caption))
+		  Dim CaptionWidth As Double = Min(CaptionSpace, Clip.TextWidth(Self.Caption))
 		  Dim CaptionLeft As Double = (CaptionSpace - CaptionWidth) / 2
 		  Dim CaptionBottom As Double = (Clip.Height / 2) + (Clip.CapHeight / 2)
 		  
 		  Clip.DrawingColor = SystemColors.LabelColor
-		  Clip.DrawString(Self.mCaption, CaptionLeft, CaptionBottom, CaptionSpace, True)
+		  Clip.DrawText(Self.mCaption, CaptionLeft, CaptionBottom, CaptionSpace, True)
 		End Sub
 	#tag EndEvent
 
@@ -183,7 +183,7 @@ Inherits ControlCanvas
 			Group="Appearance"
 			InitialValue=""
 			Type="Picture"
-			EditorType="Picture"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Borders"
@@ -223,7 +223,7 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="InitialParent"
@@ -279,7 +279,7 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ScrollSpeed"
@@ -295,7 +295,7 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabIndex"
@@ -335,7 +335,7 @@ Inherits ControlCanvas
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Visible"

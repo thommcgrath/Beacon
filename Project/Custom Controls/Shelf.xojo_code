@@ -3,16 +3,18 @@ Protected Class Shelf
 Inherits ControlCanvas
 Implements ObservationKit.Observer
 	#tag Event
-		Sub Activate()
-		  RaiseEvent Activate
+		Sub Activated()
+		  RaiseEvent Activated
 		  Self.Invalidate
+		  
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Deactivate()
-		  RaiseEvent Deactivate
+		Sub Deactivated()
+		  RaiseEvent Deactivated
 		  Self.Invalidate
+		  
 		End Sub
 	#tag EndEvent
 
@@ -155,7 +157,7 @@ Implements ObservationKit.Observer
 		      Continue
 		    End If
 		    
-		    MaxCaptionWidth = Max(MaxCaptionWidth, G.StringWidth(Self.mItems(I).Caption))
+		    MaxCaptionWidth = Max(MaxCaptionWidth, G.TextWidth(Self.mItems(I).Caption))
 		  Next
 		  If Self.DrawCaptions Then
 		    CellWidth = Min(Max(Self.IconSize, MaxCaptionWidth) + (CellPadding * 2), MaximumCellWidth)
@@ -191,7 +193,7 @@ Implements ObservationKit.Observer
 		    
 		    If Self.mSelectedIndex = I Then
 		      G.DrawingColor = SystemColors.SelectedContentBackgroundColor
-		      G.FillRoundRect(NearestMultiple(CellRect.Left, PrecisionX), NearestMultiple(CellRect.Top, PrecisionY), NearestMultiple(CellRect.Width, PrecisionX), NearestMultiple(CellRect.Height, PrecisionY), CellCornerRadius, CellCornerRadius)
+		      G.FillRoundRectangle(NearestMultiple(CellRect.Left, PrecisionX), NearestMultiple(CellRect.Top, PrecisionY), NearestMultiple(CellRect.Width, PrecisionX), NearestMultiple(CellRect.Height, PrecisionY), CellCornerRadius, CellCornerRadius)
 		      IconColor = SystemColors.AlternateSelectedControlTextColor
 		    End If
 		    
@@ -242,17 +244,17 @@ Implements ObservationKit.Observer
 		    If Self.DrawCaptions Then
 		      Dim Caption As String = Self.mItems(I).Caption
 		      Dim CaptionY As Double = IconRect.Bottom + CellSpacing + Self.TextHeight
-		      Dim CaptionWidth As Double = G.StringWidth(Caption)
+		      Dim CaptionWidth As Double = G.TextWidth(Caption)
 		      CaptionWidth = Min(CaptionWidth, CellRect.Width - (CellPadding * 2))
 		      Dim CaptionX As Double = CellRect.Left + ((CellRect.Width - CaptionWidth) / 2)
 		      
 		      G.DrawingColor = IconColor
-		      G.DrawString(Caption, NearestMultiple(CaptionX, PrecisionX), NearestMultiple(CaptionY, PrecisionY), NearestMultiple(CellRect.Width, PrecisionX), True)
+		      G.DrawText(Caption, NearestMultiple(CaptionX, PrecisionX), NearestMultiple(CaptionY, PrecisionY), NearestMultiple(CellRect.Width, PrecisionX), True)
 		    End If
 		    
 		    If Self.mPressed And Self.mMouseDownItem = I Then
 		      G.DrawingColor = &c000000CC
-		      G.FillRoundRect(NearestMultiple(CellRect.Left, PrecisionX), NearestMultiple(CellRect.Top, PrecisionY), NearestMultiple(CellRect.Width, PrecisionX), NearestMultiple(CellRect.Height, PrecisionY), CellCornerRadius, CellCornerRadius)
+		      G.FillRoundRectangle(NearestMultiple(CellRect.Left, PrecisionX), NearestMultiple(CellRect.Top, PrecisionY), NearestMultiple(CellRect.Width, PrecisionX), NearestMultiple(CellRect.Height, PrecisionY), CellCornerRadius, CellCornerRadius)
 		    End If
 		    
 		    NextPos = NextPos + If(Self.IsVertical, CellHeight, CellWidth) + CellSpacing
@@ -360,7 +362,7 @@ Implements ObservationKit.Observer
 		      Continue
 		    End If
 		    If Self.mHitRects(I).Contains(Point) Then
-		      Global.Tooltip.Show(Self.mItems(I).Caption, System.MouseX, System.MouseY + 16)
+		      App.ShowTooltip(Self.mItems(I).Caption, System.MouseX, System.MouseY + 16)
 		      Return
 		    End If
 		  Next
@@ -369,11 +371,11 @@ Implements ObservationKit.Observer
 
 
 	#tag Hook, Flags = &h0
-		Event Activate()
+		Event Activated()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Deactivate()
+		Event Deactivated()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -549,7 +551,7 @@ Implements ObservationKit.Observer
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -557,7 +559,7 @@ Implements ObservationKit.Observer
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -565,7 +567,7 @@ Implements ObservationKit.Observer
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Height"
@@ -669,7 +671,7 @@ Implements ObservationKit.Observer
 			Group="Appearance"
 			InitialValue=""
 			Type="Picture"
-			EditorType="Picture"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
@@ -701,7 +703,7 @@ Implements ObservationKit.Observer
 			Group="Behavior"
 			InitialValue=""
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="IsVertical"

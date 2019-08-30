@@ -168,7 +168,7 @@ Protected Module BeaconUI
 		  ' Pic.VerticalResolution = 72 * Scale
 		  
 		  Pic.Graphics.DrawingColor = &c000000
-		  Pic.Graphics.FillRect(0, 0, Pic.Width, Pic.Height)
+		  Pic.Graphics.FillRectangle(0, 0, Pic.Width, Pic.Height)
 		  
 		  Pic.Graphics.DrawingColor = &cFFFFFF
 		  Pic.Graphics.FillOval(2 * Scale, 2 * Scale, Pic.Width - (4 * Scale) , Pic.Height - (4 * Scale))
@@ -264,12 +264,12 @@ Protected Module BeaconUI
 		  #Pragma Unused id
 		  #Pragma Unused s
 		  
-		  Dim Bound As Integer = WindowCount - 1
+		  Dim Bound As Integer = App.WindowCount - 1
 		  Dim Sheet As Window
 		  
 		  For I As Integer = 0 To Bound
-		    If Window(I).Handle = SheetHandle Then
-		      Sheet = Window(I)
+		    If App.Window(I).Handle = SheetHandle Then
+		      Sheet = App.Window(I)
 		      Exit For I
 		    End If
 		  Next
@@ -277,8 +277,8 @@ Protected Module BeaconUI
 		  Dim InitialPosition As New REALbasic.Rect(DefaultPosition.Left, DefaultPosition.Top, DefaultPosition.Width, DefaultPosition.Height)
 		  
 		  For I As Integer = 0 To Bound
-		    If Window(I) IsA BeaconUI.SheetPositionHandler And Window(I).Handle = WindowHandle Then
-		      Dim NewPosition As REALbasic.Rect = BeaconUI.SheetPositionHandler(Window(I)).PositionSheet(Sheet, InitialPosition)
+		    If App.Window(I) IsA BeaconUI.SheetPositionHandler And App.Window(I).Handle = WindowHandle Then
+		      Dim NewPosition As REALbasic.Rect = BeaconUI.SheetPositionHandler(App.Window(I)).PositionSheet(Sheet, InitialPosition)
 		      If NewPosition = Nil Then
 		        Return DefaultPosition
 		      Else
@@ -309,7 +309,7 @@ Protected Module BeaconUI
 		    Pic.VerticalResolution = 72 * Factor
 		    Pic.HorizontalResolution = 72 * Factor
 		    Pic.Graphics.DrawingColor = RGB(FillColor.Red, FillColor.Green, FillColor.Blue)
-		    Pic.Graphics.FillRect(0, 0, Pic.Width, Pic.Height)
+		    Pic.Graphics.FillRectangle(0, 0, Pic.Width, Pic.Height)
 		    Pic.Mask.Graphics.ClearRect(0, 0, Pic.Width, Pic.Height)
 		    Pic.Mask.Graphics.DrawPicture(Mask, 0, 0, Mask.Width, Mask.Height, 0, 0, Mask.Width, Mask.Height)
 		    
@@ -319,7 +319,7 @@ Protected Module BeaconUI
 		    End If
 		    
 		    Pic.Mask.Graphics.DrawingColor = RGB(255, 255, 255, 255 - FillColor.Alpha)
-		    Pic.Mask.Graphics.FillRect(0, 0, Pic.Width, Pic.Height)
+		    Pic.Mask.Graphics.FillRectangle(0, 0, Pic.Width, Pic.Height)
 		    
 		    Bitmaps.Append(Pic)
 		  Next

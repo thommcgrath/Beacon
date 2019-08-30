@@ -69,17 +69,17 @@ Inherits ControlCanvas
 		  End If
 		  
 		  G.DrawingColor = SystemColors.SeparatorColor
-		  G.FillRect(0, 0, G.Width, InsetTop)
-		  G.FillRect(0, G.Height - InsetBottom, G.Width, InsetBottom)
-		  G.FillRect(0, InsetTop, InsetLeft, G.Height - (InsetTop + InsetBottom))
-		  G.FillRect(G.Width - InsetRight, InsetTop, InsetRight, G.Height - (InsetTop + InsetBottom))
+		  G.FillRectangle(0, 0, G.Width, InsetTop)
+		  G.FillRectangle(0, G.Height - InsetBottom, G.Width, InsetBottom)
+		  G.FillRectangle(0, InsetTop, InsetLeft, G.Height - (InsetTop + InsetBottom))
+		  G.FillRectangle(G.Width - InsetRight, InsetTop, InsetRight, G.Height - (InsetTop + InsetBottom))
 		  
 		  Dim Clip As Graphics = G.Clip(InsetLeft, InsetTop, G.Width - (InsetLeft + InsetRight), G.Height - (InsetTop + InsetBottom))
 		  #if false
 		    Clip.DrawingColor = SystemColors.UnderPageBackgroundColor
-		    Clip.FillRect(0, 0, Clip.Width, Clip.Height)
+		    Clip.FillRectangle(0, 0, Clip.Width, Clip.Height)
 		    Clip.DrawingColor = SystemColors.ControlBackgroundColor
-		    Clip.FillRect(0, 0, Clip.Width, Clip.Height)
+		    Clip.FillRectangle(0, 0, Clip.Width, Clip.Height)
 		  #endif
 		  
 		  Clip.FontName = "System"
@@ -88,7 +88,7 @@ Inherits ControlCanvas
 		  
 		  Dim ViewportWidth As Double = Clip.Width - 40
 		  
-		  Dim BodyHeight As Double = Clip.StringHeight(Self.mBody, ViewportWidth)
+		  Dim BodyHeight As Double = Clip.TextHeight(Self.mBody, ViewportWidth)
 		  Dim ContentHeight As Double = Clip.CapHeight + 20 + BodyHeight
 		  If Self.mDetailURL <> "" Then
 		    ContentHeight = ContentHeight + ButtonHeight + 20
@@ -101,33 +101,33 @@ Inherits ControlCanvas
 		  Dim TitleBaseline As Double = (20 + Clip.CapHeight) - Self.mScrollPosition
 		  Clip.DrawingColor = SystemColors.LabelColor
 		  Clip.Bold = False
-		  Clip.DrawString(Self.mBody, 20, TitleBaseline + 20 + Clip.CapHeight, ViewportWidth, False)
+		  Clip.DrawText(Self.mBody, 20, TitleBaseline + 20 + Clip.CapHeight, ViewportWidth, False)
 		  
 		  Clip.Bold = True
-		  Clip.DrawString(Self.mTitle, 20, TitleBaseline, ViewportWidth, True)
+		  Clip.DrawText(Self.mTitle, 20, TitleBaseline, ViewportWidth, True)
 		  
 		  If Self.mDetailURL <> "" Then
 		    Clip.Bold = False
 		    
 		    Dim ButtonTop As Double = Max(TitleBaseline + 40 + BodyHeight, Clip.Height - (ButtonHeight + 20))
-		    Dim CaptionWidth As Double = Clip.StringWidth("More Details")
+		    Dim CaptionWidth As Double = Clip.TextWidth("More Details")
 		    Dim ButtonWidth As Double = CaptionWidth + 40
 		    Dim ButtonLeft As Double = (Clip.Width - ButtonWidth) / 2
 		    Dim CaptionLeft As Double = ButtonLeft + 20
 		    Dim CaptionBaseline As Double = ButtonTop + ((ButtonHeight / 2) + (Clip.CapHeight / 2))
 		    
 		    Clip.DrawingColor = SystemColors.ControlTextColor.AtOpacity(0.1)
-		    Clip.FillRoundRect(ButtonLeft, ButtonTop, ButtonWidth, ButtonHeight, 6, 6)
+		    Clip.FillRoundRectangle(ButtonLeft, ButtonTop, ButtonWidth, ButtonHeight, 6, 6)
 		    Clip.DrawingColor = SystemColors.ControlTextColor.AtOpacity(0.5)
-		    Clip.DrawRoundRect(ButtonLeft, ButtonTop, ButtonWidth, ButtonHeight, 6, 6)
+		    Clip.DrawRoundRectangle(ButtonLeft, ButtonTop, ButtonWidth, ButtonHeight, 6, 6)
 		    Clip.DrawingColor = SystemColors.ControlTextColor
-		    Clip.DrawString("More Details", CaptionLeft, CaptionBaseline)
+		    Clip.DrawText("More Details", CaptionLeft, CaptionBaseline)
 		    
 		    Self.mButtonRect = New BeaconUI.Rect(ButtonLeft, ButtonTop, ButtonWidth, ButtonHeight)
 		    
 		    If Self.mPressed Then
 		      Clip.DrawingColor = &c00000080
-		      Clip.FillRoundRect(ButtonLeft, ButtonTop, ButtonWidth, ButtonHeight, 6, 6)
+		      Clip.FillRoundRectangle(ButtonLeft, ButtonTop, ButtonWidth, ButtonHeight, 6, 6)
 		    End If
 		  Else
 		    Self.mButtonRect = Nil
@@ -350,7 +350,7 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -358,7 +358,7 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -366,7 +366,7 @@ Inherits ControlCanvas
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Height"
@@ -470,7 +470,7 @@ Inherits ControlCanvas
 			Group="Appearance"
 			InitialValue=""
 			Type="Picture"
-			EditorType="Picture"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
@@ -494,7 +494,7 @@ Inherits ControlCanvas
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ScrollSpeed"

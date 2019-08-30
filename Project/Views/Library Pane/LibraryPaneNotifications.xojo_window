@@ -170,7 +170,7 @@ End
 		    Dim MessageHeight As Double = G.ActualStringHeight(Message, CellWidth)
 		    Dim MessageBaseline As Double = MessageTop + G.FontAscent
 		    G.DrawingColor = SystemColors.LabelColor
-		    G.DrawString(Message, CellPadding, MessageBaseline, CellWidth, False)
+		    G.DrawText(Message, CellPadding, MessageBaseline, CellWidth, False)
 		    
 		    Dim CellHeight As Double = CellPadding + MessageHeight + CellPadding
 		    
@@ -180,7 +180,7 @@ End
 		      Dim SecondaryMessageHeight As Double = G.ActualStringHeight(SecondaryMessage, CellWidth)
 		      Dim SecondaryMessageBaseline As Double = SecondaryMessageTop + G.FontAscent
 		      G.DrawingColor = SystemColors.SecondaryLabelColor
-		      G.DrawString(SecondaryMessage, CellPadding, SecondaryMessageBaseline, CellWidth, False)
+		      G.DrawText(SecondaryMessage, CellPadding, SecondaryMessageBaseline, CellWidth, False)
 		      CellHeight = CellHeight + SecondaryMessageHeight + (CellPadding / 2)
 		    End If
 		    
@@ -195,9 +195,9 @@ End
 		    If Self.mPressed And Self.mDownIndex = I Then
 		      G.DrawingColor = &c00000080
 		      If Self.mPressedOnClose Then
-		        G.FillRoundRect(Self.mCloseRects(I).Left, Self.mCloseRects(I).Top, Self.mCloseRects(I).Width, Self.mCloseRects(I).Height, 2, 2)
+		        G.FillRoundRectangle(Self.mCloseRects(I).Left, Self.mCloseRects(I).Top, Self.mCloseRects(I).Width, Self.mCloseRects(I).Height, 2, 2)
 		      Else
-		        G.FillRect(NotificationRect.Left, NotificationRect.Top, NotificationRect.Width, NotificationRect.Height)
+		        G.FillRectangle(NotificationRect.Left, NotificationRect.Top, NotificationRect.Width, NotificationRect.Height)
 		      End If
 		    End If
 		    
@@ -210,7 +210,7 @@ End
 		    End If
 		    If DrawBottomBorder Then
 		      G.DrawingColor = SystemColors.SeparatorColor
-		      G.FillRect(0, Pos, G.Width, 1)
+		      G.FillRectangle(0, Pos, G.Width, 1)
 		      Pos = Pos + 1
 		      ContentHeight = ContentHeight + 1
 		    End If
@@ -307,7 +307,7 @@ End
 		  
 		  If Self.mScrollPosition > 0 Then
 		    G.DrawingColor = SystemColors.SeparatorColor
-		    G.FillRect(0, 0, G.Width, 1)
+		    G.FillRectangle(0, 0, G.Width, 1)
 		    Self.PaintInto(G.Clip(0, 1, G.Width, G.Height - 1), (Self.mScrollPosition * -1) - 1)
 		  Else
 		    Self.PaintInto(G, 0)
@@ -434,7 +434,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="UseFocusRing"
@@ -442,7 +442,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackColor"
@@ -466,7 +466,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptTabs"
@@ -474,7 +474,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
@@ -482,7 +482,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
@@ -490,7 +490,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -498,7 +498,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
@@ -506,7 +506,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"
@@ -514,7 +514,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackgroundColor"
@@ -538,7 +538,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowTabs"
@@ -546,7 +546,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Progress"
@@ -586,7 +586,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -594,7 +594,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"
@@ -690,7 +690,7 @@ End
 		Group="Position"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -698,7 +698,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"
@@ -706,7 +706,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -714,7 +714,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"
@@ -722,7 +722,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
@@ -730,6 +730,6 @@ End
 		Group="Windows Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

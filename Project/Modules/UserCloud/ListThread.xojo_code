@@ -37,7 +37,7 @@ Inherits Thread
 		          UploadFileTo(LocalFile, RemotePath)
 		        ElseIf LocalIsNewer = False And IsDeleted = True Then
 		          // Delete the file
-		          LocalFile.Delete
+		          LocalFile.Remove
 		          Dim ActionDict As New Dictionary
 		          ActionDict.Value("Action") = "DELETE"
 		          ActionDict.Value("Path") = RemotePath
@@ -97,7 +97,7 @@ Inherits Thread
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -105,7 +105,7 @@ Inherits Thread
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -113,7 +113,7 @@ Inherits Thread
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Priority"

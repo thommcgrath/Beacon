@@ -90,9 +90,13 @@ Inherits TextField
 			Group="Font"
 			InitialValue="0"
 			Type="FontUnits"
-			EditorType="False"
+			EditorType="Enum"
 			#tag EnumValues
-				"Enum - "
+				"0 - Default"
+				"1 - Pixel"
+				"2 - Point"
+				"3 - Inch"
+				"4 - Millimeter"
 			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -109,7 +113,7 @@ Inherits TextField
 			Group="Initial State"
 			InitialValue=""
 			Type="String"
-			EditorType="False"
+			EditorType="MultiLineEditor"
 			#tag EnumValues
 				"MultiLineEditor - "
 			#tag EndEnumValues
@@ -299,7 +303,7 @@ Inherits TextField
 			Group="Appearance"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DataField"
@@ -347,7 +351,7 @@ Inherits TextField
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Italic"
@@ -403,7 +407,7 @@ Inherits TextField
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Password"
@@ -427,7 +431,7 @@ Inherits TextField
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TabIndex"

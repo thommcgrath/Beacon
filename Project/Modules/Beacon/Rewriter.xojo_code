@@ -17,7 +17,7 @@ Inherits Global.Thread
 	#tag Method, Flags = &h0
 		Sub Cancel()
 		  If Self.ThreadState <> Thread.ThreadStates.NotRunning Then
-		    Self.Kill
+		    Self.Stop
 		  End If
 		  
 		  For I As Integer = Self.mTriggers.LastRowIndex DownTo 0
@@ -53,10 +53,10 @@ Inherits Global.Thread
 		  Try
 		    // Normalize line endings
 		    Dim EOL As String = InitialContent.DetectLineEnding
-		    InitialContent = ReplaceLineEndings(InitialContent, Chr(10))
+		    InitialContent = InitialContent.ReplaceLineEndings(Encodings.UTF8.Chr(10))
 		    
 		    // Organize all existing content
-		    Dim Lines() As String = InitialContent.Split(Chr(10))
+		    Dim Lines() As String = InitialContent.Split(Encodings.ASCII.Chr(10))
 		    Dim UntouchedConfigs As New Dictionary
 		    Dim LastGroupHeader As String
 		    For I As Integer = 0 To Lines.LastRowIndex
@@ -326,7 +326,7 @@ Inherits Global.Thread
 		  Self.mIdentity = Identity
 		  Self.mProfile = Profile
 		  
-		  Super.Run
+		  Super.Start
 		End Sub
 	#tag EndMethod
 
@@ -377,7 +377,7 @@ Inherits Global.Thread
 
 	#tag Method, Flags = &h21
 		Private Sub Run()
-		  Super.Run
+		  Super.Start
 		End Sub
 	#tag EndMethod
 
@@ -457,7 +457,7 @@ Inherits Global.Thread
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -465,7 +465,7 @@ Inherits Global.Thread
 			Group="ID"
 			InitialValue=""
 			Type="Integer"
-			EditorType="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -473,7 +473,7 @@ Inherits Global.Thread
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Priority"

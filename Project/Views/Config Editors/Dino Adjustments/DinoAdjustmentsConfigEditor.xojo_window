@@ -159,7 +159,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   False
+      SelectionRequired=   "False"
       SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   2
@@ -256,7 +256,7 @@ End
 		  End If
 		  
 		  // See the comment in ShowAdd
-		  Dim ClassString As String = Self.List.RowTag(Self.List.SelectedRowIndex)
+		  Dim ClassString As String = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		  If DinoAdjustmentDialog.Present(Self, ClassString, Self.Config(False), Self.Document.Mods) Then
 		    Call Self.Config(True)
 		    Self.UpdateList()
@@ -286,7 +286,7 @@ End
 		  End If
 		  
 		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(False)
-		  Dim SelectedClass As String = Self.List.RowTag(Self.List.SelectedRowIndex)
+		  Dim SelectedClass As String = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		  Dim SelectedBehavior As Beacon.CreatureBehavior = Config.Behavior(SelectedClass)
 		  If SelectedBehavior = Nil Then
 		    Return
@@ -322,7 +322,7 @@ End
 		  Dim Classes() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
-		      Classes.Append(Self.List.RowTag(I))
+		      Classes.Append(Self.List.RowTagAt(I))
 		    End If
 		  Next
 		  Self.UpdateList(Classes)
@@ -331,7 +331,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectClasses() As String)
-		  Self.List.DeleteAllRows
+		  Self.List.RemoveAllRows
 		  
 		  Dim Behaviors() As Beacon.CreatureBehavior = Self.Config(False).All
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
@@ -362,7 +362,7 @@ End
 		      Self.List.Selected(Self.List.LastAddedRowIndex) = True
 		    End If
 		    
-		    Self.List.RowTag(Self.List.LastAddedRowIndex) = Behavior.TargetClass
+		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Behavior.TargetClass
 		  Next
 		  
 		  Self.List.Sort()
@@ -452,7 +452,7 @@ End
 		  If Warn Then
 		    Dim Message As String
 		    If Me.SelectedRowCount = 1 Then
-		      Message = "Are you sure you want to delete the """ + NthField(Me.Cell(Me.SelectedRowIndex, Self.ColumnName), EndOfLine, 1) + """ creature adjustment?"
+		      Message = "Are you sure you want to delete the """ + NthField(Me.CellValueAt(Me.SelectedRowIndex, Self.ColumnName), EndOfLine, 1) + """ creature adjustment?"
 		    Else
 		      Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " creature adjustments?"
 		    End If
@@ -465,7 +465,7 @@ End
 		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
 		  For I As Integer = Me.RowCount - 1 DownTo 0
 		    If Me.Selected(I) Then
-		      Dim ClassString As String = Me.RowTag(I)
+		      Dim ClassString As String = Me.RowTagAt(I)
 		      Config.RemoveBehavior(ClassString)
 		      Self.Changed = True
 		    End If
@@ -482,7 +482,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim ClassString As String = Me.RowTag(I)
+		    Dim ClassString As String = Me.RowTagAt(I)
 		    Dim Behavior As Beacon.CreatureBehavior = Config.Behavior(ClassString)
 		    If Behavior = Nil Then
 		      Continue
@@ -548,7 +548,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HelpTag"
@@ -556,7 +556,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="UseFocusRing"
@@ -564,7 +564,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackColor"
@@ -588,7 +588,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptTabs"
@@ -596,7 +596,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
@@ -604,7 +604,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -612,7 +612,7 @@ End
 		Group="Appearance"
 		InitialValue=""
 		Type="String"
-		EditorType=""
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowAutoDeactivate"
@@ -620,7 +620,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowFocusRing"
@@ -628,7 +628,7 @@ End
 		Group="Appearance"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackgroundColor"
@@ -652,7 +652,7 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AllowTabs"
@@ -660,7 +660,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Progress"
@@ -700,7 +700,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
@@ -708,7 +708,7 @@ End
 		Group="ID"
 		InitialValue=""
 		Type="String"
-		EditorType="String"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Width"
@@ -804,7 +804,7 @@ End
 		Group="Position"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
@@ -812,7 +812,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"
@@ -820,7 +820,7 @@ End
 		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"
@@ -828,7 +828,7 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Transparent"
@@ -836,7 +836,7 @@ End
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
@@ -844,6 +844,6 @@ End
 		Group="Windows Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType="Boolean"
+		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior
