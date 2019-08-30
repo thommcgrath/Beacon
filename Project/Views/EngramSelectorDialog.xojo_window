@@ -195,7 +195,6 @@ Begin BeaconDialog EngramSelectorDialog
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   "False"
       SelectionType   =   "0"
       ShowDropIndicator=   False
       TabIndex        =   2
@@ -345,7 +344,6 @@ Begin BeaconDialog EngramSelectorDialog
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   "False"
       SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   5

@@ -529,7 +529,6 @@ Begin ContainerControl DocumentImportView
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionRequired=   "False"
          SelectionType   =   "0"
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -794,7 +793,6 @@ Begin ContainerControl DocumentImportView
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionRequired=   "False"
          SelectionType   =   "0"
          ShowDropIndicator=   False
          TabIndex        =   3

@@ -137,7 +137,6 @@ Begin BeaconDialog DocumentMergerWindow
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   "False"
       SelectionType   =   "0"
       ShowDropIndicator=   False
       TabIndex        =   1

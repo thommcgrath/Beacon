@@ -125,7 +125,6 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   "False"
       SelectionType   =   "1"
       ShowDropIndicator=   False
       TabIndex        =   2

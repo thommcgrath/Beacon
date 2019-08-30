@@ -123,7 +123,6 @@ Begin BeaconContainer ColumnBrowser
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionRequired=   "False"
       SelectionType   =   "0"
       ShowDropIndicator=   False
       TabIndex        =   1
