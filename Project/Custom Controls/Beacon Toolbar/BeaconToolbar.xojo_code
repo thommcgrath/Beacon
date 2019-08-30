@@ -469,7 +469,7 @@ Implements ObservationKit.Observer
 		  Next
 		  
 		  If Self.Caption <> "" Then
-		    Dim Caption As String = Self.Caption.NthField(EndOfLine, 1)
+		    Dim Caption As String = Self.Caption.FieldAtPosition(EndOfLine, 1)
 		    
 		    Dim CaptionSize As Double = 0
 		    

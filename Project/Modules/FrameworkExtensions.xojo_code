@@ -197,6 +197,25 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function FieldAtPosition(Extends Source As String, Separator As String, OneBasedIndex As Integer) As String
+		  Return FieldAtPosition(Source, Separator, OneBasedIndex)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function FieldAtPosition(Source As String, Separator As String, OneBasedIndex As Integer) As String
+		  // Replaces NthField
+		  Dim Fields() As String = Source.Split(Separator)
+		  Dim Index As Integer = OneBasedIndex - 1
+		  If Index < 0 Or Index > Fields.LastRowIndex Then
+		    Return ""
+		  Else
+		    Return Fields(Index)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function HasAllKeys(Extends Dict As Dictionary, ParamArray Keys() As Variant) As Boolean
 		  For Each Key As Variant In Keys
 		    If Dict.HasKey(Key) = False Then

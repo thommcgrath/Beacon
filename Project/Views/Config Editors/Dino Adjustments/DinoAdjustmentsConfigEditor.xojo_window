@@ -45,7 +45,6 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       Caption         =   "Creature Adjustments"
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -81,7 +80,6 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -153,7 +151,6 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   "0"
       RowSelectionType=   "1"
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -451,7 +448,7 @@ End
 		  If Warn Then
 		    Dim Message As String
 		    If Me.SelectedRowCount = 1 Then
-		      Message = "Are you sure you want to delete the """ + NthField(Me.CellValueAt(Me.SelectedRowIndex, Self.ColumnName), EndOfLine, 1) + """ creature adjustment?"
+		      Message = "Are you sure you want to delete the """ + FrameworkExtensions.FieldAtPosition(Me.CellValueAt(Me.SelectedRowIndex, Self.ColumnName), EndOfLine, 1) + """ creature adjustment?"
 		    Else
 		      Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " creature adjustments?"
 		    End If

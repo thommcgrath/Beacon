@@ -577,8 +577,8 @@ End
 		  Self.mNotesURL = NotesURL
 		  Self.ResultsNotesButton.Enabled = NotesURL.BeginsWith("https://")
 		  
-		  Dim PathComponents() As String = NthField(URL, "?", 1).Split("/")
-		  Dim Filename As String = NthField(PathComponents(PathComponents.LastRowIndex), "#", 1)
+		  Dim PathComponents() As String = FrameworkExtensions.FieldAtPosition(URL, "?", 1).Split("/")
+		  Dim Filename As String = FrameworkExtensions.FieldAtPosition(PathComponents(PathComponents.LastRowIndex), "#", 1)
 		  Dim FilenameParts() As String = Filename.Split(".")
 		  Dim Extension As String = FilenameParts(FilenameParts.LastRowIndex)
 		  
