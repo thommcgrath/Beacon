@@ -147,7 +147,7 @@ Protected Module FrameworkExtensions
 		  End If
 		  
 		  If File.IsFolder Then
-		    For I As Integer = File.Count DownTo 1
+		    For I As Integer = File.Count - 1 DownTo 0
 		      If Not File.ChildAt(I).DeepDelete Then
 		        Return False
 		      End If

@@ -465,15 +465,16 @@ Protected Module Beacon
 		  // This function will check for UTF-8 and UTF-16 Byte Order Marks,
 		  // remove them, and convert to UTF-8.
 		  
-		  If Value.LeftB(3) = Encodings.ASCII.Chr(239) + Encodings.ASCII.Chr(187) + Encodings.ASCII.Chr(191) Then
+		  Dim Mem As MemoryBlock = Value
+		  If Mem.Size >= 3 And Mem.StringValue(0, 3) = Encodings.ASCII.Chr(239) + Encodings.ASCII.Chr(187) + Encodings.ASCII.Chr(191) Then
 		    // The rare UTF-8 BOM
-		    Return Value.DefineEncoding(Encodings.UTF8).MidB(4)
-		  ElseIf Value.LeftB(2) = Encodings.ASCII.Chr(254) + Encodings.ASCII.Chr(255) Then
+		    Return Mem.StringValue(3, Mem.Size - 3).DefineEncoding(Encodings.UTF8)
+		  ElseIf Mem.Size >= 2 And Mem.StringValue(0, 2) = Encodings.ASCII.Chr(254) + Encodings.ASCII.Chr(255) Then
 		    // Confirmed UTF-16 BE
-		    Return Value.DefineEncoding(Encodings.UTF16BE).MidB(3).ConvertEncoding(Encodings.UTF8)
-		  ElseIf Value.LeftB(2) = Encodings.ASCII.Chr(255) + Encodings.ASCII.Chr(254) Then
+		    Return Mem.StringValue(2, Mem.Size - 2).DefineEncoding(Encodings.UTF16BE).ConvertEncoding(Encodings.UTF8)
+		  ElseIf Mem.Size >= 2 And Mem.StringValue(0, 2) = Encodings.ASCII.Chr(255) + Encodings.ASCII.Chr(254) Then
 		    // Confirmed UTF-16 LE
-		    Return Value.DefineEncoding(Encodings.UTF16LE).MidB(3).ConvertEncoding(Encodings.UTF8)
+		    Return Mem.StringValue(2, Mem.Size - 2).DefineEncoding(Encodings.UTF16LE).ConvertEncoding(Encodings.UTF8)
 		  Else
 		    // Ok, now we need to get fancy. It's a safe bet that all files contain a "/script/" string, right?
 		    // Let's interpret the file as each of the 3 and see which one matches.

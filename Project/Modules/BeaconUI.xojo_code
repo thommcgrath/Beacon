@@ -303,24 +303,32 @@ Protected Module BeaconUI
 		  
 		  Dim Bitmaps() As Picture
 		  For Factor As Integer = 1 To 3
-		    Dim Mask As Picture = Icon.BestRepresentation(Width, Height, Factor)
+		    Dim ScaledIcon As Picture = Icon.BestRepresentation(Width, Height, Factor)
 		    
-		    Dim Pic As New Picture(Width * Factor, Height * Factor, 32)
+		    Dim Pic As New Picture(Width * Factor, Height * Factor)
 		    Pic.VerticalResolution = 72 * Factor
 		    Pic.HorizontalResolution = 72 * Factor
 		    Pic.Graphics.DrawingColor = RGB(FillColor.Red, FillColor.Green, FillColor.Blue)
 		    Pic.Graphics.FillRectangle(0, 0, Pic.Width, Pic.Height)
-		    Pic.Mask.Graphics.ClearRect(0, 0, Pic.Width, Pic.Height)
-		    Pic.Mask.Graphics.DrawPicture(Mask, 0, 0, Mask.Width, Mask.Height, 0, 0, Mask.Width, Mask.Height)
+		    
+		    Dim Mask As New Picture(Width * Factor, Height * Factor)
+		    Mask.VerticalResolution = 72 * Factor
+		    Mask.HorizontalResolution = 72 * Factor
+		    Mask.Graphics.DrawingColor = &cFFFFFF
+		    Mask.Graphics.FillRectangle(0, 0, Pic.Width, Pic.Height)
+		    Mask.Graphics.DrawPicture(ScaledIcon, 0, 0, Pic.Width, Pic.Height, 0, 0, ScaledIcon.Width, ScaledIcon.Height)
 		    
 		    If Overlay <> Nil Then
-		      Dim OverlayMask As Picture = Overlay.BestRepresentation(Width, Height, Factor)
-		      Pic.Mask.Graphics.DrawPicture(OverlayMask, 0, 0, Mask.Width, Mask.Height, 0, 0, OverlayMask.Width, OverlayMask.Height)
+		      Dim OverlayIcon As Picture = Overlay.BestRepresentation(Width, Height, Factor)
+		      Mask.Graphics.DrawPicture(OverlayIcon, 0, 0, Mask.Width, Mask.Height, 0, 0, OverlayIcon.Width, OverlayIcon.Height)
 		    End If
 		    
-		    Pic.Mask.Graphics.DrawingColor = RGB(255, 255, 255, 255 - FillColor.Alpha)
-		    Pic.Mask.Graphics.FillRectangle(0, 0, Pic.Width, Pic.Height)
+		    If FillColor.Alpha <> 0 Then
+		      Mask.Graphics.DrawingColor = RGB(255, 255, 255, 255 - FillColor.Alpha)
+		      Mask.Graphics.FillRectangle(0, 0, Pic.Width, Pic.Height)
+		    End If
 		    
+		    Pic.ApplyMask(Mask)
 		    Bitmaps.Append(Pic)
 		  Next
 		  Return New Picture(Width, Height, Bitmaps)

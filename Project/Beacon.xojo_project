@@ -18,7 +18,6 @@ Window=EntryPropertiesEditor;Views/EntryPropertiesEditor.xojo_window;&h000000007
 Window=ImporterWindow;Views/ImporterWindow.xojo_window;&h0000000003AE27FF;&h0000000008A387FF;false
 Folder=Icons;Icons;&h0000000007F977FF;&h0000000000000000;false
 MultiImage=LoginSidebar;Icons/LoginSidebar.xojo_image;&h000000002045EFFF;&h0000000007F977FF;false
-MultiImage=IconAdd;Icons/IconAdd.xojo_image;&h0000000025E477FF;&h0000000007F977FF;false
 MultiImage=IconEdit;Icons/IconEdit.xojo_image;&h0000000055911FFF;&h0000000007F977FF;false
 MultiImage=IconRemove;Icons/IconRemove.xojo_image;&h000000003CD3C7FF;&h0000000007F977FF;false
 Folder=Custom Controls;Custom Controls;&h0000000030DCFFFF;&h0000000000000000;false

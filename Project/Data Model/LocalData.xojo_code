@@ -264,7 +264,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    For Each SearchFolder As FolderItem In SearchFolders
 		      Dim Candidates() As FolderItem
 		      Dim Versions() As Integer
-		      For I As Integer = 1 To SearchFolder.Count
+		      For I As Integer = 0 To SearchFolder.Count - 1
 		        Dim Filename As String = SearchFolder.ChildAt(I).Name
 		        If Filename = SearchPrefix + SearchSuffix Then
 		          Candidates.Append(SearchFolder.ChildAt(I))
@@ -773,10 +773,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dim Width As Integer = (SpriteSheet.Width / 2) / 3
 		  
 		  If BadgeSheet <> Nil Then
-		    Dim Badges As Picture = New Picture(BadgeSheet.Width, BadgeSheet.Height, 32)
+		    Dim BadgesMask As New Picture(BadgeSheet.Width, BadgeSheet.Height)
+		    BadgesMask.Graphics.DrawingColor = &cFFFFFF
+		    BadgesMask.Graphics.FillRectangle(0, 0, BadgesMask.Width, BadgesMask.Height)
+		    BadgesMask.Graphics.DrawPicture(BadgeSheet, 0, 0)
+		    
+		    Dim Badges As Picture = New Picture(BadgeSheet.Width, BadgeSheet.Height)
 		    Badges.Graphics.DrawingColor = &cFFFFFF
 		    Badges.Graphics.FillRectangle(0, 0, Badges.Graphics.Width, Badges.Graphics.Height)
-		    Badges.Mask.Graphics.DrawPicture(BadgeSheet, 0, 0)
+		    Badges.ApplyMask(BadgesMask)
 		    
 		    Dim Sprites As Picture = New Picture(SpriteSheet.Width, SpriteSheet.Height, 32)
 		    Sprites.Graphics.DrawPicture(SpriteSheet, 0, 0)
@@ -1512,7 +1517,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Dim SupportFolder As FolderItem = App.ApplicationSupport
 		    Dim PresetsFolder As FolderItem = SupportFolder.Child("Presets")
 		    If PresetsFolder.Exists Then
-		      For I As Integer = PresetsFolder.Count DownTo 1
+		      For I As Integer = PresetsFolder.Count - 1 DownTo 0
 		        Dim File As FolderItem = PresetsFolder.ChildAt(I)
 		        If Not File.IsType(BeaconFileTypes.BeaconPreset) Then
 		          File.Remove

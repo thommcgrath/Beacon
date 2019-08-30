@@ -432,7 +432,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Opening()
-		  Me.LeftItems.Append(New BeaconToolbarItem("AddButton", IconAdd, "Register a new mod."))
+		  Me.LeftItems.Append(New BeaconToolbarItem("AddButton", IconToolbarAdd, "Register a new mod."))
 		  Me.LeftItems.Append(New BeaconToolbarItem("RemoveButton", IconRemove, False, "Remove the selected mod."))
 		  
 		  Me.RightItems.Append(New BeaconToolbarItem("SettingsButton", IconSettings, False, "Change settings for the selected mod."))

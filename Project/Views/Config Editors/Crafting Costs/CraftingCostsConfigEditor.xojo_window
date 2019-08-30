@@ -683,7 +683,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Opening()
-		  Dim AddButton As New BeaconToolbarItem("AddEngram", IconAdd)
+		  Dim AddButton As New BeaconToolbarItem("AddEngram", IconToolbarAdd)
 		  AddButton.HelpTag = "Change the crafting cost for a new item."
 		  
 		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)

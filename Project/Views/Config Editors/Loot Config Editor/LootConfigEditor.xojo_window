@@ -151,7 +151,6 @@ Begin ConfigEditor LootConfigEditor
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   "0"
       RowSelectionType=   "1"
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -195,7 +194,6 @@ Begin ConfigEditor LootConfigEditor
       SelectedPanelIndex=   0
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
@@ -220,7 +218,6 @@ Begin ConfigEditor LootConfigEditor
          HasBackgroundColor=   False
          Height          =   436
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -783,7 +780,7 @@ End
 #tag Events Header
 	#tag Event
 		Sub Opening()
-		  Dim AddButton As New BeaconToolbarItem("AddSource", IconAdd)
+		  Dim AddButton As New BeaconToolbarItem("AddSource", IconToolbarAdd)
 		  AddButton.HasMenu = True
 		  AddButton.HelpTag = "Define an additional loot source. Hold to quickly add a source from a menu."
 		  

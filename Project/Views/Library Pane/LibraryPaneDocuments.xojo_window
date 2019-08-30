@@ -106,7 +106,6 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -236,7 +235,7 @@ End
 		  
 		  Dim AutosaveFolder As FolderItem = App.AutosaveFolder()
 		  If AutosaveFolder <> Nil Then
-		    For I As Integer = 1 To AutosaveFolder.Count
+		    For I As Integer = 0 To AutosaveFolder.Count - 1
 		      Dim File As BookmarkedFolderItem = New BookmarkedFolderItem(AutosaveFolder.ChildAt(I))
 		      If Not File.Name.EndsWith(BeaconFileTypes.BeaconDocument.PrimaryExtension) Then
 		        Continue

@@ -186,14 +186,25 @@ Protected Class UpdateChecker
 
 	#tag Method, Flags = &h21
 		Private Shared Function OSVersion() As String
+		  Dim MajorVersion, MinorVersion, BugVersion As Integer
+		  OSVersion(MajorVersion, MinorVersion, BugVersion)
+		  Return Str(MajorVersion, "-0") + "." + Str(MinorVersion, "-0") + "." + Str(BugVersion, "-0")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Sub OSVersion(ByRef MajorVersion As Integer, ByRef MinorVersion As Integer, ByRef BugVersion As Integer)
 		  #if TargetMacOS
 		    Declare Function NSClassFromString Lib "AppKit" (ClassName As CFStringRef) As Ptr
 		    Declare Function ProcessInfo Lib "AppKit" Selector "processInfo" (ClassRef As Ptr) As Ptr
 		    Declare Function OperatingSystemVersion Lib "AppKit" Selector "operatingSystemVersion" (NSProcessInfo As Ptr) As MacOSVersion
 		    
-		    Dim Info As Ptr = ProcessInfo(NSClassFroMString("NSProcessInfo"))
+		    Dim Info As Ptr = ProcessInfo(NSClassFromString("NSProcessInfo"))
 		    Dim Struct As MacOSVersion = OperatingSystemVersion(Info)
-		    Return Str(Struct.Major, "-0") + "." + Str(Struct.Minor, "-0") + "." + Str(Struct.Bug, "-0")
+		    
+		    MajorVersion = Struct.Major
+		    MinorVersion = Struct.Minor
+		    BugVersion = Struct.Bug
 		  #elseif TargetWin32
 		    If System.IsFunctionAvailable("RtlGetVersion", "ntdll.dll") Then
 		      Soft Declare Function RtlGetVersion Lib "ntdll.dll" (ByRef VersionInformation As WinOSVersion) As Int32
@@ -203,10 +214,18 @@ Protected Class UpdateChecker
 		      
 		      Call RtlGetVersion(Struct)
 		      
-		      Return Str(Struct.MajorVersion, "-0") + "." + Str(Struct.MinorVersion, "-0") + "." + Str(Struct.BuildNumber, "-0")
+		      MajorVersion = Struct.MajorVersion
+		      MinorVersion = Struct.MinorVersion
+		      BugVersion = Struct.BuildNumber
 		    End If
 		  #endif
-		End Function
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Untitled()
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

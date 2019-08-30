@@ -722,7 +722,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Opening()
-		  Dim AddButton As New BeaconToolbarItem("AddEntry", IconAdd)
+		  Dim AddButton As New BeaconToolbarItem("AddEntry", IconToolbarAdd)
 		  AddButton.HelpTag = "Add engrams to this item set."
 		  
 		  Dim EditButton As New BeaconToolbarItem("EditEntry", IconToolbarEdit, False)

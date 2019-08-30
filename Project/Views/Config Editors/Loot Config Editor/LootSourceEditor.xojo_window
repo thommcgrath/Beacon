@@ -1550,7 +1550,7 @@ End
 #tag Events Header
 	#tag Event
 		Sub Opening()
-		  Dim AddButton As New BeaconToolbarItem("AddSet", IconAdd)
+		  Dim AddButton As New BeaconToolbarItem("AddSet", IconToolbarAdd)
 		  AddButton.HasMenu = True
 		  AddButton.HelpTag = "Add a new empty item set. Hold to add a preset from a menu."
 		  

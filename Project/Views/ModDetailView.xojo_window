@@ -1096,7 +1096,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Opening()
-		  Me.LeftItems.Append(New BeaconToolbarItem("AddButton", IconAdd, "Add new engram."))
+		  Me.LeftItems.Append(New BeaconToolbarItem("AddButton", IconToolbarAdd, "Add new engram."))
 		  Me.LeftItems.Append(New BeaconToolbarItem("RemoveButton", IconRemove, False, "Delete selected engrams."))
 		  
 		  Me.LeftItems.Append(New BeaconToolbarItem("PublishButton", IconToolbarPublish, False, "Publish changes to make them live."))

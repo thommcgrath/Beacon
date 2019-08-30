@@ -73,7 +73,7 @@ Protected Module UserCloud
 		    Return
 		  End If
 		  
-		  For I As Integer = Folder.Count DownTo 1
+		  For I As Integer = Folder.Count - 1 DownTo 0
 		    Dim Child As FolderItem = Folder.ChildAt(I)
 		    If Not Child.IsFolder Then
 		      Continue
@@ -132,7 +132,7 @@ Protected Module UserCloud
 		    Return
 		  End If
 		  
-		  For I As Integer = 1 To Folder.Count
+		  For I As Integer = 0 To Folder.Count - 1
 		    Dim Child As FolderItem = Folder.ChildAt(I)
 		    If Child.Name.BeginsWith(".") Then
 		      Continue

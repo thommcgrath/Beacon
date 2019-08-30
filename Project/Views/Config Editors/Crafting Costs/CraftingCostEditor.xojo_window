@@ -344,7 +344,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Opening()
-		  Dim AddButton As New BeaconToolbarItem("AddResource", IconAdd)
+		  Dim AddButton As New BeaconToolbarItem("AddResource", IconToolbarAdd)
 		  AddButton.HelpTag = "Add resources to this crafting cost."
 		  Me.LeftItems.Append(AddButton)
 		End Sub

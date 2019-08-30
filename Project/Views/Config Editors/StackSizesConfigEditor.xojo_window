@@ -536,7 +536,7 @@ End
 #tag Events Header
 	#tag Event
 		Sub Opening()
-		  Dim AddButton As New BeaconToolbarItem("AddEngram", IconAdd)
+		  Dim AddButton As New BeaconToolbarItem("AddEngram", IconToolbarAdd)
 		  AddButton.HelpTag = "Override the stack size of an engram."
 		  
 		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)

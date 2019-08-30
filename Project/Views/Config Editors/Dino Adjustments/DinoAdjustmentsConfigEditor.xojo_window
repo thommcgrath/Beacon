@@ -398,7 +398,7 @@ End
 		Sub Opening()
 		  Me.Caption = Self.ConfigLabel
 		  
-		  Dim AddButton As New BeaconToolbarItem("AddCreature", IconAdd)
+		  Dim AddButton As New BeaconToolbarItem("AddCreature", IconToolbarAdd)
 		  AddButton.HelpTag = "Define new creature adjustments"
 		  
 		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)

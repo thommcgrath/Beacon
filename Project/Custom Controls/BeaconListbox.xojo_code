@@ -19,9 +19,8 @@ Inherits Listbox
 		  
 		  // Need to fill with color first so translucent system colors can apply correctly
 		  #if TargetMacOS
-		    Dim OSMajor, OSMinor As Integer
-		    Call System.Gestalt("sys1", OSMajor)
-		    Call System.Gestalt("sys2", OSMinor)
+		    Dim OSMajor, OSMinor, OSBug As Integer
+		    UpdateChecker.OSVersion(OSMajor, OSMinor, OSBug)
 		    If Self.Transparent And OSMajor >= 10 And OSMinor >= 14 Then
 		      Clip.ClearRect(0, 0, Clip.Width, Clip.Height)
 		    Else
