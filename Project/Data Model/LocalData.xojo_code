@@ -405,7 +405,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("DELETE FROM custom_presets WHERE LOWER(object_id) = LOWER(?1);", Preset.PresetID)
 		  Self.Commit()
 		  
-		  Call UserCloud.Delete("/Presets/" + CType(Preset.PresetID + BeaconFileTypes.BeaconPreset.PrimaryExtension, String).Lowercase())
+		  Call UserCloud.Delete("/Presets/" + Preset.PresetID.Lowercase + BeaconFileTypes.BeaconPreset.PrimaryExtension)
 		  
 		  Self.LoadPresets()
 		End Sub
