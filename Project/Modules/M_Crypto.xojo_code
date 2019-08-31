@@ -136,8 +136,7 @@ Protected Module M_Crypto
 		    p.Byte( 8 ) = value
 		    
 		    result = EncodeHex( randomBytes )
-		    result = result.LeftB( 8 ) + "-" + result.MidB( 9, 4 ) + "-" + result.MidB( 13, 4 ) + "-" + result.MidB( 17, 4 ) + _
-		    "-" + result.RightB( 12 )
+		    result = result.Left( 8 ) + "-" + result.Middle( 8, 4 ) + "-" + result.Middle( 12, 4 ) + "-" + result.Middle( 16, 4 ) + "-" + result.Right( 12 )
 		  end if
 		  
 		  return result

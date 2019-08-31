@@ -406,7 +406,8 @@ Inherits M_Crypto.Encrypter
 		  // The first round key is the key itself.
 		  //
 		  RoundKey = new Xojo.Core.MutableMemoryBlock( KeyExpSize )
-		  M_Crypto.CopyStringToMutableMemoryBlock( key.LeftB( KeyLen ), RoundKey )
+		  dim keyMem as MemoryBlock = key
+		  M_Crypto.CopyStringToMutableMemoryBlock( keyMem.StringValue( 0, min( KeyLen, keyMem.size ) ), RoundKey )
 		  
 		  dim ptrRoundKey as Ptr = RoundKey.Data
 		  

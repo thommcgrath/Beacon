@@ -257,17 +257,16 @@ Protected Class Encrypter
 		    return vector
 		  end if
 		  
-		  if vector.LenB = BlockSize then
+		  if vector.Length = BlockSize then
 		    return vector
 		  end if
 		  
-		  dim newVector as string = DecodeHex( vector )
-		  if newVector.LenB = BlockSize then
+		  dim newVector as memoryblock = DecodeHex( vector )
+		  if newVector.size = BlockSize then
 		    return newVector
 		  else
 		    return vector
 		  end if
-		  
 		End Function
 	#tag EndMethod
 
@@ -382,10 +381,9 @@ Protected Class Encrypter
 		  end if
 		  
 		  vector = InterpretVector( vector )
-		  RaiseErrorIf vector.LenB <> BlockSize, kErrorVectorSize.ReplaceAll( "BLOCKSIZE", str( BlockSize ) )
+		  RaiseErrorIf CType(vector, MemoryBlock).Size <> BlockSize, kErrorVectorSize.ReplaceAll( "BLOCKSIZE", str( BlockSize ) )
 		  
 		  InitialVector = StringToMutableMemoryBlock( vector )
-		  
 		End Sub
 	#tag EndMethod
 
