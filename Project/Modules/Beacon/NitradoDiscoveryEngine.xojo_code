@@ -12,7 +12,7 @@ Implements Beacon.DiscoveryEngine
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
-		  If Self.CheckError(Status) Then
+		  If Self.CheckError(Status, Content) Then
 		    Return
 		  End If
 		  
@@ -44,7 +44,7 @@ Implements Beacon.DiscoveryEngine
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
-		  If Self.CheckError(Status) Then
+		  If Self.CheckError(Status, Content) Then
 		    Return
 		  End If
 		  
@@ -65,7 +65,7 @@ Implements Beacon.DiscoveryEngine
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
-		  If Self.CheckError(Status) Then
+		  If Self.CheckError(Status, Content) Then
 		    Return
 		  End If
 		  
@@ -97,7 +97,7 @@ Implements Beacon.DiscoveryEngine
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
-		  If Self.CheckError(Status) Then
+		  If Self.CheckError(Status, Content) Then
 		    Return
 		  End If
 		  
@@ -121,7 +121,7 @@ Implements Beacon.DiscoveryEngine
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
-		  If Self.CheckError(Status) Then
+		  If Self.CheckError(Status, Content) Then
 		    Return
 		  End If
 		  
@@ -154,7 +154,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function CheckError(HTTPStatus As Integer) As Boolean
+		Private Function CheckError(HTTPStatus As Integer, HTTPResponse As MemoryBlock) As Boolean
 		  Select Case HTTPStatus
 		  Case 401
 		    Self.mStatus = "Error: Authorization failed."
@@ -162,6 +162,12 @@ Implements Beacon.DiscoveryEngine
 		    Self.mStatus = "Error: Rate limit has been exceeded."
 		  Case 503
 		    Self.mStatus = "Error: Nitrado is offline for maintenance."
+		  Case 0
+		    If HTTPResponse <> Nil And HTTPResponse.Size > 0 Then
+		      Self.mStatus = "Connection error: " + HTTPResponse.StringValue(0, HTTPResponse.Size).GuessEncoding
+		    Else
+		      Self.mStatus = "Connection error"
+		    End If
 		  Else
 		    Self.mErrored = False
 		    Return False
