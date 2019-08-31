@@ -39,11 +39,10 @@ Protected Module Beacon
 		  Dim Entries() As Variant
 		  If Dict.HasKey(Key) Then
 		    Dim Value As Variant = Dict.Value(Key)
-		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
-		    If Info.FullName = "Auto()" Then
+		    If IsNull(Value) = False And Value.IsArray And Value.ArrayElementType = Variant.TypeObject Then
 		      Entries = Value
 		    Else
-		      Entries.Append(Value)
+		      Entries.AddRow(Value)
 		    End If
 		  End If
 		  Return Entries
