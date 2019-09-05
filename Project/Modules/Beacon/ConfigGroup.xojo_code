@@ -35,10 +35,10 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Dictionary, Identity As Beacon.Identity)
+		Sub Constructor(Source As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
 		  Self.Constructor
 		  Self.mIsImplicit = Source.Lookup("Implicit", False)
-		  RaiseEvent ReadDictionary(Source, Identity)
+		  RaiseEvent ReadDictionary(Source, Identity, Document)
 		End Sub
 	#tag EndMethod
 
@@ -99,10 +99,10 @@ Protected Class ConfigGroup
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
-		Function ToDictionary(Identity As Beacon.Identity) As Dictionary
+		Function ToDictionary(Document As Beacon.Document) As Dictionary
 		  Dim Dict As New Dictionary
 		  Dict.Value("Implicit") = Self.mIsImplicit
-		  RaiseEvent WriteDictionary(Dict, Identity)
+		  RaiseEvent WriteDictionary(Dict, Document)
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -141,11 +141,11 @@ Protected Class ConfigGroup
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
+		Event ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
+		Event WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
 	#tag EndHook
 
 

@@ -11,8 +11,9 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
 		  #Pragma Unused Identity
+		  #Pragma Unused Document
 		  
 		  If Dict.Lookup("App Version", 40) < Self.DiscardBeforeVersion Then
 		    App.Log("Discarding loot scale config because saved version " + App.NonReleaseVersion.ToString + " < " + Self.DiscardBeforeVersion.ToString + ".")
@@ -27,8 +28,8 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
-		  #Pragma Unused Identity
+		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
+		  #Pragma Unused Document
 		  
 		  Dict.Value("Multiplier") = Self.mMultiplier
 		  Dict.Value("App Version") = App.BuildNumber

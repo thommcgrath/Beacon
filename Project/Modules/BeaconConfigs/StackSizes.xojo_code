@@ -24,8 +24,9 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
 		  #Pragma Unused Identity
+		  #Pragma Unused Document
 		  
 		  Self.mOverrides = Dict.DictionaryValue("Overrides", New Dictionary)
 		  Self.mGlobalMultiplier = Dict.DoubleValue("Global", 1.0)
@@ -33,8 +34,8 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
-		  #Pragma Unused Identity
+		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
+		  #Pragma Unused Document
 		  
 		  Dict.Value("Global") = Self.mGlobalMultiplier
 		  Dict.Value("Overrides") = Self.mOverrides

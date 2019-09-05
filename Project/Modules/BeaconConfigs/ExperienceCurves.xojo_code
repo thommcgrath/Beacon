@@ -82,8 +82,9 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
 		  #Pragma Unused Identity
+		  #Pragma Unused Document
 		  
 		  If Dict.HasKey("Player Levels") Then
 		    Dim List() As Variant = Dict.Value("Player Levels")
@@ -112,8 +113,8 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
-		  #Pragma Unused Identity
+		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
+		  #Pragma Unused Document
 		  
 		  Dict.Value("Player Levels") = Self.mPlayerLevels
 		  Dict.Value("Dino Levels") = Self.mDinoLevels

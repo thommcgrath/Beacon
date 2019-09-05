@@ -31,8 +31,9 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
 		  #Pragma Unused Identity
+		  #Pragma Unused Document
 		  
 		  Self.mBehaviors = New Dictionary
 		  
@@ -53,8 +54,8 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
-		  #Pragma Unused Identity
+		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
+		  #Pragma Unused Document
 		  
 		  Dim Dicts() As Dictionary
 		  For Each Entry As DictionaryEntry In Self.mBehaviors

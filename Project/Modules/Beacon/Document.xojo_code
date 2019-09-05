@@ -39,6 +39,12 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub AddUser(UserID As String, PublicKey As String)
+		  Self.mEncryptedPasswords.Value(UserID.Lowercase) = EncodeBase64(Crypto.RSAEncrypt(Self.mDocumentPassword, PublicKey), 0)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ConfigGroup(GroupName As String, Create As Boolean = False) As Beacon.ConfigGroup
 		  If Self.mConfigGroups.HasKey(GroupName) Then
 		    Return Self.mConfigGroups.Value(GroupName)
@@ -65,7 +71,15 @@ Protected Class Document
 		  Self.mModified = False
 		  Self.mMods = New Beacon.StringList
 		  Self.UseCompression = True
+		  Self.mDocumentPassword = Crypto.GenerateRandomBytes(32)
+		  Self.mEncryptedPasswords = New Dictionary
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Decrypt(Data As String) As String
+		  Return BeaconEncryption.SymmetricDecrypt(Self.mDocumentPassword, DecodeBase64(Data))
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -78,6 +92,12 @@ Protected Class Document
 	#tag Method, Flags = &h0
 		Function DocumentID() As String
 		  Return Self.mIdentifier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Encrypt(Data As String) As String
+		  Return EncodeBase64(BeaconEncryption.SymmetricEncrypt(Self.mDocumentPassword, Data), 0)
 		End Function
 	#tag EndMethod
 
@@ -131,9 +151,6 @@ Protected Class Document
 		      If Dict.HasKey("Secure") Then
 		        Dim SecureDict As Dictionary = ReadSecureData(Dict.Value("Secure"), Identity)
 		        If SecureDict <> Nil Then
-		          Doc.mLastSecureDict = Dict.Value("Secure")
-		          Doc.mLastSecureHash = Doc.mLastSecureDict.Value("Hash")
-		          
 		          Dim ServerDicts() As Variant = SecureDict.Value("Servers")
 		          For Each ServerDict As Dictionary In ServerDicts
 		            Dim Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
@@ -256,13 +273,27 @@ Protected Class Document
 		    Return Beacon.Document.FromLegacy(Parsed, Identity)
 		  End If
 		  
+		  If Version >= 4 And Dict.HasKey("EncryptionKeys") And Dict.Value("EncryptionKeys") IsA Dictionary Then
+		    Dim Passwords As Dictionary = Dict.Value("EncryptionKeys")
+		    If Passwords.HasKey(Identity.Identifier.Lowercase) Then
+		      Try
+		        Dim DocumentPassword As String = Crypto.RSADecrypt(DecodeBase64(Passwords.Value(Identity.Identifier.Lowercase)), Identity.PrivateKey)
+		        Doc.mDocumentPassword = DocumentPassword
+		        Doc.mEncryptedPasswords = Passwords
+		      Catch Err As RuntimeException
+		        // Leave the encryption fresh
+		        Break
+		      End Try
+		    End If
+		  End If
+		  
 		  // New config system
 		  If Dict.HasKey("Configs") Then
 		    Dim Groups As Dictionary = Dict.Value("Configs")
 		    For Each Entry As DictionaryEntry In Groups
 		      Dim GroupName As String = Entry.Key
 		      Dim GroupData As Dictionary = Entry.Value
-		      Dim Instance As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName, GroupData, Identity)
+		      Dim Instance As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName, GroupData, Identity, Doc)
 		      If Instance <> Nil Then
 		        Doc.mConfigGroups.Value(GroupName) = Instance
 		      End If
@@ -292,25 +323,34 @@ Protected Class Document
 		  Else
 		    Doc.UseCompression = True
 		  End If
-		  If Dict.HasKey("Secure") Then
-		    Dim SecureDict As Dictionary = ReadSecureData(Dict.Value("Secure"), Identity)
-		    If SecureDict <> Nil Then
-		      Doc.mLastSecureDict = Dict.Value("Secure")
-		      Doc.mLastSecureHash = Doc.mLastSecureDict.Value("Hash")
-		      
-		      Dim ServerDicts() As Variant = SecureDict.Value("Servers")
-		      For Each ServerDict As Dictionary In ServerDicts
-		        Dim Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
-		        If Profile <> Nil Then
-		          Doc.mServerProfiles.Append(Profile)
-		        End If
-		      Next
-		      
-		      If SecureDict.HasKey("OAuth") Then
-		        Doc.mOAuthDicts = SecureDict.Value("OAuth")
+		  
+		  Dim SecureDict As Dictionary
+		  If Dict.HasKey("EncryptedData") Then
+		    Try
+		      Doc.mLastSecureData = Dict.Value("EncryptedData")
+		      Dim Decrypted As String = Doc.Decrypt(Doc.mLastSecureData)
+		      Doc.mLastSecureHash = Beacon.Hash(Decrypted)
+		      SecureDict = Beacon.ParseJSON(Decrypted)
+		    Catch Err As RuntimeException
+		      // No secure data
+		    End Try
+		  ElseIf Dict.HasKey("Secure") Then
+		    SecureDict = ReadSecureData(Dict.Value("Secure"), Identity)
+		  End If
+		  If SecureDict <> Nil Then
+		    Dim ServerDicts() As Variant = SecureDict.Value("Servers")
+		    For Each ServerDict As Dictionary In ServerDicts
+		      Dim Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
+		      If Profile <> Nil Then
+		        Doc.mServerProfiles.Append(Profile)
 		      End If
+		    Next
+		    
+		    If SecureDict.HasKey("OAuth") Then
+		      Doc.mOAuthDicts = SecureDict.Value("OAuth")
 		    End If
 		  End If
+		  
 		  If Dict.HasKey("Trust") Then
 		    Doc.mTrustKey = Dict.Value("Trust")
 		  End If
@@ -322,6 +362,16 @@ Protected Class Document
 		  Doc.Modified = Version < Beacon.Document.DocumentVersion
 		  
 		  Return Doc
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetUsers() As String()
+		  Dim Users() As String
+		  For Each Entry As DictionaryEntry In Self.mEncryptedPasswords
+		    Users.Append(Entry.Key)
+		  Next
+		  Return Users
 		End Function
 	#tag EndMethod
 
@@ -570,6 +620,15 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub RemoveUser(UserID As String)
+		  UserID = UserID.Lowercase
+		  If Self.mEncryptedPasswords.HasKey(UserID) Then
+		    Self.mEncryptedPasswords.Remove(UserID)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ServerProfile(Index As Integer) As Beacon.ServerProfile
 		  Return Self.mServerProfiles(Index)
 		End Function
@@ -606,10 +665,15 @@ Protected Class Document
 
 	#tag Method, Flags = &h0
 		Function ToDictionary(Identity As Beacon.Identity) As Dictionary
+		  If Not Self.mEncryptedPasswords.HasKey(Identity.Identifier) Then
+		    Self.AddUser(Identity.Identifier, Identity.PublicKey)
+		  End If
+		  
 		  Dim Document As New Dictionary
 		  Document.Value("Version") = Self.DocumentVersion
 		  Document.Value("Identifier") = Self.DocumentID
 		  Document.Value("Trust") = Self.TrustKey
+		  Document.Value("EncryptionKeys") = Self.mEncryptedPasswords
 		  
 		  Dim ModsList() As String = Self.Mods
 		  Document.Value("Mods") = ModsList
@@ -619,7 +683,7 @@ Protected Class Document
 		  Dim Groups As New Dictionary
 		  For Each Entry As DictionaryEntry In Self.mConfigGroups
 		    Dim Group As Beacon.ConfigGroup = Entry.Value
-		    Dim GroupData As Dictionary = Group.ToDictionary(Identity)
+		    Dim GroupData As Dictionary = Group.ToDictionary(Self)
 		    If GroupData = Nil Then
 		      GroupData = New Dictionary
 		    End If
@@ -646,23 +710,10 @@ Protected Class Document
 		  Dim Content As String = Beacon.GenerateJSON(EncryptedData, False)
 		  Dim Hash As String = Beacon.Hash(Content)
 		  If Hash <> Self.mLastSecureHash Then
-		    Dim AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
-		    Dim Key As MemoryBlock = Crypto.GenerateRandomBytes(128)
-		    Dim Vector As MemoryBlock = Crypto.GenerateRandomBytes(16)
-		    AES.SetKey(Key)
-		    AES.SetInitialVector(Vector)
-		    Dim Encrypted As MemoryBlock = AES.EncryptCBC(Content)
-		    
-		    Dim SecureDict As New Dictionary
-		    SecureDict.Value("Key") = EncodeHex(Identity.Encrypt(Key))
-		    SecureDict.Value("Vector") = EncodeHex(Vector)
-		    SecureDict.Value("Content") = EncodeHex(Encrypted)
-		    SecureDict.Value("Hash") = Hash
-		    
+		    Self.mLastSecureData = Self.Encrypt(Content)
 		    Self.mLastSecureHash = Hash
-		    Self.mLastSecureDict = SecureDict
 		  End If
-		  Document.Value("Secure") = Self.mLastSecureDict.Clone
+		  Document.Value("EncryptedData") = Self.mLastSecureData
 		  
 		  Return Document
 		End Function
@@ -762,6 +813,14 @@ Protected Class Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDocumentPassword As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEncryptedPasswords As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mIdentifier As String
 	#tag EndProperty
 
@@ -770,7 +829,7 @@ Protected Class Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLastSecureDict As Dictionary
+		Private mLastSecureData As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -853,7 +912,7 @@ Protected Class Document
 	#tag EndComputedProperty
 
 
-	#tag Constant, Name = DocumentVersion, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = DocumentVersion, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
 

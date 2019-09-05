@@ -38,8 +38,9 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
 		  #Pragma Unused Identity
+		  #Pragma Unused Document
 		  
 		  // There is a slight performance impact here, since DoubleValue will check HasKey too,
 		  // but this way is safe.
@@ -60,8 +61,8 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
-		  #Pragma Unused Identity
+		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
+		  #Pragma Unused Document
 		  
 		  Dict.Value("Harvest Amount Multiplier") = Self.mHarvestAmountMultiplier
 		  Dict.Value("Harvest Health Multiplier") = Self.mHarvestHealthMultiplier

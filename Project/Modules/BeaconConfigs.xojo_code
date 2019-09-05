@@ -89,7 +89,7 @@ Protected Module BeaconConfigs
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function CreateInstance(GroupName As String, GroupData As Dictionary, Identity As Beacon.Identity) As Beacon.ConfigGroup
+		Protected Function CreateInstance(GroupName As String, GroupData As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document) As Beacon.ConfigGroup
 		  Dim Info As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
 		  If Info = Nil Or Info.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) = False Then
 		    Return Nil
@@ -98,10 +98,11 @@ Protected Module BeaconConfigs
 		  Dim Constructors() As Introspection.ConstructorInfo = Info.GetConstructors
 		  For Each Signature As Introspection.ConstructorInfo In Constructors
 		    Dim Params() As Introspection.ParameterInfo = Signature.GetParameters
-		    If Params.LastRowIndex = 1 And Params(0).IsByRef = False And Params(0).ParameterType.FullName = "Dictionary" And Params(1).IsByRef = False And Params(1).ParameterType.FullName = "Beacon.Identity" Then
-		      Dim Values(1) As Variant
+		    If Params.LastRowIndex = 2 And Params(0).IsByRef = False And Params(0).ParameterType.FullName = "Dictionary" And Params(1).IsByRef = False And Params(1).ParameterType.FullName = "Beacon.Identity" And Params(2).IsByRef = False And Params(2).ParameterType.FullName = "Beacon.Document" Then
+		      Dim Values(2) As Variant
 		      Values(0) = GroupData
 		      Values(1) = Identity
+		      Values(2) = Document
 		      Return Signature.Invoke(Values)
 		    End If
 		  Next

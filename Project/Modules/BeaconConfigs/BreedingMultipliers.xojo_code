@@ -20,8 +20,9 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
 		  #Pragma Unused Identity
+		  #Pragma Unused Document
 		  
 		  Self.mBabyCuddleGracePeriodMultiplier = Dict.Lookup("BabyCuddleGracePeriodMultiplier", 1.0)
 		  Self.mBabyCuddleIntervalMultiplier = Dict.Lookup("BabyCuddleIntervalMultiplier", 1.0)
@@ -37,8 +38,8 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
-		  #Pragma Unused Identity
+		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
+		  #Pragma Unused Document
 		  
 		  Dict.Value("BabyCuddleGracePeriodMultiplier") = Self.mBabyCuddleGracePeriodMultiplier
 		  Dict.Value("BabyCuddleIntervalMultiplier") = Self.mBabyCuddleIntervalMultiplier

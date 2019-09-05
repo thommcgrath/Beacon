@@ -74,8 +74,9 @@ Implements Iterable
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
 		  #Pragma Unused Identity
+		  #Pragma Unused Document
 		  
 		  If Dict.HasKey("Contents") Then
 		    // Only keep the most recent of the duplicates
@@ -98,8 +99,8 @@ Implements Iterable
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
-		  #Pragma Unused Identity
+		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
+		  #Pragma Unused Document
 		  
 		  Dim Contents() As Dictionary
 		  For Each Source As Beacon.LootSource In Self.mSources

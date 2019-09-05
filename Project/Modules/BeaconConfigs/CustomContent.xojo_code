@@ -2,16 +2,16 @@
 Protected Class CustomContent
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
-		  Self.mGameIniContent = Self.ReadContent(Dict.Lookup("Game.ini", ""), Identity)
-		  Self.mGameUserSettingsIniContent = Self.ReadContent(Dict.Lookup("GameUserSettings.ini", ""), Identity)
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
+		  Self.mGameIniContent = Self.ReadContent(Dict.Lookup("Game.ini", ""), Identity, Document)
+		  Self.mGameUserSettingsIniContent = Self.ReadContent(Dict.Lookup("GameUserSettings.ini", ""), Identity, Document)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
-		  Dict.Value("Game.ini") = Self.WriteContent(Self.mGameIniContent, Identity)
-		  Dict.Value("GameUserSettings.ini") = Self.WriteContent(Self.mGameUserSettingsIniContent, Identity)
+		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
+		  Dict.Value("Game.ini") = Self.WriteContent(Self.mGameIniContent, Document)
+		  Dict.Value("GameUserSettings.ini") = Self.WriteContent(Self.mGameUserSettingsIniContent, Document)
 		End Sub
 	#tag EndEvent
 
@@ -23,9 +23,23 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function Decrypt(Input As String, Identity As Beacon.Identity) As String
+		Private Function Decrypt(Input As String, Identity As Beacon.Identity, Document As Beacon.Document) As String
 		  Try
+		    #Pragma BreakOnExceptions False
+		    Dim Decrypted As String = Document.Decrypt(Input).DefineEncoding(Encodings.UTF8)
+		    #Pragma BreakOnExceptions Default
+		    If Self.mEncryptedValues = Nil Then
+		      Self.mEncryptedValues = New Dictionary
+		    End If
+		    Self.mEncryptedValues.Value(EncodeHex(Crypto.SHA512(Decrypted))) = Input
+		    Return Decrypted
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Try
+		    #Pragma BreakOnExceptions False
 		    Dim SecureDict As Dictionary = Beacon.ParseJSON(Input)
+		    #Pragma BreakOnExceptions Default
 		    If Not SecureDict.HasAllKeys("Key", "Vector", "Content", "Hash") Then
 		      Return ""
 		    End If
@@ -61,18 +75,17 @@ Inherits Beacon.ConfigGroup
 		      End If
 		      Decrypted = Decrypted.DefineEncoding(Encodings.UTF8)
 		      
-		      If Self.mEncryptedValues = Nil Then
-		        Self.mEncryptedValues = New Dictionary
-		      End If
-		      Self.mEncryptedValues.Value(ComputedHash) = Input
+		      // Do not store to encrypted values when decrypting legacy content so the
+		      // new encryption will be used on save.
 		      
 		      Return Decrypted
 		    #else
 		      #Pragma Error "Not implemented"
 		    #endif
 		  Catch Err As RuntimeException
-		    Return ""
 		  End Try
+		  
+		  Return ""
 		End Function
 	#tag EndMethod
 
@@ -83,37 +96,16 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function Encrypt(Input As String, Identity As Beacon.Identity) As String
+		Private Function Encrypt(Input As String, Document As Beacon.Document) As String
 		  Try
 		    Dim Hash As String = EncodeHex(Crypto.SHA512(Input))
 		    If Self.mEncryptedValues <> Nil And Self.mEncryptedValues.HasKey(Hash) Then
 		      Return Self.mEncryptedValues.Value(Hash)
 		    End If
 		    
-		    #if Not TargetiOS
-		      Dim AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
-		      Dim Key As MemoryBlock = Crypto.GenerateRandomBytes(128)
-		      Dim Vector As MemoryBlock = Crypto.GenerateRandomBytes(16)
-		      AES.SetKey(Key)
-		      AES.SetInitialVector(Vector)
-		      Dim Encrypted As Global.MemoryBlock = AES.EncryptCBC(Input)
-		      
-		      Dim SecureDict As New Dictionary
-		      SecureDict.Value("Key") = EncodeHex(Identity.Encrypt(Key))
-		      SecureDict.Value("Vector") = EncodeHex(Vector)
-		      SecureDict.Value("Content") = EncodeHex(Encrypted)
-		      SecureDict.Value("Hash") = Hash
-		      
-		      Dim JSON As String = Beacon.GenerateJSON(SecureDict, False)
-		      If Self.mEncryptedValues = Nil Then
-		        Self.mEncryptedValues = New Dictionary
-		      End If
-		      Self.mEncryptedValues.Value(Hash) = JSON
-		      
-		      Return JSON
-		    #else
-		      #Pragma Error "Not implemented"
-		    #endIf
+		    Dim Encrypted As String = Document.Encrypt(Input.ConvertEncoding(Encodings.UTF8))
+		    Self.mEncryptedValues.Value(Hash) = Encrypted
+		    Return Encrypted
 		  Catch Err As RuntimeException
 		    Return ""
 		  End Try
@@ -288,7 +280,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function ReadContent(Input As String, Identity As Beacon.Identity) As String
+		Private Function ReadContent(Input As String, Identity As Beacon.Identity, Document As Beacon.Document) As String
 		  Input = Input.GuessEncoding
 		  
 		  Dim Pos As Integer
@@ -309,7 +301,7 @@ Inherits Beacon.ConfigGroup
 		    Dim Prefix As String = Input.Left(StartPos)
 		    Dim Suffix As String = Input.Right(Input.Length - EndPos)
 		    Dim EncryptedContent As String = Input.Middle(StartPos, EndPos - StartPos)
-		    Dim DecryptedContent As String = Self.Decrypt(EncryptedContent, Identity)
+		    Dim DecryptedContent As String = Self.Decrypt(EncryptedContent, Identity, Document)
 		    
 		    If DecryptedContent = "" Then
 		      Prefix = Prefix.Left(Prefix.Length - Self.EncryptedTag.Length)
@@ -331,7 +323,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function WriteContent(Input As String, Identity As Beacon.Identity) As String
+		Private Function WriteContent(Input As String, Document As Beacon.Document) As String
 		  Dim Pos As Integer
 		  
 		  Do
@@ -349,7 +341,7 @@ Inherits Beacon.ConfigGroup
 		    Dim Prefix As String = Input.Left(StartPos)
 		    Dim Suffix As String = Input.Right(Input.Length - EndPos)
 		    Dim DecryptedContent As String = Input.Middle(StartPos, EndPos - StartPos)
-		    Dim EncryptedContent As String = Self.Encrypt(DecryptedContent, Identity)
+		    Dim EncryptedContent As String = Self.Encrypt(DecryptedContent, Document)
 		    
 		    Input = Prefix + EncryptedContent + Suffix
 		    Pos = Prefix.Length + EncryptedContent.Length + Self.EncryptedTag.Length
