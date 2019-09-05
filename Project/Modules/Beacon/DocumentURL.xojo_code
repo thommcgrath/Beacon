@@ -54,8 +54,8 @@ Protected Class DocumentURL
 		        Continue
 		      End If
 		      
-		      Dim Key As String = DecodeURLComponent(Part.Left(Pos))
-		      Dim Value As String = DecodeURLComponent(Part.Middle(Pos + 1))
+		      Dim Key As String = DecodeURLComponent(Part.Left(Pos)).DefineEncoding(Encodings.UTF8)
+		      Dim Value As String = DecodeURLComponent(Part.Middle(Pos + 1)).DefineEncoding(Encodings.UTF8)
 		      
 		      Self.mQueryParams.Value(Key.Lowercase) = Value
 		    Next
@@ -114,7 +114,7 @@ Protected Class DocumentURL
 		    End If
 		  End If
 		  
-		  Return DecodeURLComponent(Name.ReplaceAll("+", " "))
+		  Return DecodeURLComponent(Name.ReplaceAll("+", " ")).DefineEncoding(Encodings.UTF8)
 		End Function
 	#tag EndMethod
 
