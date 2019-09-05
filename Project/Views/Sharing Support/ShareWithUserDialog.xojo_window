@@ -367,6 +367,13 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events HelpLink
+	#tag Event
+		Sub Pressed()
+		  ShowURL(Beacon.WebURL("/help/sharing_beacon_documents_with"))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events UserLookupSocket
 	#tag Event
 		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
