@@ -368,11 +368,10 @@ class BeaconDocument implements JsonSerializable {
 			}
 			
 			$desired_guests = array();
-			foreach ($allowed_users as $allowed_user_id) {
-				if (strtolower($allowed_user_id) === $owner_user_id) {
-					continue;
-				}
-				$desired_guests[] = strtolower($allowed_user_id);
+			$results = $database->Query('SELECT user_id FROM users WHERE user_id = ANY($1) AND user_id != $2;', '{' . implode(',', $allowed_users) . '}', $owner_user_id);
+			while (!$results->EOF()) {
+				$desired_guests[] = $results->Field('user_id');
+				$results->MoveNext();
 			}
 			
 			$current_guests = array();
@@ -386,7 +385,7 @@ class BeaconDocument implements JsonSerializable {
 			$guests_to_remove = array_diff($current_guests, $desired_guests);
 			
 			if ($role !== 'Owner' && (count($guests_to_add) > 0 || count($guests_to_remove) > 0)) {
-				$reason = 'Only the owner may add or remove users. +' . var_export($guests_to_add, true) . ' -' . var_export($guests_to_remove, true);
+				$reason = 'Only the owner may add or remove users.';
 				return false;
 			}
 		}
