@@ -187,24 +187,46 @@ case 'DELETE':
 	}
 	
 	$paths = array();
-	$results = $database->Query('SELECT user_id, document_id FROM documents WHERE document_id = ANY($1);', '{' . $document_id . '}');
+	$user_id = BeaconAPI::UserID();
+	$success = false;
+	$results = $database->Query('SELECT document_id, role FROM documents WHERE document_id = ANY($1) AND user_id = $2;', '{' . $document_id . '}', $user_id);
 	while (!$results->EOF()) {
-		if ($results->Field('user_id') !== BeaconAPI::UserID()) {
-			BeaconAPI::ReplyError('Document ' . $results->Field('document_id') . ' does not belong to you.');
+		try {
+			$document_id = $results->Field('document_id');
+			$role = $results->Field('role');
+			
+			// When a file is deleted, if it is shared with another user, ownership transfers to another user. Which user
+			// is not particularly important.
+			$database->BeginTransaction();
+			if ($role === 'Owner') {
+				$guest_results = $database->Query('SELECT user_id FROM guest_documents WHERE document_id = $1;', $document_id);
+				if ($guest_results->RecordCount() == 0) {
+					$database->Query('DELETE FROM documents WHERE document_id = $1;', $document_id);
+					$paths[] = BeaconDocument::GenerateCloudStoragePath($user_id, $document_id);
+				} else {
+					$guest_user_id = $guest_results->Field('user_id');
+					$database->Query('UPDATE documents SET user_id = $1 WHERE document_id = $2;', $user_id, $document_id);
+				}
+			} elseif ($role === 'Guest') {
+				$database->Query('DELETE FROM guest_documents WHERE document_id = $1 AND user_id = $2;', $document_id, $user_id);
+			}
+			$database->Commit();
+			$success = true;
+		} catch (Exception $e) {
 		}
-		$paths[] = BeaconDocument::GenerateCloudStoragePath($results->Field('user_id'), $results->Field('document_id'));
+		
 		$results->MoveNext();
 	}
-		
-	$database->BeginTransaction();
-	$database->Query('DELETE FROM documents WHERE document_id = ANY($1);', '{' . $document_id . '}');
-	$database->Commit();
 	
 	foreach ($paths as $path) {
 		BeaconCloudStorage::DeleteFile($path);
 	}
 	
-	BeaconAPI::ReplySuccess();
+	if ($success) {
+		BeaconAPI::ReplySuccess();
+	} else {
+		BeaconAPI::ReplyError('No document was deleted.');
+	}
 	
 	break;
 }

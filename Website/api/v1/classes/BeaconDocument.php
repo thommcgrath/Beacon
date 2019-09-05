@@ -321,18 +321,21 @@ class BeaconDocument implements JsonSerializable {
 			return false;
 		}
 		
-		// confirm ownership of the document
+		
 		$database = BeaconCommon::Database();
 		$document_id = $document['Identifier'];
-		$new_document = true;
-		$results = $database->Query('SELECT user_id FROM documents WHERE document_id = $1;', $document_id);
-		if ($results->RecordCount() == 1) {
-			if (strtolower($results->Field('user_id')) !== $user_id) {
-				$reason = 'Document ' . $document_id . ' does not belong to you.';
-				return false;
-			}
-			$new_document = false;
+		
+		// check if the document already exists
+		$results = $database->Query('SELECT document_id FROM documents WHERE document_id = $1;', $document_id);
+		$new_document = $results->RecordCount() == 0;
+		
+		// confirm write permission of the document
+		$results = $database->Query('SELECT role FROM allowed_documents WHERE document_id = $1 AND user_id;', $document_id, $user_id);
+		if ($results->RecordCount() == 0) {
+			$reason = 'Access denied for document ' . $document_id . '.';
+			return false;
 		}
+		$role = $results->Field('role');
 		
 		// gather document details
 		$editor_names = array();
@@ -346,6 +349,30 @@ class BeaconDocument implements JsonSerializable {
 		$public = false;
 		if (array_key_exists('Map', $document)) {
 			$mask = intval($document['Map']);
+		}
+		$guests_to_add = array();
+		$guests_to_remove = array();
+		if ($document_version >= 4 && $role === 'Owner' && array_key_exists('EncryptionKeys', $document) && is_array($document['EncryptionKeys']) && BeaconCommon::IsAssoc($document['EncryptionKeys'])) {
+			$encryption_keys = $document['EncryptionKeys'];
+			$allowed_users = array_keys($encryption_keys);
+			
+			$desired_guests = array();
+			foreach ($allowed_users as $allowed_user_id) {
+				if (strtolower($allowed_user_id) === strtolower($user_id)) {
+					continue;
+				}
+				$desired_guests[] = strtolower($allowed_user_id);
+			}
+			
+			$current_guests = array();
+			$results = $database->Query('SELECT user_id FROM documents WHERE document_id = $1;', $document_id);
+			while (!$results->EOF()) {
+				$current_guests[] = $results->Field('user_id');
+				$results->MoveNext();
+			}
+			
+			$guests_to_add = array_diff($desired_guests, $current_guests);
+			$guests_to_remove = array_diff($current_guests, $desired_guests);
 		}
 		if ($document_version >= 3) {
 			foreach ($document['Configs'] as $configname => $configcontent) {
@@ -458,6 +485,12 @@ class BeaconDocument implements JsonSerializable {
 				$database->Query('INSERT INTO documents (document_id, user_id, title, description, map, difficulty, console_safe, mods, included_editors, last_update) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, CURRENT_TIMESTAMP);', $document_id, $user_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
 			} else {
 				$database->Query('UPDATE documents SET revision = revision + 1, title = $3, description = $4, map = $5, difficulty = $6, console_safe = $7, mods = $8, included_editors = $9, last_update = CURRENT_TIMESTAMP WHERE document_id = $1 AND user_id = $2;', $document_id, $user_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
+			}
+			foreach ($guests_to_add as $guest_id) {
+				$database->Query('INSERT INTO guest_documents (document_id, user_id) VALUES ($1, $2);', $document_id, $guest_id);
+			}
+			foreach ($guests_to_remove as $guest_id) {
+				$database->Query('DELETE FROM guest_documents WHERE document_id = $1 AND user_id = $2;', $document_id, $guest_id);
 			}
 			$database->Commit();
 		} catch (Exception $err) {
