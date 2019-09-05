@@ -544,7 +544,7 @@ Protected Module FrameworkExtensions
 		    If CurrentThread = Nil Then
 		      Stream.Write(Contents)
 		    Else
-		      Const ChunkSize = 2048
+		      Const ChunkSize = 1024000
 		      For I As Integer = 0 To Contents.Size - 1 Step ChunkSize
 		        Dim Chunk As String = Contents.StringValue(I, Min(ChunkSize, Contents.Size - I))
 		        Stream.Write(Chunk)
