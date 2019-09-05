@@ -1022,11 +1022,7 @@ End
 		      Self.ShowHelpDrawer()
 		    End If
 		  Case "ShareButton"
-		    Dim Board As New Clipboard
-		    Board.Text = Self.mController.URL.WithScheme(Beacon.DocumentURL.TypeWeb)
-		    
-		    Dim Notification As New Beacon.UserNotification("Link to " + Self.mController.Name + " has been copied to the clipboard.")
-		    LocalData.SharedInstance.SaveNotification(Notification)
+		    SharingDialog.Present(Self, Self.Document)
 		  Case "DeployButton"
 		    Self.BeginDeploy()
 		  End Select

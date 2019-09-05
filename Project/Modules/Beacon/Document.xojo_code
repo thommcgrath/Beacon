@@ -41,6 +41,7 @@ Protected Class Document
 	#tag Method, Flags = &h0
 		Sub AddUser(UserID As String, PublicKey As String)
 		  Self.mEncryptedPasswords.Value(UserID.Lowercase) = EncodeBase64(Crypto.RSAEncrypt(Self.mDocumentPassword, PublicKey), 0)
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 
@@ -624,6 +625,7 @@ Protected Class Document
 		  UserID = UserID.Lowercase
 		  If Self.mEncryptedPasswords.HasKey(UserID) Then
 		    Self.mEncryptedPasswords.Remove(UserID)
+		    Self.mModified = True
 		  End If
 		End Sub
 	#tag EndMethod
