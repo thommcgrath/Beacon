@@ -185,7 +185,7 @@ class BeaconDocument implements JsonSerializable {
 		
 		$database = BeaconCommon::Database();
 		if ($count_only) {
-			$sql = 'SELECT COUNT(document_id) AS document_count FROM documents WHERE ' . implode(' AND ', $clauses) . ';';
+			$sql = 'SELECT COUNT(document_id) AS document_count FROM allowed_documents WHERE ' . implode(' AND ', $clauses) . ';';
 			$results = $database->Query($sql, $values);
 			return $results->Field('document_count');
 		} else {
@@ -230,7 +230,7 @@ class BeaconDocument implements JsonSerializable {
 	}
 	
 	protected static function BuildSQL(string $clause = '', string $order_by = 'last_update DESC', int $count = 0, int $offset = 0) {
-		$sql = 'SELECT ' . implode(', ', static::DatabaseColumns()) . ' FROM documents';
+		$sql = 'SELECT ' . implode(', ', static::DatabaseColumns()) . ' FROM allowed_documents';
 		if ($clause !== '') {
 			$sql .= ' WHERE ' . $clause;
 		}
@@ -330,12 +330,16 @@ class BeaconDocument implements JsonSerializable {
 		$new_document = $results->RecordCount() == 0;
 		
 		// confirm write permission of the document
-		$results = $database->Query('SELECT role FROM allowed_documents WHERE document_id = $1 AND user_id;', $document_id, $user_id);
-		if ($results->RecordCount() == 0) {
-			$reason = 'Access denied for document ' . $document_id . '.';
-			return false;
+		if ($new_document == false) {
+			$results = $database->Query('SELECT role FROM allowed_documents WHERE document_id = $1 AND user_id = $2;', $document_id, $user_id);
+			if ($results->RecordCount() == 0) {
+				$reason = 'Access denied for document ' . $document_id . '.';
+				return false;
+			}
+			$role = $results->Field('role');
+		} else {
+			$role = 'Owner';
 		}
-		$role = $results->Field('role');
 		
 		// gather document details
 		$editor_names = array();
@@ -352,20 +356,27 @@ class BeaconDocument implements JsonSerializable {
 		}
 		$guests_to_add = array();
 		$guests_to_remove = array();
-		if ($document_version >= 4 && $role === 'Owner' && array_key_exists('EncryptionKeys', $document) && is_array($document['EncryptionKeys']) && BeaconCommon::IsAssoc($document['EncryptionKeys'])) {
+		if ($document_version >= 4 && array_key_exists('EncryptionKeys', $document) && is_array($document['EncryptionKeys']) && BeaconCommon::IsAssoc($document['EncryptionKeys'])) {
 			$encryption_keys = $document['EncryptionKeys'];
 			$allowed_users = array_keys($encryption_keys);
 			
+			if ($new_document) {
+				$owner_user_id = strtolower($user_id);
+			} else {
+				$results = $database->Query('SELECT user_id FROM documents WHERE document_id = $1;', $document_id);
+				$owner_user_id = $results->Field('user_id');
+			}
+			
 			$desired_guests = array();
 			foreach ($allowed_users as $allowed_user_id) {
-				if (strtolower($allowed_user_id) === strtolower($user_id)) {
+				if (strtolower($allowed_user_id) === $owner_user_id) {
 					continue;
 				}
 				$desired_guests[] = strtolower($allowed_user_id);
 			}
 			
 			$current_guests = array();
-			$results = $database->Query('SELECT user_id FROM documents WHERE document_id = $1;', $document_id);
+			$results = $database->Query('SELECT user_id FROM guest_documents WHERE document_id = $1;', $document_id);
 			while (!$results->EOF()) {
 				$current_guests[] = $results->Field('user_id');
 				$results->MoveNext();
@@ -373,6 +384,11 @@ class BeaconDocument implements JsonSerializable {
 			
 			$guests_to_add = array_diff($desired_guests, $current_guests);
 			$guests_to_remove = array_diff($current_guests, $desired_guests);
+			
+			if ($role !== 'Owner' && (count($guests_to_add) > 0 || count($guests_to_remove) > 0)) {
+				$reason = 'Only the owner may add or remove users. +' . var_export($guests_to_add, true) . ' -' . var_export($guests_to_remove, true);
+				return false;
+			}
 		}
 		if ($document_version >= 3) {
 			foreach ($document['Configs'] as $configname => $configcontent) {

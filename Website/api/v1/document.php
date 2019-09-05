@@ -41,9 +41,9 @@ case 'GET':
 			$clauses[] = '(user_id = ::current_user_id:: OR published = \'Approved\')';
 			$params['current_user_id'] = $user_id;
 		} else {
-			$clauses[] = 'published = \'Approved\'';
+			$clauses[] = 'published = \'Approved\' AND role = \'Owner\'';
 		}
-		$sql = 'SELECT ' . implode(', ', BeaconDocument::DatabaseColumns()) . ' FROM documents WHERE ' . implode(' AND ', $clauses);
+		$sql = 'SELECT ' . implode(', ', BeaconDocument::DatabaseColumns()) . ' FROM allowed_documents WHERE ' . implode(' AND ', $clauses);
 		
 		$sort_column = 'last_update';
 		$sort_direction = 'DESC';
@@ -189,7 +189,7 @@ case 'DELETE':
 	$paths = array();
 	$user_id = BeaconAPI::UserID();
 	$success = false;
-	$results = $database->Query('SELECT document_id, role FROM documents WHERE document_id = ANY($1) AND user_id = $2;', '{' . $document_id . '}', $user_id);
+	$results = $database->Query('SELECT document_id, role FROM allowed_documents WHERE document_id = ANY($1) AND user_id = $2;', '{' . $document_id . '}', $user_id);
 	while (!$results->EOF()) {
 		try {
 			$document_id = $results->Field('document_id');
@@ -205,7 +205,8 @@ case 'DELETE':
 					$paths[] = BeaconDocument::GenerateCloudStoragePath($user_id, $document_id);
 				} else {
 					$guest_user_id = $guest_results->Field('user_id');
-					$database->Query('UPDATE documents SET user_id = $1 WHERE document_id = $2;', $user_id, $document_id);
+					$database->Query('UPDATE documents SET user_id = $1 WHERE document_id = $2;', $guest_user_id, $document_id);
+					$database->Query('DELETE FROM guest_documents WHERE document_id = $2 AND user_id = $1;', $guest_user_id, $document_id);
 				}
 			} elseif ($role === 'Guest') {
 				$database->Query('DELETE FROM guest_documents WHERE document_id = $1 AND user_id = $2;', $document_id, $user_id);
