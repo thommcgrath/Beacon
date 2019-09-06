@@ -2379,7 +2379,7 @@ End
 		  End If
 		  
 		  If Self.mConfirmEncryptionKey = "" Then
-		    Self.mConfirmEncryptionKey = Beacon.CreateUUID
+		    Self.mConfirmEncryptionKey = New v4UUID
 		    
 		    Dim Fields As New Dictionary
 		    Fields.Value("email") = Self.ConfirmAddressField.Value.Trim

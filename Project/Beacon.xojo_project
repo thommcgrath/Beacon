@@ -358,6 +358,7 @@ Class=UnimplementedEnumException;Modules/M_Crypto/UnimplementedEnumException.xoj
 Folder=Sharing Support;Views/Sharing Support;&h0000000027E12FFF;&h0000000008A387FF;false
 Window=SharingDialog;Views/Sharing Support/SharingDialog.xojo_window;&h000000006B022FFF;&h0000000027E12FFF;false
 Window=ShareWithUserDialog;Views/Sharing Support/ShareWithUserDialog.xojo_window;&h0000000076AF17FF;&h0000000027E12FFF;false
+Class=v4UUID;Modules/FrameworkExtensions/v4UUID.xojo_code;&h000000002DC03FFF;&h0000000053D607FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=2

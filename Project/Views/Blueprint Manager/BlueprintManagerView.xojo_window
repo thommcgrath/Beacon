@@ -469,7 +469,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub AddObject()
-		  Self.Editor.ObjectID = Beacon.CreateUUID
+		  Self.Editor.ObjectID = New v4UUID
 		  Self.Pages.SelectedPanelIndex = Self.PageEditor
 		End Sub
 	#tag EndMethod

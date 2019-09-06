@@ -34,7 +34,7 @@ Implements Beacon.Countable
 		  Self.mGrouping = "Miscellaneous"
 		  Self.mMinItems = 1
 		  Self.mMaxItems = 3
-		  Self.mPresetID = Beacon.CreateUUID
+		  Self.mPresetID = New v4UUID
 		  Self.Type = Types.Custom
 		  Self.mModifierValues = New Dictionary
 		End Sub
@@ -82,7 +82,7 @@ Implements Beacon.Countable
 		    Preset.mPresetID = Dict.Value("ID")
 		  End If
 		  If Preset.mPresetID = "" Then
-		    Preset.mPresetID = Beacon.CreateUUID
+		    Preset.mPresetID = New v4UUID
 		  End If
 		  Preset.mLabel = Dict.Lookup("Label", Preset.Label)
 		  Preset.mGrouping = Dict.Lookup("Grouping", Preset.Grouping)
@@ -297,7 +297,7 @@ Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Function PresetID() As String
 		  If Self.mPresetID = "" Then
-		    Self.mPresetID = Beacon.CreateUUID
+		    Self.mPresetID = New v4UUID
 		  End If
 		  Return Self.mPresetID
 		End Function

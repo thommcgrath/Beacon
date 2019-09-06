@@ -16,7 +16,7 @@ Protected Class PresetModifier
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Label As String, Pattern As String)
-		  Self.mModifierID = Beacon.CreateUUID
+		  Self.mModifierID = New v4UUID
 		  Self.mLabel = Label
 		  Self.mPattern = Pattern
 		End Sub

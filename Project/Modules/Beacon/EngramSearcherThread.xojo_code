@@ -120,9 +120,9 @@ Inherits Beacon.Thread
 		        Dim Blueprint As Beacon.MutableBlueprint
 		        Select Case Category
 		        Case Beacon.CategoryEngrams
-		          Blueprint = New Beacon.MutableEngram(Path, Beacon.CreateUUID)
+		          Blueprint = New Beacon.MutableEngram(Path, New v4UUID)
 		        Case Beacon.CategoryCreatures
-		          Blueprint = New Beacon.MutableCreature(Path, Beacon.CreateUUID)
+		          Blueprint = New Beacon.MutableCreature(Path, New v4UUID)
 		        Else
 		          Continue
 		        End Select
@@ -229,7 +229,7 @@ Inherits Beacon.Thread
 		        Blueprint = Beacon.Engram.CreateUnknownEngram(Path)
 		      End If
 		    Case "spawndino"
-		      Blueprint = New Beacon.MutableCreature(Path, Beacon.CreateUUID)
+		      Blueprint = New Beacon.MutableCreature(Path, New v4UUID)
 		    End Select
 		    
 		    If Blueprint = Nil Then

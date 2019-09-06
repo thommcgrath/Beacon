@@ -180,9 +180,9 @@ Protected Class OAuth2Client
 
 	#tag Method, Flags = &h21
 		Private Sub NewAuthorization()
-		  Self.mRequestID = Beacon.CreateUUID
+		  Self.mRequestID = New v4UUID
 		  
-		  Dim RequestID As String = Beacon.CreateUUID
+		  Dim RequestID As String = New v4UUID
 		  Dim PublicKey As String = Self.mIdentity.PublicKey
 		  Dim URL As String = Self.AuthURL + "?provider=" + EncodeURLComponent(Self.mProvider) + "&requestid=" + EncodeURLComponent(RequestID) + "&pubkey=" + EncodeURLComponent(PublicKey)
 		  

@@ -64,7 +64,7 @@ Protected Class Document
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mIdentifier = Beacon.CreateUUID
+		  Self.mIdentifier = New v4UUID
 		  Self.mMapCompatibility = Beacon.Maps.TheIsland.Mask
 		  Self.mConfigGroups = New Dictionary
 		  Self.AddConfigGroup(New BeaconConfigs.Difficulty)
@@ -267,7 +267,7 @@ Protected Class Document
 		    If Dict.HasKey("Identifier") Then
 		      Doc.mIdentifier = Dict.Value("Identifier")
 		    Else
-		      Doc.mIdentifier = Beacon.CreateUUID
+		      Doc.mIdentifier = New v4UUID
 		    End If
 		  End If
 		  If Version < 3 Then
@@ -496,7 +496,7 @@ Protected Class Document
 
 	#tag Method, Flags = &h0
 		Sub NewIdentifier()
-		  Self.mIdentifier = Beacon.CreateUUID
+		  Self.mIdentifier = New v4UUID
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod

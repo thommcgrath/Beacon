@@ -78,7 +78,7 @@ Implements Beacon.Blueprint
 		    Engram.mIsValid = True
 		  End If
 		  Engram.mPath = Path
-		  Engram.mObjectID = Beacon.CreateUUID(Crypto.MD5(Path.Lowercase))
+		  Engram.mObjectID = v4UUID.FromHash(Crypto.Algorithm.MD5, Path.Lowercase)
 		  Engram.mTags.Append("blueprintable")
 		  Return Engram
 		End Function

@@ -19,7 +19,7 @@ Protected Class CraftingCost
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mObjectID = Beacon.CreateUUID
+		  Self.mObjectID = New v4UUID
 		End Sub
 	#tag EndMethod
 

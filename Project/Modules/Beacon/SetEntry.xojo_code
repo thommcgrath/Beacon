@@ -645,7 +645,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Function UniqueID() As String
 		  // For efficiency, don't create a UUID until it is needed
 		  If Self.mUniqueID = "" Then
-		    Self.mUniqueID = Beacon.CreateUUID
+		    Self.mUniqueID = New v4UUID
 		  End If
 		  Return Self.mUniqueID
 		End Function

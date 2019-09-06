@@ -52,7 +52,7 @@ Protected Class Engram
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mAvailability = Beacon.Maps.All.Mask
-		  Self.mID = Beacon.CreateUUID
+		  Self.mID = New v4UUID
 		End Sub
 	#tag EndMethod
 
@@ -62,7 +62,7 @@ Protected Class Engram
 		  Self.Label = Source.Label
 		  Self.mAvailability = Source.Availability
 		  Self.mPath = Source.Path
-		  Self.mID = Beacon.CreateUUID
+		  Self.mID = New v4UUID
 		End Sub
 	#tag EndMethod
 
@@ -86,7 +86,7 @@ Protected Class Engram
 		  Self.Label = Source.Value("label")
 		  Self.mAvailability = 0
 		  Self.mPath = Source.Value("path")
-		  Self.mID = Beacon.CreateUUID
+		  Self.mID = New v4UUID
 		  Self.mModName = ""
 		  Self.ModID = ""
 		  Self.mResourceURL = Source.Value("resource_url")

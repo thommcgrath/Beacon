@@ -96,7 +96,7 @@ Protected Class ServerProfile
 	#tag Method, Flags = &h0
 		Function ProfileID() As String
 		  If Self.mProfileID = "" Then
-		    Self.mProfileID = Beacon.CreateUUID
+		    Self.mProfileID = New v4UUID
 		  End If
 		  Return Self.mProfileID
 		End Function

@@ -34,7 +34,7 @@ Protected Class DocumentController
 
 	#tag Method, Flags = &h0
 		Sub Constructor(WithIdentity As Beacon.Identity)
-		  Self.Constructor(Beacon.DocumentURL.TypeTransient + "://" + Beacon.CreateUUID, WithIdentity)
+		  Self.Constructor(Beacon.DocumentURL.TypeTransient + "://" + v4UUID.Create, WithIdentity)
 		End Sub
 	#tag EndMethod
 

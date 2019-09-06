@@ -193,38 +193,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function CreateUUID(Bytes As MemoryBlock = Nil) As String
-		  If Bytes = Nil Or Bytes.Size <> 16 Then
-		    Bytes = Crypto.GenerateRandomBytes(16)
-		  End If
-		  Dim Id As MemoryBlock = Bytes.StringValue(0, Bytes.Size)
-		  Dim Value As UInt8
-		  
-		  Value = Id.UInt8Value(6)
-		  Value = Value And CType(&b00001111, UInt8)
-		  Value = Value Or CType(&b01000000, UInt8)
-		  Id.UInt8Value(6) = Value
-		  
-		  Value = Id.UInt8Value(8)
-		  Value = Value And CType(&b00111111, UInt8)
-		  Value = Value Or CType(&b10000000, UInt8)
-		  Id.UInt8Value(8) = Value
-		  
-		  Dim Chars() As String
-		  For I As Integer = 0 To Id.Size - 1
-		    Chars.Append(Id.UInt8Value(I).ToHex(2))
-		  Next
-		  
-		  Chars.Insert(10, "-")
-		  Chars.Insert( 8, "-")
-		  Chars.Insert( 6, "-")
-		  Chars.Insert( 4, "-")
-		  
-		  Return Join(Chars, "").Lowercase
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function Creatures(Extends Blueprints() As Beacon.Blueprint) As Beacon.Creature()
 		  Dim Creatures() As Beacon.Creature

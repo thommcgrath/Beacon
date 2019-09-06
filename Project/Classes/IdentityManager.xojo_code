@@ -235,7 +235,7 @@ Protected Class IdentityManager
 		  
 		  Self.StartProcess()
 		  
-		  Dim SignedValue As String = Beacon.CreateUUID
+		  Dim SignedValue As String = New v4UUID
 		  Dim Signature As String = EncodeHex(Source.Sign(SignedValue))
 		  
 		  Dim MergeKeys As New Dictionary

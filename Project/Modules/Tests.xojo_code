@@ -15,6 +15,7 @@ Protected Module Tests
 		    TestMemoryBlockExtensions()
 		    TestStrings()
 		    TestEncryption()
+		    TestUUID()
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -177,6 +178,55 @@ Protected Module Tests
 		  Dim StringValue As String = "Human"
 		  Assert(StringValue.IndexOf("u") = 1, "String.IndexOf returns incorrect result. Expected 1, got " + StringValue.IndexOf("u").ToString + ".")
 		  Assert(StringValue.Middle(2) = "man", "String.Middle returns incorrect result. Expected 'man', got '" + StringValue.Middle(2) + "'.")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestUUID()
+		  Dim UUID As New v4UUID
+		  
+		  Try
+		    UUID = v4UUID.CreateNull
+		    Assert(UUID = "00000000-0000-0000-0000-000000000000", "Null UUID is not correct")
+		    Assert(UUID = Nil, "Null UUID does not compare against Nil correctly")
+		  Catch Err As UnsupportedFormatException
+		    System.DebugLog("Validator will not accept null UUID")
+		  End Try
+		  
+		  Try
+		    UUID = "ffc93232-2484-4947-8c9a-a691cf938d75"
+		    Assert(UUID.IsNull = False, "UUID is listed as null when it should not be")
+		    Assert(UUID <> Nil, "Valid UUID is successfully matching against Nil")
+		  Catch Err As UnsupportedFormatException
+		    System.DebugLog("Validator will not accept valid UUID")
+		  End Try
+		  
+		  Try
+		    Dim V As Variant = "ffc93232-2484-4947-8c9a-a691cf938d75"
+		    UUID = V.StringValue
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to convert string in variant to UUID")
+		  End Try
+		  
+		  Try
+		    Dim V As Variant = New v4UUID
+		    UUID = v4UUID(V.ObjectValue)
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to convert UUID in variant to UUID")
+		  End Try
+		  
+		  Try
+		    UUID = Nil
+		  Catch Err As RuntimeException
+		    System.DebugLog("Unable to assign UUID to Nil")
+		  End Try
+		  
+		  Try
+		    UUID = v4UUID.FromHash(Crypto.Algorithm.MD5, "Frog Blast The Vent Core")
+		    Assert(UUID = "7e05d5d6-bf10-445d-9512-d3a650670061", "Incorrect UUID generated from MD5 hash")
+		  Catch Err As UnsupportedFormatException
+		    System.DebugLog("MD5UUID generated bad format")
+		  End Try
 		End Sub
 	#tag EndMethod
 

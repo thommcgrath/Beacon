@@ -75,7 +75,7 @@ Protected Class Request
 		    ContentType = "application/x-www-form-urlencoded"
 		  End If
 		  
-		  Self.mRequestID = Beacon.CreateUUID
+		  Self.mRequestID = New v4UUID
 		  Self.mURL = Path
 		  Self.mMethod = Method.Uppercase
 		  Self.mCallback = Callback

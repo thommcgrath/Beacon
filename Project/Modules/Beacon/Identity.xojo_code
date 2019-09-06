@@ -34,7 +34,7 @@ Protected Class Identity
 		  
 		  // Keys are already hex encoded, despite being MemoryBlock objects. Brilliant.
 		  
-		  Self.mIdentifier = Beacon.CreateUUID
+		  Self.mIdentifier = New v4UUID
 		  Self.mPrivateKey = PrivateKey
 		  Self.mPublicKey = PublicKey
 		End Sub
