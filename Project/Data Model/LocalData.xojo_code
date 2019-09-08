@@ -2269,7 +2269,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  // An exception means the timezone was included, so then parse the "new" way.
 		  Try
 		    Dim Now As New Date
+		    #Pragma BreakOnExceptions False
 		    Dim TempDate As Xojo.Core.Date = Xojo.Core.Date.FromText(Source)
+		    #Pragma BreakOnExceptions Default
 		    Return New Xojo.Core.Date(TempDate.SecondsFrom1970 + (Now.GMTOffset * 3600), New Xojo.Core.TimeZone("UTC"))
 		  Catch Err As RuntimeException
 		    Dim Timestamp As Date = NewDateFromSQLDateTime(Source)
