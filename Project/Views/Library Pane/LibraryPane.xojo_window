@@ -530,7 +530,7 @@ End
 		  
 		  If Index = -1 Then
 		    If Self.mOpened Then
-		      RaiseEvent ChangePosition(Self.CollapseDistance * -1)
+		      RaiseEvent ChangePosition((Self.CollapseDistance * -1) - Self.Left)
 		      Self.mOpened = False
 		    End If
 		    Return
@@ -550,7 +550,7 @@ End
 		  End If
 		  
 		  If Not Self.mOpened Then
-		    RaiseEvent ChangePosition(Self.CollapseDistance)
+		    RaiseEvent ChangePosition(0 - Self.Left)
 		    Self.mOpened = True
 		  End If
 		End Sub
