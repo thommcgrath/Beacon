@@ -722,8 +722,14 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub LogAPIException(Err As RuntimeException, Location As String, HTTPStatus As Integer, RawContent As MemoryBlock)
+		  If Err = Nil Then
+		    Return
+		  End If
 		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
-		  Dim Base64 As String = EncodeBase64(RawContent, 0)
+		  Dim Base64 As String
+		  If RawContent <> Nil And RawContent.Size > 0 Then
+		    Base64 = EncodeBase64(RawContent, 0)
+		  End If
 		  Self.Log("Unhandled " + Info.FullName + " in " + Location + ": HTTP " + Str(HTTPStatus, "-0") + " " + Base64)
 		End Sub
 	#tag EndMethod
