@@ -89,6 +89,8 @@ Protected Class IdentityManager
 		  ElseIf Response.HTTPStatus = 401 Or Response.HTTPStatus = 403 Then
 		    // Need to get a new token
 		    Self.GetSessionToken()
+		  ElseIf Response.HTTPStatus = 0 Then
+		    Self.mLastError = Response.Message
 		  End If
 		  
 		  Self.FinishProcess()
