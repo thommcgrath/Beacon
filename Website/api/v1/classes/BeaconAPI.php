@@ -35,7 +35,12 @@ abstract class BeaconAPI {
 		header('Content-Type: application/json');
 		http_response_code($code);
 		if ($payload !== null) {
-			echo json_encode($payload, JSON_PRETTY_PRINT);
+			$response = json_encode($payload, JSON_PRETTY_PRINT);
+			if ($response === false) {
+				static::ReplyError('Unable to encode JSON response', json_last_error_msg(), 500);
+			} else {
+				echo $response;
+			}
 		}
 		exit;
 	}

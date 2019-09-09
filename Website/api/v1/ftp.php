@@ -221,7 +221,7 @@ case 'GET':
 				BeaconAPI::ReplyError('Unable to download file.', $reply_details, 500);
 			}
 			
-			$reply_details['content'] = $content;
+			$reply_details['content'] = ConvertToUnicode($content);
 			BeaconAPI::ReplySuccess($reply_details);
 		} else {
 			BeaconAPI::ReplyError('Requested file does not appear to be an ini file.', $reply_details, 500);
@@ -283,6 +283,18 @@ function SearchDirectory(BeaconFTPProvider $connection, string $starting_path, a
 				return $starting_path . $file;
 			}
 		}
+	}
+}
+
+function ConvertToUnicode(string $content) {
+	$first2 = substr($content, 0, 2);
+    
+	if ($first2 == chr(0xFE) . chr(0xFF)) {
+		return mb_convert_encoding(substr($content, 2), 'UTF-8', 'UCS-2BE');
+	} elseif ($first2 == chr(0xFF) . chr(0xFE)) {
+		return mb_convert_encoding(substr($content, 2), 'UTF-8', 'UCS-2LE');
+	} else {
+		return $content;
 	}
 }
 
