@@ -309,7 +309,11 @@ Inherits Global.Thread
 		      Next
 		    Next
 		    
-		    Return NewLines.Join(EOL)
+		    Dim Result As String = NewLines.Join(EOL)
+		    If Result.Encoding <> Encodings.ASCII Then
+		      Result = Result.ConvertEncoding(Encodings.ASCII)
+		    End If
+		    Return Result
 		    Errored = False
 		  Catch Err As RuntimeException
 		    Errored = True
