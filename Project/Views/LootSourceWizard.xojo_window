@@ -1368,6 +1368,83 @@ Begin BeaconDialog LootSourceWizard
          VisualState     =   "0"
          Width           =   510
       End
+      Begin UITweaks.ResizedLabel DefineMapsLabel
+         AllowAutoDeactivate=   True
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   13
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextAlign       =   "2"
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Tooltip         =   ""
+         Top             =   190
+         Transparent     =   True
+         Underline       =   False
+         Value           =   "Maps:"
+         Visible         =   True
+         Width           =   104
+      End
+      Begin MapSelectionGrid DefineMapsSelector
+         AcceptFocus     =   False
+         AcceptTabs      =   True
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackColor    =   False
+         HasBackgroundColor=   False
+         Height          =   118
+         HelpTag         =   ""
+         InitialParent   =   "Panel"
+         Left            =   130
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   14
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   184
+         Transparent     =   True
+         UseFocusRing    =   False
+         Visible         =   True
+         Width           =   400
+      End
    End
 End
 #tag EndWindow
@@ -1384,6 +1461,7 @@ End
 		  End If
 		  Self.BuildSourceList()
 		  
+		  Dim Mask As UInt64 = Self.mMask
 		  If Self.mSource <> Nil Then
 		    If Self.mDuplicateSource Then
 		      Self.ShowSelect()
@@ -1395,10 +1473,16 @@ End
 		        Self.ShowCustomize()
 		      Else
 		        Self.DefineCancelButton.Caption = "Cancel"
+		        Mask = Self.mSource.Availability
 		        Self.ShowDefine(Self.mSource)
 		      End If
 		    End If
 		  End If
+		  
+		  Self.DefineMapsSelector.Mask = Mask
+		  Dim DesiredWinHeight As Integer = Self.DefineMapsSelector.Top + Self.DefineMapsSelector.Height + 6 + Self.DefineActionButton.Height + 20
+		  Dim Diff As Integer = DesiredWinHeight - Self.Height
+		  Self.Height = Self.Height + Diff
 		  
 		  Self.SwapButtons()
 		End Sub
@@ -1739,9 +1823,15 @@ End
 		      Return
 		    End If
 		    
+		    Dim Mask As UInt64 = Self.DefineMapsSelector.Mask
+		    If Mask = 0 Then
+		      Self.ShowAlert("Please select a map", "Your loot source should be available to at least one map.")
+		      Return
+		    End If
+		    
 		    Destination = New Beacon.MutableLootSource(ClassString, False)
 		    Destination.Label = Label
-		    Destination.Availability = Self.mMask
+		    Destination.Availability = Mask
 		    Destination.Multipliers = New Beacon.Range(MinMultiplier, MaxMultiplier)
 		    Destination.IsOfficial = False
 		    Destination.UseBlueprints = False
