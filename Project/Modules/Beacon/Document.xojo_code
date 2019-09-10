@@ -165,6 +165,9 @@ Protected Class Document
 		  If Dict.HasKey("Trust") Then
 		    Doc.mTrustKey = Dict.Value("Trust")
 		  End If
+		  If Dict.HasKey("AllowUCS") Then
+		    Doc.mAllowUCS = Dict.Value("AllowUCS")
+		  End If
 		  
 		  If Dict.HasKey("Timestamp") Then
 		    Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
@@ -636,6 +639,7 @@ Protected Class Document
 		  Dim ModsList() As Text = Self.Mods
 		  Document.Value("Mods") = ModsList
 		  Document.Value("UseCompression") = Self.UseCompression
+		  Document.Value("AllowUCS") = Self.AllowUCS
 		  
 		  Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
 		  #if TargetiOS
@@ -717,6 +721,23 @@ Protected Class Document
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mAllowUCS
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mAllowUCS <> Value Then
+			    Self.mAllowUCS = Value
+			    Self.mModified = True
+			  End If
+			End Set
+		#tag EndSetter
+		AllowUCS As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Dim Metadata As BeaconConfigs.Metadata = Self.Metadata
 			  If Metadata <> Nil Then
 			    Return Metadata.Description
@@ -761,6 +782,10 @@ Protected Class Document
 		#tag EndSetter
 		IsPublic As Boolean
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mAllowUCS As Boolean
+	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter

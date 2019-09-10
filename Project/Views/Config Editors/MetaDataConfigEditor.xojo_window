@@ -116,7 +116,7 @@ Begin ConfigEditor MetaDataConfigEditor
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   104
+      Height          =   72
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -213,7 +213,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   302
+      Top             =   270
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -265,7 +265,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   170
+      Top             =   138
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -303,7 +303,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   170
+      Top             =   138
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -338,7 +338,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   204
+      Top             =   172
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -370,6 +370,39 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Top             =   302
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   476
+   End
+   Begin CheckBox AllowUCSCheckbox
+      AutoDeactivate  =   True
+      Bold            =   False
+      Caption         =   "Generate UCS-2 files when necessary"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   "Some letters and symbols cannot be displayed using a normal ini file. UCS-2 files may be used instead, but are more difficult to work with and may display incorrectly in some text editors and host control panels."
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   132
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      State           =   0
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
       Top             =   334
       Transparent     =   False
       Underline       =   False
@@ -395,6 +428,7 @@ End
 		  Self.PublicFileCheckbox.Value = Self.Document.IsPublic
 		  Self.PublicFileCheckbox.Enabled = (Self.Controller.URL.Scheme = Beacon.DocumentURL.TypeCloud)
 		  Self.UncompressedCheckbox.Value = Not Self.Document.UseCompression
+		  Self.AllowUCSCheckbox.Value = Self.Document.AllowUCS
 		  
 		  Dim Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
 		  Dim ScrollPosition As Integer = Self.ModsList.ScrollPosition
@@ -525,6 +559,21 @@ End
 		  
 		  Self.SettingUp = True
 		  Self.Document.UseCompression = Not Me.Value
+		  Self.Document.Metadata.IsImplicit = False
+		  Self.ContentsChanged = True
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AllowUCSCheckbox
+	#tag Event
+		Sub Action()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Self.Document.AllowUCS = Me.Value
 		  Self.Document.Metadata.IsImplicit = False
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
