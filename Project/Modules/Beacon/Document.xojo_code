@@ -356,6 +356,10 @@ Protected Class Document
 		    Doc.mTrustKey = Dict.Value("Trust")
 		  End If
 		  
+		  If Dict.HasKey("AllowUCS") Then
+		    Doc.mAllowUCS = Dict.Value("AllowUCS")
+		  End If
+		  
 		  If Dict.HasKey("Timestamp") Then
 		    Doc.mLastSaved = NewDateFromSQLDateTime(Dict.Value("Timestamp"))
 		  End If
@@ -681,6 +685,7 @@ Protected Class Document
 		  Document.Value("Mods") = ModsList
 		  Document.Value("UseCompression") = Self.UseCompression
 		  Document.Value("Timestamp") = DateTime.Now.SQLDateTimeWithOffset
+		  Document.Value("AllowUCS") = Self.AllowUCS
 		  
 		  Dim Groups As New Dictionary
 		  For Each Entry As DictionaryEntry In Self.mConfigGroups
@@ -739,6 +744,23 @@ Protected Class Document
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mAllowUCS
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mAllowUCS <> Value Then
+			    Self.mAllowUCS = Value
+			    Self.mModified = True
+			  End If
+			End Set
+		#tag EndSetter
+		AllowUCS As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Dim Metadata As BeaconConfigs.Metadata = Self.Metadata
 			  If Metadata <> Nil Then
 			    Return Metadata.Description
@@ -783,6 +805,10 @@ Protected Class Document
 		#tag EndSetter
 		IsPublic As Boolean
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mAllowUCS As Boolean
+	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter

@@ -6,7 +6,7 @@ Inherits Global.Thread
 		  Self.mFinished = False
 		  Self.mTriggers.Append(CallLater.Schedule(1, WeakAddressOf TriggerStarted))
 		  Dim Errored As Boolean
-		  Self.mUpdatedContent = Self.Rewrite(Self.mInitialContent, Self.mMode, Self.mDocument, Self.mIdentity, If(Self.mWithMarkup, Self.mDocument.TrustKey, ""), Self.mProfile, Errored)
+		  Self.mUpdatedContent = Self.Rewrite(Self.mInitialContent, Self.mMode, Self.mDocument, Self.mIdentity, If(Self.mWithMarkup, Self.mDocument.TrustKey, ""), Self.mProfile, If(Self.mDocument.AllowUCS, Beacon.Rewriter.EncodingFormat.UCS2AndASCII, Beacon.Rewriter.EncodingFormat.ASCII), Errored)
 		  Self.mFinished = True
 		  Self.mErrored = Errored
 		  Self.mTriggers.Append(CallLater.Schedule(1, WeakAddressOf TriggerFinished))
@@ -25,6 +25,37 @@ Inherits Global.Thread
 		    Self.mTriggers.Remove(I)
 		  Next
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function ConvertEncoding(Content As String, Format As Beacon.Rewriter.EncodingFormat) As String
+		  If Format = Beacon.Rewriter.EncodingFormat.Unicode Then
+		    If Content.Encoding <> Encodings.UTF8 Then
+		      Content = Content.ConvertEncoding(Encodings.UTF8)
+		    End If
+		    Return Content
+		  End If
+		  
+		  If Format = Beacon.Rewriter.EncodingFormat.UCS2AndASCII And Encodings.ASCII.IsValidData(Content) = False Then
+		    Dim Reg As New RegEx
+		    Reg.SearchPattern = "[\x{10000}-\x{10FFFF}]"
+		    Reg.ReplacementPattern = "\xEF\xBF\xBD"
+		    Reg.Options.ReplaceAllMatches = True
+		    Try
+		      Content = Reg.Replace(Content)
+		    Catch Err As RegExSearchPatternException
+		      Return Content.ConvertEncoding(Encodings.ASCII)
+		    End Try
+		    
+		    Return Encodings.ASCII.Chr(&hFF) + Encodings.ASCII.Chr(&hFE) + Content.ConvertEncoding(Encodings.UTF16LE)
+		  End If
+		  
+		  If Content.Encoding <> Encodings.ASCII Then
+		    Content = Content.ConvertEncoding(Encodings.ASCII)
+		  End If
+		  
+		  Return Content
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -49,7 +80,7 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Rewrite(InitialContent As String, ConfigDict As Dictionary, TrustKey As String, ByRef Errored As Boolean) As String
+		Shared Function Rewrite(InitialContent As String, ConfigDict As Dictionary, TrustKey As String, Format As Beacon.Rewriter.EncodingFormat, ByRef Errored As Boolean) As String
 		  Try
 		    // Normalize line endings
 		    Dim EOL As String = InitialContent.DetectLineEnding
@@ -309,12 +340,9 @@ Inherits Global.Thread
 		      Next
 		    Next
 		    
-		    Dim Result As String = NewLines.Join(EOL)
-		    If Result.Encoding <> Encodings.ASCII Then
-		      Result = Result.ConvertEncoding(Encodings.ASCII)
-		    End If
-		    Return Result
+		    Dim Result As String = ConvertEncoding(NewLines.Join(EOL), Format)
 		    Errored = False
+		    Return Result
 		  Catch Err As RuntimeException
 		    Errored = True
 		  End Try
@@ -335,7 +363,7 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Rewrite(InitialContent As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, TrustKey As String, Profile As Beacon.ServerProfile, ByRef Errored As Boolean) As String
+		Shared Function Rewrite(InitialContent As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, TrustKey As String, Profile As Beacon.ServerProfile, Format As Beacon.Rewriter.EncodingFormat, ByRef Errored As Boolean) As String
 		  Try
 		    Dim ConfigDict As New Dictionary
 		    Dim CustomContentGroup As BeaconConfigs.CustomContent
@@ -372,7 +400,7 @@ Inherits Global.Thread
 		      End If
 		    End If
 		    
-		    Return Rewrite(InitialContent, ConfigDict, TrustKey, Errored)
+		    Return Rewrite(InitialContent, ConfigDict, TrustKey, Format, Errored)
 		  Catch Err As RuntimeException
 		    Errored = True
 		  End Try
@@ -452,6 +480,13 @@ Inherits Global.Thread
 	#tag Property, Flags = &h21
 		Private mWithMarkup As Boolean
 	#tag EndProperty
+
+
+	#tag Enum, Name = EncodingFormat, Type = Integer, Flags = &h0
+		Unicode
+		  UCS2AndASCII
+		ASCII
+	#tag EndEnum
 
 
 	#tag ViewBehavior
