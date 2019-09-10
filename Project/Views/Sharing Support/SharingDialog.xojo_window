@@ -3,39 +3,39 @@ Begin BeaconDialog SharingDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   CloseButton     =   True
+   CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "0"
-   Frame           =   0
+   Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
    HasBackgroundColor=   False
-   HasCloseButton  =   True
+   HasCloseButton  =   False
    HasFullScreenButton=   False
-   HasMaximizeButton=   True
-   HasMinimizeButton=   True
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
    Height          =   400
    ImplicitInstance=   False
    MacProcID       =   0
    MaxHeight       =   32000
-   MaximizeButton  =   True
+   MaximizeButton  =   False
    MaximumHeight   =   32000
    MaximumWidth    =   32000
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   64
-   MinimizeButton  =   True
-   MinimumHeight   =   64
-   MinimumWidth    =   64
-   MinWidth        =   64
+   MinHeight       =   400
+   MinimizeButton  =   False
+   MinimumHeight   =   400
+   MinimumWidth    =   600
+   MinWidth        =   600
    Placement       =   0
    Resizable       =   False
    Resizeable      =   True
    Title           =   "Document Sharing"
-   Type            =   "0"
+   Type            =   "8"
    Visible         =   True
    Width           =   600
    Begin Label MessageLabel
@@ -140,8 +140,8 @@ Begin BeaconDialog SharingDialog
       Left            =   500
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       MacButtonStyle  =   "0"
       Scope           =   2
@@ -379,6 +379,13 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
+		  If Warn Then
+		    Dim UserCount As Integer = Me.SelectedRowCount
+		    If Not Self.ShowConfirm("Are you sure you want to stop sharing this document with " + Language.NounWithQuantity(UserCount, "user", "users") + "?", "Changes will not be made until the document is saved. This document will no longer appear in the user's cloud documents and the user will be unable to save a new version.", "Stop Sharing", "Cancel") Then
+		      Return
+		    End If
+		  End If
+		  
 		  For I As Integer = Me.RowCount - 1 DownTo 0
 		    If Me.Selected(I) Then
 		      Self.mDocument.RemoveUser(Me.CellValueAt(I, 0))

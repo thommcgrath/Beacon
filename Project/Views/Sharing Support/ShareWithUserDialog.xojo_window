@@ -3,39 +3,39 @@ Begin BeaconDialog ShareWithUserDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   CloseButton     =   True
+   CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "0"
-   Frame           =   0
+   Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
    HasBackgroundColor=   False
-   HasCloseButton  =   True
+   HasCloseButton  =   False
    HasFullScreenButton=   False
-   HasMaximizeButton=   True
-   HasMinimizeButton=   True
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
    Height          =   158
    ImplicitInstance=   False
    MacProcID       =   0
-   MaxHeight       =   32000
-   MaximizeButton  =   True
-   MaximumHeight   =   32000
-   MaximumWidth    =   32000
-   MaxWidth        =   32000
+   MaxHeight       =   158
+   MaximizeButton  =   False
+   MaximumHeight   =   158
+   MaximumWidth    =   450
+   MaxWidth        =   450
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   64
-   MinimizeButton  =   True
-   MinimumHeight   =   64
-   MinimumWidth    =   64
-   MinWidth        =   64
+   MinHeight       =   158
+   MinimizeButton  =   False
+   MinimumHeight   =   158
+   MinimumWidth    =   450
+   MinWidth        =   450
    Placement       =   0
    Resizable       =   False
    Resizeable      =   True
    Title           =   "Share With User"
-   Type            =   "0"
+   Type            =   "8"
    Visible         =   True
    Width           =   450
    Begin Label MessageLabel
@@ -79,7 +79,7 @@ Begin BeaconDialog ShareWithUserDialog
       Visible         =   True
       Width           =   410
    End
-   Begin PushButton ActionButton
+   Begin UITweaks.ResizedPushButton ActionButton
       AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
@@ -117,7 +117,7 @@ Begin BeaconDialog ShareWithUserDialog
       Visible         =   True
       Width           =   80
    End
-   Begin PushButton CancelButton
+   Begin UITweaks.ResizedPushButton CancelButton
       AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
@@ -317,13 +317,12 @@ Begin BeaconDialog ShareWithUserDialog
       Transparent     =   False
       Underline       =   False
       URL             =   ""
-      Value           =   "Helping finding a user's identifier"
+      Value           =   "Help finding a user's identifier"
       Visible         =   True
       Width           =   337
    End
    Begin URLConnection UserLookupSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False

@@ -110,6 +110,12 @@ Protected Module Language
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function NounWithQuantity(Quantity As Integer, Singular As String, Plural As String) As String
+		  Return Str(Quantity, "-0,") + " " + If(Quantity = 1, Singular, Plural)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function ReplacePlaceholders(Source As String, ParamArray Values() As String) As String
 		  For I As Integer = 0 To Values.LastRowIndex
 		    Dim Placeholder As String = "?" + Str(I + 1, "0")
