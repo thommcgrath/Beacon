@@ -3,7 +3,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   CloseButton     =   True
+   CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "1"
@@ -12,26 +12,26 @@ Begin BeaconDialog DeveloperModSettingsDialog
    FullScreenButton=   False
    HasBackColor    =   False
    HasBackgroundColor=   False
-   HasCloseButton  =   True
+   HasCloseButton  =   False
    HasFullScreenButton=   False
-   HasMaximizeButton=   True
-   HasMinimizeButton=   True
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
    Height          =   193
    ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
-   MaxHeight       =   32000
-   MaximizeButton  =   True
-   MaximumHeight   =   32000
+   MaxHeight       =   193
+   MaximizeButton  =   False
+   MaximumHeight   =   193
    MaximumWidth    =   32000
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   64
-   MinimizeButton  =   True
-   MinimumHeight   =   64
-   MinimumWidth    =   64
-   MinWidth        =   64
+   MinHeight       =   193
+   MinimizeButton  =   False
+   MinimumHeight   =   193
+   MinimumWidth    =   520
+   MinWidth        =   520
    Placement       =   1
    Resizable       =   True
    Resizeable      =   True
@@ -325,7 +325,6 @@ Begin BeaconDialog DeveloperModSettingsDialog
       Width           =   16
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

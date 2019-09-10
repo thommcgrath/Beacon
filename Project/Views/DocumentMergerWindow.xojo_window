@@ -131,7 +131,6 @@ Begin BeaconDialog DocumentMergerWindow
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   "0"
       RowSelectionType=   "0"
       Scope           =   2
       ScrollbarHorizontal=   False

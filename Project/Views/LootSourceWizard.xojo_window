@@ -60,7 +60,6 @@ Begin BeaconDialog LootSourceWizard
       SelectedPanelIndex=   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
@@ -1427,7 +1426,6 @@ Begin BeaconDialog LootSourceWizard
          HasBackgroundColor=   False
          Height          =   118
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   130
          LockBottom      =   False

@@ -20,18 +20,18 @@ Begin Window SubscribeDialog
    ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
-   MaxHeight       =   32000
+   MaxHeight       =   270
    MaximizeButton  =   False
-   MaximumHeight   =   32000
+   MaximumHeight   =   270
    MaximumWidth    =   32000
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   64
+   MinHeight       =   270
    MinimizeButton  =   False
-   MinimumHeight   =   64
-   MinimumWidth    =   64
-   MinWidth        =   64
+   MinimumHeight   =   270
+   MinimumWidth    =   500
+   MinWidth        =   500
    Placement       =   2
    Resizable       =   True
    Resizeable      =   False
@@ -624,7 +624,6 @@ Begin Window SubscribeDialog
    End
    Begin URLConnection SubscribeSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False

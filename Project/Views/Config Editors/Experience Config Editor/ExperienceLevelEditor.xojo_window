@@ -33,7 +33,7 @@ Begin BeaconDialog ExperienceLevelEditor
    MinimumWidth    =   382
    MinWidth        =   382
    Placement       =   1
-   Resizable       =   True
+   Resizable       =   False
    Resizeable      =   False
    SystemUIVisible =   "True"
    Title           =   "Set Experience for Level"

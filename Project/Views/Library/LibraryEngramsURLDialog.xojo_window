@@ -20,9 +20,9 @@ Begin BeaconDialog LibraryEngramsURLDialog
    ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
-   MaxHeight       =   32000
+   MaxHeight       =   126
    MaximizeButton  =   False
-   MaximumHeight   =   32000
+   MaximumHeight   =   126
    MaximumWidth    =   32000
    MaxWidth        =   32000
    MenuBar         =   0
@@ -242,13 +242,11 @@ Begin BeaconDialog LibraryEngramsURLDialog
    End
    Begin URLConnection Downloader
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
-      ValidateCertificates=   "False"
    End
 End
 #tag EndWindow

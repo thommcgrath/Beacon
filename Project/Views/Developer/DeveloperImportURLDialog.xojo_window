@@ -3,7 +3,7 @@ Begin BeaconDialog DeveloperImportURLDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
-   CloseButton     =   True
+   CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
    DefaultLocation =   "1"
@@ -12,26 +12,26 @@ Begin BeaconDialog DeveloperImportURLDialog
    FullScreenButton=   False
    HasBackColor    =   False
    HasBackgroundColor=   False
-   HasCloseButton  =   True
+   HasCloseButton  =   False
    HasFullScreenButton=   False
-   HasMaximizeButton=   True
-   HasMinimizeButton=   True
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
    Height          =   192
    ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
-   MaxHeight       =   32000
-   MaximizeButton  =   True
-   MaximumHeight   =   32000
+   MaxHeight       =   192
+   MaximizeButton  =   False
+   MaximumHeight   =   192
    MaximumWidth    =   32000
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   64
-   MinimizeButton  =   True
-   MinimumHeight   =   64
-   MinimumWidth    =   64
-   MinWidth        =   64
+   MinHeight       =   192
+   MinimizeButton  =   False
+   MinimumHeight   =   192
+   MinimumWidth    =   520
+   MinWidth        =   520
    Placement       =   1
    Resizable       =   True
    Resizeable      =   True
@@ -284,7 +284,6 @@ Begin BeaconDialog DeveloperImportURLDialog
    End
    Begin URLConnection Socket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False

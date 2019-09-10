@@ -27,11 +27,11 @@ Begin BeaconDialog PresetModifierEditor
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   64
+   MinHeight       =   466
    MinimizeButton  =   False
-   MinimumHeight   =   64
-   MinimumWidth    =   64
-   MinWidth        =   64
+   MinimumHeight   =   466
+   MinimumWidth    =   600
+   MinWidth        =   600
    Placement       =   1
    Resizable       =   True
    Resizeable      =   False
@@ -570,7 +570,6 @@ Begin BeaconDialog PresetModifierEditor
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   "0"
       RowSelectionType=   "0"
       Scope           =   2
       ScrollbarHorizontal=   False

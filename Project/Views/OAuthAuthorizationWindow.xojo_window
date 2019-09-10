@@ -33,7 +33,7 @@ Begin BeaconDialog OAuthAuthorizationWindow
    MinimumWidth    =   64
    MinWidth        =   64
    Placement       =   1
-   Resizable       =   True
+   Resizable       =   False
    Resizeable      =   False
    SystemUIVisible =   "True"
    Title           =   "Authorizing"

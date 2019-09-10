@@ -53,7 +53,6 @@ Begin ContainerControl DocumentImportView
       SelectedPanelIndex=   4
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
@@ -301,7 +300,6 @@ Begin ContainerControl DocumentImportView
          HasBackgroundColor=   False
          Height          =   456
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -338,7 +336,6 @@ Begin ContainerControl DocumentImportView
          HasBackgroundColor=   False
          Height          =   456
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -375,7 +372,6 @@ Begin ContainerControl DocumentImportView
          HasBackgroundColor=   False
          Height          =   456
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -523,7 +519,6 @@ Begin ContainerControl DocumentImportView
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowCount        =   "0"
          RowSelectionType=   "0"
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -787,7 +782,6 @@ Begin ContainerControl DocumentImportView
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowCount        =   "0"
          RowSelectionType=   "0"
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -813,7 +807,6 @@ Begin ContainerControl DocumentImportView
       End
    End
    Begin Timer DiscoveryWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   "0"

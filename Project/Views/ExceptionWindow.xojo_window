@@ -51,7 +51,6 @@ Begin Window ExceptionWindow
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   64
       HelpTag         =   ""
       Index           =   -2147483648
@@ -207,7 +206,6 @@ Begin Window ExceptionWindow
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -241,7 +239,6 @@ Begin Window ExceptionWindow
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   236
       HelpTag         =   ""
       Index           =   -2147483648
@@ -275,7 +272,6 @@ Begin Window ExceptionWindow
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -309,7 +305,6 @@ Begin Window ExceptionWindow
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   236
       HelpTag         =   ""
       Index           =   -2147483648
@@ -352,7 +347,6 @@ Begin Window ExceptionWindow
       SelectedPanelIndex=   3
       TabIndex        =   8
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   103
       Transparent     =   False
@@ -421,7 +415,6 @@ Begin Window ExceptionWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   True
          Tooltip         =   ""
          Top             =   155
          Transparent     =   False

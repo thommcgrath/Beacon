@@ -60,7 +60,6 @@ Begin BeaconDialog DocumentDeployWindow
       SelectedPanelIndex=   0
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
@@ -158,7 +157,6 @@ Begin BeaconDialog DocumentDeployWindow
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowCount        =   "0"
          RowSelectionType=   "0"
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -429,7 +427,6 @@ Begin BeaconDialog DocumentDeployWindow
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowCount        =   "0"
          RowSelectionType=   "0"
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -535,7 +532,6 @@ Begin BeaconDialog DocumentDeployWindow
       End
    End
    Begin Beacon.OAuth2Client Auth
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Provider        =   ""
@@ -543,7 +539,6 @@ Begin BeaconDialog DocumentDeployWindow
       TabPanelIndex   =   0
    End
    Begin Timer DeployingWatchTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   "0"
