@@ -154,6 +154,9 @@ Begin ConfigEditor MetaDataConfigEditor
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
+      HasHorizontalScrollbar=   False
+      HasVerticalScrollbar=   True
       Height          =   72
       HelpTag         =   ""
       HideSelection   =   True
@@ -170,7 +173,7 @@ Begin ConfigEditor MetaDataConfigEditor
       LockTop         =   True
       Mask            =   ""
       MaximumCharactersAllowed=   0
-      MultiLine       =   True
+      Multiline       =   True
       ReadOnly        =   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -267,6 +270,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   270
       Transparent     =   False
       Underline       =   False
@@ -337,6 +341,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   138
       Transparent     =   False
       Underline       =   False
@@ -380,6 +385,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   138
       Transparent     =   False
       Underline       =   False
@@ -421,6 +427,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   ""
       Top             =   172
       Transparent     =   False
       Underline       =   False
@@ -451,7 +458,7 @@ Begin ConfigEditor MetaDataConfigEditor
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
@@ -464,17 +471,22 @@ Begin ConfigEditor MetaDataConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
+      VisualState     =   "0"
       Width           =   476
    End
    Begin CheckBox AllowUCSCheckbox
+      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Generate UCS-2 files when necessary"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
       Height          =   20
-      Tooltip         =   "Some letters and symbols cannot be displayed using a normal ini file. UCS-2 files may be used instead, but are more difficult to work with and may display incorrectly in some text editors and host control panels."
+      HelpTag         =   "Some letters and symbols cannot be displayed using a normal ini file. UCS-2 files may be used instead, but are more difficult to work with and may display incorrectly in some text editors and host control panels."
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -485,13 +497,14 @@ Begin ConfigEditor MetaDataConfigEditor
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      State           =   0
+      State           =   "0"
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
+      Tooltip         =   "Some letters and symbols cannot be displayed using a normal ini file. UCS-2 files may be used instead, but are more difficult to work with and may display incorrectly in some text editors and host control panels."
       Top             =   334
       Transparent     =   False
       Underline       =   False
@@ -665,7 +678,7 @@ End
 		  Self.SettingUp = True
 		  Self.Document.AllowUCS = Me.Value
 		  Self.Document.Metadata.IsImplicit = False
-		  Self.ContentsChanged = True
+		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent

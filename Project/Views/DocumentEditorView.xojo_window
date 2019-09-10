@@ -53,6 +53,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       SelectedPanelIndex=   1
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
@@ -120,7 +121,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          TabStop         =   True
          Tooltip         =   ""
          Top             =   41
-         Transparent     =   True
          Transparent     =   True
          UseFocusRing    =   True
          Visible         =   False
@@ -234,6 +234,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Width           =   300
    End
    Begin Timer AutosaveTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   "2"

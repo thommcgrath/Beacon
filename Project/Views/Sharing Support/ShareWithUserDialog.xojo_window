@@ -6,16 +6,16 @@ Begin BeaconDialog ShareWithUserDialog
    CloseButton     =   True
    Compatibility   =   ""
    Composite       =   False
-   DefaultLocation =   "1"
+   DefaultLocation =   "0"
    Frame           =   0
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
    HasBackgroundColor=   False
-   HasCloseButton  =   False
+   HasCloseButton  =   True
    HasFullScreenButton=   False
-   HasMaximizeButton=   False
-   HasMinimizeButton=   False
+   HasMaximizeButton=   True
+   HasMinimizeButton=   True
    Height          =   158
    ImplicitInstance=   False
    MacProcID       =   0
@@ -35,7 +35,7 @@ Begin BeaconDialog ShareWithUserDialog
    Resizable       =   False
    Resizeable      =   True
    Title           =   "Share With User"
-   Type            =   "8"
+   Type            =   "0"
    Visible         =   True
    Width           =   450
    Begin Label MessageLabel
@@ -49,12 +49,15 @@ Begin BeaconDialog ShareWithUserDialog
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
+      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
       Left            =   20
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
+      LockRight       =   False
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
@@ -62,7 +65,8 @@ Begin BeaconDialog ShareWithUserDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -88,6 +92,7 @@ Begin BeaconDialog ShareWithUserDialog
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
+      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -125,6 +130,7 @@ Begin BeaconDialog ShareWithUserDialog
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
+      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -174,15 +180,19 @@ Begin BeaconDialog ShareWithUserDialog
       Width           =   16
    End
    Begin UITweaks.ResizedTextField UserIDField
+      AcceptTabs      =   False
+      Alignment       =   "0"
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowSpellChecking=   False
       AllowTabs       =   False
       AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
+      CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
@@ -192,7 +202,8 @@ Begin BeaconDialog ShareWithUserDialog
       Format          =   ""
       HasBorder       =   True
       Height          =   22
-      Hint            =   "User Identifier"
+      HelpTag         =   ""
+      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   93
@@ -202,6 +213,7 @@ Begin BeaconDialog ShareWithUserDialog
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      Mask            =   ""
       MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
@@ -209,6 +221,7 @@ Begin BeaconDialog ShareWithUserDialog
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
       TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -235,6 +248,7 @@ Begin BeaconDialog ShareWithUserDialog
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   22
+      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -250,7 +264,8 @@ Begin BeaconDialog ShareWithUserDialog
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -270,10 +285,11 @@ Begin BeaconDialog ShareWithUserDialog
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
+      FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
       Height          =   20
+      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -290,7 +306,8 @@ Begin BeaconDialog ShareWithUserDialog
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "0"
+      TextAlign       =   "0"
+      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -299,11 +316,14 @@ Begin BeaconDialog ShareWithUserDialog
       Top             =   86
       Transparent     =   False
       Underline       =   False
+      URL             =   ""
       Value           =   "Helping finding a user's identifier"
       Visible         =   True
       Width           =   337
    End
    Begin URLConnection UserLookupSocket
+      AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False

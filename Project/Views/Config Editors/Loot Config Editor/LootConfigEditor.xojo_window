@@ -194,6 +194,7 @@ Begin ConfigEditor LootConfigEditor
       SelectedPanelIndex=   0
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
@@ -218,6 +219,7 @@ Begin ConfigEditor LootConfigEditor
          HasBackgroundColor=   False
          Height          =   436
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True

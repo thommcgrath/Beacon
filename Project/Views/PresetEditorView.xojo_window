@@ -158,6 +158,7 @@ Begin BeaconSubview PresetEditorView
       SelectedPanelIndex=   1
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   61
       Transparent     =   False
@@ -181,6 +182,7 @@ Begin BeaconSubview PresetEditorView
          SelectionStyle  =   "0"
          TabIndex        =   0
          TabPanelIndex   =   2
+         TabStop         =   True
          Top             =   81
          Transparent     =   False
          Visible         =   True
