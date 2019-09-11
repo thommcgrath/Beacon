@@ -39,7 +39,7 @@ Inherits Global.Thread
 		  If Format = Beacon.Rewriter.EncodingFormat.UCS2AndASCII And Encodings.ASCII.IsValidData(Content) = False Then
 		    Dim Reg As New RegEx
 		    Reg.SearchPattern = "[\x{10000}-\x{10FFFF}]"
-		    Reg.ReplacementPattern = "\xEF\xBF\xBD"
+		    Reg.ReplacementPattern = "?"
 		    Reg.Options.ReplaceAllMatches = True
 		    Try
 		      Content = Reg.Replace(Content)
