@@ -18,6 +18,7 @@ if (is_null($mod)) {
 }
 
 BeaconTemplate::SetTitle('Mod: ' . $mod->Name());
+BeaconTemplate::SetPageDescription('Beacon has built-in support for the Ark mod "' . $mod->Name() . '" which means its engrams are already part of Beacon\'s database so you can begin using them immediately.');
 $engrams = BeaconEngram::Get($mod->ModID());
 $loot_sources = BeaconLootSource::Get($mod->ModID());
 $creatures = BeaconCreature::Get($mod->ModID());
@@ -32,7 +33,7 @@ $has_something = $has_engrams || $has_loot_sources || $has_creatures || $has_con
 <p>Beacon has built-in support for <a href="<?php echo BeaconWorkshopItem::URLForModID($mod->WorkshopID()); ?>"><?php echo htmlentities($mod->Name()); ?></a>. This means its engrams are already part of Beacon's database and you can begin using them immediately.</p>
 <?php if ($has_engrams) { ?>
 <h3 id="engrams"><?php echo htmlentities($mod->Name()); ?> Engrams</h3>
-<p>See the full list with spawn codes <a href="/mods/<?php echo abs($mod->WorkshopID()); ?>/spawncodes">here</a>.</p>
+<p><a href="/mods/<?php echo abs($mod->WorkshopID()); ?>/spawncodes">See the full list with spawn codes here.</a></p>
 <ul class="object_list">
 	<?php foreach ($engrams as $engram) { ?><li><a href="/object/<?php echo ($engram->IsAmbiguous() ? (urlencode($engram->ModWorkshopID()) . '/' . urlencode($engram->ClassString())) : urlencode($engram->ClassString())); ?>"><?php echo htmlentities($engram->Label()); ?></a></li><?php } ?></ul>
 <?php } ?>

@@ -8,7 +8,7 @@ if (!BeaconTemplate::IsHTML()) {
 $description = BeaconTemplate::PageDescription();
 
 ?><!DOCTYPE html>
-<html<?php if (BeaconTemplate::BodyClass() != '') { echo ' class="' . BeaconTemplate::BodyClass() . '"'; } ?>>
+<html lang="en"<?php if (BeaconTemplate::BodyClass() != '') { echo ' class="' . BeaconTemplate::BodyClass() . '"'; } ?>>
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -47,7 +47,7 @@ $description = BeaconTemplate::PageDescription();
 	<body>
 		<div id="header_wrapper">
 			<div id="header" class="pagebody">
-				<div id="header_logo_cell"><a href="/"><img id="header_logo" src="<?php echo BeaconCommon::AssetURI('beacon-header-color.svg'); ?>" height="80"></a></div>
+				<div id="header_logo_cell"><a href="/"><img id="header_logo" src="<?php echo BeaconCommon::AssetURI('beacon-header-color.svg'); ?>" height="80" alt="Beacon for Ark: Survival Evolved"></a></div>
 				<div id="header_links_cell"><ul><li><a id="menu_explore_link" href="#">Explore</a></li><li><a id="menu_download_link" href="/download/">Download</a></li><li><a id="menu_support_link" href="/help/">Support</a></li><li><a id="menu_buy_link" href="/omni/">Buy</a></li></ul></div>
 			</div>
 		</div>
@@ -57,9 +57,9 @@ $description = BeaconTemplate::PageDescription();
 			</div>
 			<div id="footer" class="pagebody">
 				<p>Beacon is an open source project by</p>
-				<p><a class="external_logo" href="https://thezaz.com/"><img class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('thezaz-color.svg'); ?>" height="120"></a></p>
+				<p><a class="external_logo" href="https://thezaz.com/"><img class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('thezaz-color.svg'); ?>" height="120" alt="The ZAZ Studios"></a></p>
 				<p>Copyright 2016-<?php echo date('Y'); ?></p>
-				<p><a class="external_logo" href="https://github.com/thommcgrath/Beacon" title="GitHub"><img height="24" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('github-color.svg'); ?>"></a><a class="external_logo" href="/discord.php" title="Discord"><img height="24" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('discord-color.svg'); ?>"></a></p>
+				<p><a class="external_logo" href="https://github.com/thommcgrath/Beacon" title="GitHub"><img height="24" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('github-color.svg'); ?>" alt="Beacon on GitHub"></a><a class="external_logo" href="/discord.php" title="Discord"><img height="24" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('discord-color.svg'); ?>" alt="Beacon Discord Server"></a></p>
 				<p>Get in touch using <a href="/help/contact">our support form</a>.<span class="smaller"><br><a href="/help/about_user_privacy">Privacy Policy</a></span></p>
 			</div>
 		</div>
