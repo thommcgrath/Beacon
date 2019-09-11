@@ -945,6 +945,15 @@ div.results {
 	}
 }
 
+ul.object_list {
+	list-style: none;
+	padding-left: 15px;
+	
+	li+li {
+		margin-top: 10px;
+	}
+}
+
 @media (min-width: $breakpoint_mini) {
 	#header_logo {
 		height: 80px;
