@@ -167,6 +167,16 @@
 	}
 	
 	table.generic {
+		tbody {
+			tr:nth-child(even) {
+				background-color: mix($background-color, $accent-color, 96%);
+			}
+			
+			tr:nth-child(odd) {
+				background-color: $background-color;
+			}
+		}
+		
 		td, th {
 			border-color: $separator-color;
 		}
@@ -233,7 +243,7 @@
 	}
 	
 	button, input[type="button"], input[type="submit"], input[type="reset"], a.button {
-		background-color: rgba($accent-color, 0);
+		background-color: $background-color;
 		color: $accent-color;
 		border-color: $accent-color;
 		
@@ -475,6 +485,7 @@
 			
 			td, th {
 				border-color: inherit;
+				background-color: white;
 			}
 			
 			thead {
