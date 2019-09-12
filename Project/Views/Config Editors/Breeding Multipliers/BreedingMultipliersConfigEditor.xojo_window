@@ -882,7 +882,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   "0"
       RowSelectionType=   "0"
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -1379,7 +1378,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Caption         =   "Breeding Multipliers"
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -1415,7 +1413,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -2053,8 +2050,7 @@ End
 		    Dim MatureSpeedMultiplier As String = Str(Config.BabyMatureSpeedMultiplier, Format)
 		    Dim IncubationSpeedMultiplier As String = Str(Config.EggHatchSpeedMultiplier, Format)
 		    Dim ImprintPeriodMultiplier As String = Str(Config.BabyCuddleIntervalMultiplier, Format)
-		    Dim Path As String = "/tools/breeding?msm=" + EncodeURLComponent(MatureSpeedMultiplier) + "&ism=" + EncodeURLComponent(IncubationSpeedMultiplier) + "&ipm=" + EncodeURLComponent(ImprintPeriodMultiplier)
-		    LinkSharingDialog.Present(Self, Beacon.WebURL(Path.ToText))
+		    LinkSharingDialog.Present(Self, Beacon.WebURL("/tools/breeding?msm=" + EncodeURLComponent(MatureSpeedMultiplier) + "&ism=" + EncodeURLComponent(IncubationSpeedMultiplier) + "&ipm=" + EncodeURLComponent(ImprintPeriodMultiplier)))
 		  End Select
 		End Sub
 	#tag EndEvent
