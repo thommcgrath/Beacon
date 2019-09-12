@@ -167,7 +167,15 @@
 	}
 	
 	table.generic {
-		border-color: 1px solid $accent-color;
+		tbody {
+			tr:nth-child(even) {
+				background-color: mix($background-color, $accent-color, 96%);
+			}
+			
+			tr:nth-child(odd) {
+				background-color: $background-color;
+			}
+		}
 		
 		td, th {
 			border-color: $separator-color;
@@ -179,7 +187,7 @@
 			
 			td, th {
 				border-color: $accent-color;
-				color: $accent-text-color;
+				color: inherit;
 			}
 		}
 	}
@@ -235,7 +243,7 @@
 	}
 	
 	button, input[type="button"], input[type="submit"], input[type="reset"], a.button {
-		background-color: rgba($accent-color, 0);
+		background-color: $background-color;
 		color: $accent-color;
 		border-color: $accent-color;
 		
@@ -468,6 +476,28 @@
 					}
 				}
 			}
+		}
+	}
+	
+	@media print {
+		table.generic {
+			border-color: #d9d9d9;
+			
+			td, th {
+				border-color: inherit;
+				background-color: white;
+			}
+			
+			thead {
+				background-color: white;
+				color: black;
+				
+				td, th {
+					border-color: black;
+					color: inherit;
+					font-weight: 600;
+				}
+			}	
 		}
 	}
 }

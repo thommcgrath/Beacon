@@ -625,6 +625,82 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: documents; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.documents (
+    document_id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    title text NOT NULL,
+    description text NOT NULL,
+    map integer NOT NULL,
+    difficulty numeric(12,4) NOT NULL,
+    console_safe boolean NOT NULL,
+    last_update timestamp with time zone DEFAULT clock_timestamp() NOT NULL,
+    revision integer DEFAULT 1 NOT NULL,
+    download_count integer DEFAULT 0 NOT NULL,
+    published public.publish_status DEFAULT 'Private'::public.publish_status NOT NULL,
+    mods uuid[] NOT NULL,
+    included_editors text[] NOT NULL
+);
+
+
+ALTER TABLE public.documents OWNER TO thommcgrath;
+
+--
+-- Name: guest_documents; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.guest_documents (
+    document_id uuid NOT NULL,
+    user_id uuid NOT NULL
+);
+
+
+ALTER TABLE public.guest_documents OWNER TO thommcgrath;
+
+--
+-- Name: allowed_documents; Type: VIEW; Schema: public; Owner: thommcgrath
+--
+
+CREATE VIEW public.allowed_documents AS
+ SELECT documents.document_id,
+    documents.user_id,
+    documents.title,
+    documents.description,
+    documents.map,
+    documents.difficulty,
+    documents.console_safe,
+    documents.last_update,
+    documents.revision,
+    documents.download_count,
+    documents.published,
+    documents.mods,
+    documents.included_editors,
+    'Owner'::text AS role
+   FROM public.documents
+UNION
+ SELECT documents.document_id,
+    guest_documents.user_id,
+    documents.title,
+    documents.description,
+    documents.map,
+    documents.difficulty,
+    documents.console_safe,
+    documents.last_update,
+    documents.revision,
+    documents.download_count,
+    documents.published,
+    documents.mods,
+    documents.included_editors,
+    'Guest'::text AS role
+   FROM (public.guest_documents
+     JOIN public.documents ON ((guest_documents.document_id = documents.document_id)));
+
+
+ALTER TABLE public.allowed_documents OWNER TO thommcgrath;
+
+--
 -- Name: blog_articles; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
@@ -863,29 +939,6 @@ INHERITS (public.objects);
 
 
 ALTER TABLE public.diets OWNER TO thommcgrath;
-
---
--- Name: documents; Type: TABLE; Schema: public; Owner: thommcgrath
---
-
-CREATE TABLE public.documents (
-    document_id uuid NOT NULL,
-    user_id uuid NOT NULL,
-    title text NOT NULL,
-    description text NOT NULL,
-    map integer NOT NULL,
-    difficulty numeric(12,4) NOT NULL,
-    console_safe boolean NOT NULL,
-    last_update timestamp with time zone DEFAULT clock_timestamp() NOT NULL,
-    revision integer DEFAULT 1 NOT NULL,
-    download_count integer DEFAULT 0 NOT NULL,
-    published public.publish_status DEFAULT 'Private'::public.publish_status NOT NULL,
-    mods uuid[] NOT NULL,
-    included_editors text[] NOT NULL
-);
-
-
-ALTER TABLE public.documents OWNER TO thommcgrath;
 
 --
 -- Name: email_addresses; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -1960,6 +2013,14 @@ ALTER TABLE ONLY public.game_variables
 
 
 --
+-- Name: guest_documents guest_documents_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.guest_documents
+    ADD CONSTRAINT guest_documents_pkey PRIMARY KEY (document_id, user_id);
+
+
+--
 -- Name: help_topics help_topics_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -2761,6 +2822,22 @@ ALTER TABLE ONLY public.exception_users
 
 
 --
+-- Name: guest_documents guest_documents_document_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.guest_documents
+    ADD CONSTRAINT guest_documents_document_id_fkey FOREIGN KEY (document_id) REFERENCES public.documents(document_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: guest_documents guest_documents_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.guest_documents
+    ADD CONSTRAINT guest_documents_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: ini_options ini_options_mod_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -2945,6 +3022,27 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: TABLE documents; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.documents TO thezaz_website;
+
+
+--
+-- Name: TABLE guest_documents; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.guest_documents TO thezaz_website;
+
+
+--
+-- Name: TABLE allowed_documents; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.allowed_documents TO thezaz_website;
+
+
+--
 -- Name: TABLE blog_articles; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
@@ -3033,13 +3131,6 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.diet_contents TO thezaz_websit
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.diets TO thezaz_website;
-
-
---
--- Name: TABLE documents; Type: ACL; Schema: public; Owner: thommcgrath
---
-
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.documents TO thezaz_website;
 
 
 --

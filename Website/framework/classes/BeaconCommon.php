@@ -415,50 +415,72 @@ abstract class BeaconCommon {
 		return ($boolval === null ? false : $boolval);
 	}
 	
-	public static function SecondsToEnglish(int $seconds) {
+	public static function SecondsToEnglish(int $seconds, bool $short = false) {
 		$parts = array();
 		if ($seconds > 86400) {
 			$days = floor($seconds / 86400);
 			$seconds = $seconds - ($days * 86400);
-			if ($days == 1) {
-				$parts[] = '1 day';
+			if ($short) {
+				$parts[] = $days . 'd';
 			} else {
-				$parts[] = $days . ' days';
+				if ($days == 1) {
+					$parts[] = '1 day';
+				} else {
+					$parts[] = $days . ' days';
+				}
 			}
 		}
 		if ($seconds > 3600) {
 			$hours = floor($seconds / 3600);
 			$seconds = $seconds - ($hours * 3600);
-			if ($hours == 1) {
-				$parts[] = '1 hour';
+			if ($short) {
+				$parts[] = $hours . 'h';
 			} else {
-				$parts[] = $hours . ' hours';
+				if ($hours == 1) {
+					$parts[] = '1 hour';
+				} else {
+					$parts[] = $hours . ' hours';
+				}
 			}
 		}
 		if ($seconds > 60) {
 			$minutes = floor($seconds / 60);
 			$seconds = $seconds - ($minutes * 60);
-			if ($minutes == 1) {
-				$parts[] = '1 minute';
+			if ($short) {
+				$parts[] = $minutes . 'm';
 			} else {
-				$parts[] = $minutes . ' minutes';
+				if ($minutes == 1) {
+					$parts[] = '1 minute';
+				} else {
+					$parts[] = $minutes . ' minutes';
+				}
 			}
 		}
-		if ($seconds == 1) {
-			$parts[] = '1 second';
-		} elseif ($seconds > 0) {
-			$parts[] = $seconds . ' seconds';
+		if ($short) {
+			if ($seconds > 0) {
+				$parts[] = $seconds . 's';
+			}
+		} else {
+			if ($seconds == 1) {
+				$parts[] = '1 second';
+			} elseif ($seconds > 0) {
+				$parts[] = $seconds . ' seconds';
+			}
 		}
 		
-		if (count($parts) == 1) {
-			return $parts[0];
-		} elseif (count($parts) == 2) {
-			return $parts[0] . ' and ' . $parts[1];
-		} elseif (count($parts) > 2) {
-			$last = 	array_pop($parts);
-			return implode(', ', $parts) . ', and ' . $last;
+		if ($short) {
+			return implode(' ', $parts);
 		} else {
-			return '';
+			if (count($parts) == 1) {
+				return $parts[0];
+			} elseif (count($parts) == 2) {
+				return $parts[0] . ' and ' . $parts[1];
+			} elseif (count($parts) > 2) {
+				$last = 	array_pop($parts);
+				return implode(', ', $parts) . ', and ' . $last;
+			} else {
+				return '';
+			}
 		}
 	}
 	
@@ -485,6 +507,17 @@ abstract class BeaconCommon {
 	public static function IsCompressed(string $content) {
 		$arr = unpack('C*', substr($content, 0, 2));
 		return count($arr) == 2 && $arr[1] == 0x1f && $arr[2] == 0x8b;
+	}
+	
+	public static function FormatFloat(float $num, int $min_decimals = 1, int $max_decimals = 4) {
+		for ($i = $min_decimals; $i < $max_decimals; $i++) {
+			$pow = pow(10, $i);
+			$test = $num * $pow;
+			if (floor($test) == $test) {
+				break;
+			}
+		}
+		return number_format($num, $i);
 	}
 }
 
