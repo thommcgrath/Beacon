@@ -1465,7 +1465,7 @@ End
 		    Dim MaxCuddles As Integer = Floor(MatureSeconds / CuddlePeriod)
 		    Dim PerCuddle As Double = 0
 		    If MaxCuddles > 0 Then
-		       PerCuddle = 1 / MaxCuddles
+		      PerCuddle = 1 / MaxCuddles
 		    End If
 		    Dim MaxImprint As Double = MaxCuddles * PerCuddle
 		    
@@ -1697,12 +1697,21 @@ End
 		      Self.ImprintPeriodField.Text = Interval.PrettyText
 		      Self.UpdateStats
 		    End If
+		  Case "ShareLinkButton"
+		    Dim Config As BeaconConfigs.BreedingMultipliers = Self.Config(False)
+		    Dim Format As String = "-0.09999999"
+		    Dim MatureSpeedMultiplier As String = Str(Config.BabyMatureSpeedMultiplier, Format)
+		    Dim IncubationSpeedMultiplier As String = Str(Config.EggHatchSpeedMultiplier, Format)
+		    Dim ImprintPeriodMultiplier As String = Str(Config.BabyCuddleIntervalMultiplier, Format)
+		    Dim Path As String = "/tools/breeding?msm=" + EncodeURLComponent(MatureSpeedMultiplier) + "&ism=" + EncodeURLComponent(IncubationSpeedMultiplier) + "&ipm=" + EncodeURLComponent(ImprintPeriodMultiplier)
+		    LinkSharingDialog.Present(Self, Beacon.WebURL(Path.ToText))
 		  End Select
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Open()
 		  Me.LeftItems.Append(New BeaconToolbarItem("AutoTuneButton", IconToolbarWizard, "Automatically compute imprint interval to give at least a specified imprinting on all creatures."))
+		  Me.LeftItems.Append(New BeaconToolbarItem("ShareLinkButton", IconToolbarShare, "Generates a link so you can share this breeding chart."))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
