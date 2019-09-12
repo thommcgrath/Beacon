@@ -102,32 +102,46 @@ BeaconTemplate::FinishStyles();
 	</thead>
 	<tbody>
 		<?php
-	
-		$results = $database->Query('SELECT MAX(build_number) AS newest_build FROM updates;');
-		$min_version = $results->Field('newest_build');
+			
+		$cache_key = 'breeding:msm=' . number_format($msm, 8) . ';ipm=' . number_format($ipm, 8) . ';ism=' . number_format($ism, 8);
+		$cached = BeaconCache::Get($cache_key);
 		
-		$creatures = BeaconCreature::GetAll($min_version);
-		foreach ($creatures as $creature) {
-			if (is_null($creature->IncubationTimeSeconds()) || is_null($creature->MatureTimeSeconds())) {
-				continue;
+		if (is_null($cached)) {
+			ob_start();
+			
+			$results = $database->Query('SELECT MAX(build_number) AS newest_build FROM updates;');
+			$min_version = $results->Field('newest_build');
+			
+			$creatures = BeaconCreature::GetAll($min_version);
+			foreach ($creatures as $creature) {
+				if (is_null($creature->IncubationTimeSeconds()) || is_null($creature->MatureTimeSeconds())) {
+					continue;
+				}
+				
+				$incubation_seconds = $creature->IncubationTimeSeconds() / $ism;
+				$mature_seconds = $creature->MatureTimeSeconds() / $msm;
+				
+				$max_cuddles = floor($mature_seconds / $computed_cuddle_period);
+				$per_cuddle = 0;
+				if ($max_cuddles > 0) {
+					$per_cuddle = 1 / $max_cuddles;
+					$cuddle_text = number_format($per_cuddle * 100, 0) . '% ea / ' . $max_cuddles . ' total';
+				} else {
+					$cuddle_text = 'Can\'t Imprint';
+				}
+				
+				$incubation_text = BeaconCommon::SecondsToEnglish($incubation_seconds, true);
+				$mature_text = BeaconCommon::SecondsToEnglish($mature_seconds, true);
+				echo '<tr><td>' . htmlentities($creature->Label()) . '<span class="narrow-only text-lighter"><br><strong>Incubation Time:</strong> ' . htmlentities($incubation_text) . '<br><strong>Mature Time:</strong> ' . htmlentities($mature_text) . '<br><strong>Imprinting:</strong> ' . htmlentities($cuddle_text) . '</span></td><td class="wide-only">' . htmlentities($incubation_text) . '</td><td class="wide-only">' . htmlentities($mature_text) . '</td><td class="wide-only">' . htmlentities($cuddle_text) . '</td></tr>';
 			}
 			
-			$incubation_seconds = $creature->IncubationTimeSeconds() / $ism;
-			$mature_seconds = $creature->MatureTimeSeconds() / $msm;
-			
-			$max_cuddles = floor($mature_seconds / $computed_cuddle_period);
-			$per_cuddle = 0;
-			if ($max_cuddles > 0) {
-				$per_cuddle = 1 / $max_cuddles;
-				$cuddle_text = number_format($per_cuddle * 100, 0) . '% ea / ' . $max_cuddles . ' total';
-			} else {
-				$cuddle_text = 'Can\'t Imprint';
-			}
-			
-			$incubation_text = BeaconCommon::SecondsToEnglish($incubation_seconds, true);
-			$mature_text = BeaconCommon::SecondsToEnglish($mature_seconds, true);
-			echo '<tr><td>' . htmlentities($creature->Label()) . '<span class="narrow-only text-lighter"><br><strong>Incubation Time:</strong> ' . htmlentities($incubation_text) . '<br><strong>Mature Time:</strong> ' . htmlentities($mature_text) . '<br><strong>Imprinting:</strong> ' . htmlentities($cuddle_text) . '</span></td><td class="wide-only">' . htmlentities($incubation_text) . '</td><td class="wide-only">' . htmlentities($mature_text) . '</td><td class="wide-only">' . htmlentities($cuddle_text) . '</td></tr>';
+			$cached = ob_get_contents();
+			ob_end_clean();
+			BeaconCache::Set($cache_key, $cached);
 		}
+		
+		echo $cached;
 		?>
 	</tbody>
 </table>
+<p class="smaller text-center">Any creature that can be imprinted can be imprinted to 100%</p>
