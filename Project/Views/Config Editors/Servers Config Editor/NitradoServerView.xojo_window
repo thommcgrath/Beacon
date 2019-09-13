@@ -2,20 +2,13 @@
 Begin ServerViewContainer NitradoServerView
    AcceptFocus     =   False
    AcceptTabs      =   True
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
-   Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   HasBackgroundColor=   False
    Height          =   600
    HelpTag         =   ""
    InitialParent   =   ""
@@ -27,7 +20,6 @@ Begin ServerViewContainer NitradoServerView
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
-   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    UseFocusRing    =   False
@@ -44,10 +36,6 @@ Begin ServerViewContainer NitradoServerView
    Begin BeaconToolbar Controls
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Untitled"
@@ -71,7 +59,6 @@ Begin ServerViewContainer NitradoServerView
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -81,10 +68,6 @@ Begin ServerViewContainer NitradoServerView
    Begin FadedSeparator ControlsSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -105,7 +88,6 @@ Begin ServerViewContainer NitradoServerView
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
@@ -113,15 +95,11 @@ Begin ServerViewContainer NitradoServerView
       Width           =   600
    End
    Begin UITweaks.ResizedLabel ServerStatusLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -141,16 +119,13 @@ Begin ServerViewContainer NitradoServerView
       TabStop         =   True
       Text            =   "Server Status:"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
-      Value           =   "Server Status:"
       Visible         =   True
       Width           =   110
    End
@@ -160,20 +135,15 @@ Begin ServerViewContainer NitradoServerView
       LockedInPosition=   False
       Mode            =   "0"
       Period          =   5000
-      RunMode         =   "0"
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin UITweaks.ResizedLabel ServerStatusField
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -193,26 +163,19 @@ Begin ServerViewContainer NitradoServerView
       TabStop         =   True
       Text            =   "Checking…"
       TextAlign       =   "0"
-      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
-      Value           =   "Checking…"
       Visible         =   True
       Width           =   438
    End
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -233,7 +196,6 @@ Begin ServerViewContainer NitradoServerView
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   103
       Transparent     =   True
       UseFocusRing    =   True
@@ -243,28 +205,18 @@ Begin ServerViewContainer NitradoServerView
    Begin UITweaks.ResizedTextField ServerNameField
       AcceptTabs      =   False
       Alignment       =   "0"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
-      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   142
@@ -275,7 +227,6 @@ Begin ServerViewContainer NitradoServerView
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
-      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -283,31 +234,23 @@ Begin ServerViewContainer NitradoServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   124
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   438
    End
    Begin UITweaks.ResizedLabel ServerNameLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -327,16 +270,13 @@ Begin ServerViewContainer NitradoServerView
       TabStop         =   True
       Text            =   "Server Name:"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   124
       Transparent     =   False
       Underline       =   False
-      Value           =   "Server Name:"
       Visible         =   True
       Width           =   110
    End
@@ -583,68 +523,12 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=false
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=false
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=false
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -676,7 +560,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

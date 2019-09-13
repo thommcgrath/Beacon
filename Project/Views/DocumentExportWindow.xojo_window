@@ -2,46 +2,32 @@
 Begin BeaconDialog DocumentExportWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
    CloseButton     =   False
-   Compatibility   =   ""
    Composite       =   False
-   DefaultLocation =   "1"
    Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   HasBackgroundColor=   False
-   HasCloseButton  =   False
-   HasFullScreenButton=   False
-   HasMaximizeButton=   False
-   HasMinimizeButton=   False
    Height          =   675
    ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
    MaxHeight       =   32000
    MaximizeButton  =   False
-   MaximumHeight   =   32000
-   MaximumWidth    =   32000
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
    MinHeight       =   400
    MinimizeButton  =   False
-   MinimumHeight   =   400
-   MinimumWidth    =   848
    MinWidth        =   848
    Placement       =   1
-   Resizable       =   True
+   Resizable       =   "True"
    Resizeable      =   True
    SystemUIVisible =   "True"
    Title           =   "Export"
-   Type            =   "8"
    Visible         =   True
    Width           =   900
    Begin UITweaks.ResizedPushButton ActionButton
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -49,9 +35,6 @@ Begin BeaconDialog DocumentExportWindow
       Caption         =   "Finished"
       Default         =   False
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -63,7 +46,6 @@ Begin BeaconDialog DocumentExportWindow
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   12
       TabPanelIndex   =   0
@@ -71,7 +53,6 @@ Begin BeaconDialog DocumentExportWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   635
       Transparent     =   False
       Underline       =   False
@@ -81,27 +62,15 @@ Begin BeaconDialog DocumentExportWindow
    Begin CodeArea ContentArea
       AcceptTabs      =   False
       Alignment       =   "0"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowStyledText =   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "Source Code Pro"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   False
-      HasHorizontalScrollbar=   False
-      HasVerticalScrollbar=   True
       Height          =   553
       HelpTag         =   ""
       HideSelection   =   True
@@ -117,7 +86,6 @@ Begin BeaconDialog DocumentExportWindow
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
-      MaximumCharactersAllowed=   0
       Multiline       =   True
       ReadOnly        =   True
       Scope           =   2
@@ -128,23 +96,18 @@ Begin BeaconDialog DocumentExportWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "Source Code Pro"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   900
    End
    Begin UITweaks.ResizedPushButton SaveButton
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -152,9 +115,6 @@ Begin BeaconDialog DocumentExportWindow
       Caption         =   "Save As…"
       Default         =   False
       Enabled         =   False
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -166,7 +126,6 @@ Begin BeaconDialog DocumentExportWindow
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
-      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   9
       TabPanelIndex   =   0
@@ -174,7 +133,6 @@ Begin BeaconDialog DocumentExportWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   635
       Transparent     =   False
       Underline       =   False
@@ -182,7 +140,6 @@ Begin BeaconDialog DocumentExportWindow
       Width           =   96
    End
    Begin ReactionButton CopyButton
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -190,9 +147,6 @@ Begin BeaconDialog DocumentExportWindow
       Caption         =   "Copy All"
       Default         =   False
       Enabled         =   False
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -204,7 +158,6 @@ Begin BeaconDialog DocumentExportWindow
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
-      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   8
       TabPanelIndex   =   0
@@ -212,7 +165,6 @@ Begin BeaconDialog DocumentExportWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   635
       Transparent     =   False
       Underline       =   False
@@ -220,7 +172,6 @@ Begin BeaconDialog DocumentExportWindow
       Width           =   96
    End
    Begin UITweaks.ResizedPushButton RewriteClipboardButton
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -228,9 +179,6 @@ Begin BeaconDialog DocumentExportWindow
       Caption         =   "Update Clipboard"
       Default         =   False
       Enabled         =   False
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -242,7 +190,6 @@ Begin BeaconDialog DocumentExportWindow
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
-      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   11
       TabPanelIndex   =   0
@@ -250,7 +197,6 @@ Begin BeaconDialog DocumentExportWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   635
       Transparent     =   False
       Underline       =   False
@@ -258,16 +204,15 @@ Begin BeaconDialog DocumentExportWindow
       Width           =   140
    End
    Begin Timer ClipboardWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   "2"
       Period          =   1000
-      RunMode         =   "2"
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin UITweaks.ResizedPushButton RewriteFileButton
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -275,9 +220,6 @@ Begin BeaconDialog DocumentExportWindow
       Caption         =   "Update File…"
       Default         =   False
       Enabled         =   False
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -289,7 +231,6 @@ Begin BeaconDialog DocumentExportWindow
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
-      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   10
       TabPanelIndex   =   0
@@ -297,7 +238,6 @@ Begin BeaconDialog DocumentExportWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   635
       Transparent     =   False
       Underline       =   False
@@ -307,10 +247,6 @@ Begin BeaconDialog DocumentExportWindow
    Begin FadedSeparator TopSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -330,7 +266,6 @@ Begin BeaconDialog DocumentExportWindow
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   60
       Transparent     =   True
       UseFocusRing    =   True
@@ -338,15 +273,11 @@ Begin BeaconDialog DocumentExportWindow
       Width           =   900
    End
    Begin PopupMenu MapMenu
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -361,14 +292,12 @@ Begin BeaconDialog DocumentExportWindow
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      SelectedRowIndex=   0
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -376,7 +305,6 @@ Begin BeaconDialog DocumentExportWindow
       Width           =   189
    End
    Begin ProgressWheel RewritingSpinner
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   16
@@ -393,22 +321,17 @@ Begin BeaconDialog DocumentExportWindow
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   22
       Transparent     =   False
       Visible         =   False
       Width           =   16
    End
    Begin Label RewritingStatusLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   16
       HelpTag         =   ""
       Index           =   -2147483648
@@ -428,26 +351,19 @@ Begin BeaconDialog DocumentExportWindow
       TabStop         =   True
       Text            =   "Building config…"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   22
       Transparent     =   False
       Underline       =   False
-      Value           =   "Building config…"
       Visible         =   False
       Width           =   161
    End
    Begin FadedSeparator BottomSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -467,7 +383,6 @@ Begin BeaconDialog DocumentExportWindow
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   614
       Transparent     =   True
       UseFocusRing    =   True
@@ -477,10 +392,6 @@ Begin BeaconDialog DocumentExportWindow
    Begin Shelf Switcher
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -503,7 +414,6 @@ Begin BeaconDialog DocumentExportWindow
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -511,6 +421,7 @@ Begin BeaconDialog DocumentExportWindow
       Width           =   442
    End
    Begin Beacon.Rewriter GameIniRewriter
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -519,6 +430,7 @@ Begin BeaconDialog DocumentExportWindow
       TabPanelIndex   =   0
    End
    Begin Beacon.Rewriter GameUserSettingsRewriter
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -527,6 +439,7 @@ Begin BeaconDialog DocumentExportWindow
       TabPanelIndex   =   0
    End
    Begin Beacon.Rewriter FileRewriter
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -535,6 +448,7 @@ Begin BeaconDialog DocumentExportWindow
       TabPanelIndex   =   0
    End
    Begin Beacon.Rewriter ClipboardRewriter
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -789,7 +703,7 @@ End
 			  If Self.MapMenu.SelectedRowIndex = -1 Then
 			    Mask = Beacon.Maps.All.Mask
 			  Else
-			    Mask = Self.MapMenu.RowTag(Self.MapMenu.SelectedRowIndex)
+			    Mask = Self.MapMenu.RowTagAt(Self.MapMenu.SelectedRowIndex)
 			  End If
 			  Return Mask
 			End Get
@@ -1064,127 +978,11 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="MinWidth"
-		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinHeight"
-		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxWidth"
-		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxHeight"
-		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Frame"
-		Visible=true
-		Group="Frame"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		#tag EnumValues
-			"0 - Document"
-			"1 - Movable Modal"
-			"2 - Modal Dialog"
-			"3 - Floating Window"
-			"4 - Plain Box"
-			"5 - Shadowed Box"
-			"6 - Rounded Window"
-			"7 - Global Floating Window"
-			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="CloseButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Resizeable"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaximizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="FullScreenButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Placement"
-		Visible=true
-		Group="Behavior"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		#tag EnumValues
-			"0 - Default"
-			"1 - Parent Window"
-			"2 - Main Screen"
-			"3 - Parent Window Screen"
-			"4 - Stagger"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -1257,14 +1055,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Resizable"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HasMaximizeButton"
 		Visible=true
 		Group="Frame"
@@ -1317,7 +1107,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"

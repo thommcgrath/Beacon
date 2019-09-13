@@ -2,20 +2,13 @@
 Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
    AcceptFocus     =   False
    AcceptTabs      =   True
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
-   Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   HasBackgroundColor=   False
    Height          =   468
    HelpTag         =   ""
    InitialParent   =   ""
@@ -27,14 +20,12 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
-   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
    Width           =   300
    Begin PagePanel Views
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   468
@@ -50,11 +41,9 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       PanelCount      =   8
       Panels          =   ""
       Scope           =   2
-      SelectedPanelIndex=   1
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
+      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   1
@@ -63,19 +52,13 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       Begin LibraryPaneDocuments DocumentsView
          AcceptFocus     =   False
          AcceptTabs      =   True
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         HasBackgroundColor=   False
          Height          =   468
          HelpTag         =   ""
          Index           =   -2147483648
@@ -94,7 +77,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   4
          TabStop         =   True
          ToolbarCaption  =   ""
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -105,19 +87,13 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       Begin LibraryPanePresets PresetsView
          AcceptFocus     =   False
          AcceptTabs      =   True
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         HasBackgroundColor=   False
          Height          =   468
          HelpTag         =   ""
          Index           =   -2147483648
@@ -136,7 +112,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   5
          TabStop         =   True
          ToolbarCaption  =   ""
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -146,19 +121,13 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       Begin LibraryPaneEngrams EngramsView
          AcceptFocus     =   False
          AcceptTabs      =   True
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         HasBackgroundColor=   False
          Height          =   468
          HelpTag         =   ""
          Index           =   -2147483648
@@ -177,7 +146,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   6
          TabStop         =   True
          ToolbarCaption  =   ""
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -187,19 +155,13 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       Begin LibraryPaneTools ToolsView
          AcceptFocus     =   False
          AcceptTabs      =   True
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         HasBackgroundColor=   False
          Height          =   468
          HelpTag         =   ""
          Index           =   -2147483648
@@ -218,7 +180,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   7
          TabStop         =   True
          ToolbarCaption  =   ""
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -228,19 +189,13 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       Begin LibraryPaneSearch SearchView
          AcceptFocus     =   False
          AcceptTabs      =   True
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         HasBackgroundColor=   False
          Height          =   468
          HelpTag         =   ""
          Index           =   -2147483648
@@ -259,7 +214,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   8
          TabStop         =   True
          ToolbarCaption  =   ""
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -269,19 +223,13 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       Begin LibraryPaneMenu MenuView
          AcceptFocus     =   False
          AcceptTabs      =   True
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         HasBackgroundColor=   False
          Height          =   468
          HelpTag         =   ""
          Index           =   -2147483648
@@ -300,7 +248,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   1
          TabStop         =   True
          ToolbarCaption  =   ""
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -310,19 +257,13 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       Begin LibraryPaneNotifications NotificationsView
          AcceptFocus     =   False
          AcceptTabs      =   True
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         HasBackgroundColor=   False
          Height          =   468
          HelpTag         =   ""
          Index           =   -2147483648
@@ -341,7 +282,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   2
          TabStop         =   True
          ToolbarCaption  =   ""
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -352,10 +292,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
    Begin Shelf ViewShelf
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -378,7 +314,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
       UseFocusRing    =   True
@@ -843,62 +778,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=false
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=false
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=false
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=false
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
@@ -936,7 +815,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

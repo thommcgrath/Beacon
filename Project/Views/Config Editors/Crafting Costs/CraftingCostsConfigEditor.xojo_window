@@ -2,20 +2,13 @@
 Begin ConfigEditor CraftingCostsConfigEditor
    AcceptFocus     =   False
    AcceptTabs      =   True
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
-   Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   HasBackgroundColor=   False
    Height          =   396
    HelpTag         =   ""
    InitialParent   =   ""
@@ -27,7 +20,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
-   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    UseFocusRing    =   False
@@ -36,10 +28,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Engrams"
@@ -63,7 +51,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -73,10 +60,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
    Begin FadedSeparator HeaderSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -97,7 +80,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
@@ -107,10 +89,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
    Begin StatusBar ListStatusBar
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Borders         =   1
@@ -133,7 +111,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   375
       Transparent     =   True
       UseFocusRing    =   True
@@ -141,13 +118,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Width           =   250
    End
    Begin BeaconListbox List
-      AllowAutoDeactivate=   True
-      AllowAutoHideScrollbars=   True
-      AllowExpandableRows=   False
-      AllowFocusRing  =   False
-      AllowResizableColumns=   False
-      AllowRowDragging=   False
-      AllowRowReordering=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -158,22 +128,12 @@ Begin ConfigEditor CraftingCostsConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
-      DropIndicatorVisible=   False
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       GridLinesHorizontal=   "0"
-      GridLinesHorizontalStyle=   "0"
       GridLinesVertical=   "0"
-      GridLinesVerticalStyle=   "0"
-      HasBorder       =   False
-      HasHeader       =   False
       HasHeading      =   False
-      HasHorizontalScrollbar=   False
-      HasVerticalScrollbar=   True
       HeadingIndex    =   0
       Height          =   334
       HelpTag         =   ""
@@ -190,7 +150,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
       LockTop         =   True
       RequiresSelection=   False
       RowCount        =   "0"
-      RowSelectionType=   "1"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -203,7 +162,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   41
       Transparent     =   True
       Underline       =   False
@@ -216,10 +174,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
    Begin FadedSeparator ListSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -240,7 +194,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
       UseFocusRing    =   True
@@ -248,7 +201,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Width           =   1
    End
    Begin PagePanel Panel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   396
@@ -264,11 +216,9 @@ Begin ConfigEditor CraftingCostsConfigEditor
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
-      SelectedPanelIndex=   1
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
+      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   1
@@ -277,10 +227,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Begin LogoFillCanvas FillCanvas
          AcceptFocus     =   False
          AcceptTabs      =   False
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "No Selection"
@@ -302,7 +248,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   True
@@ -312,19 +257,13 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Begin CraftingCostEditor Editor
          AcceptFocus     =   False
          AcceptTabs      =   True
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         HasBackgroundColor=   False
          Height          =   396
          HelpTag         =   ""
          Index           =   -2147483648
@@ -339,7 +278,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -349,10 +287,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Begin LogoFillCanvas LogoFillCanvas1
          AcceptFocus     =   False
          AcceptTabs      =   False
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "Multiple Selection"
@@ -374,7 +308,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   True
@@ -852,62 +785,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=false
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=false
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=false
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=false
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
@@ -945,7 +822,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

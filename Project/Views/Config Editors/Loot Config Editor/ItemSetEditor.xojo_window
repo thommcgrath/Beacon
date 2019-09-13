@@ -2,20 +2,13 @@
 Begin BeaconContainer ItemSetEditor
    AcceptFocus     =   False
    AcceptTabs      =   True
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
-   Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   HasBackgroundColor=   False
    Height          =   428
    HelpTag         =   ""
    InitialParent   =   ""
@@ -27,20 +20,12 @@ Begin BeaconContainer ItemSetEditor
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
-   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
    Width           =   560
    Begin BeaconListbox EntryList
-      AllowAutoDeactivate=   True
-      AllowAutoHideScrollbars=   True
-      AllowExpandableRows=   False
-      AllowFocusRing  =   False
-      AllowResizableColumns=   False
-      AllowRowDragging=   False
-      AllowRowReordering=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -51,22 +36,12 @@ Begin BeaconContainer ItemSetEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
-      DropIndicatorVisible=   False
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       GridLinesHorizontal=   "1"
-      GridLinesHorizontalStyle=   "1"
       GridLinesVertical=   "1"
-      GridLinesVerticalStyle=   "1"
-      HasBorder       =   False
-      HasHeader       =   True
       HasHeading      =   True
-      HasHorizontalScrollbar=   False
-      HasVerticalScrollbar=   True
       HeadingIndex    =   0
       Height          =   343
       HelpTag         =   ""
@@ -83,7 +58,6 @@ Begin BeaconContainer ItemSetEditor
       LockTop         =   True
       RequiresSelection=   False
       RowCount        =   "0"
-      RowSelectionType=   "1"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -96,7 +70,6 @@ Begin BeaconContainer ItemSetEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   64
       Transparent     =   True
       Underline       =   False
@@ -109,10 +82,6 @@ Begin BeaconContainer ItemSetEditor
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Item Set Contents"
@@ -136,7 +105,6 @@ Begin BeaconContainer ItemSetEditor
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -146,10 +114,6 @@ Begin BeaconContainer ItemSetEditor
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -170,7 +134,6 @@ Begin BeaconContainer ItemSetEditor
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
@@ -180,19 +143,13 @@ Begin BeaconContainer ItemSetEditor
    Begin ItemSetSettingsContainer Settings
       AcceptFocus     =   False
       AcceptTabs      =   True
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   False
-      AllowTabs       =   True
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
-      BackgroundColor =   &cFFFFFF00
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
-      HasBackgroundColor=   False
       Height          =   23
       HelpTag         =   ""
       Index           =   -2147483648
@@ -207,7 +164,6 @@ Begin BeaconContainer ItemSetEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   41
       Transparent     =   True
       UseFocusRing    =   False
@@ -217,10 +173,6 @@ Begin BeaconContainer ItemSetEditor
    Begin StatusBar StatusBar1
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Borders         =   1
@@ -243,7 +195,6 @@ Begin BeaconContainer ItemSetEditor
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   407
       Transparent     =   True
       UseFocusRing    =   True
@@ -754,62 +705,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=false
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=false
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=false
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=false
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
@@ -847,7 +742,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

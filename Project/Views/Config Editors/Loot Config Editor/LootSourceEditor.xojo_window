@@ -2,20 +2,13 @@
 Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    AcceptFocus     =   False
    AcceptTabs      =   True
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
-   Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   HasBackgroundColor=   False
    Height          =   464
    HelpTag         =   ""
    InitialParent   =   ""
@@ -27,20 +20,12 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
-   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
    Width           =   598
    Begin BeaconListbox SetList
-      AllowAutoDeactivate=   True
-      AllowAutoHideScrollbars=   True
-      AllowExpandableRows=   False
-      AllowFocusRing  =   False
-      AllowResizableColumns=   False
-      AllowRowDragging=   False
-      AllowRowReordering=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -51,22 +36,12 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
-      DropIndicatorVisible=   False
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       GridLinesHorizontal=   "0"
-      GridLinesHorizontalStyle=   "0"
       GridLinesVertical=   "0"
-      GridLinesVerticalStyle=   "0"
-      HasBorder       =   False
-      HasHeader       =   False
       HasHeading      =   False
-      HasHorizontalScrollbar=   False
-      HasVerticalScrollbar=   True
       HeadingIndex    =   0
       Height          =   120
       HelpTag         =   ""
@@ -82,7 +57,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
-      RowSelectionType=   "1"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -95,7 +69,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   140
       Transparent     =   True
       Underline       =   False
@@ -119,10 +92,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Item Sets"
@@ -145,7 +114,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -153,7 +121,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Width           =   250
    End
    Begin PagePanel Panel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   464
@@ -169,11 +136,9 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
-      SelectedPanelIndex=   0
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
+      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -182,19 +147,13 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Begin ItemSetEditor Editor
          AcceptFocus     =   False
          AcceptTabs      =   True
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   False
          EraseBackground =   True
          HasBackColor    =   False
-         HasBackgroundColor=   False
          Height          =   464
          HelpTag         =   ""
          Index           =   -2147483648
@@ -209,7 +168,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -219,10 +177,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Begin LogoFillCanvas LogoFillCanvas1
          AcceptFocus     =   False
          AcceptTabs      =   False
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "No Selection"
@@ -243,7 +197,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   True
@@ -253,10 +206,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Begin StatusBar NoSelectionStatusBar
          AcceptFocus     =   False
          AcceptTabs      =   False
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Borders         =   1
@@ -278,7 +227,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   443
          Transparent     =   True
          UseFocusRing    =   True
@@ -289,10 +237,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -312,7 +256,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
       UseFocusRing    =   True
@@ -322,19 +265,13 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    Begin SimulatorView Simulator
       AcceptFocus     =   False
       AcceptTabs      =   True
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   False
-      AllowTabs       =   True
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
-      BackgroundColor =   &cFFFFFF00
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
-      HasBackgroundColor=   False
       Height          =   183
       HelpTag         =   ""
       Index           =   -2147483648
@@ -349,7 +286,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   281
       Transparent     =   True
       UseFocusRing    =   False
@@ -359,10 +295,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    Begin FadedSeparator FadedSeparator3
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -382,7 +314,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
@@ -392,19 +323,13 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    Begin LootSourceSettingsContainer SettingsContainer
       AcceptFocus     =   False
       AcceptTabs      =   True
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   False
-      AllowTabs       =   True
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
-      BackgroundColor =   &cFFFFFF00
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
-      HasBackgroundColor=   False
       Height          =   23
       HelpTag         =   ""
       Index           =   -2147483648
@@ -419,7 +344,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   41
       Transparent     =   True
       UseFocusRing    =   False
@@ -429,10 +353,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    Begin StatusBar StatusBar1
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Borders         =   1
@@ -454,7 +374,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   260
       Transparent     =   True
       UseFocusRing    =   True
@@ -464,19 +383,13 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    Begin LootSourceHintsContainer HintsContainer
       AcceptFocus     =   False
       AcceptTabs      =   True
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   False
-      AllowTabs       =   True
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
-      BackgroundColor =   &cFFFFFF00
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
-      HasBackgroundColor=   False
       Height          =   76
       HelpTag         =   ""
       Index           =   -2147483648
@@ -492,7 +405,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   64
       Transparent     =   True
       UseFocusRing    =   False
@@ -1709,62 +1621,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=false
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=false
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=false
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=false
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
@@ -1802,7 +1658,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

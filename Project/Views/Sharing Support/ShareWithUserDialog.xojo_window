@@ -2,52 +2,35 @@
 Begin BeaconDialog ShareWithUserDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
    CloseButton     =   False
-   Compatibility   =   ""
    Composite       =   False
-   DefaultLocation =   "0"
    Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   HasBackgroundColor=   False
-   HasCloseButton  =   False
-   HasFullScreenButton=   False
-   HasMaximizeButton=   False
-   HasMinimizeButton=   False
    Height          =   158
    ImplicitInstance=   False
    MacProcID       =   0
    MaxHeight       =   158
    MaximizeButton  =   False
-   MaximumHeight   =   158
-   MaximumWidth    =   450
    MaxWidth        =   450
    MenuBar         =   0
    MenuBarVisible  =   True
    MinHeight       =   158
    MinimizeButton  =   False
-   MinimumHeight   =   158
-   MinimumWidth    =   450
    MinWidth        =   450
    Placement       =   0
-   Resizable       =   False
+   Resizable       =   "False"
    Resizeable      =   True
    Title           =   "Share With User"
-   Type            =   "8"
    Visible         =   True
    Width           =   450
    Begin Label MessageLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   True
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -66,12 +49,10 @@ Begin BeaconDialog ShareWithUserDialog
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlign       =   "0"
-      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
@@ -80,7 +61,6 @@ Begin BeaconDialog ShareWithUserDialog
       Width           =   410
    End
    Begin UITweaks.ResizedPushButton ActionButton
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -88,9 +68,6 @@ Begin BeaconDialog ShareWithUserDialog
       Caption         =   "OK"
       Default         =   True
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -102,7 +79,6 @@ Begin BeaconDialog ShareWithUserDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -110,7 +86,6 @@ Begin BeaconDialog ShareWithUserDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   118
       Transparent     =   False
       Underline       =   False
@@ -118,7 +93,6 @@ Begin BeaconDialog ShareWithUserDialog
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton CancelButton
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -126,9 +100,6 @@ Begin BeaconDialog ShareWithUserDialog
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -140,7 +111,6 @@ Begin BeaconDialog ShareWithUserDialog
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -148,7 +118,6 @@ Begin BeaconDialog ShareWithUserDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   118
       Transparent     =   False
       Underline       =   False
@@ -156,7 +125,6 @@ Begin BeaconDialog ShareWithUserDialog
       Width           =   80
    End
    Begin ProgressWheel Spinner
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   16
@@ -173,7 +141,6 @@ Begin BeaconDialog ShareWithUserDialog
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   122
       Transparent     =   False
       Visible         =   False
@@ -182,28 +149,18 @@ Begin BeaconDialog ShareWithUserDialog
    Begin UITweaks.ResizedTextField UserIDField
       AcceptTabs      =   False
       Alignment       =   "0"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
-      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   93
@@ -214,7 +171,6 @@ Begin BeaconDialog ShareWithUserDialog
       LockRight       =   False
       LockTop         =   True
       Mask            =   ""
-      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -222,31 +178,23 @@ Begin BeaconDialog ShareWithUserDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   337
    End
    Begin UITweaks.ResizedLabel ExplanationLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -265,12 +213,10 @@ Begin BeaconDialog ShareWithUserDialog
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlign       =   "0"
-      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Underline       =   False
@@ -279,15 +225,11 @@ Begin BeaconDialog ShareWithUserDialog
       Width           =   61
    End
    Begin LinkLabel HelpLink
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -307,12 +249,10 @@ Begin BeaconDialog ShareWithUserDialog
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlign       =   "0"
-      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   86
       Transparent     =   False
       Underline       =   False
@@ -323,6 +263,7 @@ Begin BeaconDialog ShareWithUserDialog
    End
    Begin URLConnection UserLookupSocket
       AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -495,14 +436,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Resizable"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HasMaximizeButton"
 		Visible=true
 		Group="Frame"
@@ -555,7 +488,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -598,59 +531,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MinWidth"
-		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinHeight"
-		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxWidth"
-		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxHeight"
-		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Frame"
-		Visible=true
-		Group="Frame"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		#tag EnumValues
-			"0 - Document"
-			"1 - Movable Modal"
-			"2 - Modal Dialog"
-			"3 - Floating Window"
-			"4 - Plain Box"
-			"5 - Shadowed Box"
-			"6 - Rounded Window"
-			"7 - Global Floating Window"
-			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Title"
 		Visible=true
 		Group="Frame"
@@ -659,42 +539,10 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="CloseButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Resizeable"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaximizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="FullScreenButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
@@ -723,21 +571,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Placement"
-		Visible=true
-		Group="Behavior"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		#tag EnumValues
-			"0 - Default"
-			"1 - Parent Window"
-			"2 - Main Screen"
-			"3 - Parent Window Screen"
-			"4 - Stagger"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Visible"
 		Visible=true
 		Group="Behavior"
@@ -751,22 +584,6 @@ End
 		Group="Behavior"
 		InitialValue="False"
 		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

@@ -3,7 +3,7 @@ Protected Module PopupMenuExtensions
 	#tag Method, Flags = &h0
 		Sub AddRow(Extends Menu As PopupMenu, Text As String, Tag As Variant)
 		  Menu.AddRow(Text)
-		  Menu.RowTag(Menu.RowCount - 1) = Tag
+		  Menu.RowTagAt(Menu.RowCount - 1) = Tag
 		End Sub
 	#tag EndMethod
 
@@ -22,7 +22,7 @@ Protected Module PopupMenuExtensions
 	#tag Method, Flags = &h0
 		Sub SelectByTag(Extends Menu As PopupMenu, Tag As Variant)
 		  For I As Integer = 0 To Menu.RowCount - 1
-		    If Menu.RowTag(I) = Tag Then
+		    If Menu.RowTagAt(I) = Tag Then
 		      Menu.SelectedRowIndex = I
 		      Return
 		    End If
@@ -34,7 +34,7 @@ Protected Module PopupMenuExtensions
 	#tag Method, Flags = &h0
 		Function Tag(Extends Menu As PopupMenu) As Variant
 		  If Menu.SelectedRowIndex > -1 Then
-		    Return Menu.RowTag(Menu.SelectedRowIndex)
+		    Return Menu.RowTagAt(Menu.SelectedRowIndex)
 		  End If
 		End Function
 	#tag EndMethod

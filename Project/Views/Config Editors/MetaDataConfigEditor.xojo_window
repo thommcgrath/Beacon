@@ -2,20 +2,13 @@
 Begin ConfigEditor MetaDataConfigEditor
    AcceptFocus     =   False
    AcceptTabs      =   True
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
-   Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   HasBackgroundColor=   False
    Height          =   374
    HelpTag         =   ""
    InitialParent   =   ""
@@ -27,7 +20,6 @@ Begin ConfigEditor MetaDataConfigEditor
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
-   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    UseFocusRing    =   False
@@ -36,28 +28,18 @@ Begin ConfigEditor MetaDataConfigEditor
    Begin UITweaks.ResizedTextField TitleField
       AcceptTabs      =   False
       Alignment       =   "0"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
-      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   132
@@ -68,7 +50,6 @@ Begin ConfigEditor MetaDataConfigEditor
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
-      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -76,31 +57,23 @@ Begin ConfigEditor MetaDataConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   476
    End
    Begin UITweaks.ResizedLabel TitleLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -120,43 +93,28 @@ Begin ConfigEditor MetaDataConfigEditor
       TabStop         =   True
       Text            =   "Title:"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "Title:"
       Visible         =   True
       Width           =   100
    End
    Begin TextArea DescriptionArea
       AcceptTabs      =   False
       Alignment       =   "0"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   True
-      AllowStyledText =   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   True
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
-      HasHorizontalScrollbar=   False
-      HasVerticalScrollbar=   True
       Height          =   72
       HelpTag         =   ""
       HideSelection   =   True
@@ -172,7 +130,6 @@ Begin ConfigEditor MetaDataConfigEditor
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
-      MaximumCharactersAllowed=   0
       Multiline       =   True
       ReadOnly        =   False
       Scope           =   2
@@ -183,31 +140,23 @@ Begin ConfigEditor MetaDataConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   54
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   476
    End
    Begin UITweaks.ResizedLabel DescriptionLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -227,30 +176,23 @@ Begin ConfigEditor MetaDataConfigEditor
       TabStop         =   True
       Text            =   "Description:"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   54
       Transparent     =   False
       Underline       =   False
-      Value           =   "Description:"
       Visible         =   True
       Width           =   100
    End
    Begin CheckBox PublicFileCheckbox
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "List this document in the community file list"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -270,23 +212,14 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   270
       Transparent     =   False
       Underline       =   False
-      Value           =   False
+      Value           =   "False"
       Visible         =   True
-      VisualState     =   "0"
       Width           =   476
    End
    Begin BeaconListbox ModsList
-      AllowAutoDeactivate=   True
-      AllowAutoHideScrollbars=   True
-      AllowExpandableRows=   False
-      AllowFocusRing  =   True
-      AllowResizableColumns=   False
-      AllowRowDragging=   False
-      AllowRowReordering=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -297,22 +230,12 @@ Begin ConfigEditor MetaDataConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
-      DropIndicatorVisible=   False
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       GridLinesHorizontal=   "0"
-      GridLinesHorizontalStyle=   "0"
       GridLinesVertical=   "0"
-      GridLinesVerticalStyle=   "0"
-      HasBorder       =   True
-      HasHeader       =   True
       HasHeading      =   True
-      HasHorizontalScrollbar=   False
-      HasVerticalScrollbar=   True
       HeadingIndex    =   1
       Height          =   120
       HelpTag         =   ""
@@ -328,7 +251,6 @@ Begin ConfigEditor MetaDataConfigEditor
       LockRight       =   True
       LockTop         =   False
       RequiresSelection=   False
-      RowSelectionType=   "0"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -341,7 +263,6 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   138
       Transparent     =   False
       Underline       =   False
@@ -352,15 +273,11 @@ Begin ConfigEditor MetaDataConfigEditor
       _ScrollWidth    =   -1
    End
    Begin UITweaks.ResizedLabel ModsLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -380,29 +297,22 @@ Begin ConfigEditor MetaDataConfigEditor
       TabStop         =   True
       Text            =   "Enabled Mods:"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   138
       Transparent     =   False
       Underline       =   False
-      Value           =   "Enabled Mods:"
       Visible         =   True
       Width           =   100
    End
    Begin Label ModsNoteLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   86
       HelpTag         =   ""
       Index           =   -2147483648
@@ -422,30 +332,23 @@ Begin ConfigEditor MetaDataConfigEditor
       TabStop         =   True
       Text            =   "Does not change anything on the server, only limits which engrams are shown in lists."
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   172
       Transparent     =   False
       Underline       =   False
-      Value           =   "Does not change anything on the server, only limits which engrams are shown in lists."
       Visible         =   True
       Width           =   100
    End
    Begin CheckBox UncompressedCheckbox
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Disable document compression"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   "Document compression can be disabled when the plain text version is needed, such as when storing the file in a version control system."
       Index           =   -2147483648
@@ -458,33 +361,27 @@ Begin ConfigEditor MetaDataConfigEditor
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      State           =   0
+      State           =   "0"
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   "Document compression can be disabled when the plain text version is needed, such as when storing the file in a version control system."
       Top             =   302
       Transparent     =   False
       Underline       =   False
-      Value           =   False
+      Value           =   "False"
       Visible         =   True
-      VisualState     =   "0"
       Width           =   476
    End
    Begin CheckBox AllowUCSCheckbox
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Generate UCS-2 files when necessary"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   "Some letters and symbols cannot be displayed using a normal ini file. UCS-2 files may be used instead, but are more difficult to work with and may display incorrectly in some text editors and host control panels."
       Index           =   -2147483648
@@ -504,13 +401,11 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   "Some letters and symbols cannot be displayed using a normal ini file. UCS-2 files may be used instead, but are more difficult to work with and may display incorrectly in some text editors and host control panels."
       Top             =   334
       Transparent     =   False
       Underline       =   False
-      Value           =   False
+      Value           =   "False"
       Visible         =   True
-      VisualState     =   "0"
       Width           =   476
    End
 End
@@ -685,62 +580,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=false
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=false
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=false
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=false
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
@@ -778,7 +617,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

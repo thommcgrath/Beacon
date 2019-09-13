@@ -96,66 +96,6 @@ Inherits Label
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="AutoDeactivate"
-			Visible=false
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HelpTag"
-			Visible=false
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextAlign"
-			Visible=false
-			Group="Appearance"
-			InitialValue="0"
-			Type="Integer"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Left"
-				"1 - Center"
-				"2 - Right"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextFont"
-			Visible=false
-			Group="Font"
-			InitialValue="System"
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextSize"
-			Visible=false
-			Group="Font"
-			InitialValue="0"
-			Type="Single"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextUnit"
-			Visible=false
-			Group="Font"
-			InitialValue="0"
-			Type="FontUnits"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Default"
-				"1 - Pixel"
-				"2 - Point"
-				"3 - Inch"
-				"4 - Millimeter"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Tooltip"
 			Visible=true
 			Group="Appearance"
@@ -373,7 +313,7 @@ Inherits Label
 			Group="Appearance"
 			InitialValue=""
 			Type="Color"
-			EditorType=""
+			EditorType="Color"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Transparent"

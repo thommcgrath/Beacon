@@ -2,20 +2,13 @@
 Begin LibrarySubview LibraryPaneEngrams
    AcceptFocus     =   False
    AcceptTabs      =   True
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
-   Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   HasBackgroundColor=   False
    Height          =   392
    HelpTag         =   ""
    InitialParent   =   ""
@@ -27,22 +20,17 @@ Begin LibrarySubview LibraryPaneEngrams
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
-   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
    Width           =   300
    Begin Label ExplanationLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   120
       HelpTag         =   ""
       Index           =   -2147483648
@@ -62,21 +50,17 @@ Begin LibrarySubview LibraryPaneEngrams
       TabStop         =   True
       Text            =   "Beacon supports mod content! Find the list of admin spawn codes for the mod. Then press ""Import from URL"" to pull them from a web page, ""Import from Clipboard"" if you've copied them, or ""Import from File"" if you have them in a file on your computer."
       TextAlign       =   "0"
-      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   60
       Transparent     =   True
       Underline       =   False
-      Value           =   "Beacon supports mod content! Find the list of admin spawn codes for the mod. Then press ""Import from URL"" to pull them from a web page, ""Import from Clipboard"" if you've copied them, or ""Import from File"" if you have them in a file on your computer."
       Visible         =   True
       Width           =   260
    End
    Begin UITweaks.ResizedPushButton ImportURLButton
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -84,9 +68,6 @@ Begin LibrarySubview LibraryPaneEngrams
       Caption         =   "Import from URL"
       Default         =   False
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -98,7 +79,6 @@ Begin LibrarySubview LibraryPaneEngrams
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -106,7 +86,6 @@ Begin LibrarySubview LibraryPaneEngrams
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   200
       Transparent     =   False
       Underline       =   False
@@ -114,7 +93,6 @@ Begin LibrarySubview LibraryPaneEngrams
       Width           =   230
    End
    Begin UITweaks.ResizedPushButton ImportClipboardButton
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -122,9 +100,6 @@ Begin LibrarySubview LibraryPaneEngrams
       Caption         =   "Import from Clipboard"
       Default         =   False
       Enabled         =   False
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -136,7 +111,6 @@ Begin LibrarySubview LibraryPaneEngrams
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -144,7 +118,6 @@ Begin LibrarySubview LibraryPaneEngrams
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   232
       Transparent     =   False
       Underline       =   False
@@ -152,7 +125,6 @@ Begin LibrarySubview LibraryPaneEngrams
       Width           =   230
    End
    Begin UITweaks.ResizedPushButton ImportFileButton
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -160,9 +132,6 @@ Begin LibrarySubview LibraryPaneEngrams
       Caption         =   "Import from File"
       Default         =   False
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -174,7 +143,6 @@ Begin LibrarySubview LibraryPaneEngrams
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -182,7 +150,6 @@ Begin LibrarySubview LibraryPaneEngrams
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   264
       Transparent     =   False
       Underline       =   False
@@ -190,7 +157,6 @@ Begin LibrarySubview LibraryPaneEngrams
       Width           =   230
    End
    Begin UITweaks.ResizedPushButton ManageEngramsButton
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -198,9 +164,6 @@ Begin LibrarySubview LibraryPaneEngrams
       Caption         =   "Manage Database"
       Default         =   False
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -212,7 +175,6 @@ Begin LibrarySubview LibraryPaneEngrams
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
@@ -220,7 +182,6 @@ Begin LibrarySubview LibraryPaneEngrams
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   296
       Transparent     =   False
       Underline       =   False
@@ -230,10 +191,6 @@ Begin LibrarySubview LibraryPaneEngrams
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Database"
@@ -257,7 +214,6 @@ Begin LibrarySubview LibraryPaneEngrams
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -270,7 +226,6 @@ Begin LibrarySubview LibraryPaneEngrams
       LockedInPosition=   False
       Mode            =   "0"
       Period          =   500
-      RunMode         =   "0"
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -378,68 +333,12 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=false
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=false
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=false
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -471,7 +370,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

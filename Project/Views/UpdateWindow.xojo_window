@@ -2,46 +2,32 @@
 Begin BeaconWindow UpdateWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
    CloseButton     =   False
-   Compatibility   =   ""
    Composite       =   True
-   DefaultLocation =   "2"
    Frame           =   0
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   HasBackgroundColor=   False
-   HasCloseButton  =   False
-   HasFullScreenButton=   False
-   HasMaximizeButton=   False
-   HasMinimizeButton=   True
    Height          =   132
    ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
    MaxHeight       =   32000
    MaximizeButton  =   False
-   MaximumHeight   =   32000
-   MaximumWidth    =   32000
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
    MinHeight       =   132
    MinimizeButton  =   True
-   MinimumHeight   =   132
-   MinimumWidth    =   600
    MinWidth        =   600
    Placement       =   2
-   Resizable       =   True
+   Resizable       =   "True"
    Resizeable      =   True
    SystemUIVisible =   "True"
    Title           =   "Beacon Updates"
-   Type            =   "0"
    Visible         =   True
    Width           =   600
    Begin PagePanel ViewPanel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   132
@@ -57,25 +43,20 @@ Begin BeaconWindow UpdateWindow
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
-      SelectedPanelIndex=   1
       TabIndex        =   0
       TabPanelIndex   =   0
-      Tooltip         =   ""
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   1
       Visible         =   True
       Width           =   600
       Begin Label CheckMessageLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -95,21 +76,17 @@ Begin BeaconWindow UpdateWindow
          TabStop         =   True
          Text            =   "Check for Beacon updates…"
          TextAlign       =   "0"
-         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
-         Value           =   "Check for Beacon updates…"
          Visible         =   True
          Width           =   560
       End
       Begin ProgressBar CheckProgress
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Enabled         =   True
          Height          =   20
@@ -124,11 +101,10 @@ Begin BeaconWindow UpdateWindow
          LockRight       =   True
          LockTop         =   True
          Maximum         =   0
-         MaximumValue    =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         Tooltip         =   ""
+         TabStop         =   True
          Top             =   52
          Transparent     =   False
          Value           =   0.0
@@ -136,7 +112,6 @@ Begin BeaconWindow UpdateWindow
          Width           =   560
       End
       Begin UITweaks.ResizedPushButton CheckCancelButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -144,9 +119,6 @@ Begin BeaconWindow UpdateWindow
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -158,7 +130,6 @@ Begin BeaconWindow UpdateWindow
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   1
@@ -166,7 +137,6 @@ Begin BeaconWindow UpdateWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   84
          Transparent     =   False
          Underline       =   False
@@ -176,10 +146,6 @@ Begin BeaconWindow UpdateWindow
       Begin ControlCanvas ResultsIconCanvas
          AcceptFocus     =   False
          AcceptTabs      =   False
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          DoubleBuffer    =   False
@@ -199,7 +165,6 @@ Begin BeaconWindow UpdateWindow
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          UseFocusRing    =   True
@@ -207,15 +172,11 @@ Begin BeaconWindow UpdateWindow
          Width           =   64
       End
       Begin Label ResultsMessageLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -235,21 +196,17 @@ Begin BeaconWindow UpdateWindow
          TabStop         =   True
          Text            =   "A new version of Beacon is available!"
          TextAlign       =   "0"
-         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
-         Value           =   "A new version of Beacon is available!"
          Visible         =   True
          Width           =   484
       End
       Begin UITweaks.ResizedPushButton ResultsActionButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -257,9 +214,6 @@ Begin BeaconWindow UpdateWindow
          Caption         =   "Download"
          Default         =   True
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -271,7 +225,6 @@ Begin BeaconWindow UpdateWindow
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   8
          TabPanelIndex   =   2
@@ -279,7 +232,6 @@ Begin BeaconWindow UpdateWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   92
          Transparent     =   False
          Underline       =   False
@@ -287,7 +239,6 @@ Begin BeaconWindow UpdateWindow
          Width           =   90
       End
       Begin UITweaks.ResizedPushButton ResultsCancelButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -295,9 +246,6 @@ Begin BeaconWindow UpdateWindow
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -309,7 +257,6 @@ Begin BeaconWindow UpdateWindow
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   7
          TabPanelIndex   =   2
@@ -317,7 +264,6 @@ Begin BeaconWindow UpdateWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   92
          Transparent     =   False
          Underline       =   False
@@ -325,15 +271,11 @@ Begin BeaconWindow UpdateWindow
          Width           =   90
       End
       Begin Label DownloadMessageLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -353,21 +295,17 @@ Begin BeaconWindow UpdateWindow
          TabStop         =   True
          Text            =   "Downloading update…"
          TextAlign       =   "0"
-         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
-         Value           =   "Downloading update…"
          Visible         =   True
          Width           =   560
       End
       Begin ProgressBar DownloadProgressBar
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Enabled         =   True
          Height          =   20
@@ -382,11 +320,10 @@ Begin BeaconWindow UpdateWindow
          LockRight       =   True
          LockTop         =   True
          Maximum         =   0
-         MaximumValue    =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
-         Tooltip         =   ""
+         TabStop         =   True
          Top             =   52
          Transparent     =   False
          Value           =   0.0
@@ -394,7 +331,6 @@ Begin BeaconWindow UpdateWindow
          Width           =   560
       End
       Begin UITweaks.ResizedPushButton DownloadCancelButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -402,9 +338,6 @@ Begin BeaconWindow UpdateWindow
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -416,7 +349,6 @@ Begin BeaconWindow UpdateWindow
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   3
@@ -424,7 +356,6 @@ Begin BeaconWindow UpdateWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   84
          Transparent     =   False
          Underline       =   False
@@ -432,7 +363,6 @@ Begin BeaconWindow UpdateWindow
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton ResultsNotesButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -440,9 +370,6 @@ Begin BeaconWindow UpdateWindow
          Caption         =   "Release Notes"
          Default         =   False
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -454,7 +381,6 @@ Begin BeaconWindow UpdateWindow
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   9
          TabPanelIndex   =   2
@@ -462,7 +388,6 @@ Begin BeaconWindow UpdateWindow
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   92
          Transparent     =   False
          Underline       =   False
@@ -470,15 +395,11 @@ Begin BeaconWindow UpdateWindow
          Width           =   120
       End
       Begin Label Label1
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -498,21 +419,19 @@ Begin BeaconWindow UpdateWindow
          TabStop         =   True
          Text            =   "After downloading, the update will install only when you're ready."
          TextAlign       =   "0"
-         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Underline       =   False
-         Value           =   "After downloading, the update will install only when you're ready."
          Visible         =   True
          Width           =   484
       End
    End
    Begin UpdateChecker Checker
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -520,6 +439,7 @@ Begin BeaconWindow UpdateWindow
    End
    Begin URLConnection Downloader
       AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -865,127 +785,11 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="MinWidth"
-		Visible=false
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinHeight"
-		Visible=false
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxWidth"
-		Visible=false
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxHeight"
-		Visible=false
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Frame"
-		Visible=false
-		Group="Frame"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		#tag EnumValues
-			"0 - Document"
-			"1 - Movable Modal"
-			"2 - Modal Dialog"
-			"3 - Floating Window"
-			"4 - Plain Box"
-			"5 - Shadowed Box"
-			"6 - Rounded Window"
-			"7 - Global Floating Window"
-			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="CloseButton"
-		Visible=false
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Resizeable"
 		Visible=false
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaximizeButton"
-		Visible=false
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimizeButton"
-		Visible=false
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="FullScreenButton"
-		Visible=false
-		Group="Frame"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Placement"
-		Visible=false
-		Group="Behavior"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		#tag EnumValues
-			"0 - Default"
-			"1 - Parent Window"
-			"2 - Main Screen"
-			"3 - Parent Window Screen"
-			"4 - Stagger"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -1058,14 +862,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Resizable"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HasMaximizeButton"
 		Visible=true
 		Group="Frame"
@@ -1118,7 +914,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"

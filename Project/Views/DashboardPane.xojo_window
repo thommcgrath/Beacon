@@ -2,20 +2,13 @@
 Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
    AcceptFocus     =   False
    AcceptTabs      =   True
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
-   Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   HasBackgroundColor=   False
    Height          =   556
    HelpTag         =   ""
    InitialParent   =   ""
@@ -27,14 +20,12 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
-   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
    Width           =   808
    Begin UITweaks.ResizedPushButton NewFileButton
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -42,9 +33,6 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Caption         =   "New Beacon File…"
       Default         =   False
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -56,7 +44,6 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -64,7 +51,6 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   243
       Transparent     =   False
       Underline       =   False
@@ -72,7 +58,6 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Width           =   138
    End
    Begin UITweaks.ResizedPushButton OpenFileButton
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -80,9 +65,6 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Caption         =   "Open Beacon File…"
       Default         =   False
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -94,7 +76,6 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -102,7 +83,6 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   243
       Transparent     =   False
       Underline       =   False
@@ -112,10 +92,6 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
    Begin ControlCanvas LogoCanvas
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -135,7 +111,6 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   53
       Transparent     =   True
       UseFocusRing    =   True
@@ -143,15 +118,11 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Width           =   128
    End
    Begin Label VersionLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -171,29 +142,22 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TabStop         =   True
       Text            =   "Version X"
       TextAlign       =   "1"
-      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   275
       Transparent     =   True
       Underline       =   False
-      Value           =   "Version X"
       Visible         =   True
       Width           =   350
    End
    Begin Label CopyrightLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -213,29 +177,22 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TabStop         =   True
       Text            =   "© 2016-2019 Thom McGrath, All Rights Reserved."
       TextAlign       =   "1"
-      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   516
       Transparent     =   True
       Underline       =   False
-      Value           =   "© 2016-2019 Thom McGrath, All Rights Reserved."
       Visible         =   True
       Width           =   350
    End
    Begin Label SyncLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -255,26 +212,19 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TabStop         =   True
       Text            =   "Engrams Updated Y"
       TextAlign       =   "1"
-      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   297
       Transparent     =   True
       Underline       =   False
-      Value           =   "Engrams Updated Y"
       Visible         =   True
       Width           =   350
    End
    Begin ControlCanvas TitleCanvas
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -294,7 +244,6 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   193
       Transparent     =   True
       UseFocusRing    =   True
@@ -302,15 +251,11 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Width           =   247
    End
    Begin LinkLabel WebsiteLink
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -331,17 +276,14 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TabStop         =   True
       Text            =   "https://beaconapp.cc/"
       TextAlign       =   "1"
-      TextAlignment   =   "2"
       TextColor       =   &c0000FF00
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   329
       Transparent     =   True
       Underline       =   True
       URL             =   ""
-      Value           =   "https://beaconapp.cc/"
       Visible         =   True
       Width           =   350
    End
@@ -511,62 +453,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=false
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=false
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=false
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=false
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
@@ -604,7 +490,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

@@ -2,20 +2,13 @@
 Begin ConfigEditor BreedingMultipliersConfigEditor
    AcceptFocus     =   False
    AcceptTabs      =   True
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
-   Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   HasBackgroundColor=   False
    Height          =   544
    HelpTag         =   ""
    InitialParent   =   ""
@@ -27,7 +20,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
-   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    UseFocusRing    =   False
@@ -36,28 +28,18 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    Begin UITweaks.ResizedTextField MatureSpeedField
       AcceptTabs      =   False
       Alignment       =   "2"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
-      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   263
@@ -68,7 +50,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockRight       =   False
       LockTop         =   True
       Mask            =   ""
-      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -76,31 +57,23 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
-      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   ""
-      Value           =   "1.0"
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel MatureSpeedLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -120,44 +93,31 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Mature Speed Multiplier:"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
-      Value           =   "Mature Speed Multiplier:"
       Visible         =   True
       Width           =   231
    End
    Begin UITweaks.ResizedTextField IncubationSpeedField
       AcceptTabs      =   False
       Alignment       =   "2"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
-      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   263
@@ -168,7 +128,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockRight       =   False
       LockTop         =   True
       Mask            =   ""
-      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -176,31 +135,23 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
-      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   125
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   ""
-      Value           =   "1.0"
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel IncubationSpeedLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -220,44 +171,31 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Incubation Speed Multiplier:"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   125
       Transparent     =   False
       Underline       =   False
-      Value           =   "Incubation Speed Multiplier:"
       Visible         =   True
       Width           =   231
    End
    Begin UITweaks.ResizedTextField EggLayPeriodField
       AcceptTabs      =   False
       Alignment       =   "2"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
-      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   263
@@ -268,7 +206,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockRight       =   False
       LockTop         =   True
       Mask            =   ""
-      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -276,31 +213,23 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
-      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   189
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   ""
-      Value           =   "1.0"
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel EggLayPeriodLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -320,44 +249,31 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Egg Lay Period Multiplier:"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   189
       Transparent     =   False
       Underline       =   False
-      Value           =   "Egg Lay Period Multiplier:"
       Visible         =   True
       Width           =   231
    End
    Begin UITweaks.ResizedTextField FoodConsumptionField
       AcceptTabs      =   False
       Alignment       =   "2"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
-      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   263
@@ -368,7 +284,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockRight       =   False
       LockTop         =   True
       Mask            =   ""
-      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -376,31 +291,23 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
-      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   253
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   ""
-      Value           =   "1.0"
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel FoodConsumptionLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -420,44 +327,31 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Baby Food Consumption Multiplier:"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   253
       Transparent     =   False
       Underline       =   False
-      Value           =   "Baby Food Consumption Multiplier:"
       Visible         =   True
       Width           =   231
    End
    Begin UITweaks.ResizedTextField ImprintPeriodField
       AcceptTabs      =   False
       Alignment       =   "2"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
-      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   621
@@ -468,7 +362,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockRight       =   False
       LockTop         =   True
       Mask            =   ""
-      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -476,31 +369,23 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
-      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   ""
-      Value           =   "1.0"
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel ImprintPeriodLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -520,44 +405,31 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Imprint Period Multiplier:"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   61
       Transparent     =   False
       Underline       =   False
-      Value           =   "Imprint Period Multiplier:"
       Visible         =   True
       Width           =   231
    End
    Begin UITweaks.ResizedTextField ImprintStatScaleField
       AcceptTabs      =   False
       Alignment       =   "2"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
-      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   621
@@ -568,7 +440,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockRight       =   False
       LockTop         =   True
       Mask            =   ""
-      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -576,31 +447,23 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
-      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   125
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   ""
-      Value           =   "1.0"
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel ImprintStatScaleLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -620,44 +483,31 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Imprint Stat Scale Multiplier:"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   125
       Transparent     =   False
       Underline       =   False
-      Value           =   "Imprint Stat Scale Multiplier:"
       Visible         =   True
       Width           =   231
    End
    Begin UITweaks.ResizedTextField ImprintGracePeriodField
       AcceptTabs      =   False
       Alignment       =   "2"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
-      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   621
@@ -668,7 +518,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockRight       =   False
       LockTop         =   True
       Mask            =   ""
-      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -676,31 +525,23 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
-      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   189
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   ""
-      Value           =   "1.0"
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel ImprintGracePeriodLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -720,44 +561,31 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Imprint Grace Period Multiplier:"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   189
       Transparent     =   False
       Underline       =   False
-      Value           =   "Imprint Grace Period Multiplier:"
       Visible         =   True
       Width           =   231
    End
    Begin UITweaks.ResizedTextField ImprintLossSpeedField
       AcceptTabs      =   False
       Alignment       =   "2"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
-      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   621
@@ -768,7 +596,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockRight       =   False
       LockTop         =   True
       Mask            =   ""
-      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -776,31 +603,23 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
-      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   253
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   ""
-      Value           =   "1.0"
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel ImprintLossSpeedLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -820,27 +639,17 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Imprint Loss Speed Multiplier:"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   253
       Transparent     =   False
       Underline       =   False
-      Value           =   "Imprint Loss Speed Multiplier:"
       Visible         =   True
       Width           =   231
    End
    Begin BeaconListbox CreaturesList
-      AllowAutoDeactivate=   True
-      AllowAutoHideScrollbars=   True
-      AllowExpandableRows=   False
-      AllowFocusRing  =   True
-      AllowResizableColumns=   False
-      AllowRowDragging=   False
-      AllowRowReordering=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -851,22 +660,12 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
-      DropIndicatorVisible=   False
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       GridLinesHorizontal=   "0"
-      GridLinesHorizontalStyle=   "0"
       GridLinesVertical=   "0"
-      GridLinesVerticalStyle=   "0"
-      HasBorder       =   True
-      HasHeader       =   True
       HasHeading      =   True
-      HasHorizontalScrollbar=   False
-      HasVerticalScrollbar=   True
       HeadingIndex    =   0
       Height          =   93
       HelpTag         =   ""
@@ -882,7 +681,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowSelectionType=   "0"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -895,7 +693,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   431
       Transparent     =   False
       Underline       =   False
@@ -906,7 +703,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       _ScrollWidth    =   -1
    End
    Begin Separator Separator1
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   4
@@ -923,7 +719,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabIndex        =   32
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   381
       Transparent     =   False
       Visible         =   True
@@ -932,28 +727,18 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    Begin UITweaks.ResizedTextField ImprintPeriodPreviewField
       AcceptTabs      =   False
       Alignment       =   "2"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
-      Hint            =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -965,7 +750,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockRight       =   False
       LockTop         =   True
       Mask            =   ""
-      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   True
       Scope           =   2
@@ -973,31 +757,23 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
-      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   397
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   ""
-      Value           =   "1.0"
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel ImprintPeriodPreviewLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -1017,29 +793,22 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Imprint Frequency:"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   397
       Transparent     =   False
       Underline       =   False
-      Value           =   "Imprint Frequency:"
       Visible         =   True
       Width           =   231
    End
    Begin Label MatureSpeedHelp
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   18
       HelpTag         =   ""
       Index           =   -2147483648
@@ -1059,29 +828,22 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Greater than 1.0 matures faster"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   95
       Transparent     =   False
       Underline       =   False
-      Value           =   "Greater than 1.0 matures faster"
       Visible         =   True
       Width           =   346
    End
    Begin Label IncubationSpeedHelp
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   18
       HelpTag         =   ""
       Index           =   -2147483648
@@ -1101,29 +863,22 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Greater than 1.0 incubates faster"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   159
       Transparent     =   False
       Underline       =   False
-      Value           =   "Greater than 1.0 incubates faster"
       Visible         =   True
       Width           =   346
    End
    Begin Label EggLayPeriodHelp
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   18
       HelpTag         =   ""
       Index           =   -2147483648
@@ -1143,29 +898,22 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Less than 1.0 produces more eggs"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   223
       Transparent     =   False
       Underline       =   False
-      Value           =   "Less than 1.0 produces more eggs"
       Visible         =   True
       Width           =   346
    End
    Begin Label FeedConsumptionHelp
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   18
       HelpTag         =   ""
       Index           =   -2147483648
@@ -1185,29 +933,22 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Greater than 1.0 eats more often"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   287
       Transparent     =   False
       Underline       =   False
-      Value           =   "Greater than 1.0 eats more often"
       Visible         =   True
       Width           =   346
    End
    Begin Label ImprintPeriodHelp
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   18
       HelpTag         =   ""
       Index           =   -2147483648
@@ -1227,29 +968,22 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Less than 1.0 imprints more frequently"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   95
       Transparent     =   False
       Underline       =   False
-      Value           =   "Less than 1.0 imprints more frequently"
       Visible         =   True
       Width           =   346
    End
    Begin Label ImprintStatScaleHelp
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   18
       HelpTag         =   ""
       Index           =   -2147483648
@@ -1269,29 +1003,22 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Greater than 1.0 increases imprinting stat bonuses"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   159
       Transparent     =   False
       Underline       =   False
-      Value           =   "Greater than 1.0 increases imprinting stat bonuses"
       Visible         =   True
       Width           =   346
    End
    Begin Label ImprintGracePeriodHelp
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   18
       HelpTag         =   ""
       Index           =   -2147483648
@@ -1311,29 +1038,22 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Greater than 1.0 increases time before decay"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   223
       Transparent     =   False
       Underline       =   False
-      Value           =   "Greater than 1.0 increases time before decay"
       Visible         =   True
       Width           =   346
    End
    Begin Label ImprintLossSpeedHelp
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   18
       HelpTag         =   ""
       Index           =   -2147483648
@@ -1353,26 +1073,19 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Less than 1.0 reduces imprint decay"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   287
       Transparent     =   False
       Underline       =   False
-      Value           =   "Less than 1.0 reduces imprint decay"
       Visible         =   True
       Width           =   346
    End
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Breeding Multipliers"
@@ -1395,7 +1108,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -1405,10 +1117,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -1428,7 +1136,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
@@ -1438,28 +1145,18 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    Begin UITweaks.ResizedTextField MatingSpeedField
       AcceptTabs      =   False
       Alignment       =   "2"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
-      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   263
@@ -1470,7 +1167,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockRight       =   False
       LockTop         =   True
       Mask            =   ""
-      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -1478,31 +1174,23 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
-      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   317
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   ""
-      Value           =   "1.0"
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel MatingSpeedLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -1522,44 +1210,31 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Mating Speed Multiplier:"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   317
       Transparent     =   False
       Underline       =   False
-      Value           =   "Mating Speed Multiplier:"
       Visible         =   True
       Width           =   231
    End
    Begin UITweaks.ResizedTextField MatingIntervalField
       AcceptTabs      =   False
       Alignment       =   "2"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
-      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   621
@@ -1570,7 +1245,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockRight       =   False
       LockTop         =   True
       Mask            =   ""
-      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -1578,31 +1252,23 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
-      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   317
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   ""
-      Value           =   "1.0"
       Visible         =   True
       Width           =   103
    End
    Begin UITweaks.ResizedLabel MatingIntervalLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
@@ -1622,29 +1288,22 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Mating Interval Multiplier:"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   317
       Transparent     =   False
       Underline       =   False
-      Value           =   "Mating Interval Multiplier:"
       Visible         =   True
       Width           =   231
    End
    Begin Label MatingSpeedHelp
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   18
       HelpTag         =   ""
       Index           =   -2147483648
@@ -1664,29 +1323,22 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Greater than 1.0 mates faster"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   351
       Transparent     =   False
       Underline       =   False
-      Value           =   "Greater than 1.0 mates faster"
       Visible         =   True
       Width           =   346
    End
    Begin Label MatingIntervalHelp
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   18
       HelpTag         =   ""
       Index           =   -2147483648
@@ -1706,16 +1358,13 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Text            =   "Less than 1.0 mates more often"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   351
       Transparent     =   False
       Underline       =   False
-      Value           =   "Less than 1.0 mates more often"
       Visible         =   True
       Width           =   346
    End
@@ -2101,62 +1750,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=false
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=false
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=false
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=false
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
@@ -2194,7 +1787,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

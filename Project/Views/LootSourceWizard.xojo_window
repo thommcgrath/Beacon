@@ -2,46 +2,32 @@
 Begin BeaconDialog LootSourceWizard
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
    CloseButton     =   False
-   Compatibility   =   ""
    Composite       =   False
-   DefaultLocation =   "1"
    Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   HasBackgroundColor=   False
-   HasCloseButton  =   False
-   HasFullScreenButton=   False
-   HasMaximizeButton=   True
-   HasMinimizeButton=   False
    Height          =   400
    ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
    MaxHeight       =   32000
    MaximizeButton  =   True
-   MaximumHeight   =   32000
-   MaximumWidth    =   32000
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
    MinHeight       =   300
    MinimizeButton  =   False
-   MinimumHeight   =   300
-   MinimumWidth    =   450
    MinWidth        =   450
    Placement       =   1
-   Resizable       =   True
+   Resizable       =   "True"
    Resizeable      =   True
    SystemUIVisible =   "True"
    Title           =   "Add Loot Source"
-   Type            =   "8"
    Visible         =   True
    Width           =   550
    Begin PagePanel Panel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   400
@@ -57,17 +43,15 @@ Begin BeaconDialog LootSourceWizard
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
-      SelectedPanelIndex=   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      Tooltip         =   ""
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   2
       Visible         =   True
       Width           =   550
       Begin UITweaks.ResizedPushButton SelectionActionButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -75,9 +59,6 @@ Begin BeaconDialog LootSourceWizard
          Caption         =   "Next"
          Default         =   True
          Enabled         =   False
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -89,7 +70,6 @@ Begin BeaconDialog LootSourceWizard
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   4
          TabPanelIndex   =   1
@@ -97,7 +77,6 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -105,7 +84,6 @@ Begin BeaconDialog LootSourceWizard
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton SelectionCancelButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -113,9 +91,6 @@ Begin BeaconDialog LootSourceWizard
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -127,7 +102,6 @@ Begin BeaconDialog LootSourceWizard
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   1
@@ -135,7 +109,6 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -143,15 +116,11 @@ Begin BeaconDialog LootSourceWizard
          Width           =   80
       End
       Begin Label SelectionMessageLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -171,27 +140,17 @@ Begin BeaconDialog LootSourceWizard
          TabStop         =   True
          Text            =   "Add Loot Source"
          TextAlign       =   "0"
-         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
-         Value           =   "Add Loot Source"
          Visible         =   True
          Width           =   510
       End
       Begin BeaconListbox SourceList
-         AllowAutoDeactivate=   True
-         AllowAutoHideScrollbars=   True
-         AllowExpandableRows=   False
-         AllowFocusRing  =   True
-         AllowResizableColumns=   False
-         AllowRowDragging=   False
-         AllowRowReordering=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -202,22 +161,12 @@ Begin BeaconDialog LootSourceWizard
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   34
-         DropIndicatorVisible=   False
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         FontName        =   "SmallSystem"
-         FontSize        =   0.0
-         FontUnit        =   0
          GridLinesHorizontal=   "0"
-         GridLinesHorizontalStyle=   "0"
          GridLinesVertical=   "0"
-         GridLinesVerticalStyle=   "0"
-         HasBorder       =   True
-         HasHeader       =   True
          HasHeading      =   True
-         HasHorizontalScrollbar=   False
-         HasVerticalScrollbar=   True
          HeadingIndex    =   0
          Height          =   262
          HelpTag         =   ""
@@ -233,7 +182,6 @@ Begin BeaconDialog LootSourceWizard
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowSelectionType=   "1"
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
@@ -246,7 +194,6 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   54
          Transparent     =   False
          Underline       =   False
@@ -257,7 +204,6 @@ Begin BeaconDialog LootSourceWizard
          _ScrollWidth    =   -1
       End
       Begin UITweaks.ResizedPushButton SelectionCustomButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -265,9 +211,6 @@ Begin BeaconDialog LootSourceWizard
          Caption         =   "Custom Loot Source…"
          Default         =   False
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -279,7 +222,6 @@ Begin BeaconDialog LootSourceWizard
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   False
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   1
@@ -287,7 +229,6 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -295,15 +236,11 @@ Begin BeaconDialog LootSourceWizard
          Width           =   160
       End
       Begin Label DefineMessageLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -323,21 +260,17 @@ Begin BeaconDialog LootSourceWizard
          TabStop         =   True
          Text            =   "Define Loot Source"
          TextAlign       =   "0"
-         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
-         Value           =   "Define Loot Source"
          Visible         =   True
          Width           =   510
       End
       Begin UITweaks.ResizedPushButton DefineActionButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -345,9 +278,6 @@ Begin BeaconDialog LootSourceWizard
          Caption         =   "Next"
          Default         =   True
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -359,7 +289,6 @@ Begin BeaconDialog LootSourceWizard
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   12
          TabPanelIndex   =   2
@@ -367,7 +296,6 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -375,7 +303,6 @@ Begin BeaconDialog LootSourceWizard
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton DefineCancelButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -383,9 +310,6 @@ Begin BeaconDialog LootSourceWizard
          Caption         =   "Back"
          Default         =   False
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -397,7 +321,6 @@ Begin BeaconDialog LootSourceWizard
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   11
          TabPanelIndex   =   2
@@ -405,7 +328,6 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -413,7 +335,6 @@ Begin BeaconDialog LootSourceWizard
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton CustomizeActionButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -421,9 +342,6 @@ Begin BeaconDialog LootSourceWizard
          Caption         =   "Done"
          Default         =   True
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -435,7 +353,6 @@ Begin BeaconDialog LootSourceWizard
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   10
          TabPanelIndex   =   3
@@ -443,7 +360,6 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -451,7 +367,6 @@ Begin BeaconDialog LootSourceWizard
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton CustomizeCancelButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -459,9 +374,6 @@ Begin BeaconDialog LootSourceWizard
          Caption         =   "Back"
          Default         =   False
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -473,7 +385,6 @@ Begin BeaconDialog LootSourceWizard
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   9
          TabPanelIndex   =   3
@@ -481,7 +392,6 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -489,15 +399,11 @@ Begin BeaconDialog LootSourceWizard
          Width           =   80
       End
       Begin Label CustomizeMessageLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -517,29 +423,22 @@ Begin BeaconDialog LootSourceWizard
          TabStop         =   True
          Text            =   "Customize Loot Source"
          TextAlign       =   "0"
-         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
-         Value           =   "Customize Loot Source"
          Visible         =   True
          Width           =   510
       End
       Begin UITweaks.ResizedLabel DefineMaxMultiplierLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -559,29 +458,22 @@ Begin BeaconDialog LootSourceWizard
          TabStop         =   True
          Text            =   "Max Multiplier:"
          TextAlign       =   "2"
-         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   156
          Transparent     =   True
          Underline       =   False
-         Value           =   "Max Multiplier:"
          Visible         =   True
          Width           =   104
       End
       Begin UITweaks.ResizedLabel DefineMinMultiplierLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -601,29 +493,22 @@ Begin BeaconDialog LootSourceWizard
          TabStop         =   True
          Text            =   "Min Multiplier:"
          TextAlign       =   "2"
-         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   122
          Transparent     =   True
          Underline       =   False
-         Value           =   "Min Multiplier:"
          Visible         =   True
          Width           =   104
       End
       Begin UITweaks.ResizedLabel DefineClassLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -643,29 +528,22 @@ Begin BeaconDialog LootSourceWizard
          TabStop         =   True
          Text            =   "Class String:"
          TextAlign       =   "2"
-         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   54
          Transparent     =   True
          Underline       =   False
-         Value           =   "Class String:"
          Visible         =   True
          Width           =   104
       End
       Begin UITweaks.ResizedLabel DefineNameLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -685,44 +563,31 @@ Begin BeaconDialog LootSourceWizard
          TabStop         =   True
          Text            =   "Label:"
          TextAlign       =   "2"
-         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   88
          Transparent     =   True
          Underline       =   False
-         Value           =   "Label:"
          Visible         =   True
          Width           =   104
       End
       Begin UITweaks.ResizedTextField DefineMaxMultiplierField
          AcceptTabs      =   False
          Alignment       =   "0"
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
-         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Format          =   ""
-         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
-         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -734,7 +599,6 @@ Begin BeaconDialog LootSourceWizard
          LockRight       =   False
          LockTop         =   True
          Mask            =   ""
-         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -742,46 +606,32 @@ Begin BeaconDialog LootSourceWizard
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
-         TextAlignment   =   "0"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   156
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
-         ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedTextField DefineMinMultiplierField
          AcceptTabs      =   False
          Alignment       =   "0"
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
-         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Format          =   ""
-         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
-         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -793,7 +643,6 @@ Begin BeaconDialog LootSourceWizard
          LockRight       =   False
          LockTop         =   True
          Mask            =   ""
-         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -801,46 +650,32 @@ Begin BeaconDialog LootSourceWizard
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
-         TextAlignment   =   "0"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   122
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
-         ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedTextField DefineNameField
          AcceptTabs      =   False
          Alignment       =   "0"
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
-         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Format          =   ""
-         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
-         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -852,7 +687,6 @@ Begin BeaconDialog LootSourceWizard
          LockRight       =   True
          LockTop         =   True
          Mask            =   ""
-         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -860,46 +694,32 @@ Begin BeaconDialog LootSourceWizard
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
-         TextAlignment   =   "0"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   88
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
-         ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   394
       End
       Begin UITweaks.ResizedTextField DefineClassField
          AcceptTabs      =   False
          Alignment       =   "0"
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
-         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   "ExampleSourceClass_C"
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Format          =   ""
-         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
-         Hint            =   "ExampleSourceClass_C"
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -911,7 +731,6 @@ Begin BeaconDialog LootSourceWizard
          LockRight       =   True
          LockTop         =   True
          Mask            =   ""
-         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -919,46 +738,32 @@ Begin BeaconDialog LootSourceWizard
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
-         TextAlignment   =   "0"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   54
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
-         ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   394
       End
       Begin UITweaks.ResizedTextField CustomizeMinSetsField
          AcceptTabs      =   False
          Alignment       =   "0"
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
-         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Format          =   ""
-         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
-         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -970,7 +775,6 @@ Begin BeaconDialog LootSourceWizard
          LockRight       =   False
          LockTop         =   True
          Mask            =   "###"
-         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -978,31 +782,23 @@ Begin BeaconDialog LootSourceWizard
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   ""
-         TextAlignment   =   "0"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   54
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
-         ValidationMask  =   "###"
-         Value           =   ""
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedLabel CustomizeMinSetsLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -1022,44 +818,31 @@ Begin BeaconDialog LootSourceWizard
          TabStop         =   True
          Text            =   "Min Sets:"
          TextAlign       =   "2"
-         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   54
          Transparent     =   True
          Underline       =   False
-         Value           =   "Min Sets:"
          Visible         =   True
          Width           =   104
       End
       Begin UITweaks.ResizedTextField CustomizeMaxSetsField
          AcceptTabs      =   False
          Alignment       =   "0"
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
-         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Format          =   ""
-         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
-         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -1071,7 +854,6 @@ Begin BeaconDialog LootSourceWizard
          LockRight       =   False
          LockTop         =   True
          Mask            =   "###"
-         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -1079,31 +861,23 @@ Begin BeaconDialog LootSourceWizard
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   ""
-         TextAlignment   =   "0"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   88
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
-         ValidationMask  =   "###"
-         Value           =   ""
          Visible         =   True
          Width           =   80
       End
       Begin UITweaks.ResizedLabel CustomizeMaxSetsLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -1123,30 +897,23 @@ Begin BeaconDialog LootSourceWizard
          TabStop         =   True
          Text            =   "Max Sets:"
          TextAlign       =   "2"
-         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   88
          Transparent     =   True
          Underline       =   False
-         Value           =   "Max Sets:"
          Visible         =   True
          Width           =   104
       End
       Begin CheckBox CustomizePreventDuplicatesCheck
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          Caption         =   "Prevent Duplicates"
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -1166,23 +933,14 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   122
          Transparent     =   False
          Underline       =   False
-         Value           =   False
+         Value           =   "False"
          Visible         =   True
-         VisualState     =   "0"
          Width           =   394
       End
       Begin BeaconListbox CustomizePresetsList
-         AllowAutoDeactivate=   True
-         AllowAutoHideScrollbars=   True
-         AllowExpandableRows=   False
-         AllowFocusRing  =   True
-         AllowResizableColumns=   False
-         AllowRowDragging=   False
-         AllowRowReordering=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -1193,22 +951,12 @@ Begin BeaconDialog LootSourceWizard
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
-         DropIndicatorVisible=   False
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         FontName        =   "SmallSystem"
-         FontSize        =   0.0
-         FontUnit        =   0
          GridLinesHorizontal=   "0"
-         GridLinesHorizontalStyle=   "0"
          GridLinesVertical=   "0"
-         GridLinesVerticalStyle=   "0"
-         HasBorder       =   True
-         HasHeader       =   False
          HasHeading      =   False
-         HasHorizontalScrollbar=   False
-         HasVerticalScrollbar=   True
          HeadingIndex    =   1
          Height          =   162
          HelpTag         =   ""
@@ -1224,7 +972,6 @@ Begin BeaconDialog LootSourceWizard
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowSelectionType=   "0"
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
@@ -1237,7 +984,6 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   154
          Transparent     =   False
          Underline       =   False
@@ -1248,15 +994,11 @@ Begin BeaconDialog LootSourceWizard
          _ScrollWidth    =   -1
       End
       Begin Label CustomizePresetsLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -1276,30 +1018,23 @@ Begin BeaconDialog LootSourceWizard
          TabStop         =   True
          Text            =   "Presets:"
          TextAlign       =   "2"
-         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   154
          Transparent     =   True
          Underline       =   False
-         Value           =   "Presets:"
          Visible         =   True
          Width           =   104
       End
       Begin CheckBox CustomizeReconfigureCheckbox
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          Caption         =   "Rebuild Existing Presets"
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   "When enabled, the existing item sets will be emptied and refilled according to their original preset."
          Index           =   -2147483648
@@ -1319,26 +1054,20 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   "When enabled, the existing item sets will be emptied and refilled according to their original preset."
          Top             =   328
          Transparent     =   False
          Underline       =   False
-         Value           =   False
+         Value           =   "False"
          Visible         =   True
-         VisualState     =   "0"
          Width           =   394
       End
       Begin CheckBox SelectionExperimentalCheck
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          Caption         =   "Show Experimental Loot Sources"
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -1358,25 +1087,19 @@ Begin BeaconDialog LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   328
          Transparent     =   False
          Underline       =   False
-         Value           =   False
+         Value           =   "False"
          Visible         =   True
-         VisualState     =   "0"
          Width           =   510
       End
       Begin UITweaks.ResizedLabel DefineMapsLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -1395,12 +1118,10 @@ Begin BeaconDialog LootSourceWizard
          TabPanelIndex   =   2
          TabStop         =   True
          TextAlign       =   "2"
-         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   190
          Transparent     =   True
          Underline       =   False
@@ -1411,21 +1132,16 @@ Begin BeaconDialog LootSourceWizard
       Begin MapSelectionGrid DefineMapsSelector
          AcceptFocus     =   False
          AcceptTabs      =   True
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         HasBackgroundColor=   False
          Height          =   118
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   130
          LockBottom      =   False
@@ -1438,7 +1154,6 @@ Begin BeaconDialog LootSourceWizard
          TabIndex        =   14
          TabPanelIndex   =   2
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   184
          Transparent     =   True
          UseFocusRing    =   False
@@ -1973,127 +1688,11 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="MinWidth"
-		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinHeight"
-		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxWidth"
-		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxHeight"
-		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Frame"
-		Visible=true
-		Group="Frame"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		#tag EnumValues
-			"0 - Document"
-			"1 - Movable Modal"
-			"2 - Modal Dialog"
-			"3 - Floating Window"
-			"4 - Plain Box"
-			"5 - Shadowed Box"
-			"6 - Rounded Window"
-			"7 - Global Floating Window"
-			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="CloseButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Resizeable"
 		Visible=true
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaximizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="FullScreenButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Placement"
-		Visible=true
-		Group="Behavior"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		#tag EnumValues
-			"0 - Default"
-			"1 - Parent Window"
-			"2 - Main Screen"
-			"3 - Parent Window Screen"
-			"4 - Stagger"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -2166,14 +1765,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Resizable"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HasMaximizeButton"
 		Visible=true
 		Group="Frame"
@@ -2226,7 +1817,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"

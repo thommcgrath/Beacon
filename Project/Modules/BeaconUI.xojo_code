@@ -173,7 +173,7 @@ Protected Module BeaconUI
 		  Pic.Graphics.DrawingColor = &cFFFFFF
 		  Pic.Graphics.FillOval(2 * Scale, 2 * Scale, Pic.Width - (4 * Scale) , Pic.Height - (4 * Scale))
 		  
-		  Dim CenterPoint As New REALbasic.Point(Pic.Width / 2, Pic.Height / 2)
+		  Dim CenterPoint As New Xojo.Point(Pic.Width / 2, Pic.Height / 2)
 		  
 		  Dim Angles(1) As Double
 		  Angles(0) = (360 * OffsetPercent) - 90
@@ -274,11 +274,11 @@ Protected Module BeaconUI
 		    End If
 		  Next
 		  
-		  Dim InitialPosition As New REALbasic.Rect(DefaultPosition.Left, DefaultPosition.Top, DefaultPosition.Width, DefaultPosition.Height)
+		  Dim InitialPosition As New Xojo.Rect(DefaultPosition.Left, DefaultPosition.Top, DefaultPosition.Width, DefaultPosition.Height)
 		  
 		  For I As Integer = 0 To Bound
 		    If App.Window(I) IsA BeaconUI.SheetPositionHandler And App.Window(I).Handle = WindowHandle Then
-		      Dim NewPosition As REALbasic.Rect = BeaconUI.SheetPositionHandler(App.Window(I)).PositionSheet(Sheet, InitialPosition)
+		      Dim NewPosition As Xojo.Rect = BeaconUI.SheetPositionHandler(App.Window(I)).PositionSheet(Sheet, InitialPosition)
 		      If NewPosition = Nil Then
 		        Return DefaultPosition
 		      Else

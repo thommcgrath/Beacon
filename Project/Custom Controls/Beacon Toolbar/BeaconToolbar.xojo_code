@@ -20,7 +20,7 @@ Implements ObservationKit.Observer
 
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  Dim Point As New REALbasic.Point(X, Y)
+		  Dim Point As New Xojo.Point(X, Y)
 		  Self.mMouseDownName = ""
 		  Self.mMouseHeld = False
 		  Self.mMouseDownX = X
@@ -92,8 +92,8 @@ Implements ObservationKit.Observer
 		  If Self.mMouseDownName <> "" Then
 		    Dim Item As BeaconToolbarItem = Self.ItemWithName(Self.mMouseDownName)
 		    If Item <> Nil Then
-		      Dim Rect As REALbasic.Rect = Item.Rect
-		      If Rect.Contains(New REALbasic.Point(X, Y)) Then
+		      Dim Rect As Xojo.Rect = Item.Rect
+		      If Rect.Contains(New Xojo.Point(X, Y)) Then
 		        If Self.mPressedName <> Item.Name Then
 		          Self.mPressedName = Item.Name
 		          Self.Invalidate
@@ -127,7 +127,7 @@ Implements ObservationKit.Observer
 
 	#tag Event
 		Sub MouseMove(X As Integer, Y As Integer)
-		  Dim Point As New REALbasic.Point(X, Y)
+		  Dim Point As New Xojo.Point(X, Y)
 		  Self.HoverItem = Self.ItemAtPoint(Point)
 		  
 		  If Self.mResizerRect <> Nil Then
@@ -162,7 +162,7 @@ Implements ObservationKit.Observer
 		  
 		  If Self.mMouseDownName <> "" Then
 		    Dim Item As BeaconToolbarItem = Self.ItemWithName(Self.mMouseDownName)
-		    If Item <> Nil And Item.Rect.Contains(New REALbasic.Point(X, Y)) And Not Self.mMouseHeld Then
+		    If Item <> Nil And Item.Rect.Contains(New Xojo.Point(X, Y)) And Not Self.mMouseHeld Then
 		      // Action
 		      RaiseEvent Pressed(Item)
 		    End If
@@ -211,7 +211,7 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DrawButton(G As Graphics, Button As BeaconToolbarItem, Rect As REALbasic.Rect, Mode As ButtonModes, Highlighted As Boolean)
+		Private Sub DrawButton(G As Graphics, Button As BeaconToolbarItem, Rect As Xojo.Rect, Mode As ButtonModes, Highlighted As Boolean)
 		  #Pragma Unused Highlighted
 		  
 		  Dim PrecisionX As Double = 1 / G.ScaleX
@@ -298,12 +298,12 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h0
 		Function ItemAtPoint(X As Integer, Y As Integer) As BeaconToolbarItem
-		  Return Self.ItemAtPoint(New REALbasic.Point(X, Y))
+		  Return Self.ItemAtPoint(New Xojo.Point(X, Y))
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ItemAtPoint(Point As REALbasic.Point) As BeaconToolbarItem
+		Function ItemAtPoint(Point As Xojo.Point) As BeaconToolbarItem
 		  If Self.mLeftItems <> Nil Then
 		    For I As Integer = 0 To Self.mLeftItems.LastRowIndex
 		      Try
@@ -403,7 +403,7 @@ Implements ObservationKit.Observer
 		    Highlighted = IsKeyWindow(Self.TrueWindow.Handle) Or IsMainWindow(Self.TrueWindow.Handle)
 		  #endif
 		  
-		  Dim ContentRect As New REALbasic.Rect(CellPadding, CellPadding, G.Width - (CellPadding * 2), G.Height - (CellPadding * 2))
+		  Dim ContentRect As New Xojo.Rect(CellPadding, CellPadding, G.Width - (CellPadding * 2), G.Height - (CellPadding * 2))
 		  
 		  If Self.mResizerStyle <> ResizerTypes.None Then
 		    Dim ResizeIcon As Picture
@@ -419,7 +419,7 @@ Implements ObservationKit.Observer
 		    Dim ResizerLeft As Integer = ContentRect.Right + CellPadding
 		    Dim ResizerTop As Integer = (G.Height - ResizeIcon.Height) / 2
 		    
-		    Self.mResizerRect = New REALbasic.Rect(ResizerLeft, 0, G.Width - ResizerLeft, G.Height)
+		    Self.mResizerRect = New Xojo.Rect(ResizerLeft, 0, G.Width - ResizerLeft, G.Height)
 		    
 		    Dim ResizeColor As Color = SystemColors.LabelColor
 		    If Not Self.ResizerEnabled Then
@@ -448,7 +448,7 @@ Implements ObservationKit.Observer
 		      Mode = ButtonModes.Disabled
 		    End If
 		    
-		    Item.Rect = New REALbasic.Rect(NextLeft, CellPadding, ButtonSize, ButtonSize)
+		    Item.Rect = New Xojo.Rect(NextLeft, CellPadding, ButtonSize, ButtonSize)
 		    Self.DrawButton(G, Item, Item.Rect, Mode, Highlighted)
 		    NextLeft = Item.Rect.Right + CellPadding
 		  Next
@@ -463,7 +463,7 @@ Implements ObservationKit.Observer
 		      Mode = ButtonModes.Disabled
 		    End If
 		    
-		    Item.Rect = New REALbasic.Rect(NextRight - ButtonSize, CellPadding, ButtonSize, ButtonSize)
+		    Item.Rect = New Xojo.Rect(NextRight - ButtonSize, CellPadding, ButtonSize, ButtonSize)
 		    Self.DrawButton(G, Item, Item.Rect, Mode, Highlighted)
 		    NextRight = Item.Rect.Left - CellPadding
 		  Next
@@ -621,7 +621,7 @@ Implements ObservationKit.Observer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mResizerRect As REALbasic.Rect
+		Private mResizerRect As Xojo.Rect
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -698,46 +698,6 @@ Implements ObservationKit.Observer
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="AutoDeactivate"
-			Visible=false
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HelpTag"
-			Visible=false
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="UseFocusRing"
-			Visible=false
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AcceptFocus"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AcceptTabs"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DoubleBuffer"
 			Visible=false

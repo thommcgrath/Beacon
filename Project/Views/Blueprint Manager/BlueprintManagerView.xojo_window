@@ -2,20 +2,13 @@
 Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
    AcceptFocus     =   False
    AcceptTabs      =   True
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
-   Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   HasBackgroundColor=   False
    Height          =   592
    HelpTag         =   ""
    InitialParent   =   ""
@@ -27,7 +20,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
-   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    UseFocusRing    =   False
@@ -36,10 +28,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
    Begin BeaconToolbar ListHeader
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Objects"
@@ -62,7 +50,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -72,10 +59,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
    Begin FadedSeparator ListSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -95,7 +78,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
@@ -103,7 +85,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Width           =   1
    End
    Begin PagePanel Pages
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   592
@@ -119,11 +100,9 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
-      SelectedPanelIndex=   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
+      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   2
@@ -132,10 +111,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Begin FadedSeparator EditorHeaderSeparator
          AcceptFocus     =   False
          AcceptTabs      =   False
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          DoubleBuffer    =   False
@@ -155,7 +130,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   40
          Transparent     =   True
          UseFocusRing    =   True
@@ -165,10 +139,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Begin BeaconToolbar EditorHeader
          AcceptFocus     =   False
          AcceptTabs      =   False
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   ""
@@ -191,7 +161,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   False
          UseFocusRing    =   True
@@ -201,19 +170,13 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Begin BlueprintEditor Editor
          AcceptFocus     =   False
          AcceptTabs      =   True
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         HasBackgroundColor=   False
          Height          =   592
          HelpTag         =   ""
          Index           =   -2147483648
@@ -233,7 +196,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          TabPanelIndex   =   2
          TabStop         =   True
          ToolbarCaption  =   ""
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -243,19 +205,13 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Begin BlueprintMultiEditor MultiEditor
          AcceptFocus     =   False
          AcceptTabs      =   True
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         HasBackgroundColor=   False
          Height          =   592
          HelpTag         =   ""
          Index           =   -2147483648
@@ -274,7 +230,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          TabPanelIndex   =   3
          TabStop         =   True
          ToolbarCaption  =   ""
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -283,13 +238,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       End
    End
    Begin BeaconListbox List
-      AllowAutoDeactivate=   True
-      AllowAutoHideScrollbars=   True
-      AllowExpandableRows=   False
-      AllowFocusRing  =   False
-      AllowResizableColumns=   False
-      AllowRowDragging=   False
-      AllowRowReordering=   False
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -300,22 +248,12 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
-      DropIndicatorVisible=   False
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       GridLinesHorizontal=   "0"
-      GridLinesHorizontalStyle=   "0"
       GridLinesVertical=   "0"
-      GridLinesVerticalStyle=   "0"
-      HasBorder       =   False
-      HasHeader       =   False
       HasHeading      =   False
-      HasHorizontalScrollbar=   False
-      HasVerticalScrollbar=   True
       HeadingIndex    =   -1
       Height          =   551
       HelpTag         =   ""
@@ -331,7 +269,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
-      RowSelectionType=   "1"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -344,7 +281,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   41
       Transparent     =   False
       Underline       =   False
@@ -357,10 +293,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
    Begin FadedSeparator ListHeaderSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -380,7 +312,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
@@ -402,7 +333,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       LockedInPosition=   False
       Mode            =   "0"
       Period          =   500
-      RunMode         =   "0"
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -847,62 +777,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=false
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=false
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=false
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=false
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
@@ -940,7 +814,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

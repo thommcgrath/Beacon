@@ -4,7 +4,7 @@ Inherits ControlCanvas
 Implements ObservationKit.Observer
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  Dim Point As New REALbasic.Point(X, Y)
+		  Dim Point As New Xojo.Point(X, Y)
 		  For I As Integer = 0 To Self.mTabRects.LastRowIndex
 		    If Self.mTabRects(I) = Nil Then
 		      Continue
@@ -63,7 +63,7 @@ Implements ObservationKit.Observer
 		    Return
 		  End If
 		  
-		  Dim Point As New REALbasic.Point(X, Y)
+		  Dim Point As New Xojo.Point(X, Y)
 		  If Self.mCloseBoxes(Self.mMouseDownIndex) <> Nil And Self.mCloseBoxes(Self.mMouseDownIndex).Contains(Point) Then
 		    RaiseEvent ShouldDismissView(Self.mMouseDownIndex)
 		  End If
@@ -105,7 +105,7 @@ Implements ObservationKit.Observer
 		    End If
 		    
 		    Dim View As BeaconSubview = RaiseEvent ViewAtIndex(I)
-		    Dim CloseRect As REALbasic.Rect = Self.mCloseBoxes(I)
+		    Dim CloseRect As Xojo.Rect = Self.mCloseBoxes(I)
 		    Dim BoxState As CloseBoxState = CloseBoxState.Normal
 		    If CloseRect <> Nil Then
 		      If Self.mHoverRect = CloseRect Then
@@ -125,7 +125,7 @@ Implements ObservationKit.Observer
 		      CloseRect.Offset(LeftPos, 0)
 		    End If
 		    Self.mCloseBoxes(I) = CloseRect
-		    Self.mTabRects(I) = New REALbasic.Rect(LeftPos, 0, TabWidth, G.Height)
+		    Self.mTabRects(I) = New Xojo.Rect(LeftPos, 0, TabWidth, G.Height)
 		    
 		    If View <> Nil And View.Progress <> BeaconSubview.ProgressNone Then
 		      Dim Progress As Graphics = G.Clip(Self.mTabRects(I).Left, Self.mTabRects(I).Top, Self.mTabRects(I).Width, Self.ProgressHeight)
@@ -181,7 +181,7 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DrawTabCell(G As Graphics, View As BeaconSubview, BoxState As CloseBoxState, ByRef CloseRect As REALbasic.Rect)
+		Private Sub DrawTabCell(G As Graphics, View As BeaconSubview, BoxState As CloseBoxState, ByRef CloseRect As Xojo.Rect)
 		  Const CellPadding = 4
 		  Const ButtonSize = 16
 		  
@@ -208,7 +208,7 @@ Implements ObservationKit.Observer
 		      IconColor = G.DrawingColor
 		    End If
 		    
-		    CloseRect = New REALbasic.Rect(G.Width - (ButtonSize + CellPadding), ButtonTop, ButtonSize, ButtonSize)
+		    CloseRect = New Xojo.Rect(G.Width - (ButtonSize + CellPadding), ButtonTop, ButtonSize, ButtonSize)
 		    
 		    Dim CloseIcon As Picture = BeaconUI.IconWithColor(IconClose, IconColor)
 		    G.DrawPicture(CloseIcon, CloseRect.Left, CloseRect.Top, CloseRect.Width, CloseRect.Height, 0, 0, CloseIcon.Width, CloseIcon.Height)
@@ -223,8 +223,8 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h21
 		Private Sub MouseMove(X As Integer, Y As Integer)
-		  Dim HoverRect As REALbasic.Rect
-		  Dim Point As New REALbasic.Point(X, Y)
+		  Dim HoverRect As Xojo.Rect
+		  Dim Point As New Xojo.Point(X, Y)
 		  For I As Integer = 0 To Self.mCloseBoxes.LastRowIndex
 		    If Self.mCloseBoxes(I) = Nil Then
 		      Continue
@@ -308,7 +308,7 @@ Implements ObservationKit.Observer
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mCloseBoxes(-1) As REALbasic.Rect
+		Private mCloseBoxes(-1) As Xojo.Rect
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -316,7 +316,7 @@ Implements ObservationKit.Observer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHoverRect As REALbasic.Rect
+		Private mHoverRect As Xojo.Rect
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -332,7 +332,7 @@ Implements ObservationKit.Observer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mTabRects(-1) As REALbasic.Rect
+		Private mTabRects(-1) As Xojo.Rect
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -376,46 +376,6 @@ Implements ObservationKit.Observer
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="AutoDeactivate"
-			Visible=false
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HelpTag"
-			Visible=false
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="UseFocusRing"
-			Visible=false
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AcceptFocus"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AcceptTabs"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DoubleBuffer"
 			Visible=false

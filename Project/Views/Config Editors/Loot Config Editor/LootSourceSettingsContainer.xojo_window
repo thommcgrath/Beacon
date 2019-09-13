@@ -2,20 +2,13 @@
 Begin ContainerControl LootSourceSettingsContainer
    AcceptFocus     =   False
    AcceptTabs      =   True
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
-   Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   HasBackgroundColor=   False
    Height          =   130
    HelpTag         =   ""
    InitialParent   =   ""
@@ -27,7 +20,6 @@ Begin ContainerControl LootSourceSettingsContainer
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
-   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    UseFocusRing    =   False
@@ -35,12 +27,9 @@ Begin ContainerControl LootSourceSettingsContainer
    Width           =   250
    Begin DisclosureTriangle DisclosureTriangle1
       AcceptFocus     =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
       AutoDeactivate  =   True
       Enabled         =   True
       Facing          =   "0"
-      FacingDirection =   "0"
       Height          =   18
       HelpTag         =   ""
       Index           =   -2147483648
@@ -55,7 +44,6 @@ Begin ContainerControl LootSourceSettingsContainer
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   2
       Transparent     =   False
       Value           =   False
@@ -65,10 +53,6 @@ Begin ContainerControl LootSourceSettingsContainer
    Begin FadedSeparator FadedSeparator2
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -88,7 +72,6 @@ Begin ContainerControl LootSourceSettingsContainer
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   129
       Transparent     =   True
       UseFocusRing    =   True
@@ -96,15 +79,11 @@ Begin ContainerControl LootSourceSettingsContainer
       Width           =   250
    End
    Begin Label SettingsLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   18
       HelpTag         =   ""
       Index           =   -2147483648
@@ -124,30 +103,22 @@ Begin ContainerControl LootSourceSettingsContainer
       TabStop         =   True
       Text            =   "Settings"
       TextAlign       =   "0"
-      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   2
       Transparent     =   False
       Underline       =   False
-      Value           =   "Settings"
       Visible         =   True
       Width           =   219
    End
    Begin RangeField MinItemSetsField
       AcceptTabs      =   False
       Alignment       =   "2"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
@@ -155,14 +126,9 @@ Begin ContainerControl LootSourceSettingsContainer
       DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   20
       HelpTag         =   ""
-      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   117
@@ -173,7 +139,6 @@ Begin ContainerControl LootSourceSettingsContainer
       LockRight       =   False
       LockTop         =   True
       Mask            =   "####"
-      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -181,31 +146,23 @@ Begin ContainerControl LootSourceSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1"
-      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   32
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   "####"
-      Value           =   "1"
       Visible         =   True
       Width           =   50
    End
    Begin UITweaks.ResizedLabel MinItemSetsLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -225,30 +182,22 @@ Begin ContainerControl LootSourceSettingsContainer
       TabStop         =   True
       Text            =   "Min Item Sets:"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   32
       Transparent     =   False
       Underline       =   False
-      Value           =   "Min Item Sets:"
       Visible         =   True
       Width           =   85
    End
    Begin RangeField MaxItemSetsField
       AcceptTabs      =   False
       Alignment       =   "2"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   ""
@@ -256,14 +205,9 @@ Begin ContainerControl LootSourceSettingsContainer
       DataSource      =   ""
       DoubleValue     =   0.0
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   20
       HelpTag         =   ""
-      Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
       Left            =   117
@@ -274,7 +218,6 @@ Begin ContainerControl LootSourceSettingsContainer
       LockRight       =   False
       LockTop         =   True
       Mask            =   "####"
-      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -282,31 +225,23 @@ Begin ContainerControl LootSourceSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1"
-      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   56
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   "####"
-      Value           =   "1"
       Visible         =   True
       Width           =   50
    End
    Begin UITweaks.ResizedLabel MaxItemSetsLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -326,30 +261,23 @@ Begin ContainerControl LootSourceSettingsContainer
       TabStop         =   True
       Text            =   "Max Item Sets:"
       TextAlign       =   "2"
-      TextAlignment   =   "3"
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   56
       Transparent     =   False
       Underline       =   False
-      Value           =   "Max Item Sets:"
       Visible         =   True
       Width           =   85
    End
    Begin CheckBox NoDuplicatesCheck
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Prevent Duplicates"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -369,18 +297,15 @@ Begin ContainerControl LootSourceSettingsContainer
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   80
       Transparent     =   False
       Underline       =   False
-      Value           =   False
+      Value           =   "False"
       Visible         =   True
-      VisualState     =   "0"
       Width           =   210
    End
    Begin UpDownArrows MinItemSetsStepper
       AcceptFocus     =   False
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   20
@@ -397,7 +322,6 @@ Begin ContainerControl LootSourceSettingsContainer
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   32
       Transparent     =   False
       Visible         =   True
@@ -405,7 +329,6 @@ Begin ContainerControl LootSourceSettingsContainer
    End
    Begin UpDownArrows MaxItemSetsStepper
       AcceptFocus     =   False
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   20
@@ -422,23 +345,18 @@ Begin ContainerControl LootSourceSettingsContainer
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   56
       Transparent     =   False
       Visible         =   True
       Width           =   13
    End
    Begin CheckBox AppendModeCheck
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Add Item Sets to Default"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "SmallSystem"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   "When checked, the item sets are added to the default loot source contents. When unchecked, the item sets completely replace the loot source contents."
       Index           =   -2147483648
@@ -458,13 +376,11 @@ Begin ContainerControl LootSourceSettingsContainer
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   "When checked, the item sets are added to the default loot source contents. When unchecked, the item sets completely replace the loot source contents."
       Top             =   104
       Transparent     =   False
       Underline       =   False
-      Value           =   False
+      Value           =   "False"
       Visible         =   True
-      VisualState     =   "0"
       Width           =   210
    End
 End
@@ -738,62 +654,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=false
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=false
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=false
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=false
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
@@ -831,7 +691,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

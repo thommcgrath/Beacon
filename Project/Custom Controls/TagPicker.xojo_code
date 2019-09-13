@@ -80,7 +80,7 @@ Inherits ControlCanvas
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  Dim ContentArea As REALbasic.Rect = Self.ContentArea
+		  Dim ContentArea As Xojo.Rect = Self.ContentArea
 		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.DrawRectangle(ContentArea.Left - 1, ContentArea.Top - 1, ContentArea.Width + 2, ContentArea.Height + 2)
 		  G.DrawingColor = SystemColors.ControlBackgroundColor
@@ -123,7 +123,7 @@ Inherits ControlCanvas
 		      YPos = YPos + VerticalSpacing + CellHeight
 		    End If
 		    
-		    Dim CellRect As New REALbasic.Rect(XPos, YPos - Self.mScrollPosition, CellWidth, CellHeight)
+		    Dim CellRect As New Xojo.Rect(XPos, YPos - Self.mScrollPosition, CellWidth, CellHeight)
 		    Self.mCells(I) = CellRect
 		    
 		    Dim CaptionLeft As Integer = CellRect.Left + HorizontalPadding
@@ -213,7 +213,7 @@ Inherits ControlCanvas
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function ContentArea() As REALbasic.Rect
+		Private Function ContentArea() As Xojo.Rect
 		  Dim X, Y, W, H As Integer
 		  W = Self.Width
 		  H = Self.Height
@@ -234,7 +234,7 @@ Inherits ControlCanvas
 		    W = W - 1
 		  End If
 		  
-		  Return New REALbasic.Rect(X, Y, W, H)
+		  Return New Xojo.Rect(X, Y, W, H)
 		End Function
 	#tag EndMethod
 
@@ -430,7 +430,7 @@ Inherits ControlCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCells() As REALbasic.Rect
+		Private mCells() As Xojo.Rect
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -529,46 +529,6 @@ Inherits ControlCanvas
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="AutoDeactivate"
-			Visible=false
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HelpTag"
-			Visible=false
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="UseFocusRing"
-			Visible=false
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AcceptFocus"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AcceptTabs"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DoubleBuffer"
 			Visible=false

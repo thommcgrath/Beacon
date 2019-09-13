@@ -155,7 +155,7 @@ Inherits AnimationKit.Task
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, CompatibilityFlags = (not TargetHasGUI and not TargetWeb and not TargetIOS) or  (TargetWeb) or  (TargetHasGUI) or  (TargetIOS)
-		Private Function CurrentRect() As Rect
+		Private Function CurrentRect() As Xojo.Rect
 		  Dim Item As Object = Self.Item
 		  
 		  If Item = Nil Then
@@ -185,20 +185,20 @@ Inherits AnimationKit.Task
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, CompatibilityFlags = (TargetIOS)
-		Private Function CurrentRect(Target As iOSControl) As Rect
-		  Return New Rect(Target.Left, Target.Top, Target.Width, Target.Height)
+		Private Function CurrentRect(Target As iOSControl) As Xojo.Rect
+		  Return New Xojo.Rect(Target.Left, Target.Top, Target.Width, Target.Height)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, CompatibilityFlags = (TargetHasGUI)
-		Private Function CurrentRect(Target As RectControl) As Rect
-		  Return New Rect(Target.Left, Target.Top, Target.Width, Target.Height)
+		Private Function CurrentRect(Target As RectControl) As Xojo.Rect
+		  Return New Xojo.Rect(Target.Left, Target.Top, Target.Width, Target.Height)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, CompatibilityFlags = (TargetHasGUI)
-		Private Function CurrentRect(Target As Window) As Rect
-		  Return New Rect(Target.Left, Target.Top, Target.Width, Target.Height)
+		Private Function CurrentRect(Target As Window) As Xojo.Rect
+		  Return New Xojo.Rect(Target.Left, Target.Top, Target.Width, Target.Height)
 		End Function
 	#tag EndMethod
 
@@ -226,16 +226,10 @@ Inherits AnimationKit.Task
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI)
-		Sub SetDestination(Source As REALbasic.Rect)
-		  Self.SetDestination(New Rect(Source.Left, Source.Top, Source.Width, Source.Height))
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI) or  (TargetIOS)
-		Sub SetDestination(Source As Rect)
-		  Dim CurrentBounds As Rect = Self.CurrentRect()
-		  Self.EndBounds = New Rect(Source.Left, Source.Top, Source.Width, Source.Height)
+		Sub SetDestination(Source As Xojo.Rect)
+		  Dim CurrentBounds As Xojo.Rect = Self.CurrentRect()
+		  Self.EndBounds = New Xojo.Rect(Source.Left, Source.Top, Source.Width, Source.Height)
 		  Self.AnimationKeys = 0
 		  If Self.EndBounds.Left <> CurrentBounds.Left Then
 		    Self.EnableValues(Self.KeyLeft)

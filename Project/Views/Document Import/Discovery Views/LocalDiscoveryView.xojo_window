@@ -2,20 +2,13 @@
 Begin DiscoveryView LocalDiscoveryView
    AcceptFocus     =   False
    AcceptTabs      =   True
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
-   Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   HasBackgroundColor=   False
    Height          =   396
    HelpTag         =   ""
    InitialParent   =   ""
@@ -27,22 +20,17 @@ Begin DiscoveryView LocalDiscoveryView
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
-   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
    Width           =   600
    Begin Label SetupMessageLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   True
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -62,43 +50,28 @@ Begin DiscoveryView LocalDiscoveryView
       TabStop         =   True
       Text            =   "Simple Config Import"
       TextAlign       =   "1"
-      TextAlignment   =   "2"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   6
       Transparent     =   True
       Underline       =   False
-      Value           =   "Simple Config Import"
       Visible         =   True
       Width           =   560
    End
    Begin CodeArea ConfigArea
       AcceptTabs      =   False
       Alignment       =   "0"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowStyledText =   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "Source Code Pro"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
-      HasHorizontalScrollbar=   False
-      HasVerticalScrollbar=   True
       Height          =   193
       HelpTag         =   ""
       HideSelection   =   True
@@ -115,7 +88,6 @@ Begin DiscoveryView LocalDiscoveryView
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
-      MaximumCharactersAllowed=   0
       Multiline       =   True
       ReadOnly        =   False
       Scope           =   2
@@ -126,23 +98,18 @@ Begin DiscoveryView LocalDiscoveryView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "Source Code Pro"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   151
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   560
    End
    Begin UITweaks.ResizedPushButton ActionButton
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -150,9 +117,6 @@ Begin DiscoveryView LocalDiscoveryView
       Caption         =   "Next"
       Default         =   True
       Enabled         =   False
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -164,7 +128,6 @@ Begin DiscoveryView LocalDiscoveryView
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
@@ -172,7 +135,6 @@ Begin DiscoveryView LocalDiscoveryView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   356
       Transparent     =   False
       Underline       =   False
@@ -180,7 +142,6 @@ Begin DiscoveryView LocalDiscoveryView
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton CancelButton
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -188,9 +149,6 @@ Begin DiscoveryView LocalDiscoveryView
       Caption         =   "Cancel"
       Default         =   False
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -202,7 +160,6 @@ Begin DiscoveryView LocalDiscoveryView
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   False
-      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -210,7 +167,6 @@ Begin DiscoveryView LocalDiscoveryView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   356
       Transparent     =   False
       Underline       =   False
@@ -218,7 +174,6 @@ Begin DiscoveryView LocalDiscoveryView
       Width           =   80
    End
    Begin UITweaks.ResizedPushButton ChooseFileButton
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -226,9 +181,6 @@ Begin DiscoveryView LocalDiscoveryView
       Caption         =   "Select File"
       Default         =   False
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -240,7 +192,6 @@ Begin DiscoveryView LocalDiscoveryView
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
-      MacButtonStyle  =   "0"
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -248,7 +199,6 @@ Begin DiscoveryView LocalDiscoveryView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   356
       Transparent     =   False
       Underline       =   False
@@ -258,10 +208,6 @@ Begin DiscoveryView LocalDiscoveryView
    Begin Shelf Switcher
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -285,7 +231,6 @@ Begin DiscoveryView LocalDiscoveryView
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   28
       Transparent     =   False
       UseFocusRing    =   True
@@ -295,10 +240,6 @@ Begin DiscoveryView LocalDiscoveryView
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -319,7 +260,6 @@ Begin DiscoveryView LocalDiscoveryView
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   88
       Transparent     =   True
       UseFocusRing    =   True
@@ -327,15 +267,11 @@ Begin DiscoveryView LocalDiscoveryView
       Width           =   600
    End
    Begin Label ExplanationLabel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   38
       HelpTag         =   ""
       Index           =   -2147483648
@@ -355,16 +291,13 @@ Begin DiscoveryView LocalDiscoveryView
       TabStop         =   True
       Text            =   "Paste the contents of your Game.ini and/or GameUserSettings.ini files here. Only one file is required, but Beacon can do a better job with both files."
       TextAlign       =   "0"
-      TextAlignment   =   "1"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   101
       Transparent     =   True
       Underline       =   False
-      Value           =   "Paste the contents of your Game.ini and/or GameUserSettings.ini files here. Only one file is required, but Beacon can do a better job with both files."
       Visible         =   True
       Width           =   560
    End
@@ -374,7 +307,6 @@ Begin DiscoveryView LocalDiscoveryView
       LockedInPosition=   False
       Mode            =   "2"
       Period          =   500
-      RunMode         =   "2"
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -705,62 +637,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=false
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=false
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=false
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=false
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
@@ -798,7 +674,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

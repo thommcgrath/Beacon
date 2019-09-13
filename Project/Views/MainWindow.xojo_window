@@ -2,51 +2,34 @@
 Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationKit.Observer,NotificationKit.Receiver
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
    CloseButton     =   True
-   Compatibility   =   ""
    Composite       =   True
-   DefaultLocation =   "2"
    Frame           =   0
    FullScreen      =   False
    FullScreenButton=   True
    HasBackColor    =   False
-   HasBackgroundColor=   False
-   HasCloseButton  =   True
-   HasFullScreenButton=   True
-   HasMaximizeButton=   True
-   HasMinimizeButton=   True
    Height          =   400
    ImplicitInstance=   True
    LiveResize      =   "True"
    MacProcID       =   0
    MaxHeight       =   32000
    MaximizeButton  =   True
-   MaximumHeight   =   32000
-   MaximumWidth    =   32000
    MaxWidth        =   32000
    MenuBar         =   817604607
    MenuBarVisible  =   True
    MinHeight       =   400
    MinimizeButton  =   True
-   MinimumHeight   =   400
-   MinimumWidth    =   800
    MinWidth        =   800
    Placement       =   2
-   Resizable       =   True
+   Resizable       =   "True"
    Resizeable      =   True
    SystemUIVisible =   "True"
    Title           =   "Beacon"
-   Type            =   "0"
    Visible         =   True
    Width           =   800
    Begin TabBar TabBar1
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Count           =   0
@@ -69,7 +52,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
       UseFocusRing    =   True
@@ -77,7 +59,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Width           =   759
    End
    Begin PagePanel Views
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   375
@@ -93,11 +74,9 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
-      SelectedPanelIndex=   0
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
+      TabStop         =   "True"
       Top             =   25
       Transparent     =   False
       Value           =   0
@@ -106,19 +85,13 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Begin DashboardPane DashboardPane1
          AcceptFocus     =   False
          AcceptTabs      =   True
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         HasBackgroundColor=   False
          Height          =   375
          HelpTag         =   ""
          Index           =   -2147483648
@@ -137,7 +110,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          TabPanelIndex   =   1
          TabStop         =   True
          ToolbarCaption  =   ""
-         Tooltip         =   ""
          Top             =   25
          Transparent     =   True
          UseFocusRing    =   False
@@ -148,10 +120,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    Begin ControlCanvas UpdateBar
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -172,7 +140,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   -169
       Transparent     =   True
       UseFocusRing    =   True
@@ -182,10 +149,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    Begin ControlCanvas OverlayCanvas
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -206,7 +169,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   445
       Transparent     =   True
       UseFocusRing    =   True
@@ -216,19 +178,13 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    Begin LibraryPane LibraryPane1
       AcceptFocus     =   False
       AcceptTabs      =   True
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   False
-      AllowTabs       =   True
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
-      BackgroundColor =   &cFFFFFF00
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
-      HasBackgroundColor=   False
       Height          =   400
       HelpTag         =   ""
       Index           =   -2147483648
@@ -243,7 +199,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   0
       Transparent     =   True
       UseFocusRing    =   False
@@ -317,7 +272,7 @@ End
 	#tag Event
 		Sub Moved()
 		  If Self.mOpened Then
-		    Dim Bounds As REALbasic.Rect = Self.Bounds
+		    Dim Bounds As Xojo.Rect = Self.Bounds
 		    Preferences.MainWindowPosition = New Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
 		  End If
 		End Sub
@@ -354,7 +309,7 @@ End
 		    Dim Height As Integer = Min(Max(Bounds.Height, Self.MinimumHeight), Self.MaximumHeight, AvailableBounds.Height)
 		    Dim Left As Integer = Min(Max(Bounds.Left, AvailableBounds.Left), AvailableBounds.Right - Width)
 		    Dim Top As Integer = Min(Max(Bounds.Top, AvailableBounds.Top), AvailableBounds.Bottom - Height)
-		    Self.Bounds = New REALbasic.Rect(Left, Top, Width, Height)
+		    Self.Bounds = New Xojo.Rect(Left, Top, Width, Height)
 		  End If
 		  
 		  Self.UpdateSizeForView(Self.DashboardPane1)
@@ -368,7 +323,7 @@ End
 	#tag Event
 		Sub Resized()
 		  If Self.mOpened Then
-		    Dim Bounds As REALbasic.Rect = Self.Bounds
+		    Dim Bounds As Xojo.Rect = Self.Bounds
 		    Preferences.MainWindowPosition = New Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
 		  End If
 		End Sub
@@ -926,127 +881,11 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="MinWidth"
-		Visible=false
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinHeight"
-		Visible=false
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxWidth"
-		Visible=false
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxHeight"
-		Visible=false
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Frame"
-		Visible=false
-		Group="Frame"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		#tag EnumValues
-			"0 - Document"
-			"1 - Movable Modal"
-			"2 - Modal Dialog"
-			"3 - Floating Window"
-			"4 - Plain Box"
-			"5 - Shadowed Box"
-			"6 - Rounded Window"
-			"7 - Global Floating Window"
-			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="CloseButton"
-		Visible=false
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Resizeable"
 		Visible=false
 		Group="Frame"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaximizeButton"
-		Visible=false
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimizeButton"
-		Visible=false
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="FullScreenButton"
-		Visible=false
-		Group="Frame"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Placement"
-		Visible=false
-		Group="Behavior"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		#tag EnumValues
-			"0 - Default"
-			"1 - Parent Window"
-			"2 - Main Screen"
-			"3 - Parent Window Screen"
-			"4 - Stagger"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -1119,14 +958,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Resizable"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="HasMaximizeButton"
 		Visible=true
 		Group="Frame"
@@ -1179,7 +1010,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Backdrop"

@@ -2,20 +2,13 @@
 Begin BeaconContainer ModDetailView
    AcceptFocus     =   False
    AcceptTabs      =   True
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
-   Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   HasBackgroundColor=   False
    Height          =   419
    HelpTag         =   ""
    InitialParent   =   ""
@@ -27,14 +20,12 @@ Begin BeaconContainer ModDetailView
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
-   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
    Width           =   864
    Begin PagePanel Panel
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   419
@@ -50,11 +41,9 @@ Begin BeaconContainer ModDetailView
       PanelCount      =   4
       Panels          =   ""
       Scope           =   2
-      SelectedPanelIndex=   3
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
+      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   3
@@ -63,28 +52,18 @@ Begin BeaconContainer ModDetailView
       Begin UITweaks.ResizedTextField ConfirmField
          AcceptTabs      =   False
          Alignment       =   "2"
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
-         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Format          =   ""
-         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
-         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -96,7 +75,6 @@ Begin BeaconContainer ModDetailView
          LockRight       =   False
          LockTop         =   True
          Mask            =   ""
-         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   True
          Scope           =   2
@@ -104,23 +82,18 @@ Begin BeaconContainer ModDetailView
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   ""
-         TextAlignment   =   "2"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   199
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
-         ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   380
       End
       Begin ReactionButton CopyButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -128,9 +101,6 @@ Begin BeaconContainer ModDetailView
          Caption         =   "Copy To Clipboard"
          Default         =   False
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -142,7 +112,6 @@ Begin BeaconContainer ModDetailView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   3
@@ -150,7 +119,6 @@ Begin BeaconContainer ModDetailView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   233
          Transparent     =   False
          Underline       =   False
@@ -158,15 +126,11 @@ Begin BeaconContainer ModDetailView
          Width           =   145
       End
       Begin Label ConfirmExplanation
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   86
          HelpTag         =   ""
          Index           =   -2147483648
@@ -186,21 +150,17 @@ Begin BeaconContainer ModDetailView
          TabStop         =   True
          Text            =   "You have not yet confirmed ownership of this mod. To so do, please copy the value below and insert it anywhere on the mod's Steam page. Then press the ""Confirm Ownership"" button below. Once confirmed, the text can be removed from your Steam page."
          TextAlign       =   "1"
-         TextAlignment   =   "2"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   101
          Transparent     =   True
          Underline       =   False
-         Value           =   "You have not yet confirmed ownership of this mod. To so do, please copy the value below and insert it anywhere on the mod's Steam page. Then press the ""Confirm Ownership"" button below. Once confirmed, the text can be removed from your Steam page."
          Visible         =   True
          Width           =   380
       End
       Begin UITweaks.ResizedPushButton ConfirmButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -208,9 +168,6 @@ Begin BeaconContainer ModDetailView
          Caption         =   "Confirm Ownership"
          Default         =   False
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -222,7 +179,6 @@ Begin BeaconContainer ModDetailView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   4
          TabPanelIndex   =   3
@@ -230,7 +186,6 @@ Begin BeaconContainer ModDetailView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   233
          Transparent     =   False
          Underline       =   False
@@ -238,15 +193,11 @@ Begin BeaconContainer ModDetailView
          Width           =   145
       End
       Begin Label NoSelectionLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -266,21 +217,17 @@ Begin BeaconContainer ModDetailView
          TabStop         =   True
          Text            =   "No Mod Selected"
          TextAlign       =   "1"
-         TextAlignment   =   "2"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   199
          Transparent     =   True
          Underline       =   False
-         Value           =   "No Mod Selected"
          Visible         =   True
          Width           =   824
       End
       Begin ProgressBar LoadingIndicator
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Enabled         =   True
          Height          =   20
@@ -295,12 +242,10 @@ Begin BeaconContainer ModDetailView
          LockRight       =   False
          LockTop         =   True
          Maximum         =   0
-         MaximumValue    =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
-         TabStop         =   True
-         Tooltip         =   ""
+         TabStop         =   "True"
          Top             =   199
          Transparent     =   False
          Value           =   0.0
@@ -308,13 +253,6 @@ Begin BeaconContainer ModDetailView
          Width           =   340
       End
       Begin BeaconListbox EngramList
-         AllowAutoDeactivate=   True
-         AllowAutoHideScrollbars=   True
-         AllowExpandableRows=   False
-         AllowFocusRing  =   False
-         AllowResizableColumns=   False
-         AllowRowDragging=   False
-         AllowRowReordering=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -325,22 +263,12 @@ Begin BeaconContainer ModDetailView
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
-         DropIndicatorVisible=   False
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          GridLinesHorizontal=   "0"
-         GridLinesHorizontalStyle=   "0"
          GridLinesVertical=   "0"
-         GridLinesVerticalStyle=   "0"
-         HasBorder       =   False
-         HasHeader       =   True
          HasHeading      =   True
-         HasHorizontalScrollbar=   False
-         HasVerticalScrollbar=   True
          HeadingIndex    =   1
          Height          =   378
          HelpTag         =   ""
@@ -356,7 +284,6 @@ Begin BeaconContainer ModDetailView
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowSelectionType=   "1"
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
@@ -369,7 +296,6 @@ Begin BeaconContainer ModDetailView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   41
          Transparent     =   False
          Underline       =   False
@@ -382,10 +308,6 @@ Begin BeaconContainer ModDetailView
       Begin BeaconToolbar Header
          AcceptFocus     =   False
          AcceptTabs      =   False
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "Mod Detail"
@@ -408,7 +330,6 @@ Begin BeaconContainer ModDetailView
          TabIndex        =   0
          TabPanelIndex   =   4
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   False
          UseFocusRing    =   True
@@ -418,10 +339,6 @@ Begin BeaconContainer ModDetailView
       Begin BeaconToolbar NoSelectionHeader
          AcceptFocus     =   False
          AcceptTabs      =   False
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "No Mod Selected"
@@ -444,7 +361,6 @@ Begin BeaconContainer ModDetailView
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   False
          UseFocusRing    =   True
@@ -454,10 +370,6 @@ Begin BeaconContainer ModDetailView
       Begin BeaconToolbar LoadingHeader
          AcceptFocus     =   False
          AcceptTabs      =   False
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "Mod Detail"
@@ -480,7 +392,6 @@ Begin BeaconContainer ModDetailView
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   False
          UseFocusRing    =   True
@@ -490,10 +401,6 @@ Begin BeaconContainer ModDetailView
       Begin BeaconToolbar ConfirmationHeader
          AcceptFocus     =   False
          AcceptTabs      =   False
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "Untitled"
@@ -516,7 +423,6 @@ Begin BeaconContainer ModDetailView
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   False
          UseFocusRing    =   True
@@ -534,10 +440,6 @@ Begin BeaconContainer ModDetailView
    Begin FadedSeparator HeaderSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -557,7 +459,6 @@ Begin BeaconContainer ModDetailView
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
@@ -1074,7 +975,7 @@ End
 		    Engram.ModID = Self.CurrentMod.ModID
 		    EngramList.AddRow("")
 		    Self.ShowEngramInRow(EngramList.LastAddedRowIndex, Engram)
-		    EngramList.CellEditableAt(EngramList.LastAddedRowIndex, 0)
+		    EngramList.EditCellAt(EngramList.LastAddedRowIndex, 0)
 		    Self.EngramSet.Add(Engram)
 		  Case "RemoveButton"
 		    For I As Integer = EngramList.RowCount -1 DownTo 0
@@ -1152,62 +1053,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=false
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=false
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=false
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=false
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
@@ -1245,7 +1090,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

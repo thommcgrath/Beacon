@@ -265,7 +265,7 @@ Implements ObservationKit.Observable
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
-		Rect As REALbasic.Rect
+		Rect As Xojo.Rect
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0

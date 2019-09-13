@@ -2,20 +2,13 @@
 Begin LibrarySubview LibraryPaneSearch
    AcceptFocus     =   False
    AcceptTabs      =   True
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
-   Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   HasBackgroundColor=   False
    Height          =   300
    HelpTag         =   ""
    InitialParent   =   ""
@@ -27,7 +20,6 @@ Begin LibrarySubview LibraryPaneSearch
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
-   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    UseFocusRing    =   False
@@ -36,10 +28,6 @@ Begin LibrarySubview LibraryPaneSearch
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Search"
@@ -63,7 +51,6 @@ Begin LibrarySubview LibraryPaneSearch
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -73,28 +60,18 @@ Begin LibrarySubview LibraryPaneSearch
    Begin UITweaks.ResizedTextField SearchField
       AcceptTabs      =   False
       Alignment       =   "0"
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       Border          =   True
       CueText         =   "Search"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       HelpTag         =   ""
-      Hint            =   "Search"
       Index           =   -2147483648
       Italic          =   False
       Left            =   10
@@ -105,7 +82,6 @@ Begin LibrarySubview LibraryPaneSearch
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
-      MaximumCharactersAllowed=   0
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -113,18 +89,14 @@ Begin LibrarySubview LibraryPaneSearch
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextAlignment   =   "0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   50
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      ValidationMask  =   ""
-      Value           =   ""
       Visible         =   True
       Width           =   280
    End
@@ -134,7 +106,6 @@ Begin LibrarySubview LibraryPaneSearch
       LockedInPosition=   False
       Mode            =   "0"
       Period          =   300
-      RunMode         =   "0"
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -151,10 +122,6 @@ Begin LibrarySubview LibraryPaneSearch
    Begin ControlCanvas Area
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -175,7 +142,6 @@ Begin LibrarySubview LibraryPaneSearch
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   82
       Transparent     =   True
       UseFocusRing    =   True
@@ -203,7 +169,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Function DrawResult(G As Graphics, Top As Integer, Dict As Dictionary, Selected As Boolean) As REALbasic.Rect
+		Private Function DrawResult(G As Graphics, Top As Integer, Dict As Dictionary, Selected As Boolean) As Xojo.Rect
 		  Const FontSizePoints = 14.0
 		  Dim SmallFontSizePoints As Double = FontSizePoints * 0.8
 		  
@@ -225,7 +191,7 @@ End
 		    RectHeight = RectHeight + Self.ResultPadding + G.TextHeight(Summary, MaxTextWidth)
 		  End If
 		  
-		  Dim Rect As New REALbasic.Rect(Self.ResultSpacing, Top, G.Width - (Self.ResultSpacing * 2), RectHeight)
+		  Dim Rect As New Xojo.Rect(Self.ResultSpacing, Top, G.Width - (Self.ResultSpacing * 2), RectHeight)
 		  Dim TitleLeft As Integer = Rect.Left + 1 + Self.ResultPadding
 		  Dim TypeWidth As Integer = Ceil(G.TextWidth(Type)) + 8
 		  Dim TypeLeft As Integer = Min(TitleLeft + TitleWidth + Self.ResultPadding, (TitleLeft + MaxTextWidth) - TypeWidth)
@@ -323,7 +289,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mResultRects() As REALbasic.Rect
+		Private mResultRects() As Xojo.Rect
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -445,7 +411,7 @@ End
 		  Dim NextTop As Integer = Self.ResultSpacing - Self.mScrollPosition
 		  For I As Integer = 0 To Self.mResultDicts.LastRowIndex
 		    Dim Dict As Dictionary = Self.mResultDicts(I)
-		    Dim Rect As REALbasic.Rect = Self.DrawResult(G, NextTop, Dict, Self.mMousePressIndex = I)
+		    Dim Rect As Xojo.Rect = Self.DrawResult(G, NextTop, Dict, Self.mMousePressIndex = I)
 		    If Rect <> Nil Then
 		      Self.mResultRects(I) = Rect
 		      NextTop = Rect.Bottom + Self.ResultSpacing
@@ -469,7 +435,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  Dim Point As New REALbasic.Point(X, Y)
+		  Dim Point As New Xojo.Point(X, Y)
 		  
 		  Self.mMouseDownIndex = -1
 		  For I As Integer = 0 To Self.mResultRects.LastRowIndex
@@ -491,8 +457,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim Point As New REALbasic.Point(X, Y)
-		  Dim Rect As REALbasic.Rect = Self.mResultRects(Self.mMouseDownIndex)
+		  Dim Point As New Xojo.Point(X, Y)
+		  Dim Rect As Xojo.Rect = Self.mResultRects(Self.mMouseDownIndex)
 		  If Rect.Contains(Point) Then
 		    If Self.mMousePressIndex <> Self.mMouseDownIndex Then
 		      Self.mMousePressIndex = Self.mMouseDownIndex
@@ -512,8 +478,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim Point As New REALbasic.Point(X, Y)
-		  Dim Rect As REALbasic.Rect = Self.mResultRects(Self.mMouseDownIndex)
+		  Dim Point As New Xojo.Point(X, Y)
+		  Dim Rect As Xojo.Rect = Self.mResultRects(Self.mMouseDownIndex)
 		  If Rect.Contains(Point) Then
 		    Self.SelectDict(Self.mResultDicts(Self.mMouseDownIndex))
 		  End If
@@ -525,68 +491,12 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=false
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=false
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=false
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Tooltip"
@@ -618,7 +528,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

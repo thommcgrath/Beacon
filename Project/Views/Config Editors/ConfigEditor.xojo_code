@@ -185,62 +185,6 @@ Inherits BeaconSubview
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="AutoDeactivate"
-			Visible=false
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HelpTag"
-			Visible=false
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="UseFocusRing"
-			Visible=false
-			Group="Appearance"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="BackColor"
-			Visible=false
-			Group="Background"
-			InitialValue="&hFFFFFF"
-			Type="Color"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HasBackColor"
-			Visible=false
-			Group="Background"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AcceptFocus"
-			Visible=false
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AcceptTabs"
-			Visible=false
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="EraseBackground"
 			Visible=false
 			Group="Behavior"
@@ -278,7 +222,7 @@ Inherits BeaconSubview
 			Group="Background"
 			InitialValue="&hFFFFFF"
 			Type="Color"
-			EditorType=""
+			EditorType="Color"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasBackgroundColor"

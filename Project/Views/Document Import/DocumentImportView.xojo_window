@@ -2,20 +2,13 @@
 Begin ContainerControl DocumentImportView
    AcceptFocus     =   False
    AcceptTabs      =   True
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
-   Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   HasBackgroundColor=   False
    Height          =   456
    HelpTag         =   ""
    InitialParent   =   ""
@@ -27,14 +20,12 @@ Begin ContainerControl DocumentImportView
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
-   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
    Width           =   600
    Begin PagePanel Views
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   456
@@ -50,24 +41,19 @@ Begin ContainerControl DocumentImportView
       PanelCount      =   6
       Panels          =   ""
       Scope           =   2
-      SelectedPanelIndex=   4
       TabIndex        =   0
       TabPanelIndex   =   0
-      Tooltip         =   ""
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   4
       Visible         =   True
       Width           =   600
       Begin RadioButton SourceRadio
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          Caption         =   "Nitrado"
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   0
@@ -86,7 +72,6 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Underline       =   False
@@ -95,15 +80,11 @@ Begin ContainerControl DocumentImportView
          Width           =   560
       End
       Begin Label ImportSourceMessage
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -123,28 +104,21 @@ Begin ContainerControl DocumentImportView
          TabStop         =   True
          Text            =   "Select Import Source"
          TextAlign       =   "0"
-         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
-         Value           =   "Select Import Source"
          Visible         =   True
          Width           =   560
       End
       Begin RadioButton SourceRadio
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          Caption         =   "Server With FTP Access"
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   1
@@ -163,7 +137,6 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   84
          Transparent     =   False
          Underline       =   False
@@ -172,14 +145,10 @@ Begin ContainerControl DocumentImportView
          Width           =   560
       End
       Begin RadioButton SourceRadio
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          Caption         =   "Single Player, Local Files, or Copy + Paste"
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   2
@@ -198,7 +167,6 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   116
          Transparent     =   False
          Underline       =   False
@@ -207,7 +175,6 @@ Begin ContainerControl DocumentImportView
          Width           =   560
       End
       Begin UITweaks.ResizedPushButton SourceCancelButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -215,9 +182,6 @@ Begin ContainerControl DocumentImportView
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -229,7 +193,6 @@ Begin ContainerControl DocumentImportView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   4
          TabPanelIndex   =   1
@@ -237,7 +200,6 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   180
          Transparent     =   False
          Underline       =   False
@@ -245,7 +207,6 @@ Begin ContainerControl DocumentImportView
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton SourceActionButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -253,9 +214,6 @@ Begin ContainerControl DocumentImportView
          Caption         =   "Continue"
          Default         =   False
          Enabled         =   False
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -267,7 +225,6 @@ Begin ContainerControl DocumentImportView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   5
          TabPanelIndex   =   1
@@ -275,7 +232,6 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   180
          Transparent     =   False
          Underline       =   False
@@ -285,21 +241,16 @@ Begin ContainerControl DocumentImportView
       Begin NitradoDiscoveryView NitradoDiscoveryView1
          AcceptFocus     =   False
          AcceptTabs      =   True
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         HasBackgroundColor=   False
          Height          =   456
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -311,7 +262,6 @@ Begin ContainerControl DocumentImportView
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -321,21 +271,16 @@ Begin ContainerControl DocumentImportView
       Begin FTPDiscoveryView FTPDiscoveryView1
          AcceptFocus     =   False
          AcceptTabs      =   True
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         HasBackgroundColor=   False
          Height          =   456
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -347,7 +292,6 @@ Begin ContainerControl DocumentImportView
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -357,21 +301,16 @@ Begin ContainerControl DocumentImportView
       Begin LocalDiscoveryView LocalDiscoveryView1
          AcceptFocus     =   False
          AcceptTabs      =   True
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         HasBackgroundColor=   False
          Height          =   456
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -383,7 +322,6 @@ Begin ContainerControl DocumentImportView
          TabIndex        =   0
          TabPanelIndex   =   4
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -391,15 +329,11 @@ Begin ContainerControl DocumentImportView
          Width           =   600
       End
       Begin Label StatusMessageLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -419,21 +353,17 @@ Begin ContainerControl DocumentImportView
          TabStop         =   True
          Text            =   "Import Status"
          TextAlign       =   "0"
-         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          Underline       =   False
-         Value           =   "Import Status"
          Visible         =   True
          Width           =   560
       End
       Begin UITweaks.ResizedPushButton StatusCancelButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -441,9 +371,6 @@ Begin ContainerControl DocumentImportView
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -455,7 +382,6 @@ Begin ContainerControl DocumentImportView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   5
@@ -463,7 +389,6 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   416
          Transparent     =   False
          Underline       =   False
@@ -471,13 +396,6 @@ Begin ContainerControl DocumentImportView
          Width           =   80
       End
       Begin BeaconListbox StatusList
-         AllowAutoDeactivate=   True
-         AllowAutoHideScrollbars=   True
-         AllowExpandableRows=   False
-         AllowFocusRing  =   True
-         AllowResizableColumns=   False
-         AllowRowDragging=   False
-         AllowRowReordering=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -488,22 +406,12 @@ Begin ContainerControl DocumentImportView
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   40
-         DropIndicatorVisible=   False
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          GridLinesHorizontal=   "0"
-         GridLinesHorizontalStyle=   "0"
          GridLinesVertical=   "0"
-         GridLinesVerticalStyle=   "0"
-         HasBorder       =   True
-         HasHeader       =   False
          HasHeading      =   False
-         HasHorizontalScrollbar=   False
-         HasVerticalScrollbar=   True
          HeadingIndex    =   -1
          Height          =   336
          HelpTag         =   ""
@@ -519,7 +427,6 @@ Begin ContainerControl DocumentImportView
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowSelectionType=   "0"
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
@@ -532,7 +439,6 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   60
          Transparent     =   False
          Underline       =   False
@@ -543,7 +449,6 @@ Begin ContainerControl DocumentImportView
          _ScrollWidth    =   -1
       End
       Begin UITweaks.ResizedPushButton StatusActionButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -551,9 +456,6 @@ Begin ContainerControl DocumentImportView
          Caption         =   "Import"
          Default         =   False
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -565,7 +467,6 @@ Begin ContainerControl DocumentImportView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   5
@@ -573,7 +474,6 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   416
          Transparent     =   False
          Underline       =   False
@@ -581,14 +481,10 @@ Begin ContainerControl DocumentImportView
          Width           =   80
       End
       Begin RadioButton SourceRadio
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          Caption         =   "Other Beacon document"
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   3
@@ -607,7 +503,6 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   148
          Transparent     =   False
          Underline       =   False
@@ -616,15 +511,11 @@ Begin ContainerControl DocumentImportView
          Width           =   560
       End
       Begin Label OtherDocsMessageLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -644,21 +535,17 @@ Begin ContainerControl DocumentImportView
          TabStop         =   True
          Text            =   "Import from Other Documents"
          TextAlign       =   "0"
-         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   20
          Transparent     =   False
          Underline       =   False
-         Value           =   "Import from Other Documents"
          Visible         =   True
          Width           =   560
       End
       Begin UITweaks.ResizedPushButton OtherDocsActionButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -666,9 +553,6 @@ Begin ContainerControl DocumentImportView
          Caption         =   "Continue"
          Default         =   True
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -680,7 +564,6 @@ Begin ContainerControl DocumentImportView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   6
@@ -688,7 +571,6 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   416
          Transparent     =   False
          Underline       =   False
@@ -696,7 +578,6 @@ Begin ContainerControl DocumentImportView
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton OtherDocsCancelButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -704,9 +585,6 @@ Begin ContainerControl DocumentImportView
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -718,7 +596,6 @@ Begin ContainerControl DocumentImportView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   6
@@ -726,7 +603,6 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   416
          Transparent     =   False
          Underline       =   False
@@ -734,13 +610,6 @@ Begin ContainerControl DocumentImportView
          Width           =   80
       End
       Begin BeaconListbox OtherDocsList
-         AllowAutoDeactivate=   True
-         AllowAutoHideScrollbars=   True
-         AllowExpandableRows=   False
-         AllowFocusRing  =   True
-         AllowResizableColumns=   False
-         AllowRowDragging=   False
-         AllowRowReordering=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -751,22 +620,12 @@ Begin ContainerControl DocumentImportView
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   26
-         DropIndicatorVisible=   False
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          GridLinesHorizontal=   "0"
-         GridLinesHorizontalStyle=   "0"
          GridLinesVertical=   "0"
-         GridLinesVerticalStyle=   "0"
-         HasBorder       =   True
-         HasHeader       =   False
          HasHeading      =   False
-         HasHorizontalScrollbar=   False
-         HasVerticalScrollbar=   True
          HeadingIndex    =   1
          Height          =   336
          HelpTag         =   ""
@@ -782,7 +641,6 @@ Begin ContainerControl DocumentImportView
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowSelectionType=   "0"
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
@@ -795,7 +653,6 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   60
          Transparent     =   False
          Underline       =   False
@@ -807,11 +664,11 @@ Begin ContainerControl DocumentImportView
       End
    End
    Begin Timer DiscoveryWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   "0"
       Period          =   100
-      RunMode         =   "0"
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -1386,62 +1243,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=false
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=false
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=false
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=false
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
@@ -1479,7 +1280,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

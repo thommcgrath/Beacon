@@ -2,20 +2,13 @@
 Begin BeaconSubview PresetEditorView
    AcceptFocus     =   False
    AcceptTabs      =   True
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
-   Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   HasBackgroundColor=   False
    Height          =   556
    HelpTag         =   ""
    InitialParent   =   ""
@@ -27,7 +20,6 @@ Begin BeaconSubview PresetEditorView
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
-   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    UseFocusRing    =   False
@@ -36,10 +28,6 @@ Begin BeaconSubview PresetEditorView
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   ""
@@ -62,7 +50,6 @@ Begin BeaconSubview PresetEditorView
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   10
       Transparent     =   False
       UseFocusRing    =   True
@@ -72,10 +59,6 @@ Begin BeaconSubview PresetEditorView
    Begin FadedSeparator HeaderSeparator
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -95,7 +78,6 @@ Begin BeaconSubview PresetEditorView
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   60
       Transparent     =   True
       UseFocusRing    =   True
@@ -105,10 +87,6 @@ Begin BeaconSubview PresetEditorView
    Begin Shelf ViewSelector
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -131,7 +109,6 @@ Begin BeaconSubview PresetEditorView
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -139,7 +116,6 @@ Begin BeaconSubview PresetEditorView
       Width           =   340
    End
    Begin PagePanel Pages
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   495
@@ -155,11 +131,9 @@ Begin BeaconSubview PresetEditorView
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
-      SelectedPanelIndex=   1
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
+      TabStop         =   "True"
       Top             =   61
       Transparent     =   False
       Value           =   1
@@ -182,20 +156,13 @@ Begin BeaconSubview PresetEditorView
          SelectionStyle  =   "0"
          TabIndex        =   0
          TabPanelIndex   =   2
-         TabStop         =   True
+         TabStop         =   "True"
          Top             =   81
          Transparent     =   False
          Visible         =   True
          Width           =   660
       End
       Begin BeaconListbox ContentsList
-         AllowAutoDeactivate=   True
-         AllowAutoHideScrollbars=   True
-         AllowExpandableRows=   False
-         AllowFocusRing  =   True
-         AllowResizableColumns=   False
-         AllowRowDragging=   False
-         AllowRowReordering=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -206,22 +173,12 @@ Begin BeaconSubview PresetEditorView
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
-         DropIndicatorVisible=   False
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         FontName        =   "SmallSystem"
-         FontSize        =   0.0
-         FontUnit        =   0
          GridLinesHorizontal=   "0"
-         GridLinesHorizontalStyle=   "0"
          GridLinesVertical=   "0"
-         GridLinesVerticalStyle=   "0"
-         HasBorder       =   True
-         HasHeader       =   True
          HasHeading      =   True
-         HasHorizontalScrollbar=   False
-         HasVerticalScrollbar=   True
          HeadingIndex    =   "#ColumnDescription"
          Height          =   379
          HelpTag         =   ""
@@ -237,7 +194,6 @@ Begin BeaconSubview PresetEditorView
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowSelectionType=   "1"
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
@@ -250,7 +206,6 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   125
          Transparent     =   True
          Underline       =   False
@@ -261,15 +216,11 @@ Begin BeaconSubview PresetEditorView
          _ScrollWidth    =   -1
       End
       Begin Label LockExplanationLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "SmallSystem"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -289,22 +240,18 @@ Begin BeaconSubview PresetEditorView
          TabStop         =   True
          Text            =   "Checking the box next to a quantity, quality, or blueprint chance will allow the values to be adjusted by modifiers."
          TextAlign       =   "1"
-         TextAlignment   =   "2"
          TextColor       =   &c00000000
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   516
          Transparent     =   True
          Underline       =   False
-         Value           =   "Checking the box next to a quantity, quality, or blueprint chance will allow the values to be adjusted by modifiers."
          Visible         =   True
          Width           =   700
       End
       Begin UpDownArrows MaxItemsStepper
          AcceptFocus     =   False
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Enabled         =   True
          Height          =   23
@@ -321,7 +268,6 @@ Begin BeaconSubview PresetEditorView
          TabIndex        =   9
          TabPanelIndex   =   1
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   183
          Transparent     =   False
          Visible         =   True
@@ -329,7 +275,6 @@ Begin BeaconSubview PresetEditorView
       End
       Begin UpDownArrows MinItemsStepper
          AcceptFocus     =   False
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Enabled         =   True
          Height          =   23
@@ -346,7 +291,6 @@ Begin BeaconSubview PresetEditorView
          TabIndex        =   6
          TabPanelIndex   =   1
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   149
          Transparent     =   False
          Visible         =   True
@@ -355,28 +299,18 @@ Begin BeaconSubview PresetEditorView
       Begin UITweaks.ResizedTextField MaxItemsField
          AcceptTabs      =   False
          Alignment       =   "2"
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
-         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Format          =   ""
-         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
-         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -388,7 +322,6 @@ Begin BeaconSubview PresetEditorView
          LockRight       =   False
          LockTop         =   True
          Mask            =   ""
-         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -396,31 +329,23 @@ Begin BeaconSubview PresetEditorView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
-         TextAlignment   =   "2"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   183
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
-         ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel MaxItemsLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -440,44 +365,31 @@ Begin BeaconSubview PresetEditorView
          TabStop         =   True
          Text            =   "Max Items:"
          TextAlign       =   "2"
-         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   183
          Transparent     =   True
          Underline       =   False
-         Value           =   "Max Items:"
          Visible         =   True
          Width           =   100
       End
       Begin UITweaks.ResizedTextField MinItemsField
          AcceptTabs      =   False
          Alignment       =   "2"
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
-         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Format          =   ""
-         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
-         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -489,7 +401,6 @@ Begin BeaconSubview PresetEditorView
          LockRight       =   False
          LockTop         =   True
          Mask            =   ""
-         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -497,31 +408,23 @@ Begin BeaconSubview PresetEditorView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
-         TextAlignment   =   "2"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   149
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
-         ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   60
       End
       Begin UITweaks.ResizedLabel MinItemsLabels
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -541,29 +444,22 @@ Begin BeaconSubview PresetEditorView
          TabStop         =   True
          Text            =   "Min Items:"
          TextAlign       =   "2"
-         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   149
          Transparent     =   True
          Underline       =   False
-         Value           =   "Min Items:"
          Visible         =   True
          Width           =   100
       End
       Begin Label GroupingLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -583,29 +479,22 @@ Begin BeaconSubview PresetEditorView
          TabStop         =   True
          Text            =   "Grouping:"
          TextAlign       =   "2"
-         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   115
          Transparent     =   True
          Underline       =   False
-         Value           =   "Grouping:"
          Visible         =   True
          Width           =   100
       End
       Begin Label NameLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   22
          HelpTag         =   ""
          Index           =   -2147483648
@@ -625,44 +514,31 @@ Begin BeaconSubview PresetEditorView
          TabStop         =   True
          Text            =   "Name:"
          TextAlign       =   "2"
-         TextAlignment   =   "3"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   81
          Transparent     =   True
          Underline       =   False
-         Value           =   "Name:"
          Visible         =   True
          Width           =   100
       End
       Begin UITweaks.ResizedTextField GroupingField
          AcceptTabs      =   False
          Alignment       =   "0"
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
-         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Format          =   ""
-         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
-         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -674,7 +550,6 @@ Begin BeaconSubview PresetEditorView
          LockRight       =   True
          LockTop         =   True
          Mask            =   ""
-         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -682,46 +557,32 @@ Begin BeaconSubview PresetEditorView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
-         TextAlignment   =   "0"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   115
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
-         ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   588
       End
       Begin UITweaks.ResizedTextField NameField
          AcceptTabs      =   False
          Alignment       =   "0"
-         AllowAutoDeactivate=   True
-         AllowFocusRing  =   True
-         AllowSpellChecking=   False
-         AllowTabs       =   False
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
-         BackgroundColor =   &cFFFFFF00
          Bold            =   False
          Border          =   True
          CueText         =   ""
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Format          =   ""
-         HasBorder       =   True
          Height          =   22
          HelpTag         =   ""
-         Hint            =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -733,7 +594,6 @@ Begin BeaconSubview PresetEditorView
          LockRight       =   True
          LockTop         =   True
          Mask            =   ""
-         MaximumCharactersAllowed=   0
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -741,29 +601,18 @@ Begin BeaconSubview PresetEditorView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
-         TextAlignment   =   "0"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   81
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
-         ValidationMask  =   ""
-         Value           =   ""
          Visible         =   True
          Width           =   588
       End
       Begin BeaconListbox ModifiersList
-         AllowAutoDeactivate=   True
-         AllowAutoHideScrollbars=   True
-         AllowExpandableRows=   False
-         AllowFocusRing  =   True
-         AllowResizableColumns=   False
-         AllowRowDragging=   False
-         AllowRowReordering=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -774,22 +623,12 @@ Begin BeaconSubview PresetEditorView
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   -1
-         DropIndicatorVisible=   False
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          GridLinesHorizontal=   "0"
-         GridLinesHorizontalStyle=   "0"
          GridLinesVertical=   "0"
-         GridLinesVerticalStyle=   "0"
-         HasBorder       =   True
-         HasHeader       =   True
          HasHeading      =   True
-         HasHorizontalScrollbar=   False
-         HasVerticalScrollbar=   True
          HeadingIndex    =   -1
          Height          =   415
          HelpTag         =   ""
@@ -805,7 +644,6 @@ Begin BeaconSubview PresetEditorView
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowSelectionType=   "1"
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
@@ -818,7 +656,6 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   121
          Transparent     =   False
          Underline       =   False
@@ -829,7 +666,6 @@ Begin BeaconSubview PresetEditorView
          _ScrollWidth    =   -1
       End
       Begin UITweaks.ResizedPushButton AddModifierButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -837,9 +673,6 @@ Begin BeaconSubview PresetEditorView
          Caption         =   "Add Modifier"
          Default         =   False
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -851,7 +684,6 @@ Begin BeaconSubview PresetEditorView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   3
@@ -859,7 +691,6 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   81
          Transparent     =   False
          Underline       =   False
@@ -867,7 +698,6 @@ Begin BeaconSubview PresetEditorView
          Width           =   114
       End
       Begin UITweaks.ResizedPushButton EditModifierButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -875,9 +705,6 @@ Begin BeaconSubview PresetEditorView
          Caption         =   "Edit"
          Default         =   False
          Enabled         =   False
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -889,7 +716,6 @@ Begin BeaconSubview PresetEditorView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
@@ -897,7 +723,6 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   81
          Transparent     =   False
          Underline       =   False
@@ -905,7 +730,6 @@ Begin BeaconSubview PresetEditorView
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton DeleteModifierButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -913,9 +737,6 @@ Begin BeaconSubview PresetEditorView
          Caption         =   "Delete"
          Default         =   False
          Enabled         =   False
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -927,7 +748,6 @@ Begin BeaconSubview PresetEditorView
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   3
@@ -935,7 +755,6 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   81
          Transparent     =   False
          Underline       =   False
@@ -1442,8 +1261,8 @@ End
 #tag EndEvents
 #tag Events MapSelector
 	#tag Event
-		Sub Pressed(segmentedIndex as integer)
-		  #Pragma Unused segmentedIndex
+		Sub Pressed(segmentIndex as integer)
+		  #Pragma Unused segmentIndex
 		  
 		  If Self.mUpdating = True Then
 		    Return
@@ -1907,62 +1726,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=false
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=false
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=false
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=false
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
@@ -2000,7 +1763,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

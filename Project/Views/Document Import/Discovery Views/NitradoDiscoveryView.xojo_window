@@ -2,20 +2,13 @@
 Begin DiscoveryView NitradoDiscoveryView
    AcceptFocus     =   False
    AcceptTabs      =   True
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
-   Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   HasBackgroundColor=   False
    Height          =   400
    HelpTag         =   ""
    InitialParent   =   ""
@@ -27,14 +20,12 @@ Begin DiscoveryView NitradoDiscoveryView
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
-   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
    Width           =   600
    Begin PagePanel PagePanel1
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   400
@@ -50,18 +41,15 @@ Begin DiscoveryView NitradoDiscoveryView
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
-      SelectedPanelIndex=   0
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
+      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   0
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton FindingCancelButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -69,9 +57,6 @@ Begin DiscoveryView NitradoDiscoveryView
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -83,7 +68,6 @@ Begin DiscoveryView NitradoDiscoveryView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   1
@@ -91,7 +75,6 @@ Begin DiscoveryView NitradoDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -99,15 +82,11 @@ Begin DiscoveryView NitradoDiscoveryView
          Width           =   80
       End
       Begin Label FindingLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -127,21 +106,17 @@ Begin DiscoveryView NitradoDiscoveryView
          TabStop         =   True
          Text            =   "Finding Servers…"
          TextAlign       =   "0"
-         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   190
          Transparent     =   True
          Underline       =   False
-         Value           =   "Finding Servers…"
          Visible         =   True
          Width           =   560
       End
       Begin ProgressBar FindingProgress
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Enabled         =   True
          Height          =   20
@@ -156,12 +131,10 @@ Begin DiscoveryView NitradoDiscoveryView
          LockRight       =   True
          LockTop         =   True
          Maximum         =   0
-         MaximumValue    =   0
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
+         TabStop         =   "True"
          Top             =   222
          Transparent     =   False
          Value           =   0.0
@@ -169,13 +142,6 @@ Begin DiscoveryView NitradoDiscoveryView
          Width           =   560
       End
       Begin BeaconListbox List
-         AllowAutoDeactivate=   True
-         AllowAutoHideScrollbars=   True
-         AllowExpandableRows=   False
-         AllowFocusRing  =   True
-         AllowResizableColumns=   False
-         AllowRowDragging=   False
-         AllowRowReordering=   False
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -186,22 +152,12 @@ Begin DiscoveryView NitradoDiscoveryView
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
-         DropIndicatorVisible=   False
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         FontName        =   "SmallSystem"
-         FontSize        =   0.0
-         FontUnit        =   0
          GridLinesHorizontal=   "0"
-         GridLinesHorizontalStyle=   "0"
          GridLinesVertical=   "0"
-         GridLinesVerticalStyle=   "0"
-         HasBorder       =   True
-         HasHeader       =   True
          HasHeading      =   True
-         HasHorizontalScrollbar=   False
-         HasVerticalScrollbar=   True
          HeadingIndex    =   -1
          Height          =   296
          HelpTag         =   ""
@@ -217,7 +173,6 @@ Begin DiscoveryView NitradoDiscoveryView
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowSelectionType=   "0"
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
@@ -230,7 +185,6 @@ Begin DiscoveryView NitradoDiscoveryView
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   52
          Transparent     =   False
          Underline       =   False
@@ -241,15 +195,11 @@ Begin DiscoveryView NitradoDiscoveryView
          _ScrollWidth    =   -1
       End
       Begin Label ListMessageLabel
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -269,21 +219,17 @@ Begin DiscoveryView NitradoDiscoveryView
          TabStop         =   True
          Text            =   "Select Servers"
          TextAlign       =   "0"
-         TextAlignment   =   "1"
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   20
          Transparent     =   True
          Underline       =   False
-         Value           =   "Select Servers"
          Visible         =   True
          Width           =   560
       End
       Begin UITweaks.ResizedPushButton ListCancelButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -291,9 +237,6 @@ Begin DiscoveryView NitradoDiscoveryView
          Caption         =   "Cancel"
          Default         =   False
          Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -305,7 +248,6 @@ Begin DiscoveryView NitradoDiscoveryView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   2
@@ -313,7 +255,6 @@ Begin DiscoveryView NitradoDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -321,7 +262,6 @@ Begin DiscoveryView NitradoDiscoveryView
          Width           =   80
       End
       Begin UITweaks.ResizedPushButton ListActionButton
-         AllowAutoDeactivate=   True
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -329,9 +269,6 @@ Begin DiscoveryView NitradoDiscoveryView
          Caption         =   "Next"
          Default         =   True
          Enabled         =   False
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -343,7 +280,6 @@ Begin DiscoveryView NitradoDiscoveryView
          LockLeft        =   False
          LockRight       =   True
          LockTop         =   False
-         MacButtonStyle  =   "0"
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   2
@@ -351,7 +287,6 @@ Begin DiscoveryView NitradoDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Tooltip         =   ""
          Top             =   360
          Transparent     =   False
          Underline       =   False
@@ -373,7 +308,6 @@ Begin DiscoveryView NitradoDiscoveryView
       LockedInPosition=   False
       Mode            =   "0"
       Period          =   1000
-      RunMode         =   "0"
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -638,62 +572,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=false
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=false
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=false
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=false
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
@@ -731,7 +609,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

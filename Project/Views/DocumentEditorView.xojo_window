@@ -2,20 +2,13 @@
 Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,NotificationKit.Receiver
    AcceptFocus     =   False
    AcceptTabs      =   True
-   AllowAutoDeactivate=   True
-   AllowFocus      =   False
-   AllowFocusRing  =   False
-   AllowTabs       =   True
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   BackgroundColor =   &cFFFFFF00
-   Compatibility   =   ""
    DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   HasBackgroundColor=   False
    Height          =   528
    HelpTag         =   ""
    InitialParent   =   ""
@@ -27,14 +20,12 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
-   Tooltip         =   ""
    Top             =   0
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
    Width           =   858
    Begin PagePanel PagePanel1
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   487
@@ -50,11 +41,9 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
-      SelectedPanelIndex=   1
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
+      TabStop         =   "True"
       Top             =   41
       Transparent     =   False
       Value           =   1
@@ -63,10 +52,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Begin LogoFillCanvas LogoFillCanvas1
          AcceptFocus     =   False
          AcceptTabs      =   False
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "Select A Config To Begin"
@@ -87,7 +72,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   41
          Transparent     =   True
          UseFocusRing    =   True
@@ -97,10 +81,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Begin Canvas OmniNoticeBanner
          AcceptFocus     =   False
          AcceptTabs      =   False
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
          AutoDeactivate  =   True
          Backdrop        =   0
          DoubleBuffer    =   False
@@ -119,7 +99,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         Tooltip         =   ""
          Top             =   41
          Transparent     =   True
          UseFocusRing    =   True
@@ -130,10 +109,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       DoubleBuffer    =   False
@@ -153,7 +128,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
@@ -163,10 +137,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
    Begin BeaconToolbar BeaconToolbar1
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   ""
@@ -189,7 +159,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Tooltip         =   ""
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
@@ -199,10 +168,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
    Begin HelpDrawer HelpDrawer
       AcceptFocus     =   False
       AcceptTabs      =   False
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
       AutoDeactivate  =   True
       Backdrop        =   0
       Body            =   ""
@@ -226,7 +191,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       TabPanelIndex   =   0
       TabStop         =   True
       Title           =   ""
-      Tooltip         =   ""
       Top             =   41
       Transparent     =   True
       UseFocusRing    =   True
@@ -239,20 +203,15 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       LockedInPosition=   False
       Mode            =   "2"
       Period          =   60000
-      RunMode         =   "2"
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin UITweaks.ResizedPopupMenu ConfigMenu
-      AllowAutoDeactivate=   True
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -267,14 +226,12 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      SelectedRowIndex=   0
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Tooltip         =   ""
       Top             =   10
       Transparent     =   False
       Underline       =   False
@@ -334,7 +291,7 @@ End
 		    Dim DocumentID As String = Self.mController.Document.DocumentID
 		    Dim ConfigName As String = Preferences.LastUsedConfigName(DocumentID)
 		    For I As Integer = 0 To Self.ConfigMenu.RowCount - 1
-		      Dim Tag As Variant = Self.ConfigMenu.RowTag(I)
+		      Dim Tag As Variant = Self.ConfigMenu.RowTagAt(I)
 		      If (Tag.Type = Variant.TypeText And Tag.StringValue = ConfigName) Or (Tag.Type = Variant.TypeString And Tag.StringValue = ConfigName) Then
 		        Self.ConfigMenu.SelectedRowIndex = I
 		        Exit For I
@@ -569,7 +526,7 @@ End
 		  
 		  Dim ConfigName As String = Issue.ConfigName
 		  For I As Integer = 0 To Self.ConfigMenu.RowCount - 1
-		    If Self.ConfigMenu.RowTag(I) = ConfigName Then
+		    If Self.ConfigMenu.RowTagAt(I) = ConfigName Then
 		      Self.ConfigMenu.SelectedRowIndex = I
 		      Exit For I
 		    End If
@@ -1065,7 +1022,7 @@ End
 		Sub SelectionChanged()
 		  Dim Tag As Variant
 		  If Me.SelectedRowIndex > -1 Then
-		    Tag = Me.RowTag(Me.SelectedRowIndex)
+		    Tag = Me.RowTagAt(Me.SelectedRowIndex)
 		  End If
 		  Dim NewPanel As ConfigEditor
 		  Dim Embed As Boolean
@@ -1162,62 +1119,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="AutoDeactivate"
-		Visible=false
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HelpTag"
-		Visible=false
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="UseFocusRing"
-		Visible=false
-		Group="Appearance"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="BackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=false
-		Group="Background"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptFocus"
-		Visible=false
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AcceptTabs"
-		Visible=false
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
@@ -1255,7 +1156,7 @@ End
 		Group="Background"
 		InitialValue="&hFFFFFF"
 		Type="Color"
-		EditorType=""
+		EditorType="Color"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="HasBackgroundColor"

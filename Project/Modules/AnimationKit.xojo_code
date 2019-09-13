@@ -22,7 +22,7 @@ Protected Module AnimationKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI)
-		Sub Animate(Extends Target As RectControl, Destination As REALbasic.Rect, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
+		Sub Animate(Extends Target As RectControl, Destination As Xojo.Rect, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
 		  Dim Task As New AnimationKit.MoveTask(Target)
 		  Task.DurationInSeconds = DurationInSeconds
 		  Task.SetDestination(Destination)
@@ -34,31 +34,7 @@ Protected Module AnimationKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI)
-		Sub Animate(Extends Target As RectControl, Destination As Rect, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
-		  Dim Task As New AnimationKit.MoveTask(Target)
-		  Task.DurationInSeconds = DurationInSeconds
-		  Task.SetDestination(Destination)
-		  If Curve <> Nil Then
-		    Task.Curve = Curve
-		  End If
-		  Task.Run
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI)
-		Sub Animate(Extends Target As Window, Destination As REALbasic.Rect, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
-		  Dim Task As New AnimationKit.MoveTask(Target)
-		  Task.DurationInSeconds = DurationInSeconds
-		  Task.SetDestination(Destination)
-		  If Curve <> Nil Then
-		    Task.Curve = Curve
-		  End If
-		  Task.Run
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI)
-		Sub Animate(Extends Target As Window, Destination As Rect, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
+		Sub Animate(Extends Target As Window, Destination As Xojo.Rect, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
 		  Dim Task As New AnimationKit.MoveTask(Target)
 		  Task.DurationInSeconds = DurationInSeconds
 		  Task.SetDestination(Destination)
@@ -70,7 +46,7 @@ Protected Module AnimationKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function CloneRect(Source As Rect) As Rect
+		Private Function CloneRect(Source As Xojo.Rect) As Xojo.Rect
 		  Return New Rect(Source.Left, Source.Top, Source.Width, Source.Height)
 		End Function
 	#tag EndMethod

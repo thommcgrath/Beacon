@@ -136,7 +136,7 @@ Implements Iterable
 		    End If
 		  Next
 		  
-		  Self.mBounds = New REALbasic.Rect(Left, Top, Right - Left, Bottom - Top)
+		  Self.mBounds = New Xojo.Rect(Left, Top, Right - Left, Bottom - Top)
 		End Sub
 	#tag EndMethod
 
@@ -181,7 +181,7 @@ Implements Iterable
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mBounds As REALbasic.Rect
+		Private mBounds As Xojo.Rect
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

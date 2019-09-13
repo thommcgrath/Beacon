@@ -29,139 +29,11 @@ Inherits TextField
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="AutoDeactivate"
-			Visible=false
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="BackColor"
-			Visible=false
-			Group="Appearance"
-			InitialValue="&hFFFFFF"
-			Type="Color"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Border"
 			Visible=false
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HelpTag"
-			Visible=false
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="UseFocusRing"
-			Visible=false
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextFont"
-			Visible=false
-			Group="Font"
-			InitialValue="System"
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextSize"
-			Visible=false
-			Group="Font"
-			InitialValue="0"
-			Type="Single"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextUnit"
-			Visible=true
-			Group="Font"
-			InitialValue="0"
-			Type="FontUnits"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Default"
-				"1 - Pixel"
-				"2 - Point"
-				"3 - Inch"
-				"4 - Millimeter"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="CueText"
-			Visible=false
-			Group="Initial State"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Text"
-			Visible=false
-			Group="Initial State"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-			#tag EnumValues
-				"MultiLineEditor - "
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AcceptTabs"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Alignment"
-			Visible=false
-			Group="Behavior"
-			InitialValue="0"
-			Type="Integer"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Default"
-				"1 - Left"
-				"2 - Center"
-				"3 - Right"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AutomaticallyCheckSpelling"
-			Visible=false
-			Group="Behavior"
-			InitialValue="False"
-			Type="boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LimitText"
-			Visible=false
-			Group="Behavior"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Mask"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -186,7 +58,7 @@ Inherits TextField
 			Group="Appearance"
 			InitialValue="&hFFFFFF"
 			Type="Color"
-			EditorType=""
+			EditorType="Color"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasBorder"
@@ -463,7 +335,7 @@ Inherits TextField
 			Group="Appearance"
 			InitialValue="&h000000"
 			Type="Color"
-			EditorType=""
+			EditorType="Color"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
