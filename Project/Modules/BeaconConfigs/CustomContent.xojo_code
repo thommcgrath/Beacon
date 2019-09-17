@@ -104,6 +104,9 @@ Inherits Beacon.ConfigGroup
 		    End If
 		    
 		    Dim Encrypted As String = Document.Encrypt(Input.ConvertEncoding(Encodings.UTF8))
+		    If Self.mEncryptedValues = Nil Then
+		      Self.mEncryptedValues = New Dictionary
+		    End If
 		    Self.mEncryptedValues.Value(Hash) = Encrypted
 		    Return Encrypted
 		  Catch Err As RuntimeException
