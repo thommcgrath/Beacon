@@ -303,7 +303,7 @@ Implements NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function BuildVersion() As String
 		  Dim VersionString As String = Str(Self.MajorVersion, "0") + "." + Str(Self.MinorVersion, "0")
-		  If Self.BugVersion > 0 Or (Self.StageCode = Application.Final And Self.NonReleaseVersion > 0) Then
+		  If Self.BugVersion > 0 Or (Self.StageCode = Application.Final And Self.NonReleaseVersion > 0) Or Self.StageCode <> Application.Final Then
 		    VersionString = VersionString + "." + Str(Self.BugVersion, "0")
 		  End If
 		  Select Case Self.StageCode
