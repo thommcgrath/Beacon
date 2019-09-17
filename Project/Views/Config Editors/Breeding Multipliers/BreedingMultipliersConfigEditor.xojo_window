@@ -1435,6 +1435,17 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function ParseDouble(Input As String, ByRef Value As Double) As Boolean
+		  If IsNumeric(Input) Then
+		    Value = CDbl(Input)
+		    Return True
+		  Else
+		    Return False
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateStats()
 		  Dim CuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period") * Self.Config(False).BabyCuddleIntervalMultiplier
 		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.StringList)
@@ -1515,8 +1526,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double = CDbl(Me.Value)
-		  If Value = 0 Then
+		  Dim Value As Double
+		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
 		  
@@ -1535,8 +1546,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double = CDbl(Me.Value)
-		  If Value = 0 Then
+		  Dim Value As Double
+		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
 		  
@@ -1555,8 +1566,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double = CDbl(Me.Value)
-		  If Value = 0 Then
+		  Dim Value As Double
+		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
 		  
@@ -1574,8 +1585,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double = CDbl(Me.Value)
-		  If Value = 0 Then
+		  Dim Value As Double
+		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
 		  
@@ -1593,8 +1604,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double = CDbl(Me.Value)
-		  If Value = 0 Then
+		  Dim Value As Double
+		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
 		  
@@ -1613,8 +1624,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double = CDbl(Me.Value)
-		  If Value = 0 Then
+		  Dim Value As Double
+		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
 		  
@@ -1632,8 +1643,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double = CDbl(Me.Value)
-		  If Value = 0 Then
+		  Dim Value As Double
+		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
 		  
@@ -1651,8 +1662,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double = CDbl(Me.Value)
-		  If Value = 0 Then
+		  Dim Value As Double
+		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
 		  
@@ -1717,8 +1728,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double = CDbl(Me.Value)
-		  If Value = 0 Then
+		  Dim Value As Double
+		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
 		  
@@ -1736,8 +1747,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double = CDbl(Me.Value)
-		  If Value = 0 Then
+		  Dim Value As Double
+		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
 		  
