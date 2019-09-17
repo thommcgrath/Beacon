@@ -2,7 +2,7 @@
 
 APPNAME="Beacon";
 PARENT=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd );
-SOURCE="${PARENT}/../../Project/Builds - Beacon.xojo_project/OS X 64 bit";
+SOURCE="${PARENT}/../../Project/Builds - Beacon/OS X 64 bit";
 DEST="/Volumes/${APPNAME}";
 OUTPUT="${PARENT}/Output";
 
