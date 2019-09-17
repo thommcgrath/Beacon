@@ -41,7 +41,7 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Identifier As String, PublicKey As MemoryBlock, PrivateKey As MemoryBlock)
+		Private Sub Constructor(Identifier As String, PublicKey As String, PrivateKey As String)
 		  Self.mIdentifier = Identifier
 		  Self.mPublicKey = PublicKey
 		  Self.mPrivateKey = PrivateKey
