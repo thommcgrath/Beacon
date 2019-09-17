@@ -320,7 +320,7 @@ End
 		  
 		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.StringList)
 		  For Each Creature As Beacon.Creature In Creatures
-		    If Creature.IncubationTime = Nil Or Creature.MatureTime = Nil Then
+		    If Creature.IncubationTime = 0 Or Creature.MatureTime = 0 Then
 		      Continue
 		    End If
 		    
@@ -440,7 +440,7 @@ End
 		  // Get fastest maturing creature
 		  Dim FastestMature As UInt64
 		  For Each Creature As Beacon.Creature In Creatures
-		    Dim MatureSeconds As UInt64 = Creature.MatureTime.TotalSeconds / Self.mMatureSpeedMultiplier
+		    Dim MatureSeconds As UInt64 = Creature.MatureTime / Self.mMatureSpeedMultiplier
 		    If FastestMature = 0 Or MatureSeconds < FastestMature Then
 		      FastestMature = MatureSeconds
 		    End If

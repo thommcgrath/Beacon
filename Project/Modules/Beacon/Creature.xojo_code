@@ -44,12 +44,9 @@ Implements Beacon.Blueprint
 		  Self.mLabel = Source.mLabel
 		  Self.mModID = Source.mModID
 		  Self.mModName = Source.mModName
-		  If Source.mIncubationTime <> Nil Then
-		    Self.mIncubationTime = Source.mIncubationTime.Clone
-		  End If
-		  If Source.mMatureTime <> Nil Then
-		    Self.mMatureTime = Source.mMatureTime.Clone
-		  End If
+		  Self.mIncubationTime = Source.mIncubationTime
+		  Self.mMatureTime = Source.mMatureTime
+		  
 		  
 		  Redim Self.mTags(-1)
 		  For Each Tag As String In Source.mTags
@@ -59,7 +56,7 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IncubationTime() As DateInterval
+		Function IncubationTime() As UInt64
 		  Return Self.mIncubationTime
 		End Function
 	#tag EndMethod
@@ -77,7 +74,7 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MatureTime() As DateInterval
+		Function MatureTime() As UInt64
 		  Return Self.mMatureTime
 		End Function
 	#tag EndMethod
@@ -141,7 +138,7 @@ Implements Beacon.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mIncubationTime As DateInterval
+		Protected mIncubationTime As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -149,7 +146,7 @@ Implements Beacon.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mMatureTime As DateInterval
+		Protected mMatureTime As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

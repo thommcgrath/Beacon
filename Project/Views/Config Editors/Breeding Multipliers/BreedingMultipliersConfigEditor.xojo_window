@@ -1460,14 +1460,12 @@ End
 		  Dim MatureMultiplier As Double = Self.Config(False).BabyMatureSpeedMultiplier
 		  
 		  For Each Creature As Beacon.Creature In Creatures
-		    If Creature.IncubationTime = Nil Or Creature.MatureTime = Nil Then
+		    If Creature.IncubationTime = 0 Or Creature.MatureTime = 0 Then
 		      Continue
 		    End If
 		    
-		    Dim IncubationPeriod As DateInterval = Creature.IncubationTime
-		    Dim IncubationSeconds As UInt64 = IncubationPeriod.TotalSeconds / IncubationMultiplier
-		    Dim MaturePeriod As DateInterval = Creature.MatureTime
-		    Dim MatureSeconds As UInt64 = MaturePeriod.TotalSeconds / MatureMultiplier
+		    Dim IncubationSeconds As UInt64 = Creature.IncubationTime / IncubationMultiplier
+		    Dim MatureSeconds As UInt64 = Creature.MatureTime / MatureMultiplier
 		    
 		    Dim MaxCuddles As Integer = Floor(MatureSeconds / CuddlePeriod)
 		    Dim PerCuddle As Double = 0
@@ -1476,10 +1474,7 @@ End
 		    End If
 		    Dim MaxImprint As Double = MaxCuddles * PerCuddle
 		    
-		    IncubationPeriod = Beacon.SecondsToInterval(IncubationSeconds)
-		    MaturePeriod = Beacon.SecondsToInterval(MatureSeconds)
-		    
-		    CreaturesList.AddRow(Creature.Label, Beacon.IntervalToString(IncubationPeriod), Beacon.IntervalToString(MaturePeriod), If(MaxCuddles = 0, "Can't Imprint", Format(PerCuddle, "0%")), If(PerCuddle = 0, "", Format(MaxImprint, "0%")))
+		    CreaturesList.AddRow(Creature.Label, Beacon.SecondsToString(IncubationSeconds), Beacon.SecondsToString(MatureSeconds), If(MaxCuddles = 0, "Can't Imprint", Format(PerCuddle, "0%")), If(PerCuddle = 0, "", Format(MaxImprint, "0%")))
 		    CreaturesList.CellTagAt(CreaturesList.LastAddedRowIndex, Self.ColumnIncubationTime) = IncubationSeconds
 		    CreaturesList.CellTagAt(CreaturesList.LastAddedRowIndex, Self.ColumnMatureTime) = MatureSeconds
 		    CreaturesList.RowTagAt(CreaturesList.LastAddedRowIndex) = Creature.ClassString
@@ -1491,7 +1486,7 @@ End
 		  CreaturesList.ScrollPosition = Position
 		  CreaturesList.Sort
 		  
-		  Self.ImprintPeriodPreviewField.Value = Beacon.IntervalToString(Beacon.SecondsToInterval(CuddlePeriod))
+		  Self.ImprintPeriodPreviewField.Value = Beacon.SecondsToString(CuddlePeriod)
 		End Sub
 	#tag EndMethod
 

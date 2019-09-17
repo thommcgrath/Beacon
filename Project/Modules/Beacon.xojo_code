@@ -498,31 +498,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function IntervalToString(Interval As DateInterval) As String
-		  Dim Parts() As String
-		  If Interval.Years > 0 Then
-		    Parts.Append(Str(Interval.Years, "-0") + "y")
-		  End If
-		  If Interval.Months > 0 Then
-		    Parts.Append(Str(Interval.Months, "-0") + "m")
-		  End If
-		  If Interval.Days > 0 Then
-		    Parts.Append(Str(Interval.Days, "-0") + "d")
-		  End If
-		  If Interval.Hours > 0 Then
-		    Parts.Append(Str(Interval.Hours, "-0") + "h")
-		  End If
-		  If Interval.Minutes > 0 Then
-		    Parts.Append(Str(Interval.Minutes, "-0") + "m")
-		  End If
-		  If Interval.Seconds > 0 Then
-		    Parts.Append(Str(Interval.Seconds, "-0") + "s")
-		  End If
-		  Return Join(Parts, " ")
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function IsBeaconURL(ByRef Value As String) As Boolean
 		  Dim PossiblePrefixes() As String
@@ -789,8 +764,35 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function SecondsToInterval(Seconds As UInt64) As DateInterval
-		  Return New DateInterval(0, 0, 0, 0, 0, Seconds, 0)
+		Protected Function SecondsToString(Seconds As UInt64) As String
+		  // Too obvious?
+		  Const SecondsPerDay = 86400
+		  Const SecondsPerHour = 3600
+		  Const SecondsPerMinute = 60
+		  
+		  Dim Days As Integer = Floor(Seconds / SecondsPerDay)
+		  Seconds = Seconds - (Days * SecondsPerDay)
+		  
+		  Dim Hours As Integer = Floor(Seconds / SecondsPerHour)
+		  Seconds = Seconds - (Hours * SecondsPerHour)
+		  
+		  Dim Minutes As Integer = Floor(Seconds / SecondsPerMinute)
+		  Seconds = Seconds - (Minutes * SecondsPerMinute)
+		  
+		  Dim Parts() As String
+		  If Days > 0 Then
+		    Parts.Append(Str(Days, "-0") + "d")
+		  End If
+		  If Hours > 0 Then
+		    Parts.Append(Str(Hours, "-0") + "h")
+		  End If
+		  If Minutes > 0 Then
+		    Parts.Append(Str(Minutes, "-0") + "m")
+		  End If
+		  If Seconds > 0 Then
+		    Parts.Append(Str(Seconds, "-0") + "s")
+		  End If
+		  Return Join(Parts, " ")
 		End Function
 	#tag EndMethod
 

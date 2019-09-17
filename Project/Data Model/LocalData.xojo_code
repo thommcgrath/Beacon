@@ -1690,10 +1690,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Creature.ModName = Results.Column("mod_name").StringValue
 		    
 		    If Results.Column("incubation_time").Value <> Nil Then
-		      Creature.IncubationTime = Beacon.SecondsToInterval(Results.Column("incubation_time").IntegerValue)
+		      Creature.IncubationTime = Results.Column("incubation_time").Value.UInt64Value
 		    End If
 		    If Results.Column("mature_time").Value <> Nil Then
-		      Creature.MatureTime = Beacon.SecondsToInterval(Results.Column("mature_time").IntegerValue)
+		      Creature.MatureTime = Results.Column("mature_time").Value.UInt64Value
 		    End If
 		    
 		    Creatures.Append(Creature)
@@ -1840,9 +1840,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Case IsA Beacon.Creature
 		        Dim Creature As Beacon.Creature = Beacon.Creature(Blueprint)
 		        Dim IncubationSeconds, MatureSeconds As Variant
-		        If Creature.IncubationTime <> Nil And Creature.MatureTime <> Nil Then
-		          IncubationSeconds = Creature.IncubationTime.TotalSeconds
-		          MatureSeconds = Creature.MatureTime.TotalSeconds
+		        If Creature.IncubationTime > 0 And Creature.MatureTime > 0 Then
+		          IncubationSeconds = Creature.IncubationTime
+		          MatureSeconds = Creature.MatureTime
 		        End If
 		        If Update Then
 		          Self.SQLExecute("UPDATE creatures SET path = ?2, class_string = ?3, label = ?4, tags = ?5, availability = ?6, incubation_time = ?7, mature_time = ?8 WHERE object_id = ?1;", ObjectID, Creature.Path, Creature.ClassString, Creature.Label, Creature.TagString, Creature.Availability, IncubationSeconds, MatureSeconds)

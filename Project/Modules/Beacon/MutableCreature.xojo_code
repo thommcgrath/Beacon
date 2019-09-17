@@ -18,12 +18,8 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub IncubationTime(Assigns Value As DateInterval)
-		  If Value <> Nil Then
-		    Self.mIncubationTime = Value.Clone
-		  Else
-		    Self.mIncubationTime = Nil
-		  End If
+		Sub IncubationTime(Assigns Value As UInt64)
+		  Self.mIncubationTime = Value
 		End Sub
 	#tag EndMethod
 
@@ -47,12 +43,8 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub MatureTime(Assigns Value As DateInterval)
-		  If Value <> Nil Then
-		    Self.mMatureTime = Value.Clone
-		  Else
-		    Self.mMatureTime = Nil
-		  End If
+		Sub MatureTime(Assigns Value As UInt64)
+		  Self.mMatureTime = Value
 		End Sub
 	#tag EndMethod
 
