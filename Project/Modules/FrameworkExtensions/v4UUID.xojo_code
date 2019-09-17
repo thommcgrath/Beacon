@@ -26,7 +26,7 @@ Class v4UUID
 		        Dim UUID As WindowsUUID
 		        If UUIDCreate(UUID) = 0 Then
 		          Dim Result As CString
-		          If UUIDToString(UUID, Result) Then
+		          If UUIDToString(UUID, Result) = 0 Then
 		            Self.mValue = Result
 		            Self.mValue = Self.mValue.DefineEncoding(Encodings.UTF8).Lowercase
 		            Return
