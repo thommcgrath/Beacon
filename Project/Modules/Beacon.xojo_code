@@ -62,8 +62,8 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function CoerceToBoolean(ByRef Value As Variant, Info As Introspection.TypeInfo) As Boolean
-		  Select Case Info.FullName
+		Private Function CoerceToBoolean(ByRef Value As Variant, DesiredTypeName As String) As Boolean
+		  Select Case DesiredTypeName
 		  Case "Boolean"
 		    Return True
 		  Case "String"
@@ -93,8 +93,8 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function CoerceToDouble(ByRef Value As Variant, Info As Introspection.TypeInfo) As Boolean
-		  #Pragma Unused Info
+		Private Function CoerceToDouble(ByRef Value As Variant, DesiredTypeName As String) As Boolean
+		  #Pragma Unused DesiredTypeName
 		  
 		  #Pragma BreakOnExceptions False
 		  Try
@@ -372,10 +372,10 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetLastValueAsType(Values() As Variant, FullName As String, Default As Variant) As Variant
+		Private Function GetLastValueAsType(Values() As Object, FullName As String, Default As Variant) As Variant
 		  For I As Integer = Values.LastRowIndex DownTo 0
-		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Values(I))
-		    If Info.FullName = FullName Then
+		    Dim ValueName As String = NameOfValue(Values(I))
+		    If ValueName = FullName Then
 		      Return Values(I)
 		    End If
 		  Next
@@ -385,22 +385,26 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h21
 		Private Function GetValueAsType(Dict As Dictionary, Key As Variant, FullName As String, Default As Variant, AllowArray As Boolean = False, Adapter As ValueAdapter = Nil) As Variant
-		  If Not Dict.HasKey(Key) Then
+		  If Dict = Nil Or Dict.HasKey(Key) = False Then
 		    Return Default
 		  End If
 		  
 		  Dim Value As Variant = Dict.Value(Key)
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
-		  If Info = Nil Then
+		  If IsNull(Value) Then
 		    Return Default
 		  End If
-		  If Info.FullName = "Auto()" And AllowArray Then
-		    Dim Arr() As Variant = Value
+		  
+		  Dim ValueName As String = NameOfValue(Value)
+		  If ValueName.BeginsWith("Unknown") Then
+		    Return Default
+		  End If
+		  If ValueName = "Object()" And AllowArray Then
+		    Dim Arr() As Object = Value
 		    Return GetLastValueAsType(Arr, FullName, Default)
-		  ElseIf Info.FullName = FullName Then
+		  ElseIf ValueName = FullName Then
 		    Return Value
 		  ElseIf Adapter <> Nil Then
-		    If Adapter.Invoke(Value, Info) Then
+		    If Adapter.Invoke(Value, ValueName) Then
 		      Return Value
 		    Else
 		      Return Default
@@ -600,6 +604,45 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function MD5(Value As MemoryBlock) As String
 		  Return EncodeHex(Crypto.MD5(Value))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function NameOfValue(Value As Variant) As String
+		  Dim ValueName As String
+		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
+		  If Info <> Nil Then
+		    ValueName = Info.FullName
+		  Else
+		    Dim Type As Integer
+		    If Value.IsArray Then
+		      Type = Value.ArrayElementType
+		    Else
+		      Type = Value.Type
+		    End If
+		    Select Case Type
+		    Case Variant.TypeDouble
+		      ValueName = "Double"
+		    Case Variant.TypeBoolean
+		      ValueName = "Boolean"
+		    Case Variant.TypeInt32
+		      ValueName = "Int32"
+		    Case Variant.TypeInt64
+		      ValueName = "Int64"
+		    Case Variant.TypeSingle
+		      ValueName = "Single"
+		    Case Variant.TypeString
+		      ValueName = "String"
+		    Case Variant.TypeText
+		      ValueName = "Text"
+		    Else
+		      ValueName = "Unknown"
+		    End Select
+		    If Value.IsArray Then
+		      ValueName = ValueName + "()"
+		    End If
+		  End If
+		  Return ValueName
 		End Function
 	#tag EndMethod
 
@@ -906,7 +949,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h21
-		Private Delegate Function ValueAdapter(ByRef Value As Variant, Info As Introspection . TypeInfo) As Boolean
+		Private Delegate Function ValueAdapter(ByRef Value As Variant, DesiredTypeName As String) As Boolean
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h1
