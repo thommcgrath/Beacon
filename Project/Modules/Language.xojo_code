@@ -76,6 +76,8 @@ Protected Module Language
 		    Return "Harvest Rates"
 		  Case BeaconConfigs.DinoAdjustments.ConfigName
 		    Return "Creature Adjustments"
+		  Case BeaconConfigs.StatMultipliers.ConfigName
+		    Return "Player and Tame Stat Multipliers"
 		  End Select
 		End Function
 	#tag EndMethod

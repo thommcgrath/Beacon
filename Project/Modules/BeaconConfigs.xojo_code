@@ -15,6 +15,7 @@ Protected Module BeaconConfigs
 		    Names.Append(BeaconConfigs.BreedingMultipliers.ConfigName)
 		    Names.Append(BeaconConfigs.HarvestRates.ConfigName)
 		    Names.Append(BeaconConfigs.DinoAdjustments.ConfigName)
+		    Names.Append(BeaconConfigs.StatMultipliers.ConfigName)
 		  End If
 		  If Human = True Then
 		    Static HumanNames() As String
@@ -140,6 +141,8 @@ Protected Module BeaconConfigs
 		    Return GetTypeInfo(BeaconConfigs.HarvestRates)
 		  Case BeaconConfigs.DinoAdjustments.ConfigName
 		    Return GetTypeInfo(BeaconConfigs.DinoAdjustments)
+		  Case BeaconConfigs.StatMultipliers.ConfigName
+		    Return GetTypeInfo(BeaconConfigs.StatMultipliers)
 		  End Select
 		End Function
 	#tag EndMethod
