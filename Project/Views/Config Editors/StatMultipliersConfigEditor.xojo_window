@@ -149,7 +149,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
@@ -228,7 +228,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
@@ -307,7 +307,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
@@ -386,7 +386,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   19
       TabPanelIndex   =   0
       TabStop         =   True
@@ -465,7 +465,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   24
       TabPanelIndex   =   0
       TabStop         =   True
@@ -544,7 +544,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   29
       TabPanelIndex   =   0
       TabStop         =   True
@@ -623,7 +623,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   34
       TabPanelIndex   =   0
       TabStop         =   True
@@ -658,7 +658,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   39
       TabPanelIndex   =   0
       TabStop         =   True
@@ -693,7 +693,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   44
       TabPanelIndex   =   0
       TabStop         =   True
@@ -728,7 +728,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   49
       TabPanelIndex   =   0
       TabStop         =   True
@@ -763,7 +763,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   54
       TabPanelIndex   =   0
       TabStop         =   True
@@ -798,7 +798,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
@@ -833,7 +833,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
@@ -868,7 +868,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
@@ -947,7 +947,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
@@ -982,7 +982,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1061,7 +1061,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1096,7 +1096,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1109,50 +1109,6 @@ Begin ConfigEditor StatMultipliersConfigEditor
       Value           =   "10 x"
       Visible         =   True
       Width           =   50
-   End
-   Begin UITweaks.ResizedTextField PlayerPerLevelMultiplierField
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
-      BackgroundColor =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Format          =   ""
-      HasBorder       =   True
-      Height          =   22
-      Hint            =   ""
-      Index           =   2
-      Italic          =   False
-      Left            =   306
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MaximumCharactersAllowed=   0
-      Password        =   False
-      ReadOnly        =   True
-      Scope           =   2
-      TabIndex        =   17
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   "2"
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   181
-      Transparent     =   False
-      Underline       =   False
-      ValidationMask  =   ""
-      Value           =   ""
-      Visible         =   True
-      Width           =   60
    End
    Begin UITweaks.ResizedLabel PlayerPerLevelComputedLabel
       AllowAutoDeactivate=   True
@@ -1175,7 +1131,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   18
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1210,7 +1166,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   21
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1289,7 +1245,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   23
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1324,7 +1280,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   26
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1403,7 +1359,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   28
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1438,7 +1394,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   31
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1517,7 +1473,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   33
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1552,7 +1508,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   36
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1631,7 +1587,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   38
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1666,7 +1622,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   41
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1745,7 +1701,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   43
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1780,7 +1736,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   46
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1859,7 +1815,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   48
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1894,7 +1850,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   51
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1973,7 +1929,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   53
       TabPanelIndex   =   0
       TabStop         =   True
@@ -2008,7 +1964,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   56
       TabPanelIndex   =   0
       TabStop         =   True
@@ -2087,7 +2043,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
-      Selectable      =   False
+      Selectable      =   True
       TabIndex        =   58
       TabPanelIndex   =   0
       TabStop         =   True
@@ -2101,25 +2057,53 @@ Begin ConfigEditor StatMultipliersConfigEditor
       Visible         =   True
       Width           =   130
    End
-   Begin UITweaks.ResizedTextField PlayerBaseField
+   Begin UITweaks.ResizedLabel PlayerPerLevelMultiplierLabel
       AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Format          =   ""
-      HasBorder       =   True
       Height          =   22
-      Hint            =   ""
+      Index           =   2
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   306
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   True
+      TabIndex        =   59
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextAlignment   =   "2"
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   181
+      Transparent     =   False
+      Underline       =   False
+      Value           =   "1"
+      Visible         =   True
+      Width           =   60
+   End
+   Begin UITweaks.ResizedLabel PlayerBaseLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
       Index           =   8
+      InitialParent   =   ""
       Italic          =   False
       Left            =   132
       LockBottom      =   False
@@ -2127,11 +2111,10 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      MaximumCharactersAllowed=   0
-      Password        =   False
-      ReadOnly        =   True
-      Scope           =   2
-      TabIndex        =   40
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   True
+      TabIndex        =   60
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -2140,30 +2123,22 @@ Begin ConfigEditor StatMultipliersConfigEditor
       Top             =   351
       Transparent     =   False
       Underline       =   False
-      ValidationMask  =   ""
-      Value           =   ""
+      Value           =   "100"
       Visible         =   True
       Width           =   100
    End
-   Begin UITweaks.ResizedTextField PlayerBaseField
+   Begin UITweaks.ResizedLabel PlayerBaseLabel
       AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Format          =   ""
-      HasBorder       =   True
       Height          =   22
-      Hint            =   ""
       Index           =   9
+      InitialParent   =   ""
       Italic          =   False
       Left            =   132
       LockBottom      =   False
@@ -2171,43 +2146,34 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      MaximumCharactersAllowed=   0
-      Password        =   False
-      ReadOnly        =   True
-      Scope           =   2
-      TabIndex        =   45
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   True
+      TabIndex        =   61
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   385
+      Top             =   382
       Transparent     =   False
       Underline       =   False
-      ValidationMask  =   ""
-      Value           =   ""
+      Value           =   "100"
       Visible         =   True
       Width           =   100
    End
-   Begin UITweaks.ResizedTextField PlayerBaseField
+   Begin UITweaks.ResizedLabel PlayerBaseLabel
       AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Format          =   ""
-      HasBorder       =   True
       Height          =   22
-      Hint            =   ""
       Index           =   10
+      InitialParent   =   ""
       Italic          =   False
       Left            =   132
       LockBottom      =   False
@@ -2215,11 +2181,10 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      MaximumCharactersAllowed=   0
-      Password        =   False
-      ReadOnly        =   True
-      Scope           =   2
-      TabIndex        =   50
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   True
+      TabIndex        =   62
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -2228,30 +2193,22 @@ Begin ConfigEditor StatMultipliersConfigEditor
       Top             =   419
       Transparent     =   False
       Underline       =   False
-      ValidationMask  =   ""
-      Value           =   ""
+      Value           =   "100"
       Visible         =   True
       Width           =   100
    End
-   Begin UITweaks.ResizedTextField PlayerBaseField
+   Begin UITweaks.ResizedLabel PlayerBaseLabel
       AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
-      BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Format          =   ""
-      HasBorder       =   True
       Height          =   22
-      Hint            =   ""
       Index           =   11
+      InitialParent   =   ""
       Italic          =   False
       Left            =   132
       LockBottom      =   False
@@ -2259,11 +2216,10 @@ Begin ConfigEditor StatMultipliersConfigEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      MaximumCharactersAllowed=   0
-      Password        =   False
-      ReadOnly        =   True
-      Scope           =   2
-      TabIndex        =   55
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   True
+      TabIndex        =   63
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -2272,8 +2228,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
       Top             =   453
       Transparent     =   False
       Underline       =   False
-      ValidationMask  =   ""
-      Value           =   ""
+      Value           =   "100"
       Visible         =   True
       Width           =   100
    End
@@ -2330,14 +2285,19 @@ End
 		  Dim Stats() As Beacon.Stat = Beacon.Stats.All
 		  Dim Config As BeaconConfigs.StatMultipliers = Self.Config(False)
 		  Dim Focus As RectControl = Self.Focus
+		  If Self.SettingUp Then
+		    Focus = Nil
+		  End If
 		  For Each Stat As Beacon.Stat In Stats
 		    If OnlyStatIndex > -1 And Stat.Index <> OnlyStatIndex Then
 		      Continue
 		    End If
 		    
 		    Dim BaseField As TextField = PlayerBaseField(Stat.Index)
+		    Dim BaseLabel As Label = PlayerBaseLabel(Stat.Index)
 		    Dim PerLevelAmountLabel As Label = PlayerPerLevelAmountLabel(Stat.Index)
 		    Dim PerLevelMultiplierField As TextField = PlayerPerLevelMultiplierField(Stat.Index)
+		    Dim PerLevelMultiplierLabel As Label = PlayerPerLevelMultiplierLabel(Stat.Index)
 		    Dim PerLevelComputedLabel As Label = PlayerPerLevelComputedLabel(Stat.Index)
 		    
 		    If BaseField <> Nil And Focus <> BaseField Then
@@ -2346,6 +2306,8 @@ End
 		        BaseAmount = BaseAmount * Config.PlayerBaseMultiplier(Stat)
 		      End If
 		      BaseField.Value = BaseAmount.PrettyText(2)
+		    ElseIf BaseLabel <> Nil Then
+		      BaseLabel.Value = Stat.PlayerBase.PrettyText(2)
 		    End If
 		    
 		    If PerLevelAmountLabel <> Nil Then
@@ -2354,6 +2316,8 @@ End
 		    
 		    If PerLevelMultiplierField <> Nil And Focus <> PerLevelMultiplierField Then
 		      PerLevelMultiplierField.Value = Config.PlayerPerLevelMultiplier(Stat).PrettyText(2)
+		    ElseIf PerLevelMultiplierLabel <> Nil Then
+		      PerLevelMultiplierLabel.Value = Config.PlayerPerLevelMultiplier(Stat).PrettyText(2)
 		    End If
 		    
 		    If PerLevelComputedLabel <> Nil Then
