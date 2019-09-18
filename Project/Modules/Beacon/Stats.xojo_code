@@ -22,7 +22,7 @@ Protected Module Stats
 		Protected Function CraftingSpeed() As Beacon.Stat
 		  Static Stat As Beacon.Stat
 		  If Stat = Nil Then
-		    Stat = New Beacon.Stat("CraftingSpeed", 11, 100, True, 10, 1.0, 1.0, 1.0, 1.0)
+		    Stat = New Beacon.Stat("CraftingSpeed", 11, True, 100, True, 10, True, 1.0, 1.0, 1.0, 1.0)
 		  End If
 		  Return Stat
 		End Function
@@ -32,7 +32,7 @@ Protected Module Stats
 		Protected Function Food() As Beacon.Stat
 		  Static Stat As Beacon.Stat
 		  If Stat = Nil Then
-		    Stat = New Beacon.Stat("Food", 4, 100, False, 10, 1.0, 1.0, 1.0, 1.0)
+		    Stat = New Beacon.Stat("Food", 4, False, 100, False, 10, True, 1.0, 1.0, 1.0, 1.0)
 		  End If
 		  Return Stat
 		End Function
@@ -42,7 +42,7 @@ Protected Module Stats
 		Protected Function Fortitude() As Beacon.Stat
 		  Static Stat As Beacon.Stat
 		  If Stat = Nil Then
-		    Stat = New Beacon.Stat("Fortitude", 10, 0, True, 2, 1.0, 1.0, 1.0, 1.0)
+		    Stat = New Beacon.Stat("Fortitude", 10, False, 0, True, 2, True, 1.0, 1.0, 1.0, 1.0)
 		  End If
 		  Return Stat
 		End Function
@@ -52,7 +52,7 @@ Protected Module Stats
 		Protected Function Health() As Beacon.Stat
 		  Static Stat As Beacon.Stat
 		  If Stat = Nil Then
-		    Stat = New Beacon.Stat("Health", 0, 100, False, 10, 1.0, 0.2, 0.14, 0.44)
+		    Stat = New Beacon.Stat("Health", 0, False, 100, False, 10, True, 1.0, 0.2, 0.14, 0.44)
 		  End If
 		  Return Stat
 		End Function
@@ -62,7 +62,7 @@ Protected Module Stats
 		Protected Function Melee() As Beacon.Stat
 		  Static Stat As Beacon.Stat
 		  If Stat = Nil Then
-		    Stat = New Beacon.Stat("Melee", 8, 100, True, 5, 1.0, 0.17, 0.14, 0.44)
+		    Stat = New Beacon.Stat("Melee", 8, True, 100, True, 5, True, 1.0, 0.17, 0.14, 0.44)
 		  End If
 		  Return Stat
 		End Function
@@ -70,30 +70,12 @@ Protected Module Stats
 
 	#tag Method, Flags = &h1
 		Protected Function Named(Key As String) As Beacon.Stat
-		  Select Case Key
-		  Case "CraftingSpeed"
-		    Return CraftingSpeed
-		  Case "Food"
-		    Return Food
-		  Case "Fortitude"
-		    Return Fortitude
-		  Case "Health"
-		    Return Health
-		  Case "Melee"
-		    Return Melee
-		  Case "Oxygen"
-		    Return Oxygen
-		  Case "Speed"
-		    Return Speed
-		  Case "Stamina"
-		    Return Stamina
-		  Case "Torpor"
-		    Return Torpor
-		  Case "Water"
-		    Return Water
-		  Case "Weight"
-		    Return Weight
-		  End Select
+		  Dim Arr() As Beacon.Stat = All
+		  For Each Stat As Beacon.Stat In Arr
+		    If Stat.Key = Key Then
+		      Return Stat
+		    End If
+		  Next
 		End Function
 	#tag EndMethod
 
@@ -101,7 +83,7 @@ Protected Module Stats
 		Protected Function Oxygen() As Beacon.Stat
 		  Static Stat As Beacon.Stat
 		  If Stat = Nil Then
-		    Stat = New Beacon.Stat("Oxygen", 3, 100, False, 20, 1.0, 1.0, 1.0, 1.0)
+		    Stat = New Beacon.Stat("Oxygen", 3, False, 100, False, 20, True, 1.0, 1.0, 1.0, 1.0)
 		  End If
 		  Return Stat
 		End Function
@@ -111,7 +93,7 @@ Protected Module Stats
 		Protected Function Speed() As Beacon.Stat
 		  Static Stat As Beacon.Stat
 		  If Stat = Nil Then
-		    Stat = New Beacon.Stat("Speed", 9, 100, True, 1.5, 1.0, 1.0, 1.0, 1.0)
+		    Stat = New Beacon.Stat("Speed", 9, True, 100, True, 1.5, True, 1.0, 1.0, 1.0, 1.0)
 		  End If
 		  Return Stat
 		End Function
@@ -121,7 +103,7 @@ Protected Module Stats
 		Protected Function Stamina() As Beacon.Stat
 		  Static Stat As Beacon.Stat
 		  If Stat = Nil Then
-		    Stat = New Beacon.Stat("Stamina", 1, 100, False, 10, 1.0, 1.0, 1.0, 1.0)
+		    Stat = New Beacon.Stat("Stamina", 1, False, 100, False, 10, True, 1.0, 1.0, 1.0, 1.0)
 		  End If
 		  Return Stat
 		End Function
@@ -131,7 +113,7 @@ Protected Module Stats
 		Protected Function Torpor() As Beacon.Stat
 		  Static Stat As Beacon.Stat
 		  If Stat = Nil Then
-		    Stat = New Beacon.Stat("Torpor", 2, 200, False, 0, 1.0, 1.0, 1.0, 1.0)
+		    Stat = New Beacon.Stat("Torpor", 2, False, 200, False, 0, False, 1.0, 1.0, 1.0, 1.0)
 		  End If
 		  Return Stat
 		End Function
@@ -141,7 +123,7 @@ Protected Module Stats
 		Protected Function Water() As Beacon.Stat
 		  Static Stat As Beacon.Stat
 		  If Stat = Nil Then
-		    Stat = New Beacon.Stat("Water", 5, 100, False, 10, 1.0, 1.0, 1.0, 1.0)
+		    Stat = New Beacon.Stat("Water", 5, False, 100, False, 10, True, 1.0, 1.0, 1.0, 1.0)
 		  End If
 		  Return Stat
 		End Function
@@ -151,9 +133,20 @@ Protected Module Stats
 		Protected Function Weight() As Beacon.Stat
 		  Static Stat As Beacon.Stat
 		  If Stat = Nil Then
-		    Stat = New Beacon.Stat("Weight", 7, 100, False, 10, 1.0, 1.0, 1.0, 1.0)
+		    Stat = New Beacon.Stat("Weight", 7, False, 100, False, 10, True, 1.0, 1.0, 1.0, 1.0)
 		  End If
 		  Return Stat
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function WithIndex(Index As Integer) As Beacon.Stat
+		  Dim Arr() As Beacon.Stat = All
+		  For Each Stat As Beacon.Stat In Arr
+		    If Stat.Index = Index Then
+		      Return Stat
+		    End If
+		  Next
 		End Function
 	#tag EndMethod
 

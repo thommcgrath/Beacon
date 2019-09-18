@@ -1063,6 +1063,8 @@ End
 		        NewPanel = New HarvestRatesConfigEditor(Self.mController)
 		      Case BeaconConfigs.DinoAdjustments.ConfigName
 		        NewPanel = New DinoAdjustmentsConfigEditor(Self.mController)
+		      Case BeaconConfigs.StatMultipliers.ConfigName
+		        NewPanel = New StatMultipliersConfigEditor(Self.mController)
 		      End Select
 		      If NewPanel <> Nil Then
 		        Self.Panels.Value(Tag.StringValue) = NewPanel

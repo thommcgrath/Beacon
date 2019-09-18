@@ -77,7 +77,7 @@ Protected Module Language
 		  Case BeaconConfigs.DinoAdjustments.ConfigName
 		    Return "Creature Adjustments"
 		  Case BeaconConfigs.StatMultipliers.ConfigName
-		    Return "Player and Tame Stat Multipliers"
+		    Return "Player and Creature Stat Multipliers"
 		  End Select
 		End Function
 	#tag EndMethod

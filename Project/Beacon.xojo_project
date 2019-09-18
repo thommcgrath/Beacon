@@ -365,6 +365,7 @@ Window=MapSelectionGrid;Custom Controls/MapSelectionGrid.xojo_window;&h000000002
 Class=StatMultipliers;Modules/BeaconConfigs/StatMultipliers.xojo_code;&h000000001B96D7FF;&h0000000068EBAFFF;false
 Class=Stat;Modules/Beacon/Stat.xojo_code;&h000000004D220FFF;&h0000000055ADDFFF;false
 Module=Stats;Modules/Beacon/Stats.xojo_code;&h00000000406747FF;&h0000000055ADDFFF;false
+Window=StatMultipliersConfigEditor;Views/Config Editors/StatMultipliersConfigEditor.xojo_window;&h000000007D06FFFF;&h00000000434D97FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=3

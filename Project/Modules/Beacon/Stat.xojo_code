@@ -1,12 +1,14 @@
 #tag Class
 Protected Class Stat
 	#tag Method, Flags = &h0
-		Sub Constructor(Key As String, Index As Integer, PlayerBase As Double, PlayerBaseCapped As Boolean, PlayerPerLevelAmount As Double, WildDefault As Double, TamedDefault As Double, TamedAddDefault As Double, TamedAffinityDefault As Double)
+		Sub Constructor(Key As String, Index As Integer, IsPercentage As Boolean, PlayerBase As Double, PlayerBaseCapped As Boolean, PlayerPerLevelAmount As Double, PlayerPerLevelEditable As Boolean, WildDefault As Double, TamedDefault As Double, TamedAddDefault As Double, TamedAffinityDefault As Double)
 		  Self.mKey = Key
 		  Self.mIndex = Index
+		  Self.mIsPercentage = IsPercentage
 		  Self.mPlayerBase = PlayerBase
 		  Self.mPlayerBaseCapped = PlayerBaseCapped
 		  Self.mPlayerPerLevelAmount = PlayerPerLevelAmount
+		  Self.mPlayerPerLevelEditable = PlayerPerLevelEditable
 		  Self.mWildDefault = WildDefault
 		  Self.mTamedDefault = TamedDefault
 		  Self.mTamedAddDefault = TamedAddDefault
@@ -17,6 +19,12 @@ Protected Class Stat
 	#tag Method, Flags = &h0
 		Function Index() As Integer
 		  Return Self.mIndex
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsPercentage() As Boolean
+		  Return Self.mIsPercentage
 		End Function
 	#tag EndMethod
 
@@ -41,6 +49,12 @@ Protected Class Stat
 	#tag Method, Flags = &h0
 		Function PlayerPerLevelAmount() As Double
 		  Return Self.mPlayerPerLevelAmount
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function PlayerPerLevelEditable() As Boolean
+		  Return Self.mPlayerPerLevelEditable
 		End Function
 	#tag EndMethod
 
@@ -74,6 +88,10 @@ Protected Class Stat
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mIsPercentage As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mKey As String
 	#tag EndProperty
 
@@ -87,6 +105,10 @@ Protected Class Stat
 
 	#tag Property, Flags = &h21
 		Private mPlayerPerLevelAmount As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPlayerPerLevelEditable As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -144,14 +166,6 @@ Protected Class Stat
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mIndex"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

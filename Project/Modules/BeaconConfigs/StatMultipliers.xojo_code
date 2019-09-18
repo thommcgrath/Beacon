@@ -10,11 +10,11 @@ Inherits Beacon.ConfigGroup
 		    Dim Stat As Beacon.Stat = Beacon.Stats.Named(Entry.Key)
 		    Dim Dict As Dictionary = Entry.Value
 		    
-		    If Dict.HasKey("Base") Then
+		    If Dict.HasKey("Base") And Stat.PlayerBaseCapped = False Then
 		      Dim Multiplier As Double = Dict.Value("Base")
 		      Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PlayerBaseStatMultipliers[" + Str(Stat.Index, "0") + "]", Multiplier.PrettyText))
 		    End If
-		    If Dict.HasKey("PerLevel") Then
+		    If Dict.HasKey("PerLevel") And Stat.PlayerPerLevelEditable = True Then
 		      Dim Multiplier As Double = Dict.Value("PerLevel")
 		      Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_Player[" + Str(Stat.Index, "0") + "]", Multiplier.PrettyText))
 		    End If
@@ -106,8 +106,12 @@ Inherits Beacon.ConfigGroup
 		    Dim TamedAffinityKey As String = "PerLevelStatsMultiplier_DinoTamed_Affinity[" + Str(Stat.Index, "0") + "]"
 		    Dim WildPerLevelKey As String = "PerLevelStatsMultiplier_DinoWild[" + Str(Stat.Index, "0") + "]"
 		    
-		    Config.PlayerBaseMultiplier(Stat) = ParsedData.DoubleValue(PlayerBaseKey, 1.0, True)
-		    Config.PlayerPerLevelMultiplier(Stat) = ParsedData.DoubleValue(PlayerPerLevelKey, 1.0, True)
+		    If Stat.PlayerBaseCapped = False Then
+		      Config.PlayerBaseMultiplier(Stat) = ParsedData.DoubleValue(PlayerBaseKey, 1.0, True)
+		    End If
+		    If Stat.PlayerPerLevelEditable Then
+		      Config.PlayerPerLevelMultiplier(Stat) = ParsedData.DoubleValue(PlayerPerLevelKey, 1.0, True)
+		    End If
 		    Config.TamedPerLevelMultiplier(Stat) = ParsedData.DoubleValue(TamedPerLevelKey, Stat.TamedDefault, True)
 		    Config.TamedAddMultiplier(Stat) = ParsedData.DoubleValue(TamedAddKey, Stat.TamedAddDefault, True)
 		    Config.TamedAffinityMultiplier(Stat) = ParsedData.DoubleValue(TamedAffinityKey, Stat.TamedAffinityDefault, True)
@@ -143,7 +147,7 @@ Inherits Beacon.ConfigGroup
 		  Else
 		    Dict = New Dictionary
 		  End If
-		  If Value = 0 Then
+		  If Value = 0 Or Value = 1 Then
 		    If Dict.HasKey("Base") Then
 		      Dict.Remove("Base")
 		    End If
@@ -183,7 +187,7 @@ Inherits Beacon.ConfigGroup
 		  Else
 		    Dict = New Dictionary
 		  End If
-		  If Value = 0 Then
+		  If Value = 0 Or Value = 1 Then
 		    If Dict.HasKey("PerLevel") Then
 		      Dict.Remove("PerLevel")
 		    End If
@@ -223,7 +227,7 @@ Inherits Beacon.ConfigGroup
 		  Else
 		    Dict = New Dictionary
 		  End If
-		  If Value = 0 Then
+		  If Value = 0 Or Value = Stat.TamedAddDefault Then
 		    If Dict.HasKey("Add") Then
 		      Dict.Remove("Add")
 		    End If
@@ -263,7 +267,7 @@ Inherits Beacon.ConfigGroup
 		  Else
 		    Dict = New Dictionary
 		  End If
-		  If Value = 0 Then
+		  If Value = 0 Or Value = Stat.TamedAffinityDefault Then
 		    If Dict.HasKey("Affinity") Then
 		      Dict.Remove("Affinity")
 		    End If
@@ -303,7 +307,7 @@ Inherits Beacon.ConfigGroup
 		  Else
 		    Dict = New Dictionary
 		  End If
-		  If Value = 0 Then
+		  If Value = 0 Or Value = Stat.TamedDefault Then
 		    If Dict.HasKey("PerLevel") Then
 		      Dict.Remove("PerLevel")
 		    End If
@@ -343,7 +347,7 @@ Inherits Beacon.ConfigGroup
 		  Else
 		    Dict = New Dictionary
 		  End If
-		  If Value = 0 Then
+		  If Value = 0 Or Value = Stat.WildDefault Then
 		    If Dict.HasKey("PerLevel") Then
 		      Dict.Remove("PerLevel")
 		    End If
