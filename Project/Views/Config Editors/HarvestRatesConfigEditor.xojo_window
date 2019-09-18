@@ -111,7 +111,6 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Caption         =   "Harvest Rate Overrides"
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -142,7 +141,6 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -196,7 +194,6 @@ Begin ConfigEditor HarvestRatesConfigEditor
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   "0"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -225,7 +222,6 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -276,7 +272,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Top             =   54
       Transparent     =   False
       Underline       =   False
-      Value           =   "False"
+      Value           =   False
       Visible         =   True
       Width           =   393
    End
@@ -543,7 +539,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Top             =   88
       Transparent     =   False
       Underline       =   False
-      Value           =   "False"
+      Value           =   False
       Visible         =   True
       Width           =   393
    End
