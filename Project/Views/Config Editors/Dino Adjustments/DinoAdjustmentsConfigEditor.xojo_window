@@ -98,8 +98,8 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   0
       Height          =   485
@@ -120,7 +120,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "1"
+      SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   2
       TabPanelIndex   =   0

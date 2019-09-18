@@ -30,7 +30,7 @@ Begin BeaconDialog DocumentDownloadWindow
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
@@ -83,7 +83,7 @@ Begin BeaconDialog DocumentDownloadWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Downloading…"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -118,7 +118,7 @@ Begin BeaconDialog DocumentDownloadWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "???"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -147,7 +147,7 @@ Begin BeaconDialog DocumentDownloadWindow
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   "True"
       Top             =   84
       Transparent     =   False
       Value           =   0.0

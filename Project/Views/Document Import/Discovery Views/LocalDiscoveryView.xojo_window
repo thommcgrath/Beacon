@@ -49,7 +49,7 @@ Begin DiscoveryView LocalDiscoveryView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Simple Config Import"
-      TextAlign       =   "1"
+      TextAlign       =   1
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -62,7 +62,7 @@ Begin DiscoveryView LocalDiscoveryView
    End
    Begin CodeArea ConfigArea
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -112,7 +112,7 @@ Begin DiscoveryView LocalDiscoveryView
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Next"
       Default         =   True
@@ -144,7 +144,7 @@ Begin DiscoveryView LocalDiscoveryView
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
@@ -176,7 +176,7 @@ Begin DiscoveryView LocalDiscoveryView
    Begin UITweaks.ResizedPushButton ChooseFileButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Select File"
       Default         =   False
@@ -290,7 +290,7 @@ Begin DiscoveryView LocalDiscoveryView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Paste the contents of your Game.ini and/or GameUserSettings.ini files here. Only one file is required, but Beacon can do a better job with both files."
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -305,7 +305,7 @@ Begin DiscoveryView LocalDiscoveryView
       Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Mode            =   "2"
+      Mode            =   2
       Period          =   500
       Scope           =   2
       TabPanelIndex   =   0

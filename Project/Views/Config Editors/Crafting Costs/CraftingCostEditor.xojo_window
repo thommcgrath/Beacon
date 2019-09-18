@@ -100,8 +100,8 @@ Begin BeaconContainer CraftingCostEditor
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   0
       Height          =   238
@@ -123,7 +123,7 @@ Begin BeaconContainer CraftingCostEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "1"
+      SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   2
       TabPanelIndex   =   0

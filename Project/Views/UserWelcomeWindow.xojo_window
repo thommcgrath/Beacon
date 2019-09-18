@@ -75,7 +75,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Welcome to Beacon"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -110,7 +110,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Beacon stores fully anonymous user data to provide community document sharing and cloud storage features."
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -146,7 +146,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "See how Beacon manages your data…"
-         TextAlign       =   "1"
+         TextAlign       =   1
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -161,7 +161,7 @@ Begin Window UserWelcomeWindow
       Begin UITweaks.ResizedPushButton ContinueAnonymousButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Continue"
          Default         =   True
@@ -193,7 +193,7 @@ Begin Window UserWelcomeWindow
       Begin UITweaks.ResizedPushButton ContinueAuthenticatedButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Login With Email"
          Default         =   False
@@ -225,7 +225,7 @@ Begin Window UserWelcomeWindow
       Begin UITweaks.ResizedPushButton DisableOnlineButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Disable Cloud && Community Features"
          Default         =   False
@@ -257,7 +257,7 @@ Begin Window UserWelcomeWindow
       Begin PushButton QuitButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Quit"
          Default         =   False
@@ -289,7 +289,7 @@ Begin Window UserWelcomeWindow
       Begin UITweaks.ResizedPushButton LoginActionButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Login"
          Default         =   True
@@ -321,7 +321,7 @@ Begin Window UserWelcomeWindow
       Begin UITweaks.ResizedPushButton LoginCancelButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
@@ -374,7 +374,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Login With Your Beacon Account"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -409,7 +409,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Using your Beacon account, you can sync files, engrams, creatures, and presets between computers."
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -422,7 +422,7 @@ Begin Window UserWelcomeWindow
       End
       Begin UITweaks.ResizedTextField LoginEmailField
          AcceptTabs      =   False
-         Alignment       =   "0"
+         Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -488,7 +488,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "E-Mail Address:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -501,7 +501,7 @@ Begin Window UserWelcomeWindow
       End
       Begin UITweaks.ResizedTextField LoginPasswordField
          AcceptTabs      =   False
-         Alignment       =   "0"
+         Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -567,7 +567,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Password:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -597,7 +597,7 @@ Begin Window UserWelcomeWindow
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         State           =   "0"
+         State           =   0
          TabIndex        =   6
          TabPanelIndex   =   2
          TabStop         =   True
@@ -635,7 +635,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Enter Your E-Mail Address"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -670,7 +670,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "After entering your E-Mail address, you will be sent a message to confirm you own the address."
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -684,7 +684,7 @@ Begin Window UserWelcomeWindow
       Begin UITweaks.ResizedPushButton ConfirmActionButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Send Confirmation"
          Default         =   True
@@ -716,7 +716,7 @@ Begin Window UserWelcomeWindow
       Begin UITweaks.ResizedPushButton ConfirmCancelButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
@@ -747,7 +747,7 @@ Begin Window UserWelcomeWindow
       End
       Begin UITweaks.ResizedTextField ConfirmAddressField
          AcceptTabs      =   False
-         Alignment       =   "0"
+         Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -813,7 +813,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "E-Mail Address:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -826,7 +826,7 @@ Begin Window UserWelcomeWindow
       End
       Begin UITweaks.ResizedTextField ConfirmCodeField
          AcceptTabs      =   False
-         Alignment       =   "0"
+         Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -892,7 +892,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Code:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -949,7 +949,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Sending Code…"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
@@ -984,7 +984,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Create Your Profile"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -1019,7 +1019,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Time to choose a username and password. Your username can be anything you wish. Your password must be at least 8 characters long, but there are no other wacky requirements. This password will protect your account's private key, so the longer, the better."
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -1032,7 +1032,7 @@ Begin Window UserWelcomeWindow
       End
       Begin UITweaks.ResizedTextField IdentityUsernameField
          AcceptTabs      =   False
-         Alignment       =   "0"
+         Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -1099,7 +1099,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Pick a random name"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
@@ -1113,7 +1113,7 @@ Begin Window UserWelcomeWindow
       End
       Begin UITweaks.ResizedTextField IdentityPasswordField
          AcceptTabs      =   False
-         Alignment       =   "0"
+         Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -1157,7 +1157,7 @@ Begin Window UserWelcomeWindow
       End
       Begin UITweaks.ResizedTextField IdentityPasswordConfirmField
          AcceptTabs      =   False
-         Alignment       =   "0"
+         Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -1223,7 +1223,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Username:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -1258,7 +1258,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Password:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -1293,7 +1293,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Password Again:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -1323,7 +1323,7 @@ Begin Window UserWelcomeWindow
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         State           =   "0"
+         State           =   0
          TabIndex        =   9
          TabPanelIndex   =   4
          TabStop         =   True
@@ -1340,7 +1340,7 @@ Begin Window UserWelcomeWindow
       Begin UITweaks.ResizedPushButton IdentityActionButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Create Account"
          Default         =   True
@@ -1372,7 +1372,7 @@ Begin Window UserWelcomeWindow
       Begin UITweaks.ResizedPushButton IdentityCancelButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
@@ -1447,7 +1447,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Creating account…"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
@@ -1483,7 +1483,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Create or Recover Account"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -1541,7 +1541,7 @@ Begin Window UserWelcomeWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Logging in…"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "SmallSystem"
          TextSize        =   0.0

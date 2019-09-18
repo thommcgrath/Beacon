@@ -58,7 +58,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
    End
    Begin CodeArea ConfigArea
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00

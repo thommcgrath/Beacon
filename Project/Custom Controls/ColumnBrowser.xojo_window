@@ -68,8 +68,8 @@ Begin BeaconContainer ColumnBrowser
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
       Height          =   285
@@ -91,7 +91,7 @@ Begin BeaconContainer ColumnBrowser
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "0"
+      SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   1
       TabPanelIndex   =   0

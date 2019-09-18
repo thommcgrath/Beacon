@@ -57,7 +57,7 @@ Begin BeaconDialog EntryEditor
       Width           =   380
       Begin DelayedTextField FilterField
          AcceptTabs      =   False
-         Alignment       =   "0"
+         Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -113,8 +113,8 @@ Begin BeaconDialog EntryEditor
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         GridLinesHorizontal=   "0"
-         GridLinesVertical=   "0"
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   1
          Height          =   261
@@ -135,7 +135,7 @@ Begin BeaconDialog EntryEditor
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionType   =   "0"
+         SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   1
          TabPanelIndex   =   0
@@ -171,7 +171,7 @@ Begin BeaconDialog EntryEditor
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         State           =   "0"
+         State           =   0
          TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
@@ -339,8 +339,8 @@ Begin BeaconDialog EntryEditor
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         GridLinesHorizontal=   "0"
-         GridLinesVertical=   "0"
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
          HasHeading      =   False
          HeadingIndex    =   -1
          Height          =   117
@@ -361,7 +361,7 @@ Begin BeaconDialog EntryEditor
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionType   =   "0"
+         SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   0
          TabPanelIndex   =   0
@@ -381,7 +381,7 @@ Begin BeaconDialog EntryEditor
       Begin UITweaks.ResizedPushButton SimulateButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Refresh"
          Default         =   False
@@ -414,7 +414,7 @@ Begin BeaconDialog EntryEditor
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
@@ -446,7 +446,7 @@ Begin BeaconDialog EntryEditor
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False

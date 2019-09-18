@@ -51,7 +51,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Set Experience for Level"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -86,7 +86,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "2"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -121,7 +121,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Level:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -156,7 +156,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Min XP:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -191,7 +191,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "0"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -226,7 +226,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Max XP:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -261,7 +261,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "2,147,483,647"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -274,7 +274,7 @@ Begin BeaconDialog ExperienceLevelEditor
    End
    Begin UITweaks.ResizedTextField XPField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -339,7 +339,7 @@ Begin BeaconDialog ExperienceLevelEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "XP For Level:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -353,7 +353,7 @@ Begin BeaconDialog ExperienceLevelEditor
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
@@ -385,7 +385,7 @@ Begin BeaconDialog ExperienceLevelEditor
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False

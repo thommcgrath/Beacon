@@ -51,7 +51,7 @@ Begin BeaconDialog ExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Experience Wizard"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -86,7 +86,7 @@ Begin BeaconDialog ExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "This wizard will help you define many level requirements in bulk. First, set the number of levels to add and the total experience to add for those levels. Then use adjust the blue handles on the curve to define how rapidly the values should increase. The list will show the total experience required for each of the new levels."
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -121,7 +121,7 @@ Begin BeaconDialog ExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "2"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -156,7 +156,7 @@ Begin BeaconDialog ExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Starting Level:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -169,7 +169,7 @@ Begin BeaconDialog ExperienceWizard
    End
    Begin UITweaks.ResizedTextField LevelCountField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -234,7 +234,7 @@ Begin BeaconDialog ExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "3"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -269,7 +269,7 @@ Begin BeaconDialog ExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Ending Level:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -282,7 +282,7 @@ Begin BeaconDialog ExperienceWizard
    End
    Begin UITweaks.ResizedTextField XPField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -347,7 +347,7 @@ Begin BeaconDialog ExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Additional XP:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -382,7 +382,7 @@ Begin BeaconDialog ExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Additional Levels:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -435,8 +435,8 @@ Begin BeaconDialog ExperienceWizard
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   -1
       Height          =   174
@@ -457,7 +457,7 @@ Begin BeaconDialog ExperienceWizard
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "0"
+      SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   11
       TabPanelIndex   =   0
@@ -477,7 +477,7 @@ Begin BeaconDialog ExperienceWizard
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
@@ -509,7 +509,7 @@ Begin BeaconDialog ExperienceWizard
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
@@ -540,7 +540,7 @@ Begin BeaconDialog ExperienceWizard
    End
    Begin UITweaks.ResizedTextField PointFields
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -583,7 +583,7 @@ Begin BeaconDialog ExperienceWizard
    End
    Begin UITweaks.ResizedTextField PointFields
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -626,7 +626,7 @@ Begin BeaconDialog ExperienceWizard
    End
    Begin UITweaks.ResizedTextField PointFields
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -669,7 +669,7 @@ Begin BeaconDialog ExperienceWizard
    End
    Begin UITweaks.ResizedTextField PointFields
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -734,7 +734,7 @@ Begin BeaconDialog ExperienceWizard
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Resulting XP total is more than Ark supports!"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0

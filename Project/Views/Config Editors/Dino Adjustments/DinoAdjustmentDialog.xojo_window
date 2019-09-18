@@ -51,7 +51,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Edit Creature"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -86,7 +86,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "From here you can adjust creature damage and resistance multipliers, replace the creature with another, or disable the creature completely."
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -121,7 +121,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Creature:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -246,7 +246,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Mode:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -275,7 +275,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       Scope           =   2
       TabIndex        =   8
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   "True"
       Top             =   158
       Transparent     =   False
       Value           =   0
@@ -283,7 +283,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       Width           =   626
       Begin UITweaks.ResizedTextField WildDamageField
          AcceptTabs      =   False
-         Alignment       =   "2"
+         Alignment       =   2
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -349,7 +349,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Wild Damage:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -362,7 +362,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       End
       Begin UITweaks.ResizedTextField WildResistanceField
          AcceptTabs      =   False
-         Alignment       =   "2"
+         Alignment       =   2
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -428,7 +428,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Wild Resistance:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -463,7 +463,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Greater than 1.0 increases wild creature damage"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
@@ -498,7 +498,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Less than 1.0 increases amount of damage taken"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
@@ -511,7 +511,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       End
       Begin UITweaks.ResizedTextField TameDamageField
          AcceptTabs      =   False
-         Alignment       =   "2"
+         Alignment       =   2
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -577,7 +577,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Tame Damage:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -590,7 +590,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       End
       Begin UITweaks.ResizedTextField TameResistanceField
          AcceptTabs      =   False
-         Alignment       =   "2"
+         Alignment       =   2
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -656,7 +656,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Tame Resistance:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -691,7 +691,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Greater than 1.0 increases tamed creature damage"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
@@ -726,7 +726,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Less than 1.0 increases amount of damage taken"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
@@ -761,7 +761,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Replacement:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -775,7 +775,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       Begin UITweaks.ResizedPushButton ChooseReplacementButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Choose…"
          Default         =   False
@@ -828,7 +828,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Not Selected"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -843,7 +843,7 @@ Begin BeaconDialog DinoAdjustmentDialog
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
@@ -875,7 +875,7 @@ Begin BeaconDialog DinoAdjustmentDialog
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
@@ -907,7 +907,7 @@ Begin BeaconDialog DinoAdjustmentDialog
    Begin UITweaks.ResizedPushButton ChooseTargetButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Choose…"
       Default         =   False
@@ -960,7 +960,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Not Selected"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0

@@ -50,7 +50,7 @@ Begin BeaconDialog LinkSharingDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Share Link"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -63,7 +63,7 @@ Begin BeaconDialog LinkSharingDialog
    End
    Begin UITweaks.ResizedTextField LinkField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -107,7 +107,7 @@ Begin BeaconDialog LinkSharingDialog
    Begin ReactionButton CopyLinkButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Copy"
       Default         =   False
@@ -139,7 +139,7 @@ Begin BeaconDialog LinkSharingDialog
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Done"
       Default         =   True

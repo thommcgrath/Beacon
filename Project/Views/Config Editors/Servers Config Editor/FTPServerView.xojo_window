@@ -86,7 +86,7 @@ Begin ServerViewContainer FTPServerView
    End
    Begin UITweaks.ResizedTextField ServerNameField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -151,7 +151,7 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Server Name:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -164,7 +164,7 @@ Begin ServerViewContainer FTPServerView
    End
    Begin UITweaks.ResizedTextField HostField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -229,7 +229,7 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Host:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -242,7 +242,7 @@ Begin ServerViewContainer FTPServerView
    End
    Begin UITweaks.ResizedTextField PortField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -307,7 +307,7 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Port:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -320,7 +320,7 @@ Begin ServerViewContainer FTPServerView
    End
    Begin UITweaks.ResizedTextField UserField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -385,7 +385,7 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Username:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -398,7 +398,7 @@ Begin ServerViewContainer FTPServerView
    End
    Begin UITweaks.ResizedTextField PassField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -463,7 +463,7 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Password:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -476,7 +476,7 @@ Begin ServerViewContainer FTPServerView
    End
    Begin UITweaks.ResizedTextField GameIniPathField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -541,7 +541,7 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Game.ini Path:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -554,7 +554,7 @@ Begin ServerViewContainer FTPServerView
    End
    Begin UITweaks.ResizedTextField GameUserSettingsIniPathField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -619,7 +619,7 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "GameUserSettings.ini Path:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -686,7 +686,7 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Mode:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -753,7 +753,7 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Build Config For:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -788,7 +788,7 @@ Begin ServerViewContainer FTPServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Does not change the map"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0

@@ -51,7 +51,7 @@ Begin Window SubscribeDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Stay up to date with Beacon!"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -86,7 +86,7 @@ Begin Window SubscribeDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Subscribe to the Beacon Announce list to stay up to date with Beacon releases and announcements. Message frequency will be kept to a minimum."
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -99,7 +99,7 @@ Begin Window SubscribeDialog
    End
    Begin UITweaks.ResizedTextField AddressField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -142,7 +142,7 @@ Begin Window SubscribeDialog
    End
    Begin UITweaks.ResizedTextField FirstNameField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -185,7 +185,7 @@ Begin Window SubscribeDialog
    End
    Begin UITweaks.ResizedTextField LastNameField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -250,7 +250,7 @@ Begin Window SubscribeDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Email Address:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -285,7 +285,7 @@ Begin Window SubscribeDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "First Name:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -320,7 +320,7 @@ Begin Window SubscribeDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Last Name:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -355,7 +355,7 @@ Begin Window SubscribeDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "(Optional)"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -390,7 +390,7 @@ Begin Window SubscribeDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "(Optional)"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -404,7 +404,7 @@ Begin Window SubscribeDialog
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Subscribe"
       Default         =   True
@@ -436,7 +436,7 @@ Begin Window SubscribeDialog
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "No Thanks"
       Default         =   False
@@ -468,7 +468,7 @@ Begin Window SubscribeDialog
    Begin UITweaks.ResizedPushButton PrivacyPolicyButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Privacy Policy"
       Default         =   False

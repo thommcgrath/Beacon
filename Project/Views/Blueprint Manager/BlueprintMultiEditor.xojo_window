@@ -136,7 +136,7 @@ Begin BeaconSubview BlueprintMultiEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
@@ -174,7 +174,7 @@ Begin BeaconSubview BlueprintMultiEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Map Availability:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -209,7 +209,7 @@ Begin BeaconSubview BlueprintMultiEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Tags:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -244,7 +244,7 @@ Begin BeaconSubview BlueprintMultiEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Selected tags will be added to all, crossed out tags will be removed from all."
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0

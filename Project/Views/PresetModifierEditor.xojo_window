@@ -61,7 +61,7 @@ Begin BeaconDialog PresetModifierEditor
    End
    Begin RangeField MinQualityField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -127,7 +127,7 @@ Begin BeaconDialog PresetModifierEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Min Quality Tiers:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -140,7 +140,7 @@ Begin BeaconDialog PresetModifierEditor
    End
    Begin UITweaks.ResizedTextField QuantityField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -205,7 +205,7 @@ Begin BeaconDialog PresetModifierEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Quantity Multiplier:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -240,7 +240,7 @@ Begin BeaconDialog PresetModifierEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Group:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -253,7 +253,7 @@ Begin BeaconDialog PresetModifierEditor
    End
    Begin UITweaks.ResizedTextField GroupNameField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -296,7 +296,7 @@ Begin BeaconDialog PresetModifierEditor
    End
    Begin DelayedTextField GroupPatternField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -361,7 +361,7 @@ Begin BeaconDialog PresetModifierEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Name:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -396,7 +396,7 @@ Begin BeaconDialog PresetModifierEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "RegEx Pattern:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -421,8 +421,8 @@ Begin BeaconDialog PresetModifierEditor
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
       Height          =   158
@@ -443,7 +443,7 @@ Begin BeaconDialog PresetModifierEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "0"
+      SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   15
       TabPanelIndex   =   0
@@ -484,7 +484,7 @@ Begin BeaconDialog PresetModifierEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Matching Sources:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -498,7 +498,7 @@ Begin BeaconDialog PresetModifierEditor
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
@@ -530,7 +530,7 @@ Begin BeaconDialog PresetModifierEditor
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
@@ -583,7 +583,7 @@ Begin BeaconDialog PresetModifierEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Blueprint Chance Multiplier:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -596,7 +596,7 @@ Begin BeaconDialog PresetModifierEditor
    End
    Begin UITweaks.ResizedTextField BlueprintField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -661,7 +661,7 @@ Begin BeaconDialog PresetModifierEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Max Quality Tiers:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -674,7 +674,7 @@ Begin BeaconDialog PresetModifierEditor
    End
    Begin RangeField MaxQualityField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00

@@ -51,7 +51,7 @@ Begin BeaconDialog EngramSelectorDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Select an Object"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -64,7 +64,7 @@ Begin BeaconDialog EngramSelectorDialog
    End
    Begin UITweaks.ResizedTextField FilterField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -119,8 +119,8 @@ Begin BeaconDialog EngramSelectorDialog
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   -1
       Height          =   254
@@ -141,7 +141,7 @@ Begin BeaconDialog EngramSelectorDialog
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "0"
+      SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -161,7 +161,7 @@ Begin BeaconDialog EngramSelectorDialog
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Select"
       Default         =   True
@@ -193,7 +193,7 @@ Begin BeaconDialog EngramSelectorDialog
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
@@ -236,8 +236,8 @@ Begin BeaconDialog EngramSelectorDialog
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   -1
       Height          =   254
@@ -258,7 +258,7 @@ Begin BeaconDialog EngramSelectorDialog
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "1"
+      SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   5
       TabPanelIndex   =   0
@@ -278,7 +278,7 @@ Begin BeaconDialog EngramSelectorDialog
    Begin UITweaks.ResizedPushButton AddToSelectionsButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   ">>"
       Default         =   False
@@ -310,7 +310,7 @@ Begin BeaconDialog EngramSelectorDialog
    Begin UITweaks.ResizedPushButton RemoveFromSelectionsButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "<<"
       Default         =   False

@@ -29,7 +29,7 @@ Begin ContainerControl LootSourceSettingsContainer
       AcceptFocus     =   False
       AutoDeactivate  =   True
       Enabled         =   True
-      Facing          =   "0"
+      Facing          =   0
       Height          =   18
       HelpTag         =   ""
       Index           =   -2147483648
@@ -102,7 +102,7 @@ Begin ContainerControl LootSourceSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Settings"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -115,7 +115,7 @@ Begin ContainerControl LootSourceSettingsContainer
    End
    Begin RangeField MinItemSetsField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -181,7 +181,7 @@ Begin ContainerControl LootSourceSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Min Item Sets:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -194,7 +194,7 @@ Begin ContainerControl LootSourceSettingsContainer
    End
    Begin RangeField MaxItemSetsField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -260,7 +260,7 @@ Begin ContainerControl LootSourceSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Max Item Sets:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -290,7 +290,7 @@ Begin ContainerControl LootSourceSettingsContainer
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
@@ -369,7 +369,7 @@ Begin ContainerControl LootSourceSettingsContainer
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True

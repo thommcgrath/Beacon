@@ -86,7 +86,7 @@ Begin BeaconSubview BlueprintEditor
    End
    Begin UITweaks.ResizedTextField PathField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -151,7 +151,7 @@ Begin BeaconSubview BlueprintEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Type:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -186,7 +186,7 @@ Begin BeaconSubview BlueprintEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Blueprint Path:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -231,7 +231,7 @@ Begin BeaconSubview BlueprintEditor
    End
    Begin UITweaks.ResizedTextField NameField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -296,7 +296,7 @@ Begin BeaconSubview BlueprintEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Name:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -326,7 +326,7 @@ Begin BeaconSubview BlueprintEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
@@ -364,7 +364,7 @@ Begin BeaconSubview BlueprintEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Map Availability:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -377,7 +377,7 @@ Begin BeaconSubview BlueprintEditor
    End
    Begin UITweaks.ResizedTextField TagsField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -442,7 +442,7 @@ Begin BeaconSubview BlueprintEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Tags:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0

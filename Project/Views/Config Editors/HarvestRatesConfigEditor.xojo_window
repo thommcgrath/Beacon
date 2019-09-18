@@ -27,7 +27,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
    Width           =   764
    Begin UITweaks.ResizedTextField HarvestAmountMultiplierField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -92,7 +92,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Global Harvest Rate Multiplier:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -178,8 +178,8 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   -1
       Height          =   278
@@ -201,7 +201,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "1"
+      SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   13
       TabPanelIndex   =   0
@@ -266,7 +266,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
@@ -282,7 +282,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
    End
    Begin UITweaks.ResizedTextField HarvestHealthMultiplierField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -347,7 +347,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Global Harvest Health Multiplier:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -360,7 +360,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
    End
    Begin UITweaks.ResizedTextField PlayerHarvestDamageMultiplierField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -425,7 +425,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Player Harvest Damage Multiplier:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -438,7 +438,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
    End
    Begin UITweaks.ResizedTextField DinoHarvestDamageMultiplierField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -503,7 +503,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Creature Harvest Damage Multiplier:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -533,7 +533,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True

@@ -49,7 +49,7 @@ Begin LibrarySubview LibraryPaneEngrams
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Beacon supports mod content! Find the list of admin spawn codes for the mod. Then press ""Import from URL"" to pull them from a web page, ""Import from Clipboard"" if you've copied them, or ""Import from File"" if you have them in a file on your computer."
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -63,7 +63,7 @@ Begin LibrarySubview LibraryPaneEngrams
    Begin UITweaks.ResizedPushButton ImportURLButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Import from URL"
       Default         =   False
@@ -95,7 +95,7 @@ Begin LibrarySubview LibraryPaneEngrams
    Begin UITweaks.ResizedPushButton ImportClipboardButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Import from Clipboard"
       Default         =   False
@@ -127,7 +127,7 @@ Begin LibrarySubview LibraryPaneEngrams
    Begin UITweaks.ResizedPushButton ImportFileButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Import from File"
       Default         =   False
@@ -159,7 +159,7 @@ Begin LibrarySubview LibraryPaneEngrams
    Begin UITweaks.ResizedPushButton ManageEngramsButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Manage Database"
       Default         =   False
@@ -224,7 +224,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Mode            =   "0"
+      Mode            =   0
       Period          =   500
       Scope           =   2
       TabPanelIndex   =   0

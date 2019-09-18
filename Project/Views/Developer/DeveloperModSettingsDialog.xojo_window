@@ -30,7 +30,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
@@ -62,7 +62,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
@@ -115,7 +115,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Mod Settings"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -128,7 +128,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
    End
    Begin UITweaks.ResizedTextField PullURLField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -193,7 +193,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Engrams URL:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -228,7 +228,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "A list of engrams can be posted online and the Beacon server will use it to automatically maintain the engrams list. See the API Guide for more details."
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0

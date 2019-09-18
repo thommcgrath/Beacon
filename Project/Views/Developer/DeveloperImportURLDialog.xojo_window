@@ -51,7 +51,7 @@ Begin BeaconDialog DeveloperImportURLDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Import Engrams From URL"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -86,7 +86,7 @@ Begin BeaconDialog DeveloperImportURLDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "If you've posted a list of spawn commands for the items in your mod, paste the url here. Beacon will scan the page and extract whatever it can. It may not be perfect, but it's a nice starting point."
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -99,7 +99,7 @@ Begin BeaconDialog DeveloperImportURLDialog
    End
    Begin UITweaks.ResizedTextField URLField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -143,7 +143,7 @@ Begin BeaconDialog DeveloperImportURLDialog
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
@@ -175,7 +175,7 @@ Begin BeaconDialog DeveloperImportURLDialog
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False

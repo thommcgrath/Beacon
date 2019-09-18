@@ -59,7 +59,7 @@ Begin LibrarySubview LibraryPaneSearch
    End
    Begin UITweaks.ResizedTextField SearchField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -104,7 +104,7 @@ Begin LibrarySubview LibraryPaneSearch
       Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Mode            =   "0"
+      Mode            =   0
       Period          =   300
       Scope           =   2
       TabPanelIndex   =   0

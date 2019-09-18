@@ -44,7 +44,7 @@ Begin ConfigEditor MapsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -77,7 +77,7 @@ Begin ConfigEditor MapsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
@@ -110,7 +110,7 @@ Begin ConfigEditor MapsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
@@ -143,7 +143,7 @@ Begin ConfigEditor MapsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
@@ -176,7 +176,7 @@ Begin ConfigEditor MapsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
@@ -209,7 +209,7 @@ Begin ConfigEditor MapsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
@@ -242,7 +242,7 @@ Begin ConfigEditor MapsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
@@ -275,7 +275,7 @@ Begin ConfigEditor MapsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True

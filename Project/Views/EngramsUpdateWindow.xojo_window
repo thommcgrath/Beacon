@@ -76,7 +76,7 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Updating Engram Definitions…"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -91,7 +91,7 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Mode            =   "1"
+      Mode            =   1
       Period          =   2000
       Scope           =   2
       TabPanelIndex   =   0
@@ -99,7 +99,7 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False

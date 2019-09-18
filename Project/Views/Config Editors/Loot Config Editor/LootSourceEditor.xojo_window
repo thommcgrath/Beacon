@@ -39,8 +39,8 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   0
       Height          =   120
@@ -61,7 +61,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "1"
+      SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   5
       TabPanelIndex   =   0

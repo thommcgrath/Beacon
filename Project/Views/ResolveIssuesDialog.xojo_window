@@ -51,7 +51,7 @@ Begin BeaconDialog ResolveIssuesDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "This document has problems that must be resolved"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -65,7 +65,7 @@ Begin BeaconDialog ResolveIssuesDialog
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   False
@@ -108,8 +108,8 @@ Begin BeaconDialog ResolveIssuesDialog
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
       Height          =   160
@@ -130,7 +130,7 @@ Begin BeaconDialog ResolveIssuesDialog
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "0"
+      SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -171,7 +171,7 @@ Begin BeaconDialog ResolveIssuesDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "To resolve unknown blueprint problems, paste their spawn codes below. It is ok to include more codes than necessary, Beacon will use only the ones it needs."
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -184,7 +184,7 @@ Begin BeaconDialog ResolveIssuesDialog
    End
    Begin TextArea BlueprintsField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -233,7 +233,7 @@ Begin BeaconDialog ResolveIssuesDialog
    Begin UITweaks.ResizedPushButton ExtractButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Extract Blueprints"
       Default         =   False
@@ -265,7 +265,7 @@ Begin BeaconDialog ResolveIssuesDialog
    Begin UITweaks.ResizedPushButton GoToButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Go To Issue"
       Default         =   False

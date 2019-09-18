@@ -50,7 +50,7 @@ Begin LibrarySubview LibraryPaneMenu Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Untitled"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c0000FF00
       TextFont        =   "System"
       TextSize        =   0.0

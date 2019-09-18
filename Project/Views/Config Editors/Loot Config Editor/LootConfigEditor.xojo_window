@@ -98,8 +98,8 @@ Begin ConfigEditor LootConfigEditor
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
       Height          =   374
@@ -120,7 +120,7 @@ Begin ConfigEditor LootConfigEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "1"
+      SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   4
       TabPanelIndex   =   0

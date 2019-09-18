@@ -51,7 +51,7 @@ Begin BeaconDialog BreedingTunerDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Auto Compute Imprinting Multiplier"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -86,7 +86,7 @@ Begin BeaconDialog BreedingTunerDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Choose the creatures that are important for hitting 100% imprint, and Beacon will compute the best imprint period multiplier."
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -100,7 +100,7 @@ Begin BeaconDialog BreedingTunerDialog
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
@@ -132,7 +132,7 @@ Begin BeaconDialog BreedingTunerDialog
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
@@ -175,8 +175,8 @@ Begin BeaconDialog BreedingTunerDialog
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
       Height          =   216
@@ -197,7 +197,7 @@ Begin BeaconDialog BreedingTunerDialog
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "0"
+      SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   6
       TabPanelIndex   =   0
@@ -217,7 +217,7 @@ Begin BeaconDialog BreedingTunerDialog
    Begin UITweaks.ResizedPushButton MajorCreaturesButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Major Creatures"
       Default         =   False
@@ -249,7 +249,7 @@ Begin BeaconDialog BreedingTunerDialog
    Begin UITweaks.ResizedPushButton AllCreaturesButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "All Creatures"
       Default         =   False
@@ -281,7 +281,7 @@ Begin BeaconDialog BreedingTunerDialog
    Begin UITweaks.ResizedPushButton ClearCreaturesButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Clear Creatures"
       Default         =   False

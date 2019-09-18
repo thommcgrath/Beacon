@@ -76,7 +76,7 @@ Begin BeaconSubview APIBuilderView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
@@ -92,7 +92,7 @@ Begin BeaconSubview APIBuilderView
    End
    Begin TextArea BodyField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   True
       BackColor       =   &cFFFFFF00
@@ -162,7 +162,7 @@ Begin BeaconSubview APIBuilderView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Body:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -176,7 +176,7 @@ Begin BeaconSubview APIBuilderView
    Begin UITweaks.ResizedPushButton BuildButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Build"
       Default         =   False
@@ -207,7 +207,7 @@ Begin BeaconSubview APIBuilderView
    End
    Begin TextArea CodeField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   True
       BackColor       =   &cFFFFFF00
@@ -277,7 +277,7 @@ Begin BeaconSubview APIBuilderView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Code:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -290,7 +290,7 @@ Begin BeaconSubview APIBuilderView
    End
    Begin UITweaks.ResizedTextField ContentTypeField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -355,7 +355,7 @@ Begin BeaconSubview APIBuilderView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Content Type:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -422,7 +422,7 @@ Begin BeaconSubview APIBuilderView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Language:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -457,7 +457,7 @@ Begin BeaconSubview APIBuilderView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Method:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -502,7 +502,7 @@ Begin BeaconSubview APIBuilderView
    End
    Begin UITweaks.ResizedTextField PathField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -567,7 +567,7 @@ Begin BeaconSubview APIBuilderView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Path:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0

@@ -109,7 +109,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "This is how you are identified to the Beacon server. Your documents and registered mods are bound to this key pair and cannot be replaced if lost. So if you use these features, you are strongly recommended to backup this identity. You can also use the backup and restore buttons to move this identity to another computer. But keep it private like a password.\n\nThese keys are also used for API authentication. See the API Guide for more information about the Beacon API."
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -123,7 +123,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
    End
    Begin TextArea PrivateKeyArea
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   True
       BackColor       =   &cFFFFFF00
@@ -193,7 +193,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Private Key:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -206,7 +206,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
    End
    Begin TextArea PublicKeyArea
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   True
       BackColor       =   &cFFFFFF00
@@ -276,7 +276,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Public Key:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -296,7 +296,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
    End
    Begin UITweaks.ResizedTextField UserIDField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -361,7 +361,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "User ID:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0

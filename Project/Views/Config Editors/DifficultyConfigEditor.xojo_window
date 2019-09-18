@@ -27,7 +27,7 @@ Begin ConfigEditor DifficultyConfigEditor
    Width           =   884
    Begin UITweaks.ResizedTextField MaxDinoLevelField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -92,7 +92,7 @@ Begin ConfigEditor DifficultyConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Maximum Creature Level:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -133,7 +133,7 @@ Begin ConfigEditor DifficultyConfigEditor
       Width           =   311
       Begin UITweaks.ResizedTextField DifficultyOffsetField
          AcceptTabs      =   False
-         Alignment       =   "0"
+         Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -199,7 +199,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "Difficulty Offset:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -212,7 +212,7 @@ Begin ConfigEditor DifficultyConfigEditor
       End
       Begin UITweaks.ResizedTextField LootScaleField
          AcceptTabs      =   False
-         Alignment       =   "0"
+         Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -278,7 +278,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "Loot Scale:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -291,7 +291,7 @@ Begin ConfigEditor DifficultyConfigEditor
       End
       Begin UITweaks.ResizedTextField OverrideOfficialDifficultyField
          AcceptTabs      =   False
-         Alignment       =   "0"
+         Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -357,7 +357,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "Override Official Difficulty:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -370,7 +370,7 @@ Begin ConfigEditor DifficultyConfigEditor
       End
       Begin UITweaks.ResizedTextField DifficultyValueField
          AcceptTabs      =   False
-         Alignment       =   "0"
+         Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -436,7 +436,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "Difficulty Value:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0

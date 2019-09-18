@@ -30,7 +30,7 @@ Begin BeaconDialog IdentityDecryptDialog
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
@@ -62,7 +62,7 @@ Begin BeaconDialog IdentityDecryptDialog
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
@@ -115,7 +115,7 @@ Begin BeaconDialog IdentityDecryptDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Enter your account password to continue"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -150,7 +150,7 @@ Begin BeaconDialog IdentityDecryptDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "This identity file is encrypted with your account password. Please enter your account password to continue."
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -163,7 +163,7 @@ Begin BeaconDialog IdentityDecryptDialog
    End
    Begin TextField PasswordField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00

@@ -79,7 +79,7 @@ Begin Window ExceptionWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Beacon has encountered an unrecoverable error"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -114,7 +114,7 @@ Begin Window ExceptionWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Well this is embarrassing. Something has gone wrong that Beacon wasn't prepared for. Beacon will need to stop now."
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -128,7 +128,7 @@ Begin Window ExceptionWindow
    Begin UITweaks.ResizedPushButton QuitButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Quit"
       Default         =   False
@@ -287,7 +287,7 @@ Begin Window ExceptionWindow
       Scope           =   2
       TabIndex        =   8
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   "True"
       Top             =   103
       Transparent     =   False
       Value           =   3
@@ -317,7 +317,7 @@ Begin Window ExceptionWindow
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Checking for solution…"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -346,7 +346,7 @@ Begin Window ExceptionWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   True
+         TabStop         =   "True"
          Top             =   155
          Transparent     =   False
          Value           =   0.0
@@ -377,7 +377,7 @@ Begin Window ExceptionWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Your privacy settings prevent Beacon from looking for a solution to this problem. Would you like to allow a one-time connection? No information about you or your computer will be sent to Beacon's server."
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -391,7 +391,7 @@ Begin Window ExceptionWindow
       Begin UITweaks.ResizedPushButton PermissionButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Allow Connection"
          Default         =   False
@@ -445,7 +445,7 @@ Begin Window ExceptionWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Privacy Policy"
-         TextAlign       =   "1"
+         TextAlign       =   1
          TextColor       =   &c00000000
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
@@ -481,7 +481,7 @@ Begin Window ExceptionWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Good news! It seems like there is more information about this problem available online."
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -495,7 +495,7 @@ Begin Window ExceptionWindow
       Begin UITweaks.ResizedPushButton SolutionOpenButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "View Online"
          Default         =   False
@@ -548,7 +548,7 @@ Begin Window ExceptionWindow
          TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Unfortunately, Beacon could not find any new information about this problem. You may be the first to experience it.\n\nIf the error happens consistently, please report it with as much detail as possible. Doing so may help other users."
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -562,7 +562,7 @@ Begin Window ExceptionWindow
       Begin UITweaks.ResizedPushButton ReportButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Add Comments"
          Default         =   False
@@ -616,7 +616,7 @@ Begin Window ExceptionWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Error ID: <hash>"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0

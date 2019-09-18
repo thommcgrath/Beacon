@@ -48,7 +48,7 @@ Begin BeaconDialog ShareWithUserDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -63,7 +63,7 @@ Begin BeaconDialog ShareWithUserDialog
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
@@ -95,7 +95,7 @@ Begin BeaconDialog ShareWithUserDialog
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
@@ -148,7 +148,7 @@ Begin BeaconDialog ShareWithUserDialog
    End
    Begin UITweaks.ResizedTextField UserIDField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -212,7 +212,7 @@ Begin BeaconDialog ShareWithUserDialog
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -248,7 +248,7 @@ Begin BeaconDialog ShareWithUserDialog
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0

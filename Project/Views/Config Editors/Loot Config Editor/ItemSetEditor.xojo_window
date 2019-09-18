@@ -39,8 +39,8 @@ Begin BeaconContainer ItemSetEditor
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "1"
-      GridLinesVertical=   "1"
+      GridLinesHorizontal=   1
+      GridLinesVertical=   1
       HasHeading      =   True
       HeadingIndex    =   0
       Height          =   343
@@ -62,7 +62,7 @@ Begin BeaconContainer ItemSetEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "1"
+      SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   3
       TabPanelIndex   =   0

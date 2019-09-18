@@ -73,7 +73,7 @@ Begin BeaconDialog OAuthAuthorizationWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Waiting for authorization…"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -87,7 +87,7 @@ Begin BeaconDialog OAuthAuthorizationWindow
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False

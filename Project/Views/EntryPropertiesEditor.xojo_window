@@ -44,7 +44,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   "1"
+      State           =   1
       TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
@@ -77,7 +77,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   "1"
+      State           =   1
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
@@ -110,7 +110,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   "1"
+      State           =   1
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
@@ -143,7 +143,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   "1"
+      State           =   1
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
@@ -176,7 +176,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   "1"
+      State           =   1
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
@@ -214,7 +214,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "%"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -227,7 +227,7 @@ Begin BeaconContainer EntryPropertiesEditor
    End
    Begin UITweaks.ResizedTextField ChanceField
       AcceptTabs      =   False
-      Alignment       =   "3"
+      Alignment       =   3
       AutoDeactivate  =   False
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -291,7 +291,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
-      TickStyle       =   "0"
+      TickStyle       =   0
       Top             =   142
       Transparent     =   False
       Value           =   25
@@ -322,7 +322,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Chance To Be Blueprint:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -389,7 +389,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Max Quality:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -456,7 +456,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Min Quality:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -469,7 +469,7 @@ Begin BeaconContainer EntryPropertiesEditor
    End
    Begin UITweaks.ResizedTextField MaxQuantityField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -535,7 +535,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Max Quantity:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -548,7 +548,7 @@ Begin BeaconContainer EntryPropertiesEditor
    End
    Begin UITweaks.ResizedTextField MinQuantityField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -614,7 +614,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Min Quantity:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -649,7 +649,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Weight:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -682,7 +682,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabIndex        =   18
       TabPanelIndex   =   0
       TabStop         =   True
-      TickStyle       =   "0"
+      TickStyle       =   0
       Top             =   176
       Transparent     =   False
       Value           =   250
@@ -691,7 +691,7 @@ Begin BeaconContainer EntryPropertiesEditor
    End
    Begin RangeField WeightField
       AcceptTabs      =   False
-      Alignment       =   "3"
+      Alignment       =   3
       AutoDeactivate  =   False
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -757,7 +757,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -787,7 +787,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   "1"
+      State           =   1
       TabIndex        =   21
       TabPanelIndex   =   0
       TabStop         =   True

@@ -45,7 +45,7 @@ Begin ContainerControl MapSelectionGrid
       LockTop         =   True
       Mask            =   ""
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True

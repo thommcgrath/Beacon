@@ -52,7 +52,7 @@ Begin DiscoveryView NitradoDiscoveryView
       Begin UITweaks.ResizedPushButton FindingCancelButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
@@ -105,7 +105,7 @@ Begin DiscoveryView NitradoDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Finding Servers…"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -155,8 +155,8 @@ Begin DiscoveryView NitradoDiscoveryView
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         GridLinesHorizontal=   "0"
-         GridLinesVertical=   "0"
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   -1
          Height          =   296
@@ -177,7 +177,7 @@ Begin DiscoveryView NitradoDiscoveryView
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionType   =   "0"
+         SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   1
          TabPanelIndex   =   2
@@ -218,7 +218,7 @@ Begin DiscoveryView NitradoDiscoveryView
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Select Servers"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -232,7 +232,7 @@ Begin DiscoveryView NitradoDiscoveryView
       Begin UITweaks.ResizedPushButton ListCancelButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
@@ -264,7 +264,7 @@ Begin DiscoveryView NitradoDiscoveryView
       Begin UITweaks.ResizedPushButton ListActionButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Next"
          Default         =   True
@@ -306,7 +306,7 @@ Begin DiscoveryView NitradoDiscoveryView
       Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Mode            =   "0"
+      Mode            =   0
       Period          =   1000
       Scope           =   2
       TabPanelIndex   =   0

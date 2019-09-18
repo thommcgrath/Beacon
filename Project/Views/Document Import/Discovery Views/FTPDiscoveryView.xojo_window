@@ -73,7 +73,7 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Mode:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -140,7 +140,7 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Beacon will securely send this information to the Beacon API server, which will perform the FTP work. The server will not store or log FTP information in any way."
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -175,7 +175,7 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Server Settings"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -210,7 +210,7 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Host:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -223,7 +223,7 @@ Begin DiscoveryView FTPDiscoveryView
       End
       Begin UITweaks.ResizedTextField ServerHostField
          AcceptTabs      =   False
-         Alignment       =   "0"
+         Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -289,7 +289,7 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Port:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -302,7 +302,7 @@ Begin DiscoveryView FTPDiscoveryView
       End
       Begin UITweaks.ResizedTextField ServerPortField
          AcceptTabs      =   False
-         Alignment       =   "0"
+         Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -368,7 +368,7 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Username:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -381,7 +381,7 @@ Begin DiscoveryView FTPDiscoveryView
       End
       Begin UITweaks.ResizedTextField ServerUserField
          AcceptTabs      =   False
-         Alignment       =   "0"
+         Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -447,7 +447,7 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Password:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -460,7 +460,7 @@ Begin DiscoveryView FTPDiscoveryView
       End
       Begin UITweaks.ResizedTextField ServerPassField
          AcceptTabs      =   False
-         Alignment       =   "0"
+         Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -526,7 +526,7 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Connecting to Server…"
-         TextAlign       =   "1"
+         TextAlign       =   1
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -586,7 +586,7 @@ Begin DiscoveryView FTPDiscoveryView
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Please locate your Game.ini file"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -600,7 +600,7 @@ Begin DiscoveryView FTPDiscoveryView
       Begin PushButton BrowseActionButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Next"
          Default         =   True
@@ -632,7 +632,7 @@ Begin DiscoveryView FTPDiscoveryView
       Begin PushButton BrowseCancelButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
@@ -833,7 +833,7 @@ Begin DiscoveryView FTPDiscoveryView
       Begin UITweaks.ResizedPushButton ServerCancelButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
@@ -865,7 +865,7 @@ Begin DiscoveryView FTPDiscoveryView
       Begin UITweaks.ResizedPushButton ServerActionButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Next"
          Default         =   True

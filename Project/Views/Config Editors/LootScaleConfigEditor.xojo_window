@@ -27,7 +27,7 @@ Begin ConfigEditor LootScaleConfigEditor
    Width           =   732
    Begin UITweaks.ResizedTextField LootScaleField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -90,7 +90,7 @@ Begin ConfigEditor LootScaleConfigEditor
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TickStyle       =   "0"
+      TickStyle       =   0
       Top             =   54
       Transparent     =   False
       Value           =   100

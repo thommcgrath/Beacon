@@ -132,8 +132,8 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   -1
       Height          =   361
@@ -155,7 +155,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "1"
+      SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   4
       TabPanelIndex   =   0

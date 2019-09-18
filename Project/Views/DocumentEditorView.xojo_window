@@ -201,7 +201,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Mode            =   "2"
+      Mode            =   2
       Period          =   60000
       Scope           =   2
       TabPanelIndex   =   0

@@ -176,8 +176,8 @@ Begin BeaconSubview PresetEditorView
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         GridLinesHorizontal=   "0"
-         GridLinesVertical=   "0"
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   "#ColumnDescription"
          Height          =   379
@@ -198,7 +198,7 @@ Begin BeaconSubview PresetEditorView
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionType   =   "1"
+         SelectionType   =   1
          ShowDropIndicator=   False
          TabIndex        =   1
          TabPanelIndex   =   2
@@ -239,7 +239,7 @@ Begin BeaconSubview PresetEditorView
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Checking the box next to a quantity, quality, or blueprint chance will allow the values to be adjusted by modifiers."
-         TextAlign       =   "1"
+         TextAlign       =   1
          TextColor       =   &c00000000
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
@@ -298,7 +298,7 @@ Begin BeaconSubview PresetEditorView
       End
       Begin UITweaks.ResizedTextField MaxItemsField
          AcceptTabs      =   False
-         Alignment       =   "2"
+         Alignment       =   2
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -364,7 +364,7 @@ Begin BeaconSubview PresetEditorView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Max Items:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -377,7 +377,7 @@ Begin BeaconSubview PresetEditorView
       End
       Begin UITweaks.ResizedTextField MinItemsField
          AcceptTabs      =   False
-         Alignment       =   "2"
+         Alignment       =   2
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -443,7 +443,7 @@ Begin BeaconSubview PresetEditorView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Min Items:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -478,7 +478,7 @@ Begin BeaconSubview PresetEditorView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Grouping:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -513,7 +513,7 @@ Begin BeaconSubview PresetEditorView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Name:"
-         TextAlign       =   "2"
+         TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -526,7 +526,7 @@ Begin BeaconSubview PresetEditorView
       End
       Begin UITweaks.ResizedTextField GroupingField
          AcceptTabs      =   False
-         Alignment       =   "0"
+         Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -570,7 +570,7 @@ Begin BeaconSubview PresetEditorView
       End
       Begin UITweaks.ResizedTextField NameField
          AcceptTabs      =   False
-         Alignment       =   "0"
+         Alignment       =   0
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -626,8 +626,8 @@ Begin BeaconSubview PresetEditorView
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         GridLinesHorizontal=   "0"
-         GridLinesVertical=   "0"
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   -1
          Height          =   415
@@ -648,7 +648,7 @@ Begin BeaconSubview PresetEditorView
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionType   =   "1"
+         SelectionType   =   1
          ShowDropIndicator=   False
          TabIndex        =   3
          TabPanelIndex   =   3
@@ -668,7 +668,7 @@ Begin BeaconSubview PresetEditorView
       Begin UITweaks.ResizedPushButton AddModifierButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Add Modifier"
          Default         =   False
@@ -700,7 +700,7 @@ Begin BeaconSubview PresetEditorView
       Begin UITweaks.ResizedPushButton EditModifierButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Edit"
          Default         =   False
@@ -732,7 +732,7 @@ Begin BeaconSubview PresetEditorView
       Begin UITweaks.ResizedPushButton DeleteModifierButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Delete"
          Default         =   False

@@ -45,7 +45,7 @@ Begin BeaconWindow UpdateWindow
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   1
@@ -75,7 +75,7 @@ Begin BeaconWindow UpdateWindow
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Check for Beacon updates…"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -104,7 +104,7 @@ Begin BeaconWindow UpdateWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   True
+         TabStop         =   "True"
          Top             =   52
          Transparent     =   False
          Value           =   0.0
@@ -114,7 +114,7 @@ Begin BeaconWindow UpdateWindow
       Begin UITweaks.ResizedPushButton CheckCancelButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
@@ -195,7 +195,7 @@ Begin BeaconWindow UpdateWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "A new version of Beacon is available!"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -209,7 +209,7 @@ Begin BeaconWindow UpdateWindow
       Begin UITweaks.ResizedPushButton ResultsActionButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Download"
          Default         =   True
@@ -241,7 +241,7 @@ Begin BeaconWindow UpdateWindow
       Begin UITweaks.ResizedPushButton ResultsCancelButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
@@ -294,7 +294,7 @@ Begin BeaconWindow UpdateWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Downloading update…"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -323,7 +323,7 @@ Begin BeaconWindow UpdateWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
-         TabStop         =   True
+         TabStop         =   "True"
          Top             =   52
          Transparent     =   False
          Value           =   0.0
@@ -333,7 +333,7 @@ Begin BeaconWindow UpdateWindow
       Begin UITweaks.ResizedPushButton DownloadCancelButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
@@ -365,7 +365,7 @@ Begin BeaconWindow UpdateWindow
       Begin UITweaks.ResizedPushButton ResultsNotesButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Release Notes"
          Default         =   False
@@ -418,7 +418,7 @@ Begin BeaconWindow UpdateWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "After downloading, the update will install only when you're ready."
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0

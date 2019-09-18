@@ -27,7 +27,7 @@ Begin ConfigEditor StackSizesConfigEditor
    Width           =   764
    Begin UITweaks.ResizedTextField GlobalMultiplierField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -92,7 +92,7 @@ Begin ConfigEditor StackSizesConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Global Stack Size Multiplier:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -176,8 +176,8 @@ Begin ConfigEditor StackSizesConfigEditor
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   -1
       Height          =   380
@@ -198,7 +198,7 @@ Begin ConfigEditor StackSizesConfigEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "1"
+      SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   5
       TabPanelIndex   =   0

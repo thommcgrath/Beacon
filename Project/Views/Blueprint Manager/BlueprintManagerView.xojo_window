@@ -251,8 +251,8 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
       Height          =   551
@@ -273,7 +273,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "1"
+      SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -331,7 +331,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Mode            =   "0"
+      Mode            =   0
       Period          =   500
       Scope           =   2
       TabPanelIndex   =   0

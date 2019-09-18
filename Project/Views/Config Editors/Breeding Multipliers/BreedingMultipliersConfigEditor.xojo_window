@@ -27,7 +27,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    Width           =   744
    Begin UITweaks.ResizedTextField MatureSpeedField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -92,7 +92,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Mature Speed Multiplier:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -105,7 +105,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    End
    Begin UITweaks.ResizedTextField IncubationSpeedField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -170,7 +170,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Incubation Speed Multiplier:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -183,7 +183,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    End
    Begin UITweaks.ResizedTextField EggLayPeriodField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -248,7 +248,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Egg Lay Period Multiplier:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -261,7 +261,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    End
    Begin UITweaks.ResizedTextField FoodConsumptionField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -326,7 +326,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Baby Food Consumption Multiplier:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -339,7 +339,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    End
    Begin UITweaks.ResizedTextField ImprintPeriodField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -404,7 +404,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Imprint Period Multiplier:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -417,7 +417,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    End
    Begin UITweaks.ResizedTextField ImprintStatScaleField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -482,7 +482,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Imprint Stat Scale Multiplier:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -495,7 +495,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    End
    Begin UITweaks.ResizedTextField ImprintGracePeriodField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -560,7 +560,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Imprint Grace Period Multiplier:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -573,7 +573,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    End
    Begin UITweaks.ResizedTextField ImprintLossSpeedField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -638,7 +638,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Imprint Loss Speed Multiplier:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -663,8 +663,8 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   0
       Height          =   93
@@ -685,7 +685,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "0"
+      SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   35
       TabPanelIndex   =   0
@@ -726,7 +726,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    End
    Begin UITweaks.ResizedTextField ImprintPeriodPreviewField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -792,7 +792,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Imprint Frequency:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -827,7 +827,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Greater than 1.0 matures faster"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -862,7 +862,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Greater than 1.0 incubates faster"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -897,7 +897,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Less than 1.0 produces more eggs"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -932,7 +932,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Greater than 1.0 eats more often"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -967,7 +967,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Less than 1.0 imprints more frequently"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -1002,7 +1002,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Greater than 1.0 increases imprinting stat bonuses"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -1037,7 +1037,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Greater than 1.0 increases time before decay"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -1072,7 +1072,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Less than 1.0 reduces imprint decay"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -1144,7 +1144,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    End
    Begin UITweaks.ResizedTextField MatingSpeedField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -1209,7 +1209,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Mating Speed Multiplier:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -1222,7 +1222,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    End
    Begin UITweaks.ResizedTextField MatingIntervalField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -1287,7 +1287,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Mating Interval Multiplier:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -1322,7 +1322,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Greater than 1.0 mates faster"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -1357,7 +1357,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Less than 1.0 mates more often"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0

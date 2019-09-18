@@ -48,7 +48,7 @@ Begin BeaconDialog SharingDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -83,7 +83,7 @@ Begin BeaconDialog SharingDialog
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -98,7 +98,7 @@ Begin BeaconDialog SharingDialog
    Begin ReactionButton CopyLinkButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Copy"
       Default         =   False
@@ -130,7 +130,7 @@ Begin BeaconDialog SharingDialog
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Done"
       Default         =   True
@@ -173,8 +173,8 @@ Begin BeaconDialog SharingDialog
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
       Height          =   248
@@ -195,7 +195,7 @@ Begin BeaconDialog SharingDialog
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "0"
+      SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -215,7 +215,7 @@ Begin BeaconDialog SharingDialog
    Begin UITweaks.ResizedPushButton AddUserButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Add User"
       Default         =   False

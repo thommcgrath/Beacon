@@ -43,7 +43,7 @@ Begin ContainerControl DocumentImportView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   4
@@ -103,7 +103,7 @@ Begin ContainerControl DocumentImportView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Select Import Source"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -177,7 +177,7 @@ Begin ContainerControl DocumentImportView
       Begin UITweaks.ResizedPushButton SourceCancelButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
@@ -209,7 +209,7 @@ Begin ContainerControl DocumentImportView
       Begin UITweaks.ResizedPushButton SourceActionButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Continue"
          Default         =   False
@@ -352,7 +352,7 @@ Begin ContainerControl DocumentImportView
          TabPanelIndex   =   5
          TabStop         =   True
          Text            =   "Import Status"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -366,7 +366,7 @@ Begin ContainerControl DocumentImportView
       Begin UITweaks.ResizedPushButton StatusCancelButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
@@ -409,8 +409,8 @@ Begin ContainerControl DocumentImportView
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         GridLinesHorizontal=   "0"
-         GridLinesVertical=   "0"
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
          HasHeading      =   False
          HeadingIndex    =   -1
          Height          =   336
@@ -431,7 +431,7 @@ Begin ContainerControl DocumentImportView
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionType   =   "0"
+         SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   1
          TabPanelIndex   =   5
@@ -451,7 +451,7 @@ Begin ContainerControl DocumentImportView
       Begin UITweaks.ResizedPushButton StatusActionButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Import"
          Default         =   False
@@ -534,7 +534,7 @@ Begin ContainerControl DocumentImportView
          TabPanelIndex   =   6
          TabStop         =   True
          Text            =   "Import from Other Documents"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -548,7 +548,7 @@ Begin ContainerControl DocumentImportView
       Begin UITweaks.ResizedPushButton OtherDocsActionButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Continue"
          Default         =   True
@@ -580,7 +580,7 @@ Begin ContainerControl DocumentImportView
       Begin UITweaks.ResizedPushButton OtherDocsCancelButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
@@ -623,8 +623,8 @@ Begin ContainerControl DocumentImportView
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         GridLinesHorizontal=   "0"
-         GridLinesVertical=   "0"
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
          HasHeading      =   False
          HeadingIndex    =   1
          Height          =   336
@@ -645,7 +645,7 @@ Begin ContainerControl DocumentImportView
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionType   =   "0"
+         SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   3
          TabPanelIndex   =   6
@@ -667,7 +667,7 @@ Begin ContainerControl DocumentImportView
       Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Mode            =   "0"
+      Mode            =   0
       Period          =   100
       Scope           =   2
       TabPanelIndex   =   0

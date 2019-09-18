@@ -28,7 +28,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
    Begin UITweaks.ResizedPushButton NewFileButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "New Beacon File…"
       Default         =   False
@@ -60,7 +60,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
    Begin UITweaks.ResizedPushButton OpenFileButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Open Beacon File…"
       Default         =   False
@@ -141,7 +141,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Version X"
-      TextAlign       =   "1"
+      TextAlign       =   1
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -176,7 +176,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "© 2016-2019 Thom McGrath, All Rights Reserved."
-      TextAlign       =   "1"
+      TextAlign       =   1
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -211,7 +211,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Engrams Updated Y"
-      TextAlign       =   "1"
+      TextAlign       =   1
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -275,7 +275,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "https://beaconapp.cc/"
-      TextAlign       =   "1"
+      TextAlign       =   1
       TextColor       =   &c0000FF00
       TextFont        =   "SmallSystem"
       TextSize        =   0.0

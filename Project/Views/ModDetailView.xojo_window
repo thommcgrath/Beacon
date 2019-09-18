@@ -51,7 +51,7 @@ Begin BeaconContainer ModDetailView
       Width           =   864
       Begin UITweaks.ResizedTextField ConfirmField
          AcceptTabs      =   False
-         Alignment       =   "2"
+         Alignment       =   2
          AutoDeactivate  =   True
          AutomaticallyCheckSpelling=   False
          BackColor       =   &cFFFFFF00
@@ -96,7 +96,7 @@ Begin BeaconContainer ModDetailView
       Begin ReactionButton CopyButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Copy To Clipboard"
          Default         =   False
@@ -149,7 +149,7 @@ Begin BeaconContainer ModDetailView
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "You have not yet confirmed ownership of this mod. To so do, please copy the value below and insert it anywhere on the mod's Steam page. Then press the ""Confirm Ownership"" button below. Once confirmed, the text can be removed from your Steam page."
-         TextAlign       =   "1"
+         TextAlign       =   1
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -163,7 +163,7 @@ Begin BeaconContainer ModDetailView
       Begin UITweaks.ResizedPushButton ConfirmButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Confirm Ownership"
          Default         =   False
@@ -216,7 +216,7 @@ Begin BeaconContainer ModDetailView
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "No Mod Selected"
-         TextAlign       =   "1"
+         TextAlign       =   1
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -266,8 +266,8 @@ Begin BeaconContainer ModDetailView
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         GridLinesHorizontal=   "0"
-         GridLinesVertical=   "0"
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   1
          Height          =   378
@@ -288,7 +288,7 @@ Begin BeaconContainer ModDetailView
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionType   =   "1"
+         SelectionType   =   1
          ShowDropIndicator=   False
          TabIndex        =   1
          TabPanelIndex   =   4

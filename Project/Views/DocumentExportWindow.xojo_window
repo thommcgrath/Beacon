@@ -30,7 +30,7 @@ Begin BeaconDialog DocumentExportWindow
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Finished"
       Default         =   False
@@ -61,7 +61,7 @@ Begin BeaconDialog DocumentExportWindow
    End
    Begin CodeArea ContentArea
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -110,7 +110,7 @@ Begin BeaconDialog DocumentExportWindow
    Begin UITweaks.ResizedPushButton SaveButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Save As…"
       Default         =   False
@@ -142,7 +142,7 @@ Begin BeaconDialog DocumentExportWindow
    Begin ReactionButton CopyButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Copy All"
       Default         =   False
@@ -174,7 +174,7 @@ Begin BeaconDialog DocumentExportWindow
    Begin UITweaks.ResizedPushButton RewriteClipboardButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Update Clipboard"
       Default         =   False
@@ -207,7 +207,7 @@ Begin BeaconDialog DocumentExportWindow
       Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Mode            =   "2"
+      Mode            =   2
       Period          =   1000
       Scope           =   2
       TabPanelIndex   =   0
@@ -215,7 +215,7 @@ Begin BeaconDialog DocumentExportWindow
    Begin UITweaks.ResizedPushButton RewriteFileButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "Update File…"
       Default         =   False
@@ -350,7 +350,7 @@ Begin BeaconDialog DocumentExportWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Building config…"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0

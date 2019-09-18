@@ -29,7 +29,7 @@ Begin ContainerControl ItemSetSettingsContainer
       AcceptFocus     =   False
       AutoDeactivate  =   True
       Enabled         =   True
-      Facing          =   "0"
+      Facing          =   0
       Height          =   18
       HelpTag         =   ""
       Index           =   -2147483648
@@ -102,7 +102,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Settings"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -115,7 +115,7 @@ Begin ContainerControl ItemSetSettingsContainer
    End
    Begin UITweaks.ResizedTextField NameField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -180,7 +180,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Name:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -215,7 +215,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Min Entries:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -250,7 +250,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Max Entries:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -285,7 +285,7 @@ Begin ContainerControl ItemSetSettingsContainer
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Weight:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -315,7 +315,7 @@ Begin ContainerControl ItemSetSettingsContainer
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
@@ -331,7 +331,7 @@ Begin ContainerControl ItemSetSettingsContainer
    End
    Begin RangeField MinEntriesField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -375,7 +375,7 @@ Begin ContainerControl ItemSetSettingsContainer
    End
    Begin RangeField MaxEntriesField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -419,7 +419,7 @@ Begin ContainerControl ItemSetSettingsContainer
    End
    Begin RangeField WeightField
       AcceptTabs      =   False
-      Alignment       =   "2"
+      Alignment       =   2
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00

@@ -45,7 +45,7 @@ Begin BeaconDialog DocumentDeployWindow
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -75,7 +75,7 @@ Begin BeaconDialog DocumentDeployWindow
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Select Deployment Servers"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -100,8 +100,8 @@ Begin BeaconDialog DocumentDeployWindow
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         GridLinesHorizontal=   "0"
-         GridLinesVertical=   "0"
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
          HasHeading      =   False
          HeadingIndex    =   -1
          Height          =   280
@@ -122,7 +122,7 @@ Begin BeaconDialog DocumentDeployWindow
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionType   =   "0"
+         SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   1
          TabPanelIndex   =   1
@@ -142,7 +142,7 @@ Begin BeaconDialog DocumentDeployWindow
       Begin UITweaks.ResizedPushButton ServerSelectionActionButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   False
          Caption         =   "Begin"
          Default         =   True
@@ -174,7 +174,7 @@ Begin BeaconDialog DocumentDeployWindow
       Begin UITweaks.ResizedPushButton ServerSelectionCancelButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
@@ -227,7 +227,7 @@ Begin BeaconDialog DocumentDeployWindow
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Deploying…"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -262,7 +262,7 @@ Begin BeaconDialog DocumentDeployWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Finished!"
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -276,7 +276,7 @@ Begin BeaconDialog DocumentDeployWindow
       Begin UITweaks.ResizedPushButton FinishedButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Done"
          Default         =   False
@@ -319,8 +319,8 @@ Begin BeaconDialog DocumentDeployWindow
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
-         GridLinesHorizontal=   "0"
-         GridLinesVertical=   "0"
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
          HasHeading      =   False
          HeadingIndex    =   -1
          Height          =   280
@@ -341,7 +341,7 @@ Begin BeaconDialog DocumentDeployWindow
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionChangeBlocked=   False
-         SelectionType   =   "0"
+         SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   1
          TabPanelIndex   =   2
@@ -361,7 +361,7 @@ Begin BeaconDialog DocumentDeployWindow
       Begin UITweaks.ResizedPushButton DeployingCancelButton
          AutoDeactivate  =   True
          Bold            =   False
-         ButtonStyle     =   "0"
+         ButtonStyle     =   0
          Cancel          =   True
          Caption         =   "Cancel"
          Default         =   False
@@ -414,7 +414,7 @@ Begin BeaconDialog DocumentDeployWindow
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "All servers updated successfully."
-         TextAlign       =   "0"
+         TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
@@ -438,7 +438,7 @@ Begin BeaconDialog DocumentDeployWindow
       Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Mode            =   "0"
+      Mode            =   0
       Period          =   100
       Scope           =   2
       TabPanelIndex   =   0

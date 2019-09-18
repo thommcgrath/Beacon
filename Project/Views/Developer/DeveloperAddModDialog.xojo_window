@@ -51,7 +51,7 @@ Begin BeaconDialog DeveloperAddModDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Register Mod"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -86,7 +86,7 @@ Begin BeaconDialog DeveloperAddModDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Register your mod with Beacon here to add support for your custom items. You will be given a confirmation code which should be added to your mod page temporarily to prove you are the owner of the mod."
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -99,7 +99,7 @@ Begin BeaconDialog DeveloperAddModDialog
    End
    Begin UITweaks.ResizedTextField ModIDField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -143,7 +143,7 @@ Begin BeaconDialog DeveloperAddModDialog
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
@@ -175,7 +175,7 @@ Begin BeaconDialog DeveloperAddModDialog
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False

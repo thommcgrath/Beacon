@@ -51,7 +51,7 @@ Begin BeaconDialog DocumentMergerWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Select Parts to Import"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -76,8 +76,8 @@ Begin BeaconDialog DocumentMergerWindow
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
       Height          =   296
@@ -98,7 +98,7 @@ Begin BeaconDialog DocumentMergerWindow
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "0"
+      SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -118,7 +118,7 @@ Begin BeaconDialog DocumentMergerWindow
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
@@ -150,7 +150,7 @@ Begin BeaconDialog DocumentMergerWindow
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
-      ButtonStyle     =   "0"
+      ButtonStyle     =   0
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False

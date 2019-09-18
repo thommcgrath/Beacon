@@ -118,7 +118,7 @@ Begin ServerViewContainer NitradoServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Server Status:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -133,7 +133,7 @@ Begin ServerViewContainer NitradoServerView
       Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Mode            =   "0"
+      Mode            =   0
       Period          =   5000
       Scope           =   2
       TabPanelIndex   =   0
@@ -162,7 +162,7 @@ Begin ServerViewContainer NitradoServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Checking…"
-      TextAlign       =   "0"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -204,7 +204,7 @@ Begin ServerViewContainer NitradoServerView
    End
    Begin UITweaks.ResizedTextField ServerNameField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -269,7 +269,7 @@ Begin ServerViewContainer NitradoServerView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Server Name:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0

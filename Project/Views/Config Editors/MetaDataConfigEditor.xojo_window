@@ -27,7 +27,7 @@ Begin ConfigEditor MetaDataConfigEditor
    Width           =   628
    Begin UITweaks.ResizedTextField TitleField
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
@@ -92,7 +92,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Title:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -105,7 +105,7 @@ Begin ConfigEditor MetaDataConfigEditor
    End
    Begin TextArea DescriptionArea
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   True
       BackColor       =   &cFFFFFF00
@@ -175,7 +175,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Description:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -205,7 +205,7 @@ Begin ConfigEditor MetaDataConfigEditor
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
@@ -233,8 +233,8 @@ Begin ConfigEditor MetaDataConfigEditor
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   1
       Height          =   120
@@ -255,7 +255,7 @@ Begin ConfigEditor MetaDataConfigEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "0"
+      SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   6
       TabPanelIndex   =   0
@@ -296,7 +296,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Enabled Mods:"
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -331,7 +331,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Does not change anything on the server, only limits which engrams are shown in lists."
-      TextAlign       =   "2"
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
@@ -361,7 +361,7 @@ Begin ConfigEditor MetaDataConfigEditor
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
@@ -394,7 +394,7 @@ Begin ConfigEditor MetaDataConfigEditor
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      State           =   "0"
+      State           =   0
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True

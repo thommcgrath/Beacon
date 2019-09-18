@@ -39,8 +39,8 @@ Begin LibrarySubview LibraryPaneTools Implements NotificationKit.Receiver
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   "0"
-      GridLinesVertical=   "0"
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
       Height          =   259
@@ -62,7 +62,7 @@ Begin LibrarySubview LibraryPaneTools Implements NotificationKit.Receiver
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionChangeBlocked=   False
-      SelectionType   =   "0"
+      SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   2
       TabPanelIndex   =   0
