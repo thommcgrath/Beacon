@@ -978,6 +978,58 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Resized()
+		  Self.Resize()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resizing()
+		  Self.Resize()
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Shared Function FormatStat(Value As Double) As String
+		  Value = Round(Value * 100) / 100
+		  
+		  Dim Formatter As String = "-0,"
+		  If Value - Floor(Value) <> 0 Then
+		    Formatter = Formatter + ".00"
+		  End If
+		  
+		  Return Format(Value, Formatter)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Resize()
+		  Dim AvailableWidth As Integer = Self.Group.Width - 64
+		  Dim FieldWidth As Integer = Self.MultiplierField(0).Width
+		  Dim LabelWidths As Integer = Floor((AvailableWidth - FieldWidth) / 2)
+		  Dim Remainder As Integer = AvailableWidth - (FieldWidth + (LabelWidths * 2))
+		  Dim LeftLabelWidth As Integer = LabelWidths + Remainder
+		  Dim RightLabelWidth As Integer = LabelWidths
+		  Dim StartingLeft As Integer = Self.Group.Left + 20
+		  
+		  For I As Integer = 0 To 9
+		    If BaseLabel(I) <> Nil Then
+		      BaseLabel(I).Width = LeftLabelWidth
+		    End If
+		    If MultiplierField(I) <> Nil Then
+		      MultiplierField(I).Left = StartingLeft + LeftLabelWidth + 12
+		      MultiplierField(I).Width = FieldWidth
+		    End If
+		    If ComputedLabel(I) <> Nil Then
+		      ComputedLabel(I).Left = StartingLeft + LeftLabelWidth + 12 + FieldWidth + 12
+		      ComputedLabel(I).Width = RightLabelWidth
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub UpdateFigures(Key As String, Config As BeaconConfigs.StatMultipliers, Creature As Beacon.Creature, OnlyStatIndex As Integer, IncludeFocusControl As Boolean)
 		  If Self.mSettingUp Then
@@ -1021,16 +1073,16 @@ End
 		    Dim StatComputedLabel As Label = ComputedLabel(Stat.Index)
 		    
 		    If StatBaseLabel <> Nil Then
-		      StatBaseLabel.Value = PerLevel.PrettyText(2) + If(Stat.IsPercentage, "%", "") + " x"
+		      StatBaseLabel.Value = Self.FormatStat(PerLevel) + If(Stat.IsPercentage, "%", "") + " x"
 		    End If
 		    
 		    If StatMultiplierField <> Nil And Focus <> StatMultiplierField Then
-		      StatMultiplierField.Value = Multiplier.PrettyText(2)
+		      StatMultiplierField.Value = Self.FormatStat(Multiplier)
 		    End If
 		    
 		    If StatComputedLabel <> Nil Then
 		      Dim Amount As Double = PerLevel * Multiplier
-		      StatComputedLabel.Value = "= " + Amount.PrettyText(2) + If(Stat.IsPercentage, "%", "")
+		      StatComputedLabel.Value = "= " + Self.FormatStat(Amount) + If(Stat.IsPercentage, "%", "")
 		    End If
 		  Next
 		  Self.mSettingUp = False

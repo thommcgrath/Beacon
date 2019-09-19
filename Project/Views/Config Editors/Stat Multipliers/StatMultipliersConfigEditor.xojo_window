@@ -2736,6 +2736,29 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
+		  Dim CreatureAvailableWidth As Integer = Self.Width - 118
+		  Dim CreatureGroupWidth As Integer = Floor(CreatureAvailableWidth / 4)
+		  Dim CreatureRemainder As Integer = CreatureAvailableWidth - (CreatureGroupWidth * 4)
+		  
+		  Dim FirstWidth As Integer = CreatureGroupWidth + If(CreatureRemainder > 0, 1, 0)
+		  Dim SecondWidth As Integer = CreatureGroupWidth + If(CreatureRemainder > 1, 1, 0)
+		  Dim ThirdWidth As Integer = CreatureGroupWidth + If(CreatureRemainder > 2, 1, 0)
+		  Dim FourthWidth As Integer = CreatureGroupWidth
+		  
+		  Self.WildCreatureStats.Width = FirstWidth
+		  Self.TamedCreatureStats.Left = Self.WildCreatureStats.Left + FirstWidth
+		  Self.TamedCreatureStats.Width = SecondWidth
+		  Self.TamedAddCreatureStats.Left = Self.TamedCreatureStats.Left + SecondWidth
+		  Self.TamedAddCreatureStats.Width = ThirdWidth
+		  Self.TamedAffinityCreatureStats.Left = Self.TamedAddCreatureStats.Left + ThirdWidth
+		  Self.TamedAffinityCreatureStats.Width = FourthWidth
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub RestoreToDefault()
 		  Self.Document.RemoveConfigGroup(BeaconConfigs.StatMultipliers.ConfigName)
 		End Sub
@@ -2821,24 +2844,24 @@ End
 		      If Not Stat.PlayerBaseCapped Then
 		        BaseAmount = BaseAmount * Config.PlayerBaseMultiplier(Stat)
 		      End If
-		      BaseField.Value = BaseAmount.PrettyText(2)
+		      BaseField.Value = CreatureStatContainer.FormatStat(BaseAmount)
 		    ElseIf BaseLabel <> Nil Then
 		      BaseLabel.Value = Stat.PlayerBase.PrettyText(2)
 		    End If
 		    
 		    If PerLevelAmountLabel <> Nil Then
-		      PerLevelAmountLabel.Value = Stat.PlayerPerLevelAmount.PrettyText(2) + If(Stat.IsPercentage, "%", "") + " x"
+		      PerLevelAmountLabel.Value = CreatureStatContainer.FormatStat(Stat.PlayerPerLevelAmount) + If(Stat.IsPercentage, "%", "") + " x"
 		    End If
 		    
 		    If PerLevelMultiplierField <> Nil And Focus <> PerLevelMultiplierField Then
-		      PerLevelMultiplierField.Value = Config.PlayerPerLevelMultiplier(Stat).PrettyText(2)
+		      PerLevelMultiplierField.Value = CreatureStatContainer.FormatStat(Config.PlayerPerLevelMultiplier(Stat))
 		    ElseIf PerLevelMultiplierLabel <> Nil Then
-		      PerLevelMultiplierLabel.Value = Config.PlayerPerLevelMultiplier(Stat).PrettyText(2)
+		      PerLevelMultiplierLabel.Value = CreatureStatContainer.FormatStat(Config.PlayerPerLevelMultiplier(Stat))
 		    End If
 		    
 		    If PerLevelComputedLabel <> Nil Then
 		      Dim PerLevelAmount As Double = Stat.PlayerPerLevelAmount * Config.PlayerPerLevelMultiplier(Stat)
-		      PerLevelComputedLabel.Value = "= " + PerLevelAmount.PrettyText(2) + If(Stat.IsPercentage, "%", "")
+		      PerLevelComputedLabel.Value = "= " + CreatureStatContainer.FormatStat(PerLevelAmount) + If(Stat.IsPercentage, "%", "")
 		    End If
 		  Next
 		End Sub
