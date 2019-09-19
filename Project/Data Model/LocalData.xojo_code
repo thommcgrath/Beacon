@@ -103,15 +103,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE mods (mod_id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, console_safe INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_source_icons (icon_id TEXT NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT NOT NULL, sort_order INTEGER NOT NULL, icon TEXT NOT NULL REFERENCES loot_source_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}');")
-		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '');")
+		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT NOT NULL, sort_order INTEGER NOT NULL, icon TEXT NOT NULL REFERENCES loot_source_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}');")
+		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '');")
 		  Self.SQLExecute("CREATE TABLE official_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, pattern TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, pattern TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT NOT NULL PRIMARY KEY, title TEXT NOT NULL, body TEXT NOT NULL, detail_url TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE notifications (notification_id TEXT NOT NULL PRIMARY KEY, message TEXT NOT NULL, secondary_message TEXT, user_data TEXT NOT NULL, moment TEXT NOT NULL, read INTEGER NOT NULL, action_url TEXT, deleted INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', incubation_time INTEGER, mature_time INTEGER);")
+		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', incubation_time INTEGER, mature_time INTEGER, stats TEXT);")
 		  
 		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts5(tags, object_id, source_table);")
 		  
@@ -1155,6 +1155,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Dim ClassString As String = Dict.Value("class_string")
 		      Dim IncubationTime As Variant = Dict.Value("incubation_time")
 		      Dim MatureTime As Variant = Dict.Value("mature_time")
+		      Dim StatsString As Variant = Nil
+		      If Dict.HasKey("stats") And Dict.Value("stats") <> Nil Then
+		        StatsString = Beacon.GenerateJSON(Dict.Value("stats"), False)
+		      End If
 		      Dim TagString, TagStringForSearching As String
 		      Try
 		        Dim Tags() As String
@@ -1174,14 +1178,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      
 		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM creatures WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID, Path.Lowercase)
 		      If Results.RowCount = 1 And ObjectID = Results.Column("object_id").StringValue Then
-		        Self.SQLExecute("UPDATE creatures SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, tags = ?7, incubation_time = ?8, mature_time = ?9 WHERE object_id = ?1;", ObjectID, ModID, Label, Availability, Path, ClassString, TagString, IncubationTime, MatureTime)
+		        Self.SQLExecute("UPDATE creatures SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, tags = ?7, incubation_time = ?8, mature_time = ?9, stats = ?10 WHERE object_id = ?1;", ObjectID, ModID, Label, Availability, Path, ClassString, TagString, IncubationTime, MatureTime, StatsString)
 		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?2 WHERE object_id = ?1 AND source_table = 'creatures';", ObjectID, TagStringForSearching)
 		      Else
 		        If Results.RowCount = 1 Then
 		          Self.SQLExecute("DELETE FROM creatures WHERE object_id = ?1;", Results.Column("object_id").StringValue)
 		          Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id = ?1 AND source_table = 'creatures';", Results.Column("object_id").StringValue)
 		        End If
-		        Self.SQLExecute("INSERT INTO creatures (object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", ObjectID, ModID, Label, Availability, Path, ClassString, TagString, IncubationTime, MatureTime)
+		        Self.SQLExecute("INSERT INTO creatures (object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time, stats) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10);", ObjectID, ModID, Label, Availability, Path, ClassString, TagString, IncubationTime, MatureTime, StatsString)
 		        Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, 'creatures');", ObjectID, TagStringForSearching)
 		      End If
 		      EngramsChanged = True
@@ -1467,14 +1471,22 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  // Creatures
-		  If FromSchemaVersion >= 9 Then
+		  If FromSchemaVersion >= 10 Then
 		    Commands.Append("INSERT INTO creatures SELECT * FROM legacy.creatures;")
+		  ElseIf FromSchemaVersion >= 9 Then
+		    Commands.Append("INSERT INTO creatures (object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time) SELECT object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time FROM legacy.creatures;")
 		  End If
 		  
 		  // Searchable Tags
 		  If FromSchemaVersion >= 9 Then
 		    Commands.Append("INSERT INTO searchable_tags SELECT * FROM legacy.searchable_tags;")
 		  End If
+		  
+		  // Sanity checking
+		  Commands.Append("DELETE FROM loot_sources WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
+		  Commands.Append("DELETE FROM engrams WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
+		  Commands.Append("DELETE FROM creatures WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
+		  Commands.Append("DELETE FROM preset_modifiers WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
 		  
 		  If Commands.LastRowIndex > -1 Then
 		    Self.BeginTransaction()
@@ -2280,7 +2292,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndProperty
 
 
-	#tag Constant, Name = CreatureSelectSQL, Type = String, Dynamic = False, Default = \"SELECT creatures.object_id\x2C creatures.path\x2C creatures.label\x2C creatures.availability\x2C creatures.tags\x2C creatures.incubation_time\x2C creatures.mature_time\x2C mods.mod_id\x2C mods.name AS mod_name FROM creatures INNER JOIN mods ON (creatures.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag Constant, Name = CreatureSelectSQL, Type = String, Dynamic = False, Default = \"SELECT creatures.object_id\x2C creatures.path\x2C creatures.label\x2C creatures.availability\x2C creatures.tags\x2C creatures.incubation_time\x2C creatures.mature_time\x2C creatures.stats\x2C mods.mod_id\x2C mods.name AS mod_name FROM creatures INNER JOIN mods ON (creatures.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT engrams.object_id\x2C engrams.path\x2C engrams.label\x2C engrams.availability\x2C engrams.tags\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
@@ -2304,7 +2316,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = Notification_NewAppNotification, Type = String, Dynamic = False, Default = \"New App Notification", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"9", Scope = Private
+	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"10", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = UserModID, Type = String, Dynamic = False, Default = \"23ecf24c-377f-454b-ab2f-d9d8f31a5863", Scope = Public
