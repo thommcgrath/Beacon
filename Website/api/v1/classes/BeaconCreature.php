@@ -15,6 +15,7 @@ class BeaconCreature extends BeaconBlueprint {
 	private $breedable;
 	private $incubation_time;
 	private $mature_time;
+	private $stats;
 	
 	protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
@@ -27,6 +28,7 @@ class BeaconCreature extends BeaconBlueprint {
 		$columns[] = 'breedable';
 		$columns[] = 'EXTRACT(epoch FROM incubation_time) AS incubation_time';
 		$columns[] = 'EXTRACT(epoch FROM mature_time) AS mature_time';
+		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(template))) FROM (SELECT stat_index, base_value, per_level_wild_multiplier, per_level_tamed_multiplier, add_multiplier, affinity_multiplier FROM creature_stats WHERE creature_stats.creature_id = creatures.object_id ORDER BY stat_index) AS template) AS stats';
 		return $columns;
 	}
 	
@@ -54,6 +56,8 @@ class BeaconCreature extends BeaconBlueprint {
 			return $this->incubation_time;
 		case 'mature_time':
 			return $this->mature_time;
+		case 'stats':
+			return $this->stats;
 		default:
 			return parent::GetColumnValue($column);
 		}
@@ -126,6 +130,13 @@ class BeaconCreature extends BeaconBlueprint {
 				throw new Exception('Mature time must be a number of seconds.');
 			}
 		}
+		if (array_key_exists('stats', $json)) {
+			if (BeaconCommon::IsAssoc($json['stats'])) {
+				$this->stats = $json['stats'];
+			} else {
+				throw new Exception('Stats must be a structure.');
+			}
+		}
 	}
 	
 	protected static function FromRow(BeaconRecordSet $row) {
@@ -142,6 +153,7 @@ class BeaconCreature extends BeaconBlueprint {
 		$obj->breedable = $row->Field('breedable');
 		$obj->incubation_time = is_null($row->Field('incubation_time')) ? null : intval($row->Field('incubation_time'));
 		$obj->mature_time = is_null($row->Field('mature_time')) ? null : intval($row->Field('mature_time'));
+		$obj->stats = is_null($row->Field('stats')) ? null : json_decode($row->Field('stats'), true);
 		return $obj;
 	}
 	
@@ -158,6 +170,7 @@ class BeaconCreature extends BeaconBlueprint {
 		$json['incubation_time'] = $this->incubation_time;
 		$json['mature_time'] = $this->mature_time;
 		$json['resource_url'] = BeaconAPI::URL('/creature/' . urlencode($this->ObjectID()));
+		$json['stats'] = $this->stats;
 		return $json;
 	}
 	
