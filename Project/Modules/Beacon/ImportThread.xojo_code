@@ -262,7 +262,7 @@ Inherits Beacon.Thread
 			    Raise Err
 			  End If
 			  
-			  Self.mGameIniContent = Value
+			  Self.mGameIniContent = Value.GuessEncoding
 			End Set
 		#tag EndSetter
 		GameIniContent As String
@@ -282,7 +282,7 @@ Inherits Beacon.Thread
 			    Raise Err
 			  End If
 			  
-			  Self.mGameUserSettingsIniContent = Value
+			  Self.mGameUserSettingsIniContent = Value.GuessEncoding
 			End Set
 		#tag EndSetter
 		GameUserSettingsIniContent As String
