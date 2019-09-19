@@ -124,63 +124,63 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function StatAddValue(Stat As Beacon.Stat) As Double
-		  Return Self.StatValue(Stat, "Add")
+		  Return Self.StatValue(Stat, Self.KeyAdd)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function StatAffinityValue(Stat As Beacon.Stat) As Double
-		  Return Self.StatValue(Stat, "Affinity")
+		  Return Self.StatValue(Stat, Self.KeyAffinity)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function StatBaseValue(Stat As Beacon.Stat) As Double
-		  Return Self.StatValue(Stat, "Base")
+		  Return Self.StatValue(Stat, Self.KeyBase)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function StatTamedValue(Stat As Beacon.Stat) As Double
-		  Return Self.StatValue(Stat, "Tamed")
+		  Return Self.StatValue(Stat, Self.KeyTamed)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function StatValue(Stat As Beacon.Stat, Key As String) As Double
+	#tag Method, Flags = &h0
+		Function StatValue(Stat As Beacon.Stat, Key As String) As Double
 		  If Self.mStats = Nil Or Self.mStats.HasKey(Stat.Index) = False Then
-		    Return 1.0
+		    Return Self.MissingStatValue
 		  End If
 		  
 		  Dim Dict As Dictionary = Self.mStats.Value(Stat.Index)
-		  Return Dict.Lookup(Key, 1.0)
+		  Return Dict.Lookup(Key, Self.MissingStatValue)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub StatValues(Stat As Beacon.Stat, ByRef Base As Double, Wild As Double, Tamed As Double, Add As Double, Affinity As Double)
-		  Base = 1.0
-		  Wild = 1.0
-		  Tamed = 1.0
-		  Add = 1.0
-		  Affinity = 1.0
+		  Base = Self.MissingStatValue
+		  Wild = Self.MissingStatValue
+		  Tamed = Self.MissingStatValue
+		  Add = Self.MissingStatValue
+		  Affinity = Self.MissingStatValue
 		  
 		  If Self.mStats = Nil Or Self.mStats.HasKey(Stat.Index) = False Then
 		    Return
 		  End If
 		  
 		  Dim Dict As Dictionary = Self.mStats.Value(Stat.Index)
-		  Base = Dict.Lookup("Base", 1.0)
-		  Wild = Dict.Lookup("Wild", 1.0)
-		  Tamed = Dict.Lookup("Tamed", 1.0)
-		  Add = Dict.Lookup("Add", 1.0)
-		  Affinity = Dict.Lookup("Affinity", 1.0)
+		  Base = Dict.Lookup("Base", Self.MissingStatValue)
+		  Wild = Dict.Lookup("Wild", Self.MissingStatValue)
+		  Tamed = Dict.Lookup("Tamed", Self.MissingStatValue)
+		  Add = Dict.Lookup("Add", Self.MissingStatValue)
+		  Affinity = Dict.Lookup("Affinity", Self.MissingStatValue)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function StatWildValue(Stat As Beacon.Stat) As Double
-		  Return Self.StatValue(Stat, "Wild")
+		  Return Self.StatValue(Stat, Self.KeyWild)
 		End Function
 	#tag EndMethod
 
@@ -235,6 +235,25 @@ Implements Beacon.Blueprint
 	#tag Property, Flags = &h1
 		Protected mTags() As String
 	#tag EndProperty
+
+
+	#tag Constant, Name = KeyAdd, Type = String, Dynamic = False, Default = \"Add", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = KeyAffinity, Type = String, Dynamic = False, Default = \"Affinity", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = KeyBase, Type = String, Dynamic = False, Default = \"Base", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = KeyTamed, Type = String, Dynamic = False, Default = \"Tamed", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = KeyWild, Type = String, Dynamic = False, Default = \"Wild", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = MissingStatValue, Type = Double, Dynamic = False, Default = \"-1", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior
