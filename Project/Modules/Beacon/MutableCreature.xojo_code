@@ -18,6 +18,42 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ConsumeStats(Source As String)
+		  Dim Arr() As Object
+		  Try
+		    Arr = Beacon.ParseJSON(Source)
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  For I As Integer = 0 To Arr.LastRowIndex
+		    Try
+		      Dim Dict As Dictionary = Dictionary(Arr(I))
+		      If Not Dict.HasAllKeys("stat_index", "base_value", "per_level_wild_multiplier", "per_level_tamed_multiplier", "add_multiplier", "affinity_multiplier") Then
+		        Continue
+		      End If
+		      
+		      Dim Index As Integer = Dict.Value("stat_index")
+		      Dim Stat As Beacon.Stat = Beacon.Stats.WithIndex(Index)
+		      If Stat = Nil Then
+		        Continue
+		      End If
+		      
+		      Dim Store As New Dictionary
+		      Store.Value("Base") = Dict.Value("base_value").DoubleValue
+		      Store.Value("Wild") = Dict.Value("per_level_wild_multiplier").DoubleValue
+		      Store.Value("Tamed") = Dict.Value("per_level_tamed_multiplier").DoubleValue
+		      Store.Value("Add") = Dict.Value("add_multiplier").DoubleValue
+		      Store.Value("Affinity") = Dict.Value("affinity_multiplier").DoubleValue
+		      Self.mStats.Value(Index) = Store
+		    Catch Err As RuntimeException
+		      Continue
+		    End Try
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub IncubationTime(Assigns Value As UInt64)
 		  Self.mIncubationTime = Value
 		End Sub

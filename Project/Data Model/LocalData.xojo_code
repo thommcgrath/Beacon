@@ -1700,6 +1700,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Creature.TagString = Results.Column("tags").StringValue
 		    Creature.ModID = Results.Column("mod_id").StringValue
 		    Creature.ModName = Results.Column("mod_name").StringValue
+		    If Results.Column("stats").Value <> Nil Then
+		      Creature.ConsumeStats(Results.Column("stats").StringValue)
+		    End If
 		    
 		    If Results.Column("incubation_time").Value <> Nil Then
 		      Creature.IncubationTime = Results.Column("incubation_time").Value.UInt64Value

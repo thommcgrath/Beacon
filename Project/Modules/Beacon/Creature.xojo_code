@@ -31,6 +31,7 @@ Implements Beacon.Blueprint
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  Self.mAvailability = Beacon.Maps.All.Mask
+		  Self.mStats = New Dictionary
 		End Sub
 	#tag EndMethod
 
@@ -46,7 +47,7 @@ Implements Beacon.Blueprint
 		  Self.mModName = Source.mModName
 		  Self.mIncubationTime = Source.mIncubationTime
 		  Self.mMatureTime = Source.mMatureTime
-		  
+		  Self.mStats = Source.mStats.Clone
 		  
 		  Redim Self.mTags(-1)
 		  For Each Tag As String In Source.mTags
@@ -122,6 +123,68 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function StatAddValue(Stat As Beacon.Stat) As Double
+		  Return Self.StatValue(Stat, "Add")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function StatAffinityValue(Stat As Beacon.Stat) As Double
+		  Return Self.StatValue(Stat, "Affinity")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function StatBaseValue(Stat As Beacon.Stat) As Double
+		  Return Self.StatValue(Stat, "Base")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function StatTamedValue(Stat As Beacon.Stat) As Double
+		  Return Self.StatValue(Stat, "Tamed")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function StatValue(Stat As Beacon.Stat, Key As String) As Double
+		  If Self.mStats = Nil Or Self.mStats.HasKey(Stat.Index) = False Then
+		    Return 1.0
+		  End If
+		  
+		  Dim Dict As Dictionary = Self.mStats.Value(Stat.Index)
+		  Return Dict.Lookup(Key, 1.0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub StatValues(Stat As Beacon.Stat, ByRef Base As Double, Wild As Double, Tamed As Double, Add As Double, Affinity As Double)
+		  Base = 1.0
+		  Wild = 1.0
+		  Tamed = 1.0
+		  Add = 1.0
+		  Affinity = 1.0
+		  
+		  If Self.mStats = Nil Or Self.mStats.HasKey(Stat.Index) = False Then
+		    Return
+		  End If
+		  
+		  Dim Dict As Dictionary = Self.mStats.Value(Stat.Index)
+		  Base = Dict.Lookup("Base", 1.0)
+		  Wild = Dict.Lookup("Wild", 1.0)
+		  Tamed = Dict.Lookup("Tamed", 1.0)
+		  Add = Dict.Lookup("Add", 1.0)
+		  Affinity = Dict.Lookup("Affinity", 1.0)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function StatWildValue(Stat As Beacon.Stat) As Double
+		  Return Self.StatValue(Stat, "Wild")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Tags() As String()
 		  Dim Clone() As String
 		  Redim Clone(Self.mTags.LastRowIndex)
@@ -163,6 +226,10 @@ Implements Beacon.Blueprint
 
 	#tag Property, Flags = &h1
 		Protected mPath As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mStats As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
