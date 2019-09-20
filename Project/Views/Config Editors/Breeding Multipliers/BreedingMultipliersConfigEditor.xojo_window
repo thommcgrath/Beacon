@@ -1701,7 +1701,7 @@ End
 		    End If
 		  Case "ShareLinkButton"
 		    Dim Config As BeaconConfigs.BreedingMultipliers = Self.Config(False)
-		    Dim Format As String = "-0.09999999"
+		    Dim Format As String = "-0.0#######"
 		    Dim MatureSpeedMultiplier As String = Str(Config.BabyMatureSpeedMultiplier, Format)
 		    Dim IncubationSpeedMultiplier As String = Str(Config.EggHatchSpeedMultiplier, Format)
 		    Dim ImprintPeriodMultiplier As String = Str(Config.BabyCuddleIntervalMultiplier, Format)
