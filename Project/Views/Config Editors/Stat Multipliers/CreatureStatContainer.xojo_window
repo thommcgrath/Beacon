@@ -997,7 +997,7 @@ End
 		  
 		  Dim Formatter As String = "-0,"
 		  If Value - Floor(Value) <> 0 Then
-		    Formatter = Formatter + ".00"
+		    Formatter = Formatter + ".0#"
 		  End If
 		  
 		  Return Format(Value, Formatter)
