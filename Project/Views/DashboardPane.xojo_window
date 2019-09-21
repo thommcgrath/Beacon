@@ -165,7 +165,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   229
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -187,7 +187,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Transparent     =   True
       Underline       =   False
       Visible         =   True
-      Width           =   350
+      Width           =   768
    End
    Begin Label SyncLabel
       AutoDeactivate  =   True

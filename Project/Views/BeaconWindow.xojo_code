@@ -119,7 +119,7 @@ Inherits Window
 		    Declare Function BringWindowToTop Lib "User32" (Target As Int32) As Boolean
 		    Call BringWindowToTop(Self.Handle)
 		  #else
-		    #Pragma Error "No code to bring a window to foreground on this platform."
+		    #Pragma Warning "No code to bring a window to foreground on this platform."
 		  #endif
 		  
 		  Self.Show()

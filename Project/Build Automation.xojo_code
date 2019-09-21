@@ -2,6 +2,26 @@
 			Begin BuildStepList Linux
 				Begin BuildProjectStep Build
 				End
+				Begin CopyFilesBuildStep CopyResourcesLinux
+					AppliesTo = 0
+					Destination = 1
+					Subdirectory = 
+					FolderItem = Li4vLi4vRm9udHMv
+				End
+				Begin IDEScriptBuildStep DownloadClassesDebugLinux , AppliesTo = 1
+					Dim AppName As String = CurrentBuildAppName
+					If TargetMacOS Then
+					Dim ResourcesPath As String = CurrentBuildLocationNative + "/" + AppName + " Resources"
+					Call DoShellCommand("/usr/bin/curl https://lab.beaconapp.cc/download/classes.php?version=" + PropertyValue("App.ShortVersion") + " > '" + ResourcesPath + "/Classes.json'")
+					End If
+				End
+				Begin IDEScriptBuildStep DownloadClassesBuildLinux , AppliesTo = 2
+					Dim AppName As String = CurrentBuildAppName
+					If TargetMacOS Then
+					Dim ResourcesPath As String = CurrentBuildLocationNative + "/" + AppName + " Resources"
+					Call DoShellCommand("/usr/bin/curl https://beaconapp.cc/download/classes.php?version=" + PropertyValue("App.ShortVersion") + " > '" + ResourcesPath + "/Classes.json'")
+					End If
+				End
 			End
 			Begin BuildStepList Mac OS X
 				Begin BuildProjectStep Build
