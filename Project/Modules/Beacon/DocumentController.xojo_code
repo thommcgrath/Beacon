@@ -228,6 +228,7 @@ Protected Class DocumentController
 		    Dim Socket As New SimpleHTTP.SynchronousHTTPSocket
 		    Socket.RequestHeader("Accept-Encoding") = "gzip"
 		    Socket.RequestHeader("Authorization") = "Session " + Preferences.OnlineToken
+		    Socket.RequestHeader("Cache-Control") = "no-cache"
 		    Socket.Send("GET", Self.mDocumentURL.WithScheme("https").URL)
 		    If Socket.LastHTTPStatus >= 200 Then
 		      FileContent = Socket.LastContent
@@ -239,6 +240,7 @@ Protected Class DocumentController
 		    // basic https request
 		    Dim Socket As New SimpleHTTP.SynchronousHTTPSocket
 		    Socket.RequestHeader("Accept-Encoding") = "gzip"
+		    Socket.RequestHeader("Cache-Control") = "no-cache"
 		    Socket.Send("GET", Self.mDocumentURL.URL)
 		    If Socket.LastHTTPStatus >= 200 Then
 		      FileContent = Socket.LastContent
