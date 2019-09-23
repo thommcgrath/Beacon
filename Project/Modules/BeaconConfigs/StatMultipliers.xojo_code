@@ -95,6 +95,10 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.StatMultipliers
+		  #Pragma Unused CommandLineOptions
+		  #Pragma Unused MapCompatibility
+		  #Pragma Unused Difficulty
+		  
 		  Dim Config As New BeaconConfigs.StatMultipliers()
 		  Dim Stats() As Beacon.Stat = Beacon.Stats.All
 		  
