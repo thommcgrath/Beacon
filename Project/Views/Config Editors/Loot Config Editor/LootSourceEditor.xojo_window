@@ -510,11 +510,11 @@ End
 		    If Groups.HasKey(Preset.Grouping) Then
 		      Arr = Groups.Value(Preset.Grouping)
 		    End If
-		    Arr.Append(Preset)
+		    Arr.AddRow(Preset)
 		    Groups.Value(Preset.Grouping) = Arr
 		    
 		    If GroupNames.IndexOf(Preset.Grouping) = -1 Then
-		      GroupNames.Append(Preset.Grouping)
+		      GroupNames.AddRow(Preset.Grouping)
 		    End If
 		  Next
 		  GroupNames.Sort
@@ -535,8 +535,8 @@ End
 		    Dim Items() As Beacon.Preset
 		    For Each Preset As Beacon.Preset In Arr
 		      If Preset.ValidForMask(Self.Document.MapCompatibility) Then
-		        Names.Append(Preset.Label)
-		        Items.Append(Preset)
+		        Names.AddRow(Preset.Label)
+		        Items.AddRow(Preset)
 		      End If
 		    Next
 		    If Names.LastRowIndex = -1 Then
@@ -700,7 +700,7 @@ End
 		  Dim SelectedSetNames() As String
 		  For I As Integer = 0 To SetList.RowCount - 1
 		    If SetList.Selected(I) Then
-		      SelectedSetNames.Append(SetList.CellValueAt(I, 0))
+		      SelectedSetNames.AddRow(SetList.CellValueAt(I, 0))
 		    End If
 		  Next
 		  
@@ -730,7 +730,7 @@ End
 		  Dim CommonSets() As Beacon.ItemSet
 		  For Each Hash As String In Hashes
 		    If Weights.Value(Hash).IntegerValue = MatchWeight Then
-		      CommonSets.Append(New Beacon.ItemSet(Sets.Value(Hash)))
+		      CommonSets.AddRow(New Beacon.ItemSet(Sets.Value(Hash)))
 		    End If
 		  Next
 		  
@@ -787,7 +787,7 @@ End
 		  Dim Sets() As Beacon.ItemSet
 		  For I As Integer = 0 To SetList.RowCount - 1
 		    If SetList.Selected(I) Then
-		      Sets.Append(SetList.RowTagAt(I))
+		      Sets.AddRow(SetList.RowTagAt(I))
 		    End If
 		  Next
 		  
@@ -934,7 +934,7 @@ End
 		  // Clone the array, but not the items
 		  Dim Results() As Beacon.LootSource
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Results.Append(Source)
+		    Results.AddRow(Source)
 		  Next
 		  Return Results
 		End Function
@@ -1110,7 +1110,7 @@ End
 		    Dim Set As Beacon.ItemSet = Me.RowTagAt(I)
 		    Dim Dict As Dictionary = Set.Export
 		    If Dict <> Nil Then
-		      Dicts.Append(Dict)
+		      Dicts.AddRow(Dict)
 		    End If
 		  Next
 		  If Dicts.LastRowIndex = -1 Then
@@ -1146,11 +1146,11 @@ End
 		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
 		    Dim Dicts() As Dictionary
 		    If Info.FullName = "Dictionary" Then
-		      Dicts.Append(Parsed)
+		      Dicts.AddRow(Parsed)
 		    ElseIf Info.FullName = "Auto()" Then
 		      Dim Values() As Variant = Parsed
 		      For Each Dict As Dictionary In Values
-		        Dicts.Append(Dict)
+		        Dicts.AddRow(Dict)
 		      Next
 		    Else
 		      System.Beep
@@ -1166,7 +1166,7 @@ End
 		          Source.Append(Set)
 		          Updated = True
 		          If SetNames.IndexOf(Set.Label) = -1 Then
-		            SetNames.Append(Set.Label)
+		            SetNames.AddRow(Set.Label)
 		          End If
 		        End If
 		      Next
@@ -1188,7 +1188,7 @@ End
 		    
 		    Dim Lines() As String
 		    For Each Source As Beacon.LootSource In Self.mSources
-		      Lines.Append("ConfigOverrideSupplyCrateItems=(SupplyCrateClassString=""" + Source.ClassString + """,MinItemSets=1,MaxItemSets=3,NumItemSetsPower=1.000000,bSetsRandomWithoutReplacement=true,ItemSets=" + Contents + ")")
+		      Lines.AddRow("ConfigOverrideSupplyCrateItems=(SupplyCrateClassString=""" + Source.ClassString + """,MinItemSets=1,MaxItemSets=3,NumItemSetsPower=1.000000,bSetsRandomWithoutReplacement=true,ItemSets=" + Contents + ")")
 		    Next
 		    Self.Import(Join(Lines, EndOfLine), "Clipboard")
 		  End
@@ -1207,11 +1207,11 @@ End
 		    If Idx = -1 Then
 		      Return False
 		    End If
-		    Targets.Append(Me.RowTagAt(Idx))
+		    Targets.AddRow(Me.RowTagAt(Idx))
 		  Else
 		    For I As Integer = 0 To Me.RowCount - 1
 		      If Me.Selected(I) Then
-		        Targets.Append(Me.RowTagAt(I))
+		        Targets.AddRow(Me.RowTagAt(I))
 		      End If
 		    Next
 		  End If
@@ -1359,7 +1359,7 @@ End
 		    Else
 		      Dim Arr() As Dictionary
 		      For Each Target As Beacon.ItemSet In Targets
-		        Arr.Append(Target.Export())
+		        Arr.AddRow(Target.Export())
 		      Next
 		      Dim Board As New Clipboard
 		      Board.Text = Beacon.GenerateJSON(Arr, False)
@@ -1378,7 +1378,7 @@ End
 		    
 		    Dim Parts() As String
 		    For Each Target As Beacon.ItemSet In Targets
-		      Parts.Append(Target.StringValue(Multipliers, UseBlueprints, Difficulty))
+		      Parts.AddRow(Target.StringValue(Multipliers, UseBlueprints, Difficulty))
 		    Next
 		    
 		    Dim Board As New Clipboard
@@ -1418,7 +1418,7 @@ End
 		  Try
 		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
 		  Catch Err As TypeMismatchException
-		    Dicts.Append(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
+		    Dicts.AddRow(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
 		  End Try
 		  
 		  Dim Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
@@ -1427,7 +1427,7 @@ End
 		  For Each ConfigDict As Dictionary In Dicts
 		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Difficulty)
 		    If Source <> Nil Then
-		      SourceLootSources.Append(Source)
+		      SourceLootSources.AddRow(Source)
 		    End If
 		  Next
 		  
@@ -1446,7 +1446,7 @@ End
 		        DestinationLootSource.Append(Set)
 		        Updated = True
 		        If SetNames.IndexOf(Set.Label) = -1 Then
-		          SetNames.Append(Set.Label)
+		          SetNames.AddRow(Set.Label)
 		        End If
 		      Next
 		    End If

@@ -217,7 +217,7 @@ End
 		  
 		  For Each View As BeaconSubview In Self.mSubviews
 		    If View.Changed Then
-		      ModifiedViews.Append(View)
+		      ModifiedViews.AddRow(View)
 		    End If
 		  Next
 		  
@@ -426,7 +426,7 @@ End
 		    Return True
 		  End If
 		  
-		  Self.mSubviews.Remove(ViewIndex)
+		  Self.mSubviews.RemoveRowAt(ViewIndex)
 		  View.Close
 		  Self.TabBar1.Count = Self.mSubviews.LastRowIndex + 2
 		  Self.LibraryPane1.CleanupClosedViews()
@@ -539,7 +539,7 @@ End
 		  
 		  Dim ViewIndex As Integer = Self.mSubviews.IndexOf(View)
 		  If ViewIndex = -1 Then
-		    Self.mSubviews.Append(View)
+		    Self.mSubviews.AddRow(View)
 		    ViewIndex = Self.mSubviews.LastRowIndex
 		    Self.TabBar1.Count = Self.mSubviews.LastRowIndex + 2
 		    View.EmbedWithinPanel(Self.Views, 1, 0, 0, Self.Views.Width, Self.Views.Height)

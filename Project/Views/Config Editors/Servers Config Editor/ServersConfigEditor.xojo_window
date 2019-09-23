@@ -193,7 +193,7 @@ End
 		  Dim SelectedProfiles() As Beacon.ServerProfile
 		  For I As Integer = 0 To Self.ServerList.RowCount - 1
 		    If Self.ServerList.Selected(I) Then
-		      SelectedProfiles.Append(Self.ServerList.RowTagAt(I))
+		      SelectedProfiles.AddRow(Self.ServerList.RowTagAt(I))
 		    End If
 		  Next
 		  
@@ -207,7 +207,7 @@ End
 		    For X As Integer = 0 To SelectedProfiles.LastRowIndex
 		      If SelectedProfiles(X) = Profile Then
 		        Selected = True
-		        SelectedProfiles.Remove(X)
+		        SelectedProfiles.RemoveRowAt(X)
 		        Exit For X
 		      End If
 		    Next

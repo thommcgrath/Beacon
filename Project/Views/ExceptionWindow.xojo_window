@@ -638,7 +638,7 @@ End
 		  Dim Trace() As StackFrame = Self.mExceptionDetails.Value("Trace")
 		  Dim Lines() As String
 		  For Each Frame As StackFrame In Trace
-		    Lines.Append(Frame.Name)
+		    Lines.AddRow(Frame.Name)
 		  Next
 		  
 		  Dim Fields As New Dictionary
@@ -660,10 +660,10 @@ End
 		Shared Sub Present(Dict As Dictionary)
 		  Dim Trace() As StackFrame = Dict.Value("Trace")
 		  Dim Lines() As String
-		  Lines.Append(Dict.Value("Type"))
-		  Lines.Append(Dict.Value("Reason"))
+		  Lines.AddRow(Dict.Value("Type"))
+		  Lines.AddRow(Dict.Value("Reason"))
 		  For Each Frame As StackFrame In Trace
-		    Lines.Append(Frame.Name)
+		    Lines.AddRow(Frame.Name)
 		  Next
 		  
 		  Dim HashContent As String = Lines.Join(Encodings.UTF8.Chr(10))

@@ -179,7 +179,7 @@ End
 		Private Sub ShowAddResources()
 		  Dim Engrams() As Beacon.Engram
 		  For I As Integer = 0 To Self.mTarget.LastRowIndex
-		    Engrams.Append(Self.mTarget.Resource(I))
+		    Engrams.AddRow(Self.mTarget.Resource(I))
 		  Next
 		  
 		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Resources", Engrams, RaiseEvent GetActiveMods, True)
@@ -203,7 +203,7 @@ End
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
 		      Dim Resource As Beacon.Engram = Self.List.RowTagAt(I)
-		      Paths.Append(Resource.Path)
+		      Paths.AddRow(Resource.Path)
 		    End If
 		  Next
 		  
@@ -373,7 +373,7 @@ End
 		    Dict.Value("Class") = Engram.ClassString
 		    Dict.Value("Quantity") = Self.mTarget.Quantity(Idx)
 		    Dict.Value("Exact") = Self.mTarget.RequireExactResource(Idx)
-		    Dicts.Append(Dict)
+		    Dicts.AddRow(Dict)
 		  Next
 		  
 		  Board.AddRawData(Beacon.GenerateJSON(Dicts, False), Self.kClipboardType)

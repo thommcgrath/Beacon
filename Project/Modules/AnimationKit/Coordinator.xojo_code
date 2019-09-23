@@ -3,7 +3,7 @@ Protected Class Coordinator
 	#tag CompatibilityFlags = ( not TargetHasGUI and not TargetWeb and not TargetIOS ) or ( TargetWeb ) or ( TargetHasGUI ) or ( TargetIOS )
 	#tag Method, Flags = &h0
 		Sub AddTask(Task As AnimationKit.Task)
-		  Self.Tasks.Append(Task)
+		  Self.Tasks.AddRow(Task)
 		  RaiseEvent TaskAdded(Task)
 		  
 		  If Self.Animator.RunMode = Timer.RunModes.Off Then
@@ -17,8 +17,8 @@ Protected Class Coordinator
 		  Dim AddedTasks(), RemovedTasks() As AnimationKit.Task
 		  For I As Integer = Self.Tasks.LastRowIndex DownTo 0
 		    If Self.Tasks(I).Cancelled Then
-		      RemovedTasks.Append(Self.Tasks(I))
-		      Self.Tasks.Remove(I)
+		      RemovedTasks.AddRow(Self.Tasks(I))
+		      Self.Tasks.RemoveRowAt(I)
 		    End If
 		  Next
 		  
@@ -33,12 +33,12 @@ Protected Class Coordinator
 		  For I As Integer = Self.Tasks.LastRowIndex DownTo 0
 		    Dim Task As AnimationKit.Task = Self.Tasks(I)
 		    If Task.Completed(Now) Then
-		      RemovedTasks.Append(Task)
-		      Self.Tasks.Remove(I)
+		      RemovedTasks.AddRow(Task)
+		      Self.Tasks.RemoveRowAt(I)
 		      
 		      If Task.NextTask <> Nil Then
 		        Self.AddTask(Task.NextTask)
-		        AddedTasks.Append(Task.NextTask)
+		        AddedTasks.AddRow(Task.NextTask)
 		      End If
 		    End If
 		  Next

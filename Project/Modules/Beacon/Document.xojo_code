@@ -14,7 +14,7 @@ Protected Class Document
 		    End If
 		  Next
 		  
-		  Self.mServerProfiles.Append(Profile.Clone)
+		  Self.mServerProfiles.AddRow(Profile.Clone)
 		  If Profile.IsConsole Then
 		    Dim SafeMods() As String = Beacon.Data.ConsoleSafeMods
 		    If Self.mMods = Nil Or Self.mMods.LastRowIndex = -1 Then
@@ -179,7 +179,7 @@ Protected Class Document
 		            Dim Path As String = FTPInfo.Value("Path")
 		            Dim Components() As String = Path.Split("/")
 		            If Components.LastRowIndex > -1 Then
-		              Dim LastComponent As String = Components(Components.Ubound)
+		              Dim LastComponent As String = Components(Components.LastRowIndex)
 		              If LastComponent.Length > 4 And LastComponent.Right(4) = ".ini" Then
 		                Components.RemoveRowAt(Components.LastRowIndex)
 		              End If
@@ -343,7 +343,7 @@ Protected Class Document
 		    For Each ServerDict As Dictionary In ServerDicts
 		      Dim Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
 		      If Profile <> Nil Then
-		        Doc.mServerProfiles.Append(Profile)
+		        Doc.mServerProfiles.AddRow(Profile)
 		      End If
 		    Next
 		    
@@ -374,7 +374,7 @@ Protected Class Document
 		Function GetUsers() As String()
 		  Dim Users() As String
 		  For Each Entry As DictionaryEntry In Self.mEncryptedPasswords
-		    Users.Append(Entry.Key)
+		    Users.AddRow(Entry.Key)
 		  Next
 		  Return Users
 		End Function
@@ -390,7 +390,7 @@ Protected Class Document
 		Function ImplementedConfigs() As Beacon.ConfigGroup()
 		  Dim Groups() As Beacon.ConfigGroup
 		  For Each Entry As DictionaryEntry In Self.mConfigGroups
-		    Groups.Append(Entry.Value)
+		    Groups.AddRow(Entry.Value)
 		  Next
 		  Return Groups
 		End Function
@@ -431,7 +431,7 @@ Protected Class Document
 		  Dim Matches() As Beacon.Map
 		  For Each Map As Beacon.Map In Possibles
 		    If Map.Matches(Self.mMapCompatibility) Then
-		      Matches.Append(Map)
+		      Matches.AddRow(Map)
 		    End If
 		  Next
 		  Return Matches
@@ -601,7 +601,7 @@ Protected Class Document
 		Sub Remove(Profile As Beacon.ServerProfile)
 		  For I As Integer = 0 To Self.mServerProfiles.LastRowIndex
 		    If Self.mServerProfiles(I) = Profile Then
-		      Self.mServerProfiles.Remove(I)
+		      Self.mServerProfiles.RemoveRowAt(I)
 		      Self.Modified = True
 		      Return
 		    End If
@@ -707,7 +707,7 @@ Protected Class Document
 		  Dim EncryptedData As New Dictionary
 		  Dim Profiles() As Dictionary
 		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
-		    Profiles.Append(Profile.ToDictionary)
+		    Profiles.AddRow(Profile.ToDictionary)
 		  Next
 		  EncryptedData.Value("Servers") = Profiles
 		  If Self.mOAuthDicts <> Nil Then
@@ -733,7 +733,7 @@ Protected Class Document
 		  Dim ExcludedConfigs() As Beacon.ConfigGroup
 		  For Each Config As Beacon.ConfigGroup In Configs
 		    If Config.Purchased(OmniVersion) = False Then
-		      ExcludedConfigs.Append(Config)
+		      ExcludedConfigs.AddRow(Config)
 		    End If
 		  Next
 		  Return ExcludedConfigs
@@ -1040,6 +1040,14 @@ Protected Class Document
 			InitialValue=""
 			Type="String"
 			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowUCS"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

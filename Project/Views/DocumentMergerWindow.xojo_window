@@ -219,13 +219,13 @@ End
 		  Dim NewMaps() As Beacon.Map = Beacon.Maps.ForMask(MapMask)
 		  For I As Integer = NewMaps.LastRowIndex DownTo 0
 		    If DestinationDocument.SupportsMap(NewMaps(I)) Then
-		      NewMaps.Remove(I)
+		      NewMaps.RemoveRowAt(I)
 		    End If
 		  Next
 		  Dim OldMaps() As Beacon.Map = DestinationDocument.Maps
 		  For I As Integer = OldMaps.LastRowIndex DownTo 0
 		    If OldMaps(I).Matches(MapMask) Then
-		      OldMaps.Remove(I)
+		      OldMaps.RemoveRowAt(I)
 		    End If
 		  Next
 		  

@@ -128,7 +128,7 @@ Protected Module BeaconUI
 		    Dim Pics() As Picture
 		    For Scale As Double = 1.0 To 3.0
 		      If Scale = HorizontalScale And Scale = VerticalScale Then
-		        Pics.Append(WindowPic)
+		        Pics.AddRow(WindowPic)
 		        Continue
 		      End If
 		      
@@ -136,7 +136,7 @@ Protected Module BeaconUI
 		      Pic.HorizontalResolution = 72 * Scale
 		      Pic.VerticalResolution = 72 * Scale
 		      Pic.Graphics.DrawPicture(WindowPic, 0, 0, Pic.Width, Pic.Height, 0, 0, WindowPic.Width, WindowPic.Height)
-		      Pics.Append(Pic)
+		      Pics.AddRow(Pic)
 		    Next
 		    
 		    Return New Picture(Win.Width, Win.Height, Pics)
@@ -191,8 +191,8 @@ Protected Module BeaconUI
 		    Dim Rads As Double = Angle * 0.01745329252
 		    Dim LegX As Double = CenterPoint.X + (Distance * Cos(Rads))
 		    Dim LegY As Double = CenterPoint.Y + (Distance * Sin(Rads))
-		    Points.Append(Round(LegX))
-		    Points.Append(Round(LegY))
+		    Points.AddRow(Round(LegX))
+		    Points.AddRow(Round(LegY))
 		  Next
 		  
 		  Pic.Graphics.DrawingColor = &c000000
@@ -329,7 +329,7 @@ Protected Module BeaconUI
 		    End If
 		    
 		    Pic.ApplyMask(Mask)
-		    Bitmaps.Append(Pic)
+		    Bitmaps.AddRow(Pic)
 		  Next
 		  Return New Picture(Width, Height, Bitmaps)
 		End Function

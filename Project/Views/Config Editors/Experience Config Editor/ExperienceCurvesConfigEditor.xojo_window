@@ -397,7 +397,7 @@ End
 		  Dim SelectedLevels() As Integer
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
-		      SelectedLevels.Append(Val(Self.List.CellValueAt(I, 0)))
+		      SelectedLevels.AddRow(Val(Self.List.CellValueAt(I, 0)))
 		    End If
 		  Next
 		  Self.UpdateList(SelectedLevels)

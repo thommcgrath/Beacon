@@ -10,9 +10,9 @@ Protected Class CraftingCost
 		    Return
 		  End If
 		  
-		  Self.mResources.Append(Resource)
-		  Self.mQuantities.Append(Quantity)
-		  Self.mRequireExacts.Append(RequireExact)
+		  Self.mResources.AddRow(Resource)
+		  Self.mQuantities.AddRow(Quantity)
+		  Self.mRequireExacts.AddRow(RequireExact)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -60,7 +60,7 @@ Protected Class CraftingCost
 		    Resource.Value("Quantity") = Quantity
 		    Resource.Value("Exact") = RequireExact
 		    
-		    Resources.Append(Resource)
+		    Resources.AddRow(Resource)
 		  Next
 		  Dict.Value("Resources") = Resources
 		  
@@ -91,9 +91,9 @@ Protected Class CraftingCost
 		      If Engram = Nil Then
 		        Engram = Beacon.Engram.CreateUnknownEngram(ClassString)
 		      End If
-		      Cost.mQuantities.Append(Quantity)
-		      Cost.mRequireExacts.Append(RequireExact)
-		      Cost.mResources.Append(Engram)
+		      Cost.mQuantities.AddRow(Quantity)
+		      Cost.mRequireExacts.AddRow(RequireExact)
+		      Cost.mResources.AddRow(Engram)
 		    Next
 		  End If
 		  
@@ -160,9 +160,9 @@ Protected Class CraftingCost
 		    Return
 		  End If
 		  
-		  Self.mResources.Insert(Index, Resource)
-		  Self.mQuantities.Insert(Index, Quantity)
-		  Self.mRequireExacts.Insert(Index,RequireExact)
+		  Self.mResources.AddRowAt(Index, Resource)
+		  Self.mQuantities.AddRowAt(Index, Quantity)
+		  Self.mRequireExacts.AddRowAt(Index,RequireExact)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -262,9 +262,9 @@ Protected Class CraftingCost
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mQuantities.Remove(Index)
-		  Self.mRequireExacts.Remove(Index)
-		  Self.mResources.Remove(Index)
+		  Self.mQuantities.RemoveRowAt(Index)
+		  Self.mRequireExacts.RemoveRowAt(Index)
+		  Self.mResources.RemoveRowAt(Index)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -306,12 +306,12 @@ Protected Class CraftingCost
 		    Dim ClassString As String = Self.mResources(I).ClassString
 		    Dim QuantityString As String = Self.mQuantities(I).ToString(Locale.Raw, "0")
 		    Dim RequireExactString As String = If(Self.mRequireExacts(I), "true", "false")
-		    Components.Append("(ResourceItemTypeString=""" + ClassString + """,BaseResourceRequirement=" + QuantityString + ",bCraftingRequireExactResourceType=" + RequireExactString + ")")
+		    Components.AddRow("(ResourceItemTypeString=""" + ClassString + """,BaseResourceRequirement=" + QuantityString + ",bCraftingRequireExactResourceType=" + RequireExactString + ")")
 		  Next
 		  
 		  Dim Pieces() As String
-		  Pieces.Append("ItemClassString=""" + If(Self.mEngram <> Nil, Self.mEngram.ClassString, "") + """")
-		  Pieces.Append("BaseCraftingResourceRequirements=(" + Join(Components, ",") + ")")
+		  Pieces.AddRow("ItemClassString=""" + If(Self.mEngram <> Nil, Self.mEngram.ClassString, "") + """")
+		  Pieces.AddRow("BaseCraftingResourceRequirements=(" + Join(Components, ",") + ")")
 		  Return "(" + Join(Pieces, ",") + ")"
 		End Function
 	#tag EndMethod

@@ -21,7 +21,7 @@ Protected Module Beacon
 		      Continue
 		    End If
 		    
-		    Tags.Append(Tag)
+		    Tags.AddRow(Tag)
 		    Changed = True
 		  Next
 		  
@@ -186,7 +186,7 @@ Protected Module Beacon
 		    Columns(2) = Blueprint.Availability.ToString(Locale.Raw)
 		    Columns(3) = """" + Blueprint.Tags.Join(",") + """"
 		    Columns(4) = """" + Blueprint.Category + """"
-		    Lines.Append(Join(Columns, ","))
+		    Lines.AddRow(Join(Columns, ","))
 		  Next
 		  
 		  Return Join(Lines, Encodings.ASCII.Chr(13) + Encodings.ASCII.Chr(10))
@@ -198,7 +198,7 @@ Protected Module Beacon
 		  Dim Creatures() As Beacon.Creature
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Creature Then
-		      Creatures.Append(Beacon.Creature(Blueprint))
+		      Creatures.AddRow(Beacon.Creature(Blueprint))
 		    End If
 		  Next
 		  Return Creatures
@@ -275,7 +275,7 @@ Protected Module Beacon
 		  Dim Engrams() As Beacon.Engram
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Engram Then
-		      Engrams.Append(Beacon.Engram(Blueprint))
+		      Engrams.AddRow(Beacon.Engram(Blueprint))
 		    End If
 		  Next
 		  Return Engrams
@@ -381,7 +381,7 @@ Protected Module Beacon
 		      For I As Integer = 0 To Bound
 		        Dim Encoding As TextEncoding = Encodings.Item(I)
 		        If EncodingsList.IndexOf(Encoding) = -1 Then
-		          EncodingsList.Append(Encoding)
+		          EncodingsList.AddRow(Encoding)
 		        End If
 		      Next
 		    End If
@@ -429,8 +429,8 @@ Protected Module Beacon
 	#tag Method, Flags = &h0
 		Function IsBeaconURL(ByRef Value As String) As Boolean
 		  Dim PossiblePrefixes() As String
-		  PossiblePrefixes.Append(Beacon.URLScheme + "://")
-		  PossiblePrefixes.Append("https://app.beaconapp.cc/")
+		  PossiblePrefixes.AddRow(Beacon.URLScheme + "://")
+		  PossiblePrefixes.AddRow("https://app.beaconapp.cc/")
 		  
 		  Dim URLLength As Integer = Value.Length
 		  For Each PossiblePrefix As String In PossiblePrefixes
@@ -447,7 +447,7 @@ Protected Module Beacon
 		Function Label(Extends Maps() As Beacon.Map) As String
 		  Dim Names() As String
 		  For Each Map As Beacon.Map In Maps
-		    Names.Append(Map.Name)
+		    Names.AddRow(Map.Name)
 		  Next
 		  
 		  If Names.LastRowIndex = -1 Then
@@ -458,7 +458,7 @@ Protected Module Beacon
 		    Return Names(0) + " & " + Names(1)
 		  Else
 		    Dim Tail As String = Names(Names.LastRowIndex)
-		    Names.Remove(Names.LastRowIndex)
+		    Names.RemoveRowAt(Names.LastRowIndex)
 		    Return Join(Names, ", ") + ", & " + Tail
 		  End If
 		End Function
@@ -471,12 +471,12 @@ Protected Module Beacon
 		    Return ClassString
 		  End If
 		  If ClassString.IndexOf("PrimalItem") > -1 Then
-		    Parts.Remove(0)
-		    Parts.Remove(Parts.LastRowIndex)
+		    Parts.RemoveRowAt(0)
+		    Parts.RemoveRowAt(Parts.LastRowIndex)
 		  ElseIf ClassString.IndexOf("Character") > -1 Then
 		    For I As Integer = Parts.LastRowIndex DownTo 0
 		      If Parts(I) = "C" Or Parts(I) = "BP" Or Parts(I) = "Character" Then
-		        Parts.Remove(I)
+		        Parts.RemoveRowAt(I)
 		      End If
 		    Next
 		  End If
@@ -497,12 +497,12 @@ Protected Module Beacon
 		  For Each Char As String In SourceChars
 		    Dim Codepoint As Integer = Asc(Char)
 		    If Codepoint = 32 Or (Codepoint >= 48 And Codepoint <= 57) Or (Codepoint >= 97 And Codepoint <= 122) Then
-		      Chars.Append(Char)
+		      Chars.AddRow(Char)
 		    ElseIf CodePoint >= 65 And Codepoint <= 90 Then
-		      Chars.Append(" ")
-		      Chars.Append(Char)
+		      Chars.AddRow(" ")
+		      Chars.AddRow(Char)
 		    ElseIf CodePoint = 95 Then
-		      Chars.Append(" ")
+		      Chars.AddRow(" ")
 		    End If
 		  Next
 		  Source = Chars.Join("")
@@ -670,7 +670,7 @@ Protected Module Beacon
 		      Continue
 		    End If
 		    
-		    Tags.Remove(Idx)
+		    Tags.RemoveRowAt(Idx)
 		    Changed = True
 		  Next
 		  
@@ -707,7 +707,7 @@ Protected Module Beacon
 		  Dim Creatures() As Beacon.Creature
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Creature Then
-		      Creatures.Append(Beacon.Creature(Blueprint))
+		      Creatures.AddRow(Beacon.Creature(Blueprint))
 		    End If
 		  Next
 		  Return Creatures
@@ -723,7 +723,7 @@ Protected Module Beacon
 		  Dim Engrams() As Beacon.Engram
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Engram Then
-		      Engrams.Append(Beacon.Engram(Blueprint))
+		      Engrams.AddRow(Beacon.Engram(Blueprint))
 		    End If
 		  Next
 		  Return Engrams
@@ -748,16 +748,16 @@ Protected Module Beacon
 		  
 		  Dim Parts() As String
 		  If Days > 0 Then
-		    Parts.Append(Str(Days, "-0") + "d")
+		    Parts.AddRow(Str(Days, "-0") + "d")
 		  End If
 		  If Hours > 0 Then
-		    Parts.Append(Str(Hours, "-0") + "h")
+		    Parts.AddRow(Str(Hours, "-0") + "h")
 		  End If
 		  If Minutes > 0 Then
-		    Parts.Append(Str(Minutes, "-0") + "m")
+		    Parts.AddRow(Str(Minutes, "-0") + "m")
 		  End If
 		  If Seconds > 0 Then
-		    Parts.Append(Str(Seconds, "-0") + "s")
+		    Parts.AddRow(Str(Seconds, "-0") + "s")
 		  End If
 		  Return Join(Parts, " ")
 		End Function
@@ -817,7 +817,7 @@ Protected Module Beacon
 		Function TagString(Extends Blueprint As Beacon.Blueprint) As String
 		  Dim Tags() As String = Blueprint.Tags
 		  If Tags.IndexOf("object") = -1 Then
-		    Tags.Insert(0, "object")
+		    Tags.AddRowAt(0, "object")
 		  End If
 		  Return Join(Tags, ",")
 		End Function
@@ -828,7 +828,7 @@ Protected Module Beacon
 		  Dim Tags() As String = Value.Split(",")
 		  Dim Idx As Integer = Tags.IndexOf("object")
 		  If Idx > -1 Then
-		    Tags.Remove(Idx)
+		    Tags.RemoveRowAt(Idx)
 		  End If
 		  Blueprint.Tags = Tags
 		End Sub

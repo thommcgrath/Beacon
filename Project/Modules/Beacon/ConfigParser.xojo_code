@@ -18,7 +18,7 @@ Private Class ConfigParser
 		        Return True
 		      Case Self.TypeArray
 		        Dim Values() As Variant = Self.mValue
-		        Values.Append(Self.SubParser.Value)
+		        Values.AddRow(Self.SubParser.Value)
 		        Self.mValue = Values
 		        Dim Consumed As Boolean = Self.SubParser.ConsumedLastChar
 		        Self.SubParser = Nil
@@ -36,7 +36,7 @@ Private Class ConfigParser
 		    If Char = """" Then
 		      InQuotes = False
 		    Else
-		      Self.Buffer.Append(Char)
+		      Self.Buffer.AddRow(Char)
 		    End If
 		    Return False
 		  End If
@@ -52,7 +52,7 @@ Private Class ConfigParser
 		        Dim Values() As Variant
 		        Self.mValue = Values
 		      Else
-		        Self.Buffer.Append(Char)
+		        Self.Buffer.AddRow(Char)
 		      End If
 		    Case "="
 		      If Not Self.KeyFound Then
@@ -65,11 +65,11 @@ Private Class ConfigParser
 		        Self.SubParser.KeyFound = True
 		        Self.KeyFound = True
 		      Else
-		        Self.Buffer.Append(Char)
+		        Self.Buffer.AddRow(Char)
 		      End If
 		    Case ")", ",", LineEndingChar
 		      If Self.Level = 0 And Char <> LineEndingChar Then
-		        Self.Buffer.Append(Char)
+		        Self.Buffer.AddRow(Char)
 		      Else
 		        Self.ConsumedLastChar = False
 		        Self.mValue = Join(Self.Buffer, "")
@@ -80,7 +80,7 @@ Private Class ConfigParser
 		    Case """"
 		      Self.InQuotes = True
 		    Else
-		      Self.Buffer.Append(Char)
+		      Self.Buffer.AddRow(Char)
 		    End Select
 		  Case Self.TypeArray
 		    Select Case Char

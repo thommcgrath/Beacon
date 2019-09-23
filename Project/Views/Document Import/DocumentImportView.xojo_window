@@ -717,7 +717,7 @@ End
 		  Dim Documents() As Beacon.Document
 		  For I As Integer = 0 To Self.mDocuments.LastRowIndex
 		    If Self.mDocuments(I) <> Nil Then
-		      Documents.Append(Self.mDocuments(I))
+		      Documents.AddRow(Self.mDocuments(I))
 		    End If
 		  Next
 		  If Documents.LastRowIndex > -1 Then
@@ -761,7 +761,7 @@ End
 		  Try
 		    Dim Maps() As Beacon.Map = Beacon.Maps.ForMask(Engine.Map)
 		    If Maps.LastRowIndex = -1 Then
-		      Maps.Append(Beacon.Maps.TheIsland)
+		      Maps.AddRow(Beacon.Maps.TheIsland)
 		    End If
 		    Dim DifficultyTotal, DifficultyScale As Double
 		    For Each Map As Beacon.Map In Maps
@@ -1128,7 +1128,7 @@ End
 		    End If
 		    
 		    Dim Doc As Beacon.Document = OtherDocsList.RowTagAt(I)
-		    Self.mDocuments.Append(Doc)
+		    Self.mDocuments.AddRow(Doc)
 		  Next
 		  Self.Finish()
 		End Sub

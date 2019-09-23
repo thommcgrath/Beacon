@@ -744,7 +744,7 @@ End
 		  If Win <> Nil Then
 		    Dim Classes() As String
 		    For Each Source As Beacon.LootSource In Self.mSources
-		      Classes.Append(Source.ClassString)
+		      Classes.AddRow(Source.ClassString)
 		    Next
 		    
 		    Dim Bound As UInteger = Win.ViewCount - 1
@@ -762,8 +762,8 @@ End
 		        For X As Integer = 0 To SourcesBound
 		          Dim Source As Beacon.LootSource = Sources(X)
 		          If Source.IsOfficial = False And Classes.IndexOf(Source.ClassString) = -1 Then
-		            Classes.Append(Source.ClassString)
-		            Self.mSources.Append(Source)
+		            Classes.AddRow(Source.ClassString)
+		            Self.mSources.AddRow(Source)
 		          End If
 		        Next
 		      End If

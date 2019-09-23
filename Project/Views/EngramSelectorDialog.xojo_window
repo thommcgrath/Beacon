@@ -402,7 +402,7 @@ End
 		Private Sub Constructor(Category As String, Subgroup As String, Exclude() As Beacon.Blueprint, Mods As Beacon.StringList, AllowMultipleSelection As Boolean)
 		  Self.mSettingUp = True
 		  For Each Blueprint As Beacon.Blueprint In Exclude
-		    Self.mExcluded.Append(Blueprint.Path)
+		    Self.mExcluded.AddRow(Blueprint.Path)
 		  Next
 		  Self.mMods = Mods
 		  Self.mAllowMultipleSelection = AllowMultipleSelection
@@ -437,7 +437,7 @@ End
 		      Self.SelectedList.AddRow(Self.List.CellValueAt(I, 0))
 		      Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTagAt(I)
 		      If Self.mAllowMultipleSelection Then
-		        Self.mExcluded.Append(Beacon.Blueprint(Self.List.RowTagAt(I)).Path)
+		        Self.mExcluded.AddRow(Beacon.Blueprint(Self.List.RowTagAt(I)).Path)
 		        Self.List.RemoveRowAt(I)
 		      End If
 		    Next
@@ -445,7 +445,7 @@ End
 		    Self.SelectedList.AddRow(Self.List.CellValueAt(Self.List.SelectedRowIndex, 0))
 		    Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		    If Self.mAllowMultipleSelection Then
-		      Self.mExcluded.Append(Beacon.Blueprint(Self.List.RowTagAt(Self.List.SelectedRowIndex)).Path)
+		      Self.mExcluded.AddRow(Beacon.Blueprint(Self.List.RowTagAt(Self.List.SelectedRowIndex)).Path)
 		      Self.List.RemoveRowAt(Self.List.SelectedRowIndex)
 		    End If
 		  End If
@@ -458,14 +458,14 @@ End
 		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Creature, Mods As Beacon.StringList = Nil, AllowMultipleSelection As Boolean) As Beacon.Creature()
 		  Dim ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Creature As Beacon.Creature In Exclude
-		    ExcludeBlueprints.Append(Creature)
+		    ExcludeBlueprints.AddRow(Creature)
 		  Next
 		  
 		  Dim Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryCreatures, Subgroup, ExcludeBlueprints, Mods, AllowMultipleSelection)
 		  Dim Creatures() As Beacon.Creature
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Creature Then
-		      Creatures.Append(Beacon.Creature(Blueprint))
+		      Creatures.AddRow(Beacon.Creature(Blueprint))
 		    End If
 		  Next
 		  Return Creatures
@@ -476,14 +476,14 @@ End
 		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Engram, Mods As Beacon.StringList = Nil, AllowMultipleSelection As Boolean) As Beacon.Engram()
 		  Dim ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Engram As Beacon.Engram In Exclude
-		    ExcludeBlueprints.Append(Engram)
+		    ExcludeBlueprints.AddRow(Engram)
 		  Next
 		  
 		  Dim Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryEngrams, Subgroup, ExcludeBlueprints, Mods, AllowMultipleSelection)
 		  Dim Engrams() As Beacon.Engram
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Engram Then
-		      Engrams.Append(Beacon.Engram(Blueprint))
+		      Engrams.AddRow(Beacon.Engram(Blueprint))
 		    End If
 		  Next
 		  Return Engrams
@@ -509,7 +509,7 @@ End
 		  End If
 		  
 		  For I As Integer = 0 To Win.SelectedList.RowCount - 1
-		    Blueprints.Append(Win.SelectedList.RowTagAt(I))
+		    Blueprints.AddRow(Win.SelectedList.RowTagAt(I))
 		  Next
 		  
 		  Win.Close
@@ -537,9 +537,9 @@ End
 		    Dim Blueprint As Beacon.Blueprint = Self.SelectedList.RowTagAt(I)
 		    Dim Idx As Integer = Self.mExcluded.IndexOf(Blueprint.Path)
 		    If Idx > -1 Then
-		      Self.mExcluded.Remove(Idx)
+		      Self.mExcluded.RemoveRowAt(Idx)
 		    End If
-		    SelectPaths.Append(Blueprint.Path)
+		    SelectPaths.AddRow(Blueprint.Path)
 		    Self.SelectedList.RemoveRowAt(I)
 		  Next
 		  Self.ActionButton.Enabled = Self.SelectedList.RowCount > 0

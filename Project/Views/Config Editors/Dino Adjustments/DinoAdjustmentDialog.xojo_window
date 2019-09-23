@@ -998,9 +998,9 @@ End
 		    If Behavior.TargetClass = EditClass Then
 		      Continue
 		    End If
-		    ConfiguredClasses.Append(Behavior.TargetClass)
+		    ConfiguredClasses.AddRow(Behavior.TargetClass)
 		    If Behavior.ProhibitSpawning Then
-		      DisabledClasses.Append(Behavior.TargetClass)
+		      DisabledClasses.AddRow(Behavior.TargetClass)
 		    End If
 		  Next
 		  
@@ -1215,12 +1215,12 @@ End
 		  Dim Exclude() As Beacon.Creature
 		  Dim SelectedCreature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Self.mSelectedClass)
 		  If SelectedCreature <> Nil Then
-		    Exclude.Append(SelectedCreature)
+		    Exclude.AddRow(SelectedCreature)
 		  End If
 		  For Each ClassString As String In Self.DisabledClasses
 		    Dim Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)
 		    If Creature <> Nil Then
-		      Exclude.Append(Creature)
+		      Exclude.AddRow(Creature)
 		    End If
 		  Next
 		  
@@ -1281,7 +1281,7 @@ End
 		  For Each ClassString As String In Self.ConfiguredClasses
 		    Dim Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)
 		    If Creature <> Nil Then
-		      Exclude.Append(Creature)
+		      Exclude.AddRow(Creature)
 		    End If
 		  Next
 		  

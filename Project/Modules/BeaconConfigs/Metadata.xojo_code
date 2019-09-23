@@ -5,7 +5,7 @@ Inherits Beacon.ConfigGroup
 		Sub GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
 		  #Pragma Unused SourceDocument
 		  
-		  Values.Append(New Beacon.ConfigValue("SessionSettings", "SessionName", Profile.Name))
+		  Values.AddRow(New Beacon.ConfigValue("SessionSettings", "SessionName", Profile.Name))
 		End Sub
 	#tag EndEvent
 

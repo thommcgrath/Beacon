@@ -4,28 +4,28 @@ Protected Class Engram
 		Function AsDictionary() As Dictionary
 		  Dim Environments() As String
 		  If Self.ValidForMap(Beacon.Maps.TheIsland) Then
-		    Environments.Append("Island")
+		    Environments.AddRow("Island")
 		  End If
 		  If Self.ValidForMap(Beacon.Maps.ScorchedEarth) Then
-		    Environments.Append("Scorched")
+		    Environments.AddRow("Scorched")
 		  End If
 		  If Self.ValidForMap(Beacon.Maps.TheCenter) Then
-		    Environments.Append("Center")
+		    Environments.AddRow("Center")
 		  End If
 		  If Self.ValidForMap(Beacon.Maps.Ragnarok) Then
-		    Environments.Append("Ragnarok")
+		    Environments.AddRow("Ragnarok")
 		  End If
 		  If Self.ValidForMap(Beacon.Maps.Aberration) Then
-		    Environments.Append("Aberration")
+		    Environments.AddRow("Aberration")
 		  End If
 		  If Self.ValidForMap(Beacon.Maps.Extinction) Then
-		    Environments.Append("Extinction")
+		    Environments.AddRow("Extinction")
 		  End If
 		  If Self.ValidForMap(Beacon.Maps.Valguero) Then
-		    Environments.Append("Valguero")
+		    Environments.AddRow("Valguero")
 		  End If
 		  If Self.ValidForMap(Beacon.Maps.Genesis) Then
-		    Environments.Append("Genesis")
+		    Environments.AddRow("Genesis")
 		  End If
 		  
 		  Dim Dict As New Dictionary

@@ -12,11 +12,11 @@ Inherits Beacon.ConfigGroup
 		    End If
 		    
 		    If Self.mCosts(I).Engram = Nil Then
-		      Issues.Append(New Beacon.Issue(ConfigName, "Crafting cost has no engram", Self.mCosts(I)))
+		      Issues.AddRow(New Beacon.Issue(ConfigName, "Crafting cost has no engram", Self.mCosts(I)))
 		    End If
 		    
 		    If Self.mCosts(I).LastRowIndex = -1 Then
-		      Issues.Append(New Beacon.Issue(ConfigName, "Crafting cost override of """ + Self.mCosts(I).Label + """ has no resources.", Self.mCosts(I)))
+		      Issues.AddRow(New Beacon.Issue(ConfigName, "Crafting cost override of """ + Self.mCosts(I).Label + """ has no resources.", Self.mCosts(I)))
 		    End If
 		  Next
 		End Sub
@@ -29,7 +29,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  For Each Cost As Beacon.CraftingCost In Self.mCosts
 		    Dim StringValue As String = Cost.StringValue
-		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts", StringValue))
+		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts", StringValue))
 		  Next
 		End Sub
 	#tag EndEvent
@@ -44,7 +44,7 @@ Inherits Beacon.ConfigGroup
 		    For Each CostData As Dictionary In Costs
 		      Dim Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(CostData)
 		      If Cost <> Nil Then
-		        Self.mCosts.Append(Cost)
+		        Self.mCosts.AddRow(Cost)
 		      End If
 		    Next
 		  End If
@@ -57,7 +57,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  Dim Costs() As Dictionary
 		  For Each Cost As Beacon.CraftingCost In Self.mCosts
-		    Costs.Append(Cost.Export)
+		    Costs.AddRow(Cost.Export)
 		  Next
 		  Dict.Value("Costs") = Costs
 		End Sub
@@ -72,7 +72,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  Dim Idx As Integer = Self.IndexOf(Cost)
 		  If Idx = -1 Then
-		    Self.mCosts.Append(Cost)
+		    Self.mCosts.AddRow(Cost)
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -100,7 +100,7 @@ Inherits Beacon.ConfigGroup
 		  If ValuesInfo.FullName = "Auto()" Then
 		    Overrides = Values
 		  ElseIf ValuesInfo.FullName = "Dictionary" Then
-		    Overrides.Append(Values)
+		    Overrides.AddRow(Values)
 		  Else
 		    Return Nil
 		  End If
@@ -141,7 +141,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  Dim Idx As Integer = Self.IndexOf(Cost)
 		  If Idx = -1 Then
-		    Self.mCosts.Insert(Index, Cost)
+		    Self.mCosts.AddRowAt(Index, Cost)
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -213,7 +213,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mCosts.Remove(Index)
+		  Self.mCosts.RemoveRowAt(Index)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

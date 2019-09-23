@@ -105,7 +105,7 @@ Inherits ControlCanvas
 		  Dim Viewport As Rect = Self.Viewport
 		  
 		  Dim YLegend As New TextShape
-		  YLegend.Text = "Level"
+		  YLegend.Value = "Level"
 		  YLegend.Rotation = -1.5708
 		  YLegend.X = Viewport.Left - 6
 		  YLegend.Y = Viewport.Top + (Viewport.Height / 2)
@@ -115,7 +115,7 @@ Inherits ControlCanvas
 		  G.DrawObject(YLegend)
 		  
 		  Dim XLegend As New TextShape
-		  XLegend.Text = "Experience"
+		  XLegend.Value = "Experience"
 		  XLegend.X = Viewport.Left + (Viewport.Width / 2)
 		  XLegend.Y = Viewport.Bottom + 6 + G.CapHeight
 		  XLegend.FontName = G.FontName

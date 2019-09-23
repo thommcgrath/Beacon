@@ -163,7 +163,7 @@ End
 		    Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(File)
 		    If Preset <> Nil Then
 		      Beacon.Data.SavePreset(Preset)
-		      AddedPresets.Append(Preset)
+		      AddedPresets.AddRow(Preset)
 		    End If
 		  Loop Until Obj.NextItem = False
 		  
@@ -229,7 +229,7 @@ End
 		  Dim Clones() As Beacon.Preset
 		  For I As Integer = 0 To List.RowCount - 1
 		    If List.Selected(I) Then
-		      Clones.Append(Self.ClonePreset(List.RowTagAt(I)))
+		      Clones.AddRow(Self.ClonePreset(List.RowTagAt(I)))
 		    End If
 		  Next
 		  
@@ -414,14 +414,14 @@ End
 		  If SelectPresets.LastRowIndex = -1 Then
 		    For I As Integer = 0 To List.RowCount - 1
 		      If List.Selected(I) Then
-		        SelectPresets.Append(List.RowTagAt(I))
+		        SelectPresets.AddRow(List.RowTagAt(I))
 		      End If
 		    Next
 		  End If
 		  
 		  Dim SelectIDs() As String
 		  For Each Preset As Beacon.Preset In SelectPresets
-		    SelectIDs.Append(Preset.PresetID)
+		    SelectIDs.AddRow(Preset.PresetID)
 		  Next
 		  
 		  While List.RowCount > PresetCount

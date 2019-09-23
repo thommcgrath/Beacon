@@ -8,7 +8,7 @@ Protected Class Socket
 		  End If
 		  
 		  Dim Request As BeaconAPI.Request = Self.Queue(0)
-		  Self.Queue.Remove(0)
+		  Self.Queue.RemoveRowAt(0)
 		  
 		  Self.ActiveRequest = Request
 		  
@@ -92,7 +92,7 @@ Protected Class Socket
 
 	#tag Method, Flags = &h0
 		Sub Start(Request As BeaconAPI.Request)
-		  Self.Queue.Append(Request)
+		  Self.Queue.AddRow(Request)
 		  If Self.Queue.LastRowIndex = 0 And Self.Working = False Then
 		    Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)
 		    Self.Working = True

@@ -132,7 +132,7 @@ Inherits Beacon.ConfigGroup
 		    End If
 		    
 		    If Not InsideBeaconSection Then
-		      FilteredLines.Append(Line)
+		      FilteredLines.AddRow(Line)
 		    End If
 		  Next
 		  

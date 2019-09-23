@@ -9,7 +9,7 @@ Protected Class TaskQueue
 	#tag Method, Flags = &h1
 		Protected Sub AppendTask(Tasks() As Beacon.TaskQueue.QueueItem)
 		  For I As Integer = 0 To Tasks.LastRowIndex
-		    Self.mTasks.Append(Tasks(I))
+		    Self.mTasks.AddRow(Tasks(I))
 		  Next
 		End Sub
 	#tag EndMethod
@@ -32,7 +32,7 @@ Protected Class TaskQueue
 		  Dim TargetIndex As Integer = Self.mNextIndex
 		  For Each Task As Beacon.TaskQueue.QueueItem In Tasks
 		    If Task <> Nil Then
-		      Self.mTasks.Insert(TargetIndex, Task)
+		      Self.mTasks.AddRowAt(TargetIndex, Task)
 		      TargetIndex = TargetIndex + 1
 		    End If
 		  Next

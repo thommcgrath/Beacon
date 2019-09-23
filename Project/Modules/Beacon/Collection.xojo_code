@@ -3,7 +3,7 @@ Protected Class Collection
 Implements Countable,Beacon.Countable,Iterable
 	#tag Method, Flags = &h0
 		Sub Append(Item As Variant)
-		  Self.mItems.Append(Item)
+		  Self.mItems.AddRow(Item)
 		End Sub
 	#tag EndMethod
 
@@ -17,7 +17,7 @@ Implements Countable,Beacon.Countable,Iterable
 		Sub Constructor(Source As Iterable)
 		  Self.Constructor(-1)
 		  For Each Item As Variant In Source
-		    Self.mItems.Append(Item)
+		    Self.mItems.AddRow(Item)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -50,7 +50,7 @@ Implements Countable,Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Item As Variant)
-		  Self.mItems.Insert(Index, Item)
+		  Self.mItems.AddRowAt(Index, Item)
 		End Sub
 	#tag EndMethod
 
@@ -88,7 +88,7 @@ Implements Countable,Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mItems.Remove(Index)
+		  Self.mItems.RemoveRowAt(Index)
 		End Sub
 	#tag EndMethod
 

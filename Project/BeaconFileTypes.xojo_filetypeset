@@ -8,10 +8,12 @@
 		MacType=
 		Name=Beacon Document
 		UTI=com.thezaz.beacon.document
-		UTIConformsTo=public.text
+		UTIConformsTo=public.text,public.data
 		Description=
 		MimeType=
 		Imported=False
+		HandlerRank=&h11
+		UTIPhysicalType=public.data
 	#tag EndFileType
 
 	#tag FileType
@@ -22,10 +24,12 @@
 		MacType=TEXT
 		Name=Ini File
 		UTI=
-		UTIConformsTo=public.text
+		UTIConformsTo=public.text,public.data
 		Description=
 		MimeType=
 		Imported=True
+		HandlerRank=&h5
+		UTIPhysicalType=public.data
 	#tag EndFileType
 
 	#tag FileType
@@ -37,10 +41,12 @@
 		MacType=
 		Name=Beacon Identity
 		UTI=com.thezaz.beacon.identity
-		UTIConformsTo=public.text
+		UTIConformsTo=public.text,public.data
 		Description=
 		MimeType=
 		Imported=False
+		HandlerRank=&h11
+		UTIPhysicalType=public.data
 	#tag EndFileType
 
 	#tag FileType
@@ -52,10 +58,12 @@
 		MacType=
 		Name=Beacon Preset
 		UTI=com.thezaz.beacon.preset
-		UTIConformsTo=public.text
+		UTIConformsTo=public.text,public.data
 		Description=
 		MimeType=
 		Imported=False
+		HandlerRank=&h11
+		UTIPhysicalType=public.data
 	#tag EndFileType
 
 	#tag FileType
@@ -66,10 +74,12 @@
 		MacType=TEXT
 		Name=JSON File
 		UTI=
-		UTIConformsTo=public.text
+		UTIConformsTo=public.text,public.data
 		Description=
 		MimeType=
 		Imported=True
+		HandlerRank=&h5
+		UTIPhysicalType=public.data
 	#tag EndFileType
 
 	#tag FileType
@@ -80,10 +90,12 @@
 		MacType=TEXT
 		Name=text/plain
 		UTI=public.text
-		UTIConformsTo=public.data, public.content
+		UTIConformsTo=public.content,public.data
 		Description=
 		MimeType=
 		Imported=True
+		HandlerRank=&h5
+		UTIPhysicalType=public.data
 	#tag EndFileType
 
 	#tag FileType
@@ -94,25 +106,29 @@
 		MacType=TEXT
 		Name=CSV File
 		UTI=
-		UTIConformsTo=public.text
+		UTIConformsTo=public.text,public.data
 		Description=
 		MimeType=
 		Imported=True
+		HandlerRank=&h5
+		UTIPhysicalType=public.data
 	#tag EndFileType
 
 	#tag FileType
 		CodeName=BeaconAuth
 		DocIcon=Beacon.xojo_resources;&h1FF0884
 		Extension=.beaconauth
-		Flags=&h0
+		Flags=&h9
 		MacCreator=
 		MacType=
 		Name=Beacon Authorization
 		UTI=com.thezaz.beacon.auth
-		UTIConformsTo=public.text
+		UTIConformsTo=public.text,public.data
 		Description=
 		MimeType=
 		Imported=False
+		HandlerRank=&h9
+		UTIPhysicalType=public.data
 	#tag EndFileType
 
 #tag EndFileTypeSet

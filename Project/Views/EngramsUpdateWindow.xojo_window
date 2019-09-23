@@ -162,7 +162,7 @@ End
 		    Self.RevealTimer.RunMode = Timer.RunModes.Off
 		    
 		    Dim ImportDate As DateTime
-		    If Notification.UserData <> Nil And Notification.UserData IsA Date Then
+		    If Notification.UserData <> Nil And Notification.UserData IsA DateTime Then
 		      ImportDate = Notification.UserData
 		    Else
 		      ImportDate = LocalData.SharedInstance.LastSync

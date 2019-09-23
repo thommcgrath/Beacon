@@ -62,7 +62,7 @@ Implements Beacon.Blueprint
 		  
 		  Redim Self.mTags(-1)
 		  For Each Tag As String In Source.mTags
-		    Self.mTags.Append(Tag)
+		    Self.mTags.AddRow(Tag)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -79,7 +79,7 @@ Implements Beacon.Blueprint
 		  End If
 		  Engram.mPath = Path
 		  Engram.mObjectID = v4UUID.FromHash(Crypto.Algorithm.MD5, Path.Lowercase)
-		  Engram.mTags.Append("blueprintable")
+		  Engram.mTags.AddRow("blueprintable")
 		  Return Engram
 		End Function
 	#tag EndMethod

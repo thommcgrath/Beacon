@@ -3,7 +3,7 @@ Protected Class MutablePreset
 Inherits Beacon.Preset
 	#tag Method, Flags = &h0
 		Sub Append(Item As Beacon.PresetEntry)
-		  Self.mContents.Append(Item)
+		  Self.mContents.AddRow(Item)
 		End Sub
 	#tag EndMethod
 
@@ -59,7 +59,7 @@ Inherits Beacon.Preset
 
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Item As Beacon.PresetEntry)
-		  Self.mContents.Insert(Index, Item)
+		  Self.mContents.AddRowAt(Index, Item)
 		End Sub
 	#tag EndMethod
 
@@ -155,7 +155,7 @@ Inherits Beacon.Preset
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mContents.Remove(Index)
+		  Self.mContents.RemoveRowAt(Index)
 		End Sub
 	#tag EndMethod
 

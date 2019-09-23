@@ -452,10 +452,10 @@ End
 		    Dim Creatures() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategoryCreatures, "", Mods, "")
 		    Dim Blueprints() As Beacon.Blueprint
 		    For Each Engram As Beacon.Blueprint In Engrams
-		      Blueprints.Append(Engram)
+		      Blueprints.AddRow(Engram)
 		    Next
 		    For Each Creature As Beacon.Blueprint In Creatures
-		      Blueprints.Append(Creature)
+		      Blueprints.AddRow(Creature)
 		    Next
 		    
 		    Dim CSV As String = Beacon.CreateCSV(Blueprints)
@@ -533,19 +533,19 @@ End
 		  Dim Blueprints() As Beacon.Blueprint
 		  Dim Labels() As String
 		  For Each Engram As Beacon.Engram In Engrams
-		    Blueprints.Append(Engram)
-		    Labels.Append(Engram.Label)
+		    Blueprints.AddRow(Engram)
+		    Labels.AddRow(Engram.Label)
 		  Next
 		  For Each Creature As Beacon.Creature In Creatures
-		    Blueprints.Append(Creature)
-		    Labels.Append(Creature.Label)
+		    Blueprints.AddRow(Creature)
+		    Labels.AddRow(Creature.Label)
 		  Next
 		  Labels.SortWith(Blueprints)
 		  
 		  Dim SelectedPaths() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
-		      SelectedPaths.Append(Beacon.Blueprint(Self.List.RowTagAt(I)).Path)
+		      SelectedPaths.AddRow(Beacon.Blueprint(Self.List.RowTagAt(I)).Path)
 		    End If
 		  Next
 		  
@@ -603,7 +603,7 @@ End
 		    Dim Blueprints() As Beacon.Blueprint
 		    For I As Integer = 0 To Self.List.RowCount - 1
 		      If Self.List.Selected(I) Then
-		        Blueprints.Append(Beacon.Blueprint(Self.List.RowTagAt(I)))
+		        Blueprints.AddRow(Beacon.Blueprint(Self.List.RowTagAt(I)))
 		      End If
 		    Next
 		    Self.MultiEditor.Blueprints = Blueprints
@@ -725,7 +725,7 @@ End
 		  Dim Objects() As Beacon.Blueprint
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Objects.Append(Beacon.Blueprint(Me.RowTagAt(I)))
+		      Objects.AddRow(Beacon.Blueprint(Me.RowTagAt(I)))
 		    End If
 		  Next
 		  
@@ -746,17 +746,17 @@ End
 		  
 		  Dim Messages() As String
 		  If ImportedCount = 1 Then
-		    Messages.Append("1 object was added.")
+		    Messages.AddRow("1 object was added.")
 		  ElseIf ImportedCount > 1 Then
-		    Messages.Append(Str(ImportedCount, "-0") + " objects were added.")
+		    Messages.AddRow(Str(ImportedCount, "-0") + " objects were added.")
 		  End If
 		  If SkippedCount = 1 Then
-		    Messages.Append("1 object was skipped because it already exists in the database.")
+		    Messages.AddRow("1 object was skipped because it already exists in the database.")
 		  ElseIf SkippedCount > 1 Then
-		    Messages.Append(Str(SkippedCount, "-0") + " objects were skipped because they already exist in the database.")
+		    Messages.AddRow(Str(SkippedCount, "-0") + " objects were skipped because they already exist in the database.")
 		  End If
 		  If ImportedCount = 0 And SkippedCount = 0 Then
-		    Messages.Append("No objects were found to import.")
+		    Messages.AddRow("No objects were found to import.")
 		  End If
 		  
 		  Self.ShowAlert("Object import has finished", Join(Messages, " "))

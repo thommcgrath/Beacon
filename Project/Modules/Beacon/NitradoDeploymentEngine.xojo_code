@@ -373,7 +373,7 @@ Implements Beacon.DeploymentEngine
 		        
 		        Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, Self.mIdentity, Self.mProfile)
 		        For Each Option As Beacon.ConfigValue In Options
-		          CommandLineOptions.Append(Option)
+		          CommandLineOptions.AddRow(Option)
 		        Next
 		      Next
 		      
@@ -387,7 +387,7 @@ Implements Beacon.DeploymentEngine
 		        End If
 		        
 		        If StartParams.Value(Key) <> Value Then
-		          Self.mCommandLineChanges.Append(ConfigValue)
+		          Self.mCommandLineChanges.AddRow(ConfigValue)
 		        End If
 		      Next
 		      
@@ -455,7 +455,7 @@ Implements Beacon.DeploymentEngine
 		      Return
 		    End If
 		    
-		    Self.mCommandLineChanges.Remove(0)
+		    Self.mCommandLineChanges.RemoveRowAt(0)
 		    Self.SetNextCommandLineParam()
 		  Catch Err As RuntimeException
 		    App.LogAPIException(Err, CurrentMethodName, Status, Content)

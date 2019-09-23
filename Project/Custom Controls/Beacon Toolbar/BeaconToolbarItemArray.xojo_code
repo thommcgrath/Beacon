@@ -16,7 +16,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		  
 		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Then
-		      Refs.Remove(I)
+		      Refs.RemoveRowAt(I)
 		      Continue
 		    End If
 		    
@@ -26,7 +26,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		    End If
 		  Next
 		  
-		  Refs.Append(New WeakRef(Observer))
+		  Refs.AddRow(New WeakRef(Observer))
 		  Self.mObservers.Value(Key) = Refs
 		  
 		End Sub
@@ -34,7 +34,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 
 	#tag Method, Flags = &h0
 		Sub Append(Item As BeaconToolbarItem)
-		  Self.mItems.Append(Item)
+		  Self.mItems.AddRow(Item)
 		  
 		  If Item <> Nil Then
 		    Item.AddObserver(Self, BeaconToolbarItem.KeyChanged)
@@ -63,7 +63,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Item As BeaconToolbarItem)
-		  Self.mItems.Insert(Index, Item)
+		  Self.mItems.AddRowAt(Index, Item)
 		  
 		  If Item <> Nil Then
 		    Item.AddObserver(Self, BeaconToolbarItem.KeyChanged)
@@ -102,7 +102,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		  
 		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Then
-		      Refs.Remove(I)
+		      Refs.RemoveRowAt(I)
 		      Continue
 		    End If
 		    
@@ -171,7 +171,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		    OldValue.RemoveObserver(Self, BeaconToolbarItem.KeyChanged)
 		  End If
 		  
-		  Self.mItems.Remove(Index)
+		  Self.mItems.RemoveRowAt(Index)
 		  
 		  Self.NotifyObservers(BeaconToolbarItem.KeyChanged, Nil)
 		End Sub
@@ -192,7 +192,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		  
 		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Or Refs(I).Value = Observer Then
-		      Refs.Remove(I)
+		      Refs.RemoveRowAt(I)
 		      Continue
 		    End If
 		  Next

@@ -975,7 +975,7 @@ End
 		  Dim Files() As Variant = Dict.Value("files")
 		  Dim Children() As String
 		  For Each Child As String In Files
-		    Children.Append(Child)
+		    Children.AddRow(Child)
 		  Next
 		  Self.Browser.AppendChildren(Children)
 		End Sub
@@ -1057,8 +1057,8 @@ End
 		    Self.ShowAlert("FTP Access Too Restrictive", "Beacon needs to be able to access this server's ""Logs"" folder too, to learn more about the server than the config files can provide. The path to this server's Game.ini does not allow access to other directories needed within Ark's ""Saved"" directory.")
 		    Return
 		  End If
-		  Components.Remove(Components.LastRowIndex) // Remove Game.ini
-		  Components.Remove(Components.LastRowIndex) // Remove WindowsServer
+		  Components.RemoveRowAt(Components.LastRowIndex) // Remove Game.ini
+		  Components.RemoveRowAt(Components.LastRowIndex) // Remove WindowsServer
 		  Components(Components.LastRowIndex) = "" // Remove Config but retain trailing slash
 		  
 		  // Should now equal the "Saved" directory

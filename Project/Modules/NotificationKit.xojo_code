@@ -14,7 +14,7 @@ Protected Module NotificationKit
 		    
 		    For I As Integer = Refs.LastRowIndex DownTo 0
 		      If Refs(I).Value = Nil Or Refs(I).Value = Receiver Then
-		        Refs.Remove(I)
+		        Refs.RemoveRowAt(I)
 		      End If
 		    Next
 		    
@@ -35,7 +35,7 @@ Protected Module NotificationKit
 		  End If
 		  
 		  Dim Notification As NotificationKit.Invocation = mPendingNotifications(0)
-		  mPendingNotifications.Remove(0)
+		  mPendingNotifications.RemoveRowAt(0)
 		  
 		  Notification.Invoke
 		End Sub
@@ -50,7 +50,7 @@ Protected Module NotificationKit
 		  Dim Refs() As WeakRef = mReceivers.Value(Notification.Name)
 		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Then
-		      Refs.Remove(I)
+		      Refs.RemoveRowAt(I)
 		    End If
 		  Next
 		  
@@ -61,7 +61,7 @@ Protected Module NotificationKit
 		  
 		  For Each Ref As WeakRef In Refs
 		    Dim Receiver As NotificationKit.Receiver = NotificationKit.Receiver(Ref.Value)
-		    mPendingNotifications.Append(New NotificationKit.Invocation(Notification, Receiver))
+		    mPendingNotifications.AddRow(New NotificationKit.Invocation(Notification, Receiver))
 		  Next
 		  
 		  If mQueueTimer = Nil Then
@@ -97,11 +97,11 @@ Protected Module NotificationKit
 		    
 		    For I As Integer = Refs.LastRowIndex DownTo 0
 		      If Refs(I).Value = Nil Then
-		        Refs.Remove(I)
+		        Refs.RemoveRowAt(I)
 		      End If
 		    Next
 		    
-		    Refs.Append(New WeakRef(Receiver))
+		    Refs.AddRow(New WeakRef(Receiver))
 		    
 		    mReceivers.Value(Key) = Refs
 		  Next

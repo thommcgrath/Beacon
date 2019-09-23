@@ -354,7 +354,7 @@ End
 		      EndPos = Source.Length
 		    End If
 		    
-		    Self.mEncryptedRanges.Append(New Beacon.Range(StartPos, EndPos))
+		    Self.mEncryptedRanges.AddRow(New Beacon.Range(StartPos, EndPos))
 		    
 		    If Styles <> Nil Then
 		      Styles.TextColor(StartPos - TagLen, TagLen) = SystemColors.TertiaryLabelColor

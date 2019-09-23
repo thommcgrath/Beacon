@@ -464,11 +464,11 @@ End
 		  Dim OfficialMasks(), ThirdPartyMasks() As UInt64
 		  For Each Map As Beacon.Map In Maps
 		    If Map.Official Then
-		      OfficialMaps.Append(Map)
-		      OfficialMasks.Append(Map.Mask)
+		      OfficialMaps.AddRow(Map)
+		      OfficialMasks.AddRow(Map.Mask)
 		    Else
-		      ThirdPartyMaps.Append(Map)
-		      ThirdPartyMasks.Append(Map.Mask)
+		      ThirdPartyMaps.AddRow(Map)
+		      ThirdPartyMasks.AddRow(Map.Mask)
 		    End If
 		  Next
 		  OfficialMasks.SortWith(OfficialMaps)
@@ -487,7 +487,7 @@ End
 		    Check.Top = OfficialNextTop
 		    Check.Left = OfficialLeft
 		    OfficialNextTop = OfficialNextTop + Check.Height + 12
-		    Self.mMapCheckboxes.Append(Check)
+		    Self.mMapCheckboxes.AddRow(Check)
 		  Next
 		  For Each Map As Beacon.Map In ThirdPartyMaps
 		    Dim Check As Checkbox = New MapCheckboxes
@@ -496,7 +496,7 @@ End
 		    Check.Top = ThirdPartyNextTop
 		    Check.Left = ThirdPartyLeft
 		    ThirdPartyNextTop = ThirdPartyNextTop + Check.Height + 12
-		    Self.mMapCheckboxes.Append(Check)
+		    Self.mMapCheckboxes.AddRow(Check)
 		  Next
 		  
 		End Sub
@@ -553,7 +553,7 @@ End
 		  For I As Integer = Tags.LastRowIndex DownTo 0
 		    Tags(I) = Tags(I).Trim
 		    If Tags(I) = "" Then
-		      Tags.Remove(I)
+		      Tags.RemoveRowAt(I)
 		    End If
 		  Next
 		  

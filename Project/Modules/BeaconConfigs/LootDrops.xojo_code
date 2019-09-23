@@ -12,7 +12,7 @@ Implements Iterable
 		    End If
 		    
 		    If Source.Count < Source.RequiredItemSets Then
-		      Issues.Append(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " needs at least " +Source.RequiredItemSets.ToString + " " + if(Source.RequiredItemSets = 1, "item set", "item sets") + " to work correctly.", Source))
+		      Issues.AddRow(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " needs at least " +Source.RequiredItemSets.ToString + " " + if(Source.RequiredItemSets = 1, "item set", "item sets") + " to work correctly.", Source))
 		    Else
 		      For Each Set As Beacon.ItemSet In Source
 		        If Set.IsValid(Document) Then
@@ -20,7 +20,7 @@ Implements Iterable
 		        End If
 		        
 		        If Set.Count = 0 Then
-		          Issues.Append(New Beacon.Issue(ConfigName, "Item set " + Set.Label + " of loot source " + Source.Label + " is empty.", Self.AssembleLocationDict(Source, Set)))
+		          Issues.AddRow(New Beacon.Issue(ConfigName, "Item set " + Set.Label + " of loot source " + Source.Label + " is empty.", Self.AssembleLocationDict(Source, Set)))
 		        Else
 		          For Each Entry As Beacon.SetEntry In Set
 		            If Entry.IsValid(Document) Then
@@ -28,7 +28,7 @@ Implements Iterable
 		            End If
 		            
 		            If Entry.Count = 0 Then
-		              Issues.Append(New Beacon.Issue(ConfigName, "An entry in item set " + Set.Label + " of loot source " + Source.Label + " has no engrams selected.", Self.AssembleLocationDict(Source, Set, Entry)))
+		              Issues.AddRow(New Beacon.Issue(ConfigName, "An entry in item set " + Set.Label + " of loot source " + Source.Label + " has no engrams selected.", Self.AssembleLocationDict(Source, Set, Entry)))
 		            Else
 		              For Each Option As Beacon.SetEntryOption In Entry
 		                If Option.IsValid(Document) Then
@@ -36,13 +36,13 @@ Implements Iterable
 		                End If
 		                
 		                If Option.Engram = Nil Then
-		                  Issues.Append(New Beacon.Issue(ConfigName, "The engram is missing for an option of an entry in " + Set.Label + " of loot source " + Source.Label + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		                  Issues.AddRow(New Beacon.Issue(ConfigName, "The engram is missing for an option of an entry in " + Set.Label + " of loot source " + Source.Label + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		                ElseIf Document.Mods.Count > 0 And Document.Mods.IndexOf(Option.Engram.ModID) = -1 Then
-		                  Issues.Append(New Beacon.Issue(ConfigName, Option.Engram.Label + " is provided by a mod that is currently disabled.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		                  Issues.AddRow(New Beacon.Issue(ConfigName, Option.Engram.Label + " is provided by a mod that is currently disabled.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		                ElseIf Option.Engram.IsTagged("Generic") Or Option.Engram.IsTagged("Blueprint") Then
-		                  Issues.Append(New Beacon.Issue(ConfigName, Option.Engram.Label + " is a generic item intended for crafting recipes. It cannot spawn in a drop.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		                  Issues.AddRow(New Beacon.Issue(ConfigName, Option.Engram.Label + " is a generic item intended for crafting recipes. It cannot spawn in a drop.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		                Else
-		                  Issues.Append(New Beacon.Issue(ConfigName, "Beacon does not know the blueprint for " + Option.Engram.ClassString + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		                  Issues.AddRow(New Beacon.Issue(ConfigName, "Beacon does not know the blueprint for " + Option.Engram.ClassString + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		                End If
 		              Next
 		            End If
@@ -68,7 +68,7 @@ Implements Iterable
 		    End If
 		    
 		    Dim StringValue As String = Source.StringValue(DifficultyConfig)
-		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideSupplyCrateItems", StringValue))
+		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideSupplyCrateItems", StringValue))
 		  Next
 		End Sub
 	#tag EndEvent
@@ -87,7 +87,7 @@ Implements Iterable
 		      If Source <> Nil Then
 		        Dim Idx As Integer = UniqueClasses.Lookup(Source.ClassString, -1)
 		        If Idx = -1 Then
-		          Self.mSources.Append(Source)
+		          Self.mSources.AddRow(Source)
 		          UniqueClasses.Value(Source.ClassString) = Self.mSources.LastRowIndex
 		        Else
 		          Self.mSources(Idx) = Source
@@ -104,7 +104,7 @@ Implements Iterable
 		  
 		  Dim Contents() As Dictionary
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Contents.Append(Source.Export)
+		    Contents.AddRow(Source.Export)
 		  Next
 		  Dict.Value("Contents") = Contents
 		End Sub
@@ -113,7 +113,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Append(Source As Beacon.LootSource)
-		  Self.mSources.Append(Source)
+		  Self.mSources.AddRow(Source)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -164,7 +164,7 @@ Implements Iterable
 		  Try
 		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
 		  Catch Err As TypeMismatchException
-		    Dicts.Append(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
+		    Dicts.AddRow(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
 		  End Try
 		  
 		  // Only keep the most recent of the duplicates
@@ -207,7 +207,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Source As Beacon.LootSource)
-		  Self.mSources.Insert(Index, Source)
+		  Self.mSources.AddRowAt(Index, Source)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -305,7 +305,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mSources.Remove(Index)
+		  Self.mSources.RemoveRowAt(Index)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

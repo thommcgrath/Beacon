@@ -4,7 +4,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Append(Item As String)
 		  If Self.mItems.IndexOf(Item) = -1 Then
-		    Self.mItems.Append(Item)
+		    Self.mItems.AddRow(Item)
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -62,7 +62,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Item As String)
 		  If Self.mItems.IndexOf(Item) = -1 Then
-		    Self.mItems.Insert(Index, Item)
+		    Self.mItems.AddRowAt(Index, Item)
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -162,7 +162,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mItems.Remove(Index)
+		  Self.mItems.RemoveRowAt(Index)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -171,7 +171,7 @@ Implements Iterable
 		Sub Remove(Item As String)
 		  Dim Idx As Integer = Self.mItems.IndexOf(Item)
 		  If Idx > -1 Then
-		    Self.mItems.Remove(Idx)
+		    Self.mItems.RemoveRowAt(Idx)
 		    Self.Modified = True
 		  End If
 		End Sub

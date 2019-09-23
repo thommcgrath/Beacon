@@ -6,7 +6,7 @@ Inherits ContainerControl
 		  RaiseEvent Opening
 		  
 		  If Self.Window <> Nil And Self.Window IsA BeaconContainer Then
-		    BeaconContainer(Self.Window).mChildren.Append(New WeakRef(Self))
+		    BeaconContainer(Self.Window).mChildren.AddRow(New WeakRef(Self))
 		  End If
 		  
 		  #if XojoVersion >= 2018.01
@@ -44,7 +44,7 @@ Inherits ContainerControl
 		Sub EmbedWithin(containingControl As RectControl, left As Integer = 0, top As Integer = 0, width As Integer = -1, height As Integer = -1)
 		  Super.EmbedWithin(ContainingControl, Left, Top, Width, Height)
 		  If Self.Window <> Nil And Self.Window IsA BeaconContainer Then
-		    BeaconContainer(Self.Window).mChildren.Append(New WeakRef(Self))
+		    BeaconContainer(Self.Window).mChildren.AddRow(New WeakRef(Self))
 		    Return
 		  End If
 		  Self.TriggerEmbeddingFinished()
@@ -55,7 +55,7 @@ Inherits ContainerControl
 		Sub EmbedWithin(containingWindow As Window, left As Integer = 0, top As Integer = 0, width As Integer = -1, height As Integer = -1)
 		  Super.EmbedWithin(ContainingWindow, Left, Top, Width, Height)
 		  If Self.Window <> Nil And Self.Window IsA BeaconContainer Then
-		    BeaconContainer(Self.Window).mChildren.Append(New WeakRef(Self))
+		    BeaconContainer(Self.Window).mChildren.AddRow(New WeakRef(Self))
 		    Return
 		  End If
 		  Self.TriggerEmbeddingFinished()
@@ -66,7 +66,7 @@ Inherits ContainerControl
 		Sub EmbedWithinPanel(containingPanel As PagePanel, page As Integer, left As Integer = 0, top As Integer = 0, width As Integer = -1, height As Integer = -1)
 		  Super.EmbedWithinPanel(ContainingPanel, Page, Left, Top, Width, Height)
 		  If Self.Window <> Nil And Self.Window IsA BeaconContainer Then
-		    BeaconContainer(Self.Window).mChildren.Append(New WeakRef(Self))
+		    BeaconContainer(Self.Window).mChildren.AddRow(New WeakRef(Self))
 		    Return
 		  End If
 		  Self.TriggerEmbeddingFinished()
@@ -78,7 +78,7 @@ Inherits ContainerControl
 		  For I As Integer = Self.mChildren.LastRowIndex DownTo 0
 		    Dim Ref As WeakRef = Self.mChildren(I)
 		    If Ref = Nil Or Ref.Value = Nil Then
-		      Self.mChildren.Remove(I)
+		      Self.mChildren.RemoveRowAt(I)
 		      Continue
 		    End If
 		    

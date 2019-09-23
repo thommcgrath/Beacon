@@ -271,7 +271,7 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h0
 		Sub Add(Item As ShelfItem)
-		  Self.mItems.Append(Item)
+		  Self.mItems.AddRow(Item)
 		  Item.AddObserver(Self, "PulseAmount")
 		  Self.Invalidate
 		End Sub
@@ -306,7 +306,7 @@ Implements ObservationKit.Observer
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
 		  Self.mItems(Index).RemoveObserver(Self, "PulseAmount")
-		  Self.mItems.Remove(Index)
+		  Self.mItems.RemoveRowAt(Index)
 		  Self.Invalidate
 		End Sub
 	#tag EndMethod

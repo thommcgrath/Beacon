@@ -6,16 +6,16 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyCuddleGracePeriodMultiplier", Self.mBabyCuddleGracePeriodMultiplier.PrettyText))
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyCuddleIntervalMultiplier", Self.mBabyCuddleIntervalMultiplier.PrettyText))
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyCuddleLoseImprintQualitySpeedMultiplier", Self.mBabyCuddleLoseImprintQualitySpeedMultiplier.PrettyText))
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyFoodConsumptionSpeedMultiplier", Self.mBabyFoodConsumptionSpeedMultiplier.PrettyText))
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyImprintingStatScaleMultiplier", Self.mBabyImprintingStatScaleMultiplier.PrettyText))
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyMatureSpeedMultiplier", Self.mBabyMatureSpeedMultiplier.PrettyText))
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "EggHatchSpeedMultiplier", Self.mEggHatchSpeedMultiplier.PrettyText))
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LayEggIntervalMultiplier", Self.mLayEggIntervalMultiplier.PrettyText))
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "MatingIntervalMultiplier", Self.mMatingIntervalMultiplier.PrettyText))
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "MatingSpeedMultiplier", Self.mMatingSpeedMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyCuddleGracePeriodMultiplier", Self.mBabyCuddleGracePeriodMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyCuddleIntervalMultiplier", Self.mBabyCuddleIntervalMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyCuddleLoseImprintQualitySpeedMultiplier", Self.mBabyCuddleLoseImprintQualitySpeedMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyFoodConsumptionSpeedMultiplier", Self.mBabyFoodConsumptionSpeedMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyImprintingStatScaleMultiplier", Self.mBabyImprintingStatScaleMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyMatureSpeedMultiplier", Self.mBabyMatureSpeedMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "EggHatchSpeedMultiplier", Self.mEggHatchSpeedMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LayEggIntervalMultiplier", Self.mLayEggIntervalMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "MatingIntervalMultiplier", Self.mMatingIntervalMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "MatingSpeedMultiplier", Self.mMatingSpeedMultiplier.PrettyText))
 		End Sub
 	#tag EndEvent
 

@@ -14,7 +14,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    End If
 		  Next
 		  
-		  Self.mSets.Append(Item)
+		  Self.mSets.AddRow(Item)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -42,7 +42,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      Continue
 		    End If
 		    WeightSum = WeightSum + Set.RawWeight
-		    Weights.Append(WeightSum * WeightScale)
+		    Weights.AddRow(WeightSum * WeightScale)
 		    WeightLookup.Value(WeightSum * WeightScale) = Set
 		  Next
 		  Weights.Sort
@@ -147,7 +147,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Function Export() As Dictionary
 		  Dim Children() As Dictionary
 		  For Each Set As Beacon.ItemSet In Self.mSets
-		    Children.Append(Set.Export)
+		    Children.AddRow(Set.Export)
 		  Next
 		  
 		  // Mandatory item sets should not be part of this.
@@ -231,7 +231,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Child)
 		    Dim Hash As String = Set.Hash
 		    If Set <> Nil And AddedHashes.HasKey(Hash) = False Then
-		      LootSource.mSets.Append(Set)
+		      LootSource.mSets.AddRow(Set)
 		      AddedHashes.Value(Hash) = True
 		    End If
 		  Next
@@ -334,7 +334,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Item As Beacon.ItemSet)
-		  Self.mSets.Insert(Index, Item)
+		  Self.mSets.AddRowAt(Index, Item)
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod
@@ -405,7 +405,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim AllowedMaps() As Beacon.Map
 		  For Each Map As Beacon.Map In AllMaps
 		    If Self.ValidForMap(Map) Then
-		      AllowedMaps.Append(Map)
+		      AllowedMaps.AddRow(Map)
 		    End If
 		  Next
 		  Return AllowedMaps
@@ -498,7 +498,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mSets.Remove(Index)
+		  Self.mSets.RemoveRowAt(Index)
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod
@@ -524,19 +524,19 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  If NumSets = MinSets And MinSets = MaxSets And Self.SetsRandomWithoutReplacement Then
 		    // All
 		    For Each Set As Beacon.ItemSet In Self.mSets
-		      SelectedSets.Append(Set)
+		      SelectedSets.AddRow(Set)
 		    Next
 		    For Each Set As Beacon.ItemSet In Self.mMandatoryItemSets
-		      SelectedSets.Append(Set)
+		      SelectedSets.AddRow(Set)
 		    Next
 		  Else
 		    Const WeightScale = 100000
 		    Dim ItemSetPool() As Beacon.ItemSet
 		    For I As Integer = 0 To Self.mSets.LastRowIndex
-		      ItemSetPool.Append(Self.mSets(I))
+		      ItemSetPool.AddRow(Self.mSets(I))
 		    Next
 		    For I As Integer = 0 To Self.mMandatoryItemSets.LastRowIndex
-		      ItemSetPool.Append(Self.mMandatoryItemSets(I))
+		      ItemSetPool.AddRow(Self.mMandatoryItemSets(I))
 		    Next
 		    
 		    Dim RecomputeFigures As Boolean = True
@@ -569,11 +569,11 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		          Continue
 		        End If
 		        
-		        SelectedSets.Append(SelectedSet)
+		        SelectedSets.AddRow(SelectedSet)
 		        If Self.SetsRandomWithoutReplacement Then
 		          For X As Integer = 0 To ItemSetPool.LastRowIndex
 		            If ItemSetPool(X) = SelectedSet Then
-		              ItemSetPool.Remove(X)
+		              ItemSetPool.RemoveRowAt(X)
 		              Exit For X
 		            End If
 		          Next
@@ -588,7 +588,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  For Each Set As Beacon.ItemSet In SelectedSets
 		    Dim SetSelections() As Beacon.SimulatedSelection = Set.Simulate
 		    For Each Selection As Beacon.SimulatedSelection In SetSelections
-		      Selections.Append(Selection)
+		      Selections.AddRow(Selection)
 		    Next
 		  Next
 		  Return Selections
@@ -607,21 +607,21 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  
 		  // This is terrible, but Ark uses the same code for both Scorched Desert Crates and Island Sea Crates
 		  If Self.mClassString = "Beacon:ScorchedEarthDesertCrate_C" Then
-		    Values.Append("SupplyCrateClassString=""SupplyCreate_OceanInstant_High_C""")
+		    Values.AddRow("SupplyCrateClassString=""SupplyCreate_OceanInstant_High_C""")
 		  Else
-		    Values.Append("SupplyCrateClassString=""" + Self.mClassString + """")
+		    Values.AddRow("SupplyCrateClassString=""" + Self.mClassString + """")
 		  End If
 		  
 		  If Self.mAppendMode Then
-		    Values.Append("bAppendItemSets=true")
+		    Values.AddRow("bAppendItemSets=true")
 		  Else
 		    Dim MinSets As Integer = Min(Self.MinItemSets, Self.MaxItemSets)
 		    Dim MaxSets As Integer = Max(Self.MaxItemSets, Self.MinItemSets)
 		    
-		    Values.Append("MinItemSets=" + MinSets.ToString)
-		    Values.Append("MaxItemSets=" + MaxSets.ToString)
-		    Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.PrettyText)
-		    Values.Append("bSetsRandomWithoutReplacement=" + if(Self.mSetsRandomWithoutReplacement, "true", "false"))
+		    Values.AddRow("MinItemSets=" + MinSets.ToString)
+		    Values.AddRow("MaxItemSets=" + MaxSets.ToString)
+		    Values.AddRow("NumItemSetsPower=" + Self.mNumItemSetsPower.PrettyText)
+		    Values.AddRow("bSetsRandomWithoutReplacement=" + if(Self.mSetsRandomWithoutReplacement, "true", "false"))
 		  End If
 		  
 		  Dim Sets() As Beacon.ItemSet
@@ -630,14 +630,14 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Sets = Self.mSets
 		  Else
 		    For Each Set As Beacon.ItemSet In Self.mSets
-		      Sets.Append(Set)
+		      Sets.AddRow(Set)
 		    Next
 		    For Each Set As Beacon.ItemSet In Self.mMandatoryItemSets
-		      Sets.Append(Set)
+		      Sets.AddRow(Set)
 		    Next
 		  End If
 		  
-		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Sets, ",", Self.mMultipliers, Self.mUseBlueprints, Difficulty) + ")")
+		  Values.AddRow("ItemSets=(" + Beacon.ItemSet.Join(Sets, ",", Self.mMultipliers, Self.mUseBlueprints, Difficulty) + ")")
 		  Return "(" + Values.Join(",") + ")"
 		End Function
 	#tag EndMethod

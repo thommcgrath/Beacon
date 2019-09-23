@@ -900,7 +900,7 @@ End
 		  
 		  Dim Options() As Beacon.SetEntryOption
 		  For Each Entry As DictionaryEntry In Self.mSelectedEngrams
-		    Options.Append(Entry.Value)
+		    Options.AddRow(Entry.Value)
 		  Next
 		  
 		  Dim Entries() As Beacon.SetEntry
@@ -910,7 +910,7 @@ End
 		    For Each Option As Beacon.SetEntryOption In Options
 		      Entry.Append(Option)
 		    Next
-		    Entries.Append(Entry)
+		    Entries.AddRow(Entry)
 		  ElseIf Options.LastRowIndex > 0 Then
 		    If SingleEntryCheck.Value Then
 		      // Merge all into one
@@ -918,19 +918,19 @@ End
 		      For Each Option As Beacon.SetEntryOption In Options
 		        Entry.Append(Option)
 		      Next
-		      Entries.Append(Entry)
+		      Entries.AddRow(Entry)
 		    Else
 		      // Multiple entries
 		      For Each Option As Beacon.SetEntryOption In Options
 		        Dim Entry As New Beacon.SetEntry
 		        Entry.Append(Option)    
-		        Entries.Append(Entry)
+		        Entries.AddRow(Entry)
 		      Next
 		    End If
 		  ElseIf Options.LastRowIndex = 0 Then
 		    Dim Entry As New Beacon.SetEntry
 		    Entry.Append(Options(0))
-		    Entries.Append(Entry)
+		    Entries.AddRow(Entry)
 		  Else
 		    System.Beep
 		    Return

@@ -70,11 +70,11 @@ End
 		  Dim OfficialMasks(), OtherMasks() As UInt64
 		  For Each Map As Beacon.Map In Maps
 		    If Map.Official Then
-		      OfficialMaps.Append(Map)
-		      OfficialMasks.Append(Map.Mask)
+		      OfficialMaps.AddRow(Map)
+		      OfficialMasks.AddRow(Map.Mask)
 		    Else
-		      OtherMaps.Append(Map)
-		      OtherMasks.Append(Map.Mask)
+		      OtherMaps.AddRow(Map)
+		      OtherMasks.AddRow(Map.Mask)
 		    End If
 		  Next
 		  
@@ -95,7 +95,7 @@ End
 		    Box.Top = OfficialNextTop
 		    Box.Left = OfficialLeft
 		    OfficialNextTop = OfficialNextTop + Box.Height + 12
-		    Self.mBoxes.Append(Box)
+		    Self.mBoxes.AddRow(Box)
 		  Next
 		  For Each Map As Beacon.Map In OtherMaps
 		    Dim Box As New Boxes
@@ -104,7 +104,7 @@ End
 		    Box.Top = OtherNextTop
 		    Box.Left = OtherLeft
 		    OtherNextTop = OtherNextTop + Box.Height + 12
-		    Self.mBoxes.Append(Box)
+		    Self.mBoxes.AddRow(Box)
 		  Next
 		  
 		  Self.Height = (OfficialMaps.LastRowIndex + 1) * 32

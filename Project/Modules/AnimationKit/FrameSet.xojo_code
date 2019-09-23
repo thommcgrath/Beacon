@@ -4,7 +4,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Append(Frame As AnimationKit.Frame)
 		  Self.VerifyFrame(Frame)
-		  Self.Frames.Append(Frame)
+		  Self.Frames.AddRow(Frame)
 		  Self.CheckCurrentFrames()
 		End Sub
 	#tag EndMethod
@@ -119,7 +119,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Frame As AnimationKit.Frame)
 		  Self.VerifyFrame(Frame)
-		  Self.Frames.Insert(Index, Frame)
+		  Self.Frames.AddRowAt(Index, Frame)
 		  Self.CheckCurrentFrames()
 		End Sub
 	#tag EndMethod
@@ -167,7 +167,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.Frames.Remove(Index)
+		  Self.Frames.RemoveRowAt(Index)
 		  Self.CheckCurrentFrames()
 		End Sub
 	#tag EndMethod
@@ -176,7 +176,7 @@ Implements Iterable
 		Function Reverse() As AnimationKit.FrameSet
 		  Dim Set As New AnimationKit.FrameSet
 		  For I As Integer = Self.Frames.LastRowIndex DownTo 0
-		    Set.Frames.Append(Self.Frames(I))
+		    Set.Frames.AddRow(Self.Frames(I))
 		  Next
 		  Set.CheckCurrentFrames()
 		  Return Set
@@ -196,7 +196,7 @@ Implements Iterable
 		    For Column As Integer = 0 To Columns - 1
 		      Dim Sprite As New iOSBitmap(Width, Height, Sprites.Scale)
 		      Sprite.Graphics.DrawImage(Sprites, (Row * Column) * -1, (Column * Height) * -1)
-		      Cells.Append(Sprite.Image)
+		      Cells.AddRow(Sprite.Image)
 		    Next
 		  Next
 		  Return Cells
@@ -216,7 +216,7 @@ Implements Iterable
 		    For Column As Integer = 0 To Columns - 1
 		      Dim Sprite As New Picture(Width, Height)
 		      Sprite.Graphics.DrawPicture(Sprites, (Row * Column) * -1, (Column * Height) * -1)
-		      Cells.Append(Sprite)
+		      Cells.AddRow(Sprite)
 		    Next
 		  Next
 		  Return Cells

@@ -599,7 +599,7 @@ End
 		  
 		  Dim UIDs() As String
 		  For Each Engram As BeaconAPI.Engram In DeletedEngrams
-		    UIDs.Append(Engram.UID)
+		    UIDs.AddRow(Engram.UID)
 		  Next
 		  
 		  Dim Request As New BeaconAPI.Request("engram.php", "DELETE", UIDs.Join(","), "text/plain", AddressOf APICallback_EngramsDelete)
@@ -682,7 +682,7 @@ End
 		  For I As Integer = 0 To Self.EngramList.RowCount - 1
 		    Dim Engram As BeaconAPI.Engram = Self.EngramList.RowTagAt(I)
 		    If Self.EngramList.Selected(I) Then
-		      Selected.Append(Engram.ID)
+		      Selected.AddRow(Engram.ID)
 		    End If
 		  Next
 		  
@@ -706,7 +706,7 @@ End
 		  
 		  Dim Dicts() As Dictionary
 		  For Each Engram As BeaconAPI.Engram In NewEngrams
-		    Dicts.Append(Engram.AsDictionary)
+		    Dicts.AddRow(Engram.AsDictionary)
 		  Next
 		  
 		  Dim Content As String = Beacon.GenerateJSON(Dicts, False)

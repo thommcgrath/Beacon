@@ -649,7 +649,7 @@ End
 		    For Each Key As Variant In Keys
 		      Dim Arr() As String = Dict.Value(Key)
 		      For Each Command As String In Arr
-		        Parameters.Append("-" + Command)
+		        Parameters.AddRow("-" + Command)
 		      Next
 		    Next
 		  End If

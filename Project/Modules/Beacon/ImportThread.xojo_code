@@ -182,7 +182,7 @@ Inherits Beacon.Thread
 		    Else
 		      Dim Items() As Variant
 		      For Each Item As Variant In ArrayValue
-		        Items.Append(ToXojoType(Item))
+		        Items.AddRow(ToXojoType(Item))
 		      Next
 		      Return Items
 		    End If

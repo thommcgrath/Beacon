@@ -6,7 +6,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
-		  Values.Append(New Beacon.ConfigValue("?", "UseOptimizedHarvestingHealth", If(Self.mUseOptimizedRates, "true", "false")))
+		  Values.AddRow(New Beacon.ConfigValue("?", "UseOptimizedHarvestingHealth", If(Self.mUseOptimizedRates, "true", "false")))
 		End Sub
 	#tag EndEvent
 
@@ -18,11 +18,11 @@ Inherits Beacon.ConfigGroup
 		  For Each Entry As DictionaryEntry In Self.mOverrides
 		    Dim ClassString As String = Entry.Key
 		    Dim Rate As Double = Entry.Value
-		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "HarvestResourceItemAmountClassMultipliers", "(ClassName=""" + ClassString + """,Multiplier=" + Rate.PrettyText + ")"))
+		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "HarvestResourceItemAmountClassMultipliers", "(ClassName=""" + ClassString + """,Multiplier=" + Rate.PrettyText + ")"))
 		  Next
 		  
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PlayerHarvestingDamageMultiplier", Self.mPlayerHarvestingDamageMultiplier.PrettyText))
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "DinoHarvestingDamageMultiplier", Self.mDinoHarvestingDamageMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PlayerHarvestingDamageMultiplier", Self.mPlayerHarvestingDamageMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "DinoHarvestingDamageMultiplier", Self.mDinoHarvestingDamageMultiplier.PrettyText))
 		End Sub
 	#tag EndEvent
 
@@ -31,9 +31,9 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
-		  Values.Append(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "HarvestAmountMultiplier", Self.mHarvestAmountMultiplier.PrettyText))
-		  Values.Append(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "HarvestHealthMultiplier", Self.mHarvestHealthMultiplier.PrettyText))
-		  Values.Append(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ClampResourceHarvestDamage", If(Self.mClampResourceHarvestDamage, "True", "False")))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "HarvestAmountMultiplier", Self.mHarvestAmountMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "HarvestHealthMultiplier", Self.mHarvestHealthMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ClampResourceHarvestDamage", If(Self.mClampResourceHarvestDamage, "True", "False")))
 		End Sub
 	#tag EndEvent
 
@@ -79,7 +79,7 @@ Inherits Beacon.ConfigGroup
 		Function Classes() As String()
 		  Dim Results() As String
 		  For Each Entry As DictionaryEntry In Self.mOverrides
-		    Results.Append(Entry.Key)
+		    Results.AddRow(Entry.Key)
 		  Next
 		  Return Results
 		End Function
@@ -137,11 +137,11 @@ Inherits Beacon.ConfigGroup
 		    Dim Info As Introspection.TypeInfo = Introspection.GetType(AutoValue)
 		    Select Case Info.FullName
 		    Case "Dictionary"
-		      Dicts.Append(AutoValue)
+		      Dicts.AddRow(AutoValue)
 		    Case "Auto()"
 		      Dim ArrayValue() As Variant = AutoValue
 		      For Each Dict As Dictionary In ArrayValue
-		        Dicts.Append(Dict)
+		        Dicts.AddRow(Dict)
 		      Next
 		    End Select
 		    

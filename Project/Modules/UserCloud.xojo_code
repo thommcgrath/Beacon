@@ -101,7 +101,7 @@ Protected Module UserCloud
 		      
 		      Dim Actions() As Dictionary
 		      For Each Dict As Dictionary In SyncActions
-		        Actions.Append(Dict)
+		        Actions.AddRow(Dict)
 		      Next
 		      NotificationKit.Post(Notification_SyncFinished, Actions)
 		      Redim SyncActions(-1)
@@ -169,7 +169,7 @@ Protected Module UserCloud
 		      Continue
 		    End If
 		    
-		    Results.Append(Key)
+		    Results.AddRow(Key)
 		  Next
 		  
 		  Return Results
@@ -241,7 +241,7 @@ Protected Module UserCloud
 		  Dim ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "GET"
 		  ActionDict.Value("Path") = RemotePath
-		  SyncActions.Append(ActionDict)
+		  SyncActions.AddRow(ActionDict)
 		End Sub
 	#tag EndMethod
 
@@ -316,7 +316,7 @@ Protected Module UserCloud
 		  Dim ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "PUT"
 		  ActionDict.Value("Path") = RemotePath
-		  SyncActions.Append(ActionDict)
+		  SyncActions.AddRow(ActionDict)
 		End Sub
 	#tag EndMethod
 

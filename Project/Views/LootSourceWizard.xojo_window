@@ -1210,14 +1210,14 @@ End
 		  Dim AllowedLootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.mMods, Preferences.ShowExperimentalLootSources)
 		  For X As Integer = AllowedLootSources.LastRowIndex DownTo 0
 		    If Not AllowedLootSources(X).ValidForMask(Self.mMask) Then
-		      AllowedLootSources.Remove(X)
+		      AllowedLootSources.RemoveRowAt(X)
 		    End If
 		  Next
 		  
 		  For X As Integer = 0 To CurrentSources.LastRowIndex
 		    For Y As Integer = AllowedLootSources.LastRowIndex DownTo 0
 		      If AllowedLootSources(Y).ClassString = CurrentSources(X).ClassString Then
-		        AllowedLootSources.Remove(Y)
+		        AllowedLootSources.RemoveRowAt(Y)
 		        Exit For Y
 		      End If
 		    Next
@@ -1231,7 +1231,7 @@ End
 		    End If
 		    
 		    Dim Source As Beacon.LootSource = Self.SourceList.RowTagAt(I)
-		    Selections.Append(Source.ClassString)
+		    Selections.AddRow(Source.ClassString)
 		  Next
 		  
 		  Dim ScrollPosition As Integer = Self.SourceList.ScrollPosition
@@ -1281,7 +1281,7 @@ End
 		      End If
 		    End If
 		    
-		    Self.mDestinations.Append(New Beacon.MutableLootSource(Source))
+		    Self.mDestinations.AddRow(New Beacon.MutableLootSource(Source))
 		  Next
 		  
 		  Self.ShowCustomize()
@@ -1588,20 +1588,20 @@ End
 		    End If
 		    
 		    Dim Preset As Beacon.Preset = Self.CustomizePresetsList.RowTagAt(I)
-		    AllowedPresets.Append(Preset.PresetID)
-		    AdditionalPresets.Append(Preset.PresetID)
+		    AllowedPresets.AddRow(Preset.PresetID)
+		    AdditionalPresets.AddRow(Preset.PresetID)
 		  Next
 		  
 		  Dim SourceSets() As Beacon.ItemSet
 		  If Self.mSource <> Nil Then
 		    For Each Set As Beacon.ItemSet In Self.mSource
 		      If Set.SourcePresetID = "" Or AllowedPresets.IndexOf(Set.SourcePresetID) > -1 Or LocalData.SharedInstance.GetPreset(Set.SourcePresetID) = Nil Then
-		        SourceSets.Append(Set)
+		        SourceSets.AddRow(Set)
 		      End If
 		      
 		      Dim Idx As Integer = AdditionalPresets.IndexOf(Set.SourcePresetID)
 		      If Idx > -1 Then
-		        AdditionalPresets.Remove(Idx)
+		        AdditionalPresets.RemoveRowAt(Idx)
 		      End If
 		    Next
 		  End If

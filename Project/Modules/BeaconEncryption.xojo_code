@@ -20,8 +20,8 @@ Protected Module BeaconEncryption
 		    Raise Err
 		  End If
 		  
-		  Lines.Remove(0)
-		  Lines.Remove(Lines.LastRowIndex)
+		  Lines.RemoveRowAt(0)
+		  Lines.RemoveRowAt(Lines.LastRowIndex)
 		  
 		  Key = Lines.Join(Encodings.UTF8.Chr(10))
 		  
@@ -49,8 +49,8 @@ Protected Module BeaconEncryption
 		    Raise Err
 		  End If
 		  
-		  Lines.Remove(0)
-		  Lines.Remove(Lines.LastRowIndex)
+		  Lines.RemoveRowAt(0)
+		  Lines.RemoveRowAt(Lines.LastRowIndex)
 		  
 		  Key = Lines.Join(Encodings.UTF8.Chr(10))
 		  
@@ -70,13 +70,13 @@ Protected Module BeaconEncryption
 		  Dim Base64 As String = EncodeBase64(Crypto.DEREncodePrivateKey(Key), 0)
 		  Dim Lines() As String = Array("-----BEGIN PRIVATE KEY-----")
 		  While Base64.Length > 64
-		    Lines.Append(Base64.Left(64))
+		    Lines.AddRow(Base64.Left(64))
 		    Base64 = Base64.Middle(64)
 		  Wend
 		  If Base64.Length > 0 Then
-		    Lines.Append(Base64)
+		    Lines.AddRow(Base64)
 		  End If
-		  Lines.Append("-----END PRIVATE KEY-----")
+		  Lines.AddRow("-----END PRIVATE KEY-----")
 		  Return Lines.Join(Encodings.UTF8.Chr(10))
 		End Function
 	#tag EndMethod
@@ -86,13 +86,13 @@ Protected Module BeaconEncryption
 		  Dim Base64 As String = EncodeBase64(DecodeHex(Key), 0)
 		  Dim Lines() As String = Array("-----BEGIN PUBLIC KEY-----")
 		  While Base64.Length > 64
-		    Lines.Append(Base64.Left(64))
+		    Lines.AddRow(Base64.Left(64))
 		    Base64 = Base64.Middle(64)
 		  Wend
 		  If Base64.Length > 0 Then
-		    Lines.Append(Base64)
+		    Lines.AddRow(Base64)
 		  End If
-		  Lines.Append("-----END PUBLIC KEY-----")
+		  Lines.AddRow("-----END PUBLIC KEY-----")
 		  Return Lines.Join(Encodings.UTF8.Chr(10))
 		End Function
 	#tag EndMethod

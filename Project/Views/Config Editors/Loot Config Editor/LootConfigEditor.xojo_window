@@ -620,7 +620,7 @@ End
 		    Dim NewSources() As Beacon.LootSource
 		    For Each Source As Beacon.LootSource In CurrentSources
 		      If Not Map.HasKey(Source.ClassString) Then
-		        NewSources.Append(Source)
+		        NewSources.AddRow(Source)
 		      End If
 		    Next
 		    Self.UpdateSourceList(NewSources)
@@ -637,13 +637,13 @@ End
 		  Dim SelectedClasses() As String
 		  If SelectedSources <> Nil Then
 		    For Each Source As Beacon.LootSource In SelectedSources
-		      SelectedClasses.Append(Source.ClassString)
+		      SelectedClasses.AddRow(Source.ClassString)
 		    Next
 		  Else
 		    Dim Bound As Integer = Self.List.RowCount - 1
 		    For I As Integer = 0 To Bound
 		      If Self.List.Selected(I) Then
-		        SelectedClasses.Append(Beacon.LootSource(Self.List.RowTagAt(I)).ClassString)
+		        SelectedClasses.AddRow(Beacon.LootSource(Self.List.RowTagAt(I)).ClassString)
 		      End If
 		    Next
 		  End If
@@ -658,7 +658,7 @@ End
 		    Self.List.CellValueAt(I, 1) = VisibleSources(I).Label
 		    If SelectedClasses.IndexOf(VisibleSources(I).ClassString) > -1 Then
 		      Self.List.Selected(I) = True
-		      Selection.Append(VisibleSources(I))
+		      Selection.AddRow(VisibleSources(I))
 		    Else
 		      Self.List.Selected(I) = False
 		    End If
@@ -760,7 +760,7 @@ End
 		      For I As Integer = LootSources.LastRowIndex DownTo 0
 		        Dim Source As Beacon.LootSource = LootSources(I)
 		        If Config.HasLootSource(Source) Or Source.ValidForMask(Mask) = False Then
-		          LootSources.Remove(I)
+		          LootSources.RemoveRowAt(I)
 		          Continue For I
 		        End If
 		      Next
@@ -877,9 +877,9 @@ End
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
 		      Dim Source As Beacon.LootSource = Me.RowTagAt(I)
-		      Dicts.Append(Source.Export)
+		      Dicts.AddRow(Source.Export)
 		      If Source.IsValid(Self.Document) Then
-		        Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.StringValue(Self.Document.Difficulty))
+		        Lines.AddRow("ConfigOverrideSupplyCrateItems=" + Source.StringValue(Self.Document.Difficulty))
 		      End If
 		    End If
 		  Next
@@ -910,11 +910,11 @@ End
 		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
 		    Dim Dicts() As Dictionary
 		    If Info.FullName = "Dictionary" Then
-		      Dicts.Append(Parsed)
+		      Dicts.AddRow(Parsed)
 		    ElseIf Info.FullName = "Auto()" Then
 		      Dim Values() As Variant = Parsed
 		      For Each Dict As Dictionary In Values
-		        Dicts.Append(Dict)
+		        Dicts.AddRow(Dict)
 		      Next
 		    Else
 		      System.Beep
@@ -923,7 +923,7 @@ End
 		    
 		    Dim Sources() As Beacon.LootSource
 		    For Each Dict As Dictionary In Dicts
-		      Sources.Append(Beacon.LootSource.ImportFromBeacon(Dict))
+		      Sources.AddRow(Beacon.LootSource.ImportFromBeacon(Dict))
 		    Next
 		    Self.AddLootSources(Sources)
 		  End If
@@ -940,7 +940,7 @@ End
 		  Dim Sources() As Beacon.LootSource
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Sources.Append(Me.RowTagAt(I))
+		      Sources.AddRow(Me.RowTagAt(I))
 		    End If
 		  Next
 		  

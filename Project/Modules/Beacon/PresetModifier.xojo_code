@@ -56,7 +56,7 @@ Protected Class PresetModifier
 		      #Pragma BreakOnExceptions False
 		      Try
 		        If Reg.Search(Source.ClassString) <> Nil Then
-		          Results.Append(Source)
+		          Results.AddRow(Source)
 		        End If
 		      Catch Err As RegExException
 		        

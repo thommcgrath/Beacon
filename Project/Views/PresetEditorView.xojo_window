@@ -895,7 +895,7 @@ End
 		    
 		    Dim Entry As Beacon.PresetEntry = ContentsList.RowTagAt(I)
 		    Call Entry.UniqueID // Triggers generation if necessary so we can compare when done
-		    Entries.Append(Entry)
+		    Entries.AddRow(Entry)
 		  Next
 		  
 		  If Entries.LastRowIndex = -1 Then
@@ -953,21 +953,21 @@ End
 		    End If
 		    Select Case I
 		    Case 0
-		      Maps.Append(Beacon.Maps.TheIsland)
+		      Maps.AddRow(Beacon.Maps.TheIsland)
 		    Case 1
-		      Maps.Append(Beacon.Maps.ScorchedEarth)
+		      Maps.AddRow(Beacon.Maps.ScorchedEarth)
 		    Case 2
-		      Maps.Append(Beacon.Maps.Aberration)
+		      Maps.AddRow(Beacon.Maps.Aberration)
 		    Case 3
-		      Maps.Append(Beacon.Maps.Extinction)
+		      Maps.AddRow(Beacon.Maps.Extinction)
 		    Case 4
-		      Maps.Append(Beacon.Maps.Genesis)
+		      Maps.AddRow(Beacon.Maps.Genesis)
 		    Case 5
-		      Maps.Append(Beacon.Maps.TheCenter)
+		      Maps.AddRow(Beacon.Maps.TheCenter)
 		    Case 6
-		      Maps.Append(Beacon.Maps.Ragnarok)
+		      Maps.AddRow(Beacon.Maps.Ragnarok)
 		    Case 7
-		      Maps.Append(Beacon.Maps.Valguero)
+		      Maps.AddRow(Beacon.Maps.Valguero)
 		    End Select
 		  Next
 		  Return Maps
@@ -1043,7 +1043,7 @@ End
 		  Dim Entries() As Beacon.PresetEntry
 		  For I As Integer = Self.ContentsList.RowCount - 1 DownTo 0
 		    If Self.ContentsList.Selected(I) Then
-		      Entries.Append(Self.ContentsList.RowTagAt(I))
+		      Entries.AddRow(Self.ContentsList.RowTagAt(I))
 		    End If
 		  Next
 		  Return Entries
@@ -1122,7 +1122,7 @@ End
 		  For I As Integer = 0 To Self.ContentsList.RowCount - 1
 		    If Self.ContentsList.Selected(I) Then
 		      Dim Entry As Beacon.PresetEntry = Self.ContentsList.RowTagAt(I)
-		      SelectedEntries.Append(Entry.UniqueID)
+		      SelectedEntries.AddRow(Entry.UniqueID)
 		    End If
 		  Next
 		  Self.ContentsList.RemoveAllRows()
@@ -1425,7 +1425,7 @@ End
 		        
 		        Dim Entry As Beacon.PresetEntry = Me.RowTagAt(I)
 		        If Entry.ValidForMap(Map) Then
-		          Entries.Append(Entry)
+		          Entries.AddRow(Entry)
 		        End If
 		      Next
 		      

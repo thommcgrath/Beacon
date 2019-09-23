@@ -157,7 +157,7 @@ End
 		  Dim Classes() As String
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
 		    Config.Behavior(Behavior.TargetClass) = Behavior
-		    Classes.Append(Behavior.TargetClass)
+		    Classes.AddRow(Behavior.TargetClass)
 		  Next
 		  Self.Changed = True
 		  Self.UpdateList(Classes)
@@ -256,7 +256,7 @@ End
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
 		    Dim Creature As Beacon.Creature = Behavior.TargetCreature
 		    If Creature <> Nil Then
-		      CurrentCreatures.Append(Creature)
+		      CurrentCreatures.AddRow(Creature)
 		    End If
 		  Next
 		  
@@ -269,7 +269,7 @@ End
 		  For Each Creature As Beacon.Creature In Creatures
 		    Dim Behavior As Beacon.CreatureBehavior = SelectedBehavior.Clone(Creature.ClassString)
 		    Config.Behavior(Behavior.TargetClass) = Behavior
-		    SelectClasses.Append(Behavior.TargetClass)
+		    SelectClasses.AddRow(Behavior.TargetClass)
 		  Next
 		  Self.UpdateList(SelectClasses)
 		  Self.Changed = True
@@ -281,7 +281,7 @@ End
 		  Dim Classes() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
-		      Classes.Append(Self.List.RowTagAt(I))
+		      Classes.AddRow(Self.List.RowTagAt(I))
 		    End If
 		  Next
 		  Self.UpdateList(Classes)
@@ -447,7 +447,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dicts.Append(Behavior.ToDictionary)
+		    Dicts.AddRow(Behavior.ToDictionary)
 		  Next
 		  
 		  Board.AddRawData(Beacon.GenerateJSON(Dicts, False), Self.kClipboardType)

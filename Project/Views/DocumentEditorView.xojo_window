@@ -474,7 +474,7 @@ End
 		  
 		  Dim HumanNames() As String
 		  For Each Config As Beacon.ConfigGroup In ExcludedConfigs
-		    HumanNames.Append("""" + Language.LabelForConfig(Config) + """")
+		    HumanNames.AddRow("""" + Language.LabelForConfig(Config) + """")
 		  Next
 		  HumanNames.Sort
 		  
@@ -966,7 +966,7 @@ End
 		        Dim Key As Variant = Self.mEditorRefs.Key(I)
 		        Dim Ref As WeakRef = Self.mEditorRefs.Value(Key)
 		        If Ref <> Nil And Ref.Value <> Nil And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Document.DocumentID <> Self.Document.DocumentID Then
-		          OtherDocuments.Append(DocumentEditorView(Ref.Value).Document)
+		          OtherDocuments.AddRow(DocumentEditorView(Ref.Value).Document)
 		        End If
 		      Next
 		      Self.mImportWindowRef = New WeakRef(DocumentImportWindow.Present(AddressOf ImportCallback, Self.Document, OtherDocuments))
@@ -998,17 +998,17 @@ End
 	#tag Event
 		Sub Opening()
 		  Dim Labels(), Tags() As String
-		  Labels.Append("Maps")
-		  Tags.Append("maps")
+		  Labels.AddRow("Maps")
+		  Tags.AddRow("maps")
 		  #if DeployEnabled
-		    Labels.Append("Servers")
-		    Tags.Append("deployments")
+		    Labels.AddRow("Servers")
+		    Tags.AddRow("deployments")
 		  #endif
 		  
 		  Dim Names() As String = BeaconConfigs.AllConfigNames
 		  For Each Name As String In Names
-		    Labels.Append(Language.LabelForConfig(Name))
-		    Tags.Append(Name)
+		    Labels.AddRow(Language.LabelForConfig(Name))
+		    Tags.AddRow(Name)
 		  Next
 		  
 		  Labels.SortWith(Tags)

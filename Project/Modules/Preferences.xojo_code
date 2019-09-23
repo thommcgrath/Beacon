@@ -9,13 +9,13 @@ Protected Module Preferences
 		  Dim Recents() As Beacon.DocumentURL = RecentDocuments
 		  For I As Integer = Recents.LastRowIndex DownTo 0
 		    If Recents(I) = URL Then
-		      Recents.Remove(I)
+		      Recents.RemoveRowAt(I)
 		    End If
 		  Next
-		  Recents.Insert(0, URL)
+		  Recents.AddRowAt(0, URL)
 		  
 		  While Recents.LastRowIndex > 19
-		    Recents.Remove(20)
+		    Recents.RemoveRowAt(20)
 		  Wend
 		  
 		  RecentDocuments = Recents
@@ -84,7 +84,7 @@ Protected Module Preferences
 		  Dim Values() As Beacon.DocumentURL
 		  For Each Value As String In StoredData
 		    Try
-		      Values.Append(New Beacon.DocumentURL(Value))
+		      Values.AddRow(New Beacon.DocumentURL(Value))
 		    Catch Err As RuntimeException
 		      
 		    End Try

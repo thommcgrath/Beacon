@@ -4,18 +4,18 @@ Protected Module BeaconConfigs
 		Protected Function AllConfigNames(Human As Boolean = False) As String()
 		  Static Names() As String
 		  If Names.LastRowIndex = -1 Then
-		    Names.Append(BeaconConfigs.Difficulty.ConfigName)
-		    Names.Append(BeaconConfigs.LootDrops.ConfigName)
-		    Names.Append(BeaconConfigs.LootScale.ConfigName)
-		    Names.Append(BeaconConfigs.Metadata.ConfigName)
-		    Names.Append(BeaconConfigs.ExperienceCurves.ConfigName)
-		    Names.Append(BeaconConfigs.CustomContent.ConfigName)
-		    Names.Append(BeaconConfigs.CraftingCosts.ConfigName)
-		    Names.Append(BeaconConfigs.StackSizes.ConfigName)
-		    Names.Append(BeaconConfigs.BreedingMultipliers.ConfigName)
-		    Names.Append(BeaconConfigs.HarvestRates.ConfigName)
-		    Names.Append(BeaconConfigs.DinoAdjustments.ConfigName)
-		    Names.Append(BeaconConfigs.StatMultipliers.ConfigName)
+		    Names.AddRow(BeaconConfigs.Difficulty.ConfigName)
+		    Names.AddRow(BeaconConfigs.LootDrops.ConfigName)
+		    Names.AddRow(BeaconConfigs.LootScale.ConfigName)
+		    Names.AddRow(BeaconConfigs.Metadata.ConfigName)
+		    Names.AddRow(BeaconConfigs.ExperienceCurves.ConfigName)
+		    Names.AddRow(BeaconConfigs.CustomContent.ConfigName)
+		    Names.AddRow(BeaconConfigs.CraftingCosts.ConfigName)
+		    Names.AddRow(BeaconConfigs.StackSizes.ConfigName)
+		    Names.AddRow(BeaconConfigs.BreedingMultipliers.ConfigName)
+		    Names.AddRow(BeaconConfigs.HarvestRates.ConfigName)
+		    Names.AddRow(BeaconConfigs.DinoAdjustments.ConfigName)
+		    Names.AddRow(BeaconConfigs.StatMultipliers.ConfigName)
 		  End If
 		  If Human = True Then
 		    Static HumanNames() As String

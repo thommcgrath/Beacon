@@ -326,7 +326,7 @@ End
 		      Continue
 		    End If
 		    
-		    CurrentEngrams.Append(Engram)
+		    CurrentEngrams.AddRow(Engram)
 		  Next
 		  
 		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Stackables", CurrentEngrams, Self.Document.Mods, False)
@@ -360,7 +360,7 @@ End
 		      Continue
 		    End If
 		    
-		    CurrentEngrams.Append(Engram)
+		    CurrentEngrams.AddRow(Engram)
 		  Next
 		  
 		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Stackables", CurrentEngrams, Self.Document.Mods, True)
@@ -390,7 +390,7 @@ End
 		      Continue
 		    End If
 		    
-		    Classes.Append(Self.List.RowTagAt(I))
+		    Classes.AddRow(Self.List.RowTagAt(I))
 		  Next
 		  Self.UpdateList(Classes)
 		End Sub
@@ -400,7 +400,7 @@ End
 		Private Sub UpdateList(SelectEngrams() As Beacon.Engram)
 		  Dim Classes() As String
 		  For Each Engram As Beacon.Engram In SelectEngrams
-		    Classes.Append(Engram.ClassString)
+		    Classes.AddRow(Engram.ClassString)
 		  Next
 		  Self.UpdateList(Classes) 
 		End Sub
@@ -599,7 +599,7 @@ End
 		    For Each Entry As DictionaryEntry In Items
 		      Dim ClassString As String = Entry.Key
 		      Dim Size As Integer = Entry.Value
-		      SelectClasses.Append(ClassString)
+		      SelectClasses.AddRow(ClassString)
 		      Config.Override(ClassString) = Size
 		    Next
 		    Self.Changed = True

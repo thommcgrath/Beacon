@@ -3,7 +3,7 @@ Protected Class SetEntry
 Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Append(Item As Beacon.SetEntryOption)
-		  Self.mOptions.Append(Item)
+		  Self.mOptions.AddRow(Item)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -29,9 +29,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Else
 		    Dim Labels() As String
 		    For I As Integer = 0 To Self.mOptions.LastRowIndex - 1
-		      Labels.Append(Self.mOptions(I).Engram.ClassString)
+		      Labels.AddRow(Self.mOptions(I).Engram.ClassString)
 		    Next
-		    Labels.Append("or " + Self.mOptions(Self.mOptions.LastRowIndex).Engram.ClassString)
+		    Labels.AddRow("or " + Self.mOptions(Self.mOptions.LastRowIndex).Engram.ClassString)
 		    
 		    Return Labels.Join(", ")
 		  End If
@@ -126,7 +126,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      If Options.HasKey(Key) Then
 		        Arr = Options.Value(Key)
 		      End If
-		      Arr.Append(Option)
+		      Arr.AddRow(Option)
 		      Options.Value(Key) = Arr
 		    Next
 		  Next
@@ -168,7 +168,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Function Export() As Dictionary
 		  Dim Children() As Dictionary
 		  For Each Item As Beacon.SetEntryOption In Self.mOptions
-		    Children.Append(Item.Export)
+		    Children.AddRow(Item.Export)
 		  Next
 		  
 		  Dim Keys As New Dictionary
@@ -308,9 +308,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    For Each ClassString As String In ClassStrings
 		      Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
 		      If Engram <> Nil Then
-		        Engrams.Append(Engram)
+		        Engrams.AddRow(Engram)
 		      Else
-		        Engrams.Append(Beacon.Engram.CreateUnknownEngram(ClassString))
+		        Engrams.AddRow(Beacon.Engram.CreateUnknownEngram(ClassString))
 		      End If
 		    Next
 		  ElseIf Dict.HasKey("Items") Then
@@ -337,14 +337,14 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		          Engram = TempEngram
 		        End If
 		      End If
-		      Engrams.Append(Engram)
+		      Engrams.AddRow(Engram)
 		    Next
 		  End If
 		  
 		  If ClassWeights.LastRowIndex < Engrams.LastRowIndex Then
 		    // Add more values
 		    While ClassWeights.LastRowIndex < Engrams.LastRowIndex
-		      ClassWeights.Append(1)
+		      ClassWeights.AddRow(1)
 		    Wend
 		  ElseIf ClassWeights.LastRowIndex > Engrams.LastRowIndex Then
 		    // Just truncate
@@ -379,7 +379,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Item As Beacon.SetEntryOption)
-		  Self.mOptions.Insert(Index, Item)
+		  Self.mOptions.AddRowAt(Index, Item)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -410,7 +410,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Shared Function Join(Entries() As Beacon.SetEntry, Separator As String, Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As String
 		  Dim Values() As String
 		  For Each Entry As Beacon.SetEntry In Entries
-		    Values.Append(Entry.StringValue(Multipliers, UseBlueprints, Difficulty))
+		    Values.AddRow(Entry.StringValue(Multipliers, UseBlueprints, Difficulty))
 		  Next
 		  Return Values.Join(Separator)
 		End Function
@@ -427,9 +427,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Else
 		    Dim Labels() As String
 		    For I As Integer = 0 To Self.mOptions.LastRowIndex - 1
-		      Labels.Append(Self.mOptions(I).Engram.Label)
+		      Labels.AddRow(Self.mOptions(I).Engram.Label)
 		    Next
-		    Labels.Append("or " + Self.mOptions(Self.mOptions.LastRowIndex).Engram.Label)
+		    Labels.AddRow("or " + Self.mOptions(Self.mOptions.LastRowIndex).Engram.Label)
 		    
 		    Return Labels.Join(", ")
 		  End If
@@ -501,7 +501,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mOptions.Remove(Index)
+		  Self.mOptions.RemoveRowAt(Index)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -548,7 +548,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      Return Selections
 		    End If
 		    Sum = Sum + Entry.Weight
-		    Weights.Append(Sum * 100000)
+		    Weights.AddRow(Sum * 100000)
 		    WeightLookup.Value(Sum * 100000) = Entry
 		  Next
 		  Weights.Sort
@@ -573,7 +573,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    
 		    Selection.IsBlueprint = BlueprintDecision > RequiredChance
 		    Selection.Quality = Beacon.Qualities.ForBaseValue(QualityValue)
-		    Selections.Append(Selection)
+		    Selections.AddRow(Selection)
 		  Next
 		  
 		  Return Selections
@@ -608,17 +608,17 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim EntryWeight As Integer = Self.mWeight
 		  
 		  Dim Values() As String
-		  Values.Append("EntryWeight=" + EntryWeight.ToString)
+		  Values.AddRow("EntryWeight=" + EntryWeight.ToString)
 		  If UseBlueprints Then
-		    Values.Append("Items=(" + Paths.Join(",") + ")")
+		    Values.AddRow("Items=(" + Paths.Join(",") + ")")
 		  Else
-		    Values.Append("ItemClassStrings=(" + Classes.Join(",") + ")")
+		    Values.AddRow("ItemClassStrings=(" + Classes.Join(",") + ")")
 		  End If
-		  Values.Append("ItemsWeights=(" + Weights.Join(",") + ")")
-		  Values.Append("MinQuantity=" + Self.MinQuantity.ToString)
-		  Values.Append("MaxQuantity=" + Self.MaxQuantity.ToString)
-		  Values.Append("MinQuality=" + MinQuality.PrettyText)
-		  Values.Append("MaxQuality=" + MaxQuality.PrettyText)
+		  Values.AddRow("ItemsWeights=(" + Weights.Join(",") + ")")
+		  Values.AddRow("MinQuantity=" + Self.MinQuantity.ToString)
+		  Values.AddRow("MaxQuantity=" + Self.MaxQuantity.ToString)
+		  Values.AddRow("MinQuality=" + MinQuality.PrettyText)
+		  Values.AddRow("MaxQuality=" + MaxQuality.PrettyText)
 		  
 		  // ChanceToActuallyGiveItem and ChanceToBeBlueprintOverride appear to be inverse of each
 		  // other. I'm not sure why both exist, but I've got a theory. Some of the loot source
@@ -630,12 +630,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  // 2017-07-07: As of 261.0, it appears ChanceToActuallyGiveItem does something else. It will
 		  // now be left off.
 		  If Chance < 1 Then
-		    Values.Append("bForceBlueprint=false")
+		    Values.AddRow("bForceBlueprint=false")
 		  Else
-		    Values.Append("bForceBlueprint=true")
+		    Values.AddRow("bForceBlueprint=true")
 		  End If
-		  //Values.Append("ChanceToActuallyGiveItem=" + InverseChance.PrettyText)
-		  Values.Append("ChanceToBeBlueprintOverride=" + Chance.PrettyText)
+		  //Values.AddRow("ChanceToActuallyGiveItem=" + InverseChance.PrettyText)
+		  Values.AddRow("ChanceToBeBlueprintOverride=" + Chance.PrettyText)
 		  
 		  Return "(" + Values.Join(",") + ")"
 		End Function

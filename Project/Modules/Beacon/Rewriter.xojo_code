@@ -4,12 +4,12 @@ Inherits Global.Thread
 	#tag Event
 		Sub Run()
 		  Self.mFinished = False
-		  Self.mTriggers.Append(CallLater.Schedule(1, WeakAddressOf TriggerStarted))
+		  Self.mTriggers.AddRow(CallLater.Schedule(1, WeakAddressOf TriggerStarted))
 		  Dim Errored As Boolean
 		  Self.mUpdatedContent = Self.Rewrite(Self.mInitialContent, Self.mMode, Self.mDocument, Self.mIdentity, If(Self.mWithMarkup, Self.mDocument.TrustKey, ""), Self.mProfile, If(Self.mDocument.AllowUCS, Beacon.Rewriter.EncodingFormat.UCS2AndASCII, Beacon.Rewriter.EncodingFormat.ASCII), Errored)
 		  Self.mFinished = True
 		  Self.mErrored = Errored
-		  Self.mTriggers.Append(CallLater.Schedule(1, WeakAddressOf TriggerFinished))
+		  Self.mTriggers.AddRow(CallLater.Schedule(1, WeakAddressOf TriggerFinished))
 		End Sub
 	#tag EndEvent
 
@@ -22,7 +22,7 @@ Inherits Global.Thread
 		  
 		  For I As Integer = Self.mTriggers.LastRowIndex DownTo 0
 		    CallLater.Cancel(Self.mTriggers(I))
-		    Self.mTriggers.Remove(I)
+		    Self.mTriggers.RemoveRowAt(I)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -62,7 +62,7 @@ Inherits Global.Thread
 		Sub Destructor()
 		  For I As Integer = Self.mTriggers.LastRowIndex DownTo 0
 		    CallLater.Cancel(Self.mTriggers(I))
-		    Self.mTriggers.Remove(I)
+		    Self.mTriggers.RemoveRowAt(I)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -132,7 +132,7 @@ Inherits Global.Thread
 		      If SectionDict.HasKey(Key) Then
 		        ConfigLines = SectionDict.Value(Key)
 		      End If
-		      ConfigLines.Append(Line)
+		      ConfigLines.AddRow(Line)
 		      SectionDict.Value(Key) = ConfigLines
 		      UntouchedConfigs.Value(LastGroupHeader) = SectionDict
 		    Next
@@ -140,12 +140,12 @@ Inherits Global.Thread
 		    Dim AllSectionHeaders() As String
 		    Dim UntouchedKeys() As Variant = UntouchedConfigs.Keys
 		    For Each UntouchedKey As String In UntouchedKeys
-		      AllSectionHeaders.Append(UntouchedKey)
+		      AllSectionHeaders.AddRow(UntouchedKey)
 		    Next
 		    Dim NewKeys() As Variant = ConfigDict.Keys
 		    For Each NewKey As String In NewKeys
 		      If AllSectionHeaders.IndexOf(NewKey) = -1 Then
-		        AllSectionHeaders.Append(NewKey)
+		        AllSectionHeaders.AddRow(NewKey)
 		      End If
 		    Next
 		    
@@ -225,7 +225,7 @@ Inherits Global.Thread
 		      If UntouchedConfigs.HasKey("Beacon") Then
 		        UntouchedConfigs.Remove("Beacon")
 		      End If
-		      AllSectionHeaders.Remove(AllSectionHeaders.IndexOf("Beacon"))
+		      AllSectionHeaders.RemoveRowAt(AllSectionHeaders.IndexOf("Beacon"))
 		    Else
 		      // We'll need to use the legacy style of removing only what is being replaced
 		      For Each Header As String In NewKeys
@@ -260,7 +260,7 @@ Inherits Global.Thread
 		        Dim Entries() As Variant = Dict.Keys
 		        For Each Entry As String In Entries
 		          If Keys.IndexOf(Entry) = -1 Then
-		            Keys.Append(Entry)
+		            Keys.AddRow(Entry)
 		          End If
 		        Next
 		        
@@ -275,13 +275,13 @@ Inherits Global.Thread
 		          If BeaconDict.HasKey("ManagedKeys") Then
 		            SectionLines = BeaconDict.Value("ManagedKeys")
 		          End If
-		          SectionLines.Append("ManagedKeys=(Section=""" + Header + """,Keys=(" + Keys.Join(",") + "))")
+		          SectionLines.AddRow("ManagedKeys=(Section=""" + Header + """,Keys=(" + Keys.Join(",") + "))")
 		          BeaconDict.Value("ManagedKeys") = SectionLines
 		        Next
 		        BeaconDict.Value("Build") = Array("Build=" + Str(App.BuildNumber, "0"))
 		        BeaconDict.Value("Trust") = Array("Trust=" + TrustKey)
 		        BeaconDict.Value("LastUpdated") = Array("LastUpdated=""" + DateTime.Now.SQLDateTimeWithOffset + """")
-		        AllSectionHeaders.Append("Beacon")
+		        AllSectionHeaders.AddRow("Beacon")
 		        ConfigDict.Value("Beacon") = BeaconDict
 		      End If
 		    End If
@@ -291,9 +291,9 @@ Inherits Global.Thread
 		    AllSectionHeaders.Sort
 		    For Each Header As String In AllSectionHeaders
 		      If NewLines.LastRowIndex > -1 Then
-		        NewLines.Append("")
+		        NewLines.AddRow("")
 		      End If
-		      NewLines.Append("[" + Header + "]")
+		      NewLines.AddRow("[" + Header + "]")
 		      
 		      Dim SectionConfigs() As String
 		      
@@ -302,7 +302,7 @@ Inherits Global.Thread
 		        Dim SectionKeys() As Variant = Section.Keys
 		        For Each Key As Variant In SectionKeys
 		          If SectionConfigs.IndexOf(Key) = -1 Then
-		            SectionConfigs.Append(Key)
+		            SectionConfigs.AddRow(Key)
 		          End If
 		        Next
 		      End If
@@ -312,7 +312,7 @@ Inherits Global.Thread
 		        Dim SectionKeys() As Variant = Section.Keys
 		        For Each Key As Variant In SectionKeys
 		          If SectionConfigs.IndexOf(Key) = -1 Then
-		            SectionConfigs.Append(Key)
+		            SectionConfigs.AddRow(Key)
 		          End If
 		        Next
 		      End If
@@ -325,7 +325,7 @@ Inherits Global.Thread
 		          If Section.HasKey(ConfigKey) Then
 		            Dim Values() As String = Section.Value(ConfigKey)
 		            For Each Line As String In Values
-		              NewLines.Append(Line)
+		              NewLines.AddRow(Line)
 		            Next
 		          End If
 		        End If
@@ -334,7 +334,7 @@ Inherits Global.Thread
 		          If Section.HasKey(ConfigKey) Then
 		            Dim Values() As String = Section.Value(ConfigKey)
 		            For Each Line As String In Values
-		              NewLines.Append(Line)
+		              NewLines.AddRow(Line)
 		            Next
 		          End If
 		        End If

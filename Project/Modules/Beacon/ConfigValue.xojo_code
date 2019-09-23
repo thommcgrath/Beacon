@@ -29,7 +29,7 @@ Protected Class ConfigValue
 		    If Section.HasKey(SimplifiedKey) Then
 		      Arr = Section.Value(SimplifiedKey)
 		    End If
-		    Arr.Append(Value.Key + "=" + Value.Value)
+		    Arr.AddRow(Value.Key + "=" + Value.Value)
 		    Section.Value(SimplifiedKey) = Arr
 		    
 		    Dict.Value(Header) = Section
@@ -138,32 +138,32 @@ Protected Class ConfigValue
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Value"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Header"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="SimplifiedKey"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Text"
-			EditorType=""
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

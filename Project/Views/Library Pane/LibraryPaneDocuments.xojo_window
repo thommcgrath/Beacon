@@ -223,7 +223,7 @@ End
 		    For Each Dict As Dictionary In Dicts
 		      Dim Document As New BeaconAPI.Document(Dict)
 		      Dim URL As String = Beacon.DocumentURL.TypeCloud + "://" + Document.ResourceURL.Middle(Document.ResourceURL.IndexOf("://") + 3)
-		      Self.mCloudDocuments.Append(URL)
+		      Self.mCloudDocuments.AddRow(URL)
 		    Next
 		  End If
 		  
@@ -243,7 +243,7 @@ End
 		    Dim Dicts() As Variant = Response.JSON
 		    For Each Dict As Dictionary In Dicts
 		      Dim Document As New BeaconAPI.Document(Dict)
-		      Self.mCommunityDocuments.Append(Document.ResourceURL)
+		      Self.mCommunityDocuments.AddRow(Document.ResourceURL)
 		    Next
 		  End If
 		  
@@ -299,14 +299,14 @@ End
 		  Case Beacon.DocumentURL.TypeCloud
 		    For I As Integer = Self.mCloudDocuments.LastRowIndex DownTo 0
 		      If Self.mCloudDocuments(I) = URL Then
-		        Self.mCloudDocuments.Remove(I)
+		        Self.mCloudDocuments.RemoveRowAt(I)
 		        Exit For I
 		      End If
 		    Next
 		  Case Beacon.DocumentURL.TypeWeb
 		    For I As Integer = Self.mCommunityDocuments.LastRowIndex DownTo 0
 		      If Self.mCommunityDocuments(I) = URL Then
-		        Self.mCommunityDocuments.Remove(I)
+		        Self.mCommunityDocuments.RemoveRowAt(I)
 		        Exit For I
 		      End If
 		    Next
@@ -315,7 +315,7 @@ End
 		  Dim Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
 		  For I As Integer = Recents.LastRowIndex DownTo 0
 		    If Recents(I) = URL Then
-		      Recents.Remove(I)
+		      Recents.RemoveRowAt(I)
 		      Exit For I
 		    End If
 		  Next
@@ -373,7 +373,7 @@ End
 		  
 		  If RecentIdx > -1 Then
 		    If Self.ShowConfirm("Unable to load """ + Sender.Name + """", "The document could not be loaded. It may have been deleted. Would you like to remove it from the recent documents list?", "Remove", "Keep") Then
-		      Recents.Remove(RecentIdx)
+		      Recents.RemoveRowAt(RecentIdx)
 		      Preferences.RecentDocuments = Recents
 		    End If
 		  Else
@@ -500,7 +500,7 @@ End
 		  Dim Documents() As Beacon.DocumentURL
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
-		      Documents.Append(Self.List.RowTagAt(I))
+		      Documents.AddRow(Self.List.RowTagAt(I))
 		    End If
 		  Next
 		  Return Documents
@@ -511,7 +511,7 @@ End
 		Sub SelectedDocuments(Assigns Documents() As Beacon.DocumentURL)
 		  Dim Selected() As String
 		  For Each URL As Beacon.DocumentURL In Documents
-		    Selected.Append(URL)
+		    Selected.AddRow(URL)
 		  Next
 		  
 		  For I As Integer = 0 To Self.List.RowCount - 1
@@ -584,7 +584,7 @@ End
 		  For I As Integer = 0 To RowBound
 		    If Self.List.Selected(I) Then
 		      Dim URL As Beacon.DocumentURL = Self.List.RowTagAt(I)
-		      SelectedURLs.Append(URL)
+		      SelectedURLs.AddRow(URL)
 		    End If
 		  Next
 		  
@@ -759,7 +759,7 @@ End
 		      For X As Integer = Recents.LastRowIndex DownTo 0
 		        If Recents(X) = SelectedURL Then
 		          Changed = True
-		          Recents.Remove(X)
+		          Recents.RemoveRowAt(X)
 		          Continue For I
 		        End If
 		      Next
@@ -779,7 +779,7 @@ End
 		    Dim URL As Beacon.DocumentURL = Me.RowTagAt(I)
 		    Dim Controller As New Beacon.DocumentController(URL, App.IdentityManager.CurrentIdentity)
 		    If Controller.CanWrite() Then
-		      Controllers.Append(Controller)
+		      Controllers.AddRow(Controller)
 		    End If
 		  Next
 		  

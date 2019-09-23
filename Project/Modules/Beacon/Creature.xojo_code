@@ -51,7 +51,7 @@ Implements Beacon.Blueprint
 		  
 		  Redim Self.mTags(-1)
 		  For Each Tag As String In Source.mTags
-		    Self.mTags.Append(Tag)
+		    Self.mTags.AddRow(Tag)
 		  Next
 		End Sub
 	#tag EndMethod

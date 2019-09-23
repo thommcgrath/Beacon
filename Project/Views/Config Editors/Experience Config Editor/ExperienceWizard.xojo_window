@@ -776,7 +776,7 @@ End
 		  Dim Levels() As UInt64
 		  If Not Win.mCancelled Then
 		    For I As Integer = 0 To Win.List.RowCount - 1
-		      Levels.Append(Win.List.RowTagAt(I))
+		      Levels.AddRow(Win.List.RowTagAt(I))
 		    Next
 		  End If
 		  Win.Close

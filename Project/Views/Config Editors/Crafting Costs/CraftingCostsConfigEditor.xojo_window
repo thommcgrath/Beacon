@@ -346,7 +346,7 @@ End
 		    Else
 		      Config.Append(CraftingCost)
 		    End If
-		    NewCosts.Append(CraftingCost)
+		    NewCosts.AddRow(CraftingCost)
 		  Next
 		  Self.Changed = True
 		  Self.UpdateList(NewCosts)
@@ -458,7 +458,7 @@ End
 		      Continue
 		    End If
 		    
-		    CurrentEngrams.Append(Config(I).Engram)
+		    CurrentEngrams.AddRow(Config(I).Engram)
 		  Next
 		  
 		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, False)
@@ -472,7 +472,7 @@ End
 		  For Each Engram As Beacon.Engram In NewEngrams
 		    Dim Cost As New Beacon.CraftingCost(Engram)
 		    Config.Append(Cost)
-		    NewCosts.Append(Cost)
+		    NewCosts.AddRow(Cost)
 		  Next
 		  
 		  Self.UpdateList(NewCosts)
@@ -493,7 +493,7 @@ End
 		      Continue
 		    End If
 		    
-		    CurrentEngrams.Append(Config(I).Engram)
+		    CurrentEngrams.AddRow(Config(I).Engram)
 		  Next
 		  
 		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, True)
@@ -509,7 +509,7 @@ End
 		    Dim Cost As New Beacon.CraftingCost(SourceCost)
 		    Cost.Engram = Engram
 		    Config.Append(Cost)
-		    NewCosts.Append(Cost)
+		    NewCosts.AddRow(Cost)
 		  Next
 		  
 		  Self.UpdateList(NewCosts)
@@ -525,7 +525,7 @@ End
 		      Continue
 		    End If
 		    
-		    Arr.Append(Self.List.RowTagAt(I))
+		    Arr.AddRow(Self.List.RowTagAt(I))
 		  Next
 		  Self.UpdateList(Arr)
 		End Sub
@@ -538,7 +538,7 @@ End
 		  
 		  Dim ObjectIDs() As String
 		  For Each Item As Beacon.CraftingCost In SelectItems
-		    ObjectIDs.Append(Item.ObjectID)
+		    ObjectIDs.AddRow(Item.ObjectID)
 		  Next
 		  
 		  Self.List.RemoveAllRows
@@ -561,7 +561,7 @@ End
 		Private Sub UpdateList(SelectItem As Beacon.CraftingCost)
 		  Dim Arr() As Beacon.CraftingCost
 		  If SelectItem <> Nil Then
-		    Arr.Append(SelectItem)
+		    Arr.AddRow(SelectItem)
 		  End If
 		  Self.UpdateList(Arr)
 		  Self.List.EnsureSelectionIsVisible()
@@ -720,7 +720,7 @@ End
 		    End If
 		    
 		    Dim Cost As Beacon.CraftingCost = Me.RowTagAt(I)
-		    Dicts.Append(Cost.Export)
+		    Dicts.AddRow(Cost.Export)
 		  Next
 		  
 		  Board.AddRawData(Beacon.GenerateJSON(Dicts, False), Self.kClipboardType)
@@ -746,7 +746,7 @@ End
 		        Dim Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(Dict)
 		        If Cost <> Nil Then
 		          Config.Append(Cost)
-		          Costs.Append(Cost)
+		          Costs.AddRow(Cost)
 		        End If
 		      Next
 		      

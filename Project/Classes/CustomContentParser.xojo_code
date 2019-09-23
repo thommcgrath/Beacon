@@ -10,7 +10,7 @@ Protected Class CustomContentParser
 		      
 		      If Not Self.mDiscardNestedParser Then
 		        For Each Value As Beacon.ConfigValue In Values
-		          Self.mValues.Append(Value)
+		          Self.mValues.AddRow(Value)
 		        Next
 		      End If
 		    End If
@@ -62,7 +62,7 @@ Protected Class CustomContentParser
 		  End If
 		  
 		  Dim Value As String = Line.Middle(KeyPos + 1).Trim
-		  Self.mValues.Append(New Beacon.ConfigValue(Self.mCurrentHeader, Key, Value))
+		  Self.mValues.AddRow(New Beacon.ConfigValue(Self.mCurrentHeader, Key, Value))
 		  Return Nil
 		End Function
 	#tag EndMethod
@@ -86,7 +86,7 @@ Protected Class CustomContentParser
 		  Dim Siblings As Dictionary = ExistingConfigs.Value(Header)
 		  Dim Keys() As Variant = Siblings.Keys
 		  For Each Key As String In Keys
-		    SkippedKeys.Append(Key)
+		    SkippedKeys.AddRow(Key)
 		  Next
 		  Return SkippedKeys
 		End Function
@@ -102,7 +102,7 @@ Protected Class CustomContentParser
 		      
 		      If Not Self.mDiscardNestedParser Then
 		        For Each Value As Beacon.ConfigValue In Values
-		          Self.mValues.Append(Value)
+		          Self.mValues.AddRow(Value)
 		        Next
 		      End If
 		    End If

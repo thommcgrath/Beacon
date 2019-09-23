@@ -219,7 +219,7 @@ End
 		      Continue
 		    End If
 		    
-		    Sources.Append(EntryList.RowTagAt(I))
+		    Sources.AddRow(EntryList.RowTagAt(I))
 		  Next
 		  
 		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.Mods, Sources, Prefilter)
@@ -301,7 +301,7 @@ End
 		  If SelectEntries <> Nil Then
 		    For Each Entry As Beacon.SetEntry In SelectEntries
 		      If Entry <> Nil Then
-		        Selected.Append(Entry.UniqueID)
+		        Selected.AddRow(Entry.UniqueID)
 		      End If
 		    Next
 		    ScrollToSelection = True
@@ -309,7 +309,7 @@ End
 		    For I As Integer = 0 To EntryList.RowCount - 1
 		      If EntryList.Selected(I) Then
 		        Dim Entry As Beacon.SetEntry = EntryList.RowTagAt(I)
-		        Selected.Append(Entry.UniqueID)
+		        Selected.AddRow(Entry.UniqueID)
 		      End If
 		    Next
 		  End If
@@ -480,7 +480,7 @@ End
 		  Dim Entries() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Entries.Append(Beacon.SetEntry(Me.RowTagAt(I)).Export)
+		      Entries.AddRow(Beacon.SetEntry(Me.RowTagAt(I)).Export)
 		    End If
 		  Next
 		  
@@ -618,7 +618,7 @@ End
 		    Dim Entries() As Beacon.SetEntry
 		    For I As Integer = 0 To Me.RowCount - 1
 		      If Me.Selected(I) Then
-		        Entries.Append(Me.RowTagAt(I))
+		        Entries.AddRow(Me.RowTagAt(I))
 		      End If
 		    Next
 		    

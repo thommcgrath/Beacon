@@ -520,7 +520,7 @@ End
 		    End If
 		    
 		    Dim Profile As Beacon.NitradoServerProfile = Self.List.RowTagAt(I)
-		    Engines.Append(New Beacon.NitradoDiscoveryEngine(Profile, Self.AuthClient.AccessToken))
+		    Engines.AddRow(New Beacon.NitradoDiscoveryEngine(Profile, Self.AuthClient.AccessToken))
 		  Next
 		  Self.ShouldFinish(Engines, "Nitrado", Self.AuthClient.AuthData)
 		End Sub

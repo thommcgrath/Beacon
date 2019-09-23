@@ -5,7 +5,7 @@ Implements Beacon.Countable
 		Function ActiveModifierIDs() As String()
 		  Dim IDs() As String
 		  For Each Entry As DictionaryEntry In Self.mModifierValues
-		    IDs.Append(Entry.Key)
+		    IDs.AddRow(Entry.Key)
 		  Next
 		  Return IDs
 		End Function
@@ -94,7 +94,7 @@ Implements Beacon.Countable
 		    For Each EntryDict As Dictionary In Contents
 		      Dim Entry As Beacon.PresetEntry = Beacon.PresetEntry.ImportFromBeacon(EntryDict)
 		      If Entry <> Nil Then
-		        Preset.mContents.Append(Entry)
+		        Preset.mContents.AddRow(Entry)
 		      End If
 		    Next
 		  ElseIf Dict.HasKey("Contents") Then
@@ -110,7 +110,7 @@ Implements Beacon.Countable
 		            Dim Child As New Beacon.PresetEntry(Entry)
 		            Child.ValidForMap(Beacon.Maps.TheIsland) = ValidForIsland
 		            Child.ValidForMap(Beacon.Maps.ScorchedEarth) = ValidForScorched
-		            Preset.mContents.Append(Child)
+		            Preset.mContents.AddRow(Child)
 		          End If
 		        Next
 		      Next
@@ -152,7 +152,7 @@ Implements Beacon.Countable
 		      
 		      Dim IDs() As String = SourceKindToModifierID(ModifierID)
 		      If IDs.LastRowIndex = -1 Then
-		        IDs.Append(ModifierID)
+		        IDs.AddRow(ModifierID)
 		      End If
 		      
 		      For Each ID As String In IDs
@@ -325,18 +325,18 @@ Implements Beacon.Countable
 		  Dim IDs() As String
 		  Select Case Kind
 		  Case "Bonus"
-		    IDs.Append(Beacon.PresetModifier.BonusCratesID)
-		    IDs.Append(Beacon.PresetModifier.AberrationSurfaceBonusCratesID)
+		    IDs.AddRow(Beacon.PresetModifier.BonusCratesID)
+		    IDs.AddRow(Beacon.PresetModifier.AberrationSurfaceBonusCratesID)
 		  Case "Cave"
-		    IDs.Append(Beacon.PresetModifier.CaveCratesID)
+		    IDs.AddRow(Beacon.PresetModifier.CaveCratesID)
 		  Case "Sea"
-		    IDs.Append(Beacon.PresetModifier.DeepSeaCratesID)
-		    IDs.Append(Beacon.PresetModifier.OpenDesertCratesID)
+		    IDs.AddRow(Beacon.PresetModifier.DeepSeaCratesID)
+		    IDs.AddRow(Beacon.PresetModifier.OpenDesertCratesID)
 		  Case "Standard"
-		    IDs.Append(Beacon.PresetModifier.BasicCratesID)
-		    IDs.Append(Beacon.PresetModifier.AberrationSurfaceCratesID)
-		    IDs.Append(Beacon.PresetModifier.BossesID)
-		    IDs.Append(Beacon.PresetModifier.ArtifactCratesID)
+		    IDs.AddRow(Beacon.PresetModifier.BasicCratesID)
+		    IDs.AddRow(Beacon.PresetModifier.AberrationSurfaceCratesID)
+		    IDs.AddRow(Beacon.PresetModifier.BossesID)
+		    IDs.AddRow(Beacon.PresetModifier.ArtifactCratesID)
 		  End Select
 		  Return IDs
 		End Function
@@ -347,8 +347,8 @@ Implements Beacon.Countable
 		  Dim Hashes() As String
 		  Dim Contents() As Dictionary
 		  For Each Entry As Beacon.PresetEntry In Self.mContents
-		    Hashes.Append(Entry.Hash)
-		    Contents.Append(Entry.Export)
+		    Hashes.AddRow(Entry.Hash)
+		    Contents.AddRow(Entry.Export)
 		  Next
 		  Hashes.SortWith(Contents)
 		  
@@ -359,7 +359,7 @@ Implements Beacon.Countable
 		    Dim ModifierID As String = Entry.Key
 		    Dim Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
 		    If Modifier <> Nil Then
-		      Definitions.Append(Modifier.ToDictionary)
+		      Definitions.AddRow(Modifier.ToDictionary)
 		    End If
 		  Next
 		  

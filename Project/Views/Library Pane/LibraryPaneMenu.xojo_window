@@ -94,33 +94,33 @@ End
 	#tag Method, Flags = &h1
 		Protected Sub RebuildMenu()
 		  Dim Links() As Pair
-		  Links.Append("Check for Updates" : "beacon://action/checkforupdate")
-		  Links.Append("Update Engrams" : "beacon://action/checkforengrams")
+		  Links.AddRow("Check for Updates" : "beacon://action/checkforupdate")
+		  Links.AddRow("Update Engrams" : "beacon://action/checkforengrams")
 		  If Preferences.OnlineEnabled Then
 		    If UserCloud.IsBusy Then
-		      Links.Append("Syncing Cloud Files…" : "")
+		      Links.AddRow("Syncing Cloud Files…" : "")
 		    Else
-		      Links.Append("Sync Cloud Files" : "beacon://syncusercloud")
+		      Links.AddRow("Sync Cloud Files" : "beacon://syncusercloud")
 		    End If
 		  End If
-		  Links.Append("Release Notes" : "beacon://releasenotes")
-		  Links.Append(Nil)
+		  Links.AddRow("Release Notes" : "beacon://releasenotes")
+		  Links.AddRow(Nil)
 		  
 		  If Not Preferences.OnlineEnabled Then
-		    Links.Append("Enable Cloud && Community" : "beacon://enableonline")
+		    Links.AddRow("Enable Cloud && Community" : "beacon://enableonline")
 		  Else
 		    If App.IdentityManager.CurrentIdentity = Nil Or App.IdentityManager.CurrentIdentity.LoginKey = "" Then
-		      Links.Append("Sign In" : "beacon://signin")
+		      Links.AddRow("Sign In" : "beacon://signin")
 		    Else
-		      Links.Append(App.IdentityManager.CurrentIdentity.LoginKey : "")
-		      Links.Append("Manage Account" : "beacon://showaccount")
-		      Links.Append("Sign Out" : "beacon://signout")
+		      Links.AddRow(App.IdentityManager.CurrentIdentity.LoginKey : "")
+		      Links.AddRow("Manage Account" : "beacon://showaccount")
+		      Links.AddRow("Sign Out" : "beacon://signout")
 		    End If
 		  End If
-		  Links.Append(Nil)
+		  Links.AddRow(Nil)
 		  
-		  Links.Append("Admin Spawn Codes" : "beacon://spawncodes")
-		  Links.Append("Report a Problem" : "beacon://reportproblem")
+		  Links.AddRow("Admin Spawn Codes" : "beacon://spawncodes")
+		  Links.AddRow("Report a Problem" : "beacon://reportproblem")
 		  
 		  Self.SetContents(Links)
 		End Sub

@@ -41,7 +41,7 @@ Inherits Thread
 		          Dim ActionDict As New Dictionary
 		          ActionDict.Value("Action") = "DELETE"
 		          ActionDict.Value("Path") = RemotePath
-		          SyncActions.Append(ActionDict)
+		          SyncActions.AddRow(ActionDict)
 		        ElseIf FilesAreDifferent = True And LocalIsNewer = False Then
 		          // Retrieve the file
 		          RequestFileFrom(LocalFile, RemotePath, ServerModified)

@@ -490,7 +490,7 @@ End
 		        Continue
 		      End Select
 		      
-		      Self.mDeploymentEngines.Append(DeploymentEngine)
+		      Self.mDeploymentEngines.AddRow(DeploymentEngine)
 		      Self.DeployingList.AddRow(DeploymentEngine.Name + EndOfLine + DeploymentEngine.Status)
 		      Self.DeployingList.RowTagAt(DeployingList.LastAddedRowIndex) = DeploymentEngine
 		    Next
@@ -504,7 +504,7 @@ End
 		  End If
 		  
 		  Dim Provider As String = Self.mOAuthQueue(0)
-		  Self.mOAuthQueue.Remove(0)
+		  Self.mOAuthQueue.RemoveRowAt(0)
 		  
 		  Self.Auth.Provider = Provider
 		  If Self.Auth.Provider <> Provider Then
@@ -628,26 +628,26 @@ End
 		  Dim SuccessCount, TotalCount As Integer
 		  For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
 		    If DeploymentEngine.Errored Then
-		      Report.Append(DeploymentEngine.Name + ": " + DeploymentEngine.Status)
+		      Report.AddRow(DeploymentEngine.Name + ": " + DeploymentEngine.Status)
 		    Else
 		      SuccessCount = SuccessCount + 1
-		      Report.Append(DeploymentEngine.Name + ": Finished successfully. " + If(DeploymentEngine.ServerIsStarting, "The server is starting up now.", "You may start the server when you are ready."))
+		      Report.AddRow(DeploymentEngine.Name + ": Finished successfully. " + If(DeploymentEngine.ServerIsStarting, "The server is starting up now.", "You may start the server when you are ready."))
 		    End If
 		  Next
 		  TotalCount = Self.mDeploymentEngines.LastRowIndex + 1
 		  
 		  If SuccessCount = 0 Then
 		    If TotalCount = 1 Then
-		      Report.Insert(0, "The deployment did not succeed!")
+		      Report.AddRowAt(0, "The deployment did not succeed!")
 		    Else
-		      Report.Insert(0, "No server completed the deployment successfully!")
+		      Report.AddRowAt(0, "No server completed the deployment successfully!")
 		    End If
 		  ElseIf SuccessCount = 1 And TotalCount = 1 Then
 		    Report(0) = "The deployment finished successfully. " + If(Self.mDeploymentEngines(0).ServerIsStarting, "The server is starting up now.", "You may start the server when you are ready.")
 		  ElseIf SuccessCount = TotalCount Then
-		    Report.Insert(0, "All servers updated successfully.")
+		    Report.AddRowAt(0, "All servers updated successfully.")
 		  Else
-		    Report.Insert(0, "Some servers successfully updated, but there were errors.")
+		    Report.AddRowAt(0, "Some servers successfully updated, but there were errors.")
 		  End If
 		  
 		  Self.FinishedReportLabel.Value = Join(Report, EndOfLine)
@@ -769,7 +769,7 @@ End
 		    
 		    Dim Provider As String = Profile.OAuthProvider
 		    If Provider <> "" And Self.mOAuthQueue.IndexOf(Provider) = -1 Then
-		      Self.mOAuthQueue.Append(Provider)
+		      Self.mOAuthQueue.AddRow(Provider)
 		    End If
 		  Next
 		  

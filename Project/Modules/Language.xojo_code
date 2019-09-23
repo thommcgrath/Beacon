@@ -16,9 +16,9 @@ Protected Module Language
 		    Return Items(0) + " and " + Items(1)
 		  Else
 		    Dim LastItem As String = Items(Items.LastRowIndex)
-		    Items.Remove(Items.LastRowIndex)
+		    Items.RemoveRowAt(Items.LastRowIndex)
 		    Dim List As String = Join(Items, ", ") + ", and " + LastItem
-		    Items.Append(LastItem) // Gotta put it back
+		    Items.AddRow(LastItem) // Gotta put it back
 		    Return List
 		  End If
 		End Function

@@ -5,7 +5,7 @@ Protected Class EngramSet
 		  Dim Engrams() As BeaconAPI.Engram
 		  For Each Entry As DictionaryEntry In Self.mNewEngrams
 		    Dim Engram As BeaconAPI.Engram = Entry.Value
-		    Engrams.Append(New BeaconAPI.Engram(Engram))
+		    Engrams.AddRow(New BeaconAPI.Engram(Engram))
 		  Next
 		  Return Engrams
 		End Function
@@ -65,14 +65,14 @@ Protected Class EngramSet
 		Function EngramsToDelete() As BeaconAPI.Engram()
 		  Dim NewClasses() As String
 		  For Each Entry As DictionaryEntry In Self.mNewEngrams
-		    NewClasses.Append(BeaconAPI.Engram(Entry.Value).Path)
+		    NewClasses.AddRow(BeaconAPI.Engram(Entry.Value).Path)
 		  Next
 		  
 		  Dim DeleteEngrams() As BeaconAPI.Engram
 		  For Each Entry As DictionaryEntry In Self.mOriginalEngrams
 		    Dim Engram As BeaconAPI.Engram = Entry.Value
 		    If NewClasses.IndexOf(Engram.Path) = -1 Then
-		      DeleteEngrams.Append(New BeaconAPI.Engram(Engram))
+		      DeleteEngrams.AddRow(New BeaconAPI.Engram(Engram))
 		    End If
 		  Next
 		  
@@ -94,11 +94,11 @@ Protected Class EngramSet
 		      // Might be changed
 		      Dim OriginalEngram As BeaconAPI.Engram = OriginalClasses.Value(Engram.Path)
 		      If Engram.Hash <> OriginalEngram.Hash Then
-		        NewEngrams.Append(New BeaconAPI.Engram(Engram))
+		        NewEngrams.AddRow(New BeaconAPI.Engram(Engram))
 		      End If
 		    Else
 		      // Definitely new
-		      NewEngrams.Append(New BeaconAPI.Engram(Engram))
+		      NewEngrams.AddRow(New BeaconAPI.Engram(Engram))
 		    End If
 		  Next
 		  

@@ -379,8 +379,8 @@ End
 		  End Try
 		  
 		  For Each ResultDict As Dictionary In Results
-		    Self.mResultDicts.Append(ResultDict)
-		    Self.mResultRects.Append(Nil)
+		    Self.mResultDicts.AddRow(ResultDict)
+		    Self.mResultRects.AddRow(Nil)
 		  Next
 		End Sub
 	#tag EndEvent

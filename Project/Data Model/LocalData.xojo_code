@@ -21,7 +21,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dim Mods() As Beacon.ModDetails
 		  Dim Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe FROM mods ORDER BY name;")
 		  While Not Results.AfterLastRow
-		    Mods.Append(New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue))
+		    Mods.AddRow(New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue))
 		    Results.MoveToNextRow
 		  Wend
 		  Return Mods
@@ -40,7 +40,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    Dim Modifier As Beacon.PresetModifier = Beacon.PresetModifier.FromDictionary(Dict)
 		    If Modifier <> Nil Then
-		      Modifiers.Append(Modifier)
+		      Modifiers.AddRow(Modifier)
 		    End If
 		    
 		    Results.MoveToNextRow
@@ -71,7 +71,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dim Keys() As Variant = Dict.Keys
 		  Dim Tags() As String
 		  For Each Key As String In Keys
-		    Tags.Append(Key)
+		    Tags.AddRow(Key)
 		  Next
 		  Tags.Sort
 		  
@@ -84,11 +84,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.mLock.Enter
 		  
 		  If Self.mTransactions.LastRowIndex = -1 Then
-		    Self.mTransactions.Insert(0, "")
+		    Self.mTransactions.AddRowAt(0, "")
 		    Self.SQLExecute("BEGIN TRANSACTION;")
 		  Else
 		    Dim Savepoint As String = "Savepoint_" + EncodeHex(Crypto.GenerateRandomBytes(4))
-		    Self.mTransactions.Insert(0, Savepoint)
+		    Self.mTransactions.AddRowAt(0, Savepoint)
 		    Self.SQLExecute("SAVEPOINT " + Savepoint + ";")
 		  End If
 		End Sub
@@ -119,7 +119,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dim Categories() As String = Array(Beacon.CategoryCreatures, Beacon.CategoryEngrams)
 		  Dim DeleteStatements() As String
 		  For Each Category As String In Categories
-		    DeleteStatements.Append("DELETE FROM " + Category + " WHERE object_id = OLD.object_id;")
+		    DeleteStatements.AddRow("DELETE FROM " + Category + " WHERE object_id = OLD.object_id;")
 		  Next
 		  Self.SQLExecute("CREATE TRIGGER blueprints_delete_trigger INSTEAD OF DELETE ON blueprints FOR EACH ROW BEGIN " + DeleteStatements.Join(" ") + " DELETE FROM searchable_tags WHERE object_id = OLD.object_id; END;")
 		  
@@ -179,7 +179,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Dim Savepoint As String = Self.mTransactions(0)
-		  Self.mTransactions.Remove(0)
+		  Self.mTransactions.RemoveRowAt(0)
 		  
 		  If Savepoint = "" Then
 		    Self.SQLExecute("COMMIT TRANSACTION;")
@@ -197,7 +197,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dim Results As RowSet = Self.SQLSelect("SELECT mod_id FROM mods WHERE console_safe = 1;")
 		  Dim Mods() As String
 		  While Not Results.AfterLastRow
-		    Mods.Append(Results.Column("mod_id").StringValue)
+		    Mods.AddRow(Results.Column("mod_id").StringValue)
 		    Results.MoveToNextRow
 		  Wend
 		  Return Mods
@@ -267,11 +267,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      For I As Integer = 0 To SearchFolder.Count - 1
 		        Dim Filename As String = SearchFolder.ChildAt(I).Name
 		        If Filename = SearchPrefix + SearchSuffix Then
-		          Candidates.Append(SearchFolder.ChildAt(I))
-		          Versions.Append(1)
+		          Candidates.AddRow(SearchFolder.ChildAt(I))
+		          Versions.AddRow(1)
 		        ElseIf Filename.BeginsWith(SearchPrefix) And Filename.EndsWith(SearchSuffix) Then
-		          Candidates.Append(SearchFolder.ChildAt(I))
-		          Versions.Append(Integer.FromString(Filename.Middle(SearchPrefix.Length + 2, Filename.Length - (SearchPrefix.Length + SearchSuffix.Length))))
+		          Candidates.AddRow(SearchFolder.ChildAt(I))
+		          Versions.AddRow(Integer.FromString(Filename.Middle(SearchPrefix.Length + 2, Filename.Length - (SearchPrefix.Length + SearchSuffix.Length))))
 		        End If
 		      Next
 		      
@@ -327,7 +327,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Sub DeleteBlueprints(Blueprints() As Beacon.Blueprint)
 		  Dim ObjectIDs() As String
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
-		    ObjectIDs.Append("'" + Blueprint.ObjectID + "'")
+		    ObjectIDs.AddRow("'" + Blueprint.ObjectID + "'")
 		  Next
 		  
 		  Self.BeginTransaction()
@@ -635,7 +635,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Notification.UserData = Beacon.ParseJSON(Results.Column("user_data").StringValue)
 		    Catch Err As RuntimeException
 		    End Try
-		    Notifications.Append(Notification)
+		    Notifications.AddRow(Notification)
 		    
 		    Results.MoveToNextRow
 		  Wend
@@ -698,11 +698,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If Mods.LastRowIndex > -1 Then
 		      Dim Placeholders() As String
 		      For Each ModID As String In Mods
-		        Placeholders.Append("?" + Str(NextPlaceholder))
+		        Placeholders.AddRow("?" + Str(NextPlaceholder))
 		        Values.Value(NextPlaceholder) = ModID
 		        NextPlaceholder = NextPlaceholder + 1
 		      Next
-		      Clauses.Append("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
+		      Clauses.AddRow("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
 		    End If
 		    
 		    Dim SQL As String = "SELECT COUNT(loot_sources.object_id) FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id) WHERE (" + Clauses.Join(") AND (") + ");"
@@ -819,7 +819,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Combined.Graphics.DrawPicture(HighlightRep, 0, 0, Combined.Width, Combined.Height, 0, 0, HighlightRep.Width, HighlightRep.Height)
 		    Combined.Graphics.DrawPicture(ColorRep, 0, 0, Combined.Width, Combined.Height, 0, 0, ColorRep.Width, ColorRep.Height)
 		    
-		    Bitmaps.Append(Combined)
+		    Bitmaps.AddRow(Combined)
 		  Next
 		  
 		  Dim Icon As New Picture(Width, Height, Bitmaps)
@@ -830,7 +830,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub Import(Content As String)
-		  Self.mPendingImports.Append(Content)
+		  Self.mPendingImports.AddRow(Content)
 		  
 		  If Self.mImportThread = Nil Then
 		    Self.mImportThread = New Thread
@@ -1005,7 +1005,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    // Caution!! This field always contains all mods.
 		    Dim Mods() As Variant = ChangeDict.Value("mods")
 		    Dim RetainMods() As String
-		    RetainMods.Append(Self.UserModID)
+		    RetainMods.AddRow(Self.UserModID)
 		    For Each ModData As Dictionary In Mods
 		      Dim ModID As String = ModData.Value("mod_id")
 		      Dim ModName As String = ModData.Value("name")
@@ -1022,7 +1022,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe) VALUES (?1, ?2, ?3);", ModID, ModName, ConsoleSafe)
 		      End If
 		      
-		      RetainMods.Append(ModID)
+		      RetainMods.AddRow(ModID)
 		    Next
 		    Dim ModResults As RowSet = Self.SQLSelect("SELECT mod_id FROM mods;")
 		    While Not ModResults.AfterLastRow
@@ -1043,7 +1043,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Case "loot_sources"
 		        Self.SQLExecute("DELETE FROM loot_sources WHERE object_id = ?1;", ObjectID)
 		      Case "loot_source_icons"
-		        DeleteIcons.Append(ObjectID)
+		        DeleteIcons.AddRow(ObjectID)
 		      Case "engrams"
 		        Self.SQLExecute("DELETE FROM engrams WHERE object_id = ?1;", ObjectID)
 		      Case "presets"
@@ -1118,10 +1118,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Dim Tags() As String
 		        Dim Temp() As Variant = Dict.Value("tags")
 		        For Each Tag As String In Temp
-		          Tags.Append(Tag)
+		          Tags.AddRow(Tag)
 		        Next
 		        TagString = Tags.Join(",")
-		        Tags.Insert(0, "object")
+		        Tags.AddRowAt(0, "object")
 		        TagStringForSearching = Tags.Join(",")
 		      Catch Err As TypeMismatchException
 		        
@@ -1164,10 +1164,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Dim Tags() As String
 		        Dim Temp() As Variant = Dict.Value("tags")
 		        For Each Tag As String In Temp
-		          Tags.Append(Tag)
+		          Tags.AddRow(Tag)
 		        Next
 		        TagString = Tags.Join(",")
-		        Tags.Insert(0, "object")
+		        Tags.AddRowAt(0, "object")
 		        TagStringForSearching = Tags.Join(",")
 		      Catch Err As TypeMismatchException
 		        
@@ -1396,7 +1396,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      End If
 		      
 		      Preset.Type = Type
-		      Self.mPresets.Append(Preset)
+		      Self.mPresets.AddRow(Preset)
 		    End If
 		    Results.MoveToNextRow
 		  Wend
@@ -1417,76 +1417,76 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  // Mods
 		  If FromSchemaVersion >= 6 Then
-		    Commands.Append("INSERT INTO mods SELECT * FROM legacy.mods WHERE mod_id != '" + Self.UserModID + "';")
+		    Commands.AddRow("INSERT INTO mods SELECT * FROM legacy.mods WHERE mod_id != '" + Self.UserModID + "';")
 		  End If
 		  
 		  // Loot Sources
 		  If FromSchemaVersion >= 8 Then  
-		    Commands.Append("INSERT INTO loot_source_icons SELECT * FROM legacy.loot_source_icons;")
-		    Commands.Append("INSERT INTO loot_sources SELECT * FROM legacy.loot_sources;")
+		    Commands.AddRow("INSERT INTO loot_source_icons SELECT * FROM legacy.loot_source_icons;")
+		    Commands.AddRow("INSERT INTO loot_sources SELECT * FROM legacy.loot_sources;")
 		  End If
 		  
 		  // Engrams
 		  If FromSchemaVersion >= 9 Then
-		    Commands.Append("INSERT INTO engrams SELECT * FROM legacy.engrams;")
+		    Commands.AddRow("INSERT INTO engrams SELECT * FROM legacy.engrams;")
 		  ElseIf FromSchemaVersion >= 6 Then
-		    Commands.Append("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) SELECT object_id, mod_id, label, availability, path, class_string, '' AS tags FROM legacy.engrams WHERE mod_id = '" + Self.UserModID + "' AND can_blueprint = 0;")
-		    Commands.Append("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) SELECT object_id, mod_id, label, availability, path, class_string, 'blueprintable' AS tags FROM legacy.engrams WHERE mod_id = '" + Self.UserModID + "' AND can_blueprint = 1;")
-		    Commands.Append("INSERT INTO searchable_tags (object_id, source_table, tags) SELECT object_id, 'engrams' AS source_table, CASE tags WHEN '' THEN 'object' ELSE 'object,' || tags END tags FROM engrams WHERE mod_id = '" + Self.UserModID + "';")
+		    Commands.AddRow("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) SELECT object_id, mod_id, label, availability, path, class_string, '' AS tags FROM legacy.engrams WHERE mod_id = '" + Self.UserModID + "' AND can_blueprint = 0;")
+		    Commands.AddRow("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) SELECT object_id, mod_id, label, availability, path, class_string, 'blueprintable' AS tags FROM legacy.engrams WHERE mod_id = '" + Self.UserModID + "' AND can_blueprint = 1;")
+		    Commands.AddRow("INSERT INTO searchable_tags (object_id, source_table, tags) SELECT object_id, 'engrams' AS source_table, CASE tags WHEN '' THEN 'object' ELSE 'object,' || tags END tags FROM engrams WHERE mod_id = '" + Self.UserModID + "';")
 		  End If
 		  
 		  // Variables
 		  If FromSchemaVersion >= 6 Then
-		    Commands.Append("INSERT INTO variables SELECT * FROM legacy.variables WHERE LOWER(legacy.variables.key) != 'sync_time';")
+		    Commands.AddRow("INSERT INTO variables SELECT * FROM legacy.variables WHERE LOWER(legacy.variables.key) != 'sync_time';")
 		  End If
 		  
 		  // Official Presets
 		  If FromSchemaVersion >= 6 Then
-		    Commands.Append("INSERT INTO official_presets SELECT * FROM legacy.official_presets;")
+		    Commands.AddRow("INSERT INTO official_presets SELECT * FROM legacy.official_presets;")
 		  End If
 		  
 		  // Notifications
 		  If FromSchemaVersion >= 6 Then
-		    Commands.Append("INSERT INTO notifications SELECT * FROM legacy.notifications;")
+		    Commands.AddRow("INSERT INTO notifications SELECT * FROM legacy.notifications;")
 		  End If
 		  
 		  // Config Help
 		  If FromSchemaVersion >= 6 Then
-		    Commands.Append("INSERT INTO config_help (config_name, title, body, detail_url) SELECT LOWER(config_name), title, body, detail_url FROM legacy.config_help;")
+		    Commands.AddRow("INSERT INTO config_help (config_name, title, body, detail_url) SELECT LOWER(config_name), title, body, detail_url FROM legacy.config_help;")
 		  End If
 		  
 		  // Preset Modifiers
 		  If FromSchemaVersion >= 6 Then
-		    Commands.Append("INSERT INTO preset_modifiers SELECT * FROM legacy.preset_modifiers")
+		    Commands.AddRow("INSERT INTO preset_modifiers SELECT * FROM legacy.preset_modifiers")
 		  End If
 		  
 		  // Game Variables
 		  If FromSchemaVersion >= 7 Then
-		    Commands.Append("INSERT INTO game_variables SELECT * FROM legacy.game_variables;")
+		    Commands.AddRow("INSERT INTO game_variables SELECT * FROM legacy.game_variables;")
 		  End If
 		  
 		  // Custom Presets
 		  If FromSchemaVersion >= 3 Then
-		    Commands.Append("INSERT INTO custom_presets SELECT * FROM legacy.custom_presets;")
+		    Commands.AddRow("INSERT INTO custom_presets SELECT * FROM legacy.custom_presets;")
 		  End If
 		  
 		  // Creatures
 		  If FromSchemaVersion >= 10 Then
-		    Commands.Append("INSERT INTO creatures SELECT * FROM legacy.creatures;")
+		    Commands.AddRow("INSERT INTO creatures SELECT * FROM legacy.creatures;")
 		  ElseIf FromSchemaVersion >= 9 Then
-		    Commands.Append("INSERT INTO creatures (object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time) SELECT object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time FROM legacy.creatures;")
+		    Commands.AddRow("INSERT INTO creatures (object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time) SELECT object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time FROM legacy.creatures;")
 		  End If
 		  
 		  // Searchable Tags
 		  If FromSchemaVersion >= 9 Then
-		    Commands.Append("INSERT INTO searchable_tags SELECT * FROM legacy.searchable_tags;")
+		    Commands.AddRow("INSERT INTO searchable_tags SELECT * FROM legacy.searchable_tags;")
 		  End If
 		  
 		  // Sanity checking
-		  Commands.Append("DELETE FROM loot_sources WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
-		  Commands.Append("DELETE FROM engrams WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
-		  Commands.Append("DELETE FROM creatures WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
-		  Commands.Append("DELETE FROM preset_modifiers WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
+		  Commands.AddRow("DELETE FROM loot_sources WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
+		  Commands.AddRow("DELETE FROM engrams WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
+		  Commands.AddRow("DELETE FROM creatures WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
+		  Commands.AddRow("DELETE FROM preset_modifiers WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
 		  
 		  If Commands.LastRowIndex > -1 Then
 		    Self.BeginTransaction()
@@ -1588,7 +1588,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dim Success As Boolean
 		  For I As Integer = 0 To Self.mPendingImports.LastRowIndex
 		    Dim Content As String = Self.mPendingImports(I)
-		    Self.mPendingImports.Remove(I)
+		    Self.mPendingImports.RemoveRowAt(I)
 		    
 		    Success = Self.ImportInner(Content) Or Success
 		  Next
@@ -1664,7 +1664,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function Presets() As Beacon.Preset()
 		  Dim Results() As Beacon.Preset
 		  For Each Preset As Beacon.Preset In Self.mPresets
-		    Results.Append(New Beacon.Preset(Preset))
+		    Results.AddRow(New Beacon.Preset(Preset))
 		  Next
 		  Return Results
 		End Function
@@ -1677,7 +1677,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Dim Savepoint As String = Self.mTransactions(0)
-		  Self.mTransactions.Remove(0)
+		  Self.mTransactions.RemoveRowAt(0)
 		  
 		  If Savepoint = "" Then
 		    Self.SQLExecute("ROLLBACK TRANSACTION;")
@@ -1711,7 +1711,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Creature.MatureTime = Results.Column("mature_time").Value.UInt64Value
 		    End If
 		    
-		    Creatures.Append(Creature)
+		    Creatures.AddRow(Creature)
 		    Results.MoveToNextRow
 		  Wend
 		  Return Creatures
@@ -1728,7 +1728,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Engram.TagString = Results.Column("tags").StringValue
 		    Engram.ModID = Results.Column("mod_id").StringValue
 		    Engram.ModName = Results.Column("mod_name").StringValue
-		    Engrams.Append(Engram)
+		    Engrams.AddRow(Engram)
 		    Results.MoveToNextRow
 		  Wend
 		  Return Engrams
@@ -1786,7 +1786,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      For Each Dict As Dictionary In SetDicts
 		        Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Dict)
 		        If Set <> Nil Then
-		          Sets.Append(Set)
+		          Sets.AddRow(Set)
 		        End If
 		      Next
 		      Source.MandatoryItemSets = Sets
@@ -1796,7 +1796,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Source.RequiredItemSets = Requirements.Value("min_item_sets")
 		    End If
 		    
-		    Sources.Append(New Beacon.LootSource(Source))
+		    Sources.AddRow(New Beacon.LootSource(Source))
 		    Results.MoveToNextRow
 		  Wend
 		  Return Sources
@@ -1946,7 +1946,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Dim Clauses() As String
 		    Dim Values As New Dictionary
 		    If SearchText <> "" Then
-		      Clauses.Append("LOWER(label) LIKE LOWER(?" + Str(NextPlaceholder) + ") OR LOWER(class_string) LIKE LOWER(?" + Str(NextPlaceholder) + ")")
+		      Clauses.AddRow("LOWER(label) LIKE LOWER(?" + Str(NextPlaceholder) + ") OR LOWER(class_string) LIKE LOWER(?" + Str(NextPlaceholder) + ")")
 		      Values.Value(NextPlaceholder) = "%" + SearchText + "%"
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
@@ -1964,15 +1964,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If Mods <> Nil And Mods.LastRowIndex > -1 Then
 		      Dim Placeholders() As String
 		      For Each ModID As String In Mods
-		        Placeholders.Append("?" + Str(NextPlaceholder))
+		        Placeholders.AddRow("?" + Str(NextPlaceholder))
 		        Values.Value(NextPlaceholder) = ModID
 		        NextPlaceholder = NextPlaceholder + 1
 		      Next
-		      Clauses.Append("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
+		      Clauses.AddRow("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
 		    End If
 		    If Tags <> "" Then
 		      SQL = SQL.Replace(Category + " INNER JOIN mods", Category + " INNER JOIN searchable_tags ON (searchable_tags.object_id = " + Category + ".object_id AND searchable_tags.source_table = '" + Category + "') INNER JOIN mods")
-		      Clauses.Append("searchable_tags.tags MATCH ?" + Str(NextPlaceholder, "0"))
+		      Clauses.AddRow("searchable_tags.tags MATCH ?" + Str(NextPlaceholder, "0"))
 		      Values.Value(NextPlaceholder) = Tags
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
@@ -1994,13 +1994,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Dim Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
 		      For Each Engram As Beacon.Engram In Engrams
 		        Self.mEngramCache.Value(Engram.Path) = Engram
-		        Blueprints.Append(Engram)
+		        Blueprints.AddRow(Engram)
 		      Next
 		    Case Beacon.CategoryCreatures
 		      Dim Creatures() As Beacon.Creature = Self.RowSetToCreature(Results)
 		      For Each Creature As Beacon.Creature In Creatures
 		        Self.mCreatureCache.Value(Creature.Path) = Creature
-		        Blueprints.Append(Creature)
+		        Blueprints.AddRow(Creature)
 		      Next
 		    End Select
 		  Catch Err As UnsupportedOperationException
@@ -2024,19 +2024,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If Mods.LastRowIndex > -1 Then
 		      Dim Placeholders() As String
 		      For Each ModID As String In Mods
-		        Placeholders.Append("?" + Str(NextPlaceholder))
+		        Placeholders.AddRow("?" + Str(NextPlaceholder))
 		        Values.Value(NextPlaceholder) = ModID
 		        NextPlaceholder = NextPlaceholder + 1
 		      Next
-		      Clauses.Append("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
+		      Clauses.AddRow("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
 		    End If
 		    If SearchText <> "" Then
-		      Clauses.Append("LOWER(label) LIKE LOWER(?" + Str(NextPlaceholder) + ") OR LOWER(class_string) LIKE LOWER(?" + Str(NextPlaceholder) + ")")
+		      Clauses.AddRow("LOWER(label) LIKE LOWER(?" + Str(NextPlaceholder) + ") OR LOWER(class_string) LIKE LOWER(?" + Str(NextPlaceholder) + ")")
 		      Values.Value(NextPlaceholder) = "%" + SearchText + "%"
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
 		    If Not IncludeExperimental Then
-		      Clauses.Append("experimental = 0")
+		      Clauses.AddRow("experimental = 0")
 		    End If
 		    
 		    Dim SQL As String = "SELECT " + Self.LootSourcesSelectColumns + ", mods.mod_id, mods.name AS mod_name FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id)"
@@ -2090,7 +2090,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Try
 		      // I know this line looks insane, but it's correct. Placeholders start at 1.
 		      For I As Integer = 1 To Dict.KeyCount
-		        Values.Append(Dict.Value(I))
+		        Values.AddRow(Dict.Value(I))
 		      Next
 		    Catch Err As TypeMismatchException
 		      Redim Values(-1)
@@ -2133,7 +2133,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Try
 		      // I know this line looks insane, but it's correct. Placeholders start at 1.
 		      For I As Integer = 1 To Dict.KeyCount
-		        Values.Append(Dict.Value(I))
+		        Values.AddRow(Dict.Value(I))
 		      Next
 		    Catch Err As TypeMismatchException
 		      Redim Values(-1)
@@ -2198,7 +2198,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Dict.Value("label") = Results.Column("label").StringValue
 		    Dict.Value("availability") = Results.Column("availability").IntegerValue
 		    Dict.Value("category") = Results.Column("category").StringValue
-		    Dicts.Append(Dict)
+		    Dicts.AddRow(Dict)
 		    
 		    Results.MoveToNextRow()
 		  Wend

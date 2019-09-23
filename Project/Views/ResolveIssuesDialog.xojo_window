@@ -345,7 +345,7 @@ End
 		  If Document.MapCompatibility = 0 Then
 		    Dim Issue As New Beacon.Issue("Maps", "No maps have been selected. Use the ""Maps"" config editor to choose maps.")
 		    UniqueIssues.Value(Issue.Description) = Issue
-		    DocumentIssues.Append(Issue)
+		    DocumentIssues.AddRow(Issue)
 		  End If
 		  
 		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
@@ -353,7 +353,7 @@ End
 		    Dim Issues() As Beacon.Issue = Config.Issues(Document, App.IdentityManager.CurrentIdentity)
 		    For Each Issue As Beacon.Issue In Issues
 		      If Not UniqueIssues.HasKey(Issue.Description) Then
-		        DocumentIssues.Append(Issue)
+		        DocumentIssues.AddRow(Issue)
 		        UniqueIssues.Value(Issue.Description) = Issue
 		      End If
 		    Next

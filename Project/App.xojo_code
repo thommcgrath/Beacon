@@ -127,14 +127,14 @@ Implements NotificationKit.Receiver
 		    // Not critically important
 		  End Try
 		  
-		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_CheckBetaExpiration)
-		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_PrivacyCheck)
-		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_SetupDatabase)
-		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_ShowMainWindow)
-		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_RequestUser)
-		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_CheckUpdates)
-		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_NewsletterPrompt)
-		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_GettingStarted)
+		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_CheckBetaExpiration)
+		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_PrivacyCheck)
+		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_SetupDatabase)
+		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_ShowMainWindow)
+		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_RequestUser)
+		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_CheckUpdates)
+		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_NewsletterPrompt)
+		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_GettingStarted)
 		  Self.NextLaunchQueueTask
 		  
 		  #If TargetWin32
@@ -389,7 +389,7 @@ Implements NotificationKit.Receiver
 		    End If
 		    
 		    If Char = BreakChar Then
-		      Args.Append(Arg)
+		      Args.AddRow(Arg)
 		      Arg = ""
 		    Else
 		      Arg = Arg + Char
@@ -397,7 +397,7 @@ Implements NotificationKit.Receiver
 		  Next
 		  
 		  If Arg <> "" Then
-		    Args.Append(Arg)
+		    Args.AddRow(Arg)
 		  End If
 		  
 		  If Args.LastRowIndex > 0 Then
@@ -429,7 +429,7 @@ Implements NotificationKit.Receiver
 		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Error)
 		  Dim Stack() As StackFrame = Error.StackFrames
 		  While Stack.LastRowIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
-		    Stack.Remove(0)
+		    Stack.RemoveRowAt(0)
 		  Wend
 		  
 		  Dim Location As String = "Unknown"
@@ -699,10 +699,10 @@ Implements NotificationKit.Receiver
 		    System.DebugLog(DetailedMessage)
 		  #else
 		    Try
-		      Self.mQueuedLogMessages.Append(DetailedMessage)
+		      Self.mQueuedLogMessages.AddRow(DetailedMessage)
 		      
 		      Dim LogFile As FolderItem = Self.ApplicationSupport.Child("Events.log")
-		      Dim Stream As TextOutputStream = TextOutputStream.Append(LogFile)
+		      Dim Stream As TextOutputStream = TextOutputStream.AddRow(LogFile)
 		      While Self.mQueuedLogMessages.LastRowIndex > -1
 		        Stream.WriteLine(Self.mQueuedLogMessages(0))
 		        Self.mQueuedLogMessages.Remove(0)
@@ -821,7 +821,7 @@ Implements NotificationKit.Receiver
 		  End If
 		  
 		  Dim Task As LaunchQueueTask = Self.mLaunchQueue(0)
-		  Self.mLaunchQueue.Remove(0)
+		  Self.mLaunchQueue.RemoveRowAt(0)
 		  
 		  Task.Invoke()
 		End Sub

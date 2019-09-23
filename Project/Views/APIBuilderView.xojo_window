@@ -668,19 +668,19 @@ End
 		  End If
 		  
 		  Dim Lines() As String
-		  Lines.Append(Request.Method + " " + Path + " HTTP/1.1")
-		  Lines.Append("Host: " + Host)
+		  Lines.AddRow(Request.Method + " " + Path + " HTTP/1.1")
+		  Lines.AddRow("Host: " + Host)
 		  
 		  If Request.Authenticated Then
-		    Lines.Append("Authorization: " + Request.AuthHeader)
+		    Lines.AddRow("Authorization: " + Request.AuthHeader)
 		  End If
 		  
 		  If Request.Method <> "GET" Then
 		    If Request.ContentType <> "" Then
-		      Lines.Append("Content-Type: " + Request.ContentType)
+		      Lines.AddRow("Content-Type: " + Request.ContentType)
 		    End If
-		    Lines.Append("")
-		    Lines.Append(Request.Query)
+		    Lines.AddRow("")
+		    Lines.AddRow(Request.Query)
 		  End If
 		  
 		  Return Lines.Join(EOL)
@@ -701,55 +701,55 @@ End
 		      URL = URL + "?" + Request.Query
 		    End If
 		  End If
-		  Lines.Append("$url = '" + URL.ReplaceAll("'", "\'") + "';")
+		  Lines.AddRow("$url = '" + URL.ReplaceAll("'", "\'") + "';")
 		  
 		  If Authenticated Or Request.Method <> "GET" Then
-		    Lines.Append("$method = '" + Request.Method.ReplaceAll("'", "\'").Uppercase + "';")
+		    Lines.AddRow("$method = '" + Request.Method.ReplaceAll("'", "\'").Uppercase + "';")
 		  End If
 		  
 		  If Request.Method <> "GET" And Request.Query <> "" Then
-		    Lines.Append("$body = '" + Request.Query.ReplaceAll("'", "\'") + "';")
+		    Lines.AddRow("$body = '" + Request.Query.ReplaceAll("'", "\'") + "';")
 		  End If
 		  
 		  If Authenticated Then
-		    Lines.Append("")
+		    Lines.AddRow("")
 		    If Request.Method = "GET" Then
-		      Lines.Append("$auth = $method . Encodings.UTF8.Chr(10) . $url;")
+		      Lines.AddRow("$auth = $method . Encodings.UTF8.Chr(10) . $url;")
 		    Else
 		      If Request.Query <> "" Then
-		        Lines.Append("$auth = $method . Encodings.UTF8.Chr(10) . $url  . Encodings.UTF8.Chr(10) . $body;")
+		        Lines.AddRow("$auth = $method . Encodings.UTF8.Chr(10) . $url  . Encodings.UTF8.Chr(10) . $body;")
 		      Else
-		        Lines.Append("$auth = $method . Encodings.UTF8.Chr(10) . $url  . Encodings.UTF8.Chr(10);")
+		        Lines.AddRow("$auth = $method . Encodings.UTF8.Chr(10) . $url  . Encodings.UTF8.Chr(10);")
 		      End If
 		    End If
-		    Lines.Append("// Change Myself.beaconidentiy to point to your identity file!")
-		    Lines.Append("$identity = json_decode(file_get_contents('Myself.beaconidentity'), true);")
-		    Lines.Append("$username = $identity['Identifier'];")
-		    Lines.Append("$private_key = $identity['Private'];")
-		    Lines.Append("$private_key = trim(chunk_split(base64_encode(hex2bin($private_key)), 64, ""\n""));")
-		    Lines.Append("$private_key = ""-----BEGIN RSA PRIVATE KEY-----\n$private_key\n-----END RSA PRIVATE KEY-----"";")
-		    Lines.Append("openssl_sign($auth, $password, $private_key) or die('Unable to authenticate action');")
+		    Lines.AddRow("// Change Myself.beaconidentiy to point to your identity file!")
+		    Lines.AddRow("$identity = json_decode(file_get_contents('Myself.beaconidentity'), true);")
+		    Lines.AddRow("$username = $identity['Identifier'];")
+		    Lines.AddRow("$private_key = $identity['Private'];")
+		    Lines.AddRow("$private_key = trim(chunk_split(base64_encode(hex2bin($private_key)), 64, ""\n""));")
+		    Lines.AddRow("$private_key = ""-----BEGIN RSA PRIVATE KEY-----\n$private_key\n-----END RSA PRIVATE KEY-----"";")
+		    Lines.AddRow("openssl_sign($auth, $password, $private_key) or die('Unable to authenticate action');")
 		  End If
 		  
-		  Lines.Append("")
-		  Lines.Append("$http = curl_init();")
-		  Lines.Append("curl_setopt($http, CURLOPT_URL, $url);")
-		  Lines.Append("curl_setopt($http, CURLOPT_RETURNTRANSFER, 1);")
+		  Lines.AddRow("")
+		  Lines.AddRow("$http = curl_init();")
+		  Lines.AddRow("curl_setopt($http, CURLOPT_URL, $url);")
+		  Lines.AddRow("curl_setopt($http, CURLOPT_RETURNTRANSFER, 1);")
 		  If Request.Method <> "GET" Then
-		    Lines.Append("curl_setopt($http, CURLOPT_CUSTOMREQUEST, $method);")
+		    Lines.AddRow("curl_setopt($http, CURLOPT_CUSTOMREQUEST, $method);")
 		    If Request.Query <> "" Then
-		      Lines.Append("curl_setopt($http, CURLOPT_POSTFIELDS, $body);")
+		      Lines.AddRow("curl_setopt($http, CURLOPT_POSTFIELDS, $body);")
 		    End If
 		    If Request.ContentType <> "" Then
-		      Lines.Append("curl_setopt($http, CURLOPT_HTTPHEADER, array('Content-Type: " + Request.ContentType.ReplaceAll("'", "\'") + "'));")
+		      Lines.AddRow("curl_setopt($http, CURLOPT_HTTPHEADER, array('Content-Type: " + Request.ContentType.ReplaceAll("'", "\'") + "'));")
 		    End If
 		  End If
 		  If Authenticated Then
-		    Lines.Append("curl_setopt($http, CURLOPT_USERPWD, $username . ':' . bin2hex($password));")
+		    Lines.AddRow("curl_setopt($http, CURLOPT_USERPWD, $username . ':' . bin2hex($password));")
 		  End If
-		  Lines.Append("$response = curl_exec($http);")
-		  Lines.Append("$http_status = curl_getinfo($http, CURLINFO_HTTP_CODE);")
-		  Lines.Append("curl_close($http);")
+		  Lines.AddRow("$response = curl_exec($http);")
+		  Lines.AddRow("$http_status = curl_getinfo($http, CURLINFO_HTTP_CODE);")
+		  Lines.AddRow("curl_close($http);")
 		  
 		  Return Lines.Join(EOL)
 		End Function

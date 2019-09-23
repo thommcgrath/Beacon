@@ -44,12 +44,12 @@ Inherits ControlCanvas
 		    Dim ExcludeIndex As Integer = Self.mExcludeTags.IndexOf(Tag)
 		    
 		    If RequireIndex > -1 Then
-		      Self.mRequireTags.Remove(RequireIndex)
-		      Self.mExcludeTags.Append(Tag)
+		      Self.mRequireTags.RemoveRowAt(RequireIndex)
+		      Self.mExcludeTags.AddRow(Tag)
 		    ElseIf ExcludeIndex > -1 Then
-		      Self.mExcludeTags.Remove(ExcludeIndex)
+		      Self.mExcludeTags.RemoveRowAt(ExcludeIndex)
 		    Else
-		      Self.mRequireTags.Append(Tag)
+		      Self.mRequireTags.AddRow(Tag)
 		    End If
 		    
 		    RaiseEvent TagsChanged
@@ -182,7 +182,7 @@ Inherits ControlCanvas
 		Private Shared Function ArrayToString(Source() As String) As String
 		  Dim Clone() As String
 		  For Each Value As String In Source
-		    Clone.Append(Value)
+		    Clone.AddRow(Value)
 		  Next
 		  Clone.Sort
 		  Return Join(Clone, ",")
@@ -242,7 +242,7 @@ Inherits ControlCanvas
 		Function ExcludedTags() As String()
 		  Dim Tags() As String
 		  For Each Tag As String In Self.mExcludeTags
-		    Tags.Append(Tag)
+		    Tags.AddRow(Tag)
 		  Next
 		  Return Tags
 		End Function
@@ -263,7 +263,7 @@ Inherits ControlCanvas
 		Function RequiredTags() As String()
 		  Dim Tags() As String
 		  For Each Tag As String In Self.mRequireTags
-		    Tags.Append(Tag)
+		    Tags.AddRow(Tag)
 		  Next
 		  Return Tags
 		End Function
@@ -366,11 +366,11 @@ Inherits ControlCanvas
 		    Dim FireChangeEvent As Boolean
 		    For I As Integer = Self.mRequireTags.LastRowIndex DownTo 0
 		      If Self.mTags.IndexOf(Self.mRequireTags(I)) = -1 Then
-		        Self.mRequireTags.Remove(I)
+		        Self.mRequireTags.RemoveRowAt(I)
 		        FireChangeEvent = True
 		      End
 		      If Self.mTags.IndexOf(Self.mExcludeTags(I)) = -1 Then
-		        Self.mExcludeTags.Remove(I)
+		        Self.mExcludeTags.RemoveRowAt(I)
 		        FireChangeEvent = True
 		      End If
 		    Next

@@ -34,7 +34,7 @@ Protected Module Maps
 		  Dim Matches() As Beacon.Map
 		  For Each Map As Beacon.Map In Possibles
 		    If (Map.Mask And Mask) > 0 Then
-		      Matches.Append(Map)
+		      Matches.AddRow(Map)
 		    End If
 		  Next
 		  

@@ -48,7 +48,7 @@ Private Class NSColor
 		    Dim ObjectCount As Integer = ArrayCount(ArrayRef)
 		    For I As Integer = 0 To ObjectCount - 1
 		      Dim Handle As Ptr = ArrayObjectAtIndex(ArrayRef, I)
-		      Colors.Append(New SystemColors.NSColor(Handle))
+		      Colors.AddRow(New SystemColors.NSColor(Handle))
 		    Next
 		  #endif
 		  Return Colors
@@ -261,7 +261,9 @@ Private Class NSColor
 			Name="Name"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -269,12 +271,15 @@ Private Class NSColor
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
+			InitialValue=""
 			Type="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -282,6 +287,7 @@ Private Class NSColor
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
@@ -289,6 +295,7 @@ Private Class NSColor
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

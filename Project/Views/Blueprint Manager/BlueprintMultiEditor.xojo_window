@@ -266,11 +266,11 @@ End
 		  Dim OfficialMasks(), ThirdPartyMasks() As UInt64
 		  For Each Map As Beacon.Map In Maps
 		    If Map.Official Then
-		      OfficialMaps.Append(Map)
-		      OfficialMasks.Append(Map.Mask)
+		      OfficialMaps.AddRow(Map)
+		      OfficialMasks.AddRow(Map.Mask)
 		    Else
-		      ThirdPartyMaps.Append(Map)
-		      ThirdPartyMasks.Append(Map.Mask)
+		      ThirdPartyMaps.AddRow(Map)
+		      ThirdPartyMasks.AddRow(Map.Mask)
 		    End If
 		  Next
 		  OfficialMasks.SortWith(OfficialMaps)
@@ -289,7 +289,7 @@ End
 		    Check.Top = OfficialNextTop
 		    Check.Left = OfficialLeft
 		    OfficialNextTop = OfficialNextTop + Check.Height + 12
-		    Self.mMapCheckboxes.Append(Check)
+		    Self.mMapCheckboxes.AddRow(Check)
 		  Next
 		  For Each Map As Beacon.Map In ThirdPartyMaps
 		    Dim Check As Checkbox = New MapCheckboxes
@@ -298,7 +298,7 @@ End
 		    Check.Top = ThirdPartyNextTop
 		    Check.Left = ThirdPartyLeft
 		    ThirdPartyNextTop = ThirdPartyNextTop + Check.Height + 12
-		    Self.mMapCheckboxes.Append(Check)
+		    Self.mMapCheckboxes.AddRow(Check)
 		  Next
 		End Sub
 	#tag EndEvent
@@ -381,7 +381,7 @@ End
 		  For Each Blueprint As Beacon.Blueprint In Self.mBlueprints
 		    Dim Saved As Beacon.Blueprint = LocalData.SharedInstance.GetBlueprintByObjectID(Blueprint.ObjectID)
 		    If Saved <> Nil Then
-		      Blueprints.Append(Saved)
+		      Blueprints.AddRow(Saved)
 		    End If
 		  Next
 		  Self.Modified = False
@@ -455,7 +455,7 @@ End
 		  For I As Integer = 0 To Tags.KeyCount - 1
 		    Dim Tag As String = Tags.Key(I)
 		    If Tags.Lookup(Tag, 0) = BlueprintCount Then
-		      CommonTags.Append(Tag)
+		      CommonTags.AddRow(Tag)
 		    End If
 		  Next
 		  Self.Picker.SetSelections(CommonTags, Nil)

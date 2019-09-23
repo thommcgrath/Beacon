@@ -388,9 +388,9 @@ End
 		      
 		      // Clicking a notification dismisses it
 		      LocalData.SharedInstance.DeleteNotification(Self.mNotifications(Self.mDownIndex))
-		      Self.mNotifications.Remove(Self.mDownIndex)
-		      Self.mCloseRects.Remove(Self.mDownIndex)
-		      Self.mNotificationRects.Remove(Self.mDownIndex)
+		      Self.mNotifications.RemoveRowAt(Self.mDownIndex)
+		      Self.mCloseRects.RemoveRowAt(Self.mDownIndex)
+		      Self.mNotificationRects.RemoveRowAt(Self.mDownIndex)
 		      
 		      // Update counts. Painting should handle this, but just in case.
 		      Dim NewUnreadCount As Integer = Self.UnreadCount
