@@ -280,6 +280,7 @@ Inherits Global.Thread
 		        Next
 		        BeaconDict.Value("Build") = Array("Build=" + Str(App.BuildNumber, "0"))
 		        BeaconDict.Value("Trust") = Array("Trust=" + TrustKey)
+		        BeaconDict.Value("LastUpdated") = Array("LastUpdated=""" + Xojo.Core.Date.Now.Convert.SQLDateTimeWithOffset + """")
 		        AllSectionHeaders.Append("Beacon")
 		        ConfigDict.Value("Beacon") = BeaconDict
 		      End If
