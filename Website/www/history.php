@@ -1,6 +1,13 @@
 <?php
 require(dirname(__FILE__, 2) . '/framework/loader.php');
 $stage = isset($_GET['stage']) ? intval($_GET['stage']) : 3;
+
+if (is_null(filter_var($stage, FILTER_VALIDATE_INT, ['options' => ['min_range' => -2147483648, 'max_range' => 2147483647], 'flags' => FILTER_NULL_ON_FAILURE]))) {
+	header('Location: https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+	http_response_code(302);
+	exit;
+}
+
 BeaconTemplate::SetTitle('Version History');
 ?><h1>Version History</h1>
 <div class="indent">
