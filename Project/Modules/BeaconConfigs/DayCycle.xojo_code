@@ -82,6 +82,7 @@ Inherits Beacon.ConfigGroup
 		#tag EndGetter
 		#tag Setter
 			Set
+			  Value = Max(Value, 0.000001)
 			  If Self.mDaySpeedMultiplier <> Value Then
 			    Self.mDaySpeedMultiplier = Value
 			    Self.Modified = True
@@ -107,6 +108,7 @@ Inherits Beacon.ConfigGroup
 		#tag EndGetter
 		#tag Setter
 			Set
+			  Value = Max(Value, 0.000001)
 			  If Self.mNightSpeedMultiplier <> Value Then
 			    Self.mNightSpeedMultiplier = Value
 			    Self.Modified = True
