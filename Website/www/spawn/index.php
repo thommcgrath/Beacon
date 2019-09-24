@@ -7,8 +7,22 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('spawncodes.scss'));
 $mod_id = array_key_exists('mod_id', $_GET) ? $_GET['mod_id'] : null;
 $database = BeaconCommon::Database();
 
-if (is_null($mod_id) && isset($_GET['workshop_id'])) {
-	$mod = BeaconMod::GetByConfirmedWorkshopID($_GET['workshop_id']);
+if (is_null($mod_id) == false) {
+	if (BeaconCommon::IsUUID($mod_id) == false) {
+		header('Location: https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+		http_response_code(302);
+		echo 'caught';
+		exit;
+	}
+} elseif (isset($_GET['workshop_id'])) {
+	$workshop_id = $_GET['workshop_id'];
+	if (is_null(filter_var($workshop_id, FILTER_VALIDATE_INT, ['options' => ['min_range' => -2147483648, 'max_range' => 2147483647], 'flags' => FILTER_NULL_ON_FAILURE]))) {
+		header('Location: https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+		http_response_code(302);
+		exit;
+	}
+	
+	$mod = BeaconMod::GetByConfirmedWorkshopID($workshop_id);
 	if (is_array($mod) && count($mod) == 1) {
 		$mod_id = $mod[0]->ModID();
 	} else {
