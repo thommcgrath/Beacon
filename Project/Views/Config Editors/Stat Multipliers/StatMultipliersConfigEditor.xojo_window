@@ -2890,6 +2890,7 @@ End
 		  Self.SettingUp = True
 		  Dim Multiplier As Double = CDbl(Me.Value)
 		  Self.Config(True).PlayerPerLevelMultiplier(Stat) = Multiplier
+		  Self.Changed = True
 		  Self.SettingUp = False
 		  Self.UpdatePlayerUI(Index)
 		End Sub
@@ -2911,6 +2912,7 @@ End
 		  Dim DesiredBase As Double = CDbl(Me.Value)
 		  Dim Multiplier As Double = DesiredBase / Stat.PlayerBase
 		  Self.Config(True).PlayerBaseMultiplier(Stat) = Multiplier
+		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
@@ -2954,6 +2956,7 @@ End
 	#tag Event
 		Sub MultiplierUpdated(StatIndex As Integer, Value As Double)
 		  Self.Config(True).WildPerLevelMultiplier(Beacon.Stats.WithIndex(StatIndex)) = Value
+		  Self.Changed = True
 		  Self.UpdateCreatureStats(StatIndex)
 		End Sub
 	#tag EndEvent
@@ -2962,6 +2965,7 @@ End
 	#tag Event
 		Sub MultiplierUpdated(StatIndex As Integer, Value As Double)
 		  Self.Config(True).TamedPerLevelMultiplier(Beacon.Stats.WithIndex(StatIndex)) = Value
+		  Self.Changed = True
 		  Self.UpdateCreatureStats(StatIndex)
 		End Sub
 	#tag EndEvent
@@ -2970,6 +2974,7 @@ End
 	#tag Event
 		Sub MultiplierUpdated(StatIndex As Integer, Value As Double)
 		  Self.Config(True).TamedAddMultiplier(Beacon.Stats.WithIndex(StatIndex)) = Value
+		  Self.Changed = True
 		  Self.UpdateCreatureStats(StatIndex)
 		End Sub
 	#tag EndEvent
@@ -2978,6 +2983,7 @@ End
 	#tag Event
 		Sub MultiplierUpdated(StatIndex As Integer, Value As Double)
 		  Self.Config(True).TamedAffinityMultiplier(Beacon.Stats.WithIndex(StatIndex)) = Value
+		  Self.Changed = True
 		  Self.UpdateCreatureStats(StatIndex)
 		End Sub
 	#tag EndEvent
