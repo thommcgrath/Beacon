@@ -1,5 +1,40 @@
 #tag Module
 Protected Module BeaconEncryption
+	#tag Method, Flags = &h21
+		Private Function CRC32(Data As MemoryBlock) As UInt32
+		  If Data = Nil Or Data.Size = 0 Then
+		    Return 0
+		  End If
+		  
+		  Try
+		    Dim crcg, c, t, x,b As UInt32
+		    Dim ch As UInt8
+		    crcg = &hffffffff
+		    c = Data.Size - 1
+		    
+		    For x=0 To c
+		      ch = Data.UInt8Value(x)
+		      
+		      t = (crcg And &hFF) Xor ch
+		      
+		      For b=0 To 7
+		        If( (t And &h1) = &h1) Then
+		          t = BeaconEncryption.ShiftRight(t, 1) Xor &hEDB88320
+		        Else
+		          t = BeaconEncryption.ShiftRight(t, 1)
+		        End If
+		      Next
+		      crcg = BeaconEncryption.ShiftRight(crcg, 8) Xor t
+		    Next
+		    
+		    crcg = crcg Xor &hFFFFFFFF
+		    Return crcg
+		  Catch Err As RuntimeException
+		    Return 0
+		  End Try
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function IsEncrypted(Data As MemoryBlock) As Boolean
 		  Dim Header As BeaconEncryption.SymmetricHeader = BeaconEncryption.SymmetricHeader.FromMemoryBlock(Data)
@@ -97,6 +132,22 @@ Protected Module BeaconEncryption
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function ShiftLeft(Value As UInt64, NumBits As UInt64) As UInt64
+		  // It is insane that I need to implement this method manually.
+		  
+		  Return Value * (2 ^ NumBits)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ShiftRight(Value As UInt64, NumBits As UInt64) As UInt64
+		  // It is insane that I need to implement this method manually.
+		  
+		  Return Value / (2 ^ NumBits)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function SymmetricDecrypt(Key As MemoryBlock, Data As MemoryBlock) As MemoryBlock
 		  If Data = "" Then
@@ -126,7 +177,7 @@ Protected Module BeaconEncryption
 		    Data = Data.Left(Header.Length)
 		  End If
 		  
-		  Dim ComputedChecksum As UInt32 = Beacon.CRC32(Data)
+		  Dim ComputedChecksum As UInt32 = BeaconEncryption.CRC32(Data)
 		  If ComputedChecksum <> Header.Checksum Then
 		    Dim Err As New CryptoException
 		    Err.Reason = "CRC32 checksum failed on decrypted data."

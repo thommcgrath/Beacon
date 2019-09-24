@@ -17,7 +17,7 @@ Private Class SymmetricHeader
 		  Self.mVersion = Version
 		  Self.mVector = Crypto.GenerateRandomBytes(If(Version = 2, 16, 8))
 		  Self.mLength = Payload.Size
-		  Self.mChecksum = Beacon.CRC32(Payload)
+		  Self.mChecksum = BeaconEncryption.CRC32(Payload)
 		End Sub
 	#tag EndMethod
 
