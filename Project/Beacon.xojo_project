@@ -368,6 +368,7 @@ Module=Stats;Modules/Beacon/Stats.xojo_code;&h00000000406747FF;&h0000000055ADDFF
 Folder=Stat Multipliers;Views/Config Editors/Stat Multipliers;&h0000000013098FFF;&h00000000434D97FF;false
 Window=StatMultipliersConfigEditor;Views/Config Editors/Stat Multipliers/StatMultipliersConfigEditor.xojo_window;&h000000007D06FFFF;&h0000000013098FFF;false
 Window=CreatureStatContainer;Views/Config Editors/Stat Multipliers/CreatureStatContainer.xojo_window;&h0000000073C36FFF;&h0000000013098FFF;false
+Class=DayCycle;Modules/BeaconConfigs/DayCycle.xojo_code;&h0000000006DFE7FF;&h0000000068EBAFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=3

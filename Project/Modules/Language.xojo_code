@@ -78,6 +78,8 @@ Protected Module Language
 		    Return "Creature Adjustments"
 		  Case BeaconConfigs.StatMultipliers.ConfigName
 		    Return "Player and Creature Stat Multipliers"
+		  Case BeaconConfigs.DayCycle.ConfigName
+		    Return "Day and Night Cycle"
 		  End Select
 		End Function
 	#tag EndMethod
