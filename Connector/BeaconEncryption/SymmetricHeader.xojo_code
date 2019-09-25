@@ -36,6 +36,22 @@ Private Class SymmetricHeader
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function EncryptedLength() As UInt64
+		  // This is UInt64 because Header.Lenght is UInt32, and we're adding to it, so we need more space
+		  
+		  Dim Factor As Integer
+		  Select Case Self.mVersion
+		  Case 1
+		    Factor = 8
+		  Case 2
+		    Factor = 16
+		  End Select
+		  
+		  Return Ceil(Self.mLength / Factor) * Factor
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function FromMemoryBlock(Source As MemoryBlock) As SymmetricHeader
 		  If Source.Size < 18 Then
 		    // Not enough data

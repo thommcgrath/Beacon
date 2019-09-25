@@ -15,7 +15,7 @@ Inherits TCPSocket
 		    Return
 		  End If
 		  
-		  While True
+		  While Buffer <> Nil
 		    Dim PayloadLen As UInt64 = BeaconEncryption.GetLength(Buffer)
 		    If PayloadLen = 0 Then
 		      Return
@@ -46,7 +46,14 @@ Inherits TCPSocket
 		    Dim ReplyNonce As Integer = Self.mNextNonce
 		    Self.mNextNonce = Self.mNextNonce + 1
 		    
-		    Dim Response As Dictionary = RaiseEvent MessageReceived(Dict)
+		    Dim Response As Dictionary
+		    Try
+		      Response = RaiseEvent MessageReceived(Dict)
+		    Catch Err As RuntimeException
+		      If Not App.HandleException(Err) Then
+		        Quit
+		      End If
+		    End Try
 		    If Response = Nil Then
 		      Response = New Dictionary
 		    End If

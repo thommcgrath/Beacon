@@ -55,6 +55,11 @@ Inherits DaemonApplication
 		  End If
 		  Self.EncryptionKey = Config.Value("Encryption Key")
 		  
+		  If Not Config.HasKey("Port") Then
+		    Config.Value("Port") = 48962
+		  End If
+		  Dim Port As Integer = Config.Value("Port").IntegerValue
+		  
 		  Dim ConfigContents As String = Xojo.GenerateJSON(Config, True)
 		  If ConfigHash <> EncodeHex(ConfigContents) Then
 		    Dim Stream As TextOutputStream = TextOutputStream.Create(Self.ConfigFile)
@@ -68,7 +73,7 @@ Inherits DaemonApplication
 		    Return
 		  End If
 		  
-		  Self.Listen(48962)
+		  Self.Listen(Port)
 		End Sub
 	#tag EndEvent
 
