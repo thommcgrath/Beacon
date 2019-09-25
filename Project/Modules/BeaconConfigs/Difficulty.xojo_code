@@ -15,7 +15,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DifficultyOffset", Self.DifficultyOffset.PrettyText))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DifficultyOffset", "1.0"))
 		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(1)))
 		End Sub
 	#tag EndEvent
@@ -79,12 +79,7 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Dim DifficultyOffset As Double = Min(Self.DifficultyOffset, 1.0)
-			  If DifficultyOffset <= 0 Then
-			    DifficultyOffset = 1
-			  End If
-			  
-			  Return 0.75 + (DifficultyOffset * 1.75)
+			  Return 0.75 + (Self.DifficultyOffset * 1.75)
 			End Get
 		#tag EndGetter
 		BaseArbitraryQuality As Double
@@ -93,7 +88,7 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return 1.0
+			  Return (Self.DifficultyValue - 0.5) / 4.5
 			End Get
 		#tag EndGetter
 		DifficultyOffset As Double

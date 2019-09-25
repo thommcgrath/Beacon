@@ -15,14 +15,18 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Identity
 		  #Pragma Unused Document
 		  
-		  If Dict.Lookup("App Version", 40) < Self.DiscardBeforeVersion Then
-		    App.Log("Discarding loot scale config because saved version " + App.NonReleaseVersion.ToString + " < " + Self.DiscardBeforeVersion.ToString + ".")
-		    Self.mMultiplier = 1.0
-		    Return
-		  End If
-		  
 		  If Dict.HasKey("Multiplier") Then
 		    Self.mMultiplier = Dict.Value("Multiplier")
+		  End If
+		  
+		  If Self.mMultiplier <> 1.0 And Dict.Lookup("App Version", 40) < Self.DiscardBeforeVersion Then
+		    App.Log("Discarding loot scale config because saved version " + App.NonReleaseVersion.ToString + " < " + Self.DiscardBeforeVersion.ToString + ".")
+		    
+		    Dim Notification As New Beacon.UserNotification("Loot Quality Scale of " + Format(Self.mMultiplier, "0%") + " has been reset to default.", Beacon.UserNotification.Severities.Elevated)
+		    Notification.SecondaryMessage = "Since the last time you used this file, Beacon's quality formulas have changed. To prevent unintended quality changes, Beacon has reset your Loot Quality Scale. You are welcome to set it back to " + Format(Self.mMultiplier, "0%") + " if you like, but you may find that value to be too high or low for the new quality values."
+		    LocalData.SharedInstance.SaveNotification(Notification)
+		    
+		    Self.mMultiplier = 1.0
 		  End If
 		End Sub
 	#tag EndEvent
@@ -92,7 +96,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndComputedProperty
 
 
-	#tag Constant, Name = DiscardBeforeVersion, Type = Double, Dynamic = False, Default = \"40", Scope = Private
+	#tag Constant, Name = DiscardBeforeVersion, Type = Double, Dynamic = False, Default = \"10209300", Scope = Private
 	#tag EndConstant
 
 

@@ -149,11 +149,7 @@ Protected Module Tests
 		    Dim QualityExtremeMin As Double = Quality.Value(Source.Multipliers.Min, ExtremeDifficulty)
 		    Dim QualityExtremeMax As Double = Quality.Value(Source.Multipliers.Max, ExtremeDifficulty)
 		    
-		    If QualityStandardMin = QualityHighMin And QualityHighMin = QualityExtremeMin And QualityStandardMax = QualityHighMax And QualityHighMax = QualityExtremeMax Then
-		      System.DebugLog("Qualities are equal regardless of difficulty")
-		    Else
-		      System.DebugLog("Qualities vary with difficulty")
-		    End If
+		    Assert(QualityExtremeMin > QualityHighMin And QualityHighMin > QualityStandardMin And QualityExtremeMax > QualityHighMax And QualityHighMax > QualityStandardMax, "Qualities are equal regardless of difficulty")
 		    
 		    Dim StandardQualityMin As Beacon.Quality = Beacon.Qualities.ForValue(QualityStandardMin, Source.Multipliers.Min, StandardDifficulty)
 		    Dim StandardQualityMax As Beacon.Quality = Beacon.Qualities.ForValue(QualityStandardMax, Source.Multipliers.Max, StandardDifficulty)
@@ -231,5 +227,40 @@ Protected Module Tests
 	#tag EndMethod
 
 
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+	#tag EndViewBehavior
 End Module
 #tag EndModule
