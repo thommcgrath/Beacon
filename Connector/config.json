@@ -1,3 +1,9 @@
 {
-    "Encryption Key": "1da467abc289bc9d608b90c684460797"
+    "Encryption Key": "1da467abc289bc9d608b90c684460797",
+	"Port": 48962,
+	"Start Command": "say 'frog blast the vent core'",
+	"Stop Command": "say 'here we go again'",
+	"Status Command": "say 'no'",
+	"Config Folder": "~/Scratch/Connector Test/WindowsServer",
+	"Logs Folder": "~/Scratch/Connector Test/Logs"
 }
