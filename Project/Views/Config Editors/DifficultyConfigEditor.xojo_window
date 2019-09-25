@@ -479,7 +479,7 @@ End
 		Private Sub FillReferenceFields(Difficulty As BeaconConfigs.Difficulty)
 		  Self.LootScaleField.Text = Str(Difficulty.DifficultyValue, "0%")
 		  Self.DifficultyValueField.Text = Difficulty.DifficultyValue.PrettyText
-		  Self.DifficultyOffsetField.Text = Difficulty.DifficultyOffset.PrettyText
+		  Self.DifficultyOffsetField.Text = "1.0"
 		  Self.OverrideOfficialDifficultyField.Text = Difficulty.OverrideOfficialDifficulty.PrettyText
 		End Sub
 	#tag EndMethod
