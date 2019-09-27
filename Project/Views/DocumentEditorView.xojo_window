@@ -54,7 +54,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          AcceptTabs      =   False
          AutoDeactivate  =   True
          Backdrop        =   0
-         Caption         =   "Select A Config To Begin"
+         Caption         =   "There was an error loading the editor"
          DoubleBuffer    =   False
          Enabled         =   True
          Height          =   487
@@ -198,7 +198,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Width           =   300
    End
    Begin Timer AutosaveTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -1065,6 +1064,8 @@ End
 		        NewPanel = New DinoAdjustmentsConfigEditor(Self.mController)
 		      Case BeaconConfigs.StatMultipliers.ConfigName
 		        NewPanel = New StatMultipliersConfigEditor(Self.mController)
+		      Case BeaconConfigs.DayCycle.ConfigName
+		        NewPanel = New DayCycleConfigEditor(Self.mController)
 		      End Select
 		      If NewPanel <> Nil Then
 		        Self.Panels.Value(Tag.StringValue) = NewPanel
