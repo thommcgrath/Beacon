@@ -15,7 +15,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
-		  Values.Append(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DifficultyOffset", "1.0"))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DifficultyOffset", "1.0"))
 		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(1)))
 		End Sub
 	#tag EndEvent
