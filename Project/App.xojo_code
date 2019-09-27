@@ -702,7 +702,7 @@ Implements NotificationKit.Receiver
 		      Self.mQueuedLogMessages.AddRow(DetailedMessage)
 		      
 		      Dim LogFile As FolderItem = Self.ApplicationSupport.Child("Events.log")
-		      Dim Stream As TextOutputStream = TextOutputStream.AddRow(LogFile)
+		      Dim Stream As TextOutputStream = TextOutputStream.Open(LogFile)
 		      While Self.mQueuedLogMessages.LastRowIndex > -1
 		        Stream.WriteLine(Self.mQueuedLogMessages(0))
 		        Self.mQueuedLogMessages.Remove(0)
