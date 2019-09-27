@@ -83,7 +83,7 @@ Begin ConfigEditor LootScaleConfigEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Maximum         =   200
+      Maximum         =   500
       Minimum         =   10
       PageStep        =   20
       Scope           =   2
