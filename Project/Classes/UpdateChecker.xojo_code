@@ -40,6 +40,15 @@ Protected Class UpdateChecker
 		    Params.Value("platform") = "mac"
 		  #elseif TargetWin32
 		    Params.Value("platform") = "win"
+		  #elseif TargetLinux
+		    Params.Value("platform") = "lin"
+		    
+		    Try
+		      Dim DebianFile As New FolderItem("/etc/debian_version", FolderItem.PathModes.Native)
+		      Params.Value("installer_format") = If(DebianFile.Exists, "deb", "rpm")
+		    Catch Err As RuntimeException
+		      Params.Value("installer_format") = "rpm"
+		    End Try
 		  #endif
 		  
 		  Self.mSocket.Send("GET", Beacon.WebURL("/updates.php?" + SimpleHTTP.BuildFormData(Params)))
@@ -141,6 +150,12 @@ Protected Class UpdateChecker
 		      Location = Dict.Value("mac")
 		    #elseif TargetWin32
 		      Location = Dict.Value("win")
+		    #elseif TargetLinux
+		      If Dict.HasKey("lin") Then
+		        Location = Dict.Value("lin")
+		      Else
+		        RaiseEvent NoUpdate()
+		      End If
 		    #endif
 		    Dim PackageURL As String = Location.Value("url")
 		    Dim Signature As String = Location.Value("signature")
