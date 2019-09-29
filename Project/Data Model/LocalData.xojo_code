@@ -997,7 +997,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If ShouldTruncate Then
 		      Self.SQLExecute("DELETE FROM mods WHERE mod_id != ?1;", Self.UserModID)
 		      Self.SQLExecute("DELETE FROM loot_sources WHERE mod_id != ?1;", Self.UserModID)
+		      Self.SQLExecute("DELETE FROM searchable_tags WHERE source_table = 'engrams' AND object_id IN (SELECT object_id FROM engrams WHERE mod_id != ?1);", Self.UserModID)
 		      Self.SQLExecute("DELETE FROM engrams WHERE mod_id != ?1;", Self.UserModID)
+		      Self.SQLExecute("DELETE FROM searchable_tags WHERE source_table = 'creatures' AND object_id IN (SELECT object_id FROM creatures WHERE mod_id != ?1);", Self.UserModID)
+		      Self.SQLExecute("DELETE FROM creatures WHERE mod_id != ?1;", Self.UserModID)
 		      Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id != ?1;", Self.UserModID)
 		      Self.SQLExecute("DELETE FROM official_presets;")
 		    End If
