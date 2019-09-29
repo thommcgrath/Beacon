@@ -975,6 +975,13 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Opening()
+		  Self.SwapButtons()
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h21
 		Private Sub Constructor(ConfiguredClasses() As String, DisabledClasses() As String, Mods As Beacon.StringList)
 		  Self.ConfiguredClasses = ConfiguredClasses
