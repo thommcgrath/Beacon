@@ -5,6 +5,12 @@ Inherits TCPSocket
 		Sub Connected()
 		  Self.mConnectedAddress = Self.RemoteAddress
 		  App.Log("Received connection from " + Self.mConnectedAddress)
+		  
+		  Self.mConnectionKey = Crypto.GenerateRandomBytes(32)
+		  Dim Dict As New Dictionary
+		  Dict.Value("Key") = EncodeHex(Self.mConnectionKey).Lowercase
+		  
+		  Self.Write(BeaconEncryption.SymmetricEncrypt(Self.mPreSharedKey, Xojo.GenerateJSON(Dict, False)))
 		End Sub
 	#tag EndEvent
 
@@ -26,7 +32,7 @@ Inherits TCPSocket
 		    
 		    Dim Decrypted As MemoryBlock
 		    Try
-		      Decrypted = BeaconEncryption.SymmetricDecrypt(Self.EncryptionKey, Payload)
+		      Decrypted = BeaconEncryption.SymmetricDecrypt(Self.mConnectionKey, Payload)
 		    Catch Err As RuntimeException
 		      Continue
 		    End Try
@@ -59,7 +65,7 @@ Inherits TCPSocket
 		    End If
 		    Response.Value("Nonce") = ReplyNonce
 		    
-		    Self.Write(BeaconEncryption.SymmetricEncrypt(Self.EncryptionKey, Xojo.GenerateJSON(Response, False)))
+		    Self.Write(BeaconEncryption.SymmetricEncrypt(Self.mConnectionKey, Xojo.GenerateJSON(Response, False)))
 		  Wend
 		End Sub
 	#tag EndEvent
@@ -70,7 +76,6 @@ Inherits TCPSocket
 		  
 		  App.Log("Lost connection with " + Self.mConnectedAddress)
 		  Self.Reset()
-		  Break
 		End Sub
 	#tag EndEvent
 
@@ -84,7 +89,7 @@ Inherits TCPSocket
 
 	#tag Method, Flags = &h0
 		Sub Constructor(EncryptionKey As String)
-		  Self.EncryptionKey = EncryptionKey
+		  Self.mPreSharedKey = EncryptionKey
 		  Self.Constructor
 		End Sub
 	#tag EndMethod
@@ -93,6 +98,7 @@ Inherits TCPSocket
 		Private Sub Reset()
 		  Self.mNextNonce = 1
 		  Self.mConnectedAddress = ""
+		  Self.mConnectionKey = ""
 		  Self.Purge
 		End Sub
 	#tag EndMethod
@@ -104,15 +110,19 @@ Inherits TCPSocket
 
 
 	#tag Property, Flags = &h21
-		Private EncryptionKey As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mConnectedAddress As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mConnectionKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mNextNonce As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPreSharedKey As String
 	#tag EndProperty
 
 
@@ -154,14 +164,6 @@ Inherits TCPSocket
 			Visible=true
 			Group="Behavior"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="EncryptionKey"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

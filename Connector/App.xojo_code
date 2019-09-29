@@ -51,9 +51,9 @@ Inherits DaemonApplication
 		  End If
 		  
 		  If Not Config.HasKey("Encryption Key") Then
-		    Config.Value("Encryption Key") = EncodeHex(Crypto.GenerateRandomBytes(16)).Lowercase
+		    Config.Value("Encryption Key") = EncodeHex(Crypto.GenerateRandomBytes(32)).Lowercase
 		  End If
-		  Self.EncryptionKey = Config.Value("Encryption Key")
+		  Self.EncryptionKey = DecodeHex(Config.Value("Encryption Key"))
 		  
 		  If Not Config.HasKey("Port") Then
 		    Config.Value("Port") = 48962
