@@ -1,6 +1,17 @@
 #tag Module
 Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
+		Sub Append(Extends Target As MemoryBlock, NewData As MemoryBlock)
+		  If NewData = Nil Then
+		    Return
+		  End If
+		  
+		  Target.Size = Target.Size + NewData.Size
+		  Target.StringValue(Target.Size - NewData.Size, NewData.Size) = NewData.StringValue(0, NewData.Size)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Clone(Extends Source As MemoryBlock) As MemoryBlock
 		  Dim Replica As New MemoryBlock(Source.Size)
 		  Replica.LittleEndian = Source.LittleEndian

@@ -3,6 +3,8 @@ Protected Class ControlSocket
 Inherits TCPSocket
 	#tag Event
 		Sub Connected()
+		  Self.Buffer = New MemoryBlock(0)
+		  
 		  Self.mConnectedAddress = Self.RemoteAddress
 		  App.Log("Received connection from " + Self.mConnectedAddress)
 		  
@@ -16,32 +18,41 @@ Inherits TCPSocket
 
 	#tag Event
 		Sub DataReceived()
-		  Dim Buffer As MemoryBlock = Self.Lookahead
-		  If Buffer = Nil Or Buffer.Size = 0 Then
-		    Return
-		  End If
+		  Self.Buffer.Append(Self.ReadAll)
 		  
-		  While Buffer <> Nil
-		    Dim PayloadLen As UInt64 = BeaconEncryption.GetLength(Buffer)
+		  While Self.Buffer <> Nil And Self.Buffer.Size > 0
+		    Dim PayloadLen As UInt64 = BeaconEncryption.GetLength(Self.Buffer)
 		    If PayloadLen = 0 Then
 		      Return
 		    End If
 		    
-		    Dim Payload As MemoryBlock = Self.Read(PayloadLen, Nil)
-		    Buffer = Buffer.MidB(PayloadLen)
+		    Dim Payload As MemoryBlock
+		    If Self.Buffer.Size < PayloadLen Then
+		      Return
+		    ElseIf Self.Buffer.Size > PayloadLen Then
+		      Payload = Self.Buffer.Left(PayloadLen)
+		      Self.Buffer = Self.Buffer.Middle(0, PayloadLen)
+		    Else
+		      Payload = Self.Buffer
+		      Self.Buffer = New MemoryBlock(0)
+		    End If
 		    
 		    Dim Decrypted As MemoryBlock
 		    Try
 		      Decrypted = BeaconEncryption.SymmetricDecrypt(Self.mConnectionKey, Payload)
 		    Catch Err As RuntimeException
-		      Continue
+		      App.Log("Incorrect encryption key")
+		      Self.Disconnect()
+		      Return
 		    End Try
 		    
 		    Dim Dict As Dictionary
 		    Try
 		      Dict = Xojo.ParseJSON(Decrypted)
 		    Catch Err As RuntimeException
-		      Continue
+		      App.Log("Bad JSON payload")
+		      Self.Disconnect()
+		      Return
 		    End Try
 		    
 		    If Dict.HasKey("Nonce") = False Or Dict.Value("Nonce").IntegerValue <> Self.mNextNonce Then
@@ -64,6 +75,10 @@ Inherits TCPSocket
 		      Response = New Dictionary
 		    End If
 		    Response.Value("Nonce") = ReplyNonce
+		    
+		    If Dict.HasKey("Command") Then
+		      Response.Value("Command") = Dict.Value("Command")
+		    End If
 		    
 		    Self.Write(BeaconEncryption.SymmetricEncrypt(Self.mConnectionKey, Xojo.GenerateJSON(Response, False)))
 		  Wend
@@ -108,6 +123,10 @@ Inherits TCPSocket
 		Event MessageReceived(Message As Dictionary) As Dictionary
 	#tag EndHook
 
+
+	#tag Property, Flags = &h21
+		Private Buffer As MemoryBlock
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mConnectedAddress As String

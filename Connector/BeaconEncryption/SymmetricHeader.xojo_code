@@ -37,7 +37,7 @@ Private Class SymmetricHeader
 
 	#tag Method, Flags = &h0
 		Function EncryptedLength() As UInt64
-		  // This is UInt64 because Header.Lenght is UInt32, and we're adding to it, so we need more space
+		  // This is UInt64 because Header.Length is UInt32, and we're adding to it, so we need more space
 		  
 		  Dim Factor As Integer
 		  Select Case Self.mVersion
@@ -47,7 +47,11 @@ Private Class SymmetricHeader
 		    Factor = 16
 		  End Select
 		  
-		  Return Ceil(Self.mLength / Factor) * Factor
+		  Dim Blocks As Integer = Ceil(Self.mLength / Factor)
+		  If Self.mLength Mod Factor = 0 Then
+		    Blocks = Blocks + 1
+		  End If
+		  Return Blocks * Factor
 		End Function
 	#tag EndMethod
 

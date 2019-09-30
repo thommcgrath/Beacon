@@ -53,7 +53,7 @@ Inherits DaemonApplication
 		  If Not Config.HasKey("Encryption Key") Then
 		    Config.Value("Encryption Key") = EncodeHex(Crypto.GenerateRandomBytes(32)).Lowercase
 		  End If
-		  Self.EncryptionKey = DecodeHex(Config.Value("Encryption Key"))
+		  Self.EncryptionKey = Self.PrepareKey(Config.Value("Encryption Key"))
 		  
 		  If Not Config.HasKey("Port") Then
 		    Config.Value("Port") = 48962
@@ -161,6 +161,21 @@ Inherits DaemonApplication
 		  Dim Sock As New ControlSocket(Self.EncryptionKey)
 		  AddHandler Sock.MessageReceived, WeakAddressOf Socket_MessageReceived
 		  Return Sock
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function PrepareKey(Value As String) As String
+		  Dim Reg As New RegEx
+		  Reg.SearchPattern = "^[a-f0-9]{64}$"
+		  
+		  If Reg.Search(Value.Lowercase) <> Nil Then
+		    // It's a hex string
+		    Return DecodeHex(Value)
+		  End If
+		  
+		  // It's something else, so let's prepare a key
+		  Return Crypto.SHA256(Value)
 		End Function
 	#tag EndMethod
 
