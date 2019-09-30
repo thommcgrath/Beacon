@@ -32,7 +32,8 @@ Protected Module Tests
 		    Dim QualityExtremeMin As Double = Quality.Value(Source.Multipliers.Min, ExtremeDifficulty)
 		    Dim QualityExtremeMax As Double = Quality.Value(Source.Multipliers.Max, ExtremeDifficulty)
 		    
-		    Assert(QualityExtremeMin > QualityHighMin And QualityHighMin > QualityStandardMin And QualityExtremeMax > QualityHighMax And QualityHighMax > QualityStandardMax, "Qualities are equal regardless of difficulty")
+		    // Compare backwards because we expect lower values for higher difficulties
+		    Assert(QualityExtremeMin < QualityHighMin And QualityHighMin < QualityStandardMin And QualityExtremeMax < QualityHighMax And QualityHighMax < QualityStandardMax, "Qualities are equal regardless of difficulty")
 		    
 		    Dim StandardQualityMin As Beacon.Quality = Beacon.Qualities.ForValue(QualityStandardMin, Source.Multipliers.Min, StandardDifficulty)
 		    Dim StandardQualityMax As Beacon.Quality = Beacon.Qualities.ForValue(QualityStandardMax, Source.Multipliers.Max, StandardDifficulty)
