@@ -10,7 +10,7 @@
 					AppliesTo = 1
 					Destination = 0
 					Subdirectory = 
-					FolderItem = Li4vLi4vLi4vLi4vLi4vLi4vLi4vLmZpbGUvaWQ9NjU3MTM2Ny40NDk2ODk0NQ==
+					FolderItem = Li4vLi4vLi4vLi4vLi4vLi4vLi4vLmZpbGUvaWQ9NjU3MTM2Ny40NTI0MDU2NQ==
 				End
 				Begin IDEScriptBuildStep Sign , AppliesTo = 0
 					Dim App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + """"
