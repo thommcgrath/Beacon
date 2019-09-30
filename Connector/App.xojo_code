@@ -192,9 +192,15 @@ Inherits DaemonApplication
 		    Dim Contents As String = Stream.ReadAll(Nil)
 		    Stream.Close
 		    
+		    Dim Hash As String = EncodeHex(Crypto.SHA512(Contents)).Lowercase
+		    
+		    Dim Compressor As New _GZipString
+		    Contents = Compressor.Compress(Contents, _GZipString.BestCompression)
+		    
 		    Dim Response As New Dictionary
 		    Response.Value("Contents") = EncodeBase64(Contents, 0)
-		    Response.Value("SHA512") = EncodeHex(Crypto.SHA512(Contents)).Lowercase
+		    Response.Value("SHA512") = Hash
+		    Response.Value("Compressed") = True
 		    Return Response
 		  Catch Err As RuntimeException
 		    Dim Response As New Dictionary
@@ -243,7 +249,7 @@ Inherits DaemonApplication
 		  Case "Put Game.ini"
 		    // Updates Game.ini
 		    Dim Response As New Dictionary
-		    Response.Value("Success") = Self.WriteFile(Self.ConfigFolder.Child("Game.ini"), Message.Value("Contents"), Message.Value("SHA512"))
+		    Response.Value("Success") = Self.WriteFile(Self.ConfigFolder.Child("Game.ini"), Message.Value("Contents"), Message.Value("SHA512"), Message.Value("Compressed"))
 		    Return Response
 		  Case "Get GameUserSettings.ini"
 		    // Replies with GameUserSettings.ini
@@ -251,7 +257,7 @@ Inherits DaemonApplication
 		  Case "Put GameUserSettings.ini"
 		    // Updates GameUserSettings.ini
 		    Dim Response As New Dictionary
-		    Response.Value("Success") = Self.WriteFile(Self.ConfigFolder.Child("GameUserSettings.ini"), Message.Value("Contents"), Message.Value("SHA512"))
+		    Response.Value("Success") = Self.WriteFile(Self.ConfigFolder.Child("GameUserSettings.ini"), Message.Value("Contents"), Message.Value("SHA512"), Message.Value("Compressed"))
 		    Return Response
 		  Case "Log"
 		    // Gets the most recent log file
@@ -276,13 +282,19 @@ Inherits DaemonApplication
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function WriteFile(File As Folderitem, Contents As String, ExpectedHash As String) As Boolean
+		Private Function WriteFile(File As Folderitem, Contents As String, ExpectedHash As String, Compressed As Boolean) As Boolean
 		  If File = Nil Then
 		    Return False
 		  End If
 		  
 		  Try
 		    Contents = DecodeBase64(Contents)
+		    
+		    If Compressed Then
+		      Dim Compressor As New _GZipString
+		      Contents = Compressor.Decompress(Contents)
+		    End If
+		    
 		    Dim ComputedHash As String = EncodeHex(Crypto.SHA512(Contents))
 		    If ComputedHash <> ExpectedHash Then
 		      Return False
