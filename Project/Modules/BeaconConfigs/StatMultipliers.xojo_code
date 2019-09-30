@@ -55,13 +55,13 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Identity
 		  #Pragma Unused Document
 		  
-		  If Dict.HasKey("PlayerStats") Then
+		  If Dict.HasKey("PlayerStats") And Dict.Value("PlayerStats") IsA Dictionary Then
 		    Self.PlayerStats = Dict.Value("PlayerStats")
 		  End If
-		  If Dict.HasKey("TamedStats") Then
+		  If Dict.HasKey("TamedStats") And Dict.Value("TamedStats") IsA Dictionary Then
 		    Self.TamedStats = Dict.Value("TamedStats")
 		  End If
-		  If Dict.HasKey("WildStats") Then
+		  If Dict.HasKey("WildStats") And Dict.Value("WildStats") IsA Dictionary Then
 		    Self.WildStats = Dict.Value("WildStats")
 		  End If
 		End Sub
