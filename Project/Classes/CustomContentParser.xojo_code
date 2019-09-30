@@ -57,6 +57,9 @@ Protected Class CustomContentParser
 		  End If
 		  
 		  Dim Key As String = Line.Left(KeyPos).Trim
+		  If Key.IndexOf("[") > -1 And Key.EndsWith("]") Then
+		    Key = Key.Left(Key.IndexOf("["))
+		  End If
 		  If Self.mSkippedKeys.IndexOf(Key) > -1 Then
 		    Return Nil
 		  End If
