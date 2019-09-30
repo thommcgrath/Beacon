@@ -141,8 +141,6 @@ Implements NotificationKit.Receiver
 		    Self.HandleCommandLineData(System.CommandLine, True)
 		  #EndIf
 		  
-		  BeaconUI.RegisterSheetPositionHandler
-		  
 		  Self.AllowAutoQuit = True
 		  
 		  Tests.RunTests()

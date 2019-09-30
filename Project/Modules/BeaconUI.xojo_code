@@ -259,43 +259,6 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function Handler_WillPositionSheet(id as Ptr, s as Ptr, WindowHandle As Integer, SheetHandle As Integer, DefaultPosition As NSRect) As NSRect
-		  #Pragma Unused id
-		  #Pragma Unused s
-		  
-		  Dim Bound As Integer = App.WindowCount - 1
-		  Dim Sheet As Window
-		  
-		  For I As Integer = 0 To Bound
-		    If App.Window(I).Handle = SheetHandle Then
-		      Sheet = App.Window(I)
-		      Exit For I
-		    End If
-		  Next
-		  
-		  Dim InitialPosition As New Xojo.Rect(DefaultPosition.Left, DefaultPosition.Top, DefaultPosition.Width, DefaultPosition.Height)
-		  
-		  For I As Integer = 0 To Bound
-		    If App.Window(I) IsA BeaconUI.SheetPositionHandler And App.Window(I).Handle = WindowHandle Then
-		      Dim NewPosition As Xojo.Rect = BeaconUI.SheetPositionHandler(App.Window(I)).PositionSheet(Sheet, InitialPosition)
-		      If NewPosition = Nil Then
-		        Return DefaultPosition
-		      Else
-		        Dim ReturnRect As NSRect
-		        ReturnRect.Left = InitialPosition.Left
-		        ReturnRect.Top = InitialPosition.Top
-		        ReturnRect.Width = InitialPosition.Width
-		        ReturnRect.Height = InitialPosition.Height
-		        Return ReturnRect
-		      End If
-		    End If
-		  Next
-		  
-		  Return DefaultPosition
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Function IconWithColor(Icon As Picture, FillColor As Color, Overlay As Picture = Nil) As Picture
 		  Dim Width As Integer = Icon.Width
@@ -367,24 +330,6 @@ Protected Module BeaconUI
 		  Pic.Graphics.DrawPicture(Source, 0, 0, Width, Height, Left, Top, Width, Height)
 		  Return Pic
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub RegisterSheetPositionHandler()
-		  #if TargetCocoa
-		    If DelegateClass = Nil Then
-		      Declare Function NSSelectorFromString Lib "Cocoa" (SelectorName As CFStringRef) As Ptr
-		      Declare Function NSClassFromString Lib "Cocoa" (ClassName As CFStringRef) As Ptr
-		      Declare Function class_addMethod Lib "Cocoa" (Ref As Ptr, Name As Ptr, Imp As Ptr, Types As CString) As Boolean
-		      
-		      DelegateClass = NSClassFromString("XOJWindowController")
-		      If Not class_addMethod(DelegateClass, NSSelectorFromString("window:willPositionSheet:usingRect:"), AddressOf Handler_WillPositionSheet, "{NSRect=ffff}@:@@{NSRect=ffff}") Then
-		        Break
-		        Return
-		      End If
-		    End If
-		  #endif
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -486,10 +431,6 @@ Protected Module BeaconUI
 
 
 	#tag Property, Flags = &h21
-		Private DelegateClass As Ptr
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mColorProfile As BeaconUI.ColorProfile
 	#tag EndProperty
 
@@ -513,14 +454,6 @@ Protected Module BeaconUI
 	#tag Constant, Name = ToolbarHasBackground, Type = Boolean, Dynamic = False, Default = \"True", Scope = Protected
 		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"False"
 	#tag EndConstant
-
-
-	#tag Structure, Name = NSRect, Flags = &h21
-		Left As CGFloat
-		  Top As CGFloat
-		  Width As CGFloat
-		Height As CGFloat
-	#tag EndStructure
 
 
 	#tag ViewBehavior
