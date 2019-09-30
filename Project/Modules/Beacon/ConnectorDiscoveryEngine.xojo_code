@@ -28,9 +28,9 @@ Implements Beacon.DiscoveryEngine
 		Sub Constructor(Profile As Beacon.ConnectorServerProfile)
 		  Self.mProfile = Profile
 		  
-		  Self.mTasks.Append(WeakAddressOf TaskDownloadLogFile)
-		  Self.mTasks.Append(WeakAddressOf TaskDownloadGameUserSettingsIni)
-		  Self.mTasks.Append(WeakAddressOf TaskDownloadGameIni)
+		  Self.mTasks.AddRow(WeakAddressOf TaskDownloadLogFile)
+		  Self.mTasks.AddRow(WeakAddressOf TaskDownloadGameUserSettingsIni)
+		  Self.mTasks.AddRow(WeakAddressOf TaskDownloadGameIni)
 		End Sub
 	#tag EndMethod
 
@@ -88,7 +88,8 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub mSocket_Error(Sender As Beacon.ConnectorClientSocket, Err As RuntimeException)
-		  // This is not correct, as this event fires on planned disconnect
+		  #Pragma Unused Sender
+		  #Pragma Unused Err
 		  
 		  Self.mErrored = True
 		  Self.mFinished = True
@@ -98,6 +99,8 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub mSocket_MessageReceived(Sender As Beacon.ConnectorClientSocket, Message As Dictionary)
+		  #Pragma Unused Sender
+		  
 		  If Not Message.HasKey("Command") Then
 		    Return
 		  End If
@@ -202,19 +205,19 @@ Implements Beacon.DiscoveryEngine
 		    End If
 		    
 		    Dim StartupParams() As String = Params(0).Split("?")
-		    Params.Remove(0)
+		    Params.RemoveRowAt(0)
 		    
 		    Self.mMap = Beacon.Maps.MaskForIdentifier(StartupParams(0))
-		    StartupParams.Remove(0)
+		    StartupParams.RemoveRowAt(0)
 		    
-		    StartupParams.Remove(0) // The Listen statement
+		    StartupParams.RemoveRowAt(0) // The Listen statement
 		    
 		    Dim Merged() As String
 		    For Each Param As String In StartupParams
-		      Merged.Append(Param)
+		      Merged.AddRow(Param)
 		    Next
 		    For Each Param As String In Params
-		      Merged.Append(Param)
+		      Merged.AddRow(Param)
 		    Next
 		    Params.ResizeTo(-1)
 		    StartupParams.ResizeTo(-1)
@@ -264,7 +267,7 @@ Implements Beacon.DiscoveryEngine
 		  End If
 		  
 		  Dim Task As DiscoveryTask = Self.mTasks(0)
-		  Self.mTasks.Remove(0)
+		  Self.mTasks.RemoveRowAt(0)
 		  
 		  Task.Invoke()
 		End Sub

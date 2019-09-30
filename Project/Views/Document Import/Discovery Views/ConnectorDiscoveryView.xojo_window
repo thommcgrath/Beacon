@@ -570,7 +570,7 @@ End
 		  Dim Profile As New Beacon.ConnectorServerProfile
 		  Profile.Address = Self.AddressField.Value
 		  Profile.Port = CDbl(Self.PortField.Value)
-		  Profile.PreSharedKey = Self.KeyField.Text
+		  Profile.PreSharedKey = Self.KeyField.Value
 		  Self.Profile = Profile
 		  
 		  Self.HelpLabel.Visible = False
