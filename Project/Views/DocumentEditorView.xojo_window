@@ -427,6 +427,16 @@ End
 		      AutosaveFile.Remove
 		    Catch Err As IOException
 		      App.Log("Autosave " + AutosaveFile.NativePath + " did not delete: " + Err.Message + " (code: " + Err.ErrorNumber.ToString + ")")
+		      Try
+		        Dim Destination As FolderItem = SpecialFolder.Temporary.Child("Beacon Autosave")
+		        If Not Destination.Exists Then
+		          Destination.CreateAsFolder
+		        End If
+		        Destination = Destination.Child(v4UUID.Create + ".beacon")
+		        AutosaveFile.MoveFileTo(Destination)
+		      Catch DeeperError As RuntimeException
+		        App.Log("And unable to move the file to system temp for cleanup later: " + DeeperError.Message + " (code: " + DeeperError.ErrorNumber.ToString + ")")
+		      End Try
 		    End Try
 		    Self.mAutosaveFile = Nil
 		  End If
