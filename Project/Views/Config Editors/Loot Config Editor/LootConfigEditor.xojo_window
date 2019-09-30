@@ -911,7 +911,7 @@ End
 		    Dim Dicts() As Dictionary
 		    If Info.FullName = "Dictionary" Then
 		      Dicts.AddRow(Parsed)
-		    ElseIf Info.FullName = "Auto()" Then
+		    ElseIf Info.FullName = "Object()" Then
 		      Dim Values() As Variant = Parsed
 		      For Each Dict As Dictionary In Values
 		        Dicts.AddRow(Dict)

@@ -97,7 +97,7 @@ Inherits Beacon.ConfigGroup
 		  Dim Values As Variant = ParsedData.Value("ConfigOverrideItemCraftingCosts")
 		  Dim ValuesInfo As Introspection.TypeInfo = Introspection.GetType(Values)
 		  Dim Overrides() As Variant
-		  If ValuesInfo.FullName = "Auto()" Then
+		  If ValuesInfo.FullName = "Object()" Then
 		    Overrides = Values
 		  ElseIf ValuesInfo.FullName = "Dictionary" Then
 		    Overrides.AddRow(Values)

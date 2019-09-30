@@ -88,7 +88,7 @@ Inherits Beacon.ConfigGroup
 		    Select Case Info.FullName
 		    Case "Dictionary"
 		      Dicts.AddRow(AutoValue)
-		    Case "Auto()"
+		    Case "Object()"
 		      Dim ArrayValue() As Variant = AutoValue
 		      For Each Dict As Dictionary In ArrayValue
 		        Dicts.AddRow(Dict)

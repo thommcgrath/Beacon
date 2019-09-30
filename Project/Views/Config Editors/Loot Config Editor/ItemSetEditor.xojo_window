@@ -522,7 +522,7 @@ End
 		      Self.mSet.Append(Entry)
 		      Modified = True
 		    End If
-		  ElseIf Info.FullName = "Auto()" Then
+		  ElseIf Info.FullName = "Object()" Then
 		    // Multiple items
 		    Dim Dicts() As Variant = Parsed
 		    For Each Dict As Dictionary In Dicts
