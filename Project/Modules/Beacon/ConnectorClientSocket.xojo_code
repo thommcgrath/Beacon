@@ -36,7 +36,12 @@ Inherits TCPSocket
 		    Try
 		      Decrypted = BeaconEncryption.SymmetricDecrypt(Key, Payload)
 		    Catch Err As RuntimeException
+		      Err.ErrorNumber = Self.IncorrectEncryptionKeyError
 		      Err.Message = "Incorrect encryption key"
+		      If Self.mTimeoutKey <> "" Then
+		        CallLater.Cancel(Self.mTimeoutKey)
+		        Self.mTimeoutKey = ""
+		      End If
 		      RaiseEvent Error(Err)
 		      Return
 		    End Try
@@ -45,12 +50,20 @@ Inherits TCPSocket
 		    Try
 		      Dict = Xojo.ParseJSON(Decrypted)
 		    Catch Err As RuntimeException
+		      If Self.mTimeoutKey <> "" Then
+		        CallLater.Cancel(Self.mTimeoutKey)
+		        Self.mTimeoutKey = ""
+		      End If
 		      RaiseEvent Error(Err)
 		      Return
 		    End Try
 		    
 		    If Self.ConnectionKey = "" Then
 		      Self.ConnectionKey = DecodeHex(Dict.Value("Key"))
+		      If Self.mTimeoutKey <> "" Then
+		        CallLater.Cancel(Self.mTimeoutKey)
+		        Self.mTimeoutKey = ""
+		      End If
 		      RaiseEvent Connected()
 		    Else
 		      If Dict.HasKey("Nonce") = False Or Dict.Value("Nonce").IntegerValue <> Self.NextInboundNonce Then
@@ -72,6 +85,17 @@ Inherits TCPSocket
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0
+		Sub Close()
+		  If Self.mTimeoutKey <> "" Then
+		    CallLater.Cancel(Self.mTimeoutKey)
+		    Self.mTimeoutKey = ""
+		  End If
+		  Super.Close()
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Connect()
 		  Super.Connect()
@@ -82,6 +106,27 @@ Inherits TCPSocket
 		Sub Connect(PreSharedKey As String)
 		  Self.PreSharedKey = Self.PrepareKey(PreSharedKey)
 		  Self.Connect()
+		  Self.mTimeoutKey = CallLater.Schedule(Self.TimeoutSeconds * 1000, WeakAddressOf TimeoutElapsed)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  If Self.mTimeoutKey <> "" Then
+		    CallLater.Cancel(Self.mTimeoutKey)
+		    Self.mTimeoutKey = ""
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Disconnect()
+		  If Self.mTimeoutKey <> "" Then
+		    CallLater.Cancel(Self.mTimeoutKey)
+		    Self.mTimeoutKey = ""
+		  End If
+		  Super.Disconnect()
+		  
 		End Sub
 	#tag EndMethod
 
@@ -98,6 +143,19 @@ Inherits TCPSocket
 		  // It's something else, so let's prepare a key
 		  Return Crypto.SHA256(Value)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TimeoutElapsed()
+		  Self.mTimeoutKey = ""
+		  
+		  Dim Err As New RuntimeException
+		  Err.ErrorNumber = Self.TimeoutError
+		  Err.Message = "A connection was not established after " + Self.TimeoutSeconds.ToString + " seconds."
+		  RaiseEvent Error(Err)
+		  
+		  Self.Close()
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -146,6 +204,10 @@ Inherits TCPSocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mTimeoutKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private NextInboundNonce As Integer
 	#tag EndProperty
 
@@ -156,6 +218,16 @@ Inherits TCPSocket
 	#tag Property, Flags = &h21
 		Private PreSharedKey As String
 	#tag EndProperty
+
+
+	#tag Constant, Name = IncorrectEncryptionKeyError, Type = Double, Dynamic = False, Default = \"2850", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = TimeoutError, Type = Double, Dynamic = False, Default = \"6449", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = TimeoutSeconds, Type = Double, Dynamic = False, Default = \"60", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior

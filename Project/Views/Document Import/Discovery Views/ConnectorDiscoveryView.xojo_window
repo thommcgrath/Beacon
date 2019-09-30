@@ -615,15 +615,26 @@ End
 		  
 		  Self.CheckEnabled()
 		  
-		  #if false
-		    Dim Message As String
-		    Select Case Err.ErrorNumber
-		    Case
-		      
-		    End Select
-		  #endif
+		  Dim Message As String
+		  Select Case Err.ErrorNumber
+		  Case TCPSocket.LostConnection
+		    Message = "A connection was established, but it has been lost."
+		  Case TCPSocket.NameResolutionError
+		    Message = "Unable to reach host. Check the address and try again."
+		  Case 22
+		    Message = "Server found, but unable to establish a connection. Check the port and try again."
+		  Case Beacon.ConnectorClientSocket.IncorrectEncryptionKeyError
+		    Message = "The encryption key is not correct."
+		  Case Beacon.ConnectorClientSocket.TimeoutError
+		    Message = "After trying for " + Beacon.ConnectorClientSocket.TimeoutSeconds.ToString + " seconds, a connection could not be established. Check the address and try again."
+		  Else
+		    Message = "Unknown error #" + Err.ErrorNumber.ToString
+		    If Err.Message <> "" Then
+		      Message = Message + ": " + Err.Message
+		    End If
+		  End Select
 		  
-		  Self.ShowAlert("Unable to connect", Err.Message)
+		  Self.ShowAlert("There was an error while discovering the server.", Message)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
