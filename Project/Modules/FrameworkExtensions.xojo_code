@@ -441,6 +441,16 @@ Protected Module FrameworkExtensions
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ToString(Extends Source As MemoryBlock) As String
+		  If Source.Size = 0 Then
+		    Return ""
+		  Else
+		    Return Source.StringValue(0, Source.Size)
+		  End If
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ToString(Extends Source() As String) As String()
 		  Dim Result() As String

@@ -38,7 +38,7 @@ Begin ContainerControl DocumentImportView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   6
+      PanelCount      =   7
       Panels          =   ""
       Scope           =   2
       TabIndex        =   0
@@ -137,7 +137,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   84
+         Top             =   148
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -200,7 +200,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   180
+         Top             =   212
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -232,7 +232,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   180
+         Top             =   212
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -250,7 +250,6 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -280,7 +279,6 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -310,7 +308,6 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -503,7 +500,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   148
+         Top             =   180
          Transparent     =   False
          Underline       =   False
          Value           =   False
@@ -662,9 +659,67 @@ Begin ContainerControl DocumentImportView
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
+      Begin ConnectorDiscoveryView ConnectorDiscoveryView1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   456
+         InitialParent   =   "Views"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   7
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   False
+         Visible         =   True
+         Width           =   600
+      End
+      Begin RadioButton SourceRadio
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Server with Beacon Connector"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   4
+         InitialParent   =   "Views"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   7
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   84
+         Transparent     =   False
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         Width           =   560
+      End
    End
    Begin Timer DiscoveryWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -881,6 +936,7 @@ End
 		  Self.FTPDiscoveryView1.PullValuesFromDocument(Document)
 		  Self.LocalDiscoveryView1.PullValuesFromDocument(Document)
 		  Self.NitradoDiscoveryView1.PullValuesFromDocument(Document)
+		  Self.ConnectorDiscoveryView1.PullValuesFromDocument(Document)
 		End Sub
 	#tag EndMethod
 
@@ -960,6 +1016,9 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = PageConnector, Type = Double, Dynamic = False, Default = \"6", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PageFTP, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
@@ -978,7 +1037,7 @@ End
 	#tag Constant, Name = PageStatus, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = SourcesPageHeight, Type = Double, Dynamic = False, Default = \"220", Scope = Private
+	#tag Constant, Name = SourcesPageHeight, Type = Double, Dynamic = False, Default = \"252", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = StatusPageHeight, Type = Double, Dynamic = False, Default = \"456", Scope = Private
@@ -1001,6 +1060,8 @@ End
 		    LocalDiscoveryView1.Begin
 		  Case Self.PageStatus, Self.PageOtherDocuments
 		    RaiseEvent ShouldResize(Self.StatusPageHeight)
+		  Case Self.PageConnector
+		    ConnectorDiscoveryView1.Begin
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -1008,7 +1069,7 @@ End
 #tag Events SourceRadio
 	#tag Event
 		Sub ValueChanged(index as Integer)
-		  SourceActionButton.Enabled = SourceRadio(0).Value Or SourceRadio(1).Value Or SourceRadio(2).Value Or (SourceRadio(3).Value And SourceRadio(3).Enabled And Self.mOtherDocuments.LastRowIndex > -1)
+		  SourceActionButton.Enabled = SourceRadio(0).Value Or SourceRadio(1).Value Or SourceRadio(2).Value Or (SourceRadio(3).Value And SourceRadio(3).Enabled And Self.mOtherDocuments.LastRowIndex > -1) Or SourceRadio(4).Value
 		  SourceActionButton.Default = SourceActionButton.Enabled
 		End Sub
 	#tag EndEvent
@@ -1030,6 +1091,8 @@ End
 		    Views.SelectedPanelIndex = Self.PageFTP
 		  Case SourceRadio(2).Value
 		    Views.SelectedPanelIndex = Self.PageLocal
+		  Case SourceRadio(4).Value
+		    Views.SelectedPanelIndex = Self.PageConnector
 		  Case SourceRadio(3).Value
 		    OtherDocsList.RemoveAllRows
 		    OtherDocsList.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
@@ -1159,6 +1222,27 @@ End
 		  Next
 		  
 		  OtherDocsActionButton.Enabled = Enabled
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConnectorDiscoveryView1
+	#tag Event
+		Sub ShouldCancel()
+		  If Self.QuickCancel Then
+		    RaiseEvent ShouldDismiss
+		  Else
+		    Views.SelectedPanelIndex = 0
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(NewHeight As Integer)
+		  RaiseEvent ShouldResize(NewHeight)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
+		  Self.BeginDiscovery(Engines, OAuthProvider, OAuthData)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

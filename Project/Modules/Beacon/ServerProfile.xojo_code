@@ -48,6 +48,8 @@ Protected Class ServerProfile
 		    Return New Beacon.NitradoServerProfile(Dict)
 		  Case "FTP"
 		    Return New Beacon.FTPServerProfile(Dict)
+		  Case "Connector"
+		    Return New Beacon.ConnectorServerProfile(Dict)
 		  End Select
 		End Function
 	#tag EndMethod
