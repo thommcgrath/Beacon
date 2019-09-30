@@ -318,6 +318,8 @@ End
 		      View = New NitradoServerView(Self.Document, Beacon.NitradoServerProfile(Profile))
 		    Case IsA Beacon.FTPServerProfile
 		      View = New FTPServerView(Beacon.FTPServerProfile(Profile))
+		    Case IsA Beacon.ConnectorServerProfile
+		      View = New ConnectorServerView(Beacon.ConnectorServerProfile(Profile))
 		    Else
 		      Self.CurrentProfileID = ""
 		      Return

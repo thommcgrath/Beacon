@@ -374,6 +374,7 @@ Class=ConnectorClientSocket;Modules/Beacon/ConnectorClientSocket.xojo_code;&h000
 Class=ConnectorDiscoveryEngine;Modules/Beacon/ConnectorDiscoveryEngine.xojo_code;&h00000000254FBFFF;&h0000000055ADDFFF;false
 Class=ConnectorServerProfile;Modules/Beacon/ConnectorServerProfile.xojo_code;&h000000005FA1BFFF;&h0000000055ADDFFF;false
 Window=ConnectorDiscoveryView;Views/Document Import/Discovery Views/ConnectorDiscoveryView.xojo_window;&h000000004C7F1FFF;&h0000000020AC2FFF;false
+Window=ConnectorServerView;Views/Config Editors/Servers Config Editor/ConnectorServerView.xojo_window;&h00000000156B4FFF;&h000000002E7F7FFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=3

@@ -322,7 +322,12 @@ Implements Beacon.DiscoveryEngine
 		  
 		  Dim Content As String = Dict.Value("Contents")
 		  Dim Hash As String = Dict.Value("SHA512")
+		  Dim Compressed As Boolean = Dict.Lookup("Compressed", True).BooleanValue
 		  Content = DecodeBase64(Content)
+		  If Compressed Then
+		    Dim Compressor As New _GZipString
+		    Content = Compressor.Decompress(Content)
+		  End If
 		  Dim ComputedHash As String = EncodeHex(Crypto.SHA512(Content)).Lowercase
 		  
 		  If ComputedHash = Hash Then

@@ -25,7 +25,7 @@ Inherits TCPSocket
 		      Return
 		    ElseIf Self.Buffer.Size > PayloadLen Then
 		      Payload = Self.Buffer.Left(PayloadLen)
-		      Self.Buffer = Self.Buffer.Middle(0, PayloadLen)
+		      Self.Buffer = Self.Buffer.Middle(PayloadLen, Self.Buffer.Size - PayloadLen)
 		    Else
 		      Payload = Self.Buffer
 		      Self.Buffer = New MemoryBlock(0)

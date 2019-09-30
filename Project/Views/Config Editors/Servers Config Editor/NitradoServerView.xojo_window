@@ -424,10 +424,6 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mBrowser As WeakRef
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mDocument As Beacon.Document
 	#tag EndProperty
 
