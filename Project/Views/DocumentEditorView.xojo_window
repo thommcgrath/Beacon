@@ -43,7 +43,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   0
@@ -862,6 +861,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mPanelHistory() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mUpdateUITag As String
 	#tag EndProperty
 
@@ -1029,23 +1032,43 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub SelectionChanged()
-		  Dim Tag As Variant
+		  Dim TagVar As Variant
 		  If Me.SelectedRowIndex > -1 Then
-		    Tag = Me.RowTagAt(Me.SelectedRowIndex)
+		    TagVar = Me.RowTagAt(Me.SelectedRowIndex)
 		  End If
 		  Dim NewPanel As ConfigEditor
 		  Dim Embed As Boolean
-		  If Tag <> Nil And (Tag.Type = Variant.TypeString Or Tag.Type = Variant.TypeText) Then
-		    Self.UpdateHelpForConfig(Tag.StringValue)
+		  If IsNull(TagVar) = False And (TagVar.Type = Variant.TypeString Or TagVar.Type = Variant.TypeText) Then
+		    Dim Tag As String = TagVar.StringValue
+		    Self.UpdateHelpForConfig(Tag)
 		    
 		    If Self.mController.Document <> Nil Then
-		      Preferences.LastUsedConfigName(Self.mController.Document.DocumentID) = Tag.StringValue
+		      Preferences.LastUsedConfigName(Self.mController.Document.DocumentID) = Tag
 		    End If
 		    
-		    If Self.Panels.HasKey(Tag.StringValue) Then
-		      NewPanel = Self.Panels.Value(Tag.StringValue)
+		    Dim HistoryIndex As Integer = Self.mPanelHistory.IndexOf(Tag)
+		    If HistoryIndex > 0 Then
+		      Self.mPanelHistory.RemoveRowAt(HistoryIndex)
+		    End If
+		    Self.mPanelHistory.AddRowAt(0, Tag)
+		    
+		    // Close older panels
+		    If Self.mPanelHistory.LastRowIndex > 2 Then
+		      For I As Integer = Self.mPanelHistory.LastRowIndex DownTo 3
+		        Dim PanelTag As String = Self.mPanelHistory(I)
+		        If Self.Panels.HasKey(PanelTag) Then
+		          Dim Panel As ConfigEditor = Self.Panels.Value(PanelTag)
+		          RemoveHandler Panel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
+		          Panel.Close
+		          Self.Panels.Remove(PanelTag)
+		        End If
+		      Next
+		    End If
+		    
+		    If Self.Panels.HasKey(Tag) Then
+		      NewPanel = Self.Panels.Value(Tag)
 		    Else
-		      Select Case Tag.StringValue
+		      Select Case Tag
 		      Case "maps"
 		        NewPanel = New MapsConfigEditor(Self.mController)
 		      Case "deployments"
@@ -1078,7 +1101,7 @@ End
 		        NewPanel = New DayCycleConfigEditor(Self.mController)
 		      End Select
 		      If NewPanel <> Nil Then
-		        Self.Panels.Value(Tag.StringValue) = NewPanel
+		        Self.Panels.Value(Tag) = NewPanel
 		        Embed = True
 		      End If
 		    End If
@@ -1102,8 +1125,8 @@ End
 		  
 		  If Self.CurrentPanel <> Nil Then
 		    Dim RequiresPurchase As Boolean
-		    If Tag <> Nil And (Tag.Type = Variant.TypeString Or Tag.Type = Variant.TypeText) Then
-		      RequiresPurchase = Not BeaconConfigs.ConfigPurchased(Tag.StringValue, If(App.IdentityManager.CurrentIdentity <> Nil, App.IdentityManager.CurrentIdentity.OmniVersion, 0))
+		    If IsNull(TagVar) = False And (TagVar.Type = Variant.TypeString Or TagVar.Type = Variant.TypeText) Then
+		      RequiresPurchase = Not BeaconConfigs.ConfigPurchased(TagVar.StringValue, If(App.IdentityManager.CurrentIdentity <> Nil, App.IdentityManager.CurrentIdentity.OmniVersion, 0))
 		    End If
 		    Dim TopOffset As Integer
 		    If RequiresPurchase Then
