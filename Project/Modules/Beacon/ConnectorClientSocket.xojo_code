@@ -80,6 +80,27 @@ Inherits TCPSocket
 
 	#tag Event
 		Sub Error(err As RuntimeException)
+		  Dim Message As String
+		  Select Case Err.ErrorNumber
+		  Case TCPSocket.LostConnection
+		    Message = "A connection was established, but it has been lost."
+		  Case TCPSocket.NameResolutionError
+		    Message = "Unable to reach host. Check the address and try again."
+		  Case 22
+		    Message = "Server found, but unable to establish a connection. Check the port and try again."
+		  Case Self.IncorrectEncryptionKeyError
+		    Message = "The encryption key is not correct."
+		  Case Self.TimeoutError
+		    Message = "After trying for " + Self.TimeoutSeconds.ToString + " seconds, a connection could not be established. Check the address and try again."
+		  Else
+		    Message = "Unknown error #" + Err.ErrorNumber.ToString
+		    If Err.Message <> "" Then
+		      Message = Message + ": " + Err.Message
+		    End If
+		  End Select
+		  
+		  Err.Message = Message
+		  
 		  RaiseEvent Error(Err)
 		End Sub
 	#tag EndEvent
@@ -131,6 +152,46 @@ Inherits TCPSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function PackFile(Dict As Dictionary, File As FolderItem, Compressed As Boolean) As Boolean
+		  If File = Nil Or File.Exists = False Then
+		    Return False
+		  End If
+		  
+		  Try
+		    Dim Stream As TextInputStream = TextInputStream.Open(File)
+		    Dim Contents As String = Stream.ReadAll(Nil)
+		    Stream.Close
+		    
+		    Return PackFile(Dict, Contents, Compressed)
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function PackFile(Dict As Dictionary, Contents As String, Compressed As Boolean) As Boolean
+		  Try
+		    Dim Hash As String = EncodeHex(Crypto.SHA512(Contents)).Lowercase
+		    
+		    If Compressed Then
+		      Dim Compressor As New _GZipString
+		      Contents = Compressor.Compress(Contents, _GZipString.BestCompression)
+		    End If
+		    
+		    Contents = EncodeBase64(Contents)
+		    
+		    Dict.Value("Contents") = Contents
+		    Dict.Value("SHA512") = Hash
+		    Dict.Value("Compressed") = Compressed
+		    Return True
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function PrepareKey(Value As String) As String
 		  Dim Reg As New RegEx
 		  Reg.SearchPattern = "^[a-f0-9]{64}$"
@@ -145,6 +206,14 @@ Inherits TCPSocket
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub SendSimpleCommand(Command As String)
+		  Dim Message As New Dictionary
+		  Message.Value("Command") = Command
+		  Self.Write(Message)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub TimeoutElapsed()
 		  Self.mTimeoutKey = ""
@@ -156,6 +225,29 @@ Inherits TCPSocket
 		  
 		  Self.Close()
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function UnpackFile(Dict As Dictionary, ByRef Contents As String) As Boolean
+		  If Dict.HasKey("Error") Then
+		    Return False
+		  End If
+		  
+		  Dim Content As String = Dict.Value("Contents")
+		  Dim Hash As String = Dict.Value("SHA512")
+		  Dim Compressed As Boolean = Dict.Lookup("Compressed", False).BooleanValue
+		  Content = DecodeBase64(Content)
+		  If Compressed Then
+		    Dim Compressor As New _GZipString
+		    Content = Compressor.Decompress(Content)
+		  End If
+		  Dim ComputedHash As String = EncodeHex(Crypto.SHA512(Content)).Lowercase
+		  
+		  If ComputedHash = Hash Then
+		    Contents = Content
+		    Return True
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

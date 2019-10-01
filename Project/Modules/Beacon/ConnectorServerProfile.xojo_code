@@ -51,6 +51,12 @@ Inherits Beacon.ServerProfile
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SupportsRestart() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter

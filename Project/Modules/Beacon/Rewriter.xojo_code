@@ -80,6 +80,12 @@ Inherits Global.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Mode() As String
+		  Return Self.mMode
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function Rewrite(InitialContent As String, ConfigDict As Dictionary, TrustKey As String, Format As Beacon.Rewriter.EncodingFormat, ByRef Errored As Boolean) As String
 		  Try
 		    // Normalize line endings

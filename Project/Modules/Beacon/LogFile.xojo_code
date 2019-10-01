@@ -1,0 +1,177 @@
+#tag Class
+Protected Class LogFile
+	#tag Method, Flags = &h0
+		Shared Function Analyze(Contents As String) As Beacon.LogFile
+		  Dim Encoding As TextEncoding = Contents.Encoding
+		  Contents = Contents.ReplaceLineEndings(EndOfLine)
+		  Dim Lines() As String = Contents.Split(EndOfLine)
+		  
+		  Dim File As New Beacon.LogFile
+		  
+		  For Each Line As String In Lines
+		    Dim StartPos As Integer = Line.IndexOf("CommandLine: ")
+		    If StartPos = -1 Then
+		      Continue
+		    End If
+		    
+		    Dim EndPos As Integer
+		    StartPos = StartPos + 13
+		    If (Line.Middle(StartPos, 1) = "=") Then
+		      StartPos = StartPos + 1
+		      EndPos = Line.IndexOf(StartPos, """")
+		    Else
+		      EndPos = Line.Length
+		    End If
+		    
+		    Dim LineContent As String = Line.Middle(StartPos, EndPos - StartPos)
+		    Dim InQuotes As Boolean
+		    Dim Chars() As String = LineContent.Split("")
+		    Dim Buffer As New MemoryBlock(0)
+		    Dim Params() As String
+		    For Each Char As String In Chars
+		      If Char = """" Then
+		        If InQuotes Then
+		          Params.AddRow(Buffer.ToString.DefineEncoding(Encoding))
+		          Buffer = New MemoryBlock(0)
+		          InQuotes = False
+		        Else
+		          InQuotes = True
+		        End If
+		        Continue
+		      ElseIf Char = " " Then
+		        If InQuotes = False Then
+		          Params.AddRow(Buffer.ToString.DefineEncoding(Encoding))
+		          Buffer = New MemoryBlock(0)
+		        End If
+		      ElseIf Char = "-" And Buffer.Size = 0 Then
+		        Continue
+		      Else
+		        Buffer.Append(Char)
+		      End If
+		    Next
+		    If Buffer.Size > 0 Then
+		      Params.AddRow(Buffer.ToString.DefineEncoding(Encoding))
+		      Buffer = New MemoryBlock(0)
+		    End If
+		    
+		    Dim StartupParams() As String = Params(0).Split("?")
+		    Params.RemoveRowAt(0)
+		    
+		    File.mMaps = Beacon.Maps.MaskForIdentifier(StartupParams(0))
+		    StartupParams.RemoveRowAt(0)
+		    
+		    StartupParams.RemoveRowAt(0) // The Listen statement
+		    
+		    Dim Merged() As String
+		    For Each Param As String In StartupParams
+		      Merged.AddRow(Param)
+		    Next
+		    For Each Param As String In Params
+		      Merged.AddRow(Param)
+		    Next
+		    Params.ResizeTo(-1)
+		    StartupParams.ResizeTo(-1)
+		    
+		    Dim Options As New Dictionary
+		    For Each Param As String In Merged
+		      If Param = "" Then
+		        Continue
+		      End If
+		      
+		      Dim EqualsPos As Integer = Param.IndexOf("=")
+		      If EqualsPos > -1 Then
+		        Options.Value(Param.Left(EqualsPos)) = Param.Middle(EqualsPos + 1)
+		      Else
+		        Options.Value(Param) = True
+		      End If
+		    Next
+		    File.mOptions = Options
+		  Next
+		  
+		  Return File
+		  
+		  Exception Err As RuntimeException
+		    Return Nil
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.mOptions = New Dictionary
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Maps() As UInt64
+		  Return Self.mMaps
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Options() As Dictionary
+		  Return Self.mOptions.Clone
+		End Function
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mMaps As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOptions As Dictionary
+	#tag EndProperty
+
+
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="mMaps"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+	#tag EndViewBehavior
+End Class
+#tag EndClass

@@ -89,18 +89,15 @@ Implements Beacon.DiscoveryEngine
 	#tag Method, Flags = &h21
 		Private Sub mSocket_Error(Sender As Beacon.ConnectorClientSocket, Err As RuntimeException)
 		  #Pragma Unused Sender
-		  #Pragma Unused Err
 		  
 		  Self.mErrored = True
 		  Self.mFinished = True
-		  Self.mStatus = "Disconnected"
+		  Self.mStatus = Err.Message
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub mSocket_MessageReceived(Sender As Beacon.ConnectorClientSocket, Message As Dictionary)
-		  #Pragma Unused Sender
-		  
 		  If Not Message.HasKey("Command") Then
 		    Return
 		  End If
@@ -108,7 +105,7 @@ Implements Beacon.DiscoveryEngine
 		  Select Case Message.Value("Command")
 		  Case "Log"
 		    Dim LogContents As String
-		    If Not Self.UnpackFile(Message, LogContents) Then
+		    If Not Sender.UnpackFile(Message, LogContents) Then
 		      Self.mErrored = True
 		      Self.mFinished = True
 		      Self.mStatus = "Unable to unpack log file"
@@ -118,7 +115,7 @@ Implements Beacon.DiscoveryEngine
 		    Self.ProcessLogContents(LogContents.GuessEncoding)
 		  Case "Get Game.ini"
 		    Dim FileContents As String
-		    If Not Self.UnpackFile(Message, FileContents) Then
+		    If Not Sender.UnpackFile(Message, FileContents) Then
 		      Self.mErrored = True
 		      Self.mFinished = True
 		      Self.mStatus = "Unable to unpack Game.ini file"
@@ -129,7 +126,7 @@ Implements Beacon.DiscoveryEngine
 		    Self.RunNextTask()
 		  Case "Get GameUserSettings.ini"
 		    Dim FileContents As String
-		    If Not Self.UnpackFile(Message, FileContents) Then
+		    If Not Sender.UnpackFile(Message, FileContents) Then
 		      Self.mErrored = True
 		      Self.mFinished = True
 		      Self.mStatus = "Unable to unpack GameUserSettings.ini file"
@@ -154,96 +151,18 @@ Implements Beacon.DiscoveryEngine
 		Private Sub ProcessLogContents(Contents As String)
 		  Self.mStatus = "Analyzing log file…"
 		  
-		  Dim Encoding As TextEncoding = Contents.Encoding
-		  Contents = Contents.ReplaceLineEndings(EndOfLine)
-		  Dim Lines() As String = Contents.Split(EndOfLine)
-		  
-		  For Each Line As String In Lines
-		    Dim StartPos As Integer = Line.IndexOf("CommandLine: ")
-		    If StartPos = -1 Then
-		      Continue
-		    End If
-		    
-		    Dim EndPos As Integer
-		    StartPos = StartPos + 13
-		    If (Line.Middle(StartPos, 1) = "=") Then
-		      StartPos = StartPos + 1
-		      EndPos = Line.IndexOf(StartPos, """")
-		    Else
-		      EndPos = Line.Length
-		    End If
-		    
-		    Dim LineContent As String = Line.Middle(StartPos, EndPos - StartPos)
-		    Dim InQuotes As Boolean
-		    Dim Chars() As String = LineContent.Split("")
-		    Dim Buffer As New MemoryBlock(0)
-		    Dim Params() As String
-		    For Each Char As String In Chars
-		      If Char = """" Then
-		        If InQuotes Then
-		          Params.AddRow(Buffer.ToString.DefineEncoding(Encoding))
-		          Buffer = New MemoryBlock(0)
-		          InQuotes = False
-		        Else
-		          InQuotes = True
-		        End If
-		        Continue
-		      ElseIf Char = " " Then
-		        If InQuotes = False Then
-		          Params.AddRow(Buffer.ToString.DefineEncoding(Encoding))
-		          Buffer = New MemoryBlock(0)
-		        End If
-		      ElseIf Char = "-" And Buffer.Size = 0 Then
-		        Continue
-		      Else
-		        Buffer.Append(Char)
-		      End If
-		    Next
-		    If Buffer.Size > 0 Then
-		      Params.AddRow(Buffer.ToString.DefineEncoding(Encoding))
-		      Buffer = New MemoryBlock(0)
-		    End If
-		    
-		    Dim StartupParams() As String = Params(0).Split("?")
-		    Params.RemoveRowAt(0)
-		    
-		    Self.mMap = Beacon.Maps.MaskForIdentifier(StartupParams(0))
-		    StartupParams.RemoveRowAt(0)
-		    
-		    StartupParams.RemoveRowAt(0) // The Listen statement
-		    
-		    Dim Merged() As String
-		    For Each Param As String In StartupParams
-		      Merged.AddRow(Param)
-		    Next
-		    For Each Param As String In Params
-		      Merged.AddRow(Param)
-		    Next
-		    Params.ResizeTo(-1)
-		    StartupParams.ResizeTo(-1)
-		    
-		    Dim Options As New Dictionary
-		    For Each Param As String In Merged
-		      If Param = "" Then
-		        Continue
-		      End If
-		      
-		      Dim EqualsPos As Integer = Param.IndexOf("=")
-		      If EqualsPos > -1 Then
-		        Options.Value(Param.Left(EqualsPos)) = Param.Middle(EqualsPos + 1)
-		      Else
-		        Options.Value(Param) = True
-		      End If
-		    Next
-		    Self.mCommandLineOptions = Options
-		  Next
-		  
-		  Self.RunNextTask()
-		  
-		  Exception Err As RuntimeException
+		  Dim File As Beacon.LogFile = Beacon.LogFile.Analyze(Contents)
+		  If File = Nil Then
 		    Self.mErrored = True
 		    Self.mFinished = True
-		    Self.mStatus = "There was an exception while analyzing the log file"
+		    Self.mStatus = "There was an error while analyzing the log file"
+		    Return
+		  End If
+		  
+		  Self.mMap = File.Maps
+		  Self.mCommandLineOptions = File.Options
+		  
+		  Self.RunNextTask()
 		End Sub
 	#tag EndMethod
 
@@ -312,29 +231,6 @@ Implements Beacon.DiscoveryEngine
 		  
 		  Self.mSocket.Write(Message)
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function UnpackFile(Dict As Dictionary, ByRef Contents As String) As Boolean
-		  If Dict.HasKey("Error") Then
-		    Return False
-		  End If
-		  
-		  Dim Content As String = Dict.Value("Contents")
-		  Dim Hash As String = Dict.Value("SHA512")
-		  Dim Compressed As Boolean = Dict.Lookup("Compressed", True).BooleanValue
-		  Content = DecodeBase64(Content)
-		  If Compressed Then
-		    Dim Compressor As New _GZipString
-		    Content = Compressor.Decompress(Content)
-		  End If
-		  Dim ComputedHash As String = EncodeHex(Crypto.SHA512(Content)).Lowercase
-		  
-		  If ComputedHash = Hash Then
-		    Contents = Content
-		    Return True
-		  End If
-		End Function
 	#tag EndMethod
 
 
