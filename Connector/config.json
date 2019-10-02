@@ -5,5 +5,6 @@
 	"Stop Command": "say 'Stopping'",
 	"Status Command": "say 'Status Check'",
 	"Config Folder": "~/Scratch/Connector Test/WindowsServer",
-	"Logs Folder": "~/Scratch/Connector Test/Logs"
+	"Logs Folder": "~/Scratch/Connector Test/Logs",
+	"Set Parameter Command": "say 'Parameter %key% should become %value%'"
 }

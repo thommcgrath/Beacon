@@ -93,6 +93,9 @@ Inherits DaemonApplication
 		    Self.StatusCommand = Config.Value("Status Command")
 		    Self.StartCommand = Config.Value("Start Command")
 		    Self.StopCommand = Config.Value("Stop Command")
+		    If Config.HasKey("Set Parameter Command") Then
+		      Self.ChangeParameterCommand = Config.Value("Set Parameter Command")
+		    End If
 		  Catch Err As RuntimeException
 		    Self.Log("One or more commands are malformed")
 		    Quit
@@ -176,6 +179,17 @@ Inherits DaemonApplication
 		  
 		  // It's something else, so let's prepare a key
 		  Return Crypto.SHA256(Value)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function QuoteValue(Value As String) As String
+		  #if TargetWin32
+		    Value = Value.ReplaceAll("""", """""")
+		  #else
+		    Value = Value.ReplaceAll("""", "\""")
+		  #endif
+		  Return """" + Value + """"
 		End Function
 	#tag EndMethod
 
@@ -272,6 +286,31 @@ Inherits DaemonApplication
 		      End If
 		    Next
 		    Return Self.ReadFile(NewestFile)
+		  Case "Param"
+		    Dim Response As New Dictionary
+		    If Message.HasKey("Param") = False Or Message.HasKey("Value") = False Then
+		      Response.Value("Success") = False
+		      Response.Value("Reason") = "Missing Param or Value parameters."
+		      Return Response
+		    End If
+		    If Self.ChangeParameterCommand = "" Then
+		      // The connector has chosen not to implement this, so pretend all is well.
+		      Response.Value("Success") = True
+		      Return Response
+		    End If
+		    
+		    Dim Parameter As String = Message.Value("Param")
+		    Dim Value As String = Message.Value("Value")
+		    Dim Command As String = Self.ChangeParameterCommand
+		    Command = Command.ReplaceAll("%key%", Parameter)
+		    Command = Command.ReplaceAll("%value%", Value)
+		    Command = Command.ReplaceAll("escape(%key)", Self.QuoteValue(Parameter))
+		    Command = Command.ReplaceAll("escape(%value%)", Self.QuoteValue(Value))
+		    
+		    Dim Sh As New Shell
+		    Sh.Execute(Command)
+		    Response.Value("Success") = Sh.ExitCode = 0
+		    Return Response
 		  End Select
 		  
 		  Exception Err As RuntimeException
@@ -311,6 +350,10 @@ Inherits DaemonApplication
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private ChangeParameterCommand As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private ConfigFile As FolderItem
