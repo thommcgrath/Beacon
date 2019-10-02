@@ -687,8 +687,14 @@ End
 		  Select Case Item.Name
 		  Case "PowerButton"
 		    If Self.Status = ServerStatus.Started And Self.ClientSocket.IsConnected Then
+		      Dim StopMessage As String = StopMessageDialog.Present(Self)
+		      If StopMessage = "" Then
+		        Return
+		      End If
+		      
 		      Dim Message As New Dictionary
 		      Message.Value("Command") = "Stop"
+		      Message.Value("Message") = StopMessage
 		      Self.ClientSocket.Write(Message)
 		      Self.RefreshServerStatus()
 		    ElseIf Self.Status = ServerStatus.Stopped And Self.ClientSocket.IsConnected Then

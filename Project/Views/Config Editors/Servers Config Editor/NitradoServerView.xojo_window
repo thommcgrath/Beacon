@@ -479,9 +479,14 @@ End
 		    Headers.Value("Authorization") = "Bearer " + Self.Auth.AccessToken
 		    
 		    If Item.Toggled Then
+		      Dim StopMessage As String = StopMessageDialog.Present(Self)
+		      If StopMessage = "" Then
+		        Return
+		      End If
+		      
 		      Dim FormData As New Dictionary
 		      FormData.Value("message") = "Server stopped by Beacon (https://beaconapp.cc)"
-		      FormData.Value("stop_message") = "Server is now stopping."
+		      FormData.Value("stop_message") = StopMessage
 		      
 		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/stop", FormData, AddressOf Callback_ServerToggle, Nil, Headers)
 		    Else

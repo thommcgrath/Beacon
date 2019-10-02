@@ -769,13 +769,14 @@ End
 		  End Select
 		  
 		  // Prompt for server stop message here
-		  Dim StopMessage As String = Preferences.LastStopMessage
+		  Dim StopMessage As String
 		  If SupportsCustomStopMessage Then
-		    StopMessage = StopMessageDialog.Present(Self, StopMessage)
+		    StopMessage = StopMessageDialog.Present(Self)
 		    If StopMessage = "" Then
 		      Return
 		    End If
-		    Preferences.LastStopMessage = StopMessage
+		  Else
+		    StopMessage = Preferences.LastStopMessage
 		  End If
 		  Self.mStopMessage = StopMessage
 		  
