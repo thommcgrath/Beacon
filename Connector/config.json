@@ -2,7 +2,7 @@
     "Encryption Key": "1da467abc289bc9d608b90c684460797",
 	"Port": 48962,
 	"Start Command": "say 'Starting'",
-	"Stop Command": "say 'Stopping'",
+	"Stop Command": "say 'Stopping server with message %message%'",
 	"Status Command": "say 'Status Check'",
 	"Config Folder": "~/Scratch/Connector Test/WindowsServer",
 	"Logs Folder": "~/Scratch/Connector Test/Logs",

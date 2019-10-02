@@ -498,7 +498,7 @@ End
 		    Next
 		    
 		    For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
-		      DeploymentEngine.Begin(Self.mDeployLabel, Self.mDocument, App.IdentityManager.CurrentIdentity)
+		      DeploymentEngine.Begin(Self.mDeployLabel, Self.mDocument, App.IdentityManager.CurrentIdentity, Self.mStopMessage)
 		    Next
 		    
 		    Self.DeployingWatchTimer.RunMode = Timer.RunModes.Multiple
@@ -683,6 +683,10 @@ End
 		Private mOAuthWindow As OAuthAuthorizationWindow
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mStopMessage As String
+	#tag EndProperty
+
 
 	#tag Constant, Name = PageDeploying, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
@@ -724,6 +728,7 @@ End
 		  
 		  Dim SelectedCount As Integer
 		  Dim Supported As Integer = RestartSupportedUnknown
+		  Dim SupportsCustomStopMessage As Boolean
 		  For I As Integer = 0 To Self.mDocument.ServerProfileCount - 1
 		    Dim Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(I)
 		    If Not Profile.Enabled Then
@@ -740,6 +745,8 @@ End
 		    ElseIf (CanRestart = True And Supported = RestartSupportedNone) Or (CanRestart = False And Supported = RestartSupportedAll) Then
 		      Supported = RestartSupportedMixed
 		    End If
+		    
+		    SupportsCustomStopMessage = SupportsCustomStopMessage Or Profile.SupportsCustomStopMessage
 		  Next
 		  
 		  Dim Predicate As String = If(SelectedCount = 1, "server", "servers")
@@ -760,6 +767,17 @@ End
 		      Return
 		    End If
 		  End Select
+		  
+		  // Prompt for server stop message here
+		  Dim StopMessage As String = Preferences.LastStopMessage
+		  If SupportsCustomStopMessage Then
+		    StopMessage = StopMessageDialog.Present(Self, StopMessage)
+		    If StopMessage = "" Then
+		      Return
+		    End If
+		    Preferences.LastStopMessage = StopMessage
+		  End If
+		  Self.mStopMessage = StopMessage
 		  
 		  Self.Pages.SelectedPanelIndex = Self.PageDeploying
 		  

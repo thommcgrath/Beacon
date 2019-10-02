@@ -111,6 +111,12 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SupportsCustomStopMessage() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SupportsRestart() As Boolean
 		  Return False
 		End Function

@@ -232,6 +232,8 @@ Inherits DaemonApplication
 		    Return Nil
 		  End If
 		  
+		  Self.Log("Command: " + Message.Value("Command"))
+		  
 		  Select Case Message.Value("Command")
 		  Case "Start"
 		    // Starts the server
@@ -243,8 +245,13 @@ Inherits DaemonApplication
 		    Return Response
 		  Case "Stop"
 		    // Stops the server
+		    Dim Command As String = Self.StopCommand
+		    Dim StopMessage As String = Message.Lookup("Message", "")
+		    Command = Command.ReplaceAll("%message%", StopMessage)
+		    Command = Command.ReplaceAll("escape(%message%)", Self.QuoteValue(StopMessage))
+		    
 		    Dim Sh As New Shell
-		    Sh.Execute(Self.StopCommand)
+		    Sh.Execute(Command)
 		    
 		    Dim Response As New Dictionary
 		    Response.Value("Success") = Sh.ExitCode = 0

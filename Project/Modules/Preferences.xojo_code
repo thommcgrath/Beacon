@@ -270,6 +270,22 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.StringValue("Last Stop Message", "Server is now stopping for a few minutes for changes.")
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.StringValue("Last Stop Message") = Value
+			End Set
+		#tag EndSetter
+		Protected LastStopMessage As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.RectValue("Main Window Size", Nil)
 			End Get
 		#tag EndGetter

@@ -377,6 +377,7 @@ Window=ConnectorDiscoveryView;Views/Document Import/Discovery Views/ConnectorDis
 Window=ConnectorServerView;Views/Config Editors/Servers Config Editor/ConnectorServerView.xojo_window;&h00000000156B4FFF;&h000000002E7F7FFF;false
 Class=ConnectorDeploymentEngine;Modules/Beacon/ConnectorDeploymentEngine.xojo_code;&h00000000646037FF;&h0000000055ADDFFF;false
 Class=LogFile;Modules/Beacon/LogFile.xojo_code;&h000000004D9167FF;&h0000000055ADDFFF;false
+Window=StopMessageDialog;Views/StopMessageDialog.xojo_window;&h00000000245037FF;&h0000000008A387FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=3

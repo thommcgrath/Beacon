@@ -26,10 +26,11 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Begin(Label As String, Document As Beacon.Document, Identity As Beacon.Identity)
+		Sub Begin(Label As String, Document As Beacon.Document, Identity As Beacon.Identity, StopMessage As String)
 		  Self.mLabel = Label
 		  Self.mDocument = Document
 		  Self.mIdentity = Identity
+		  Self.mStopMessage = StopMessage
 		  
 		  Self.RunNextTask()
 		End Sub
@@ -843,7 +844,7 @@ Implements Beacon.DeploymentEngine
 		  
 		  Dim FormData As New Dictionary
 		  FormData.Value("message") = "Server is being updated by Beacon (https://beaconapp.cc)"
-		  FormData.Value("stop_message") = "Server is now stopping for a few minutes for changes."
+		  FormData.Value("stop_message") = Self.mStopMessage
 		  
 		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/stop", FormData, AddressOf Callback_ServerStop, Nil, Headers)
 		End Sub
@@ -1014,6 +1015,10 @@ Implements Beacon.DeploymentEngine
 
 	#tag Property, Flags = &h21
 		Private mStatus As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mStopMessage As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

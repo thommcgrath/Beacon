@@ -13,7 +13,7 @@ Protected Interface DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Begin(Label As String, Document As Beacon.Document, Identity As Beacon.Identity)
+		Sub Begin(Label As String, Document As Beacon.Document, Identity As Beacon.Identity, StopMessage As String)
 		  
 		End Sub
 	#tag EndMethod

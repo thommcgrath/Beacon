@@ -31,13 +31,14 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Begin(Label As String, Document As Beacon.Document, Identity As Beacon.Identity)
+		Sub Begin(Label As String, Document As Beacon.Document, Identity As Beacon.Identity, StopMessage As String)
 		  // Part of the Beacon.DeploymentEngine interface.
 		  
 		  #Pragma Unused Label
 		  
 		  Self.mDocument = Document
 		  Self.mIdentity = Identity
+		  Self.mStopMessage = StopMessage
 		  Self.mStatus = "Connecting…"
 		  
 		  Self.AppendTask(WeakAddressOf TaskStopServer, WeakAddressOf TaskDownloadLog, WeakAddressOf TaskSetNextCommandLineParam, WeakAddressOf TaskDownloadGameUserSettings, WeakAddressOf TaskDownloadGameIni, WeakAddressOf TaskRewriteIniFiles, WeakAddressOf TaskUploadGameUserSettings, WeakAddressOf TaskUploadGameIni, WeakAddressOf TaskStartServer)
@@ -116,7 +117,10 @@ Implements Beacon.DeploymentEngine
 		    End If
 		    
 		    Self.mServerWasStarted = True
-		    Sender.SendSimpleCommand("Stop")
+		    Dim StopCommand As New Dictionary
+		    StopCommand.Value("Command") = "Stop"
+		    StopCommand.Value("Message") = Self.mStopMessage
+		    Sender.Write(StopCommand)
 		    Self.mStatus = "Stopping server…"
 		  Case "Stop"
 		    Dim Stopped As Boolean = Message.Lookup("Success", False).BooleanValue
@@ -249,7 +253,7 @@ Implements Beacon.DeploymentEngine
 		    Self.mGameUserSettingsRewritten = Sender.UpdatedContent
 		  End Select
 		  
-		  If Self.mGameIniRewritten <> "" And Self.mGameIniRewritten <> "" Then
+		  If Self.mGameIniRewritten <> "" And Self.mGameUserSettingsRewritten <> "" Then
 		    Self.RunNextTask()
 		  End If
 		End Sub
@@ -443,6 +447,10 @@ Implements Beacon.DeploymentEngine
 
 	#tag Property, Flags = &h21
 		Private mStatus As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mStopMessage As String
 	#tag EndProperty
 
 
