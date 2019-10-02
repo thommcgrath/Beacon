@@ -504,6 +504,14 @@ Begin ServerViewContainer ConnectorServerView
       Visible         =   True
       Width           =   110
    End
+   Begin Timer RefreshTimer
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Period          =   30000
+      RunMode         =   "0"
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -533,6 +541,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RefreshServerStatus()
+		  Self.RefreshTimer.RunMode = Timer.RunModes.Off
+		  
 		  If IsNumeric(Self.PortField.Value) = False Or Self.AddressField.Value.Trim = "" Or Self.KeyField.Value.Trim = "" Then
 		    Self.Status = ServerStatus.UnableToCheck
 		    Self.ClientSocket.Close
@@ -655,6 +665,8 @@ End
 		  Case "Status"
 		    Dim Started As Boolean = Message.Lookup("Status", "stopped") = "started"
 		    Self.Status = If(Started, ServerStatus.Started, ServerStatus.Stopped)
+		    Self.RefreshTimer.Reset
+		    Self.RefreshTimer.RunMode = Timer.RunModes.Single
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -723,6 +735,13 @@ End
 		Sub TextChanged()
 		  Self.mProfile.PreSharedKey = Me.Value.Trim
 		  Self.Changed = Self.mProfile.Modified
+		  Self.RefreshServerStatus()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events RefreshTimer
+	#tag Event
+		Sub Run()
 		  Self.RefreshServerStatus()
 		End Sub
 	#tag EndEvent
