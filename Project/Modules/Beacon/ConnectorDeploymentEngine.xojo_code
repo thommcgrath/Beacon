@@ -183,6 +183,7 @@ Implements Beacon.DeploymentEngine
 		      Return
 		    End If
 		    
+		    Self.mCommandLineChanges.RemoveRowAt(0)
 		    Self.TaskSetNextCommandLineParam()
 		  End Select
 		End Sub
