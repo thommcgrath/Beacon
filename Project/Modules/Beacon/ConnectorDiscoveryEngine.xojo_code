@@ -1,9 +1,23 @@
 #tag Class
 Protected Class ConnectorDiscoveryEngine
+Inherits Beacon.TaskQueue
 Implements Beacon.DiscoveryEngine
+	#tag Event
+		Sub Finished()
+		  Self.mSocket.Close
+		  Self.mErrored = False
+		  Self.mFinished = True
+		  Self.mStatus = "Finished"
+		  RaiseEvent Finished()
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Sub Begin()
 		  // Part of the Beacon.DiscoveryEngine interface.
+		  
+		  Self.AppendTask(WeakAddressOf TaskDownloadLogFile, WeakAddressOf TaskDownloadGameUserSettingsIni, WeakAddressOf TaskDownloadGameIni)
 		  
 		  Self.mSocket = New Beacon.ConnectorClientSocket
 		  AddHandler mSocket.Connected, WeakAddressOf mSocket_Connected
@@ -27,10 +41,6 @@ Implements Beacon.DiscoveryEngine
 	#tag Method, Flags = &h0
 		Sub Constructor(Profile As Beacon.ConnectorServerProfile)
 		  Self.mProfile = Profile
-		  
-		  Self.mTasks.AddRow(WeakAddressOf TaskDownloadLogFile)
-		  Self.mTasks.AddRow(WeakAddressOf TaskDownloadGameUserSettingsIni)
-		  Self.mTasks.AddRow(WeakAddressOf TaskDownloadGameIni)
 		End Sub
 	#tag EndMethod
 
@@ -174,24 +184,6 @@ Implements Beacon.DiscoveryEngine
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub RunNextTask()
-		  If Self.mTasks.LastRowIndex = -1 Then
-		    Self.mSocket.Close
-		    
-		    Self.mErrored = False
-		    Self.mFinished = True
-		    Self.mStatus = "Finished"
-		    Return
-		  End If
-		  
-		  Dim Task As DiscoveryTask = Self.mTasks(0)
-		  Self.mTasks.RemoveRowAt(0)
-		  
-		  Task.Invoke()
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function Status() As String
 		  // Part of the Beacon.DiscoveryEngine interface.
@@ -234,6 +226,11 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 
+	#tag Hook, Flags = &h0
+		Event Finished()
+	#tag EndHook
+
+
 	#tag Property, Flags = &h21
 		Private mCommandLineOptions As Dictionary
 	#tag EndProperty
@@ -268,10 +265,6 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Property, Flags = &h21
 		Private mStatus As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mTasks() As DiscoveryTask
 	#tag EndProperty
 
 
