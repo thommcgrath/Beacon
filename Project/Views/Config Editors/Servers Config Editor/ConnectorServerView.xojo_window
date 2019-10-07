@@ -672,6 +672,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Error(Err As RuntimeException)
+		  #Pragma Unused Err
+		  
 		  Self.Status = ServerStatus.Error
 		End Sub
 	#tag EndEvent
