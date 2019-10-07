@@ -39,7 +39,6 @@ Begin BeaconDialog StopMessageDialog
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -498,14 +497,6 @@ End
 		Group="Deprecated"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="mReturnMessage"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

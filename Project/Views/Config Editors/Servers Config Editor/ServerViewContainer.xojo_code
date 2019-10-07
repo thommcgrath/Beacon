@@ -3,6 +3,22 @@ Protected Class ServerViewContainer
 Inherits BeaconSubview
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="EraseBackground"
+			Visible=false
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Tooltip"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="AllowAutoDeactivate"
 			Visible=true
 			Group="Appearance"
@@ -16,7 +32,7 @@ Inherits BeaconSubview
 			Group="Appearance"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="BackgroundColor"
@@ -24,7 +40,7 @@ Inherits BeaconSubview
 			Group="Background"
 			InitialValue="&hFFFFFF"
 			Type="Color"
-			EditorType=""
+			EditorType="Color"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="HasBackgroundColor"
@@ -40,7 +56,7 @@ Inherits BeaconSubview
 			Group="Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AllowTabs"
@@ -48,7 +64,7 @@ Inherits BeaconSubview
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Progress"
@@ -88,7 +104,7 @@ Inherits BeaconSubview
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -96,7 +112,7 @@ Inherits BeaconSubview
 			Group="ID"
 			InitialValue=""
 			Type="String"
-			EditorType="String"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Width"
@@ -192,7 +208,7 @@ Inherits BeaconSubview
 			Group="Position"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Visible"
@@ -200,7 +216,7 @@ Inherits BeaconSubview
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
@@ -208,14 +224,6 @@ Inherits BeaconSubview
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HelpTag"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -224,7 +232,7 @@ Inherits BeaconSubview
 			Group="Background"
 			InitialValue=""
 			Type="Picture"
-			EditorType="Picture"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Transparent"
@@ -232,7 +240,7 @@ Inherits BeaconSubview
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DoubleBuffer"
@@ -240,7 +248,7 @@ Inherits BeaconSubview
 			Group="Windows Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType="Boolean"
+			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -1,6 +1,6 @@
 #tag Class
 Protected Class StringArrayIterator
-Implements  Iterator
+Implements Iterator
 	#tag Method, Flags = &h0
 		Sub Constructor(List() As String)
 		  Redim Self.mItems(List.LastRowIndex)

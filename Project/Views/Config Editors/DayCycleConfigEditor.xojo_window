@@ -40,7 +40,6 @@ Begin ConfigEditor DayCycleConfigEditor
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -84,7 +83,6 @@ Begin ConfigEditor DayCycleConfigEditor
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -303,7 +301,6 @@ Begin ConfigEditor DayCycleConfigEditor
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -347,7 +344,6 @@ Begin ConfigEditor DayCycleConfigEditor
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648

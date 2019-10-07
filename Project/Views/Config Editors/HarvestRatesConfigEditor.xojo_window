@@ -272,7 +272,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Top             =   54
       Transparent     =   False
       Underline       =   False
-      Value           =   False
+      Value           =   "False"
       Visible         =   True
       Width           =   393
    End
@@ -539,7 +539,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Top             =   88
       Transparent     =   False
       Underline       =   False
-      Value           =   False
+      Value           =   "False"
       Visible         =   True
       Width           =   393
    End

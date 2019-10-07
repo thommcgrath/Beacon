@@ -40,9 +40,9 @@ Begin ConfigEditor StatMultipliersConfigEditor
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
-      SelectedPanelIndex=   0
       TabIndex        =   64
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   61
       Transparent     =   False
@@ -2557,6 +2557,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   328
+         Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Left            =   104
          LockBottom      =   False
@@ -2587,6 +2588,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   328
+         Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Left            =   355
          LockBottom      =   False
@@ -2617,6 +2619,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   328
+         Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Left            =   606
          LockBottom      =   False
@@ -2647,6 +2650,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   328
+         Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Left            =   857
          LockBottom      =   False

@@ -8,7 +8,7 @@
 		MacType=
 		Name=Beacon Document
 		UTI=com.thezaz.beacon.document
-		UTIConformsTo=public.text,public.data
+		UTIConformsTo=public.text, public.data
 		Description=
 		MimeType=
 		Imported=False
@@ -24,7 +24,7 @@
 		MacType=TEXT
 		Name=Ini File
 		UTI=
-		UTIConformsTo=public.text,public.data
+		UTIConformsTo=public.text, public.data
 		Description=
 		MimeType=
 		Imported=True
@@ -41,7 +41,7 @@
 		MacType=
 		Name=Beacon Identity
 		UTI=com.thezaz.beacon.identity
-		UTIConformsTo=public.text,public.data
+		UTIConformsTo=public.text, public.data
 		Description=
 		MimeType=
 		Imported=False
@@ -58,7 +58,7 @@
 		MacType=
 		Name=Beacon Preset
 		UTI=com.thezaz.beacon.preset
-		UTIConformsTo=public.text,public.data
+		UTIConformsTo=public.text, public.data
 		Description=
 		MimeType=
 		Imported=False
@@ -74,7 +74,7 @@
 		MacType=TEXT
 		Name=JSON File
 		UTI=
-		UTIConformsTo=public.text,public.data
+		UTIConformsTo=public.text, public.data
 		Description=
 		MimeType=
 		Imported=True
@@ -90,7 +90,7 @@
 		MacType=TEXT
 		Name=text/plain
 		UTI=public.text
-		UTIConformsTo=public.content,public.data
+		UTIConformsTo=public.content, public.data
 		Description=
 		MimeType=
 		Imported=True
@@ -106,7 +106,7 @@
 		MacType=TEXT
 		Name=CSV File
 		UTI=
-		UTIConformsTo=public.text,public.data
+		UTIConformsTo=public.text, public.data
 		Description=
 		MimeType=
 		Imported=True
@@ -123,7 +123,7 @@
 		MacType=
 		Name=Beacon Authorization
 		UTI=com.thezaz.beacon.auth
-		UTIConformsTo=public.text,public.data
+		UTIConformsTo=public.text, public.data
 		Description=
 		MimeType=
 		Imported=False

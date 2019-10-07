@@ -1,6 +1,6 @@
 #tag Class
 Private Class FrameSetIterator
-Implements  Iterator
+Implements Iterator
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As AnimationKit.FrameSet)
 		  Self.Index = 0

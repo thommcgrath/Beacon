@@ -128,14 +128,6 @@ Inherits CheckBox
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="AutoDeactivate"
-			Visible=false
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Caption"
 			Visible=true
 			Group="Appearance"
@@ -154,14 +146,6 @@ Inherits CheckBox
 		#tag ViewProperty
 			Name="Tooltip"
 			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HelpTag"
-			Visible=false
 			Group="Appearance"
 			InitialValue=""
 			Type="String"
@@ -208,14 +192,6 @@ Inherits CheckBox
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="TextFont"
-			Visible=false
-			Group="Font"
-			InitialValue="System"
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="FontSize"
 			Visible=true
 			Group="Font"
@@ -224,31 +200,8 @@ Inherits CheckBox
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="TextSize"
-			Visible=false
-			Group="Font"
-			InitialValue="0"
-			Type="Single"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="FontUnit"
 			Visible=true
-			Group="Font"
-			InitialValue="0"
-			Type="FontUnits"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Default"
-				"1 - Pixel"
-				"2 - Point"
-				"3 - Inch"
-				"4 - Millimeter"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TextUnit"
-			Visible=false
 			Group="Font"
 			InitialValue="0"
 			Type="FontUnits"
@@ -283,27 +236,6 @@ Inherits CheckBox
 			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="State"
-			Visible=false
-			Group="Initial State"
-			InitialValue="0"
-			Type="CheckedStates"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Unchecked"
-				"1 - Checked"
-				"2 - Indeterminate"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Value"
-			Visible=false
-			Group="Initial State"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="DataField"
 			Visible=true
 			Group="Database Binding"
@@ -325,6 +257,14 @@ Inherits CheckBox
 			Group=""
 			InitialValue=""
 			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Mask"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="UInt64"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

@@ -68,7 +68,6 @@ Begin ContainerControl CreatureStatContainer
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
-         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   0
@@ -183,7 +182,6 @@ Begin ContainerControl CreatureStatContainer
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
-         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   1
@@ -298,7 +296,6 @@ Begin ContainerControl CreatureStatContainer
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
-         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   2
@@ -413,7 +410,6 @@ Begin ContainerControl CreatureStatContainer
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
-         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   3
@@ -528,7 +524,6 @@ Begin ContainerControl CreatureStatContainer
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
-         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   4
@@ -643,7 +638,6 @@ Begin ContainerControl CreatureStatContainer
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
-         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   7
@@ -758,7 +752,6 @@ Begin ContainerControl CreatureStatContainer
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
-         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   8
@@ -873,7 +866,6 @@ Begin ContainerControl CreatureStatContainer
          FontSize        =   0.0
          FontUnit        =   0
          Format          =   ""
-         HasBorder       =   True
          Height          =   22
          Hint            =   ""
          Index           =   9

@@ -1,6 +1,6 @@
 #tag Interface
 Private Interface Countable
-Implements  Iterable
+Implements Iterable
 	#tag Method, Flags = &h0
 		Function Count() As Integer
 		  

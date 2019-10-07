@@ -1,6 +1,6 @@
 #tag Class
 Protected Class ControlGroupIterator
-Implements  Iterator
+Implements Iterator
 	#tag Method, Flags = &h0
 		Sub Constructor(Group As ControlGroup)
 		  Self.mGroup = Group

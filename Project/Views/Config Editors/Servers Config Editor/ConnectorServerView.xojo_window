@@ -27,6 +27,7 @@ Begin ServerViewContainer ConnectorServerView
    Width           =   600
    Begin Beacon.ConnectorClientSocket ClientSocket
       Address         =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Port            =   0
@@ -40,6 +41,7 @@ Begin ServerViewContainer ConnectorServerView
       AllowTabs       =   False
       Backdrop        =   0
       Caption         =   "Untitled"
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
       Index           =   -2147483648
@@ -59,6 +61,7 @@ Begin ServerViewContainer ConnectorServerView
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
+      Transparent     =   False
       Visible         =   True
       Width           =   600
    End
@@ -133,7 +136,6 @@ Begin ServerViewContainer ConnectorServerView
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -282,7 +284,6 @@ Begin ServerViewContainer ConnectorServerView
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -326,7 +327,6 @@ Begin ServerViewContainer ConnectorServerView
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -370,7 +370,6 @@ Begin ServerViewContainer ConnectorServerView
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
@@ -505,6 +504,7 @@ Begin ServerViewContainer ConnectorServerView
       Width           =   110
    End
    Begin Timer RefreshTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   30000

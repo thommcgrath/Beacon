@@ -1,6 +1,6 @@
 #tag Class
 Protected Class BeaconToolbarItemIterator
-Implements  Iterator
+Implements Iterator
 	#tag Method, Flags = &h0
 		Sub Constructor(Source() As BeaconToolbarItem)
 		  Redim Self.mItems(Source.LastRowIndex)
