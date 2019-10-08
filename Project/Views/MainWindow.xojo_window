@@ -240,11 +240,14 @@ End
 		        If Not Self.DiscardView(View) Then
 		          Return True
 		        End If
-		      Next      
+		      Next
 		      Return False
 		    ElseIf Choice = Dialog.CancelButton Then
 		      Return True
 		    ElseIf Choice = Dialog.AlternateActionButton Then
+		      For Each View As BeaconSubview In ModifiedViews
+		        View.DiscardChanges()
+		      Next
 		      Return False
 		    End If
 		  End Select
