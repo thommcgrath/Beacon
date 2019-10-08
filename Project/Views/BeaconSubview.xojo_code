@@ -111,10 +111,17 @@ Implements ObservationKit.Observable
 		  Case Dialog.CancelButton
 		    Return False
 		  Case Dialog.AlternateActionButton
-		    RaiseEvent CleanupDiscardedChanges()
+		    Self.DiscardChanges()
 		    Return True
 		  End Select
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DiscardChanges()
+		  RaiseEvent CleanupDiscardedChanges()
+		  Self.Changed = False
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
