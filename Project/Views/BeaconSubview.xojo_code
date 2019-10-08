@@ -121,7 +121,7 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Sub DiscardChanges()
 		  RaiseEvent CleanupDiscardedChanges()
-		  Self.Changed = False
+		  Self.ContentsChanged = False
 		End Sub
 	#tag EndMethod
 
