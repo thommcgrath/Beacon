@@ -2,7 +2,11 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Beacon"
-#define MyAppVersion "1.2.9"
+#ifdef x64
+#define MyAppVersion GetFileProductVersion("..\..\Project\Builds - Beacon.xojo_project\Windows 64 bit\Beacon\Beacon.exe")
+#else
+#define MyAppVersion GetFileProductVersion("..\..\Project\Builds - Beacon.xojo_project\Windows\Beacon\Beacon.exe")
+#endif
 #define MyAppPublisher "The ZAZ Studios"
 #define MyAppURL "https://beaconapp.cc/"
 #define MyAppExeName "Beacon.exe"
@@ -15,7 +19,6 @@
 AppId={{E58BA263-A23C-484E-99DF-319D5BD1399F}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-;AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
@@ -30,14 +33,14 @@ MinVersion=6.1.7601
 ChangesAssociations=yes
 #ifdef x64
 ArchitecturesAllowed=x64
-OutputDir=Output\x64
+OutputDir={#MyAppVersion}\x64
 #else
 #ifdef x86
 ArchitecturesAllowed=x86
-OutputDir=Output\x86
+OutputDir={#MyAppVersion}\x86
 #else
 ArchitecturesAllowed=x86 x64
-OutputDir=Output\Combo
+OutputDir={#MyAppVersion}\Combo
 #define x64 1
 #define x86 1
 #endif
