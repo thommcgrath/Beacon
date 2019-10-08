@@ -120,7 +120,7 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Sub DiscardChanges()
 		  RaiseEvent CleanupDiscardedChanges()
-		  Self.ContentsChanged = False
+		  Self.Changed = False
 		End Sub
 	#tag EndMethod
 
