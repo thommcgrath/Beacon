@@ -28,7 +28,6 @@ if [ -e "${OUTPUT}/${APPNAME}.dmg" ]; then
 	rm -rf "${OUTPUT}/${APPNAME}.dmg";
 fi
 hdiutil convert "${OUTPUT}/${APPNAME}.sparseimage" -format UDBZ -o "${OUTPUT}/${APPNAME}.dmg";
-hdiutil internet-enable -yes "${OUTPUT}/${APPNAME}.dmg";
 codesign -s 'Developer ID Application: Thom McGrath' --timestamp "${OUTPUT}/${APPNAME}.dmg";
 rm -rf "${OUTPUT}/${APPNAME}.sparseimage";
 
