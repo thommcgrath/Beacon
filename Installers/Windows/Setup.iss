@@ -3,9 +3,9 @@
 
 #define MyAppName "Beacon"
 #ifdef x64
-#define MyAppVersion GetFileProductVersion("..\..\Project\Builds - Beacon\Windows 64 bit\Beacon\Beacon.exe")
+  #define MyAppVersion Trim(GetFileProductVersion("..\..\Project\Builds - Beacon\Windows 64 bit\Beacon\Beacon.exe"))
 #else
-#define MyAppVersion GetFileProductVersion("..\..\Project\Builds - Beacon\Windows\Beacon\Beacon.exe")
+  #define MyAppVersion Trim(GetFileProductVersion("..\..\Project\Builds - Beacon\Windows\Beacon\Beacon.exe"))
 #endif
 #define MyAppPublisher "The ZAZ Studios"
 #define MyAppURL "https://beaconapp.cc/"
@@ -27,26 +27,26 @@ DefaultDirName={commonpf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 OutputBaseFilename=Install_{#MyAppName}
-Compression=lzma
-SolidCompression=yes
+Compression=lzma2
+SolidCompression=no
 MinVersion=6.1.7601
 ChangesAssociations=yes
 #ifdef x64
-ArchitecturesAllowed=x64
-OutputDir={#MyAppVersion}\x64
+  ArchitecturesAllowed=x64
+  OutputDir={#MyAppVersion}\x64
 #else
-#ifdef x86
-ArchitecturesAllowed=x86
-OutputDir={#MyAppVersion}\x86
-#else
-ArchitecturesAllowed=x86 x64
-OutputDir={#MyAppVersion}\Combo
-#define x64 1
-#define x86 1
-#endif
+  #ifdef x86
+    ArchitecturesAllowed=x86
+    OutputDir={#MyAppVersion}\x86
+  #else
+    ArchitecturesAllowed=x86 x64
+    OutputDir={#MyAppVersion}\Combo
+    #define x64 1
+    #define x86 1
+  #endif
 #endif
 #ifdef x64
-ArchitecturesInstallIn64BitMode=x64
+  ArchitecturesInstallIn64BitMode=x64
 #endif
 SignTool=TheZAZ /d $qBeacon$q /du $qhttps://beaconapp.cc$q $f
 WizardStyle=modern
