@@ -181,6 +181,7 @@ function PrepareSpawnPointTable(BeaconSpawnPoint $spawn_point, array &$propertie
 			$creatures[] = $label;
 		}
 	}
+	sort($creatures);
 	$properties['Spawns'] = implode(', ', $creatures);
 	
 	unset($properties['Spawn Code']);
