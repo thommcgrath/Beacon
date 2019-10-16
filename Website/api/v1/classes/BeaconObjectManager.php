@@ -2,7 +2,6 @@
 
 class BeaconObjectManager {
 	protected $class_name = null;
-	protected $min_version = 99999999;
 	
 	public function __construct(string $class_name) {
 		$test = new $class_name;
@@ -34,14 +33,14 @@ class BeaconObjectManager {
 		if ($object_id === null) {
 			// list all
 			if (isset($_GET['mod_id'])) {
-				$objects = $this->class_name::Get($_GET['mod_id'], $this->min_version);
+				$objects = $this->class_name::Get($_GET['mod_id'], BeaconCommon::MinVersion());
 			} else {
-				$objects = $this->class_name::Get(null, $this->min_version);
+				$objects = $this->class_name::Get(null, BeaconCommon::MinVersion());
 			}
 			BeaconAPI::ReplySuccess($objects);
 		} else {
 			// specific objects
-			$objects = $this->class_name::Get($object_id, $this->min_version);
+			$objects = $this->class_name::Get($object_id, BeaconCommon::MinVersion());
 			if (count($objects) === 0) {
 				BeaconAPI::ReplyError('Object not found', null, 404);
 			}
@@ -98,7 +97,7 @@ class BeaconObjectManager {
 			// mod_id is one that the user owns. If there is not a matching object, the mod_id value
 			// is then required.
 			if (array_key_exists('object_id', $item)) {
-				$object = $this->class_name::GetByObjectID($item['object_id'], $this->min_version);
+				$object = $this->class_name::GetByObjectID($item['object_id'], BeaconCommon::MinVersion());
 				if (is_null($object)) {
 					$object = new $this->class_name($item['object_id']);
 				}
@@ -129,7 +128,7 @@ class BeaconObjectManager {
 			try {
 				$object->ConsumeJSON($item);
 				$object->Save();
-				$object = $this->class_name::GetByObjectID($object->ObjectID(), $this->min_version);
+				$object = $this->class_name::GetByObjectID($object->ObjectID(), BeaconCommon::MinVersion());
 				if (is_null($object) === false) {
 					$saved[] = $object;
 				} else {

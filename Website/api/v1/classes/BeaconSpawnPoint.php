@@ -37,6 +37,10 @@ class BeaconSpawnPoint extends BeaconBlueprint {
 		$json['spawns'] = $this->groups;
 		return $json;
 	}
+	
+	public function Spawns() {
+		return $this->groups;
+	}
 }
 
 ?>

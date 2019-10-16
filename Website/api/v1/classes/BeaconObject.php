@@ -206,11 +206,11 @@ class BeaconObject implements JsonSerializable {
 		return null;
 	}
 	
-	public static function GetAll(int $min_version = 0, DateTime $updated_since = null, bool $confirmed_only = false) {
+	public static function GetAll(int $min_version = -1, DateTime $updated_since = null, bool $confirmed_only = false) {
 		return static::Get(null, $min_version, $updated_since, $confirmed_only);
 	}
 	
-	public static function Get($values = null, int $min_version = 0, DateTime $updated_since = null, bool $confirmed_only = false) {
+	public static function Get($values = null, int $min_version = -1, DateTime $updated_since = null, bool $confirmed_only = false) {
 		if ($values !== null) {
 			$values = static::PrepareLists($values);
 		} else {
@@ -219,6 +219,10 @@ class BeaconObject implements JsonSerializable {
 		
 		if ($updated_since === null) {
 			$updated_since = new DateTime('2000-01-01');
+		}
+		
+		if ($min_version == -1) {
+			$min_version = BeaconCommon::MinVersion();
 		}
 		
 		$clauses = array();
@@ -254,14 +258,14 @@ class BeaconObject implements JsonSerializable {
 		return static::FromResults($results);
 	}
 	
-	public static function GetByObjectID(string $object_id, int $min_version = 0, DateTime $updated_since = null) {
+	public static function GetByObjectID(string $object_id, int $min_version = -1, DateTime $updated_since = null) {
 		$objects = static::Get($object_id, $min_version, $updated_since);
 		if (count($objects) == 1) {
 			return $objects[0];
 		}
 	}
 	
-	public static function GetWithTag(string $tag, int $min_version = 0, DateTime $updated_since = null) {
+	public static function GetWithTag(string $tag, int $min_version = -1, DateTime $updated_since = null) {
 		$tag = self::NormalizeTag($tag);
 		return static::Get('tags:' . $tag, $min_version, $updated_since);
 	}
@@ -302,9 +306,13 @@ class BeaconObject implements JsonSerializable {
 		return $obj;
 	}
 	
-	public static function LastUpdate(int $min_version = 0) {
+	public static function LastUpdate(int $min_version = -1) {
 		$database = BeaconCommon::Database();
 		$table = static::TableName();
+		
+		if ($min_version == -1) {
+			$min_version = BeaconCommon::MinVersion();
+		}
 		
 		$results = $database->Query('SELECT MAX(last_update) AS most_recent_change FROM ' . $table . ' WHERE min_version <= $1;', $min_version);
 		if ($results->Field('most_recent_change') !== null) {
@@ -326,9 +334,13 @@ class BeaconObject implements JsonSerializable {
 		return ($change_time >= $delete_time) ? $change_time : $delete_time;
 	}
 	
-	public static function Deletions(int $min_version = 0, DateTime $since = null) {
+	public static function Deletions(int $min_version = -1, DateTime $since = null) {
 		if ($since === null) {
 			$since = new DateTime('2000-01-01');
+		}
+		
+		if ($min_version == -1) {
+			$min_version = BeaconCommon::MinVersion();
 		}
 		
 		$database = BeaconCommon::Database();

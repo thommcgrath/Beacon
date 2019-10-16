@@ -68,6 +68,9 @@ if ($obj instanceof BeaconCreature) {
 } elseif ($obj instanceof BeaconPreset) {
 	$type = 'Preset';
 	PreparePresetTable($obj, $properties);
+} elseif ($obj instanceof BeaconSpawnPoint) {
+	$type = 'Spawn Point';
+	PrepareSpawnPointTable($obj, $properties);
 }
 
 $parser = new Parsedown();
@@ -144,7 +147,7 @@ function PrepareDietTable(BeaconDiet $diet, array &$properties) {
 	$engrams = array();
 	foreach ($engram_ids as $id) {
 		$engram = BeaconEngram::GetByObjectID($id);
-		$engrams[] = '[' . $engram->Label() . '](/object.php/' . $engram->ObjectID() . ')';
+		$engrams[] = '[' . $engram->Label() . '](/object/' . $engram->ClassString() . ')';
 	}
 	$properties['Preferred Foods'] = implode(', ', $engrams);
 	
@@ -152,12 +155,35 @@ function PrepareDietTable(BeaconDiet $diet, array &$properties) {
 	$creatures = array();
 	foreach ($creature_ids as $id) {
 		$creature = BeaconCreature::GetByObjectID($id);
-		$creatures[] = '[' . $creature->Label() . '](/object.php/' . $creature->ObjectID() . ')';
+		$creatures[] = '[' . $creature->Label() . '](/object/' . $creature->ClassString() . ')';
 	}
 	$properties['Eaten By'] = implode(', ', $creatures);
 }
 
 function PreparePresetTable(BeaconPreset $preset, array &$properties) {
+}
+
+function PrepareSpawnPointTable(BeaconSpawnPoint $spawn_point, array &$properties) {
+	$spawns = $spawn_point->Spawns();
+	
+	$creatures = array();
+	foreach ($spawns as $group) {
+		foreach ($group['creatures'] as $creature_data) {
+			$creature = BeaconCreature::GetByObjectID($creature_data['creature_id']);
+			if (is_null($creature)) {
+				continue;
+			}
+			
+			$label = '[' . $creature->Label() . '](/object/' . $creature->ClassString() . ')';
+			if (is_null($creature_data['max_percentage']) == false) {
+				$label .= ' (Max ' . BeaconCommon::FormatFloat($creature_data['max_percentage'] * 100, 0) . '%)';
+			}
+			$creatures[] = $label;
+		}
+	}
+	$properties['Spawns'] = implode(', ', $creatures);
+	
+	
 }
 
 ?>
