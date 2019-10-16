@@ -253,7 +253,7 @@ abstract class BeaconCommon {
 			$cache_key = $workshop_id . '|' . $cache_key;
 		}
 		
-		$obj = null;//BeaconCache::Get($cache_key);
+		$obj = BeaconCache::Get($cache_key);
 		if (!is_null($obj)) {
 			// Renew the cache
 			BeaconCache::Set($cache_key, $obj, 3600);
