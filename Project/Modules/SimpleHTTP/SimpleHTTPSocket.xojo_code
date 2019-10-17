@@ -18,8 +18,8 @@ Private Class SimpleHTTPSocket
 		    AddHandler Self.mSocket.ContentReceived, WeakAddressOf mSocket_ContentReceived
 		  #else
 		    Self.mLegacySocket = New HTTPSecureSocket
-		    Self.mLegacySocket.Secure = True
-		    Self.mLegacySocket.ConnectionType = SSLSocket.TLSv12
+		    Self.mLegacySocket.SSLEnabled = True
+		    Self.mLegacySocket.SSLConnectionType = SSLSocket.SSLConnectionTypes.TLSv12
 		    AddHandler Self.mLegacySocket.Error, WeakAddressOf mLegacySocket_Error
 		    AddHandler Self.mLegacySocket.PageReceived, WeakAddressOf mLegacySocket_PageReceived
 		  #endif
@@ -167,6 +167,7 @@ Private Class SimpleHTTPSocket
 
 
 	#tag Constant, Name = UseNewSocket, Type = Boolean, Dynamic = False, Default = \"True", Scope = Private
+		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"False"
 	#tag EndConstant
 
 
