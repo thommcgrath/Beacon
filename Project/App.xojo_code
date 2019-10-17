@@ -76,16 +76,16 @@ Implements NotificationKit.Receiver
 		  Dim Lock As New Mutex("com.thezaz.beacon")
 		  If Not Lock.TryEnter Then
 		    #If TargetWin32
-		      Dim StartTime As Double = Microseconds
+		      Dim StartTime As Double = System.Microseconds
 		      Dim PushSocket As New IPCSocket
 		      PushSocket.Path = Self.ApplicationSupport.Child("ipc").NativePath
 		      PushSocket.Connect
-		      Do Until PushSocket.IsConnected Or Microseconds - StartTime > 5000000
+		      Do Until PushSocket.IsConnected Or System.Microseconds - StartTime > 5000000
 		        PushSocket.Poll
 		      Loop
 		      If PushSocket.IsConnected Then
 		        PushSocket.Write(System.CommandLine + Encodings.UTF8.Chr(0))
-		        Do Until PushSocket.BytesLeftToSend = 0 Or Microseconds - StartTime > 5000000
+		        Do Until PushSocket.BytesLeftToSend = 0 Or System.Microseconds - StartTime > 5000000
 		          PushSocket.Poll
 		        Loop
 		        PushSocket.Close
@@ -99,7 +99,7 @@ Implements NotificationKit.Receiver
 		    #If TargetWin32
 		      Self.mHandoffSocket = New IPCSocket
 		      Self.mHandoffSocket.Path = Self.ApplicationSupport.Child("ipc").NativePath
-		      AddHandler Self.mHandoffSocket.DataAvailable, WeakAddressOf Self.mHandoffSocket_DataAvailable
+		      AddHandler Self.mHandoffSocket.DataReceived, WeakAddressOf Self.mHandoffSocket_DataReceived
 		      AddHandler Self.mHandoffSocket.Error, WeakAddressOf Self.mHandoffSocket_Error
 		      Self.mHandoffSocket.Listen
 		    #EndIf
@@ -729,7 +729,7 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mHandoffSocket_DataAvailable(Sender As IPCSocket)
+		Private Sub mHandoffSocket_DataReceived(Sender As IPCSocket)
 		  Do
 		    Dim Buffer As String = DefineEncoding(Sender.Lookahead, Encodings.UTF8)
 		    Dim Pos As Integer = Buffer.IndexOf(Encodings.UTF8.Chr(0))
@@ -933,7 +933,7 @@ Implements NotificationKit.Receiver
 		    If Parent.Child("Resources").Exists Then
 		      Return Parent.Child("Resources")
 		    Else
-		      Dim Name As String = Left(Self.ExecutableFile.Name, Len(Self.ExecutableFile.Name) - 4)
+		      Dim Name As String = Self.ExecutableFile.Name.Left(Self.ExecutableFile.Name.Length - 4)
 		      Return Parent.Child(Name + " Resources")
 		    End If
 		  #endif

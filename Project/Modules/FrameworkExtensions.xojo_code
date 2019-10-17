@@ -129,7 +129,7 @@ Protected Module FrameworkExtensions
 		      Return
 		    End If
 		    
-		    If Win.Placement = Window.PlacementParent Then
+		    If Win.DefaultLocation = Window.Locations.ParentWindow Then
 		      Win.Top = Parent.Top
 		      Win.Left = Parent.Left + ((Parent.Width - Win.Width) / 2)
 		    End If

@@ -80,7 +80,7 @@ Protected Module BeaconUI
 	#tag Method, Flags = &h0
 		Function Capture(Extends Win As Window) As Picture
 		  #if TargetWin32
-		    Declare Sub BitBlt Lib "GDI32" (DestinationContext As Integer, X As Integer, Y As Integer, Width As Integer, Height As Integer, SourceContext As Integer, SrcX As Integer, SrcY As Integer, RasterOperationCode As Integer)
+		    Declare Sub BitBlt Lib "GDI32" (DestinationContext As Ptr, X As Integer, Y As Integer, Width As Integer, Height As Integer, SourceContext As Integer, SrcX As Integer, SrcY As Integer, RasterOperationCode As Integer)
 		    Declare Function GetDC Lib "User32" (Handle As Integer ) As Integer
 		    Declare Function CreateCompatibleBitmap Lib "Gdi32" (Context As Integer, Width As Integer, Height As Integer) As Integer
 		    Declare Sub GetObjectA Lib "GDI32" (Bitmap As Integer, Size As Integer, Struct As Ptr)
@@ -120,7 +120,7 @@ Protected Module BeaconUI
 		    WindowPic.HorizontalResolution = 72 * HorizontalScale
 		    WindowPic.VerticalResolution = 72 * VerticalScale
 		    
-		    Dim DestinationContext As Integer = WindowPic.Graphics.Handle(Graphics.HandleTypeHDC)
+		    Dim DestinationContext As Ptr = WindowPic.Graphics.Handle(Graphics.HandleTypes.HDC)
 		    Const CAPTUREBLT = &h40000000
 		    Const SRCCOPY = &hCC0020
 		    BitBlt(DestinationContext, 0, 0, PicWidth, PicHeight, Context, 0, 0, SRCCOPY + CAPTUREBLT )
@@ -255,6 +255,8 @@ Protected Module BeaconUI
 		    Panel.FontUnit = FontUnits.Point
 		    Panel.FontName = "System"
 		    Panel.FontSize = GetPointSize(FontObject)
+		  #else
+		    #Pragma Unused Panel
 		  #endif
 		End Sub
 	#tag EndMethod

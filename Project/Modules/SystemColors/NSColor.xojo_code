@@ -211,6 +211,8 @@ Private Class NSColor
 		      Return Nil
 		    End If
 		    Return New SystemColors.NSColor(Handle)
+		  #else
+		    #Pragma Unused SelectorName
 		  #endif
 		End Function
 	#tag EndMethod
@@ -233,6 +235,8 @@ Private Class NSColor
 		    Declare Function GetColorWithSystemEffect Lib CocoaLib Selector "colorWithSystemEffect:" (Target As Ptr, Effect As Integer) As Ptr
 		    Dim Handle As Ptr = GetColorWithSystemEffect(Self.mHandle, CType(Effect, Integer))
 		    Return New SystemColors.NSColor(Handle)
+		  #else
+		    #Pragma Unused Effect
 		  #endif
 		End Function
 	#tag EndMethod

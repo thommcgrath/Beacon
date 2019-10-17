@@ -50,7 +50,7 @@ Inherits FolderItem
 		      App.Log("Unable to resolve saveinfo for: " + Str(ErrorCode(ErrorRef)) + " " + ErrorDescription(ErrorRef))
 		    End If
 		  #else
-		    Dim File As FolderItem = Volume(0).GetRelative(DecodeBase64(SaveInfo))
+		    Dim File As FolderItem = FolderItem.DriveAt(0).FromSaveInfo(DecodeBase64(SaveInfo))
 		    Return New BookmarkedFolderItem(File)
 		  #endif
 		End Function
@@ -83,7 +83,7 @@ Inherits FolderItem
 		      End If
 		    End If
 		  #else
-		    Return EncodeBase64(Self.GetSaveInfo(Nil), 0)
+		    Return EncodeBase64(Self.SaveInfo(Nil), 0)
 		  #endif
 		End Function
 	#tag EndMethod
