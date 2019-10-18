@@ -209,7 +209,7 @@ BeaconTemplate::FinishStyles();
 				echo '<li>';
 				echo '<span class="title">' . htmlentities($results->Field('message')) . '</span>';
 				if ($results->Field('secondary_message') != '') {
-					echo '<br>' . nl2br(htmlentities($results->Field('secondary_message')));
+					echo '<br>' . nl2br(htmlentities($results->Field('secondary_message')), false);
 				}
 				if ($results->Field('action_url') != '') {
 					echo '<br><a href="' . htmlentities($results->Field('action_url')) . '">More Details &hellip;</a>';
