@@ -92,8 +92,28 @@ class BeaconLogin {
 			return false;
 		}
 		
-		$plain = "To continue setting up your Beacon Account, enter the following code where prompted.\n\n$code\n\nNote: The code is case-sensitive.\nIf you need help, simply reply to this email.";
-		$html = '<center><a href="' . BeaconCommon::AbsoluteURL('/account/login/?email=' . urlencode($email) . '&code=' . urlencode($code) . (is_null($key) ? '' : '&key=' . urlencode($key))) . '">Click Here to Confirm Your E-Mail</a></center><br /><br \>If you need to enter the code manually, your code is ' . htmlentities($code) . '. The code is case-sensitive, so using copy and paste is recommended.<br /><br />If you need help, simply reply to this email.';
+		$plain = "To continue setting up your Beacon Account, enter the following code where prompted.\n\n$code\n\nNote: The code is case-sensitive.\nIf you need help, simply reply to this email.\n\nRecent Beacon News";
+		$html = '<center><a href="' . BeaconCommon::AbsoluteURL('/account/login/?email=' . urlencode($email) . '&code=' . urlencode($code) . (is_null($key) ? '' : '&key=' . urlencode($key))) . '">Click Here to Confirm Your E-Mail</a></center><br /><br \>If you need to enter the code manually, your code is ' . htmlentities($code) . '. The code is case-sensitive, so using copy and paste is recommended.<br /><br />If you need help, simply reply to this email.<br /><br /><strong style="font-size: larger;">Recent Beacon News</strong>';
+		
+		$database = BeaconCommon::Database();
+		$results = $database->Query('SELECT MAX(build_number) AS latest_public_build FROM updates WHERE stage = 3;');
+		$public_build = $results->Field('latest_public_build');
+		$results = $database->Query('(SELECT message, secondary_message, action_url, last_update FROM client_notices WHERE (min_version IS NULL OR min_version <= $1) AND (max_version IS NULL OR max_version >= $1)) UNION (SELECT subject AS message, preview AS secondary_message, \'/blog/\' || article_slug AS action_url, last_updated AS last_update FROM blog_articles WHERE publish_date < CURRENT_TIMESTAMP) ORDER BY last_update DESC LIMIT 3;', $public_build);
+		while (!$results->EOF()) {
+			$plain .= "\n\n" . $results->Field('message');
+			if ($results->Field('action_url') != '') {
+				$url = BeaconCommon::AbsoluteURL($results->Field('action_url'));
+				$plain .= "\n" . $url;
+				$html .= '<br /><br /><strong><a href="' . htmlentities($url) . '">' . htmlentities($results->Field('message')) . '</a></strong>';
+			} else {
+				$html .= '<br /><br /><strong>' . htmlentities($results->Field('message')) . '</strong>';
+			}
+			if ($results->Field('secondary_message') != '') {
+				$plain .= "\n" . $results->Field('secondary_message');
+				$html .= '<br />' . nl2br(htmlentities($results->Field('secondary_message')), true);
+			}
+			$results->MoveNext();
+		}
 		
 		return BeaconEmail::SendMail($email, 'Please Verify Your E-Mail Address', $plain, $html);
 	}
