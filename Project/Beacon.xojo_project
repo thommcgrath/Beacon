@@ -378,6 +378,7 @@ Window=ConnectorServerView;Views/Config Editors/Servers Config Editor/ConnectorS
 Class=ConnectorDeploymentEngine;Modules/Beacon/ConnectorDeploymentEngine.xojo_code;&h00000000646037FF;&h0000000055ADDFFF;false
 Class=LogFile;Modules/Beacon/LogFile.xojo_code;&h000000004D9167FF;&h0000000055ADDFFF;false
 Window=StopMessageDialog;Views/StopMessageDialog.xojo_window;&h00000000245037FF;&h0000000008A387FF;false
+Class=HTTPClientSocket;Classes/HTTPClientSocket.xojo_code;&h00000000647FD7FF;&h00000000056D5FFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=3

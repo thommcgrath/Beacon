@@ -226,7 +226,7 @@ Begin BeaconDialog DeveloperImportURLDialog
       Visible         =   False
       Width           =   16
    End
-   Begin URLConnection Socket
+   Begin HTTPClientSocket Socket
       AllowCertificateValidation=   False
       Enabled         =   True
       HTTPStatusCode  =   0
@@ -295,7 +295,7 @@ End
 #tag EndEvents
 #tag Events Socket
 	#tag Event
-		Sub Error(e As RuntimeException)
+		Sub Error(E As RuntimeException)
 		  Spinner.Visible = False
 		  ActionButton.Enabled = True
 		  URLField.Enabled = True
@@ -304,7 +304,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
 		  URLField.Value = URL
 		  
 		  Spinner.Visible = False

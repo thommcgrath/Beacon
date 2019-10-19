@@ -109,7 +109,7 @@ Begin LibrarySubview LibraryPaneSearch
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin URLConnection SearchSocket
+   Begin HTTPClientSocket SearchSocket
       AllowCertificateValidation=   False
       Enabled         =   True
       HTTPStatusCode  =   0
@@ -354,7 +354,7 @@ End
 #tag EndEvents
 #tag Events SearchSocket
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused URL
 		  
 		  Self.Reset()

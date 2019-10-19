@@ -20,7 +20,7 @@ Protected Class UpdateChecker
 		  Self.mSilent = Silent
 		  Self.mChecking = True
 		  
-		  Self.mSocket = New URLConnection
+		  Self.mSocket = New HTTPClientSocket
 		  Self.mSocket.AllowCertificateValidation = True
 		  AddHandler Self.mSocket.Error, WeakAddressOf Self.mSocket_Error
 		  AddHandler Self.mSocket.HeadersReceived, WeakAddressOf Self.mSocket_HeadersReceived
@@ -90,7 +90,7 @@ Protected Class UpdateChecker
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mSocket_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
+		Private Sub mSocket_ContentReceived(Sender As HTTPClientSocket, URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  #Pragma Unused HTTPStatus
@@ -170,7 +170,7 @@ Protected Class UpdateChecker
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mSocket_Error(Sender As URLConnection, Error As RuntimeException)
+		Private Sub mSocket_Error(Sender As HTTPClientSocket, Error As RuntimeException)
 		  Sender.Disconnect
 		  Self.mChecking = False
 		  
@@ -185,7 +185,7 @@ Protected Class UpdateChecker
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mSocket_HeadersReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer)
+		Private Sub mSocket_HeadersReceived(Sender As HTTPClientSocket, URL As String, HTTPStatus As Integer)
 		  #Pragma Unused URL
 		  
 		  If HTTPStatus <> 200 Then
@@ -276,7 +276,7 @@ Protected Class UpdateChecker
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSocket As URLConnection
+		Private mSocket As HTTPClientSocket
 	#tag EndProperty
 
 

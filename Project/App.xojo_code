@@ -67,6 +67,20 @@ Implements NotificationKit.Receiver
 
 	#tag Event
 		Sub Opening()
+		  Dim MBSRegistered As Boolean
+		  Try
+		    #Pragma BreakOnExceptions False
+		    MBSRegistered = RegisterMBSPlugin("Thom McGrath", "Complete", 201912, BeaconEncryption.SymmetricDecrypt(Self.MBSEncryption, Self.MBSSerial))
+		    #Pragma BreakOnExceptions Default
+		  Catch Err As RuntimeException
+		  End Try
+		  #if Not DebugBuild
+		    If Not MBSRegistered Then
+		      MessageBox("This build is not ready for use.")
+		      Quit
+		    End If
+		  #endif
+		  
 		  #If TargetMacOS
 		    Self.Log("Beacon " + Str(Self.BuildNumber, "-0") + " for Mac.")
 		  #ElseIf TargetWin32
@@ -1088,10 +1102,16 @@ Implements NotificationKit.Receiver
 		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"Ctrl+Q"
 	#tag EndConstant
 
-	#tag Constant, Name = Notification_AppearanceChanged, Type = Text, Dynamic = False, Default = \"Appearance Changed", Scope = Public
+	#tag Constant, Name = MBSEncryption, Type = String, Dynamic = False, Default = \"9311d936-34e9-455c-88c4-b1c8476a1e15", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = Notification_UpdateFound, Type = Text, Dynamic = False, Default = \"Update Found", Scope = Public
+	#tag Constant, Name = MBSSerial, Type = String, Dynamic = False, Default = \"HelloWorld", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_AppearanceChanged, Type = String, Dynamic = False, Default = \"Appearance Changed", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_UpdateFound, Type = String, Dynamic = False, Default = \"Update Found", Scope = Public
 	#tag EndConstant
 
 

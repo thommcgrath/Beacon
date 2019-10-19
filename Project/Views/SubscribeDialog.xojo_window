@@ -497,7 +497,7 @@ Begin Window SubscribeDialog
       Visible         =   True
       Width           =   110
    End
-   Begin URLConnection SubscribeSocket
+   Begin HTTPClientSocket SubscribeSocket
       AllowCertificateValidation=   False
       Enabled         =   True
       HTTPStatusCode  =   0
@@ -574,14 +574,14 @@ End
 #tag EndEvents
 #tag Events SubscribeSocket
 	#tag Event
-		Sub Error(e As RuntimeException)
+		Sub Error(E As RuntimeException)
 		  #Pragma Unused e
 		  
 		  Self.Close
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused URL
 		  #Pragma Unused Content
 		  #Pragma Unused HTTPStatus
