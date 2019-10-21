@@ -70,7 +70,9 @@ Implements NotificationKit.Receiver
 		  Dim MBSRegistered As Boolean
 		  Try
 		    #Pragma BreakOnExceptions False
-		    MBSRegistered = RegisterMBSPlugin("Thom McGrath", "Complete", 201912, BeaconEncryption.SymmetricDecrypt(Self.MBSEncryption, Self.MBSSerial))
+		    Dim MBSLicenseJSON As String = BeaconEncryption.SymmetricDecrypt(Self.MBSEncryption, DecodeHex(Self.MBSSerial))
+		    Dim MBSData As Dictionary = Xojo.ParseJSON(MBSLicenseJSON) // Do not use Beacon.ParseJSON here
+		    MBSRegistered = RegisterMBSPlugin(MBSData.Value("name").StringValue, MBSData.Value("product").StringValue, MBSData.Value("expires").IntegerValue, MBSData.Value("serial").StringValue)
 		    #Pragma BreakOnExceptions Default
 		  Catch Err As RuntimeException
 		  End Try
@@ -1105,7 +1107,7 @@ Implements NotificationKit.Receiver
 	#tag Constant, Name = MBSEncryption, Type = String, Dynamic = False, Default = \"9311d936-34e9-455c-88c4-b1c8476a1e15", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = MBSSerial, Type = String, Dynamic = False, Default = \"HelloWorld", Scope = Private
+	#tag Constant, Name = MBSSerial, Type = String, Dynamic = False, Default = \"8a02b5258c6d01b671066776539be5dcf83f000000950876d0f466ac023074fd0378bf244dd3d06340831c03e1f84cb2b8bc554e1f33f2afd09b739f7cfe0f2289c8aa07185836a64d5724a3fbff3c3a056f07eebe10952fd0612a82b7c4835494b8e34e28f32f6a1b85a7b2f35abc3dae3b53717e25e2d365613f0bccb0dccfd6d11372d8b1e7caeba2806ddac72df1fb98b336d505db008b16932046eb652b0643508ac5b374811296f3e8308891836cb90a942c2c1c9af2e0", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_AppearanceChanged, Type = String, Dynamic = False, Default = \"Appearance Changed", Scope = Public
