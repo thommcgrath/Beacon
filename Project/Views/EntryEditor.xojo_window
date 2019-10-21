@@ -789,7 +789,7 @@ End
 		        WeightString = "50"
 		        Me.Cell(Row, Self.ColumnWeight) = WeightString
 		      End
-		      Dim Weight As Double = Max(Min(Val(WeightString) / 100, 1), 0)
+		      Dim Weight As Double = Abs(CDbl(Me.Cell(Row, Column))) / 100
 		      Self.mSelectedEngrams.Value(Engram.Path) = New Beacon.SetEntryOption(Engram, Weight)
 		    ElseIf Not Checked And Self.mSelectedEngrams.HasKey(Engram.Path) Then
 		      Self.mSelectedEngrams.Remove(Engram.Path)
@@ -800,7 +800,7 @@ End
 		    Self.UpdateSimulation()
 		  Case Self.ColumnWeight
 		    If Self.mSelectedEngrams.HasKey(Engram.Path) Then
-		      Dim Weight As Double = Max(Min(Val(Me.Cell(Row, Column)) / 100, 1), 0)
+		      Dim Weight As Double = Abs(CDbl(Me.Cell(Row, Column))) / 100
 		      Self.mSelectedEngrams.Value(Engram.Path) = New Beacon.SetEntryOption(Engram, Weight)
 		      Self.UpdateSelectionUI()
 		      Self.UpdateSimulation()
