@@ -695,6 +695,22 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SearchForSpawnPoints(Extends Source As Beacon.DataSource, SearchText As String = "", Mods As Beacon.StringList = Nil, Tags As String = "") As Beacon.SpawnPoint()
+		  If Mods = Nil Then
+		    Mods = New Beacon.StringList
+		  End If
+		  Var Blueprints() As Beacon.Blueprint = Source.SearchForBlueprints(CategorySpawnPoints, SearchText, Mods, Tags)
+		  Var SpawnPoints() As Beacon.SpawnPoint
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    If Blueprint IsA Beacon.SpawnPoint Then
+		      SpawnPoints.AddRow(Beacon.SpawnPoint(Blueprint))
+		    End If
+		  Next
+		  Return SpawnPoints
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function SecondsToString(Seconds As UInt64) As String
 		  // Too obvious?

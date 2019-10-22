@@ -293,6 +293,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Sub Constructor()
 		  Self.mEngramCache = New Dictionary
 		  Self.mCreatureCache = New Dictionary
+		  Self.mSpawnPointCache = New Dictionary
 		  Self.mLock = New CriticalSection
 		  
 		  Dim AppSupport As FolderItem = App.ApplicationSupport
@@ -424,28 +425,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function DeleteCreature(Creature As Beacon.Creature) As Boolean
-		  Try
-		    Dim Results As RowSet = Self.SQLSelect("SELECT mod_id FROM creatures WHERE LOWER(path) = LOWER(?1);", Creature.Path)
-		    If Results.RowCount = 1 And Results.Column("mod_id").StringValue <> Self.UserModID Then
-		      Return False
-		    End If
-		    
-		    Self.BeginTransaction()
-		    Self.SQLExecute("DELETE FROM creatures WHERE LOWER(path) = LOWER(?1) AND mod_id = ?2;", Creature.Path, Self.UserModID)
-		    Self.Commit()
-		    
-		    Self.SyncUserEngrams()
-		    
-		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
-		    Return True
-		  Catch Err As UnsupportedOperationException
-		    Return False
-		  End Try
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub DeleteDataForMod(ModID As String)
 		  Self.BeginTransaction()
@@ -530,8 +509,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Case Beacon.CategoryCreatures
 		    Return Self.GetCreatureByPath(Path)
 		  Case Beacon.CategorySpawnPoints
-		    #Pragma Warning "No implementation for GetSpawnPointByPath"
-		    //Return Self.GetSpawnPointByPath(Path)
+		    Return Self.GetSpawnPointByPath(Path)
 		  End Select
 		End Function
 	#tag EndMethod
@@ -766,6 +744,29 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dict.Value("Pattern") = Results.Column("pattern").StringValue
 		  Dict.Value("Label") = Results.Column("label").StringValue
 		  Return Beacon.PresetModifier.FromDictionary(Dict)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPointByPath(Path As String) As Beacon.SpawnPoint
+		  If Self.mSpawnPointCache.HasKey(Path) Then
+		    Return Self.mSpawnPointCache.Value(Path)
+		  End If
+		  
+		  Try
+		    Dim RS As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE LOWER(path) = ?1;", Path.Lowercase)
+		    If RS.RowCount = 0 Then
+		      Return Nil
+		    End If
+		    
+		    Dim Points() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(RS)
+		    For Each Point As Beacon.SpawnPoint In Points
+		      Self.mSpawnPointCache.Value(Point.Path) = Point
+		    Next
+		    Return Points(0)
+		  Catch Err As UnsupportedOperationException
+		    Return Nil
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -1847,6 +1848,24 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Function RowSetToSpawnPoint(Results As RowSet) As Beacon.SpawnPoint()
+		  Dim SpawnPoints() As Beacon.SpawnPoint
+		  While Not Results.AfterLastRow
+		    Dim Point As New Beacon.MutableSpawnPoint(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
+		    Point.Label = Results.Column("label").StringValue
+		    Point.Availability = Results.Column("availability").IntegerValue
+		    Point.TagString = Results.Column("tags").StringValue
+		    Point.ModID = Results.Column("mod_id").StringValue
+		    Point.ModName = Results.Column("mod_name").StringValue
+		    Point.SetsAsJSON = Results.Column("default_contents").StringValue
+		    SpawnPoints.AddRow(Point)
+		    Results.MoveToNextRow
+		  Wend
+		  Return SpawnPoints
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function SaveBlueprint(Blueprint As Beacon.Blueprint, Replace As Boolean = True) As Boolean
 		  Dim Arr(0) As Beacon.Blueprint
@@ -1886,34 +1905,58 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        ObjectID = Blueprint.ObjectID
 		      End If
 		      
-		      Dim Category As String
+		      Dim Category As String = Blueprint.Category
+		      Dim Columns As Dictionary
+		      Columns.Value("object_id") = ObjectID
+		      Columns.Value("path") = Blueprint.Path
+		      Columns.Value("class_string") = Blueprint.ClassString
+		      Columns.Value("label") = Blueprint.Label
+		      Columns.Value("tags") = Blueprint.TagString
+		      Columns.Value("availability") = Blueprint.Availability
+		      
 		      Select Case Blueprint
-		      Case IsA Beacon.Engram
-		        Dim Engram As Beacon.Engram = Beacon.Engram(Blueprint)
-		        If Update Then
-		          Self.SQLExecute("UPDATE engrams SET path = ?2, class_string = ?3, label = ?4, tags = ?5, availability = ?6 WHERE object_id = ?1;", ObjectID, Engram.Path, Engram.ClassString, Engram.Label, Engram.TagString, Engram.Availability)
-		        Else
-		          Self.SQLExecute("INSERT INTO engrams (object_id, path, class_string, label, tags, availability, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID, Engram.Path, Engram.ClassString, Engram.Label, Engram.TagString, Engram.Availability, Self.UserModID)
-		        End If
-		        Category = Beacon.CategoryEngrams
 		      Case IsA Beacon.Creature
 		        Dim Creature As Beacon.Creature = Beacon.Creature(Blueprint)
-		        Dim IncubationSeconds, MatureSeconds As Variant
 		        If Creature.IncubationTime > 0 And Creature.MatureTime > 0 Then
-		          IncubationSeconds = Creature.IncubationTime
-		          MatureSeconds = Creature.MatureTime
-		        End If
-		        If Update Then
-		          Self.SQLExecute("UPDATE creatures SET path = ?2, class_string = ?3, label = ?4, tags = ?5, availability = ?6, incubation_time = ?7, mature_time = ?8 WHERE object_id = ?1;", ObjectID, Creature.Path, Creature.ClassString, Creature.Label, Creature.TagString, Creature.Availability, IncubationSeconds, MatureSeconds)
+		          Columns.Value("incubation_time") = Creature.IncubationTime
+		          Columns.Value("mature_time") = Creature.MatureTime
 		        Else
-		          Self.SQLExecute("INSERT INTO creatures (object_id, path, class_string, label, tags, availability, incubation_time, mature_time, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", ObjectID, Creature.Path, Creature.ClassString, Creature.Label, Creature.TagString, Creature.Availability, IncubationSeconds, MatureSeconds, Self.UserModID)
+		          Columns.Value("incubation_time") = Nil
+		          Columns.Value("mature_time") = Nil
 		        End If
-		        Category = Beacon.CategoryCreatures
+		      Case IsA Beacon.SpawnPoint
+		        Columns.Value("default_contents") = Beacon.SpawnPoint(Blueprint).SetsAsJSON(False)
 		      End Select
 		      
 		      If Update Then
+		        Dim Assignments() As String
+		        Dim Values() As Variant
+		        Dim NextPlaceholder As Integer = 1
+		        Dim WhereClause As String
+		        For Each Entry As DictionaryEntry In Columns
+		          If Entry.Key = "object_id" Then
+		            WhereClause = "object_id = ?" + NextPlaceholder.ToString
+		          Else
+		            Assignments.AddRow(Entry.Key.StringValue + " = ?" + NextPlaceholder.ToString)
+		          End If
+		          Values.AddRow(Entry.Value)
+		          NextPlaceholder = NextPlaceholder + 1
+		        Next
+		        
+		        Self.SQLExecute("UPDATE " + Category + " SET " + Assignments.Join(", ") + " WHERE " + WhereClause + ";", Values)
 		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?3 WHERE object_id = ?2 AND source_table = ?1;", Category, ObjectID, Blueprint.TagString)
 		      Else
+		        Dim ColumnNames(), Placeholders() As String
+		        Dim Values() As Variant
+		        Dim NextPlaceholder As Integer = 1
+		        For Each Entry As DictionaryEntry In Columns
+		          ColumnNames.AddRow(Entry.Key.StringValue)
+		          Placeholders.AddRow("?" + NextPlaceholder.ToString)
+		          Values.AddRow(Entry.Value)
+		          NextPlaceholder = NextPlaceholder + 1
+		        Next
+		        
+		        Self.SQLExecute("INSERT INTO " + Category + " (" + ColumnNames.Join(", ") + ") VALUES (" + Placeholders.Join(", ") + ");", Values)
 		        Self.SQLExecute("INSERT INTO searchable_tags (source_table, object_id, tags) VALUES (?1, ?2, ?3);", Category, ObjectID, Blueprint.TagString)
 		      End If
 		      
@@ -2328,6 +2371,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mPresets() As Beacon.Preset
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSpawnPointCache As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
