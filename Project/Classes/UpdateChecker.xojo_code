@@ -245,11 +245,19 @@ Protected Class UpdateChecker
 
 	#tag Method, Flags = &h0
 		Shared Function VerifyFile(File As Global.FolderItem, Signature As String) As Boolean
-		  Dim Stream As BinaryStream = BinaryStream.Open(File, False)
-		  Dim Contents As MemoryBlock = Stream.Read(Stream.Length)
-		  Stream.Close
+		  If File = Nil Or File.Exists = False Then
+		    Return False
+		  End If
 		  
-		  Return Crypto.RSAVerifySignature(Contents, DecodeHex(Signature), PublicKey)
+		  Try
+		    Dim Stream As BinaryStream = BinaryStream.Open(File, False)
+		    Dim Contents As MemoryBlock = Stream.Read(Stream.Length)
+		    Stream.Close
+		    
+		    Return Crypto.RSAVerifySignature(Contents, DecodeHex(Signature), PublicKey)
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
 		End Function
 	#tag EndMethod
 
