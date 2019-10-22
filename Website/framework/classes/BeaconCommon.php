@@ -50,6 +50,7 @@ abstract class BeaconCommon {
 				static::$min_version = 99999999;
 			} else {
 				static::$min_version = 0;
+				$database = static::Database();
 				$builds = $database->Query("SELECT build_number FROM updates WHERE stage >= 3 ORDER BY build_number DESC LIMIT 1;");
 				if ($builds->RecordCount() == 1) {
 					static::$min_version = intval($builds->Field('build_number'));
