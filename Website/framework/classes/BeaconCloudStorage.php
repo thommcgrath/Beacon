@@ -17,7 +17,7 @@ abstract class BeaconCloudStorage {
 	}
 	
 	private static function LocalPath(string $remote_path) {
-		return sys_get_temp_dir() . static::ResourcePath($remote_path);
+		return '/var/tmp' . static::ResourcePath($remote_path);
 	}
 	
 	private static function ResourcePath(string $remote_path) {
