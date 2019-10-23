@@ -3,6 +3,7 @@
 abstract class BeaconCommon {
 	protected static $database = null;
 	protected static $globals = array();
+	protected static $min_version = -1;
 	
 	public static function GenerateUUID() {
 		$data = random_bytes(16);
@@ -41,6 +42,22 @@ abstract class BeaconCommon {
 	
 	public static function WebRoot() {
 		return dirname(__FILE__, 3) . '/www';
+	}
+	
+	public static function MinVersion() {
+		if (static::$min_version == -1) {
+			if (static::InDevelopment()) {
+				static::$min_version = 99999999;
+			} else {
+				static::$min_version = 0;
+				$database = static::Database();
+				$builds = $database->Query("SELECT build_number FROM updates WHERE stage >= 3 ORDER BY build_number DESC LIMIT 1;");
+				if ($builds->RecordCount() == 1) {
+					static::$min_version = intval($builds->Field('build_number'));
+				}
+			}
+		}
+		return static::$min_version;
 	}
 	
 	public static function AssetURI(string $asset_filename) {
@@ -256,11 +273,7 @@ abstract class BeaconCommon {
 			return null;
 		}
 		
-		$build_number = 0;
-		$builds = $database->Query("SELECT build_number FROM updates WHERE stage >= 3 ORDER BY build_number DESC LIMIT 1;");
-		if ($builds->RecordCount() == 1) {
-			$build_number = intval($builds->Field('build_number'));
-		}
+		$build_number = static::MinVersion();
 		
 		$objects = array();
 		while (!$results->EOF()) {
@@ -281,6 +294,9 @@ abstract class BeaconCommon {
 				break;
 			case 'presets':
 				$obj = BeaconPreset::GetByObjectID($id, $build_number);
+				break;
+			case 'spawn_points':
+				$obj = BeaconSpawnPoint::GetByObjectID($id, $build_number);
 				break;
 			default:
 				$obj = null;

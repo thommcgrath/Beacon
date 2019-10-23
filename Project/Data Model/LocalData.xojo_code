@@ -1,6 +1,90 @@
 #tag Class
 Protected Class LocalData
 Implements Beacon.DataSource,NotificationKit.Receiver
+	#tag Method, Flags = &h21
+		Private Function AddBlueprintToDatabase(Category As String, BlueprintData As Dictionary, ExtraValues As Dictionary = Nil) As Boolean
+		  Try
+		    Dim ObjectID As String = BlueprintData.Value("id").StringValue.Lowercase
+		    Dim Label As String = BlueprintData.Value("label")
+		    Dim ModID As String = Dictionary(BlueprintData.Value("mod")).Value("id").StringValue.Lowercase
+		    Dim Availability As Integer = BlueprintData.Value("availability").IntegerValue
+		    Dim Path As String = BlueprintData.Value("path").StringValue
+		    Dim ClassString As String = BlueprintData.Value("class_string").StringValue
+		    Dim TagString, TagStringForSearching As String
+		    Try
+		      Dim Tags() As String
+		      Dim Temp() As Variant = BlueprintData.Value("tags")
+		      For Each Tag As String In Temp
+		        Tags.AddRow(Tag)
+		      Next
+		      TagString = Tags.Join(",")
+		      Tags.AddRowAt(0, "object")
+		      TagStringForSearching = Tags.Join(",")
+		    Catch Err As TypeMismatchException
+		      
+		    End Try
+		    
+		    // Set the extra values first so our values take priority without
+		    // using HasKey, which would cost performance
+		    Dim Columns As New Dictionary
+		    If ExtraValues <> Nil Then
+		      For Each Entry As DictionaryEntry In ExtraValues
+		        Columns.Value(Entry.Key) = Entry.Value
+		      Next
+		    End If
+		    Columns.Value("object_id") = ObjectID
+		    Columns.Value("mod_id") = ModID
+		    Columns.Value("label") = Label
+		    Columns.Value("availability") = Availability
+		    Columns.Value("path") = Path
+		    Columns.Value("class_string") = ClassString
+		    Columns.Value("Tags") = TagString
+		    
+		    Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID, Path.Lowercase)
+		    If Results.RowCount = 1 And ObjectID = Results.Column("object_id").StringValue Then
+		      Dim Assignments() As String
+		      Dim Values() As Variant
+		      Dim NextPlaceholder As Integer = 1
+		      Dim WhereClause As String
+		      For Each Entry As DictionaryEntry In Columns
+		        If Entry.Key = "object_id" Then
+		          WhereClause = "object_id = ?" + NextPlaceholder.ToString
+		        Else
+		          Assignments.AddRow(Entry.Key.StringValue + " = ?" + NextPlaceholder.ToString)
+		        End If
+		        Values.AddRow(Entry.Value)
+		        NextPlaceholder = NextPlaceholder + 1
+		      Next
+		      
+		      Self.SQLExecute("UPDATE " + Category + " SET " + Assignments.Join(", ") + " WHERE " + WhereClause + ";", Values)
+		      Self.SQLExecute("UPDATE searchable_tags SET tags = ?2 WHERE object_id = ?1 AND source_table = ?3;", ObjectID, TagStringForSearching, Category)
+		    Else
+		      If Results.RowCount = 1 Then
+		        Self.SQLExecute("DELETE FROM " + Category + " WHERE object_id = ?1;", Results.Column("object_id").StringValue)
+		        Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id = ?1 AND source_table = ?3;", Results.Column("object_id").StringValue, Category)
+		      End If
+		      
+		      Dim ColumnNames(), Placeholders() As String
+		      Dim Values() As Variant
+		      Dim NextPlaceholder As Integer = 1
+		      For Each Entry As DictionaryEntry In Columns
+		        ColumnNames.AddRow(Entry.Key.StringValue)
+		        Placeholders.AddRow("?" + NextPlaceholder.ToString)
+		        Values.AddRow(Entry.Value)
+		        NextPlaceholder = NextPlaceholder + 1
+		      Next
+		      
+		      Self.SQLExecute("INSERT INTO " + Category + " (" + ColumnNames.Join(", ") + ") VALUES (" + Placeholders.Join(", ") + ");", Values)
+		      Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, ?3);", ObjectID, TagStringForSearching, Category)
+		    End If
+		    
+		    Return True
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub AddPresetModifier(Modifier As Beacon.PresetModifier)
 		  Self.BeginTransaction()
@@ -112,11 +196,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE notifications (notification_id TEXT NOT NULL PRIMARY KEY, message TEXT NOT NULL, secondary_message TEXT, user_data TEXT NOT NULL, moment TEXT NOT NULL, read INTEGER NOT NULL, action_url TEXT, deleted INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', incubation_time INTEGER, mature_time INTEGER, stats TEXT);")
+		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', default_contents TEXT NOT NULL DEFAULT '[]');")
 		  
 		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts5(tags, object_id, source_table);")
 		  
-		  Self.SQLExecute("CREATE VIEW blueprints AS SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryEngrams + "' AS category FROM engrams UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryCreatures + "' AS category FROM creatures;")
-		  Dim Categories() As String = Array(Beacon.CategoryCreatures, Beacon.CategoryEngrams)
+		  Self.SQLExecute("CREATE VIEW blueprints AS SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryEngrams + "' AS category FROM engrams UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryCreatures + "' AS category FROM creatures UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategorySpawnPoints + "' AS category FROM spawn_points")
+		  Dim Categories() As String = Array(Beacon.CategoryCreatures, Beacon.CategoryEngrams, Beacon.CategorySpawnPoints)
 		  Dim DeleteStatements() As String
 		  For Each Category As String In Categories
 		    DeleteStatements.AddRow("DELETE FROM " + Category + " WHERE object_id = OLD.object_id;")
@@ -208,6 +293,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Sub Constructor()
 		  Self.mEngramCache = New Dictionary
 		  Self.mCreatureCache = New Dictionary
+		  Self.mSpawnPointCache = New Dictionary
 		  Self.mLock = New CriticalSection
 		  
 		  Dim AppSupport As FolderItem = App.ApplicationSupport
@@ -339,26 +425,17 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function DeleteCreature(Creature As Beacon.Creature) As Boolean
-		  Try
-		    Dim Results As RowSet = Self.SQLSelect("SELECT mod_id FROM creatures WHERE LOWER(path) = LOWER(?1);", Creature.Path)
-		    If Results.RowCount = 1 And Results.Column("mod_id").StringValue <> Self.UserModID Then
-		      Return False
-		    End If
-		    
-		    Self.BeginTransaction()
-		    Self.SQLExecute("DELETE FROM creatures WHERE LOWER(path) = LOWER(?1) AND mod_id = ?2;", Creature.Path, Self.UserModID)
-		    Self.Commit()
-		    
-		    Self.SyncUserEngrams()
-		    
-		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
-		    Return True
-		  Catch Err As UnsupportedOperationException
-		    Return False
-		  End Try
-		End Function
+	#tag Method, Flags = &h21
+		Private Sub DeleteDataForMod(ModID As String)
+		  Self.BeginTransaction()
+		  Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id IN (SELECT object_id FROM blueprints WHERE mod_id = ?1);", ModID)
+		  Dim Results As RowSet = Self.SQLSelect("SELECT DISTINCT category FROM blueprints WHERE mod_id = ?1;", ModID)
+		  While Not Results.AfterLastRow
+		    Self.SQLExecute("DELETE FROM " + Results.Column("category").StringValue + " WHERE mod_id = ?1;", ModID)
+		    Results.MoveToNextRow
+		  Wend
+		  Self.Commit()
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -431,6 +508,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return Self.GetEngramByPath(Path)
 		  Case Beacon.CategoryCreatures
 		    Return Self.GetCreatureByPath(Path)
+		  Case Beacon.CategorySpawnPoints
+		    Return Self.GetSpawnPointByPath(Path)
 		  End Select
 		End Function
 	#tag EndMethod
@@ -669,6 +748,29 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetSpawnPointByPath(Path As String) As Beacon.SpawnPoint
+		  If Self.mSpawnPointCache.HasKey(Path) Then
+		    Return Self.mSpawnPointCache.Value(Path)
+		  End If
+		  
+		  Try
+		    Dim RS As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE LOWER(path) = ?1;", Path.Lowercase)
+		    If RS.RowCount = 0 Then
+		      Return Nil
+		    End If
+		    
+		    Dim Points() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(RS)
+		    For Each Point As Beacon.SpawnPoint In Points
+		      Self.mSpawnPointCache.Value(Point.Path) = Point
+		    Next
+		    Return Points(0)
+		  Catch Err As UnsupportedOperationException
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetStringVariable(Key As String) As String
 		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RowCount = 1 Then
@@ -858,9 +960,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return False
 		  End Try
 		  Self.BeginTransaction()
-		  Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id IN (SELECT object_id FROM engrams WHERE mod_id = ?1 UNION SELECT object_id FROM creatures WHERE mod_id = ?1);", Self.UserModID)
-		  Self.SQLExecute("DELETE FROM engrams WHERE mod_id = ?1;", Self.UserModID)
-		  Self.SQLExecute("DELETE FROM creatures WHERE mod_id = ?1;", Self.UserModID)
+		  Self.DeleteDataForMod(Self.UserModID)
 		  For Each Dict As Dictionary In Blueprints
 		    Try
 		      Dim Category As String = Dict.Value("category")
@@ -916,11 +1016,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If RemotePath = "/Engrams.json" Then
 		      Select Case Action.Value("Action")
 		      Case "DELETE"
-		        Self.BeginTransaction()
-		        Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id IN (SELECT object_id FROM engrams WHERE mod_id = ?1 UNION SELECT object_id FROM creatures WHERE mod_id = ?1);", Self.UserModID)
-		        Self.SQLExecute("DELETE FROM engrams WHERE mod_id = ?1;", Self.UserModID)
-		        Self.SQLExecute("DELETE FROM creatures WHERE mod_id = ?1;", Self.UserModID)
-		        Self.Commit()
+		        Self.DeleteDataForMod(Self.UserModID)
 		        EngramsUpdated = True
 		      Case "GET"
 		        EngramsUpdated = Self.ImportCloudEngrams() Or EngramsUpdated
@@ -1108,91 +1204,37 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      EngramsChanged = True
 		    Next
 		    
-		    Dim Engrams() As Variant = ChangeDict.Value("engrams")
-		    For Each Dict As Dictionary In Engrams
-		      Dim ObjectID As String = Dict.Value("id")
-		      Dim Label As String = Dict.Value("label")
-		      Dim ModID As String = Dictionary(Dict.Value("mod")).Value("id")
-		      Dim Availability As Integer = Dict.Value("availability")
-		      Dim Path As String = Dict.Value("path")
-		      Dim ClassString As String = Dict.Value("class_string")
-		      Dim TagString, TagStringForSearching As String
-		      Try
-		        Dim Tags() As String
-		        Dim Temp() As Variant = Dict.Value("tags")
-		        For Each Tag As String In Temp
-		          Tags.AddRow(Tag)
-		        Next
-		        TagString = Tags.Join(",")
-		        Tags.AddRowAt(0, "object")
-		        TagStringForSearching = Tags.Join(",")
-		      Catch Err As TypeMismatchException
-		        
-		      End Try
-		      
-		      ObjectID = ObjectID.Lowercase
-		      ModID = ModID.Lowercase
-		      
-		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM engrams WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID, Path.Lowercase)
-		      If Results.RowCount = 1 And ObjectID = Results.Column("object_id").StringValue Then
-		        Self.SQLExecute("UPDATE engrams SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, tags = ?7 WHERE object_id = ?1;", ObjectID, ModID, Label, Availability, Path, ClassString, TagString)
-		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?2 WHERE object_id = ?1 AND source_table = 'engrams';", ObjectID, TagStringForSearching)
-		      Else
-		        If Results.RowCount = 1 Then
-		          Self.SQLExecute("DELETE FROM engrams WHERE object_id = ?1;", Results.Column("object_id").StringValue)
-		          Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id = ?1 AND source_table = 'engrams';", Results.Column("object_id").StringValue)
-		        End If
-		        Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID, ModID, Label, Availability, Path, ClassString, TagString)
-		        Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, 'engrams');", ObjectID, TagStringForSearching)
-		      End If
-		      EngramsChanged = True
-		    Next
+		    If ChangeDict.HasKey("engrams") Then
+		      Dim Engrams() As Variant = ChangeDict.Value("engrams")
+		      For Each Dict As Dictionary In Engrams
+		        Dim Imported As Boolean = Self.AddBlueprintToDatabase(Beacon.CategoryEngrams, Dict)
+		        EngramsChanged = EngramsChanged Or Imported
+		      Next
+		    End If
 		    
-		    Dim Creatures() As Variant = ChangeDict.Value("creatures")
-		    For Each Dict As Dictionary In Creatures
-		      Dim ObjectID As String = Dict.Value("id")
-		      Dim Label As String = Dict.Value("label")
-		      Dim ModID As String = Dictionary(Dict.Value("mod")).Value("id")
-		      Dim Availability As Integer = Dict.Value("availability")
-		      Dim Path As String = Dict.Value("path")
-		      Dim ClassString As String = Dict.Value("class_string")
-		      Dim IncubationTime As Variant = Dict.Value("incubation_time")
-		      Dim MatureTime As Variant = Dict.Value("mature_time")
-		      Dim StatsString As Variant = Nil
-		      If Dict.HasKey("stats") And Dict.Value("stats") <> Nil Then
-		        StatsString = Beacon.GenerateJSON(Dict.Value("stats"), False)
-		      End If
-		      Dim TagString, TagStringForSearching As String
-		      Try
-		        Dim Tags() As String
-		        Dim Temp() As Variant = Dict.Value("tags")
-		        For Each Tag As String In Temp
-		          Tags.AddRow(Tag)
-		        Next
-		        TagString = Tags.Join(",")
-		        Tags.AddRowAt(0, "object")
-		        TagStringForSearching = Tags.Join(",")
-		      Catch Err As TypeMismatchException
+		    If ChangeDict.HasKey("creatures") Then
+		      Dim Creatures() As Variant = ChangeDict.Value("creatures")
+		      For Each Dict As Dictionary In Creatures
+		        Dim ExtraColumns As New Dictionary
+		        ExtraColumns.Value("incubation_time") = Dict.Value("incubation_time")
+		        ExtraColumns.Value("mature_time") = Dict.Value("mature_time")
+		        ExtraColumns.Value("stats") = Beacon.GenerateJSON(Dict.Value("stats"), False)
 		        
-		      End Try
-		      
-		      ObjectID = ObjectID.Lowercase
-		      ModID = ModID.Lowercase
-		      
-		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM creatures WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID, Path.Lowercase)
-		      If Results.RowCount = 1 And ObjectID = Results.Column("object_id").StringValue Then
-		        Self.SQLExecute("UPDATE creatures SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, tags = ?7, incubation_time = ?8, mature_time = ?9, stats = ?10 WHERE object_id = ?1;", ObjectID, ModID, Label, Availability, Path, ClassString, TagString, IncubationTime, MatureTime, StatsString)
-		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?2 WHERE object_id = ?1 AND source_table = 'creatures';", ObjectID, TagStringForSearching)
-		      Else
-		        If Results.RowCount = 1 Then
-		          Self.SQLExecute("DELETE FROM creatures WHERE object_id = ?1;", Results.Column("object_id").StringValue)
-		          Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id = ?1 AND source_table = 'creatures';", Results.Column("object_id").StringValue)
-		        End If
-		        Self.SQLExecute("INSERT INTO creatures (object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time, stats) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10);", ObjectID, ModID, Label, Availability, Path, ClassString, TagString, IncubationTime, MatureTime, StatsString)
-		        Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, 'creatures');", ObjectID, TagStringForSearching)
-		      End If
-		      EngramsChanged = True
-		    Next
+		        Dim Imported As Boolean = Self.AddBlueprintToDatabase(Beacon.CategoryCreatures, Dict, ExtraColumns)
+		        EngramsChanged = EngramsChanged Or Imported
+		      Next
+		    End If
+		    
+		    If ChangeDict.HasKey("spawn_points") Then
+		      Dim SpawnPoints() As Variant = ChangeDict.Value("spawn_points")
+		      For Each Dict As Dictionary In SpawnPoints
+		        Dim ExtraColumns As New Dictionary
+		        ExtraColumns.Value("default_contents") = Beacon.GenerateJSON(Dict.Value("spawns"), False)
+		        
+		        Dim Imported As Boolean = Self.AddBlueprintToDatabase(Beacon.CategorySpawnPoints, Dict, ExtraColumns)
+		        EngramsChanged = EngramsChanged Or Imported
+		      Next
+		    End If
 		    
 		    Dim ReloadPresets As Boolean
 		    Dim Presets() As Variant = ChangeDict.Value("presets")
@@ -1806,6 +1848,24 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Function RowSetToSpawnPoint(Results As RowSet) As Beacon.SpawnPoint()
+		  Dim SpawnPoints() As Beacon.SpawnPoint
+		  While Not Results.AfterLastRow
+		    Dim Point As New Beacon.MutableSpawnPoint(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
+		    Point.Label = Results.Column("label").StringValue
+		    Point.Availability = Results.Column("availability").IntegerValue
+		    Point.TagString = Results.Column("tags").StringValue
+		    Point.ModID = Results.Column("mod_id").StringValue
+		    Point.ModName = Results.Column("mod_name").StringValue
+		    Point.SetsAsJSON = Results.Column("default_contents").StringValue
+		    SpawnPoints.AddRow(Point)
+		    Results.MoveToNextRow
+		  Wend
+		  Return SpawnPoints
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function SaveBlueprint(Blueprint As Beacon.Blueprint, Replace As Boolean = True) As Boolean
 		  Dim Arr(0) As Beacon.Blueprint
@@ -1845,34 +1905,58 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        ObjectID = Blueprint.ObjectID
 		      End If
 		      
-		      Dim Category As String
+		      Dim Category As String = Blueprint.Category
+		      Dim Columns As Dictionary
+		      Columns.Value("object_id") = ObjectID
+		      Columns.Value("path") = Blueprint.Path
+		      Columns.Value("class_string") = Blueprint.ClassString
+		      Columns.Value("label") = Blueprint.Label
+		      Columns.Value("tags") = Blueprint.TagString
+		      Columns.Value("availability") = Blueprint.Availability
+		      
 		      Select Case Blueprint
-		      Case IsA Beacon.Engram
-		        Dim Engram As Beacon.Engram = Beacon.Engram(Blueprint)
-		        If Update Then
-		          Self.SQLExecute("UPDATE engrams SET path = ?2, class_string = ?3, label = ?4, tags = ?5, availability = ?6 WHERE object_id = ?1;", ObjectID, Engram.Path, Engram.ClassString, Engram.Label, Engram.TagString, Engram.Availability)
-		        Else
-		          Self.SQLExecute("INSERT INTO engrams (object_id, path, class_string, label, tags, availability, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID, Engram.Path, Engram.ClassString, Engram.Label, Engram.TagString, Engram.Availability, Self.UserModID)
-		        End If
-		        Category = Beacon.CategoryEngrams
 		      Case IsA Beacon.Creature
 		        Dim Creature As Beacon.Creature = Beacon.Creature(Blueprint)
-		        Dim IncubationSeconds, MatureSeconds As Variant
 		        If Creature.IncubationTime > 0 And Creature.MatureTime > 0 Then
-		          IncubationSeconds = Creature.IncubationTime
-		          MatureSeconds = Creature.MatureTime
-		        End If
-		        If Update Then
-		          Self.SQLExecute("UPDATE creatures SET path = ?2, class_string = ?3, label = ?4, tags = ?5, availability = ?6, incubation_time = ?7, mature_time = ?8 WHERE object_id = ?1;", ObjectID, Creature.Path, Creature.ClassString, Creature.Label, Creature.TagString, Creature.Availability, IncubationSeconds, MatureSeconds)
+		          Columns.Value("incubation_time") = Creature.IncubationTime
+		          Columns.Value("mature_time") = Creature.MatureTime
 		        Else
-		          Self.SQLExecute("INSERT INTO creatures (object_id, path, class_string, label, tags, availability, incubation_time, mature_time, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", ObjectID, Creature.Path, Creature.ClassString, Creature.Label, Creature.TagString, Creature.Availability, IncubationSeconds, MatureSeconds, Self.UserModID)
+		          Columns.Value("incubation_time") = Nil
+		          Columns.Value("mature_time") = Nil
 		        End If
-		        Category = Beacon.CategoryCreatures
+		      Case IsA Beacon.SpawnPoint
+		        Columns.Value("default_contents") = Beacon.SpawnPoint(Blueprint).SetsAsJSON(False)
 		      End Select
 		      
 		      If Update Then
+		        Dim Assignments() As String
+		        Dim Values() As Variant
+		        Dim NextPlaceholder As Integer = 1
+		        Dim WhereClause As String
+		        For Each Entry As DictionaryEntry In Columns
+		          If Entry.Key = "object_id" Then
+		            WhereClause = "object_id = ?" + NextPlaceholder.ToString
+		          Else
+		            Assignments.AddRow(Entry.Key.StringValue + " = ?" + NextPlaceholder.ToString)
+		          End If
+		          Values.AddRow(Entry.Value)
+		          NextPlaceholder = NextPlaceholder + 1
+		        Next
+		        
+		        Self.SQLExecute("UPDATE " + Category + " SET " + Assignments.Join(", ") + " WHERE " + WhereClause + ";", Values)
 		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?3 WHERE object_id = ?2 AND source_table = ?1;", Category, ObjectID, Blueprint.TagString)
 		      Else
+		        Dim ColumnNames(), Placeholders() As String
+		        Dim Values() As Variant
+		        Dim NextPlaceholder As Integer = 1
+		        For Each Entry As DictionaryEntry In Columns
+		          ColumnNames.AddRow(Entry.Key.StringValue)
+		          Placeholders.AddRow("?" + NextPlaceholder.ToString)
+		          Values.AddRow(Entry.Value)
+		          NextPlaceholder = NextPlaceholder + 1
+		        Next
+		        
+		        Self.SQLExecute("INSERT INTO " + Category + " (" + ColumnNames.Join(", ") + ") VALUES (" + Placeholders.Join(", ") + ");", Values)
 		        Self.SQLExecute("INSERT INTO searchable_tags (source_table, object_id, tags) VALUES (?1, ?2, ?3);", Category, ObjectID, Blueprint.TagString)
 		      End If
 		      
@@ -1960,6 +2044,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      SQL = Self.EngramSelectSQL
 		    Case Beacon.CategoryCreatures
 		      SQL = Self.CreatureSelectSQL
+		    Case Beacon.CategorySpawnPoints
+		      SQL = Self.SpawnPointSelectSQL
 		    Else
 		      Return Blueprints
 		    End Select
@@ -2098,6 +2184,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Catch Err As TypeMismatchException
 		      Redim Values(-1)
 		    End Try
+		  ElseIf Values.LastRowIndex = 0 And Values(0).IsArray Then
+		    Values = Values(0)
 		  End If
 		  
 		  For I As Integer = 0 To Values.LastRowIndex
@@ -2190,7 +2278,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub SyncUserEngramsActual()
-		  Dim Results As RowSet = Self.SQLSelect("SELECT class_string, path, tags, object_id, label, availability, '" + Beacon.CategoryEngrams + "' AS category FROM engrams WHERE mod_id = ?1 UNION SELECT class_string, path, tags, object_id, label, availability, '" + Beacon.CategoryCreatures + "' AS category FROM creatures WHERE mod_id = ?1;", Self.UserModID)
+		  Dim Results As RowSet = Self.SQLSelect("SELECT class_string, path, tags, object_id, label, category FROM blueprints WHERE mod_id = ?1;", Self.UserModID)
 		  Dim Dicts() As Dictionary
 		  While Not Results.AfterLastRow
 		    Dim Dict As New Dictionary  
@@ -2286,6 +2374,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mSpawnPointCache As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSyncUserEngramsKey As String
 	#tag EndProperty
 
@@ -2322,7 +2414,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = Notification_NewAppNotification, Type = String, Dynamic = False, Default = \"New App Notification", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"10", Scope = Private
+	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"11", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.availability\x2C spawn_points.tags\x2C spawn_points.default_contents\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = UserModID, Type = String, Dynamic = False, Default = \"23ecf24c-377f-454b-ab2f-d9d8f31a5863", Scope = Public
