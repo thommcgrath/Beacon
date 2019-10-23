@@ -56,6 +56,12 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Categories() As String()
+		  Return Array(CategoryEngrams, CategoryCreatures, CategorySpawnPoints)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Clone(Extends Source As DateInterval) As DateInterval
 		  Return New DateInterval(Source.Years, Source.Months, Source.Days, Source.Hours, Source.Minutes, Source.Seconds, Source.NanoSeconds)
 		End Function

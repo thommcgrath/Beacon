@@ -183,33 +183,42 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("PRAGMA foreign_keys = ON;")
 		  Self.SQLExecute("PRAGMA journal_mode = WAL;")
 		  
+		  Dim ModsOnDelete As String
+		  #if DebugBuild
+		    ModsOnDelete = "RESTRICT"
+		  #else
+		    ModsOnDelete = "CASCADE"
+		  #endif
+		  
 		  Self.BeginTransaction()
 		  Self.SQLExecute("CREATE TABLE variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE mods (mod_id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, console_safe INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_source_icons (icon_id TEXT NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT NOT NULL, sort_order INTEGER NOT NULL, icon TEXT NOT NULL REFERENCES loot_source_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}');")
-		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '');")
+		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT NOT NULL, sort_order INTEGER NOT NULL, icon TEXT NOT NULL REFERENCES loot_source_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}');")
+		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '');")
 		  Self.SQLExecute("CREATE TABLE official_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, pattern TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, pattern TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT NOT NULL PRIMARY KEY, title TEXT NOT NULL, body TEXT NOT NULL, detail_url TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE notifications (notification_id TEXT NOT NULL PRIMARY KEY, message TEXT NOT NULL, secondary_message TEXT, user_data TEXT NOT NULL, moment TEXT NOT NULL, read INTEGER NOT NULL, action_url TEXT, deleted INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', incubation_time INTEGER, mature_time INTEGER, stats TEXT);")
-		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', default_contents TEXT NOT NULL DEFAULT '[]');")
+		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', incubation_time INTEGER, mature_time INTEGER, stats TEXT);")
+		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', default_contents TEXT NOT NULL DEFAULT '[]');")
 		  
 		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts5(tags, object_id, source_table);")
 		  
 		  Self.SQLExecute("CREATE VIEW blueprints AS SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryEngrams + "' AS category FROM engrams UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryCreatures + "' AS category FROM creatures UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategorySpawnPoints + "' AS category FROM spawn_points")
-		  Dim Categories() As String = Array(Beacon.CategoryCreatures, Beacon.CategoryEngrams, Beacon.CategorySpawnPoints)
+		  Dim Categories() As String = Beacon.Categories
 		  Dim DeleteStatements() As String
 		  For Each Category As String In Categories
 		    DeleteStatements.AddRow("DELETE FROM " + Category + " WHERE object_id = OLD.object_id;")
 		  Next
 		  Self.SQLExecute("CREATE TRIGGER blueprints_delete_trigger INSTEAD OF DELETE ON blueprints FOR EACH ROW BEGIN " + DeleteStatements.Join(" ") + " DELETE FROM searchable_tags WHERE object_id = OLD.object_id; END;")
 		  
-		  Self.SQLExecute("CREATE INDEX engrams_class_string_idx ON engrams(class_string);")
-		  Self.SQLExecute("CREATE UNIQUE INDEX engrams_path_idx ON engrams(path);")
+		  For Each Category As String In Categories
+		    Self.SQLExecute("CREATE INDEX " + Category + "_class_string_idx ON " + Category + "(class_string);")
+		    Self.SQLExecute("CREATE UNIQUE INDEX " + Category + "_path_idx ON " + Category + "(path);")
+		  Next
 		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
 		  
@@ -428,36 +437,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Sub DeleteDataForMod(ModID As String)
 		  Self.BeginTransaction()
-		  Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id IN (SELECT object_id FROM blueprints WHERE mod_id = ?1);", ModID)
-		  Dim Results As RowSet = Self.SQLSelect("SELECT DISTINCT category FROM blueprints WHERE mod_id = ?1;", ModID)
-		  While Not Results.AfterLastRow
-		    Self.SQLExecute("DELETE FROM " + Results.Column("category").StringValue + " WHERE mod_id = ?1;", ModID)
-		    Results.MoveToNextRow
-		  Wend
+		  Self.SQLExecute("DELETE FROM loot_sources WHERE mod_id = ?1;", ModID)
+		  Self.SQLExecute("DELETE FROM blueprints WHERE mod_id = ?1;", ModID)
+		  Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id = ?1;", ModID)
 		  Self.Commit()
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function DeleteEngram(Engram As Beacon.Engram) As Boolean
-		  Try
-		    Dim Results As RowSet = Self.SQLSelect("SELECT mod_id FROM engrams WHERE LOWER(path) = LOWER(?1);", Engram.Path)
-		    If Results.RowCount = 1 And Results.Column("mod_id").StringValue <> Self.UserModID Then
-		      Return False
-		    End If
-		    
-		    Self.BeginTransaction()
-		    Self.SQLExecute("DELETE FROM engrams WHERE LOWER(path) = LOWER(?1) AND mod_id = ?2;", Engram.Path, Self.UserModID)
-		    Self.Commit()
-		    
-		    Self.SyncUserEngrams()
-		    
-		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
-		    Return True
-		  Catch Err As UnsupportedOperationException
-		    Return False
-		  End Try
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -1084,21 +1068,21 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Dim EngramsChanged As Boolean
 		    
 		    // Drop indexes
-		    Self.SQLExecute("DROP INDEX engrams_class_string_idx;")
-		    Self.SQLExecute("DROP INDEX engrams_path_idx;")
+		    Dim Categories() As String = Beacon.Categories
+		    For Each Category As String In Categories
+		      Self.SQLExecute("DROP INDEX " + Category +"_class_string_idx;")
+		      Self.SQLExecute("DROP INDEX " + Category + "_path_idx;")
+		    Next
 		    Self.SQLExecute("DROP INDEX loot_sources_sort_order_idx;")
 		    Self.SQLExecute("DROP INDEX loot_sources_path_idx;")
 		    
 		    Dim ShouldTruncate As Boolean = ChangeDict.Value("is_full") = 1
 		    If ShouldTruncate Then
-		      Self.SQLExecute("DELETE FROM mods WHERE mod_id != ?1;", Self.UserModID)
 		      Self.SQLExecute("DELETE FROM loot_sources WHERE mod_id != ?1;", Self.UserModID)
-		      Self.SQLExecute("DELETE FROM searchable_tags WHERE source_table = 'engrams' AND object_id IN (SELECT object_id FROM engrams WHERE mod_id != ?1);", Self.UserModID)
-		      Self.SQLExecute("DELETE FROM engrams WHERE mod_id != ?1;", Self.UserModID)
-		      Self.SQLExecute("DELETE FROM searchable_tags WHERE source_table = 'creatures' AND object_id IN (SELECT object_id FROM creatures WHERE mod_id != ?1);", Self.UserModID)
-		      Self.SQLExecute("DELETE FROM creatures WHERE mod_id != ?1;", Self.UserModID)
+		      Self.SQLExecute("DELETE FROM blueprints WHERE mod_id != ?1;", Self.UserModID)
 		      Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id != ?1;", Self.UserModID)
 		      Self.SQLExecute("DELETE FROM official_presets;")
+		      Self.SQLExecute("DELETE FROM mods WHERE mod_id != ?1;", Self.UserModID) // Mods must be deleted last
 		    End If
 		    
 		    // Caution!! This field always contains all mods.
@@ -1127,6 +1111,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    While Not ModResults.AfterLastRow
 		      Dim ModID As String = ModResults.Column("mod_id").StringValue.Lowercase
 		      If RetainMods.IndexOf(ModID) = -1 Then
+		        Self.DeleteDataForMod(ModID)
 		        Self.SQLExecute("DELETE FROM mods WHERE mod_id = ?1;", ModID)
 		      End If
 		      ModResults.MoveToNextRow
@@ -1143,8 +1128,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.SQLExecute("DELETE FROM loot_sources WHERE object_id = ?1;", ObjectID)
 		      Case "loot_source_icons"
 		        DeleteIcons.AddRow(ObjectID)
-		      Case "engrams"
-		        Self.SQLExecute("DELETE FROM engrams WHERE object_id = ?1;", ObjectID)
+		      Case Beacon.CategoryEngrams, Beacon.CategoryCreatures, Beacon.CategorySpawnPoints
+		        Self.SQLExecute("DELETE FROM blueprints WHERE object_id = ?1;", ObjectID)
 		      Case "presets"
 		        Self.SQLExecute("DELETE FROM official_presets WHERE object_id = ?1;", ObjectID)
 		      End Select
@@ -1310,8 +1295,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    
 		    // Restore Indexes
-		    Self.SQLExecute("CREATE INDEX engrams_class_string_idx ON engrams(class_string);")
-		    Self.SQLExecute("CREATE UNIQUE INDEX engrams_path_idx ON engrams(path);")
+		    For Each Category As String In Categories
+		      Self.SQLExecute("CREATE INDEX " + Category + "_class_string_idx ON " + Category + "(class_string);")
+		      Self.SQLExecute("CREATE UNIQUE INDEX " + Category + "_path_idx ON " + Category + "(path);")
+		    Next
 		    Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
 		    Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
 		    
@@ -1522,15 +1509,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Commands.AddRow("INSERT INTO creatures (object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time) SELECT object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time FROM legacy.creatures;")
 		  End If
 		  
+		  // Spawn Points
+		  If FromSchemaVersion >= 11 Then
+		    Commands.AddRow("INSERT INTO spawn_points SELECT * FROM legacy.spawn_points;")
+		  End If
+		  
 		  // Searchable Tags
 		  If FromSchemaVersion >= 9 Then
-		    Commands.AddRow("INSERT INTO searchable_tags SELECT * FROM legacy.searchable_tags;")
+		    Commands.AddRow("INSERT INTO searchable_tags SELECT DISTINCT * FROM legacy.searchable_tags;")
 		  End If
 		  
 		  // Sanity checking
 		  Commands.AddRow("DELETE FROM loot_sources WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
-		  Commands.AddRow("DELETE FROM engrams WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
-		  Commands.AddRow("DELETE FROM creatures WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
+		  Commands.AddRow("DELETE FROM blueprints WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
 		  Commands.AddRow("DELETE FROM preset_modifiers WHERE mod_id NOT IN (SELECT mod_id FROM mods);")
 		  
 		  If Commands.LastRowIndex > -1 Then
