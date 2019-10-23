@@ -468,6 +468,7 @@ Protected Class HTTPClientSocket
 	#tag Method, Flags = &h0
 		Sub SetRequestContent(Content As String, MimeType As String)
 		  Self.RequestHeader("Content-Type") = MimeType
+		  Self.mSocket.OptionUpload = True
 		  Self.mSocket.InputData = Content
 		End Sub
 	#tag EndMethod
