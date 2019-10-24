@@ -66,7 +66,11 @@ Implements Beacon.DocumentItem, Beacon.Countable
 		    Var CreatureID As v4UUID = CreatureData.Value("creature_id").StringValue
 		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByID(CreatureID)
 		    If Creature = Nil Then
-		      Continue
+		      If CreatureData.HasKey("creature_path") Then
+		        Creature = New Beacon.MutableCreature(CreatureData.Value("creature_path").StringValue, CreatureID)
+		      Else
+		        Continue
+		      End If
 		    End If
 		    
 		    Var Limit As Double = CreatureData.Lookup("max_percentage", 1.0)
@@ -148,7 +152,8 @@ Implements Beacon.DocumentItem, Beacon.Countable
 		    End If
 		    
 		    Var CreatureData As New Dictionary
-		    CreatureData.Value("creature_id") = Creature.ObjectID
+		    CreatureData.Value("creature_id") = Creature.ObjectID.StringValue
+		    CreatureData.Value("creature_path") = Creature.Path
 		    
 		    If Entry.Value.DoubleValue < 1.0 Then
 		      CreatureData.Value("max_percentage") = Entry.Value
