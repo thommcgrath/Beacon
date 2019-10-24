@@ -1897,13 +1897,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      End If
 		      
 		      Dim Category As String = Blueprint.Category
-		      Dim Columns As Dictionary
+		      Dim Columns As New Dictionary
 		      Columns.Value("object_id") = ObjectID
 		      Columns.Value("path") = Blueprint.Path
 		      Columns.Value("class_string") = Blueprint.ClassString
 		      Columns.Value("label") = Blueprint.Label
 		      Columns.Value("tags") = Blueprint.TagString
 		      Columns.Value("availability") = Blueprint.Availability
+		      Columns.Value("mod_id") = Self.UserModID
 		      
 		      Select Case Blueprint
 		      Case IsA Beacon.Creature
@@ -2269,7 +2270,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub SyncUserEngramsActual()
-		  Dim Results As RowSet = Self.SQLSelect("SELECT class_string, path, tags, object_id, label, category FROM blueprints WHERE mod_id = ?1;", Self.UserModID)
+		  Dim Results As RowSet = Self.SQLSelect("SELECT class_string, path, tags, object_id, label, availability, category FROM blueprints WHERE mod_id = ?1;", Self.UserModID)
 		  Dim Dicts() As Dictionary
 		  While Not Results.AfterLastRow
 		    Dim Dict As New Dictionary  
