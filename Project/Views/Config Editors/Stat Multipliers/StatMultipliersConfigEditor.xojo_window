@@ -42,7 +42,6 @@ Begin ConfigEditor StatMultipliersConfigEditor
       Scope           =   2
       TabIndex        =   64
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   61
       Transparent     =   False
