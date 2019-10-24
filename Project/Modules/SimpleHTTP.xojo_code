@@ -14,7 +14,7 @@ Protected Module SimpleHTTP
 		    Parts.AddRow(EncodeURLComponent(Key) + "=" + EncodeURLComponent(Value))
 		  Next
 		  
-		  Return Join(Parts, "&")
+		  Return Parts.Join("&")
 		End Function
 	#tag EndMethod
 

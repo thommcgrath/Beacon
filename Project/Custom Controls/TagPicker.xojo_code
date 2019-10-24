@@ -185,7 +185,7 @@ Inherits ControlCanvas
 		    Clone.AddRow(Value)
 		  Next
 		  Clone.Sort
-		  Return Join(Clone, ",")
+		  Return Clone.Join(",")
 		End Function
 	#tag EndMethod
 
@@ -474,13 +474,13 @@ Inherits ControlCanvas
 			Get
 			  Dim Value As String
 			  If Self.mRequireTags.LastRowIndex > -1 Then
-			    Value = "(""" + Join(Self.mRequireTags, """ AND """) + """)"
+			    Value = "(""" + Self.mRequireTags.Join(""" AND """) + """)"
 			  End If
 			  If Self.mExcludeTags.LastRowIndex > -1 Then
 			    If Value = "" Then
 			      Value = "object"
 			    End If
-			    Value = Value + " NOT (""" + Join(Self.mExcludeTags, """ OR """) + """)"
+			    Value = Value + " NOT (""" + Self.mExcludeTags.Join(""" OR """) + """)"
 			  End If
 			  Return Value
 			End Get

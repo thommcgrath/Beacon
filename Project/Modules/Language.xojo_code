@@ -17,7 +17,7 @@ Protected Module Language
 		  Else
 		    Dim LastItem As String = Items(Items.LastRowIndex)
 		    Items.RemoveRowAt(Items.LastRowIndex)
-		    Dim List As String = Join(Items, ", ") + ", and " + LastItem
+		    Dim List As String = Items.Join(", ") + ", and " + LastItem
 		    Items.AddRow(LastItem) // Gotta put it back
 		    Return List
 		  End If

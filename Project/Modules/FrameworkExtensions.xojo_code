@@ -252,7 +252,7 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function Join(Extends Source() As String, Delimiter As String) As String
-		  Return Join(Source, Delimiter)
+		  Return Source.Join(Delimiter)
 		End Function
 	#tag EndMethod
 

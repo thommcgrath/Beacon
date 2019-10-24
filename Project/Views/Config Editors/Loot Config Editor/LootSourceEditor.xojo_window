@@ -1190,7 +1190,7 @@ End
 		    For Each Source As Beacon.LootSource In Self.mSources
 		      Lines.AddRow("ConfigOverrideSupplyCrateItems=(SupplyCrateClassString=""" + Source.ClassString + """,MinItemSets=1,MaxItemSets=3,NumItemSetsPower=1.000000,bSetsRandomWithoutReplacement=true,ItemSets=" + Contents + ")")
 		    Next
-		    Self.Import(Join(Lines, EndOfLine), "Clipboard")
+		    Self.Import(Lines.Join(EndOfLine), "Clipboard")
 		  End
 		End Sub
 	#tag EndEvent

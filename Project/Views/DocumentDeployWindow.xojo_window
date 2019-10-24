@@ -652,7 +652,7 @@ End
 		    Report.AddRowAt(0, "Some servers successfully updated, but there were errors.")
 		  End If
 		  
-		  Self.FinishedReportLabel.Value = Join(Report, EndOfLine)
+		  Self.FinishedReportLabel.Value = Report.Join(EndOfLine)
 		  
 		  Self.Pages.SelectedPanelIndex = Self.PageFinished
 		End Sub

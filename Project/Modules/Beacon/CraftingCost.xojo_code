@@ -311,8 +311,8 @@ Protected Class CraftingCost
 		  
 		  Dim Pieces() As String
 		  Pieces.AddRow("ItemClassString=""" + If(Self.mEngram <> Nil, Self.mEngram.ClassString, "") + """")
-		  Pieces.AddRow("BaseCraftingResourceRequirements=(" + Join(Components, ",") + ")")
-		  Return "(" + Join(Pieces, ",") + ")"
+		  Pieces.AddRow("BaseCraftingResourceRequirements=(" + Components.Join(",") + ")")
+		  Return "(" + Pieces.Join(",") + ")"
 		End Function
 	#tag EndMethod
 

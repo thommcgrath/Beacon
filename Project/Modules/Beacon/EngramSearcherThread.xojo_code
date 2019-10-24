@@ -42,12 +42,12 @@ Inherits Beacon.Thread
 		              ColumnBuffer.AddRow(Character)
 		            End If
 		          ElseIf Character = "," Then
-		            Columns.AddRow(Join(ColumnBuffer, ""))
+		            Columns.AddRow(ColumnBuffer.Join(""))
 		            Redim ColumnBuffer(-1)
 		            Started = False
 		          ElseIf Character = CarriageReturn Then
 		            // Next line
-		            Columns.AddRow(Join(ColumnBuffer, ""))
+		            Columns.AddRow(ColumnBuffer.Join(""))
 		            Lines.AddRow(Columns)
 		            Redim ColumnBuffer(-1)
 		            Columns = Array("") // To create a new array
@@ -58,7 +58,7 @@ Inherits Beacon.Thread
 		          End If
 		        End If
 		      Next
-		      Columns.AddRow(Join(ColumnBuffer, ""))
+		      Columns.AddRow(ColumnBuffer.Join(""))
 		      Lines.AddRow(Columns)
 		      
 		      Dim LastPushTime As Double = System.Microseconds

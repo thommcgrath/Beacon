@@ -759,7 +759,7 @@ End
 		    Messages.AddRow("No objects were found to import.")
 		  End If
 		  
-		  Self.ShowAlert("Object import has finished", Join(Messages, " "))
+		  Self.ShowAlert("Object import has finished", Messages.Join(" "))
 		End Sub
 	#tag EndEvent
 	#tag Event

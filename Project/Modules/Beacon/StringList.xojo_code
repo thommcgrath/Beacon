@@ -93,7 +93,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function Join(Delimiter As String) As String
-		  Return Join(Self.mItems, Delimiter)
+		  Return Self.mItems.Join(Delimiter)
 		End Function
 	#tag EndMethod
 
@@ -115,8 +115,8 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function Operator_Compare(Others() As String) As Integer
-		  Dim CompareLeft As String = Join(Self.mItems, "|")
-		  Dim CompareRight As String = Join(Others, "|")
+		  Dim CompareLeft As String = Self.mItems.Join("|")
+		  Dim CompareRight As String = Others.Join("|")
 		  Return CompareLeft.Compare(CompareRight, ComparisonOptions.CaseSensitive)
 		End Function
 	#tag EndMethod

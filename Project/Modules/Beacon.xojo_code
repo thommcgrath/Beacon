@@ -149,7 +149,7 @@ Protected Module Beacon
 		  Columns(4) = """Group"""
 		  
 		  Dim Lines(0) As String
-		  Lines(0) = Join(Columns, ",")
+		  Lines(0) = Columns.Join(",")
 		  
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    Columns(0) = """" + Blueprint.Path + """"
@@ -157,10 +157,10 @@ Protected Module Beacon
 		    Columns(2) = Blueprint.Availability.ToString(Locale.Raw)
 		    Columns(3) = """" + Blueprint.Tags.Join(",") + """"
 		    Columns(4) = """" + Blueprint.Category + """"
-		    Lines.AddRow(Join(Columns, ","))
+		    Lines.AddRow(Columns.Join(","))
 		  Next
 		  
-		  Return Join(Lines, Encodings.ASCII.Chr(13) + Encodings.ASCII.Chr(10))
+		  Return Lines.Join(Encodings.ASCII.Chr(13) + Encodings.ASCII.Chr(10))
 		End Function
 	#tag EndMethod
 
@@ -430,7 +430,7 @@ Protected Module Beacon
 		  Else
 		    Dim Tail As String = Names(Names.LastRowIndex)
 		    Names.RemoveRowAt(Names.LastRowIndex)
-		    Return Join(Names, ", ") + ", & " + Tail
+		    Return Names.Join(", ") + ", & " + Tail
 		  End If
 		End Function
 	#tag EndMethod
@@ -451,7 +451,7 @@ Protected Module Beacon
 		      End If
 		    Next
 		  End If
-		  Return Beacon.MakeHumanReadable(Join(Parts, " "))
+		  Return Beacon.MakeHumanReadable(Parts.Join(" "))
 		End Function
 	#tag EndMethod
 
@@ -746,7 +746,7 @@ Protected Module Beacon
 		  If Seconds > 0 Then
 		    Parts.AddRow(Str(Seconds, "-0") + "s")
 		  End If
-		  Return Join(Parts, " ")
+		  Return Parts.Join(" ")
 		End Function
 	#tag EndMethod
 
@@ -790,7 +790,7 @@ Protected Module Beacon
 		  If Tags.IndexOf("object") = -1 Then
 		    Tags.AddRowAt(0, "object")
 		  End If
-		  Return Join(Tags, ",")
+		  Return Tags.Join(",")
 		End Function
 	#tag EndMethod
 

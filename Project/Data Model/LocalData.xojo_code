@@ -2083,7 +2083,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    
 		    If Clauses.LastRowIndex > -1 Then
-		      SQL = SQL + " WHERE (" + Join(Clauses, ") AND (") + ")"
+		      SQL = SQL + " WHERE (" + Clauses.Join(") AND (") + ")"
 		    End If
 		    SQL = SQL + " ORDER BY label;"
 		    
@@ -2152,7 +2152,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    Dim SQL As String = "SELECT " + Self.LootSourcesSelectColumns + ", mods.mod_id, mods.name AS mod_name FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id)"
 		    If Clauses.LastRowIndex > -1 Then
-		      SQL = SQL + " WHERE (" + Join(Clauses, ") AND (") + ")"
+		      SQL = SQL + " WHERE (" + Clauses.Join(") AND (") + ")"
 		    End If
 		    SQL = SQL + " ORDER BY label;"
 		    
