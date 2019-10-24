@@ -27,7 +27,7 @@ Begin ContainerControl LootSourceHintsContainer
    Width           =   250
    Begin TextArea NotesArea
       AcceptTabs      =   False
-      Alignment       =   "0"
+      Alignment       =   0
       AutoDeactivate  =   True
       AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
