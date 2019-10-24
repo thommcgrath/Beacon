@@ -732,6 +732,29 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetSpawnPointByClass(ClassString As String) As Beacon.SpawnPoint
+		  Try
+		    If ClassString.Length < 2 Or ClassString.Right(2) <> "_C" Then
+		      ClassString = ClassString + "_C"
+		    End If
+		    
+		    Dim RS As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
+		    If RS.RowCount = 0 Then
+		      Return Nil
+		    End If
+		    
+		    Dim SpawnPoints() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(RS)
+		    For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
+		      Self.mSpawnPointCache.Value(SpawnPoint.Path) = SpawnPoint
+		    Next
+		    Return SpawnPoints(0)
+		  Catch Err As UnsupportedOperationException
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetSpawnPointByPath(Path As String) As Beacon.SpawnPoint
 		  If Self.mSpawnPointCache.HasKey(Path) Then
 		    Return Self.mSpawnPointCache.Value(Path)
@@ -747,8 +770,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    For Each Point As Beacon.SpawnPoint In Points
 		      Self.mSpawnPointCache.Value(Point.Path) = Point
 		    Next
-		    Return Points(0)
-		  Catch Err As UnsupportedOperationException
+		    Return New Beacon.SpawnPoint(Points(0))
+		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
 		End Function
@@ -1850,7 +1873,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Point.ModID = Results.Column("mod_id").StringValue
 		    Point.ModName = Results.Column("mod_name").StringValue
 		    Point.SetsAsJSON = Results.Column("default_contents").StringValue
-		    SpawnPoints.AddRow(Point)
+		    Point.Modified = False
+		    SpawnPoints.AddRow(New Beacon.SpawnPoint(Point))
 		    Results.MoveToNextRow
 		  Wend
 		  Return SpawnPoints
@@ -2083,8 +2107,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.mCreatureCache.Value(Creature.Path) = Creature
 		        Blueprints.AddRow(Creature)
 		      Next
+		    Case Beacon.CategorySpawnPoints
+		      Dim SpawnPoints() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(Results)
+		      For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
+		        Self.mSpawnPointCache.Value(SpawnPoint.Path) = SpawnPoint
+		        Blueprints.AddRow(SpawnPoint)
+		      Next
 		    End Select
-		  Catch Err As UnsupportedOperationException
+		  Catch Err As RuntimeException
 		    
 		  End Try
 		  

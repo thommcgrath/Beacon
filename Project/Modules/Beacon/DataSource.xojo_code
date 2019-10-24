@@ -85,6 +85,18 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetSpawnPointByClass(ClassString As String) As Beacon.SpawnPoint
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPointByPath(Path As String) As Beacon.SpawnPoint
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetStringVariable(Key As String) As String
 		  
 		End Function
