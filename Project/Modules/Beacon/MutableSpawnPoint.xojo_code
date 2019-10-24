@@ -25,7 +25,7 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As String, ObjectID As String)
+		Sub Constructor(Path As String, ObjectID As v4UUID)
 		  Super.Constructor()
 		  Self.mObjectID = ObjectID
 		  Self.Path = Path
@@ -61,7 +61,7 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ModID(Assigns Value As String)
+		Sub ModID(Assigns Value As v4UUID)
 		  // Part of the Beacon.MutableBlueprint interface.
 		  
 		  Self.mModID = Value

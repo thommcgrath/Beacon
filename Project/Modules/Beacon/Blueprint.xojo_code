@@ -37,7 +37,7 @@ Protected Interface Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModID() As String
+		Function ModID() As v4UUID
 		  
 		End Function
 	#tag EndMethod
@@ -55,7 +55,7 @@ Protected Interface Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As String
+		Function ObjectID() As v4UUID
 		  
 		End Function
 	#tag EndMethod

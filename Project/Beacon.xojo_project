@@ -381,6 +381,7 @@ Window=StopMessageDialog;Views/StopMessageDialog.xojo_window;&h00000000245037FF;
 Class=SpawnPoint;Modules/Beacon/SpawnPoint.xojo_code;&h000000002BC267FF;&h0000000055ADDFFF;false
 Class=MutableSpawnPoint;Modules/Beacon/MutableSpawnPoint.xojo_code;&h00000000400377FF;&h0000000055ADDFFF;false
 Class=SpawnPointSet;Modules/Beacon/SpawnPointSet.xojo_code;&h00000000687F27FF;&h0000000055ADDFFF;false
+Class=MutableSpawnPointSet;Modules/Beacon/MutableSpawnPointSet.xojo_code;&h000000001AB577FF;&h0000000055ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=3

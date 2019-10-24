@@ -165,7 +165,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModID() As String
+		Function ModID() As v4UUID
 		  // Part of the Beacon.Blueprint interface.
 		  
 		  Return Self.mModID
@@ -215,7 +215,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As String
+		Function ObjectID() As v4UUID
 		  // Part of the Beacon.Blueprint interface.
 		  
 		  Return Self.mObjectID
@@ -291,7 +291,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mModID As String
+		Protected mModID As v4UUID
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -303,7 +303,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mObjectID As String
+		Protected mObjectID As v4UUID
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

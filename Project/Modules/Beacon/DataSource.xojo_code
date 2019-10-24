@@ -25,6 +25,12 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetBlueprintByObjectID(ObjectID As v4UUID) As Beacon.Blueprint
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetBooleanVariable(Key As String) As Boolean
 		  
 		End Function
@@ -32,6 +38,12 @@ Protected Interface DataSource
 
 	#tag Method, Flags = &h0
 		Function GetCreatureByClass(ClassString As String) As Beacon.Creature
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreatureByID(CreatureID As v4UUID) As Beacon.Creature
 		  
 		End Function
 	#tag EndMethod
@@ -50,6 +62,12 @@ Protected Interface DataSource
 
 	#tag Method, Flags = &h0
 		Function GetEngramByClass(ClassString As String) As Beacon.Engram
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramByID(EngramID As v4UUID) As Beacon.Engram
 		  
 		End Function
 	#tag EndMethod
@@ -86,6 +104,12 @@ Protected Interface DataSource
 
 	#tag Method, Flags = &h0
 		Function GetSpawnPointByClass(ClassString As String) As Beacon.SpawnPoint
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPointByID(SpawnPointID As v4UUID) As Beacon.SpawnPoint
 		  
 		End Function
 	#tag EndMethod

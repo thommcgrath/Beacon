@@ -4,9 +4,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Function AddBlueprintToDatabase(Category As String, BlueprintData As Dictionary, ExtraValues As Dictionary = Nil) As Boolean
 		  Try
-		    Dim ObjectID As String = BlueprintData.Value("id").StringValue.Lowercase
+		    Dim ObjectID As v4UUID = BlueprintData.Value("id").StringValue
 		    Dim Label As String = BlueprintData.Value("label")
-		    Dim ModID As String = Dictionary(BlueprintData.Value("mod")).Value("id").StringValue.Lowercase
+		    Dim ModID As v4UUID = Dictionary(BlueprintData.Value("mod")).Value("id").StringValue
 		    Dim Availability As Integer = BlueprintData.Value("availability").IntegerValue
 		    Dim Path As String = BlueprintData.Value("path").StringValue
 		    Dim ClassString As String = BlueprintData.Value("class_string").StringValue
@@ -32,8 +32,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Columns.Value(Entry.Key) = Entry.Value
 		      Next
 		    End If
-		    Columns.Value("object_id") = ObjectID
-		    Columns.Value("mod_id") = ModID
+		    Columns.Value("object_id") = ObjectID.StringValue
+		    Columns.Value("mod_id") = ModID.StringValue
 		    Columns.Value("label") = Label
 		    Columns.Value("availability") = Availability
 		    Columns.Value("path") = Path
@@ -480,20 +480,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBlueprintByObjectID(ObjectID As String) As Beacon.Blueprint
-		  Dim Results As RowSet = Self.SQLSelect("SELECT path, category FROM blueprints WHERE object_id = ?1;", ObjectID)
+		Function GetBlueprintByObjectID(ObjectID As v4UUID) As Beacon.Blueprint
+		  Var Results As RowSet = Self.SQLSelect("SELECT category FROM blueprints WHERE object_id = ?1;", ObjectID.StringValue)
 		  If Results.RowCount <> 1 Then
 		    Return Nil
 		  End If
 		  
-		  Dim Path As String = Results.Column("path").StringValue
 		  Select Case Results.Column("category").StringValue
 		  Case Beacon.CategoryEngrams
-		    Return Self.GetEngramByPath(Path)
+		    Return Self.GetEngramByID(ObjectID)
 		  Case Beacon.CategoryCreatures
-		    Return Self.GetCreatureByPath(Path)
+		    Return Self.GetCreatureByID(ObjectID)
 		  Case Beacon.CategorySpawnPoints
-		    Return Self.GetSpawnPointByPath(Path)
+		    Return Self.GetSpawnPointByID(ObjectID)
 		  End Select
 		End Function
 	#tag EndMethod
@@ -528,24 +527,52 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function GetCreatureByClass(ClassString As String) As Beacon.Creature
 		  // Part of the Beacon.DataSource interface.
 		  
-		  Try
-		    If ClassString.Length < 2 Or ClassString.Right(2) <> "_C" Then
-		      ClassString = ClassString + "_C"
-		    End If
-		    
-		    Dim RS As RowSet = Self.SQLSelect(Self.CreatureSelectSQL + " WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
-		    If RS.RowCount = 0 Then
+		  If ClassString.Length < 2 Or ClassString.Right(2) <> "_C" Then
+		    ClassString = ClassString + "_C"
+		  End If
+		  
+		  If Self.mCreatureCache.HasKey(ClassString) = False Then
+		    Try
+		      Var Results As RowSet = Self.SQLSelect(Self.CreatureSelectSQL + " WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
+		      If Results.RowCount = 0 Then
+		        Return Nil
+		      End If
+		      
+		      Var Creatures() As Beacon.Creature = Self.RowSetToCreature(Results)
+		      Self.mCreatureCache.Value(Creatures(0).ClassString) = Creatures(0)
+		      For Each Creature As Beacon.Creature In Creatures
+		        Self.mCreatureCache.Value(Creature.Path) = Creature
+		        Self.mCreatureCache.Value(Creature.ObjectID) = Creature
+		      Next
+		    Catch Err As UnsupportedOperationException
 		      Return Nil
-		    End If
-		    
-		    Dim Creatures() As Beacon.Creature = Self.RowSetToCreature(RS)
-		    For Each Creature As Beacon.Creature In Creatures
-		      Self.mCreatureCache.Value(Creature.Path) = Creature
-		    Next
-		    Return Creatures(0)
-		  Catch Err As UnsupportedOperationException
-		    Return Nil
-		  End Try
+		    End Try
+		  End If
+		  Return Self.mCreatureCache.Value(ClassString)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreatureByID(CreatureID As v4UUID) As Beacon.Creature
+		  // Part of the Beacon.DataSource interface.
+		  
+		  If Self.mCreatureCache.HasKey(CreatureID) = False Then
+		    Try
+		      Var Results As RowSet = Self.SQLSelect(Self.CreatureSelectSQL + " WHERE object_id = ?1;", CreatureID.StringValue)
+		      If Results.RowCount = 0 Then
+		        Return Nil
+		      End If
+		      
+		      Var Creatures() As Beacon.Creature = Self.RowSetToCreature(Results)
+		      For Each Creature As Beacon.Creature In Creatures
+		        Self.mCreatureCache.Value(Creature.Path) = Creature
+		        Self.mCreatureCache.Value(Creature.ObjectID) = Creature
+		      Next
+		    Catch Err As UnsupportedOperationException
+		      Return Nil
+		    End Try
+		  End If
+		  Return Self.mCreatureCache.Value(CreatureID)
 		End Function
 	#tag EndMethod
 
@@ -553,24 +580,23 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function GetCreatureByPath(Path As String) As Beacon.Creature
 		  // Part of the Beacon.DataSource interface.
 		  
-		  If Self.mCreatureCache.HasKey(Path) Then
-		    Return Self.mCreatureCache.Value(Path)
-		  End If
-		  
-		  Try
-		    Dim RS As RowSet = Self.SQLSelect(Self.CreatureSelectSQL + " WHERE LOWER(path) = ?1;", Path.Lowercase)
-		    If RS.RowCount = 0 Then
+		  If Self.mCreatureCache.HasKey(Path) = False Then
+		    Try
+		      Var Results As RowSet = Self.SQLSelect(Self.CreatureSelectSQL + " WHERE LOWER(path) = ?1;", Path.Lowercase)
+		      If Results.RowCount = 0 Then
+		        Return Nil
+		      End If
+		      
+		      Var Creatures() As Beacon.Creature = Self.RowSetToCreature(Results)
+		      For Each Creature As Beacon.Creature In Creatures
+		        Self.mCreatureCache.Value(Creature.Path) = Creature
+		        Self.mCreatureCache.Value(Creature.ObjectID) = Creature
+		      Next
+		    Catch Err As UnsupportedOperationException
 		      Return Nil
-		    End If
-		    
-		    Dim Creatures() As Beacon.Creature = Self.RowSetToCreature(RS)
-		    For Each Creature As Beacon.Creature In Creatures
-		      Self.mCreatureCache.Value(Creature.Path) = Creature
-		    Next
-		    Return Creatures(0)
-		  Catch Err As UnsupportedOperationException
-		    Return Nil
-		  End Try
+		    End Try
+		  End If
+		  Return Self.mCreatureCache.Value(Path)
 		End Function
 	#tag EndMethod
 
@@ -608,24 +634,52 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function GetEngramByClass(ClassString As String) As Beacon.Engram
 		  // Part of the Beacon.DataSource interface.
 		  
-		  Try
-		    If ClassString.Length < 2 Or ClassString.Right(2) <> "_C" Then
-		      ClassString = ClassString + "_C"
-		    End If
-		    
-		    Dim RS As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
-		    If RS.RowCount = 0 Then
+		  If ClassString.Length < 2 Or ClassString.Right(2) <> "_C" Then
+		    ClassString = ClassString + "_C"
+		  End If
+		  
+		  If Self.mEngramCache.HasKey(ClassString) = False Then
+		    Try
+		      Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
+		      If Results.RowCount = 0 Then
+		        Return Nil
+		      End If
+		      
+		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
+		      Self.mEngramCache.Value(Engrams(0).ClassString) = Engrams(0)
+		      For Each Engram As Beacon.Engram In Engrams
+		        Self.mEngramCache.Value(Engram.Path) = Engram
+		        Self.mEngramCache.Value(Engram.ObjectID) = Engram
+		      Next
+		    Catch Err As UnsupportedOperationException
 		      Return Nil
-		    End If
-		    
-		    Dim Engrams() As Beacon.Engram = Self.RowSetToEngram(RS)
-		    For Each Engram As Beacon.Engram In Engrams
-		      Self.mEngramCache.Value(Engram.Path) = Engram
-		    Next
-		    Return Engrams(0)
-		  Catch Err As UnsupportedOperationException
-		    Return Nil
-		  End Try
+		    End Try
+		  End If
+		  Return Self.mEngramCache.Value(ClassString)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramByID(EngramID As v4UUID) As Beacon.Engram
+		  // Part of the Beacon.DataSource interface.
+		  
+		  If Self.mEngramCache.HasKey(EngramID) = False Then
+		    Try
+		      Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE object_id = ?1;", EngramID.StringValue)
+		      If Results.RowCount = 0 Then
+		        Return Nil
+		      End If
+		      
+		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
+		      For Each Engram As Beacon.Engram In Engrams
+		        Self.mEngramCache.Value(Engram.Path) = Engram
+		        Self.mEngramCache.Value(Engram.ObjectID) = Engram
+		      Next
+		    Catch Err As UnsupportedOperationException
+		      Return Nil
+		    End Try
+		  End If
+		  Return Self.mEngramCache.Value(EngramID)
 		End Function
 	#tag EndMethod
 
@@ -633,24 +687,23 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function GetEngramByPath(Path As String) As Beacon.Engram
 		  // Part of the Beacon.DataSource interface.
 		  
-		  If Self.mEngramCache.HasKey(Path) Then
-		    Return Self.mEngramCache.Value(Path)
-		  End If
-		  
-		  Try
-		    Dim RS As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE LOWER(path) = ?1;", Path.Lowercase)
-		    If RS.RowCount = 0 Then
+		  If Self.mEngramCache.HasKey(Path) = False Then
+		    Try
+		      Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE LOWER(path) = ?1;", Path.Lowercase)
+		      If Results.RowCount = 0 Then
+		        Return Nil
+		      End If
+		      
+		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
+		      For Each Engram As Beacon.Engram In Engrams
+		        Self.mEngramCache.Value(Engram.Path) = Engram
+		        Self.mEngramCache.Value(Engram.ObjectID) = Engram
+		      Next
+		    Catch Err As UnsupportedOperationException
 		      Return Nil
-		    End If
-		    
-		    Dim Engrams() As Beacon.Engram = Self.RowSetToEngram(RS)
-		    For Each Engram As Beacon.Engram In Engrams
-		      Self.mEngramCache.Value(Engram.Path) = Engram
-		    Next
-		    Return Engrams(0)
-		  Catch Err As UnsupportedOperationException
-		    Return Nil
-		  End Try
+		    End Try
+		  End If
+		  Return Self.mEngramCache.Value(Path)
 		End Function
 	#tag EndMethod
 
@@ -733,47 +786,78 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetSpawnPointByClass(ClassString As String) As Beacon.SpawnPoint
-		  Try
-		    If ClassString.Length < 2 Or ClassString.Right(2) <> "_C" Then
-		      ClassString = ClassString + "_C"
-		    End If
-		    
-		    Dim RS As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
-		    If RS.RowCount = 0 Then
+		  // Part of the Beacon.DataSource interface.
+		  
+		  If ClassString.Length < 2 Or ClassString.Right(2) <> "_C" Then
+		    ClassString = ClassString + "_C"
+		  End If
+		  
+		  If Self.mSpawnPointCache.HasKey(ClassString) = False Then
+		    Try
+		      Var Results As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
+		      If Results.RowCount = 0 Then
+		        Return Nil
+		      End If
+		      
+		      Var SpawnPoints() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(Results)
+		      Self.mSpawnPointCache.Value(SpawnPoints(0).ClassString) = SpawnPoints(0)
+		      For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
+		        Self.mSpawnPointCache.Value(SpawnPoint.Path) = SpawnPoint
+		        Self.mSpawnPointCache.Value(SpawnPoint.ObjectID) = SpawnPoint
+		      Next
+		    Catch Err As UnsupportedOperationException
 		      Return Nil
-		    End If
-		    
-		    Dim SpawnPoints() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(RS)
-		    For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
-		      Self.mSpawnPointCache.Value(SpawnPoint.Path) = SpawnPoint
-		    Next
-		    Return SpawnPoints(0)
-		  Catch Err As UnsupportedOperationException
-		    Return Nil
-		  End Try
+		    End Try
+		  End If
+		  Return Self.mSpawnPointCache.Value(ClassString)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPointByID(SpawnPointID As v4UUID) As Beacon.SpawnPoint
+		  // Part of the Beacon.DataSource interface.
+		  
+		  If Self.mSpawnPointCache.HasKey(SpawnPointID) = False Then
+		    Try
+		      Var Results As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE object_id = ?1;", SpawnPointID.StringValue)
+		      If Results.RowCount = 0 Then
+		        Return Nil
+		      End If
+		      
+		      Var SpawnPoints() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(Results)
+		      For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
+		        Self.mSpawnPointCache.Value(SpawnPoint.Path) = SpawnPoint
+		        Self.mSpawnPointCache.Value(SpawnPoint.ObjectID) = SpawnPoint
+		      Next
+		    Catch Err As UnsupportedOperationException
+		      Return Nil
+		    End Try
+		  End If
+		  Return Self.mSpawnPointCache.Value(SpawnPointID)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function GetSpawnPointByPath(Path As String) As Beacon.SpawnPoint
-		  If Self.mSpawnPointCache.HasKey(Path) Then
-		    Return Self.mSpawnPointCache.Value(Path)
-		  End If
+		  // Part of the Beacon.DataSource interface.
 		  
-		  Try
-		    Dim RS As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE LOWER(path) = ?1;", Path.Lowercase)
-		    If RS.RowCount = 0 Then
+		  If Self.mSpawnPointCache.HasKey(Path) = False Then
+		    Try
+		      Var Results As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE LOWER(path) = ?1;", Path.Lowercase)
+		      If Results.RowCount = 0 Then
+		        Return Nil
+		      End If
+		      
+		      Var SpawnPoints() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(Results)
+		      For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
+		        Self.mSpawnPointCache.Value(SpawnPoint.Path) = SpawnPoint
+		        Self.mSpawnPointCache.Value(SpawnPoint.ObjectID) = SpawnPoint
+		      Next
+		    Catch Err As UnsupportedOperationException
 		      Return Nil
-		    End If
-		    
-		    Dim Points() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(RS)
-		    For Each Point As Beacon.SpawnPoint In Points
-		      Self.mSpawnPointCache.Value(Point.Path) = Point
-		    Next
-		    Return New Beacon.SpawnPoint(Points(0))
-		  Catch Err As RuntimeException
-		    Return Nil
-		  End Try
+		    End Try
+		  End If
+		  Return Self.mSpawnPointCache.Value(Path)
 		End Function
 	#tag EndMethod
 
@@ -977,13 +1061,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Continue
 		      End If
 		      
-		      Dim ObjectID As String = Dict.Value("object_id")
+		      Dim ObjectID As v4UUID = Dict.Value("object_id").StringValue
 		      Dim ClassString As String = Dict.Value("class_string")
 		      Dim Label As String = Dict.Value("label")         
 		      Dim Availability As UInt64 = Dict.Value("availability")
 		      Dim Tags As String = Dict.Value("tags")
-		      Self.SQLExecute("INSERT INTO " + Category + " (object_id, class_string, label, path, availability, tags, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  ObjectID, ClassString, Label, Path, Availability, Tags, Self.UserModID)      
-		      Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, ?3);", ObjectID, Tags, Category)
+		      Self.SQLExecute("INSERT INTO " + Category + " (object_id, class_string, label, path, availability, tags, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  ObjectID.StringValue, ClassString, Label, Path, Availability, Tags, Self.UserModID)      
+		      Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, ?3);", ObjectID.StringValue, Tags, Category)
 		      EngramsUpdated = True
 		    Catch Err As RuntimeException
 		    End Try
@@ -1142,23 +1226,22 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    // When deleting, loot_source_icons must be done after loot_sources
 		    Dim Deletions() As Variant = ChangeDict.Value("deletions")
-		    Dim DeleteIcons() As String
+		    Dim DeleteIcons() As v4UUID
 		    For Each Deletion As Dictionary In Deletions
-		      Dim ObjectID As String = Deletion.Value("object_id")
-		      ObjectID = ObjectID.Lowercase
+		      Dim ObjectID As v4UUID = Deletion.Value("object_id").StringValue
 		      Select Case Deletion.Value("group")
 		      Case "loot_sources"
-		        Self.SQLExecute("DELETE FROM loot_sources WHERE object_id = ?1;", ObjectID)
+		        Self.SQLExecute("DELETE FROM loot_sources WHERE object_id = ?1;", ObjectID.StringValue)
 		      Case "loot_source_icons"
 		        DeleteIcons.AddRow(ObjectID)
 		      Case Beacon.CategoryEngrams, Beacon.CategoryCreatures, Beacon.CategorySpawnPoints
-		        Self.SQLExecute("DELETE FROM blueprints WHERE object_id = ?1;", ObjectID)
+		        Self.SQLExecute("DELETE FROM blueprints WHERE object_id = ?1;", ObjectID.StringValue)
 		      Case "presets"
-		        Self.SQLExecute("DELETE FROM official_presets WHERE object_id = ?1;", ObjectID)
+		        Self.SQLExecute("DELETE FROM official_presets WHERE object_id = ?1;", ObjectID.StringValue)
 		      End Select
 		    Next
-		    For Each IconID As String In DeleteIcons
-		      Self.SQLExecute("DELETE FROM loot_source_icons WHERE icon_id = ?1;", IconID)
+		    For Each IconID As v4UUID In DeleteIcons
+		      Self.SQLExecute("DELETE FROM loot_source_icons WHERE icon_id = ?1;", IconID.StringValue)
 		    Next
 		    
 		    Dim LootSourceIcons() As Variant = ChangeDict.Value("loot_source_icons")
@@ -1181,9 +1264,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    Dim LootSources() As Variant = ChangeDict.Value("loot_sources")
 		    For Each Dict As Dictionary In LootSources
-		      Dim ObjectID As String = Dict.Value("id")
+		      Dim ObjectID As v4UUID = Dict.Value("id").StringValue
 		      Dim Label As String = Dict.Value("label")
-		      Dim ModID As String = Dictionary(Dict.Value("mod")).Value("id")
+		      Dim ModID As v4UUID = Dictionary(Dict.Value("mod")).Value("id").StringValue
 		      Dim Availability As Integer = Dict.Value("availability")
 		      Dim Path As String = Dict.Value("path")
 		      Dim ClassString As String = Dict.Value("class_string")
@@ -1193,21 +1276,17 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Dim SortOrder As Integer = Dict.Value("sort_order")
 		      Dim Experimental As Boolean = Dict.Value("experimental")
 		      Dim Notes As String = Dict.Value("notes")
-		      Dim IconID As String = Dict.Value("icon")
+		      Dim IconID As v4UUID = Dict.Value("icon").StringValue
 		      Dim Requirements As String = Dict.Lookup("requirements", "{}")
 		      
-		      ObjectID = ObjectID.Lowercase
-		      ModID = ModID.Lowercase
-		      IconID = IconID.Lowercase
-		      
-		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM loot_sources WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID, Path.Lowercase)
+		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM loot_sources WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID.StringValue, Path.Lowercase)
 		      If Results.RowCount = 1 And ObjectID = Results.Column("object_id").StringValue Then
-		        Self.SQLExecute("UPDATE loot_sources SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, multiplier_min = ?7, multiplier_max = ?8, uicolor = ?9, sort_order = ?10, icon = ?11, experimental = ?12, notes = ?13, requirements = ?14 WHERE object_id = ?1;", ObjectID, ModID, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, IconID, Experimental, Notes, Requirements)
+		        Self.SQLExecute("UPDATE loot_sources SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, multiplier_min = ?7, multiplier_max = ?8, uicolor = ?9, sort_order = ?10, icon = ?11, experimental = ?12, notes = ?13, requirements = ?14 WHERE object_id = ?1;", ObjectID.StringValue, ModID.StringValue, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, IconID.StringValue, Experimental, Notes, Requirements)
 		      Else
 		        If Results.RowCount = 1 Then
 		          Self.SQLExecute("DELETE FROM loot_sources WHERE object_id = ?1;", Results.Column("object_id").StringValue)
 		        End If
-		        Self.SQLExecute("INSERT INTO loot_sources (object_id, mod_id, label, availability, path, class_string, multiplier_min, multiplier_max, uicolor, sort_order, icon, experimental, notes, requirements) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14);", ObjectID, ModID, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, IconID, Experimental, Notes, Requirements)
+		        Self.SQLExecute("INSERT INTO loot_sources (object_id, mod_id, label, availability, path, class_string, multiplier_min, multiplier_max, uicolor, sort_order, icon, experimental, notes, requirements) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14);", ObjectID.StringValue, ModID.StringValue, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, IconID.StringValue, Experimental, Notes, Requirements)
 		      End If
 		      EngramsChanged = True
 		    Next
@@ -1247,11 +1326,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Dim ReloadPresets As Boolean
 		    Dim Presets() As Variant = ChangeDict.Value("presets")
 		    For Each Dict As Dictionary In Presets
-		      Dim ObjectID As String = Dict.Value("id")
+		      Dim ObjectID As v4UUID = Dict.Value("id").StringValue
 		      Dim Label As String = Dict.Value("label")
 		      Dim Contents As String = Dict.Value("contents")
-		      
-		      ObjectID = ObjectID.Lowercase
 		      
 		      ReloadPresets = True
 		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM official_presets WHERE object_id = ?1;", ObjectID)
@@ -1264,19 +1341,17 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    Dim PresetModifiers() As Variant = ChangeDict.Value("preset_modifiers")
 		    For Each Dict As Dictionary In PresetModifiers
-		      Dim ObjectID As String = Dict.Value("id")
+		      Dim ObjectID As v4UUID = Dict.Value("id").StringValue
 		      Dim Label As String = Dict.Value("label")
 		      Dim Pattern As String = Dict.Value("pattern")
-		      Dim ModID As String = Dictionary(Dict.Value("mod")).Value("id")
-		      
-		      ObjectID = ObjectID.Lowercase
+		      Dim ModID As v4UUID = Dictionary(Dict.Value("mod")).Value("id").StringValue
 		      
 		      ReloadPresets = True
-		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM preset_modifiers WHERE object_id = ?1;", ObjectID)
+		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM preset_modifiers WHERE object_id = ?1;", ObjectID.StringValue)
 		      If Results.RowCount = 1 Then
-		        Self.SQLExecute("UPDATE preset_modifiers SET label = ?2, pattern = ?3, mod_id = ?4 WHERE object_id = ?1;", ObjectID, Label, Pattern, ModID)
+		        Self.SQLExecute("UPDATE preset_modifiers SET label = ?2, pattern = ?3, mod_id = ?4 WHERE object_id = ?1;", ObjectID.StringValue, Label, Pattern, ModID.StringValue)
 		      Else
-		        Self.SQLExecute("INSERT INTO preset_modifiers (object_id, label, pattern, mod_id) VALUES (?1, ?2, ?3, ?4);", ObjectID, Label, Pattern, ModID)
+		        Self.SQLExecute("INSERT INTO preset_modifiers (object_id, label, pattern, mod_id) VALUES (?1, ?2, ?3, ?4);", ObjectID.StringValue, Label, Pattern, ModID.StringValue)
 		      End If
 		    Next
 		    
@@ -1564,10 +1639,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Dim Results As RowSet = Self.SQLSelect("SELECT path, class_string, label, availability, can_blueprint FROM legacy.engrams WHERE built_in = 0;")
 		      While Not Results.AfterLastRow
 		        Try
-		          Dim ObjectID As String = New v4UUID
+		          Dim ObjectID As New v4UUID
 		          Dim Tags As String = If(Results.Column("can_blueprint").BooleanValue, "object,blueprintable", "object")
-		          Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, path, class_string, label, availability, tags) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID, Self.UserModID, Results.Column("path").StringValue, Results.Column("class_string").StringValue, Results.Column("label").StringValue, Results.Column("availability").IntegerValue, Tags)
-		          Self.SQLExecute("INSERT INTO searchable_tags (object_id, source_table, tags) VALUES (?1, ?2, ?3);", ObjectID, "engrams", Tags)
+		          Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, path, class_string, label, availability, tags) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID.StringValue, Self.UserModID, Results.Column("path").StringValue, Results.Column("class_string").StringValue, Results.Column("label").StringValue, Results.Column("availability").IntegerValue, Tags)
+		          Self.SQLExecute("INSERT INTO searchable_tags (object_id, source_table, tags) VALUES (?1, ?2, ?3);", ObjectID.StringValue, "engrams", Tags)
 		        Catch Err As UnsupportedOperationException
 		          Self.Rollback()
 		          Self.mBase.RemoveDatabase("legacy")
@@ -1897,7 +1972,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    Try
 		      Dim Update As Boolean
-		      Dim ObjectID As String
+		      Dim ObjectID As v4UUID
 		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id, mod_id FROM blueprints WHERE object_id = ?1 OR LOWER(path) = ?2;", Blueprint.ObjectID, Blueprint.Path.Lowercase)
 		      If Results.RowCount = 1 Then
 		        ObjectID = Results.Column("object_id").StringValue
@@ -1906,7 +1981,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Continue
 		        End If
 		        
-		        Dim ModID As String = Results.Column("mod_id").StringValue
+		        Dim ModID As v4UUID = Results.Column("mod_id").StringValue
 		        If ModID <> Self.UserModID Then
 		          Continue
 		        End If
@@ -1922,7 +1997,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      
 		      Dim Category As String = Blueprint.Category
 		      Dim Columns As New Dictionary
-		      Columns.Value("object_id") = ObjectID
+		      Columns.Value("object_id") = ObjectID.StringValue
 		      Columns.Value("path") = Blueprint.Path
 		      Columns.Value("class_string") = Blueprint.ClassString
 		      Columns.Value("label") = Blueprint.Label
@@ -1960,7 +2035,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Next
 		        
 		        Self.SQLExecute("UPDATE " + Category + " SET " + Assignments.Join(", ") + " WHERE " + WhereClause + ";", Values)
-		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?3 WHERE object_id = ?2 AND source_table = ?1;", Category, ObjectID, Blueprint.TagString)
+		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?3 WHERE object_id = ?2 AND source_table = ?1;", Category, ObjectID.StringValue, Blueprint.TagString)
 		      Else
 		        Dim ColumnNames(), Placeholders() As String
 		        Dim Values() As Variant
@@ -1973,7 +2048,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Next
 		        
 		        Self.SQLExecute("INSERT INTO " + Category + " (" + ColumnNames.Join(", ") + ") VALUES (" + Placeholders.Join(", ") + ");", Values)
-		        Self.SQLExecute("INSERT INTO searchable_tags (source_table, object_id, tags) VALUES (?1, ?2, ?3);", Category, ObjectID, Blueprint.TagString)
+		        Self.SQLExecute("INSERT INTO searchable_tags (source_table, object_id, tags) VALUES (?1, ?2, ?3);", Category, ObjectID.StringValue, Blueprint.TagString)
 		      End If
 		      
 		      CountSaved = CountSaved + 1

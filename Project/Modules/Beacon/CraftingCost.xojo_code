@@ -228,7 +228,7 @@ Protected Class CraftingCost
 		  Dim OtherName As String = If(Other.mEngram <> Nil, Other.mEngram.Label, "")
 		  Dim Result As Integer = SelfName.Compare(OtherName, ComparisonOptions.CaseSensitive)
 		  If Result = 0 Then
-		    Result = Self.mObjectID.Compare(Other.mObjectID, ComparisonOptions.CaseSensitive)
+		    Result = Self.mObjectID.StringValue.Compare(Other.mObjectID.StringValue, ComparisonOptions.CaseSensitive)
 		  End If
 		  Return Result
 		End Function
@@ -349,7 +349,7 @@ Protected Class CraftingCost
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mObjectID As String
+		Private mObjectID As v4UUID
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -157,6 +157,12 @@ Class v4UUID
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function StringValue() As String
+		  Return Self.mValue
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mValue As String

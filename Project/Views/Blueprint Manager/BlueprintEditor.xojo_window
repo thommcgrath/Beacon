@@ -604,7 +604,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mObjectID As String
+		Private mObjectID As v4UUID
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -670,7 +670,7 @@ End
 			  Self.Modified = False
 			End Set
 		#tag EndSetter
-		ObjectID As String
+		ObjectID As v4UUID
 	#tag EndComputedProperty
 
 
@@ -982,13 +982,5 @@ End
 		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ObjectID"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 #tag EndViewBehavior

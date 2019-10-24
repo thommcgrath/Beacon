@@ -113,7 +113,7 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModID() As String
+		Function ModID() As v4UUID
 		  Return Self.mModID
 		End Function
 	#tag EndMethod
@@ -158,7 +158,7 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ObjectID() As String
+		Function ObjectID() As v4UUID
 		  Return Self.mObjectID
 		End Function
 	#tag EndMethod
@@ -210,7 +210,7 @@ Implements Beacon.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mModID As String
+		Protected mModID As v4UUID
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -218,7 +218,7 @@ Implements Beacon.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mObjectID As String
+		Protected mObjectID As v4UUID
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
