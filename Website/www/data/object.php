@@ -166,16 +166,12 @@ function PreparePresetTable(BeaconPreset $preset, array &$properties) {
 function PrepareSpawnPointTable(BeaconSpawnPoint $spawn_point, array &$properties) {
 	$spawns = $spawn_point->Spawns();
 	$limits = $spawn_point->Limits();
+	if (is_null($limits)) {
+		$limits = [];
+	}
 	
 	if (is_null($spawns)) {
 		return;
-	}
-	
-	$percentages = array();
-	if (is_null($limits) == false) {
-		foreach ($limits as $limit) {
-			$percentages[$limit['creature_id']] = $limit['max_percentage'];
-		}
 	}
 	
 	$unique_creatures = array();
@@ -192,15 +188,15 @@ function PrepareSpawnPointTable(BeaconSpawnPoint $spawn_point, array &$propertie
 			}
 			
 			$label = '[' . $creature->Label() . '](/object/' . $creature->ClassString() . ')';
-			if (array_key_exists($creature_id, $percentages)) {
-				$label .= ' (Max ' . BeaconCommon::FormatFloat($percentages[$creature_id] * 100, 0) . '%)';
+			if (array_key_exists($creature_id, $limits)) {
+				$label .= ' (Max ' . BeaconCommon::FormatFloat($limits[$creature_id] * 100, 0) . '%)';
 			}
 			$creatures[] = $label;
 			$unique_creatures[] = $creature_id;
 		}
 	}
 	
-	foreach ($percentages as $creature_id => $percentage) {
+	foreach ($limits as $creature_id => $percentage) {
 		if (in_array($creature_id, $unique_creatures)) {
 			continue;
 		}
