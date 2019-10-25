@@ -8,16 +8,8 @@ if (empty($_GET['tag'])) {
 	exit;
 }
 
-$database = BeaconCommon::Database();
-$results = $database->Query("SELECT build_number FROM updates WHERE stage >= 3 ORDER BY build_number DESC LIMIT 1;");
-if ($results->RecordCount() == 1) {
-	$build = intval($results->Field('build_number'));
-} else {
-	$build = 0;
-}
-
 $tag = $_GET['tag'];
-$objects = BeaconBlueprint::GetWithTag($tag, $build);
+$objects = BeaconBlueprint::GetWithTag($tag, BeaconCommon::MinVersion());
 if (count($objects) == 0) {
 	echo '<h1>No Objects Tagged &quot;' . htmlentities(ucwords($tag)) . '&quot;</h1>';
 	echo '<p>Sorry</p>';
