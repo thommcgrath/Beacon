@@ -39,9 +39,18 @@ class BeaconSpawnPoint extends BeaconBlueprint {
 	public function jsonSerialize() {
 		$json = parent::jsonSerialize();
 		$json['resource_url'] = BeaconAPI::URL('/spawn_point/' . urlencode($this->ObjectID()));
-		$json['spawns'] = $this->groups;
-		$json['groups'] = $this->groups;
-		$json['limits'] = $this->limits;
+		if (is_null($this->groups) || count($this->groups) == 0) {
+			$json['spawns'] = null;
+			$json['groups'] = null;
+		} else {
+			$json['spawns'] = $this->groups;
+			$json['groups'] = $this->groups;
+		}
+		if (is_null($this->limits) || count($this->limits) == 0) {
+			$json['limits'] = null;
+		} else {
+			$json['limits'] = $this->limits;
+		}
 		return $json;
 	}
 	
