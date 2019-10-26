@@ -177,31 +177,31 @@ function PrepareSpawnPointTable(BeaconSpawnPoint $spawn_point, array &$propertie
 	$unique_creatures = array();
 	$creatures = array();
 	foreach ($spawns as $group) {
-		foreach ($group['creatures'] as $creature_id) {
-			if (in_array($creature_id, $unique_creatures)) {
+		foreach ($group['creatures'] as $creature_path) {
+			if (in_array($creature_path, $unique_creatures)) {
 				continue;
 			}
 			
-			$creature = BeaconCreature::GetByObjectID($creature_id);
+			$creature = BeaconCreature::GetByObjectPath($creature_path);
 			if (is_null($creature)) {
 				continue;
 			}
 			
 			$label = '[' . $creature->Label() . '](/object/' . $creature->ClassString() . ')';
-			if (array_key_exists($creature_id, $limits)) {
-				$label .= ' (Max ' . BeaconCommon::FormatFloat($limits[$creature_id] * 100, 0) . '%)';
+			if (array_key_exists($creature_path, $limits)) {
+				$label .= ' (Max ' . BeaconCommon::FormatFloat($limits[$creature_path] * 100, 0) . '%)';
 			}
 			$creatures[] = $label;
-			$unique_creatures[] = $creature_id;
+			$unique_creatures[] = $creature_path;
 		}
 	}
 	
-	foreach ($limits as $creature_id => $percentage) {
-		if (in_array($creature_id, $unique_creatures)) {
+	foreach ($limits as $creature_path => $percentage) {
+		if (in_array($creature_path, $unique_creatures)) {
 			continue;
 		}
 		
-		$creature = BeaconCreature::GetByObjectID($creature_id);
+		$creature = BeaconCreature::GetByObjectPath($creature_path);
 		if (is_null($creature)) {
 			continue;
 		}
