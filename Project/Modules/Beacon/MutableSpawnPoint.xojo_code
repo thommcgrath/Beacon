@@ -61,6 +61,35 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Limit(Creature As Beacon.Creature, Assigns Value As Double)
+		  Value = Min(Abs(Value), 1.0)
+		  
+		  Var Exists As Boolean = Self.mLimits.HasKey(Creature.Path)
+		  
+		  If Exists And Value = 1.0 Then
+		    Self.mLimits.Remove(Creature.Path)
+		    Self.Modified = True
+		    Return
+		  End If
+		  
+		  If Exists = False Or Self.mLimits.Value(Creature.Path).DoubleValue <> Value Then
+		    Self.mLimits.Value(Creature.Path) = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LimitsString(Assigns Value As String)
+		  Try
+		    Self.mLimits = Beacon.ParseJSON(Value)
+		    Self.Modified = True
+		  Catch Err As RuntimeException
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ModID(Assigns Value As v4UUID)
 		  // Part of the Beacon.MutableBlueprint interface.
 		  
@@ -104,6 +133,12 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ResizeTo(Bound As Integer)
+		  Self.mSets.ResizeTo(Bound)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Set(Index As Integer, Assigns Value As Beacon.SpawnPointSet)
 		  If Self.mSets(Index) <> Value Then
 		    Self.mSets(Index) = New Beacon.SpawnPointSet(Value)
@@ -113,7 +148,7 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SetsAsJSON(Assigns Value As String)
+		Sub SetsString(Assigns Value As String)
 		  Var Parsed As Variant
 		  Try
 		    Parsed = Beacon.ParseJSON(Value)
@@ -121,7 +156,7 @@ Implements Beacon.MutableBlueprint
 		    Return
 		  End Try
 		  
-		  Dim Children() As Variant = Parsed
+		  Var Children() As Variant = Parsed
 		  Self.mSets.ResizeTo(-1)
 		  For Each SaveData As Dictionary In Children
 		    Var Set As Beacon.SpawnPointSet = Beacon.SpawnPointSet.FromSaveData(SaveData)

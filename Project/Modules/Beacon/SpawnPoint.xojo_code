@@ -36,6 +36,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  Self.mAvailability = Beacon.Maps.All.Mask
+		  Self.mLimits = New Dictionary
 		End Sub
 	#tag EndMethod
 
@@ -51,6 +52,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  Self.mModID = Source.mModID
 		  Self.mModName = Source.mModName
 		  Self.mModified = Source.mModified
+		  Self.mLimits = Source.mLimits.Clone
 		  
 		  Self.mSets.ResizeTo(Source.mSets.LastRowIndex)
 		  For I As Integer = Source.mSets.FirstRowIndex To Source.mSets.LastRowIndex
@@ -94,21 +96,24 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		      Return Nil
 		    End If
 		    
-		    Var Editable As New Beacon.MutableSpawnPoint(SpawnPoint)
+		    SpawnPoint = New Beacon.SpawnPoint(SpawnPoint)
 		    If Dict.HasKey("Label") Then
-		      Editable.Label = Dict.Value("Label")
+		      SpawnPoint.mLabel = Dict.Value("Label")
+		    End If
+		    If Dict.HasKey("Limits") Then
+		      SpawnPoint.mLimits = Dictionary(Dict.Value("Limits").ObjectValue).Clone
 		    End If
 		    If Dict.HasKey("Sets") Then
 		      Var SetSaveData() As Variant = Dict.Value("Sets")
 		      For Each Data As Dictionary In SetSaveData
 		        Var Set As Beacon.SpawnPointSet = Beacon.SpawnPointSet.FromSaveData(Data)
 		        If Set <> Nil Then
-		          Editable.AddSet(Set, True)
+		          SpawnPoint.mSets.AddRow(Set)
 		        End If
 		      Next
 		    End If
-		    Editable.Modified = False
-		    Return New Beacon.SpawnPoint(Editable)
+		    SpawnPoint.Modified = False
+		    Return SpawnPoint
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
@@ -161,6 +166,39 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  // Part of the Beacon.Blueprint interface.
 		  
 		  Return Self.mLabel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Limit(Creature As Beacon.Creature) As Double
+		  If Self.mLimits.HasKey(Creature.Path) Then
+		    Return Self.mLimits.Value(Creature.Path)
+		  Else
+		    Return 1.0
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Limits() As Dictionary
+		  Var Limits As New Dictionary
+		  For Each Entry As DictionaryEntry In Self.mLimits
+		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Entry.Key)
+		    If Creature <> Nil Then
+		      Limits.Value(Creature) = Entry.Value
+		    End If
+		  Next
+		  Return Limits
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LimitsString(Pretty As Boolean = False) As String
+		  Try
+		    Return Beacon.GenerateJSON(Self.mLimits, Pretty)
+		  Catch Err As RuntimeException
+		    Return ""
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -242,6 +280,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  Keys.Value("Path") = Self.Path
 		  Keys.Value("Class") = Self.ClassString
 		  Keys.Value("Sets") = Children
+		  Keys.Value("Limits") = Self.mLimits
 		  Return Keys
 		End Function
 	#tag EndMethod
@@ -253,14 +292,18 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SetsAsJSON(Pretty As Boolean = False) As String
+		Function SetsString(Pretty As Boolean = False) As String
 		  Var Objects() As Variant
 		  For Each Set As Beacon.SpawnPointSet In Self.mSets
 		    If Set <> Nil Then
 		      Objects.AddRow(Set.SaveData)
 		    End If
 		  Next
-		  Return Beacon.GenerateJSON(Objects, Pretty)
+		  Try
+		    Return Beacon.GenerateJSON(Objects, Pretty)
+		  Catch Err As RuntimeException
+		    Return ""
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -288,6 +331,10 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 
 	#tag Property, Flags = &h1
 		Protected mLabel As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mLimits As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

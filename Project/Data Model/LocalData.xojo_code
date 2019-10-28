@@ -38,9 +38,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Columns.Value("availability") = Availability
 		    Columns.Value("path") = Path
 		    Columns.Value("class_string") = ClassString
-		    Columns.Value("Tags") = TagString
+		    Columns.Value("tags") = TagString
 		    
-		    Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID, Path.Lowercase)
+		    Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID.StringValue, Path.Lowercase)
 		    If Results.RowCount = 1 And ObjectID = Results.Column("object_id").StringValue Then
 		      Dim Assignments() As String
 		      Dim Values() As Variant
@@ -57,7 +57,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Next
 		      
 		      Self.SQLExecute("UPDATE " + Category + " SET " + Assignments.Join(", ") + " WHERE " + WhereClause + ";", Values)
-		      Self.SQLExecute("UPDATE searchable_tags SET tags = ?2 WHERE object_id = ?1 AND source_table = ?3;", ObjectID, TagStringForSearching, Category)
+		      Self.SQLExecute("UPDATE searchable_tags SET tags = ?2 WHERE object_id = ?1 AND source_table = ?3;", ObjectID.StringValue, TagStringForSearching, Category)
 		    Else
 		      If Results.RowCount = 1 Then
 		        Self.SQLExecute("DELETE FROM " + Category + " WHERE object_id = ?1;", Results.Column("object_id").StringValue)
@@ -75,7 +75,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Next
 		      
 		      Self.SQLExecute("INSERT INTO " + Category + " (" + ColumnNames.Join(", ") + ") VALUES (" + Placeholders.Join(", ") + ");", Values)
-		      Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, ?3);", ObjectID, TagStringForSearching, Category)
+		      Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, ?3);", ObjectID.StringValue, TagStringForSearching, Category)
 		    End If
 		    
 		    Return True
@@ -203,7 +203,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE notifications (notification_id TEXT NOT NULL PRIMARY KEY, message TEXT NOT NULL, secondary_message TEXT, user_data TEXT NOT NULL, moment TEXT NOT NULL, read INTEGER NOT NULL, action_url TEXT, deleted INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', incubation_time INTEGER, mature_time INTEGER, stats TEXT);")
-		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', default_contents TEXT NOT NULL DEFAULT '[]');")
+		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', groups TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
 		  
 		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts5(tags, object_id, source_table);")
 		  
@@ -1305,7 +1305,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Dim ExtraColumns As New Dictionary
 		        ExtraColumns.Value("incubation_time") = Dict.Value("incubation_time")
 		        ExtraColumns.Value("mature_time") = Dict.Value("mature_time")
-		        ExtraColumns.Value("stats") = Beacon.GenerateJSON(Dict.Value("stats"), False)
+		        If IsNull(Dict.Value("stats")) = False Then
+		          ExtraColumns.Value("stats") = Beacon.GenerateJSON(Dict.Value("stats"), False)
+		        End If
 		        
 		        Dim Imported As Boolean = Self.AddBlueprintToDatabase(Beacon.CategoryCreatures, Dict, ExtraColumns)
 		        EngramsChanged = EngramsChanged Or Imported
@@ -1316,7 +1318,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Dim SpawnPoints() As Variant = ChangeDict.Value("spawn_points")
 		      For Each Dict As Dictionary In SpawnPoints
 		        Dim ExtraColumns As New Dictionary
-		        ExtraColumns.Value("default_contents") = Beacon.GenerateJSON(Dict.Value("spawns"), False)
+		        If IsNull(Dict.Value("groups")) = False Then
+		          ExtraColumns.Value("groups") = Beacon.GenerateJSON(Dict.Value("groups"), False)
+		        End If
+		        If IsNull(Dict.Value("limits")) = False Then
+		          ExtraColumns.Value("limits") = Beacon.GenerateJSON(Dict.Value("limits"), False)
+		        End If
 		        
 		        Dim Imported As Boolean = Self.AddBlueprintToDatabase(Beacon.CategorySpawnPoints, Dict, ExtraColumns)
 		        EngramsChanged = EngramsChanged Or Imported
@@ -1331,11 +1338,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Dim Contents As String = Dict.Value("contents")
 		      
 		      ReloadPresets = True
-		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM official_presets WHERE object_id = ?1;", ObjectID)
+		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM official_presets WHERE object_id = ?1;", ObjectID.StringValue)
 		      If Results.RowCount = 1 Then
-		        Self.SQLExecute("UPDATE official_presets SET label = ?2, contents = ?3 WHERE object_id = ?1;", ObjectID, Label, Contents)
+		        Self.SQLExecute("UPDATE official_presets SET label = ?2, contents = ?3 WHERE object_id = ?1;", ObjectID.StringValue, Label, Contents)
 		      Else
-		        Self.SQLExecute("INSERT INTO official_presets (object_id, label, contents) VALUES (?1, ?2, ?3);", ObjectID, Label, Contents)
+		        Self.SQLExecute("INSERT INTO official_presets (object_id, label, contents) VALUES (?1, ?2, ?3);", ObjectID.StringValue, Label, Contents)
 		      End If
 		    Next
 		    
@@ -1608,7 +1615,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  // Spawn Points
-		  If FromSchemaVersion >= 11 Then
+		  If FromSchemaVersion >= 12 Then
 		    Commands.AddRow("INSERT INTO spawn_points SELECT * FROM legacy.spawn_points;")
 		  End If
 		  
@@ -1947,7 +1954,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Point.TagString = Results.Column("tags").StringValue
 		    Point.ModID = Results.Column("mod_id").StringValue
 		    Point.ModName = Results.Column("mod_name").StringValue
-		    Point.SetsAsJSON = Results.Column("default_contents").StringValue
+		    Point.SetsString = Results.Column("groups").StringValue
+		    Point.LimitsString = Results.Column("limits").StringValue
 		    Point.Modified = False
 		    SpawnPoints.AddRow(New Beacon.SpawnPoint(Point))
 		    Results.MoveToNextRow
@@ -2016,7 +2024,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Columns.Value("mature_time") = Nil
 		        End If
 		      Case IsA Beacon.SpawnPoint
-		        Columns.Value("default_contents") = Beacon.SpawnPoint(Blueprint).SetsAsJSON(False)
+		        Columns.Value("groups") = Beacon.SpawnPoint(Blueprint).SetsString(False)
+		        Columns.Value("limits") = Beacon.SpawnPoint(Blueprint).LimitsString(False)
 		      End Select
 		      
 		      If Update Then
@@ -2511,10 +2520,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = Notification_NewAppNotification, Type = String, Dynamic = False, Default = \"New App Notification", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"11", Scope = Private
+	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"12", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.availability\x2C spawn_points.tags\x2C spawn_points.default_contents\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.availability\x2C spawn_points.tags\x2C spawn_points.groups\x2C spawn_points.limits\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = UserModID, Type = String, Dynamic = False, Default = \"23ecf24c-377f-454b-ab2f-d9d8f31a5863", Scope = Public

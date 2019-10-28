@@ -130,7 +130,7 @@ Protected Module Preferences
 		      Default = "(""object"") NOT (""deprecated"" OR ""cheat"" OR ""event"" OR ""reward"" OR ""generic"" OR ""blueprint"")"
 		    End Select
 		  Case Beacon.CategoryCreatures
-		    Default = "(""object"") NOT (""minion"" OR ""boss"" OR ""event"")"
+		    Default = "(""object"") NOT (""minion"" OR ""boss"" OR ""event"" OR ""generic"")"
 		  End Select
 		  
 		  Init

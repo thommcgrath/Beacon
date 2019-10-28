@@ -3,7 +3,6 @@ Protected Class SpawnPointSet
 Implements Beacon.DocumentItem, Beacon.Countable
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  Self.mEntities = New Dictionary
 		  Self.mWeight = 1.0
 		  Self.mModified = False
 		End Sub
@@ -14,6 +13,13 @@ Implements Beacon.DocumentItem, Beacon.Countable
 		  Self.Constructor()
 		  
 		  Self.mModified = Source.mModified
+		  Self.mWeight = Source.mWeight
+		  Self.mLabel = Source.mLabel
+		  
+		  Self.mCreatures.ResizeTo(Source.mCreatures.LastRowIndex)
+		  For I As Integer = 0 To Source.mCreatures.LastRowIndex
+		    Self.mCreatures(I) = New Beacon.Creature(Source.mCreatures(I))
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -29,21 +35,13 @@ Implements Beacon.DocumentItem, Beacon.Countable
 		Function Count() As Integer
 		  // Part of the Beacon.Countable interface.
 		  
-		  Return Self.mEntities.KeyCount
+		  Return Self.mCreatures.Count
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Creature(AtIndex As Integer) As Beacon.Creature
-		  Return Beacon.Data.GetCreatureByPath(Self.mEntities.Key(AtIndex).StringValue)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function CreatureLimit(Creature As Beacon.Creature) As Double
-		  If Self.mEntities.HasKey(Creature.Path) Then
-		    Return Self.mEntities.Value(Creature.Path)
-		  End If
+		  Return Self.mCreatures(AtIndex)
 		End Function
 	#tag EndMethod
 
@@ -53,28 +51,22 @@ Implements Beacon.DocumentItem, Beacon.Countable
 		    Return Nil
 		  End If
 		  
-		  If SaveData.HasAllKeys("label", "weight", "creatures") = False Then
+		  If SaveData.HasAllKeys("Label", "Weight", "Creatures") = False Then
 		    Return Nil
 		  End If
 		  
 		  Var Set As New Beacon.MutableSpawnPointSet
-		  Set.Label = SaveData.Value("label")
-		  Set.Weight = SaveData.Value("weight")
+		  Set.Label = SaveData.Value("Label")
+		  Set.Weight = SaveData.Value("Weight")
 		  
-		  Var Creatures() As Variant = SaveData.Value("creatures")
-		  For Each CreatureData As Dictionary In Creatures
-		    Var CreatureID As v4UUID = CreatureData.Value("creature_id").StringValue
-		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByID(CreatureID)
+		  Var Paths() As Variant = SaveData.Value("Creatures")
+		  For Each Path As String In Paths
+		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Path)
 		    If Creature = Nil Then
-		      If CreatureData.HasKey("creature_path") Then
-		        Creature = New Beacon.MutableCreature(CreatureData.Value("creature_path").StringValue, CreatureID)
-		      Else
-		        Continue
-		      End If
+		      Continue
 		    End If
 		    
-		    Var Limit As Double = CreatureData.Lookup("max_percentage", 1.0)
-		    Set.CreatureLimit(Creature) = Limit
+		    Set.AddCreature(Creature)
 		  Next
 		  
 		  Set.Modified = False
@@ -83,8 +75,13 @@ Implements Beacon.DocumentItem, Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsCreatureLimited(Creature As Beacon.Creature) As Boolean
-		  Return Self.mEntities.HasKey(Creature.Path) And Self.mEntities.Value(Creature.Path) < 1.0
+		Function IndexOf(Creature As Beacon.Creature) As Integer
+		  For I As Integer = 0 To Self.mCreatures.LastRowIndex
+		    If Self.mCreatures(I) = Creature Then
+		      Return I
+		    End If
+		  Next
+		  Return -1
 		End Function
 	#tag EndMethod
 
@@ -94,16 +91,9 @@ Implements Beacon.DocumentItem, Beacon.Countable
 		  
 		  #Pragma Unused Document
 		  
-		  If Self.mEntities.KeyCount = 0 Then
+		  If Self.mCreatures.LastRowIndex = -1 Then
 		    Return False
 		  End If
-		  
-		  For Each Entry As DictionaryEntry In Self.mEntities
-		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Entry.Key.StringValue)
-		    If Creature = Nil Then
-		      Return False
-		    End If
-		  Next
 		  
 		  Return True
 		End Function
@@ -114,11 +104,8 @@ Implements Beacon.DocumentItem, Beacon.Countable
 		  // Part of the Iterable interface.
 		  
 		  Var Creatures() As Variant
-		  For Each Entry As DictionaryEntry In Self.mEntities
-		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Entry.Key)
-		    If Creature <> Nil Then
-		      Creatures.AddRow(Creature)
-		    End If
+		  For Each Creature As Beacon.Creature In Self.mCreatures
+		    Creatures.AddRow(Creature)
 		  Next
 		  Return New Beacon.GenericIterator(Creatures)
 		End Function
@@ -144,39 +131,28 @@ Implements Beacon.DocumentItem, Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
-		  Var Creatures() As Dictionary
-		  For Each Entry As DictionaryEntry In Self.mEntities
-		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Entry.Key.StringValue)
-		    If Creature = Nil Then
-		      Continue
-		    End If
-		    
-		    Var CreatureData As New Dictionary
-		    CreatureData.Value("creature_id") = Creature.ObjectID.StringValue
-		    CreatureData.Value("creature_path") = Creature.Path
-		    
-		    If Entry.Value.DoubleValue < 1.0 Then
-		      CreatureData.Value("max_percentage") = Entry.Value
-		    End If
+		  Var Creatures() As String
+		  For Each Creature As Beacon.Creature In Self.mCreatures
+		    Creatures.AddRow(Creature.Path)
 		  Next
 		  
 		  Var SaveData As New Dictionary
-		  SaveData.Value("label") = Self.Label
-		  SaveData.Value("weight") = Self.Weight
-		  SaveData.Value("creatures") = Creatures
+		  SaveData.Value("Label") = Self.Label
+		  SaveData.Value("Weight") = Self.Weight
+		  SaveData.Value("Creature") = Creatures
 		  Return SaveData
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Weight() As Double
-		  Return Weight
+		  Return Self.mWeight
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h1
-		Protected mEntities As Dictionary
+		Protected mCreatures() As Beacon.Creature
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

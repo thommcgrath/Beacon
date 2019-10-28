@@ -17,6 +17,7 @@ Protected Module BeaconConfigs
 		    Names.AddRow(BeaconConfigs.DinoAdjustments.ConfigName)
 		    Names.AddRow(BeaconConfigs.StatMultipliers.ConfigName)
 		    Names.AddRow(BeaconConfigs.DayCycle.ConfigName)
+		    Names.AddRow(BeaconConfigs.SpawnPoints.ConfigName)
 		  End If
 		  If Human = True Then
 		    Static HumanNames() As String
@@ -146,6 +147,8 @@ Protected Module BeaconConfigs
 		    Return GetTypeInfo(BeaconConfigs.StatMultipliers)
 		  Case BeaconConfigs.DayCycle.ConfigName
 		    Return GetTypeInfo(BeaconConfigs.DayCycle)
+		  Case BeaconConfigs.SpawnPoints.ConfigName
+		    Return GetTypeInfo(BeaconConfigs.SpawnPoints)
 		  End Select
 		End Function
 	#tag EndMethod
