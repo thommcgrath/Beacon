@@ -279,8 +279,12 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  Keys.Value("Label") = Self.Label
 		  Keys.Value("Path") = Self.Path
 		  Keys.Value("Class") = Self.ClassString
-		  Keys.Value("Sets") = Children
-		  Keys.Value("Limits") = Self.mLimits
+		  If Children.LastRowIndex > -1 Then
+		    Keys.Value("Sets") = Children
+		  End If
+		  If Self.mLimits.KeyCount > 0 Then
+		    Keys.Value("Limits") = Self.mLimits
+		  End If
 		  Return Keys
 		End Function
 	#tag EndMethod

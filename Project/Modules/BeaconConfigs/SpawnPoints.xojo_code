@@ -7,39 +7,78 @@ Implements  Iterable
 		  #Pragma Unused SourceDocument
 		  #Pragma Unused Profile
 		  
-		  //    ConfigOverrideNPCSpawnEntriesContainer=(
-		  //        NPCSpawnEntriesContainerClassString=<spawn_class>,
-		  //        NPCSpawnEntries=(
-		  //            (
-		  //                AnEntryName=<spawn_name>,
-		  //                EntryWeight=<factor>,
-		  //                NPCsToSpawnStrings=(<entity_id>)
-		  //            )
-		  //        ),
-		  //        NPCSpawnLimits=(
-		  //            (
-		  //                NPCClassString=<entity_id>,
-		  //                MaxPercentageOfDesiredNumToAllow=<percentage>
-		  //            )
-		  //        )
-		  //    )
-		  
 		  For Each SpawnPoint As Beacon.SpawnPoint In Self.mSpawnPoints
-		    Var Entries() As String
+		    Var RenderedEntries() As String
 		    Var Limits As Dictionary = SpawnPoint.Limits
 		    
 		    For Each Set As Beacon.SpawnPointSet In SpawnPoint
-		      Var CreatureClasses() As String
-		      For Each Creature As Beacon.Creature In Set
-		        CreatureClasses.AddRow("""" + Creature.ClassString + """")
+		      Var CreatureClasses(), LevelMembers(), OffsetMembers(), SpawnChanceMembers() As String
+		      Var IncludeLevels, IncludeOffsets, IncludeSpawnChance As Boolean
+		      Var Entries() As Beacon.SpawnPointSetEntry = Set.Entries
+		      Var SpawnSum As Double
+		      
+		      For Each Entry As Beacon.SpawnPointSetEntry In Entries
+		        IncludeLevels = IncludeLevels Or Entry.LevelCount > 0
+		        IncludeOffsets = IncludeOffsets Or Entry.Offset <> Nil
+		        IncludeSpawnChance = IncludeSpawnChance Or Entry.OverridesSpawnChance
+		        SpawnSum = SpawnSum + Entry.SpawnChance
+		      Next
+		      For Each Entry As Beacon.SpawnPointSetEntry In Entries
+		        CreatureClasses.AddRow("""" + Entry.Creature.ClassString + """")
+		        
+		        If IncludeLevels Then
+		          Var Levels() As Beacon.SpawnPointLevel = Entry.Levels
+		          Var MinLevels(), MaxLevels(), Difficulties() As String
+		          For Each Level As Beacon.SpawnPointLevel In Levels
+		            MinLevels.AddRow(Level.MinLevel.PrettyText)
+		            MaxLevels.AddRow(Level.MaxLevel.PrettyText)
+		            Difficulties.AddRow(Level.Difficulty.PrettyText)
+		          Next
+		          LevelMembers.AddRow("(EnemyLevelsMin=(" + MinLevels.Join(",") + "),EnemyLevelsMax=(" + MaxLevels.Join(",") + "),GameDifficulties=(" + Difficulties.Join(",") + "))")
+		        End If
+		        If IncludeOffsets Then
+		          Var Offset As Beacon.Point3D = Entry.Offset
+		          If Offset <> Nil Then
+		            OffsetMembers.AddRow("(X=" + Offset.X.PrettyText + ",Y=" + Offset.Y.PrettyText + ",Z=" + Offset.Z.PrettyText + ")")
+		          Else
+		            OffsetMembers.AddRow("(X=0.0,Y=0.0,Z=0.0)")
+		          End If
+		        End If
+		        If IncludeSpawnChance Then
+		          Var Chance As Double = Entry.SpawnChance / SpawnSum
+		          SpawnChanceMembers.AddRow(Chance.PrettyText)
+		        End If
 		      Next
 		      
-		      Entries.AddRow("(AnEntryName=""" + Set.Label + """,EntryWeight=" + Set.Weight.PrettyText + ",NPCsToSpawnStrings=(" + CreatureClasses.Join(",") + "))")
+		      Var Members(2) As String
+		      Members(0) = "AnEntryName=""" + Set.Label + """"
+		      Members(1) = "EntryWeight=" + Set.Weight.PrettyText
+		      Members(2) = "NPCsToSpawnStrings=(" + CreatureClasses.Join(",") + ")"
+		      
+		      If IncludeLevels Then
+		        Members.AddRow("NPCDifficultyLevelRanges=(" + LevelMembers.Join(",") + ")")
+		      End If
+		      If IncludeOffsets Then
+		        Members.AddRow("NPCsSpawnOffsets=(" + OffsetMembers.Join(",") + ")")
+		      End If
+		      If IncludeSpawnChance Then
+		        Members.AddRow("NPCsToSpawnPercentageChance=(" + SpawnChanceMembers.Join(",") + ")")
+		      End If
+		      
+		      If Set.OverridesSpreadRadius Then
+		        Members.AddRow("ManualSpawnPointSpreadRadius=" + Set.SpreadRadius.PrettyText)
+		      End If
+		      
+		      If Set.OverridesWaterOnlyMinimumHeight Then
+		        Members.AddRow("WaterOnlySpawnMinimumWaterHeight=" + Set.WaterOnlyMinimumHeight.PrettyText)
+		      End If
+		      
+		      RenderedEntries.AddRow("(" + Members.Join(",") + ")")
 		    Next
 		    
 		    Var Pieces() As String
 		    Pieces.AddRow("NPCSpawnEntriesContainerClassString=""" + SpawnPoint.ClassString + """")
-		    Pieces.AddRow("NPCSpawnEntries=(" + Entries.Join(",") + ")")
+		    Pieces.AddRow("NPCSpawnEntries=(" + RenderedEntries.Join(",") + ")")
 		    If Limits.KeyCount > 0 Then
 		      Var LimitConfigs() As String
 		      For Each Entry As DictionaryEntry In Limits
@@ -173,26 +212,72 @@ Implements  Iterable
 		      If ConfigKey.BeginsWith("ConfigSubtract") Then
 		        
 		      Else
-		        Var Entries() As Variant = Dict.Value("NPCSpawnEntries")
-		        For Each Entry As Dictionary In Entries
-		          If Not Entry.HasKey("NPCsToSpawnStrings") Then
-		            Continue
-		          End If
-		          
-		          Var Classes() As Variant = Entry.Value("NPCsToSpawnStrings")
-		          Var Set As New Beacon.MutableSpawnPointSet
-		          Set.Label = Entry.Lookup("AnEntryName", "Untitled Creature Set")
-		          Set.Weight = Entry.Lookup("EntryWeight", 1.0)
-		          For Each CreatureClassString As String In Classes
-		            Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(CreatureClassString)
-		            If Creature <> Nil Then
-		              Set.AddCreature(Creature)
+		        If Dict.HasKey("NPCSpawnEntries") Then
+		          Var Entries() As Variant = Dict.Value("NPCSpawnEntries")
+		          For Each Entry As Dictionary In Entries
+		            If Not Entry.HasKey("NPCsToSpawnStrings") Then
+		              Continue
+		            End If
+		            
+		            Var Classes() As Variant = Entry.Value("NPCsToSpawnStrings")
+		            Var LevelMembers(), OffsetMembers(), SpawnChanceMembers() As Variant
+		            
+		            If Entry.HasKey("NPCDifficultyLevelRanges") Then
+		              LevelMembers = Entry.Value("NPCDifficultyLevelRanges")
+		            End If
+		            If Entry.HasKey("NPCsSpawnOffsets") Then
+		              OffsetMembers = Entry.Value("NPCsSpawnOffsets")
+		            End If
+		            If Entry.HasKey("NPCsToSpawnPercentageChance") Then
+		              SpawnChanceMembers = Entry.Value("NPCsToSpawnPercentageChance")
+		            End If
+		            
+		            Var Set As New Beacon.MutableSpawnPointSet
+		            Set.Label = Entry.Lookup("AnEntryName", "Untitled Spawn Set")
+		            Set.Weight = Entry.Lookup("EntryWeight", 1.0)
+		            
+		            For I As Integer = 0 To Classes.LastRowIndex
+		              Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Classes(I))
+		              If Creature = Nil Then
+		                Continue
+		              End If
+		              
+		              Var SetEntry As New Beacon.MutableSpawnPointSetEntry(Creature)
+		              If LevelMembers.LastRowIndex >= I Then
+		                Var LevelValues As Dictionary = LevelMembers(I)
+		                Var MinLevels() As Variant = LevelValues.Value("EnemyLevelsMin")
+		                Var MaxLevels() As Variant = LevelValues.Value("EnemyLevelsMax")
+		                Var Difficulties() As Variant = LevelValues.Value("GameDifficulties")
+		                
+		                For LevelIdx As Integer = 0 To Min(MinLevels.LastRowIndex, MaxLevels.LastRowIndex, Difficulties.LastRowIndex)
+		                  SetEntry.Append(New Beacon.SpawnPointLevel(MinLevels(LevelIdx), MaxLevels(LevelIdx), Difficulties(LevelIdx)))
+		                Next
+		              End If
+		              If OffsetMembers.LastRowIndex >= I Then
+		                Var OffsetValues As Dictionary = OffsetMembers(I)
+		                SetEntry.Offset = New Beacon.Point3D(OffsetValues.Value("X"), OffsetValues.Value("Y"), OffsetValues.Value("Z"))
+		              End If
+		              If SpawnChanceMembers.LastRowIndex >= I Then
+		                SetEntry.SpawnChance = SpawnChanceMembers(I)
+		              End If
+		              Set.Append(SetEntry)
+		            Next
+		            
+		            If Entry.HasKey("ManualSpawnPointSpreadRadius") Then
+		              Set.OverridesSpreadRadius = True
+		              Set.SpreadRadius = Entry.Value("ManualSpawnPointSpreadRadius")
+		            End If
+		            
+		            If Entry.HasKey("WaterOnlySpawnMinimumWaterHeight") Then
+		              Set.OverridesWaterOnlyMinimumHeight = True
+		              Set.WaterOnlyMinimumHeight = Entry.Value("WaterOnlySpawnMinimumWaterHeight")
+		            End If
+		            
+		            If Set.Count > 0 Then
+		              Clone.AddSet(Set)
 		            End If
 		          Next
-		          If Set.Count > 0 Then
-		            Clone.AddSet(Set)
-		          End If
-		        Next
+		        End If
 		        
 		        If Dict.HasKey("NPCSpawnLimits") Then
 		          Var Limits() As Variant = Dict.Value("NPCSpawnLimits")
@@ -308,18 +393,65 @@ Implements  Iterable
 
 	#tag Note, Name = ConfigOverrideNPCSpawnEntriesContainer
 		ConfigOverrideNPCSpawnEntriesContainer=(
-		    NPCSpawnEntriesContainerClassString=<spawn_class>,
+		    NPCSpawnEntriesContainerClassString="AB_DinoSpawnEntriesRockDrake_C",
 		    NPCSpawnEntries=(
 		        (
-		            AnEntryName=<spawn_name>,
-		            EntryWeight=<factor>,
-		            NPCsToSpawnStrings=(<entity_id>)
+		            AnEntryName="Rock Drakes (1)",
+		            EntryWeight=0.330000,
+		            NPCsToSpawnStrings=(
+		                "RockDrake_Character_BP_C"
+		            ),
+		            NPCsSpawnOffsets=(
+		                (
+		                    X=0.000000,
+		                    Y=0.000000,
+		                    Z=0.000000
+		                )
+		            ),
+		            NPCsToSpawnPercentageChance=(
+		                1.000000
+		            ),
+		            GroupSpawnOffset=(
+		                X=0.000000,
+		                Y=0.000000,
+		                Z=35.000000
+		            ),
+		            ManualSpawnPointSpreadRadius=650.000000,
+		            WaterOnlySpawnMinimumWaterHeight=24.0
+		            NPCDifficultyLevelRanges=(
+		                (
+		                    EnemyLevelsMin=(
+		                        1.000000,
+		                        1.000000,
+		                        1.000000,
+		                        1.000000,
+		                        1.000000,
+		                        1.000000
+		                    ),
+		                    EnemyLevelsMax=(
+		                        30.999990,
+		                        30.999990,
+		                        30.999990,
+		                        30.999990,
+		                        30.999990,
+		                        30.999990
+		                    ),
+		                    GameDifficulties=(
+		                        0.000000,
+		                        1.000000,
+		                        2.000000,
+		                        3.000000,
+		                        4.000000,
+		                        5.000000
+		                    )
+		                )
+		            )
 		        )
 		    ),
 		    NPCSpawnLimits=(
 		        (
-		            NPCClassString=<entity_id>,
-		            MaxPercentageOfDesiredNumToAllow=<percentage>
+		            NPCClassString="RockDrake_Character_BP_C",
+		            MaxPercentageOfDesiredNumToAllow=1
 		        )
 		    )
 		)
