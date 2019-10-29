@@ -74,8 +74,8 @@ Implements  Iterable
 		          MaxLevelOffsetMembers.AddRow(Offset.PrettyText)
 		        End If
 		        If IncludeLevelOverride Then
-		          Var Override As Double = If(Entry.LevelOverride <> Nil, Entry.LevelOverride.Value, 1.0)
-		          LevelOverrideMembers.AddRow(Override.PrettyText)
+		          Var Override As UInt8 = Round(If(Entry.LevelOverride <> Nil, Entry.LevelOverride.Value, 1.0))
+		          LevelOverrideMembers.AddRow(Override.ToString)
 		        End If
 		      Next
 		      
@@ -264,7 +264,7 @@ Implements  Iterable
 		            End If
 		            
 		            Var Classes() As Variant = Entry.Value("NPCsToSpawnStrings")
-		            Var LevelMembers(), OffsetMembers(), SpawnChanceMembers() As Variant
+		            Var LevelMembers(), OffsetMembers(), SpawnChanceMembers(), MinLevelOffsetMembers(), MaxLevelOffsetMembers(), MinLevelMultiplierMembers(), MaxLevelMultipliersMembers(), LevelOverrideMembers() As Variant
 		            
 		            If Entry.HasKey("NPCDifficultyLevelRanges") Then
 		              LevelMembers = Entry.Value("NPCDifficultyLevelRanges")
@@ -274,6 +274,21 @@ Implements  Iterable
 		            End If
 		            If Entry.HasKey("NPCsToSpawnPercentageChance") Then
 		              SpawnChanceMembers = Entry.Value("NPCsToSpawnPercentageChance")
+		            End If
+		            If Entry.HasKey("NPCMinLevelMultiplier") Then
+		              MinLevelMultiplierMembers = Entry.Value("NPCMinLevelMultiplier")
+		            End If
+		            If Entry.HasKey("NPCMinLevelOffset") Then
+		              MinLevelOffsetMembers = Entry.Value("NPCMinLevelOffset")
+		            End If
+		            If Entry.HasKey("NPCMaxLevelMultiplier") Then
+		              MaxLevelMultipliersMembers = Entry.Value("NPCMaxLevelMultiplier")
+		            End If
+		            If Entry.HasKey("NPCMaxLevelOffset") Then
+		              MaxLevelOffsetMembers = Entry.Value("NPCMaxLevelOffset")
+		            End If
+		            If Entry.HasKey("NPCOverrideLevel") Then
+		              LevelOverrideMembers = Entry.Value("NPCOverrideLevel")
 		            End If
 		            
 		            Var Set As New Beacon.MutableSpawnPointSet
@@ -302,7 +317,22 @@ Implements  Iterable
 		                SetEntry.Offset = New Beacon.Point3D(OffsetValues.Value("X"), OffsetValues.Value("Y"), OffsetValues.Value("Z"))
 		              End If
 		              If SpawnChanceMembers.LastRowIndex >= I Then
-		                SetEntry.SpawnChance = SpawnChanceMembers(I)
+		                SetEntry.SpawnChance = SpawnChanceMembers(I).DoubleValue
+		              End If
+		              If MinLevelMultiplierMembers.LastRowIndex >= I Then
+		                SetEntry.MinLevelMultiplier = MinLevelMultiplierMembers(I).DoubleValue
+		              End If
+		              If MinLevelOffsetMembers.LastRowIndex >= I Then
+		                SetEntry.MinLevelOffset = MinLevelOffsetMembers(I).DoubleValue
+		              End If
+		              If MaxLevelMultipliersMembers.LastRowIndex >= I Then
+		                SetEntry.MaxLevelMultiplier = MaxLevelMultipliersMembers(I).DoubleValue
+		              End If
+		              If MaxLevelOffsetMembers.LastRowIndex >= I Then
+		                SetEntry.MaxLevelOffset = MaxLevelOffsetMembers(I).DoubleValue
+		              End If
+		              If LevelOverrideMembers.LastRowIndex >= I Then
+		                SetEntry.LevelOverride = LevelOverrideMembers(I).DoubleValue
 		              End If
 		              Set.Append(SetEntry)
 		            Next
