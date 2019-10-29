@@ -388,6 +388,7 @@ Class=SpawnPointLevel;Modules/Beacon/SpawnPointLevel.xojo_code;&h00000000146CB7F
 Class=SpawnPointSetEntry;Modules/Beacon/SpawnPointSetEntry.xojo_code;&h000000004EB4F7FF;&h0000000055ADDFFF;false
 Class=MutableSpawnPointSetEntry;Modules/Beacon/MutableSpawnPointSetEntry.xojo_code;&h00000000316317FF;&h0000000055ADDFFF;false
 Class=NullableDouble;Modules/FrameworkExtensions/NullableDouble.xojo_code;&h000000002D9437FF;&h0000000053D607FF;false
+Class=ConfigKey;Modules/Beacon/ConfigKey.xojo_code;&h00000000375F2FFF;&h0000000055ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=3

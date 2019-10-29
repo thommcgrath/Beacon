@@ -94,6 +94,16 @@ Protected Class ConfigGroup
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function NonGeneratedKeys() As Beacon.ConfigKey()
+		  // If a config group parses keys that it does not generate, they should be returned here
+		  // to prevent custom config content from grabbing them
+		  
+		  Var Keys() As Beacon.ConfigKey
+		  Return Keys
+		End Function
+	#tag EndMethod
+
 	#tag DelegateDeclaration, Flags = &h0
 		Delegate Sub ResolveIssuesCallback()
 	#tag EndDelegateDeclaration

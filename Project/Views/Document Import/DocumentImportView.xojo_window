@@ -914,8 +914,20 @@ End
 		  Dim GenericProfile As New Beacon.GenericServerProfile(Document.Title, Beacon.Maps.All.Mask)
 		  Dim Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  For Each Config As Beacon.ConfigGroup In Configs
-		    Beacon.ConfigValue.FillConfigDict(GameIniValues, Config.GameIniValues(Document, Identity, GenericProfile))
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, Config.GameUserSettingsIniValues(Document, Identity, GenericProfile))
+		    Var GameIniArray() As Beacon.ConfigValue = Config.GameIniValues(Document, Identity, GenericProfile)
+		    Var GameUserSettingsIniArray() As Beacon.ConfigValue = Config.GameUserSettingsIniValues(Document, Identity, GenericProfile)
+		    Var NonGeneratedKeys() As Beacon.ConfigKey = Config.NonGeneratedKeys()
+		    For Each Key As Beacon.ConfigKey In NonGeneratedKeys
+		      Select Case Key.File
+		      Case "Game.ini"
+		        GameIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
+		      Case "GameUserSettings.ini"
+		        GameUserSettingsIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
+		      End Select
+		    Next
+		    
+		    Beacon.ConfigValue.FillConfigDict(GameIniValues, GameIniArray)
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, GameUserSettingsIniArray)
 		  Next
 		  
 		  Dim CustomContent As New BeaconConfigs.CustomContent
