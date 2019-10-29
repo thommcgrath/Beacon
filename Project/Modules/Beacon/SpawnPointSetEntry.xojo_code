@@ -59,8 +59,7 @@ Implements Beacon.DocumentItem
 		  End If
 		  
 		  If Dict.HasKey("Chance") Then
-		    Entry.mChance = Dict.Value("Chance")
-		    Entry.mOverridesSpawnChance = True
+		    Entry.mChance = Dict.Value("Chance").DoubleValue
 		  End If
 		  
 		  If Dict.HasKey("Offset") Then
@@ -75,6 +74,26 @@ Implements Beacon.DocumentItem
 		        Entry.mLevels.AddRow(Level)
 		      End If
 		    Next
+		  End If
+		  
+		  If Dict.HasKey("MaxLevelMultiplier") Then
+		    Entry.mMaxLevelMultiplier = Dict.Value("MaxLevelMultiplier").DoubleValue
+		  End If
+		  
+		  If Dict.HasKey("MaxLevelOffset") Then
+		    Entry.mMaxLevelOffset = Dict.Value("MaxLevelOffset").DoubleValue
+		  End If
+		  
+		  If Dict.HasKey("MinLevelMultiplier") Then
+		    Entry.mMinLevelMultiplier = Dict.Value("MinLevelMultiplier").DoubleValue
+		  End If
+		  
+		  If Dict.HasKey("MinLevelOffset") Then
+		    Entry.mMinLevelOffset = Dict.Value("MinLevelOffset").DoubleValue
+		  End If
+		  
+		  If Dict.HasKey("LevelOverride") Then
+		    Entry.mLevelOverride = Dict.Value("LevelOverride").DoubleValue
 		  End If
 		  
 		  Return Entry
@@ -127,6 +146,12 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function LevelOverride() As NullableDouble
+		  Return Self.mLevelOverride
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Levels() As Beacon.SpawnPointLevel()
 		  Var Arr() As Beacon.SpawnPointLevel
 		  Arr.ResizeTo(Self.mLevels.LastRowIndex)
@@ -134,6 +159,30 @@ Implements Beacon.DocumentItem
 		    Arr(I) = New Beacon.SpawnPointLevel(Self.mLevels(I))
 		  Next
 		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MaxLevelMultiplier() As NullableDouble
+		  Return Self.mMaxLevelMultiplier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MaxLevelOffset() As NullableDouble
+		  Return Self.mMaxLevelOffset
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MinLevelMultiplier() As NullableDouble
+		  Return Self.mMinLevelMultiplier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MinLevelOffset() As NullableDouble
+		  Return Self.mMinLevelOffset
 		End Function
 	#tag EndMethod
 
@@ -168,17 +217,11 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function OverridesSpawnChance() As Boolean
-		  Return Self.mOverridesSpawnChance
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Dim Dict As New Dictionary
 		  Dict.Value("Creature") = Self.mCreature.Path
-		  If Self.mOverridesSpawnChance Then
-		    Dict.Value("SpawnChance") = Self.mChance
+		  If Self.mChance <> Nil Then
+		    Dict.Value("SpawnChance") = Self.mChance.Value
 		  End If
 		  If Self.mOffset <> Nil Then
 		    Dict.Value("Offset") = Self.mOffset.SaveData
@@ -190,19 +233,34 @@ Implements Beacon.DocumentItem
 		      Levels(I) = Self.mLevels(I).SaveData
 		    Next
 		  End If
+		  If Self.mMaxLevelMultiplier <> Nil Then
+		    Dict.Value("MaxLevelMultiplier") = Self.mMaxLevelMultiplier.Value
+		  End If
+		  If Self.mMaxLevelOffset <> Nil Then
+		    Dict.Value("MaxLevelOffset") = Self.mMaxLevelOffset.Value
+		  End If
+		  If Self.mMinLevelMultiplier <> Nil Then
+		    Dict.Value("MinLevelMultiplier") = Self.mMinLevelMultiplier.Value
+		  End If
+		  If Self.mMinLevelOffset <> Nil Then
+		    Dict.Value("MinLevelOffset") = Self.mMinLevelOffset.Value
+		  End If
+		  If Self.mLevelOverride <> Nil Then
+		    Dict.Value("LevelOverride") = Self.mLevelOverride
+		  End If
 		  Return Dict
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SpawnChance() As Double
+		Function SpawnChance() As NullableDouble
 		  Return Self.mChance
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h1
-		Protected mChance As Double
+		Protected mChance As NullableDouble
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -210,7 +268,27 @@ Implements Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
+		Protected mLevelOverride As NullableDouble
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mLevels() As Beacon.SpawnPointLevel
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mMaxLevelMultiplier As NullableDouble
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mMaxLevelOffset As NullableDouble
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mMinLevelMultiplier As NullableDouble
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mMinLevelOffset As NullableDouble
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -219,10 +297,6 @@ Implements Beacon.DocumentItem
 
 	#tag Property, Flags = &h1
 		Protected mOffset As Beacon.Point3D
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mOverridesSpawnChance As Boolean
 	#tag EndProperty
 
 

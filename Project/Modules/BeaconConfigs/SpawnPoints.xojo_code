@@ -12,16 +12,25 @@ Implements  Iterable
 		    Var Limits As Dictionary = SpawnPoint.Limits
 		    
 		    For Each Set As Beacon.SpawnPointSet In SpawnPoint
-		      Var CreatureClasses(), LevelMembers(), OffsetMembers(), SpawnChanceMembers() As String
-		      Var IncludeLevels, IncludeOffsets, IncludeSpawnChance As Boolean
+		      Var CreatureClasses(), LevelMembers(), OffsetMembers(), SpawnChanceMembers(), MinLevelMultiplierMembers(), MinLevelOffsetMembers(), MaxLevelMultiplierMembers(), MaxLevelOffsetMembers(), LevelOverrideMembers() As String
+		      Var IncludeLevels, IncludeOffsets, IncludeSpawnChance, IncludeMinLevelMultiplier, IncludeMaxLevelMultiplier, IncludeMinLevelOffset, IncludeMaxLevelOffset, IncludeLevelOverride As Boolean
 		      Var Entries() As Beacon.SpawnPointSetEntry = Set.Entries
 		      Var SpawnSum As Double
 		      
 		      For Each Entry As Beacon.SpawnPointSetEntry In Entries
 		        IncludeLevels = IncludeLevels Or Entry.LevelCount > 0
 		        IncludeOffsets = IncludeOffsets Or Entry.Offset <> Nil
-		        IncludeSpawnChance = IncludeSpawnChance Or Entry.OverridesSpawnChance
-		        SpawnSum = SpawnSum + Entry.SpawnChance
+		        If Entry.SpawnChance <> Nil Then
+		          SpawnSum = SpawnSum + Entry.SpawnChance
+		          IncludeSpawnChance = True
+		        Else
+		          SpawnSum = SpawnSum + 1.0
+		        End If
+		        IncludeMinLevelMultiplier = Entry.MinLevelMultiplier <> Nil
+		        IncludeMinLevelOffset = Entry.MinLevelOffset <> Nil
+		        IncludeMaxLevelMultiplier = Entry.MaxLevelMultiplier <> Nil
+		        IncludeMaxLevelOffset = Entry.MaxLevelOffset <> Nil
+		        IncludeLevelOverride = Entry.LevelOverride <> Nil
 		      Next
 		      For Each Entry As Beacon.SpawnPointSetEntry In Entries
 		        CreatureClasses.AddRow("""" + Entry.Creature.ClassString + """")
@@ -45,8 +54,28 @@ Implements  Iterable
 		          End If
 		        End If
 		        If IncludeSpawnChance Then
-		          Var Chance As Double = Entry.SpawnChance / SpawnSum
+		          Var Chance As Double = If(Entry.SpawnChance <> Nil, Entry.SpawnChance.Value, 1.0) / SpawnSum
 		          SpawnChanceMembers.AddRow(Chance.PrettyText)
+		        End If
+		        If IncludeMinLevelMultiplier Then
+		          Var Multiplier As Double = If(Entry.MinLevelMultiplier <> Nil, Entry.MinLevelMultiplier.Value, 1.0)
+		          MinLevelMultiplierMembers.AddRow(Multiplier.PrettyText)
+		        End If
+		        If IncludeMinLevelOffset Then
+		          Var Offset As Double = If(Entry.MinLevelOffset <> Nil, Entry.MinLevelOffset.Value, 0.0)
+		          MinLevelOffsetMembers.AddRow(Offset.PrettyText)
+		        End If
+		        If IncludeMaxLevelMultiplier Then
+		          Var Multiplier As Double = If(Entry.MaxLevelMultiplier <> Nil, Entry.MaxLevelMultiplier.Value, 1.0)
+		          MaxLevelMultiplierMembers.AddRow(Multiplier.PrettyText)
+		        End If
+		        If IncludeMaxLevelOffset Then
+		          Var Offset As Double = If(Entry.MaxLevelOffset <> Nil, Entry.MaxLevelOffset.Value, 0.0)
+		          MaxLevelOffsetMembers.AddRow(Offset.PrettyText)
+		        End If
+		        If IncludeLevelOverride Then
+		          Var Override As Double = If(Entry.LevelOverride <> Nil, Entry.LevelOverride.Value, 1.0)
+		          LevelOverrideMembers.AddRow(Override.PrettyText)
 		        End If
 		      Next
 		      
@@ -63,6 +92,21 @@ Implements  Iterable
 		      End If
 		      If IncludeSpawnChance Then
 		        Members.AddRow("NPCsToSpawnPercentageChance=(" + SpawnChanceMembers.Join(",") + ")")
+		      End If
+		      If IncludeMinLevelMultiplier Then
+		        Members.AddRow("NPCMinLevelMultiplier=(" + MinLevelMultiplierMembers.Join(",") + ")")
+		      End If
+		      If IncludeMinLevelOffset Then
+		        Members.AddRow("NPCMinLevelOffset=(" + MinLevelOffsetMembers.Join(",") + ")")
+		      End If
+		      If IncludeMaxLevelMultiplier Then
+		        Members.AddRow("NPCMaxLevelMultiplier=(" + MaxLevelMultiplierMembers.Join(",") + ")")
+		      End If
+		      If IncludeMaxLevelOffset Then
+		        Members.AddRow("NPCMaxLevelOffset=(" + MaxLevelOffsetMembers.Join(",") + ")")
+		      End If
+		      If IncludeLevelOverride Then
+		        Members.AddRow("NPCOverrideLevel=(" + LevelOverrideMembers.Join(",") + ")")
 		      End If
 		      
 		      If Set.OverridesSpreadRadius Then
@@ -453,8 +497,24 @@ Implements  Iterable
 		            NPCClassString="RockDrake_Character_BP_C",
 		            MaxPercentageOfDesiredNumToAllow=1
 		        )
+		    ),
+		    NPCMinLevelMultiplier=(
+		        1.0
+		    ),
+		    NPCMinLevelOffset=(
+		        0.0
+		    ),
+		    NPCMaxLevelMultiplier=(
+		        1.0
+		    ),
+		    NPCMaxLevelOffset=(
+		        0.0
+		    ),
+		    NPCOverrideLevel=(
+		        1.0
 		    )
 		)
+		
 		
 	#tag EndNote
 

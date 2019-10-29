@@ -56,12 +56,57 @@ Inherits Beacon.SpawnPointSetEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub LevelOverride(Assigns Value As NullableDouble)
+		  If Self.mLevelOverride <> Value Then
+		    Self.mLevelOverride = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Levels(Assigns NewLevels() As Beacon.SpawnPointLevel)
 		  Self.mLevels.ResizeTo(NewLevels.LastRowIndex)
 		  For I As Integer = 0 To NewLevels.LastRowIndex
 		    Self.mLevels(I) = New Beacon.SpawnPointLevel(NewLevels(I))
 		  Next
 		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub MaxLevelMultiplier(Assigns Value As NullableDouble)
+		  If Self.mMaxLevelMultiplier <> Value Then
+		    Self.mMaxLevelMultiplier = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub MaxLevelOffset(Assigns Value As NullableDouble)
+		  If Self.mMaxLevelOffset <> Value Then
+		    Self.mMaxLevelOffset = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub MinLevelMultiplier(Assigns Value As NullableDouble)
+		  If Self.mMinLevelMultiplier <> Value Then
+		    Self.mMinLevelMultiplier = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub MinLevelOffset(Assigns Value As NullableDouble)
+		  If Self.mMinLevelOffset <> Value Then
+		    Self.mMinLevelOffset = Value
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -88,15 +133,6 @@ Inherits Beacon.SpawnPointSetEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OverridesSpawnChance(Assigns Value As Boolean)
-		  If Self.mOverridesSpawnChance <> Value Then
-		    Self.mOverridesSpawnChance = Value
-		    Self.Modified = True
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Remove(Level As Beacon.SpawnPointLevel)
 		  Var Idx As Integer = Self.IndexOf(Level)
 		  If Idx > -1 Then
@@ -114,10 +150,9 @@ Inherits Beacon.SpawnPointSetEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SpawnChance(Assigns Value As Double)
+		Sub SpawnChance(Assigns Value As NullableDouble)
 		  If Self.mChance <> Value Then
 		    Self.mChance = Value
-		    Self.mOverridesSpawnChance = True
 		    Self.Modified = True
 		  End If
 		End Sub
