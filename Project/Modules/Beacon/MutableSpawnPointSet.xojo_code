@@ -47,24 +47,6 @@ Inherits Beacon.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OverridesSpreadRadius(Assigns Value As Boolean)
-		  If Self.mIncludeSpreadRadius <> Value Then
-		    Self.mIncludeSpreadRadius = Value
-		    Self.Modified = True
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub OverridesWaterOnlyMinimumHeight(Assigns Value As Boolean)
-		  If Self.mIncludeWaterOnlyMinimumHeight <> Value Then
-		    Self.mIncludeWaterOnlyMinimumHeight = Value
-		    Self.Modified = True
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Remove(Entry As Beacon.SpawnPointSetEntry)
 		  Var Idx As Integer = Self.IndexOf(Entry)
 		  If Idx > -1 Then
@@ -83,9 +65,8 @@ Inherits Beacon.SpawnPointSet
 
 	#tag Method, Flags = &h0
 		Sub SpreadRadius(Assigns Value As Double)
-		  If Self.mSpreadRadius <> Value Or Self.mIncludeSpreadRadius = False Then
+		  If Self.mSpreadRadius <> Value Then
 		    Self.mSpreadRadius = Value
-		    Self.mIncludeSpreadRadius = True
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -93,9 +74,8 @@ Inherits Beacon.SpawnPointSet
 
 	#tag Method, Flags = &h0
 		Sub WaterOnlyMinimumHeight(Assigns Value As Double)
-		  If Self.mWaterOnlyMinimumHeight <> Value Or Self.mIncludeWaterOnlyMinimumHeight = False Then
+		  If Self.mWaterOnlyMinimumHeight <> Value Then
 		    Self.mWaterOnlyMinimumHeight = Value
-		    Self.mIncludeWaterOnlyMinimumHeight = True
 		    Self.Modified = True
 		  End If
 		End Sub

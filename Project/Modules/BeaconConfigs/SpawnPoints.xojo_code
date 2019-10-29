@@ -109,12 +109,12 @@ Implements  Iterable
 		        Members.AddRow("NPCOverrideLevel=(" + LevelOverrideMembers.Join(",") + ")")
 		      End If
 		      
-		      If Set.OverridesSpreadRadius Then
-		        Members.AddRow("ManualSpawnPointSpreadRadius=" + Set.SpreadRadius.PrettyText)
+		      If Set.SpreadRadius <> Nil Then
+		        Members.AddRow("ManualSpawnPointSpreadRadius=" + Set.SpreadRadius.Value.PrettyText)
 		      End If
 		      
-		      If Set.OverridesWaterOnlyMinimumHeight Then
-		        Members.AddRow("WaterOnlySpawnMinimumWaterHeight=" + Set.WaterOnlyMinimumHeight.PrettyText)
+		      If Set.WaterOnlyMinimumHeight <> Nil Then
+		        Members.AddRow("WaterOnlySpawnMinimumWaterHeight=" + Set.WaterOnlyMinimumHeight.Value.PrettyText)
 		      End If
 		      
 		      RenderedEntries.AddRow("(" + Members.Join(",") + ")")
@@ -254,7 +254,7 @@ Implements  Iterable
 		        Clone.ResizeTo(-1)
 		      End If
 		      If ConfigKey.BeginsWith("ConfigSubtract") Then
-		        
+		        #Pragma Warning "Does not import the ConfigSubtract variant"
 		      Else
 		        If Dict.HasKey("NPCSpawnEntries") Then
 		          Var Entries() As Variant = Dict.Value("NPCSpawnEntries")
@@ -338,12 +338,10 @@ Implements  Iterable
 		            Next
 		            
 		            If Entry.HasKey("ManualSpawnPointSpreadRadius") Then
-		              Set.OverridesSpreadRadius = True
 		              Set.SpreadRadius = Entry.Value("ManualSpawnPointSpreadRadius")
 		            End If
 		            
 		            If Entry.HasKey("WaterOnlySpawnMinimumWaterHeight") Then
-		              Set.OverridesWaterOnlyMinimumHeight = True
 		              Set.WaterOnlyMinimumHeight = Entry.Value("WaterOnlySpawnMinimumWaterHeight")
 		            End If
 		            

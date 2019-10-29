@@ -6,8 +6,6 @@ Implements Beacon.DocumentItem, Beacon.Countable
 		  Self.mWeight = 1.0
 		  Self.mModified = False
 		  Self.mGroupOffset = Nil
-		  Self.mSpreadRadius = 650
-		  Self.mIncludeSpreadRadius = False
 		End Sub
 	#tag EndMethod
 
@@ -24,9 +22,7 @@ Implements Beacon.DocumentItem, Beacon.Countable
 		    Self.mGroupOffset = Nil
 		  End If
 		  Self.mSpreadRadius = Source.mSpreadRadius
-		  Self.mIncludeSpreadRadius = Source.mIncludeSpreadRadius
 		  Self.mWaterOnlyMinimumHeight = Source.mWaterOnlyMinimumHeight
-		  Self.mIncludeWaterOnlyMinimumHeight = Source.mIncludeWaterOnlyMinimumHeight
 		  
 		  Self.mEntries.ResizeTo(Source.mEntries.LastRowIndex)
 		  For I As Integer = 0 To Source.mEntries.LastRowIndex
@@ -92,9 +88,8 @@ Implements Beacon.DocumentItem, Beacon.Countable
 		    Set.Append(Entry)
 		  Next
 		  
-		  If SaveData.HasKey("SpreadRadius") And SaveData.Value("SpreadRadius") <> Nil Then
-		    Set.SpreadRadius = SaveData.Value("SpreadRadius")
-		    Set.OverridesSpreadRadius = True
+		  If SaveData.HasKey("SpreadRadius") Then
+		    Set.SpreadRadius = SaveData.Value("SpreadRadius").DoubleValue
 		  End If
 		  
 		  If SaveData.HasKey("GroupOffset") And SaveData.Value("GroupOffset") <> Nil Then
@@ -105,8 +100,7 @@ Implements Beacon.DocumentItem, Beacon.Countable
 		  End If
 		  
 		  If SaveData.HasKey("WaterOnlyMinimumHeight") Then
-		    Set.WaterOnlyMinimumHeight = SaveData.Value("WaterOnlyMinimumHeight")
-		    Set.OverridesWaterOnlyMinimumHeight = True
+		    Set.WaterOnlyMinimumHeight = SaveData.Value("WaterOnlyMinimumHeight").DoubleValue
 		  End If
 		  
 		  Set.Modified = False
@@ -193,18 +187,6 @@ Implements Beacon.DocumentItem, Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function OverridesSpreadRadius() As Boolean
-		  Return Self.mIncludeSpreadRadius
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function OverridesWaterOnlyMinimumHeight() As Boolean
-		  Return Self.mIncludeWaterOnlyMinimumHeight
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var Entries() As Dictionary
 		  For Each Entry As Beacon.SpawnPointSetEntry In Self.mEntries
@@ -218,24 +200,24 @@ Implements Beacon.DocumentItem, Beacon.Countable
 		  If Self.mGroupOffset <> Nil Then
 		    SaveData.Value("GroupOffset") = Self.mGroupOffset.SaveData
 		  End If
-		  If Self.mIncludeSpreadRadius Then
-		    SaveData.Value("SpreadRadius") = Self.mSpreadRadius
+		  If Self.mSpreadRadius <> Nil Then
+		    SaveData.Value("SpreadRadius") = Self.mSpreadRadius.Value
 		  End If
-		  If Self.mIncludeWaterOnlyMinimumHeight Then
-		    SaveData.Value("WaterOnlyMinimumHeight") = Self.mWaterOnlyMinimumHeight
+		  If Self.mWaterOnlyMinimumHeight <> Nil Then
+		    SaveData.Value("WaterOnlyMinimumHeight") = Self.mWaterOnlyMinimumHeight.Value
 		  End If
 		  Return SaveData
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SpreadRadius() As Double
+		Function SpreadRadius() As NullableDouble
 		  Return Self.mSpreadRadius
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function WaterOnlyMinimumHeight() As Double
+		Function WaterOnlyMinimumHeight() As NullableDouble
 		  Return Self.mWaterOnlyMinimumHeight
 		End Function
 	#tag EndMethod
@@ -256,14 +238,6 @@ Implements Beacon.DocumentItem, Beacon.Countable
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mIncludeSpreadRadius As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mIncludeWaterOnlyMinimumHeight As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
 		Protected mLabel As String
 	#tag EndProperty
 
@@ -272,11 +246,11 @@ Implements Beacon.DocumentItem, Beacon.Countable
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mSpreadRadius As Double = 650
+		Protected mSpreadRadius As NullableDouble
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mWaterOnlyMinimumHeight As Double
+		Protected mWaterOnlyMinimumHeight As NullableDouble
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
