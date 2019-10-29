@@ -916,7 +916,7 @@ End
 		  For Each Config As Beacon.ConfigGroup In Configs
 		    Var GameIniArray() As Beacon.ConfigValue = Config.GameIniValues(Document, Identity, GenericProfile)
 		    Var GameUserSettingsIniArray() As Beacon.ConfigValue = Config.GameUserSettingsIniValues(Document, Identity, GenericProfile)
-		    Var NonGeneratedKeys() As Beacon.ConfigKey = Config.NonGeneratedKeys()
+		    Var NonGeneratedKeys() As Beacon.ConfigKey = Config.NonGeneratedKeys(Identity)
 		    For Each Key As Beacon.ConfigKey In NonGeneratedKeys
 		      Select Case Key.File
 		      Case "Game.ini"

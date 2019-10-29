@@ -137,6 +137,13 @@ Implements  Iterable
 	#tag EndEvent
 
 	#tag Event
+		Sub NonGeneratedKeys(Keys() As Beacon.ConfigKey)
+		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "ConfigAddNPCSpawnEntriesContainer"))
+		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "ConfigSubtractNPCSpawnEntriesContainer"))
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
 		  #Pragma Unused Identity
 		  #Pragma Unused Document
@@ -471,15 +478,6 @@ Implements  Iterable
 	#tag Method, Flags = &h0
 		Function LastRowIndex() As Integer
 		  Return Self.mSpawnPoints.LastRowIndex
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function NonGeneratedKeys() As Beacon.ConfigKey()
-		  Var Keys() As Beacon.ConfigKey = Super.NonGeneratedKeys()
-		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "ConfigAddNPCSpawnEntriesContainer"))
-		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "ConfigSubtractNPCSpawnEntriesContainer"))
-		  Return Keys
 		End Function
 	#tag EndMethod
 

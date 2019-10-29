@@ -95,11 +95,16 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NonGeneratedKeys() As Beacon.ConfigKey()
+		Function NonGeneratedKeys(Identity As Beacon.Identity) As Beacon.ConfigKey()
 		  // If a config group parses keys that it does not generate, they should be returned here
 		  // to prevent custom config content from grabbing them
 		  
 		  Var Keys() As Beacon.ConfigKey
+		  
+		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
+		    RaiseEvent NonGeneratedKeys(Keys)
+		  End If
+		  
 		  Return Keys
 		End Function
 	#tag EndMethod
@@ -148,6 +153,10 @@ Protected Class ConfigGroup
 
 	#tag Hook, Flags = &h0
 		Event GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event NonGeneratedKeys(Keys() As Beacon.ConfigKey)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
