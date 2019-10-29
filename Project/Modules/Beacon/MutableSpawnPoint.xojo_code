@@ -6,10 +6,10 @@ Implements Beacon.MutableBlueprint
 		Sub AddSet(Set As Beacon.SpawnPointSet, Replace As Boolean = False)
 		  Var Idx As Integer = Self.IndexOf(Set)
 		  If Idx = -1 Then
-		    Self.mSets.AddRow(New Beacon.SpawnPointSet(Set))
+		    Self.mSets.AddRow(Set.ImmutableVersion)
 		    Self.Modified = True
 		  ElseIf Replace Then
-		    Self.mSets(Idx) = New Beacon.SpawnPointSet(Set)
+		    Self.mSets(Idx) = Set.ImmutableVersion
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -32,6 +32,12 @@ Implements Beacon.MutableBlueprint
 		  Self.Label = Beacon.LabelFromClassString(Self.ClassString)
 		  Self.Modified = False
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ImmutableVersion() As Beacon.SpawnPoint
+		  Return New Beacon.SpawnPoint(Self)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -108,6 +114,12 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MutableVersion() As Beacon.MutableSpawnPoint
+		  Return Self
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Path(Assigns Value As String)
 		  // Part of the Beacon.MutableBlueprint interface.
 		  
@@ -141,7 +153,7 @@ Implements Beacon.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub Set(Index As Integer, Assigns Value As Beacon.SpawnPointSet)
 		  If Self.mSets(Index) <> Value Then
-		    Self.mSets(Index) = New Beacon.SpawnPointSet(Value)
+		    Self.mSets(Index) = Value.ImmutableVersion
 		    Self.Modified = True
 		  End If
 		End Sub

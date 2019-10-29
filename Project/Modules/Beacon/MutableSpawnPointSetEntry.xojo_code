@@ -21,6 +21,14 @@ Inherits Beacon.SpawnPointSetEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ID(Assigns Value As v4UUID)
+		  If Not IsNull(Value) Then
+		    Self.mID = Value
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ImmutableVersion() As Beacon.SpawnPointSetEntry
 		  Return New Beacon.SpawnPointSetEntry(Self)
 		End Function

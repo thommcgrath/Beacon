@@ -56,7 +56,7 @@ Protected Class SpawnPointLevel
 
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("Min") = Self.MinLevel
 		  Dict.Value("Max") = Self.MaxLevel
 		  Dict.Value("Diff") = Self.Difficulty
@@ -124,7 +124,23 @@ Protected Class SpawnPointLevel
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Integer"
+			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MaxLevel"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Difficulty"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

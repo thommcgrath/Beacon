@@ -247,14 +247,82 @@ Implements  Iterable
 		        SpawnPoint = SpawnPoints.mSpawnPoints(Idx)
 		      End If
 		      
-		      Var Clone As New Beacon.MutableSpawnPoint(SpawnPoint)
+		      Var Clone As Beacon.MutableSpawnPoint = SpawnPoint.MutableVersion
 		      
 		      // make changes
 		      If ConfigKey.BeginsWith("ConfigOverride") Then
 		        Clone.ResizeTo(-1)
 		      End If
 		      If ConfigKey.BeginsWith("ConfigSubtract") Then
-		        #Pragma Warning "Does not import the ConfigSubtract variant"
+		        Var CreaturesToRemove(), LimitsToRemove() As String
+		        If Dict.HasKey("NPCSpawnEntries") Then
+		          Var Entries() As Variant = Dict.Value("NPCSpawnEntries")
+		          For Each Entry As Dictionary In Entries
+		            If Not Entry.HasKey("NPCsToSpawnStrings") Then
+		              Continue
+		            End If
+		            
+		            Var Classes() As Variant = Entry.Value("NPCsToSpawnStrings")
+		            For Each CreatureClass As String In Classes
+		              If CreaturesToRemove.IndexOf(CreatureClass) = -1 Then
+		                CreaturesToRemove.AddRow(CreatureClass)
+		              End If
+		            Next
+		          Next
+		        End If
+		        
+		        If Dict.HasKey("NPCSpawnLimits") Then
+		          Var Entries() As Variant = Dict.Value("NPCSpawnLimits")
+		          For Each Entry As Dictionary In Entries
+		            If Not Entry.HasKey("NPCClassString") Then
+		              Continue
+		            End If
+		            
+		            Var CreatureClass As String = Entry.Value("NPCClassString")
+		            If LimitsToRemove.IndexOf(CreatureClass) = -1 Then
+		              LimitsToRemove.AddRow(CreatureClass)
+		            End If
+		          Next
+		        End If
+		        
+		        If CreaturesToRemove.LastRowIndex > -1 Or LimitsToRemove.LastRowIndex > -1 Then
+		          For Each CreatureClass As String In CreaturesToRemove
+		            Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(CreatureClass)
+		            If Creature = Nil Then
+		              Continue
+		            End If
+		            
+		            For SetIdx As Integer = Clone.LastRowIndex DownTo 0
+		              Var Set As Beacon.SpawnPointSet = Clone.Set(SetIdx)
+		              Var MutableSet As Beacon.MutableSpawnPointSet
+		              
+		              For EntryIdx As Integer = Set.LastRowIndex DownTo 0
+		                If Set.Entry(EntryIdx).Creature = Creature Then
+		                  If MutableSet = Nil Then
+		                    MutableSet = Set.MutableVersion
+		                  End If
+		                  
+		                  MutableSet.Remove(EntryIdx)
+		                End If
+		              Next
+		              
+		              If MutableSet <> Nil Then
+		                If MutableSet.Count = 0 Then
+		                  Clone.RemoveSet(MutableSet)
+		                Else
+		                  Clone.Set(SetIdx) = MutableSet
+		                End If
+		              End If
+		            Next
+		          Next
+		          
+		          For Each CreatureClass As String In LimitsToRemove
+		            Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(CreatureClass)
+		            If Creature <> Nil Then
+		              Clone.Limit(Creature) = 1.0
+		            End If
+		          Next
+		        End If
 		      Else
 		        If Dict.HasKey("NPCSpawnEntries") Then
 		          Var Entries() As Variant = Dict.Value("NPCSpawnEntries")
@@ -367,9 +435,9 @@ Implements  Iterable
 		      End If
 		      
 		      If Idx = -1 Then
-		        SpawnPoints.mSpawnPoints.AddRow(New Beacon.SpawnPoint(Clone))
+		        SpawnPoints.mSpawnPoints.AddRow(Clone.ImmutableVersion)
 		      Else
-		        SpawnPoints.mSpawnPoints(Idx) = New Beacon.SpawnPoint(Clone)
+		        SpawnPoints.mSpawnPoints(Idx) = Clone.ImmutableVersion
 		      End If
 		    Catch Err As RuntimeException
 		    End Try

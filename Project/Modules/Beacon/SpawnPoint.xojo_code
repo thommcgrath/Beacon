@@ -56,7 +56,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  
 		  Self.mSets.ResizeTo(Source.mSets.LastRowIndex)
 		  For I As Integer = Source.mSets.FirstRowIndex To Source.mSets.LastRowIndex
-		    Self.mSets(I) = New Beacon.SpawnPointSet(Source.mSets(I))
+		    Self.mSets(I) = Source.mSets(I).ImmutableVersion
 		  Next
 		  
 		  Self.mTags.ResizeTo(-1)
@@ -117,6 +117,12 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ImmutableVersion() As Beacon.SpawnPoint
+		  Return Self
 		End Function
 	#tag EndMethod
 
@@ -248,6 +254,12 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		Function MutableClone() As Beacon.MutableBlueprint
 		  // Part of the Beacon.Blueprint interface.
 		  
+		  Return New Beacon.MutableSpawnPoint(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MutableVersion() As Beacon.MutableSpawnPoint
 		  Return New Beacon.MutableSpawnPoint(Self)
 		End Function
 	#tag EndMethod

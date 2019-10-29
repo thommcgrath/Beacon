@@ -1,11 +1,20 @@
 #tag Class
 Protected Class SpawnPointSet
 Implements Beacon.DocumentItem, Beacon.Countable
+	#tag Method, Flags = &h0
+		Function Clone() As Beacon.SpawnPointSet
+		  Var Clone As New Beacon.SpawnPointSet(Self)
+		  Clone.mID = New v4UUID
+		  Return Clone
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  Self.mWeight = 1.0
 		  Self.mModified = False
 		  Self.mGroupOffset = Nil
+		  Self.mID = New v4UUID
 		End Sub
 	#tag EndMethod
 
@@ -13,6 +22,7 @@ Implements Beacon.DocumentItem, Beacon.Countable
 		Sub Constructor(Source As Beacon.SpawnPointSet)
 		  Self.Constructor()
 		  
+		  Self.mID = Source.mID
 		  Self.mModified = Source.mModified
 		  Self.mWeight = Source.mWeight
 		  Self.mLabel = Source.mLabel
@@ -70,23 +80,45 @@ Implements Beacon.DocumentItem, Beacon.Countable
 		    Return Nil
 		  End If
 		  
-		  If SaveData.HasAllKeys("Label", "Weight", "Entries") = False Then
+		  Var Set As New Beacon.MutableSpawnPointSet
+		  If SaveData.HasKey("Label") Then
+		    Set.Label = SaveData.Value("Label")
+		  ElseIf SaveData.HasKey("label") Then
+		    Set.Label = SaveData.Value("label")
+		  Else
+		    Return Nil
+		  End If
+		  If SaveData.HasKey("Weight") Then
+		    Set.Weight = SaveData.Value("Weight")
+		  ElseIf SaveData.HasKey("weight") Then
+		    Set.Weight = SaveData.Value("weight")
+		  Else
 		    Return Nil
 		  End If
 		  
-		  Var Set As New Beacon.MutableSpawnPointSet
-		  Set.Label = SaveData.Value("Label")
-		  Set.Weight = SaveData.Value("Weight")
-		  
-		  Var Entries() As Variant = SaveData.Value("Entries")
-		  For Each EntrySaveData As Dictionary In Entries
-		    Var Entry As Beacon.SpawnPointSetEntry = Beacon.SpawnPointSetEntry.FromSaveData(EntrySaveData)
-		    If Entry = Nil Then
-		      Continue
-		    End If
-		    
-		    Set.Append(Entry)
-		  Next
+		  If SaveData.HasKey("Entries") Then
+		    Var Entries() As Variant = SaveData.Value("Entries")
+		    For Each EntrySaveData As Dictionary In Entries
+		      Var Entry As Beacon.SpawnPointSetEntry = Beacon.SpawnPointSetEntry.FromSaveData(EntrySaveData)
+		      If Entry = Nil Then
+		        Continue
+		      End If
+		      
+		      Set.Append(Entry)
+		    Next
+		  ElseIf SaveData.HasKey("creatures") Then
+		    Var Paths() As Variant = SaveData.Value("creatures")
+		    For Each Path As String In Paths
+		      Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Path)
+		      If Creature = Nil Then
+		        Continue
+		      End If
+		      
+		      Set.Append(New Beacon.SpawnPointSetEntry(Creature))
+		    Next
+		  Else
+		    Return Nil
+		  End If
 		  
 		  If SaveData.HasKey("SpreadRadius") Then
 		    Set.SpreadRadius = SaveData.Value("SpreadRadius").DoubleValue
@@ -113,6 +145,18 @@ Implements Beacon.DocumentItem, Beacon.Countable
 		  If Self.mGroupOffset <> Nil Then
 		    Return New Beacon.Point3D(Self.mGroupOffset)
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ID() As v4UUID
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ImmutableVersion() As Beacon.SpawnPointSet
+		  Return Self
 		End Function
 	#tag EndMethod
 
@@ -187,6 +231,34 @@ Implements Beacon.DocumentItem, Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MutableClone() As Beacon.MutableSpawnPointSet
+		  Var Clone As New Beacon.MutableSpawnPointSet(Self)
+		  Clone.ID = New v4UUID
+		  Return Clone
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MutableVersion() As Beacon.MutableSpawnPointSet
+		  Return New Beacon.MutableSpawnPointSet(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Operator_Compare(Other As Beacon.SpawnPointSet) As Integer
+		  If Other = Nil Then
+		    Return 1
+		  End If
+		  
+		  If Self.mID = Other.mID Then
+		    Return 0
+		  End If
+		  
+		  Return Self.mLabel.Compare(Other.mLabel, ComparisonOptions.CaseInsensitive, Locale.Current)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var Entries() As Dictionary
 		  For Each Entry As Beacon.SpawnPointSetEntry In Self.mEntries
@@ -235,6 +307,10 @@ Implements Beacon.DocumentItem, Beacon.Countable
 
 	#tag Property, Flags = &h1
 		Protected mGroupOffset As Beacon.Point3D
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mID As v4UUID
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

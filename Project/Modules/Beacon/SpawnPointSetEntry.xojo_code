@@ -1,9 +1,17 @@
 #tag Class
 Protected Class SpawnPointSetEntry
 Implements Beacon.DocumentItem
+	#tag Method, Flags = &h0
+		Function Clone() As Beacon.SpawnPointSetEntry
+		  Var Clone As New Beacon.SpawnPointSetEntry(Self)
+		  Clone.mID = New v4UUID
+		  Return Clone
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  Self.mChance = 1.0
+		  Self.mID = New v4UUID
 		End Sub
 	#tag EndMethod
 
@@ -18,9 +26,15 @@ Implements Beacon.DocumentItem
 		Sub Constructor(Source As Beacon.SpawnPointSetEntry)
 		  Self.Constructor()
 		  
+		  Self.mID = Source.mID
 		  Self.mCreature = Source.mCreature
 		  Self.mChance = Source.mChance
 		  Self.mModified = Source.mModified
+		  Self.mLevelOverride = Source.mLevelOverride
+		  Self.mMaxLevelMultiplier = Source.mMaxLevelMultiplier
+		  Self.mMaxLevelOffset = Source.mMaxLevelOffset
+		  Self.mMinLevelMultiplier = Source.mMinLevelMultiplier
+		  Self.mMinLevelOffset = Source.mMinLevelOffset
 		  If Source.mOffset <> Nil Then
 		    Self.mOffset = New Beacon.Point3D(Source.mOffset)
 		  End If
@@ -48,11 +62,13 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(Dict As Dictionary) As Beacon.SpawnPointSetEntry
+		  Break
+		  
 		  If Dict = Nil Or Dict.HasKey("Creature") = False Then
 		    Return Nil
 		  End If
 		  
-		  Dim Entry As New Beacon.SpawnPointSetEntry
+		  Var Entry As New Beacon.SpawnPointSetEntry
 		  Entry.mCreature = Beacon.Data.GetCreatureByPath(Dict.Value("Creature"))
 		  If Entry.mCreature = Nil Then
 		    Return Nil
@@ -97,6 +113,12 @@ Implements Beacon.DocumentItem
 		  End If
 		  
 		  Return Entry
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ID() As v4UUID
+		  Return Self.mID
 		End Function
 	#tag EndMethod
 
@@ -203,6 +225,14 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MutableClone() As Beacon.MutableSpawnPointSetEntry
+		  Var Clone As New Beacon.MutableSpawnPointSetEntry(Self)
+		  Clone.ID = New v4UUID
+		  Return Clone
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function MutableVersion() As Beacon.MutableSpawnPointSetEntry
 		  Return New Beacon.MutableSpawnPointSetEntry(Self)
 		End Function
@@ -217,8 +247,18 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Operator_Compare(Other As Beacon.SpawnPointSetEntry) As Integer
+		  If Other = Nil Then
+		    Return 1
+		  End If
+		  
+		  Return Self.mID.Operator_Compare(Other.mID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("Creature") = Self.mCreature.Path
 		  If Self.mChance <> Nil Then
 		    Dict.Value("SpawnChance") = Self.mChance.Value
@@ -265,6 +305,10 @@ Implements Beacon.DocumentItem
 
 	#tag Property, Flags = &h1
 		Protected mCreature As Beacon.Creature
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mID As v4UUID
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

@@ -38,12 +38,32 @@ Inherits Beacon.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ID(Assigns Value As v4UUID)
+		  If Not IsNull(Value) Then
+		    Self.mID = Value
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ImmutableVersion() As Beacon.SpawnPointSet
+		  Return New Beacon.SpawnPointSet(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Label(Assigns Value As String)
 		  If Self.mLabel.Compare(Value, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
 		    Self.mLabel = Value
 		    Self.Modified = True
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MutableVersion() As Beacon.MutableSpawnPointSet
+		  Return Self
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
