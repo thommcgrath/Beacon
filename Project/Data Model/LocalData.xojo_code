@@ -862,6 +862,25 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetSpawnPointsForCreature(Creature As Beacon.Creature, Mods As Beacon.StringList, Tags As String) As Beacon.SpawnPoint()
+		  Var Clauses() As String
+		  Var Values() As Variant
+		  Clauses.AddRow("LOWER(spawn_points.groups) LIKE :placeholder:")
+		  Values.AddRow("%" + Creature.Path.Lowercase + "%")
+		  
+		  Var Blueprints() As Beacon.Blueprint = Self.SearchForBlueprints(Beacon.CategorySpawnPoints, "", Mods, Tags, Clauses, Values)
+		  Var SpawnPoints() As Beacon.SpawnPoint
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    If Blueprint IsA Beacon.SpawnPoint Then
+		      SpawnPoints.AddRow(Beacon.SpawnPoint(Blueprint))
+		    End If
+		  Next
+		  
+		  Return SpawnPoints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetStringVariable(Key As String) As String
 		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RowCount = 1 Then
@@ -2126,6 +2145,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function SearchForBlueprints(Category As String, SearchText As String, Mods As Beacon.StringList, Tags As String) As Beacon.Blueprint()
+		  Var ExtraClauses() As String
+		  Var ExtraValues() As Variant
+		  Return Self.SearchForBlueprints(Category, SearchText, Mods, Tags, ExtraClauses, ExtraValues)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SearchForBlueprints(Category As String, SearchText As String, Mods As Beacon.StringList, Tags As String, ExtraClauses() As String, ExtraValues() As Variant) As Beacon.Blueprint()
 		  Dim Blueprints() As Beacon.Blueprint
 		  
 		  Try
@@ -2153,7 +2180,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If Mods <> Nil And Mods.LastRowIndex > -1 Then
 		      Dim Placeholders() As String
 		      For Each ModID As String In Mods
-		        Placeholders.AddRow("?" + Str(NextPlaceholder))
+		        Placeholders.AddRow("?" + NextPlaceholder.ToString)
 		        Values.Value(NextPlaceholder) = ModID
 		        NextPlaceholder = NextPlaceholder + 1
 		      Next
@@ -2164,6 +2191,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Clauses.AddRow("searchable_tags.tags MATCH ?" + Str(NextPlaceholder, "0"))
 		      Values.Value(NextPlaceholder) = Tags
 		      NextPlaceholder = NextPlaceholder + 1
+		    End If
+		    
+		    If ExtraClauses.LastRowIndex > -1 And ExtraClauses.LastRowIndex = ExtraValues.LastRowIndex Then
+		      For I As Integer = 0 To ExtraClauses.LastRowIndex
+		        Var Clause As String = ExtraClauses(I).ReplaceAll(":placeholder:", "?" + NextPlaceholder.ToString)
+		        Var Value As Variant = ExtraValues(I)
+		        Clauses.AddRow(Clause)
+		        Values.Value(NextPlaceholder) = Value
+		        NextPlaceholder = NextPlaceholder + 1
+		      Next
 		    End If
 		    
 		    If Clauses.LastRowIndex > -1 Then
