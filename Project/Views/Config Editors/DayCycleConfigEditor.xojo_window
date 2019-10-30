@@ -517,6 +517,12 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub RestoreToDefault()
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.DayCycle.ConfigName)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub SetupUI()
 		  Self.mOfficialDaySeconds = Val(LocalData.SharedInstance.Variable("Day Length Seconds"))
 		  If Self.mOfficialDaySeconds = 0 Then

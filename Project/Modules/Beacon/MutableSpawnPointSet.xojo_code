@@ -84,7 +84,7 @@ Inherits Beacon.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SpreadRadius(Assigns Value As Double)
+		Sub SpreadRadius(Assigns Value As NullableDouble)
 		  If Self.mSpreadRadius <> Value Then
 		    Self.mSpreadRadius = Value
 		    Self.Modified = True
@@ -93,7 +93,7 @@ Inherits Beacon.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub WaterOnlyMinimumHeight(Assigns Value As Double)
+		Sub WaterOnlyMinimumHeight(Assigns Value As NullableDouble)
 		  If Self.mWaterOnlyMinimumHeight <> Value Then
 		    Self.mWaterOnlyMinimumHeight = Value
 		    Self.Modified = True

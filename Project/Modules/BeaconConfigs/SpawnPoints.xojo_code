@@ -1,7 +1,7 @@
 #tag Class
  Attributes ( OmniVersion = 1 ) Protected Class SpawnPoints
 Inherits Beacon.ConfigGroup
-Implements  Iterable
+Implements Iterable
 	#tag Event
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
 		  #Pragma Unused SourceDocument
@@ -180,6 +180,17 @@ Implements  Iterable
 
 
 	#tag Method, Flags = &h0
+		Function All() As Beacon.SpawnPoint()
+		  Var Arr() As Beacon.SpawnPoint
+		  Arr.ResizeTo(Self.mSpawnPoints.LastRowIndex)
+		  For I As Integer = 0 To Self.mSpawnPoints.LastRowIndex
+		    Arr(I) = Self.mSpawnPoints(I).ImmutableVersion
+		  Next
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Append(SpawnPoint As Beacon.SpawnPoint)
 		  If Self.IndexOf(SpawnPoint) = -1 Then
 		    Self.mSpawnPoints.AddRow(SpawnPoint)
@@ -191,6 +202,12 @@ Implements  Iterable
 	#tag Method, Flags = &h0
 		Shared Function ConfigName() As String
 		  Return "SpawnPoints"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Count() As Integer
+		  Return Self.mSpawnPoints.LastRowIndex + 1
 		End Function
 	#tag EndMethod
 
@@ -413,11 +430,11 @@ Implements  Iterable
 		            Next
 		            
 		            If Entry.HasKey("ManualSpawnPointSpreadRadius") Then
-		              Set.SpreadRadius = Entry.Value("ManualSpawnPointSpreadRadius")
+		              Set.SpreadRadius = Entry.Value("ManualSpawnPointSpreadRadius").DoubleValue
 		            End If
 		            
 		            If Entry.HasKey("WaterOnlySpawnMinimumWaterHeight") Then
-		              Set.WaterOnlyMinimumHeight = Entry.Value("WaterOnlySpawnMinimumWaterHeight")
+		              Set.WaterOnlyMinimumHeight = Entry.Value("WaterOnlySpawnMinimumWaterHeight").DoubleValue
 		            End If
 		            
 		            If Set.Count > 0 Then
@@ -701,14 +718,6 @@ Implements  Iterable
 			Group="Behavior"
 			InitialValue=""
 			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mSpawnPoints()"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
