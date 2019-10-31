@@ -33,7 +33,7 @@ Implements NotificationKit.Receiver
 		  
 		  If Self.LaunchOnQuit <> Nil And Self.LaunchOnQuit.Exists Then
 		    Self.Log("Launching " + Self.LaunchOnQuit.NativePath)
-		    Self.LaunchOnQuit.Launch
+		    Self.LaunchOnQuit.Open
 		  End If
 		  
 		  Self.Log("Beacon finished gracefully")
@@ -283,7 +283,7 @@ Implements NotificationKit.Receiver
 		  End If
 		  If Not Folder.Exists Then
 		    If Create Then
-		      Folder.CreateAsFolder
+		      Folder.CreateFolder
 		    Else
 		      Return Nil
 		    End If
@@ -326,10 +326,10 @@ Implements NotificationKit.Receiver
 		  If Folder.Exists Then
 		    If Not Folder.IsFolder Then
 		      Folder.Remove
-		      Folder.CreateAsFolder
+		      Folder.CreateFolder
 		    End If
 		  Else
-		    Folder.CreateAsFolder
+		    Folder.CreateFolder
 		  End If
 		End Sub
 	#tag EndMethod
@@ -530,11 +530,11 @@ Implements NotificationKit.Receiver
 		    End If
 		    
 		    If Not HelpFolder.Exists Then
-		      HelpFolder.CreateAsFolder()
+		      HelpFolder.CreateFolder()
 		      HelpFile = HelpFolder.Child(Topic)
 		    End If
 		    
-		    SourceFile.CopyFileTo(HelpFile)
+		    SourceFile.CopyTo(HelpFile)
 		  End If
 		  
 		  Return HelpFile

@@ -334,7 +334,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    Dim BackupsFolder As FolderItem = AppSupport.Child("Old Libraries")
 		    If Not BackupsFolder.Exists Then
-		      BackupsFolder.CreateAsFolder
+		      BackupsFolder.CreateFolder
 		    End If
 		    
 		    // Relocate the current library
@@ -345,7 +345,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Counter = Counter + 1
 		        Continue
 		      End If
-		      Self.mBase.DatabaseFile.MoveFileTo(Destination)
+		      Self.mBase.DatabaseFile.MoveTo(Destination)
 		      MigrateFile = Destination
 		      Exit
 		    Loop
@@ -374,7 +374,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Versions.SortWith(Candidates)
 		        
 		        Dim RestoreFile As FolderItem = Candidates(Candidates.LastRowIndex)
-		        RestoreFile.MoveFileTo(AppSupport.Child("Library.sqlite"))
+		        RestoreFile.MoveTo(AppSupport.Child("Library.sqlite"))
 		        
 		        Self.mBase = New SQLiteDatabase
 		        Self.mBase.DatabaseFile = AppSupport.Child("Library.sqlite")

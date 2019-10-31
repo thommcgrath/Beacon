@@ -342,7 +342,7 @@ End
 		    Preset.ToFile(Folder.Child(Preset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension))
 		  Next
 		  
-		  Folder.Launch
+		  Folder.Open
 		End Sub
 	#tag EndMethod
 

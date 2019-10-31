@@ -410,7 +410,7 @@ End
 		      Return True
 		    End If
 		    If Not Folder.Exists Then
-		      Folder.CreateAsFolder
+		      Folder.CreateFolder
 		    End If
 		    App.ShowFile(Folder)
 		  Case "Copy Profile ID"

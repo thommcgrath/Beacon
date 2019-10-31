@@ -63,7 +63,7 @@ Protected Module FrameworkExtensions
 		    Else
 		      If Create = True Then
 		        Folder.Remove
-		        Folder.CreateAsFolder
+		        Folder.CreateFolder
 		        Return True
 		      Else
 		        Return False
@@ -71,7 +71,7 @@ Protected Module FrameworkExtensions
 		    End If
 		  Else
 		    If Create = True Then
-		      Folder.CreateAsFolder
+		      Folder.CreateFolder
 		      Return True
 		    Else
 		      Return False

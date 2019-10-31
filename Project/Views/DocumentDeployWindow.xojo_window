@@ -547,7 +547,7 @@ End
 		    Return False
 		  ElseIf ServerFolder.Exists = False Then
 		    Try
-		      ServerFolder.CreateAsFolder
+		      ServerFolder.CreateFolder
 		    Catch Err As IOException
 		      App.Log("Unable to backup " + Engine.Name + ": Could not create server backup folder " + ServerFolder.NativePath + ": " + Err.Message)
 		      Return False
@@ -566,7 +566,7 @@ End
 		    Return False
 		  End If
 		  Try
-		    Subfolder.CreateAsFolder
+		    Subfolder.CreateFolder
 		  Catch Err As IOException
 		    App.Log("Unable to backup " + Engine.Name + ": Could not create deployment folder " + Subfolder.NativePath + ": " + Err.Message)
 		  End Try
@@ -881,7 +881,7 @@ End
 		  If Finished Then
 		    Dim BackupsFolder As FolderItem = App.ApplicationSupport.Child("Backups")
 		    If Not BackupsFolder.Exists Then
-		      BackupsFolder.CreateAsFolder
+		      BackupsFolder.CreateFolder
 		    End If
 		    
 		    For Each Engine As Beacon.DeploymentEngine In Self.mDeploymentEngines

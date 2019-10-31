@@ -431,10 +431,10 @@ End
 		      Try
 		        Dim Destination As FolderItem = SpecialFolder.Temporary.Child("Beacon Autosave")
 		        If Not Destination.Exists Then
-		          Destination.CreateAsFolder
+		          Destination.CreateFolder
 		        End If
 		        Destination = Destination.Child(v4UUID.Create + ".beacon")
-		        AutosaveFile.MoveFileTo(Destination)
+		        AutosaveFile.MoveTo(Destination)
 		      Catch DeeperError As RuntimeException
 		        App.Log("And unable to move the file to system temp for cleanup later: " + DeeperError.Message + " (code: " + DeeperError.ErrorNumber.ToString + ")")
 		      End Try

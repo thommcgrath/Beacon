@@ -465,7 +465,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub LaunchUpdate()
-		  Self.mFile.Launch
+		  Self.mFile.Open
 		  Self.Close
 		  Quit
 		End Sub
@@ -502,7 +502,7 @@ End
 		  #if Not TargetMacOS
 		    Dim Folder As FolderItem = App.ApplicationSupport.Child("Updates")
 		    If Not Folder.Exists Then
-		      Folder.CreateAsFolder
+		      Folder.CreateFolder
 		    End If
 		    Self.mFile = Folder.Child(Self.mFilename)
 		  #endif
@@ -758,7 +758,7 @@ End
 		      App.LaunchOnQuit = Self.mFile
 		      Self.Close
 		    Case Confirm.AlternateActionButton
-		      Self.mFile.Parent.Launch
+		      Self.mFile.Parent.Open
 		      Self.Close
 		    End Select
 		    Return
