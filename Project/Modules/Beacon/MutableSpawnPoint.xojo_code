@@ -96,6 +96,15 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Mode(Assigns Value As Integer)
+		  If Self.mMode <> Value Then
+		    Self.mMode = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ModID(Assigns Value As v4UUID)
 		  // Part of the Beacon.MutableBlueprint interface.
 		  

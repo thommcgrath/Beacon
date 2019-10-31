@@ -11,6 +11,18 @@ Implements Iterable
 		    Var RenderedEntries() As String
 		    Var Limits As Dictionary = SpawnPoint.Limits
 		    
+		    Var Config As String
+		    Select Case SpawnPoint.Mode
+		    Case Beacon.SpawnPoint.ModeOverride
+		      Config = "ConfigOverrideNPCSpawnEntriesContainer"
+		    Case Beacon.SpawnPoint.ModeAppend
+		      Config = "ConfigAddNPCSpawnEntriesContainer"
+		    Case Beacon.SpawnPoint.ModeRemove
+		      Config = "ConfigSubtractNPCSpawnEntriesContainer"
+		    Else
+		      Continue
+		    End Select
+		    
 		    For Each Set As Beacon.SpawnPointSet In SpawnPoint
 		      Var CreatureClasses(), LevelMembers(), OffsetMembers(), SpawnChanceMembers(), MinLevelMultiplierMembers(), MinLevelOffsetMembers(), MaxLevelMultiplierMembers(), MaxLevelOffsetMembers(), LevelOverrideMembers() As String
 		      Var IncludeLevels, IncludeOffsets, IncludeSpawnChance, IncludeMinLevelMultiplier, IncludeMaxLevelMultiplier, IncludeMinLevelOffset, IncludeMaxLevelOffset, IncludeLevelOverride As Boolean
@@ -131,13 +143,14 @@ Implements Iterable
 		      Pieces.AddRow("NPCSpawnLimits=(" + LimitConfigs.Join(",") + ")")
 		    End If
 		    
-		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideNPCSpawnEntriesContainer", "ConfigOverrideNPCSpawnEntriesContainer=(" + Pieces.Join(",") + ")"))
+		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, Config, Config + "=(" + Pieces.Join(",") + ")"))
 		  Next
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub NonGeneratedKeys(Keys() As Beacon.ConfigKey)
+		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "ConfigOverrideNPCSpawnEntriesContainer"))
 		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "ConfigAddNPCSpawnEntriesContainer"))
 		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "ConfigSubtractNPCSpawnEntriesContainer"))
 		End Sub
@@ -272,190 +285,124 @@ Implements Iterable
 		      End If
 		      
 		      Var Clone As Beacon.MutableSpawnPoint = SpawnPoint.MutableVersion
+		      Clone.ResizeTo(-1)
+		      
+		      If ConfigKey.BeginsWith("ConfigAdd") Then
+		        Clone.Mode = Beacon.SpawnPoint.ModeAppend
+		      ElseIf ConfigKey.BeginsWith("ConfigSubtract") Then
+		        Clone.Mode = Beacon.SpawnPoint.ModeRemove
+		      Else
+		        Clone.Mode = Beacon.SpawnPoint.ModeOverride
+		      End If
 		      
 		      // make changes
-		      If ConfigKey.BeginsWith("ConfigOverride") Then
-		        Clone.ResizeTo(-1)
-		      End If
-		      If ConfigKey.BeginsWith("ConfigSubtract") Then
-		        Var CreaturesToRemove(), LimitsToRemove() As String
-		        If Dict.HasKey("NPCSpawnEntries") Then
-		          Var Entries() As Variant = Dict.Value("NPCSpawnEntries")
-		          For Each Entry As Dictionary In Entries
-		            If Not Entry.HasKey("NPCsToSpawnStrings") Then
-		              Continue
-		            End If
-		            
-		            Var Classes() As Variant = Entry.Value("NPCsToSpawnStrings")
-		            For Each CreatureClass As String In Classes
-		              If CreaturesToRemove.IndexOf(CreatureClass) = -1 Then
-		                CreaturesToRemove.AddRow(CreatureClass)
-		              End If
-		            Next
-		          Next
-		        End If
-		        
-		        If Dict.HasKey("NPCSpawnLimits") Then
-		          Var Entries() As Variant = Dict.Value("NPCSpawnLimits")
-		          For Each Entry As Dictionary In Entries
-		            If Not Entry.HasKey("NPCClassString") Then
-		              Continue
-		            End If
-		            
-		            Var CreatureClass As String = Entry.Value("NPCClassString")
-		            If LimitsToRemove.IndexOf(CreatureClass) = -1 Then
-		              LimitsToRemove.AddRow(CreatureClass)
-		            End If
-		          Next
-		        End If
-		        
-		        If CreaturesToRemove.LastRowIndex > -1 Or LimitsToRemove.LastRowIndex > -1 Then
-		          For Each CreatureClass As String In CreaturesToRemove
-		            Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(CreatureClass)
+		      If Dict.HasKey("NPCSpawnEntries") Then
+		        Var Entries() As Variant = Dict.Value("NPCSpawnEntries")
+		        For Each Entry As Dictionary In Entries
+		          If Not Entry.HasKey("NPCsToSpawnStrings") Then
+		            Continue
+		          End If
+		          
+		          Var Classes() As Variant = Entry.Value("NPCsToSpawnStrings")
+		          Var LevelMembers(), OffsetMembers(), SpawnChanceMembers(), MinLevelOffsetMembers(), MaxLevelOffsetMembers(), MinLevelMultiplierMembers(), MaxLevelMultipliersMembers(), LevelOverrideMembers() As Variant
+		          
+		          If Entry.HasKey("NPCDifficultyLevelRanges") Then
+		            LevelMembers = Entry.Value("NPCDifficultyLevelRanges")
+		          End If
+		          If Entry.HasKey("NPCsSpawnOffsets") Then
+		            OffsetMembers = Entry.Value("NPCsSpawnOffsets")
+		          End If
+		          If Entry.HasKey("NPCsToSpawnPercentageChance") Then
+		            SpawnChanceMembers = Entry.Value("NPCsToSpawnPercentageChance")
+		          End If
+		          If Entry.HasKey("NPCMinLevelMultiplier") Then
+		            MinLevelMultiplierMembers = Entry.Value("NPCMinLevelMultiplier")
+		          End If
+		          If Entry.HasKey("NPCMinLevelOffset") Then
+		            MinLevelOffsetMembers = Entry.Value("NPCMinLevelOffset")
+		          End If
+		          If Entry.HasKey("NPCMaxLevelMultiplier") Then
+		            MaxLevelMultipliersMembers = Entry.Value("NPCMaxLevelMultiplier")
+		          End If
+		          If Entry.HasKey("NPCMaxLevelOffset") Then
+		            MaxLevelOffsetMembers = Entry.Value("NPCMaxLevelOffset")
+		          End If
+		          If Entry.HasKey("NPCOverrideLevel") Then
+		            LevelOverrideMembers = Entry.Value("NPCOverrideLevel")
+		          End If
+		          
+		          Var Set As New Beacon.MutableSpawnPointSet
+		          Set.Label = Entry.Lookup("AnEntryName", "Untitled Spawn Set")
+		          Set.Weight = Entry.Lookup("EntryWeight", 1.0)
+		          
+		          For I As Integer = 0 To Classes.LastRowIndex
+		            Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Classes(I))
 		            If Creature = Nil Then
 		              Continue
 		            End If
 		            
-		            For SetIdx As Integer = Clone.LastRowIndex DownTo 0
-		              Var Set As Beacon.SpawnPointSet = Clone.Set(SetIdx)
-		              Var MutableSet As Beacon.MutableSpawnPointSet
+		            Var SetEntry As New Beacon.MutableSpawnPointSetEntry(Creature)
+		            If LevelMembers.LastRowIndex >= I Then
+		              Var LevelValues As Dictionary = LevelMembers(I)
+		              Var MinLevels() As Variant = LevelValues.Value("EnemyLevelsMin")
+		              Var MaxLevels() As Variant = LevelValues.Value("EnemyLevelsMax")
+		              Var Difficulties() As Variant = LevelValues.Value("GameDifficulties")
 		              
-		              For EntryIdx As Integer = Set.LastRowIndex DownTo 0
-		                If Set.Entry(EntryIdx).Creature = Creature Then
-		                  If MutableSet = Nil Then
-		                    MutableSet = Set.MutableVersion
-		                  End If
-		                  
-		                  MutableSet.Remove(EntryIdx)
-		                End If
+		              For LevelIdx As Integer = 0 To Min(MinLevels.LastRowIndex, MaxLevels.LastRowIndex, Difficulties.LastRowIndex)
+		                SetEntry.Append(New Beacon.SpawnPointLevel(MinLevels(LevelIdx), MaxLevels(LevelIdx), Difficulties(LevelIdx)))
 		              Next
-		              
-		              If MutableSet <> Nil Then
-		                If MutableSet.Count = 0 Then
-		                  Clone.RemoveSet(MutableSet)
-		                Else
-		                  Clone.Set(SetIdx) = MutableSet
-		                End If
-		              End If
-		            Next
+		            End If
+		            If OffsetMembers.LastRowIndex >= I Then
+		              Var OffsetValues As Dictionary = OffsetMembers(I)
+		              SetEntry.Offset = New Beacon.Point3D(OffsetValues.Value("X"), OffsetValues.Value("Y"), OffsetValues.Value("Z"))
+		            End If
+		            If SpawnChanceMembers.LastRowIndex >= I Then
+		              SetEntry.SpawnChance = SpawnChanceMembers(I).DoubleValue
+		            End If
+		            If MinLevelMultiplierMembers.LastRowIndex >= I Then
+		              SetEntry.MinLevelMultiplier = MinLevelMultiplierMembers(I).DoubleValue
+		            End If
+		            If MinLevelOffsetMembers.LastRowIndex >= I Then
+		              SetEntry.MinLevelOffset = MinLevelOffsetMembers(I).DoubleValue
+		            End If
+		            If MaxLevelMultipliersMembers.LastRowIndex >= I Then
+		              SetEntry.MaxLevelMultiplier = MaxLevelMultipliersMembers(I).DoubleValue
+		            End If
+		            If MaxLevelOffsetMembers.LastRowIndex >= I Then
+		              SetEntry.MaxLevelOffset = MaxLevelOffsetMembers(I).DoubleValue
+		            End If
+		            If LevelOverrideMembers.LastRowIndex >= I Then
+		              SetEntry.LevelOverride = LevelOverrideMembers(I).DoubleValue
+		            End If
+		            Set.Append(SetEntry)
 		          Next
 		          
-		          For Each CreatureClass As String In LimitsToRemove
-		            Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(CreatureClass)
-		            If Creature <> Nil Then
-		              Clone.Limit(Creature) = 1.0
-		            End If
-		          Next
-		        End If
-		      Else
-		        If Dict.HasKey("NPCSpawnEntries") Then
-		          Var Entries() As Variant = Dict.Value("NPCSpawnEntries")
-		          For Each Entry As Dictionary In Entries
-		            If Not Entry.HasKey("NPCsToSpawnStrings") Then
-		              Continue
-		            End If
-		            
-		            Var Classes() As Variant = Entry.Value("NPCsToSpawnStrings")
-		            Var LevelMembers(), OffsetMembers(), SpawnChanceMembers(), MinLevelOffsetMembers(), MaxLevelOffsetMembers(), MinLevelMultiplierMembers(), MaxLevelMultipliersMembers(), LevelOverrideMembers() As Variant
-		            
-		            If Entry.HasKey("NPCDifficultyLevelRanges") Then
-		              LevelMembers = Entry.Value("NPCDifficultyLevelRanges")
-		            End If
-		            If Entry.HasKey("NPCsSpawnOffsets") Then
-		              OffsetMembers = Entry.Value("NPCsSpawnOffsets")
-		            End If
-		            If Entry.HasKey("NPCsToSpawnPercentageChance") Then
-		              SpawnChanceMembers = Entry.Value("NPCsToSpawnPercentageChance")
-		            End If
-		            If Entry.HasKey("NPCMinLevelMultiplier") Then
-		              MinLevelMultiplierMembers = Entry.Value("NPCMinLevelMultiplier")
-		            End If
-		            If Entry.HasKey("NPCMinLevelOffset") Then
-		              MinLevelOffsetMembers = Entry.Value("NPCMinLevelOffset")
-		            End If
-		            If Entry.HasKey("NPCMaxLevelMultiplier") Then
-		              MaxLevelMultipliersMembers = Entry.Value("NPCMaxLevelMultiplier")
-		            End If
-		            If Entry.HasKey("NPCMaxLevelOffset") Then
-		              MaxLevelOffsetMembers = Entry.Value("NPCMaxLevelOffset")
-		            End If
-		            If Entry.HasKey("NPCOverrideLevel") Then
-		              LevelOverrideMembers = Entry.Value("NPCOverrideLevel")
-		            End If
-		            
-		            Var Set As New Beacon.MutableSpawnPointSet
-		            Set.Label = Entry.Lookup("AnEntryName", "Untitled Spawn Set")
-		            Set.Weight = Entry.Lookup("EntryWeight", 1.0)
-		            
-		            For I As Integer = 0 To Classes.LastRowIndex
-		              Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Classes(I))
-		              If Creature = Nil Then
-		                Continue
-		              End If
-		              
-		              Var SetEntry As New Beacon.MutableSpawnPointSetEntry(Creature)
-		              If LevelMembers.LastRowIndex >= I Then
-		                Var LevelValues As Dictionary = LevelMembers(I)
-		                Var MinLevels() As Variant = LevelValues.Value("EnemyLevelsMin")
-		                Var MaxLevels() As Variant = LevelValues.Value("EnemyLevelsMax")
-		                Var Difficulties() As Variant = LevelValues.Value("GameDifficulties")
-		                
-		                For LevelIdx As Integer = 0 To Min(MinLevels.LastRowIndex, MaxLevels.LastRowIndex, Difficulties.LastRowIndex)
-		                  SetEntry.Append(New Beacon.SpawnPointLevel(MinLevels(LevelIdx), MaxLevels(LevelIdx), Difficulties(LevelIdx)))
-		                Next
-		              End If
-		              If OffsetMembers.LastRowIndex >= I Then
-		                Var OffsetValues As Dictionary = OffsetMembers(I)
-		                SetEntry.Offset = New Beacon.Point3D(OffsetValues.Value("X"), OffsetValues.Value("Y"), OffsetValues.Value("Z"))
-		              End If
-		              If SpawnChanceMembers.LastRowIndex >= I Then
-		                SetEntry.SpawnChance = SpawnChanceMembers(I).DoubleValue
-		              End If
-		              If MinLevelMultiplierMembers.LastRowIndex >= I Then
-		                SetEntry.MinLevelMultiplier = MinLevelMultiplierMembers(I).DoubleValue
-		              End If
-		              If MinLevelOffsetMembers.LastRowIndex >= I Then
-		                SetEntry.MinLevelOffset = MinLevelOffsetMembers(I).DoubleValue
-		              End If
-		              If MaxLevelMultipliersMembers.LastRowIndex >= I Then
-		                SetEntry.MaxLevelMultiplier = MaxLevelMultipliersMembers(I).DoubleValue
-		              End If
-		              If MaxLevelOffsetMembers.LastRowIndex >= I Then
-		                SetEntry.MaxLevelOffset = MaxLevelOffsetMembers(I).DoubleValue
-		              End If
-		              If LevelOverrideMembers.LastRowIndex >= I Then
-		                SetEntry.LevelOverride = LevelOverrideMembers(I).DoubleValue
-		              End If
-		              Set.Append(SetEntry)
-		            Next
-		            
-		            If Entry.HasKey("ManualSpawnPointSpreadRadius") Then
-		              Set.SpreadRadius = Entry.Value("ManualSpawnPointSpreadRadius").DoubleValue
-		            End If
-		            
-		            If Entry.HasKey("WaterOnlySpawnMinimumWaterHeight") Then
-		              Set.WaterOnlyMinimumHeight = Entry.Value("WaterOnlySpawnMinimumWaterHeight").DoubleValue
-		            End If
-		            
-		            If Set.Count > 0 Then
-		              Clone.AddSet(Set)
-		            End If
-		          Next
-		        End If
-		        
-		        If Dict.HasKey("NPCSpawnLimits") Then
-		          Var Limits() As Variant = Dict.Value("NPCSpawnLimits")
-		          For Each Limit As Dictionary In Limits
-		            If Not Limit.HasAllKeys("NPCClassString", "MaxPercentageOfDesiredNumToAllow") Then
-		              Continue
-		            End If
-		            
-		            Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Limit.Value("NPCClassString"))
-		            If Creature <> Nil Then
-		              Clone.Limit(Creature) = Limit.Value("MaxPercentageOfDesiredNumToAllow")
-		            End If
-		          Next
-		        End If
+		          If Entry.HasKey("ManualSpawnPointSpreadRadius") Then
+		            Set.SpreadRadius = Entry.Value("ManualSpawnPointSpreadRadius").DoubleValue
+		          End If
+		          
+		          If Entry.HasKey("WaterOnlySpawnMinimumWaterHeight") Then
+		            Set.WaterOnlyMinimumHeight = Entry.Value("WaterOnlySpawnMinimumWaterHeight").DoubleValue
+		          End If
+		          
+		          If Set.Count > 0 Then
+		            Clone.AddSet(Set)
+		          End If
+		        Next
+		      End If
+		      
+		      If Dict.HasKey("NPCSpawnLimits") Then
+		        Var Limits() As Variant = Dict.Value("NPCSpawnLimits")
+		        For Each Limit As Dictionary In Limits
+		          If Not Limit.HasAllKeys("NPCClassString", "MaxPercentageOfDesiredNumToAllow") Then
+		            Continue
+		          End If
+		          
+		          Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Limit.Value("NPCClassString"))
+		          If Creature <> Nil Then
+		            Clone.Limit(Creature) = Limit.Value("MaxPercentageOfDesiredNumToAllow")
+		          End If
+		        Next
 		      End If
 		      
 		      If Idx = -1 Then

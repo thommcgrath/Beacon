@@ -112,6 +112,9 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		        End If
 		      Next
 		    End If
+		    If Dict.HasKey("Mode") Then
+		      SpawnPoint.mMode = Dict.Value("Mode").IntegerValue
+		    End If
 		    SpawnPoint.Modified = False
 		    Return SpawnPoint
 		  Catch Err As RuntimeException
@@ -209,6 +212,12 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Mode() As Integer
+		  Return Self.mMode
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ModID() As v4UUID
 		  // Part of the Beacon.Blueprint interface.
 		  
@@ -291,6 +300,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  Keys.Value("Label") = Self.Label
 		  Keys.Value("Path") = Self.Path
 		  Keys.Value("Class") = Self.ClassString
+		  Keys.Value("Mode") = Self.Mode
 		  If Children.LastRowIndex > -1 Then
 		    Keys.Value("Sets") = Children
 		  End If
@@ -354,6 +364,10 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
+		Protected mMode As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mModID As v4UUID
 	#tag EndProperty
 
@@ -380,6 +394,16 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag Property, Flags = &h1
 		Protected mTags() As String
 	#tag EndProperty
+
+
+	#tag Constant, Name = ModeAppend, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ModeOverride, Type = Double, Dynamic = False, Default = \"0", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ModeRemove, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior
