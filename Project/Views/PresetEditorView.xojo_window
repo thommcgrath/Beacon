@@ -782,6 +782,9 @@ End
 
 	#tag Event
 		Sub Opening()
+		  Self.MapSelector.Width = Self.MapSelector.SegmentCount * 110 // Because the design-time size is not being respected
+		  Self.MapSelector.ResizeCells
+		  Self.MinimumWidth = Self.MapSelector.Width + 40
 		  Self.UpdateUI()
 		End Sub
 	#tag EndEvent
@@ -1279,12 +1282,6 @@ End
 		  Next
 		  
 		  Self.mUpdating = False
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Opening()
-		  Me.Width = Me.SegmentCount * 110 // Because the design-time size is not being respected
-		  Me.ResizeCells
 		End Sub
 	#tag EndEvent
 #tag EndEvents

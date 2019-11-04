@@ -337,7 +337,7 @@ Protected Module BeaconUI
 	#tag Method, Flags = &h0
 		Sub ResizeCells(Extends Target As SegmentedButton)
 		  Dim CellCount As Integer = Target.SegmentCount
-		  Dim AvailableWidth As Integer = Target.Width - (CellCount * 2)
+		  Dim AvailableWidth As Integer = Target.Width - (CellCount + 3)
 		  Dim BaseCellWidth As Integer = Floor(AvailableWidth / CellCount)
 		  Dim Remainder As Integer = AvailableWidth - (BaseCellWidth * CellCount)
 		  
