@@ -1483,7 +1483,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Try
 		      Dim Changes As RowSet = Self.SQLSelect("UPDATE custom_presets SET label = ?2, contents = ?3 WHERE object_id = ?1 AND label != ?2 AND contents != ?3;", PresetID, Preset.Label, Contents)
 		      Imported = Changes.RowCount = 1
-		    Catch Err As UnsupportedOperationException
+		    Catch Err As RuntimeException
 		      Imported = False
 		    End Try
 		  Else
