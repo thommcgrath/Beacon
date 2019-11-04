@@ -825,7 +825,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function ValidForMask(Extends Blueprint As Beacon.Blueprint, Mask As UInt64) As Boolean
-		  Return Mask = 0 Or (Blueprint.Availability And Mask) = Mask
+		  Return Mask = 0 Or (Blueprint.Availability And Mask) > 0
 		End Function
 	#tag EndMethod
 

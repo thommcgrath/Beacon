@@ -136,7 +136,7 @@ Begin BeaconDialog AddSpawnPointDialog
       ColumnWidths    =   ""
       DataField       =   ""
       DataSource      =   ""
-      DefaultRowHeight=   26
+      DefaultRowHeight=   34
       DropIndicatorVisible=   False
       Enabled         =   True
       FontName        =   "System"
@@ -454,12 +454,18 @@ End
 		  End If
 		  
 		  Self.List.RemoveAllRows()
+		  Dim MapLabels As New Dictionary
 		  For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
 		    If Not SpawnPoint.ValidForMask(Self.mAvailability) Or Self.mDefinedSpawns.HasKey(SpawnPoint.Path) Then
 		      Continue
 		    End If
 		    
-		    Self.List.AddRow(SpawnPoint.Label)
+		    Var ComboMask As UInt64 = SpawnPoint.Availability And Self.mAvailability
+		    If Not MapLabels.HasKey(ComboMask) Then
+		      MapLabels.Value(ComboMask) = Beacon.Maps.ForMask(ComboMask).Label
+		    End If
+		    
+		    Self.List.AddRow(SpawnPoint.Label + EndOfLine + "Exists on " + MapLabels.Value(ComboMask))
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = SpawnPoint
 		  Next
 		  Self.List.SortingColumn = 0
