@@ -193,6 +193,18 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub ParsingFinished(ParsedData As Dictionary)
+		  Var ParsedConfig As BeaconConfigs.SpawnPoints = BeaconConfigs.SpawnPoints.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
+		  If ParsedConfig = Nil Or ParsedConfig.Count = 0 Then
+		    Self.ShowAlert("No spawn points to import", "The parsed ini content did not contain any spawn point data.")
+		    Return
+		  End If
+		  
+		  Self.HandlePastedSpawnPoints(ParsedConfig.All)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub RestoreToDefault()
 		  Self.Document.RemoveConfigGroup(BeaconConfigs.SpawnPoints.ConfigName)
 		End Sub
@@ -234,6 +246,27 @@ End
 		Function ConfigLabel() As String
 		  Return Language.LabelForConfig(BeaconConfigs.SpawnPoints.ConfigName)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub HandlePastedSpawnPoints(SpawnPoints() As Beacon.SpawnPoint)
+		  If SpawnPoints.LastRowIndex = -1 Then
+		    Return
+		  End If
+		  
+		  Var Config As BeaconConfigs.SpawnPoints = Self.Config(True)
+		  For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
+		    Var Idx As Integer = Config.IndexOf(SpawnPoint)
+		    If Idx = -1 Then
+		      Config.ResizeTo(Config.LastRowIndex + 1)
+		      Idx = Config.LastRowIndex
+		    End If
+		    Config(Idx) = SpawnPoint
+		  Next
+		  
+		  Self.Changed = Config.Modified
+		  Self.UpdateList(SpawnPoints)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -291,6 +324,10 @@ End
 	#tag Property, Flags = &h21
 		Private mConfigRef As WeakRef
 	#tag EndProperty
+
+
+	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.spawnpoint", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -359,6 +396,80 @@ End
 		  
 		  Self.UpdateList()
 		  Self.Changed = Config.Modified
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanCopy() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformCopy(Board As Clipboard)
+		  Var SaveData() As Dictionary
+		  Var Bound As Integer = Me.RowCount - 1
+		  For I As Integer = 0 To Bound
+		    If Not Me.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Var SpawnPoint As Beacon.SpawnPoint = Me.RowTagAt(I)
+		    SaveData.AddRow(SpawnPoint.SaveData)
+		  Next
+		  
+		  Board.AddRawData(Beacon.GenerateJSON(SaveData, False), Self.kClipboardType)
+		  
+		  If Not BeaconConfigs.ConfigPurchased(BeaconConfigs.SpawnPoints.ConfigName, App.IdentityManager.CurrentIdentity.OmniVersion) Then
+		    Return
+		  End If
+		  
+		  Var Lines() As String
+		  For I As Integer = 0 To Bound
+		    If Not Me.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Var SpawnPoint As Beacon.SpawnPoint = Me.RowTagAt(I)
+		    Var Value As Beacon.ConfigValue = BeaconConfigs.SpawnPoints.ConfigValueForSpawnPoint(SpawnPoint)
+		    If Value <> Nil Then
+		      Lines.AddRow(Value.Key + "=" + Value.Value)
+		    End If
+		  Next
+		  
+		  Board.Text = Lines.Join(EndOfLine)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanPaste(Board As Clipboard) As Boolean
+		  If Board.RawDataAvailable(Self.kClipboardType) Then
+		    Return True
+		  End If
+		  
+		  If Not Board.TextAvailable Then
+		    Return False
+		  End If
+		  
+		  Var CopiedText As String = Board.Text.Left(38)
+		  Return CopiedText.IndexOf("ConfigOverrideNPCSpawnEntriesContainer") > -1 Or CopiedText.IndexOf("ConfigAddNPCSpawnEntriesContainer") > -1 Or CopiedText.IndexOf("ConfigSubtractNPCSpawnEntriesContainer") > -1
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformPaste(Board As Clipboard)
+		  If Board.RawDataAvailable(Self.kClipboardType) Then
+		    Try
+		      Var Parsed() As Variant = Beacon.ParseJSON(Board.RawData(Self.kClipboardType))
+		      Var SpawnPoints() As Beacon.SpawnPoint
+		      For Each Dict As Dictionary In Parsed
+		        Var SpawnPoint As Beacon.SpawnPoint = Beacon.SpawnPoint.FromSaveData(Dict)
+		        If SpawnPoint <> Nil Then
+		          SpawnPoints.AddRow(SpawnPoint)
+		        End If
+		      Next
+		      Self.HandlePastedSpawnPoints(SpawnPoints)
+		    Catch Err As RuntimeException
+		    End Try
+		  ElseIf Board.TextAvailable Then
+		    Self.Parse(Board.Text, "Clipboard")
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

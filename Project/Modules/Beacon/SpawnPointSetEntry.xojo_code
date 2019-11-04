@@ -62,8 +62,6 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(Dict As Dictionary) As Beacon.SpawnPointSetEntry
-		  Break
-		  
 		  If Dict = Nil Or Dict.HasKey("Creature") = False Then
 		    Return Nil
 		  End If

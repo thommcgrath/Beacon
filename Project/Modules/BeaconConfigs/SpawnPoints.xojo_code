@@ -5,149 +5,16 @@ Implements Iterable
 	#tag Event
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
 		  #Pragma Unused SourceDocument
-		  #Pragma Unused Profile
 		  
 		  For Each SpawnPoint As Beacon.SpawnPoint In Self.mSpawnPoints
-		    Var RenderedEntries() As String
-		    Var Limits As Dictionary = SpawnPoint.Limits
-		    
-		    Var Config As String
-		    Select Case SpawnPoint.Mode
-		    Case Beacon.SpawnPoint.ModeOverride
-		      Config = "ConfigOverrideNPCSpawnEntriesContainer"
-		    Case Beacon.SpawnPoint.ModeAppend
-		      Config = "ConfigAddNPCSpawnEntriesContainer"
-		    Case Beacon.SpawnPoint.ModeRemove
-		      Config = "ConfigSubtractNPCSpawnEntriesContainer"
-		    Else
+		    If Not SpawnPoint.ValidForMask(Profile.Mask) Then
 		      Continue
-		    End Select
-		    
-		    For Each Set As Beacon.SpawnPointSet In SpawnPoint
-		      Var CreatureClasses(), LevelMembers(), OffsetMembers(), SpawnChanceMembers(), MinLevelMultiplierMembers(), MinLevelOffsetMembers(), MaxLevelMultiplierMembers(), MaxLevelOffsetMembers(), LevelOverrideMembers() As String
-		      Var IncludeLevels, IncludeOffsets, IncludeSpawnChance, IncludeMinLevelMultiplier, IncludeMaxLevelMultiplier, IncludeMinLevelOffset, IncludeMaxLevelOffset, IncludeLevelOverride As Boolean
-		      Var Entries() As Beacon.SpawnPointSetEntry = Set.Entries
-		      Var SpawnSum As Double
-		      
-		      For Each Entry As Beacon.SpawnPointSetEntry In Entries
-		        IncludeLevels = IncludeLevels Or Entry.LevelCount > 0
-		        IncludeOffsets = IncludeOffsets Or Entry.Offset <> Nil
-		        If Entry.SpawnChance <> Nil Then
-		          SpawnSum = SpawnSum + Entry.SpawnChance
-		          IncludeSpawnChance = True
-		        Else
-		          SpawnSum = SpawnSum + 1.0
-		        End If
-		        IncludeMinLevelMultiplier = Entry.MinLevelMultiplier <> Nil
-		        IncludeMinLevelOffset = Entry.MinLevelOffset <> Nil
-		        IncludeMaxLevelMultiplier = Entry.MaxLevelMultiplier <> Nil
-		        IncludeMaxLevelOffset = Entry.MaxLevelOffset <> Nil
-		        IncludeLevelOverride = Entry.LevelOverride <> Nil
-		      Next
-		      For Each Entry As Beacon.SpawnPointSetEntry In Entries
-		        CreatureClasses.AddRow("""" + Entry.Creature.ClassString + """")
-		        
-		        If IncludeLevels Then
-		          Var Levels() As Beacon.SpawnPointLevel = Entry.Levels
-		          Var MinLevels(), MaxLevels(), Difficulties() As String
-		          For Each Level As Beacon.SpawnPointLevel In Levels
-		            MinLevels.AddRow(Level.MinLevel.PrettyText)
-		            MaxLevels.AddRow(Level.MaxLevel.PrettyText)
-		            Difficulties.AddRow(Level.Difficulty.PrettyText)
-		          Next
-		          LevelMembers.AddRow("(EnemyLevelsMin=(" + MinLevels.Join(",") + "),EnemyLevelsMax=(" + MaxLevels.Join(",") + "),GameDifficulties=(" + Difficulties.Join(",") + "))")
-		        End If
-		        If IncludeOffsets Then
-		          Var Offset As Beacon.Point3D = Entry.Offset
-		          If Offset <> Nil Then
-		            OffsetMembers.AddRow("(X=" + Offset.X.PrettyText + ",Y=" + Offset.Y.PrettyText + ",Z=" + Offset.Z.PrettyText + ")")
-		          Else
-		            OffsetMembers.AddRow("(X=0.0,Y=0.0,Z=0.0)")
-		          End If
-		        End If
-		        If IncludeSpawnChance Then
-		          Var Chance As Double = If(Entry.SpawnChance <> Nil, Entry.SpawnChance.Value, 1.0) / SpawnSum
-		          SpawnChanceMembers.AddRow(Chance.PrettyText)
-		        End If
-		        If IncludeMinLevelMultiplier Then
-		          Var Multiplier As Double = If(Entry.MinLevelMultiplier <> Nil, Entry.MinLevelMultiplier.Value, 1.0)
-		          MinLevelMultiplierMembers.AddRow(Multiplier.PrettyText)
-		        End If
-		        If IncludeMinLevelOffset Then
-		          Var Offset As Double = If(Entry.MinLevelOffset <> Nil, Entry.MinLevelOffset.Value, 0.0)
-		          MinLevelOffsetMembers.AddRow(Offset.PrettyText)
-		        End If
-		        If IncludeMaxLevelMultiplier Then
-		          Var Multiplier As Double = If(Entry.MaxLevelMultiplier <> Nil, Entry.MaxLevelMultiplier.Value, 1.0)
-		          MaxLevelMultiplierMembers.AddRow(Multiplier.PrettyText)
-		        End If
-		        If IncludeMaxLevelOffset Then
-		          Var Offset As Double = If(Entry.MaxLevelOffset <> Nil, Entry.MaxLevelOffset.Value, 0.0)
-		          MaxLevelOffsetMembers.AddRow(Offset.PrettyText)
-		        End If
-		        If IncludeLevelOverride Then
-		          Var Override As UInt8 = Round(If(Entry.LevelOverride <> Nil, Entry.LevelOverride.Value, 1.0))
-		          LevelOverrideMembers.AddRow(Override.ToString)
-		        End If
-		      Next
-		      
-		      Var Members(2) As String
-		      Members(0) = "AnEntryName=""" + Set.Label + """"
-		      Members(1) = "EntryWeight=" + Set.Weight.PrettyText
-		      Members(2) = "NPCsToSpawnStrings=(" + CreatureClasses.Join(",") + ")"
-		      
-		      If IncludeLevels Then
-		        Members.AddRow("NPCDifficultyLevelRanges=(" + LevelMembers.Join(",") + ")")
-		      End If
-		      If IncludeOffsets Then
-		        Members.AddRow("NPCsSpawnOffsets=(" + OffsetMembers.Join(",") + ")")
-		      End If
-		      If IncludeSpawnChance Then
-		        Members.AddRow("NPCsToSpawnPercentageChance=(" + SpawnChanceMembers.Join(",") + ")")
-		      End If
-		      If IncludeMinLevelMultiplier Then
-		        Members.AddRow("NPCMinLevelMultiplier=(" + MinLevelMultiplierMembers.Join(",") + ")")
-		      End If
-		      If IncludeMinLevelOffset Then
-		        Members.AddRow("NPCMinLevelOffset=(" + MinLevelOffsetMembers.Join(",") + ")")
-		      End If
-		      If IncludeMaxLevelMultiplier Then
-		        Members.AddRow("NPCMaxLevelMultiplier=(" + MaxLevelMultiplierMembers.Join(",") + ")")
-		      End If
-		      If IncludeMaxLevelOffset Then
-		        Members.AddRow("NPCMaxLevelOffset=(" + MaxLevelOffsetMembers.Join(",") + ")")
-		      End If
-		      If IncludeLevelOverride Then
-		        Members.AddRow("NPCOverrideLevel=(" + LevelOverrideMembers.Join(",") + ")")
-		      End If
-		      
-		      If Set.SpreadRadius <> Nil Then
-		        Members.AddRow("ManualSpawnPointSpreadRadius=" + Set.SpreadRadius.Value.PrettyText)
-		      End If
-		      
-		      If Set.WaterOnlyMinimumHeight <> Nil Then
-		        Members.AddRow("WaterOnlySpawnMinimumWaterHeight=" + Set.WaterOnlyMinimumHeight.Value.PrettyText)
-		      End If
-		      
-		      RenderedEntries.AddRow("(" + Members.Join(",") + ")")
-		    Next
-		    
-		    Var Pieces() As String
-		    Pieces.AddRow("NPCSpawnEntriesContainerClassString=""" + SpawnPoint.ClassString + """")
-		    Pieces.AddRow("NPCSpawnEntries=(" + RenderedEntries.Join(",") + ")")
-		    If Limits.KeyCount > 0 Then
-		      Var LimitConfigs() As String
-		      For Each Entry As DictionaryEntry In Limits
-		        If Entry.Value.DoubleValue < 1.0 Then
-		          LimitConfigs.AddRow("(NPCClassString=""" + Beacon.Creature(Entry.Key).ClassString + """,MaxPercentageOfDesiredNumToAllow=" + Entry.Value.DoubleValue.PrettyText + ")")
-		        End If
-		      Next
-		      If LimitConfigs.LastRowIndex > -1 Then
-		        Pieces.AddRow("NPCSpawnLimits=(" + LimitConfigs.Join(",") + ")")
-		      End If
 		    End If
 		    
-		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, Config, "(" + Pieces.Join(",") + ")"))
+		    Var Value As Beacon.ConfigValue = Self.ConfigValueForSpawnPoint(SpawnPoint)
+		    If Value <> Nil Then
+		      Values.AddRow(Value)
+		    End If
 		  Next
 		End Sub
 	#tag EndEvent
@@ -219,6 +86,151 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Shared Function ConfigName() As String
 		  Return "SpawnPoints"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function ConfigValueForSpawnPoint(SpawnPoint As Beacon.SpawnPoint) As Beacon.ConfigValue
+		  Var RenderedEntries() As String
+		  Var Limits As Dictionary = SpawnPoint.Limits
+		  
+		  Var Config As String
+		  Select Case SpawnPoint.Mode
+		  Case Beacon.SpawnPoint.ModeOverride
+		    Config = "ConfigOverrideNPCSpawnEntriesContainer"
+		  Case Beacon.SpawnPoint.ModeAppend
+		    Config = "ConfigAddNPCSpawnEntriesContainer"
+		  Case Beacon.SpawnPoint.ModeRemove
+		    Config = "ConfigSubtractNPCSpawnEntriesContainer"
+		  Else
+		    Return Nil
+		  End Select
+		  
+		  For Each Set As Beacon.SpawnPointSet In SpawnPoint
+		    Var CreatureClasses(), LevelMembers(), OffsetMembers(), SpawnChanceMembers(), MinLevelMultiplierMembers(), MinLevelOffsetMembers(), MaxLevelMultiplierMembers(), MaxLevelOffsetMembers(), LevelOverrideMembers() As String
+		    Var IncludeLevels, IncludeOffsets, IncludeSpawnChance, IncludeMinLevelMultiplier, IncludeMaxLevelMultiplier, IncludeMinLevelOffset, IncludeMaxLevelOffset, IncludeLevelOverride As Boolean
+		    Var Entries() As Beacon.SpawnPointSetEntry = Set.Entries
+		    Var SpawnSum As Double
+		    
+		    For Each Entry As Beacon.SpawnPointSetEntry In Entries
+		      IncludeLevels = IncludeLevels Or Entry.LevelCount > 0
+		      IncludeOffsets = IncludeOffsets Or Entry.Offset <> Nil
+		      If Entry.SpawnChance <> Nil Then
+		        SpawnSum = SpawnSum + Entry.SpawnChance
+		        IncludeSpawnChance = True
+		      Else
+		        SpawnSum = SpawnSum + 1.0
+		      End If
+		      IncludeMinLevelMultiplier = Entry.MinLevelMultiplier <> Nil
+		      IncludeMinLevelOffset = Entry.MinLevelOffset <> Nil
+		      IncludeMaxLevelMultiplier = Entry.MaxLevelMultiplier <> Nil
+		      IncludeMaxLevelOffset = Entry.MaxLevelOffset <> Nil
+		      IncludeLevelOverride = Entry.LevelOverride <> Nil
+		    Next
+		    For Each Entry As Beacon.SpawnPointSetEntry In Entries
+		      CreatureClasses.AddRow("""" + Entry.Creature.ClassString + """")
+		      
+		      If IncludeLevels Then
+		        Var Levels() As Beacon.SpawnPointLevel = Entry.Levels
+		        Var MinLevels(), MaxLevels(), Difficulties() As String
+		        For Each Level As Beacon.SpawnPointLevel In Levels
+		          MinLevels.AddRow(Level.MinLevel.PrettyText)
+		          MaxLevels.AddRow(Level.MaxLevel.PrettyText)
+		          Difficulties.AddRow(Level.Difficulty.PrettyText)
+		        Next
+		        LevelMembers.AddRow("(EnemyLevelsMin=(" + MinLevels.Join(",") + "),EnemyLevelsMax=(" + MaxLevels.Join(",") + "),GameDifficulties=(" + Difficulties.Join(",") + "))")
+		      End If
+		      If IncludeOffsets Then
+		        Var Offset As Beacon.Point3D = Entry.Offset
+		        If Offset <> Nil Then
+		          OffsetMembers.AddRow("(X=" + Offset.X.PrettyText + ",Y=" + Offset.Y.PrettyText + ",Z=" + Offset.Z.PrettyText + ")")
+		        Else
+		          OffsetMembers.AddRow("(X=0.0,Y=0.0,Z=0.0)")
+		        End If
+		      End If
+		      If IncludeSpawnChance Then
+		        Var Chance As Double = If(Entry.SpawnChance <> Nil, Entry.SpawnChance.Value, 1.0) / SpawnSum
+		        SpawnChanceMembers.AddRow(Chance.PrettyText)
+		      End If
+		      If IncludeMinLevelMultiplier Then
+		        Var Multiplier As Double = If(Entry.MinLevelMultiplier <> Nil, Entry.MinLevelMultiplier.Value, 1.0)
+		        MinLevelMultiplierMembers.AddRow(Multiplier.PrettyText)
+		      End If
+		      If IncludeMinLevelOffset Then
+		        Var Offset As Double = If(Entry.MinLevelOffset <> Nil, Entry.MinLevelOffset.Value, 0.0)
+		        MinLevelOffsetMembers.AddRow(Offset.PrettyText)
+		      End If
+		      If IncludeMaxLevelMultiplier Then
+		        Var Multiplier As Double = If(Entry.MaxLevelMultiplier <> Nil, Entry.MaxLevelMultiplier.Value, 1.0)
+		        MaxLevelMultiplierMembers.AddRow(Multiplier.PrettyText)
+		      End If
+		      If IncludeMaxLevelOffset Then
+		        Var Offset As Double = If(Entry.MaxLevelOffset <> Nil, Entry.MaxLevelOffset.Value, 0.0)
+		        MaxLevelOffsetMembers.AddRow(Offset.PrettyText)
+		      End If
+		      If IncludeLevelOverride Then
+		        Var Override As UInt8 = Round(If(Entry.LevelOverride <> Nil, Entry.LevelOverride.Value, 1.0))
+		        LevelOverrideMembers.AddRow(Override.ToString)
+		      End If
+		    Next
+		    
+		    Var Members(2) As String
+		    Members(0) = "AnEntryName=""" + Set.Label + """"
+		    Members(1) = "EntryWeight=" + Set.Weight.PrettyText
+		    Members(2) = "NPCsToSpawnStrings=(" + CreatureClasses.Join(",") + ")"
+		    
+		    If IncludeLevels Then
+		      Members.AddRow("NPCDifficultyLevelRanges=(" + LevelMembers.Join(",") + ")")
+		    End If
+		    If IncludeOffsets Then
+		      Members.AddRow("NPCsSpawnOffsets=(" + OffsetMembers.Join(",") + ")")
+		    End If
+		    If IncludeSpawnChance Then
+		      Members.AddRow("NPCsToSpawnPercentageChance=(" + SpawnChanceMembers.Join(",") + ")")
+		    End If
+		    If IncludeMinLevelMultiplier Then
+		      Members.AddRow("NPCMinLevelMultiplier=(" + MinLevelMultiplierMembers.Join(",") + ")")
+		    End If
+		    If IncludeMinLevelOffset Then
+		      Members.AddRow("NPCMinLevelOffset=(" + MinLevelOffsetMembers.Join(",") + ")")
+		    End If
+		    If IncludeMaxLevelMultiplier Then
+		      Members.AddRow("NPCMaxLevelMultiplier=(" + MaxLevelMultiplierMembers.Join(",") + ")")
+		    End If
+		    If IncludeMaxLevelOffset Then
+		      Members.AddRow("NPCMaxLevelOffset=(" + MaxLevelOffsetMembers.Join(",") + ")")
+		    End If
+		    If IncludeLevelOverride Then
+		      Members.AddRow("NPCOverrideLevel=(" + LevelOverrideMembers.Join(",") + ")")
+		    End If
+		    
+		    If Set.SpreadRadius <> Nil Then
+		      Members.AddRow("ManualSpawnPointSpreadRadius=" + Set.SpreadRadius.Value.PrettyText)
+		    End If
+		    
+		    If Set.WaterOnlyMinimumHeight <> Nil Then
+		      Members.AddRow("WaterOnlySpawnMinimumWaterHeight=" + Set.WaterOnlyMinimumHeight.Value.PrettyText)
+		    End If
+		    
+		    RenderedEntries.AddRow("(" + Members.Join(",") + ")")
+		  Next
+		  
+		  Var Pieces() As String
+		  Pieces.AddRow("NPCSpawnEntriesContainerClassString=""" + SpawnPoint.ClassString + """")
+		  Pieces.AddRow("NPCSpawnEntries=(" + RenderedEntries.Join(",") + ")")
+		  If Limits.KeyCount > 0 Then
+		    Var LimitConfigs() As String
+		    For Each Entry As DictionaryEntry In Limits
+		      If Entry.Value.DoubleValue < 1.0 Then
+		        LimitConfigs.AddRow("(NPCClassString=""" + Beacon.Creature(Entry.Key).ClassString + """,MaxPercentageOfDesiredNumToAllow=" + Entry.Value.DoubleValue.PrettyText + ")")
+		      End If
+		    Next
+		    If LimitConfigs.LastRowIndex > -1 Then
+		      Pieces.AddRow("NPCSpawnLimits=(" + LimitConfigs.Join(",") + ")")
+		    End If
+		  End If
+		  
+		  Return New Beacon.ConfigValue(Beacon.ShooterGameHeader, Config, "(" + Pieces.Join(",") + ")")
 		End Function
 	#tag EndMethod
 
