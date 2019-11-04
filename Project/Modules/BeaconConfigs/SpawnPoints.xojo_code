@@ -138,12 +138,16 @@ Implements Iterable
 		    If Limits.KeyCount > 0 Then
 		      Var LimitConfigs() As String
 		      For Each Entry As DictionaryEntry In Limits
-		        LimitConfigs.AddRow("(NPCClassString=""" + Beacon.Creature(Entry.Key).ClassString + """,MaxPercentageOfDesiredNumToAllow=" + Entry.Value.DoubleValue.PrettyText + ")")
+		        If Entry.Value.DoubleValue < 1.0 Then
+		          LimitConfigs.AddRow("(NPCClassString=""" + Beacon.Creature(Entry.Key).ClassString + """,MaxPercentageOfDesiredNumToAllow=" + Entry.Value.DoubleValue.PrettyText + ")")
+		        End If
 		      Next
-		      Pieces.AddRow("NPCSpawnLimits=(" + LimitConfigs.Join(",") + ")")
+		      If LimitConfigs.LastRowIndex > -1 Then
+		        Pieces.AddRow("NPCSpawnLimits=(" + LimitConfigs.Join(",") + ")")
+		      End If
 		    End If
 		    
-		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, Config, Config + "=(" + Pieces.Join(",") + ")"))
+		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, Config, "(" + Pieces.Join(",") + ")"))
 		  Next
 		End Sub
 	#tag EndEvent

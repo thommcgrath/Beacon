@@ -161,6 +161,33 @@ Begin ConfigEditor SpawnPointsConfigEditor
       Visible         =   True
       Width           =   250
    End
+   Begin FadedSeparator MainSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   548
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   250
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   1
+   End
 End
 #tag EndWindow
 
@@ -281,6 +308,24 @@ End
 		  Me.LeftItems.Append(DuplicateButton)
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub Pressed(Item As BeaconToolbarItem)
+		  If Item.Name = "AddButton" Then
+		    Var SpawnPoints() As Beacon.SpawnPoint = AddSpawnPointDialog.Present(Self, Self.Document)
+		    If SpawnPoints.LastRowIndex = -1 Then
+		      Return
+		    End If
+		    
+		    Var Config As BeaconConfigs.SpawnPoints = Self.Config(True)
+		    For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
+		      Config.Append(SpawnPoint)
+		    Next
+		    
+		    Self.Changed = Config.Modified
+		    Self.UpdateList(SpawnPoints)
+		  End If
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events List
 	#tag Event
@@ -290,6 +335,30 @@ End
 		  End If
 		  
 		  Self.UpdateStatus()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
+		  If Warn Then
+		    
+		  End If
+		  
+		  Var Bound As Integer = Me.RowCount - 1
+		  Var Config As BeaconConfigs.SpawnPoints = Self.Config(True)
+		  For I As Integer = 0 To Bound
+		    If Me.Selected(I) Then
+		      Var SpawnPoint As Beacon.SpawnPoint = Me.RowTagAt(I)
+		      Config.Remove(SpawnPoint)
+		    End If
+		  Next
+		  
+		  Self.UpdateList()
+		  Self.Changed = Config.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
