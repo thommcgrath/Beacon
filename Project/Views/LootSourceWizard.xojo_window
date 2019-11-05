@@ -1406,6 +1406,14 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDefineLabelEditingAutomatically As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDefineLabelWasEditedByUser As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDestinations() As Beacon.MutableLootSource
 	#tag EndProperty
 
@@ -1663,6 +1671,26 @@ End
 		    Self.ShowDefine(Self.mDestinations(0))
 		  Else
 		    Self.ShowSelect()
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DefineNameField
+	#tag Event
+		Sub TextChanged()
+		  If Not Self.mDefineLabelEditingAutomatically Then
+		    Self.mDefineLabelWasEditedByUser = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DefineClassField
+	#tag Event
+		Sub TextChanged()
+		  If Not Self.mDefineLabelWasEditedByUser Then
+		    Self.mDefineLabelEditingAutomatically = True
+		    Self.DefineNameField.Value = Beacon.LabelFromClassString(Me.Value)
+		    Self.mDefineLabelEditingAutomatically = False
 		  End If
 		End Sub
 	#tag EndEvent

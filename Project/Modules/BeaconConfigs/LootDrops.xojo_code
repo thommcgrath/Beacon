@@ -359,7 +359,7 @@ Implements Iterable
 	#tag EndProperty
 
 
-	#tag Constant, Name = ConfigKey, Type = Text, Dynamic = False, Default = \"LootDrops", Scope = Private
+	#tag Constant, Name = ConfigKey, Type = String, Dynamic = False, Default = \"LootDrops", Scope = Private
 	#tag EndConstant
 
 

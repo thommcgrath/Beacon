@@ -415,6 +415,12 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsUnknown(Extends Blueprint As Beacon.Blueprint) As Boolean
+		  Return Blueprint.Path.BeginsWith(UnknownBlueprintPrefix)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Label(Extends Maps() As Beacon.Map) As String
 		  Dim Names() As String
 		  For Each Map As Beacon.Map In Maps
@@ -437,21 +443,73 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function LabelFromClassString(ClassString As String) As String
-		  Dim Parts() As String = ClassString.Split("_")
-		  If Parts.LastRowIndex <= 1 Then
-		    Return ClassString
+		  If ClassString.EndsWith("_C") Then
+		    ClassString = ClassString.Left(ClassString.Length - 2)
 		  End If
-		  If ClassString.IndexOf("PrimalItem") > -1 Then
-		    Parts.RemoveRowAt(0)
-		    Parts.RemoveRowAt(Parts.LastRowIndex)
-		  ElseIf ClassString.IndexOf("Character") > -1 Then
+		  
+		  Var Prefixes() As String = Array("DinoDropInventoryComponent", "DinoSpawnEntries")
+		  Var Blacklist() As String = Array("Character", "BP", "DinoSpawnEntries", "SupplyCrate", "SupplyCreate", "DinoDropInventoryComponent")
+		  
+		  Try
+		    ClassString = ClassString.Replace("T_Ext", "Ext")
+		    
+		    Var MapName As String
+		    
+		    Var Parts() As String = ClassString.Split("_")
+		    If Parts(0).BeginsWith("PrimalItem") Then
+		      Parts.RemoveRowAt(0)
+		    End If
+		    
 		    For I As Integer = Parts.LastRowIndex DownTo 0
-		      If Parts(I) = "C" Or Parts(I) = "BP" Or Parts(I) = "Character" Then
+		      Select Case Parts(I)
+		      Case "AB"
+		        MapName = "Aberration"
 		        Parts.RemoveRowAt(I)
-		      End If
+		        Continue
+		      Case "Val"
+		        MapName = "Valguero"
+		        Parts.RemoveRowAt(I)
+		        Continue
+		      Case "SE"
+		        MapName = "Scorched"
+		        Parts.RemoveRowAt(I)
+		        Continue
+		      Case "Ext", "EX"
+		        MapName = "Extinction"
+		        Parts.RemoveRowAt(I)
+		        Continue
+		      Case "JacksonL", "Ragnarok"
+		        MapName = "Ragnarok"
+		        Parts.RemoveRowAt(I)
+		        Continue
+		      Case "TheCenter"
+		        MapName = "The Center"
+		        Parts.RemoveRowAt(I)
+		        Continue
+		      End Select
+		      
+		      For Each Prefix As String In Prefixes
+		        If Parts(I).BeginsWith(Prefix) Then
+		          Parts(I) = Parts(I).Middle(Prefix.Length)
+		        End If
+		      Next
+		      
+		      For Each Member As String In Blacklist
+		        If Parts(I) = Member Then
+		          Parts.RemoveRowAt(I)
+		          Continue For I
+		        End If
+		      Next
 		    Next
-		  End If
-		  Return Beacon.MakeHumanReadable(Parts.Join(" "))
+		    
+		    If MapName <> "" Then
+		      Parts.AddRowAt(0, MapName)
+		    End If
+		    
+		    Return Beacon.MakeHumanReadable(Parts.Join(" "))
+		  Catch Err As RuntimeException
+		    Return Beacon.MakeHumanReadable(ClassString)
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -805,6 +863,19 @@ Protected Module Beacon
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function UnknownBlueprintPath(FolderName As String, ClassString As String) As String
+		  Var ClassName As String
+		  If ClassString.EndsWith("_C") Then
+		    ClassName = ClassString.Left(ClassString.Length - 2)
+		  Else
+		    ClassName = ClassString
+		  End If
+		  
+		  Return UnknownBlueprintPrefix + FolderName + "/" + ClassName + "." + ClassName
+		End Function
+	#tag EndMethod
+
 	#tag DelegateDeclaration, Flags = &h1
 		Protected Delegate Function URLHandler(URL As String) As Boolean
 	#tag EndDelegateDeclaration
@@ -899,6 +970,9 @@ Protected Module Beacon
 	#tag EndConstant
 
 	#tag Constant, Name = ShooterGameHeader, Type = String, Dynamic = False, Default = \"/script/shootergame.shootergamemode", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = UnknownBlueprintPrefix, Type = String, Dynamic = False, Default = \"/Game/BeaconUserBlueprints/", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = URLScheme, Type = String, Dynamic = False, Default = \"beacon", Scope = Protected
