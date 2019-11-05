@@ -381,6 +381,14 @@ End
 	#tag Event
 		Sub Opening()
 		  Self.SwapButtons()
+		  
+		  If Self.mUIMode = Self.UIModeDuplicate Then
+		    Self.ModeLabel.Visible = False
+		    Self.ModeMenu.Visible = False
+		    Self.LoadDefaultsCheck.Visible = False
+		    Self.List.Height = Self.List.Height + (Self.ModeMenu.Bottom - Self.List.Bottom)
+		  End If
+		  
 		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent
@@ -396,10 +404,11 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Document As Beacon.Document)
+		Private Sub Constructor(Document As Beacon.Document, UIMode As Integer)
 		  Self.mMods = Document.Mods
 		  Self.mAvailability = Document.MapCompatibility
 		  Self.mDefinedSpawns = New Dictionary
+		  Self.mUIMode = UIMode
 		  
 		  If Document.HasConfigGroup(BeaconConfigs.SpawnPoints.ConfigName) Then
 		    Var Config As BeaconConfigs.SpawnPoints = BeaconConfigs.SpawnPoints(Document.ConfigGroup(BeaconConfigs.SpawnPoints.ConfigName, False))
@@ -416,8 +425,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Document As Beacon.Document) As Beacon.SpawnPoint()
-		  Var Win As New AddSpawnPointDialog(Document)
+		Shared Function Present(Parent As Window, Document As Beacon.Document, UIMode As Integer = UIModeAdd) As Beacon.SpawnPoint()
+		  Var Win As New AddSpawnPointDialog(Document, UIMode)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  Var SpawnPoints() As Beacon.SpawnPoint = Win.mSelectedPoints
@@ -527,11 +536,21 @@ End
 		Private mSelectedPoints() As Beacon.SpawnPoint
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mUIMode As Integer
+	#tag EndProperty
+
 
 	#tag Constant, Name = FilterModeCreature, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = FilterModeSpawnPoint, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = UIModeAdd, Type = Double, Dynamic = False, Default = \"0", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = UIModeDuplicate, Type = Double, Dynamic = False, Default = \"1", Scope = Public
 	#tag EndConstant
 
 

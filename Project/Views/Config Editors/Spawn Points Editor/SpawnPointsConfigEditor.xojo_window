@@ -301,12 +301,11 @@ End
 		    Self.List.Selected(I) = Selected.HasKey(SpawnPoints(I).ObjectID)
 		  Next
 		  
-		  Self.List.SortingColumn = 0
-		  Self.List.Sort
-		  
 		  Self.UpdateStatus()
+		  Self.List.SortingColumn = 0
 		  
 		  Self.SettingUp = False
+		  Self.List.Sort
 		End Sub
 	#tag EndMethod
 
@@ -347,7 +346,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Pressed(Item As BeaconToolbarItem)
-		  If Item.Name = "AddButton" Then
+		  Select Case Item.Name
+		  Case "AddButton"
 		    Var SpawnPoints() As Beacon.SpawnPoint = AddSpawnPointDialog.Present(Self, Self.Document)
 		    If SpawnPoints.LastRowIndex = -1 Then
 		      Return
@@ -360,7 +360,26 @@ End
 		    
 		    Self.Changed = Config.Modified
 		    Self.UpdateList(SpawnPoints)
-		  End If
+		  Case "DuplicateButton"
+		    Var TargetSpawnPoints() As Beacon.SpawnPoint = AddSpawnPointDialog.Present(Self, Self.Document, AddSpawnPointDialog.UIModeDuplicate)
+		    If TargetSpawnPoints.LastRowIndex = -1 Then
+		      Return
+		    End If
+		    
+		    Var SourceSpawnPoint As Beacon.SpawnPoint = Self.List.RowTagAt(Self.List.SelectedRowIndex)
+		    Var SourceLimits As String = SourceSpawnPoint.LimitsString
+		    Var SourceSets As String = SourceSpawnPoint.SetsString
+		    Var Config As BeaconConfigs.SpawnPoints = Self.Config(True)
+		    For Each Target As Beacon.SpawnPoint In TargetSpawnPoints
+		      Var SpawnPoint As New Beacon.MutableSpawnPoint(Target)
+		      SpawnPoint.LimitsString = SourceLimits
+		      SpawnPoint.SetsString = SourceSets
+		      Config.Append(SpawnPoint.ImmutableVersion)
+		    Next
+		    
+		    Self.Changed = Config.Modified
+		    Self.UpdateList(TargetSpawnPoints)
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -371,6 +390,7 @@ End
 		    Return
 		  End If
 		  
+		  Self.ControlToolbar.DuplicateButton.Enabled = Me.SelectedRowCount = 1
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndEvent

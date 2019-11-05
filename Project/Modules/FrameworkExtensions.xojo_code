@@ -50,6 +50,12 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Bottom(Extends Ctl As RectControl) As Integer
+		  Return Ctl.Top + Ctl.Height
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Characters(Extends Source As String) As String()
 		  Return Source.Split("")
 		End Function
@@ -378,6 +384,12 @@ Protected Module FrameworkExtensions
 		Sub Right(Extends Target As MemoryBlock, Length As UInteger, Assigns NewData As MemoryBlock)
 		  Target.Middle(Target.Size - Length, Length) = NewData
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Right(Extends Ctl As RectControl) As Integer
+		  Return Ctl.Left + Ctl.Width
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
