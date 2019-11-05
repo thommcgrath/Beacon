@@ -297,12 +297,7 @@ End
 		  
 		  Var Config As BeaconConfigs.SpawnPoints = Self.Config(True)
 		  For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
-		    Var Idx As Integer = Config.IndexOf(SpawnPoint)
-		    If Idx = -1 Then
-		      Config.ResizeTo(Config.LastRowIndex + 1)
-		      Idx = Config.LastRowIndex
-		    End If
-		    Config(Idx) = SpawnPoint
+		    Config.Add(SpawnPoint)
 		  Next
 		  
 		  Self.Changed = Config.Modified
@@ -422,7 +417,7 @@ End
 		    
 		    Var Config As BeaconConfigs.SpawnPoints = Self.Config(True)
 		    For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
-		      Config.Append(SpawnPoint)
+		      Config.Add(SpawnPoint)
 		    Next
 		    
 		    Self.Changed = Config.Modified
@@ -441,7 +436,7 @@ End
 		      Var SpawnPoint As New Beacon.MutableSpawnPoint(Target)
 		      SpawnPoint.LimitsString = SourceLimits
 		      SpawnPoint.SetsString = SourceSets
-		      Config.Append(SpawnPoint.ImmutableVersion)
+		      Config.Add(SpawnPoint)
 		    Next
 		    
 		    Self.Changed = Config.Modified
@@ -463,6 +458,15 @@ End
 		    Return
 		  End If
 		  
+		  Var SpawnPoints() As Beacon.SpawnPoint
+		  Var Bound As Integer = Me.RowCount - 1
+		  For I As Integer = 0 To Bound
+		    If Me.Selected(I) Then
+		      SpawnPoints.AddRow(Me.RowTagAt(I))
+		    End If
+		  Next
+		  
+		  Self.Editor.SpawnPoints = SpawnPoints
 		  Self.ControlToolbar.DuplicateButton.Enabled = Me.SelectedRowCount = 1
 		  Self.UpdateStatus()
 		End Sub
@@ -563,6 +567,13 @@ End
 		  ElseIf Board.TextAvailable Then
 		    Self.Parse(Board.Text, "Clipboard")
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Editor
+	#tag Event
+		Sub ContentsChanged()
+		  Self.Changed = Self.Changed Or Self.Config(False).Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents

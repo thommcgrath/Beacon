@@ -6,7 +6,9 @@ Implements Iterable
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
 		  #Pragma Unused SourceDocument
 		  
-		  For Each SpawnPoint As Beacon.SpawnPoint In Self.mSpawnPoints
+		  For Each Entry As DictionaryEntry In Self.mSpawnPoints
+		    Var SpawnPoint As Beacon.SpawnPoint = Entry.Value
+		    
 		    If Not SpawnPoint.ValidForMask(Profile.Mask) Then
 		      Continue
 		    End If
@@ -42,7 +44,7 @@ Implements Iterable
 		    For Each PointData As Dictionary In Points
 		      Var SpawnPoint As Beacon.SpawnPoint = Beacon.SpawnPoint.FromSaveData(PointData)
 		      If SpawnPoint <> Nil Then
-		        Self.mSpawnPoints.AddRow(SpawnPoint)
+		        Self.mSpawnPoints.Value(SpawnPoint.Path) = SpawnPoint
 		      End If
 		    Next
 		  Catch Err As RuntimeException
@@ -55,8 +57,8 @@ Implements Iterable
 		  #Pragma Unused Document
 		  
 		  Var Points() As Dictionary
-		  For Each SpawnPoint As Beacon.SpawnPoint In Self.mSpawnPoints
-		    Points.AddRow(SpawnPoint.SaveData)
+		  For Each Entry As DictionaryEntry In Self.mSpawnPoints
+		    Points.AddRow(Beacon.SpawnPoint(Entry.Value).SaveData)
 		  Next
 		  Dict.Value("Points") = Points
 		End Sub
@@ -64,23 +66,20 @@ Implements Iterable
 
 
 	#tag Method, Flags = &h0
-		Function All() As Beacon.SpawnPoint()
-		  Var Arr() As Beacon.SpawnPoint
-		  Arr.ResizeTo(Self.mSpawnPoints.LastRowIndex)
-		  For I As Integer = 0 To Self.mSpawnPoints.LastRowIndex
-		    Arr(I) = Self.mSpawnPoints(I).ImmutableVersion
-		  Next
-		  Return Arr
-		End Function
+		Sub Add(SpawnPoint As Beacon.SpawnPoint)
+		  Self.mSpawnPoints.Value(SpawnPoint.Path) = SpawnPoint.ImmutableVersion
+		  Self.Modified = True
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Append(SpawnPoint As Beacon.SpawnPoint)
-		  If Self.IndexOf(SpawnPoint) = -1 Then
-		    Self.mSpawnPoints.AddRow(SpawnPoint)
-		    Self.Modified = True
-		  End If
-		End Sub
+		Function All() As Beacon.SpawnPoint()
+		  Var Arr() As Beacon.SpawnPoint
+		  For Each Entry As DictionaryEntry In Self.mSpawnPoints
+		    Arr.AddRow(Beacon.SpawnPoint(Entry.Value).ImmutableVersion)
+		  Next
+		  Return Arr
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -235,8 +234,16 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.mSpawnPoints = New Dictionary
+		  Super.Constructor
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return Self.mSpawnPoints.LastRowIndex + 1
+		  Return Self.mSpawnPoints.KeyCount
 		End Function
 	#tag EndMethod
 
@@ -250,7 +257,7 @@ Implements Iterable
 		  HandleConfig(SpawnPoints, ParsedData, "ConfigOverrideNPCSpawnEntriesContainer")
 		  HandleConfig(SpawnPoints, ParsedData, "ConfigAddNPCSpawnEntriesContainer")
 		  HandleConfig(SpawnPoints, ParsedData, "ConfigSubtractNPCSpawnEntriesContainer")
-		  If SpawnPoints.LastRowIndex > -1 Then
+		  If SpawnPoints.Count > 0 Then
 		    Return SpawnPoints
 		  End If
 		End Function
@@ -269,6 +276,7 @@ Implements Iterable
 		    Dicts.AddRow(ParsedData.Value(ConfigKey))
 		  End Try
 		  
+		  Var SpawnClasses As New Dictionary
 		  For Each Obj As Variant In Dicts
 		    If IsNull(Obj) Or Obj.Type <> Variant.TypeObject Or (Obj IsA Dictionary) = False Then
 		      Continue
@@ -281,23 +289,16 @@ Implements Iterable
 		        Continue
 		      End If
 		      
-		      Var ClassString As String = Dict.Value("NPCSpawnEntriesContainerClassString")
-		      Var Idx As Integer = -1
-		      For I As Integer = 0 To SpawnPoints.mSpawnPoints.LastRowIndex
-		        If SpawnPoints.mSpawnPoints(I) <> Nil And SpawnPoints.mSpawnPoints(I).ClassString = ClassString Then
-		          Idx = I
-		          Exit For I
-		        End If
-		      Next
-		      
 		      Var SpawnPoint As Beacon.SpawnPoint
-		      If Idx = -1 Then
+		      Var ClassString As String = Dict.Value("NPCSpawnEntriesContainerClassString")
+		      If SpawnClasses.HasKey(ClassString) Then
+		        SpawnPoint = SpawnPoints.mSpawnPoints.Value(SpawnClasses.Value(ClassString))
+		      Else
 		        SpawnPoint = Beacon.Data.GetSpawnPointByClass(ClassString)
 		        If SpawnPoint = Nil Then
 		          Continue
 		        End If
-		      Else
-		        SpawnPoint = SpawnPoints.mSpawnPoints(Idx)
+		        SpawnClasses.Value(ClassString) = SpawnPoint.Path
 		      End If
 		      
 		      Var Clone As Beacon.MutableSpawnPoint = SpawnPoint.MutableVersion
@@ -421,11 +422,7 @@ Implements Iterable
 		        Next
 		      End If
 		      
-		      If Idx = -1 Then
-		        SpawnPoints.mSpawnPoints.AddRow(Clone.ImmutableVersion)
-		      Else
-		        SpawnPoints.mSpawnPoints(Idx) = Clone.ImmutableVersion
-		      End If
+		      SpawnPoints.mSpawnPoints.Value(Clone.Path) = Clone.ImmutableVersion
 		    Catch Err As RuntimeException
 		    End Try
 		  Next
@@ -433,13 +430,12 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IndexOf(SpawnPoint As Beacon.SpawnPoint) As Integer
-		  For I As Integer = 0 To Self.mSpawnPoints.LastRowIndex
-		    If Self.mSpawnPoints(I).ClassString = SpawnPoint.ClassString Then
-		      Return I
-		    End If
-		  Next
-		  Return -1
+		Function HasSpawnPoint(SpawnPoint As Beacon.SpawnPoint) As Boolean
+		  If SpawnPoint = Nil Then
+		    Return False
+		  End If
+		  
+		  Return Self.mSpawnPoints.HasKey(SpawnPoint.Path)
 		End Function
 	#tag EndMethod
 
@@ -448,51 +444,25 @@ Implements Iterable
 		  // Part of the Iterable interface.
 		  
 		  Var Points() As Variant
-		  For Each SpawnPoint As Beacon.SpawnPoint In Self.mSpawnPoints
-		    Points.AddRow(SpawnPoint)
+		  For Each Entry As DictionaryEntry In Self.mSpawnPoints
+		    Points.AddRow(Beacon.SpawnPoint(Entry.Value).ImmutableVersion)
 		  Next
 		  Return New Beacon.GenericIterator(Points)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LastRowIndex() As Integer
-		  Return Self.mSpawnPoints.LastRowIndex
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Operator_Subscript(Idx As Integer) As Beacon.SpawnPoint
-		  Return Self.mSpawnPoints(Idx)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Operator_Subscript(Idx As Integer, Assigns SpawnPoint As Beacon.SpawnPoint)
-		  Self.mSpawnPoints(Idx) = SpawnPoint
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Remove(SpawnPoint As Beacon.SpawnPoint)
-		  Var Idx As Integer = Self.IndexOf(SpawnPoint)
-		  If Idx > -1 Then
-		    Self.Remove(Idx)
+		  If Self.HasSpawnPoint(SpawnPoint) Then
+		    Self.mSpawnPoints.Remove(SpawnPoint.Path)
+		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Remove(Idx As Integer)
-		  Self.mSpawnPoints.RemoveRowAt(Idx)
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ResizeTo(NewBound As Integer)
-		  Self.mSpawnPoints.ResizeTo(NewBound)
+		Sub RemoveAll()
+		  Self.mSpawnPoints = New Dictionary
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -620,7 +590,7 @@ Implements Iterable
 
 
 	#tag Property, Flags = &h21
-		Private mSpawnPoints() As Beacon.SpawnPoint
+		Private mSpawnPoints As Dictionary
 	#tag EndProperty
 
 

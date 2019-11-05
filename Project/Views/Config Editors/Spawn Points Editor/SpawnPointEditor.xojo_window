@@ -10,7 +10,7 @@ Begin BeaconContainer SpawnPointEditor
    Enabled         =   True
    EraseBackground =   True
    HasBackgroundColor=   False
-   Height          =   300
+   Height          =   664
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -24,11 +24,133 @@ Begin BeaconContainer SpawnPointEditor
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   300
+   Width           =   906
+   Begin PagePanel Pages
+      AllowAutoDeactivate=   True
+      Enabled         =   True
+      Height          =   664
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      PanelCount      =   2
+      Panels          =   ""
+      Scope           =   2
+      SelectedPanelIndex=   0
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   False
+      Value           =   0
+      Visible         =   True
+      Width           =   906
+      Begin StatusBar EmptyStatusBar
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         Borders         =   1
+         Caption         =   ""
+         Enabled         =   True
+         Height          =   21
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   2
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   643
+         Transparent     =   True
+         Visible         =   True
+         Width           =   906
+      End
+      Begin LogoFillCanvas EmptyFillCanvas
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         Caption         =   "No Selection"
+         Enabled         =   True
+         Height          =   643
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   3
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   906
+      End
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Method, Flags = &h0
+		Function SpawnPoints() As Beacon.SpawnPoint
+		  Var Points() As Beacon.SpawnPoint
+		  Points.ResizeTo(Self.mSpawnPoints.LastRowIndex)
+		  For I As Integer = 0 To Self.mSpawnPoints.LastRowIndex
+		    Points(I) = Self.mSpawnPoints(I).ImmutableVersion
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SpawnPoints(Assigns Points() As Beacon.SpawnPoint)
+		  If Points = Nil Then
+		    Self.mSpawnPoints.ResizeTo(-1)
+		  Else
+		    Self.mSpawnPoints.ResizeTo(Points.LastRowIndex)
+		    For I As Integer = 0 To Points.LastRowIndex
+		      Self.mSpawnPoints(I) = Points(I).MutableVersion
+		    Next
+		  End If
+		  
+		  Self.UpdateUI
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateUI()
+		  If Self.mSpawnPoints.LastRowIndex = -1 Then
+		    Self.Pages.SelectedPanelIndex = 0
+		    Return
+		  End If
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mSpawnPoints() As Beacon.MutableSpawnPoint
+	#tag EndProperty
+
+
 	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"300", Scope = Public
 	#tag EndConstant
 
