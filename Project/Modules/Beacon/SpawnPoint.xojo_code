@@ -89,6 +89,8 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  SpawnPoint.mPath = Beacon.UnknownBlueprintPath("SpawnPoints", ClassString)
 		  SpawnPoint.mObjectID = v4UUID.FromHash(Crypto.Algorithm.MD5, SpawnPoint.mPath.Lowercase)
 		  SpawnPoint.mLabel = Beacon.LabelFromClassString(ClassString)
+		  SpawnPoint.mModID = LocalData.UserModID
+		  SpawnPoint.mModName = LocalData.UserModName
 		  Return SpawnPoint
 		End Function
 	#tag EndMethod
