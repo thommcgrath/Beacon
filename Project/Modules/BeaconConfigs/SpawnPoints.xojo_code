@@ -84,7 +84,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Shared Function ConfigName() As String
-		  Return "SpawnPoints"
+		  Return ConfigKey
 		End Function
 	#tag EndMethod
 
@@ -296,7 +296,7 @@ Implements Iterable
 		      Else
 		        SpawnPoint = Beacon.Data.GetSpawnPointByClass(ClassString)
 		        If SpawnPoint = Nil Then
-		          Continue
+		          SpawnPoint = Beacon.SpawnPoint.CreateUnknown(ClassString)
 		        End If
 		        SpawnClasses.Value(ClassString) = SpawnPoint.Path
 		      End If
@@ -593,6 +593,9 @@ Implements Iterable
 		Private mSpawnPoints As Dictionary
 	#tag EndProperty
 
+
+	#tag Constant, Name = ConfigKey, Type = String, Dynamic = False, Default = \"SpawnPoints", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = ModeAdd, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
