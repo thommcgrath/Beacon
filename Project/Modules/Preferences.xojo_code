@@ -409,6 +409,22 @@ Protected Module Preferences
 		Protected SourcesSplitterPosition As Integer
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.IntegerValue("Spawn Points Splitter Position", 250)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("Spawn Points Splitter Position") = Value
+			End Set
+		#tag EndSetter
+		Protected SpawnPointsSplitterPosition As Integer
+	#tag EndComputedProperty
+
 
 	#tag Constant, Name = Notification_OnlineStateChanged, Type = Text, Dynamic = False, Default = \"Online State Changed", Scope = Protected
 	#tag EndConstant

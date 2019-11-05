@@ -188,6 +188,35 @@ Begin ConfigEditor SpawnPointsConfigEditor
       Visible         =   True
       Width           =   1
    End
+   Begin SpawnPointEditor Editor
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackgroundColor=   False
+      Height          =   548
+      InitialParent   =   ""
+      Left            =   251
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   729
+   End
 End
 #tag EndWindow
 
@@ -201,6 +230,18 @@ End
 		  End If
 		  
 		  Self.HandlePastedSpawnPoints(ParsedConfig.All)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resize(Initial As Boolean)
+		  If Initial Then
+		    Self.SetListWidth(Preferences.SpawnPointsSplitterPosition)
+		  Else
+		    Self.SetListWidth(Self.ControlToolbar.Width)
+		  End If
+		  
+		  Self.ControlToolbar.ResizerEnabled = Self.Width > Self.MinimumWidth
 		End Sub
 	#tag EndEvent
 
@@ -270,6 +311,29 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub SetListWidth(NewSize As Integer)
+		  If Self.Width < Self.MinimumWidth Then
+		    // Don't compute anything
+		    Return
+		  End If
+		  
+		  Dim AvailableSpace As Integer = Self.Width - Self.MainSeparator.Width
+		  Dim ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - SpawnPointEditor.MinimumWidth)
+		  Dim EditorWidth As Integer = AvailableSpace - ListWidth
+		  
+		  Self.ControlToolbar.Width = ListWidth
+		  Self.MainSeparator.Left = ListWidth
+		  Self.List.Width = ListWidth
+		  Self.ControlToolbarSeparator.Width = ListWidth
+		  Self.ListStatus.Width = ListWidth
+		  Self.Editor.Left = Self.MainSeparator.Left + Self.MainSeparator.Width
+		  Self.Editor.Width = EditorWidth
+		  
+		  Preferences.SpawnPointsSplitterPosition = ListWidth
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateList()
 		  Var SpawnPoints() As Beacon.SpawnPoint
 		  Var Bound As Integer = Self.List.RowCount - 1
@@ -328,6 +392,9 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.spawnpoint", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"250", Scope = Public
+	#tag EndConstant
+
 
 #tag EndWindowCode
 
@@ -380,6 +447,12 @@ End
 		    Self.Changed = Config.Modified
 		    Self.UpdateList(TargetSpawnPoints)
 		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(ByRef NewSize As Integer)
+		  Self.SetListWidth(NewSize)
+		  NewSize = Me.Width
 		End Sub
 	#tag EndEvent
 #tag EndEvents
