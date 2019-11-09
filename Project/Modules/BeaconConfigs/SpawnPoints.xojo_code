@@ -120,11 +120,11 @@ Implements Iterable
 		      Else
 		        SpawnSum = SpawnSum + 1.0
 		      End If
-		      IncludeMinLevelMultiplier = Entry.MinLevelMultiplier <> Nil
-		      IncludeMinLevelOffset = Entry.MinLevelOffset <> Nil
-		      IncludeMaxLevelMultiplier = Entry.MaxLevelMultiplier <> Nil
-		      IncludeMaxLevelOffset = Entry.MaxLevelOffset <> Nil
-		      IncludeLevelOverride = Entry.LevelOverride <> Nil
+		      IncludeMinLevelMultiplier = IncludeMinLevelMultiplier Or Entry.MinLevelMultiplier <> Nil
+		      IncludeMinLevelOffset = IncludeMinLevelOffset Or Entry.MinLevelOffset <> Nil
+		      IncludeMaxLevelMultiplier = IncludeMaxLevelMultiplier Or Entry.MaxLevelMultiplier <> Nil
+		      IncludeMaxLevelOffset = IncludeMaxLevelOffset Or Entry.MaxLevelOffset <> Nil
+		      IncludeLevelOverride = IncludeLevelOverride Or Entry.LevelOverride <> Nil
 		    Next
 		    For Each Entry As Beacon.SpawnPointSetEntry In Entries
 		      CreatureClasses.AddRow("""" + Entry.Creature.ClassString + """")
@@ -209,6 +209,18 @@ Implements Iterable
 		    
 		    If Set.WaterOnlyMinimumHeight <> Nil Then
 		      Members.AddRow("WaterOnlySpawnMinimumWaterHeight=" + Set.WaterOnlyMinimumHeight.Value.PrettyText)
+		    End If
+		    
+		    If Set.MinDistanceFromStructuresMultiplier <> Nil Then
+		      Members.AddRow("SpawnMinDistanceFromStructuresMultiplier=" + Set.MinDistanceFromStructuresMultiplier.Value.PrettyText)
+		    End If
+		    
+		    If Set.MinDistanceFromPlayersMultiplier <> Nil Then
+		      Members.AddRow("SpawnMinDistanceFromPlayersMultiplier=" + Set.MinDistanceFromPlayersMultiplier.Value.PrettyText)
+		    End If
+		    
+		    If Set.MinDistanceFromTamedDinosMultiplier <> Nil Then
+		      Members.AddRow("SpawnMinDistanceFromTamedDinosMultiplier=" + Set.MinDistanceFromTamedDinosMultiplier.Value.PrettyText)
 		    End If
 		    
 		    RenderedEntries.AddRow("(" + Members.Join(",") + ")")
@@ -402,6 +414,18 @@ Implements Iterable
 		            Set.WaterOnlyMinimumHeight = Entry.Value("WaterOnlySpawnMinimumWaterHeight").DoubleValue
 		          End If
 		          
+		          If Entry.HasKey("SpawnMinDistanceFromStructuresMultiplier") Then
+		            Set.MinDistanceFromStructuresMultiplier = Entry.Value("SpawnMinDistanceFromStructuresMultiplier").DoubleValue
+		          End If
+		          
+		          If Entry.HasKey("SpawnMinDistanceFromPlayersMultiplier") Then
+		            Set.MinDistanceFromPlayersMultiplier = Entry.Value("SpawnMinDistanceFromPlayersMultiplier").DoubleValue
+		          End If
+		          
+		          If Entry.HasKey("SpawnMinDistanceFromTamedDinosMultiplier") Then
+		            Set.MinDistanceFromTamedDinosMultiplier = Entry.Value("SpawnMinDistanceFromTamedDinosMultiplier").DoubleValue
+		          End If
+		          
 		          If Set.Count > 0 Then
 		            Clone.AddSet(Set)
 		          End If
@@ -542,7 +566,10 @@ Implements Iterable
 		                        5.000000
 		                    )
 		                )
-		            )
+		            ),
+		            SpawnMinDistanceFromStructuresMultiplier=1.0,
+		            SpawnMinDistanceFromPlayersMultiplier=1.0,
+		            SpawnMinDistanceFromTamedDinosMultiplier=1.0
 		        )
 		    ),
 		    NPCSpawnLimits=(
@@ -567,7 +594,6 @@ Implements Iterable
 		        1.0
 		    )
 		)
-		
 		
 	#tag EndNote
 

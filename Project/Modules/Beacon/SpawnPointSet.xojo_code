@@ -1,6 +1,6 @@
 #tag Class
 Protected Class SpawnPointSet
-Implements Beacon.DocumentItem, Beacon.Countable
+Implements Beacon.DocumentItem,Beacon.Countable
 	#tag Method, Flags = &h0
 		Function Clone() As Beacon.SpawnPointSet
 		  Var Clone As New Beacon.SpawnPointSet(Self)
@@ -135,6 +135,18 @@ Implements Beacon.DocumentItem, Beacon.Countable
 		    Set.WaterOnlyMinimumHeight = SaveData.Value("WaterOnlyMinimumHeight").DoubleValue
 		  End If
 		  
+		  If SaveData.HasKey("MinDistanceFromPlayersMultiplier") Then
+		    Set.MinDistanceFromPlayersMultiplier = SaveData.Value("MinDistanceFromPlayersMultiplier").DoubleValue
+		  End If
+		  
+		  If SaveData.HasKey("MinDistanceFromStructuresMultiplier") Then
+		    Set.MinDistanceFromStructuresMultiplier = SaveData.Value("MinDistanceFromStructuresMultiplier").DoubleValue
+		  End If
+		  
+		  If SaveData.HasKey("MinDistanceFromTamedDinosMultiplier") Then
+		    Set.MinDistanceFromTamedDinosMultiplier = SaveData.Value("MinDistanceFromTamedDinosMultiplier").DoubleValue
+		  End If
+		  
 		  Set.Modified = False
 		  Return New Beacon.SpawnPointSet(Set)
 		End Function
@@ -201,6 +213,24 @@ Implements Beacon.DocumentItem, Beacon.Countable
 	#tag Method, Flags = &h0
 		Function Label() As String
 		  Return Self.mLabel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MinDistanceFromPlayersMultiplier() As NullableDouble
+		  Return Self.mMinDistanceFromPlayersMultiplier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MinDistanceFromStructuresMultiplier() As NullableDouble
+		  Return Self.mMinDistanceFromStructuresMultiplier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MinDistanceFromTamedDinosMultiplier() As NullableDouble
+		  Return Self.mMinDistanceFromTamedDinosMultiplier
 		End Function
 	#tag EndMethod
 
@@ -278,6 +308,15 @@ Implements Beacon.DocumentItem, Beacon.Countable
 		  If Self.mWaterOnlyMinimumHeight <> Nil Then
 		    SaveData.Value("WaterOnlyMinimumHeight") = Self.mWaterOnlyMinimumHeight.Value
 		  End If
+		  If Self.mMinDistanceFromPlayersMultiplier <> Nil Then
+		    SaveData.Value("MinDistanceFromPlayersMultiplier") = Self.mMinDistanceFromPlayersMultiplier.Value
+		  End If
+		  If Self.mMinDistanceFromStructuresMultiplier <> Nil Then
+		    SaveData.Value("MinDistanceFromStructuresMultiplier") = Self.mMinDistanceFromStructuresMultiplier.Value
+		  End If
+		  If Self.mMinDistanceFromTamedDinosMultiplier <> Nil Then
+		    SaveData.Value("MinDistanceFromTamedDinosMultiplier") = Self.mMinDistanceFromTamedDinosMultiplier.Value
+		  End If
 		  Return SaveData
 		End Function
 	#tag EndMethod
@@ -315,6 +354,18 @@ Implements Beacon.DocumentItem, Beacon.Countable
 
 	#tag Property, Flags = &h1
 		Protected mLabel As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mMinDistanceFromPlayersMultiplier As NullableDouble
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mMinDistanceFromStructuresMultiplier As NullableDouble
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mMinDistanceFromTamedDinosMultiplier As NullableDouble
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

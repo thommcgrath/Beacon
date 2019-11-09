@@ -284,7 +284,7 @@ Implements Beacon.DocumentItem
 		    Dict.Value("MinLevelOffset") = Self.mMinLevelOffset.Value
 		  End If
 		  If Self.mLevelOverride <> Nil Then
-		    Dict.Value("LevelOverride") = Self.mLevelOverride
+		    Dict.Value("LevelOverride") = Self.mLevelOverride.Value
 		  End If
 		  Return Dict
 		End Function

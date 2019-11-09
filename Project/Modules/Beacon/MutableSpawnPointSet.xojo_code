@@ -61,6 +61,33 @@ Inherits Beacon.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub MinDistanceFromPlayersMultiplier(Assigns Value As NullableDouble)
+		  If Self.mMinDistanceFromPlayersMultiplier <> Value Then
+		    Self.mMinDistanceFromPlayersMultiplier = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub MinDistanceFromStructuresMultiplier(Assigns Value As NullableDouble)
+		  If Self.mMinDistanceFromStructuresMultiplier <> Value Then
+		    Self.mMinDistanceFromStructuresMultiplier = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub MinDistanceFromTamedDinosMultiplier(Assigns Value As NullableDouble)
+		  If Self.mMinDistanceFromTamedDinosMultiplier <> Value Then
+		    Self.mMinDistanceFromTamedDinosMultiplier = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function MutableVersion() As Beacon.MutableSpawnPointSet
 		  Return Self
 		End Function
