@@ -463,7 +463,7 @@ End
 #tag EndWindowCode
 
 #tag Events TitleField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -475,10 +475,10 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events DescriptionArea
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.PublicFileCheckbox.Enabled = Me.Value.Trim.Length > 32
 		  
@@ -492,10 +492,10 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events PublicFileCheckbox
-	#tag Event
+	#tag EventAPI2
 		Sub ValueChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -507,7 +507,7 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ModsList
 	#tag Event
@@ -549,7 +549,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events UncompressedCheckbox
-	#tag Event
+	#tag EventAPI2
 		Sub ValueChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -561,10 +561,10 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events AllowUCSCheckbox
-	#tag Event
+	#tag EventAPI2
 		Sub ValueChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -576,7 +576,7 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

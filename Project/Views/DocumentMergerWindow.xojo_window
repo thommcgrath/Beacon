@@ -183,11 +183,11 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Self.SwapButtons()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h0
@@ -332,7 +332,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Dim PreviousMods As New Beacon.StringList(Self.mDestination.Mods)
 		  
@@ -386,14 +386,14 @@ End
 		    Self.Close
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.Close
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

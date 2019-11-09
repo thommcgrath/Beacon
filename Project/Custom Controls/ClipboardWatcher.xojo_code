@@ -1,7 +1,7 @@
 #tag Class
 Protected Class ClipboardWatcher
 Inherits Timer
-	#tag Event
+	#tag EventAPI2
 		Sub Run()
 		  Dim Board As New Clipboard
 		  Dim Hash As String
@@ -17,7 +17,7 @@ Inherits Timer
 		  RaiseEvent ClipboardChanged(Board.Text)
 		  Self.mLastHash = Hash
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h0

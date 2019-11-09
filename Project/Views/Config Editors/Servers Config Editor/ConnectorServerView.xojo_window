@@ -710,25 +710,25 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ServerNameField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.mProfile.Name = Me.Value
 		  Self.ControlToolbar.Caption = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events AddressField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.mProfile.Address = Me.Value.Trim
 		  Self.Changed = Self.mProfile.Modified
 		  Self.RefreshServerStatus()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events PortField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If IsNumeric(Me.Value) Then
 		    Self.mProfile.Port = CDbl(Me.Value)
@@ -736,23 +736,23 @@ End
 		  End If
 		  Self.RefreshServerStatus()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events KeyField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.mProfile.PreSharedKey = Me.Value.Trim
 		  Self.Changed = Self.mProfile.Modified
 		  Self.RefreshServerStatus()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events RefreshTimer
-	#tag Event
+	#tag EventAPI2
 		Sub Run()
 		  Self.RefreshServerStatus()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

@@ -488,13 +488,13 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Closing()
 		  Self.EngramSearcher.Cancel
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Dim PreferredSize As Size = Preferences.EntryEditorSize
 		  
@@ -507,7 +507,7 @@ End
 		  Self.SwapButtons()
 		  Self.mSettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 	#tag Event
 		Sub Resized()
@@ -807,7 +807,7 @@ End
 		  End Select
 		End Sub
 	#tag EndEvent
-	#tag Event
+	#tag EventAPI2
 		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Select Case Column
 		  Case Self.ColumnIncluded
@@ -837,7 +837,7 @@ End
 		  
 		  Return True
 		End Function
-	#tag EndEvent
+	#tag EndEventAPI2
 	#tag Event
 		Sub Opening()
 		  Me.ColumnTypeAt(Self.ColumnIncluded) = Listbox.CellTypes.CheckBox
@@ -847,11 +847,11 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events SingleEntryCheck
-	#tag Event
+	#tag EventAPI2
 		Sub ValueChanged()
 		  Self.UpdateSimulation()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events Picker
 	#tag Event
@@ -884,15 +884,15 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events SimulateButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.UpdateSimulation()
 		  
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  If Self.mSelectedEngrams.KeyCount = 0 Then
 		    Return
@@ -940,14 +940,14 @@ End
 		  Self.mCreatedEntries = Entries
 		  Self.Hide
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.Hide
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events EngramSearcher
 	#tag Event

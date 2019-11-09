@@ -507,20 +507,20 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events RefreshTimer
-	#tag Event
+	#tag EventAPI2
 		Sub Run()
 		  Self.RefreshServerStatus()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ServerNameField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.mProfile.Name = Me.Value
 		  Self.Controls.Caption = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

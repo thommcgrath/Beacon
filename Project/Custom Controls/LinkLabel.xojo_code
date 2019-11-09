@@ -46,12 +46,12 @@ Inherits Label
 		End Sub
 	#tag EndEvent
 
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Self.ShowAsLink = Self.ShowAsLink
 		  RaiseEvent Opening
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Hook, Flags = &h0

@@ -447,7 +447,7 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Self.SwapButtons()
 		  
@@ -462,7 +462,7 @@ End
 		  Next
 		  Self.ServerSelectionList.Sort
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h21
@@ -719,7 +719,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ServerSelectionActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Const RestartSupportedUnknown = -1
 		  Const RestartSupportedNone = 0
@@ -796,24 +796,24 @@ End
 		  
 		  Self.AuthenticateNext()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ServerSelectionCancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.Close
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events FinishedButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.CLose
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events DeployingCancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Dim AnyFinished As Boolean
 		  
@@ -830,7 +830,7 @@ End
 		    Self.Close
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events Auth
 	#tag Event
@@ -871,7 +871,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events DeployingWatchTimer
-	#tag Event
+	#tag EventAPI2
 		Sub Run()
 		  Dim Finished As Boolean = True
 		  For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
@@ -899,7 +899,7 @@ End
 		    Next
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

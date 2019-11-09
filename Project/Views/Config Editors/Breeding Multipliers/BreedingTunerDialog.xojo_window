@@ -314,7 +314,7 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Self.CreaturesList.ColumnTypeAt(Self.ColumnChecked) = Listbox.CellTypes.CheckBox
 		  
@@ -330,7 +330,7 @@ End
 		  
 		  Self.CheckCreatures(Preferences.BreedingTunerCreatures)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h21
@@ -418,15 +418,15 @@ End
 #tag EndWindowCode
 
 #tag Events CancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.mChosenMultiplier = 0
 		  Self.Hide
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Const Threshold = 0.95
 		  
@@ -455,7 +455,7 @@ End
 		  Self.mChosenMultiplier = ImprintMultiplier
 		  Self.Hide
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CreaturesList
 	#tag Event
@@ -478,25 +478,25 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events MajorCreaturesButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.CheckCreatures(LocalData.SharedInstance.GetStringVariable("Major Imprint Creatures"))
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events AllCreaturesButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.CheckCreatures("*")
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ClearCreaturesButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.CheckCreatures("")
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

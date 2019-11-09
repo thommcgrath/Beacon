@@ -383,18 +383,18 @@ End
 #tag EndWindowCode
 
 #tag Events NewFileButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  MainWindow.Documents.NewDocument()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events OpenFileButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  MainWindow.Documents.ShowOpenDocument()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events LogoCanvas
 	#tag Event
@@ -406,14 +406,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events VersionLabel
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Me.Value = "Version " + App.BuildVersion
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events SyncLabel
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Dim LastSync As DateTime = LocalData.SharedInstance.LastSync
 		  If IsNull(LastSync) Then
@@ -422,7 +422,7 @@ End
 		    Me.Value = "Engrams updated " + LastSync.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC"
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events TitleCanvas
 	#tag Event

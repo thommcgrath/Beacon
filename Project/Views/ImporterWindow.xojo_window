@@ -192,13 +192,13 @@ End
 #tag EndWindowCode
 
 #tag Events CancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  If Self.mCancelAction <> Nil Then
 		    Self.mCancelAction.Invoke()
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

@@ -460,14 +460,14 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Closing()
 		  Self.ClipboardRewriter.Cancel
 		  Self.FileRewriter.Cancel
 		  Self.GameIniRewriter.Cancel
 		  Self.GameUserSettingsRewriter.Cancel
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h21
@@ -775,14 +775,14 @@ End
 #tag EndWindowCode
 
 #tag Events ActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.Close()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events SaveButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Dim Dialog As New SaveFileDialog
 		  Dialog.Filter = BeaconFileTypes.IniFile
@@ -800,7 +800,7 @@ End
 		    Self.ShowAlert("Unable to write to " + File.DisplayName, "Check file permissions and disk space.")
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CopyButton
 	#tag Event
@@ -814,7 +814,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events RewriteClipboardButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Dim Board As New Clipboard
 		  Self.ClipboardRewriter.Rewrite(Board.Text, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, True, Self.mCurrentProfile)
@@ -822,17 +822,17 @@ End
 		  Self.mLastRewrittenHash = ""
 		  Self.CheckButtons()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ClipboardWatcher
-	#tag Event
+	#tag EventAPI2
 		Sub Run()
 		  Self.CheckClipboard()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events RewriteFileButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Dim Mode As String = Self.CurrentMode
 		  Dim RequiredHeader As String
@@ -876,14 +876,14 @@ End
 		  
 		  Self.CheckButtons()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events MapMenu
-	#tag Event
+	#tag EventAPI2
 		Sub SelectionChanged()
 		  Self.Setup()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events Switcher
 	#tag Event

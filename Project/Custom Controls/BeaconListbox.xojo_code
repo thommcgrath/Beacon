@@ -211,7 +211,7 @@ Inherits Listbox
 		End Function
 	#tag EndEvent
 
-	#tag Event
+	#tag EventAPI2
 		Sub MenuSelected()
 		  If Self.Window = Nil Or Self.Window.Focus <> Self Then
 		    Return
@@ -229,9 +229,9 @@ Inherits Listbox
 		  
 		  RaiseEvent MenuSelected()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Self.FontName = "SmallSystem"
 		  Self.DefaultRowHeight = Max(26, Self.DefaultRowHeight)
@@ -240,9 +240,9 @@ Inherits Listbox
 		  
 		  Self.mPostOpenInvalidateCallbackKey = CallLater.Schedule(0, WeakAddressOf PostOpenInvalidate)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
-	#tag Event
+	#tag EventAPI2
 		Sub SelectionChanged()
 		  If Self.mBlockSelectionChangeCount > 0 Then
 		    Self.mFireChangeWhenUnlocked = True
@@ -251,7 +251,7 @@ Inherits Listbox
 		  
 		  RaiseEvent SelectionChanged
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag MenuHandler

@@ -320,12 +320,12 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Self.UpdateUI()
 		  Self.GoToButton.Visible = (Self.GoToIssueHandler <> Nil)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h21
@@ -444,11 +444,11 @@ End
 #tag EndWindowCode
 
 #tag Events ActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.Close
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events IssuesList
 	#tag Event
@@ -458,14 +458,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events BlueprintsField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.ExtractButton.Enabled = Me.Value.Trim <> ""
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ExtractButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  ResolutionSpinner.Visible = True
 		  ActionButton.Enabled = False
@@ -481,10 +481,10 @@ End
 		    Config.TryToResolveIssues(Content, Callback)
 		  Next
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events GoToButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  If Self.IssuesList.SelectedRowIndex = -1 Or Self.GoToIssueHandler = Nil Then
 		    Return
@@ -495,7 +495,7 @@ End
 		  Self.GoToIssueHandler.Invoke(Issue)
 		  Self.Close()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

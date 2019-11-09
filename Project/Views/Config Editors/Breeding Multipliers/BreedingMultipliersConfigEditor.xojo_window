@@ -1515,7 +1515,7 @@ End
 #tag EndWindowCode
 
 #tag Events MatureSpeedField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -1532,10 +1532,10 @@ End
 		  Self.SettingUp = False
 		  Self.UpdateStats()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events IncubationSpeedField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -1552,10 +1552,10 @@ End
 		  Self.SettingUp = False
 		  Self.UpdateStats()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events EggLayPeriodField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -1571,10 +1571,10 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events FoodConsumptionField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -1590,10 +1590,10 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ImprintPeriodField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -1610,10 +1610,10 @@ End
 		  Self.SettingUp = False
 		  Self.UpdateStats()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ImprintStatScaleField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -1629,10 +1629,10 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ImprintGracePeriodField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -1648,10 +1648,10 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ImprintLossSpeedField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -1667,10 +1667,10 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CreaturesList
-	#tag Event
+	#tag EventAPI2
 		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  If Column = Self.ColumnIncubationTime Or Column = Self.ColumnMatureTime Then
 		    Dim Period1 As UInt64 = Me.CellTagAt(Row1, Column)
@@ -1687,7 +1687,7 @@ End
 		    Return False
 		  End If
 		End Function
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events Header
 	#tag Event
@@ -1717,7 +1717,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events MatingSpeedField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -1733,10 +1733,10 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events MatingIntervalField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -1752,7 +1752,7 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

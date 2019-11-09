@@ -160,8 +160,10 @@ Begin BeaconDialog AddSpawnPointDialog
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      RequiresSelection=   False
       RowSelectionType=   "1"
       Scope           =   2
+      SelectionChangeBlocked=   False
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
@@ -226,6 +228,7 @@ Begin BeaconDialog AddSpawnPointDialog
       SelectionStyle  =   "0"
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   "True"
       Top             =   52
       Transparent     =   False
       Visible         =   True
@@ -246,7 +249,6 @@ Begin BeaconDialog AddSpawnPointDialog
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
-      HasBorder       =   True
       Height          =   22
       Hint            =   "Search for spawn points"
       Index           =   -2147483648
@@ -378,7 +380,7 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Self.SwapButtons()
 		  
@@ -391,7 +393,7 @@ End
 		  
 		  Self.UpdateFilter()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h21
@@ -557,7 +559,7 @@ End
 #tag EndWindowCode
 
 #tag Events ActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Var Mode As Integer
 		  Select Case Self.ModeMenu.SelectedRowIndex
@@ -589,14 +591,14 @@ End
 		  
 		  Self.Hide
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.Hide
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events List
 	#tag Event
@@ -606,12 +608,12 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events FilterSelector
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Me.Width = Me.SegmentCount * 100
 		  Me.ResizeCells
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 	#tag Event
 		Sub Pressed(segmentIndex as integer)
 		  Self.FilterMode = SegmentIndex
@@ -626,11 +628,11 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ModeMenu
-	#tag Event
+	#tag EventAPI2
 		Sub SelectionChanged()
 		  Self.LoadDefaultsCheck.Visible = Me.SelectedRowIndex = 0
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

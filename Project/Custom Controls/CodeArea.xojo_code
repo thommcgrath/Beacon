@@ -1,7 +1,7 @@
 #tag Class
 Protected Class CodeArea
 Inherits TextArea
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  RaiseEvent Opening
 		  Self.FontUnit = FontUnits.Point
@@ -12,7 +12,7 @@ Inherits TextArea
 		  Self.Italic = False
 		  Self.MultiLine = True
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Hook, Flags = &h0

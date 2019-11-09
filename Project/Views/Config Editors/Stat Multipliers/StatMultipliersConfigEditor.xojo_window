@@ -2880,7 +2880,7 @@ End
 #tag EndWindowCode
 
 #tag Events PlayerPerLevelMultiplierField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged(index as Integer)
 		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
 		    Return
@@ -2898,10 +2898,10 @@ End
 		  Self.SettingUp = False
 		  Self.UpdatePlayerUI(Index)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events PlayerBaseField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged(index as Integer)
 		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
 		    Return
@@ -2919,7 +2919,7 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CreatureMenu
 	#tag Event
@@ -2944,7 +2944,7 @@ End
 		  End If
 		End Sub
 	#tag EndEvent
-	#tag Event
+	#tag EventAPI2
 		Sub SelectionChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -2954,7 +2954,7 @@ End
 		  Self.UpdateCreatureStats()
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events WildCreatureStats
 	#tag Event

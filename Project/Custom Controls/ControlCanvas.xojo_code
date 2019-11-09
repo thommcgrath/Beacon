@@ -52,7 +52,7 @@ Inherits Canvas
 		End Function
 	#tag EndEvent
 
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  RaiseEvent Opening
 		  
@@ -64,7 +64,7 @@ Inherits Canvas
 		    Self.EraseBackground = Not Self.DoubleBuffer
 		  #endif
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)

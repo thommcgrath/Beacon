@@ -21,11 +21,11 @@ Inherits UITweaks.ResizedTextField
 		End Sub
 	#tag EndEvent
 
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  //
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h0
@@ -152,14 +152,6 @@ Inherits UITweaks.ResizedTextField
 			Visible=true
 			Group="Font"
 			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Border"
-			Visible=false
-			Group="Appearance"
-			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty

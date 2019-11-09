@@ -494,11 +494,11 @@ End
 		  Self.Header.Duplicate.Enabled = Me.SelectedRowCount = 1
 		End Sub
 	#tag EndEvent
-	#tag Event
+	#tag EventAPI2
 		Sub DoubleClicked()
 		  Self.EditSelected()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

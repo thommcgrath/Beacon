@@ -242,11 +242,11 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Activated()
 		  Self.Changed = Self.Document.Modified
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 	#tag Event
 		Sub CleanupDiscardedChanges()
@@ -1002,11 +1002,11 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events AutosaveTimer
-	#tag Event
+	#tag EventAPI2
 		Sub Run()
 		  Self.Autosave()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ConfigMenu
 	#tag Event
@@ -1032,7 +1032,7 @@ End
 		  Next
 		End Sub
 	#tag EndEvent
-	#tag Event
+	#tag EventAPI2
 		Sub SelectionChanged()
 		  Dim TagVar As Variant
 		  If Me.SelectedRowIndex > -1 Then
@@ -1155,7 +1155,7 @@ End
 		  
 		  Self.UpdateMinimumDimensions()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

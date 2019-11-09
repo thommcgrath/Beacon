@@ -995,13 +995,13 @@ End
 		  ChanceSlider.Enabled = False
 		End Sub
 	#tag EndEvent
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.Focus = Me Then
 		    ChanceSlider.Value = Max(Min(Val(Me.Value), ChanceSlider.MaximumValue), ChanceSlider.MinimumValue)
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ChanceSlider
 	#tag Event
@@ -1018,7 +1018,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events QualityMenus
-	#tag Event
+	#tag EventAPI2
 		Sub SelectionChanged(index as Integer)
 		  If Not Self.mIgnoreChanges Then
 		    Select Case Index
@@ -1030,7 +1030,7 @@ End
 		    RaiseEvent Changed
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 	#tag Event
 		Sub Opening(index as Integer)
 		  Me.RemoveAllRows()
@@ -1045,24 +1045,24 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events MaxQuantityField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Not Self.mIgnoreChanges Then
 		    EditMaxQuantityCheck.Value = True
 		    RaiseEvent Changed
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events MinQuantityField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Not Self.mIgnoreChanges Then
 		    EditMinQuantityCheck.Value = True
 		    RaiseEvent Changed
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events WeightSlider
 	#tag Event

@@ -63,7 +63,7 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Dim Maps() As Beacon.Map = Beacon.Maps.All
 		  Dim OfficialMaps(), OtherMaps() As Beacon.Map
@@ -113,7 +113,7 @@ End
 		  RaiseEvent Opening
 		  Self.mSettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Hook, Flags = &h0
@@ -166,7 +166,7 @@ End
 #tag EndWindowCode
 
 #tag Events Boxes
-	#tag Event
+	#tag EventAPI2
 		Sub ValueChanged(index as Integer)
 		  If Self.mSettingUp Then
 		    Return
@@ -174,7 +174,7 @@ End
 		  
 		  RaiseEvent Changed
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

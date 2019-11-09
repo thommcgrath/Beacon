@@ -534,13 +534,13 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  RaiseEvent Opening
 		  Self.SetupUI()
 		  Self.mSettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h0
@@ -651,14 +651,14 @@ End
 #tag EndWindowCode
 
 #tag Events DisclosureTriangle1
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.SetupUI
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events NameField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
@@ -671,10 +671,10 @@ End
 		  Self.ItemSet.Label = Me.Value
 		  RaiseEvent SettingsChanged
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events PreventDuplicatesCheck
-	#tag Event
+	#tag EventAPI2
 		Sub ValueChanged()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
@@ -689,7 +689,7 @@ End
 		  Self.MinEntriesField.CheckValue
 		  RaiseEvent SettingsChanged
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events MinEntriesField
 	#tag Event
@@ -785,7 +785,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events WeightStepper
-	#tag Event
+	#tag EventAPI2
 		Sub DownPressed()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
@@ -793,8 +793,8 @@ End
 		  
 		  Self.WeightField.DoubleValue = Self.WeightField.DoubleValue - (If(Keyboard.AsyncShiftKey, 5, 1) * (Self.WeightScale / 100))
 		End Sub
-	#tag EndEvent
-	#tag Event
+	#tag EndEventAPI2
+	#tag EventAPI2
 		Sub UpPressed()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
@@ -802,10 +802,10 @@ End
 		  
 		  Self.WeightField.DoubleValue = Self.WeightField.DoubleValue + (If(Keyboard.AsyncShiftKey, 5, 1) * (Self.WeightScale / 100))
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events MaxEntriesStepper
-	#tag Event
+	#tag EventAPI2
 		Sub DownPressed()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
@@ -813,8 +813,8 @@ End
 		  
 		  Self.MaxEntriesField.DoubleValue = Self.MaxEntriesField.DoubleValue - 1
 		End Sub
-	#tag EndEvent
-	#tag Event
+	#tag EndEventAPI2
+	#tag EventAPI2
 		Sub UpPressed()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
@@ -822,10 +822,10 @@ End
 		  
 		  Self.MaxEntriesField.DoubleValue = Self.MaxEntriesField.DoubleValue + 1
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events MinEntriesStepper
-	#tag Event
+	#tag EventAPI2
 		Sub DownPressed()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
@@ -833,8 +833,8 @@ End
 		  
 		  Self.MinEntriesField.DoubleValue = Self.MinEntriesField.DoubleValue - 1
 		End Sub
-	#tag EndEvent
-	#tag Event
+	#tag EndEventAPI2
+	#tag EventAPI2
 		Sub UpPressed()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
@@ -842,7 +842,7 @@ End
 		  
 		  Self.MinEntriesField.DoubleValue = Self.MinEntriesField.DoubleValue + 1
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

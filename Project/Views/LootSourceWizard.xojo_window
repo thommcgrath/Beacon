@@ -45,10 +45,9 @@ Begin BeaconDialog LootSourceWizard
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
-      Value           =   2
+      Value           =   0
       Visible         =   True
       Width           =   550
       Begin UITweaks.ResizedPushButton SelectionActionButton
@@ -936,7 +935,6 @@ Begin BeaconDialog LootSourceWizard
          Top             =   122
          Transparent     =   False
          Underline       =   False
-         Value           =   "False"
          Visible         =   True
          Width           =   394
       End
@@ -1057,7 +1055,6 @@ Begin BeaconDialog LootSourceWizard
          Top             =   328
          Transparent     =   False
          Underline       =   False
-         Value           =   "False"
          Visible         =   True
          Width           =   394
       End
@@ -1090,7 +1087,6 @@ Begin BeaconDialog LootSourceWizard
          Top             =   328
          Transparent     =   False
          Underline       =   False
-         Value           =   "False"
          Visible         =   True
          Width           =   510
       End
@@ -1141,7 +1137,6 @@ Begin BeaconDialog LootSourceWizard
          HasBackColor    =   False
          Height          =   118
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   130
          LockBottom      =   False
@@ -1165,7 +1160,7 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Dim HasExperimentalSources As Boolean = LocalData.SharedInstance.HasExperimentalLootSources(Self.mMods)
 		  If HasExperimentalSources Then
@@ -1201,7 +1196,7 @@ End
 		  
 		  Self.SwapButtons()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h21
@@ -1447,19 +1442,19 @@ End
 #tag EndWindowCode
 
 #tag Events SelectionActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.ChooseSelectedLootSources()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events SelectionCancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events SourceList
 	#tag Event
@@ -1488,12 +1483,12 @@ End
 		  G.DrawPicture(Icon, NearestMultiple((SpaceWidth - Icon.Width) / 2, PrecisionX), NearestMultiple((SpaceHeight - Icon.Height) / 2, PrecisionY))
 		End Sub
 	#tag EndEvent
-	#tag Event
+	#tag EventAPI2
 		Sub DoubleClicked()
 		  Self.ChooseSelectedLootSources()
 		End Sub
-	#tag EndEvent
-	#tag Event
+	#tag EndEventAPI2
+	#tag EventAPI2
 		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  If Column <> 0 Then
 		    Return False
@@ -1510,17 +1505,17 @@ End
 		  
 		  Return True
 		End Function
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events SelectionCustomButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.ShowDefine(Nil)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events DefineActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Dim ClassString As String = Self.DefineClassField.Value.Trim
 		  If Not ClassString.EndsWith("_C") Then
@@ -1565,10 +1560,10 @@ End
 		  
 		  Self.ShowCustomize()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events DefineCancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  If Me.Caption = "Cancel" Then
 		    Self.mCancelled = True
@@ -1578,10 +1573,10 @@ End
 		  
 		  Self.ShowSelect()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CustomizeActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Dim MinItemSets As Integer = Floor(CDbl(Self.CustomizeMinSetsField.Value))
 		  Dim MaxItemSets As Integer = Floor(CDbl(Self.CustomizeMaxSetsField.Value))
@@ -1656,10 +1651,10 @@ End
 		  Self.mCancelled = False
 		  Self.Hide
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CustomizeCancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  If Me.Caption = "Cancel" Then
 		    Self.mCancelled = True
@@ -1673,19 +1668,19 @@ End
 		    Self.ShowSelect()
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events DefineNameField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Not Self.mDefineLabelEditingAutomatically Then
 		    Self.mDefineLabelWasEditedByUser = True
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events DefineClassField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Not Self.mDefineLabelWasEditedByUser Then
 		    Self.mDefineLabelEditingAutomatically = True
@@ -1693,7 +1688,7 @@ End
 		    Self.mDefineLabelEditingAutomatically = False
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CustomizePresetsList
 	#tag Event
@@ -1703,7 +1698,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events SelectionExperimentalCheck
-	#tag Event
+	#tag EventAPI2
 		Sub ValueChanged()
 		  If Preferences.ShowExperimentalLootSources = Me.Value Then
 		    Return
@@ -1712,7 +1707,7 @@ End
 		  Preferences.ShowExperimentalLootSources = Me.Value
 		  Self.BuildSourceList()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

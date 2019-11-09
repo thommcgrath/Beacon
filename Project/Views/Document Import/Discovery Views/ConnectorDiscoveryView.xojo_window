@@ -512,13 +512,13 @@ End
 		End Sub
 	#tag EndEvent
 
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  RaiseEvent Opening()
 		  Self.SwapButtons()
 		  Self.CheckEnabled()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h21
@@ -545,28 +545,28 @@ End
 #tag EndWindowCode
 
 #tag Events AddressField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.CheckEnabled()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events PortField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.CheckEnabled()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events KeyField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.CheckEnabled()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Dim Profile As New Beacon.ConnectorServerProfile
 		  Profile.Address = Self.AddressField.Value
@@ -585,10 +585,10 @@ End
 		  
 		  Self.CheckEnabled()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.TestSocket.Close
 		  Self.Spinner.Visible = False
@@ -596,7 +596,7 @@ End
 		  Self.HelpLabel.Visible = True
 		  Self.ShouldCancel()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events TestSocket
 	#tag Event

@@ -912,12 +912,12 @@ End
 		End Sub
 	#tag EndEvent
 
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  RaiseEvent Opening
 		  Self.SwapButtons()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h21
@@ -1021,35 +1021,35 @@ End
 #tag EndWindowCode
 
 #tag Events ServerHostField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.CheckServerActionButton()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ServerPortField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.CheckServerActionButton()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ServerUserField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.CheckServerActionButton()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ServerPassField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.CheckServerActionButton()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events BrowseActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Dim GameIniPath As String = Self.Browser.CurrentPath
 		  Dim Components() As String = GameIniPath.Split("/")
@@ -1067,14 +1067,14 @@ End
 		  Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, InitialPath, App.IdentityManager.CurrentIdentity)
 		  Self.ShouldFinish(Engines)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events BrowseCancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.ViewPanel.SelectedPanelIndex = Self.PageGeneral
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events Browser
 	#tag Event
@@ -1101,14 +1101,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ServerCancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.ShouldCancel()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ServerActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.mProfile = New Beacon.FTPServerProfile()
 		  Self.mProfile.Host = Self.ServerHostField.Value
@@ -1134,7 +1134,7 @@ End
 		  Request.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(Request)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events BrowseSocket
 	#tag Event

@@ -1,7 +1,7 @@
 #tag Class
 Protected Class BeaconContainer
 Inherits ContainerControl
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  RaiseEvent Opening
 		  
@@ -23,7 +23,7 @@ Inherits ContainerControl
 		  RaiseEvent Resize(Self.mFirstResize)
 		  Self.mFirstResize = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 	#tag Event
 		Sub Resized()

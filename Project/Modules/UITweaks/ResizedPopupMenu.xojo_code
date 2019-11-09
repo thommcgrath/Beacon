@@ -1,13 +1,13 @@
 #tag Class
 Protected Class ResizedPopupMenu
 Inherits PopupMenu
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Self.ResizeForPlatform(Self.IdealHeight)
 		  
 		  RaiseEvent Opening
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Hook, Flags = &h0

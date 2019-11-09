@@ -199,9 +199,9 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.Close
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents

@@ -749,13 +749,13 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Self.mSettingUp = False
 		  
 		  Self.Designer.Curve = New Beacon.Curve(0, 0, 1, 1)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h21
@@ -835,7 +835,7 @@ End
 #tag EndWindowCode
 
 #tag Events LevelCountField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.mSettingUp Or Self.Focus <> Me Then
 		    Return
@@ -843,10 +843,10 @@ End
 		  
 		  Self.UpdateList()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events XPField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.mSettingUp Or Self.Focus <> Me Then
 		    Return
@@ -854,7 +854,7 @@ End
 		  
 		  Self.UpdateList()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events Designer
 	#tag Event
@@ -884,23 +884,23 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.mCancelled = False
 		  Self.Hide()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events PointFields
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged(index as Integer)
 		  If Self.mSettingUp Or Self.Focus <> Me Then
 		    Return
@@ -909,7 +909,7 @@ End
 		  Dim Curve As New Beacon.Curve(CDbl(Self.PointFields(0).Value), CDbl(Self.PointFields(1).Value), CDbl(Self.PointFields(2).Value), CDbl(Self.PointFields(3).Value))
 		  Self.Designer.Curve = Curve
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

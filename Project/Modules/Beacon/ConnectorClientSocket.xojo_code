@@ -10,7 +10,7 @@ Inherits TCPSocket
 		End Sub
 	#tag EndEvent
 
-	#tag Event
+	#tag EventAPI2
 		Sub DataReceived()
 		  Self.Buffer.Append(Self.ReadAll)
 		  
@@ -76,7 +76,7 @@ Inherits TCPSocket
 		    End If
 		  Wend
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 	#tag Event
 		Sub Error(err As RuntimeException)

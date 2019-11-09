@@ -241,26 +241,26 @@ End
 #tag EndWindowCode
 
 #tag Events MessageField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.ActionButton.Enabled = Me.Value.Trim <> ""
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.mReturnMessage = Self.MessageField.Value.Trim
 		  Self.Hide
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.Hide
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

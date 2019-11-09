@@ -1,7 +1,7 @@
 #tag Class
 Protected Class BeaconWindow
 Inherits Window
-	#tag Event
+	#tag EventAPI2
 		Sub Closing()
 		  RaiseEvent Closing
 		  
@@ -21,9 +21,9 @@ Inherits Window
 		    Self.mWindowMenuItem = Nil
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
-	#tag Event
+	#tag EventAPI2
 		Sub MenuSelected()
 		  If Self.HasCloseButton Then
 		    FileClose.Enable
@@ -40,7 +40,7 @@ Inherits Window
 		  
 		  RaiseEvent MenuSelected
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 	#tag Event
 		Sub Moved()
@@ -50,7 +50,7 @@ Inherits Window
 		End Sub
 	#tag EndEvent
 
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Dim InitialWidth As Integer = Self.Width
 		  // Dumb workaround because contents are sizing 1 pixels too short.
@@ -73,7 +73,7 @@ Inherits Window
 		  Self.mOpened = True
 		  Self.Invalidate
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 	#tag Event
 		Sub Resized()

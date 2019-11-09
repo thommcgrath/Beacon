@@ -32,6 +32,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       AllowTabs       =   False
       Backdrop        =   0
       Caption         =   "Spawn Points"
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
       Index           =   -2147483648
@@ -51,6 +52,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
+      Transparent     =   False
       Visible         =   True
       Width           =   250
    End
@@ -91,8 +93,10 @@ Begin ConfigEditor SpawnPointsConfigEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      RequiresSelection=   False
       RowSelectionType=   "1"
       Scope           =   2
+      SelectionChangeBlocked=   False
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
@@ -111,6 +115,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -140,6 +145,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       Backdrop        =   0
       Borders         =   1
       Caption         =   ""
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   21
       Index           =   -2147483648
@@ -167,6 +173,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   548
       Index           =   -2147483648
@@ -200,6 +207,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   548
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   251
       LockBottom      =   True

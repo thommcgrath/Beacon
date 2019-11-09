@@ -765,7 +765,7 @@ End
 #tag EndWindowCode
 
 #tag Events HarvestAmountMultiplierField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -778,7 +778,7 @@ End
 		  Self.SettingUp = False
 		  Self.UpdateList()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events Header
 	#tag Event
@@ -932,7 +932,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events UseOptimizedRatesCheck
-	#tag Event
+	#tag EventAPI2
 		Sub ValueChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -944,10 +944,10 @@ End
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events HarvestHealthMultiplierField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -960,10 +960,10 @@ End
 		  Self.SettingUp = False
 		  Self.UpdateList()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events PlayerHarvestDamageMultiplierField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -976,10 +976,10 @@ End
 		  Self.SettingUp = False
 		  Self.UpdateList()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events DinoHarvestDamageMultiplierField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -992,10 +992,10 @@ End
 		  Self.SettingUp = False
 		  Self.UpdateList()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ClampHarvestDamageCheck
-	#tag Event
+	#tag EventAPI2
 		Sub ValueChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -1007,7 +1007,7 @@ End
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

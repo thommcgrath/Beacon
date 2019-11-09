@@ -373,7 +373,7 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Self.Picker.Tags = LocalData.SharedInstance.AllTags(Self.mCategory)
 		  Self.Picker.Spec = Preferences.SelectedTag(Self.mCategory, Self.mSubgroup)
@@ -383,7 +383,7 @@ End
 		  Self.Resize()
 		  Self.mSettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 	#tag Event
 		Sub Resized()
@@ -608,11 +608,11 @@ End
 #tag EndWindowCode
 
 #tag Events FilterField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.UpdateFilter()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events List
 	#tag Event
@@ -624,7 +624,7 @@ End
 		  Self.AddToSelectionsButton.Enabled = Me.SelectedRowCount > 0
 		End Sub
 	#tag EndEvent
-	#tag Event
+	#tag EventAPI2
 		Sub DoubleClicked()
 		  Self.MakeSelection()
 		  
@@ -633,23 +633,23 @@ End
 		    Self.Hide
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.mCancelled = False
 		  Self.Hide()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events SelectedList
 	#tag Event
@@ -662,11 +662,11 @@ End
 		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
-	#tag Event
+	#tag EventAPI2
 		Sub DoubleClicked()
 		  Self.UnmakeSelection
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
 		  #Pragma Unused Warn
@@ -676,18 +676,18 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events AddToSelectionsButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.MakeSelection()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events RemoveFromSelectionsButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.UnmakeSelection()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events Picker
 	#tag Event

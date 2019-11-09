@@ -2,12 +2,12 @@
 Protected Class BeaconSubview
 Inherits BeaconContainer
 Implements ObservationKit.Observable
-	#tag Event
+	#tag EventAPI2
 		Sub Closing()
 		  RaiseEvent Closing
 		  Self.mClosed = True
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 	#tag Event
 		Sub ContentsChanged()
@@ -16,11 +16,11 @@ Implements ObservationKit.Observable
 		End Sub
 	#tag EndEvent
 
-	#tag Event
+	#tag EventAPI2
 		Sub MenuSelected()
 		  // The parent view will call down to the MenuSelected method
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 	#tag Event
 		Sub Opening()

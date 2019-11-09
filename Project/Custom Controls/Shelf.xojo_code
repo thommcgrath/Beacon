@@ -2,21 +2,21 @@
 Protected Class Shelf
 Inherits ControlCanvas
 Implements ObservationKit.Observer
-	#tag Event
+	#tag EventAPI2
 		Sub Activated()
 		  RaiseEvent Activated
 		  Self.Invalidate
 		  
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
-	#tag Event
+	#tag EventAPI2
 		Sub Deactivated()
 		  RaiseEvent Deactivated
 		  Self.Invalidate
 		  
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean

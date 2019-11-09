@@ -421,12 +421,12 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigArea
-	#tag Event
+	#tag EventAPI2
 		Sub SelectionChanged()
 		  Self.UpdateEncryptButton()
 		End Sub
-	#tag EndEvent
-	#tag Event
+	#tag EndEventAPI2
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.UpdateTextColors()
 		  
@@ -452,7 +452,7 @@ End
 		    Self.Changed = True
 		  End Select
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events LeftButtons
 	#tag Event

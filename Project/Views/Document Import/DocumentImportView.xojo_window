@@ -736,12 +736,12 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Self.SwapButtons
 		  Self.Reset
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h21
@@ -1064,7 +1064,7 @@ End
 #tag EndWindowCode
 
 #tag Events Views
-	#tag Event
+	#tag EventAPI2
 		Sub PanelChanged()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageSources
@@ -1081,25 +1081,25 @@ End
 		    ConnectorDiscoveryView1.Begin
 		  End Select
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events SourceRadio
-	#tag Event
+	#tag EventAPI2
 		Sub ValueChanged(index as Integer)
 		  SourceActionButton.Enabled = SourceRadio(0).Value Or SourceRadio(1).Value Or SourceRadio(2).Value Or (SourceRadio(3).Value And SourceRadio(3).Enabled And Self.mOtherDocuments.LastRowIndex > -1) Or SourceRadio(4).Value
 		  SourceActionButton.Default = SourceActionButton.Enabled
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events SourceCancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  RaiseEvent ShouldDismiss
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events SourceActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Select Case True
 		  Case SourceRadio(0).Value
@@ -1122,7 +1122,7 @@ End
 		    Views.SelectedPanelIndex = Self.PageOtherDocuments
 		  End Select
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events NitradoDiscoveryView1
 	#tag Event
@@ -1188,7 +1188,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events StatusCancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  If Self.QuickCancel Then
 		    Self.Close
@@ -1196,10 +1196,10 @@ End
 		    Self.Reset()
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events OtherDocsActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Redim Self.mDocuments(-1)
 		  For I As Integer = 0 To OtherDocsList.RowCount - 1
@@ -1212,14 +1212,14 @@ End
 		  Next
 		  Self.Finish()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events OtherDocsCancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Views.SelectedPanelIndex = Self.PageSources
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events OtherDocsList
 	#tag Event
@@ -1264,7 +1264,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events DiscoveryWatcher
-	#tag Event
+	#tag EventAPI2
 		Sub Run()
 		  Dim AllFinished As Boolean = True
 		  Dim SuccessCount As Integer
@@ -1340,7 +1340,7 @@ End
 		    End If
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

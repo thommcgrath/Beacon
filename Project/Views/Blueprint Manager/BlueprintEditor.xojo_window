@@ -695,21 +695,21 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events PathField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.Modified = True
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events TypeMenu
-	#tag Event
+	#tag EventAPI2
 		Sub SelectionChanged()
 		  Self.Modified = True
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events NameField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Me.Value.Trim = "" Then
 		    Header.Caption = "New Object"
@@ -718,21 +718,21 @@ End
 		  End If
 		  Self.Modified = True
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events MapCheckboxes
-	#tag Event
+	#tag EventAPI2
 		Sub ValueChanged(index as Integer)
 		  Self.Modified = True
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events TagsField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.Modified = True
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

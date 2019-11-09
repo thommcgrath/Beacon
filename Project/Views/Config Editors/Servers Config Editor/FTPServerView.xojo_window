@@ -834,61 +834,61 @@ End
 #tag EndWindowCode
 
 #tag Events ServerNameField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.mProfile.Name = Me.Value
 		  Self.Header.Caption = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events HostField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.mProfile.Host = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events PortField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.mProfile.Port = Integer.FromString(Me.Value)
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events UserField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.mProfile.Username = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events PassField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.mProfile.Password = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events GameIniPathField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.mProfile.GameIniPath = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events GameUserSettingsIniPathField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.mProfile.GameUserSettingsIniPath = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ModeMenu
 	#tag Event
@@ -900,12 +900,12 @@ End
 		  Me.AddRow("SFTP", Beacon.FTPServerProfile.ModeSFTP)
 		End Sub
 	#tag EndEvent
-	#tag Event
+	#tag EventAPI2
 		Sub SelectionChanged()
 		  Self.mProfile.Mode = Me.Tag
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events MapMenu
 	#tag Event
@@ -918,7 +918,7 @@ End
 		  Next
 		End Sub
 	#tag EndEvent
-	#tag Event
+	#tag EventAPI2
 		Sub SelectionChanged()
 		  Dim Mask As UInt64
 		  If Me.SelectedRowIndex = -1 Then
@@ -929,7 +929,7 @@ End
 		  Self.mProfile.Mask = Mask
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

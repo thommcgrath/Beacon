@@ -324,18 +324,18 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Closing()
 		  NotificationKit.Ignore(Self, Self.Notification_CloseDrawer, Self.Notification_ShowPane)
 		  RaiseEvent Closing
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
-	#tag Event
+	#tag EventAPI2
 		Sub MenuSelected()
 		  Self.CurrentView.EnableMenuItems()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
@@ -346,13 +346,13 @@ End
 		End Function
 	#tag EndEvent
 
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Self.CurrentView.SwitchedTo()
 		  RaiseEvent Opening
 		  NotificationKit.Watch(Self, Self.Notification_CloseDrawer, Self.Notification_ShowPane)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)

@@ -328,14 +328,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events SearchField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.SearchTimer.RunMode = Timer.RunModes.Single
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events SearchTimer
-	#tag Event
+	#tag EventAPI2
 		Sub Run()
 		  Dim Terms As String = Self.SearchField.Value.Trim
 		  
@@ -350,7 +350,7 @@ End
 		  Self.SearchSocket.RequestHeader("Accept") = "application/json"
 		  Self.SearchSocket.Send("GET", Beacon.WebURL("/search/?query=" + EncodeURLComponent(Terms)))
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events SearchSocket
 	#tag Event

@@ -329,14 +329,14 @@ End
 		End Sub
 	#tag EndEvent
 
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Self.AuthClient.Provider = Beacon.OAuth2Client.ProviderNitrado
 		  Self.SwapButtons()
 		  RaiseEvent Opening
 		  Self.CheckActionEnabled
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 	#tag Event
 		Sub Resize()
@@ -482,11 +482,11 @@ End
 #tag EndWindowCode
 
 #tag Events FindingCancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.ShouldCancel()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events List
 	#tag Event
@@ -504,14 +504,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ListCancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.ShouldCancel()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ListActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Dim Engines() As Beacon.NitradoDiscoveryEngine
 		  For I As Integer = 0 To Self.List.RowCount - 1
@@ -524,7 +524,7 @@ End
 		  Next
 		  Self.ShouldFinish(Engines, "Nitrado", Self.AuthClient.AuthData)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events AuthClient
 	#tag Event
@@ -564,11 +564,11 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events LookupStartTimer
-	#tag Event
+	#tag EventAPI2
 		Sub Run()
 		  Self.AuthClient.Authenticate(App.IdentityManager.CurrentIdentity)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

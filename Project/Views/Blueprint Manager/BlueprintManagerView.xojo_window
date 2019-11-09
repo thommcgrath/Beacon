@@ -663,7 +663,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events Pages
-	#tag Event
+	#tag EventAPI2
 		Sub PanelChanged()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageEmpty
@@ -674,7 +674,7 @@ End
 		    Self.Changed = Self.Editor.Changed
 		  End Select
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events Editor
 	#tag Event
@@ -769,11 +769,11 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ClipboardWatcher
-	#tag Event
+	#tag EventAPI2
 		Sub Run()
 		  Self.ListHeader.ImportClipboard.Enabled = Self.ClipboardHasCodes
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

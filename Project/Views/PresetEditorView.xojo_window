@@ -1490,38 +1490,38 @@ End
 		  Header.DeleteEntries.Enabled = Me.SelectedRowCount > 0
 		End Sub
 	#tag EndEvent
-	#tag Event
+	#tag EventAPI2
 		Sub DoubleClicked()
 		  Self.EditSelectedEntries()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events MaxItemsStepper
-	#tag Event
+	#tag EventAPI2
 		Sub DownPressed()
 		  Self.MaxItemsField.Value = Str(CDbl(Self.MaxItemsField.Value) - 1, "-0")
 		End Sub
-	#tag EndEvent
-	#tag Event
+	#tag EndEventAPI2
+	#tag EventAPI2
 		Sub UpPressed()
 		  Self.MaxItemsField.Value = Str(CDbl(Self.MaxItemsField.Value) + 1, "-0")
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events MinItemsStepper
-	#tag Event
+	#tag EventAPI2
 		Sub DownPressed()
 		  Self.MinItemsField.Value = Str(CDbl(Self.MinItemsField.Value) - 1, "-0")
 		End Sub
-	#tag EndEvent
-	#tag Event
+	#tag EndEventAPI2
+	#tag EventAPI2
 		Sub UpPressed()
 		  Self.MinItemsField.Value = Str(CDbl(Self.MinItemsField.Value) + 1, "-0")
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events MaxItemsField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.mUpdating Then
 		    Return
@@ -1537,7 +1537,7 @@ End
 		    Me.Value = Str(Self.mPreset.MaxItems, "-0")
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 	#tag Event
 		Sub LostFocus()
 		  Me.Value = Str(Self.mPreset.MaxItems, "-0")
@@ -1545,7 +1545,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events MinItemsField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.mUpdating Then
 		    Return
@@ -1561,7 +1561,7 @@ End
 		    Me.Value = Str(Self.mPreset.MinItems, "-0")
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 	#tag Event
 		Sub LostFocus()
 		  Me.Value = Str(Self.mPreset.MinItems, "-0")
@@ -1569,7 +1569,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events GroupingField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.mUpdating Then
 		    Return
@@ -1581,10 +1581,10 @@ End
 		    Self.Changed = True
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events NameField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.mUpdating Then
 		    Return
@@ -1596,7 +1596,7 @@ End
 		    Self.Changed = True
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ModifiersList
 	#tag Event
@@ -1605,11 +1605,11 @@ End
 		  DeleteModifierButton.Enabled = Me.SelectedRowCount > 0
 		End Sub
 	#tag EndEvent
-	#tag Event
+	#tag EventAPI2
 		Sub DoubleClicked()
 		  Self.ShowModifierEditor(True)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 	#tag Event
 		Function CanCopy() As Boolean
 		  Return Me.SelectedRowCount > 0
@@ -1701,25 +1701,25 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events AddModifierButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.ShowModifierEditor(False)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events EditModifierButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.ShowModifierEditor(True)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events DeleteModifierButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.ModifiersList.DoClear()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

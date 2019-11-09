@@ -263,14 +263,14 @@ End
 #tag EndWindowCode
 
 #tag Events URLField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.ActionButton.Enabled = Me.Value.Trim.Left(4) = "http"
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Dim URL As String = URLField.Value.Trim
 		  If URL.IndexOf("pasted.co/") > -1 Then
@@ -283,15 +283,15 @@ End
 		  ActionButton.Enabled = False
 		  URLField.Enabled = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.Socket.Disconnect
 		  Self.Hide
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events Socket
 	#tag Event

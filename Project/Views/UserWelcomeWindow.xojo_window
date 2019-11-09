@@ -1638,7 +1638,7 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Closing()
 		  RemoveHandler App.IdentityManager.Finished, AddressOf IdentityManager_Finished
 		  
@@ -1648,9 +1648,9 @@ End
 		    App.NextLaunchQueueTask()
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  AddHandler App.IdentityManager.Finished, AddressOf IdentityManager_Finished
 		  
@@ -1660,7 +1660,7 @@ End
 		    Preferences.OnlineEnabled = False
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h21
@@ -1921,7 +1921,7 @@ End
 #tag EndWindowCode
 
 #tag Events PagePanel1
-	#tag Event
+	#tag EventAPI2
 		Sub PanelChanged()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageLogin
@@ -1938,7 +1938,7 @@ End
 		  
 		  Call CallLater.Schedule(1, AddressOf SetPageFocus)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events PrivacyPolicyLabel
 	#tag Event
@@ -1948,44 +1948,44 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ContinueAnonymousButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.HandleAnonymous()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ContinueAuthenticatedButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.PagePanel1.SelectedPanelIndex = Self.PageLogin
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events DisableOnlineButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.HandleDisableOnline()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events QuitButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Quit
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events LoginActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.SetLoginStatus("Logging in…")
 		  
 		  Self.LoginSocket.Send("POST", BeaconAPI.URL("session.php"))
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events LoginCancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.SetLoginStatus("")
 		  Self.LoginSocket.Disconnect()
@@ -1996,31 +1996,31 @@ End
 		    Self.PagePanel1.SelectedPanelIndex = Self.PagePrivacy
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events LoginEmailField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.CheckLoginButton()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events LoginPasswordField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.CheckLoginButton()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events LoginRevealCheckbox
-	#tag Event
+	#tag EventAPI2
 		Sub ValueChanged()
 		  Self.LoginPasswordField.Password = Not Me.Value
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ConfirmActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  If Self.mConfirmedAddress = Self.ConfirmAddressField.Value.Trim And Self.mConfirmedCode <> "" Then
 		    Self.PagePanel1.SelectedPanelIndex = Self.PageIdentity
@@ -2066,10 +2066,10 @@ End
 		  Self.VerifyConfirmationCodeSocket.SetFormData(Fields)
 		  Self.VerifyConfirmationCodeSocket.Send("POST", Beacon.WebURL("/account/login/verify.php"))
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ConfirmCancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.PagePanel1.SelectedPanelIndex = Self.PageLogin
 		  Self.ResetConfirmUI()
@@ -2081,28 +2081,28 @@ End
 		    Self.mConfirmedEmailScheduleKey = ""
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ConfirmAddressField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.CheckConfirmButton()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ConfirmCodeField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.CheckConfirmButton()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events IdentityUsernameField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.CheckIdentityActionButton()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events IdentityRandomNameButton
 	#tag Event
@@ -2113,36 +2113,36 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events IdentityPasswordField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.CheckIdentityActionButton()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events IdentityPasswordConfirmField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.CheckIdentityActionButton()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events IdentityRevealCheckbox
-	#tag Event
+	#tag EventAPI2
 		Sub ValueChanged()
 		  Self.IdentityPasswordField.Password = Not Me.Value
 		  Self.IdentityPasswordConfirmField.Password = Not Me.Value
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events IdentityActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.SubmitIdentity(False)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events IdentityCancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.ResetConfirmUI()
 		  Self.PagePanel1.SelectedPanelIndex = Self.PageConfirm
@@ -2150,7 +2150,7 @@ End
 		  Self.IdentitySuggestionSocket.Disconnect()
 		  Self.SetSubmitIdentityStatus("")
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events LoginSignupButton
 	#tag Event

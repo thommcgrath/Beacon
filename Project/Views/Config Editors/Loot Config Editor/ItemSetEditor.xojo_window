@@ -545,7 +545,7 @@ End
 		  Return Me.SelectedRowIndex > -1
 		End Function
 	#tag EndEvent
-	#tag Event
+	#tag EventAPI2
 		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Dim Entry1 As Beacon.SetEntry = Me.RowTagAt(Row1)
 		  Dim Entry2 As Beacon.SetEntry = Me.RowTagAt(Row2)
@@ -584,17 +584,17 @@ End
 		  End If
 		  Return True
 		End Function
-	#tag EndEvent
+	#tag EndEventAPI2
 	#tag Event
 		Sub Opening()
 		  
 		End Sub
 	#tag EndEvent
-	#tag Event
+	#tag EventAPI2
 		Sub DoubleClicked()
 		  Self.EditSelectedEntries()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 	#tag Event
 		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
 		  #Pragma Unused X

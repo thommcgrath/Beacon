@@ -208,12 +208,12 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Self.SwapButtons()
 		  Self.ActionButton.Enabled = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h21
@@ -250,7 +250,7 @@ End
 #tag EndWindowCode
 
 #tag Events ActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  // No trim. Trailing or leading whitespace is perfectly valid for the password.
 		  Dim Password As String = Self.PasswordField.Value
@@ -264,22 +264,22 @@ End
 		  
 		  Self.ShowAlert("Unable to decrypt identity", "This usually means the password is wrong. Please try again.")
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.Hide
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events PasswordField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  // No trim. Trailing or leading whitespace is perfectly valid for the password.
 		  Self.ActionButton.Enabled = Me.Value <> ""
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

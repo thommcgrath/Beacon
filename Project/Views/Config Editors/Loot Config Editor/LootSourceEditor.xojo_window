@@ -429,14 +429,14 @@ End
 		End Sub
 	#tag EndEvent
 
-	#tag Event
+	#tag EventAPI2
 		Sub MenuSelected()
 		  Self.BuildPresetMenu(DocumentAddItemSet)
 		  If Self.SetList.SelectedRowCount > 0 Then
 		    DocumentRemoveItemSet.Enable
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 	#tag Event
 		Sub Opening()

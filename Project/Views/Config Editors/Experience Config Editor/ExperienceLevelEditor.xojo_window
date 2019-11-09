@@ -418,7 +418,7 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Self.LevelField.Value = Format(Self.mEditingLevel, "0,")
 		  Self.MinXPField.Value = Format(Self.mMinXP, "0,")
@@ -428,7 +428,7 @@ End
 		  
 		  Self.SwapButtons()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h21
@@ -487,27 +487,27 @@ End
 #tag EndWindowCode
 
 #tag Events XPField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  Self.CheckActionEnabled()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.mCancelled = False
 		  Self.Hide
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

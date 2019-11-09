@@ -558,13 +558,13 @@ End
 		  Self.LeftButtons.EditButton.Enabled = Me.SelectedRowCount = 1
 		End Sub
 	#tag EndEvent
-	#tag Event
+	#tag EventAPI2
 		Sub DoubleClicked()
 		  If Me.SelectedRowCount = 1 Then
 		    Self.ShowEditExperience()
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

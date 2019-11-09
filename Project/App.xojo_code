@@ -8,7 +8,7 @@ Implements NotificationKit.Receiver
 		End Sub
 	#tag EndEvent
 
-	#tag Event
+	#tag EventAPI2
 		Function AppleEventReceived(theEvent As AppleEvent, eventClass As String, eventID As String) As Boolean
 		  If eventClass = "GURL" And eventID = "GURL" Then
 		    Dim URL As String = theEvent.StringParam("----")
@@ -17,9 +17,9 @@ Implements NotificationKit.Receiver
 		    Return False
 		  End If
 		End Function
-	#tag EndEvent
+	#tag EndEventAPI2
 
-	#tag Event
+	#tag EventAPI2
 		Sub Closing()
 		  Try
 		    Self.UninstallTemporaryFont(Self.ResourcesFolder.Child("Fonts").Child("SourceCodePro").Child("SourceCodePro-Regular.otf"))
@@ -38,16 +38,16 @@ Implements NotificationKit.Receiver
 		  
 		  Self.Log("Beacon finished gracefully")
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
-	#tag Event
+	#tag EventAPI2
 		Sub DocumentOpened(item As FolderItem)
 		  Self.OpenFile(Item, False)
 		  
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
-	#tag Event
+	#tag EventAPI2
 		Sub MenuSelected()
 		  FileNew.Enable
 		  FileNewPreset.Enable
@@ -63,9 +63,9 @@ Implements NotificationKit.Receiver
 		    End If
 		  Next
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  #If TargetMacOS
 		    Self.Log("Beacon " + Str(Self.BuildNumber, "-0") + " for Mac.")
@@ -145,7 +145,7 @@ Implements NotificationKit.Receiver
 		  
 		  Tests.RunTests()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 	#tag Event
 		Function UnhandledException(error As RuntimeException) As Boolean

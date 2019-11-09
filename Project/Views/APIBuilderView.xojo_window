@@ -759,7 +759,7 @@ End
 #tag EndWindowCode
 
 #tag Events BuildButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Dim Path As String = PathField.Value
 		  Dim Method As String = MethodMenu.SelectedRowValue
@@ -790,17 +790,17 @@ End
 		    CodeField.Value = Self.BuildHTTPCode(Request)
 		  End Select
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events MethodMenu
-	#tag Event
+	#tag EventAPI2
 		Sub SelectionChanged()
 		  BodyField.Enabled = Me.SelectedRowIndex > 0
 		  BodyLabel.Enabled = BodyField.Enabled
 		  ContentTypeField.Enabled = BodyField.Enabled
 		  ContentTypeLabel.Enabled = BodyField.Enabled
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

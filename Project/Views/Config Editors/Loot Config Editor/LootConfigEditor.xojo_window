@@ -960,7 +960,7 @@ End
 		  Return Not Source.IsValid(Self.Document)
 		End Function
 	#tag EndEvent
-	#tag Event
+	#tag EventAPI2
 		Sub DoubleClicked()
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
@@ -977,7 +977,7 @@ End
 		    Return
 		  Next
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events Editor
 	#tag Event

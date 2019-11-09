@@ -975,11 +975,11 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Self.SwapButtons()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h21
@@ -1173,34 +1173,34 @@ End
 #tag EndWindowCode
 
 #tag Events ModeMultipliersRadio
-	#tag Event
+	#tag EventAPI2
 		Sub ValueChanged()
 		  If Me.Value Then
 		    Self.Pages.SelectedPanelIndex = Self.PageMultipliers
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ModeReplaceRadio
-	#tag Event
+	#tag EventAPI2
 		Sub ValueChanged()
 		  If Me.Value Then
 		    Self.Pages.SelectedPanelIndex = Self.PageReplace
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ModeDisableRadio
-	#tag Event
+	#tag EventAPI2
 		Sub ValueChanged()
 		  If Me.Value Then
 		    Self.Pages.SelectedPanelIndex = Self.PageDisable
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events Pages
-	#tag Event
+	#tag EventAPI2
 		Sub PanelChanged()
 		  Dim OriginalHeight As Integer = Me.Height
 		  Select Case Me.SelectedPanelIndex
@@ -1214,10 +1214,10 @@ End
 		  Dim Delta As Integer = Me.Height - OriginalHeight
 		  Self.Height = Self.Height + Delta
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ChooseReplacementButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Dim Exclude() As Beacon.Creature
 		  Dim SelectedCreature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Self.mSelectedClass)
@@ -1237,10 +1237,10 @@ End
 		    Self.SelectedReplacement = Creatures(0).ClassString
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  If Self.SelectedClass = "" Then
 		    Self.ShowAlert("You haven't selected a creature", "That's an important step, right?")
@@ -1271,18 +1271,18 @@ End
 		  Self.Cancelled = False
 		  Self.Hide
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.Cancelled = True
 		  Self.Hide
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ChooseTargetButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Dim Exclude() As Beacon.Creature
 		  For Each ClassString As String In Self.ConfiguredClasses
@@ -1298,7 +1298,7 @@ End
 		    Self.SelectedClass = Creatures(0).ClassString
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

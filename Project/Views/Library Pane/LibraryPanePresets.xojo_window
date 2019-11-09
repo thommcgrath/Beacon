@@ -508,14 +508,14 @@ End
 		  Header.Export.Enabled = Me.SelectedRowCount > 0
 		End Sub
 	#tag EndEvent
-	#tag Event
+	#tag EventAPI2
 		Sub DoubleClicked()
 		  If Me.SelectedRowIndex > -1 Then
 		    Dim Preset As Beacon.Preset = Me.RowTagAt(Me.SelectedRowIndex)
 		    Self.OpenPreset(Preset)
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 	#tag Event
 		Sub Opening()
 		  Me.ColumnAlignmentAt(1) = Listbox.Alignments.Right

@@ -277,7 +277,7 @@ End
 #tag EndWindowCode
 
 #tag Events ImportURLButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Dim Content As String = BlueprintManagerView.PromptForImportURL(Self)
 		  If Content <> "" Then
@@ -286,19 +286,19 @@ End
 		    View.ImportText(Content)
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ImportClipboardButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Dim View As BlueprintManagerView = Self.ManagerView
 		  Self.ShowView(View)
 		  View.ImportFromClipboard()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ImportFileButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Dim File As FolderItem = BlueprintManagerView.PromptForImportFile(Self)
 		  If File <> Nil Then
@@ -307,15 +307,15 @@ End
 		    View.ImportFromFile(File)
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ManageEngramsButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Dim View As BlueprintManagerView = Self.ManagerView
 		  Self.ShowView(View)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events Header
 	#tag Event
@@ -325,11 +325,11 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ClipboardWatcher
-	#tag Event
+	#tag EventAPI2
 		Sub Run()
 		  Self.ImportClipboardButton.Enabled = BlueprintManagerView.ClipboardHasCodes
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

@@ -209,7 +209,7 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Function CancelClosing(appQuitting as Boolean) As Boolean
 		  #Pragma Unused AppQuitting
 		  
@@ -256,7 +256,7 @@ End
 		    End If
 		  End Select
 		End Function
-	#tag EndEvent
+	#tag EndEventAPI2
 
 	#tag Event
 		Sub Closing()

@@ -531,7 +531,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events MapCheckboxes
-	#tag Event
+	#tag EventAPI2
 		Sub ValueChanged(index as Integer)
 		  If Self.mSettingUp Then
 		    Return
@@ -539,7 +539,7 @@ End
 		  
 		  Self.Modified = True
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

@@ -1,7 +1,7 @@
 #tag Class
 Protected Class ReactionButton
 Inherits UITweaks.ResizedPushButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.mOriginalCaption = Self.Caption
 		  RaiseEvent Pressed
@@ -11,7 +11,7 @@ Inherits UITweaks.ResizedPushButton
 		  Self.Enabled = False
 		  Self.mCallbackKey = CallLater.Schedule(2000, WeakAddressOf RestoreCallback)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h0

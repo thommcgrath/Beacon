@@ -754,25 +754,25 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events QuitButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  App.Terminate(0)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events Pages
-	#tag Event
+	#tag EventAPI2
 		Sub PanelChanged()
 		  Self.QuitButton.Enabled = Me.SelectedPanelIndex <> Self.PageStart
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events PermissionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.BeginChecking()
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events PermissionPolicyLabel
 	#tag Event
@@ -782,7 +782,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events SolutionOpenButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  If Self.mSolutionURL <> "" Then
 		    ShowURL(Self.mSolutionURL)
@@ -790,14 +790,14 @@ End
 		    App.ShowBugReporter(Self.mExceptionHash)
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events ReportButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  App.ShowBugReporter(Self.mExceptionHash)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

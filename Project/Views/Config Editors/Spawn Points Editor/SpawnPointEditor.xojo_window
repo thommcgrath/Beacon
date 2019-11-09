@@ -40,13 +40,12 @@ Begin BeaconContainer SpawnPointEditor
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
-      SelectedPanelIndex=   0
       TabIndex        =   0
       TabPanelIndex   =   0
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   906
       Begin StatusBar EmptyStatusBar
@@ -57,6 +56,7 @@ Begin BeaconContainer SpawnPointEditor
          Backdrop        =   0
          Borders         =   1
          Caption         =   ""
+         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   21
          Index           =   -2147483648
@@ -85,6 +85,7 @@ Begin BeaconContainer SpawnPointEditor
          AllowTabs       =   False
          Backdrop        =   0
          Caption         =   "No Selection"
+         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   643
          Index           =   -2147483648
@@ -142,6 +143,8 @@ End
 		    Self.Pages.SelectedPanelIndex = 0
 		    Return
 		  End If
+		  
+		  Self.Pages.SelectedPanelIndex = 1
 		End Sub
 	#tag EndMethod
 

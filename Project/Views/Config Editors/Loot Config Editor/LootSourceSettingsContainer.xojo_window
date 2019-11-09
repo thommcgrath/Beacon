@@ -387,12 +387,12 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Self.SetupUI()
 		  Self.mSettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h0
@@ -492,11 +492,11 @@ End
 #tag EndWindowCode
 
 #tag Events DisclosureTriangle1
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.SetupUI
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events MinItemSetsField
 	#tag Event
@@ -581,7 +581,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events NoDuplicatesCheck
-	#tag Event
+	#tag EventAPI2
 		Sub ValueChanged()
 		  If Self.mSettingUp Then
 		    Return
@@ -594,10 +594,10 @@ End
 		  
 		  RaiseEvent SettingsChanged
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events MinItemSetsStepper
-	#tag Event
+	#tag EventAPI2
 		Sub DownPressed()
 		  If Self.mSettingUp Then
 		    Return
@@ -605,8 +605,8 @@ End
 		  
 		  Self.MinItemSetsField.DoubleValue = Self.MinItemSetsField.DoubleValue - 1
 		End Sub
-	#tag EndEvent
-	#tag Event
+	#tag EndEventAPI2
+	#tag EventAPI2
 		Sub UpPressed()
 		  If Self.mSettingUp Then
 		    Return
@@ -614,10 +614,10 @@ End
 		  
 		  Self.MinItemSetsField.DoubleValue = Self.MinItemSetsField.DoubleValue + 1
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events MaxItemSetsStepper
-	#tag Event
+	#tag EventAPI2
 		Sub DownPressed()
 		  If Self.mSettingUp Then
 		    Return
@@ -625,8 +625,8 @@ End
 		  
 		  Self.MaxItemSetsField.DoubleValue = Self.MaxItemSetsField.DoubleValue - 1
 		End Sub
-	#tag EndEvent
-	#tag Event
+	#tag EndEventAPI2
+	#tag EventAPI2
 		Sub UpPressed()
 		  If Self.mSettingUp Then
 		    Return
@@ -634,10 +634,10 @@ End
 		  
 		  Self.MaxItemSetsField.DoubleValue = Self.MaxItemSetsField.DoubleValue + 1
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events AppendModeCheck
-	#tag Event
+	#tag EventAPI2
 		Sub ValueChanged()
 		  If Self.mSettingUp Then
 		    Return
@@ -650,7 +650,7 @@ End
 		  
 		  RaiseEvent SettingsChanged
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

@@ -275,11 +275,11 @@ End
 #tag EndWindowCode
 
 #tag Events DownloadLinkLabel
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Me.Value = BeaconAPI.URL("/document/" + EncodeURLComponent(Self.mDocument.DocumentID) + "?name=" + EncodeURLComponent(Self.mDocument.Title))
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CopyLinkButton
 	#tag Event
@@ -293,11 +293,11 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.Close
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events UserList
 	#tag Event
@@ -339,7 +339,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events AddUserButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Dim UserID, PublicKey As String
 		  If ShareWithUserDialog.Present(Self, UserID, PublicKey) Then
@@ -348,7 +348,7 @@ End
 		    Self.mDocument.AddUser(UserID, PublicKey)
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

@@ -455,7 +455,7 @@ End
 #tag EndWindowCode
 
 #tag Events GlobalMultiplierField
-	#tag Event
+	#tag EventAPI2
 		Sub TextChanged()
 		  If Self.SettingUp Then
 		    Return
@@ -467,7 +467,7 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events Header
 	#tag Event

@@ -692,7 +692,7 @@ End
 #tag EndWindowCode
 
 #tag Events List
-	#tag Event
+	#tag EventAPI2
 		Sub DoubleClicked()
 		  For I As Integer = Self.List.RowCount - 1 DownTo 0
 		    If Not Self.List.Selected(I) Then
@@ -702,8 +702,8 @@ End
 		    Self.OpenURL(Beacon.DocumentURL(Self.List.RowTagAt(I)))
 		  Next
 		End Sub
-	#tag EndEvent
-	#tag Event
+	#tag EndEventAPI2
+	#tag EventAPI2
 		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Select Case Column
 		  Case 0
@@ -715,7 +715,7 @@ End
 		    Return True
 		  End Select
 		End Function
-	#tag EndEvent
+	#tag EndEventAPI2
 	#tag Event
 		Function CanDelete() As Boolean
 		  If Me.SelectedRowCount = 0 Then

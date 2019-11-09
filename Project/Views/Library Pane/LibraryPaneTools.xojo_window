@@ -231,7 +231,7 @@ End
 #tag EndWindowCode
 
 #tag Events ToolsList
-	#tag Event
+	#tag EventAPI2
 		Sub DoubleClicked()
 		  If Me.SelectedRowIndex = -1 Then
 		    Return
@@ -249,7 +249,7 @@ End
 		    Self.ShowMods()
 		  End Select
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events Header
 	#tag Event

@@ -478,11 +478,11 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Closing()
 		  Self.Searcher.Cancel
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 	#tag Event
 		Sub Opening()
@@ -904,7 +904,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfirmButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Panel.SelectedPanelIndex = PageLoading
 		  
@@ -912,7 +912,7 @@ End
 		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.Socket.Start(Request)
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events EngramList
 	#tag Event

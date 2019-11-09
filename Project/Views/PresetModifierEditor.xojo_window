@@ -720,7 +720,7 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
+	#tag EventAPI2
 		Sub Opening()
 		  Self.SwapButtons()
 		  
@@ -729,7 +729,7 @@ End
 		  Self.QuantityField.Value = Format(Self.mPreset.QuantityMultiplier(Self.mEditID), "0.00")
 		  Self.BlueprintField.Value = Format(Self.mPreset.BlueprintMultiplier(Self.mEditID), "0.00")
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 
 
 	#tag Method, Flags = &h21
@@ -860,7 +860,7 @@ End
 		  End If
 		End Sub
 	#tag EndEvent
-	#tag Event
+	#tag EventAPI2
 		Sub SelectionChanged()
 		  If Me.SelectedRowIndex = -1 Then
 		    Return
@@ -874,7 +874,7 @@ End
 		    Self.SetEditorVisible(False)
 		  End If
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events MinQualityField
 	#tag Event
@@ -898,7 +898,7 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.MinQualityField.CheckValue
 		  Self.MaxQualityField.CheckValue
@@ -940,15 +940,15 @@ End
 		  Self.mCancelled = False
 		  Self.Hide
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events CancelButton
-	#tag Event
+	#tag EventAPI2
 		Sub Pressed()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
-	#tag EndEvent
+	#tag EndEventAPI2
 #tag EndEvents
 #tag Events MaxQualityField
 	#tag Event
