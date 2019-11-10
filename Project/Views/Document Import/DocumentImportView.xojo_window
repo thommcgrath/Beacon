@@ -130,7 +130,7 @@ Begin ContainerControl DocumentImportView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   4
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -193,7 +193,7 @@ Begin ContainerControl DocumentImportView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   4
+         TabIndex        =   6
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -225,7 +225,7 @@ Begin ContainerControl DocumentImportView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   5
+         TabIndex        =   7
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -493,7 +493,7 @@ Begin ContainerControl DocumentImportView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   6
+         TabIndex        =   5
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -561,7 +561,7 @@ Begin ContainerControl DocumentImportView
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   3
          TabPanelIndex   =   6
          TabStop         =   True
          TextFont        =   "System"
@@ -643,7 +643,7 @@ Begin ContainerControl DocumentImportView
          SelectionChangeBlocked=   False
          SelectionType   =   0
          ShowDropIndicator=   False
-         TabIndex        =   3
+         TabIndex        =   1
          TabPanelIndex   =   6
          TabStop         =   True
          TextFont        =   "System"
@@ -706,7 +706,7 @@ Begin ContainerControl DocumentImportView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   7
+         TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
