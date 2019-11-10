@@ -43,10 +43,9 @@ Begin ContainerControl DocumentImportView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
-      Value           =   4
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin RadioButton SourceRadio
@@ -250,7 +249,6 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -280,7 +278,6 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -310,7 +307,6 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -674,7 +670,6 @@ Begin ContainerControl DocumentImportView
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   456
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -724,7 +719,6 @@ Begin ContainerControl DocumentImportView
       End
    End
    Begin Timer DiscoveryWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -738,6 +732,15 @@ End
 #tag WindowCode
 	#tag EventAPI2
 		Sub Opening()
+		  #if Not Self.ConnectorEnabled
+		    Self.SourceRadio(4).Visible = False
+		    For I As Integer = 1 To 3
+		      Self.SourceRadio(I).Top = Self.SourceRadio(I).Top - 32
+		    Next
+		    Self.SourceCancelButton.Top = Self.SourceRadio(3).Bottom + 12
+		    Self.SourceActionButton.Top = Self.SourceCancelButton.Top
+		  #endif
+		  
 		  Self.SwapButtons
 		  Self.Reset
 		End Sub
@@ -973,7 +976,7 @@ End
 		  If Self.Views.SelectedPanelIndex <> 0 Then
 		    Self.Views.SelectedPanelIndex = 0
 		  Else
-		    RaiseEvent ShouldResize(Self.SourcesPageHeight)
+		    RaiseEvent ShouldResize(Self.SourcesPageHeight - If(Self.ConnectorEnabled, 0, 32))
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1033,6 +1036,9 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = ConnectorEnabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PageConnector, Type = Double, Dynamic = False, Default = \"6", Scope = Private
 	#tag EndConstant
 
@@ -1068,7 +1074,7 @@ End
 		Sub PanelChanged()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageSources
-		    RaiseEvent ShouldResize(Self.SourcesPageHeight)
+		    RaiseEvent ShouldResize(Self.SourcesPageHeight - If(Self.ConnectorEnabled, 0, 32))
 		  Case Self.PageNitrado
 		    NitradoDiscoveryView1.Begin
 		  Case Self.PageFTP
