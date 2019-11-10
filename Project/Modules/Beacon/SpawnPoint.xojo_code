@@ -83,12 +83,18 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateUnknown(ClassString As String) As Beacon.SpawnPoint
+		Shared Function CreateFromClass(ClassString As String) As Beacon.SpawnPoint
+		  Return CreateFromPath(Beacon.UnknownBlueprintPath("SpawnPoints", ClassString))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function CreateFromPath(Path As String) As Beacon.SpawnPoint
 		  Var SpawnPoint As New Beacon.SpawnPoint
-		  SpawnPoint.mClassString = ClassString
-		  SpawnPoint.mPath = Beacon.UnknownBlueprintPath("SpawnPoints", ClassString)
+		  SpawnPoint.mClassString = Beacon.ClassStringFromPath(Path)
+		  SpawnPoint.mPath = Path
 		  SpawnPoint.mObjectID = v4UUID.FromHash(Crypto.Algorithm.MD5, SpawnPoint.mPath.Lowercase)
-		  SpawnPoint.mLabel = Beacon.LabelFromClassString(ClassString)
+		  SpawnPoint.mLabel = Beacon.LabelFromClassString(SpawnPoint.mClassString)
 		  SpawnPoint.mModID = LocalData.UserModID
 		  SpawnPoint.mModName = LocalData.UserModName
 		  Return SpawnPoint
@@ -101,11 +107,14 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		    Var SpawnPoint As Beacon.SpawnPoint
 		    If Dict.HasKey("Path") Then
 		      SpawnPoint = Beacon.Data.GetSpawnPointByPath(Dict.Value("Path"))
+		      If SpawnPoint = Nil Then
+		        SpawnPoint = Beacon.SpawnPoint.CreateFromPath(Dict.Value("Path"))
+		      End If
 		    End If
 		    If SpawnPoint = Nil And Dict.HasKey("Class") Then
 		      SpawnPoint = Beacon.Data.GetSpawnPointByClass(Dict.Value("Class"))
 		      If SpawnPoint = Nil Then
-		        SpawnPoint = Beacon.SpawnPoint.CreateUnknown(Dict.Value("Class"))
+		        SpawnPoint = Beacon.SpawnPoint.CreateFromClass(Dict.Value("Class"))
 		      End If
 		    End If
 		    If SpawnPoint = Nil Then

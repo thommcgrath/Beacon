@@ -223,6 +223,24 @@ Implements Iterable
 		      Members.AddRow("SpawnMinDistanceFromTamedDinosMultiplier=" + Set.MinDistanceFromTamedDinosMultiplier.Value.PrettyText)
 		    End If
 		    
+		    If Set.ReplacesCreatures Then
+		      Var ReplacedCreatures() As Beacon.Creature = Set.ReplacedCreatures()
+		      Var Replacements() As String
+		      For Each FromCreature As Beacon.Creature In ReplacedCreatures
+		        Var ReplacementCreatures() As Beacon.Creature = Set.ReplacementCreatures(FromCreature)
+		        Var ReplacementClasses(), ReplacementWeights() As String
+		        
+		        For Each ToCreature As Beacon.Creature In ReplacementCreatures
+		          Var Weight As Double = Set.CreatureReplacementWeight(FromCreature, ToCreature)
+		          ReplacementClasses.AddRow("""" + ToCreature.ClassString + """")
+		          ReplacementWeights.AddRow(Weight.PrettyText)
+		        Next
+		        
+		        Replacements.AddRow("(FromClass=""" + FromCreature.ClassString + """,ToClasses=(" + ReplacementClasses.Join(",") + "),Weights=(" + ReplacementWeights.Join(",") + "))")
+		      Next
+		      Members.AddRow("NPCRandomSpawnClassWeights=(" + Replacements.Join(",") + ")")
+		    End If
+		    
 		    RenderedEntries.AddRow("(" + Members.Join(",") + ")")
 		  Next
 		  
@@ -308,7 +326,7 @@ Implements Iterable
 		      Else
 		        SpawnPoint = Beacon.Data.GetSpawnPointByClass(ClassString)
 		        If SpawnPoint = Nil Then
-		          SpawnPoint = Beacon.SpawnPoint.CreateUnknown(ClassString)
+		          SpawnPoint = Beacon.SpawnPoint.CreateFromClass(ClassString)
 		        End If
 		        SpawnClasses.Value(ClassString) = SpawnPoint.Path
 		      End If
@@ -328,11 +346,16 @@ Implements Iterable
 		      If Dict.HasKey("NPCSpawnEntries") Then
 		        Var Entries() As Variant = Dict.Value("NPCSpawnEntries")
 		        For Each Entry As Dictionary In Entries
-		          If Not Entry.HasKey("NPCsToSpawnStrings") Then
+		          Var Classes() As Variant
+		          If Entry.HasKey("NPCsToSpawn") Then
+		            Classes = Entry.Value("NPCsToSpawn")
+		          ElseIf Entry.HasKey("NPCsToSpawnStrings") Then
+		            Classes = Entry.Value("NPCsToSpawnStrings")
+		          End If
+		          If Classes.LastRowIndex = -1 Then
 		            Continue
 		          End If
 		          
-		          Var Classes() As Variant = Entry.Value("NPCsToSpawnStrings")
 		          Var LevelMembers(), OffsetMembers(), SpawnChanceMembers(), MinLevelOffsetMembers(), MaxLevelOffsetMembers(), MinLevelMultiplierMembers(), MaxLevelMultipliersMembers(), LevelOverrideMembers() As Variant
 		          
 		          If Entry.HasKey("NPCDifficultyLevelRanges") Then
@@ -365,9 +388,10 @@ Implements Iterable
 		          Set.Weight = Entry.Lookup("EntryWeight", 1.0)
 		          
 		          For I As Integer = 0 To Classes.LastRowIndex
-		            Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Classes(I))
+		            Var CreaturePath As String = Beacon.NormalizeBlueprintPath(Classes(I), "Creatures")
+		            Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(CreaturePath)
 		            If Creature = Nil Then
-		              Continue
+		              Creature = Beacon.Creature.CreateFromPath(CreaturePath)
 		            End If
 		            
 		            Var SetEntry As New Beacon.MutableSpawnPointSetEntry(Creature)
@@ -424,6 +448,36 @@ Implements Iterable
 		          
 		          If Entry.HasKey("SpawnMinDistanceFromTamedDinosMultiplier") Then
 		            Set.MinDistanceFromTamedDinosMultiplier = Entry.Value("SpawnMinDistanceFromTamedDinosMultiplier").DoubleValue
+		          End If
+		          
+		          If Entry.HasKey("NPCRandomSpawnClassWeights") Then
+		            Var Replacements() As Variant = Entry.Value("NPCRandomSpawnClassWeights")
+		            For Each Replacement As Dictionary In Replacements
+		              If Not Replacement.HasAllKeys("FromClass", "ToClasses", "Weights") Then
+		                Continue
+		              End If
+		              
+		              Var FromClassValue As String = Replacement.Value("FromClass")
+		              Var FromCreaturePath As String = Beacon.NormalizeBlueprintPath(FromClassValue, "Creatures")
+		              Var FromCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(FromCreaturePath)
+		              If FromCreature = Nil Then
+		                FromCreature = Beacon.Creature.CreateFromPath(FromCreaturePath)
+		              End If
+		              
+		              Var ToWeights() As Variant = Replacement.Value("Weights")
+		              Var ToClassValues() As Variant = Replacement.Value("ToClasses")
+		              For I As Integer = 0 To ToClassValues.LastRowIndex
+		                Var ToWeight As Double = If(I <= ToWeights.LastRowIndex, ToWeights(I), 1.0)
+		                Var ToClassValue As String = ToClassValues(I)
+		                Var ToCreaturePath As String = Beacon.NormalizeBlueprintPath(ToClassValue, "Creatures")
+		                Var ToCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(ToCreaturePath)
+		                If ToCreature = Nil Then
+		                  ToCreature = Beacon.Creature.CreateFromPath(ToCreaturePath)
+		                End If
+		                
+		                Set.CreatureReplacementWeight(FromCreature, ToCreature) = ToWeight
+		              Next
+		            Next
 		          End If
 		          
 		          If Set.Count > 0 Then
@@ -569,7 +623,20 @@ Implements Iterable
 		            ),
 		            SpawnMinDistanceFromStructuresMultiplier=1.0,
 		            SpawnMinDistanceFromPlayersMultiplier=1.0,
-		            SpawnMinDistanceFromTamedDinosMultiplier=1.0
+		            SpawnMinDistanceFromTamedDinosMultiplier=1.0,
+		            NPCRandomSpawnClassWeights=(
+		                (
+		                    FromClass="Carno_Character_BP_C",
+		                    ToClasses=(
+		                        "Carno_Character_BP_C",
+		                        "MegaCarno_Character_BP_C"
+		                    ),
+		                    Weights=(
+		                        1.0,
+		                        0.1
+		                    )
+		                )
+		            )
 		        )
 		    ),
 		    NPCSpawnLimits=(
@@ -594,6 +661,8 @@ Implements Iterable
 		        1.0
 		    )
 		)
+		
+		
 		
 	#tag EndNote
 

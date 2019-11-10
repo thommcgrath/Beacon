@@ -19,6 +19,41 @@ Inherits Beacon.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub CreatureReplacementWeight(FromCreature As Beacon.Creature, ToCreature As Beacon.Creature, Assigns Weight As NullableDouble)
+		  Var CurrentWeight As NullableDouble = Self.CreatureReplacementWeight(FromCreature, ToCreature)
+		  If CurrentWeight = Weight Then
+		    Return
+		  End If
+		  
+		  Var Options As Dictionary
+		  If Self.mReplacements.HasKey(FromCreature.Path) Then
+		    Options = Self.mReplacements.Value(FromCreature.Path)
+		  Else
+		    If Weight = Nil Then
+		      Return
+		    End If
+		    Options = New Dictionary
+		  End If
+		  
+		  If Weight = Nil Then
+		    If Options.HasKey(ToCreature.Path) Then
+		      Options.Remove(ToCreature.Path)
+		    End If
+		  Else
+		    Options.Value(ToCreature.Path) = Weight.Value
+		  End If
+		  
+		  If Options.KeyCount = 0 And Self.mReplacements.HasKey(FromCreature.Path) Then
+		    Self.mReplacements.Remove(FromCreature.Path)
+		  Else
+		    Self.mReplacements.Value(FromCreature.Path) = Options
+		  End If
+		  
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Entries(Assigns NewEntries() As Beacon.SpawnPointSetEntry)
 		  Self.mEntries.ResizeTo(NewEntries.LastRowIndex)
 		  For I As Integer = 0 To NewEntries.LastRowIndex

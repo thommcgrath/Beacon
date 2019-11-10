@@ -12,6 +12,7 @@ Implements Beacon.MutableBlueprint
 		Sub Constructor(Path As String, ObjectID As v4UUID)
 		  Super.Constructor()
 		  Self.mPath = Path
+		  Self.mClassString = Beacon.ClassStringFromPath(Path)
 		  Self.mObjectID = ObjectID
 		  Self.mLabel = Beacon.LabelFromClassString(Self.ClassString)
 		End Sub
@@ -99,6 +100,7 @@ Implements Beacon.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub Path(Assigns Value As String)
 		  Self.mPath = Value
+		  Self.mClassString = Beacon.ClassStringFromPath(Value)
 		End Sub
 	#tag EndMethod
 

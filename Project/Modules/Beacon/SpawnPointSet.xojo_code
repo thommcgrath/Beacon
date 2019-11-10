@@ -15,6 +15,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  Self.mModified = False
 		  Self.mGroupOffset = Nil
 		  Self.mID = New v4UUID
+		  Self.mReplacements = New Dictionary
 		End Sub
 	#tag EndMethod
 
@@ -33,6 +34,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  End If
 		  Self.mSpreadRadius = Source.mSpreadRadius
 		  Self.mWaterOnlyMinimumHeight = Source.mWaterOnlyMinimumHeight
+		  Self.mReplacements = Source.mReplacements.Clone
 		  
 		  Self.mEntries.ResizeTo(Source.mEntries.LastRowIndex)
 		  For I As Integer = 0 To Source.mEntries.LastRowIndex
@@ -54,6 +56,21 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  // Part of the Beacon.Countable interface.
 		  
 		  Return Self.mEntries.Count
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CreatureReplacementWeight(FromCreature As Beacon.Creature, ToCreature As Beacon.Creature) As NullableDouble
+		  If Not Self.mReplacements.HasKey(FromCreature.Path) Then
+		    Return Nil
+		  End If
+		  
+		  Var Options As Dictionary = Self.mReplacements.Value(FromCreature.Path)
+		  If Options.HasKey(ToCreature.Path) Then
+		    Return Options.Value(ToCreature.Path).DoubleValue
+		  Else
+		    Return Nil
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -145,6 +162,29 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  
 		  If SaveData.HasKey("MinDistanceFromTamedDinosMultiplier") Then
 		    Set.MinDistanceFromTamedDinosMultiplier = SaveData.Value("MinDistanceFromTamedDinosMultiplier").DoubleValue
+		  End If
+		  
+		  If SaveData.HasKey("Replacements") Then
+		    Var Replacements As Dictionary = SaveData.Value("Replacements")
+		    For Each Entry As DictionaryEntry In Replacements
+		      Var FromPath As String = Entry.Key
+		      Var FromCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(FromPath)
+		      If FromCreature = Nil Then
+		        FromCreature = Beacon.Creature.CreateFromPath(FromPath)
+		      End If
+		      
+		      Var ToDict As Dictionary = Entry.Value
+		      For Each SubEntry As DictionaryEntry In ToDict
+		        Var ToPath As String = SubEntry.Key
+		        Var Weight As Double = SubEntry.Value
+		        Var ToCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(ToPath)
+		        If ToCreature = Nil Then
+		          ToCreature = Beacon.Creature.CreateFromPath(ToPath)
+		        End If
+		        
+		        Set.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
+		      Next
+		    Next
 		  End If
 		  
 		  Set.Modified = False
@@ -289,6 +329,48 @@ Implements Beacon.DocumentItem,Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ReplacedCreatures() As Beacon.Creature()
+		  Var Arr() As Beacon.Creature
+		  For Each Entry As DictionaryEntry In Self.mReplacements
+		    Var Path As String = Entry.Key
+		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Path)
+		    If Creature = Nil Then
+		      Creature = Beacon.Creature.CreateFromPath(Path)
+		    End If
+		    Arr.AddRow(Creature)
+		  Next
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ReplacementCreatures(FromCreature As Beacon.Creature) As Beacon.Creature()
+		  Var Arr() As Beacon.Creature
+		  If Not Self.mReplacements.HasKey(FromCreature.Path) Then
+		    Return Arr
+		  End If
+		  
+		  Var Options As Dictionary = Self.mReplacements.Value(FromCreature.Path)
+		  For Each Entry As DictionaryEntry In Options
+		    Var Path As String = Entry.Key
+		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Path)
+		    If Creature = Nil Then
+		      Creature = Beacon.Creature.CreateFromPath(Path)
+		    End If
+		    Arr.AddRow(Creature)
+		  Next
+		  
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ReplacesCreatures() As Boolean
+		  Return Self.mReplacements.KeyCount > 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var Entries() As Dictionary
 		  For Each Entry As Beacon.SpawnPointSetEntry In Self.mEntries
@@ -316,6 +398,9 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  End If
 		  If Self.mMinDistanceFromTamedDinosMultiplier <> Nil Then
 		    SaveData.Value("MinDistanceFromTamedDinosMultiplier") = Self.mMinDistanceFromTamedDinosMultiplier.Value
+		  End If
+		  If Self.mReplacements.KeyCount > 0 Then
+		    SaveData.Value("Replacements") = Self.mReplacements
 		  End If
 		  Return SaveData
 		End Function
@@ -370,6 +455,10 @@ Implements Beacon.DocumentItem,Beacon.Countable
 
 	#tag Property, Flags = &h1
 		Protected mModified As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mReplacements As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

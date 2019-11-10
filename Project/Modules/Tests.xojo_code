@@ -16,6 +16,7 @@ Protected Module Tests
 		    TestStrings()
 		    TestEncryption()
 		    TestUUID()
+		    TestObjectResolution()
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -130,6 +131,37 @@ Protected Module Tests
 		  
 		  MidRead = Original.Middle(5, 200)
 		  Assert(MidRead = "blast the vent core!", "Incorrect MemoryBlock.Middle read when length is greater than size.")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestObjectResolution()
+		  // Ark object identifiers come in 3 forms: Blueprint'/Game/Path/Class.Class', BlueprintGeneratedClass'/Game/Path/Class.Class_C', and 'Class_C'
+		  // and all need to resolve to some object. Worse, that object could be known or unknown by Beacon.
+		  
+		  Const ExpectedOfficialPath = "/Game/Aberration/Dinos/RockDrake/PrimalItemArmor_RockDrakeSaddle.PrimalItemArmor_RockDrakeSaddle"
+		  Const ExpectedUnofficialPath = "/Game/Mods/CrystalWyverns/Wyvern_Character_Blue_BP_PetCraftToo.Wyvern_Character_Blue_BP_PetCraftToo"
+		  Const ExpectedUnknownPath = "/Game/BeaconUserBlueprints/Creatures/Wyvern_Character_Blue_BP_PetCraftToo.Wyvern_Character_Blue_BP_PetCraftToo"
+		  
+		  Var NormalizedPath As String = Beacon.NormalizeBlueprintPath("BlueprintGeneratedClass'/Game/Aberration/Dinos/RockDrake/PrimalItemArmor_RockDrakeSaddle.PrimalItemArmor_RockDrakeSaddle_C'", "Engrams")
+		  Assert(NormalizedPath = ExpectedOfficialPath, "Failed to resolve path correctly. Expected " + ExpectedOfficialPath + ", got " + NormalizedPath)
+		  
+		  NormalizedPath = Beacon.NormalizeBlueprintPath(ExpectedOfficialPath, "Engrams")
+		  Assert(NormalizedPath = ExpectedOfficialPath, "Failed to resolve path correctly. Expected " + ExpectedOfficialPath + ", got " + NormalizedPath)
+		  
+		  NormalizedPath = Beacon.NormalizeBlueprintPath("PrimalItemArmor_RockDrakeSaddle_C", "Engrams")
+		  Assert(NormalizedPath = ExpectedOfficialPath, "Failed to resolve path correctly. Expected " + ExpectedOfficialPath + ", got " + NormalizedPath)
+		  
+		  
+		  NormalizedPath = Beacon.NormalizeBlueprintPath("BlueprintGeneratedClass'/Game/Mods/CrystalWyverns/Wyvern_Character_Blue_BP_PetCraftToo.Wyvern_Character_Blue_BP_PetCraftToo_C'", "Creatures")
+		  Assert(NormalizedPath = ExpectedUnofficialPath, "Failed to resolve path correctly. Expected " + ExpectedUnofficialPath + ", got " + NormalizedPath)
+		  
+		  NormalizedPath = Beacon.NormalizeBlueprintPath(ExpectedUnofficialPath, "Creatures")
+		  Assert(NormalizedPath = ExpectedUnofficialPath, "Failed to resolve path correctly. Expected " + ExpectedUnofficialPath + ", got " + NormalizedPath)
+		  
+		  
+		  NormalizedPath = Beacon.NormalizeBlueprintPath("Wyvern_Character_Blue_BP_PetCraftToo_C", "Creatures")
+		  Assert(NormalizedPath = ExpectedUnknownPath, "Failed to resolve path correctly. Expected " + ExpectedUnknownPath + ", got " + NormalizedPath)
 		End Sub
 	#tag EndMethod
 

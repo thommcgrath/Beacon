@@ -133,12 +133,7 @@ Implements Beacon.MutableBlueprint
 		  // Part of the Beacon.MutableBlueprint interface.
 		  
 		  Self.mPath = Value
-		  
-		  Var Components() As String = Value.Split("/")
-		  Var Tail As String = Components(Components.LastRowIndex)
-		  Components = Tail.Split(".")
-		  Self.mClassString = Components(Components.LastRowIndex) + "_C"
-		  
+		  Self.mClassString = Beacon.ClassStringFromPath(Value)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod

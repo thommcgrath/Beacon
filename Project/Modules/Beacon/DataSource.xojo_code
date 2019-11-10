@@ -151,6 +151,12 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ResolvePathFromClassString(ClassString As String) As String
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SaveNotification(Notification As Beacon.UserNotification)
 		  
 		End Sub

@@ -61,6 +61,24 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function ClassStringFromPath(Path As String) As String
+		  If Path.Length > 6 And Path.Left(6) = "/Game/" Then
+		    If Path.Right(2) = "_C" Then
+		      // Appears to be a BlueprintGeneratedClass Path
+		      Path = Path.Left(Path.Length - 2)
+		    End If
+		  Else
+		    Return EncodeHex(Crypto.MD5(Path)).Lowercase
+		  End If
+		  
+		  Var Components() As String = Path.Split("/")
+		  Var Tail As String = Components(Components.LastRowIndex)
+		  Components = Tail.Split(".")
+		  Return Components(Components.LastRowIndex) + "_C"
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Clone(Extends Source As DateInterval) As DateInterval
 		  Return New DateInterval(Source.Years, Source.Months, Source.Days, Source.Hours, Source.Minutes, Source.Seconds, Source.NanoSeconds)
@@ -596,6 +614,40 @@ Protected Module Beacon
 		    End If
 		  End If
 		  Return ValueName
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function NormalizeBlueprintPath(Path As String, FolderName As String) As String
+		  Path = Path.Trim
+		  
+		  If Path.BeginsWith("BlueprintGeneratedClass") Then
+		    Path = Path.Middle(23)
+		  ElseIf Path.BeginsWith("Blueprint") Then
+		    Path = Path.Middle(9)
+		  End If
+		  
+		  If (Path.BeginsWith("'") And Path.EndsWith("'")) Or (Path.BeginsWith("""") And Path.EndsWith("""")) Then
+		    Path = Path.Middle(1, Path.Length - 2)
+		  End If
+		  
+		  If Path.BeginsWith("/Game/") Then
+		    // Looks like a real path
+		    
+		    If Path.EndsWith("_C") Then
+		      Path = Path.Left(Path.Length - 2)
+		    End If
+		    
+		    Return Path
+		  Else
+		    // Assume this is a class string
+		    Var PossiblePath As String = Beacon.Data.ResolvePathFromClassString(Path)
+		    If PossiblePath <> "" Then
+		      Return PossiblePath
+		    Else
+		      Return Beacon.UnknownBlueprintPath(FolderName, Path)
+		    End If
+		  End If
 		End Function
 	#tag EndMethod
 

@@ -15,10 +15,7 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function ClassString() As String
-		  Dim Components() As String = Self.mPath.Split("/")
-		  Dim Tail As String = Components(Components.LastRowIndex)
-		  Components = Tail.Split(".")
-		  Return Components(Components.LastRowIndex) + "_C"
+		  Return Self.mClassString
 		End Function
 	#tag EndMethod
 
@@ -54,6 +51,25 @@ Implements Beacon.Blueprint
 		    Self.mTags.AddRow(Tag)
 		  Next
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function CreateFromClass(ClassString As String) As Beacon.Creature
+		  Return Creature.CreateFromPath(Beacon.UnknownBlueprintPath("Creatures", ClassString))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function CreateFromPath(Path As String) As Beacon.Creature
+		  Var Creature As New Beacon.Creature
+		  Creature.mClassString = Beacon.ClassStringFromPath(Path)
+		  Creature.mPath = Path
+		  Creature.mObjectID = v4UUID.FromHash(Crypto.Algorithm.MD5, Creature.mPath.Lowercase)
+		  Creature.mLabel = Beacon.LabelFromClassString(Creature.mClassString)
+		  Creature.mModID = LocalData.UserModID
+		  Creature.mModName = LocalData.UserModName
+		  Return Creature
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -198,6 +214,10 @@ Implements Beacon.Blueprint
 
 	#tag Property, Flags = &h1
 		Protected mAvailability As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mClassString As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

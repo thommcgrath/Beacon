@@ -1830,6 +1830,17 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ResolvePathFromClassString(ClassString As String) As String
+		  Var Results As RowSet = Self.SQLSelect("SELECT path FROM blueprints WHERE class_string = ?1;", ClassString)
+		  If Results.RowCount = 0 Then
+		    Return ""
+		  End If
+		  
+		  Return Results.Column("path").StringValue
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Rollback()
 		  If Self.mTransactions.LastRowIndex = -1 Then
