@@ -22,7 +22,7 @@ Begin BeaconContainer SpawnPointEditor
    TabStop         =   True
    Tooltip         =   ""
    Top             =   0
-   Transparent     =   True
+   Transparent     =   False
    Visible         =   True
    Width           =   906
    Begin PagePanel Pages
@@ -106,6 +106,91 @@ Begin BeaconContainer SpawnPointEditor
          Transparent     =   True
          Visible         =   True
          Width           =   906
+      End
+      Begin BeaconToolbar SetsToolbar
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         Caption         =   "Spawn Sets"
+         Enabled         =   True
+         Height          =   40
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Resizer         =   "1"
+         ResizerEnabled  =   True
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Visible         =   True
+         Width           =   200
+      End
+      Begin BeaconToolbar LimitsToolbar
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         Caption         =   "Limits"
+         Enabled         =   True
+         Height          =   40
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Resizer         =   "2"
+         ResizerEnabled  =   True
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   1
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   371
+         Visible         =   True
+         Width           =   200
+      End
+      Begin FadedSeparator ColumnSeparator
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         Enabled         =   True
+         Height          =   664
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   200
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   2
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   1
       End
    End
 End

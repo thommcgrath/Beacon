@@ -17,7 +17,9 @@ Protected Module BeaconConfigs
 		    Names.AddRow(BeaconConfigs.DinoAdjustments.ConfigName)
 		    Names.AddRow(BeaconConfigs.StatMultipliers.ConfigName)
 		    Names.AddRow(BeaconConfigs.DayCycle.ConfigName)
-		    Names.AddRow(BeaconConfigs.SpawnPoints.ConfigName)
+		    #if SpawnPointsEnabled
+		      Names.AddRow(BeaconConfigs.SpawnPoints.ConfigName)
+		    #endif
 		  End If
 		  If Human = True Then
 		    Static HumanNames() As String
@@ -152,6 +154,10 @@ Protected Module BeaconConfigs
 		  End Select
 		End Function
 	#tag EndMethod
+
+
+	#tag Constant, Name = SpawnPointsEnabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Protected
+	#tag EndConstant
 
 
 	#tag ViewBehavior
