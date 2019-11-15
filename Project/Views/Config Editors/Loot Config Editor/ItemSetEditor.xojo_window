@@ -545,56 +545,16 @@ End
 		  Return Me.SelectedRowIndex > -1
 		End Function
 	#tag EndEvent
-	#tag EventAPI2
-		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
-		  Dim Entry1 As Beacon.SetEntry = Me.RowTagAt(Row1)
-		  Dim Entry2 As Beacon.SetEntry = Me.RowTagAt(Row2)
-		  
-		  Dim Value1, Value2 As Double
-		  Select Case Column
-		  Case Self.ColumnLabel
-		    Return False
-		  Case Self.ColumnQuantity
-		    If Entry1.MinQuantity = Entry2.MinQuantity Then
-		      Value1 = Entry1.MaxQuantity
-		      Value2 = Entry2.MaxQuantity
-		    Else
-		      Value1 = Entry1.MinQuantity
-		      Value2 = Entry2.MinQuantity
-		    End If
-		  Case Self.ColumnQuality
-		    If Entry1.MinQuality = Entry2.MinQuality Then
-		      Value1 = Entry1.MaxQuality.BaseValue
-		      Value2 = Entry2.MaxQuality.BaseValue
-		    Else
-		      Value1 = Entry1.MinQuality.BaseValue
-		      Value2 = Entry2.MinQuality.BaseValue
-		    End If
-		  Case Self.ColumnFigures
-		    Value1 = Entry1.RawWeight
-		    Value2 = Entry2.RawWeight
-		  End Select
-		  
-		  If Value1 = Value2 Then
-		    Result = 0
-		  ElseIf Value1 > Value2 Then
-		    Result = 1
-		  Else
-		    Result = -1
-		  End If
-		  Return True
-		End Function
-	#tag EndEventAPI2
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  
 		End Sub
 	#tag EndEvent
-	#tag EventAPI2
-		Sub DoubleClicked()
+	#tag Event
+		Sub DoubleClick()
 		  Self.EditSelectedEntries()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 	#tag Event
 		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
 		  #Pragma Unused X
@@ -638,7 +598,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub SelectionChanged()
+		Sub Change()
 		  Self.Header.EditEntry.Enabled = Me.SelectedRowCount > 0
 		  Self.UpdateStatus()
 		End Sub
@@ -649,10 +609,50 @@ End
 		  Return Not Entry.IsValid(Self.Document)
 		End Function
 	#tag EndEvent
+	#tag Event
+		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  Dim Entry1 As Beacon.SetEntry = Me.RowTagAt(Row1)
+		  Dim Entry2 As Beacon.SetEntry = Me.RowTagAt(Row2)
+		  
+		  Dim Value1, Value2 As Double
+		  Select Case Column
+		  Case Self.ColumnLabel
+		    Return False
+		  Case Self.ColumnQuantity
+		    If Entry1.MinQuantity = Entry2.MinQuantity Then
+		      Value1 = Entry1.MaxQuantity
+		      Value2 = Entry2.MaxQuantity
+		    Else
+		      Value1 = Entry1.MinQuantity
+		      Value2 = Entry2.MinQuantity
+		    End If
+		  Case Self.ColumnQuality
+		    If Entry1.MinQuality = Entry2.MinQuality Then
+		      Value1 = Entry1.MaxQuality.BaseValue
+		      Value2 = Entry2.MaxQuality.BaseValue
+		    Else
+		      Value1 = Entry1.MinQuality.BaseValue
+		      Value2 = Entry2.MinQuality.BaseValue
+		    End If
+		  Case Self.ColumnFigures
+		    Value1 = Entry1.RawWeight
+		    Value2 = Entry2.RawWeight
+		  End Select
+		  
+		  If Value1 = Value2 Then
+		    Result = 0
+		  ElseIf Value1 > Value2 Then
+		    Result = 1
+		  Else
+		    Result = -1
+		  End If
+		  Return True
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events Header
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddEntry"
 		    Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.Mods)
@@ -672,7 +672,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Dim AddButton As New BeaconToolbarItem("AddEntry", IconToolbarAdd)
 		  AddButton.HelpTag = "Add engrams to this item set."
 		  

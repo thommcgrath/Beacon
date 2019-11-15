@@ -153,7 +153,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.ToolbarCaption = "Search"
 		End Sub
 	#tag EndEvent
@@ -328,15 +328,15 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events SearchField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.SearchTimer.RunMode = Timer.RunModes.Single
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events SearchTimer
-	#tag EventAPI2
-		Sub Run()
+	#tag Event
+		Sub Action()
 		  Dim Terms As String = Self.SearchField.Value.Trim
 		  
 		  If Terms = "" Then
@@ -350,7 +350,7 @@ End
 		  Self.SearchSocket.RequestHeader("Accept") = "application/json"
 		  Self.SearchSocket.Send("GET", Beacon.WebURL("/search/?query=" + EncodeURLComponent(Terms)))
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events SearchSocket
 	#tag Event

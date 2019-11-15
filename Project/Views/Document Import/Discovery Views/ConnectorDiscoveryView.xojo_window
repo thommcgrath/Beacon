@@ -512,13 +512,13 @@ End
 		End Sub
 	#tag EndEvent
 
-	#tag EventAPI2
-		Sub Opening()
-		  RaiseEvent Opening()
+	#tag Event
+		Sub Open()
+		  RaiseEvent Open()
 		  Self.SwapButtons()
 		  Self.CheckEnabled()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
@@ -533,7 +533,7 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event Opening()
+		Event Open()
 	#tag EndHook
 
 
@@ -545,29 +545,29 @@ End
 #tag EndWindowCode
 
 #tag Events AddressField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.CheckEnabled()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events PortField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.CheckEnabled()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events KeyField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.CheckEnabled()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Dim Profile As New Beacon.ConnectorServerProfile
 		  Profile.Address = Self.AddressField.Value
 		  Profile.Port = CDbl(Self.PortField.Value)
@@ -585,18 +585,18 @@ End
 		  
 		  Self.CheckEnabled()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.TestSocket.Close
 		  Self.Spinner.Visible = False
 		  Self.StatusLabel.Visible = False
 		  Self.HelpLabel.Visible = True
 		  Self.ShouldCancel()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events TestSocket
 	#tag Event
@@ -641,7 +641,7 @@ End
 #tag EndEvents
 #tag Events HelpLabel
 	#tag Event
-		Sub Pressed()
+		Sub Action()
 		  ShowURL(Beacon.WebURL("/connector"))
 		End Sub
 	#tag EndEvent

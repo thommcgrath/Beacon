@@ -183,11 +183,11 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Self.SwapButtons()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
@@ -311,7 +311,7 @@ End
 
 #tag Events List
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
 		End Sub
 	#tag EndEvent
@@ -332,8 +332,8 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Dim PreviousMods As New Beacon.StringList(Self.mDestination.Mods)
 		  
 		  For I As Integer = 0 To Self.List.RowCount - 1
@@ -386,14 +386,14 @@ End
 		    Self.Close
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.Close
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

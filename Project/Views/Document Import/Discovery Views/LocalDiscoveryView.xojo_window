@@ -213,7 +213,6 @@ Begin DiscoveryView LocalDiscoveryView
       DoubleBuffer    =   False
       DrawCaptions    =   True
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   60
       HelpTag         =   ""
       Index           =   -2147483648
@@ -244,7 +243,6 @@ Begin DiscoveryView LocalDiscoveryView
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -328,14 +326,14 @@ End
 		End Sub
 	#tag EndEvent
 
-	#tag EventAPI2
-		Sub Opening()
-		  RaiseEvent Opening
+	#tag Event
+		Sub Open()
+		  RaiseEvent Open
 		  Self.AcceptFileDrop(BeaconFileTypes.IniFile)
 		  Self.ConfigArea.AcceptFileDrop(BeaconFileTypes.IniFile)
 		  Self.SwapButtons()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
@@ -512,7 +510,7 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event Opening()
+		Event Open()
 	#tag EndHook
 
 
@@ -546,8 +544,8 @@ End
 #tag EndWindowCode
 
 #tag Events ConfigArea
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Not Self.mSettingUp Then
 		    Select Case Self.Switcher.SelectedIndex
 		    Case Self.GameIniIndex
@@ -559,7 +557,7 @@ End
 		  
 		  Self.ActionButton.Enabled = Self.mGameIniContent.Length > 0 Or Self.mGameUserSettingsIniContent.Length > 0
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 	#tag Event
 		Sub DropObject(obj As DragItem, action As Integer)
 		  #Pragma Unused Action
@@ -568,24 +566,24 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Dim Engines(0) As Beacon.DiscoveryEngine
 		  Engines(0) = New Beacon.LocalDiscoveryEngine(Self.mGameIniContent, Self.mGameUserSettingsIniContent)
 		  Self.ShouldFinish(Engines)
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.ShouldCancel()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ChooseFileButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  If Self.mGameIniContent.Length > 0 And Self.mGameUserSettingsIniContent.Length > 0 And Self.ShowConfirm("Both files are already selected", "You can select another file if you really want to, but both Game.ini and GameUserSettings.ini files are already present.", "Add Another", "Cancel") = False Then
 		    Return
 		  End If
@@ -599,11 +597,11 @@ End
 		    Self.AddFile(File)
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Switcher
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.Add(IconGameUserSettingsIni, "GameUserSettings.ini", "gameusersettings.ini")
 		  Me.Add(IconGameIni, "Game.ini", "game.ini")
@@ -612,7 +610,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Pressed()
+		Sub Action()
 		  Dim SettingUp As Boolean = Self.mSettingUp
 		  Self.mSettingUp = True
 		  Select Case Me.SelectedIndex

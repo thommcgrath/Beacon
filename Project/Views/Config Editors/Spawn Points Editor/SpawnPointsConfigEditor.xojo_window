@@ -403,7 +403,7 @@ End
 
 #tag Events ControlToolbar
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Dim AddButton As New BeaconToolbarItem("AddButton", IconToolbarAdd)
 		  AddButton.HelpTag = "Override a spawn point."
 		  
@@ -415,7 +415,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddButton"
 		    Var SpawnPoints() As Beacon.SpawnPoint = AddSpawnPointDialog.Present(Self, Self.Document)
@@ -461,7 +461,7 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub SelectionChanged()
+		Sub Change()
 		  If Self.SettingUp Then
 		    Return
 		  End If

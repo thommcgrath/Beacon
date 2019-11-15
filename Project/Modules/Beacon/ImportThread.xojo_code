@@ -92,7 +92,7 @@ Inherits Beacon.Thread
 		  Self.mUpdateTimer = New Timer
 		  Self.mUpdateTimer.RunMode = Timer.RunModes.Off
 		  Self.mUpdateTimer.Period = 0
-		  AddHandler Self.mUpdateTimer.Run, WeakAddressOf Self.mUpdateTimer_Run
+		  AddHandler Self.mUpdateTimer.Action, WeakAddressOf Self.mUpdateTimer_Action
 		End Sub
 	#tag EndMethod
 
@@ -143,7 +143,7 @@ Inherits Beacon.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mUpdateTimer_Run(Sender As Timer)
+		Private Sub mUpdateTimer_Action(Sender As Timer)
 		  #Pragma Unused Sender
 		  
 		  RaiseEvent UpdateUI

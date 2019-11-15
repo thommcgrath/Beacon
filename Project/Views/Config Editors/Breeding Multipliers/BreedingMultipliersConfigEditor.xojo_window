@@ -1373,7 +1373,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.MinimumWidth = 744
 		  Self.MinimumHeight = 544
 		End Sub
@@ -1515,8 +1515,8 @@ End
 #tag EndWindowCode
 
 #tag Events MatureSpeedField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1532,11 +1532,11 @@ End
 		  Self.SettingUp = False
 		  Self.UpdateStats()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events IncubationSpeedField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1552,11 +1552,11 @@ End
 		  Self.SettingUp = False
 		  Self.UpdateStats()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events EggLayPeriodField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1571,11 +1571,11 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events FoodConsumptionField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1590,11 +1590,11 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ImprintPeriodField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1610,11 +1610,11 @@ End
 		  Self.SettingUp = False
 		  Self.UpdateStats()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ImprintStatScaleField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1629,11 +1629,11 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ImprintGracePeriodField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1648,11 +1648,11 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ImprintLossSpeedField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1667,11 +1667,11 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CreaturesList
-	#tag EventAPI2
-		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+	#tag Event
+		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  If Column = Self.ColumnIncubationTime Or Column = Self.ColumnMatureTime Then
 		    Dim Period1 As UInt64 = Me.CellTagAt(Row1, Column)
 		    Dim Period2 As UInt64 = Me.CellTagAt(Row2, Column)
@@ -1687,11 +1687,11 @@ End
 		    Return False
 		  End If
 		End Function
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Header
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AutoTuneButton"
 		    Dim Interval As Double = BreedingTunerDialog.Present(Self, Self.Config(False).BabyMatureSpeedMultiplier)
@@ -1710,15 +1710,15 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.LeftItems.Append(New BeaconToolbarItem("AutoTuneButton", IconToolbarWizard, "Automatically compute imprint interval to give at least a specified imprinting on all creatures."))
 		  Me.LeftItems.Append(New BeaconToolbarItem("ShareLinkButton", IconToolbarShare, "Generates a link so you can share this breeding chart."))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events MatingSpeedField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1733,11 +1733,11 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events MatingIntervalField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1752,7 +1752,7 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

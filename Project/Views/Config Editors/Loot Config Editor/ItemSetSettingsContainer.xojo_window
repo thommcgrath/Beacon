@@ -534,13 +534,13 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag EventAPI2
-		Sub Opening()
-		  RaiseEvent Opening
+	#tag Event
+		Sub Open()
+		  RaiseEvent Open
 		  Self.SetupUI()
 		  Self.mSettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
@@ -588,7 +588,7 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event Opening()
+		Event Open()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -651,15 +651,15 @@ End
 #tag EndWindowCode
 
 #tag Events DisclosureTriangle1
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.SetupUI
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events NameField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -671,11 +671,11 @@ End
 		  Self.ItemSet.Label = Me.Value
 		  RaiseEvent SettingsChanged
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events PreventDuplicatesCheck
-	#tag EventAPI2
-		Sub ValueChanged()
+	#tag Event
+		Sub Action()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -689,11 +689,11 @@ End
 		  Self.MinEntriesField.CheckValue
 		  RaiseEvent SettingsChanged
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events MinEntriesField
 	#tag Event
-		Sub TextChanged()
+		Sub TextChange()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -724,7 +724,7 @@ End
 #tag EndEvents
 #tag Events MaxEntriesField
 	#tag Event
-		Sub TextChanged()
+		Sub TextChange()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -755,7 +755,7 @@ End
 #tag EndEvents
 #tag Events WeightField
 	#tag Event
-		Sub TextChanged()
+		Sub TextChange()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
@@ -785,64 +785,64 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events WeightStepper
-	#tag EventAPI2
-		Sub DownPressed()
+	#tag Event
+		Sub Down()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
 		  
 		  Self.WeightField.DoubleValue = Self.WeightField.DoubleValue - (If(Keyboard.AsyncShiftKey, 5, 1) * (Self.WeightScale / 100))
 		End Sub
-	#tag EndEventAPI2
-	#tag EventAPI2
-		Sub UpPressed()
+	#tag EndEvent
+	#tag Event
+		Sub Up()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
 		  
 		  Self.WeightField.DoubleValue = Self.WeightField.DoubleValue + (If(Keyboard.AsyncShiftKey, 5, 1) * (Self.WeightScale / 100))
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events MaxEntriesStepper
-	#tag EventAPI2
-		Sub DownPressed()
+	#tag Event
+		Sub Down()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
 		  
 		  Self.MaxEntriesField.DoubleValue = Self.MaxEntriesField.DoubleValue - 1
 		End Sub
-	#tag EndEventAPI2
-	#tag EventAPI2
-		Sub UpPressed()
+	#tag EndEvent
+	#tag Event
+		Sub Up()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
 		  
 		  Self.MaxEntriesField.DoubleValue = Self.MaxEntriesField.DoubleValue + 1
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events MinEntriesStepper
-	#tag EventAPI2
-		Sub DownPressed()
+	#tag Event
+		Sub Down()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
 		  
 		  Self.MinEntriesField.DoubleValue = Self.MinEntriesField.DoubleValue - 1
 		End Sub
-	#tag EndEventAPI2
-	#tag EventAPI2
-		Sub UpPressed()
+	#tag EndEvent
+	#tag Event
+		Sub Up()
 		  If Self.mSettingUp Or Self.ItemSet = Nil Then
 		    Return
 		  End If
 		  
 		  Self.MinEntriesField.DoubleValue = Self.MinEntriesField.DoubleValue + 1
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

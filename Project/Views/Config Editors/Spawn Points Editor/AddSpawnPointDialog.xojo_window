@@ -380,8 +380,8 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Self.SwapButtons()
 		  
 		  If Self.mUIMode = Self.UIModeDuplicate Then
@@ -393,7 +393,7 @@ End
 		  
 		  Self.UpdateFilter()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
@@ -559,8 +559,8 @@ End
 #tag EndWindowCode
 
 #tag Events ActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Var Mode As Integer
 		  Select Case Self.ModeMenu.SelectedRowIndex
 		  Case 0
@@ -591,29 +591,29 @@ End
 		  
 		  Self.Hide
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.Hide
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub SelectionChanged()
+		Sub Change()
 		  Self.CheckActionEnabled()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events FilterSelector
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Me.Width = Me.SegmentCount * 100
 		  Me.ResizeCells
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 	#tag Event
 		Sub Pressed(segmentIndex as integer)
 		  Self.FilterMode = SegmentIndex
@@ -622,17 +622,17 @@ End
 #tag EndEvents
 #tag Events FilterField
 	#tag Event
-		Sub TextChanged()
+		Sub TextChange()
 		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ModeMenu
-	#tag EventAPI2
-		Sub SelectionChanged()
+	#tag Event
+		Sub Change()
 		  Self.LoadDefaultsCheck.Visible = Me.SelectedRowIndex = 0
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

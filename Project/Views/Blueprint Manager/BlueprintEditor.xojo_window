@@ -458,7 +458,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Dim Maps() As Beacon.Map = Beacon.Maps.All
 		  Dim OfficialMaps(), ThirdPartyMaps() As Beacon.Map
 		  Dim OfficialMasks(), ThirdPartyMasks() As UInt64
@@ -678,7 +678,7 @@ End
 
 #tag Events Header
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "SaveButton"
 		    Self.Save()
@@ -688,29 +688,29 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.LeftItems.Append(New BeaconToolbarItem("SaveButton", IconToolbarSave, False, "Save Object"))
 		  Me.LeftItems.Append(New BeaconToolbarItem("RevertButton", IconToolbarRevert, False, "Revert Changes"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events PathField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.Modified = True
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events TypeMenu
-	#tag EventAPI2
-		Sub SelectionChanged()
+	#tag Event
+		Sub Change()
 		  Self.Modified = True
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events NameField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Me.Value.Trim = "" Then
 		    Header.Caption = "New Object"
 		  Else
@@ -718,21 +718,21 @@ End
 		  End If
 		  Self.Modified = True
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events MapCheckboxes
-	#tag EventAPI2
-		Sub ValueChanged(index as Integer)
+	#tag Event
+		Sub Action(index as Integer)
 		  Self.Modified = True
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events TagsField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.Modified = True
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

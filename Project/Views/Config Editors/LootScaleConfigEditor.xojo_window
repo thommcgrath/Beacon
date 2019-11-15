@@ -173,8 +173,8 @@ End
 #tag EndWindowCode
 
 #tag Events LootScaleField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -190,7 +190,7 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ScaleSlider
 	#tag Event

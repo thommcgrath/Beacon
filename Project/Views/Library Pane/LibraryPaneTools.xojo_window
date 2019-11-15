@@ -145,13 +145,13 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Closing()
+		Sub Close()
 		  NotificationKit.Ignore(Self, Preferences.Notification_OnlineStateChanged)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.ToolbarCaption = "Tools"
 		  
 		  NotificationKit.Watch(Self, Preferences.Notification_OnlineStateChanged)
@@ -231,8 +231,8 @@ End
 #tag EndWindowCode
 
 #tag Events ToolsList
-	#tag EventAPI2
-		Sub DoubleClicked()
+	#tag Event
+		Sub DoubleClick()
 		  If Me.SelectedRowIndex = -1 Then
 		    Return
 		  End If
@@ -249,7 +249,7 @@ End
 		    Self.ShowMods()
 		  End Select
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Header
 	#tag Event

@@ -43,6 +43,7 @@ Begin ContainerControl DocumentImportView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -249,6 +250,7 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -278,6 +280,7 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -307,6 +310,7 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -670,6 +674,7 @@ Begin ContainerControl DocumentImportView
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   456
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -719,6 +724,7 @@ Begin ContainerControl DocumentImportView
       End
    End
    Begin Timer DiscoveryWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -730,8 +736,8 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  #if Not Self.ConnectorEnabled
 		    Self.SourceRadio(4).Visible = False
 		    For I As Integer = 1 To 3
@@ -744,7 +750,7 @@ End
 		  Self.SwapButtons
 		  Self.Reset
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
@@ -1070,8 +1076,8 @@ End
 #tag EndWindowCode
 
 #tag Events Views
-	#tag EventAPI2
-		Sub PanelChanged()
+	#tag Event
+		Sub Change()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageSources
 		    RaiseEvent ShouldResize(Self.SourcesPageHeight - If(Self.ConnectorEnabled, 0, 32))
@@ -1087,26 +1093,26 @@ End
 		    ConnectorDiscoveryView1.Begin
 		  End Select
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events SourceRadio
-	#tag EventAPI2
-		Sub ValueChanged(index as Integer)
+	#tag Event
+		Sub Action(index as Integer)
 		  SourceActionButton.Enabled = SourceRadio(0).Value Or SourceRadio(1).Value Or SourceRadio(2).Value Or (SourceRadio(3).Value And SourceRadio(3).Enabled And Self.mOtherDocuments.LastRowIndex > -1) Or SourceRadio(4).Value
 		  SourceActionButton.Default = SourceActionButton.Enabled
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events SourceCancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  RaiseEvent ShouldDismiss
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events SourceActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Select Case True
 		  Case SourceRadio(0).Value
 		    Views.SelectedPanelIndex = Self.PageNitrado
@@ -1128,7 +1134,7 @@ End
 		    Views.SelectedPanelIndex = Self.PageOtherDocuments
 		  End Select
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events NitradoDiscoveryView1
 	#tag Event
@@ -1194,19 +1200,19 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events StatusCancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  If Self.QuickCancel Then
 		    Self.Close
 		  Else
 		    Self.Reset()
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events OtherDocsActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Redim Self.mDocuments(-1)
 		  For I As Integer = 0 To OtherDocsList.RowCount - 1
 		    If Not OtherDocsList.CellCheckBoxValueAt(I, 0) Then
@@ -1218,14 +1224,14 @@ End
 		  Next
 		  Self.Finish()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events OtherDocsCancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Views.SelectedPanelIndex = Self.PageSources
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events OtherDocsList
 	#tag Event
@@ -1270,8 +1276,8 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events DiscoveryWatcher
-	#tag EventAPI2
-		Sub Run()
+	#tag Event
+		Sub Action()
 		  Dim AllFinished As Boolean = True
 		  Dim SuccessCount As Integer
 		  Dim Errors As Boolean
@@ -1346,7 +1352,7 @@ End
 		    End If
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

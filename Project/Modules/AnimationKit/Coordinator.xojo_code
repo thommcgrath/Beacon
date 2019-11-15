@@ -61,7 +61,7 @@ Protected Class Coordinator
 		  Self.Animator = New Timer
 		  Self.Animator.RunMode = Timer.RunModes.Off
 		  Self.Animator.Period = 10
-		  AddHandler Self.Animator.Run, WeakAddressOf Self.Animator_Run
+		  AddHandler Self.Animator.Action, WeakAddressOf Self.Animator_Run
 		End Sub
 	#tag EndMethod
 

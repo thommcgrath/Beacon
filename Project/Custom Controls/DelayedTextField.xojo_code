@@ -1,12 +1,12 @@
 #tag Class
 Protected Class DelayedTextField
 Inherits UITweaks.ResizedTextField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.mTimer.Reset
 		  Self.mTimer.RunMode = Timer.RunModes.Single
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
@@ -16,7 +16,7 @@ Inherits UITweaks.ResizedTextField
 		  Self.mTimer = New Timer
 		  Self.mTimer.RunMode = Timer.RunModes.Off
 		  Self.mTimer.Period = 250
-		  AddHandler Self.mTimer.Run, WeakAddressOf mTimer_Run
+		  AddHandler Self.mTimer.Action, WeakAddressOf mTimer_Action
 		  
 		  Super.Constructor
 		End Sub
@@ -24,7 +24,7 @@ Inherits UITweaks.ResizedTextField
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
-		  RemoveHandler Self.mTimer.Run, WeakAddressOf mTimer_Run
+		  RemoveHandler Self.mTimer.Action, WeakAddressOf mTimer_Action
 		  Self.mTimer.RunMode = Timer.RunModes.Off
 		  Self.mTimer.Reset
 		  Self.mTimer = Nil
@@ -32,16 +32,16 @@ Inherits UITweaks.ResizedTextField
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mTimer_Run(Sender As Timer)
+		Private Sub mTimer_Action(Sender As Timer)
 		  #Pragma Unused Sender
 		  
-		  RaiseEvent TextChanged
+		  RaiseEvent TextChange
 		End Sub
 	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
-		Event TextChanged()
+		Event TextChange()
 	#tag EndHook
 
 

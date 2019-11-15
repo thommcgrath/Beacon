@@ -43,7 +43,7 @@ Begin DiscoveryView NitradoDiscoveryView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   "True"
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -134,7 +134,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   "True"
+         TabStop         =   True
          Top             =   222
          Transparent     =   False
          Value           =   0.0
@@ -329,14 +329,14 @@ End
 		End Sub
 	#tag EndEvent
 
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Self.AuthClient.Provider = Beacon.OAuth2Client.ProviderNitrado
 		  Self.SwapButtons()
-		  RaiseEvent Opening
+		  RaiseEvent Open
 		  Self.CheckActionEnabled
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 	#tag Event
 		Sub Resize()
@@ -459,7 +459,7 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event Opening()
+		Event Open()
 	#tag EndHook
 
 
@@ -482,15 +482,15 @@ End
 #tag EndWindowCode
 
 #tag Events FindingCancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.ShouldCancel()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.List.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
 		End Sub
 	#tag EndEvent
@@ -504,15 +504,15 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ListCancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.ShouldCancel()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ListActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Dim Engines() As Beacon.NitradoDiscoveryEngine
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.CellCheckBoxValueAt(I, 0) Then
@@ -524,7 +524,7 @@ End
 		  Next
 		  Self.ShouldFinish(Engines, "Nitrado", Self.AuthClient.AuthData)
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events AuthClient
 	#tag Event
@@ -564,11 +564,11 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events LookupStartTimer
-	#tag EventAPI2
-		Sub Run()
+	#tag Event
+		Sub Action()
 		  Self.AuthClient.Authenticate(App.IdentityManager.CurrentIdentity)
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

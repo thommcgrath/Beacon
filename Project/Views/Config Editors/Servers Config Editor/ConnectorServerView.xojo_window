@@ -517,13 +517,13 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Closing()
+		Sub Close()
 		  Self.ClientSocket.Close
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.ControlToolbar.Caption = Self.mProfile.Name
 		  Self.ServerNameField.Value = Self.mProfile.Name
 		  Self.AddressField.Value = Self.mProfile.Address
@@ -680,12 +680,12 @@ End
 #tag EndEvents
 #tag Events ControlToolbar
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.LeftItems.Append(New BeaconToolbarItem("PowerButton", IconToolbarPower, False, "Start or stop the server."))
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "PowerButton"
 		    If Self.Status = ServerStatus.Started And Self.ClientSocket.IsConnected Then
@@ -710,49 +710,49 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ServerNameField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.mProfile.Name = Me.Value
 		  Self.ControlToolbar.Caption = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events AddressField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.mProfile.Address = Me.Value.Trim
 		  Self.Changed = Self.mProfile.Modified
 		  Self.RefreshServerStatus()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events PortField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If IsNumeric(Me.Value) Then
 		    Self.mProfile.Port = CDbl(Me.Value)
 		    Self.Changed = Self.mProfile.Modified
 		  End If
 		  Self.RefreshServerStatus()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events KeyField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.mProfile.PreSharedKey = Me.Value.Trim
 		  Self.Changed = Self.mProfile.Modified
 		  Self.RefreshServerStatus()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events RefreshTimer
-	#tag EventAPI2
-		Sub Run()
+	#tag Event
+		Sub Action()
 		  Self.RefreshServerStatus()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

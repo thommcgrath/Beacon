@@ -263,15 +263,15 @@ End
 #tag EndWindowCode
 
 #tag Events URLField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.ActionButton.Enabled = Me.Value.Trim.Left(4) = "http"
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Dim URL As String = URLField.Value.Trim
 		  If URL.IndexOf("pasted.co/") > -1 Then
 		    Self.ShowAlert("Can't import from this url", "TinyPaste/pasted.co prevent pulling content from their pages. Instead, copy and paste the spawn codes into a text file and import that.")
@@ -283,15 +283,15 @@ End
 		  ActionButton.Enabled = False
 		  URLField.Enabled = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.Socket.Disconnect
 		  Self.Hide
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Socket
 	#tag Event

@@ -1,9 +1,9 @@
 #tag Class
 Protected Class BeaconContainer
 Inherits ContainerControl
-	#tag EventAPI2
-		Sub Opening()
-		  RaiseEvent Opening
+	#tag Event
+		Sub Open()
+		  RaiseEvent Open
 		  
 		  If Self.Window <> Nil And Self.Window IsA BeaconContainer Then
 		    BeaconContainer(Self.Window).mChildren.AddRow(New WeakRef(Self))
@@ -23,7 +23,7 @@ Inherits ContainerControl
 		  RaiseEvent Resize(Self.mFirstResize)
 		  Self.mFirstResize = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 	#tag Event
 		Sub Resized()
@@ -94,7 +94,7 @@ Inherits ContainerControl
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Opening()
+		Event Open()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

@@ -488,14 +488,14 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag EventAPI2
-		Sub Closing()
+	#tag Event
+		Sub Close()
 		  Self.EngramSearcher.Cancel
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Dim PreferredSize As Size = Preferences.EntryEditorSize
 		  
 		  Self.Picker.Tags = LocalData.SharedInstance.AllTags(Beacon.CategoryEngrams)
@@ -507,7 +507,7 @@ End
 		  Self.SwapButtons()
 		  Self.mSettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 	#tag Event
 		Sub Resized()
@@ -767,7 +767,7 @@ End
 
 #tag Events FilterField
 	#tag Event
-		Sub TextChanged()
+		Sub TextChange()
 		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent
@@ -807,8 +807,15 @@ End
 		  End Select
 		End Sub
 	#tag EndEvent
-	#tag EventAPI2
-		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+	#tag Event
+		Sub Open()
+		  Me.ColumnTypeAt(Self.ColumnIncluded) = Listbox.CellTypes.CheckBox
+		  Me.ColumnTypeAt(Self.ColumnWeight) = Listbox.CellTypes.TextField
+		  Me.ColumnAlignmentAt(Self.ColumnWeight) = Listbox.Alignments.Center
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Select Case Column
 		  Case Self.ColumnIncluded
 		    If Me.CellCheckBoxValueAt(Row1, Column) = True And Me.CellCheckBoxValueAt(Row2, Column) = False Then
@@ -837,21 +844,14 @@ End
 		  
 		  Return True
 		End Function
-	#tag EndEventAPI2
-	#tag Event
-		Sub Opening()
-		  Me.ColumnTypeAt(Self.ColumnIncluded) = Listbox.CellTypes.CheckBox
-		  Me.ColumnTypeAt(Self.ColumnWeight) = Listbox.CellTypes.TextField
-		  Me.ColumnAlignmentAt(Self.ColumnWeight) = Listbox.Alignments.Center
-		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SingleEntryCheck
-	#tag EventAPI2
-		Sub ValueChanged()
+	#tag Event
+		Sub Action()
 		  Self.UpdateSimulation()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Picker
 	#tag Event
@@ -884,16 +884,15 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events SimulateButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.UpdateSimulation()
-		  
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  If Self.mSelectedEngrams.KeyCount = 0 Then
 		    Return
 		  End If
@@ -940,14 +939,14 @@ End
 		  Self.mCreatedEntries = Entries
 		  Self.Hide
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.Hide
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events EngramSearcher
 	#tag Event

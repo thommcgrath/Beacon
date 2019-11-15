@@ -47,7 +47,7 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mPulseTimer_Run(Sender As Timer)
+		Private Sub mPulseTimer_Action(Sender As Timer)
 		  #Pragma Unused Sender
 		  
 		  Dim Amount As Double = Self.PulseAmount
@@ -186,13 +186,13 @@ Implements ObservationKit.Observable
 			    Self.mNotificationColor = Value
 			    Self.mLastPulseTime = System.Microseconds - (Self.PulseTimeout * 1000) // To trigger a pulse immediately
 			    If Value = ShelfItem.NotificationColors.None And Self.mPulseTimer <> Nil Then
-			      RemoveHandler mPulseTimer.Run, WeakAddressOf mPulseTimer_Run
+			      RemoveHandler mPulseTimer.Action, WeakAddressOf mPulseTimer_Action
 			      Self.mPulseTimer = Nil
 			    ElseIf Value <> ShelfItem.NotificationColors.None And Self.mPulseTimer = Nil Then
 			      Self.mPulseTimer = New Timer
 			      Self.mPulseTimer.Period = 5
 			      Self.mPulseTimer.RunMode = Timer.RunModes.Multiple
-			      AddHandler mPulseTimer.Run, WeakAddressOf mPulseTimer_Run
+			      AddHandler mPulseTimer.Action, WeakAddressOf mPulseTimer_Action
 			    End If
 			    Self.NotifyObservers("PulseAmount", 0.0)
 			  End If

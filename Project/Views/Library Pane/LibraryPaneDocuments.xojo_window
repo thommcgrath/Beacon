@@ -180,13 +180,13 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Closing()
+		Sub Close()
 		  NotificationKit.Ignore(Self, Preferences.Notification_OnlineStateChanged, IdentityManager.Notification_IdentityChanged, Preferences.Notification_RecentsChanged)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.ToolbarCaption = "Documents"
 		  
 		  NotificationKit.Watch(Self, Preferences.Notification_OnlineStateChanged, IdentityManager.Notification_IdentityChanged, Preferences.Notification_RecentsChanged)
@@ -692,30 +692,6 @@ End
 #tag EndWindowCode
 
 #tag Events List
-	#tag EventAPI2
-		Sub DoubleClicked()
-		  For I As Integer = Self.List.RowCount - 1 DownTo 0
-		    If Not Self.List.Selected(I) Then
-		      Continue
-		    End If
-		    
-		    Self.OpenURL(Beacon.DocumentURL(Self.List.RowTagAt(I)))
-		  Next
-		End Sub
-	#tag EndEventAPI2
-	#tag EventAPI2
-		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
-		  Select Case Column
-		  Case 0
-		    Dim Row1URL As Beacon.DocumentURL = Me.RowTagAt(Row1)
-		    Dim Row2URL As Beacon.DocumentURL = Me.RowTagAt(Row2)
-		    
-		    Result = Row1URL.Name.Compare(Row2URL.Name, ComparisonOptions.CaseSensitive)
-		    
-		    Return True
-		  End Select
-		End Function
-	#tag EndEventAPI2
 	#tag Event
 		Function CanDelete() As Boolean
 		  If Me.SelectedRowCount = 0 Then
@@ -855,10 +831,34 @@ End
 		  G.DrawPicture(Icon, (Me.ColumnAt(Column).WidthActual - Icon.Width) / 2, (Me.DefaultRowHeight - Icon.Height) / 2)
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub DoubleClick()
+		  For I As Integer = Self.List.RowCount - 1 DownTo 0
+		    If Not Self.List.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Self.OpenURL(Beacon.DocumentURL(Self.List.RowTagAt(I)))
+		  Next
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  Select Case Column
+		  Case 0
+		    Dim Row1URL As Beacon.DocumentURL = Me.RowTagAt(Row1)
+		    Dim Row2URL As Beacon.DocumentURL = Me.RowTagAt(Row2)
+		    
+		    Result = Row1URL.Name.Compare(Row2URL.Name, ComparisonOptions.CaseSensitive)
+		    
+		    Return True
+		  End Select
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events Header
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.LeftItems.Append(New BeaconToolbarItem("Add", IconToolbarAdd, "Start a new Beacon document."))
 		End Sub
 	#tag EndEvent
@@ -868,7 +868,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "Add"
 		    Self.NewDocument()
@@ -878,7 +878,7 @@ End
 #tag EndEvents
 #tag Events Switcher
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.Add(IconRecentDocuments, "Recent", "recent")
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
@@ -890,7 +890,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Pressed()
+		Sub Action()
 		  Self.View = Me.SelectedIndex
 		End Sub
 	#tag EndEvent

@@ -406,13 +406,13 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Closing()
+		Sub Close()
 		  NotificationKit.Ignore(Self, IdentityManager.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.ToolbarCaption = "Identity"
 		  Self.UpdateUI(App.IdentityManager.CurrentIdentity)
 		  NotificationKit.Watch(Self, IdentityManager.Notification_IdentityChanged)
@@ -476,7 +476,7 @@ End
 
 #tag Events Header
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "ExportIdentity"
 		    Self.ShowExportIdentity()
@@ -486,7 +486,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.LeftItems.Append(New BeaconToolbarItem("ExportIdentity", IconToolbarExport, "Create a backup of your identity file."))
 		  Me.LeftItems.Append(New BeaconToolbarItem("ImportIdentity", IconToolbarImport, "Restore an indentity file backup."))
 		End Sub

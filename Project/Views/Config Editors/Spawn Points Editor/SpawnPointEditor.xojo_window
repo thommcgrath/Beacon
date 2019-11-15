@@ -42,6 +42,7 @@ Begin BeaconContainer SpawnPointEditor
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   "True"
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
@@ -114,6 +115,7 @@ Begin BeaconContainer SpawnPointEditor
          AllowTabs       =   False
          Backdrop        =   0
          Caption         =   "Spawn Sets"
+         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   40
          Index           =   -2147483648
@@ -133,6 +135,7 @@ Begin BeaconContainer SpawnPointEditor
          TabStop         =   True
          Tooltip         =   ""
          Top             =   0
+         Transparent     =   False
          Visible         =   True
          Width           =   200
       End
@@ -143,6 +146,7 @@ Begin BeaconContainer SpawnPointEditor
          AllowTabs       =   False
          Backdrop        =   0
          Caption         =   "Limits"
+         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   40
          Index           =   -2147483648
@@ -162,6 +166,7 @@ Begin BeaconContainer SpawnPointEditor
          TabStop         =   True
          Tooltip         =   ""
          Top             =   371
+         Transparent     =   False
          Visible         =   True
          Width           =   200
       End
@@ -171,6 +176,7 @@ Begin BeaconContainer SpawnPointEditor
          AllowFocusRing  =   True
          AllowTabs       =   False
          Backdrop        =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   664
          Index           =   -2147483648

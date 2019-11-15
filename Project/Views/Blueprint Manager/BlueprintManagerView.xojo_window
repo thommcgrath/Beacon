@@ -341,8 +341,16 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Closing()
+		Sub Close()
 		  NotificationKit.Ignore(Self, LocalData.Notification_EngramsChanged)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub EnableMenuItems()
+		  If Self.List.RowCount > 0 Then
+		    FileExport.Enable
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -353,15 +361,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub MenuSelected()
-		  If Self.List.RowCount > 0 Then
-		    FileExport.Enable
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Opening()
+		Sub Open()
 		  NotificationKit.Watch(Self, LocalData.Notification_EngramsChanged)
 		  
 		  Self.SetupUI()
@@ -639,7 +639,7 @@ End
 
 #tag Events ListHeader
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddObject"
 		    Self.AddObject()
@@ -653,7 +653,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.LeftItems.Append(New BeaconToolbarItem("AddObject", IconToolbarAdd, "Define a new creature or engram"))
 		  
 		  Me.RightItems.Append(New BeaconToolbarItem("ImportFile", IconToolbarFile, "Import from file"))
@@ -663,8 +663,8 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events Pages
-	#tag EventAPI2
-		Sub PanelChanged()
+	#tag Event
+		Sub Change()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageEmpty
 		    Self.Changed = False
@@ -674,7 +674,7 @@ End
 		    Self.Changed = Self.Editor.Changed
 		  End Select
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Editor
 	#tag Event
@@ -696,7 +696,7 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub SelectionChanged()
+		Sub Change()
 		  If Not Self.mSettingUp Then
 		    Self.UpdateEditorWithSelection()
 		  End If
@@ -769,11 +769,11 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ClipboardWatcher
-	#tag EventAPI2
-		Sub Run()
+	#tag Event
+		Sub Action()
 		  Self.ListHeader.ImportClipboard.Enabled = Self.ClipboardHasCodes
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

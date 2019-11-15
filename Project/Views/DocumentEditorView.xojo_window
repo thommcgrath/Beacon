@@ -242,11 +242,11 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag EventAPI2
-		Sub Activated()
+	#tag Event
+		Sub Activate()
 		  Self.Changed = Self.Document.Modified
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 	#tag Event
 		Sub CleanupDiscardedChanges()
@@ -255,7 +255,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Closing()
+		Sub Close()
 		  NotificationKit.Ignore(Self, IdentityManager.Notification_IdentityChanged)
 		  
 		  If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
@@ -266,7 +266,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub MenuSelected()
+		Sub EnableMenuItems()
 		  FileSaveAs.Enable
 		  
 		  If Self.ReadyToDeploy Then
@@ -286,7 +286,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  If Self.mController.Document <> Nil Then
 		    Dim DocumentID As String = Self.mController.Document.DocumentID
 		    Dim ConfigName As String = Preferences.LastUsedConfigName(DocumentID)
@@ -948,7 +948,7 @@ End
 #tag EndEvents
 #tag Events BeaconToolbar1
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Dim ImportButton As New BeaconToolbarItem("ImportButton", IconToolbarImport, "Import config files…")
 		  Dim ExportButton As New BeaconToolbarItem("ExportButton", IconToolbarExport, Self.ReadyToExport, "Save new config files…")
 		  #if DeployEnabled
@@ -969,7 +969,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "ImportButton"
 		    If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
@@ -1002,38 +1002,15 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events AutosaveTimer
-	#tag EventAPI2
-		Sub Run()
+	#tag Event
+		Sub Action()
 		  Self.Autosave()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigMenu
 	#tag Event
-		Sub Opening()
-		  Dim Labels(), Tags() As String
-		  Labels.AddRow("Maps")
-		  Tags.AddRow("maps")
-		  #if DeployEnabled
-		    Labels.AddRow("Servers")
-		    Tags.AddRow("deployments")
-		  #endif
-		  
-		  Dim Names() As String = BeaconConfigs.AllConfigNames
-		  For Each Name As String In Names
-		    Labels.AddRow(Language.LabelForConfig(Name))
-		    Tags.AddRow(Name)
-		  Next
-		  
-		  Labels.SortWith(Tags)
-		  
-		  For I As Integer = 0 To Labels.LastRowIndex
-		    Me.AddRow(Labels(I), Tags(I))
-		  Next
-		End Sub
-	#tag EndEvent
-	#tag EventAPI2
-		Sub SelectionChanged()
+		Sub Change()
 		  Dim TagVar As Variant
 		  If Me.SelectedRowIndex > -1 Then
 		    TagVar = Me.RowTagAt(Me.SelectedRowIndex)
@@ -1155,7 +1132,30 @@ End
 		  
 		  Self.UpdateMinimumDimensions()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Dim Labels(), Tags() As String
+		  Labels.AddRow("Maps")
+		  Tags.AddRow("maps")
+		  #if DeployEnabled
+		    Labels.AddRow("Servers")
+		    Tags.AddRow("deployments")
+		  #endif
+		  
+		  Dim Names() As String = BeaconConfigs.AllConfigNames
+		  For Each Name As String In Names
+		    Labels.AddRow(Language.LabelForConfig(Name))
+		    Tags.AddRow(Name)
+		  Next
+		  
+		  Labels.SortWith(Tags)
+		  
+		  For I As Integer = 0 To Labels.LastRowIndex
+		    Me.AddRow(Labels(I), Tags(I))
+		  Next
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

@@ -995,13 +995,13 @@ End
 		  ChanceSlider.Enabled = False
 		End Sub
 	#tag EndEvent
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.Focus = Me Then
 		    ChanceSlider.Value = Max(Min(Val(Me.Value), ChanceSlider.MaximumValue), ChanceSlider.MinimumValue)
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ChanceSlider
 	#tag Event
@@ -1018,8 +1018,8 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events QualityMenus
-	#tag EventAPI2
-		Sub SelectionChanged(index as Integer)
+	#tag Event
+		Sub Change(index as Integer)
 		  If Not Self.mIgnoreChanges Then
 		    Select Case Index
 		    Case 0 // Min
@@ -1030,9 +1030,9 @@ End
 		    RaiseEvent Changed
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 	#tag Event
-		Sub Opening(index as Integer)
+		Sub Open(index as Integer)
 		  Me.RemoveAllRows()
 		  
 		  Dim Qualities() As Beacon.Quality = Beacon.Qualities.All
@@ -1045,24 +1045,24 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events MaxQuantityField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Not Self.mIgnoreChanges Then
 		    EditMaxQuantityCheck.Value = True
 		    RaiseEvent Changed
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events MinQuantityField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Not Self.mIgnoreChanges Then
 		    EditMinQuantityCheck.Value = True
 		    RaiseEvent Changed
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events WeightSlider
 	#tag Event
@@ -1096,7 +1096,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub TextChanged()
+		Sub TextChange()
 		  If Self.Focus = Me Then
 		    WeightSlider.Value = Round(Me.DoubleValue)
 		  End If

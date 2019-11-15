@@ -720,8 +720,8 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Self.SwapButtons()
 		  
 		  Self.MinQualityField.DoubleValue = Self.mPreset.MinQualityModifier(Self.mEditID)
@@ -729,7 +729,7 @@ End
 		  Self.QuantityField.Value = Format(Self.mPreset.QuantityMultiplier(Self.mEditID), "0.00")
 		  Self.BlueprintField.Value = Format(Self.mPreset.BlueprintMultiplier(Self.mEditID), "0.00")
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
@@ -836,7 +836,22 @@ End
 
 #tag Events GroupMenu
 	#tag Event
-		Sub Opening()
+		Sub Change()
+		  If Me.SelectedRowIndex = -1 Then
+		    Return
+		  End If
+		  
+		  Dim Modifier As Beacon.PresetModifier = Me.RowTagAt(Me.SelectedRowIndex)
+		  If Modifier = Nil Then
+		    // Create a new one
+		    Self.SetEditorVisible(True)
+		  Else
+		    Self.SetEditorVisible(False)
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
 		  Dim Modifiers() As Beacon.PresetModifier = LocalData.SharedInstance.AllPresetModifiers
 		  Dim Actives() As String = Self.mPreset.ActiveModifierIDs()
 		  For Each Modifier As Beacon.PresetModifier In Modifiers
@@ -860,21 +875,6 @@ End
 		  End If
 		End Sub
 	#tag EndEvent
-	#tag EventAPI2
-		Sub SelectionChanged()
-		  If Me.SelectedRowIndex = -1 Then
-		    Return
-		  End If
-		  
-		  Dim Modifier As Beacon.PresetModifier = Me.RowTagAt(Me.SelectedRowIndex)
-		  If Modifier = Nil Then
-		    // Create a new one
-		    Self.SetEditorVisible(True)
-		  Else
-		    Self.SetEditorVisible(False)
-		  End If
-		End Sub
-	#tag EndEventAPI2
 #tag EndEvents
 #tag Events MinQualityField
 	#tag Event
@@ -886,7 +886,7 @@ End
 #tag EndEvents
 #tag Events GroupPatternField
 	#tag Event
-		Sub TextChanged()
+		Sub TextChange()
 		  Dim Modifier As New Beacon.PresetModifier("", Self.GroupPatternField.Value)
 		  Dim Matches() As Beacon.LootSource = Modifier.Matches(Self.mSources)
 		  
@@ -898,8 +898,8 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.MinQualityField.CheckValue
 		  Self.MaxQualityField.CheckValue
 		  Dim MinQualityModifier As Integer = Self.MinQualityField.DoubleValue
@@ -940,15 +940,15 @@ End
 		  Self.mCancelled = False
 		  Self.Hide
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events MaxQualityField
 	#tag Event

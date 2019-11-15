@@ -460,14 +460,14 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag EventAPI2
-		Sub Closing()
+	#tag Event
+		Sub Close()
 		  Self.ClipboardRewriter.Cancel
 		  Self.FileRewriter.Cancel
 		  Self.GameIniRewriter.Cancel
 		  Self.GameUserSettingsRewriter.Cancel
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
@@ -775,15 +775,15 @@ End
 #tag EndWindowCode
 
 #tag Events ActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.Close()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events SaveButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Dim Dialog As New SaveFileDialog
 		  Dialog.Filter = BeaconFileTypes.IniFile
 		  Dialog.SuggestedFileName = Self.CurrentFilename
@@ -800,11 +800,11 @@ End
 		    Self.ShowAlert("Unable to write to " + File.DisplayName, "Check file permissions and disk space.")
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CopyButton
 	#tag Event
-		Sub Pressed()
+		Sub Action()
 		  Dim Board As New Clipboard
 		  Board.Text = Self.ContentArea.Value
 		  Self.mLastRewrittenHash = EncodeHex(MD5(Board.Text))
@@ -814,26 +814,26 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events RewriteClipboardButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Dim Board As New Clipboard
 		  Self.ClipboardRewriter.Rewrite(Board.Text, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, True, Self.mCurrentProfile)
 		  
 		  Self.mLastRewrittenHash = ""
 		  Self.CheckButtons()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ClipboardWatcher
-	#tag EventAPI2
-		Sub Run()
+	#tag Event
+		Sub Action()
 		  Self.CheckClipboard()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events RewriteFileButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Dim Mode As String = Self.CurrentMode
 		  Dim RequiredHeader As String
 		  Select Case Mode
@@ -876,18 +876,18 @@ End
 		  
 		  Self.CheckButtons()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events MapMenu
-	#tag EventAPI2
-		Sub SelectionChanged()
+	#tag Event
+		Sub Change()
 		  Self.Setup()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Switcher
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.Add(IconGameUserSettingsIni, "GameUserSettings.ini", "gameusersettings.ini")
 		  Me.Add(IconGameIni, "Game.ini", "game.ini")
@@ -897,7 +897,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Pressed()
+		Sub Action()
 		  Self.RefreshContentArea()
 		  Self.CheckButtons()
 		End Sub

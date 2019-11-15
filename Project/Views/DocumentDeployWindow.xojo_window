@@ -447,8 +447,8 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Self.SwapButtons()
 		  
 		  Self.ServerSelectionList.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
@@ -462,7 +462,7 @@ End
 		  Next
 		  Self.ServerSelectionList.Sort
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
@@ -719,8 +719,8 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ServerSelectionActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Const RestartSupportedUnknown = -1
 		  Const RestartSupportedNone = 0
 		  Const RestartSupportedMixed = 1
@@ -796,25 +796,25 @@ End
 		  
 		  Self.AuthenticateNext()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ServerSelectionCancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.Close
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events FinishedButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.CLose
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events DeployingCancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Dim AnyFinished As Boolean
 		  
 		  For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
@@ -830,7 +830,7 @@ End
 		    Self.Close
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Auth
 	#tag Event
@@ -871,8 +871,8 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events DeployingWatchTimer
-	#tag EventAPI2
-		Sub Run()
+	#tag Event
+		Sub Action()
 		  Dim Finished As Boolean = True
 		  For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
 		    Finished = Finished And DeploymentEngine.Finished
@@ -899,7 +899,7 @@ End
 		    Next
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

@@ -275,15 +275,15 @@ End
 #tag EndWindowCode
 
 #tag Events DownloadLinkLabel
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Me.Value = BeaconAPI.URL("/document/" + EncodeURLComponent(Self.mDocument.DocumentID) + "?name=" + EncodeURLComponent(Self.mDocument.Title))
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CopyLinkButton
 	#tag Event
-		Sub Pressed()
+		Sub Action()
 		  Dim Board As New Clipboard
 		  Board.Text = Self.DownloadLinkLabel.Value
 		  
@@ -293,15 +293,15 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.Close
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events UserList
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Dim Users() As String = Self.mDocument.GetUsers()
 		  Users.Sort
 		  
@@ -339,8 +339,8 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events AddUserButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Dim UserID, PublicKey As String
 		  If ShareWithUserDialog.Present(Self, UserID, PublicKey) Then
 		    Self.UserList.AddRow(UserID)
@@ -348,7 +348,7 @@ End
 		    Self.mDocument.AddUser(UserID, PublicKey)
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

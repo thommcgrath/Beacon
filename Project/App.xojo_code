@@ -8,19 +8,8 @@ Implements NotificationKit.Receiver
 		End Sub
 	#tag EndEvent
 
-	#tag EventAPI2
-		Function AppleEventReceived(theEvent As AppleEvent, eventClass As String, eventID As String) As Boolean
-		  If eventClass = "GURL" And eventID = "GURL" Then
-		    Dim URL As String = theEvent.StringParam("----")
-		    Return Self.HandleURL(URL)
-		  Else
-		    Return False
-		  End If
-		End Function
-	#tag EndEventAPI2
-
-	#tag EventAPI2
-		Sub Closing()
+	#tag Event
+		Sub Close()
 		  Try
 		    Self.UninstallTemporaryFont(Self.ResourcesFolder.Child("Fonts").Child("SourceCodePro").Child("SourceCodePro-Regular.otf"))
 		  Catch Err As RuntimeException
@@ -38,17 +27,10 @@ Implements NotificationKit.Receiver
 		  
 		  Self.Log("Beacon finished gracefully")
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
-	#tag EventAPI2
-		Sub DocumentOpened(item As FolderItem)
-		  Self.OpenFile(Item, False)
-		  
-		End Sub
-	#tag EndEventAPI2
-
-	#tag EventAPI2
-		Sub MenuSelected()
+	#tag Event
+		Sub EnableMenuItems()
 		  FileNew.Enable
 		  FileNewPreset.Enable
 		  FileOpen.Enable
@@ -63,10 +45,21 @@ Implements NotificationKit.Receiver
 		    End If
 		  Next
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Function HandleAppleEvent(theEvent As AppleEvent, eventClass As String, eventID As String) As Boolean
+		  If eventClass = "GURL" And eventID = "GURL" Then
+		    Dim URL As String = theEvent.StringParam("----")
+		    Return Self.HandleURL(URL)
+		  Else
+		    Return False
+		  End If
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub Open()
 		  #If TargetMacOS
 		    Self.Log("Beacon " + Str(Self.BuildNumber, "-0") + " for Mac.")
 		  #ElseIf TargetWin32
@@ -145,7 +138,13 @@ Implements NotificationKit.Receiver
 		  
 		  Tests.RunTests()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
+
+	#tag Event
+		Sub OpenDocument(item As FolderItem)
+		  Self.OpenFile(Item, False)
+		End Sub
+	#tag EndEvent
 
 	#tag Event
 		Function UnhandledException(error As RuntimeException) As Boolean
@@ -906,7 +905,7 @@ Implements NotificationKit.Receiver
 		    Dim Item As New MenuItem(Document.Name)
 		    Item.Tag = Document
 		    Item.Enable
-		    AddHandler Item.MenuItemSelected, WeakAddressOf mOpenRecent_OpenFile
+		    AddHandler Item.Action, WeakAddressOf mOpenRecent_OpenFile
 		    FileOpenRecent.AddMenu(Item)
 		  Next
 		  If Documents.LastRowIndex > -1 Then
@@ -914,7 +913,7 @@ Implements NotificationKit.Receiver
 		    
 		    Dim Item As New MenuItem("Clear Menu")
 		    Item.Enable
-		    AddHandler Item.MenuItemSelected, WeakAddressOf mOpenRecent_ClearMenu
+		    AddHandler Item.Action, WeakAddressOf mOpenRecent_ClearMenu
 		    FileOpenRecent.AddMenu(Item)
 		  Else
 		    Dim Item As New MenuItem("No Items")

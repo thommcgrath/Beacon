@@ -804,7 +804,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.Header.Caption = Self.mProfile.Name
 		  Self.ServerNameField.Value = Self.mProfile.Name
 		  Self.HostField.Value = Self.mProfile.Host
@@ -834,65 +834,71 @@ End
 #tag EndWindowCode
 
 #tag Events ServerNameField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.mProfile.Name = Me.Value
 		  Self.Header.Caption = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events HostField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.mProfile.Host = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events PortField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.mProfile.Port = Integer.FromString(Me.Value)
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events UserField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.mProfile.Username = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events PassField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.mProfile.Password = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events GameIniPathField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.mProfile.GameIniPath = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events GameUserSettingsIniPathField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.mProfile.GameUserSettingsIniPath = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ModeMenu
 	#tag Event
-		Sub Opening()
+		Sub Change()
+		  Self.mProfile.Mode = Me.Tag
+		  Self.Changed = Self.mProfile.Modified
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
 		  Me.RemoveAllRows
 		  Me.AddRow("Autodetect", Beacon.FTPServerProfile.ModeAuto)
 		  Me.AddRow("FTP", Beacon.FTPServerProfile.ModeFTP)
@@ -900,26 +906,10 @@ End
 		  Me.AddRow("SFTP", Beacon.FTPServerProfile.ModeSFTP)
 		End Sub
 	#tag EndEvent
-	#tag EventAPI2
-		Sub SelectionChanged()
-		  Self.mProfile.Mode = Me.Tag
-		  Self.Changed = Self.mProfile.Modified
-		End Sub
-	#tag EndEventAPI2
 #tag EndEvents
 #tag Events MapMenu
 	#tag Event
-		Sub Opening()
-		  Me.AddRow("All Maps", Beacon.Maps.All.Mask)
-		  
-		  Dim Maps() As Beacon.Map = Beacon.Maps.All
-		  For Each Map As Beacon.Map In Maps
-		    Me.AddRow(Map.Name, Map.Mask)
-		  Next
-		End Sub
-	#tag EndEvent
-	#tag EventAPI2
-		Sub SelectionChanged()
+		Sub Change()
 		  Dim Mask As UInt64
 		  If Me.SelectedRowIndex = -1 Then
 		    Mask = Beacon.Maps.All.Mask
@@ -929,7 +919,17 @@ End
 		  Self.mProfile.Mask = Mask
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.AddRow("All Maps", Beacon.Maps.All.Mask)
+		  
+		  Dim Maps() As Beacon.Map = Beacon.Maps.All
+		  For Each Map As Beacon.Map In Maps
+		    Me.AddRow(Map.Name, Map.Mask)
+		  Next
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

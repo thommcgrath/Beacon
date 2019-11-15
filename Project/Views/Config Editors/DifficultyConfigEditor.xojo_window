@@ -487,8 +487,8 @@ End
 #tag EndWindowCode
 
 #tag Events MaxDinoLevelField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -505,7 +505,7 @@ End
 		    Self.Changed = Self.Document.Modified
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

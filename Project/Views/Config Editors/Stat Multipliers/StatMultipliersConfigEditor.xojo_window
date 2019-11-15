@@ -2733,7 +2733,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.MinimumWidth = 1122
 		  Self.MinimumHeight = 495
 		End Sub
@@ -2880,8 +2880,8 @@ End
 #tag EndWindowCode
 
 #tag Events PlayerPerLevelMultiplierField
-	#tag EventAPI2
-		Sub TextChanged(index as Integer)
+	#tag Event
+		Sub TextChange(index as Integer)
 		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
 		    Return
 		  End If
@@ -2898,11 +2898,11 @@ End
 		  Self.SettingUp = False
 		  Self.UpdatePlayerUI(Index)
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events PlayerBaseField
-	#tag EventAPI2
-		Sub TextChanged(index as Integer)
+	#tag Event
+		Sub TextChange(index as Integer)
 		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
 		    Return
 		  End If
@@ -2919,11 +2919,22 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CreatureMenu
 	#tag Event
-		Sub Opening()
+		Sub Change()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Self.UpdateCreatureStats()
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
 		  Dim Health As Beacon.Stat = Beacon.Stats.Health
 		  Dim Creatures() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategoryCreatures, "", Self.Document.Mods, "")
 		  For Each Blueprint As Beacon.Blueprint In Creatures
@@ -2944,17 +2955,6 @@ End
 		  End If
 		End Sub
 	#tag EndEvent
-	#tag EventAPI2
-		Sub SelectionChanged()
-		  If Self.SettingUp Then
-		    Return
-		  End If
-		  
-		  Self.SettingUp = True
-		  Self.UpdateCreatureStats()
-		  Self.SettingUp = False
-		End Sub
-	#tag EndEventAPI2
 #tag EndEvents
 #tag Events WildCreatureStats
 	#tag Event
@@ -2994,7 +2994,7 @@ End
 #tag EndEvents
 #tag Events Switcher
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.Add(IconPlayers, "Players", "players")
 		  Me.Add(IconTames, "Creatures", "tames")
@@ -3003,7 +3003,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Pressed()
+		Sub Action()
 		  Self.PagePanel1.SelectedPanelIndex = Me.SelectedIndex - 1
 		End Sub
 	#tag EndEvent

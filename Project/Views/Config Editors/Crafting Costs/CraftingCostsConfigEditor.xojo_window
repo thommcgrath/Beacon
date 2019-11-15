@@ -320,7 +320,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.MinimumWidth = Self.ListMinWidth + Self.ListSeparator.Width + Self.Editor.MinimumWidth
 		End Sub
 	#tag EndEvent
@@ -615,7 +615,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Dim AddButton As New BeaconToolbarItem("AddEngram", IconToolbarAdd)
 		  AddButton.HelpTag = "Change the crafting cost for a new item."
 		  
@@ -627,7 +627,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddEngram"
 		    Self.ShowAddEngram()
@@ -639,7 +639,7 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub SelectionChanged()
+		Sub Change()
 		  If Me.SelectedRowCount = 1 Then
 		    Self.Editor.Target = Me.RowTagAt(Me.SelectedRowIndex)
 		  Else

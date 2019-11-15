@@ -451,13 +451,13 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Closing()
+		Sub Close()
 		  Self.mInstance = Nil
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
@@ -559,8 +559,8 @@ End
 #tag EndWindowCode
 
 #tag Events ViewPanel
-	#tag EventAPI2
-		Sub PanelChanged()
+	#tag Event
+		Sub Change()
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.ViewCheck
 		    Self.Height = Self.HeightCheck
@@ -573,15 +573,15 @@ End
 		    Self.Resizeable = False
 		  End Select
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CheckCancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.Checker.Cancel
 		  Self.Close
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ResultsIconCanvas
 	#tag Event
@@ -593,8 +593,8 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ResultsActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  If Self.mFile = Nil Then
 		    Dim Dialog As New SaveFileDialog
 		    Dialog.SuggestedFileName = Self.mFilename
@@ -621,29 +621,29 @@ End
 		  Self.DownloadProgressBar.MaximumValue = 0
 		  Self.ViewPanel.SelectedPanelIndex = Self.ViewDownload
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ResultsCancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.Close
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events DownloadCancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.Downloader.Disconnect
 		  Self.Close
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ResultsNotesButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  ShowURL(Self.mNotesURL)
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Checker
 	#tag Event

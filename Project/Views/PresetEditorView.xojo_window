@@ -136,7 +136,7 @@ Begin BeaconSubview PresetEditorView
       TabStop         =   "True"
       Top             =   61
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   740
       BeginSegmentedButton SegmentedButton MapSelector
@@ -767,7 +767,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub MenuSelected()
+		Sub EnableMenuItems()
 		  If Self.Changed Then
 		    FileSave.Enable
 		    If Self.mSaveFile <> Nil Then
@@ -781,7 +781,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.MapSelector.Width = Self.MapSelector.SegmentCount * 110 // Because the design-time size is not being respected
 		  Self.MapSelector.ResizeCells
 		  Self.MinimumWidth = Self.MapSelector.Width + 40
@@ -1226,7 +1226,7 @@ End
 
 #tag Events Header
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddEntries"
 		    Self.ShowAddDialog()
@@ -1238,7 +1238,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.LeftItems.Append(New BeaconToolbarItem("AddEntries", IconToolbarAdd))
 		  Me.LeftItems.Append(New BeaconToolbarItem("EditEntries", IconToolbarEdit, False))
 		  Me.LeftItems.Append(New BeaconToolbarItem("DeleteEntries", IconRemove, False))
@@ -1247,7 +1247,7 @@ End
 #tag EndEvents
 #tag Events ViewSelector
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.Add(IconPresetSettings, "General", "settings")
 		  Me.Add(IconPresetContents, "Contents", "contents")
@@ -1257,7 +1257,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Pressed()
+		Sub Action()
 		  Self.Pages.SelectedPanelIndex = Me.SelectedIndex - 1
 		End Sub
 	#tag EndEvent
@@ -1287,7 +1287,7 @@ End
 #tag EndEvents
 #tag Events ContentsList
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.ColumnTypeAt(Self.ColumnIncluded) = Listbox.CellTypes.CheckBox
 		  Me.ColumnTypeAt(Self.ColumnQuantity) = Listbox.CellTypes.CheckBox
 		  Me.ColumnTypeAt(Self.ColumnQuality) = Listbox.CellTypes.CheckBox
@@ -1485,44 +1485,44 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub SelectionChanged()
+		Sub Change()
 		  Header.EditEntries.Enabled = Me.SelectedRowCount > 0
 		  Header.DeleteEntries.Enabled = Me.SelectedRowCount > 0
 		End Sub
 	#tag EndEvent
-	#tag EventAPI2
-		Sub DoubleClicked()
+	#tag Event
+		Sub DoubleClick()
 		  Self.EditSelectedEntries()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events MaxItemsStepper
-	#tag EventAPI2
-		Sub DownPressed()
+	#tag Event
+		Sub Down()
 		  Self.MaxItemsField.Value = Str(CDbl(Self.MaxItemsField.Value) - 1, "-0")
 		End Sub
-	#tag EndEventAPI2
-	#tag EventAPI2
-		Sub UpPressed()
+	#tag EndEvent
+	#tag Event
+		Sub Up()
 		  Self.MaxItemsField.Value = Str(CDbl(Self.MaxItemsField.Value) + 1, "-0")
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events MinItemsStepper
-	#tag EventAPI2
-		Sub DownPressed()
+	#tag Event
+		Sub Down()
 		  Self.MinItemsField.Value = Str(CDbl(Self.MinItemsField.Value) - 1, "-0")
 		End Sub
-	#tag EndEventAPI2
-	#tag EventAPI2
-		Sub UpPressed()
+	#tag EndEvent
+	#tag Event
+		Sub Up()
 		  Self.MinItemsField.Value = Str(CDbl(Self.MinItemsField.Value) + 1, "-0")
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events MaxItemsField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.mUpdating Then
 		    Return
 		  End If
@@ -1537,7 +1537,7 @@ End
 		    Me.Value = Str(Self.mPreset.MaxItems, "-0")
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 	#tag Event
 		Sub LostFocus()
 		  Me.Value = Str(Self.mPreset.MaxItems, "-0")
@@ -1545,8 +1545,8 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events MinItemsField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.mUpdating Then
 		    Return
 		  End If
@@ -1561,7 +1561,7 @@ End
 		    Me.Value = Str(Self.mPreset.MinItems, "-0")
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 	#tag Event
 		Sub LostFocus()
 		  Me.Value = Str(Self.mPreset.MinItems, "-0")
@@ -1569,8 +1569,8 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events GroupingField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.mUpdating Then
 		    Return
 		  End If
@@ -1581,11 +1581,11 @@ End
 		    Self.Changed = True
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events NameField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.mUpdating Then
 		    Return
 		  End If
@@ -1596,20 +1596,15 @@ End
 		    Self.Changed = True
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ModifiersList
 	#tag Event
-		Sub SelectionChanged()
+		Sub Change()
 		  EditModifierButton.Enabled = Me.SelectedRowCount = 1
 		  DeleteModifierButton.Enabled = Me.SelectedRowCount > 0
 		End Sub
 	#tag EndEvent
-	#tag EventAPI2
-		Sub DoubleClicked()
-		  Self.ShowModifierEditor(True)
-		End Sub
-	#tag EndEventAPI2
 	#tag Event
 		Function CanCopy() As Boolean
 		  Return Me.SelectedRowCount > 0
@@ -1699,27 +1694,32 @@ End
 		  End Try
 		End Sub
 	#tag EndEvent
-#tag EndEvents
-#tag Events AddModifierButton
-	#tag EventAPI2
-		Sub Pressed()
-		  Self.ShowModifierEditor(False)
-		End Sub
-	#tag EndEventAPI2
-#tag EndEvents
-#tag Events EditModifierButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub DoubleClick()
 		  Self.ShowModifierEditor(True)
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
+#tag EndEvents
+#tag Events AddModifierButton
+	#tag Event
+		Sub Action()
+		  Self.ShowModifierEditor(False)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EditModifierButton
+	#tag Event
+		Sub Action()
+		  Self.ShowModifierEditor(True)
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events DeleteModifierButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.ModifiersList.DoClear()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

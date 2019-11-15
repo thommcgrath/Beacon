@@ -170,7 +170,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  For I As Integer = 0 To Self.Document.ServerProfileCount - 1
 		    Dim Profile As Beacon.ServerProfile = Self.Document.ServerProfile(I)
 		    
@@ -302,7 +302,7 @@ End
 
 #tag Events ServerList
 	#tag Event
-		Sub SelectionChanged()
+		Sub Change()
 		  If Me.SelectedRowIndex = -1 Then
 		    Self.CurrentProfileID = ""
 		    Return

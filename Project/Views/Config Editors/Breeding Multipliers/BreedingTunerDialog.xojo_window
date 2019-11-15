@@ -314,8 +314,8 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Self.CreaturesList.ColumnTypeAt(Self.ColumnChecked) = Listbox.CellTypes.CheckBox
 		  
 		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.StringList)
@@ -330,7 +330,7 @@ End
 		  
 		  Self.CheckCreatures(Preferences.BreedingTunerCreatures)
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
@@ -418,16 +418,16 @@ End
 #tag EndWindowCode
 
 #tag Events CancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.mChosenMultiplier = 0
 		  Self.Hide
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Const Threshold = 0.95
 		  
 		  Dim Creatures() As Beacon.Creature
@@ -455,7 +455,7 @@ End
 		  Self.mChosenMultiplier = ImprintMultiplier
 		  Self.Hide
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CreaturesList
 	#tag Event
@@ -478,25 +478,25 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events MajorCreaturesButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.CheckCreatures(LocalData.SharedInstance.GetStringVariable("Major Imprint Creatures"))
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events AllCreaturesButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.CheckCreatures("*")
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ClearCreaturesButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.CheckCreatures("")
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

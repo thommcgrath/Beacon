@@ -151,8 +151,8 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
-		  RaiseEvent Opening
+		Sub Open()
+		  RaiseEvent Open
 		  Self.Reset()
 		End Sub
 	#tag EndEvent
@@ -300,7 +300,7 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Opening()
+		Event Open()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -359,7 +359,7 @@ End
 #tag EndEvents
 #tag Events Lists
 	#tag Event
-		Sub SelectionChanged(index as Integer)
+		Sub Change(index as Integer)
 		  If Self.mUpdating Then
 		    Return
 		  End If

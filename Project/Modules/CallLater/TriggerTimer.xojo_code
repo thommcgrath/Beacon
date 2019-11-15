@@ -1,8 +1,8 @@
 #tag Class
 Private Class TriggerTimer
 Inherits Timer
-	#tag EventAPI2
-		Sub Run()
+	#tag Event
+		Sub Action()
 		  If Self.Callback <> Nil Then
 		    Self.Callback.Invoke()
 		  ElseIf Self.CallbackWithArg <> Nil Then
@@ -13,7 +13,7 @@ Inherits Timer
 		    Timers.Remove(Self.Key)
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Property, Flags = &h0

@@ -754,50 +754,50 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events QuitButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  App.Terminate(0)
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Pages
-	#tag EventAPI2
-		Sub PanelChanged()
+	#tag Event
+		Sub Change()
 		  Self.QuitButton.Enabled = Me.SelectedPanelIndex <> Self.PageStart
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events PermissionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.BeginChecking()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events PermissionPolicyLabel
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.URL = Beacon.WebURL("/privacy.php")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SolutionOpenButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  If Self.mSolutionURL <> "" Then
 		    ShowURL(Self.mSolutionURL)
 		  Else
 		    App.ShowBugReporter(Self.mExceptionHash)
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ReportButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  App.ShowBugReporter(Self.mExceptionHash)
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

@@ -2,12 +2,12 @@
 Protected Class BeaconSubview
 Inherits BeaconContainer
 Implements ObservationKit.Observable
-	#tag EventAPI2
-		Sub Closing()
-		  RaiseEvent Closing
+	#tag Event
+		Sub Close()
+		  RaiseEvent Close
 		  Self.mClosed = True
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 	#tag Event
 		Sub ContentsChanged()
@@ -16,16 +16,16 @@ Implements ObservationKit.Observable
 		End Sub
 	#tag EndEvent
 
-	#tag EventAPI2
-		Sub MenuSelected()
-		  // The parent view will call down to the MenuSelected method
+	#tag Event
+		Sub EnableMenuItems()
+		  // The parent view will call down to the EnableMenuItems method
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.Progress = Self.ProgressNone
-		  RaiseEvent Opening
+		  RaiseEvent Open
 		End Sub
 	#tag EndEvent
 
@@ -130,7 +130,7 @@ Implements ObservationKit.Observable
 		    FileSave.Enable
 		  End If
 		  
-		  RaiseEvent MenuSelected()
+		  RaiseEvent EnableMenuItems()
 		End Sub
 	#tag EndMethod
 
@@ -209,7 +209,7 @@ Implements ObservationKit.Observable
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Closing()
+		Event Close()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -217,15 +217,15 @@ Implements ObservationKit.Observable
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event EnableMenuItems()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Hidden()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event MenuSelected()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event Opening()
+		Event Open()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

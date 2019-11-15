@@ -204,8 +204,8 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Self.SwapButtons()
 		  
 		  Dim Board As New Clipboard
@@ -213,7 +213,7 @@ End
 		    URLField.Value = Board.Text
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
@@ -235,8 +235,8 @@ End
 #tag EndWindowCode
 
 #tag Events ActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Spinner.Visible = True
 		  ActionButton.Enabled = False
 		  URLField.Enabled = False
@@ -245,24 +245,24 @@ End
 		  Downloader.AllowCertificateValidation = True
 		  Downloader.Send("GET", URLField.Value.Trim)
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.Downloader.Disconnect
 		  Self.mContent = ""
 		  Self.Hide
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events URLField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Dim URL As String = Me.Value.Trim
 		  ActionButton.Enabled = Spinner.Visible = False And (URL.Left(7) = "http://" Or URL.Left(8) = "https://")
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Downloader
 	#tag Event

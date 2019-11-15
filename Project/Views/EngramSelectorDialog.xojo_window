@@ -373,8 +373,8 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Self.Picker.Tags = LocalData.SharedInstance.AllTags(Self.mCategory)
 		  Self.Picker.Spec = Preferences.SelectedTag(Self.mCategory, Self.mSubgroup)
 		  Self.UpdateFilter()
@@ -383,7 +383,7 @@ End
 		  Self.Resize()
 		  Self.mSettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 	#tag Event
 		Sub Resized()
@@ -608,15 +608,15 @@ End
 #tag EndWindowCode
 
 #tag Events FilterField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.UpdateFilter()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub SelectionChanged()
+		Sub Change()
 		  If Not Self.mAllowMultipleSelection Then
 		    Self.MakeSelection()
 		  End If
@@ -624,8 +624,8 @@ End
 		  Self.AddToSelectionsButton.Enabled = Me.SelectedRowCount > 0
 		End Sub
 	#tag EndEvent
-	#tag EventAPI2
-		Sub DoubleClicked()
+	#tag Event
+		Sub DoubleClick()
 		  Self.MakeSelection()
 		  
 		  If Not Self.mAllowMultipleSelection Then
@@ -633,27 +633,27 @@ End
 		    Self.Hide
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.mCancelled = False
 		  Self.Hide()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.mCancelled = True
 		  Self.Hide()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events SelectedList
 	#tag Event
-		Sub SelectionChanged()
+		Sub Change()
 		  Self.RemoveFromSelectionsButton.Enabled = Me.SelectedRowCount > 0
 		End Sub
 	#tag EndEvent
@@ -662,11 +662,11 @@ End
 		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
-	#tag EventAPI2
-		Sub DoubleClicked()
+	#tag Event
+		Sub DoubleClick()
 		  Self.UnmakeSelection
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
 		  #Pragma Unused Warn
@@ -676,18 +676,18 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events AddToSelectionsButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.MakeSelection()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events RemoveFromSelectionsButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.UnmakeSelection()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Picker
 	#tag Event

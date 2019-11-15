@@ -285,7 +285,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.Auth.Provider = Beacon.OAuth2Client.ProviderNitrado
 		  Self.Auth.AuthData = Self.mDocument.OAuthData("Nitrado")
 		  Self.Auth.Authenticate(App.IdentityManager.CurrentIdentity)
@@ -472,7 +472,7 @@ End
 #tag EndEvents
 #tag Events Controls
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "PowerButton"
 		    Dim Headers As New Dictionary
@@ -501,26 +501,26 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.LeftItems.Append(New BeaconToolbarItem("PowerButton", IconToolbarPower, False, "Start or stop the server."))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events RefreshTimer
-	#tag EventAPI2
-		Sub Run()
+	#tag Event
+		Sub Action()
 		  Self.RefreshServerStatus()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ServerNameField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.mProfile.Name = Me.Value
 		  Self.Controls.Caption = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

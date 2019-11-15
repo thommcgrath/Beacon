@@ -2,17 +2,17 @@
 Protected Class ConfigEditor
 Inherits BeaconSubview
 	#tag Event
-		Sub MenuSelected()
+		Sub EnableMenuItems()
 		  DocumentRestoreConfigToDefault.Enable
 		  DocumentRestoreConfigToDefault.Value = "Restore """ + Self.ConfigLabel + """ to Default"
 		  
-		  RaiseEvent MenuSelected
+		  RaiseEvent EnableMenuItems
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
-		  RaiseEvent Opening
+		Sub Open()
+		  RaiseEvent Open
 		  Self.SettingUp = True
 		  RaiseEvent SetupUI
 		  Self.SettingUp = False
@@ -146,11 +146,11 @@ Inherits BeaconSubview
 
 
 	#tag Hook, Flags = &h0
-		Event MenuSelected()
+		Event EnableMenuItems()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Opening()
+		Event Open()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

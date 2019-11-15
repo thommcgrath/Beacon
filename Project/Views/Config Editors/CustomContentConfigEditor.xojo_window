@@ -168,13 +168,13 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Closing()
+		Sub Close()
 		  NotificationKit.Ignore(Self, App.Notification_AppearanceChanged)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  NotificationKit.Watch(Self, App.Notification_AppearanceChanged)
 		End Sub
 	#tag EndEvent
@@ -394,7 +394,7 @@ End
 
 #tag Events Switcher
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.Add(IconGameUserSettingsIni, "GameUserSettings.ini", "gameusersettings.ini")
 		  Me.Add(IconGameIni, "Game.ini", "game.ini")
@@ -403,7 +403,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Pressed()
+		Sub Action()
 		  Dim SettingUp As Boolean = Self.SettingUp
 		  Self.SettingUp = True
 		  Select Case Me.SelectedIndex
@@ -421,13 +421,8 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ConfigArea
-	#tag EventAPI2
-		Sub SelectionChanged()
-		  Self.UpdateEncryptButton()
-		End Sub
-	#tag EndEventAPI2
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.UpdateTextColors()
 		  
 		  If Self.SettingUp Then
@@ -452,11 +447,16 @@ End
 		    Self.Changed = True
 		  End Select
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
+	#tag Event
+		Sub SelChange()
+		  Self.UpdateEncryptButton()
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events LeftButtons
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "EncryptButton"
 		    Self.ToggleEncryption
@@ -464,7 +464,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.LeftItems.Append(New BeaconToolbarItem("EncryptButton", IconToolbarLock, "Encrypt the selected text when saving."))
 		End Sub
 	#tag EndEvent

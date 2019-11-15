@@ -309,27 +309,27 @@ End
 #tag EndWindowCode
 
 #tag Events ActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Me.Enabled = False
 		  Self.Spinner.Visible = True
 		  Self.UserLookupSocket.Send("GET", BeaconAPI.URL("/user/" + EncodeURLComponent(Self.UserIDField.Value)))
 		  
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.mCancelled = True
 		  Self.UserLookupSocket.Disconnect
 		  Self.Hide
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events HelpLink
 	#tag Event
-		Sub Pressed()
+		Sub Action()
 		  ShowURL(Beacon.WebURL("/help/sharing_beacon_documents_with"))
 		End Sub
 	#tag EndEvent

@@ -43,10 +43,10 @@ Begin DiscoveryView FTPDiscoveryView
       Scope           =   2
       TabIndex        =   17
       TabPanelIndex   =   0
-      TabStop         =   "True"
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedLabel ServerModeLabel
@@ -555,7 +555,7 @@ Begin DiscoveryView FTPDiscoveryView
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
-         TabStop         =   "True"
+         TabStop         =   True
          Top             =   161
          Transparent     =   False
          Value           =   0.0
@@ -668,7 +668,6 @@ Begin DiscoveryView FTPDiscoveryView
          Backdrop        =   0
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
          Height          =   1
          HelpTag         =   ""
          Index           =   0
@@ -697,7 +696,6 @@ Begin DiscoveryView FTPDiscoveryView
          Backdrop        =   0
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
          Height          =   1
          HelpTag         =   ""
          Index           =   1
@@ -726,7 +724,6 @@ Begin DiscoveryView FTPDiscoveryView
          Backdrop        =   0
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
          Height          =   204
          HelpTag         =   ""
          Index           =   2
@@ -755,7 +752,6 @@ Begin DiscoveryView FTPDiscoveryView
          Backdrop        =   0
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
          Height          =   204
          HelpTag         =   ""
          Index           =   3
@@ -912,12 +908,12 @@ End
 		End Sub
 	#tag EndEvent
 
-	#tag EventAPI2
-		Sub Opening()
-		  RaiseEvent Opening
+	#tag Event
+		Sub Open()
+		  RaiseEvent Open
 		  Self.SwapButtons()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
@@ -999,7 +995,7 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event Opening()
+		Event Open()
 	#tag EndHook
 
 
@@ -1021,36 +1017,36 @@ End
 #tag EndWindowCode
 
 #tag Events ServerHostField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.CheckServerActionButton()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ServerPortField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.CheckServerActionButton()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ServerUserField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.CheckServerActionButton()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ServerPassField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Self.CheckServerActionButton()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events BrowseActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Dim GameIniPath As String = Self.Browser.CurrentPath
 		  Dim Components() As String = GameIniPath.Split("/")
 		  If Components.LastRowIndex <= 2 Then
@@ -1067,14 +1063,14 @@ End
 		  Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, InitialPath, App.IdentityManager.CurrentIdentity)
 		  Self.ShouldFinish(Engines)
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events BrowseCancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.ViewPanel.SelectedPanelIndex = Self.PageGeneral
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Browser
 	#tag Event
@@ -1101,15 +1097,15 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ServerCancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.ShouldCancel()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ServerActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.mProfile = New Beacon.FTPServerProfile()
 		  Self.mProfile.Host = Self.ServerHostField.Value
 		  Self.mProfile.Port = Val(Self.ServerPortField.Value)
@@ -1134,7 +1130,7 @@ End
 		  Request.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(Request)
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events BrowseSocket
 	#tag Event

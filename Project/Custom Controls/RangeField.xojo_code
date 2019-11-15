@@ -21,11 +21,11 @@ Inherits UITweaks.ResizedTextField
 		End Sub
 	#tag EndEvent
 
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  //
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
@@ -72,7 +72,7 @@ Inherits UITweaks.ResizedTextField
 		  End If
 		  If Self.mLastNotifiedValue <> Value Then
 		    Self.mLastNotifiedValue = Value
-		    RaiseEvent TextChanged()
+		    RaiseEvent TextChange()
 		  End If
 		End Sub
 	#tag EndMethod
@@ -99,7 +99,7 @@ Inherits UITweaks.ResizedTextField
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event TextChanged()
+		Event TextChange()
 	#tag EndHook
 
 

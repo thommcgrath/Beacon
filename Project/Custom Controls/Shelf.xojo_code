@@ -2,21 +2,19 @@
 Protected Class Shelf
 Inherits ControlCanvas
 Implements ObservationKit.Observer
-	#tag EventAPI2
-		Sub Activated()
-		  RaiseEvent Activated
+	#tag Event
+		Sub Activate()
+		  RaiseEvent Activate
 		  Self.Invalidate
-		  
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
-	#tag EventAPI2
-		Sub Deactivated()
-		  RaiseEvent Deactivated
+	#tag Event
+		Sub Deactivate()
+		  RaiseEvent Deactivate
 		  Self.Invalidate
-		  
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
@@ -102,8 +100,8 @@ Implements ObservationKit.Observer
 	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
-		  RaiseEvent Opening
+		Sub Open()
+		  RaiseEvent Open
 		  Self.Transparent = True
 		End Sub
 	#tag EndEvent
@@ -322,7 +320,7 @@ Implements ObservationKit.Observer
 		  Value = Max(Min(Self.mItems.LastRowIndex, Value), If(Self.RequiresSelection, 0, -1))
 		  If Self.mSelectedIndex <> Value Then
 		    Self.mSelectedIndex = Value
-		    RaiseEvent Pressed
+		    RaiseEvent Action
 		    Self.Invalidate
 		  End If
 		End Sub
@@ -371,19 +369,19 @@ Implements ObservationKit.Observer
 
 
 	#tag Hook, Flags = &h0
-		Event Activated()
+		Event Action()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Deactivated()
+		Event Activate()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Opening()
+		Event Deactivate()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Pressed()
+		Event Open()
 	#tag EndHook
 
 

@@ -67,13 +67,13 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Closing()
+		Sub Close()
 		  NotificationKit.Ignore(Self, Preferences.Notification_OnlineTokenChanged, Preferences.Notification_OnlineStateChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.RebuildMenu()
 		  NotificationKit.Watch(Self, Preferences.Notification_OnlineTokenChanged, Preferences.Notification_OnlineStateChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished)
 		End Sub
@@ -182,7 +182,7 @@ End
 
 #tag Events Labels
 	#tag Event
-		Sub Pressed(index as Integer)
+		Sub Action(index as Integer)
 		  Dim URL As String = Self.Labels(Index).URL
 		  If URL = "" Then
 		    Return

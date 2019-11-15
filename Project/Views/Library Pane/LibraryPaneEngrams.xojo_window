@@ -240,7 +240,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.ToolbarCaption = "Engrams"
 		End Sub
 	#tag EndEvent
@@ -277,8 +277,8 @@ End
 #tag EndWindowCode
 
 #tag Events ImportURLButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Dim Content As String = BlueprintManagerView.PromptForImportURL(Self)
 		  If Content <> "" Then
 		    Dim View As BlueprintManagerView = Self.ManagerView
@@ -286,20 +286,20 @@ End
 		    View.ImportText(Content)
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ImportClipboardButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Dim View As BlueprintManagerView = Self.ManagerView
 		  Self.ShowView(View)
 		  View.ImportFromClipboard()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ImportFileButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Dim File As FolderItem = BlueprintManagerView.PromptForImportFile(Self)
 		  If File <> Nil Then
 		    Dim View As BlueprintManagerView = Self.ManagerView
@@ -307,15 +307,15 @@ End
 		    View.ImportFromFile(File)
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ManageEngramsButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Dim View As BlueprintManagerView = Self.ManagerView
 		  Self.ShowView(View)
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Header
 	#tag Event
@@ -325,11 +325,11 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ClipboardWatcher
-	#tag EventAPI2
-		Sub Run()
+	#tag Event
+		Sub Action()
 		  Self.ImportClipboardButton.Enabled = BlueprintManagerView.ClipboardHasCodes
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

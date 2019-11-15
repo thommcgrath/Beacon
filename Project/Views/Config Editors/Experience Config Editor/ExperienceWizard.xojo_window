@@ -749,13 +749,13 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Self.mSettingUp = False
 		  
 		  Self.Designer.Curve = New Beacon.Curve(0, 0, 1, 1)
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
@@ -835,26 +835,26 @@ End
 #tag EndWindowCode
 
 #tag Events LevelCountField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.mSettingUp Or Self.Focus <> Me Then
 		    Return
 		  End If
 		  
 		  Self.UpdateList()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events XPField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.mSettingUp Or Self.Focus <> Me Then
 		    Return
 		  End If
 		  
 		  Self.UpdateList()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Designer
 	#tag Event
@@ -877,31 +877,31 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.ColumnAlignmentAt(0) = Listbox.Alignments.Right
 		  Me.ColumnAlignmentAt(1) = Listbox.Alignments.Right
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.mCancelled = False
 		  Self.Hide()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.mCancelled = True
 		  Self.Hide()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events PointFields
-	#tag EventAPI2
-		Sub TextChanged(index as Integer)
+	#tag Event
+		Sub TextChange(index as Integer)
 		  If Self.mSettingUp Or Self.Focus <> Me Then
 		    Return
 		  End If
@@ -909,7 +909,7 @@ End
 		  Dim Curve As New Beacon.Curve(CDbl(Self.PointFields(0).Value), CDbl(Self.PointFields(1).Value), CDbl(Self.PointFields(2).Value), CDbl(Self.PointFields(3).Value))
 		  Self.Designer.Curve = Curve
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

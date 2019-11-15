@@ -233,7 +233,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.ToolbarCaption = "Mods"
 		End Sub
 	#tag EndEvent
@@ -327,7 +327,7 @@ End
 
 #tag Events ModList
 	#tag Event
-		Sub SelectionChanged()
+		Sub Change()
 		  Header.RemoveButton.Enabled = Me.SelectedRowIndex > -1
 		  Header.SettingsButton.Enabled = Me.SelectedRowIndex > -1
 		  ModView.CurrentMod = Self.SelectedMod()
@@ -348,7 +348,7 @@ End
 #tag EndEvents
 #tag Events Header
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddButton"
 		    If DeveloperAddModDialog.Present(Self) Then
@@ -377,7 +377,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.LeftItems.Append(New BeaconToolbarItem("AddButton", IconToolbarAdd, "Register a new mod."))
 		  Me.LeftItems.Append(New BeaconToolbarItem("RemoveButton", IconRemove, False, "Remove the selected mod."))
 		  

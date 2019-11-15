@@ -52,9 +52,9 @@ Inherits Canvas
 		End Function
 	#tag EndEvent
 
-	#tag EventAPI2
-		Sub Opening()
-		  RaiseEvent Opening
+	#tag Event
+		Sub Open()
+		  RaiseEvent Open
 		  
 		  #if XojoVersion >= 2018.01
 		    Self.Transparent = True
@@ -64,7 +64,7 @@ Inherits Canvas
 		    Self.EraseBackground = Not Self.DoubleBuffer
 		  #endif
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
@@ -151,7 +151,7 @@ Inherits Canvas
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Opening()
+		Event Open()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

@@ -45,9 +45,10 @@ Begin BeaconDialog LootSourceWizard
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   550
       Begin UITweaks.ResizedPushButton SelectionActionButton
@@ -935,6 +936,7 @@ Begin BeaconDialog LootSourceWizard
          Top             =   122
          Transparent     =   False
          Underline       =   False
+         Value           =   "False"
          Visible         =   True
          Width           =   394
       End
@@ -1055,6 +1057,7 @@ Begin BeaconDialog LootSourceWizard
          Top             =   328
          Transparent     =   False
          Underline       =   False
+         Value           =   "False"
          Visible         =   True
          Width           =   394
       End
@@ -1087,6 +1090,7 @@ Begin BeaconDialog LootSourceWizard
          Top             =   328
          Transparent     =   False
          Underline       =   False
+         Value           =   "False"
          Visible         =   True
          Width           =   510
       End
@@ -1137,6 +1141,7 @@ Begin BeaconDialog LootSourceWizard
          HasBackColor    =   False
          Height          =   118
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   130
          LockBottom      =   False
@@ -1160,8 +1165,8 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Dim HasExperimentalSources As Boolean = LocalData.SharedInstance.HasExperimentalLootSources(Self.mMods)
 		  If HasExperimentalSources Then
 		    Self.SelectionExperimentalCheck.Value = Preferences.ShowExperimentalLootSources
@@ -1196,7 +1201,7 @@ End
 		  
 		  Self.SwapButtons()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
@@ -1442,23 +1447,23 @@ End
 #tag EndWindowCode
 
 #tag Events SelectionActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.ChooseSelectedLootSources()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events SelectionCancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events SourceList
 	#tag Event
-		Sub SelectionChanged()
+		Sub Change()
 		  SelectionActionButton.Enabled = Me.SelectedRowIndex > -1
 		End Sub
 	#tag EndEvent
@@ -1483,13 +1488,8 @@ End
 		  G.DrawPicture(Icon, NearestMultiple((SpaceWidth - Icon.Width) / 2, PrecisionX), NearestMultiple((SpaceHeight - Icon.Height) / 2, PrecisionY))
 		End Sub
 	#tag EndEvent
-	#tag EventAPI2
-		Sub DoubleClicked()
-		  Self.ChooseSelectedLootSources()
-		End Sub
-	#tag EndEventAPI2
-	#tag EventAPI2
-		Function RowComparison(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+	#tag Event
+		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  If Column <> 0 Then
 		    Return False
 		  End If
@@ -1505,18 +1505,23 @@ End
 		  
 		  Return True
 		End Function
-	#tag EndEventAPI2
+	#tag EndEvent
+	#tag Event
+		Sub DoubleClick()
+		  Self.ChooseSelectedLootSources()
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events SelectionCustomButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.ShowDefine(Nil)
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events DefineActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Dim ClassString As String = Self.DefineClassField.Value.Trim
 		  If Not ClassString.EndsWith("_C") Then
 		    Self.ShowAlert("Invalid class string", "Ark class strings always end in _C. Check your class string and try again.")
@@ -1560,11 +1565,11 @@ End
 		  
 		  Self.ShowCustomize()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events DefineCancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  If Me.Caption = "Cancel" Then
 		    Self.mCancelled = True
 		    Self.Hide
@@ -1573,11 +1578,11 @@ End
 		  
 		  Self.ShowSelect()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CustomizeActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Dim MinItemSets As Integer = Floor(CDbl(Self.CustomizeMinSetsField.Value))
 		  Dim MaxItemSets As Integer = Floor(CDbl(Self.CustomizeMaxSetsField.Value))
 		  Dim PreventDuplicates As Boolean = Self.CustomizePreventDuplicatesCheck.Value
@@ -1651,11 +1656,11 @@ End
 		  Self.mCancelled = False
 		  Self.Hide
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CustomizeCancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  If Me.Caption = "Cancel" Then
 		    Self.mCancelled = True
 		    Self.Hide
@@ -1668,38 +1673,38 @@ End
 		    Self.ShowSelect()
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events DefineNameField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Not Self.mDefineLabelEditingAutomatically Then
 		    Self.mDefineLabelWasEditedByUser = True
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events DefineClassField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Not Self.mDefineLabelWasEditedByUser Then
 		    Self.mDefineLabelEditingAutomatically = True
 		    Self.DefineNameField.Value = Beacon.LabelFromClassString(Me.Value)
 		    Self.mDefineLabelEditingAutomatically = False
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CustomizePresetsList
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SelectionExperimentalCheck
-	#tag EventAPI2
-		Sub ValueChanged()
+	#tag Event
+		Sub Action()
 		  If Preferences.ShowExperimentalLootSources = Me.Value Then
 		    Return
 		  End If
@@ -1707,7 +1712,7 @@ End
 		  Preferences.ShowExperimentalLootSources = Me.Value
 		  Self.BuildSourceList()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

@@ -613,8 +613,8 @@ End
 #tag EndWindowCode
 
 #tag Events DayMultiplierField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
 		    Return
 		  End If
@@ -625,11 +625,11 @@ End
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events NightMultiplierField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
 		    Return
 		  End If
@@ -640,11 +640,11 @@ End
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events DayLengthField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
 		    Return
 		  End If
@@ -656,11 +656,11 @@ End
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events NightLengthField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Or IsNumeric(Me.Value) = False Then
 		    Return
 		  End If
@@ -672,7 +672,7 @@ End
 		  Self.UpdateCalculations()
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

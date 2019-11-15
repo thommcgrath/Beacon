@@ -324,18 +324,18 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag EventAPI2
-		Sub Closing()
+	#tag Event
+		Sub Close()
 		  NotificationKit.Ignore(Self, Self.Notification_CloseDrawer, Self.Notification_ShowPane)
-		  RaiseEvent Closing
+		  RaiseEvent Close
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
-	#tag EventAPI2
-		Sub MenuSelected()
+	#tag Event
+		Sub EnableMenuItems()
 		  Self.CurrentView.EnableMenuItems()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
@@ -346,13 +346,13 @@ End
 		End Function
 	#tag EndEvent
 
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Self.CurrentView.SwitchedTo()
-		  RaiseEvent Opening
+		  RaiseEvent Open
 		  NotificationKit.Watch(Self, Self.Notification_CloseDrawer, Self.Notification_ShowPane)
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
@@ -524,11 +524,11 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Closing()
+		Event Close()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Opening()
+		Event Open()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -737,7 +737,7 @@ End
 #tag EndEvents
 #tag Events ViewShelf
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.Add(Self.mMenuButton)
 		  Me.Add(Self.mNotificationsButton)
 		  Me.Add(ShelfItem.NewSpacer)
@@ -749,7 +749,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Pressed()
+		Sub Action()
 		  If Me.SelectedItem = Nil Then
 		    Self.ShowPage(-1)
 		    Return

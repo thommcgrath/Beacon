@@ -63,8 +63,8 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Dim Maps() As Beacon.Map = Beacon.Maps.All
 		  Dim OfficialMaps(), OtherMaps() As Beacon.Map
 		  Dim OfficialMasks(), OtherMasks() As UInt64
@@ -110,10 +110,10 @@ End
 		  Self.Height = (OfficialMaps.LastRowIndex + 1) * 32
 		  Self.Width = 304
 		  
-		  RaiseEvent Opening
+		  RaiseEvent Open
 		  Self.mSettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Hook, Flags = &h0
@@ -121,7 +121,7 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Opening()
+		Event Open()
 	#tag EndHook
 
 
@@ -166,15 +166,15 @@ End
 #tag EndWindowCode
 
 #tag Events Boxes
-	#tag EventAPI2
-		Sub ValueChanged(index as Integer)
+	#tag Event
+		Sub Action(index as Integer)
 		  If Self.mSettingUp Then
 		    Return
 		  End If
 		  
 		  RaiseEvent Changed
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

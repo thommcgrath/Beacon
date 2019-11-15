@@ -209,8 +209,8 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag EventAPI2
-		Function CancelClosing(appQuitting as Boolean) As Boolean
+	#tag Event
+		Function CancelClose(appQuitting as Boolean) As Boolean
 		  #Pragma Unused AppQuitting
 		  
 		  Dim ModifiedViews() As BeaconSubview
@@ -256,16 +256,16 @@ End
 		    End If
 		  End Select
 		End Function
-	#tag EndEventAPI2
+	#tag EndEvent
 
 	#tag Event
-		Sub Closing()
+		Sub Close()
 		  NotificationKit.Ignore(Self, App.Notification_UpdateFound)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub MenuSelected()
+		Sub EnableMenuItems()
 		  If Self.mCurrentView <> Nil Then
 		    Self.mCurrentView.EnableMenuItems()
 		  End If
@@ -282,7 +282,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Dim Bounds As Rect = Preferences.MainWindowPosition
 		  If Bounds <> Nil Then
 		    // Find the best screen
@@ -695,7 +695,7 @@ End
 
 #tag Events TabBar1
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.Count = 1
 		End Sub
 	#tag EndEvent
@@ -822,7 +822,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.Visible = False
 		  Me.Left = 0
 		  Me.Top = 0

@@ -1,12 +1,12 @@
 #tag Class
 Protected Class DiscoveryView
 Inherits ContainerControl
-	#tag EventAPI2
-		Sub Closing()
-		  RaiseEvent Closing
+	#tag Event
+		Sub Close()
+		  RaiseEvent Close
 		  Self.mClosed = True
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 	#tag Event
 		Sub Resized()
@@ -92,7 +92,7 @@ Inherits ContainerControl
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Closing()
+		Event Close()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

@@ -2,21 +2,19 @@
 Protected Class BeaconToolbar
 Inherits ControlCanvas
 Implements ObservationKit.Observer
-	#tag EventAPI2
-		Sub Activated()
-		  RaiseEvent Activated
+	#tag Event
+		Sub Activate()
+		  RaiseEvent Activate
 		  Self.Invalidate
-		  
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
-	#tag EventAPI2
-		Sub Deactivated()
-		  RaiseEvent Deactivated
+	#tag Event
+		Sub Deactivate()
+		  RaiseEvent Deactivate
 		  Self.Invalidate
-		  
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
@@ -164,7 +162,7 @@ Implements ObservationKit.Observer
 		    Dim Item As BeaconToolbarItem = Self.ItemWithName(Self.mMouseDownName)
 		    If Item <> Nil And Item.Rect.Contains(New Xojo.Point(X, Y)) And Not Self.mMouseHeld Then
 		      // Action
-		      RaiseEvent Pressed(Item)
+		      RaiseEvent Action(Item)
 		    End If
 		    Self.mPressedName = ""
 		    Self.mMouseDownName = ""
@@ -175,8 +173,8 @@ Implements ObservationKit.Observer
 	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
-		  RaiseEvent Opening
+		Sub Open()
+		  RaiseEvent Open
 		  Self.Transparent = True
 		End Sub
 	#tag EndEvent
@@ -200,7 +198,7 @@ Implements ObservationKit.Observer
 		  Self.mHoldTimer = New Timer
 		  Self.mHoldTimer.RunMode = Timer.RunModes.Off
 		  Self.mHoldTimer.Period = 250
-		  AddHandler Self.mHoldTimer.Run, WeakAddressOf Self.mHoldTimer_Run
+		  AddHandler Self.mHoldTimer.Action, WeakAddressOf Self.mHoldTimer_Action
 		End Sub
 	#tag EndMethod
 
@@ -349,7 +347,7 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mHoldTimer_Run(Sender As Timer)
+		Private Sub mHoldTimer_Action(Sender As Timer)
 		  #Pragma Unused Sender
 		  
 		  If Self.mMouseHeld Or Self.mPressedName = "" Then
@@ -498,7 +496,11 @@ Implements ObservationKit.Observer
 
 
 	#tag Hook, Flags = &h0
-		Event Activated()
+		Event Action(Item As BeaconToolbarItem)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Activate()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -506,7 +508,7 @@ Implements ObservationKit.Observer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Deactivated()
+		Event Deactivate()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -514,11 +516,7 @@ Implements ObservationKit.Observer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Opening()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event Pressed(Item As BeaconToolbarItem)
+		Event Open()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

@@ -292,13 +292,13 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Closing()
+		Sub Close()
 		  NotificationKit.Ignore(Self, LocalData.Notification_DatabaseUpdated, IdentityManager.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.ToolbarCaption = "Home"
 		  
 		  Self.mMainGroup = New ControlGroup(LogoCanvas, TitleCanvas, VersionLabel, NewFileButton, OpenFileButton, SyncLabel, WebsiteLink)
@@ -383,18 +383,18 @@ End
 #tag EndWindowCode
 
 #tag Events NewFileButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  MainWindow.Documents.NewDocument()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events OpenFileButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  MainWindow.Documents.ShowOpenDocument()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events LogoCanvas
 	#tag Event
@@ -406,15 +406,15 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events VersionLabel
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Me.Value = "Version " + App.BuildVersion
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events SyncLabel
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Dim LastSync As DateTime = LocalData.SharedInstance.LastSync
 		  If IsNull(LastSync) Then
 		    Me.Value = "No engram data available"
@@ -422,7 +422,7 @@ End
 		    Me.Value = "Engrams updated " + LastSync.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC"
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events TitleCanvas
 	#tag Event
@@ -441,12 +441,12 @@ End
 #tag EndEvents
 #tag Events WebsiteLink
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.Value = Beacon.WebURL()
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Pressed()
+		Sub Action()
 		  ShowURL(Me.Value)
 		End Sub
 	#tag EndEvent

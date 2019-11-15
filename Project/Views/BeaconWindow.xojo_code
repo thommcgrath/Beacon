@@ -1,9 +1,9 @@
 #tag Class
 Protected Class BeaconWindow
 Inherits Window
-	#tag EventAPI2
-		Sub Closing()
-		  RaiseEvent Closing
+	#tag Event
+		Sub Close()
+		  RaiseEvent Close
 		  
 		  If Self.mWindowMenuItem <> Nil Then
 		    Dim WindowMenu As MenuItem = MainMenuBar.Child("WindowMenu")
@@ -17,14 +17,14 @@ Inherits Window
 		      End If
 		    Next
 		    
-		    RemoveHandler Self.mWindowMenuItem.MenuItemSelected, WeakAddressOf Self.mWindowMenuItem_Action
+		    RemoveHandler Self.mWindowMenuItem.Action, WeakAddressOf Self.mWindowMenuItem_Action
 		    Self.mWindowMenuItem = Nil
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
-	#tag EventAPI2
-		Sub MenuSelected()
+	#tag Event
+		Sub EnableMenuItems()
 		  If Self.HasCloseButton Then
 		    FileClose.Enable
 		  End If
@@ -38,9 +38,9 @@ Inherits Window
 		    Self.mWindowMenuItem.Enable
 		  End If
 		  
-		  RaiseEvent MenuSelected
+		  RaiseEvent EnableMenuItems
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 	#tag Event
 		Sub Moved()
@@ -50,8 +50,8 @@ Inherits Window
 		End Sub
 	#tag EndEvent
 
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Dim InitialWidth As Integer = Self.Width
 		  // Dumb workaround because contents are sizing 1 pixels too short.
 		  // A resize causes them to find their correct positions.
@@ -59,7 +59,7 @@ Inherits Window
 		  Self.Width = InitialWidth
 		  
 		  Dim MenuItem As New MenuItem(Self.Title)
-		  AddHandler MenuItem.MenuItemSelected, WeakAddressOf Self.mWindowMenuItem_Action
+		  AddHandler MenuItem.Action, WeakAddressOf Self.mWindowMenuItem_Action
 		  
 		  If MenuItem <> Nil Then
 		    Self.mWindowMenuItem = MenuItem
@@ -68,12 +68,12 @@ Inherits Window
 		    MainMenuBar.Child("WindowMenu").AddMenu(MenuItem)
 		  End If
 		  
-		  RaiseEvent Opening
+		  RaiseEvent Open
 		  
 		  Self.mOpened = True
 		  Self.Invalidate
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 	#tag Event
 		Sub Resized()
@@ -152,11 +152,11 @@ Inherits Window
 
 
 	#tag Hook, Flags = &h0
-		Event Closing()
+		Event Close()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event MenuSelected()
+		Event EnableMenuItems()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -164,7 +164,7 @@ Inherits Window
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Opening()
+		Event Open()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

@@ -303,8 +303,8 @@ End
 #tag EndWindowCode
 
 #tag Events ActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.WorkshopMod.PullURL = Self.PullURLField.Value
 		  Dim Payload As String = Beacon.GenerateJSON(Self.WorkshopMod.AsDictionary, False)
 		  
@@ -312,22 +312,22 @@ End
 		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.Socket.Start(Request)
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.Close
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events PullURLField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  Dim URL As String = Me.Value.Trim
 		  ActionButton.Enabled = URL = "" Or URL.Left(8) = "https://" Or URL.Left(7) = "http://"
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Socket
 	#tag Event

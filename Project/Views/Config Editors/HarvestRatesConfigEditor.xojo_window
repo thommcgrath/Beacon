@@ -765,8 +765,8 @@ End
 #tag EndWindowCode
 
 #tag Events HarvestAmountMultiplierField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -778,11 +778,11 @@ End
 		  Self.SettingUp = False
 		  Self.UpdateList()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Header
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Dim AddButton As New BeaconToolbarItem("AddEngram", IconToolbarAdd)
 		  AddButton.HelpTag = "Override the harvest rate of an engram."
 		  
@@ -794,7 +794,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddEngram"
 		    Self.ShowAddOverride()
@@ -806,14 +806,14 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.ColumnAlignmentAt(Self.ColumnRate) = Listbox.Alignments.Right
 		  Me.ColumnAlignmentAt(Self.ColumnEffectiveRate) = Listbox.Alignments.Right
 		  Me.ColumnTypeAt(Self.ColumnRate) = Listbox.CellTypes.TextField
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub SelectionChanged()
+		Sub Change()
 		  Self.Header.Duplicate.Enabled = Me.SelectedRowCount = 1
 		End Sub
 	#tag EndEvent
@@ -932,8 +932,8 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events UseOptimizedRatesCheck
-	#tag EventAPI2
-		Sub ValueChanged()
+	#tag Event
+		Sub Action()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -944,11 +944,11 @@ End
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events HarvestHealthMultiplierField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -960,11 +960,11 @@ End
 		  Self.SettingUp = False
 		  Self.UpdateList()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events PlayerHarvestDamageMultiplierField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -976,11 +976,11 @@ End
 		  Self.SettingUp = False
 		  Self.UpdateList()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events DinoHarvestDamageMultiplierField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -992,11 +992,11 @@ End
 		  Self.SettingUp = False
 		  Self.UpdateList()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ClampHarvestDamageCheck
-	#tag EventAPI2
-		Sub ValueChanged()
+	#tag Event
+		Sub Action()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -1007,7 +1007,7 @@ End
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

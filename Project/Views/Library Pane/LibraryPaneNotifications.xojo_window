@@ -91,13 +91,13 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Closing()
+		Sub Close()
 		  NotificationKit.Ignore(Self, LocalData.Notification_NewAppNotification)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  NotificationKit.Watch(Self, LocalData.Notification_NewAppNotification)
 		  
 		  Self.RefreshNotifications()

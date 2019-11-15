@@ -1,9 +1,9 @@
 #tag Class
 Protected Class CodeArea
 Inherits TextArea
-	#tag EventAPI2
-		Sub Opening()
-		  RaiseEvent Opening
+	#tag Event
+		Sub Open()
+		  RaiseEvent Open
 		  Self.FontUnit = FontUnits.Point
 		  Self.FontName = "Source Code Pro"
 		  Self.FontSize = 12
@@ -12,11 +12,11 @@ Inherits TextArea
 		  Self.Italic = False
 		  Self.MultiLine = True
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Hook, Flags = &h0
-		Event Opening()
+		Event Open()
 	#tag EndHook
 
 

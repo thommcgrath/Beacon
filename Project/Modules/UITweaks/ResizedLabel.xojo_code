@@ -1,17 +1,17 @@
 #tag Class
 Protected Class ResizedLabel
 Inherits Label
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Self.ResizeForPlatform(Self.IdealHeight)
 		  
-		  RaiseEvent Opening
+		  RaiseEvent Open
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Hook, Flags = &h0
-		Event Opening()
+		Event Open()
 	#tag EndHook
 
 

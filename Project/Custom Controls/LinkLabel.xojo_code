@@ -40,26 +40,26 @@ Inherits Label
 	#tag Event
 		Sub MouseUp(X As Integer, Y As Integer)
 		  If X >= 0 And X <= Self.Width And Y >= 0 And Y <= Self.Height Then
-		    RaiseEvent Pressed
+		    RaiseEvent Action
 		    Self.TextColor = SystemColors.LinkColor
 		  End If
 		End Sub
 	#tag EndEvent
 
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Self.ShowAsLink = Self.ShowAsLink
-		  RaiseEvent Opening
+		  RaiseEvent Open
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Hook, Flags = &h0
-		Event Opening()
+		Event Action()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Pressed()
+		Event Open()
 	#tag EndHook
 
 

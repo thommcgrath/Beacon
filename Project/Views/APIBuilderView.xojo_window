@@ -612,7 +612,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.ToolbarCaption = "API Builder"
 		End Sub
 	#tag EndEvent
@@ -759,8 +759,8 @@ End
 #tag EndWindowCode
 
 #tag Events BuildButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Dim Path As String = PathField.Value
 		  Dim Method As String = MethodMenu.SelectedRowValue
 		  Dim Body As String = BodyField.Value
@@ -790,17 +790,17 @@ End
 		    CodeField.Value = Self.BuildHTTPCode(Request)
 		  End Select
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events MethodMenu
-	#tag EventAPI2
-		Sub SelectionChanged()
+	#tag Event
+		Sub Change()
 		  BodyField.Enabled = Me.SelectedRowIndex > 0
 		  BodyLabel.Enabled = BodyField.Enabled
 		  ContentTypeField.Enabled = BodyField.Enabled
 		  ContentTypeLabel.Enabled = BodyField.Enabled
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

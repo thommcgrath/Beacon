@@ -1109,8 +1109,8 @@ End
 #tag EndWindowCode
 
 #tag Events MultiplierField
-	#tag EventAPI2
-		Sub TextChanged(index as Integer)
+	#tag Event
+		Sub TextChange(index as Integer)
 		  If Self.mSettingUp Or IsNumeric(Me.Value) = False Then
 		    Return
 		  End If
@@ -1118,7 +1118,7 @@ End
 		  Dim Multiplier As Double = CDbl(Me.Value)
 		  RaiseEvent MultiplierUpdated(Index, Multiplier)
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

@@ -314,7 +314,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub MenuSelected()
+		Sub EnableMenuItems()
 		  DocumentAddBeacon.Enable
 		  
 		  If Self.List.SelectedRowCount > 0 Then
@@ -328,7 +328,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.MinimumWidth = Self.FadedSeparator1.Width + Self.ListMinWidth + LootSourceEditor.MinimumWidth
 		  Self.MinimumHeight = 547
 		End Sub
@@ -714,7 +714,7 @@ End
 
 #tag Events Header
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Dim AddButton As New BeaconToolbarItem("AddSource", IconToolbarAdd)
 		  AddButton.HasMenu = True
 		  AddButton.HelpTag = "Define an additional loot source. Hold to quickly add a source from a menu."
@@ -737,7 +737,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddSource"
 		    Self.ShowAddLootSource()
@@ -930,7 +930,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub SelectionChanged()
+		Sub Change()
 		  Header.Duplicate.Enabled = Me.SelectedRowCount = 1
 		  
 		  If Self.mBlockSelectionChanged Then
@@ -960,8 +960,8 @@ End
 		  Return Not Source.IsValid(Self.Document)
 		End Function
 	#tag EndEvent
-	#tag EventAPI2
-		Sub DoubleClicked()
+	#tag Event
+		Sub DoubleClick()
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
@@ -977,7 +977,7 @@ End
 		    Return
 		  Next
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Editor
 	#tag Event

@@ -455,8 +455,8 @@ End
 #tag EndWindowCode
 
 #tag Events GlobalMultiplierField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  If Self.SettingUp Then
 		    Return
 		  End If
@@ -467,11 +467,11 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Header
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Dim AddButton As New BeaconToolbarItem("AddEngram", IconToolbarAdd)
 		  AddButton.HelpTag = "Override the stack size of an engram."
 		  
@@ -483,7 +483,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddEngram"
 		    Self.ShowAddOverride()
@@ -495,13 +495,13 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.ColumnAlignmentAt(Self.ColumnStackSize) = Listbox.Alignments.Right
 		  Me.ColumnTypeAt(Self.ColumnStackSize) = Listbox.CellTypes.TextField
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub SelectionChanged()
+		Sub Change()
 		  Self.Header.Duplicate.Enabled = Me.SelectedRowCount = 1
 		End Sub
 	#tag EndEvent

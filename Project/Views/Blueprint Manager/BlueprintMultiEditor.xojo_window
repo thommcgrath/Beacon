@@ -260,7 +260,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Dim Maps() As Beacon.Map = Beacon.Maps.All
 		  Dim OfficialMaps(), ThirdPartyMaps() As Beacon.Map
 		  Dim OfficialMasks(), ThirdPartyMasks() As UInt64
@@ -487,7 +487,7 @@ End
 
 #tag Events Header
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "SaveButton"
 		    Self.Save()
@@ -497,7 +497,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.LeftItems.Append(New BeaconToolbarItem("SaveButton", IconToolbarSave, False, "Save Object"))
 		  Me.LeftItems.Append(New BeaconToolbarItem("RevertButton", IconToolbarRevert, False, "Revert Changes"))
 		End Sub
@@ -531,15 +531,15 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events MapCheckboxes
-	#tag EventAPI2
-		Sub ValueChanged(index as Integer)
+	#tag Event
+		Sub Action(index as Integer)
 		  If Self.mSettingUp Then
 		    Return
 		  End If
 		  
 		  Self.Modified = True
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

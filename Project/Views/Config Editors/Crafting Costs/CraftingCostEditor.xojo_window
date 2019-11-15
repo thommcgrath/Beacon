@@ -293,7 +293,7 @@ End
 
 #tag Events Header
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddResource"
 		    Self.ShowAddResources()
@@ -301,7 +301,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Dim AddButton As New BeaconToolbarItem("AddResource", IconToolbarAdd)
 		  AddButton.HelpTag = "Add resources to this crafting cost."
 		  Me.LeftItems.Append(AddButton)
@@ -310,7 +310,7 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.ColumnAlignmentAt(Self.ColumnQuantity) = Listbox.Alignments.Right
 		  Me.ColumnTypeAt(Self.ColumnQuantity) = Listbox.CellTypes.TextField
 		  Me.ColumnTypeAt(Self.ColumnRequireExact) = Listbox.CellTypes.CheckBox
@@ -410,7 +410,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub SelectionChanged()
+		Sub Change()
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndEvent

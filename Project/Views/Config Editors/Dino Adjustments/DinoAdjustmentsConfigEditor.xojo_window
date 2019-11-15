@@ -358,7 +358,7 @@ End
 
 #tag Events Header
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.Caption = Self.ConfigLabel
 		  
 		  Dim AddButton As New BeaconToolbarItem("AddCreature", IconToolbarAdd)
@@ -372,7 +372,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddCreature"
 		    Self.ShowAdd()
@@ -384,7 +384,7 @@ End
 #tag EndEvents
 #tag Events List
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Me.ColumnAlignmentAt(Self.ColumnWildDamage) = Listbox.Alignments.Center
 		  Me.ColumnAlignmentAt(Self.ColumnWildResistance) = Listbox.Alignments.Center
 		  Me.ColumnAlignmentAt(Self.ColumnTamedDamage) = Listbox.Alignments.Center
@@ -490,15 +490,15 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub SelectionChanged()
+		Sub Change()
 		  Self.Header.Duplicate.Enabled = Me.SelectedRowCount = 1
 		End Sub
 	#tag EndEvent
-	#tag EventAPI2
-		Sub DoubleClicked()
+	#tag Event
+		Sub DoubleClick()
 		  Self.EditSelected()
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

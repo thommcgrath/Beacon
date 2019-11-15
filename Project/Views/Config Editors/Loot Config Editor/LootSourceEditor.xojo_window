@@ -429,17 +429,17 @@ End
 		End Sub
 	#tag EndEvent
 
-	#tag EventAPI2
-		Sub MenuSelected()
+	#tag Event
+		Sub EnableMenuItems()
 		  Self.BuildPresetMenu(DocumentAddItemSet)
 		  If Self.SetList.SelectedRowCount > 0 Then
 		    DocumentRemoveItemSet.Enable
 		  End If
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndEvent
@@ -524,7 +524,7 @@ End
 		  Next
 		  
 		  Dim EmptySetItem As New MenuItem("New Empty Set", Nil)
-		  AddHandler EmptySetItem.MenuItemSelected, WeakAddressOf Self.HandlePresetMenu
+		  AddHandler EmptySetItem.Action, WeakAddressOf Self.HandlePresetMenu
 		  Parent.AddMenu(EmptySetItem)
 		  
 		  Dim HasTarget As Boolean = Self.mSources.LastRowIndex > -1
@@ -554,7 +554,7 @@ End
 		    For Each Preset As Beacon.Preset In Items
 		      Dim PresetItem As New MenuItem(Preset.Label, Preset)
 		      PresetItem.Enabled = HasTarget
-		      AddHandler PresetItem.MenuItemSelected, WeakAddressOf Self.HandlePresetMenu
+		      AddHandler PresetItem.Action, WeakAddressOf Self.HandlePresetMenu
 		      Parent.AddMenu(PresetItem)
 		    Next
 		  Next
@@ -1066,7 +1066,7 @@ End
 
 #tag Events SetList
 	#tag Event
-		Sub SelectionChanged()
+		Sub Change()
 		  If Self.mSorting = True Then
 		    Return
 		  End If
@@ -1461,7 +1461,7 @@ End
 #tag EndEvents
 #tag Events Header
 	#tag Event
-		Sub Opening()
+		Sub Open()
 		  Dim AddButton As New BeaconToolbarItem("AddSet", IconToolbarAdd)
 		  AddButton.HasMenu = True
 		  AddButton.HelpTag = "Add a new empty item set. Hold to add a preset from a menu."
@@ -1475,7 +1475,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Pressed(Item As BeaconToolbarItem)
+		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddSet"
 		    Self.ShowNewSet()

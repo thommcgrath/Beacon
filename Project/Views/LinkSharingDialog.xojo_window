@@ -189,7 +189,7 @@ End
 
 #tag Events CopyLinkButton
 	#tag Event
-		Sub Pressed()
+		Sub Action()
 		  Dim Board As New Clipboard
 		  Board.Text = Self.LinkField.Value
 		  
@@ -199,9 +199,9 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.Close
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents

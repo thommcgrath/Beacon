@@ -387,12 +387,12 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag EventAPI2
-		Sub Opening()
+	#tag Event
+		Sub Open()
 		  Self.SetupUI()
 		  Self.mSettingUp = False
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
@@ -492,15 +492,15 @@ End
 #tag EndWindowCode
 
 #tag Events DisclosureTriangle1
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.SetupUI
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events MinItemSetsField
 	#tag Event
-		Sub TextChanged()
+		Sub TextChange()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -541,7 +541,7 @@ End
 #tag EndEvents
 #tag Events MaxItemSetsField
 	#tag Event
-		Sub TextChanged()
+		Sub TextChange()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -581,8 +581,8 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events NoDuplicatesCheck
-	#tag EventAPI2
-		Sub ValueChanged()
+	#tag Event
+		Sub Action()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -594,51 +594,51 @@ End
 		  
 		  RaiseEvent SettingsChanged
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events MinItemSetsStepper
-	#tag EventAPI2
-		Sub DownPressed()
+	#tag Event
+		Sub Down()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
 		  
 		  Self.MinItemSetsField.DoubleValue = Self.MinItemSetsField.DoubleValue - 1
 		End Sub
-	#tag EndEventAPI2
-	#tag EventAPI2
-		Sub UpPressed()
+	#tag EndEvent
+	#tag Event
+		Sub Up()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
 		  
 		  Self.MinItemSetsField.DoubleValue = Self.MinItemSetsField.DoubleValue + 1
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events MaxItemSetsStepper
-	#tag EventAPI2
-		Sub DownPressed()
+	#tag Event
+		Sub Down()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
 		  
 		  Self.MaxItemSetsField.DoubleValue = Self.MaxItemSetsField.DoubleValue - 1
 		End Sub
-	#tag EndEventAPI2
-	#tag EventAPI2
-		Sub UpPressed()
+	#tag EndEvent
+	#tag Event
+		Sub Up()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
 		  
 		  Self.MaxItemSetsField.DoubleValue = Self.MaxItemSetsField.DoubleValue + 1
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events AppendModeCheck
-	#tag EventAPI2
-		Sub ValueChanged()
+	#tag Event
+		Sub Action()
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -650,7 +650,7 @@ End
 		  
 		  RaiseEvent SettingsChanged
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

@@ -276,15 +276,15 @@ End
 #tag EndWindowCode
 
 #tag Events ModIDField
-	#tag EventAPI2
-		Sub TextChanged()
+	#tag Event
+		Sub TextChange()
 		  ActionButton.Enabled = Me.Value.Trim <> ""
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Dim ModID As String = ModIDField.Value.Trim
 		  If ModID.Left(4) = "http" Then
 		    Dim Regex As New Regex
@@ -307,15 +307,15 @@ End
 		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.Socket.Start(Request)
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
-	#tag EventAPI2
-		Sub Pressed()
+	#tag Event
+		Sub Action()
 		  Self.mRegistered = False
 		  Self.Hide
 		End Sub
-	#tag EndEventAPI2
+	#tag EndEvent
 #tag EndEvents
 #tag Events Socket
 	#tag Event
