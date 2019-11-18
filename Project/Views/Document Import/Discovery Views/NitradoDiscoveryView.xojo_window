@@ -43,7 +43,7 @@ Begin DiscoveryView NitradoDiscoveryView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -134,7 +134,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   True
+         TabStop         =   "True"
          Top             =   222
          Transparent     =   False
          Value           =   0.0

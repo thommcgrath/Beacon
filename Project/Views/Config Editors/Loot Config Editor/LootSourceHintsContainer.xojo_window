@@ -52,7 +52,7 @@ Begin ContainerControl LootSourceHintsContainer
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
-      MultiLine       =   True
+      Multiline       =   True
       ReadOnly        =   True
       Scope           =   2
       ScrollbarHorizontal=   False
