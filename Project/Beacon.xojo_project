@@ -393,6 +393,7 @@ Folder=Spawn Points Editor;Views/Config Editors/Spawn Points Editor;&h000000007E
 Window=SpawnPointsConfigEditor;Views/Config Editors/Spawn Points Editor/SpawnPointsConfigEditor.xojo_window;&h000000005F3A27FF;&h000000007ED5DFFF;false
 Window=AddSpawnPointDialog;Views/Config Editors/Spawn Points Editor/AddSpawnPointDialog.xojo_window;&h00000000181707FF;&h000000007ED5DFFF;false
 Window=SpawnPointEditor;Views/Config Editors/Spawn Points Editor/SpawnPointEditor.xojo_window;&h0000000069122FFF;&h000000007ED5DFFF;false
+Class=BlueprintSet;Modules/BeaconAPI/BlueprintSet.xojo_code;&h0000000064D6C7FF;&h00000000783217FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=3

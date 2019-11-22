@@ -72,6 +72,12 @@ Protected Interface Blueprint
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ToDictionary() As Dictionary
+		  
+		End Function
+	#tag EndMethod
+
 
 End Interface
 #tag EndInterface

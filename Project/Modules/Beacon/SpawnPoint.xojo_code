@@ -102,6 +102,43 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function FromDictionary(Dict As Dictionary) As Beacon.SpawnPoint
+		  If Dict.HasKey("Category") = False Or Dict.Value("Category") <> Beacon.CategorySpawnPoints Then
+		    Return Nil
+		  End If
+		  
+		  If Not Dict.HasAllKeys("UUID", "Label", "Path", "Availability", "Tags", "ModID", "ModName") Then
+		    Return Nil
+		  End If
+		  
+		  Var Sets() As Beacon.SpawnPointSet
+		  If Dict.HasKey("Sets") Then
+		    Var SetSaveData() As Variant = Dict.Value("Sets")
+		    For Each SaveData As Dictionary In SetSaveData
+		      Var Set As Beacon.SpawnPointSet = Beacon.SpawnPointSet.FromSaveData(SaveData)
+		      If Set <> Nil Then
+		        Sets.AddRow(Set)
+		      End If
+		    Next
+		  End If
+		  
+		  Var Point As New Beacon.MutableSpawnPoint(Dict.Value("Path").StringValue, Dict.Value("UUID").StringValue)
+		  Point.Label = Dict.Value("Label").StringValue
+		  Point.Availability = Dict.Value("Availability").UInt64Value
+		  Point.Tags = Dict.Value("Tags")
+		  Point.ModID = Dict.Value("ModID").StringValue
+		  Point.ModName = Dict.Value("ModName").StringValue
+		  
+		  Var Immutable As New Beacon.SpawnPoint(Point)
+		  If Dict.HasKey("Limits") Then
+		    Immutable.mLimits = Dict.Value("Limits")
+		  End If
+		  Immutable.mSets = Sets
+		  Return Immutable
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function FromSaveData(Dict As Dictionary) As Beacon.SpawnPoint
 		  Try
 		    Var SpawnPoint As Beacon.SpawnPoint
@@ -316,7 +353,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
-		  Var Children() As Dictionary
+		  Var Children() As Variant
 		  For Each Set As Beacon.SpawnPointSet In Self.mSets
 		    Children.AddRow(Set.SaveData)
 		  Next
@@ -368,6 +405,33 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		    Clone(I) = Self.mTags(I)
 		  Next
 		  Return Clone
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ToDictionary() As Dictionary
+		  Var Sets() As Variant
+		  For Each Set As Beacon.SpawnPointSet In Self.mSets
+		    Sets.AddRow(Set.SaveData)
+		  Next
+		  
+		  Var Dict As New Dictionary
+		  Dict.Value("Category") = Self.Category
+		  Dict.Value("UUID") = Self.ObjectID.StringValue
+		  Dict.Value("Label") = Self.Label
+		  Dict.Value("Path") = Self.Path
+		  Dict.Value("Availability") = Self.Availability
+		  Dict.Value("Tags") = Self.Tags
+		  Dict.Value("ModID") = Self.ModID.StringValue
+		  Dict.Value("ModName") = Self.ModName
+		  If Self.mLimits.KeyCount > 0 Then
+		    Dict.Value("Limits") = Self.mLimits
+		  End If
+		  Dict.Value("Mode") = Self.Mode
+		  If Sets.LastRowIndex > -1 Then
+		    Dict.Value("Sets") = Sets
+		  End If
+		  Return Dict
 		End Function
 	#tag EndMethod
 

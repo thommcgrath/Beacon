@@ -372,7 +372,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
-		  Var Entries() As Dictionary
+		  Var Entries() As Variant
 		  For Each Entry As Beacon.SpawnPointSetEntry In Self.mEntries
 		    Entries.AddRow(Entry.SaveData)
 		  Next

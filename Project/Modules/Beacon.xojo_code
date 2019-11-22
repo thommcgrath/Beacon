@@ -50,6 +50,34 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function BlueprintFromDictionary(Dict As Dictionary) As Beacon.Blueprint
+		  Try
+		    Var Blueprint As Beacon.Blueprint = Beacon.Engram.FromDictionary(Dict)
+		    If Blueprint <> Nil Then
+		      Return Blueprint
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Try
+		    Var Blueprint As Beacon.Blueprint = Beacon.Creature.FromDictionary(Dict)
+		    If Blueprint <> Nil Then
+		      Return Blueprint
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Try
+		    Var Blueprint As Beacon.Blueprint = Beacon.SpawnPoint.FromDictionary(Dict)
+		    If Blueprint <> Nil Then
+		      Return Blueprint
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function BooleanValue(Extends Dict As Dictionary, Key As Variant, Default As Boolean, AllowArray As Boolean = False) As Boolean
 		  Return GetValueAsType(Dict, Key, "Boolean", Default, AllowArray, AddressOf CoerceToBoolean)
 		End Function
@@ -406,6 +434,12 @@ Protected Module Beacon
 		    
 		    Return REALbasic.EncodeHex(Crypto.SHA256(Str(Created.SecondsFrom1970 + 2082844800, "-0"))).Lowercase
 		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Hash(Extends Blueprint As Beacon.Blueprint) As String
+		  Return EncodeHex(Crypto.SHA1(Beacon.GenerateJSON(Blueprint.ToDictionary, False)))
 		End Function
 	#tag EndMethod
 

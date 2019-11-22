@@ -265,7 +265,7 @@ Implements Beacon.DocumentItem
 		    Dict.Value("Offset") = Self.mOffset.SaveData
 		  End If
 		  If Self.mLevels.LastRowIndex > -1 Then
-		    Var Levels() As Dictionary
+		    Var Levels() As Variant
 		    Levels.ResizeTo(Self.mLevels.LastRowIndex)
 		    For I As Integer = 0 To Self.mLevels.LastRowIndex
 		      Levels(I) = Self.mLevels(I).SaveData

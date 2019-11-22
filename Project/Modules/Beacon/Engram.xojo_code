@@ -85,6 +85,26 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function FromDictionary(Dict As Dictionary) As Beacon.Engram
+		  If Dict.HasKey("Category") = False Or Dict.Value("Category") <> Beacon.CategoryEngrams Then
+		    Return Nil
+		  End If
+		  
+		  If Not Dict.HasAllKeys("UUID", "Label", "Path", "Availability", "Tags", "ModID", "ModName") Then
+		    Return Nil
+		  End If
+		  
+		  Var Engram As New Beacon.MutableEngram(Dict.Value("Path").StringValue, Dict.Value("UUID").StringValue)
+		  Engram.Label = Dict.Value("Label").StringValue
+		  Engram.Availability = Dict.Value("Availability").UInt64Value
+		  Engram.Tags = Dict.Value("Tags")
+		  Engram.ModID = Dict.Value("ModID").StringValue
+		  Engram.ModName = Dict.Value("ModName").StringValue
+		  Return New Beacon.Engram(Engram)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GeneratedClassBlueprintPath() As String
 		  Return "BlueprintGeneratedClass'" + Self.mPath + "_C'"
 		End Function
@@ -193,6 +213,21 @@ Implements Beacon.Blueprint
 		    Clone(I) = Self.mTags(I)
 		  Next
 		  Return Clone
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ToDictionary() As Dictionary
+		  Var Dict As New Dictionary
+		  Dict.Value("Category") = Self.Category
+		  Dict.Value("UUID") = Self.ObjectID.StringValue
+		  Dict.Value("Label") = Self.Label
+		  Dict.Value("Path") = Self.Path
+		  Dict.Value("Availability") = Self.Availability
+		  Dict.Value("Tags") = Self.Tags
+		  Dict.Value("ModID") = Self.ModID.StringValue
+		  Dict.Value("ModName") = Self.ModName
+		  Return Dict
 		End Function
 	#tag EndMethod
 
