@@ -86,7 +86,7 @@ Begin BeaconSubview APIBuilderView
       Top             =   239
       Transparent     =   False
       Underline       =   False
-      Value           =   "False"
+      Value           =   False
       Visible         =   True
       Width           =   267
    End

@@ -57,7 +57,6 @@ Begin BeaconSubview ModsView
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   "0"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -86,7 +85,6 @@ Begin BeaconSubview ModsView
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   379
       HelpTag         =   ""
       Index           =   -2147483648
@@ -120,7 +118,6 @@ Begin BeaconSubview ModsView
       HasBackColor    =   False
       Height          =   419
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   236
       LockBottom      =   True
@@ -146,7 +143,6 @@ Begin BeaconSubview ModsView
       Caption         =   "Mods"
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -177,7 +173,6 @@ Begin BeaconSubview ModsView
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -206,7 +201,6 @@ Begin BeaconSubview ModsView
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648

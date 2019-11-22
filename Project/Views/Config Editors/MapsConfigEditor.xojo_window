@@ -54,7 +54,7 @@ Begin ConfigEditor MapsConfigEditor
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "False"
+      Value           =   False
       Visible         =   True
       Width           =   200
    End
@@ -87,7 +87,7 @@ Begin ConfigEditor MapsConfigEditor
       Top             =   52
       Transparent     =   False
       Underline       =   False
-      Value           =   "False"
+      Value           =   False
       Visible         =   True
       Width           =   200
    End
@@ -120,7 +120,7 @@ Begin ConfigEditor MapsConfigEditor
       Top             =   84
       Transparent     =   False
       Underline       =   False
-      Value           =   "False"
+      Value           =   False
       Visible         =   True
       Width           =   200
    End
@@ -153,7 +153,7 @@ Begin ConfigEditor MapsConfigEditor
       Top             =   116
       Transparent     =   False
       Underline       =   False
-      Value           =   "False"
+      Value           =   False
       Visible         =   True
       Width           =   200
    End
@@ -186,7 +186,7 @@ Begin ConfigEditor MapsConfigEditor
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      Value           =   "False"
+      Value           =   False
       Visible         =   True
       Width           =   200
    End
@@ -219,7 +219,7 @@ Begin ConfigEditor MapsConfigEditor
       Top             =   52
       Transparent     =   False
       Underline       =   False
-      Value           =   "False"
+      Value           =   False
       Visible         =   True
       Width           =   200
    End
@@ -252,7 +252,7 @@ Begin ConfigEditor MapsConfigEditor
       Top             =   84
       Transparent     =   False
       Underline       =   False
-      Value           =   "False"
+      Value           =   False
       Visible         =   True
       Width           =   200
    End
@@ -285,7 +285,7 @@ Begin ConfigEditor MapsConfigEditor
       Top             =   148
       Transparent     =   False
       Underline       =   False
-      Value           =   "False"
+      Value           =   False
       Visible         =   True
       Width           =   200
    End

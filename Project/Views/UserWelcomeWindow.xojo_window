@@ -607,7 +607,7 @@ Begin Window UserWelcomeWindow
          Top             =   203
          Transparent     =   False
          Underline       =   False
-         Value           =   "False"
+         Value           =   False
          Visible         =   True
          Width           =   268
       End
@@ -1333,7 +1333,7 @@ Begin Window UserWelcomeWindow
          Top             =   280
          Transparent     =   False
          Underline       =   False
-         Value           =   "False"
+         Value           =   False
          Visible         =   True
          Width           =   267
       End

@@ -372,6 +372,7 @@ Begin BeaconDialog AddSpawnPointDialog
       Top             =   328
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   "0"
       Width           =   200

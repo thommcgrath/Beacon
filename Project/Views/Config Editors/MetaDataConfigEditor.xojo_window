@@ -215,7 +215,7 @@ Begin ConfigEditor MetaDataConfigEditor
       Top             =   270
       Transparent     =   False
       Underline       =   False
-      Value           =   "False"
+      Value           =   False
       Visible         =   True
       Width           =   476
    End
@@ -371,7 +371,7 @@ Begin ConfigEditor MetaDataConfigEditor
       Top             =   302
       Transparent     =   False
       Underline       =   False
-      Value           =   "False"
+      Value           =   False
       Visible         =   True
       Width           =   476
    End
@@ -404,7 +404,7 @@ Begin ConfigEditor MetaDataConfigEditor
       Top             =   334
       Transparent     =   False
       Underline       =   False
-      Value           =   "False"
+      Value           =   False
       Visible         =   True
       Width           =   476
    End

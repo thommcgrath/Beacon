@@ -54,7 +54,7 @@ Begin BeaconContainer EntryPropertiesEditor
       Top             =   142
       Transparent     =   False
       Underline       =   False
-      Value           =   "True"
+      Value           =   True
       Visible         =   False
       Width           =   58
    End
@@ -87,7 +87,7 @@ Begin BeaconContainer EntryPropertiesEditor
       Top             =   110
       Transparent     =   False
       Underline       =   False
-      Value           =   "True"
+      Value           =   True
       Visible         =   False
       Width           =   58
    End
@@ -120,7 +120,7 @@ Begin BeaconContainer EntryPropertiesEditor
       Top             =   78
       Transparent     =   False
       Underline       =   False
-      Value           =   "True"
+      Value           =   True
       Visible         =   False
       Width           =   58
    End
@@ -153,7 +153,7 @@ Begin BeaconContainer EntryPropertiesEditor
       Top             =   44
       Transparent     =   False
       Underline       =   False
-      Value           =   "True"
+      Value           =   True
       Visible         =   False
       Width           =   58
    End
@@ -186,7 +186,7 @@ Begin BeaconContainer EntryPropertiesEditor
       Top             =   10
       Transparent     =   False
       Underline       =   False
-      Value           =   "True"
+      Value           =   True
       Visible         =   False
       Width           =   58
    End
@@ -797,7 +797,7 @@ Begin BeaconContainer EntryPropertiesEditor
       Top             =   176
       Transparent     =   False
       Underline       =   False
-      Value           =   "True"
+      Value           =   True
       Visible         =   False
       Width           =   58
    End

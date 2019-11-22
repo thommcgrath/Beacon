@@ -936,7 +936,7 @@ Begin BeaconDialog LootSourceWizard
          Top             =   122
          Transparent     =   False
          Underline       =   False
-         Value           =   "False"
+         Value           =   False
          Visible         =   True
          Width           =   394
       End
@@ -1057,7 +1057,7 @@ Begin BeaconDialog LootSourceWizard
          Top             =   328
          Transparent     =   False
          Underline       =   False
-         Value           =   "False"
+         Value           =   False
          Visible         =   True
          Width           =   394
       End
@@ -1090,7 +1090,7 @@ Begin BeaconDialog LootSourceWizard
          Top             =   328
          Transparent     =   False
          Underline       =   False
-         Value           =   "False"
+         Value           =   False
          Visible         =   True
          Width           =   510
       End

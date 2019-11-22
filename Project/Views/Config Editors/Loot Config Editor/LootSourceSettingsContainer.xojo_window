@@ -300,6 +300,7 @@ Begin ContainerControl LootSourceSettingsContainer
       Top             =   80
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       Width           =   210
    End
@@ -378,6 +379,7 @@ Begin ContainerControl LootSourceSettingsContainer
       Top             =   104
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       Width           =   210
    End
