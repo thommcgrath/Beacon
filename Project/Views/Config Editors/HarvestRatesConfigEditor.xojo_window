@@ -731,7 +731,7 @@ End
 		    End If
 		    
 		    Dim Rate As Double = Config.Override(ClassString)
-		    Dim EffectiveRate As Double = Rate * Config.HarvestAmountMultiplier
+		    Dim EffectiveRate As Double = Round(Rate) * Round(Config.HarvestAmountMultiplier)
 		    Self.List.AddRow(EngramName, Rate.PrettyText, EffectiveRate.PrettyText)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = ClassString
 		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectClasses.IndexOf(ClassString) > -1
