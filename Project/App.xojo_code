@@ -736,7 +736,7 @@ Implements NotificationKit.Receiver
 		      Exit
 		    End If
 		    
-		    Dim Command As String = DefineEncoding(Sender.Read(Pos), Encodings.UTF8)
+		    Dim Command As String = DefineEncoding(Sender.Read(Pos + 1), Encodings.UTF8)
 		    Command = Command.Left(Command.Length) // Drop the null byte
 		    Self.Log("Received command line data: " + Command)
 		    Self.HandleCommandLineData(Command, False)
