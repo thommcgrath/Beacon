@@ -25,269 +25,34 @@ Begin ConfigEditor MapsConfigEditor
    UseFocusRing    =   False
    Visible         =   True
    Width           =   750
-   Begin CheckBox MapCheckboxes
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "The Island"
-      DataField       =   ""
-      DataSource      =   ""
+   Begin MapSelectionGrid Grid
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
+      DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   1
+      EraseBackground =   True
+      HasBackgroundColor=   False
+      Height          =   444
       InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
+      Left            =   14
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      State           =   0
-      TabIndex        =   0
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
+      Tooltip         =   ""
+      Top             =   14
+      Transparent     =   True
       Visible         =   True
-      Width           =   200
-   End
-   Begin CheckBox MapCheckboxes
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "Scorched Earth"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   2
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      State           =   0
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   52
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   200
-   End
-   Begin CheckBox MapCheckboxes
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "Aberration"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   16
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      State           =   0
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   84
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   200
-   End
-   Begin CheckBox MapCheckboxes
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "Extinction"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   32
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      State           =   0
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   116
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   200
-   End
-   Begin CheckBox MapCheckboxes
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "The Center"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   4
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   232
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      State           =   0
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   200
-   End
-   Begin CheckBox MapCheckboxes
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "Ragnarok"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   8
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   232
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      State           =   0
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   52
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   200
-   End
-   Begin CheckBox MapCheckboxes
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "Valguero"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   64
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   232
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      State           =   0
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   84
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   200
-   End
-   Begin CheckBox MapCheckboxes
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "Genesis"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   128
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      State           =   0
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   148
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   200
+      Width           =   722
    End
 End
 #tag EndWindow
@@ -301,15 +66,7 @@ End
 
 	#tag Event
 		Sub SetupUI()
-		  Dim Maps() As Beacon.Map = Beacon.Maps.All
-		  For Each Map As Beacon.Map In Maps
-		    Dim Ctl As CheckBox = Self.MapCheckboxes(Map.Mask)
-		    If Ctl = Nil Then
-		      Continue
-		    End If
-		    
-		    Ctl.Value = Self.Document.SupportsMap(Map)
-		  Next
+		  Self.Grid.Mask = Self.Document.MapCompatibility
 		End Sub
 	#tag EndEvent
 
@@ -323,20 +80,15 @@ End
 
 #tag EndWindowCode
 
-#tag Events MapCheckboxes
+#tag Events Grid
 	#tag Event
-		Sub Action(index as Integer)
+		Sub Changed()
 		  If Self.SettingUp Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Dim MaskValue As Integer = Index
-		  If Me.Value Then
-		    Self.Document.MapCompatibility = Self.Document.MapCompatibility Or MaskValue
-		  Else
-		    Self.Document.MapCompatibility = Self.Document.MapCompatibility And Not MaskValue
-		  End If
+		  Self.Document.MapCompatibility = Me.Mask
 		  Self.Changed = True
 		  Self.SettingUp = False
 		End Sub
