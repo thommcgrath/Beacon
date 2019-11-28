@@ -285,6 +285,12 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Close()
+		  Self.Auth.Cancel
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.Auth.Provider = Beacon.OAuth2Client.ProviderNitrado
 		  Self.Auth.AuthData = Self.mDocument.OAuthData("Nitrado")
