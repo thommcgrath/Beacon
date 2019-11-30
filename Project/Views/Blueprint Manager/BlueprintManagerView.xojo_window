@@ -102,10 +102,9 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
-      Value           =   2
+      Value           =   0
       Visible         =   True
       Width           =   510
       Begin FadedSeparator EditorHeaderSeparator
@@ -179,7 +178,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          HasBackColor    =   False
          Height          =   592
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   296
          LockBottom      =   True
@@ -189,7 +187,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
-         ObjectID        =   ""
          Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
@@ -214,7 +211,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          HasBackColor    =   False
          Height          =   592
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   296
          LockBottom      =   True
@@ -319,7 +315,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Width           =   295
    End
    Begin Beacon.EngramSearcherThread Searcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -328,7 +323,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       TabPanelIndex   =   0
    End
    Begin Timer ClipboardWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -427,7 +421,7 @@ End
 		  End If
 		  
 		  If Self.Pages.SelectedPanelIndex = Self.PageEditor Then
-		    Self.Editor.ObjectID = ""
+		    Self.Editor.ObjectID = v4UUID.CreateNull
 		    Return Not Self.Editor.Modified
 		  ElseIf Self.Pages.SelectedPanelIndex = Self.PageMulti Then
 		    Self.MultiEditor.Blueprints = Nil
@@ -568,7 +562,7 @@ End
 		Private Sub UpdateEditorWithSelection()
 		  If Self.List.SelectedRowCount = 0 Then
 		    If Self.Pages.SelectedPanelIndex = Self.PageEditor Then
-		      Self.Editor.ObjectID = ""
+		      Self.Editor.ObjectID = v4UUID.CreateNull
 		      If Not Self.Editor.Modified Then
 		        Self.Pages.SelectedPanelIndex = Self.PageEmpty
 		      End If
@@ -594,7 +588,7 @@ End
 		    End If
 		  ElseIf Self.List.SelectedRowCount > 1 Then
 		    If Self.Pages.SelectedPanelIndex = Self.PageEditor Then
-		      Self.Editor.ObjectID = ""
+		      Self.Editor.ObjectID = v4UUID.CreateNull
 		      If Self.Editor.Modified Then
 		        Return
 		      End If

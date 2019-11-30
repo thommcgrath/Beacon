@@ -33,7 +33,6 @@ Begin BeaconSubview BlueprintMultiEditor
       Caption         =   "Edit Multiple"
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -64,7 +63,6 @@ Begin BeaconSubview BlueprintMultiEditor
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -94,7 +92,6 @@ Begin BeaconSubview BlueprintMultiEditor
       Border          =   15
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   100
       HelpTag         =   ""
       Index           =   -2147483648
@@ -116,39 +113,6 @@ Begin BeaconSubview BlueprintMultiEditor
       UseFocusRing    =   True
       Visible         =   True
       Width           =   338
-   End
-   Begin CheckBox MapCheckboxes
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "The Island"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   0
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   152
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      State           =   0
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   173
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   140
    End
    Begin UITweaks.ResizedLabel MapLabel
       AutoDeactivate  =   True
@@ -255,55 +219,39 @@ Begin BeaconSubview BlueprintMultiEditor
       Visible         =   True
       Width           =   120
    End
+   Begin MapSelectionGrid MapSelector
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackgroundColor=   False
+      Height          =   339
+      InitialParent   =   ""
+      Left            =   146
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   167
+      Transparent     =   True
+      Visible         =   True
+      Width           =   350
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
-		Sub Open()
-		  Dim Maps() As Beacon.Map = Beacon.Maps.All
-		  Dim OfficialMaps(), ThirdPartyMaps() As Beacon.Map
-		  Dim OfficialMasks(), ThirdPartyMasks() As UInt64
-		  For Each Map As Beacon.Map In Maps
-		    If Map.Official Then
-		      OfficialMaps.AddRow(Map)
-		      OfficialMasks.AddRow(Map.Mask)
-		    Else
-		      ThirdPartyMaps.AddRow(Map)
-		      ThirdPartyMasks.AddRow(Map.Mask)
-		    End If
-		  Next
-		  OfficialMasks.SortWith(OfficialMaps)
-		  ThirdPartyMasks.SortWith(ThirdPartyMaps)
-		  
-		  Dim OfficialLeft As Integer = MapCheckboxes(0).Left
-		  Dim OfficialNextTop As Integer = MapCheckboxes(0).Top
-		  Dim ThirdPartyLeft As Integer = MapCheckboxes(0).Left + MapCheckboxes(0).Width + 12
-		  Dim ThirdPartyNextTop As Integer = MapCheckboxes(0).Top
-		  
-		  MapCheckboxes(0).Close
-		  For Each Map As Beacon.Map In OfficialMaps
-		    Dim Check As Checkbox = New MapCheckboxes
-		    Check.Index = Map.Mask
-		    Check.Caption = Map.Name
-		    Check.Top = OfficialNextTop
-		    Check.Left = OfficialLeft
-		    OfficialNextTop = OfficialNextTop + Check.Height + 12
-		    Self.mMapCheckboxes.AddRow(Check)
-		  Next
-		  For Each Map As Beacon.Map In ThirdPartyMaps
-		    Dim Check As Checkbox = New MapCheckboxes
-		    Check.Index = Map.Mask
-		    Check.Caption = Map.Name
-		    Check.Top = ThirdPartyNextTop
-		    Check.Left = ThirdPartyLeft
-		    ThirdPartyNextTop = ThirdPartyNextTop + Check.Height + 12
-		    Self.mMapCheckboxes.AddRow(Check)
-		  Next
-		End Sub
-	#tag EndEvent
-
-
 	#tag Method, Flags = &h0
 		Function Blueprints() As Beacon.Blueprint()
 		  Dim Blueprints() As Beacon.Blueprint
@@ -394,14 +342,8 @@ End
 		  Dim AddTags() As String = Self.Picker.RequiredTags
 		  Dim RemoveTags() As String = Self.Picker.ExcludedTags
 		  
-		  Dim AddMask, ClearMask As UInt64
-		  For Each Check As Checkbox In Self.mMapCheckboxes
-		    If Check.VisualState = Checkbox.VisualStates.Checked Then
-		      AddMask = AddMask Or Check.Index
-		    ElseIf Check.VisualState = Checkbox.VisualStates.Unchecked Then
-		      ClearMask = ClearMask Or Check.Index
-		    End If
-		  Next
+		  Dim AddMask As UInt64 = Self.MapSelector.CheckedMask
+		  Dim ClearMask As UInt64 = Self.MapSelector.UncheckedMask
 		  
 		  For Each Blueprint As Beacon.MutableBlueprint In Self.mBlueprints
 		    Blueprint.Availability = (Blueprint.Availability Or AddMask) And Not ClearMask
@@ -424,14 +366,10 @@ End
 		  Self.Picker.ClearSelections()
 		  Self.Picker.Tags = LocalData.SharedInstance.AllTags()
 		  
-		  Dim Masks As New Dictionary
+		  Dim Masks() As UInt64
 		  Dim Tags As New Dictionary
 		  For Each Blueprint As Beacon.Blueprint In Self.mBlueprints
-		    For Each Check As Checkbox In Self.mMapCheckboxes
-		      If Blueprint.ValidForMask(Check.Index) Then
-		        Masks.Value(Check.Index) = Masks.Lookup(Check.Index, 0) + 1
-		      End If
-		    Next
+		    Masks.AddRow(Blueprint.Availability)
 		    
 		    Dim BlueprintTags() As String = Blueprint.Tags
 		    For Each Tag As String In BlueprintTags
@@ -440,16 +378,7 @@ End
 		  Next
 		  
 		  Dim BlueprintCount As Integer = Self.mBlueprints.LastRowIndex + 1
-		  For Each Check As Checkbox In Self.mMapCheckboxes
-		    Dim Count As Integer = Masks.Lookup(Check.Index, 0)
-		    If Count = 0 Then
-		      Check.VisualState = Checkbox.VisualStates.Unchecked
-		    ElseIf Count = BlueprintCount Then
-		      Check.VisualState = Checkbox.VisualStates.Checked
-		    Else
-		      Check.VisualState = Checkbox.VisualStates.Indeterminate
-		    End If
-		  Next
+		  Self.MapSelector.SetWithMasks(Masks)
 		  
 		  Dim CommonTags() As String
 		  For I As Integer = 0 To Tags.KeyCount - 1
@@ -468,10 +397,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mBlueprints() As Beacon.MutableBlueprint
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMapCheckboxes() As Checkbox
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -522,17 +447,14 @@ End
 		  Me.Height = NewHeight
 		  
 		  Self.MapLabel.Top = Self.MapLabel.Top + Delta
-		  For Each Check As Checkbox In Self.mMapCheckboxes
-		    If Check <> Nil Then
-		      Check.Top = Check.Top + Delta
-		    End If
-		  Next
+		  Self.MapSelector.Top = Self.MapSelector.Top + Delta
+		  Self.MapSelector.Height = Self.MapSelector.Height - Delta
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events MapCheckboxes
+#tag Events MapSelector
 	#tag Event
-		Sub Action(index as Integer)
+		Sub Changed()
 		  If Self.mSettingUp Then
 		    Return
 		  End If

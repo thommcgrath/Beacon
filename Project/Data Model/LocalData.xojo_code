@@ -2011,7 +2011,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Try
 		      Dim Update As Boolean
 		      Dim ObjectID As v4UUID
-		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id, mod_id FROM blueprints WHERE object_id = ?1 OR LOWER(path) = ?2;", Blueprint.ObjectID, Blueprint.Path.Lowercase)
+		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id, mod_id FROM blueprints WHERE object_id = ?1 OR LOWER(path) = ?2;", Blueprint.ObjectID.StringValue, Blueprint.Path.Lowercase)
+		      Dim CacheDict As Dictionary
 		      If Results.RowCount = 1 Then
 		        ObjectID = Results.Column("object_id").StringValue
 		        
@@ -2053,9 +2054,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Columns.Value("incubation_time") = Nil
 		          Columns.Value("mature_time") = Nil
 		        End If
+		        CacheDict = Self.mCreatureCache
 		      Case IsA Beacon.SpawnPoint
 		        Columns.Value("groups") = Beacon.SpawnPoint(Blueprint).SetsString(False)
 		        Columns.Value("limits") = Beacon.SpawnPoint(Blueprint).LimitsString(False)
+		        CacheDict = Self.mSpawnPointCache
+		      Case IsA Beacon.Engram
+		        CacheDict = Self.mEngramCache
 		      End Select
 		      
 		      If Update Then
@@ -2088,6 +2093,18 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        
 		        Self.SQLExecute("INSERT INTO " + Category + " (" + ColumnNames.Join(", ") + ") VALUES (" + Placeholders.Join(", ") + ");", Values)
 		        Self.SQLExecute("INSERT INTO searchable_tags (source_table, object_id, tags) VALUES (?1, ?2, ?3);", Category, ObjectID.StringValue, Blueprint.TagString)
+		      End If
+		      
+		      If CacheDict <> Nil Then
+		        If CacheDict.HasKey(Blueprint.ObjectID.StringValue) Then
+		          CacheDict.Remove(Blueprint.ObjectID.StringValue)
+		        End If
+		        If CacheDict.HasKey(Blueprint.Path) Then
+		          CacheDict.Remove(Blueprint.Path)
+		        End If
+		        If CacheDict.HasKey(Blueprint.ClassString) Then
+		          CacheDict.Remove(Blueprint.ClassString)
+		        End If
 		      End If
 		      
 		      CountSaved = CountSaved + 1

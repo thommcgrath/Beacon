@@ -307,39 +307,6 @@ Begin BeaconSubview BlueprintEditor
       Visible         =   True
       Width           =   120
    End
-   Begin CheckBox MapCheckboxes
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "The Island"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   0
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   152
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      State           =   0
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   195
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   140
-   End
    Begin UITweaks.ResizedLabel MapLabel
       AutoDeactivate  =   True
       Bold            =   False
@@ -453,56 +420,39 @@ Begin BeaconSubview BlueprintEditor
       Visible         =   True
       Width           =   120
    End
+   Begin MapSelectionGrid MapSelector
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackgroundColor=   False
+      Height          =   317
+      InitialParent   =   ""
+      Left            =   146
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   189
+      Transparent     =   True
+      Visible         =   True
+      Width           =   350
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
-		Sub Open()
-		  Dim Maps() As Beacon.Map = Beacon.Maps.All
-		  Dim OfficialMaps(), ThirdPartyMaps() As Beacon.Map
-		  Dim OfficialMasks(), ThirdPartyMasks() As UInt64
-		  For Each Map As Beacon.Map In Maps
-		    If Map.Official Then
-		      OfficialMaps.AddRow(Map)
-		      OfficialMasks.AddRow(Map.Mask)
-		    Else
-		      ThirdPartyMaps.AddRow(Map)
-		      ThirdPartyMasks.AddRow(Map.Mask)
-		    End If
-		  Next
-		  OfficialMasks.SortWith(OfficialMaps)
-		  ThirdPartyMasks.SortWith(ThirdPartyMaps)
-		  
-		  Dim OfficialLeft As Integer = MapCheckboxes(0).Left
-		  Dim OfficialNextTop As Integer = MapCheckboxes(0).Top
-		  Dim ThirdPartyLeft As Integer = MapCheckboxes(0).Left + MapCheckboxes(0).Width + 12
-		  Dim ThirdPartyNextTop As Integer = MapCheckboxes(0).Top
-		  
-		  MapCheckboxes(0).Close
-		  For Each Map As Beacon.Map In OfficialMaps
-		    Dim Check As Checkbox = New MapCheckboxes
-		    Check.Index = Map.Mask
-		    Check.Caption = Map.Name
-		    Check.Top = OfficialNextTop
-		    Check.Left = OfficialLeft
-		    OfficialNextTop = OfficialNextTop + Check.Height + 12
-		    Self.mMapCheckboxes.AddRow(Check)
-		  Next
-		  For Each Map As Beacon.Map In ThirdPartyMaps
-		    Dim Check As Checkbox = New MapCheckboxes
-		    Check.Index = Map.Mask
-		    Check.Caption = Map.Name
-		    Check.Top = ThirdPartyNextTop
-		    Check.Left = ThirdPartyLeft
-		    ThirdPartyNextTop = ThirdPartyNextTop + Check.Height + 12
-		    Self.mMapCheckboxes.AddRow(Check)
-		  Next
-		  
-		End Sub
-	#tag EndEvent
-
-
 	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  Return Self.mModified
@@ -530,8 +480,8 @@ End
 		  
 		  Self.Modified = False
 		  
-		  Dim ObjID As String = Self.ObjectID
-		  Self.ObjectID = ""
+		  Dim ObjID As v4UUID = Self.ObjectID
+		  Self.ObjectID = v4UUID.CreateNull
 		  Self.ObjectID = ObjID
 		End Sub
 	#tag EndMethod
@@ -557,13 +507,7 @@ End
 		    End If
 		  Next
 		  
-		  Dim Availability As UInt64
-		  For Each Check As Checkbox In Self.mMapCheckboxes
-		    If Check.Value Then
-		      Availability = Availability Or Check.Index
-		    End If
-		  Next
-		  
+		  Dim Availability As UInt64 = Self.MapSelector.Mask
 		  If Availability = 0 Then
 		    Self.ShowAlert("Object is not available to any maps", "This object should be usable on at least one map.")
 		    Return
@@ -594,10 +538,6 @@ End
 		End Sub
 	#tag EndMethod
 
-
-	#tag Property, Flags = &h21
-		Private mMapCheckboxes() As Checkbox
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mModified As Boolean
@@ -654,17 +594,13 @@ End
 			    Self.PathField.Value = Blueprint.Path
 			    Self.NameField.Value = Blueprint.Label
 			    Self.TagsField.Value = Blueprint.Tags.Join(", ")
-			    For Each Check As Checkbox In Self.mMapCheckboxes
-			      Check.Value = (Blueprint.Availability And Check.Index) = Check.Index
-			    Next
+			    Self.MapSelector.Mask = Blueprint.Availability
 			  Else
 			    Self.TypeMenu.SelectedRowIndex = -1
 			    Self.PathField.Value = ""
 			    Self.NameField.Value = ""
 			    Self.TagsField.Value = ""
-			    For Each Check As Checkbox In Self.mMapCheckboxes
-			      Check.Value = False
-			    Next
+			    Self.MapSelector.Mask = 0
 			  End If
 			  
 			  Self.Modified = False
@@ -720,16 +656,16 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events MapCheckboxes
+#tag Events TagsField
 	#tag Event
-		Sub Action(index as Integer)
+		Sub TextChange()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events TagsField
+#tag Events MapSelector
 	#tag Event
-		Sub TextChange()
+		Sub Changed()
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent

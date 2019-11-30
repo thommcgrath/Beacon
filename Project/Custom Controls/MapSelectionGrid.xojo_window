@@ -116,6 +116,56 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0
+		Function CheckedMask() As UInt64
+		  Dim Combined As UInt64
+		  For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
+		    If Box.VisualState = CheckBox.VisualStates.Checked Then
+		      Combined = Combined Or Box.Mask
+		    End If
+		  Next
+		  Return Combined
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SetWithMasks(Masks() As UInt64)
+		  Dim Dict As New Dictionary
+		  For Each Mask As UInt64 In Masks
+		    For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
+		      If (Mask And Box.Mask) = Box.Mask Then
+		        Dict.Value(Box.Mask) = Dict.Lookup(Box.Mask, 0) + 1
+		      End If
+		    Next
+		  Next
+		  
+		  Dim MaskCount As Integer = Masks.LastRowIndex + 1
+		  For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
+		    Dim Count As Integer = Dict.Lookup(Box.Mask, 0)
+		    If Count = 0 Then
+		      Box.VisualState = Checkbox.VisualStates.Unchecked
+		    ElseIf Count = MaskCount Then
+		      Box.VisualState = Checkbox.VisualStates.Checked
+		    Else
+		      Box.VisualState = Checkbox.VisualStates.Indeterminate
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UncheckedMask() As UInt64
+		  Dim Combined As UInt64
+		  For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
+		    If Box.VisualState = CheckBox.VisualStates.Unchecked Then
+		      Combined = Combined Or Box.Mask
+		    End If
+		  Next
+		  Return Combined
+		End Function
+	#tag EndMethod
+
+
 	#tag Hook, Flags = &h0
 		Event Changed()
 	#tag EndHook
