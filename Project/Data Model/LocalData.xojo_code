@@ -542,7 +542,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Self.mCreatureCache.Value(Creatures(0).ClassString) = Creatures(0)
 		      For Each Creature As Beacon.Creature In Creatures
 		        Self.mCreatureCache.Value(Creature.Path) = Creature
-		        Self.mCreatureCache.Value(Creature.ObjectID) = Creature
+		        Self.mCreatureCache.Value(Creature.ObjectID.StringValue) = Creature
 		      Next
 		    Catch Err As UnsupportedOperationException
 		      Return Nil
@@ -556,7 +556,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function GetCreatureByID(CreatureID As v4UUID) As Beacon.Creature
 		  // Part of the Beacon.DataSource interface.
 		  
-		  If Self.mCreatureCache.HasKey(CreatureID) = False Then
+		  If Self.mCreatureCache.HasKey(CreatureID.StringValue) = False Then
 		    Try
 		      Var Results As RowSet = Self.SQLSelect(Self.CreatureSelectSQL + " WHERE object_id = ?1;", CreatureID.StringValue)
 		      If Results.RowCount = 0 Then
@@ -566,13 +566,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var Creatures() As Beacon.Creature = Self.RowSetToCreature(Results)
 		      For Each Creature As Beacon.Creature In Creatures
 		        Self.mCreatureCache.Value(Creature.Path) = Creature
-		        Self.mCreatureCache.Value(Creature.ObjectID) = Creature
+		        Self.mCreatureCache.Value(Creature.ObjectID.StringValue) = Creature
 		      Next
 		    Catch Err As UnsupportedOperationException
 		      Return Nil
 		    End Try
 		  End If
-		  Return Self.mCreatureCache.Value(CreatureID)
+		  Return Self.mCreatureCache.Value(CreatureID.StringValue)
 		End Function
 	#tag EndMethod
 
@@ -590,7 +590,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var Creatures() As Beacon.Creature = Self.RowSetToCreature(Results)
 		      For Each Creature As Beacon.Creature In Creatures
 		        Self.mCreatureCache.Value(Creature.Path) = Creature
-		        Self.mCreatureCache.Value(Creature.ObjectID) = Creature
+		        Self.mCreatureCache.Value(Creature.ObjectID.StringValue) = Creature
 		      Next
 		    Catch Err As UnsupportedOperationException
 		      Return Nil
@@ -649,7 +649,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Self.mEngramCache.Value(Engrams(0).ClassString) = Engrams(0)
 		      For Each Engram As Beacon.Engram In Engrams
 		        Self.mEngramCache.Value(Engram.Path) = Engram
-		        Self.mEngramCache.Value(Engram.ObjectID) = Engram
+		        Self.mEngramCache.Value(Engram.ObjectID.StringValue) = Engram
 		      Next
 		    Catch Err As UnsupportedOperationException
 		      Return Nil
@@ -663,7 +663,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function GetEngramByID(EngramID As v4UUID) As Beacon.Engram
 		  // Part of the Beacon.DataSource interface.
 		  
-		  If Self.mEngramCache.HasKey(EngramID) = False Then
+		  If Self.mEngramCache.HasKey(EngramID.StringValue) = False Then
 		    Try
 		      Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE object_id = ?1;", EngramID.StringValue)
 		      If Results.RowCount = 0 Then
@@ -673,13 +673,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
 		      For Each Engram As Beacon.Engram In Engrams
 		        Self.mEngramCache.Value(Engram.Path) = Engram
-		        Self.mEngramCache.Value(Engram.ObjectID) = Engram
+		        Self.mEngramCache.Value(Engram.ObjectID.StringValue) = Engram
 		      Next
 		    Catch Err As UnsupportedOperationException
 		      Return Nil
 		    End Try
 		  End If
-		  Return Self.mEngramCache.Value(EngramID)
+		  Return Self.mEngramCache.Value(EngramID.StringValue)
 		End Function
 	#tag EndMethod
 
@@ -697,7 +697,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
 		      For Each Engram As Beacon.Engram In Engrams
 		        Self.mEngramCache.Value(Engram.Path) = Engram
-		        Self.mEngramCache.Value(Engram.ObjectID) = Engram
+		        Self.mEngramCache.Value(Engram.ObjectID.StringValue) = Engram
 		      Next
 		    Catch Err As UnsupportedOperationException
 		      Return Nil
@@ -803,7 +803,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Self.mSpawnPointCache.Value(SpawnPoints(0).ClassString) = SpawnPoints(0)
 		      For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
 		        Self.mSpawnPointCache.Value(SpawnPoint.Path) = SpawnPoint
-		        Self.mSpawnPointCache.Value(SpawnPoint.ObjectID) = SpawnPoint
+		        Self.mSpawnPointCache.Value(SpawnPoint.ObjectID.StringValue) = SpawnPoint
 		      Next
 		    Catch Err As UnsupportedOperationException
 		      Return Nil
@@ -817,7 +817,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function GetSpawnPointByID(SpawnPointID As v4UUID) As Beacon.SpawnPoint
 		  // Part of the Beacon.DataSource interface.
 		  
-		  If Self.mSpawnPointCache.HasKey(SpawnPointID) = False Then
+		  If Self.mSpawnPointCache.HasKey(SpawnPointID.StringValue) = False Then
 		    Try
 		      Var Results As RowSet = Self.SQLSelect(Self.SpawnPointSelectSQL + " WHERE object_id = ?1;", SpawnPointID.StringValue)
 		      If Results.RowCount = 0 Then
@@ -827,13 +827,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var SpawnPoints() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(Results)
 		      For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
 		        Self.mSpawnPointCache.Value(SpawnPoint.Path) = SpawnPoint
-		        Self.mSpawnPointCache.Value(SpawnPoint.ObjectID) = SpawnPoint
+		        Self.mSpawnPointCache.Value(SpawnPoint.ObjectID.StringValue) = SpawnPoint
 		      Next
 		    Catch Err As UnsupportedOperationException
 		      Return Nil
 		    End Try
 		  End If
-		  Return Self.mSpawnPointCache.Value(SpawnPointID)
+		  Return Self.mSpawnPointCache.Value(SpawnPointID.StringValue)
 		End Function
 	#tag EndMethod
 
@@ -851,7 +851,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var SpawnPoints() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(Results)
 		      For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
 		        Self.mSpawnPointCache.Value(SpawnPoint.Path) = SpawnPoint
-		        Self.mSpawnPointCache.Value(SpawnPoint.ObjectID) = SpawnPoint
+		        Self.mSpawnPointCache.Value(SpawnPoint.ObjectID.StringValue) = SpawnPoint
 		      Next
 		    Catch Err As UnsupportedOperationException
 		      Return Nil
