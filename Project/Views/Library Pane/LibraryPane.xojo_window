@@ -743,7 +743,7 @@ End
 		  Me.Add(ShelfItem.NewSpacer)
 		  Me.Add(IconDocuments, "Documents", "documents")
 		  Me.Add(IconPresets, "Presets", "presets")
-		  Me.Add(IconEngrams, "Database", "engrams")
+		  Me.Add(IconEngrams, "Blueprints", "engrams")
 		  Me.Add(IconTools, "Tools", "tools")
 		  Me.Add(IconSearch, "Search", "search")
 		End Sub

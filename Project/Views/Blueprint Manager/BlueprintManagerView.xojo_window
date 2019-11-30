@@ -30,7 +30,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      Caption         =   "Objects"
+      Caption         =   "Blueprints"
       DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
@@ -365,7 +365,7 @@ End
 		  NotificationKit.Watch(Self, LocalData.Notification_EngramsChanged)
 		  
 		  Self.SetupUI()
-		  Self.Title = "Database Manager"
+		  Self.Title = "Blueprint Manager"
 		End Sub
 	#tag EndEvent
 

@@ -161,7 +161,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Bold            =   False
       ButtonStyle     =   0
       Cancel          =   False
-      Caption         =   "Manage Database"
+      Caption         =   "Manage Blueprints"
       Default         =   False
       Enabled         =   True
       Height          =   20
@@ -193,7 +193,7 @@ Begin LibrarySubview LibraryPaneEngrams
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      Caption         =   "Database"
+      Caption         =   "Blueprints"
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   "False"
