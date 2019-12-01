@@ -108,6 +108,7 @@ Begin ConfigEditor StackSizesConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "Stack Size Overrides"
       DoubleBuffer    =   False
       Enabled         =   True

@@ -30,6 +30,7 @@ Begin BeaconSubview APIBuilderView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "API Builder"
       DoubleBuffer    =   False
       Enabled         =   True

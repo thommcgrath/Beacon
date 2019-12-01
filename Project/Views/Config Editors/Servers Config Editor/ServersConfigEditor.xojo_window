@@ -139,6 +139,7 @@ Begin ConfigEditor ServersConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "Servers"
       DoubleBuffer    =   False
       Enabled         =   True

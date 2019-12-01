@@ -90,6 +90,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "Documents"
       DoubleBuffer    =   False
       Enabled         =   True

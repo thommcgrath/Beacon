@@ -193,6 +193,7 @@ Begin LibrarySubview LibraryPaneEngrams
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "Blueprints"
       DoubleBuffer    =   False
       Enabled         =   True

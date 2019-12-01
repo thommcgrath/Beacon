@@ -1088,6 +1088,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "Breeding Multipliers"
       DoubleBuffer    =   False
       Enabled         =   True

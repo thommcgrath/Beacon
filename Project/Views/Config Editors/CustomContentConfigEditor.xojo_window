@@ -137,6 +137,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   ""
       DoubleBuffer    =   False
       Enabled         =   True

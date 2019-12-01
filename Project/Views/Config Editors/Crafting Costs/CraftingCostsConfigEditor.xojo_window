@@ -30,6 +30,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "Engrams"
       DoubleBuffer    =   False
       Enabled         =   True

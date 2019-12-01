@@ -30,6 +30,7 @@ Begin BeaconSubview BlueprintEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "New Object"
       DoubleBuffer    =   False
       Enabled         =   True

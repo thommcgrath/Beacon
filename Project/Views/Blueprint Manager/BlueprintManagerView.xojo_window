@@ -30,6 +30,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "Blueprints"
       DoubleBuffer    =   False
       Enabled         =   True
@@ -135,37 +136,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          Visible         =   True
          Width           =   510
       End
-      Begin BeaconToolbar EditorHeader
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         Caption         =   ""
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   40
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   296
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Resizer         =   "0"
-         ResizerEnabled  =   True
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Top             =   0
-         Transparent     =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   510
-      End
       Begin BlueprintEditor Editor
          AcceptFocus     =   False
          AcceptTabs      =   True
@@ -229,6 +199,38 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
+         Visible         =   True
+         Width           =   510
+      End
+      Begin BeaconToolbar EditorHeader
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Borders         =   0
+         Caption         =   ""
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   40
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   296
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Resizer         =   "0"
+         ResizerEnabled  =   True
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   0
+         Transparent     =   False
+         UseFocusRing    =   True
          Visible         =   True
          Width           =   510
       End

@@ -30,6 +30,7 @@ Begin ConfigEditor LootConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "Sources"
       DoubleBuffer    =   False
       Enabled         =   True

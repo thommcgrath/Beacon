@@ -30,6 +30,7 @@ Begin ServerViewContainer FTPServerView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "Untitled"
       DoubleBuffer    =   False
       Enabled         =   True

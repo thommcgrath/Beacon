@@ -84,6 +84,7 @@ Begin BeaconContainer ItemSetEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "Item Set Contents"
       DoubleBuffer    =   False
       Enabled         =   True

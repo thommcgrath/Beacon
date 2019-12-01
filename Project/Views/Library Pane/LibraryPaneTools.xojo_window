@@ -84,6 +84,7 @@ Begin LibrarySubview LibraryPaneTools Implements NotificationKit.Receiver
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "Tools"
       DoubleBuffer    =   False
       Enabled         =   True

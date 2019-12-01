@@ -140,6 +140,7 @@ Begin BeaconSubview ModsView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "Mods"
       DoubleBuffer    =   False
       Enabled         =   True

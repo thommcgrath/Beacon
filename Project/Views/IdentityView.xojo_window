@@ -30,6 +30,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "Identity"
       DoubleBuffer    =   False
       Enabled         =   True

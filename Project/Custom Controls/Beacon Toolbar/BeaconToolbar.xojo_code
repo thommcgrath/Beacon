@@ -401,7 +401,30 @@ Implements ObservationKit.Observer
 		    Highlighted = IsKeyWindow(Self.TrueWindow.Handle) Or IsMainWindow(Self.TrueWindow.Handle)
 		  #endif
 		  
-		  Dim ContentRect As New Xojo.Rect(CellPadding, CellPadding, G.Width - (CellPadding * 2), G.Height - (CellPadding * 2))
+		  G.ClearRect(0, 0, G.Width, G.Height)
+		  
+		  Var MainRect As New Xojo.Rect(0, 0, G.Width, G.Height)
+		  If Self.mBorders <> 0 Then
+		    If (Self.mBorders And BeaconUI.BorderTop) = BeaconUI.BorderTop Then
+		      MainRect.Top = MainRect.Top + 1
+		      MainRect.Height = MainRect.Height - 1
+		    End If
+		    If (Self.mBorders And BeaconUI.BorderBottom) = BeaconUI.BorderBottom Then
+		      MainRect.Height = MainRect.Height - 1
+		    End If
+		    If (Self.mBorders And BeaconUI.BorderLeft) = BeaconUI.BorderLeft Then
+		      MainRect.Left = MainRect.Left + 1
+		      MainRect.Width = MainRect.Width - 1
+		    End If
+		    If (Self.mBorders And BeaconUI.BorderRight) = BeaconUI.BorderRight Then
+		      MainRect.Width = MainRect.Width - 1
+		    End If
+		    G.DrawingColor = SystemColors.SeparatorColor
+		    G.FillRectangle(0, 0, G.Width, G.Height)
+		    G.ClearRect(MainRect.Left, MainRect.Top, MainRect.Width, MainRect.Height)
+		  End If
+		  
+		  Dim ContentRect As New Xojo.Rect(MainRect.Left + CellPadding, MainRect.Top + CellPadding, MainRect.Width - (CellPadding * 2), MainRect.Height - (CellPadding * 2))
 		  
 		  If Self.mResizerStyle <> ResizerTypes.None Then
 		    Dim ResizeIcon As Picture
@@ -539,6 +562,25 @@ Implements ObservationKit.Observer
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mBorders
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Value = Value And (BeaconUI.BorderTop Or BeaconUI.BorderBottom Or BeaconUI.BorderLeft Or BeaconUI.BorderRight)
+			  
+			  If Self.mBorders <> Value Then
+			    Self.mBorders = Value
+			    Self.Invalidate
+			  End If
+			End Set
+		#tag EndSetter
+		Borders As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mCaption
 			End Get
 		#tag EndGetter
@@ -561,6 +603,10 @@ Implements ObservationKit.Observer
 		#tag EndGetter
 		LeftItems As BeaconToolbarItemArray
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mBorders As Integer
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mCaption As String
@@ -697,54 +743,6 @@ Implements ObservationKit.Observer
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=false
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Tooltip"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowAutoDeactivate"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowFocusRing"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowFocus"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowTabs"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -774,14 +772,6 @@ Implements ObservationKit.Observer
 			Group="Position"
 			InitialValue="40"
 			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group="Position"
-			InitialValue=""
-			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -833,14 +823,6 @@ Implements ObservationKit.Observer
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="TabPanelIndex"
-			Visible=false
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="TabStop"
 			Visible=true
 			Group="Position"
@@ -865,11 +847,27 @@ Implements ObservationKit.Observer
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Backdrop"
-			Visible=false
+			Name="Tooltip"
+			Visible=true
 			Group="Appearance"
 			InitialValue=""
-			Type="Picture"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowAutoDeactivate"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowFocusRing"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -885,6 +883,22 @@ Implements ObservationKit.Observer
 			Visible=true
 			Group="Appearance"
 			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowFocus"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowTabs"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
@@ -918,18 +932,58 @@ Implements ObservationKit.Observer
 			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Transparent"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="ResizerEnabled"
 			Visible=true
 			Group="Behavior"
 			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Borders"
+			Visible=true
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DoubleBuffer"
+			Visible=false
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="InitialParent"
+			Visible=false
+			Group="Position"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabPanelIndex"
+			Visible=false
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Backdrop"
+			Visible=false
+			Group="Appearance"
+			InitialValue=""
+			Type="Picture"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Transparent"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty

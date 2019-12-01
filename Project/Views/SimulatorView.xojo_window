@@ -83,6 +83,7 @@ Begin BeaconContainer SimulatorView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "Simulator"
       DoubleBuffer    =   False
       Enabled         =   True

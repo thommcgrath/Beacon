@@ -108,6 +108,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "Harvest Rate Overrides"
       DoubleBuffer    =   False
       Enabled         =   True

@@ -308,6 +308,7 @@ Begin BeaconContainer ModDetailView
          AcceptTabs      =   False
          AutoDeactivate  =   True
          Backdrop        =   0
+         Borders         =   0
          Caption         =   "Mod Detail"
          DoubleBuffer    =   False
          Enabled         =   True
@@ -339,6 +340,7 @@ Begin BeaconContainer ModDetailView
          AcceptTabs      =   False
          AutoDeactivate  =   True
          Backdrop        =   0
+         Borders         =   0
          Caption         =   "No Mod Selected"
          DoubleBuffer    =   False
          Enabled         =   True
@@ -370,6 +372,7 @@ Begin BeaconContainer ModDetailView
          AcceptTabs      =   False
          AutoDeactivate  =   True
          Backdrop        =   0
+         Borders         =   0
          Caption         =   "Mod Detail"
          DoubleBuffer    =   False
          Enabled         =   True
@@ -401,6 +404,7 @@ Begin BeaconContainer ModDetailView
          AcceptTabs      =   False
          AutoDeactivate  =   True
          Backdrop        =   0
+         Borders         =   0
          Caption         =   "Untitled"
          DoubleBuffer    =   False
          Enabled         =   True

@@ -30,6 +30,7 @@ Begin LibrarySubview LibraryPaneNotifications Implements NotificationKit.Receive
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "Notifications"
       DoubleBuffer    =   False
       Enabled         =   True

@@ -30,6 +30,7 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "Presets"
       DoubleBuffer    =   False
       Enabled         =   True
