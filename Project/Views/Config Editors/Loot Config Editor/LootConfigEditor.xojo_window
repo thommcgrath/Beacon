@@ -335,6 +335,57 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub ParsingFinished(ParsedData As Dictionary)
+		  If ParsedData = Nil Then
+		    Return
+		  End If
+		  
+		  Var OtherConfig As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
+		  If OtherConfig = Nil Then
+		    Return
+		  End If
+		  
+		  Var Sources() As Beacon.LootSource = OtherConfig.DefinedSources
+		  Var TotalNewSources As Integer = Sources.LastRowIndex + 1
+		  If TotalNewSources = 0 Then
+		    Return
+		  End If
+		  
+		  Var DuplicateSourceCount As Integer
+		  Var Config As BeaconConfigs.LootDrops = Self.Config(True)
+		  For Each Source As Beacon.LootSource In Sources
+		    If Config.HasLootSource(Source) Then
+		      DuplicateSourceCount = DuplicateSourceCount + 1
+		    End If
+		  Next
+		  
+		  Var Replace As Boolean = True
+		  If DuplicateSourceCount > 0 Then
+		    Replace = Self.ShowConfirm("Replace " + Language.NounWithQuantity(DuplicateSourceCount, "loot source", "loot sources") + "?", DuplicateSourceCount.ToString + " of " + Language.NounWithQuantity(TotalNewSources, " loot source has already been defined in this document. Would you like to replace it?", " loot sources are already defined in this document. Would you like to replace them?"), "Replace", "Cancel")
+		  End If
+		  
+		  Var AddedSources() As Beacon.LootSource
+		  For Each Source As Beacon.LootSource In OtherConfig
+		    If Config.HasLootSource(Source) Then
+		      If Replace Then
+		        Config.Remove(Source)
+		      Else
+		        Continue
+		      End If
+		    End If
+		    
+		    AddedSources.AddRow(Source)
+		    Config.Append(Source)
+		  Next
+		  
+		  If AddedSources.LastRowIndex > -1 Then
+		    Self.Changed = True
+		    Self.UpdateSourceList(AddedSources)
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Resize(Initial As Boolean)
 		  If Initial Then
 		    Self.SetListWidth(Preferences.SourcesSplitterPosition)
@@ -858,7 +909,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And Board.Text.Left(30) = "ConfigOverrideSupplyCrateItems")
+		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And Board.Text.IndexOf("ConfigOverrideSupplyCrateItems") > -1)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -926,6 +977,8 @@ End
 		      Sources.AddRow(Beacon.LootSource.ImportFromBeacon(Dict))
 		    Next
 		    Self.AddLootSources(Sources)
+		  ElseIf Board.TextAvailable And Board.Text.IndexOf("ConfigOverrideSupplyCrateItems") > -1 Then
+		    Self.Parse(Board.Text, "Clipboard")
 		  End If
 		End Sub
 	#tag EndEvent
