@@ -739,6 +739,7 @@ End
 	#tag Event
 		Sub Open()
 		  #if Not Self.ConnectorEnabled
+		    Self.SourceRadio(4).Top = -100
 		    Self.SourceRadio(4).Visible = False
 		    For I As Integer = 1 To 3
 		      Self.SourceRadio(I).Top = Self.SourceRadio(I).Top - 32
