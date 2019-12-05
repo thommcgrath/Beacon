@@ -203,25 +203,28 @@ Inherits Beacon.Thread
 		    ElseIf StringValue = "false" Then
 		      Return False
 		    Else
-		      Dim IsNumeric As Boolean = True
-		      Dim DecimalPoints As Integer
-		      Dim Characters() As String = StringValue.Split("")
-		      For Each Char As String In Characters
-		        Select Case Char
-		        Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
-		          // Still a Number
-		        Case "."
-		          If DecimalPoints = 1 Then
+		      Dim IsNumeric As Boolean
+		      If StringValue.Length > 0 Then
+		        IsNumeric = True
+		        Dim DecimalPoints As Integer
+		        Dim Characters() As String = StringValue.Split("")
+		        For Each Char As String In Characters
+		          Select Case Char
+		          Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
+		            // Still a Number
+		          Case "."
+		            If DecimalPoints = 1 Then
+		              IsNumeric = False
+		              Exit
+		            Else
+		              DecimalPoints = 1
+		            End If
+		          Else
 		            IsNumeric = False
 		            Exit
-		          Else
-		            DecimalPoints = 1
-		          End If
-		        Else
-		          IsNumeric = False
-		          Exit
-		        End Select
-		      Next
+		          End Select
+		        Next
+		      End If
 		      If IsNumeric Then
 		        // Number
 		        Return Val(StringValue)
