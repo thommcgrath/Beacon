@@ -69,14 +69,21 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Constructor(Callback As ImportFinishedDelegate, RequireDeploy As Boolean)
+		  Self.mImportCallback = Callback
+		  Self.mDeployRequired = RequireDeploy
+		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
 	#tag DelegateDeclaration, Flags = &h0
 		Delegate Sub ImportFinishedDelegate(Documents() As Beacon . Document)
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
-		Shared Function Present(ImportCallback As ImportFinishedDelegate, DestinationDocument As Beacon.Document, OtherDocuments() As Beacon.Document) As DocumentImportWindow
-		  Dim Win As New DocumentImportWindow
-		  Win.mImportCallback = ImportCallback
+		Shared Function Present(ImportCallback As ImportFinishedDelegate, DestinationDocument As Beacon.Document, OtherDocuments() As Beacon.Document, RequireDeploy As Boolean) As DocumentImportWindow
+		  Dim Win As New DocumentImportWindow(ImportCallback, RequireDeploy)
 		  Win.DocumentImportView1.PullValuesFromDocument(DestinationDocument) // Give discovery views a chance to get stuff like oauth keys
 		  Win.DocumentImportView1.SetOtherDocuments(OtherDocuments)
 		  Win.Show
@@ -86,8 +93,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(ImportCallback As ImportFinishedDelegate, DestinationDocument As Beacon.Document, File As FolderItem) As DocumentImportWindow
-		  Dim Win As New DocumentImportWindow
-		  Win.mImportCallback = ImportCallback
+		  Dim Win As New DocumentImportWindow(ImportCallback, False)
 		  Win.DocumentImportView1.PullValuesFromDocument(DestinationDocument) // Give discovery views a chance to get stuff like oauth keys
 		  Win.DocumentImportView1.Import(File)
 		  Win.Show
@@ -95,6 +101,10 @@ End
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mDeployRequired As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mImportCallback As ImportFinishedDelegate
@@ -119,6 +129,11 @@ End
 	#tag Event
 		Sub DocumentsImported(Documents() As Beacon.Document)
 		  Self.mImportCallback.Invoke(Documents)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.DeployRequired = Self.mDeployRequired
 		End Sub
 	#tag EndEvent
 #tag EndEvents

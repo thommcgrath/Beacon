@@ -386,6 +386,13 @@ End
 		  Else
 		    Self.Autosave()
 		    
+		    If Not Self.ReadyToDeploy Then
+		      If Self.ShowConfirm("This document is not ready for deploy.", "You must link at least one server with this document to use the deploy feature.", "Link a Server", "Cancel") Then 
+		        Self.BeginImport(True)
+		      End If
+		      Return
+		    End If
+		    
 		    If Not Self.ContinueWithoutExcludedConfigs() Then
 		      Return
 		    End If
@@ -418,6 +425,31 @@ End
 		  End If
 		  
 		  DocumentExportWindow.Present(Self, Self.Document)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub BeginImport(ForDeployment As Boolean)
+		  If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
+		    DocumentImportWindow(Self.mImportWindowRef.Value).Show()
+		  Else
+		    Dim OtherDocuments() As Beacon.Document
+		    For I As Integer = 0 To Self.mEditorRefs.KeyCount - 1
+		      Dim Key As Variant = Self.mEditorRefs.Key(I)
+		      Dim Ref As WeakRef = Self.mEditorRefs.Value(Key)
+		      If Ref <> Nil And Ref.Value <> Nil And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Document.DocumentID <> Self.Document.DocumentID Then
+		        OtherDocuments.AddRow(DocumentEditorView(Ref.Value).Document)
+		      End If
+		    Next
+		    
+		    Dim Ref As DocumentImportWindow
+		    If ForDeployment Then
+		      Ref = DocumentImportWindow.Present(AddressOf ImportAndDeployCallback, Self.Document, OtherDocuments, True)
+		    Else
+		      Ref = DocumentImportWindow.Present(AddressOf ImportCallback, Self.Document, OtherDocuments, False)
+		    End If
+		    Self.mImportWindowRef = New WeakRef(Ref)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -510,6 +542,13 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub CopyFromDocumentsAndDeploy(SourceDocuments As Variant)
+		  Dim Documents() As Beacon.Document = SourceDocuments
+		  DocumentMergerWindow.Present(Self, Documents, Self.Document, WeakAddressOf MergeAndDeployCallback)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Destructor()
 		  If Self.mController <> Nil Then
@@ -583,6 +622,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ImportAndDeployCallback(Documents() As Beacon.Document)
+		  Call CallLater.Schedule(0, WeakAddressOf CopyFromDocumentsAndDeploy, Documents)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ImportCallback(Documents() As Beacon.Document)
 		  Call CallLater.Schedule(0, WeakAddressOf CopyFromDocuments, Documents)
 		End Sub
@@ -619,6 +664,13 @@ End
 		    // Safe to cleanup the autosave
 		    Self.CleanupAutosave()
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub MergeAndDeployCallback()
+		  Self.MergeCallback()
+		  Self.BeginDeploy()
 		End Sub
 	#tag EndMethod
 
@@ -805,7 +857,7 @@ End
 		  Self.Title = Self.mController.Name
 		  Self.BeaconToolbar1.ExportButton.Enabled = Self.ReadyToExport
 		  #if DeployEnabled
-		    Self.BeaconToolbar1.DeployButton.Enabled = Self.ReadyToDeploy
+		    Self.BeaconToolbar1.DeployButton.Enabled = Self.ReadyToExport
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -953,7 +1005,7 @@ End
 		  Dim ImportButton As New BeaconToolbarItem("ImportButton", IconToolbarImport, "Import config files…")
 		  Dim ExportButton As New BeaconToolbarItem("ExportButton", IconToolbarExport, Self.ReadyToExport, "Save new config files…")
 		  #if DeployEnabled
-		    Dim DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToDeploy, "Make config changes live")
+		    Dim DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToExport, "Make config changes live")
 		  #endif
 		  Dim ShareButton As New BeaconToolbarItem("ShareButton", IconToolbarShare, Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud, "Copy link to this document")
 		  
@@ -973,19 +1025,7 @@ End
 		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "ImportButton"
-		    If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
-		      DocumentImportWindow(Self.mImportWindowRef.Value).Show()
-		    Else
-		      Dim OtherDocuments() As Beacon.Document
-		      For I As Integer = 0 To Self.mEditorRefs.KeyCount - 1
-		        Dim Key As Variant = Self.mEditorRefs.Key(I)
-		        Dim Ref As WeakRef = Self.mEditorRefs.Value(Key)
-		        If Ref <> Nil And Ref.Value <> Nil And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Document.DocumentID <> Self.Document.DocumentID Then
-		          OtherDocuments.AddRow(DocumentEditorView(Ref.Value).Document)
-		        End If
-		      Next
-		      Self.mImportWindowRef = New WeakRef(DocumentImportWindow.Present(AddressOf ImportCallback, Self.Document, OtherDocuments))
-		    End If
+		    Self.BeginImport(False)
 		  Case "ExportButton"
 		    Self.BeginExport()
 		  Case "HelpButton"

@@ -738,6 +738,8 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
+		  RaiseEvent Open
+		  
 		  #if Not Self.ConnectorEnabled
 		    Self.SourceRadio(4).Top = -100
 		    Self.SourceRadio(4).Visible = False
@@ -991,7 +993,7 @@ End
 	#tag Method, Flags = &h0
 		Sub SetOtherDocuments(Documents() As Beacon.Document)
 		  Self.mOtherDocuments = Documents
-		  Self.SourceRadio(3).Enabled = Documents.LastRowIndex > -1
+		  Self.SourceRadio(3).Enabled = (Not Self.mDeployRequired) And Documents.LastRowIndex > -1
 		  Self.SourceRadio(3).Caption = "Other Beacon Document" + If(Self.SourceRadio(3).Enabled, "", " (No Other Documents Open)")
 		End Sub
 	#tag EndMethod
@@ -1002,6 +1004,10 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event Open()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event ShouldDismiss()
 	#tag EndHook
 
@@ -1009,6 +1015,30 @@ End
 		Event ShouldResize(Height As Integer)
 	#tag EndHook
 
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mDeployRequired
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mDeployRequired = Value Then
+			    Return
+			  End If
+			  
+			  Self.mDeployRequired = Value
+			  Self.SourceRadio(2).Enabled = Not Value
+			  Self.SourceRadio(3).Enabled = (Not Value) And Self.mOtherDocuments.LastRowIndex > -1
+			End Set
+		#tag EndSetter
+		DeployRequired As Boolean
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mDeployRequired As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mDocuments() As Beacon.Document
@@ -1578,6 +1608,14 @@ End
 		Group="Size"
 		InitialValue="300"
 		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="DeployRequired"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior
