@@ -9,6 +9,51 @@ $document_id = BeaconAPI::ObjectID();
 $method = BeaconAPI::Method();
 $database = BeaconCommon::Database();
 
+$subobject = BeaconAPI::ObjectID(1);
+if (is_null($subobject) == false) {
+	if (!BeaconCommon::IsUUID($document_id)) {
+		BeaconAPI::ReplyError('Must use a v4 UUID', null, 400);
+	}
+	
+	$document = BeaconDocument::GetByDocumentID($document_id);
+	if (is_null($document) || count($document) != 1) {
+		BeaconAPI::ReplyError('Document not found', null, 404);
+	}
+	$document = $document[0];
+	
+	$subject = strtolower($subobject);
+	switch ($subobject) {
+	case 'publish':
+		switch ($method) {
+		case 'GET':
+			BeaconAPI::ReplySuccess(array('document_id' => $document_id, 'status' => $document->PublishStatus()));
+			break;
+		case 'POST':
+		case 'PUT':
+			BeaconAPI::Authorize(true);
+			
+			if ($document->UserID() != BeaconAPI::UserID()) {
+				BeaconAPI::ReplyError('Not authorized', null, 403);
+			}
+			
+			$payload = BeaconAPI::JSONPayload();
+			$desired_status = $payload['status'];
+			$document->SetPublishStatus($desired_status);
+			BeaconAPI::ReplySuccess(array('document_id' => $document_id, 'status' => $document->PublishStatus()));
+			
+			break;
+		default:
+			BeaconAPI::ReplyError('Method not allowed', null, 405);
+			break;
+		}
+		break;
+	default:
+		BeaconAPI::ReplyError('Action not found', null, 404);
+		break;
+	}
+	exit;
+}
+
 switch ($method) {
 case 'HEAD':
 	header('Content-Type: application/json');
