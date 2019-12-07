@@ -64,6 +64,11 @@ if (strtoupper($_SERVER['REQUEST_METHOD']) === 'POST') {
 			$database->Commit();
 		} else {
 			$code = $results->Field('code');
+			if ($email_id == '82991894-20b2-4ee0-994b-0cc6b9f702fa') {
+				BeaconCommon::PostSlackMessage('A blocked account tried to redeem gift code ' . $code . '.');
+				BeaconCommon::Redirect('https://www.youtube.com/watch?v=sKbP-M8vVtw');
+			}
+			
 			$purchase_id = BeaconCommon::GenerateUUID();
 			
 			$database->BeginTransaction();
