@@ -401,27 +401,27 @@ Implements ObservationKit.Observer
 		    Highlighted = IsKeyWindow(Self.TrueWindow.Handle) Or IsMainWindow(Self.TrueWindow.Handle)
 		  #endif
 		  
-		  G.ClearRect(0, 0, G.Width, G.Height)
-		  
 		  Var MainRect As New Xojo.Rect(0, 0, G.Width, G.Height)
 		  If Self.mBorders <> 0 Then
+		    G.DrawingColor = SystemColors.SeparatorColor
 		    If (Self.mBorders And BeaconUI.BorderTop) = BeaconUI.BorderTop Then
 		      MainRect.Top = MainRect.Top + 1
 		      MainRect.Height = MainRect.Height - 1
+		      G.DrawLine(0, 0, G.Width, 0)
 		    End If
 		    If (Self.mBorders And BeaconUI.BorderBottom) = BeaconUI.BorderBottom Then
 		      MainRect.Height = MainRect.Height - 1
+		      G.DrawLine(0, G.Height - 1, G.Width, G.Height - 1)
 		    End If
 		    If (Self.mBorders And BeaconUI.BorderLeft) = BeaconUI.BorderLeft Then
 		      MainRect.Left = MainRect.Left + 1
 		      MainRect.Width = MainRect.Width - 1
+		      G.DrawLine(0, MainRect.Top, 0, MainRect.Bottom - 1)
 		    End If
 		    If (Self.mBorders And BeaconUI.BorderRight) = BeaconUI.BorderRight Then
 		      MainRect.Width = MainRect.Width - 1
+		      G.DrawLine(MainRect.Right, MainRect.Top, MainRect.Right, MainRect.Bottom - 1)
 		    End If
-		    G.DrawingColor = SystemColors.SeparatorColor
-		    G.FillRectangle(0, 0, G.Width, G.Height)
-		    G.ClearRect(MainRect.Left, MainRect.Top, MainRect.Width, MainRect.Height)
 		  End If
 		  
 		  Dim ContentRect As New Xojo.Rect(MainRect.Left + CellPadding, MainRect.Top + CellPadding, MainRect.Width - (CellPadding * 2), MainRect.Height - (CellPadding * 2))
