@@ -14,6 +14,7 @@ class BeaconUser implements JsonSerializable {
 	protected $purchased_omni_version = 0;
 	protected $expiration = '';
 	protected $usercloud_key = null;
+	protected $banned = false;
 	
 	public function __construct($source = null) {
 		if ($source instanceof BeaconRecordSet) {
@@ -25,6 +26,7 @@ class BeaconUser implements JsonSerializable {
 			$this->private_key_salt = $source->Field('private_key_salt');
 			$this->private_key_iterations = intval($source->Field('private_key_iterations'));
 			$this->usercloud_key = $source->Field('usercloud_key');
+			$this->banned = false;
 			
 			if (self::OmniFree) {
 				$this->purchased_omni_version = 1;
@@ -113,6 +115,7 @@ class BeaconUser implements JsonSerializable {
 			'private_key' => $this->private_key,
 			'private_key_salt' => $this->private_key_salt,
 			'private_key_iterations' => $this->private_key_iterations,
+			'banned' => $this->banned,
 			'signatures' => $this->signatures,
 			'omni_version' => $this->purchased_omni_version,
 			'usercloud_key' => $this->usercloud_key
@@ -134,6 +137,18 @@ class BeaconUser implements JsonSerializable {
 		$signature = '';
 		if (openssl_sign(implode(' ', $fields), $signature, BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
 			$this->signatures['1'] = bin2hex($signature);
+		}
+		
+		// version 2
+		$fields = array($hardware_id, strtolower($this->UserID()), strval($this->purchased_omni_version), ($this->banned ? 'Banned' : 'Clean'));
+		if (self::OmniFree) {
+			$expires = (floor(time() / 604800) * 604800) + 2592000;
+			$this->expiration = date('Y-m-d H:i:sO', $expires);
+			$fields[] = $this->expiration;
+		}
+		$signature = '';
+		if (openssl_sign(implode(' ', $fields), $signature, BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
+			$this->signatures['2'] = bin2hex($signature);
 		}
 	}
 	
