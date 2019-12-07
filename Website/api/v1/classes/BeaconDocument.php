@@ -591,10 +591,13 @@ class BeaconDocument implements JsonSerializable {
 		
 		// see if a publish request is needed
 		if (BeaconCommon::MinVersion() < 10300107) {
-			if ($public) {
-				//$this->SetPublishStatus(BeaconDocument::PUBLISH_STATUS_REQUESTED);
-			} else {
-				//$this->SetPublishStatus(BeaconDocument::PUBLISH_STATUS_PRIVATE);
+			$documents = BeaconDocument::GetByDocumentID($document_id);
+			if (count($documents) == 1) {
+				if ($public) {
+					$documents[0]->SetPublishStatus(BeaconDocument::PUBLISH_STATUS_REQUESTED);
+				} else {
+					$documents[0]->SetPublishStatus(BeaconDocument::PUBLISH_STATUS_PRIVATE);
+				}
 			}
 		}
 		

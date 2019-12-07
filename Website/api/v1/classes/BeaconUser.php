@@ -26,7 +26,7 @@ class BeaconUser implements JsonSerializable {
 			$this->private_key_salt = $source->Field('private_key_salt');
 			$this->private_key_iterations = intval($source->Field('private_key_iterations'));
 			$this->usercloud_key = $source->Field('usercloud_key');
-			$this->banned = false;
+			$this->banned = $source->Field('banned');
 			
 			if (self::OmniFree) {
 				$this->purchased_omni_version = 1;
@@ -104,6 +104,10 @@ class BeaconUser implements JsonSerializable {
 	
 	public function OmniVersion() {
 		return $this->purchased_omni_version;
+	}
+	
+	public function IsBanned() {
+		return $this->banned;
 	}
 	
 	public function jsonSerialize() {
@@ -320,7 +324,7 @@ class BeaconUser implements JsonSerializable {
 	}
 	
 	private static function SQLColumns() {
-		return array('user_id', 'email_id', 'username', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key');
+		return array('user_id', 'email_id', 'username', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key', 'banned');
 	}
 	
 	public static function GetByEmail(string $email) {
