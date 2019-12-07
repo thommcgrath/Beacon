@@ -115,7 +115,7 @@ Begin ConfigEditor MetaDataConfigEditor
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   72
+      Height          =   104
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -186,39 +186,6 @@ Begin ConfigEditor MetaDataConfigEditor
       Visible         =   True
       Width           =   100
    End
-   Begin CheckBox PublicFileCheckbox
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "List this document in the community file list"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   132
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Scope           =   2
-      State           =   0
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   270
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   476
-   End
    Begin BeaconListbox ModsList
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
@@ -263,7 +230,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   138
+      Top             =   170
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -301,7 +268,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   138
+      Top             =   170
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -336,7 +303,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   172
+      Top             =   204
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -423,8 +390,6 @@ End
 		Sub SetupUI()
 		  Self.TitleField.Value = Self.Document.Title
 		  Self.DescriptionArea.Value = Self.Document.Description
-		  Self.PublicFileCheckbox.Value = Self.Document.IsPublic
-		  Self.PublicFileCheckbox.Enabled = (Self.Controller.URL.Scheme = Beacon.DocumentURL.TypeCloud)
 		  Self.UncompressedCheckbox.Value = Not Self.Document.UseCompression
 		  Self.AllowUCSCheckbox.Value = Self.Document.AllowUCS
 		  
@@ -480,29 +445,12 @@ End
 #tag Events DescriptionArea
 	#tag Event
 		Sub TextChange()
-		  Self.PublicFileCheckbox.Enabled = Me.Value.Trim.Length > 32
-		  
 		  If Self.SettingUp Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
 		  Self.Document.Description = Self.SanitizeText(Me.Value.Trim, False)
-		  Self.Document.Metadata.IsImplicit = False
-		  Self.Changed = True
-		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events PublicFileCheckbox
-	#tag Event
-		Sub Action()
-		  If Self.SettingUp Then
-		    Return
-		  End If
-		  
-		  Self.SettingUp = True
-		  Self.Document.IsPublic = Me.Value
 		  Self.Document.Metadata.IsImplicit = False
 		  Self.Changed = True
 		  Self.SettingUp = False

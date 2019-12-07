@@ -8,7 +8,7 @@ Begin BeaconDialog SharingDialog
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   400
+   Height          =   630
    ImplicitInstance=   False
    MacProcID       =   0
    MaxHeight       =   32000
@@ -16,7 +16,7 @@ Begin BeaconDialog SharingDialog
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   400
+   MinHeight       =   630
    MinimizeButton  =   False
    MinWidth        =   600
    Placement       =   0
@@ -25,6 +25,155 @@ Begin BeaconDialog SharingDialog
    Title           =   "Document Sharing"
    Visible         =   True
    Width           =   600
+   Begin GroupBox WriteAccessGroup
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Write Access"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   278
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   300
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   560
+      Begin UITweaks.ResizedPushButton AddUserButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   0
+         Cancel          =   False
+         Caption         =   "Add User"
+         Default         =   False
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "WriteAccessGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   538
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   90
+      End
+      Begin BeaconListbox UserList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   True
+         ColumnCount     =   1
+         ColumnsResizable=   False
+         ColumnWidths    =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   26
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   False
+         HeadingIndex    =   -1
+         Height          =   130
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "WriteAccessGroup"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
+         SelectionType   =   0
+         ShowDropIndicator=   False
+         TabIndex        =   2
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   388
+         Transparent     =   False
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   520
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
+      Begin Label WriteAccessLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   40
+         Index           =   -2147483648
+         InitialParent   =   "WriteAccessGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   True
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   3
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "0"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   336
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Users listed here will be able to make changes to this document and deploy changes to servers. Only the document owner may add or remove users."
+         Visible         =   True
+         Width           =   520
+      End
+   End
    Begin Label MessageLabel
       AutoDeactivate  =   True
       Bold            =   True
@@ -60,73 +209,6 @@ Begin BeaconDialog SharingDialog
       Visible         =   True
       Width           =   560
    End
-   Begin Label DownloadLinkLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   True
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlign       =   0
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   52
-      Transparent     =   False
-      Underline       =   False
-      Value           =   "https://api.beaconapp.cc/v1/document"
-      Visible         =   True
-      Width           =   468
-   End
-   Begin ReactionButton CopyLinkButton
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   0
-      Cancel          =   False
-      Caption         =   "Copy"
-      Default         =   False
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   500
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   52
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
@@ -147,102 +229,293 @@ Begin BeaconDialog SharingDialog
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   360
+      Top             =   590
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
    End
-   Begin BeaconListbox UserList
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
+   Begin GroupBox ReadOnlyGroup
+      AllowAutoDeactivate=   True
       Bold            =   False
-      Border          =   True
-      ColumnCount     =   1
-      ColumnsResizable=   False
-      ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      DefaultRowHeight=   26
+      Caption         =   "Read-Only Access"
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   False
-      HeadingIndex    =   -1
-      Height          =   248
-      HelpTag         =   ""
-      Hierarchical    =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   76
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   ""
       Italic          =   False
       Left            =   20
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      RequiresSelection=   False
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionChangeBlocked=   False
-      SelectionType   =   0
-      ShowDropIndicator=   False
-      TabIndex        =   4
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   92
+      Tooltip         =   ""
+      Top             =   52
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   560
-      _ScrollOffset   =   0
-      _ScrollWidth    =   -1
+      Begin Label DownloadLinkLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ReadOnlyGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   True
+         TabIndex        =   0
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   88
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "https://api.beaconapp.cc/v1/document"
+         Visible         =   True
+         Width           =   428
+      End
+      Begin ReactionButton CopyLinkButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   0
+         Cancel          =   False
+         Caption         =   "Copy"
+         Default         =   False
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ReadOnlyGroup"
+         Italic          =   False
+         Left            =   480
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   88
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
    End
-   Begin UITweaks.ResizedPushButton AddUserButton
-      AutoDeactivate  =   True
+   Begin GroupBox CommunityAccessGroup
+      AllowAutoDeactivate=   True
       Bold            =   False
-      ButtonStyle     =   0
-      Cancel          =   False
-      Caption         =   "Add User"
-      Default         =   False
+      Caption         =   "Community Sharing"
       Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   148
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
       Left            =   20
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
+      LockRight       =   True
+      LockTop         =   True
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   360
+      Tooltip         =   ""
+      Top             =   140
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   90
+      Width           =   560
+      Begin Label CommunityAccessLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   60
+         Index           =   -2147483648
+         InitialParent   =   "CommunityAccessGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   True
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "0"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   176
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Documents shared with the community will be available for download from the Beacon website and the Community section of the Documents list. Community members will have read-only access, unless listed below."
+         Visible         =   True
+         Width           =   520
+      End
+      Begin Label CommunityStatusLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "CommunityAccessGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   1
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   248
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Current Status:"
+         Visible         =   True
+         Width           =   100
+      End
+      Begin Label CommunityStatusField
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "CommunityAccessGroup"
+         Italic          =   False
+         Left            =   152
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   2
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "0"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   248
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Checking…"
+         Visible         =   True
+         Width           =   316
+      End
+      Begin PushButton CommunityShareButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Share"
+         Default         =   False
+         Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "CommunityAccessGroup"
+         Italic          =   False
+         Left            =   480
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         MacButtonStyle  =   "0"
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   248
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+   End
+   Begin Timer StatusCheckTimer
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Period          =   200
+      RunMode         =   "1"
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+   Begin BeaconAPI.Socket APISocket
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
    End
 End
 #tag EndWindow
@@ -266,6 +539,48 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub StatusCheckReplyCallback(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
+		  If Response.HTTPStatus <> 200 Or Response.JSONParsed = False Then
+		    Self.CommunityStatusField.Value = "Unknown"
+		    Self.CommunityShareButton.Caption = "Share"
+		    Self.CommunityShareButton.Enabled = False
+		    Return
+		  End If
+		  
+		  Try
+		    Var Payload As Dictionary = Response.JSON
+		    Var Status As String = Payload.Value("status")
+		    
+		    Select Case Status
+		    Case "Requested"
+		      Self.CommunityStatusField.Value = "Private (Sharing Request Pending)"
+		      Self.CommunityShareButton.Caption = "Share"
+		      Self.CommunityShareButton.Enabled = False
+		    Case "Approved"
+		      Self.CommunityStatusField.Value = "Shared"
+		      Self.CommunityShareButton.Caption = "Unshare"
+		      Self.CommunityShareButton.Enabled = True
+		    Case "Private", "Approved But Private"
+		      Self.CommunityStatusField.Value = "Private"
+		      Self.CommunityShareButton.Caption = "Share"
+		      Self.CommunityShareButton.Enabled = True
+		    Case "Denied"
+		      Self.CommunityStatusField.Value = "Private (Sharing Request Denied)"
+		      Self.CommunityShareButton.Caption = "Share"
+		      Self.CommunityShareButton.Enabled = False
+		    End Select
+		  Catch Err As RuntimeException
+		    Self.CommunityStatusField.Value = "Unknown"
+		    Self.CommunityShareButton.Caption = "Share"
+		    Self.CommunityShareButton.Enabled = False
+		    Return
+		  End Try
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mDocument As Beacon.Document
@@ -274,28 +589,15 @@ End
 
 #tag EndWindowCode
 
-#tag Events DownloadLinkLabel
-	#tag Event
-		Sub Open()
-		  Me.Value = BeaconAPI.URL("/document/" + EncodeURLComponent(Self.mDocument.DocumentID) + "?name=" + EncodeURLComponent(Self.mDocument.Title))
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events CopyLinkButton
+#tag Events AddUserButton
 	#tag Event
 		Sub Action()
-		  Dim Board As New Clipboard
-		  Board.Text = Self.DownloadLinkLabel.Value
-		  
-		  Me.Caption = "Copied!"
-		  Me.Enabled = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ActionButton
-	#tag Event
-		Sub Action()
-		  Self.Close
+		  Dim UserID, PublicKey As String
+		  If ShareWithUserDialog.Present(Self, UserID, PublicKey) Then
+		    Self.UserList.AddRow(UserID)
+		    Self.UserList.Sort
+		    Self.mDocument.AddUser(UserID, PublicKey)
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -338,15 +640,58 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
-#tag Events AddUserButton
+#tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim UserID, PublicKey As String
-		  If ShareWithUserDialog.Present(Self, UserID, PublicKey) Then
-		    Self.UserList.AddRow(UserID)
-		    Self.UserList.Sort
-		    Self.mDocument.AddUser(UserID, PublicKey)
+		  Self.Close
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DownloadLinkLabel
+	#tag Event
+		Sub Open()
+		  Me.Value = BeaconAPI.URL("/document/" + EncodeURLComponent(Self.mDocument.DocumentID) + "?name=" + EncodeURLComponent(Self.mDocument.Title))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CopyLinkButton
+	#tag Event
+		Sub Action()
+		  Dim Board As New Clipboard
+		  Board.Text = Self.DownloadLinkLabel.Value
+		  
+		  Me.Caption = "Copied!"
+		  Me.Enabled = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CommunityShareButton
+	#tag Event
+		Sub Action()
+		  Var DesiredStatus As String
+		  If Me.Caption = "Share" Then
+		    DesiredStatus = "Requested"
+		  Else
+		    DesiredStatus = "Private"
 		  End If
+		  
+		  Var Payload As New Dictionary
+		  Payload.Value("status") = DesiredStatus
+		  
+		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("/document/" + Self.mDocument.DocumentID + "/publish"), "POST", Beacon.GenerateJSON(Payload, False), "application/json", AddressOf StatusCheckReplyCallback)
+		  Request.Authenticate(Preferences.OnlineToken)
+		  APISocket.Start(Request)
+		  
+		  Me.Enabled = False
+		  Self.CommunityStatusField.Value = "Sharing…"
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events StatusCheckTimer
+	#tag Event
+		Sub Action()
+		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("/document/" + Self.mDocument.DocumentID + "/publish"), "GET", AddressOf StatusCheckReplyCallback)
+		  APISocket.Start(Request)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

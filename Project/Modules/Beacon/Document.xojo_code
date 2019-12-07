@@ -127,9 +127,6 @@ Protected Class Document
 		      If Dict.HasKey("Description") Then
 		        Doc.Description = Dict.Value("Description")
 		      End If
-		      If Dict.HasKey("Public") Then
-		        Doc.IsPublic = Dict.Value("Public")
-		      End If
 		      If Dict.HasKey("Map") Then
 		        Doc.mMapCompatibility = Dict.Value("Map")
 		      ElseIf Dict.HasKey("MapPreference") Then
@@ -792,18 +789,15 @@ Protected Class Document
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Dim Metadata As BeaconConfigs.Metadata = Self.Metadata
-			  If Metadata <> Nil Then
-			    Return Metadata.IsPublic
-			  End If
+			  Return False
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.Metadata(True).IsPublic = Value
+			  // Do Nothing
 			End Set
 		#tag EndSetter
-		IsPublic As Boolean
+		Attributes( Deprecated ) IsPublic As Boolean
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21

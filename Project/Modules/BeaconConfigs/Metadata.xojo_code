@@ -20,9 +20,6 @@ Inherits Beacon.ConfigGroup
 		  If Dict.HasKey("Description") Then
 		    Self.Description = Dict.Value("Description")
 		  End If
-		  If Dict.HasKey("Public") Then
-		    Self.IsPublic = Dict.Value("Public")
-		  End If
 		End Sub
 	#tag EndEvent
 
@@ -32,7 +29,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  Dict.Value("Title") = Self.Title
 		  Dict.Value("Description") = Self.Description
-		  Dict.Value("Public") = Self.IsPublic
+		  Dict.Value("Public") = False
 		End Sub
 	#tag EndEvent
 
@@ -90,26 +87,19 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mIsPublic
+			  Return False
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mIsPublic <> Value Then
-			    Self.mIsPublic = Value
-			    Self.Modified = True
-			  End If
+			  // Do Nothing
 			End Set
 		#tag EndSetter
-		IsPublic As Boolean
+		Attributes( Deprecated ) IsPublic As Boolean
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mDescription As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mIsPublic As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

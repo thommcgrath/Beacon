@@ -210,7 +210,6 @@ Protected Class DocumentController
 		  #Pragma Unused Sender
 		  
 		  Dim FileContent As MemoryBlock
-		  Dim ClearPublishStatus As Boolean
 		  
 		  Select Case Self.mDocumentURL.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
@@ -234,7 +233,6 @@ Protected Class DocumentController
 		    Socket.Send("GET", Self.mDocumentURL.URL)
 		    If Socket.LastHTTPStatus >= 200 Then
 		      FileContent = Socket.LastContent
-		      ClearPublishStatus = True
 		    Else
 		      Dim Message As String = Self.ErrorMessageFromSocket(Socket)
 		      Call CallLater.Schedule(0, AddressOf TriggerLoadError, Message)
@@ -294,9 +292,6 @@ Protected Class DocumentController
 		  
 		  If Document.Title.Trim = "" Then
 		    Document.Title = Self.Name
-		  End If
-		  If ClearPublishStatus Then
-		    Document.IsPublic = False
 		  End If
 		  
 		  Self.mDocument = Document

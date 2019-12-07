@@ -654,7 +654,6 @@ End
 		  If Not Self.Closed Then
 		    Self.Changed = Sender.Document <> Nil And Sender.Document.Modified
 		    Self.Title = Sender.Name
-		    Self.BeaconToolbar1.ShareButton.Enabled = (Sender.URL.Scheme = Beacon.DocumentURL.TypeCloud)
 		    Self.Progress = BeaconSubview.ProgressNone
 		  End If
 		  
@@ -1007,7 +1006,7 @@ End
 		  #if DeployEnabled
 		    Dim DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToExport, "Make config changes live")
 		  #endif
-		  Dim ShareButton As New BeaconToolbarItem("ShareButton", IconToolbarShare, Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud, "Copy link to this document")
+		  Dim ShareButton As New BeaconToolbarItem("ShareButton", IconToolbarShare, "Copy link to this document")
 		  
 		  Dim HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarHelp, False, "Toggle help panel")
 		  
@@ -1035,7 +1034,13 @@ End
 		      Self.ShowHelpDrawer()
 		    End If
 		  Case "ShareButton"
-		    SharingDialog.Present(Self, Self.Document)
+		    If Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud Then
+		      SharingDialog.Present(Self, Self.Document)
+		    ElseIf Self.mController.URL.Scheme = Beacon.DocumentURL.TypeLocal Then
+		      Self.ShowAlert("Document sharing is only available to cloud documents", "Use ""Save As…"" under the file menu to save a new copy of this document to the cloud if you would like to use Beacon's sharing features.")
+		    Else
+		      Self.ShowAlert("Document sharing is only available to cloud documents", "If you would like to use Beacon's sharing features, first save your document using ""Save"" under the file menu.")
+		    End If
 		  Case "DeployButton"
 		    Self.BeginDeploy()
 		  End Select
