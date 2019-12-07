@@ -10,7 +10,7 @@
 		.ExternalClass {width:100%;}
 		</style>
 		<table width="100%" cellspacing="0" cellpadding="0" border="0">
-			<tr background="<?php echo BeaconCommon::AbsoluteURL(BeaconCommon::AssetURI('emailbg.png')); ?>">
+			<tr style="background-image: url(<?php echo BeaconCommon::AbsoluteURL(BeaconCommon::AssetURI('emailbg.png')); ?>); background-repeat: repeat">
 				<td>&nbsp;</td>
 				<td width="600" colspan="2"><img src="<?php echo BeaconCommon::AbsoluteURL(BeaconCommon::AssetURI('emailheader.png')); ?>" srcset="<?php echo BeaconCommon::AbsoluteURL(BeaconCommon::AssetURI('emailheader.png')); ?> 1x, <?php echo BeaconCommon::AbsoluteURL(BeaconCommon::AssetURI('emailheader@2x.png')); ?> 2x, <?php echo BeaconCommon::AbsoluteURL(BeaconCommon::AssetURI('emailheader@3x.png')); ?> 3x" width="600" height="168" alt="Beacon for Ark: Survival Evolved."></td>
 				<td>&nbsp;</td>
@@ -22,7 +22,7 @@
 			</tr>
 			<tr style="background-color: #f2f2f2; font-size: 14px; color: #303030;">
 				<td>&nbsp;</td>
-				<td width="300" style="padding: 10px;" align="left">This email was sent to <?php echo htmlentities($recipient); ?> because it was requested from <a href="https://beaconapp.cc">https://beaconapp.cc</a>. This is not a marketing email.</td>
+				<td width="300" style="padding: 10px;" align="left">This email was sent to <?php echo htmlentities($recipient); ?> because it was requested from <a href="https://beaconapp.cc">https://beaconapp.cc</a>.</td>
 				<td width="300" style="padding: 10px;" align="right">The ZAZ Studios<br><span style="font-size: 12px">PO Box 2311<br>Columbia, CT 06237</span></td>
 				<td>&nbsp;</td>
 			</tr>

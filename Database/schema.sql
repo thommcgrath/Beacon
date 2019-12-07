@@ -549,6 +549,79 @@ $$;
 ALTER FUNCTION public.update_blog_article_timestamp() OWNER TO thommcgrath;
 
 --
+-- Name: update_creature_modified(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.update_creature_modified() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	IF TG_OP = 'DELETE' OR TG_OP = 'TRUNCATE' OR (TG_OP = 'UPDATE' AND NEW.creature_id != OLD.creature_id) THEN
+		UPDATE creatures SET last_update = CURRENT_TIMESTAMP WHERE object_id = OLD.creature_id;
+	END IF;
+	IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
+		UPDATE creatures SET last_update = CURRENT_TIMESTAMP WHERE object_id = NEW.creature_id;
+	END IF;
+	RETURN NULL;
+END;
+$$;
+
+
+ALTER FUNCTION public.update_creature_modified() OWNER TO thommcgrath;
+
+--
+-- Name: update_spawn_point_timestamp(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.update_spawn_point_timestamp() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	v_oldid UUID;
+	v_newid UUID;
+BEGIN
+	IF TG_TABLE_NAME = 'spawn_point_creatures' THEN
+		IF TG_OP = 'DELETE' THEN
+			v_oldid = OLD.group_id;
+		ELSIF TG_OP = 'UPDATE' THEN
+			v_oldid = OLD.group_id;
+			v_newid = NEW.group_id;
+		ELSE
+			v_newid = NEW.group_id;
+		END IF;
+		IF v_oldid IS NOT NULL THEN
+			UPDATE spawn_points SET last_update = CURRENT_TIMESTAMP FROM spawn_point_groups WHERE spawn_point_groups.group_id = v_oldid AND spawn_point_groups.spawn_point_id = spawn_points.object_id;
+		END IF;
+		IF v_newid IS NOT NULL AND v_newid IS DISTINCT FROM v_oldid THEN
+			UPDATE spawn_points SET last_update = CURRENT_TIMESTAMP FROM spawn_point_groups WHERE spawn_point_groups.group_id = v_newid AND spawn_point_groups.spawn_point_id = spawn_points.object_id;
+		END IF;
+	ELSE
+		IF TG_OP = 'DELETE' THEN
+			v_oldid = OLD.spawn_point_id;
+		ELSIF TG_OP = 'UPDATE' THEN
+			v_oldid = OLD.spawn_point_id;
+			v_newid = NEW.spawn_point_id;
+		ELSE
+			v_newid = NEW.spawn_point_id;
+		END IF;
+		IF v_oldid IS NOT NULL THEN
+			UPDATE spawn_points SET last_update = CURRENT_TIMESTAMP WHERE object_id = v_oldid;
+		END IF;
+		IF v_newid IS NOT NULL AND v_newid IS DISTINCT FROM v_oldid THEN
+			UPDATE spawn_points SET last_update = CURRENT_TIMESTAMP WHERE object_id = v_newid;
+		END IF;
+	END IF;
+	IF TG_OP = 'DELETE' THEN
+		RETURN OLD;
+	ELSE
+		RETURN NEW;
+	END IF;
+END; $$;
+
+
+ALTER FUNCTION public.update_spawn_point_timestamp() OWNER TO thommcgrath;
+
+--
 -- Name: update_support_article_hash(); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
@@ -798,6 +871,21 @@ INHERITS (public.objects);
 ALTER TABLE public.loot_sources OWNER TO thommcgrath;
 
 --
+-- Name: spawn_points; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.spawn_points (
+    path public.citext NOT NULL,
+    class_string public.citext NOT NULL,
+    availability integer DEFAULT 0 NOT NULL,
+    CONSTRAINT spawn_points_path_check CHECK ((path OPERATOR(public.~~) '/Game/%'::public.citext))
+)
+INHERITS (public.objects);
+
+
+ALTER TABLE public.spawn_points OWNER TO thommcgrath;
+
+--
 -- Name: blueprints; Type: VIEW; Schema: public; Owner: thommcgrath
 --
 
@@ -836,7 +924,19 @@ UNION
     loot_sources.class_string,
     loot_sources.availability,
     loot_sources.tags
-   FROM public.loot_sources;
+   FROM public.loot_sources
+UNION
+ SELECT spawn_points.object_id,
+    spawn_points.label,
+    spawn_points.tableoid,
+    spawn_points.min_version,
+    spawn_points.last_update,
+    spawn_points.mod_id,
+    spawn_points.path,
+    spawn_points.class_string,
+    spawn_points.availability,
+    spawn_points.tags
+   FROM public.spawn_points;
 
 
 ALTER TABLE public.blueprints OWNER TO thommcgrath;
@@ -898,6 +998,24 @@ CREATE TABLE public.corrupt_files (
 
 
 ALTER TABLE public.corrupt_files OWNER TO thommcgrath;
+
+--
+-- Name: creature_stats; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.creature_stats (
+    creature_id uuid NOT NULL,
+    stat_index integer NOT NULL,
+    base_value numeric(10,4) NOT NULL,
+    per_level_wild_multiplier numeric(10,4) NOT NULL,
+    per_level_tamed_multiplier numeric(10,4) NOT NULL,
+    add_multiplier numeric(10,4) NOT NULL,
+    affinity_multiplier numeric(10,4) NOT NULL,
+    CONSTRAINT creature_stats_stat_index_check CHECK (((stat_index >= 0) AND (stat_index <= 9) AND (stat_index <> 5) AND (stat_index <> 6)))
+);
+
+
+ALTER TABLE public.creature_stats OWNER TO thommcgrath;
 
 --
 -- Name: deletions; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -1365,6 +1483,33 @@ CREATE TABLE public.sessions (
 ALTER TABLE public.sessions OWNER TO thommcgrath;
 
 --
+-- Name: spawn_point_creatures; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.spawn_point_creatures (
+    group_id uuid NOT NULL,
+    creature_id uuid NOT NULL,
+    max_percentage numeric(5,4)
+);
+
+
+ALTER TABLE public.spawn_point_creatures OWNER TO thommcgrath;
+
+--
+-- Name: spawn_point_groups; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.spawn_point_groups (
+    group_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    spawn_point_id uuid NOT NULL,
+    label public.citext NOT NULL,
+    weight numeric(12,4) NOT NULL
+);
+
+
+ALTER TABLE public.spawn_point_groups OWNER TO thommcgrath;
+
+--
 -- Name: stw_applicants; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
@@ -1829,6 +1974,41 @@ ALTER TABLE ONLY public.presets ALTER COLUMN tags SET DEFAULT '{}'::public.citex
 
 
 --
+-- Name: spawn_points object_id; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.spawn_points ALTER COLUMN object_id SET DEFAULT public.gen_random_uuid();
+
+
+--
+-- Name: spawn_points min_version; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.spawn_points ALTER COLUMN min_version SET DEFAULT 0;
+
+
+--
+-- Name: spawn_points last_update; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.spawn_points ALTER COLUMN last_update SET DEFAULT ('now'::text)::timestamp(0) with time zone;
+
+
+--
+-- Name: spawn_points mod_id; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.spawn_points ALTER COLUMN mod_id SET DEFAULT '30bbab29-44b2-4f4b-a373-6d4740d9d3b5'::uuid;
+
+
+--
+-- Name: spawn_points tags; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.spawn_points ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
 -- Name: blog_articles blog_articles_article_hash_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -1882,6 +2062,14 @@ ALTER TABLE ONLY public.creature_engrams
 
 ALTER TABLE ONLY public.creature_engrams
     ADD CONSTRAINT creature_engrams_pkey PRIMARY KEY (relation_id);
+
+
+--
+-- Name: creature_stats creature_stats_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.creature_stats
+    ADD CONSTRAINT creature_stats_pkey PRIMARY KEY (creature_id, stat_index);
 
 
 --
@@ -2197,6 +2385,46 @@ ALTER TABLE ONLY public.sessions
 
 
 --
+-- Name: spawn_point_creatures spawn_point_creatures_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.spawn_point_creatures
+    ADD CONSTRAINT spawn_point_creatures_pkey PRIMARY KEY (group_id, creature_id);
+
+
+--
+-- Name: spawn_point_groups spawn_point_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.spawn_point_groups
+    ADD CONSTRAINT spawn_point_groups_pkey PRIMARY KEY (group_id);
+
+
+--
+-- Name: spawn_points spawn_points_class_string_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.spawn_points
+    ADD CONSTRAINT spawn_points_class_string_key UNIQUE (class_string);
+
+
+--
+-- Name: spawn_points spawn_points_path_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.spawn_points
+    ADD CONSTRAINT spawn_points_path_key UNIQUE (path);
+
+
+--
+-- Name: spawn_points spawn_points_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.spawn_points
+    ADD CONSTRAINT spawn_points_pkey PRIMARY KEY (object_id);
+
+
+--
 -- Name: stw_applicants stw_applicants_email_id_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -2456,6 +2684,13 @@ CREATE TRIGGER create_slug_from_video_title_trigger BEFORE INSERT ON public.supp
 
 
 --
+-- Name: creature_stats creature_stats_update_creature_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER creature_stats_update_creature_trigger AFTER INSERT OR DELETE OR UPDATE ON public.creature_stats FOR EACH ROW EXECUTE PROCEDURE public.update_creature_modified();
+
+
+--
 -- Name: creatures creatures_after_delete_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
@@ -2673,6 +2908,48 @@ CREATE TRIGGER presets_json_sync_trigger BEFORE INSERT OR UPDATE ON public.prese
 
 
 --
+-- Name: spawn_point_creatures spawn_point_creatures_update_timestamp_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER spawn_point_creatures_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.spawn_point_creatures FOR EACH ROW EXECUTE PROCEDURE public.update_spawn_point_timestamp();
+
+
+--
+-- Name: spawn_point_groups spawn_point_groups_update_timestamp_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER spawn_point_groups_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.spawn_point_groups FOR EACH ROW EXECUTE PROCEDURE public.update_spawn_point_timestamp();
+
+
+--
+-- Name: spawn_points spawn_points_after_delete_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER spawn_points_after_delete_trigger AFTER DELETE ON public.spawn_points FOR EACH ROW EXECUTE PROCEDURE public.object_delete_trigger();
+
+
+--
+-- Name: spawn_points spawn_points_before_insert_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER spawn_points_before_insert_trigger BEFORE INSERT ON public.spawn_points FOR EACH ROW EXECUTE PROCEDURE public.object_insert_trigger();
+
+
+--
+-- Name: spawn_points spawn_points_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER spawn_points_before_update_trigger BEFORE UPDATE ON public.spawn_points FOR EACH ROW EXECUTE PROCEDURE public.object_update_trigger();
+
+
+--
+-- Name: spawn_points spawn_points_compute_class_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER spawn_points_compute_class_trigger BEFORE INSERT OR UPDATE ON public.spawn_points FOR EACH ROW EXECUTE PROCEDURE public.compute_class_trigger();
+
+
+--
 -- Name: blog_articles update_blog_article_hash_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
@@ -2707,6 +2984,14 @@ ALTER TABLE ONLY public.creature_engrams
 
 ALTER TABLE ONLY public.creature_engrams
     ADD CONSTRAINT creature_engrams_engram_id_fkey FOREIGN KEY (engram_id) REFERENCES public.engrams(object_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: creature_stats creature_stats_creature_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.creature_stats
+    ADD CONSTRAINT creature_stats_creature_id_fkey FOREIGN KEY (creature_id) REFERENCES public.creatures(object_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -2966,6 +3251,38 @@ ALTER TABLE ONLY public.sessions
 
 
 --
+-- Name: spawn_point_creatures spawn_point_creatures_creature_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.spawn_point_creatures
+    ADD CONSTRAINT spawn_point_creatures_creature_id_fkey FOREIGN KEY (creature_id) REFERENCES public.creatures(object_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: spawn_point_creatures spawn_point_creatures_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.spawn_point_creatures
+    ADD CONSTRAINT spawn_point_creatures_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.spawn_point_groups(group_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: spawn_point_groups spawn_point_groups_spawn_point_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.spawn_point_groups
+    ADD CONSTRAINT spawn_point_groups_spawn_point_id_fkey FOREIGN KEY (spawn_point_id) REFERENCES public.spawn_points(object_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: spawn_points spawn_points_mod_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.spawn_points
+    ADD CONSTRAINT spawn_points_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES public.mods(mod_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: stw_applicants stw_applicants_email_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -3078,6 +3395,13 @@ GRANT SELECT ON TABLE public.loot_sources TO thezaz_website;
 
 
 --
+-- Name: TABLE spawn_points; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_points TO thezaz_website;
+
+
+--
 -- Name: TABLE blueprints; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
@@ -3110,6 +3434,13 @@ GRANT SELECT ON TABLE public.computed_engram_availabilities TO thezaz_website;
 --
 
 GRANT SELECT,INSERT ON TABLE public.corrupt_files TO thezaz_website;
+
+
+--
+-- Name: TABLE creature_stats; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.creature_stats TO thezaz_website;
 
 
 --
@@ -3306,6 +3637,20 @@ GRANT SELECT ON TABLE public.search_contents TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.sessions TO thezaz_website;
+
+
+--
+-- Name: TABLE spawn_point_creatures; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_point_creatures TO thezaz_website;
+
+
+--
+-- Name: TABLE spawn_point_groups; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_point_groups TO thezaz_website;
 
 
 --

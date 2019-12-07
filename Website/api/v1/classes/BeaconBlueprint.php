@@ -6,6 +6,13 @@ class BeaconBlueprint extends BeaconObject {
 	private $class_string;
 	private $is_ambiguous = false;
 	
+	public static function GetByObjectPath(string $path, int $min_version = -1, DateTime $updated_since = null) {
+		$objects = static::Get('path:' . $path, $min_version, $updated_since);
+		if (count($objects) == 1) {
+			return $objects[0];
+		}
+	}
+	
 	protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
 		$columns[] = 'availability';

@@ -58,6 +58,82 @@ class BeaconDocument implements JsonSerializable {
 		return $this->published;
 	}
 	
+	public function SetPublishStatus(string $desired_status) {
+		$database = BeaconCommon::Database();
+		
+		$results = $database->Query('SELECT published FROM documents WHERE document_id = $1;', $this->document_id);
+		$current_status = $results->Field('published');
+		$new_status = $current_status;
+		if ($desired_status == BeaconDocument::PUBLISH_STATUS_REQUESTED || $desired_status == BeaconDocument::PUBLISH_STATUS_APPROVED) {
+			if ($current_status == BeaconDocument::PUBLISH_STATUS_APPROVED_PRIVATE) {
+				$new_status = BeaconDocument::PUBLISH_STATUS_APPROVED;
+			} elseif ($current_status == BeaconDocument::PUBLISH_STATUS_PRIVATE) {
+				$new_status = BeaconDocument::PUBLISH_STATUS_REQUESTED;
+				
+				$attachment = array(
+					'title' => $this->name,
+					'text' => $this->description,
+					'fallback' => 'Unable to show response buttons.',
+					'callback_id' => 'publish_document:' . $this->document_id,
+					'actions' => array(
+						array(
+							'name' => 'status',
+							'text' => 'Approve',
+							'type' => 'button',
+							'value' => BeaconDocument::PUBLISH_STATUS_APPROVED,
+							'confirm' => array(
+								'text' => 'Are you sure you want to approve this document?',
+								'ok_text' => 'Approve'
+							)
+						),
+						array(
+							'name' => 'status',
+							'text' => 'Deny',
+							'type' => 'button',
+							'value' => BeaconDocument::PUBLISH_STATUS_DENIED,
+							'confirm' => array(
+								'text' => 'Are you sure you want to reject this document?',
+								'ok_text' => 'Deny'
+							)
+						)
+					),
+					'fields' => array()
+				);
+				
+				$user = BeaconUser::GetByUserID($this->user_id);
+				if (is_null($user) === false) {
+					if ($user->IsAnonymous()) {
+						$username = 'Anonymous';
+					} else {
+						$username = $user->Username() . '#' . $user->Suffix();
+					}
+					$attachment['fields'][] = array(
+						'title' => 'Author',
+						'value' => $username
+					);
+				}
+				
+				$obj = array(
+					'text' => 'Request to publish document',
+					'attachments' => array($attachment)
+				);
+				BeaconCommon::PostSlackRaw(json_encode($obj));	
+			}
+		} else {
+			if ($current_status == BeaconDocument::PUBLISH_STATUS_APPROVED) {
+				$new_status = BeaconDocument::PUBLISH_STATUS_APPROVED_PRIVATE;
+			} elseif ($current_status == BeaconDocument::PUBLISH_STATUS_REQUESTED) {
+				$new_status = BeaconDocument::PUBLISH_STATUS_PRIVATE;
+			}
+		}
+		if ($new_status != $current_status) {
+			$database->BeginTransaction();
+			$database->Query('UPDATE documents SET published = $2 WHERE document_id = $1;', $this->document_id, $new_status);
+			$database->Commit();
+		}
+		$this->published = $new_status;
+	}
+	
 	public function MapMask() {
 		return $this->map_mask;
 	}
@@ -514,75 +590,12 @@ class BeaconDocument implements JsonSerializable {
 		}
 		
 		// see if a publish request is needed
-		$results = $database->Query('SELECT published FROM documents WHERE document_id = $1;', $document_id);
-		$current_status = $results->Field('published');
-		$new_status = $current_status;
-		if ($public) {
-			if ($current_status == BeaconDocument::PUBLISH_STATUS_APPROVED_PRIVATE) {
-				$new_status = BeaconDocument::PUBLISH_STATUS_APPROVED;
-			} elseif ($current_status == BeaconDocument::PUBLISH_STATUS_PRIVATE) {
-				$new_status = BeaconDocument::PUBLISH_STATUS_REQUESTED;
-				
-				$attachment = array(
-					'title' => $title,
-					'text' => $description,
-					'fallback' => 'Unable to show response buttons.',
-					'callback_id' => 'publish_document:' . $document_id,
-					'actions' => array(
-						array(
-							'name' => 'status',
-							'text' => 'Approve',
-							'type' => 'button',
-							'value' => BeaconDocument::PUBLISH_STATUS_APPROVED,
-							'confirm' => array(
-								'text' => 'Are you sure you want to approve this document?',
-								'ok_text' => 'Approve'
-							)
-						),
-						array(
-							'name' => 'status',
-							'text' => 'Deny',
-							'type' => 'button',
-							'value' => BeaconDocument::PUBLISH_STATUS_DENIED,
-							'confirm' => array(
-								'text' => 'Are you sure you want to reject this document?',
-								'ok_text' => 'Deny'
-							)
-						)
-					),
-					'fields' => array()
-				);
-				
-				$user = BeaconUser::GetByUserID($user_id);
-				if (is_null($user) === false) {
-					if ($user->IsAnonymous()) {
-						$username = 'Anonymous';
-					} else {
-						$username = $user->Username() . '#' . $user->Suffix();
-					}
-					$attachment['fields'][] = array(
-						'title' => 'Author',
-						'value' => $username
-					);
-				}
-				
-				$obj = array(
-					'text' => 'Request to publish document',
-					'attachments' => array($attachment)
-				);
-				BeaconCommon::PostSlackRaw(json_encode($obj));	
+		if (BeaconCommon::MinVersion() < 10300107) {
+			if ($public) {
+				$this->SetPublishStatus(BeaconDocument::PUBLISH_STATUS_REQUESTED);
+			} else {
+				$this->SetPublishStatus(BeaconDocument::PUBLISH_STATUS_PRIVATE);
 			}
-		} else {
-			if ($current_status == BeaconDocument::PUBLISH_STATUS_APPROVED) {
-				$new_status = BeaconDocument::PUBLISH_STATUS_APPROVED_PRIVATE;
-			} elseif ($current_status == BeaconDocument::PUBLISH_STATUS_REQUESTED) {
-				$new_status = BeaconDocument::PUBLISH_STATUS_PRIVATE;
-			}
-		}
-		if ($new_status != $current_status) {
-			$database->BeginTransaction();
-			$database->Query('UPDATE documents SET published = $2 WHERE document_id = $1;', $document_id, $new_status);
-			$database->Commit();
 		}
 		
 		return true;

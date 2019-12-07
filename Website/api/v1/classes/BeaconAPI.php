@@ -167,7 +167,7 @@ abstract class BeaconAPI {
 		return self::$user_id;
 	}
 	
-	public static function ObjectID() {
+	public static function ObjectID(int $place = 0) {
 		if (!isset($_SERVER['PATH_INFO'])) {
 			return null;
 		}
@@ -177,11 +177,11 @@ abstract class BeaconAPI {
 			return null;
 		}
 		
-		if (empty($request[0])) {
+		if (empty($request[$place])) {
 			return null;
 		}
 		
-		return $request[0];
+		return $request[$place];
 	}
 	
 	public static function ObjectCount() {
