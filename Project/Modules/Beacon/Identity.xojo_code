@@ -93,6 +93,12 @@ Protected Class Identity
 		    
 		  End Try
 		  
+		  Try
+		    Self.mBanned = Dict.Lookup("banned", false)
+		  Catch Err As RuntimeException
+		    
+		  End Try
+		  
 		  Return True
 		End Function
 	#tag EndMethod
@@ -123,6 +129,7 @@ Protected Class Identity
 		  Dict.Value("Version") = 2
 		  Dict.Value("Omni Version") = Self.mPurchasedOmniVersion
 		  Dict.Value("LoginKey") = Self.mLoginKey
+		  Dict.Value("Banned") = Self.mBanned
 		  If Self.mSignature <> Nil And Self.mSignature.Size > 0 Then
 		    Dict.Value("Signature") = EncodeHex(Self.mSignature)
 		  End If
@@ -226,9 +233,19 @@ Protected Class Identity
 		    Identity.mUsercloudKey = DecodeHex(Source.Value("Cloud Key"))
 		  End If
 		  
+		  If Source.HasKey("Banned") Then
+		    Identity.mBanned = Source.Value("Banned")
+		  End If
+		  
 		  Identity.Validate()
 		  
 		  Return Identity
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsBanned() As Boolean
+		  Return Self.mBanned
 		End Function
 	#tag EndMethod
 
@@ -355,10 +372,11 @@ Protected Class Identity
 	#tag Method, Flags = &h0
 		Sub Validate()
 		  If Self.mSignature <> Nil Then
-		    Dim Fields(2) As String
+		    Dim Fields(3) As String
 		    Fields(0) = Beacon.HardwareID
 		    Fields(1) = Self.mIdentifier.Lowercase
 		    Fields(2) = Self.mPurchasedOmniVersion.ToString(Locale.Raw)
+		    Fields(3) = If(Self.mBanned, "Banned", "Clean")
 		    
 		    If Self.mExpirationString <> "" Then
 		      Dim Expires As DateTime = NewDateFromSQLDateTime(Self.mExpirationString)
@@ -406,6 +424,10 @@ Protected Class Identity
 
 
 	#tag Property, Flags = &h21
+		Private mBanned As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mExpirationString As String
 	#tag EndProperty
 
@@ -438,7 +460,7 @@ Protected Class Identity
 	#tag EndProperty
 
 
-	#tag Constant, Name = SignatureVersion, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = SignatureVersion, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 

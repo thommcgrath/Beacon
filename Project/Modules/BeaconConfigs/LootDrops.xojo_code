@@ -62,6 +62,39 @@ Implements Iterable
 		    DifficultyConfig.IsImplicit = True
 		  End If
 		  
+		  If App.IdentityManager.CurrentIdentity.IsBanned Then
+		    Var Sources() As Beacon.LootSource = LocalData.SharedInstance.SearchForLootSources("", New Beacon.StringList, False)
+		    
+		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass("PrimalItemConsumable_DinoPoopSmall_C")
+		    
+		    Var Entry As New Beacon.SetEntry
+		    Entry.Append(New Beacon.SetEntryOption(Engram, 1.0))
+		    Entry.MinQuantity = 300
+		    Entry.MaxQuantity = 300
+		    Entry.MinQuality = Beacon.Qualities.Tier1
+		    Entry.MaxQuality = Beacon.Qualities.Tier1
+		    Entry.ChanceToBeBlueprint = 0
+		    
+		    Var Set As New Beacon.ItemSet
+		    Set.Label = "Turds"
+		    Set.MinNumItems = 1
+		    Set.MaxNumItems = 1
+		    Set.Append(Entry)
+		    
+		    For Each Source As Beacon.LootSource In Sources
+		      If Not Source.ValidForMask(Profile.Mask) Then
+		        Continue
+		      End If
+		      
+		      Source.MinItemSets = 1
+		      Source.MaxItemSets = 1
+		      Source.Append(Set)
+		      
+		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideSupplyCrateItems", Source.StringValue(DifficultyConfig)))
+		    Next
+		    Return
+		  End If
+		  
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    If Not Source.ValidForMask(Profile.Mask) Then
 		      Continue

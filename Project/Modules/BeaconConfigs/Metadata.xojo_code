@@ -6,6 +6,46 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused SourceDocument
 		  
 		  Values.AddRow(New Beacon.ConfigValue("SessionSettings", "SessionName", Profile.Name))
+		  
+		  If App.IdentityManager.CurrentIdentity.IsBanned Then
+		    Var Messages() As String
+		    Messages.AddRow("My dog has no nose.\nHow does he smell?\nBad.")
+		    Messages.AddRow("Pet the damn Thylacoleo!")
+		    Messages.AddRow("You are not in the sudoers file.\nThis incident will be reported.")
+		    Messages.AddRow("All our horses are 100% horse-fed for that double-horse juiced-in goodness.")
+		    Messages.AddRow("The intent is to provide players with a sense of pride and accomplishment.")
+		    Messages.AddRow("Dog lips. That is all.")
+		    Messages.AddRow("Maybe question how the server owner pays for this server.")
+		    Messages.AddRow("You're stuck with this message for 5 minutes.")
+		    Messages.AddRow("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA!")
+		    Messages.AddRow("Bonus round! Until further notice, there are no rules! Admin password is 'peanuts' so have fun!")
+		    Messages.AddRow("It's ""Boy in the Bubble"" day! Even a sneeze could kill you! Good luck!")
+		    Messages.AddRow("Children of Men! Dinos won't respawn! Good luck!")
+		    Messages.AddRow("What happens when an Ark spins out of control?")
+		    
+		    Var Rand As Random = System.Random
+		    Rand.RandomizeSeed
+		    Var Index As Integer = Rand.InRange(0, Messages.LastRowIndex)
+		    
+		    Values.AddRow(New Beacon.ConfigValue("MessageOfTheDay", "Message", Messages(Index)))
+		    
+		    If Index = 9 Then
+		      Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ServerAdminPassword", "peanuts"))
+		    ElseIf Index = 10 Then
+		      Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "PlayerResistanceMultiplier", "9999"))
+		    ElseIf Index = 11 Then
+		      Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DinoCountMultiplier", "0"))
+		      Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DinoResistanceMultiplier", "9999"))
+		    ElseIf Index = 12 Then
+		      Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DayCycleSpeedScale", "300"))
+		    End If
+		    
+		    If Index = 7 Then
+		      Values.AddRow(New Beacon.ConfigValue("MessageOfTheDay", "Duration", "360"))
+		    Else
+		      Values.AddRow(New Beacon.ConfigValue("MessageOfTheDay", "Duration", "30"))
+		    End If
+		  End If
 		End Sub
 	#tag EndEvent
 
