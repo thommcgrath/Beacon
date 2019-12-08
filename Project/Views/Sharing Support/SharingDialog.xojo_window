@@ -544,7 +544,11 @@ End
 		  #Pragma Unused Request
 		  
 		  If Response.HTTPStatus <> 200 Or Response.JSONParsed = False Then
-		    Self.CommunityStatusField.Value = "Unknown"
+		    If Response.HTTPStatus = 403 Then
+		      Self.CommunityStatusField.Value = "Not Authorized"
+		    Else
+		      Self.CommunityStatusField.Value = "Unknown"
+		    End If
 		    Self.CommunityShareButton.Caption = "Share"
 		    Self.CommunityShareButton.Enabled = False
 		    Return
