@@ -290,7 +290,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim NewURL As String = Beacon.DocumentURL.TypeCloud + "://" + BeaconAPI.URL("/document.php/" + Self.mController.Document.DocumentID).Middle(8)
+		  Dim NewURL As String = Beacon.DocumentURL.TypeCloud + "://" + BeaconAPI.URL("/document/" + Self.mController.Document.DocumentID).Middle(8)
 		  Self.mController.Document.Title = Self.TitleField.Value
 		  Self.mController.SaveAs(NewURL)
 		  Self.mResponseState = Self.StateSaved

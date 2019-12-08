@@ -558,7 +558,7 @@ End
 		  Dim Params As New Dictionary
 		  
 		  // Do not sign this request so we get only truly public documents
-		  Dim Request As New BeaconAPI.Request("document.php", "GET", Params, AddressOf APICallback_CommunityDocumentsList)
+		  Dim Request As New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_CommunityDocumentsList)
 		  Self.APISocket.Start(Request)
 		  
 		  If Self.View = Self.ViewCommunityDocuments Then

@@ -10,7 +10,7 @@ Begin BeaconDialog AddSpawnPointDialog
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   400
+   Height          =   450
    ImplicitInstance=   False
    MacProcID       =   0
    MaximumHeight   =   32000
@@ -50,7 +50,7 @@ Begin BeaconDialog AddSpawnPointDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   360
+      Top             =   410
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -82,7 +82,7 @@ Begin BeaconDialog AddSpawnPointDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   360
+      Top             =   410
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -102,11 +102,11 @@ Begin BeaconDialog AddSpawnPointDialog
       InitialParent   =   ""
       Italic          =   False
       Left            =   20
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
@@ -116,7 +116,7 @@ Begin BeaconDialog AddSpawnPointDialog
       TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   329
+      Top             =   314
       Transparent     =   False
       Underline       =   False
       Value           =   "Mode:"
@@ -149,16 +149,16 @@ Begin BeaconDialog AddSpawnPointDialog
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   228
+      Height          =   214
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
       Italic          =   False
       Left            =   84
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
       RowSelectionType=   "1"
@@ -196,7 +196,7 @@ Begin BeaconDialog AddSpawnPointDialog
       LockRight       =   False
       LockTop         =   True
       Multiline       =   False
-      Scope           =   0
+      Scope           =   2
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -228,7 +228,6 @@ Begin BeaconDialog AddSpawnPointDialog
       SelectionStyle  =   "0"
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Top             =   52
       Transparent     =   False
       Visible         =   True
@@ -312,11 +311,43 @@ Begin BeaconDialog AddSpawnPointDialog
       Visible         =   True
       Width           =   52
    End
-   Begin UITweaks.ResizedPopupMenu ModeMenu
+   Begin CheckBox LoadDefaultsCheck
       AllowAutoDeactivate=   True
       Bold            =   False
+      Caption         =   "Load Default Spawns"
       DataField       =   ""
       DataSource      =   ""
+      Enabled         =   False
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   310
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   13
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   314
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      VisualState     =   "0"
+      Width           =   200
+   End
+   Begin RadioButton OverrideRadio
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Override Spawn Point"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -324,7 +355,6 @@ Begin BeaconDialog AddSpawnPointDialog
       Height          =   20
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Replace default spawns\nAdd to default spawns\nRemove from default spawns"
       Italic          =   False
       Left            =   84
       LockBottom      =   True
@@ -333,23 +363,21 @@ Begin BeaconDialog AddSpawnPointDialog
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
-      SelectedRowIndex=   0
-      TabIndex        =   12
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   328
+      Top             =   314
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
-      Width           =   284
+      Width           =   214
    End
-   Begin CheckBox LoadDefaultsCheck
+   Begin RadioButton AppendRadio
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "Load Default Spawns"
-      DataField       =   ""
-      DataSource      =   ""
+      Caption         =   "Add to Default Spawns"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -358,24 +386,53 @@ Begin BeaconDialog AddSpawnPointDialog
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   380
-      LockBottom      =   False
+      Left            =   84
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Scope           =   2
-      TabIndex        =   13
+      TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   328
+      Top             =   346
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
-      VisualState     =   "0"
-      Width           =   200
+      Width           =   214
+   End
+   Begin RadioButton RemoveRadio
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Remove from Default Spawns"
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   84
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   16
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   378
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   214
    End
 End
 #tag EndWindow
@@ -385,12 +442,12 @@ End
 		Sub Open()
 		  Self.SwapButtons()
 		  
-		  If Self.mUIMode = Self.UIModeDuplicate Then
-		    Self.ModeLabel.Visible = False
-		    Self.ModeMenu.Visible = False
-		    Self.LoadDefaultsCheck.Visible = False
-		    Self.List.Height = Self.List.Height + (Self.ModeMenu.Bottom - Self.List.Bottom)
-		  End If
+		  // If Self.mUIMode = Self.UIModeDuplicate Then
+		  // Self.ModeLabel.Visible = False
+		  // Self.ModeMenu.Visible = False
+		  // Self.LoadDefaultsCheck.Visible = False
+		  // Self.List.Height = Self.List.Height + (Self.ModeMenu.Bottom - Self.List.Bottom)
+		  // End If
 		  
 		  Self.UpdateFilter()
 		End Sub
@@ -399,7 +456,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckActionEnabled()
-		  Var Enabled As Boolean = Self.List.SelectedRowCount > 0
+		  Self.LoadDefaultsCheck.Enabled = Self.OverrideRadio.Value
+		  
+		  Var Enabled As Boolean = Self.OverrideRadio.Value Or Self.AppendRadio.Value Or Self.RemoveRadio.Value
 		  If Self.ActionButton.Enabled <> Enabled Then
 		    Self.ActionButton.Enabled = Enabled
 		  End If
@@ -418,7 +477,7 @@ End
 		    If Config <> Nil Then
 		      Var SpawnPoints() As Beacon.SpawnPoint = Config.All
 		      For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
-		        Self.mDefinedSpawns.Value(SpawnPoint.Path) = True
+		        Self.mDefinedSpawns.Value(SpawnPoint.UniqueKey) = True
 		      Next
 		    End If
 		  End If
@@ -468,7 +527,11 @@ End
 		  Self.List.RemoveAllRows()
 		  Dim MapLabels As New Dictionary
 		  For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
-		    If Not SpawnPoint.ValidForMask(Self.mAvailability) Or Self.mDefinedSpawns.HasKey(SpawnPoint.Path) Then
+		    If Not SpawnPoint.ValidForMask(Self.mAvailability) Then
+		      Continue
+		    End If
+		    
+		    If Self.mDefinedSpawns.HasKey(SpawnPoint.Path + ":Override") Or (Self.mDefinedSpawns.HasKey(SpawnPoint.Path + ":Append") And Self.mDefinedSpawns.HasKey(SpawnPoint.Path + ":Remove")) Then
 		      Continue
 		    End If
 		    
@@ -563,14 +626,13 @@ End
 	#tag Event
 		Sub Action()
 		  Var Mode As Integer
-		  Select Case Self.ModeMenu.SelectedRowIndex
-		  Case 0
+		  If Self.OverrideRadio.Value Then
 		    Mode = Beacon.SpawnPoint.ModeOverride
-		  Case 1
+		  ElseIf Self.AppendRadio.Value Then
 		    Mode = Beacon.SpawnPoint.ModeAppend
-		  Case 2
+		  ElseIf Self.RemoveRadio.Value Then
 		    Mode = Beacon.SpawnPoint.ModeRemove
-		  End Select
+		  End If
 		  Var ClearPoints As Boolean = Mode <> Beacon.SpawnPoint.ModeOverride Or Self.LoadDefaultsCheck.Value = False
 		  
 		  For I As Integer = 0 To Self.List.RowCount - 1
@@ -604,6 +666,42 @@ End
 #tag Events List
 	#tag Event
 		Sub Change()
+		  Var SupportedModes As Integer = Beacon.SpawnPoint.ModeOverride Or Beacon.SpawnPoint.ModeAppend Or Beacon.SpawnPoint.ModeRemove
+		  For I As Integer = 0 To Me.RowCount - 1
+		    If Not Me.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Var DefinedModes As Integer
+		    Var Point As Beacon.SpawnPoint = Me.RowTagAt(I)
+		    If Self.mDefinedSpawns.HasKey(Point.Path + ":Override") Then
+		      // Include Append and Remove here so they cannot be selected if Override is already defined
+		      DefinedModes = DefinedModes Or Beacon.SpawnPoint.ModeOverride Or Beacon.SpawnPoint.ModeAppend Or Beacon.SpawnPoint.ModeRemove
+		    End If
+		    If Self.mDefinedSpawns.HasKey(Point.Path + ":Append") Then
+		      DefinedModes = DefinedModes Or Beacon.SpawnPoint.ModeOverride Or Beacon.SpawnPoint.ModeAppend
+		    End If
+		    If Self.mDefinedSpawns.HasKey(Point.Path + ":Remove") Then
+		      DefinedModes = DefinedModes Or Beacon.SpawnPoint.ModeOverride Or Beacon.SpawnPoint.ModeRemove
+		    End If
+		    
+		    SupportedModes = SupportedModes And (Not DefinedModes)
+		  Next
+		  
+		  Self.OverrideRadio.Enabled = (SupportedModes And Beacon.SpawnPoint.ModeOverride) = Beacon.SpawnPoint.ModeOverride
+		  Self.AppendRadio.Enabled = (SupportedModes And Beacon.SpawnPoint.ModeAppend) = Beacon.SpawnPoint.ModeAppend
+		  Self.RemoveRadio.Enabled = (SupportedModes And Beacon.SpawnPoint.ModeRemove) = Beacon.SpawnPoint.ModeRemove
+		  
+		  If Self.OverrideRadio.Enabled = False And Self.OverrideRadio.Value = True Then
+		    Self.OverrideRadio.Value = False
+		  End If
+		  If Self.AppendRadio.Enabled = False And Self.AppendRadio.Value = True Then
+		    Self.AppendRadio.Value = False
+		  End If
+		  If Self.RemoveRadio.Enabled = False And Self.RemoveRadio.Value = True Then
+		    Self.RemoveRadio.Value = False
+		  End If
+		  
 		  Self.CheckActionEnabled()
 		End Sub
 	#tag EndEvent
@@ -628,10 +726,24 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ModeMenu
+#tag Events OverrideRadio
 	#tag Event
-		Sub Change()
-		  Self.LoadDefaultsCheck.Visible = Me.SelectedRowIndex = 0
+		Sub Action()
+		  Self.CheckActionEnabled()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AppendRadio
+	#tag Event
+		Sub Action()
+		  Self.CheckActionEnabled()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events RemoveRadio
+	#tag Event
+		Sub Action()
+		  Self.CheckActionEnabled()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

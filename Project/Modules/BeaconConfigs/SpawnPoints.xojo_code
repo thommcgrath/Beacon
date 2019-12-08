@@ -44,7 +44,7 @@ Implements Iterable
 		    For Each PointData As Dictionary In Points
 		      Var SpawnPoint As Beacon.SpawnPoint = Beacon.SpawnPoint.FromSaveData(PointData)
 		      If SpawnPoint <> Nil Then
-		        Self.mSpawnPoints.Value(SpawnPoint.Path) = SpawnPoint
+		        Self.mSpawnPoints.Value(Self.DictionaryKey(SpawnPoint)) = SpawnPoint
 		      End If
 		    Next
 		  Catch Err As RuntimeException
@@ -67,7 +67,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Add(SpawnPoint As Beacon.SpawnPoint)
-		  Self.mSpawnPoints.Value(SpawnPoint.Path) = SpawnPoint.ImmutableVersion
+		  Self.mSpawnPoints.Value(Self.DictionaryKey(SpawnPoint)) = SpawnPoint.ImmutableVersion
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -277,6 +277,16 @@ Implements Iterable
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Function DictionaryKey(Point As Beacon.SpawnPoint) As String
+		  If Point = Nil Then
+		    Return ""
+		  End If
+		  
+		  Return Point.UniqueKey
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.SpawnPoints
 		  #Pragma Unused CommandLineOptions
@@ -306,6 +316,15 @@ Implements Iterable
 		    Dicts.AddRow(ParsedData.Value(ConfigKey))
 		  End Try
 		  
+		  Var Mode As Integer
+		  If ConfigKey.BeginsWith("ConfigAdd") Then
+		    Mode = Beacon.SpawnPoint.ModeAppend
+		  ElseIf ConfigKey.BeginsWith("ConfigSubtract") Then
+		    Mode = Beacon.SpawnPoint.ModeRemove
+		  Else
+		    Mode = Beacon.SpawnPoint.ModeOverride
+		  End If
+		  
 		  Var SpawnClasses As New Dictionary
 		  For Each Obj As Variant In Dicts
 		    If IsNull(Obj) Or Obj.Type <> Variant.TypeObject Or (Obj IsA Dictionary) = False Then
@@ -328,19 +347,15 @@ Implements Iterable
 		        If SpawnPoint = Nil Then
 		          SpawnPoint = Beacon.SpawnPoint.CreateFromClass(ClassString)
 		        End If
-		        SpawnClasses.Value(ClassString) = SpawnPoint.Path
+		        
+		        Var Mutable As Beacon.MutableSpawnPoint = SpawnPoint.MutableVersion
+		        Mutable.Mode = Mode
+		        SpawnPoint = Mutable
+		        SpawnClasses.Value(ClassString) = DictionaryKey(SpawnPoint)
 		      End If
 		      
 		      Var Clone As Beacon.MutableSpawnPoint = SpawnPoint.MutableVersion
 		      Clone.ResizeTo(-1)
-		      
-		      If ConfigKey.BeginsWith("ConfigAdd") Then
-		        Clone.Mode = Beacon.SpawnPoint.ModeAppend
-		      ElseIf ConfigKey.BeginsWith("ConfigSubtract") Then
-		        Clone.Mode = Beacon.SpawnPoint.ModeRemove
-		      Else
-		        Clone.Mode = Beacon.SpawnPoint.ModeOverride
-		      End If
 		      
 		      // make changes
 		      If Dict.HasKey("NPCSpawnEntries") Then
@@ -500,7 +515,7 @@ Implements Iterable
 		        Next
 		      End If
 		      
-		      SpawnPoints.mSpawnPoints.Value(Clone.Path) = Clone.ImmutableVersion
+		      SpawnPoints.mSpawnPoints.Value(DictionaryKey(Clone)) = Clone.ImmutableVersion
 		    Catch Err As RuntimeException
 		    End Try
 		  Next

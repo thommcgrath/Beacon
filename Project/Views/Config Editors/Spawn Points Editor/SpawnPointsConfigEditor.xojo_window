@@ -31,6 +31,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      Borders         =   0
       Caption         =   "Spawn Points"
       DoubleBuffer    =   False
       Enabled         =   True
@@ -195,17 +196,9 @@ Begin ConfigEditor SpawnPointsConfigEditor
       Visible         =   True
       Width           =   1
    End
-   Begin SpawnPointEditor Editor
+   Begin PagePanel Pages
       AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   False
-      AllowTabs       =   True
-      Backdrop        =   0
-      BackgroundColor =   &cFFFFFF00
-      DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   True
-      HasBackgroundColor=   False
       Height          =   548
       Index           =   -2147483648
       InitialParent   =   ""
@@ -215,15 +208,105 @@ Begin ConfigEditor SpawnPointsConfigEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PanelCount      =   2
+      Panels          =   ""
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   6
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
-      Transparent     =   True
+      Transparent     =   False
+      Value           =   0
       Visible         =   True
       Width           =   729
+      Begin SpawnPointEditor Editor
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   548
+         InitialParent   =   "Pages"
+         Left            =   251
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   729
+      End
+      Begin StatusBar NoSelectionStatusBar
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         Borders         =   2
+         Caption         =   ""
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   21
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   251
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   527
+         Transparent     =   True
+         Visible         =   True
+         Width           =   729
+      End
+      Begin LogoFillCanvas NoSelectionFillCanvas
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         Caption         =   "No Selection"
+         DoubleBuffer    =   False
+         Enabled         =   True
+         Height          =   527
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   251
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   729
+      End
    End
 End
 #tag EndWindow
@@ -329,8 +412,8 @@ End
 		  Self.List.Width = ListWidth
 		  Self.ControlToolbarSeparator.Width = ListWidth
 		  Self.ListStatus.Width = ListWidth
-		  Self.Editor.Left = Self.MainSeparator.Left + Self.MainSeparator.Width
-		  Self.Editor.Width = EditorWidth
+		  Self.Pages.Left = Self.MainSeparator.Left + Self.MainSeparator.Width
+		  Self.Pages.Width = EditorWidth
 		  
 		  Preferences.SpawnPointsSplitterPosition = ListWidth
 		End Sub
@@ -476,6 +559,7 @@ End
 		  
 		  Self.Editor.SpawnPoints = SpawnPoints
 		  Self.ControlToolbar.DuplicateButton.Enabled = Me.SelectedRowCount = 1
+		  Self.Pages.SelectedPanelIndex = If(SpawnPoints.LastRowIndex = -1, 0, 1)
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndEvent

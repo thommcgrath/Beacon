@@ -53,6 +53,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  Self.mModName = Source.mModName
 		  Self.mModified = Source.mModified
 		  Self.mLimits = Source.mLimits.Clone
+		  Self.mMode = Source.mMode
 		  
 		  Self.mSets.ResizeTo(Source.mSets.LastRowIndex)
 		  For I As Integer = Source.mSets.FirstRowIndex To Source.mSets.LastRowIndex
@@ -435,6 +436,21 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function UniqueKey() As String
+		  Var Key As String = Self.Path
+		  Select Case Self.Mode
+		  Case Beacon.SpawnPoint.ModeOverride
+		    Key = Key + ":Override"
+		  Case Beacon.SpawnPoint.ModeAppend
+		    Key = Key + ":Append"
+		  Case Beacon.SpawnPoint.ModeRemove
+		    Key = Key + ":Remove"
+		  End Select
+		  Return Key
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h1
 		Protected mAvailability As UInt64
@@ -485,13 +501,13 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndProperty
 
 
-	#tag Constant, Name = ModeAppend, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag Constant, Name = ModeAppend, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = ModeOverride, Type = Double, Dynamic = False, Default = \"0", Scope = Public
+	#tag Constant, Name = ModeOverride, Type = Double, Dynamic = False, Default = \"1", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = ModeRemove, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag Constant, Name = ModeRemove, Type = Double, Dynamic = False, Default = \"4", Scope = Public
 	#tag EndConstant
 
 

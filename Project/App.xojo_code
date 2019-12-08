@@ -506,7 +506,7 @@ Implements NotificationKit.Receiver
 		    Dim Idx As Integer = URL.IndexOf(LegacyURL)
 		    If Idx > -1 Then
 		      Dim DocID As String = URL.Middle(Idx + LegacyURL.Length)
-		      URL = BeaconAPI.URL("/document.php/" + DocID)
+		      URL = BeaconAPI.URL("/document/" + DocID)
 		    End If
 		    
 		    Dim FileURL As String = "https://" + URL
