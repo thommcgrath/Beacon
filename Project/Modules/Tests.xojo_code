@@ -19,6 +19,7 @@ Protected Module Tests
 		    TestUUID()
 		    TestObjectResolution()
 		    TestBlueprintSerialization()
+		    TestLimitCalculations()
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -113,6 +114,20 @@ Protected Module Tests
 		  End Try
 		  
 		  Call Assert(TestValue = Decrypted, "Symmetric(legacy) decrypted value does not match original")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestLimitCalculations()
+		  Const InitialValueConstant = 100.0
+		  Const StateModifierScale = 0.001
+		  Const RandomizerRangeMultiplier = 0.1
+		  
+		  Var Limit As Double = BeaconConfigs.StatLimits.ComputeEffectiveLimit(19800.0, InitialValueConstant, StateModifierScale, RandomizerRangeMultiplier)
+		  Call Assert(Limit = 298.0, "Longneck effective damage limit computed as " + Limit.PrettyText + " instead of 298.0.")
+		  
+		  Var Value As Double = BeaconConfigs.StatLimits.SolveForDesiredLimit(298.0, InitialValueConstant, StateModifierScale, RandomizerRangeMultiplier)
+		  Call Assert(Value = 19800.0, "Longneck damage limit value computed as " + Value.PrettyText + " instead of 19800.0.")
 		End Sub
 	#tag EndMethod
 

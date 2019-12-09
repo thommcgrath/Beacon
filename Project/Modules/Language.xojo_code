@@ -82,6 +82,8 @@ Protected Module Language
 		    Return "Day and Night Cycle"
 		  Case BeaconConfigs.SpawnPoints.ConfigName
 		    Return "Creature Spawn Points"
+		  Case BeaconConfigs.StatLimits.ConfigName
+		    Return "Item Stat Limits"
 		  End Select
 		End Function
 	#tag EndMethod

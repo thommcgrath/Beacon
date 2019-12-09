@@ -1126,6 +1126,8 @@ End
 		        NewPanel = New DayCycleConfigEditor(Self.mController)
 		      Case BeaconConfigs.SpawnPoints.ConfigName
 		        NewPanel = New SpawnPointsConfigEditor(Self.mController)
+		      Case BeaconConfigs.StatLimits.ConfigName
+		        NewPanel = New StatLimitsConfigEditor(Self.mController)
 		      End Select
 		      If NewPanel <> Nil Then
 		        Self.Panels.Value(Tag) = NewPanel
