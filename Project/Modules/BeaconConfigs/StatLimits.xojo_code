@@ -36,6 +36,24 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
+		Sub GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		  #Pragma Unused SourceDocument
+		  #Pragma Unused Profile
+		  
+		  For I As Integer = 0 To Self.mValues.LastRowIndex
+		    If Self.mValues(I) = Nil Then
+		      Continue
+		    End If
+		    
+		    Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ClampItemStats", "True"))
+		    Return
+		  Next
+		  
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ClampItemStats", "False"))
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
 		  #Pragma Unused Identity
 		  #Pragma Unused Document

@@ -635,7 +635,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       AllowRowReordering=   False
       Bold            =   False
       ColumnCount     =   9
-      ColumnWidths    =   "*,75,75,75,75,75,75,75,75"
+      ColumnWidths    =   "*,75,75,75,0,75,75,0,0"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
