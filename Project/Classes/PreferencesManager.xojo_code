@@ -364,8 +364,10 @@ Protected Class PreferencesManager
 
 	#tag Method, Flags = &h1
 		Protected Sub Write()
-		  Dim Writer As New Beacon.JSONWriter(Self.mValues, Self.mFile)
-		  Writer.Start
+		  Try
+		    Call Self.mFile.Write(Beacon.GenerateJSON(Self.mValues, True))
+		  Catch Err As RuntimeException
+		  End Try
 		End Sub
 	#tag EndMethod
 
