@@ -1980,7 +1980,8 @@ End
 		Sub Action()
 		  Self.SetLoginStatus("Logging in…")
 		  
-		  Self.LoginSocket.Send("POST", BeaconAPI.URL("session.php"))
+		  Self.LoginSocket.RequestHeader("Authorization") = "Basic " + EncodeBase64(Self.LoginEmailField.Value.Trim + ":" + Self.LoginPasswordField.Value, 0)
+		  Self.LoginSocket.Send("POST", BeaconAPI.URL("session"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -2418,16 +2419,6 @@ End
 		  Self.SetLoginStatus("")
 		  Self.ShowError("Unable to login", e)
 		End Sub
-	#tag EndEvent
-	#tag Event
-		Function AuthenticationRequested(realm As String, ByRef name As String, ByRef password As String) As Boolean
-		  #Pragma Unused Realm
-		  
-		  Name = Self.LoginEmailField.Value.Trim
-		  Password = Self.LoginPasswordField.Value
-		  
-		  Return True
-		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
