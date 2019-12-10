@@ -128,7 +128,7 @@ abstract class BeaconAPI {
 							$content .= chr(10) . self::Body();
 						}
 						
-						if ($user->CheckSignature($content, hex2bin($password))) {
+						if ($user->CheckSignature($content, $password)) {
 							self::$user_id = $username;
 							self::$auth_style = self::AUTH_STYLE_PUBLIC_KEY;
 							$authorized = true;
