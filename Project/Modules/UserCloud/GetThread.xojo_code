@@ -34,20 +34,26 @@ Inherits Thread
 		  
 		  Dim RemotePath As String = URL.Middle(BaseURL.Length)
 		  Dim LocalFile As FolderItem = LocalFile(RemotePath)
-		  If LocalFile.Exists Then
-		    Dim CreationDate As DateTime = LocalFile.CreationDateTime
-		    Dim ModificationDate As DateTime = LocalFile.ModificationDateTime
-		    Dim Stream As BinaryStream = BinaryStream.Open(LocalFile, True)
-		    Stream.BytePosition = 0
-		    Stream.Length = 0
-		    Stream.Write(Content)
-		    Stream.Close
-		    LocalFile.CreationDateTime = CreationDate
-		    LocalFile.ModificationDateTime = ModificationDate
-		  Else
-		    Dim Stream As BinaryStream = BinaryStream.Create(LocalFile, True)
-		    Stream.Write(Content)
-		    Stream.Close
+		  If LocalFile <> Nil Then
+		    Try
+		      If LocalFile.Exists Then
+		        Dim CreationDate As DateTime = LocalFile.CreationDateTime
+		        Dim ModificationDate As DateTime = LocalFile.ModificationDateTime
+		        Dim Stream As BinaryStream = BinaryStream.Open(LocalFile, True)
+		        Stream.BytePosition = 0
+		        Stream.Length = 0
+		        Stream.Write(Content)
+		        Stream.Close
+		        LocalFile.CreationDateTime = CreationDate
+		        LocalFile.ModificationDateTime = ModificationDate
+		      Else
+		        Dim Stream As BinaryStream = BinaryStream.Create(LocalFile, True)
+		        Stream.Write(Content)
+		        Stream.Close
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log("Unable to write to " + LocalFile.NativePath + ", Error " + Err.ErrorNumber.ToString + ": " + Err.Explanation)
+		    End Try
 		  End If
 		  
 		  CleanupRequest(Self.mRequest)
