@@ -33,6 +33,7 @@ Begin Window DocumentImportWindow
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
+      DeployRequired  =   False
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True

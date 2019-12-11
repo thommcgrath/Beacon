@@ -37,6 +37,7 @@ Begin ConfigEditor MapsConfigEditor
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   444
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   14
       LockBottom      =   True
@@ -44,6 +45,7 @@ Begin ConfigEditor MapsConfigEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      Mask            =   ""
       Scope           =   2
       TabIndex        =   8
       TabPanelIndex   =   0

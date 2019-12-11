@@ -53,6 +53,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Top             =   88
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   "0"
       Width           =   142
@@ -85,6 +86,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Top             =   20
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   "0"
       Width           =   142
@@ -117,6 +119,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Top             =   54
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   "0"
       Width           =   142
@@ -149,6 +152,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Top             =   88
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   "0"
       Width           =   142
@@ -181,6 +185,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Top             =   122
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   "0"
       Width           =   142
@@ -213,6 +218,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Top             =   20
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   "0"
       Width           =   142
@@ -245,6 +251,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Top             =   122
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   "0"
       Width           =   142
@@ -277,6 +284,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Top             =   54
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   "0"
       Width           =   142
@@ -662,8 +670,10 @@ Begin ConfigEditor StatLimitsConfigEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      RequiresSelection=   False
       RowSelectionType=   "0"
       Scope           =   2
+      SelectionChangeBlocked=   False
       TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True

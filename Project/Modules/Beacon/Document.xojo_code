@@ -964,14 +964,6 @@ Protected Class Document
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="IsPublic"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Left"
 			Visible=true
 			Group="Position"

@@ -134,6 +134,7 @@ Begin BeaconContainer SpawnPointEditor
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
+      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False

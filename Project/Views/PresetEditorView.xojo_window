@@ -1007,11 +1007,11 @@ End
 		  Next
 		  
 		  If MapsValid = 0 Then
-		    Self.ContentsList.CellCheckBoxStateAt(Index, Self.ColumnIncluded) = Checkbox.CheckedStates.Unchecked
+		    Self.ContentsList.CellCheckBoxStateAt(Index, Self.ColumnIncluded) = Checkbox.VisualStates.Unchecked
 		  ElseIf MapsInvalid = 0 Then
-		    Self.ContentsList.CellCheckBoxStateAt(Index, Self.ColumnIncluded) = Checkbox.CheckedStates.Checked
+		    Self.ContentsList.CellCheckBoxStateAt(Index, Self.ColumnIncluded) = Checkbox.VisualStates.Checked
 		  Else
-		    Self.ContentsList.CellCheckBoxStateAt(Index, Self.ColumnIncluded) = Checkbox.CheckedStates.Indeterminate
+		    Self.ContentsList.CellCheckBoxStateAt(Index, Self.ColumnIncluded) = Checkbox.VisualStates.Indeterminate
 		  End If
 		  
 		  Self.ContentsList.RowTagAt(Index) = Entry
@@ -1305,8 +1305,8 @@ End
 		  
 		  Select Case Column
 		  Case Self.ColumnIncluded
-		    Dim State As CheckBox.CheckedStates = Me.CellCheckBoxStateAt(Row, Column)
-		    If State = Checkbox.CheckedStates.Indeterminate Then
+		    Dim State As Checkbox.VisualStates = Me.CellCheckBoxStateAt(Row, Column)
+		    If State = Checkbox.VisualStates.Indeterminate Then
 		      Return
 		    End If
 		    
@@ -1315,8 +1315,8 @@ End
 		      For I As Integer = Me.RowCount - 1 DownTo 0
 		        Dim Entry As Beacon.PresetEntry = Me.RowTagAt(I)
 		        For Each Map As Beacon.Map In Maps
-		          If Entry.ValidForMap(Map) <> (State = Checkbox.CheckedStates.Checked) Then
-		            Entry.ValidForMap(Map) = (State = Checkbox.CheckedStates.Checked)
+		          If Entry.ValidForMap(Map) <> (State = Checkbox.VisualStates.Checked) Then
+		            Entry.ValidForMap(Map) = (State = Checkbox.VisualStates.Checked)
 		            Me.CellCheckBoxStateAt(I, Column) = State
 		            Self.Changed = True
 		          End If
@@ -1325,8 +1325,8 @@ End
 		    Else
 		      Dim Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
 		      For Each Map As Beacon.Map In Maps
-		        If Entry.ValidForMap(Map) <> (State = Checkbox.CheckedStates.Checked) Then
-		          Entry.ValidForMap(Map) = (State = Checkbox.CheckedStates.Checked)
+		        If Entry.ValidForMap(Map) <> (State = Checkbox.VisualStates.Checked) Then
+		          Entry.ValidForMap(Map) = (State = Checkbox.VisualStates.Checked)
 		          Self.Changed = True
 		        End If
 		      Next

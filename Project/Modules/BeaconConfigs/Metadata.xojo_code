@@ -222,14 +222,6 @@ Inherits Beacon.ConfigGroup
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="IsPublic"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Title"
 			Visible=false
 			Group="Behavior"

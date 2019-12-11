@@ -8,6 +8,14 @@ Inherits CheckBox
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Value"
+			Visible=false
+			Group="Initial State"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"

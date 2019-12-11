@@ -1,7 +1,7 @@
 Type=Desktop
-RBProjectVersion=2019.021
+RBProjectVersion=2019.03
 MinIDEVersion=20150400
-OrigIDEVersion=20190210
+OrigIDEVersion=20190300
 Class=App;App.xojo_code;&h00000000283BFFFF;&h0000000000000000;false
 MenuBar=MainMenuBar;MainMenuBar.xojo_menu;&h0000000030BBA7FF;&h0000000000000000;false
 FileTypeSet=BeaconFileTypes;BeaconFileTypes.xojo_filetypeset;&h0000000029A467FF;&h0000000000000000;false

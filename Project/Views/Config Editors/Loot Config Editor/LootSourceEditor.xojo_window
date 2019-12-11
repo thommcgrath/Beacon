@@ -139,7 +139,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -750,7 +750,7 @@ End
 		  
 		  #if false
 		    If Self.mSources.LastRowIndex > -1 Then
-		      Dim DuplicatesState As CheckBox.CheckedStates = if(Self.mSources(0).SetsRandomWithoutReplacement, CheckBox.CheckedStates.Checked, CheckBox.CheckedStates.Unchecked)
+		      Dim DuplicatesState As Checkbox.VisualStates = if(Self.mSources(0).SetsRandomWithoutReplacement, Checkbox.VisualStates.Checked, Checkbox.VisualStates.Unchecked)
 		      Dim Label As String = Self.mSources(0).Label
 		      Dim MinSets As Integer = Self.mSources(0).MinItemSets
 		      Dim MaxSets As Integer = Self.mSources(0).MaxItemSets
@@ -763,9 +763,9 @@ End
 		          Label = ""
 		        End If
 		        
-		        Dim State As CheckBox.CheckedStates = if(Self.mSources(I).SetsRandomWithoutReplacement, CheckBox.CheckedStates.Checked, CheckBox.CheckedStates.Unchecked)
+		        Dim State As Checkbox.VisualStates = if(Self.mSources(I).SetsRandomWithoutReplacement, Checkbox.VisualStates.Checked, Checkbox.VisualStates.Unchecked)
 		        If State <> DuplicatesState Then
-		          DuplicatesState = CheckBox.CheckedStates.Indeterminate
+		          DuplicatesState = Checkbox.VisualStates.Indeterminate
 		        End If
 		      Next
 		    End If
