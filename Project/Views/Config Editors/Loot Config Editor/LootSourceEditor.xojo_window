@@ -698,10 +698,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RebuildSetList()
+		  If Self.SetList = Nil Then
+		    Return
+		  End If
+		  
 		  Dim SelectedSetNames() As String
-		  For I As Integer = 0 To SetList.RowCount - 1
-		    If SetList.Selected(I) Then
-		      SelectedSetNames.AddRow(SetList.CellValueAt(I, 0))
+		  For I As Integer = 0 To Self.SetList.RowCount - 1
+		    If Self.SetList.Selected(I) Then
+		      SelectedSetNames.AddRow(Self.SetList.CellValueAt(I, 0))
 		    End If
 		  Next
 		  
@@ -747,29 +751,6 @@ End
 		  Self.mSorting = True
 		  SetList.Sort
 		  Self.mSorting = False
-		  
-		  #if false
-		    If Self.mSources.LastRowIndex > -1 Then
-		      Dim DuplicatesState As Checkbox.VisualStates = if(Self.mSources(0).SetsRandomWithoutReplacement, Checkbox.VisualStates.Checked, Checkbox.VisualStates.Unchecked)
-		      Dim Label As String = Self.mSources(0).Label
-		      Dim MinSets As Integer = Self.mSources(0).MinItemSets
-		      Dim MaxSets As Integer = Self.mSources(0).MaxItemSets
-		      
-		      For I As Integer = 1 To Self.mSources.LastRowIndex
-		        MinSets = Min(MinSets, Self.mSources(I).MinItemSets)
-		        MaxSets = Max(MaxSets, Self.mSources(I).MaxItemSets)
-		        
-		        If Self.mSources(I).Label <> Label Then
-		          Label = ""
-		        End If
-		        
-		        Dim State As Checkbox.VisualStates = if(Self.mSources(I).SetsRandomWithoutReplacement, Checkbox.VisualStates.Checked, Checkbox.VisualStates.Unchecked)
-		        If State <> DuplicatesState Then
-		          DuplicatesState = Checkbox.VisualStates.Indeterminate
-		        End If
-		      Next
-		    End If
-		  #endif
 		  
 		  If Self.SimulatorVisible Then
 		    Self.Simulator.Simulate()
