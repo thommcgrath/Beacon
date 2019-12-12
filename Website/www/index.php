@@ -86,12 +86,12 @@ BeaconTemplate::StartStyles();
 
 #hero.mac {
 	background-image: url(/assets/images/hero-mac.png);
-	padding-top: calc(714 / 1212 * 100%);
+	padding-top: calc(493 / 800 * 100%);
 }
 
 #hero.windows {
 	background-image: url(/assets/images/hero-windows.png);
-	padding-top: calc(706 / 1376 * 100%);
+	padding-top: calc(523 / 800 * 100%);
 }
 
 #nitrado_container {
@@ -126,7 +126,6 @@ BeaconTemplate::StartStyles();
 
 	#hero.windows {
 		background-image: url(/assets/images/hero-windows@2x.png);
-		padding-top: calc(1459 / 2804 * 100%);
 	}
 
 	@media (prefers-color-scheme: dark) {
