@@ -431,7 +431,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Next
 		    Labels.AddRow("or " + Self.mOptions(Self.mOptions.LastRowIndex).Engram.Label)
 		    
-		    Return Labels.Join("")
+		    Return Labels.Join(", ")
 		  End If
 		End Function
 	#tag EndMethod
