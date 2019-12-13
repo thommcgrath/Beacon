@@ -69,15 +69,7 @@ Protected Class OAuth2Client
 
 	#tag Method, Flags = &h0
 		Sub Cancel()
-		  If Self.mCheckStatusKey <> "" Then
-		    CallLater.Cancel(Self.mCheckStatusKey)
-		    Self.mCheckStatusKey = ""
-		  End If
-		  
-		  If Self.mCheckSocket <> Nil Then
-		    Self.mCheckSocket.Disconnect
-		    Self.mCheckSocket = Nil
-		  End If
+		  Self.Cleanup()
 		  
 		  RaiseEvent DismissWaitingWindow()
 		End Sub
@@ -95,9 +87,23 @@ Protected Class OAuth2Client
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub Cleanup()
+		  If Self.mCheckStatusKey <> "" Then
+		    CallLater.Cancel(Self.mCheckStatusKey)
+		    Self.mCheckStatusKey = ""
+		  End If
+		  
+		  If Self.mCheckSocket <> Nil Then
+		    Self.mCheckSocket.Disconnect
+		    Self.mCheckSocket = Nil
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Destructor()
-		  Self.Cancel()
+		  Self.Cleanup()
 		End Sub
 	#tag EndMethod
 

@@ -121,6 +121,14 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
+		Private Function Client() As Beacon.OAuth2Client
+		  If Self.mClient <> Nil And Self.mClient.Value <> Nil And Self.mClient.Value IsA Beacon.OAuth2Client Then
+		    Return Beacon.OAuth2Client(Self.mClient.Value)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Constructor()
 		  // Calling the overridden superclass constructor.
 		  Super.Constructor
@@ -130,14 +138,14 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Client As Beacon.OAuth2Client)
-		  Self.mClient = Client
+		  Self.mClient = New WeakRef(Client)
 		  Self.Constructor()
 		End Sub
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mClient As Beacon.OAuth2Client
+		Private mClient As WeakRef
 	#tag EndProperty
 
 
@@ -146,8 +154,20 @@ End
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
-		  Self.mClient.Cancel
-		  Me.Enabled = False
+		  Try
+		    Var Client As Beacon.OAuth2Client = Self.Client
+		    If Client <> Nil Then
+		      Client.Cancel
+		      Me.Enabled = False
+		      
+		      // If we made it here, OAuth2Client.DismissWaitingWindow should close this window.
+		      // So return to prevent the Self.Close below from firing.
+		      Return
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Self.Close
 		End Sub
 	#tag EndEvent
 #tag EndEvents
