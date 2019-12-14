@@ -57,7 +57,6 @@ Begin BeaconContainer ItemSetEditor
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   "0"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -84,11 +83,14 @@ Begin BeaconContainer ItemSetEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      BorderBottom    =   False
+      BorderLeft      =   False
+      BorderRight     =   False
       Borders         =   0
+      BorderTop       =   False
       Caption         =   "Item Set Contents"
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -119,7 +121,6 @@ Begin BeaconContainer ItemSetEditor
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -180,7 +181,6 @@ Begin BeaconContainer ItemSetEditor
       Caption         =   ""
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   21
       HelpTag         =   ""
       Index           =   -2147483648

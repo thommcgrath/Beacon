@@ -40,7 +40,11 @@ Begin ServerViewContainer ConnectorServerView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      BorderBottom    =   False
+      BorderLeft      =   False
+      BorderRight     =   False
       Borders         =   0
+      BorderTop       =   False
       Caption         =   "Untitled"
       DoubleBuffer    =   False
       Enabled         =   True

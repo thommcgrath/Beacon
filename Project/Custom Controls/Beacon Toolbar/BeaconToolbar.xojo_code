@@ -562,6 +562,78 @@ Implements ObservationKit.Observer
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return (Self.mBorders And BeaconUI.BorderBottom) = BeaconUI.BorderBottom
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Var Borders As UInteger
+			  If Value Then
+			    Borders = Self.mBorders Or BeaconUI.BorderBottom
+			  Else
+			    Borders = Self.mBorders And (Not BeaconUI.BorderBottom)
+			  End If
+			  
+			  If Self.mBorders <> Borders Then
+			    Self.mBorders = Borders
+			    Self.Invalidate
+			  End If
+			End Set
+		#tag EndSetter
+		BorderBottom As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return (Self.mBorders And BeaconUI.BorderLeft) = BeaconUI.BorderLeft
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Var Borders As UInteger
+			  If Value Then
+			    Borders = Self.mBorders Or BeaconUI.BorderLeft
+			  Else
+			    Borders = Self.mBorders And (Not BeaconUI.BorderLeft)
+			  End If
+			  
+			  If Self.mBorders <> Borders Then
+			    Self.mBorders = Borders
+			    Self.Invalidate
+			  End If
+			End Set
+		#tag EndSetter
+		BorderLeft As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return (Self.mBorders And BeaconUI.BorderRight) = BeaconUI.BorderRight
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Var Borders As UInteger
+			  If Value Then
+			    Borders = Self.mBorders Or BeaconUI.BorderRight
+			  Else
+			    Borders = Self.mBorders And (Not BeaconUI.BorderRight)
+			  End If
+			  
+			  If Self.mBorders <> Borders Then
+			    Self.mBorders = Borders
+			    Self.Invalidate
+			  End If
+			End Set
+		#tag EndSetter
+		BorderRight As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mBorders
 			End Get
 		#tag EndGetter
@@ -576,6 +648,30 @@ Implements ObservationKit.Observer
 			End Set
 		#tag EndSetter
 		Borders As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return (Self.mBorders And BeaconUI.BorderTop) = BeaconUI.BorderTop
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Var Borders As UInteger
+			  If Value Then
+			    Borders = Self.mBorders Or BeaconUI.BorderTop
+			  Else
+			    Borders = Self.mBorders And (Not BeaconUI.BorderTop)
+			  End If
+			  
+			  If Self.mBorders <> Borders Then
+			    Self.mBorders = Borders
+			    Self.Invalidate
+			  End If
+			End Set
+		#tag EndSetter
+		BorderTop As Boolean
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -941,10 +1037,42 @@ Implements ObservationKit.Observer
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Borders"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BorderBottom"
 			Visible=true
 			Group="Behavior"
-			InitialValue="0"
-			Type="Integer"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BorderLeft"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BorderRight"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BorderTop"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

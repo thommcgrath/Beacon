@@ -139,7 +139,11 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      BorderBottom    =   False
+      BorderLeft      =   False
+      BorderRight     =   False
       Borders         =   0
+      BorderTop       =   False
       Caption         =   ""
       DoubleBuffer    =   False
       Enabled         =   True

@@ -30,7 +30,11 @@ Begin LibrarySubview LibraryPaneSearch
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      BorderBottom    =   False
+      BorderLeft      =   False
+      BorderRight     =   False
       Borders         =   0
+      BorderTop       =   False
       Caption         =   "Search"
       DoubleBuffer    =   False
       Enabled         =   True

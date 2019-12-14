@@ -228,7 +228,6 @@ Begin BeaconDialog AddSpawnPointDialog
       SelectionStyle  =   "0"
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   52
       Transparent     =   False
       Visible         =   True
@@ -459,7 +458,7 @@ End
 		Private Sub CheckActionEnabled()
 		  Self.LoadDefaultsCheck.Enabled = Self.OverrideRadio.Value
 		  
-		  Var Enabled As Boolean = Self.OverrideRadio.Value Or Self.AppendRadio.Value Or Self.RemoveRadio.Value
+		  Var Enabled As Boolean = Self.List.SelectedRowCount > 0 And (Self.OverrideRadio.Value Or Self.AppendRadio.Value Or Self.RemoveRadio.Value)
 		  If Self.ActionButton.Enabled <> Enabled Then
 		    Self.ActionButton.Enabled = Enabled
 		  End If

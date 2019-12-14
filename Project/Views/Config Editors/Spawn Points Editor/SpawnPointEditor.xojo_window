@@ -59,7 +59,11 @@ Begin BeaconContainer SpawnPointEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      BorderBottom    =   True
+      BorderLeft      =   False
+      BorderRight     =   False
       Borders         =   2
+      BorderTop       =   False
       Caption         =   "Limits"
       DoubleBuffer    =   False
       Enabled         =   True
@@ -91,7 +95,11 @@ Begin BeaconContainer SpawnPointEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      BorderBottom    =   True
+      BorderLeft      =   False
+      BorderRight     =   False
       Borders         =   2
+      BorderTop       =   False
       Caption         =   "Spawn Sets"
       DoubleBuffer    =   False
       Enabled         =   True
@@ -134,7 +142,6 @@ Begin BeaconContainer SpawnPointEditor
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
@@ -255,7 +262,7 @@ Begin BeaconContainer SpawnPointEditor
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin BeaconListbox SetsList1
+   Begin BeaconListbox LimitsList
       AllowAutoDeactivate=   True
       AllowAutoHideScrollbars=   True
       AllowExpandableRows=   False
@@ -264,8 +271,8 @@ Begin BeaconContainer SpawnPointEditor
       AllowRowDragging=   False
       AllowRowReordering=   False
       Bold            =   False
-      ColumnCount     =   1
-      ColumnWidths    =   ""
+      ColumnCount     =   2
+      ColumnWidths    =   "*,75"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
@@ -312,6 +319,60 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Method, Flags = &h21
+		Private Function Document() As Beacon.Document
+		  Return RaiseEvent GetDocument
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub PresentLimitsDialog()
+		  Var SelectedCreatures() As Beacon.Creature
+		  Self.PresentLimitsDialog(SelectedCreatures)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub PresentLimitsDialog(SelectedCreatures() As Beacon.Creature)
+		  Var DefinedCreatures() As Beacon.Creature
+		  Var CommonLimit As NullableDouble
+		  
+		  For Each Point As Beacon.SpawnPoint In Self.mSpawnPoints
+		    Var Limits As Dictionary = Point.Limits
+		    For Each Entry As DictionaryEntry In Limits
+		      Var Creature As Beacon.Creature = Entry.Key
+		      If DefinedCreatures.IndexOf(Creature) = -1 Then
+		        DefinedCreatures.AddRow(Creature)
+		      End If
+		      If SelectedCreatures.IndexOf(Creature) > -1 Then
+		        Var CreatureLimit As Double = Entry.Value
+		        If CommonLimit = Nil Then
+		          CommonLimit = CreatureLimit
+		        ElseIf CommonLimit <> -1.0 And CommonLimit <> CreatureLimit Then
+		          CommonLimit = -1.0
+		        End If
+		      End If
+		    Next
+		  Next
+		  
+		  If CommonLimit <> Nil And CommonLimit = -1.0 Then
+		    CommonLimit = Nil
+		  End If
+		  
+		  Var Limit As NullableDouble = SpawnPointLimitDialog.Present(Self, Self.Document.Mods, CommonLimit, SelectedCreatures, DefinedCreatures)
+		  If Limit <> Nil Then
+		    For Each Point As Beacon.MutableSpawnPoint In Self.mSpawnPoints
+		      For Each Creature As Beacon.Creature In SelectedCreatures
+		        Point.Limit(Creature) = Limit
+		      Next
+		    Next
+		    
+		    Self.UpdateUI
+		    RaiseEvent Updated
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function SpawnPoints() As Beacon.SpawnPoint
 		  Var Points() As Beacon.SpawnPoint
@@ -338,16 +399,99 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateUI()
-		  If Self.mSpawnPoints.LastRowIndex = -1 Then
-		    Self.Pages.SelectedPanelIndex = 0
-		    Return
+		Private Sub UpdateLimitsStatus()
+		  If Self.LimitsList.SelectedRowCount > 0 Then
+		    Self.LimitsStatusBar.Caption = Self.LimitsList.SelectedRowCount.ToString + " of " + Language.NounWithQuantity(Self.LimitsList.RowCount, "Limit", "Limits") + " Selected"
+		  Else
+		    Self.LimitsStatusBar.Caption = Language.NounWithQuantity(Self.LimitsList.RowCount, "Limit", "Limits")
 		  End If
 		  
-		  Self.Pages.SelectedPanelIndex = 1
+		  Self.LimitsToolbar.EditButton.Enabled = Self.LimitsList.SelectedRowCount > 0
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateUI()
+		  If Self.mSpawnPoints.LastRowIndex = -1 Then
+		    Self.mBlockListChange = True
+		    Self.LimitsList.RowCount = 0
+		    Self.SetsList.RowCount = 0
+		    Self.mBlockListChange = False
+		    Return
+		  End If
+		  
+		  Self.mBlockListChange = True
+		  Const MixedLimitValue = -1.0
+		  
+		  Var CombinedLimits As Dictionary
+		  
+		  For Each Point As Beacon.SpawnPoint In Self.mSpawnPoints
+		    Var PointLimits As Dictionary = Point.Limits
+		    
+		    If CombinedLimits = Nil Then
+		      CombinedLimits = New Dictionary
+		      For Each Entry As DictionaryEntry In PointLimits
+		        Var Creature As Beacon.Creature = Entry.Key
+		        Var Limit As Double = Entry.Value
+		        CombinedLimits.Value(Creature.Path) = Limit
+		      Next
+		    Else
+		      For Each Entry As DictionaryEntry In PointLimits
+		        Var Creature As Beacon.Creature = Entry.Key
+		        Var Limit As Double = Entry.Value
+		        
+		        If CombinedLimits.HasKey(Creature.Path) = False Or CombinedLimits.Value(Creature.Path).DoubleValue <> Limit Then
+		          CombinedLimits.Value(Creature.Path) = MixedLimitValue
+		        End If
+		      Next
+		    End If
+		  Next
+		  
+		  If CombinedLimits.KeyCount = 0 Then
+		    Self.LimitsList.RowCount = 0
+		    Self.mBlockListChange = False
+		    Return
+		  End If
+		  
+		  Var SelectedCreatures() As String
+		  For I As Integer = 0 To Self.LimitsList.RowCount - 1
+		    If Self.LimitsList.Selected(I) Then
+		      SelectedCreatures.AddRow(Self.LimitsList.RowTagAt(I))
+		    End If
+		  Next
+		  
+		  Self.LimitsList.RowCount = CombinedLimits.KeyCount
+		  For RowIndex As Integer = 0 To CombinedLimits.KeyCount - 1
+		    Var Path As String = CombinedLimits.Key(RowIndex)
+		    Var Limit As Double = CombinedLimits.Value(Path)
+		    
+		    Self.LimitsList.CellValueAt(RowIndex, 0) = Beacon.Data.GetCreatureByPath(Path).Label
+		    Self.LimitsList.CellValueAt(RowIndex, 1) = If(Limit = MixedLimitValue, "Mixed", Beacon.PrettyText(Limit * 100, 2) + "%")
+		    Self.LimitsList.RowTagAt(RowIndex) = Path
+		    Self.LimitsList.Selected(RowIndex) = SelectedCreatures.IndexOf(Path) > -1
+		  Next
+		  
+		  Self.UpdateLimitsStatus
+		  
+		  Self.LimitsList.SortingColumn = 0
+		  Self.LimitsList.Sort
+		  Self.mBlockListChange = False
+		End Sub
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event GetDocument() As Beacon.Document
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Updated()
+	#tag EndHook
+
+
+	#tag Property, Flags = &h21
+		Private mBlockListChange As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mSpawnPoints() As Beacon.MutableSpawnPoint
@@ -357,9 +501,116 @@ End
 	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"300", Scope = Public
 	#tag EndConstant
 
+	#tag Constant, Name = PageNoSelection, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageSetEditor, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
 
 #tag EndWindowCode
 
+#tag Events LimitsToolbar
+	#tag Event
+		Sub Action(Item As BeaconToolbarItem)
+		  Select Case Item.Name
+		  Case "AddButton"
+		    Self.PresentLimitsDialog()
+		  Case "EditButton"
+		    Var SelectedCreatures() As Beacon.Creature
+		    For I As Integer = 0 To Self.LimitsList.RowCount - 1
+		      If Self.LimitsList.Selected(I) Then
+		        SelectedCreatures.AddRow(Beacon.Data.GetCreatureByPath(Self.LimitsList.RowTagAt(I).StringValue))
+		      End If
+		    Next
+		    Self.PresentLimitsDialog(SelectedCreatures)
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Var AddButton As New BeaconToolbarItem("AddButton", IconToolbarAdd)
+		  AddButton.HelpTag = "Define a new creature limit."
+		  Me.LeftItems.Append(AddButton)
+		  
+		  Var EditButton As New BeaconToolbarItem("EditButton", IconToolbarEdit, False)
+		  EditButton.HelpTag = "Edit the selected creature limit or limits."
+		  Me.RightItems.Append(EditButton)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(ByRef NewSize As Integer)
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SetsList
+	#tag Event
+		Sub Change()
+		  If Self.mBlockListChange Then
+		    Return
+		  End If
+		  
+		  If Me.SelectedRowCount = 0 Then
+		    // Self.SetsEditor.
+		    Self.Pages.SelectedPanelIndex = Self.PageNoSelection
+		    Return
+		  End If
+		  
+		  Self.Pages.SelectedPanelIndex = Self.PageSetEditor
+		  // Self.SetsEditor
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LimitsList
+	#tag Event
+		Sub Open()
+		  Me.ColumnAlignmentAt(1) = Listbox.Alignments.Right
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  If Self.mBlockListChange Then
+		    Return
+		  End If
+		  
+		  Self.UpdateLimitsStatus
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub DoubleClick()
+		  Var SelectedCreatures() As Beacon.Creature
+		  For I As Integer = 0 To Self.LimitsList.RowCount - 1
+		    If Self.LimitsList.Selected(I) Then
+		      SelectedCreatures.AddRow(Beacon.Data.GetCreatureByPath(Self.LimitsList.RowTagAt(I).StringValue))
+		    End If
+		  Next
+		  Self.PresentLimitsDialog(SelectedCreatures)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
+		  #Pragma Unused Warn
+		  
+		  For I As Integer = 0 To Me.RowCount - 1
+		    If Me.Selected(I) Then
+		      Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Me.RowTagAt(I).StringValue)
+		      For Each Point As Beacon.MutableSpawnPoint In Self.mSpawnPoints
+		        Point.Limit(Creature) = 1.0
+		      Next
+		    End If
+		  Next
+		  
+		  RaiseEvent Updated
+		  Self.UpdateUI
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="Name"

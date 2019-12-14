@@ -94,7 +94,11 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      BorderBottom    =   False
+      BorderLeft      =   False
+      BorderRight     =   False
       Borders         =   0
+      BorderTop       =   False
       Caption         =   "Item Sets"
       DoubleBuffer    =   False
       Enabled         =   True

@@ -31,11 +31,15 @@ Begin ConfigEditor SpawnPointsConfigEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      BorderBottom    =   True
+      BorderLeft      =   False
+      BorderRight     =   False
       Borders         =   0
+      BorderTop       =   False
       Caption         =   "Spawn Points"
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   40
+      Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -109,34 +113,6 @@ Begin ConfigEditor SpawnPointsConfigEditor
       Width           =   250
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
-   End
-   Begin FadedSeparator ControlToolbarSeparator
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   40
-      Transparent     =   True
-      Visible         =   True
-      Width           =   250
    End
    Begin StatusBar ListStatus
       AllowAutoDeactivate=   True
@@ -213,11 +189,10 @@ Begin ConfigEditor SpawnPointsConfigEditor
       Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   729
       Begin SpawnPointEditor Editor
@@ -232,7 +207,6 @@ Begin ConfigEditor SpawnPointsConfigEditor
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   548
-         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   251
          LockBottom      =   True
@@ -412,7 +386,6 @@ End
 		  Self.ControlToolbar.Width = ListWidth
 		  Self.MainSeparator.Left = ListWidth
 		  Self.List.Width = ListWidth
-		  Self.ControlToolbarSeparator.Width = ListWidth
 		  Self.ListStatus.Width = ListWidth
 		  Self.Pages.Left = Self.MainSeparator.Left + Self.MainSeparator.Width
 		  Self.Pages.Width = EditorWidth
@@ -669,6 +642,11 @@ End
 		Sub ContentsChanged()
 		  Self.Changed = Self.Changed Or Self.Config(False).Modified
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetDocument() As Beacon.Document
+		  Return Self.Document
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
