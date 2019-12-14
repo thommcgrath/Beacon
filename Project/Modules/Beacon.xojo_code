@@ -724,7 +724,7 @@ Protected Module Beacon
 		  
 		  While Places < DecimalPlaces
 		    Dim TestValue As Double = Value * Multiplier
-		    If Floor(TestValue) = TestValue Then
+		    If Abs(TestValue - Floor(TestValue)) < 0.0000001 Then
 		      Exit
 		    End If
 		    Multiplier = Multiplier * 10
