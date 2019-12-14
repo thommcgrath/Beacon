@@ -414,8 +414,8 @@ End
 		  Redim Self.mSources(Sources.LastRowIndex)
 		  
 		  If Sources.LastRowIndex = -1 Then
-		    Self.MinItemSetsField.Value = ""
-		    Self.MaxItemSetsField.Value = ""
+		    Self.MinItemSetsField.Clear
+		    Self.MaxItemSetsField.Clear
 		    Self.NoDuplicatesCheck.VisualState = CheckBox.VisualStates.Unchecked
 		    Self.AppendModeCheck.VisualState = CheckBox.VisualStates.Unchecked
 		  Else
@@ -441,8 +441,17 @@ End
 		      End If
 		    Next
 		    
-		    Self.MinItemSetsField.Value = If(CommonMinItemSets > -1, Str(CommonMinItemSets, "-0"), "")
-		    Self.MaxItemSetsField.Value = If(CommonMaxItemSets > -1, Str(CommonMaxItemSets, "-0"), "")
+		    If CommonMinItemSets > -1 Then
+		      Self.MinItemSetsField.DoubleValue = CommonMinItemSets
+		    Else
+		      Self.MinItemSetsField.Clear
+		    End If
+		    If CommonMaxItemSets > -1 Then
+		      Self.MaxItemSetsField.DoubleValue = CommonMaxItemSets
+		    Else
+		      Self.MaxItemSetsField.Clear
+		    End If
+		    
 		    Self.NoDuplicatesCheck.VisualState = CommonNoDuplicates
 		    Self.AppendModeCheck.VisualState = CommonAppendMode
 		  End If

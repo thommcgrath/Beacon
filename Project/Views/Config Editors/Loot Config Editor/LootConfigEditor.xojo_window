@@ -160,7 +160,6 @@ Begin ConfigEditor LootConfigEditor
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -178,7 +177,6 @@ Begin ConfigEditor LootConfigEditor
          HasBackColor    =   False
          Height          =   436
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True

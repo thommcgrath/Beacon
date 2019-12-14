@@ -617,8 +617,8 @@ End
 			  Else
 			    Self.mItemSetRef = Nil
 			    Self.NameField.Value = ""
-			    Self.MinEntriesField.Value = ""
-			    Self.MaxEntriesField.Value = ""
+			    Self.MinEntriesField.Clear
+			    Self.MaxEntriesField.Clear
 			    Self.WeightField.Value = ""
 			    Self.PreventDuplicatesCheck.Value = False
 			  End If

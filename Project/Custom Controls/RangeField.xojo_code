@@ -53,6 +53,13 @@ Inherits UITweaks.ResizedTextField
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Clear()
+		  Self.Value = ""
+		  Self.mLastNotifiedValue = ""
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Shared Function Format(Value As Double) As String
 		  If Floor(Value) = Value Then
