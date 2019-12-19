@@ -400,6 +400,8 @@ Inherits Listbox
 		    Return
 		  End If
 		  
+		  Self.SelectionChangeBlocked = True
+		  
 		  #if TargetWindows
 		    Dim ScrollerVisible As Boolean = Self.HasVerticalScrollbar
 		    If ScrollerVisible Then
@@ -422,6 +424,8 @@ Inherits Listbox
 		      Self.HasVerticalScrollbar = True
 		    End If
 		  #endif
+		  
+		  Self.SelectionChangeBlocked = False
 		End Sub
 	#tag EndMethod
 

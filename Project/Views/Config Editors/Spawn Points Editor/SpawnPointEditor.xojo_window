@@ -148,6 +148,63 @@ Begin BeaconContainer SpawnPointEditor
       Value           =   0
       Visible         =   True
       Width           =   705
+      Begin SpawnPointSetEditor SetEditor
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   664
+         InitialParent   =   "Pages"
+         Left            =   201
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   705
+      End
+      Begin LogoFillCanvas LogoCanvas
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         Caption         =   "No Selection"
+         Enabled         =   True
+         Height          =   664
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   201
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   705
+      End
    End
    Begin StatusBar SetsStatusBar
       AllowAutoDeactivate=   True
@@ -411,19 +468,30 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub UpdateSetsStatus()
+		  If Self.SetsList.SelectedRowCount > 0 Then
+		    Self.SetsStatusBar.Caption = Self.SetsList.SelectedRowCount.ToString + " of " + Language.NounWithQuantity(Self.SetsList.RowCount, "Spawn Set", "Spawn Sets") + " Selected"
+		  Else
+		    Self.SetsStatusBar.Caption = Language.NounWithQuantity(Self.SetsList.RowCount, "Spawn Set", "Spawn Sets")
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
 		  If Self.mSpawnPoints.LastRowIndex = -1 Then
-		    Self.mBlockListChange = True
 		    Self.LimitsList.RowCount = 0
 		    Self.SetsList.RowCount = 0
-		    Self.mBlockListChange = False
 		    Return
 		  End If
 		  
-		  Self.mBlockListChange = True
+		  Self.LimitsList.SelectionChangeBlocked = True
+		  Self.SetsList.SelectionChangeBlocked = True
+		  
 		  Const MixedLimitValue = -1.0
 		  
 		  Var CombinedLimits As Dictionary
+		  Var CombinedSets As New Dictionary
 		  
 		  For Each Point As Beacon.SpawnPoint In Self.mSpawnPoints
 		    Var PointLimits As Dictionary = Point.Limits
@@ -445,37 +513,87 @@ End
 		        End If
 		      Next
 		    End If
+		    
+		    For Each Set As Beacon.SpawnPointSet In Point
+		      Var Hash As String = Set.Hash
+		      Var Organizer As SpawnSetOrganizer
+		      If CombinedSets.HasKey(Hash) Then
+		        Organizer = CombinedSets.Value(Hash)
+		      Else
+		        Organizer = New SpawnSetOrganizer(Set.MutableVersion)
+		        CombinedSets.Value(Hash) = Organizer
+		      End If
+		      Organizer.AttachPoint(Point)
+		    Next
 		  Next
 		  
-		  If CombinedLimits.KeyCount = 0 Then
+		  If CombinedLimits.KeyCount > 0 Then
+		    Var SelectedCreatures() As String
+		    For I As Integer = 0 To Self.LimitsList.RowCount - 1
+		      If Self.LimitsList.Selected(I) Then
+		        SelectedCreatures.AddRow(Self.LimitsList.RowTagAt(I))
+		      End If
+		    Next
+		    
+		    Self.LimitsList.RowCount = CombinedLimits.KeyCount
+		    For RowIndex As Integer = 0 To CombinedLimits.KeyCount - 1
+		      Var Path As String = CombinedLimits.Key(RowIndex)
+		      Var Limit As Double = CombinedLimits.Value(Path)
+		      
+		      Self.LimitsList.CellValueAt(RowIndex, 0) = Beacon.Data.GetCreatureByPath(Path).Label
+		      Self.LimitsList.CellValueAt(RowIndex, 1) = If(Limit = MixedLimitValue, "Mixed", Beacon.PrettyText(Limit * 100, 2) + "%")
+		      Self.LimitsList.RowTagAt(RowIndex) = Path
+		      Self.LimitsList.Selected(RowIndex) = SelectedCreatures.IndexOf(Path) > -1
+		    Next
+		  Else
 		    Self.LimitsList.RowCount = 0
-		    Self.mBlockListChange = False
-		    Return
 		  End If
 		  
-		  Var SelectedCreatures() As String
-		  For I As Integer = 0 To Self.LimitsList.RowCount - 1
-		    If Self.LimitsList.Selected(I) Then
-		      SelectedCreatures.AddRow(Self.LimitsList.RowTagAt(I))
-		    End If
-		  Next
-		  
-		  Self.LimitsList.RowCount = CombinedLimits.KeyCount
-		  For RowIndex As Integer = 0 To CombinedLimits.KeyCount - 1
-		    Var Path As String = CombinedLimits.Key(RowIndex)
-		    Var Limit As Double = CombinedLimits.Value(Path)
+		  If CombinedSets.KeyCount > 0 Then
+		    Var SelectedSets() As String
+		    For I As Integer = 0 To Self.SetsList.RowCount - 1
+		      If Self.SetsList.Selected(I) Then
+		        SelectedSets.AddRow(SpawnSetOrganizer(Self.SetsList.RowTagAt(I)).CurrentHash)
+		      End If
+		    Next
 		    
-		    Self.LimitsList.CellValueAt(RowIndex, 0) = Beacon.Data.GetCreatureByPath(Path).Label
-		    Self.LimitsList.CellValueAt(RowIndex, 1) = If(Limit = MixedLimitValue, "Mixed", Beacon.PrettyText(Limit * 100, 2) + "%")
-		    Self.LimitsList.RowTagAt(RowIndex) = Path
-		    Self.LimitsList.Selected(RowIndex) = SelectedCreatures.IndexOf(Path) > -1
-		  Next
+		    Self.SetsList.RowCount = CombinedSets.KeyCount
+		    For RowIndex As Integer = 0 To CombinedSets.KeyCount - 1
+		      Var Hash As String = CombinedSets.Key(RowIndex)
+		      Var Organizer As SpawnSetOrganizer = CombinedSets.Value(Hash)
+		      Var Set As Beacon.MutableSpawnPointSet = Organizer.Template
+		      
+		      Var Label As String = Set.Label
+		      If Self.mSpawnPoints.LastRowIndex > 0 Then
+		        Var PointNames() As String
+		        Var Points() As Beacon.SpawnPoint = Organizer.FoundInPoints
+		        For Each Point As Beacon.SpawnPoint In Points
+		          PointNames.AddRow(Point.Label)
+		        Next
+		        PointNames.Sort
+		        Label = Label + EndOfLine + "Found in " + Language.EnglishOxfordList(PointNames)
+		        Self.SetsList.DefaultRowHeight = 34
+		      Else
+		        Self.SetsList.DefaultRowHeight = 26
+		      End If
+		      
+		      Self.SetsList.CellValueAt(RowIndex, 0) = Label
+		      Self.SetsList.RowTagAt(RowIndex) = Organizer
+		      Self.SetsList.Selected(RowIndex) = SelectedSets.IndexOf(Organizer.CurrentHash) > -1
+		    Next
+		  Else
+		    Self.SetsList.RowCount = 0
+		  End If
 		  
 		  Self.UpdateLimitsStatus
+		  Self.UpdateSetsStatus
 		  
 		  Self.LimitsList.SortingColumn = 0
 		  Self.LimitsList.Sort
-		  Self.mBlockListChange = False
+		  Self.LimitsList.SelectionChangeBlocked = False
+		  Self.SetsList.SortingColumn = 0
+		  Self.SetsList.Sort
+		  Self.SetsList.SelectionChangeBlocked = False
 		End Sub
 	#tag EndMethod
 
@@ -488,10 +606,6 @@ End
 		Event Updated()
 	#tag EndHook
 
-
-	#tag Property, Flags = &h21
-		Private mBlockListChange As Boolean
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mSpawnPoints() As Beacon.MutableSpawnPoint
@@ -544,21 +658,57 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events SetsToolbar
+	#tag Event
+		Sub Action(Item As BeaconToolbarItem)
+		  Select Case Item.Name
+		  Case "AddButton"
+		    Var Organizer As New SpawnSetOrganizer(New Beacon.MutableSpawnPointSet)
+		    For Each Point As Beacon.SpawnPoint In Self.mSpawnPoints
+		      Organizer.AttachPoint(Point)
+		    Next
+		    
+		    Var Label As String = Organizer.Template.Label
+		    If Self.mSpawnPoints.LastRowIndex > 0 Then
+		      Var PointNames() As String
+		      Var Points() As Beacon.SpawnPoint = Self.mSpawnPoints
+		      For Each Point As Beacon.SpawnPoint In Points
+		        PointNames.AddRow(Point.Label)
+		      Next
+		      PointNames.Sort
+		      Label = Label + EndOfLine + "Found in " + Language.EnglishOxfordList(PointNames)
+		    End If
+		    
+		    Self.SetsList.AddRow(Label)
+		    Self.SetsList.RowTagAt(Self.SetsList.LastRowIndex) = Organizer
+		    Self.SetsList.SelectedRowIndex = Self.SetsList.LastRowIndex
+		    Self.SetsList.Sort
+		    Self.SetsList.EnsureSelectionIsVisible
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Var AddButton As New BeaconToolbarItem("AddButton", IconToolbarAdd)
+		  AddButton.HelpTag = "Create a new spawn set."
+		  Me.LeftItems.Append(AddButton)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events SetsList
 	#tag Event
 		Sub Change()
-		  If Self.mBlockListChange Then
+		  Self.UpdateSetsStatus()
+		  
+		  If Me.SelectedRowCount = 1 Then
+		    Self.Pages.SelectedPanelIndex = Self.PageSetEditor
+		    Self.SetEditor.SpawnSet = SpawnSetOrganizer(Me.RowTagAt(Me.SelectedRowIndex)).Template
 		    Return
 		  End If
 		  
-		  If Me.SelectedRowCount = 0 Then
-		    // Self.SetsEditor.
-		    Self.Pages.SelectedPanelIndex = Self.PageNoSelection
-		    Return
-		  End If
-		  
-		  Self.Pages.SelectedPanelIndex = Self.PageSetEditor
-		  // Self.SetsEditor
+		  Self.SetEditor.SpawnSet = Nil
+		  Self.Pages.SelectedPanelIndex = Self.PageNoSelection
+		  Self.LogoCanvas.Caption = If(Me.SelectedRowCount = 0, "No Selection", "Multiple Selection")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -570,10 +720,6 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  If Self.mBlockListChange Then
-		    Return
-		  End If
-		  
 		  Self.UpdateLimitsStatus
 		End Sub
 	#tag EndEvent

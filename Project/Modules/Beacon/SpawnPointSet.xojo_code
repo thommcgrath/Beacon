@@ -201,6 +201,16 @@ Implements Beacon.DocumentItem,Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Hash() As String
+		  If Self.mCachedHash = "" Then
+		    Var Raw As String = Beacon.GenerateJSON(Self.SaveData, False)
+		    Self.mCachedHash = EncodeHex(Crypto.MD5(Raw))
+		  End If
+		  Return Self.mCachedHash
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ID() As v4UUID
 		  
 		End Function
@@ -426,6 +436,10 @@ Implements Beacon.DocumentItem,Beacon.Countable
 
 
 	#tag Property, Flags = &h1
+		Protected mCachedHash As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mEntries() As Beacon.SpawnPointSetEntry
 	#tag EndProperty
 
@@ -438,7 +452,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mLabel As String
+		Protected mLabel As String = "New Spawn Set"
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

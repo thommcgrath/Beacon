@@ -123,6 +123,15 @@ Inherits Beacon.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Modified(Assigns Value As Boolean)
+		  If Value = True Then
+		    Self.mCachedHash = ""
+		  End If
+		  Super.Modified = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function MutableVersion() As Beacon.MutableSpawnPointSet
 		  Return Self
 		End Function
