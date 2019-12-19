@@ -57,15 +57,12 @@ Protected Class CustomContentParser
 		  End If
 		  
 		  Dim Key As String = Line.Left(KeyPos).Trim
-		  If Key.IndexOf("[") > -1 And Key.EndsWith("]") Then
-		    Key = Key.Left(Key.IndexOf("["))
-		  End If
-		  If Self.mSkippedKeys.IndexOf(Key) > -1 Then
-		    Return Nil
+		  Dim Value As String = Line.Middle(KeyPos + 1).Trim
+		  Dim ConfigValue As New Beacon.ConfigValue(Self.mCurrentHeader, Key, Value)
+		  If Self.mSkippedKeys.IndexOf(ConfigValue.SimplifiedKey) = -1 Then
+		    Self.mValues.AddRow(ConfigValue)
 		  End If
 		  
-		  Dim Value As String = Line.Middle(KeyPos + 1).Trim
-		  Self.mValues.AddRow(New Beacon.ConfigValue(Self.mCurrentHeader, Key, Value))
 		  Return Nil
 		End Function
 	#tag EndMethod
