@@ -184,6 +184,7 @@ Begin BeaconContainer SpawnPointEditor
          AllowTabs       =   False
          Backdrop        =   0
          Caption         =   "No Selection"
+         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   664
          Index           =   -2147483648
@@ -376,6 +377,27 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub EmbeddingFinished()
+		  Self.SetsListWidth = Preferences.SpawnPointEditorSetsSplitterPosition
+		  Self.LimitsListHeight = Preferences.SpawnPointEditorLimitsSplitterPosition
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
+		  If Not Self.FinishedEmbedding Then
+		    Return
+		  End If
+		  
+		  Self.SetsListWidth = Self.SetsListWidth
+		  Self.LimitsListHeight = Self.LimitsListHeight
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h21
 		Private Function Document() As Beacon.Document
 		  Return RaiseEvent GetDocument
@@ -425,7 +447,7 @@ End
 		    Next
 		    
 		    Self.UpdateUI
-		    RaiseEvent Updated
+		    RaiseEvent Changed
 		  End If
 		End Sub
 	#tag EndMethod
@@ -493,7 +515,7 @@ End
 		  Var CombinedLimits As Dictionary
 		  Var CombinedSets As New Dictionary
 		  
-		  For Each Point As Beacon.SpawnPoint In Self.mSpawnPoints
+		  For Each Point As Beacon.MutableSpawnPoint In Self.mSpawnPoints
 		    Var PointLimits As Dictionary = Point.Limits
 		    
 		    If CombinedLimits = Nil Then
@@ -520,10 +542,10 @@ End
 		      If CombinedSets.HasKey(Hash) Then
 		        Organizer = CombinedSets.Value(Hash)
 		      Else
-		        Organizer = New SpawnSetOrganizer(Set.MutableVersion)
+		        Organizer = New SpawnSetOrganizer(Set)
 		        CombinedSets.Value(Hash) = Organizer
 		      End If
-		      Organizer.AttachPoint(Point)
+		      Organizer.Attach(Point, Set)
 		    Next
 		  Next
 		  
@@ -553,33 +575,21 @@ End
 		    Var SelectedSets() As String
 		    For I As Integer = 0 To Self.SetsList.RowCount - 1
 		      If Self.SetsList.Selected(I) Then
-		        SelectedSets.AddRow(SpawnSetOrganizer(Self.SetsList.RowTagAt(I)).CurrentHash)
+		        SelectedSets.AddRow(SpawnSetOrganizer(Self.SetsList.RowTagAt(I)).Template.ID)
 		      End If
 		    Next
 		    
+		    Var ExtendedLabels As Boolean = Self.mSpawnPoints.LastRowIndex > 0
+		    
 		    Self.SetsList.RowCount = CombinedSets.KeyCount
+		    Self.SetsList.DefaultRowHeight = If(ExtendedLabels, 34, 26)
 		    For RowIndex As Integer = 0 To CombinedSets.KeyCount - 1
 		      Var Hash As String = CombinedSets.Key(RowIndex)
 		      Var Organizer As SpawnSetOrganizer = CombinedSets.Value(Hash)
-		      Var Set As Beacon.MutableSpawnPointSet = Organizer.Template
 		      
-		      Var Label As String = Set.Label
-		      If Self.mSpawnPoints.LastRowIndex > 0 Then
-		        Var PointNames() As String
-		        Var Points() As Beacon.SpawnPoint = Organizer.FoundInPoints
-		        For Each Point As Beacon.SpawnPoint In Points
-		          PointNames.AddRow(Point.Label)
-		        Next
-		        PointNames.Sort
-		        Label = Label + EndOfLine + "Found in " + Language.EnglishOxfordList(PointNames)
-		        Self.SetsList.DefaultRowHeight = 34
-		      Else
-		        Self.SetsList.DefaultRowHeight = 26
-		      End If
-		      
-		      Self.SetsList.CellValueAt(RowIndex, 0) = Label
+		      Self.SetsList.CellValueAt(RowIndex, 0) = Organizer.Label(ExtendedLabels)
 		      Self.SetsList.RowTagAt(RowIndex) = Organizer
-		      Self.SetsList.Selected(RowIndex) = SelectedSets.IndexOf(Organizer.CurrentHash) > -1
+		      Self.SetsList.Selected(RowIndex) = SelectedSets.IndexOf(Organizer.Template.ID) > -1
 		    Next
 		  Else
 		    Self.SetsList.RowCount = 0
@@ -599,26 +609,101 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event GetDocument() As Beacon.Document
+		Event Changed()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Updated()
+		Event GetDocument() As Beacon.Document
 	#tag EndHook
 
+
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  Return Self.Height - Self.LimitsToolbar.Top
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.Height < Self.MinimumHeight Then
+			    // Don't compute anything
+			    Return
+			  End If
+			  
+			  System.DebugLog("Requested limits height: " + Value.ToString)
+			  
+			  // Remember, this works BACKWARDS so a value of 100 means 100 from the bottom of the window
+			  
+			  Const SetsListMinHeight = 200
+			  Const LimitsListMinHeight = 150
+			  
+			  Var MinTop As Integer = SetsListMinHeight
+			  Var MaxTop As Integer = Self.Height - LimitsListMinHeight
+			  Var Top As Integer = Max(Min(Self.Height - Value, MaxTop), MinTop)
+			  Value = Self.Height - Top
+			  
+			  Self.LimitsToolbar.Top = Top
+			  Self.LimitsList.Top = Self.LimitsToolbar.Top + Self.LimitsToolbar.Height
+			  Self.LimitsList.Height = Self.LimitsStatusBar.Top - Self.LimitsList.Top
+			  
+			  Self.SetsStatusBar.Top = Top - Self.SetsStatusBar.Height
+			  Self.SetsList.Height = Self.SetsStatusBar.Top - Self.SetsList.Top
+			  
+			  System.DebugLog("Actual limits height: " + Value.ToString)
+			  Preferences.SpawnPointEditorLimitsSplitterPosition = Value
+			End Set
+		#tag EndSetter
+		Private LimitsListHeight As Integer
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mSpawnPoints() As Beacon.MutableSpawnPoint
 	#tag EndProperty
 
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  Return Self.SetsList.Width
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.Width < Self.MinimumWidth Then
+			    // Don't compute anything
+			    Return
+			  End If
+			  
+			  Var AvailableSpace As Integer = Self.Width - Self.ColumnSeparator.Width
+			  Var ListWidth As Integer = Min(Max(Value, Self.SetsListMinWidth), AvailableSpace - SpawnPointSetEditor.MinimumWidth)
+			  Var EditorWidth As Integer = AvailableSpace - ListWidth
+			  
+			  Self.SetsList.Width = ListWidth
+			  Self.SetsToolbar.Width = ListWidth
+			  Self.SetsStatusBar.Width = ListWidth
+			  Self.ColumnSeparator.Left = ListWidth
+			  Self.LimitsList.Width = ListWidth
+			  Self.LimitsToolbar.Width = ListWidth
+			  Self.LimitsStatusBar.Width = ListWidth
+			  Self.Pages.Left = Self.ColumnSeparator.Left + Self.ColumnSeparator.Width
+			  Self.Pages.Width = EditorWidth
+			  
+			  Preferences.SpawnPointEditorSetsSplitterPosition = ListWidth
+			End Set
+		#tag EndSetter
+		Private SetsListWidth As Integer
+	#tag EndComputedProperty
 
-	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"300", Scope = Public
+
+	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"911", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = PageNoSelection, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageSetEditor, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = SetsListMinWidth, Type = Double, Dynamic = False, Default = \"250", Scope = Private
 	#tag EndConstant
 
 
@@ -654,7 +739,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ShouldResize(ByRef NewSize As Integer)
-		  
+		  Self.LimitsListHeight = Self.Height - NewSize
+		  NewSize = Self.LimitsListHeight
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -663,23 +749,12 @@ End
 		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddButton"
-		    Var Organizer As New SpawnSetOrganizer(New Beacon.MutableSpawnPointSet)
-		    For Each Point As Beacon.SpawnPoint In Self.mSpawnPoints
-		      Organizer.AttachPoint(Point)
+		    Var Organizer As New SpawnSetOrganizer
+		    For Each Point As Beacon.MutableSpawnPoint In Self.mSpawnPoints
+		      Organizer.Attach(Point)
 		    Next
 		    
-		    Var Label As String = Organizer.Template.Label
-		    If Self.mSpawnPoints.LastRowIndex > 0 Then
-		      Var PointNames() As String
-		      Var Points() As Beacon.SpawnPoint = Self.mSpawnPoints
-		      For Each Point As Beacon.SpawnPoint In Points
-		        PointNames.AddRow(Point.Label)
-		      Next
-		      PointNames.Sort
-		      Label = Label + EndOfLine + "Found in " + Language.EnglishOxfordList(PointNames)
-		    End If
-		    
-		    Self.SetsList.AddRow(Label)
+		    Self.SetsList.AddRow(Organizer.Label(Self.mSpawnPoints.LastRowIndex > 0))
 		    Self.SetsList.RowTagAt(Self.SetsList.LastRowIndex) = Organizer
 		    Self.SetsList.SelectedRowIndex = Self.SetsList.LastRowIndex
 		    Self.SetsList.Sort
@@ -692,6 +767,29 @@ End
 		  Var AddButton As New BeaconToolbarItem("AddButton", IconToolbarAdd)
 		  AddButton.HelpTag = "Create a new spawn set."
 		  Me.LeftItems.Append(AddButton)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(ByRef NewSize As Integer)
+		  Self.SetsListWidth = NewSize
+		  NewSize = Self.SetsListWidth
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SetEditor
+	#tag Event
+		Sub Changed()
+		  If Self.SetsList.SelectedRowCount <> 1 Then
+		    Break
+		    Return
+		  End If
+		  
+		  Var Organizer As SpawnSetOrganizer = Self.SetsList.RowTagAt(Self.SetsList.SelectedRowIndex)
+		  Organizer.Replicate()
+		  
+		  Self.SetsList.CellValueAt(Self.SetsList.SelectedRowIndex, 0) = Organizer.Label(Self.mSpawnPoints.LastRowIndex > 0)
+		  
+		  RaiseEvent Changed
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -752,7 +850,7 @@ End
 		    End If
 		  Next
 		  
-		  RaiseEvent Updated
+		  RaiseEvent Changed
 		  Self.UpdateUI
 		End Sub
 	#tag EndEvent

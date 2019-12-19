@@ -19,6 +19,13 @@ Inherits Beacon.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub CopyFrom(Source As Beacon.SpawnPointSet)
+		  // Public
+		  Super.CopyFrom(Source)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub CreatureReplacementWeight(FromCreature As Beacon.Creature, ToCreature As Beacon.Creature, Assigns Weight As NullableDouble)
 		  Var CurrentWeight As NullableDouble = Self.CreatureReplacementWeight(FromCreature, ToCreature)
 		  If CurrentWeight = Weight Then

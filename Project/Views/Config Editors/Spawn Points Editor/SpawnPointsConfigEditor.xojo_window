@@ -289,6 +289,13 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Open()
+		  Self.MinimumWidth = Self.ListMinWidth + Self.MainSeparator.Width + SpawnPointEditor.MinimumWidth
+		  Self.MinimumHeight = 350
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ParsingFinished(ParsedData As Dictionary)
 		  Var ParsedConfig As BeaconConfigs.SpawnPoints = BeaconConfigs.SpawnPoints.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
 		  If ParsedConfig = Nil Or ParsedConfig.Count = 0 Then

@@ -1,5 +1,5 @@
 #tag Window
-Begin ContainerControl SpawnPointSetEditor
+Begin BeaconContainer SpawnPointSetEditor
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -44,7 +44,7 @@ Begin ContainerControl SpawnPointSetEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   0
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -222,7 +222,7 @@ Begin ContainerControl SpawnPointSetEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -410,7 +410,7 @@ Begin ContainerControl SpawnPointSetEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "0"
@@ -490,7 +490,7 @@ Begin ContainerControl SpawnPointSetEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   12
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "3"
@@ -525,7 +525,7 @@ Begin ContainerControl SpawnPointSetEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   13
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "3"
@@ -552,7 +552,7 @@ Begin ContainerControl SpawnPointSetEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   20
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -580,7 +580,7 @@ Begin ContainerControl SpawnPointSetEditor
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   21
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -611,7 +611,7 @@ Begin ContainerControl SpawnPointSetEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   0
+         TabIndex        =   12
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "3"
@@ -646,7 +646,7 @@ Begin ContainerControl SpawnPointSetEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   1
+         TabIndex        =   10
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "3"
@@ -681,7 +681,7 @@ Begin ContainerControl SpawnPointSetEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   2
+         TabIndex        =   8
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "3"
@@ -716,7 +716,7 @@ Begin ContainerControl SpawnPointSetEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   3
+         TabIndex        =   6
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "3"
@@ -786,7 +786,7 @@ Begin ContainerControl SpawnPointSetEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   5
+         TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "3"
@@ -829,7 +829,7 @@ Begin ContainerControl SpawnPointSetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   6
+         TabIndex        =   13
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "2"
@@ -873,7 +873,7 @@ Begin ContainerControl SpawnPointSetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   7
+         TabIndex        =   11
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "2"
@@ -917,7 +917,7 @@ Begin ContainerControl SpawnPointSetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   8
+         TabIndex        =   9
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "2"
@@ -961,7 +961,7 @@ Begin ContainerControl SpawnPointSetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   9
+         TabIndex        =   7
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "2"
@@ -1005,7 +1005,7 @@ Begin ContainerControl SpawnPointSetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   10
+         TabIndex        =   5
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "2"
@@ -1049,7 +1049,7 @@ Begin ContainerControl SpawnPointSetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   11
+         TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "2"
@@ -1093,7 +1093,7 @@ Begin ContainerControl SpawnPointSetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   12
+         TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "2"
@@ -1137,7 +1137,7 @@ Begin ContainerControl SpawnPointSetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   13
+         TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "2"
@@ -1206,6 +1206,9 @@ End
 		Private mSettingUp As Boolean
 	#tag EndProperty
 
+
+	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"660", Scope = Public
+	#tag EndConstant
 
 	#tag Constant, Name = WeightScale, Type = Double, Dynamic = False, Default = \"1000", Scope = Private
 	#tag EndConstant

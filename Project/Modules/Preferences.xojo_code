@@ -413,6 +413,38 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.IntegerValue("Spawn Point Editor Limits Splitter Position", 250)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("Spawn Point Editor Limits Splitter Position") = Value
+			End Set
+		#tag EndSetter
+		Protected SpawnPointEditorLimitsSplitterPosition As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.IntegerValue("Spawn Point Editor Sets Splitter Position", 250)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("Spawn Point Editor Sets Splitter Position") = Value
+			End Set
+		#tag EndSetter
+		Protected SpawnPointEditorSetsSplitterPosition As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.IntegerValue("Spawn Points Splitter Position", 250)
 			End Get
 		#tag EndGetter

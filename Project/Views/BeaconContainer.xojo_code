@@ -2,26 +2,23 @@
 Protected Class BeaconContainer
 Inherits ContainerControl
 	#tag Event
-		Sub Open()
-		  RaiseEvent Open
-		  
-		  If Self.Window <> Nil And Self.Window IsA BeaconContainer Then
-		    BeaconContainer(Self.Window).mChildren.AddRow(New WeakRef(Self))
+		Sub Close()
+		  If Self.mFinishedCallback <> "" Then
+		    CallLater.Cancel(Self.mFinishedCallback)
+		    Self.mFinishedCallback = ""
 		  End If
 		  
-		  #if XojoVersion >= 2018.01
-		    Self.Composited = False
-		    Self.Transparent = TargetMacOS
-		  #else
-		    Self.DoubleBuffer = TargetWin32
-		    Self.Transparent = Not Self.DoubleBuffer
-		    Self.EraseBackground = Not Self.DoubleBuffer
-		  #endif
+		  RaiseEvent Close
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Open()
+		  If Self.mEmbedding Then
+		    Return
+		  End If
 		  
-		  Self.SwapButtons()
-		  
-		  RaiseEvent Resize(Self.mFirstResize)
-		  Self.mFirstResize = False
+		  Self.Open()
 		End Sub
 	#tag EndEvent
 
@@ -40,41 +37,106 @@ Inherits ContainerControl
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h21
+		Private Sub AddChild(Child As BeaconContainer)
+		  For I As Integer = Self.mChildren.LastRowIndex DownTo 0
+		    If Self.mChildren(I) = Nil Or Self.mChildren(I).Value = Nil Then
+		      Self.mChildren.RemoveRowAt(I)
+		      Continue
+		    End If
+		    
+		    If Self.mChildren(I).Value = Child Then
+		      Return
+		    End If
+		  Next
+		  
+		  Self.mChildren.AddRow(New WeakRef(Child))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function AddToParent() As Boolean
+		  If Self.Window <> Nil And Self.Window IsA BeaconContainer Then
+		    Var Win As BeaconContainer = BeaconContainer(Self.Window)
+		    If Win.FinishedEmbedding Then
+		      Self.mFinishedCallback = CallLater.Schedule(1, AddressOf TriggerEmbeddingFinished)
+		    Else
+		      BeaconContainer(Self.Window).AddChild(Self)
+		    End If
+		    Return False
+		  End If
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub EmbedWithin(containingControl As RectControl, left As Integer = 0, top As Integer = 0, width As Integer = -1, height As Integer = -1)
+		  Self.mEmbedding = True
 		  Super.EmbedWithin(ContainingControl, Left, Top, Width, Height)
-		  If Self.Window <> Nil And Self.Window IsA BeaconContainer Then
-		    BeaconContainer(Self.Window).mChildren.AddRow(New WeakRef(Self))
-		    Return
+		  Self.mEmbedding = False
+		  Self.Open()
+		  If Self.AddToParent Then
+		    Self.TriggerEmbeddingFinished()
 		  End If
-		  Self.TriggerEmbeddingFinished()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub EmbedWithin(containingWindow As Window, left As Integer = 0, top As Integer = 0, width As Integer = -1, height As Integer = -1)
+		  Self.mEmbedding = True
 		  Super.EmbedWithin(ContainingWindow, Left, Top, Width, Height)
-		  If Self.Window <> Nil And Self.Window IsA BeaconContainer Then
-		    BeaconContainer(Self.Window).mChildren.AddRow(New WeakRef(Self))
-		    Return
+		  Self.mEmbedding = False
+		  Self.Open()
+		  If Self.AddToParent Then
+		    Self.TriggerEmbeddingFinished()
 		  End If
-		  Self.TriggerEmbeddingFinished()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub EmbedWithinPanel(containingPanel As PagePanel, page As Integer, left As Integer = 0, top As Integer = 0, width As Integer = -1, height As Integer = -1)
+		  Self.mEmbedding = True
 		  Super.EmbedWithinPanel(ContainingPanel, Page, Left, Top, Width, Height)
-		  If Self.Window <> Nil And Self.Window IsA BeaconContainer Then
-		    BeaconContainer(Self.Window).mChildren.AddRow(New WeakRef(Self))
-		    Return
+		  Self.mEmbedding = False
+		  Self.Open()
+		  If Self.AddToParent Then
+		    Self.TriggerEmbeddingFinished()
 		  End If
-		  Self.TriggerEmbeddingFinished()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FinishedEmbedding() As Boolean
+		  Return Self.mEmbedded
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Open()
+		  RaiseEvent Open
+		  
+		  Call Self.AddToParent()
+		  
+		  #if XojoVersion >= 2018.01
+		    Self.Composited = False
+		    Self.Transparent = TargetMacOS
+		  #else
+		    Self.DoubleBuffer = TargetWin32
+		    Self.Transparent = Not Self.DoubleBuffer
+		    Self.EraseBackground = Not Self.DoubleBuffer
+		  #endif
+		  
+		  Self.SwapButtons()
+		  
+		  RaiseEvent Resize(Self.mFirstResize)
+		  Self.mFirstResize = False
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub TriggerEmbeddingFinished()
+		  Self.mEmbedded = True
 		  For I As Integer = Self.mChildren.LastRowIndex DownTo 0
 		    Dim Ref As WeakRef = Self.mChildren(I)
 		    If Ref = Nil Or Ref.Value = Nil Then
@@ -88,6 +150,10 @@ Inherits ContainerControl
 		End Sub
 	#tag EndMethod
 
+
+	#tag Hook, Flags = &h0
+		Event Close()
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event EmbeddingFinished()
@@ -104,6 +170,18 @@ Inherits ContainerControl
 
 	#tag Property, Flags = &h21
 		Private mChildren() As WeakRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEmbedded As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEmbedding As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFinishedCallback As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

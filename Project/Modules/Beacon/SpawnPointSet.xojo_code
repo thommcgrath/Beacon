@@ -22,9 +22,24 @@ Implements Beacon.DocumentItem,Beacon.Countable
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.SpawnPointSet)
 		  Self.Constructor()
-		  
 		  Self.mID = Source.mID
+		  Self.CopyFrom(Source)
 		  Self.mModified = Source.mModified
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
+		  // Part of the Beacon.DocumentItem interface.
+		  
+		  #Pragma Unused Engrams
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub CopyFrom(Source As Beacon.SpawnPointSet)
+		  Self.mCachedHash = ""
+		  Self.mModified = True
 		  Self.mWeight = Source.mWeight
 		  Self.mLabel = Source.mLabel
 		  If Source.mGroupOffset <> Nil Then
@@ -40,14 +55,6 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  For I As Integer = 0 To Source.mEntries.LastRowIndex
 		    Self.mEntries(I) = Source.mEntries(I).ImmutableVersion
 		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
-		  // Part of the Beacon.DocumentItem interface.
-		  
-		  #Pragma Unused Engrams
 		End Sub
 	#tag EndMethod
 
@@ -212,7 +219,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function ID() As v4UUID
-		  
+		  Return Self.mID
 		End Function
 	#tag EndMethod
 
