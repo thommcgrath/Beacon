@@ -7,10 +7,12 @@ Inherits UITweaks.ResizedTextField
 		    Return True
 		  End If
 		  
-		  If Key = Encodings.UTF8.Chr(10) Or Key = Encodings.UTF8.Chr(13) Then
+		  Var Code As Integer = Asc(Key)
+		  Select Case Code
+		  Case 10, 13, 3
 		    Self.CheckValue()
 		    Return True
-		  End If
+		  End Select
 		End Function
 	#tag EndEvent
 
@@ -32,6 +34,12 @@ Inherits UITweaks.ResizedTextField
 		Sub CheckValue()
 		  If RaiseEvent AllowContents(Me.Value) Then
 		    Self.SetValue(Self.Value) // Fires TextChanged only if necessary
+		    Return
+		  End If
+		  
+		  If Not IsNumeric(Self.Value) Then
+		    System.Beep
+		    Self.SetValue(Self.mLastNotifiedValue)
 		    Return
 		  End If
 		  
