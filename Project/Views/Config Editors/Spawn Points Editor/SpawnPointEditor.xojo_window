@@ -453,12 +453,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SpawnPoints() As Beacon.SpawnPoint
+		Function SpawnPoints() As Beacon.SpawnPoint()
 		  Var Points() As Beacon.SpawnPoint
 		  Points.ResizeTo(Self.mSpawnPoints.LastRowIndex)
 		  For I As Integer = 0 To Self.mSpawnPoints.LastRowIndex
-		    Points(I) = Self.mSpawnPoints(I).ImmutableVersion
+		    Points(I) = New Beacon.SpawnPoint(Self.mSpawnPoints(I))
 		  Next
+		  Return Points
 		End Function
 	#tag EndMethod
 
@@ -469,7 +470,7 @@ End
 		  Else
 		    Self.mSpawnPoints.ResizeTo(Points.LastRowIndex)
 		    For I As Integer = 0 To Points.LastRowIndex
-		      Self.mSpawnPoints(I) = Points(I).MutableVersion
+		      Self.mSpawnPoints(I) = New Beacon.MutableSpawnPoint(Points(I))
 		    Next
 		  End If
 		  

@@ -68,7 +68,7 @@ Protected Class SpawnSetOrganizer
 		      Self.mSets.Value(Point) = Set
 		    End If
 		    
-		    Point.AddSet(Set) // Will replace
+		    Point.AddSet(Set, True)
 		  Next
 		End Sub
 	#tag EndMethod

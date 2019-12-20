@@ -1216,6 +1216,20 @@ End
 
 #tag EndWindowCode
 
+#tag Events NameField
+	#tag Event
+		Sub TextChange()
+		  If Self.mSettingUp Or Self.SpawnSet = Nil Then
+		    Return
+		  End If
+		  
+		  Self.SpawnSet.Label = Me.Value
+		  If Self.SpawnSet.Modified Then
+		    RaiseEvent Changed
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events WeightField
 	#tag Event
 		Sub RangeError(DesiredValue As Double, NewValue As Double)

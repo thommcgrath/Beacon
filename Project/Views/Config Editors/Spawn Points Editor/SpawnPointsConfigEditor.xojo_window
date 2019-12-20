@@ -192,7 +192,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   729
       Begin SpawnPointEditor Editor
@@ -654,6 +654,28 @@ End
 		Function GetDocument() As Beacon.Document
 		  Return Self.Document
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Changed()
+		  Var Config As BeaconConfigs.SpawnPoints = Self.Config(True)
+		  Var Points() As Beacon.SpawnPoint = Me.SpawnPoints
+		  Var PathMap As New Dictionary
+		  For Each Point As Beacon.SpawnPoint In Points
+		    Config.Add(Point)
+		    PathMap.Value(Point.Path) = Point
+		  Next
+		  For I As Integer = 0 To Self.List.RowCount - 1
+		    Var Point As Beacon.SpawnPoint = Self.List.RowTagAt(I)
+		    If Not PathMap.HasKey(Point.Path) Then
+		      Continue
+		    End If
+		    
+		    Var NewPoint As Beacon.SpawnPoint = PathMap.Value(Point.Path)
+		    
+		    Self.List.CellValueAt(I, 0) = NewPoint.Label
+		    Self.List.RowTagAt(I) = NewPoint
+		  Next
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
