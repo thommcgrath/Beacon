@@ -435,6 +435,7 @@ End
 		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectClasses.IndexOf(ClassString) > -1
 		  Next
 		  
+		  Self.List.SortingColumn = 0
 		  Self.List.Sort
 		  Self.List.ScrollPosition = ScrollPosition
 		  Self.List.SelectionChangeBlocked = False
