@@ -416,8 +416,6 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectedPoints() As Beacon.SpawnPoint)
-		  Self.SettingUp = True
-		  
 		  Var Config As BeaconConfigs.SpawnPoints = Self.Config(False)
 		  Var SpawnPoints() As Beacon.SpawnPoint = Config.All
 		  Var Selected As New Dictionary
@@ -425,19 +423,18 @@ End
 		    Selected.Value(SpawnPoint.ObjectID) = True
 		  Next
 		  
+		  Self.List.SelectionChangeBlocked = True
 		  Self.List.RowCount = Config.Count
-		  
 		  For I As Integer = 0 To SpawnPoints.LastRowIndex
 		    Self.List.CellValueAt(I, 0) = SpawnPoints(I).Label
 		    Self.List.RowTagAt(I) = SpawnPoints(I)
 		    Self.List.Selected(I) = Selected.HasKey(SpawnPoints(I).ObjectID)
 		  Next
+		  Self.List.SortingColumn = 0
+		  Self.List.Sort
+		  Self.List.SelectionChangeBlocked = False
 		  
 		  Self.UpdateStatus()
-		  Self.List.SortingColumn = 0
-		  
-		  Self.SettingUp = False
-		  Self.List.Sort
 		End Sub
 	#tag EndMethod
 
@@ -527,10 +524,6 @@ End
 #tag Events List
 	#tag Event
 		Sub Change()
-		  If Self.SettingUp Then
-		    Return
-		  End If
-		  
 		  Var SpawnPoints() As Beacon.SpawnPoint
 		  Var Bound As Integer = Me.RowCount - 1
 		  For I As Integer = 0 To Bound
@@ -553,7 +546,21 @@ End
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
 		  If Warn Then
+		    Var Dialog As New MessageDialog
+		    Dialog.Title = ""
+		    If Me.SelectedRowCount = 1 Then
+		      Dialog.Message = "Are you sure you want to delete the selected spawn point?"
+		    Else
+		      Dialog.Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " spawn points?"
+		    End If
+		    Dialog.Explanation = "This action cannot be undone."
+		    Dialog.ActionButton.Caption = "Delete"
+		    Dialog.CancelButton.Visible = True
 		    
+		    Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		    If Choice = Dialog.CancelButton Then
+		      Return
+		    End If
 		  End If
 		  
 		  Var Bound As Integer = Me.RowCount - 1

@@ -799,7 +799,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Visible         =   True
          Width           =   228
       End
-      Begin UITweaks.ResizedTextField WaterMinHeightField
+      Begin RangeField WaterMinHeightField
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowSpellChecking=   False
@@ -843,7 +843,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Visible         =   True
          Width           =   80
       End
-      Begin UITweaks.ResizedTextField SpreadRadiusField
+      Begin RangeField SpreadRadiusField
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowSpellChecking=   False
@@ -887,7 +887,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Visible         =   True
          Width           =   80
       End
-      Begin UITweaks.ResizedTextField TameDistanceField
+      Begin RangeField TameDistanceField
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowSpellChecking=   False
@@ -931,7 +931,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Visible         =   True
          Width           =   80
       End
-      Begin UITweaks.ResizedTextField StructureDistanceField
+      Begin RangeField StructureDistanceField
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowSpellChecking=   False
@@ -975,7 +975,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Visible         =   True
          Width           =   80
       End
-      Begin UITweaks.ResizedTextField PlayerDistanceField
+      Begin RangeField PlayerDistanceField
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowSpellChecking=   False
@@ -1019,7 +1019,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Visible         =   True
          Width           =   80
       End
-      Begin UITweaks.ResizedTextField OffsetZField
+      Begin RangeField OffsetFields
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowSpellChecking=   False
@@ -1036,7 +1036,7 @@ Begin BeaconContainer SpawnPointSetEditor
          HasBorder       =   True
          Height          =   22
          Hint            =   ""
-         Index           =   -2147483648
+         Index           =   2
          InitialParent   =   "AdvancedGroup"
          Italic          =   False
          Left            =   464
@@ -1063,7 +1063,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Visible         =   True
          Width           =   80
       End
-      Begin UITweaks.ResizedTextField OffsetYField
+      Begin RangeField OffsetFields
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowSpellChecking=   False
@@ -1080,7 +1080,7 @@ Begin BeaconContainer SpawnPointSetEditor
          HasBorder       =   True
          Height          =   22
          Hint            =   ""
-         Index           =   -2147483648
+         Index           =   1
          InitialParent   =   "AdvancedGroup"
          Italic          =   False
          Left            =   372
@@ -1107,7 +1107,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Visible         =   True
          Width           =   80
       End
-      Begin UITweaks.ResizedTextField OffsetXField
+      Begin RangeField OffsetFields
          AllowAutoDeactivate=   True
          AllowFocusRing  =   True
          AllowSpellChecking=   False
@@ -1124,7 +1124,7 @@ Begin BeaconContainer SpawnPointSetEditor
          HasBorder       =   True
          Height          =   22
          Hint            =   ""
-         Index           =   -2147483648
+         Index           =   0
          InitialParent   =   "AdvancedGroup"
          Italic          =   False
          Left            =   280
@@ -1186,7 +1186,47 @@ End
 		  Self.mSettingUp = True
 		  
 		  Self.NameField.Value = Set.Label
-		  Self.WeightField.Value = Set.Weight.PrettyText
+		  Self.WeightField.DoubleValue = Set.Weight
+		  
+		  If Set.GroupOffset <> Nil Then
+		    Self.OffsetFields(0).DoubleValue = Set.GroupOffset.X
+		    Self.OffsetFields(1).DoubleValue = Set.GroupOffset.Y
+		    Self.OffsetFields(2).DoubleValue = Set.GroupOffset.Z
+		  Else
+		    Self.OffsetFields(0).Clear
+		    Self.OffsetFields(1).Clear
+		    Self.OffsetFields(2).Clear
+		  End If
+		  
+		  If Set.MinDistanceFromPlayersMultiplier <> Nil Then
+		    Self.PlayerDistanceField.DoubleValue = Set.MinDistanceFromPlayersMultiplier
+		  Else
+		    Self.PlayerDistanceField.Clear
+		  End If
+		  
+		  If Set.MinDistanceFromStructuresMultiplier <> Nil Then
+		    Self.StructureDistanceField.DoubleValue = Set.MinDistanceFromStructuresMultiplier
+		  Else
+		    Self.StructureDistanceField.Clear
+		  End If
+		  
+		  If Set.MinDistanceFromTamedDinosMultiplier <> Nil Then
+		    Self.TameDistanceField.DoubleValue = Set.MinDistanceFromTamedDinosMultiplier
+		  Else
+		    Self.TameDistanceField.Clear
+		  End If
+		  
+		  If Set.SpreadRadius <> Nil Then
+		    Self.SpreadRadiusField.DoubleValue = Set.SpreadRadius
+		  Else
+		    Self.SpreadRadiusField.Clear
+		  End If
+		  
+		  If Set.WaterOnlyMinimumHeight <> Nil Then
+		    Self.WaterMinHeightField.DoubleValue = Set.WaterOnlyMinimumHeight
+		  Else
+		    Self.WaterMinHeightField.Clear
+		  End If
 		  
 		  Self.mSettingUp = False
 		End Sub
@@ -1279,6 +1319,226 @@ End
 		  
 		  Self.WeightField.DoubleValue = Self.WeightField.DoubleValue + (If(Keyboard.AsyncShiftKey, 5, 1) * (Self.WeightScale / 100))
 		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events WaterMinHeightField
+	#tag Event
+		Sub TextChange()
+		  If Self.mSettingUp Or Self.SpawnSet = Nil Then
+		    Return
+		  End If
+		  
+		  If Me.Value = "" Then
+		    Self.SpawnSet.WaterOnlyMinimumHeight = Nil
+		  Else
+		    Self.SpawnSet.WaterOnlyMinimumHeight = Me.DoubleValue
+		  End If
+		  
+		  RaiseEvent Changed
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub RangeError(DesiredValue As Double, NewValue As Double)
+		  #Pragma Unused DesiredValue
+		  #Pragma Unused NewValue
+		  
+		  System.Beep
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 0.00001
+		  MaxValue = 1000000
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function AllowContents(Value As String) As Boolean
+		  Return Value = ""
+		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events SpreadRadiusField
+	#tag Event
+		Sub TextChange()
+		  If Self.mSettingUp Or Self.SpawnSet = Nil Then
+		    Return
+		  End If
+		  
+		  If Me.Value = "" Then
+		    Self.SpawnSet.SpreadRadius = Nil
+		  Else
+		    Self.SpawnSet.SpreadRadius = Me.DoubleValue
+		  End If
+		  
+		  RaiseEvent Changed
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub RangeError(DesiredValue As Double, NewValue As Double)
+		  #Pragma Unused DesiredValue
+		  #Pragma Unused NewValue
+		  
+		  System.Beep
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 0.00001
+		  MaxValue = 1000000
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function AllowContents(Value As String) As Boolean
+		  Return Value = ""
+		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events TameDistanceField
+	#tag Event
+		Sub TextChange()
+		  If Self.mSettingUp Or Self.SpawnSet = Nil Then
+		    Return
+		  End If
+		  
+		  If Me.Value = "" Then
+		    Self.SpawnSet.MinDistanceFromTamedDinosMultiplier = Nil
+		  Else
+		    Self.SpawnSet.MinDistanceFromTamedDinosMultiplier = Me.DoubleValue
+		  End If
+		  
+		  RaiseEvent Changed
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub RangeError(DesiredValue As Double, NewValue As Double)
+		  #Pragma Unused DesiredValue
+		  #Pragma Unused NewValue
+		  
+		  System.Beep
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 0.00001
+		  MaxValue = 1000000
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function AllowContents(Value As String) As Boolean
+		  Return Value = ""
+		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events StructureDistanceField
+	#tag Event
+		Sub TextChange()
+		  If Self.mSettingUp Or Self.SpawnSet = Nil Then
+		    Return
+		  End If
+		  
+		  If Me.Value = "" Then
+		    Self.SpawnSet.MinDistanceFromStructuresMultiplier = Nil
+		  Else
+		    Self.SpawnSet.MinDistanceFromStructuresMultiplier = Me.DoubleValue
+		  End If
+		  
+		  RaiseEvent Changed
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub RangeError(DesiredValue As Double, NewValue As Double)
+		  #Pragma Unused DesiredValue
+		  #Pragma Unused NewValue
+		  
+		  System.Beep
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 0.00001
+		  MaxValue = 1000000
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function AllowContents(Value As String) As Boolean
+		  Return Value = ""
+		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events PlayerDistanceField
+	#tag Event
+		Sub TextChange()
+		  If Self.mSettingUp Or Self.SpawnSet = Nil Then
+		    Return
+		  End If
+		  
+		  If Me.Value = "" Then
+		    Self.SpawnSet.MinDistanceFromPlayersMultiplier = Nil
+		  Else
+		    Self.SpawnSet.MinDistanceFromPlayersMultiplier = Me.DoubleValue
+		  End If
+		  
+		  RaiseEvent Changed
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub RangeError(DesiredValue As Double, NewValue As Double)
+		  #Pragma Unused DesiredValue
+		  #Pragma Unused NewValue
+		  
+		  System.Beep
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 0.00001
+		  MaxValue = 1000000
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function AllowContents(Value As String) As Boolean
+		  Return Value = ""
+		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events OffsetFields
+	#tag Event
+		Sub GetRange(index as Integer, ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 0.00001
+		  MaxValue = 1000000
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub RangeError(index as Integer, DesiredValue As Double, NewValue As Double)
+		  #Pragma Unused DesiredValue
+		  #Pragma Unused NewValue
+		  
+		  System.Beep
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub TextChange(index as Integer)
+		  If Self.mSettingUp Or Self.SpawnSet = Nil Then
+		    Return
+		  End If
+		  
+		  Var Offset As Beacon.Point3D
+		  If OffsetFields(0).Value = "" Or OffsetFields(1).Value = "" Or OffsetFields(2).Value = "" Then
+		    Offset = Nil
+		  Else
+		    Offset = New Beacon.Point3D(OffsetFields(0).DoubleValue, OffsetFields(1).DoubleValue, OffsetFields(2).DoubleValue)
+		  End If
+		  
+		  If Self.SpawnSet.GroupOffset <> Offset Then
+		    Self.SpawnSet.GroupOffset = Offset
+		    RaiseEvent Changed
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function AllowContents(index as Integer, Value As String) As Boolean
+		  Return Value = ""
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

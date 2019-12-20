@@ -25,16 +25,6 @@ Protected Class SpawnSetOrganizer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function FoundInPoints() As Beacon.MutableSpawnPoint()
-		  Var Arr() As Beacon.MutableSpawnPoint
-		  For Each Entry As DictionaryEntry In Self.mSets
-		    Arr.AddRow(Entry.Key)
-		  Next
-		  Return Arr
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Label(Extended As Boolean) As String
 		  If Not Extended Then
 		    Return Self.Template.Label
@@ -42,7 +32,7 @@ Protected Class SpawnSetOrganizer
 		  
 		  If Self.mSubLabel = "" Then
 		    Var PointNames() As String
-		    Var Points() As Beacon.MutableSpawnPoint = Self.FoundInPoints
+		    Var Points() As Beacon.MutableSpawnPoint = Self.Points
 		    For Each Point As Beacon.MutableSpawnPoint In Points
 		      PointNames.AddRow(Point.Label)
 		    Next
@@ -51,6 +41,16 @@ Protected Class SpawnSetOrganizer
 		  End If
 		  
 		  Return Self.Template.Label + EndOfLine + Self.mSubLabel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Points() As Beacon.MutableSpawnPoint()
+		  Var Arr() As Beacon.MutableSpawnPoint
+		  For Each Entry As DictionaryEntry In Self.mSets
+		    Arr.AddRow(Entry.Key)
+		  Next
+		  Return Arr
 		End Function
 	#tag EndMethod
 
@@ -71,6 +71,14 @@ Protected Class SpawnSetOrganizer
 		    Point.AddSet(Set, True)
 		  Next
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SetForPoint(Point As Beacon.MutableSpawnPoint) As Beacon.SpawnPointSet
+		  If Self.mSets.HasKey(Point) Then
+		    Return Self.mSets.Value(Point)
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

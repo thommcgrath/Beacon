@@ -223,6 +223,11 @@ Implements Iterable
 		      Members.AddRow("SpawnMinDistanceFromTamedDinosMultiplier=" + Set.MinDistanceFromTamedDinosMultiplier.Value.PrettyText)
 		    End If
 		    
+		    If Set.GroupOffset <> Nil Then
+		      Var Offset As Beacon.Point3D = Set.GroupOffset
+		      Members.AddRow("GroupSpawnOffset=(X=" + Offset.X.PrettyText + ",Y=" + Offset.Y.PrettyText + ",Z=" + Offset.Z.PrettyText + ")")
+		    End If
+		    
 		    If Set.ReplacesCreatures Then
 		      Var ReplacedCreatures() As Beacon.Creature = Set.ReplacedCreatures()
 		      Var Replacements() As String
@@ -465,6 +470,15 @@ Implements Iterable
 		            Set.MinDistanceFromTamedDinosMultiplier = Entry.Value("SpawnMinDistanceFromTamedDinosMultiplier").DoubleValue
 		          End If
 		          
+		          If Entry.HasKey("GroupSpawnOffset") Then
+		            Var Offset As Beacon.Point3D = Beacon.Point3D.FromSaveData(Entry.Value("GroupSpawnOffset"))
+		            If Offset <> Nil Then
+		              Set.GroupOffset = Offset
+		            Else
+		              Break
+		            End If
+		          End If
+		          
 		          If Entry.HasKey("NPCRandomSpawnClassWeights") Then
 		            Var Replacements() As Variant = Entry.Value("NPCRandomSpawnClassWeights")
 		            For Each Replacement As Dictionary In Replacements
@@ -528,7 +542,7 @@ Implements Iterable
 		    Return False
 		  End If
 		  
-		  Return Self.mSpawnPoints.HasKey(SpawnPoint.Path)
+		  Return Self.mSpawnPoints.HasKey(Self.DictionaryKey(SpawnPoint))
 		End Function
 	#tag EndMethod
 
@@ -547,7 +561,7 @@ Implements Iterable
 	#tag Method, Flags = &h0
 		Sub Remove(SpawnPoint As Beacon.SpawnPoint)
 		  If Self.HasSpawnPoint(SpawnPoint) Then
-		    Self.mSpawnPoints.Remove(SpawnPoint.Path)
+		    Self.mSpawnPoints.Remove(Self.DictionaryKey(SpawnPoint))
 		    Self.Modified = True
 		  End If
 		End Sub

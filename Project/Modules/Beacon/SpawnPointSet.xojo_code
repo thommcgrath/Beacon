@@ -50,6 +50,9 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  Self.mSpreadRadius = Source.mSpreadRadius
 		  Self.mWaterOnlyMinimumHeight = Source.mWaterOnlyMinimumHeight
 		  Self.mReplacements = Source.mReplacements.Clone
+		  Self.mMinDistanceFromPlayersMultiplier = Source.mMinDistanceFromPlayersMultiplier
+		  Self.mMinDistanceFromStructuresMultiplier = Source.mMinDistanceFromStructuresMultiplier
+		  Self.mMinDistanceFromTamedDinosMultiplier = Source.mMinDistanceFromTamedDinosMultiplier
 		  
 		  Self.mEntries.ResizeTo(Source.mEntries.LastRowIndex)
 		  For I As Integer = 0 To Source.mEntries.LastRowIndex
@@ -149,7 +152,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  End If
 		  
 		  If SaveData.HasKey("GroupOffset") And SaveData.Value("GroupOffset") <> Nil Then
-		    Var GroupOffset As Beacon.Point3D = Beacon.Point3D(SaveData.Value("GroupOffset"))
+		    Var GroupOffset As Beacon.Point3D = Beacon.Point3D.FromSaveData(SaveData.Value("GroupOffset"))
 		    If GroupOffset <> Nil Then
 		      Set.GroupOffset = GroupOffset
 		    End If

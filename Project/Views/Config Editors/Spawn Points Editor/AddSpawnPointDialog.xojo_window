@@ -314,7 +314,7 @@ Begin BeaconDialog AddSpawnPointDialog
    Begin CheckBox LoadDefaultsCheck
       AllowAutoDeactivate=   True
       Bold            =   False
-      Caption         =   "Load Default Spawns"
+      Caption         =   "Load Simplified Default Spawns"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   False
@@ -342,7 +342,7 @@ Begin BeaconDialog AddSpawnPointDialog
       Value           =   False
       Visible         =   True
       VisualState     =   "0"
-      Width           =   200
+      Width           =   270
    End
    Begin RadioButton OverrideRadio
       AllowAutoDeactivate=   True
