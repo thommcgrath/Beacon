@@ -11,7 +11,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  Self.mWeight = 1.0
+		  Self.mWeight = 0.5
 		  Self.mModified = False
 		  Self.mGroupOffset = Nil
 		  Self.mID = New v4UUID

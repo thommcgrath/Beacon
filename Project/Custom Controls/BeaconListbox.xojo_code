@@ -233,7 +233,7 @@ Inherits Listbox
 
 	#tag Event
 		Function KeyDown(Key As String) As Boolean
-		  If (Key = Encodings.UTF8.Chr(8) Or Key = Encodings.UTF8.Chr(127)) And CanDelete() Then
+		  If (Key = Encodings.UTF8.Chr(8) Or Key = Encodings.UTF8.Chr(127)) And Self.CanDelete() Then
 		    RaiseEvent PerformClear(True)
 		    Return True
 		  Else
@@ -286,6 +286,12 @@ Inherits Listbox
 	#tag Method, Flags = &h0
 		Function CanCopy() As Boolean
 		  Return RaiseEvent CanCopy()
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CanDelete() As Boolean
+		  Return RaiseEvent CanDelete()
 		End Function
 	#tag EndMethod
 
@@ -534,6 +540,9 @@ Inherits Listbox
 	#tag Constant, Name = AlternateRowColor, Type = Color, Dynamic = False, Default = \"&cFAFAFA", Scope = Public
 	#tag EndConstant
 
+	#tag Constant, Name = DoubleLineRowHeight, Type = Double, Dynamic = False, Default = \"34", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = InvalidSelectedRowColor, Type = Color, Dynamic = False, Default = \"&c800000", Scope = Public
 	#tag EndConstant
 
@@ -562,6 +571,9 @@ Inherits Listbox
 	#tag EndConstant
 
 	#tag Constant, Name = SelectedTextColorInactive, Type = Color, Dynamic = False, Default = \"&c000000", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = StandardRowHeight, Type = Double, Dynamic = False, Default = \"26", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = TextColor, Type = Color, Dynamic = False, Default = \"&c000000", Scope = Public

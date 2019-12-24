@@ -315,11 +315,13 @@ Implements Iterable
 		  End If
 		  
 		  Var Dicts() As Variant
+		  #Pragma BreakOnExceptions False
 		  Try
 		    Dicts = ParsedData.Value(ConfigKey)
 		  Catch Err As RuntimeException
 		    Dicts.AddRow(ParsedData.Value(ConfigKey))
 		  End Try
+		  #Pragma BreakOnExceptions Default
 		  
 		  Var Mode As Integer
 		  If ConfigKey.BeginsWith("ConfigAdd") Then

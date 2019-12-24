@@ -66,7 +66,7 @@ Begin BeaconContainer SpawnPointSetEditor
          ColumnWidths    =   ""
          DataField       =   ""
          DataSource      =   ""
-         DefaultRowHeight=   26
+         DefaultRowHeight=   34
          DropIndicatorVisible=   False
          Enabled         =   True
          FontName        =   "System"
@@ -91,7 +91,7 @@ Begin BeaconContainer SpawnPointSetEditor
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowSelectionType=   "0"
+         RowSelectionType=   "1"
          Scope           =   2
          SelectionChangeBlocked=   False
          TabIndex        =   0
@@ -244,7 +244,7 @@ Begin BeaconContainer SpawnPointSetEditor
          ColumnWidths    =   ""
          DataField       =   ""
          DataSource      =   ""
-         DefaultRowHeight=   26
+         DefaultRowHeight=   34
          DropIndicatorVisible=   False
          Enabled         =   True
          FontName        =   "System"
@@ -269,7 +269,7 @@ Begin BeaconContainer SpawnPointSetEditor
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
-         RowSelectionType=   "0"
+         RowSelectionType=   "1"
          Scope           =   2
          SelectionChangeBlocked=   False
          TabIndex        =   0
@@ -1156,6 +1156,27 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Resize(Initial As Boolean)
+		  Const ReplaceMinWidth = 304
+		  
+		  Var AvailableWidth As Integer = Self.Width - 52
+		  Var ReplacementsWidth As Integer = Max(AvailableWidth * 0.4, ReplaceMinWidth)
+		  Var EntriesWidth As Integer = AvailableWidth - ReplacementsWidth
+		  
+		  Self.EntriesGroup.Width = EntriesWidth
+		  Self.ReplaceGroup.Left = Self.EntriesGroup.Left + Self.EntriesGroup.Width + 12
+		  Self.ReplaceGroup.Width = ReplacementsWidth
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h21
+		Private Function Document() As Beacon.Document
+		  Return RaiseEvent GetDocument
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function SpawnSet() As Beacon.MutableSpawnPointSet
 		  If Self.mRef <> Nil And Self.mRef.Value <> Nil Then
@@ -1178,6 +1199,116 @@ End
 		  
 		  Self.mRef = New WeakRef(Set)
 		  Self.UpdateUI(Set)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateEntriesList(Set As Beacon.SpawnPointSet, SelectEntries() As Beacon.SpawnPointSetEntry = Nil)
+		  Var List As BeaconListbox = Self.EntriesList
+		  
+		  Var SelectedEntries() As String
+		  If SelectEntries = Nil Then
+		    For I As Integer = 0 To List.RowCount - 1
+		      If List.Selected(I) Then
+		        Var Entry As Beacon.SpawnPointSetEntry = List.RowTagAt(I)
+		        SelectedEntries.AddRow(Entry.ID)
+		      End If
+		    Next
+		  Else
+		    For Each Entry As Beacon.SpawnPointSetEntry In SelectEntries
+		      SelectedEntries.AddRow(Entry.ID)
+		    Next
+		  End If
+		  
+		  Var RowHeight As Integer = BeaconListbox.StandardRowHeight
+		  List.SelectionChangeBlocked = True
+		  List.RowCount = Set.Count
+		  Var Bound As Integer = Set.Count - 1
+		  For RowIndex As Integer = 0 To Bound
+		    Var Entry As Beacon.SpawnPointSetEntry = Set.Entry(RowIndex)
+		    
+		    Var Figures() As String
+		    If Entry.Offset <> Nil Then
+		      Figures.AddRow("Offset: " + Entry.Offset.X.PrettyText + "," + Entry.Offset.Y.PrettyText + "," + Entry.Offset.Z.PrettyText)
+		    End If
+		    If Entry.SpawnChance <> Nil Then
+		      Figures.AddRow("Chance: " + Entry.SpawnChance.Value.ToString("0%"))
+		    End If
+		    If Entry.LevelCount > 0 Then
+		      Var Difficulty As Double = Self.Document.DifficultyValue
+		      Var LevelRange As Beacon.Range = Entry.LevelRangeForDifficulty(Difficulty)
+		      Figures.AddRow("Level Range Override: " + LevelRange.Min.PrettyText() + " to " + LevelRange.Max.PrettyText())
+		    End If
+		    Figures.Sort
+		    
+		    Var Label As String = Entry.Creature.Label
+		    If Figures.LastRowIndex > -1 Then
+		      Label = Label + EndOfLine + Figures.Join("   ")
+		      RowHeight = BeaconListbox.DoubleLineRowHeight
+		    End If
+		    
+		    List.RowTagAt(RowIndex) = Entry
+		    List.CellValueAt(RowIndex, 0) = Label
+		    List.Selected(RowIndex) = SelectedEntries.IndexOf(Entry.ID) > -1
+		  Next
+		  If List.DefaultRowHeight <> RowHeight Then
+		    List.DefaultRowHeight = RowHeight
+		  End If
+		  List.SortingColumn = 0
+		  List.Sort
+		  List.SelectionChangeBlocked = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateReplacementsList(Set As Beacon.SpawnPointSet, SelectCreatures() As Beacon.Creature = Nil)
+		  Var SelectedReplacements() As String
+		  If SelectCreatures = Nil Then
+		    For I As Integer = 0 To Self.ReplaceList.RowCount - 1
+		      If Self.ReplaceList.Selected(I) Then
+		        SelectedReplacements.AddRow(Self.ReplaceList.RowTagAt(I))
+		      End If
+		    Next
+		  Else
+		    For Each Creature As Beacon.Creature In SelectCreatures
+		      SelectedReplacements.AddRow(Creature.Path)
+		    Next
+		  End If
+		  
+		  Var ReplacedCreatures() As Beacon.Creature = Set.ReplacedCreatures
+		  Self.ReplaceList.SelectionChangeBlocked = True
+		  Self.ReplaceList.RowCount = ReplacedCreatures.LastRowIndex + 1
+		  For RowIndex As Integer = 0 To ReplacedCreatures.LastRowIndex
+		    Var ReplacedCreature As Beacon.Creature = ReplacedCreatures(RowIndex)
+		    Var ReplacementCreatures() As Beacon.Creature = Set.ReplacementCreatures(ReplacedCreature)
+		    
+		    Var TotalWeight As Double
+		    For Each ReplacementCreature As Beacon.Creature In ReplacementCreatures
+		      Var Weight As NullableDouble = Set.CreatureReplacementWeight(ReplacedCreature, ReplacementCreature)
+		      If Weight <> Nil Then
+		        TotalWeight = TotalWeight + Weight
+		      End If
+		    Next
+		    
+		    Var ReplacementCreatureNames() As String
+		    For Each ReplacementCreature As Beacon.Creature In ReplacementCreatures
+		      Var Label As String = ReplacementCreature.Label
+		      Var Weight As NullableDouble = Set.CreatureReplacementWeight(ReplacedCreature, ReplacementCreature)
+		      If Weight <> Nil Then
+		        Var Chance As Double = (Weight / TotalWeight) * 100
+		        Label = Label + " (" + Chance.PrettyText(2) + "%)"
+		      End If
+		      ReplacementCreatureNames.AddRow(Label)
+		    Next
+		    ReplacementCreatureNames.Sort
+		    
+		    Self.ReplaceList.CellValueAt(RowIndex, 0) = ReplacedCreature.Label + EndOfLine + Language.EnglishOxfordList(ReplacementCreatureNames)
+		    Self.ReplaceList.RowTagAt(RowIndex) = ReplacedCreature.Path
+		    Self.ReplaceList.Selected(RowIndex) = SelectedReplacements.IndexOf(ReplacedCreature.Path) > -1
+		  Next
+		  Self.ReplaceList.SortingColumn = 0
+		  Self.ReplaceList.Sort
+		  Self.ReplaceList.SelectionChangeBlocked = False
 		End Sub
 	#tag EndMethod
 
@@ -1228,6 +1359,9 @@ End
 		    Self.WaterMinHeightField.Clear
 		  End If
 		  
+		  Self.UpdateEntriesList(Set)
+		  Self.UpdateReplacementsList(Set)
+		  
 		  Self.mSettingUp = False
 		End Sub
 	#tag EndMethod
@@ -1235,6 +1369,10 @@ End
 
 	#tag Hook, Flags = &h0
 		Event Changed()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event GetDocument() As Beacon.Document
 	#tag EndHook
 
 
@@ -1247,15 +1385,300 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = kEntryClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.spawn.entry", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = kReplacementClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.spawn.replacement", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"660", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = WeightScale, Type = Double, Dynamic = False, Default = \"1000", Scope = Private
+	#tag Constant, Name = WeightScale, Type = Double, Dynamic = False, Default = \"1.0", Scope = Private
 	#tag EndConstant
 
 
 #tag EndWindowCode
 
+#tag Events EntriesList
+	#tag Event
+		Function CanCopy() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanPaste(Board As Clipboard) As Boolean
+		  Return Board.RawDataAvailable(Self.kEntryClipboardType) Or (Board.TextAvailable And Board.Text.IndexOf("""Type"": ""SpawnPointSetEntry""") > -1)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
+		  Var Bound As Integer = Me.RowCount - 1
+		  Var EntriesToDelete() As Beacon.SpawnPointSetEntry
+		  Var EntryNames() As String
+		  Var UseGenericNames As Boolean
+		  For I As Integer = Bound DownTo 0
+		    If Me.Selected(I) = False Then
+		      Continue
+		    End If
+		    
+		    Var Entry As Beacon.SpawnPointSetEntry = Me.RowTagAt(I)
+		    EntriesToDelete.AddRow(Entry)
+		    If EntryNames.IndexOf(Entry.Creature.Label) > -1 Then
+		      UseGenericNames = True
+		    End If
+		    EntryNames.AddRow(Entry.Creature.Label)
+		  Next
+		  
+		  Var Names As String
+		  If UseGenericNames Then
+		    Names = "these " + Me.SelectedRowCount.ToString + " creatures"
+		  Else
+		    Names = Language.EnglishOxfordList(EntryNames)
+		  End If
+		  If Warn And Not Self.ShowConfirm("Are you sure you want to delete " + Names + "?", "This action cannot be undone.", "Delete", "Cancel") Then
+		    Return
+		  End If
+		  
+		  Var Set As Beacon.MutableSpawnPointSet = Self.SpawnSet
+		  Var Changed As Boolean
+		  For Each Entry As Beacon.SpawnPointSetEntry In EntriesToDelete
+		    Var Idx As Integer = Set.IndexOf(Entry)
+		    If Idx > -1 Then
+		      Set.Remove(Idx)
+		      Changed = True
+		    End If
+		  Next
+		  
+		  If Changed Then
+		    RaiseEvent Changed
+		    Self.UpdateEntriesList(Set)
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformCopy(Board As Clipboard)
+		  Var Items() As Dictionary
+		  For I As Integer = 0 To Me.RowCount - 1
+		    If Me.Selected(I) Then
+		      Items.AddRow(Beacon.SpawnPointSetEntry(Me.RowTagAt(I)).SaveData)
+		    End If
+		  Next
+		  
+		  Var JSON As String = Beacon.GenerateJSON(Items, True)
+		  Board.Text = JSON.Trim
+		  Board.AddRawData(JSON, Self.kEntryClipboardType)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformPaste(Board As Clipboard)
+		  If Not Me.CanPaste Or Self.SpawnSet = Nil Then
+		    Return
+		  End If
+		  
+		  Var Items() As Variant
+		  Try
+		    If Board.RawDataAvailable(Self.kEntryClipboardType) Then
+		      Items = Beacon.ParseJSON(Board.RawData(Self.kEntryClipboardType))
+		    Else
+		      Items = Beacon.ParseJSON(Board.Text)
+		    End If
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Var Set As Beacon.MutableSpawnPointSet = Self.SpawnSet
+		  Var SelectEntries() As Beacon.SpawnPointSetEntry
+		  For Each Item As Dictionary In Items
+		    Var Entry As Beacon.SpawnPointSetEntry = Beacon.SpawnPointSetEntry.FromSaveData(Item)
+		    If Entry = Nil Then
+		      Continue
+		    End If
+		    
+		    Set.Append(Entry)
+		    SelectEntries.AddRow(Entry)
+		  Next
+		  
+		  Self.UpdateEntriesList(Set, SelectEntries)
+		  RaiseEvent Changed
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  Self.EntryDeleteButton.Enabled = Me.CanDelete
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EntryDeleteButton
+	#tag Event
+		Sub Action()
+		  Self.EntriesList.DoClear
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ReplaceList
+	#tag Event
+		Function CanCopy() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanPaste(Board As Clipboard) As Boolean
+		  Return Board.RawDataAvailable(Self.kReplacementClipboardType) Or (Board.TextAvailable And Board.Text.IndexOf("""Replacements"": [") > -1 And Board.Text.IndexOf("""Creature"": ""/Game/") > -1)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  Self.ReplaceDeleteButton.Enabled = Me.CanDelete
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
+		  Var Bound As Integer = Me.RowCount - 1
+		  Var CreaturesToDelete() As Beacon.Creature
+		  Var CreatureNames() As String
+		  Var UseGenericNames As Boolean
+		  For I As Integer = Bound DownTo 0
+		    If Me.Selected(I) = False Then
+		      Continue
+		    End If
+		    
+		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Me.RowTagAt(I))
+		    If Creature = Nil Then
+		      Creature = Beacon.Creature.CreateFromPath(Me.RowTagAt(I))
+		    End If
+		    
+		    CreaturesToDelete.AddRow(Creature)
+		    
+		    If CreatureNames.IndexOf(Creature.Label) > -1 Then
+		      UseGenericNames = True
+		    Else
+		      CreatureNames.AddRow(Creature.Label)
+		    End If
+		  Next
+		  
+		  Var Names As String
+		  If UseGenericNames Then
+		    Names = "these " + Me.SelectedRowCount.ToString + " replacements"
+		  Else
+		    Names = Language.EnglishOxfordList(CreatureNames)
+		  End If
+		  If Warn And Not Self.ShowConfirm("Are you sure you want to delete " + Names + "?", "This action cannot be undone.", "Delete", "Cancel") Then
+		    Return
+		  End If
+		  
+		  Var Set As Beacon.MutableSpawnPointSet = Self.SpawnSet
+		  Var Changed As Boolean
+		  For Each FromCreature As Beacon.Creature In CreaturesToDelete
+		    Var Replacements() As Beacon.Creature = Set.ReplacementCreatures(FromCreature)
+		    For Each ToCreature As Beacon.Creature In Replacements
+		      If Set.CreatureReplacementWeight(FromCreature, ToCreature) <> Nil Then
+		        Set.CreatureReplacementWeight(FromCreature, ToCreature) = Nil
+		        Changed = True
+		      End If
+		    Next
+		  Next
+		  
+		  If Changed Then
+		    RaiseEvent Changed
+		    Self.UpdateReplacementsList(Set)
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformCopy(Board As Clipboard)
+		  Var Items() As Dictionary
+		  Var Set As Beacon.SpawnPointSet = Self.SpawnSet
+		  For I As Integer = 0 To Me.RowCount - 1
+		    If Not Me.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Var Path As String = Me.RowTagAt(I)
+		    Var FromCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Path)
+		    If FromCreature = Nil Then
+		      FromCreature = Beacon.Creature.CreateFromPath(Path)
+		    End If
+		    
+		    Var Replacements() As Beacon.Creature = Set.ReplacementCreatures(FromCreature)
+		    Var Map As New Dictionary
+		    For Each ToCreature As Beacon.Creature In Replacements
+		      Var Weight As Double = Set.CreatureReplacementWeight(FromCreature, ToCreature)
+		      Map.Value(ToCreature.Path) = Weight
+		    Next
+		    
+		    Var Dict As New Dictionary
+		    Dict.Value("Creature") = FromCreature.Path
+		    Dict.Value("Replacements") = Map
+		    Items.AddRow(Dict)
+		  Next
+		  
+		  Var JSON As String = Beacon.GenerateJSON(Items, True)
+		  Board.Text = JSON.Trim
+		  Board.AddRawData(Self.kReplacementClipboardType, JSON)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformPaste(Board As Clipboard)
+		  If Not Me.CanPaste Or Self.SpawnSet = Nil Then
+		    Return
+		  End If
+		  
+		  Var Items() As Variant
+		  Try
+		    If Board.RawDataAvailable(Self.kReplacementClipboardType) Then
+		      Items = Beacon.ParseJSON(Board.RawData(Self.kEntryClipboardType))
+		    Else
+		      Items = Beacon.ParseJSON(Board.Text)
+		    End If
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Var Set As Beacon.MutableSpawnPointSet = Self.SpawnSet
+		  Var SelectCreatures() As Beacon.Creature
+		  For Each Item As Dictionary In Items
+		    If Item.HasKey("Creature") = False Or Item.HasKey("Replacements") = False Then
+		      Continue
+		    End If
+		    
+		    Var FromPath As String = Item.Value("Creature")
+		    Var FromCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(FromPath)
+		    If FromCreature = Nil Then
+		      FromCreature = Beacon.Creature.CreateFromPath(FromPath)
+		    End If
+		    
+		    Var Maps() As Variant = Item.Value("Replacements")
+		    For Each Map As Dictionary In Maps
+		      For Each MapEntry As DictionaryEntry In Map
+		        Var ToPath As String = MapEntry.Key
+		        Var ToCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(ToPath)
+		        If ToCreature = Nil Then
+		          ToCreature = Beacon.Creature.CreateFromPath(ToPath)
+		        End If
+		        Var Weight As Double = MapEntry.Value
+		        Set.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
+		      Next
+		    Next
+		    
+		    SelectCreatures.AddRow(FromCreature)
+		  Next
+		  
+		  Self.UpdateReplacementsList(Set, SelectCreatures)
+		  RaiseEvent Changed
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events NameField
 	#tag Event
 		Sub TextChange()

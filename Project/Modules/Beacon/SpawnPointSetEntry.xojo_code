@@ -72,7 +72,9 @@ Implements Beacon.DocumentItem
 		    Return Nil
 		  End If
 		  
-		  If Dict.HasKey("Chance") Then
+		  If Dict.HasKey("SpawnChance") Then
+		    Entry.mChance = Dict.Value("SpawnChance").DoubleValue
+		  ElseIf Dict.HasKey("Chance") Then
 		    Entry.mChance = Dict.Value("Chance").DoubleValue
 		  End If
 		  
@@ -166,8 +168,46 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function LevelForDifficulty(Difficulty As Double) As Beacon.SpawnPointLevel
+		  Var Candidate As Beacon.SpawnPointLevel
+		  For Each Level As Beacon.SpawnPointLevel In Self.mLevels
+		    If Level.Difficulty <= Difficulty And (Candidate = Nil Or Candidate.Difficulty < Level.Difficulty) Then
+		      Candidate = Level
+		    End If
+		  Next
+		  If Candidate = Nil Then
+		    Candidate = New Beacon.SpawnPointLevel(1.0, 30.0, Difficulty)
+		  End If
+		  Return Candidate
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function LevelOverride() As NullableDouble
 		  Return Self.mLevelOverride
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LevelRangeForDifficulty(Difficulty As Double) As Beacon.Range
+		  Var Levels As Beacon.SpawnPointLevel = Self.LevelForDifficulty(Difficulty)
+		  Var MinLevelOffset, MaxLevelOffset As Double = 0.0
+		  Var MinLevelMultiplier, MaxLevelMultiplier As Double = 1.0
+		  If Self.MinLevelOffset <> Nil Then
+		    MinLevelOffset = Self.MinLevelOffset
+		  End If
+		  If Self.MaxLevelOffset <> Nil Then
+		    MaxLevelOffset = Self.MaxLevelOffset
+		  End If
+		  If Self.MinLevelMultiplier <> Nil Then
+		    MinLevelMultiplier = Self.MinLevelMultiplier
+		  End If
+		  If Self.MaxLevelMultiplier <> Nil Then
+		    MaxLevelMultiplier = Self.MaxLevelMultiplier
+		  End If
+		  Var MinLevel As Integer = Round((Floor(Levels.MinLevel) + MinLevelOffset) * Difficulty * MinLevelMultiplier)
+		  Var MaxLevel As Integer = Round((Floor(Levels.MaxLevel) + MaxLevelOffset) * Difficulty * MaxLevelMultiplier)
+		  Return New Beacon.Range(MinLevel, MaxLevel)
 		End Function
 	#tag EndMethod
 
@@ -258,6 +298,7 @@ Implements Beacon.DocumentItem
 		Function SaveData() As Dictionary
 		  Var Dict As New Dictionary
 		  Dict.Value("Creature") = Self.mCreature.Path
+		  Dict.Value("Type") = "SpawnPointSetEntry"
 		  If Self.mChance <> Nil Then
 		    Dict.Value("SpawnChance") = Self.mChance.Value
 		  End If
@@ -265,11 +306,12 @@ Implements Beacon.DocumentItem
 		    Dict.Value("Offset") = Self.mOffset.SaveData
 		  End If
 		  If Self.mLevels.LastRowIndex > -1 Then
-		    Var Levels() As Variant
+		    Var Levels() As Dictionary
 		    Levels.ResizeTo(Self.mLevels.LastRowIndex)
 		    For I As Integer = 0 To Self.mLevels.LastRowIndex
 		      Levels(I) = Self.mLevels(I).SaveData
 		    Next
+		    Dict.Value("Levels") = Levels
 		  End If
 		  If Self.mMaxLevelMultiplier <> Nil Then
 		    Dict.Value("MaxLevelMultiplier") = Self.mMaxLevelMultiplier.Value

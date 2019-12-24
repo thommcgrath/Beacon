@@ -793,6 +793,11 @@ End
 		  RaiseEvent Changed
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function GetDocument() As Beacon.Document
+		  Return Self.Document
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events SetsList
 	#tag Event
