@@ -1158,6 +1158,8 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
 		  Const ReplaceMinWidth = 304
 		  
 		  Var AvailableWidth As Integer = Self.Width - 52

@@ -479,42 +479,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateLimitsStatus()
-		  If Self.LimitsList.SelectedRowCount > 0 Then
-		    Self.LimitsStatusBar.Caption = Self.LimitsList.SelectedRowCount.ToString + " of " + Language.NounWithQuantity(Self.LimitsList.RowCount, "Limit", "Limits") + " Selected"
-		  Else
-		    Self.LimitsStatusBar.Caption = Language.NounWithQuantity(Self.LimitsList.RowCount, "Limit", "Limits")
-		  End If
-		  
-		  Self.LimitsToolbar.EditButton.Enabled = Self.LimitsList.SelectedRowCount > 0
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub UpdateSetsStatus()
-		  If Self.SetsList.SelectedRowCount > 0 Then
-		    Self.SetsStatusBar.Caption = Self.SetsList.SelectedRowCount.ToString + " of " + Language.NounWithQuantity(Self.SetsList.RowCount, "Spawn Set", "Spawn Sets") + " Selected"
-		  Else
-		    Self.SetsStatusBar.Caption = Language.NounWithQuantity(Self.SetsList.RowCount, "Spawn Set", "Spawn Sets")
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub UpdateUI()
-		  If Self.mSpawnPoints.LastRowIndex = -1 Then
-		    Self.LimitsList.RowCount = 0
-		    Self.SetsList.RowCount = 0
-		    Return
-		  End If
-		  
+		Private Sub UpdateLimitsList(SelectCreatures() As Beacon.Creature = Nil)
 		  Self.LimitsList.SelectionChangeBlocked = True
-		  Self.SetsList.SelectionChangeBlocked = True
 		  
 		  Const MixedLimitValue = -1.0
 		  
 		  Var CombinedLimits As Dictionary
-		  Var CombinedSets As New Dictionary
 		  
 		  For Each Point As Beacon.MutableSpawnPoint In Self.mSpawnPoints
 		    Var PointLimits As Dictionary = Point.Limits
@@ -536,21 +506,9 @@ End
 		        End If
 		      Next
 		    End If
-		    
-		    For Each Set As Beacon.SpawnPointSet In Point
-		      Var Hash As String = Set.Hash
-		      Var Organizer As SpawnSetOrganizer
-		      If CombinedSets.HasKey(Hash) Then
-		        Organizer = CombinedSets.Value(Hash)
-		      Else
-		        Organizer = New SpawnSetOrganizer(Set)
-		        CombinedSets.Value(Hash) = Organizer
-		      End If
-		      Organizer.Attach(Point, Set)
-		    Next
 		  Next
 		  
-		  If CombinedLimits.KeyCount > 0 Then
+		  If CombinedLimits <> Nil And CombinedLimits.KeyCount > 0 Then
 		    Var SelectedCreatures() As String
 		    For I As Integer = 0 To Self.LimitsList.RowCount - 1
 		      If Self.LimitsList.Selected(I) Then
@@ -572,13 +530,58 @@ End
 		    Self.LimitsList.RowCount = 0
 		  End If
 		  
-		  If CombinedSets.KeyCount > 0 Then
-		    Var SelectedSets() As String
-		    For I As Integer = 0 To Self.SetsList.RowCount - 1
-		      If Self.SetsList.Selected(I) Then
-		        SelectedSets.AddRow(SpawnSetOrganizer(Self.SetsList.RowTagAt(I)).Template.ID)
+		  Self.UpdateLimitsStatus
+		  
+		  Self.LimitsList.SortingColumn = 0
+		  Self.LimitsList.Sort
+		  Self.LimitsList.SelectionChangeBlocked = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateLimitsStatus()
+		  If Self.LimitsList.SelectedRowCount > 0 Then
+		    Self.LimitsStatusBar.Caption = Self.LimitsList.SelectedRowCount.ToString + " of " + Language.NounWithQuantity(Self.LimitsList.RowCount, "Limit", "Limits") + " Selected"
+		  Else
+		    Self.LimitsStatusBar.Caption = Language.NounWithQuantity(Self.LimitsList.RowCount, "Limit", "Limits")
+		  End If
+		  
+		  Self.LimitsToolbar.EditButton.Enabled = Self.LimitsList.SelectedRowCount > 0
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateSetsList(SelectSets() As Beacon.SpawnPointSet = Nil)
+		  Self.SetsList.SelectionChangeBlocked = True
+		  
+		  Var CombinedSets As New Dictionary
+		  For Each Point As Beacon.MutableSpawnPoint In Self.mSpawnPoints
+		    For Each Set As Beacon.SpawnPointSet In Point
+		      Var Hash As String = Set.Hash
+		      Var Organizer As SpawnSetOrganizer
+		      If CombinedSets.HasKey(Hash) Then
+		        Organizer = CombinedSets.Value(Hash)
+		      Else
+		        Organizer = New SpawnSetOrganizer(Set)
+		        CombinedSets.Value(Hash) = Organizer
 		      End If
+		      Organizer.Attach(Point, Set)
 		    Next
+		  Next
+		  
+		  If CombinedSets <> Nil And CombinedSets.KeyCount > 0 Then
+		    Var SelectedSets() As String
+		    If SelectSets = Nil Then
+		      For I As Integer = 0 To Self.SetsList.RowCount - 1
+		        If Self.SetsList.Selected(I) Then
+		          SelectedSets.AddRow(SpawnSetOrganizer(Self.SetsList.RowTagAt(I)).Template.ID)
+		        End If
+		      Next
+		    Else
+		      For Each Set As Beacon.SpawnPointSet In SelectSets
+		        SelectedSets.AddRow(Set.Hash)
+		      Next
+		    End If
 		    
 		    Var ExtendedLabels As Boolean = Self.mSpawnPoints.LastRowIndex > 0
 		    
@@ -590,21 +593,34 @@ End
 		      
 		      Self.SetsList.CellValueAt(RowIndex, 0) = Organizer.Label(ExtendedLabels)
 		      Self.SetsList.RowTagAt(RowIndex) = Organizer
-		      Self.SetsList.Selected(RowIndex) = SelectedSets.IndexOf(Organizer.Template.ID) > -1
+		      Self.SetsList.Selected(RowIndex) = Organizer.Matches(SelectedSets)
 		    Next
 		  Else
 		    Self.SetsList.RowCount = 0
 		  End If
 		  
-		  Self.UpdateLimitsStatus
 		  Self.UpdateSetsStatus
 		  
-		  Self.LimitsList.SortingColumn = 0
-		  Self.LimitsList.Sort
-		  Self.LimitsList.SelectionChangeBlocked = False
 		  Self.SetsList.SortingColumn = 0
 		  Self.SetsList.Sort
 		  Self.SetsList.SelectionChangeBlocked = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateSetsStatus()
+		  If Self.SetsList.SelectedRowCount > 0 Then
+		    Self.SetsStatusBar.Caption = Self.SetsList.SelectedRowCount.ToString + " of " + Language.NounWithQuantity(Self.SetsList.RowCount, "Spawn Set", "Spawn Sets") + " Selected"
+		  Else
+		    Self.SetsStatusBar.Caption = Language.NounWithQuantity(Self.SetsList.RowCount, "Spawn Set", "Spawn Sets")
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateUI()
+		  Self.UpdateSetsList()
+		  Self.UpdateLimitsList()
 		End Sub
 	#tag EndMethod
 
@@ -694,6 +710,9 @@ End
 		Private SetsListWidth As Integer
 	#tag EndComputedProperty
 
+
+	#tag Constant, Name = kSetsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.spawn.set", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"911", Scope = Public
 	#tag EndConstant
@@ -855,6 +874,68 @@ End
 		  Me.SelectionChangeBlocked = False
 		  
 		  RaiseEvent Changed
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanCopy() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanPaste(Board As Clipboard) As Boolean
+		  Return Board.RawDataAvailable(Self.kSetsClipboardType) Or (Board.TextAvailable And Board.Text.IndexOf("""Type"": ""SpawnPointSet""") > -1)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformCopy(Board As Clipboard)
+		  Var Items() As Dictionary
+		  For I As Integer = 0 To Me.RowCount - 1
+		    If Not Me.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Var Organizer As SpawnSetOrganizer = Me.RowTagAt(I)
+		    Items.AddRow(Organizer.Template.SaveData)
+		  Next
+		  
+		  Var JSON As String = Beacon.GenerateJSON(Items, True)
+		  Board.Text = JSON
+		  Board.AddRawData(JSON, Self.kSetsClipboardType)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformPaste(Board As Clipboard)
+		  If Not Me.CanPaste Then
+		    Return
+		  End If
+		  
+		  Var Items() As Variant
+		  Try
+		    If Board.RawDataAvailable(Self.kSetsClipboardType) Then
+		      Items = Beacon.ParseJSON(Board.RawData(Self.kSetsClipboardType))
+		    Else
+		      Items = Beacon.ParseJSON(Board.Text)
+		    End If
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
+		  
+		  Var SelectSets() As Beacon.SpawnPointSet
+		  For Each Item As Dictionary In Items
+		    Var Set As Beacon.SpawnPointSet = Beacon.SpawnPointSet.FromSaveData(Item)
+		    If Set = Nil Then
+		      Continue
+		    End If
+		    
+		    For Each Point As Beacon.MutableSpawnPoint In Self.mSpawnPoints
+		      Point.AddSet(Set)
+		    Next
+		    
+		    SelectSets.AddRow(Set)
+		  Next
+		  
+		  RaiseEvent Changed
+		  Self.UpdateSetsList(SelectSets)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

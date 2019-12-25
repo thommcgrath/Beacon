@@ -398,6 +398,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  Next
 		  
 		  Var SaveData As New Dictionary
+		  SaveData.Value("Type") = "SpawnPointSet"
 		  SaveData.Value("Label") = Self.Label
 		  SaveData.Value("Weight") = Self.Weight
 		  SaveData.Value("Entries") = Entries

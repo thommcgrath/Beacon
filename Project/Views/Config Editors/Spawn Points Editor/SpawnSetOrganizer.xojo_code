@@ -45,6 +45,46 @@ Protected Class SpawnSetOrganizer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Matches(Set As Beacon.SpawnPointSet) As Boolean
+		  If Self.mTemplate.ID = Set.ID Or Self.mTemplate.Hash = Set.Hash Then
+		    Return True
+		  End If
+		  
+		  For Each Entry As DictionaryEntry In Self.mSets
+		    Var OtherSet As Beacon.SpawnPointSet = Entry.Value
+		    If OtherSet.ID = Set.ID or OtherSet.Hash = Set.Hash Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Matches(Values() As String) As Boolean
+		  Var PossibleValues() As String
+		  PossibleValues.AddRow(Self.mTemplate.ID)
+		  PossibleValues.AddRow(Self.mTemplate.Hash)
+		  For Each Entry As DictionaryEntry In Self.mSets
+		    Var Set As Beacon.SpawnPointSet = Entry.Value
+		    PossibleValues.AddRow(Set.ID)
+		    PossibleValues.AddRow(Set.Hash)
+		  Next
+		  
+		  For Each Value As String In Values
+		    If PossibleValues.IndexOf(Value) > -1 Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Matches(ParamArray Values() As String) As Boolean
+		  Return Self.Matches(Values)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Points() As Beacon.MutableSpawnPoint()
 		  Var Arr() As Beacon.MutableSpawnPoint
 		  For Each Entry As DictionaryEntry In Self.mSets
