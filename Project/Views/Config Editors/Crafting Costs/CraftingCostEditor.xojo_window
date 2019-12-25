@@ -334,27 +334,22 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  If Warn Then
-		    Dim Message As String
-		    If Me.SelectedRowCount = 1 Then
-		      Message = "Are you sure you want to remove """ + Me.CellValueAt(Me.SelectedRowIndex, 0) + """ from the required resources?"
-		    Else
-		      Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " resources from the crafting cost?"
-		    End If
-		    
-		    If Not Self.ShowConfirm(Message, "This action cannot be undone.", "Delete", "Cancel") Then
-		      Return
-		    End If
-		  End If
-		  
-		  For I As Integer = Me.RowCount - 1 DownTo 0
-		    If Not Me.Selected(I) Then
+		  Var EngramsToDelete() As Beacon.Engram
+		  Var Bound As Integer = Me.RowCount - 1
+		  For I As Integer = 0 To Bound
+		    If Me.Selected(I) = False Then
 		      Continue
 		    End If
 		    
-		    Dim Engram As Beacon.Engram = Me.RowTagAt(I)
+		    EngramsToDelete.AddRow(Me.RowTagAt(I))
+		  Next
+		  
+		  If Warn And Self.ShowDeleteConfirmation(EngramsToDelete, "ingredient", "ingredients") = False Then
+		    Return
+		  End If
+		  
+		  For Each Engram As Beacon.Engram In EngramsToDelete
 		    Self.mTarget.Remove(Engram)
-		    Me.RemoveRowAt(I)
 		    Self.Changed = True
 		  Next
 		End Sub

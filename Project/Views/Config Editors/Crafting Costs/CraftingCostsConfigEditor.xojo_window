@@ -662,31 +662,26 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  If Warn Then
-		    Dim Message As String
-		    If Me.SelectedRowCount = 1 Then
-		      Message = "Are you sure you want to delete the """ + Me.CellValueAt(Me.SelectedRowIndex, 0) + """ crafting cost override?"
-		    Else
-		      Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " crafting cost overrides?"
-		    End If
-		    
-		    If Not Self.ShowConfirm(Message, "This action cannot be undone.", "Delete", "Cancel") Then
-		      Return
-		    End If
-		  End If
-		  
-		  Me.SelectionChangeBlocked = True
-		  Dim Config As BeaconConfigs.CraftingCosts = Self.Config(True)
-		  For I As Integer = Me.RowCount - 1 DownTo 0
-		    If Not Me.Selected(I) Then
+		  Var Costs() As Beacon.CraftingCost
+		  Var Bound As Integer = Me.RowCount - 1
+		  For I As Integer = 0 To Bound
+		    If Me.Selected(I) = False Then
 		      Continue
 		    End If
 		    
-		    Dim Cost As Beacon.CraftingCost = Me.RowTagAt(I)
+		    Costs.AddRow(Me.RowTagAt(I))
+		  Next
+		  
+		  If Warn And Self.ShowDeleteConfirmation(Costs, "crafting cost override", "crafting cost overrides") = False Then
+		    Return
+		  End If
+		  
+		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(True)
+		  For Each Cost As Beacon.CraftingCost In Costs
 		    Config.Remove(Cost)
 		  Next
+		  Self.Changed = True
 		  Self.UpdateList()
-		  Me.SelectionChangeBlocked = False
 		End Sub
 	#tag EndEvent
 	#tag Event

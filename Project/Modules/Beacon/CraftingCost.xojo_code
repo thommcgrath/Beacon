@@ -1,5 +1,6 @@
 #tag Class
 Protected Class CraftingCost
+Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Sub Append(Resource As Beacon.Engram, Quantity As Integer, RequireExact As Boolean)
 		  If Resource = Nil Then
