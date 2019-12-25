@@ -501,7 +501,9 @@ End
 		        Var Creature As Beacon.Creature = Entry.Key
 		        Var Limit As Double = Entry.Value
 		        
-		        If CombinedLimits.HasKey(Creature.Path) = False Or CombinedLimits.Value(Creature.Path).DoubleValue <> Limit Then
+		        If CombinedLimits.HasKey(Creature.Path) = False Then
+		          CombinedLimits.Value(Creature.Path) = Limit
+		        ElseIf CombinedLimits.Value(Creature.Path).DoubleValue <> Limit Then
 		          CombinedLimits.Value(Creature.Path) = MixedLimitValue
 		        End If
 		      Next
@@ -510,11 +512,17 @@ End
 		  
 		  If CombinedLimits <> Nil And CombinedLimits.KeyCount > 0 Then
 		    Var SelectedCreatures() As String
-		    For I As Integer = 0 To Self.LimitsList.RowCount - 1
-		      If Self.LimitsList.Selected(I) Then
-		        SelectedCreatures.AddRow(Self.LimitsList.RowTagAt(I))
-		      End If
-		    Next
+		    If SelectCreatures <> Nil Then
+		      For Each Creature As Beacon.Creature In SelectCreatures
+		        SelectedCreatures.AddRow(Creature.Path)
+		      Next
+		    Else
+		      For I As Integer = 0 To Self.LimitsList.RowCount - 1
+		        If Self.LimitsList.Selected(I) Then
+		          SelectedCreatures.AddRow(Self.LimitsList.RowTagAt(I))
+		        End If
+		      Next
+		    End If
 		    
 		    Self.LimitsList.RowCount = CombinedLimits.KeyCount
 		    For RowIndex As Integer = 0 To CombinedLimits.KeyCount - 1
@@ -710,6 +718,9 @@ End
 		Private SetsListWidth As Integer
 	#tag EndComputedProperty
 
+
+	#tag Constant, Name = kLimitsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.spawn.limit", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = kSetsClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.spawn.set", Scope = Private
 	#tag EndConstant
@@ -968,19 +979,125 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  #Pragma Unused Warn
-		  
+		  Var Creatures() As Beacon.Creature
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Me.Selected(I) Then
-		      Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Me.RowTagAt(I).StringValue)
-		      For Each Point As Beacon.MutableSpawnPoint In Self.mSpawnPoints
-		        Point.Limit(Creature) = 1.0
-		      Next
+		    If Me.Selected(I) = False Then
+		      Continue
 		    End If
+		    
+		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Me.RowTagAt(I).StringValue)
+		    If Creature = Nil Then
+		      Creature = Beacon.Creature.CreateFromPath(Me.RowTagAt(I).StringValue)
+		    End If
+		    
+		    Creatures.AddRow(Creature)
+		  Next
+		  
+		  If Warn And Self.ShowDeleteConfirmation(Creatures, "creature limit", "creature limits") = False Then
+		    Return
+		  End If
+		  
+		  For Each Creature As Beacon.Creature In Creatures
+		    For Each Point As Beacon.MutableSpawnPoint In Self.mSpawnPoints
+		      Point.Limit(Creature) = 1.0
+		    Next
 		  Next
 		  
 		  RaiseEvent Changed
-		  Self.UpdateUI
+		  Self.UpdateLimitsList()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanCopy() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanPaste(Board As Clipboard) As Boolean
+		  Return Board.RawDataAvailable(Self.kLimitsClipboardType) Or (Board.TextAvailable And Board.Text.IndexOf("""Type"": ""SpawnPointLimit""") > -1)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformCopy(Board As Clipboard)
+		  Var Limits As New Dictionary
+		  Var Creatures() As Beacon.Creature
+		  For I As Integer = 0 To Me.RowCount - 1
+		    If Me.Selected(I) = False Then
+		      Continue
+		    End If
+		    
+		    Var Path As String = Me.RowTagAt(I)
+		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Path)
+		    If Creature = Nil Then
+		      Creature = Beacon.Creature.CreateFromPath(Path)
+		    End If
+		    
+		    Var CommonLimit As NullableDouble
+		    For Each Point As Beacon.SpawnPoint In Self.mSpawnPoints
+		      Var Limit As NullableDouble = Point.Limit(Creature)
+		      If Limit = Nil Or Limit = 1.0 Then
+		        Continue
+		      End If
+		      
+		      If CommonLimit = Nil Then
+		        CommonLimit = Limit
+		      ElseIf CommonLimit <> Limit Then
+		        Continue For I
+		      End If
+		    Next
+		    
+		    If CommonLimit <> Nil Then
+		      Limits.Value(Creature.Path) = CommonLimit.Value
+		    End If
+		  Next
+		  
+		  If Limits.KeyCount = 0 Then
+		    Beep
+		    Return
+		  End If
+		  
+		  Limits.Value("Type") = "SpawnPointLimit"
+		  
+		  Var JSON As String = Beacon.GenerateJSON(Limits, True).Trim
+		  Board.Text = JSON
+		  Board.AddRawData(JSON, Self.kLimitsClipboardType)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformPaste(Board As Clipboard)
+		  Var Dict As Dictionary
+		  Try
+		    If Board.RawDataAvailable(Self.kLimitsClipboardType) Then
+		      Dict = Beacon.ParseJSON(Board.RawData(Self.kLimitsClipboardType))
+		    Else
+		      Dict = Beacon.ParseJSON(Board.Text)
+		    End If
+		  Catch Err As RuntimeException
+		    Beep
+		    Return
+		  End Try
+		  
+		  Var SelectCreatures() As Beacon.Creature
+		  For Each Entry As DictionaryEntry In Dict
+		    If Entry.Key = "SpawnPointLimit" Then
+		      Continue
+		    End If
+		    
+		    Var Path As String = Entry.Key
+		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Path)
+		    If Creature = Nil Then
+		      Creature = Beacon.Creature.CreateFromPath(Path)
+		    End If
+		    SelectCreatures.AddRow(Creature)
+		    
+		    Var Limit As Double = Entry.Value
+		    For Each Point As Beacon.MutableSpawnPoint In Self.mSpawnPoints
+		      Point.Limit(Creature) = Limit
+		    Next
+		  Next
+		  
+		  RaiseEvent Changed
+		  Self.UpdateLimitsList(SelectCreatures)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
