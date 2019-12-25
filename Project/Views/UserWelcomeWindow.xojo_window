@@ -2168,7 +2168,7 @@ End
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  G.ClearRect(0, 0, G.Width, G.Height)
+		  G.ClearRectangle(0, 0, G.Width, G.Height)
 		  
 		  If Not SystemColors.IsDarkMode Then
 		    G.DrawingColor = &c713a9a

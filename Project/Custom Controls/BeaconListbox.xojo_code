@@ -22,7 +22,7 @@ Inherits Listbox
 		    Dim OSMajor, OSMinor, OSBug As Integer
 		    UpdateChecker.OSVersion(OSMajor, OSMinor, OSBug)
 		    If Self.Transparent And OSMajor >= 10 And OSMinor >= 14 Then
-		      Clip.ClearRect(0, 0, Clip.Width, Clip.Height)
+		      Clip.ClearRectangle(0, 0, Clip.Width, Clip.Height)
 		    Else
 		      Clip.DrawingColor = SystemColors.UnderPageBackgroundColor
 		      Clip.FillRectangle(0, 0, Clip.Width, Clip.Height)

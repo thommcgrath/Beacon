@@ -89,14 +89,14 @@ Implements Beacon.DocumentItem
 		  If Dict.HasKey("Path") Then
 		    Engram = Beacon.Data.GetEngramByPath(Dict.Value("Path"))
 		    If Engram = Nil Then
-		      BackupEngram = Beacon.Engram.CreateUnknownEngram(Dict.Value("Path"))
+		      BackupEngram = Beacon.Engram.CreateFromPath(Dict.Value("Path"))
 		    End If
 		  End If
 		  
 		  If Engram = Nil And Dict.HasKey("Class") Then
 		    Engram = Beacon.Data.GetEngramByClass(Dict.Value("Class"))
 		    If Engram = Nil And BackupEngram = Nil Then
-		      BackupEngram = Beacon.Engram.CreateUnknownEngram(Dict.Value("Class"))
+		      BackupEngram = Beacon.Engram.CreateFromClass(Dict.Value("Class"))
 		    End If
 		  End If
 		  

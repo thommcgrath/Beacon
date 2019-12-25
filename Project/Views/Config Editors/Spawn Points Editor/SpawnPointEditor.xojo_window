@@ -1047,7 +1047,6 @@ End
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
 		  Var Limits As New Dictionary
-		  Var Creatures() As Beacon.Creature
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) = False Then
 		      Continue
@@ -1079,7 +1078,7 @@ End
 		  Next
 		  
 		  If Limits.KeyCount = 0 Then
-		    Beep
+		    System.Beep
 		    Return
 		  End If
 		  
@@ -1100,7 +1099,7 @@ End
 		      Dict = Beacon.ParseJSON(Board.Text)
 		    End If
 		  Catch Err As RuntimeException
-		    Beep
+		    System.Beep
 		    Return
 		  End Try
 		  

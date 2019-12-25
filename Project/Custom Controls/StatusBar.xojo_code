@@ -27,7 +27,7 @@ Inherits ControlCanvas
 		  End If
 		  
 		  Dim Clip As Graphics = G.Clip(ContentLeft, ContentTop, ContentRight - ContentLeft, ContentBottom - ContentTop)
-		  Clip.ClearRect(0, 0, Clip.Width, Clip.Height)
+		  Clip.ClearRectangle(0, 0, Clip.Width, Clip.Height)
 		  Clip.FontName = "SmallSystem"
 		  Clip.FontSize = 0
 		  

@@ -108,7 +108,7 @@ Protected Class PreferencesManager
 		  Dim BlueHex As String = StringValue.Middle(4, 2)
 		  Dim AlphaHex As String = StringValue.Middle(6, 2)
 		  
-		  Return Color.RGBA(Integer.FromHex(RedHex), Integer.FromHex(GreenHex), Integer.FromHex(BlueHex), Integer.FromHex(AlphaHex))
+		  Return Color.RGB(Integer.FromHex(RedHex), Integer.FromHex(GreenHex), Integer.FromHex(BlueHex), Integer.FromHex(AlphaHex))
 		End Function
 	#tag EndMethod
 

@@ -148,7 +148,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    
 		    Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
 		    If Engram = Nil Then
-		      Engram = Beacon.Engram.CreateUnknownEngram(Path)
+		      Engram = Beacon.Engram.CreateFromPath(Path)
 		    End If
 		    
 		    BlueprintEntry.Append(New Beacon.SetEntryOption(Engram, AverageWeight))
@@ -310,7 +310,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      If Engram <> Nil Then
 		        Engrams.AddRow(Engram)
 		      Else
-		        Engrams.AddRow(Beacon.Engram.CreateUnknownEngram(ClassString))
+		        Engrams.AddRow(Beacon.Engram.CreateFromClass(ClassString))
 		      End If
 		    Next
 		  ElseIf Dict.HasKey("Items") Then
@@ -330,7 +330,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
 		      If Engram = Nil Then
 		        // Path was not found
-		        Dim TempEngram As Beacon.Engram = Beacon.Engram.CreateUnknownEngram(Path)
+		        Dim TempEngram As Beacon.Engram = Beacon.Engram.CreateFromPath(Path)
 		        Engram = Beacon.Data.GetEngramByClass(TempEngram.ClassString)
 		        If Engram = Nil Then
 		          // Didn't find it by class either

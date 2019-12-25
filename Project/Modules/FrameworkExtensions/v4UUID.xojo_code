@@ -87,7 +87,7 @@ Class v4UUID
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromHash(Algorithm As Crypto.Algorithm, Data As MemoryBlock) As v4UUID
+		Shared Function FromHash(Algorithm As Crypto.HashAlgorithms, Data As MemoryBlock) As v4UUID
 		  Return New v4UUID(FormatBytes(Crypto.Hash(Data, Algorithm)))
 		End Function
 	#tag EndMethod

@@ -220,7 +220,9 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function IsDarkMode() As Boolean
-		  #if XojoVersion >= 2018.03
+		  #if XojoVersion >= 2019.03
+		    Return Color.IsDarkMode
+		  #elseif XojoVersion >= 2018.03
 		    Return REALbasic.IsDarkMode
 		  #else
 		    Return False

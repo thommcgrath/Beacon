@@ -296,7 +296,7 @@ Protected Module Tests
 		  End Try
 		  
 		  Try
-		    UUID = v4UUID.FromHash(Crypto.Algorithm.MD5, "Frog Blast The Vent Core")
+		    UUID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, "Frog Blast The Vent Core")
 		    Call Assert(UUID = "7e05d5d6-bf10-445d-9512-d3a650670061", "Incorrect UUID generated from MD5 hash")
 		  Catch Err As UnsupportedFormatException
 		    System.DebugLog("MD5UUID generated bad format")

@@ -160,7 +160,7 @@ Implements ObservationKit.Observer
 		    End If
 		    
 		    LeftPos = LeftPos + TabWidth
-		    G.ClearRect(LeftPos, 0, 1, G.Height - 1)
+		    G.ClearRectangle(LeftPos, 0, 1, G.Height - 1)
 		    G.DrawingColor = SystemColors.SeparatorColor
 		    G.FillRectangle(LeftPos, 0, 1, G.Height)
 		    LeftPos = LeftPos + 1

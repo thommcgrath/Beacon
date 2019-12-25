@@ -210,7 +210,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Dim MutableSource As New Beacon.MutableLootSource(ClassString, False)
 		    MutableSource.Multipliers = New Beacon.Range(Dict.Lookup("Multiplier_Min", 1), Dict.Lookup("Multiplier_Max", 1))
 		    MutableSource.Availability = Beacon.Maps.All.Mask
-		    MutableSource.UIColor = Color.RGBA(Integer.FromHex(UIColor.Middle(0, 2)), Integer.FromHex(UIColor.Middle(2, 2)), Integer.FromHex(UIColor.Middle(4, 2)), Integer.FromHex(UIColor.Middle(6, 2)))
+		    MutableSource.UIColor = Color.RGB(Integer.FromHex(UIColor.Middle(0, 2)), Integer.FromHex(UIColor.Middle(2, 2)), Integer.FromHex(UIColor.Middle(4, 2)), Integer.FromHex(UIColor.Middle(6, 2)))
 		    MutableSource.SortValue = Dict.Lookup("SortValue", 99)
 		    MutableSource.Label = Dict.Lookup("Label", ClassString)
 		    MutableSource.UseBlueprints = Dict.Lookup("UseBlueprints", False)
@@ -276,7 +276,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Dim MutableSource As New Beacon.MutableLootSource(ClassString, False)
 		    MutableSource.Multipliers = New Beacon.Range(Dict.Lookup("Multiplier_Min", 1), Dict.Lookup("Multiplier_Max", 1))
 		    MutableSource.Availability = Beacon.Maps.All.Mask
-		    MutableSource.UIColor = Color.RGBA(Integer.FromHex(UIColor.Middle(0, 2)), Integer.FromHex(UIColor.Middle(2, 2)), Integer.FromHex(UIColor.Middle(4, 2)), Integer.FromHex(UIColor.Middle(6, 2)))
+		    MutableSource.UIColor = Color.RGB(Integer.FromHex(UIColor.Middle(0, 2)), Integer.FromHex(UIColor.Middle(2, 2)), Integer.FromHex(UIColor.Middle(4, 2)), Integer.FromHex(UIColor.Middle(6, 2)))
 		    MutableSource.SortValue = Dict.Lookup("SortValue", 99)
 		    MutableSource.Label = Dict.Lookup("Label", ClassString)
 		    MutableSource.UseBlueprints = Dict.Lookup("UseBlueprints", False)

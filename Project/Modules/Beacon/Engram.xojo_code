@@ -84,15 +84,9 @@ Implements Beacon.Blueprint
 		    Engram.mIsValid = True
 		  End If
 		  Engram.mPath = Path
-		  Engram.mObjectID = v4UUID.FromHash(Crypto.Algorithm.MD5, Path.Lowercase)
+		  Engram.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Path.Lowercase)
 		  Engram.mTags.AddRow("blueprintable")
 		  Return Engram
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "Beacon.Engram.CreateFromPath" )  Shared Function CreateUnknownEngram(Path As String) As Beacon.Engram
-		  Return CreateFromPath(Path)
 		End Function
 	#tag EndMethod
 

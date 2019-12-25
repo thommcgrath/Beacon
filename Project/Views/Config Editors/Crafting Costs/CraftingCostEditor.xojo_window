@@ -390,7 +390,7 @@ End
 		      Dim ClassString As String = Dict.Value("Class")
 		      Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
 		      If Engram = Nil Then
-		        Engram = Beacon.Engram.CreateUnknownEngram(ClassString)
+		        Engram = Beacon.Engram.CreateFromClass(ClassString)
 		      End If
 		      
 		      Dim Quantity As Integer = Dict.Value("Quantity")

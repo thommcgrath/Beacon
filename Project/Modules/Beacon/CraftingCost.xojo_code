@@ -77,7 +77,7 @@ Implements Beacon.NamedItem
 		    Dim ClassString As String = Dict.Value("Engram")
 		    Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
 		    If Engram = Nil Then
-		      Engram = Beacon.Engram.CreateUnknownEngram(ClassString)
+		      Engram = Beacon.Engram.CreateFromClass(ClassString)
 		    End If
 		    Cost.mEngram = Engram
 		  End If
@@ -90,7 +90,7 @@ Implements Beacon.NamedItem
 		      Dim RequireExact As Boolean = Resource.Lookup("Exact", False)
 		      Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
 		      If Engram = Nil Then
-		        Engram = Beacon.Engram.CreateUnknownEngram(ClassString)
+		        Engram = Beacon.Engram.CreateFromClass(ClassString)
 		      End If
 		      Cost.mQuantities.AddRow(Quantity)
 		      Cost.mRequireExacts.AddRow(RequireExact)
@@ -112,7 +112,7 @@ Implements Beacon.NamedItem
 		    
 		    Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
 		    If Engram = Nil Then
-		      Engram = Beacon.Engram.CreateUnknownEngram(ClassString)
+		      Engram = Beacon.Engram.CreateFromClass(ClassString)
 		    End If
 		    
 		    Dim Cost As New Beacon.CraftingCost(Engram)
@@ -125,7 +125,7 @@ Implements Beacon.NamedItem
 		        End If
 		        Dim ResourceEngram As Beacon.Engram = Beacon.Data.GetEngramByClass(ResourceClass)
 		        If ResourceEngram = Nil Then
-		          ResourceEngram = Beacon.Engram.CreateUnknownEngram(ResourceClass)
+		          ResourceEngram = Beacon.Engram.CreateFromClass(ResourceClass)
 		        End If
 		        Dim Quantity As Integer = Resource.Lookup("BaseResourceRequirement", 1)
 		        Dim RequireExact As Boolean = Resource.Lookup("bCraftingRequireExactResourceType", False)
