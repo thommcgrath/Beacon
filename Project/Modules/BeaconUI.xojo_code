@@ -426,6 +426,38 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ShowDeleteConfirmation(Extends Win As Window, Items() As Beacon.NamedItem, SingularNoun As String, PluralNoun As String) As Boolean
+		  Return ShowDeleteConfirmation(Win, Items, SingularNoun, PluralNoun)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ShowDeleteConfirmation(Win As Window = Nil, Items() As Beacon.NamedItem, SingularNoun As String, PluralNoun As String) As Boolean
+		  Var Names() As String
+		  Var UseGenericNames As Boolean
+		  For Each Item As Beacon.NamedItem In Items
+		    Var Name As String = Item.Label
+		    If Names.IndexOf(Name) > -1 Then
+		      UseGenericNames = True
+		    Else
+		      Names.AddRow(Name)
+		    End If
+		  Next
+		  
+		  Var Message As String
+		  If UseGenericNames Then
+		    Message = "Are you sure you want to delete these " + Items.Count.ToString + " " + PluralNoun + "?"
+		  ElseIf Names.LastRowIndex = 0 Then
+		    Message = "Are you sure you want to delete the " + SingularNoun + " " + Names(0) + "?"
+		  Else
+		    Message = "Are you sure you want to delete the " + PluralNoun + " " + Language.EnglishOxfordList(Names)
+		  End If
+		  
+		  Return ShowConfirm(Win, Message, "This action cannot be undone.", "Delete", "Cancel")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function WithColor(Extends Icon As Picture, FillColor As Color) As Picture
 		  Return BeaconUI.IconWithColor(Icon, FillColor)
 		End Function

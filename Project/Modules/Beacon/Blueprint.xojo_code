@@ -1,5 +1,6 @@
 #tag Interface
 Protected Interface Blueprint
+Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function Availability() As UInt64
 		  
@@ -26,12 +27,6 @@ Protected Interface Blueprint
 
 	#tag Method, Flags = &h0
 		Function IsTagged(Tag As String) As Boolean
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Label() As String
 		  
 		End Function
 	#tag EndMethod
