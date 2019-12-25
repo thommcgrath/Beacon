@@ -542,27 +542,27 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  If Warn Then
-		    Dim Message As String
-		    If Me.SelectedRowCount = 1 Then
-		      Message = "Are you sure you want to delete the """ + Me.CellValueAt(Me.SelectedRowIndex, 0) + """ stack size override?"
-		    Else
-		      Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " stack size overrides?"
-		    End If
-		    
-		    If Not Self.ShowConfirm(Message, "This action cannot be undone.", "Delete", "Cancel") Then
-		      Return
-		    End If
-		  End If
-		  
-		  Dim Config As BeaconConfigs.StackSizes = Self.Config(True)
+		  Var Engrams() As Beacon.Engram
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Not Me.Selected(I) Then
+		    If Me.Selected(I) = False Then
 		      Continue
 		    End If
 		    
-		    Dim ClassString As String = Me.RowTagAt(I)
-		    Config.Override(ClassString) = 0
+		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(Me.RowTagAt(I))
+		    If Engram = Nil Then
+		      Engram = Beacon.Engram.CreateFromClass(Me.RowTagAt(I))
+		    End If
+		    
+		    Engrams.AddRow(Engram)
+		  Next
+		  
+		  If Warn And Self.ShowDeleteConfirmation(Engrams, "stack size override", "stack size overrides") = False Then
+		    Return
+		  End If
+		  
+		  Var Config As BeaconConfigs.StackSizes = Self.Config(True)
+		  For Each Engram As Beacon.Engram In Engrams
+		    Config.Override(Engram.ClassString) = 0
 		  Next
 		  Self.Changed = True
 		  Self.UpdateList()

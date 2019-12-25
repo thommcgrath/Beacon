@@ -68,7 +68,13 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateUnknownEngram(Path As String) As Beacon.Engram
+		Shared Function CreateFromClass(ClassString As String) As Beacon.Engram
+		  Return CreateFromPath(Beacon.UnknownBlueprintPath("Engrams", ClassString))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function CreateFromPath(Path As String) As Beacon.Engram
 		  Dim Engram As New Beacon.Engram
 		  If Path.Length > 6 And Path.Left(6) = "/Game/" Then
 		    If Path.Right(2) = "_C" Then
@@ -81,6 +87,12 @@ Implements Beacon.Blueprint
 		  Engram.mObjectID = v4UUID.FromHash(Crypto.Algorithm.MD5, Path.Lowercase)
 		  Engram.mTags.AddRow("blueprintable")
 		  Return Engram
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Attributes( Deprecated = "Beacon.Engram.CreateFromPath" )  Shared Function CreateUnknownEngram(Path As String) As Beacon.Engram
+		  Return CreateFromPath(Path)
 		End Function
 	#tag EndMethod
 
