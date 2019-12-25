@@ -38,7 +38,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Caption         =   "Engrams"
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -69,7 +68,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -100,7 +98,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Caption         =   ""
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   21
       HelpTag         =   ""
       Index           =   -2147483648
@@ -154,7 +151,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   "0"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -183,7 +179,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   396
       HelpTag         =   ""
       Index           =   -2147483648
@@ -223,10 +218,9 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   399
       Begin LogoFillCanvas FillCanvas
@@ -237,7 +231,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
          Caption         =   "No Selection"
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
          Height          =   396
          HelpTag         =   ""
          Index           =   -2147483648
@@ -271,7 +264,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
          HasBackColor    =   False
          Height          =   396
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -297,7 +289,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
          Caption         =   "Multiple Selection"
          DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   "True"
          Height          =   396
          HelpTag         =   ""
          Index           =   -2147483648

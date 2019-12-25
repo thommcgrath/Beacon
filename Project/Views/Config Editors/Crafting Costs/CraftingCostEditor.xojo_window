@@ -38,7 +38,6 @@ Begin BeaconContainer CraftingCostEditor
       Caption         =   "Resources Required"
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -69,7 +68,6 @@ Begin BeaconContainer CraftingCostEditor
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -98,7 +96,7 @@ Begin BeaconContainer CraftingCostEditor
       Border          =   False
       ColumnCount     =   3
       ColumnsResizable=   False
-      ColumnWidths    =   "*,100,100"
+      ColumnWidths    =   "*,90,110"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
@@ -114,7 +112,7 @@ Begin BeaconContainer CraftingCostEditor
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Resource	Quantity	Require Exact"
+      InitialValue    =   "Resource	Quantity	No Cost Scaling"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -123,7 +121,6 @@ Begin BeaconContainer CraftingCostEditor
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   "0"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -154,7 +151,6 @@ Begin BeaconContainer CraftingCostEditor
       Caption         =   ""
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   21
       HelpTag         =   ""
       Index           =   -2147483648
