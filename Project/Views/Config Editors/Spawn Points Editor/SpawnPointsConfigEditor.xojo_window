@@ -545,31 +545,23 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  If Warn Then
-		    Var Dialog As New MessageDialog
-		    Dialog.Title = ""
-		    If Me.SelectedRowCount = 1 Then
-		      Dialog.Message = "Are you sure you want to delete the selected spawn point?"
-		    Else
-		      Dialog.Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " spawn points?"
-		    End If
-		    Dialog.Explanation = "This action cannot be undone."
-		    Dialog.ActionButton.Caption = "Delete"
-		    Dialog.CancelButton.Visible = True
-		    
-		    Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
-		    If Choice = Dialog.CancelButton Then
-		      Return
-		    End If
-		  End If
-		  
 		  Var Bound As Integer = Me.RowCount - 1
 		  Var Config As BeaconConfigs.SpawnPoints = Self.Config(True)
+		  Var Points() As Beacon.SpawnPoint
 		  For I As Integer = 0 To Bound
-		    If Me.Selected(I) Then
-		      Var SpawnPoint As Beacon.SpawnPoint = Me.RowTagAt(I)
-		      Config.Remove(SpawnPoint)
+		    If Me.Selected(I) = False Then
+		      Continue
 		    End If
+		    
+		    Points.AddRow(Me.RowTagAt(I))
+		  Next
+		  
+		  If Warn And Self.ShowDeleteConfirmation(Points, "spawn point", "spawn points") = False Then
+		    Return
+		  End If
+		  
+		  For Each Point As Beacon.SpawnPoint In Points
+		    Config.Remove(Point)
 		  Next
 		  
 		  Self.UpdateList()

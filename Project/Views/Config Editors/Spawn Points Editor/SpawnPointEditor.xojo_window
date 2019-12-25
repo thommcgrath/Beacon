@@ -852,39 +852,66 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  If Warn Then
-		    Var Dialog As New MessageDialog
-		    Dialog.Title = ""
-		    If Me.SelectedRowCount = 1 Then
-		      Dialog.Message = "Are you sure you want to delete the selected spawn set?"
-		    Else
-		      Dialog.Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " spawn sets?"
+		  Var Organizers() As SpawnSetOrganizer
+		  Var Bound As Integer = Me.RowCount - 1
+		  For I As Integer = 0 To Bound
+		    If Me.Selected(I) = False Then
+		      Continue
 		    End If
-		    Dialog.Explanation = "This action cannot be undone."
-		    Dialog.ActionButton.Caption = "Delete"
-		    Dialog.CancelButton.Visible = True
 		    
-		    Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
-		    If Choice = Dialog.CancelButton Then
-		      Return
-		    End If
+		    Organizers.AddRow(Me.RowTagAt(I))
+		  Next
+		  
+		  If Warn And Self.ShowDeleteConfirmation(Organizers, "spawn set", "spawn sets") = False Then
+		    Return
 		  End If
 		  
-		  Me.SelectionChangeBlocked = True
-		  For I As Integer = Me.RowCount - 1 DownTo 0
-		    If Me.Selected(I) Then
-		      Var Organizer As SpawnSetOrganizer = Me.RowTagAt(I)
-		      Var Points() As Beacon.MutableSpawnPoint = Organizer.Points
-		      For Each Point As Beacon.MutableSpawnPoint In Points
-		        Var Set As Beacon.SpawnPointSet = Organizer.SetForPoint(Point)
-		        Point.RemoveSet(Set)
-		      Next
-		      Me.RemoveRowAt(I)
-		    End If
+		  For Each Organizer As SpawnSetOrganizer In Organizers
+		    Var Points() As Beacon.MutableSpawnPoint = Organizer.Points
+		    For Each Point As Beacon.MutableSpawnPoint In Points
+		      Var Set As Beacon.SpawnPointSet = Organizer.SetForPoint(Point)
+		      Point.RemoveSet(Set)
+		    Next
 		  Next
-		  Me.SelectionChangeBlocked = False
 		  
 		  RaiseEvent Changed
+		  Self.UpdateSetsList()
+		  
+		  #if false
+		    If Warn Then
+		      Var Dialog As New MessageDialog
+		      Dialog.Title = ""
+		      If Me.SelectedRowCount = 1 Then
+		        Dialog.Message = "Are you sure you want to delete the selected spawn set?"
+		      Else
+		        Dialog.Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " spawn sets?"
+		      End If
+		      Dialog.Explanation = "This action cannot be undone."
+		      Dialog.ActionButton.Caption = "Delete"
+		      Dialog.CancelButton.Visible = True
+		      
+		      Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		      If Choice = Dialog.CancelButton Then
+		        Return
+		      End If
+		    End If
+		    
+		    Me.SelectionChangeBlocked = True
+		    For I As Integer = Me.RowCount - 1 DownTo 0
+		      If Me.Selected(I) Then
+		        Var Organizer As SpawnSetOrganizer = Me.RowTagAt(I)
+		        Var Points() As Beacon.MutableSpawnPoint = Organizer.Points
+		        For Each Point As Beacon.MutableSpawnPoint In Points
+		          Var Set As Beacon.SpawnPointSet = Organizer.SetForPoint(Point)
+		          Point.RemoveSet(Set)
+		        Next
+		        Me.RemoveRowAt(I)
+		      End If
+		    Next
+		    Me.SelectionChangeBlocked = False
+		    
+		    RaiseEvent Changed
+		  #endif
 		End Sub
 	#tag EndEvent
 	#tag Event

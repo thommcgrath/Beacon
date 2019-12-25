@@ -1422,28 +1422,16 @@ End
 		Sub PerformClear(Warn As Boolean)
 		  Var Bound As Integer = Me.RowCount - 1
 		  Var EntriesToDelete() As Beacon.SpawnPointSetEntry
-		  Var EntryNames() As String
-		  Var UseGenericNames As Boolean
-		  For I As Integer = Bound DownTo 0
+		  For I As Integer = 0 To Bound
 		    If Me.Selected(I) = False Then
 		      Continue
 		    End If
 		    
 		    Var Entry As Beacon.SpawnPointSetEntry = Me.RowTagAt(I)
 		    EntriesToDelete.AddRow(Entry)
-		    If EntryNames.IndexOf(Entry.Creature.Label) > -1 Then
-		      UseGenericNames = True
-		    End If
-		    EntryNames.AddRow(Entry.Creature.Label)
 		  Next
 		  
-		  Var Names As String
-		  If UseGenericNames Then
-		    Names = "these " + Me.SelectedRowCount.ToString + " creatures"
-		  Else
-		    Names = Language.EnglishOxfordList(EntryNames)
-		  End If
-		  If Warn And Not Self.ShowConfirm("Are you sure you want to delete " + Names + "?", "This action cannot be undone.", "Delete", "Cancel") Then
+		  If Warn And Self.ShowDeleteConfirmation(EntriesToDelete, "creature", "creatures") = False Then
 		    Return
 		  End If
 		  
@@ -1548,8 +1536,6 @@ End
 		Sub PerformClear(Warn As Boolean)
 		  Var Bound As Integer = Me.RowCount - 1
 		  Var CreaturesToDelete() As Beacon.Creature
-		  Var CreatureNames() As String
-		  Var UseGenericNames As Boolean
 		  For I As Integer = Bound DownTo 0
 		    If Me.Selected(I) = False Then
 		      Continue
@@ -1561,21 +1547,9 @@ End
 		    End If
 		    
 		    CreaturesToDelete.AddRow(Creature)
-		    
-		    If CreatureNames.IndexOf(Creature.Label) > -1 Then
-		      UseGenericNames = True
-		    Else
-		      CreatureNames.AddRow(Creature.Label)
-		    End If
 		  Next
 		  
-		  Var Names As String
-		  If UseGenericNames Then
-		    Names = "these " + Me.SelectedRowCount.ToString + " replacements"
-		  Else
-		    Names = Language.EnglishOxfordList(CreatureNames)
-		  End If
-		  If Warn And Not Self.ShowConfirm("Are you sure you want to delete " + Names + "?", "This action cannot be undone.", "Delete", "Cancel") Then
+		  If Warn And Self.ShowDeleteConfirmation(CreaturesToDelete, "creature replacement", "creature replacements") = False Then
 		    Return
 		  End If
 		  

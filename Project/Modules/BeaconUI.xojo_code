@@ -443,6 +443,7 @@ Protected Module BeaconUI
 		      Names.AddRow(Name)
 		    End If
 		  Next
+		  UseGenericNames = UseGenericNames Or Names.Count > 8
 		  
 		  Var Message As String
 		  If UseGenericNames Then
@@ -450,7 +451,7 @@ Protected Module BeaconUI
 		  ElseIf Names.LastRowIndex = 0 Then
 		    Message = "Are you sure you want to delete the " + SingularNoun + " " + Names(0) + "?"
 		  Else
-		    Message = "Are you sure you want to delete the " + PluralNoun + " " + Language.EnglishOxfordList(Names)
+		    Message = "Are you sure you want to delete the " + PluralNoun + " " + Language.EnglishOxfordList(Names) + "?"
 		  End If
 		  
 		  Return ShowConfirm(Win, Message, "This action cannot be undone.", "Delete", "Cancel")

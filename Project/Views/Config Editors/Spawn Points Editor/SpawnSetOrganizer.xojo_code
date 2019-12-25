@@ -1,5 +1,6 @@
 #tag Class
 Protected Class SpawnSetOrganizer
+Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Sub Attach(Point As Beacon.MutableSpawnPoint, Set As Beacon.SpawnPointSet = Nil)
 		  If Set <> Nil Then
@@ -22,6 +23,14 @@ Protected Class SpawnSetOrganizer
 		  Self.mSets = New Dictionary
 		  Self.mTemplate = New Beacon.MutableSpawnPointSet(Template)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Label() As String
+		  // Part of the Beacon.NamedItem interface.
+		  
+		  Return Self.Label(False)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

@@ -1,6 +1,6 @@
 #tag Class
 Protected Class SpawnPointSetEntry
-Implements Beacon.DocumentItem
+Implements Beacon.DocumentItem, Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function Clone() As Beacon.SpawnPointSetEntry
 		  Var Clone As New Beacon.SpawnPointSetEntry(Self)
@@ -146,6 +146,14 @@ Implements Beacon.DocumentItem
 		  #Pragma Unused Document
 		  
 		  Return Self.mCreature <> Nil
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Label() As String
+		  // Part of the Beacon.NamedItem interface.
+		  
+		  Return Self.mCreature.Label
 		End Function
 	#tag EndMethod
 
