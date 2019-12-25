@@ -193,7 +193,7 @@ Begin ConfigEditor MetaDataConfigEditor
       Border          =   True
       ColumnCount     =   3
       ColumnsResizable=   False
-      ColumnWidths    =   "26,*,100"
+      ColumnWidths    =   "26,100,*"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
@@ -203,13 +203,13 @@ Begin ConfigEditor MetaDataConfigEditor
       GridLinesHorizontal=   0
       GridLinesVertical=   0
       HasHeading      =   True
-      HeadingIndex    =   1
+      HeadingIndex    =   2
       Height          =   120
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   " 	Mod	Console Safe"
+      InitialValue    =   " 	Console Safe	Mod"
       Italic          =   False
       Left            =   132
       LockBottom      =   True
@@ -398,10 +398,10 @@ End
 		  Dim ListIndex As Integer = Self.ModsList.SelectedRowIndex
 		  Self.ModsList.RemoveAllRows()
 		  For Each Details As Beacon.ModDetails In Mods
-		    Self.ModsList.AddRow("", Details.Name, If(Details.ConsoleSafe, "Yes", "No"))
+		    Self.ModsList.AddRow("", If(Details.ConsoleSafe, "Yes", "No"), Details.Name)
 		    Dim Idx As Integer = Self.ModsList.LastAddedRowIndex
 		    Self.ModsList.RowTagAt(Idx) = Details
-		    Self.ModsList.CellCheckBoxValueAt(Idx, 0) = Self.Document.Mods.LastRowIndex = -1 Or Self.Document.Mods.IndexOf(Details.ModID) > -1
+		    Self.ModsList.CellCheckBoxValueAt(Idx, Self.ModColumnEnabled) = Self.Document.Mods.LastRowIndex = -1 Or Self.Document.Mods.IndexOf(Details.ModID) > -1
 		  Next
 		  Self.ModsList.Sort
 		  Self.ModsList.ScrollPosition = ScrollPosition
@@ -423,6 +423,16 @@ End
 		  Return Language.LabelForConfig(BeaconConfigs.Metadata.ConfigName)
 		End Function
 	#tag EndMethod
+
+
+	#tag Constant, Name = ModColumnConsoleSafe, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ModColumnEnabled, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ModColumnName, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -460,21 +470,21 @@ End
 #tag Events ModsList
 	#tag Event
 		Sub Open()
-		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
-		  Me.ColumnAlignmentAt(2) = Listbox.Alignments.Center
+		  Me.ColumnTypeAt(Self.ModColumnEnabled) = Listbox.CellTypes.CheckBox
+		  Me.ColumnAlignmentAt(Self.ModColumnConsoleSafe) = Listbox.Alignments.Center
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
 		  #Pragma Unused row
 		  
-		  If Self.SettingUp Or Column <> 0 Then
+		  If Self.SettingUp Or Column <> Self.ModColumnEnabled Then
 		    Return
 		  End If
 		  
 		  Dim AllChecked As Boolean = True
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Not Me.CellCheckBoxValueAt(I, 0) Then
+		    If Not Me.CellCheckBoxValueAt(I, Self.ModColumnEnabled) Then
 		      AllChecked = False
 		      Exit For I
 		    End If
@@ -485,7 +495,7 @@ End
 		    Self.Changed = True
 		  Else
 		    For I As Integer = 0 To Me.RowCount - 1
-		      If Me.CellCheckBoxValueAt(I, 0) Then
+		      If Me.CellCheckBoxValueAt(I, Self.ModColumnEnabled) Then
 		        Self.Document.Mods.Append(Beacon.ModDetails(Me.RowTagAt(I)).ModID)
 		      Else
 		        Self.Document.Mods.Remove(Beacon.ModDetails(Me.RowTagAt(I)).ModID)
