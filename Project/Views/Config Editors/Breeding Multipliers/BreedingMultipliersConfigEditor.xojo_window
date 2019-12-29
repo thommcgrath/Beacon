@@ -654,9 +654,9 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       AutoHideScrollbars=   True
       Bold            =   False
       Border          =   True
-      ColumnCount     =   5
+      ColumnCount     =   6
       ColumnsResizable=   False
-      ColumnWidths    =   ""
+      ColumnWidths    =   "6*,5*,5*,3*,3*,3*"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
@@ -672,7 +672,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Creature	Incubation Time	Mature Time	% Per Imprint	Max Imprint %"
+      InitialValue    =   "Creature	Incubation Time	Mature Time	Imprints	% Per Imprint	Max Imprint %"
       Italic          =   False
       Left            =   20
       LockBottom      =   True
@@ -1479,7 +1479,7 @@ End
 		    End If
 		    Dim MaxImprint As Double = MaxCuddles * PerCuddle
 		    
-		    CreaturesList.AddRow(Creature.Label, Beacon.SecondsToString(IncubationSeconds), Beacon.SecondsToString(MatureSeconds), If(MaxCuddles = 0, "Can't Imprint", Format(PerCuddle, "0%")), If(PerCuddle = 0, "", Format(MaxImprint, "0%")))
+		    CreaturesList.AddRow(Creature.Label, Beacon.SecondsToString(IncubationSeconds), Beacon.SecondsToString(MatureSeconds), MaxCuddles.ToString, If(MaxCuddles = 0, "Can't Imprint", Format(PerCuddle, "0%")), If(PerCuddle = 0, "", Format(MaxImprint, "0%")))
 		    CreaturesList.CellTagAt(CreaturesList.LastAddedRowIndex, Self.ColumnIncubationTime) = IncubationSeconds
 		    CreaturesList.CellTagAt(CreaturesList.LastAddedRowIndex, Self.ColumnMatureTime) = MatureSeconds
 		    CreaturesList.RowTagAt(CreaturesList.LastAddedRowIndex) = Creature.ClassString
@@ -1501,7 +1501,7 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = ColumnBestImprint, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = ColumnBestImprint, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnCreatureName, Type = Double, Dynamic = False, Default = \"0", Scope = Private
@@ -1513,7 +1513,10 @@ End
 	#tag Constant, Name = ColumnMatureTime, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnPerImprint, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = ColumnNumImprints, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnPerImprint, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
 
