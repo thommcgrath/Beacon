@@ -90,7 +90,7 @@ Implements Iterable
 		      Source.MaxItemSets = 1
 		      Source.Append(Set)
 		      
-		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideSupplyCrateItems", Source.StringValue(DifficultyConfig)))
+		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, ConfigOverrideSupplyCrateItems, Source.StringValue(DifficultyConfig)))
 		    Next
 		    Return
 		  End If
@@ -101,7 +101,7 @@ Implements Iterable
 		    End If
 		    
 		    Dim StringValue As String = Source.StringValue(DifficultyConfig)
-		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideSupplyCrateItems", StringValue))
+		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, ConfigOverrideSupplyCrateItems, StringValue))
 		  Next
 		End Sub
 	#tag EndEvent
@@ -189,30 +189,43 @@ Implements Iterable
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  
-		  If Not ParsedData.HasKey("ConfigOverrideSupplyCrateItems") Then
+		  If Not ParsedData.HasKey(ConfigOverrideSupplyCrateItems) Then
 		    Return Nil
 		  End If
 		  
-		  Dim Dicts() As Variant
-		  Try
-		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
-		  Catch Err As TypeMismatchException
-		    Dicts.AddRow(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
-		  End Try
+		  Var Value As Variant = ParsedData.Value(ConfigOverrideSupplyCrateItems)
+		  If IsNull(Value) Then
+		    Return Nil
+		  End If
+		  
+		  Var Dicts() As Variant
+		  If Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary Then
+		    Dicts.AddRow(Dictionary(Value.ObjectValue))
+		  ElseIf Value.IsArray And Value.ArrayElementType = Value.TypeObject Then
+		    Dicts = Value
+		  End If
 		  
 		  // Only keep the most recent of the duplicates
-		  Dim LootDrops As New BeaconConfigs.LootDrops
-		  Dim UniqueClasses As New Dictionary
+		  Var LootDrops As New BeaconConfigs.LootDrops
+		  Var UniqueClasses As New Dictionary
 		  For Each ConfigDict As Dictionary In Dicts
-		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Difficulty)
-		    If Source <> Nil Then
-		      Dim Idx As Integer = UniqueClasses.Lookup(Source.ClassString, -1)
-		      If Idx = -1 Then
-		        LootDrops.Append(Source)
-		        UniqueClasses.Value(Source.ClassString) = LootDrops.LastRowIndex
-		      Else
-		        LootDrops(Idx) = Source
-		      End If
+		    Var Source As Beacon.LootSource
+		    Try
+		      Source = Beacon.LootSource.ImportFromConfig(ConfigDict, Difficulty)
+		    Catch Err As RuntimeException
+		      Continue
+		    End Try
+		    
+		    If Source = Nil Then
+		      Continue
+		    End If
+		    
+		    Var Idx As Integer = UniqueClasses.Lookup(Source.ClassString, -1)
+		    If Idx = -1 Then
+		      LootDrops.Append(Source)
+		      UniqueClasses.Value(Source.ClassString) = LootDrops.LastRowIndex
+		    Else
+		      LootDrops(Idx) = Source
 		    End If
 		  Next
 		  If LootDrops.LastRowIndex > -1 Then
@@ -393,6 +406,9 @@ Implements Iterable
 
 
 	#tag Constant, Name = ConfigKey, Type = String, Dynamic = False, Default = \"LootDrops", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ConfigOverrideSupplyCrateItems, Type = String, Dynamic = True, Default = \"ConfigOverrideSupplyCrateItems", Scope = Private
 	#tag EndConstant
 
 
