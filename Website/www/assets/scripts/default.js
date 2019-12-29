@@ -83,8 +83,6 @@ var explore = {
 	search: function(terms) {
 		if (!terms) {
 			terms = '';
-		} else {
-			terms = terms.trim();
 		}
 		if (explore.field.value != terms) {
 			explore.field.value = terms;
@@ -93,7 +91,7 @@ var explore = {
 			explore.displayResults();
 			return;
 		}
-		request.get('/search/', { 'query': terms, 'count': 4 }, function(data) {
+		request.get('/search/', { 'query': terms.trim(), 'count': 4 }, function(data) {
 			explore.displayResults(data);
 		}, function(http_status, body) {
 			explore.displayResults();

@@ -535,6 +535,14 @@ abstract class BeaconCommon {
 		}
 		return number_format($num, $i);
 	}
+	
+	public static function IsHex($content) {
+		if (!is_string($content)) {
+			return false;
+		}
+		
+		return (preg_match('/^[a-fA-F0-9]+$/', $content) === 1);
+	}
 }
 
 ?>
