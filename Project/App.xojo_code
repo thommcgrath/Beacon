@@ -265,10 +265,11 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function ApplicationSupport() As FolderItem
-		  Dim AppSupport As FolderItem = SpecialFolder.ApplicationData
-		  Dim CompanyFolder As FolderItem = AppSupport.Child("The ZAZ")
+		  Var AppSupport As FolderItem = SpecialFolder.ApplicationData
+		  Self.CheckFolder(AppSupport)
+		  Var CompanyFolder As FolderItem = AppSupport.Child("The ZAZ")
 		  Self.CheckFolder(CompanyFolder)
-		  Dim AppFolder As FolderItem = CompanyFolder.Child(if(DebugBuild, "Beacon Debug", "Beacon"))
+		  Var AppFolder As FolderItem = CompanyFolder.Child(if(DebugBuild, "Beacon Debug", "Beacon"))
 		  Self.CheckFolder(AppFolder)
 		  Return AppFolder
 		End Function
