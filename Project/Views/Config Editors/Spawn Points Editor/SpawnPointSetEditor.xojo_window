@@ -1530,6 +1530,7 @@ End
 	#tag Event
 		Sub Change()
 		  Self.ReplaceDeleteButton.Enabled = Me.CanDelete
+		  Self.ReplaceEditButton.Enabled = Me.SelectedRowCount = 1
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1652,6 +1653,45 @@ End
 		  
 		  Self.UpdateReplacementsList(Set, SelectCreatures)
 		  RaiseEvent Changed
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ReplaceAddButton
+	#tag Event
+		Sub Action()
+		  Var Creature As Beacon.Creature = SpawnPointReplacementsDialog.Present(Self, Self.Document.Mods, Self.SpawnSet)
+		  If Creature <> Nil Then
+		    Var Creatures(0) As Beacon.Creature
+		    Creatures(0) = Creature
+		    Self.UpdateReplacementsList(Self.SpawnSet, Creatures)
+		    RaiseEvent Changed
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ReplaceEditButton
+	#tag Event
+		Sub Action()
+		  Var TargetPath As String = Self.ReplaceList.RowTagAt(Self.ReplaceList.SelectedRowIndex)
+		  Var TargetCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(TargetPath)
+		  If TargetCreature = Nil Then
+		    TargetCreature = Beacon.Creature.CreateFromPath(TargetPath)
+		  End If
+		  
+		  Var Creature As Beacon.Creature = SpawnPointReplacementsDialog.Present(Self, Self.Document.Mods, Self.SpawnSet, TargetCreature)
+		  If Creature <> Nil Then
+		    Var Creatures(0) As Beacon.Creature
+		    Creatures(0) = Creature
+		    Self.UpdateReplacementsList(Self.SpawnSet, Creatures)
+		    RaiseEvent Changed
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ReplaceDeleteButton
+	#tag Event
+		Sub Action()
+		  Self.ReplaceList.DoClear
 		End Sub
 	#tag EndEvent
 #tag EndEvents

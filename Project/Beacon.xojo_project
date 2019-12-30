@@ -400,6 +400,7 @@ Window=SpawnPointLimitDialog;Views/Config Editors/Spawn Points Editor/SpawnPoint
 Window=SpawnPointSetEditor;Views/Config Editors/Spawn Points Editor/SpawnPointSetEditor.xojo_window;&h0000000040649FFF;&h000000007ED5DFFF;false
 Class=SpawnSetOrganizer;Views/Config Editors/Spawn Points Editor/SpawnSetOrganizer.xojo_code;&h00000000538C5FFF;&h000000007ED5DFFF;false
 Interface=NamedItem;Modules/Beacon/NamedItem.xojo_code;&h000000002D4B87FF;&h0000000055ADDFFF;false
+Window=SpawnPointReplacementsDialog;Views/Config Editors/Spawn Points Editor/SpawnPointReplacementsDialog.xojo_window;&h000000005F5EE7FF;&h000000007ED5DFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=3
