@@ -413,27 +413,34 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  If Warn Then
-		    Dim Message As String
-		    If Me.SelectedRowCount = 1 Then
-		      Message = "Are you sure you want to delete the """ + FrameworkExtensions.FieldAtPosition(Me.CellValueAt(Me.SelectedRowIndex, Self.ColumnName), EndOfLine, 1) + """ creature adjustment?"
-		    Else
-		      Message = "Are you sure you want to delete these " + Str(Me.SelectedRowCount, "-0") + " creature adjustments?"
+		  Var Creatures() As Beacon.Creature
+		  Var Bound As Integer = Me.RowCount - 1
+		  For I As Integer = 0 To Bound
+		    If Me.Selected(I) = False Then
+		      Continue
 		    End If
 		    
-		    If Not Self.ShowConfirm(Message, "This action cannot be undone.", "Delete", "Cancel") Then
-		      Return
+		    Var ClassString As String = Me.RowTagAt(I)
+		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)
+		    If Creature = Nil Then
+		      Creature = Beacon.Creature.CreateFromClass(ClassString)
 		    End If
+		    
+		    Creatures.AddRow(Creature)
+		  Next
+		  
+		  If Warn And Self.ShowDeleteConfirmation(Creatures, "creature adjustment", "creature adjustments") = False Then
+		    Return
 		  End If
 		  
-		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
-		  For I As Integer = Me.RowCount - 1 DownTo 0
-		    If Me.Selected(I) Then
-		      Dim ClassString As String = Me.RowTagAt(I)
-		      Config.RemoveBehavior(ClassString)
-		      Self.Changed = True
-		    End If
+		  Var Changed As Boolean = Self.Changed
+		  Var Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
+		  For Each Creature As Beacon.Creature In Creatures
+		    Config.RemoveBehavior(Creature.ClassString)
+		    Changed = True
 		  Next
+		  
+		  Self.Changed = Changed
 		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
