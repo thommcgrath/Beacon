@@ -278,7 +278,6 @@ Begin BeaconDialog EntryEditor
          HasBackColor    =   False
          Height          =   209
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
          Left            =   422
          LockBottom      =   True
@@ -476,7 +475,6 @@ Begin BeaconDialog EntryEditor
       Width           =   80
    End
    Begin Beacon.EngramSearcherThread EngramSearcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -779,19 +777,27 @@ End
 		  
 		  Select Case Column
 		  Case Self.ColumnIncluded
-		    Dim Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
-		    If Checked And Not Self.mSelectedEngrams.HasKey(Engram.Path) Then
-		      Dim WeightString As String = Me.CellValueAt(Row, Self.ColumnWeight)
-		      If WeightString = "" Then
-		        WeightString = "50"
-		        Me.CellValueAt(Row, Self.ColumnWeight) = WeightString
-		      End
-		      Dim Weight As Double = Abs(CDbl(Me.CellValueAt(Row, Column))) / 100
-		      Self.mSelectedEngrams.Value(Engram.Path) = New Beacon.SetEntryOption(Engram, Weight)
-		    ElseIf Not Checked And Self.mSelectedEngrams.HasKey(Engram.Path) Then
-		      Self.mSelectedEngrams.Remove(Engram.Path)
+		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
+		    If Checked Then
+		      If Self.mSelectedEngrams.HasKey(Engram.Path) = False Then
+		        Var WeightString As String = Me.CellValueAt(Row, Self.ColumnWeight)
+		        If WeightString = "" Then
+		          WeightString = "50"
+		          Me.CellValueAt(Row, Self.ColumnWeight) = WeightString
+		        End If
+		        
+		        Var Weight As Double = Abs(CDbl(WeightString)) / 100
+		        Var Option As New Beacon.SetEntryOption(Engram, Weight)
+		        Self.mSelectedEngrams.Value(Engram.Path) = Option
+		      Else
+		        Return
+		      End If
 		    Else
-		      Return
+		      If Self.mSelectedEngrams.HasKey(Engram.Path) = True Then
+		        Self.mSelectedEngrams.Remove(Engram.Path)
+		      Else
+		        Return
+		      End If
 		    End If
 		    Self.UpdateSelectionUI()
 		    Self.UpdateSimulation()
