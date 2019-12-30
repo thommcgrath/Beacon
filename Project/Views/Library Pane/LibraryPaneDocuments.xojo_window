@@ -210,6 +210,7 @@ End
 		      
 		      Dim Controller As New Beacon.DocumentController(FileURL, App.IdentityManager.CurrentIdentity)
 		      AddHandler Controller.Loaded, AddressOf AutosaveController_Loaded
+		      AddHandler Controller.LoadError, AddressOf AutosaveController_LoadError
 		      Controller.Load()
 		    Next
 		  End If
@@ -275,6 +276,13 @@ End
 		  Document.Modified = True
 		  Dim Controller As New Beacon.DocumentController(Document, App.IdentityManager.CurrentIdentity)
 		  Self.OpenController(Controller)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub AutosaveController_LoadError(Sender As Beacon.DocumentController, Reason As String)
+		  App.Log("Failed to restore autosave file: " + Reason)
+		  Sender.Delete
 		End Sub
 	#tag EndMethod
 
