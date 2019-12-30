@@ -236,7 +236,6 @@ Begin BeaconSubview BlueprintMultiEditor
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   339
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   146
       LockBottom      =   True

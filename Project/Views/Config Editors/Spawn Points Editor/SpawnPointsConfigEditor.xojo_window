@@ -192,7 +192,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   729
       Begin SpawnPointEditor Editor

@@ -808,6 +808,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
+         DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -852,6 +853,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
+         DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -896,6 +898,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
+         DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -940,6 +943,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
+         DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -984,6 +988,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
+         DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1028,6 +1033,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
+         DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1072,6 +1078,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
+         DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -1116,6 +1123,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Bold            =   False
          DataField       =   ""
          DataSource      =   ""
+         DoubleValue     =   0.0
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
