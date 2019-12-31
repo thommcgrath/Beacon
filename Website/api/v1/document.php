@@ -204,7 +204,7 @@ case 'POST':
 	$documents = array();
 	$database->BeginTransaction();
 	foreach ($items as $document) {
-		if ($single_mode) {
+		if ($single_mode && is_null($document_id) === false) {
 			$this_document_id = $document_id;
 		} else {
 			$this_document_id = $document['Identifier'];

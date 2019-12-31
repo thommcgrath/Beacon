@@ -14,6 +14,7 @@ class BeaconDocument implements JsonSerializable {
 	protected $download_count = 0;
 	protected $last_updated = null;
 	protected $user_id = '';
+	protected $owner_id = '';
 	protected $published = self::PUBLISH_STATUS_PRIVATE;
 	protected $map_mask = 0;
 	protected $difficulty_value = 0;
@@ -48,6 +49,10 @@ class BeaconDocument implements JsonSerializable {
 	
 	public function UserID() {
 		return $this->user_id;
+	}
+	
+	public function OwnerID() {
+		return $this->owner_id;
 	}
 	
 	public function IsPublic() {
@@ -296,6 +301,7 @@ class BeaconDocument implements JsonSerializable {
 		$document->download_count = intval($results->Field('download_count'));
 		$document->last_updated = new DateTime($results->Field('last_update'));
 		$document->user_id = $results->Field('user_id');
+		$document->owner_id = $results->Field('owner_id');
 		$document->published = $results->Field('published');
 		$document->map_mask = intval($results->Field('map'));
 		$document->difficulty_value = floatval($results->Field('difficulty'));
@@ -332,6 +338,7 @@ class BeaconDocument implements JsonSerializable {
 			'download_count',
 			'last_update',
 			'user_id',
+			'owner_id',
 			'published',
 			'map',
 			'difficulty',
@@ -345,6 +352,7 @@ class BeaconDocument implements JsonSerializable {
 		return array(
 			'document_id' => $this->document_id,
 			'user_id' => $this->user_id,
+			'owner_id' => $this->owner_id,
 			'name' => $this->name,
 			'description' => $this->description,
 			'revision' => $this->revision,
@@ -358,7 +366,7 @@ class BeaconDocument implements JsonSerializable {
 	}
 	
 	public function CloudStoragePath() {
-		return static::GenerateCloudStoragePath($this->UserID(), $this->DocumentID());
+		return static::GenerateCloudStoragePath($this->OwnerID(), $this->DocumentID());
 	}
 	
 	public static function GenerateCloudStoragePath(string $user_id, string $document_id) {
@@ -407,14 +415,16 @@ class BeaconDocument implements JsonSerializable {
 		
 		// confirm write permission of the document
 		if ($new_document == false) {
-			$results = $database->Query('SELECT role FROM allowed_documents WHERE document_id = $1 AND user_id = $2;', $document_id, $user_id);
+			$results = $database->Query('SELECT role, owner_id FROM allowed_documents WHERE document_id = $1 AND user_id = $2;', $document_id, $user_id);
 			if ($results->RecordCount() == 0) {
 				$reason = 'Access denied for document ' . $document_id . '.';
 				return false;
 			}
 			$role = $results->Field('role');
+			$owner_id = $results->Field('owner_id');
 		} else {
 			$role = 'Owner';
+			$owner_id = $user_id;
 		}
 		
 		// gather document details
@@ -563,7 +573,7 @@ class BeaconDocument implements JsonSerializable {
 			}
 		}
 		
-		if (BeaconCloudStorage::PutFile(BeaconDocument::GenerateCloudStoragePath($user_id, $document_id), gzencode(json_encode($document))) === false) {
+		if (BeaconCloudStorage::PutFile(BeaconDocument::GenerateCloudStoragePath($owner_id, $document_id), gzencode(json_encode($document))) === false) {
 			$reason = 'Unable to upload document to cloud storage platform.';
 			return false;
 		}
