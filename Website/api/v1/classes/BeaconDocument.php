@@ -201,14 +201,33 @@ class BeaconDocument implements JsonSerializable {
 	
 	public static function GetAll() {
 		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL());
+		$results = $database->Query(static::BuildSQL('user_id = owner_id'));
 		return self::GetFromResults($results);
 	}
 	
 	public static function GetByDocumentID(string $document_id) {
 		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('document_id = ANY($1)'), '{' . $document_id . '}');
+		$results = $database->Query(static::BuildSQL('document_id = ANY($1) AND user_id = owner_id'), '{' . $document_id . '}');
 		return self::GetFromResults($results);
+	}
+	
+	public static function GetDocumentByID(string $document_id) {
+		// Just an alias for GetByDocumentID to make sense with GetSharedDocumentByID
+		return self::GetByDocumentID($document_id);
+	}
+	
+	public static function GetSharedDocumentByID(string $document_id, $user_id) {
+		if (is_null($user_id)) {
+			return self::GetByDocumentID($document_id);
+		}
+		
+		$database = BeaconCommon::Database();
+		$results = $database->Query(static::BuildSQL('document_id = ANY($1) AND user_id = $2'), '{' . $document_id . '}', $user_id);
+		$documents = self::GetFromResults($results);
+		if (count($documents) === 0) {
+			$documents = self::GetByDocumentID($document_id);
+		}
+		return $documents;
 	}
 	
 	public static function Search(array $params, string $order_by = 'last_update DESC', int $count = 0, int $offset = 0, bool $count_only = false) {
@@ -263,6 +282,9 @@ class BeaconDocument implements JsonSerializable {
 				break;
 			}
 		}
+		
+		// We want to list only "original" documents, not shared documents.
+		$clauses[] = 'user_id = owner_id';
 		
 		$database = BeaconCommon::Database();
 		if ($count_only) {
@@ -404,7 +426,6 @@ class BeaconDocument implements JsonSerializable {
 			$reason = 'Version 1 documents are no longer not accepted.';
 			return false;
 		}
-		
 		
 		$database = BeaconCommon::Database();
 		$document_id = $document['Identifier'];
@@ -585,7 +606,7 @@ class BeaconDocument implements JsonSerializable {
 			if ($new_document) {
 				$database->Query('INSERT INTO documents (document_id, user_id, title, description, map, difficulty, console_safe, mods, included_editors, last_update) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, CURRENT_TIMESTAMP);', $document_id, $user_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
 			} else {
-				$database->Query('UPDATE documents SET revision = revision + 1, title = $3, description = $4, map = $5, difficulty = $6, console_safe = $7, mods = $8, included_editors = $9, last_update = CURRENT_TIMESTAMP WHERE document_id = $1 AND user_id = $2;', $document_id, $user_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
+				$database->Query('UPDATE documents SET revision = revision + 1, title = $3, description = $4, map = $5, difficulty = $6, console_safe = $7, mods = $8, included_editors = $9, last_update = CURRENT_TIMESTAMP WHERE document_id = $1 AND user_id = $2;', $document_id, $owner_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
 			}
 			foreach ($guests_to_add as $guest_id) {
 				$database->Query('INSERT INTO guest_documents (document_id, user_id) VALUES ($1, $2);', $document_id, $guest_id);
