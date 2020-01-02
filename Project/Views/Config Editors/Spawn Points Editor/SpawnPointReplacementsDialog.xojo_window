@@ -296,6 +296,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
          RequiresSelection=   False
          RowSelectionType=   "1"
          Scope           =   2
+         SelectionChangeBlocked=   False
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
@@ -859,14 +860,6 @@ End
 		Group="Deprecated"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="mCancelled"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior
