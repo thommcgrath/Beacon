@@ -209,7 +209,7 @@ Implements Iterable
 		  Var LootDrops As New BeaconConfigs.LootDrops
 		  Var UniqueClasses As New Dictionary
 		  For Each Member As Variant In Dicts
-		    If Member.Type <> Variant.TypeObject Or (Member.ObjectValue IsA Dictionary) = False Then
+		    If IsNull(Member) Or Member.Type <> Variant.TypeObject Or (Member.ObjectValue IsA Dictionary) = False Then
 		      Continue
 		    End If
 		    

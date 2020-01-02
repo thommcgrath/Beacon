@@ -367,153 +367,163 @@ Implements Iterable
 		      // make changes
 		      If Dict.HasKey("NPCSpawnEntries") Then
 		        Var Entries() As Variant = Dict.Value("NPCSpawnEntries")
-		        For Each Entry As Dictionary In Entries
-		          Var Classes() As Variant
-		          If Entry.HasKey("NPCsToSpawn") Then
-		            Classes = Entry.Value("NPCsToSpawn")
-		          ElseIf Entry.HasKey("NPCsToSpawnStrings") Then
-		            Classes = Entry.Value("NPCsToSpawnStrings")
-		          End If
-		          If Classes.LastRowIndex = -1 Then
+		        For Each Member As Variant In Entries
+		          If IsNull(Member) Or Member.Type <> Variant.TypeObject Or (Member.ObjectValue IsA Dictionary) = False Then
 		            Continue
 		          End If
 		          
-		          Var LevelMembers(), OffsetMembers(), SpawnChanceMembers(), MinLevelOffsetMembers(), MaxLevelOffsetMembers(), MinLevelMultiplierMembers(), MaxLevelMultipliersMembers(), LevelOverrideMembers() As Variant
+		          Var Entry As Dictionary = Dictionary(Member.ObjectValue)
 		          
-		          If Entry.HasKey("NPCDifficultyLevelRanges") Then
-		            LevelMembers = Entry.Value("NPCDifficultyLevelRanges")
-		          End If
-		          If Entry.HasKey("NPCsSpawnOffsets") Then
-		            OffsetMembers = Entry.Value("NPCsSpawnOffsets")
-		          End If
-		          If Entry.HasKey("NPCsToSpawnPercentageChance") Then
-		            SpawnChanceMembers = Entry.Value("NPCsToSpawnPercentageChance")
-		          End If
-		          If Entry.HasKey("NPCMinLevelMultiplier") Then
-		            MinLevelMultiplierMembers = Entry.Value("NPCMinLevelMultiplier")
-		          End If
-		          If Entry.HasKey("NPCMinLevelOffset") Then
-		            MinLevelOffsetMembers = Entry.Value("NPCMinLevelOffset")
-		          End If
-		          If Entry.HasKey("NPCMaxLevelMultiplier") Then
-		            MaxLevelMultipliersMembers = Entry.Value("NPCMaxLevelMultiplier")
-		          End If
-		          If Entry.HasKey("NPCMaxLevelOffset") Then
-		            MaxLevelOffsetMembers = Entry.Value("NPCMaxLevelOffset")
-		          End If
-		          If Entry.HasKey("NPCOverrideLevel") Then
-		            LevelOverrideMembers = Entry.Value("NPCOverrideLevel")
-		          End If
-		          
-		          Var Set As New Beacon.MutableSpawnPointSet
-		          Set.Label = Entry.Lookup("AnEntryName", "Untitled Spawn Set")
-		          Set.Weight = Entry.Lookup("EntryWeight", 1.0)
-		          
-		          For I As Integer = 0 To Classes.LastRowIndex
-		            Var CreaturePath As String = Beacon.NormalizeBlueprintPath(Classes(I), "Creatures")
-		            Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(CreaturePath)
-		            If Creature = Nil Then
-		              Creature = Beacon.Creature.CreateFromPath(CreaturePath)
+		          Try
+		            Var Classes() As Variant
+		            If Entry.HasKey("NPCsToSpawn") Then
+		              Classes = Entry.Value("NPCsToSpawn")
+		            ElseIf Entry.HasKey("NPCsToSpawnStrings") Then
+		              Classes = Entry.Value("NPCsToSpawnStrings")
+		            End If
+		            If Classes.LastRowIndex = -1 Then
+		              Continue
 		            End If
 		            
-		            Var SetEntry As New Beacon.MutableSpawnPointSetEntry(Creature)
-		            If LevelMembers.LastRowIndex >= I Then
-		              Var LevelValues As Dictionary = LevelMembers(I)
-		              Var MinLevels() As Variant = LevelValues.Value("EnemyLevelsMin")
-		              Var MaxLevels() As Variant = LevelValues.Value("EnemyLevelsMax")
-		              Var Difficulties() As Variant = LevelValues.Value("GameDifficulties")
-		              
-		              For LevelIdx As Integer = 0 To Min(MinLevels.LastRowIndex, MaxLevels.LastRowIndex, Difficulties.LastRowIndex)
-		                SetEntry.Append(New Beacon.SpawnPointLevel(MinLevels(LevelIdx), MaxLevels(LevelIdx), Difficulties(LevelIdx)))
-		              Next
+		            Var LevelMembers(), OffsetMembers(), SpawnChanceMembers(), MinLevelOffsetMembers(), MaxLevelOffsetMembers(), MinLevelMultiplierMembers(), MaxLevelMultipliersMembers(), LevelOverrideMembers() As Variant
+		            
+		            If Entry.HasKey("NPCDifficultyLevelRanges") Then
+		              LevelMembers = Entry.Value("NPCDifficultyLevelRanges")
 		            End If
-		            If OffsetMembers.LastRowIndex >= I Then
-		              Var OffsetValues As Dictionary = OffsetMembers(I)
-		              SetEntry.Offset = New Beacon.Point3D(OffsetValues.Value("X"), OffsetValues.Value("Y"), OffsetValues.Value("Z"))
+		            If Entry.HasKey("NPCsSpawnOffsets") Then
+		              OffsetMembers = Entry.Value("NPCsSpawnOffsets")
 		            End If
-		            If SpawnChanceMembers.LastRowIndex >= I Then
-		              SetEntry.SpawnChance = SpawnChanceMembers(I).DoubleValue
+		            If Entry.HasKey("NPCsToSpawnPercentageChance") Then
+		              SpawnChanceMembers = Entry.Value("NPCsToSpawnPercentageChance")
 		            End If
-		            If MinLevelMultiplierMembers.LastRowIndex >= I Then
-		              SetEntry.MinLevelMultiplier = MinLevelMultiplierMembers(I).DoubleValue
+		            If Entry.HasKey("NPCMinLevelMultiplier") Then
+		              MinLevelMultiplierMembers = Entry.Value("NPCMinLevelMultiplier")
 		            End If
-		            If MinLevelOffsetMembers.LastRowIndex >= I Then
-		              SetEntry.MinLevelOffset = MinLevelOffsetMembers(I).DoubleValue
+		            If Entry.HasKey("NPCMinLevelOffset") Then
+		              MinLevelOffsetMembers = Entry.Value("NPCMinLevelOffset")
 		            End If
-		            If MaxLevelMultipliersMembers.LastRowIndex >= I Then
-		              SetEntry.MaxLevelMultiplier = MaxLevelMultipliersMembers(I).DoubleValue
+		            If Entry.HasKey("NPCMaxLevelMultiplier") Then
+		              MaxLevelMultipliersMembers = Entry.Value("NPCMaxLevelMultiplier")
 		            End If
-		            If MaxLevelOffsetMembers.LastRowIndex >= I Then
-		              SetEntry.MaxLevelOffset = MaxLevelOffsetMembers(I).DoubleValue
+		            If Entry.HasKey("NPCMaxLevelOffset") Then
+		              MaxLevelOffsetMembers = Entry.Value("NPCMaxLevelOffset")
 		            End If
-		            If LevelOverrideMembers.LastRowIndex >= I Then
-		              SetEntry.LevelOverride = LevelOverrideMembers(I).DoubleValue
+		            If Entry.HasKey("NPCOverrideLevel") Then
+		              LevelOverrideMembers = Entry.Value("NPCOverrideLevel")
 		            End If
-		            Set.Append(SetEntry)
-		          Next
-		          
-		          If Entry.HasKey("ManualSpawnPointSpreadRadius") Then
-		            Set.SpreadRadius = Entry.Value("ManualSpawnPointSpreadRadius").DoubleValue
-		          End If
-		          
-		          If Entry.HasKey("WaterOnlySpawnMinimumWaterHeight") Then
-		            Set.WaterOnlyMinimumHeight = Entry.Value("WaterOnlySpawnMinimumWaterHeight").DoubleValue
-		          End If
-		          
-		          If Entry.HasKey("SpawnMinDistanceFromStructuresMultiplier") Then
-		            Set.MinDistanceFromStructuresMultiplier = Entry.Value("SpawnMinDistanceFromStructuresMultiplier").DoubleValue
-		          End If
-		          
-		          If Entry.HasKey("SpawnMinDistanceFromPlayersMultiplier") Then
-		            Set.MinDistanceFromPlayersMultiplier = Entry.Value("SpawnMinDistanceFromPlayersMultiplier").DoubleValue
-		          End If
-		          
-		          If Entry.HasKey("SpawnMinDistanceFromTamedDinosMultiplier") Then
-		            Set.MinDistanceFromTamedDinosMultiplier = Entry.Value("SpawnMinDistanceFromTamedDinosMultiplier").DoubleValue
-		          End If
-		          
-		          If Entry.HasKey("GroupSpawnOffset") Then
-		            Var Offset As Beacon.Point3D = Beacon.Point3D.FromSaveData(Entry.Value("GroupSpawnOffset"))
-		            If Offset <> Nil Then
-		              Set.GroupOffset = Offset
-		            Else
-		              Break
-		            End If
-		          End If
-		          
-		          If Entry.HasKey("NPCRandomSpawnClassWeights") Then
-		            Var Replacements() As Variant = Entry.Value("NPCRandomSpawnClassWeights")
-		            For Each Replacement As Dictionary In Replacements
-		              If Not Replacement.HasAllKeys("FromClass", "ToClasses", "Weights") Then
-		                Continue
+		            
+		            Var Set As New Beacon.MutableSpawnPointSet
+		            Set.Label = Entry.Lookup("AnEntryName", "Untitled Spawn Set")
+		            Set.Weight = Entry.Lookup("EntryWeight", 1.0)
+		            
+		            For I As Integer = 0 To Classes.LastRowIndex
+		              Var CreaturePath As String = Beacon.NormalizeBlueprintPath(Classes(I), "Creatures")
+		              Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(CreaturePath)
+		              If Creature = Nil Then
+		                Creature = Beacon.Creature.CreateFromPath(CreaturePath)
 		              End If
 		              
-		              Var FromClassValue As String = Replacement.Value("FromClass")
-		              Var FromCreaturePath As String = Beacon.NormalizeBlueprintPath(FromClassValue, "Creatures")
-		              Var FromCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(FromCreaturePath)
-		              If FromCreature = Nil Then
-		                FromCreature = Beacon.Creature.CreateFromPath(FromCreaturePath)
+		              Var SetEntry As New Beacon.MutableSpawnPointSetEntry(Creature)
+		              If LevelMembers.LastRowIndex >= I Then
+		                Var LevelValues As Dictionary = LevelMembers(I)
+		                Var MinLevels() As Variant = LevelValues.Value("EnemyLevelsMin")
+		                Var MaxLevels() As Variant = LevelValues.Value("EnemyLevelsMax")
+		                Var Difficulties() As Variant = LevelValues.Value("GameDifficulties")
+		                
+		                For LevelIdx As Integer = 0 To Min(MinLevels.LastRowIndex, MaxLevels.LastRowIndex, Difficulties.LastRowIndex)
+		                  SetEntry.Append(New Beacon.SpawnPointLevel(MinLevels(LevelIdx), MaxLevels(LevelIdx), Difficulties(LevelIdx)))
+		                Next
 		              End If
-		              
-		              Var ToWeights() As Variant = Replacement.Value("Weights")
-		              Var ToClassValues() As Variant = Replacement.Value("ToClasses")
-		              For I As Integer = 0 To ToClassValues.LastRowIndex
-		                Var ToWeight As Double = If(I <= ToWeights.LastRowIndex, ToWeights(I), 1.0)
-		                Var ToClassValue As String = ToClassValues(I)
-		                Var ToCreaturePath As String = Beacon.NormalizeBlueprintPath(ToClassValue, "Creatures")
-		                Var ToCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(ToCreaturePath)
-		                If ToCreature = Nil Then
-		                  ToCreature = Beacon.Creature.CreateFromPath(ToCreaturePath)
+		              If OffsetMembers.LastRowIndex >= I Then
+		                Var OffsetValues As Dictionary = OffsetMembers(I)
+		                SetEntry.Offset = New Beacon.Point3D(OffsetValues.Value("X"), OffsetValues.Value("Y"), OffsetValues.Value("Z"))
+		              End If
+		              If SpawnChanceMembers.LastRowIndex >= I Then
+		                SetEntry.SpawnChance = SpawnChanceMembers(I).DoubleValue
+		              End If
+		              If MinLevelMultiplierMembers.LastRowIndex >= I Then
+		                SetEntry.MinLevelMultiplier = MinLevelMultiplierMembers(I).DoubleValue
+		              End If
+		              If MinLevelOffsetMembers.LastRowIndex >= I Then
+		                SetEntry.MinLevelOffset = MinLevelOffsetMembers(I).DoubleValue
+		              End If
+		              If MaxLevelMultipliersMembers.LastRowIndex >= I Then
+		                SetEntry.MaxLevelMultiplier = MaxLevelMultipliersMembers(I).DoubleValue
+		              End If
+		              If MaxLevelOffsetMembers.LastRowIndex >= I Then
+		                SetEntry.MaxLevelOffset = MaxLevelOffsetMembers(I).DoubleValue
+		              End If
+		              If LevelOverrideMembers.LastRowIndex >= I Then
+		                SetEntry.LevelOverride = LevelOverrideMembers(I).DoubleValue
+		              End If
+		              Set.Append(SetEntry)
+		            Next
+		            
+		            If Entry.HasKey("ManualSpawnPointSpreadRadius") Then
+		              Set.SpreadRadius = Entry.Value("ManualSpawnPointSpreadRadius").DoubleValue
+		            End If
+		            
+		            If Entry.HasKey("WaterOnlySpawnMinimumWaterHeight") Then
+		              Set.WaterOnlyMinimumHeight = Entry.Value("WaterOnlySpawnMinimumWaterHeight").DoubleValue
+		            End If
+		            
+		            If Entry.HasKey("SpawnMinDistanceFromStructuresMultiplier") Then
+		              Set.MinDistanceFromStructuresMultiplier = Entry.Value("SpawnMinDistanceFromStructuresMultiplier").DoubleValue
+		            End If
+		            
+		            If Entry.HasKey("SpawnMinDistanceFromPlayersMultiplier") Then
+		              Set.MinDistanceFromPlayersMultiplier = Entry.Value("SpawnMinDistanceFromPlayersMultiplier").DoubleValue
+		            End If
+		            
+		            If Entry.HasKey("SpawnMinDistanceFromTamedDinosMultiplier") Then
+		              Set.MinDistanceFromTamedDinosMultiplier = Entry.Value("SpawnMinDistanceFromTamedDinosMultiplier").DoubleValue
+		            End If
+		            
+		            If Entry.HasKey("GroupSpawnOffset") Then
+		              Var Offset As Beacon.Point3D = Beacon.Point3D.FromSaveData(Entry.Value("GroupSpawnOffset"))
+		              If Offset <> Nil Then
+		                Set.GroupOffset = Offset
+		              Else
+		                Break
+		              End If
+		            End If
+		            
+		            If Entry.HasKey("NPCRandomSpawnClassWeights") Then
+		              Var Replacements() As Variant = Entry.Value("NPCRandomSpawnClassWeights")
+		              For Each Replacement As Dictionary In Replacements
+		                If Not Replacement.HasAllKeys("FromClass", "ToClasses", "Weights") Then
+		                  Continue
 		                End If
 		                
-		                Set.CreatureReplacementWeight(FromCreature, ToCreature) = ToWeight
+		                Var FromClassValue As String = Replacement.Value("FromClass")
+		                Var FromCreaturePath As String = Beacon.NormalizeBlueprintPath(FromClassValue, "Creatures")
+		                Var FromCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(FromCreaturePath)
+		                If FromCreature = Nil Then
+		                  FromCreature = Beacon.Creature.CreateFromPath(FromCreaturePath)
+		                End If
+		                
+		                Var ToWeights() As Variant = Replacement.Value("Weights")
+		                Var ToClassValues() As Variant = Replacement.Value("ToClasses")
+		                For I As Integer = 0 To ToClassValues.LastRowIndex
+		                  Var ToWeight As Double = If(I <= ToWeights.LastRowIndex, ToWeights(I), 1.0)
+		                  Var ToClassValue As String = ToClassValues(I)
+		                  Var ToCreaturePath As String = Beacon.NormalizeBlueprintPath(ToClassValue, "Creatures")
+		                  Var ToCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(ToCreaturePath)
+		                  If ToCreature = Nil Then
+		                    ToCreature = Beacon.Creature.CreateFromPath(ToCreaturePath)
+		                  End If
+		                  
+		                  Set.CreatureReplacementWeight(FromCreature, ToCreature) = ToWeight
+		                Next
 		              Next
-		            Next
-		          End If
-		          
-		          If Set.Count > 0 Then
-		            Clone.AddSet(Set)
-		          End If
+		            End If
+		            
+		            If Set.Count > 0 Then
+		              Clone.AddSet(Set)
+		            End If
+		          Catch Err As RuntimeException
+		            
+		          End Try
 		        Next
 		      End If
 		      
