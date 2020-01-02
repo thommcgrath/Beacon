@@ -426,7 +426,17 @@ End
 		  Self.List.SelectionChangeBlocked = True
 		  Self.List.RowCount = Config.Count
 		  For I As Integer = 0 To SpawnPoints.LastRowIndex
-		    Self.List.CellValueAt(I, 0) = SpawnPoints(I).Label
+		    Var Prefix As String
+		    Select Case SpawnPoints(I).Mode
+		    Case Beacon.SpawnPoint.ModeOverride
+		      Prefix = "Replace"
+		    Case Beacon.SpawnPoint.ModeAppend
+		      Prefix = "Add to"
+		    Case Beacon.SpawnPoint.ModeRemove
+		      Prefix = "Remove from"
+		    End Select
+		    
+		    Self.List.CellValueAt(I, 0) = Prefix + " " + SpawnPoints(I).Label
 		    Self.List.RowTagAt(I) = SpawnPoints(I)
 		    Self.List.Selected(I) = Selected.HasKey(SpawnPoints(I).ObjectID)
 		  Next
@@ -641,6 +651,33 @@ End
 		    Self.Parse(Board.Text, "Clipboard")
 		  End If
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  If Column <> 0 Then
+		    Return False
+		  End If
+		  
+		  Var Point1 As Beacon.SpawnPoint = Me.RowTagAt(Row1)
+		  Var Point2 As Beacon.SpawnPoint = Me.RowTagAt(Row2)
+		  
+		  If Point1 = Nil Or Point2 = Nil Then
+		    Return False
+		  End If
+		  
+		  Result = Point1.Label.Compare(Point2.Label)
+		  If Result <> 0 Then
+		    Return True
+		  End If
+		  
+		  If Point1.Mode < Point2.Mode Then
+		    Result = -1
+		  ElseIf Point1.Mode > Point2.Mode Then
+		    Result = 1
+		  End If
+		  
+		  Return True
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events Editor
