@@ -208,10 +208,14 @@ Implements Iterable
 		  // Only keep the most recent of the duplicates
 		  Var LootDrops As New BeaconConfigs.LootDrops
 		  Var UniqueClasses As New Dictionary
-		  For Each ConfigDict As Dictionary In Dicts
+		  For Each Member As Variant In Dicts
+		    If Member.Type <> Variant.TypeObject Or (Member.ObjectValue IsA Dictionary) = False Then
+		      Continue
+		    End If
+		    
 		    Var Source As Beacon.LootSource
 		    Try
-		      Source = Beacon.LootSource.ImportFromConfig(ConfigDict, Difficulty)
+		      Source = Beacon.LootSource.ImportFromConfig(Dictionary(Member.ObjectValue), Difficulty)
 		    Catch Err As RuntimeException
 		      Continue
 		    End Try
