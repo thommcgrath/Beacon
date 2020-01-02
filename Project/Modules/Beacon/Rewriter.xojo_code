@@ -359,7 +359,7 @@ Inherits Global.Thread
 	#tag Method, Flags = &h0
 		Sub Rewrite(InitialContent As String, Mode As String, Document As Beacon.Document, Identity As Beacon.Identity, WithMarkup As Boolean, Profile As Beacon.ServerProfile)
 		  Self.mWithMarkup = WithMarkup
-		  Self.mInitialContent = InitialContent
+		  Self.mInitialContent = InitialContent.SanitizeIni
 		  Self.mMode = Mode
 		  Self.mDocument = Document
 		  Self.mIdentity = Identity

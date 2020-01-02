@@ -10,6 +10,10 @@ Inherits Beacon.Thread
 		  
 		  // Normalize line endings
 		  Dim Content As String = Self.mGameUserSettingsIniContent.ReplaceLineEndings(LineEnding) + LineEnding + Self.mGameIniContent.ReplaceLineEndings(LineEnding)
+		  
+		  // Fix smart quotes
+		  Content = Content.SanitizeIni
+		  
 		  Self.mCharactersProcessed = 0
 		  Self.mCharactersTotal = Content.Length
 		  

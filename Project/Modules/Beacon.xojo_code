@@ -814,6 +814,22 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SanitizeIni(Extends Content As String) As String
+		  Content = Content.ReplaceAll("‘", "'")
+		  Content = Content.ReplaceAll("’", "'")
+		  Content = Content.ReplaceAll("“", """")
+		  Content = Content.ReplaceAll("”", """")
+		  Return Content
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function SanitizeIni(Content As String) As String
+		  Return Content.SanitizeIni
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SearchForCreatures(Extends Source As Beacon.DataSource, SearchText As String = "", Mods As Beacon.StringList = Nil, Tags As String = "") As Beacon.Creature()
 		  If Mods = Nil Then
 		    Mods = New Beacon.StringList

@@ -131,9 +131,9 @@ Inherits BeaconSubview
 		  End If
 		  Sanitizer.ReplacementPattern = ""
 		  If ASCIIOnly Then
-		    Return Sanitizer.Replace(Source).ConvertEncoding(Encodings.ASCII)
+		    Return Sanitizer.Replace(Source.SanitizeIni).ConvertEncoding(Encodings.ASCII)
 		  Else
-		    Return Sanitizer.Replace(Source)
+		    Return Sanitizer.Replace(Source.SanitizeIni)
 		  End If
 		End Function
 	#tag EndMethod
