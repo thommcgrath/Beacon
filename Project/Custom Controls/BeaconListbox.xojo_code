@@ -212,6 +212,18 @@ Inherits Listbox
 	#tag EndEvent
 
 	#tag Event
+		Sub DoubleClick()
+		  If IsEventImplemented("DoubleClick") Then
+		    RaiseEvent DoubleClick
+		  Else
+		    If Self.CanEdit Then
+		      Self.DoEdit
+		    End If
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub EnableMenuItems()
 		  If Self.Window = Nil Or Self.Window.Focus <> Self Then
 		    Return
@@ -296,6 +308,12 @@ Inherits Listbox
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CanEdit() As Boolean
+		  Return RaiseEvent CanEdit()
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CanPaste() As Boolean
 		  Dim Board As New Clipboard
 		  Return RaiseEvent CanPaste(Board)
@@ -326,6 +344,12 @@ Inherits Listbox
 		  Dim Board As New Clipboard
 		  RaiseEvent PerformCopy(Board)
 		  RaiseEvent PerformClear(False)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DoEdit()
+		  RaiseEvent PerformEdit
 		End Sub
 	#tag EndMethod
 
@@ -445,6 +469,10 @@ Inherits Listbox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event CanEdit() As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event CanPaste(Board As Clipboard) As Boolean
 	#tag EndHook
 
@@ -469,6 +497,10 @@ Inherits Listbox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event DoubleClick()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event EnableMenuItems()
 	#tag EndHook
 
@@ -486,6 +518,10 @@ Inherits Listbox
 
 	#tag Hook, Flags = &h0
 		Event PerformCopy(Board As Clipboard)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event PerformEdit()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

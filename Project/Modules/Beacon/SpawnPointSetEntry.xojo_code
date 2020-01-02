@@ -1,6 +1,6 @@
 #tag Class
 Protected Class SpawnPointSetEntry
-Implements Beacon.DocumentItem, Beacon.NamedItem
+Implements Beacon.DocumentItem,Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function Clone() As Beacon.SpawnPointSetEntry
 		  Var Clone As New Beacon.SpawnPointSetEntry(Self)
@@ -176,14 +176,14 @@ Implements Beacon.DocumentItem, Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LevelForDifficulty(Difficulty As Double) As Beacon.SpawnPointLevel
+		Function LevelForDifficulty(Difficulty As Double, NilDefault As Boolean = False) As Beacon.SpawnPointLevel
 		  Var Candidate As Beacon.SpawnPointLevel
 		  For Each Level As Beacon.SpawnPointLevel In Self.mLevels
 		    If Level.Difficulty <= Difficulty And (Candidate = Nil Or Candidate.Difficulty < Level.Difficulty) Then
 		      Candidate = Level
 		    End If
 		  Next
-		  If Candidate = Nil Then
+		  If Candidate = Nil And NilDefault = False Then
 		    Candidate = New Beacon.SpawnPointLevel(1.0, 30.0, Difficulty)
 		  End If
 		  Return Candidate

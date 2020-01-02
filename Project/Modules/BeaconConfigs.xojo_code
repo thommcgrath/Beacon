@@ -159,7 +159,7 @@ Protected Module BeaconConfigs
 	#tag EndMethod
 
 
-	#tag Constant, Name = SpawnPointsEnabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Protected
+	#tag Constant, Name = SpawnPointsEnabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Protected
 	#tag EndConstant
 
 

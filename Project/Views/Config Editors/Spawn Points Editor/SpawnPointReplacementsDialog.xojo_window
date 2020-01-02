@@ -14,12 +14,12 @@ Begin BeaconDialog SpawnPointReplacementsDialog
    ImplicitInstance=   False
    MacProcID       =   0
    MaximumHeight   =   32000
-   MaximumWidth    =   32000
+   MaximumWidth    =   660
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinimumHeight   =   64
-   MinimumWidth    =   64
-   Resizeable      =   False
+   MinimumHeight   =   512
+   MinimumWidth    =   660
+   Resizeable      =   True
    Title           =   "Creature Replacements"
    Type            =   "8"
    Visible         =   True

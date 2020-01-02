@@ -32,32 +32,7 @@ Inherits UITweaks.ResizedTextField
 
 	#tag Method, Flags = &h0
 		Sub CheckValue()
-		  If RaiseEvent AllowContents(Me.Value) Then
-		    Self.SetValue(Self.Value) // Fires TextChanged only if necessary
-		    Return
-		  End If
-		  
-		  If Not IsNumeric(Self.Value) Then
-		    System.Beep
-		    Self.SetValue(Self.mLastNotifiedValue)
-		    Return
-		  End If
-		  
-		  Dim MinValue, MaxValue As Double
-		  RaiseEvent GetRange(MinValue, MaxValue)
-		  
-		  Dim Value As Double = CDbl(Self.Value)
-		  Dim Formatted As String
-		  If Value < MinValue Then
-		    Formatted = Self.Format(MinValue)
-		    RaiseEvent RangeError(Value, MinValue)
-		  ElseIf Value > MaxValue Then
-		    Formatted = Self.Format(MaxValue)
-		    RaiseEvent RangeError(Value, MaxValue)
-		  Else
-		    Formatted = Self.Format(Value)
-		  End If
-		  Self.SetValue(Formatted)
+		  Call Self.Validate()
 		End Sub
 	#tag EndMethod
 
@@ -90,6 +65,41 @@ Inherits UITweaks.ResizedTextField
 		    RaiseEvent TextChange()
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Validate() As Boolean
+		  If RaiseEvent AllowContents(Me.Value) Then
+		    Self.SetValue(Self.Value) // Fires TextChanged only if necessary
+		    Return True
+		  End If
+		  
+		  If Not IsNumeric(Self.Value) Then
+		    System.Beep
+		    Self.SetValue(Self.mLastNotifiedValue)
+		    Return False
+		  End If
+		  
+		  Var MinValue, MaxValue As Double
+		  RaiseEvent GetRange(MinValue, MaxValue)
+		  
+		  Var Value As Double = CDbl(Self.Value)
+		  Var Formatted As String
+		  Var Valid As Boolean
+		  If Value < MinValue Then
+		    Formatted = Self.Format(MinValue)
+		    RaiseEvent RangeError(Value, MinValue)
+		  ElseIf Value > MaxValue Then
+		    Formatted = Self.Format(MaxValue)
+		    RaiseEvent RangeError(Value, MaxValue)
+		  Else
+		    Formatted = Self.Format(Value)
+		    Valid = True
+		  End If
+		  Self.SetValue(Formatted)
+		  
+		  Return Valid
+		End Function
 	#tag EndMethod
 
 

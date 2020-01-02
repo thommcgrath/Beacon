@@ -1257,7 +1257,7 @@ End
 		      RowHeight = BeaconListbox.DoubleLineRowHeight
 		    End If
 		    
-		    List.RowTagAt(RowIndex) = Entry
+		    List.RowTagAt(RowIndex) = Entry.MutableVersion
 		    List.CellValueAt(RowIndex, 0) = Label
 		    List.Selected(RowIndex) = SelectedEntries.IndexOf(Entry.ID) > -1
 		  Next
@@ -1509,6 +1509,66 @@ End
 	#tag Event
 		Sub Change()
 		  Self.EntryDeleteButton.Enabled = Me.CanDelete
+		  Self.EntryEditButton.Enabled = Me.CanEdit
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformEdit()
+		  Var Entries() As Beacon.MutableSpawnPointSetEntry
+		  For I As Integer = 0 To Me.RowCount - 1
+		    If Me.Selected(I) = False Then
+		      Continue
+		    End If
+		    
+		    Entries.AddRow(Me.RowTagAt(I))
+		  Next
+		  
+		  Var UpdatedEntries() As Beacon.MutableSpawnPointSetEntry = SpawnPointCreatureDialog.Present(Self, Self.Document, Entries)
+		  If UpdatedEntries = Nil Or UpdatedEntries.LastRowIndex = -1 Then
+		    Return
+		  End If
+		  
+		  Var Set As Beacon.MutableSpawnPointSet = Self.SpawnSet
+		  For Each Entry As Beacon.MutableSpawnPointSetEntry In Entries
+		    Set.Remove(Entry)
+		  Next
+		  For Each Entry As Beacon.MutableSpawnPointSetEntry In UpdatedEntries
+		    Set.Append(Entry)
+		  Next
+		  
+		  Self.UpdateEntriesList(Set, UpdatedEntries)
+		  RaiseEvent Changed
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EntryAddButton
+	#tag Event
+		Sub Action()
+		  Var Entry As Beacon.MutableSpawnPointSetEntry = SpawnPointCreatureDialog.Present(Self, Self.Document)
+		  If Entry = Nil Then
+		    Return
+		  End If
+		  
+		  Var Set As Beacon.MutableSpawnPointSet = Self.SpawnSet
+		  Set.Append(Entry)
+		  
+		  Var Entries(0) As Beacon.MutableSpawnPointSetEntry
+		  Entries(0) = Entry
+		  Self.UpdateEntriesList(Set, Entries)
+		  Self.EntriesList.EnsureSelectionIsVisible()
+		  RaiseEvent Changed
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EntryEditButton
+	#tag Event
+		Sub Action()
+		  Self.EntriesList.DoEdit
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1538,7 +1598,7 @@ End
 	#tag Event
 		Sub Change()
 		  Self.ReplaceDeleteButton.Enabled = Me.CanDelete
-		  Self.ReplaceEditButton.Enabled = Me.SelectedRowCount = 1
+		  Self.ReplaceEditButton.Enabled = Me.CanEdit
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1663,23 +1723,13 @@ End
 		  RaiseEvent Changed
 		End Sub
 	#tag EndEvent
-#tag EndEvents
-#tag Events ReplaceAddButton
 	#tag Event
-		Sub Action()
-		  Var Creature As Beacon.Creature = SpawnPointReplacementsDialog.Present(Self, Self.Document.Mods, Self.SpawnSet)
-		  If Creature <> Nil Then
-		    Var Creatures(0) As Beacon.Creature
-		    Creatures(0) = Creature
-		    Self.UpdateReplacementsList(Self.SpawnSet, Creatures)
-		    RaiseEvent Changed
-		  End If
-		End Sub
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount = 1
+		End Function
 	#tag EndEvent
-#tag EndEvents
-#tag Events ReplaceEditButton
 	#tag Event
-		Sub Action()
+		Sub PerformEdit()
 		  Var TargetPath As String = Self.ReplaceList.RowTagAt(Self.ReplaceList.SelectedRowIndex)
 		  Var TargetCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(TargetPath)
 		  If TargetCreature = Nil Then
@@ -1693,6 +1743,29 @@ End
 		    Self.UpdateReplacementsList(Self.SpawnSet, Creatures)
 		    RaiseEvent Changed
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ReplaceAddButton
+	#tag Event
+		Sub Action()
+		  Var Creature As Beacon.Creature = SpawnPointReplacementsDialog.Present(Self, Self.Document.Mods, Self.SpawnSet)
+		  If Creature = Nil Then
+		    Return
+		  End If
+		  
+		  Var Creatures(0) As Beacon.Creature
+		  Creatures(0) = Creature
+		  Self.UpdateReplacementsList(Self.SpawnSet, Creatures)
+		  Self.ReplaceList.EnsureSelectionIsVisible
+		  RaiseEvent Changed
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ReplaceEditButton
+	#tag Event
+		Sub Action()
+		  Self.ReplaceList.DoEdit
 		End Sub
 	#tag EndEvent
 #tag EndEvents
