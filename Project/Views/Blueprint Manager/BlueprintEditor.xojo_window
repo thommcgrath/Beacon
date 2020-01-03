@@ -212,7 +212,7 @@ Begin BeaconSubview BlueprintEditor
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Engram\nCreature"
+      InitialValue    =   "Engram\nCreature\nSpawn Point"
       Italic          =   False
       Left            =   152
       ListIndex       =   0
@@ -501,8 +501,25 @@ End
 		    Return
 		  End If
 		  If Not Path.BeginsWith("/Game/") Then
-		    Self.ShowAlert("The blueprint path is required", "Beacon requires the full blueprint path to the object in order to function correctly.")
-		    Return
+		    If Path.EndsWith("_C") And Path.IndexOf("/") = -1 Then
+		      Var TempPath As String
+		      Select Case Self.TypeMenu.SelectedRowIndex
+		      Case Self.IndexEngram
+		        TempPath = Beacon.Engram.CreateFromClass(Path).Path
+		      Case Self.IndexCreature
+		        TempPath = Beacon.Creature.CreateFromClass(Path).Path
+		      Case Self.IndexSpawnPoint
+		        TempPath = Beacon.SpawnPoint.CreateFromClass(Path).Path
+		      End Select
+		      If Self.ShowConfirm("The entered path is a class string, not a blueprint path. Do you want to use the path """ + TempPath + """ instead?", "This is not recommended. Beacon uses the paths to properly track items that may have the same class. When possible, use the full correct path to the blueprint.", "Use Anyway", "Cancel") Then
+		        Path = TempPath
+		      Else
+		        Return
+		      End If
+		    Else
+		      Self.ShowAlert("The blueprint path is required", "Beacon requires the full blueprint path to the object in order to function correctly.")
+		      Return
+		    End If
 		  End If
 		  
 		  Dim Tags() As String = Self.TagsField.Value.Split(",")
@@ -520,7 +537,7 @@ End
 		  End If
 		  
 		  Select Case Self.TypeMenu.SelectedRowIndex
-		  Case 0
+		  Case Self.IndexEngram
 		    Dim Engram As New Beacon.MutableEngram(Path, Self.mObjectID)
 		    Engram.Label = Label
 		    Engram.Tags = Tags
@@ -529,13 +546,22 @@ End
 		      Self.ShowAlert("This engram did not save", "Its blueprint path may already be in the database.")
 		      Return
 		    End If
-		  Case 1
+		  Case Self.IndexCreature
 		    Dim Creature As New Beacon.MutableCreature(Path, Self.mObjectID)
 		    Creature.Label = Label
 		    Creature.Tags = Tags
 		    Creature.Availability = Availability
 		    If Not LocalData.SharedInstance.SaveBlueprint(Creature, True) Then
 		      Self.ShowAlert("This creature did not save", "Its blueprint path may already be in the database.")
+		      Return
+		    End If
+		  Case Self.IndexSpawnPoint
+		    Var Point As New Beacon.MutableSpawnPoint(Path, Self.mObjectID)
+		    Point.Label = Label
+		    Point.Tags = Tags
+		    Point.Availability = Availability
+		    If Not LocalData.SharedInstance.SaveBlueprint(Point, True) Then
+		      Self.ShowAlert("This spawn point did not save", "Its blueprint path may already be in the database.")
 		      Return
 		    End If
 		  End Select
@@ -596,6 +622,8 @@ End
 			      Self.TypeMenu.SelectByCaption("Creature")
 			    Case IsA Beacon.Engram
 			      Self.TypeMenu.SelectByCaption("Engram")
+			    Case IsA Beacon.SpawnPoint
+			      Self.TypeMenu.SelectByCaption("Spawn Point")
 			    End Select
 			    Self.PathField.Value = Blueprint.Path
 			    Self.NameField.Value = Blueprint.Label
@@ -614,6 +642,16 @@ End
 		#tag EndSetter
 		ObjectID As v4UUID
 	#tag EndComputedProperty
+
+
+	#tag Constant, Name = IndexCreature, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = IndexEngram, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = IndexSpawnPoint, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode

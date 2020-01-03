@@ -442,28 +442,32 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ExportAll()
-		  Dim Dialog As New SaveFileDialog
+		  Var Dialog As New SaveFileDialog
 		  Dialog.SuggestedFileName = "Beacon Objects.csv"
 		  Dialog.PromptText = "Export objects to CSV"
 		  Dialog.Filter = BeaconFileTypes.CSVFile
 		  
-		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File <> Nil Then
-		    Dim Mods As New Beacon.StringList
+		    Var Mods As New Beacon.StringList
 		    Mods.Append(LocalData.UserModID)
 		    
-		    Dim Engrams() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategoryEngrams, "", Mods, "")
-		    Dim Creatures() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategoryCreatures, "", Mods, "")
-		    Dim Blueprints() As Beacon.Blueprint
+		    Var Engrams() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategoryEngrams, "", Mods, "")
+		    Var Creatures() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategoryCreatures, "", Mods, "")
+		    Var Points() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategorySpawnPoints, "", Mods, "")
+		    Var Blueprints() As Beacon.Blueprint
 		    For Each Engram As Beacon.Blueprint In Engrams
 		      Blueprints.AddRow(Engram)
 		    Next
 		    For Each Creature As Beacon.Blueprint In Creatures
 		      Blueprints.AddRow(Creature)
 		    Next
+		    For Each Point As Beacon.Blueprint In Points
+		      Blueprints.AddRow(Point)
+		    Next
 		    
-		    Dim CSV As String = Beacon.CreateCSV(Blueprints)
-		    Dim Stream As TextOutputStream = TextOutputStream.Create(File)
+		    Var CSV As String = Beacon.CreateCSV(Blueprints)
+		    Var Stream As TextOutputStream = TextOutputStream.Create(File)
 		    Stream.Write(CSV)
 		    Stream.Close
 		  End If
@@ -529,13 +533,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SetupUI()
-		  Dim Mods As New Beacon.StringList(0)
+		  Var Mods As New Beacon.StringList(0)
 		  Mods(0) = LocalData.UserModID
 		  
-		  Dim Engrams() As Beacon.Engram = LocalData.SharedInstance.SearchForEngrams("", Mods)
-		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", Mods)
-		  Dim Blueprints() As Beacon.Blueprint
-		  Dim Labels() As String
+		  Var Engrams() As Beacon.Engram = LocalData.SharedInstance.SearchForEngrams("", Mods)
+		  Var Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", Mods)
+		  Var Points() As Beacon.SpawnPoint = LocalData.SharedInstance.SearchForSpawnPoints("", Mods)
+		  Var Blueprints() As Beacon.Blueprint
+		  Var Labels() As String
 		  For Each Engram As Beacon.Engram In Engrams
 		    Blueprints.AddRow(Engram)
 		    Labels.AddRow(Engram.Label)
@@ -544,9 +549,13 @@ End
 		    Blueprints.AddRow(Creature)
 		    Labels.AddRow(Creature.Label)
 		  Next
+		  For Each Point As Beacon.SpawnPoint In Points
+		    Blueprints.AddRow(Point)
+		    Labels.AddRow(Point.Label)
+		  Next
 		  Labels.SortWith(Blueprints)
 		  
-		  Dim SelectedPaths() As String
+		  Var SelectedPaths() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
 		      SelectedPaths.AddRow(Beacon.Blueprint(Self.List.RowTagAt(I)).Path)
@@ -556,7 +565,7 @@ End
 		  Self.mSettingUp = True
 		  Self.List.RowCount = Blueprints.LastRowIndex + 1
 		  For I As Integer = 0 To Blueprints.LastRowIndex
-		    Dim Blueprint As Beacon.Blueprint = Blueprints(I)
+		    Var Blueprint As Beacon.Blueprint = Blueprints(I)
 		    
 		    Self.List.RowTagAt(I) = Blueprint
 		    Self.List.CellValueAt(I, 0) = Blueprint.Label
