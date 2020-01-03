@@ -15,7 +15,9 @@ if (is_null($subobject) == false) {
 		BeaconAPI::ReplyError('Must use a v4 UUID', null, 400);
 	}
 	
-	$document = BeaconDocument::GetByDocumentID($document_id);
+	BeaconAPI::Authorize(true);
+	
+	$document = BeaconDocument::GetSharedDocumentByID($document_id, BeaconAPI::UserID());
 	if (is_null($document) || count($document) != 1) {
 		BeaconAPI::ReplyError('Document not found', null, 404);
 	}
@@ -30,8 +32,6 @@ if (is_null($subobject) == false) {
 			break;
 		case 'POST':
 		case 'PUT':
-			BeaconAPI::Authorize(true);
-			
 			if ($document->UserID() != BeaconAPI::UserID()) {
 				BeaconAPI::ReplyError('Not authorized', null, 403);
 			}
@@ -125,14 +125,24 @@ case 'GET':
 		$simple = isset($_GET['simple']);
 		
 		// specific document(s)
-		$documents = BeaconDocument::GetByDocumentID($document_id);
+		$documents = BeaconDocument::GetSharedDocumentByID($document_id, $user_id);
 		if (count($documents) === 0) {
 			BeaconAPI::ReplyError('No document found', null, 404);
+		} elseif (count($documents) > 1) {
+			$simple = true;
 		}
 		
-		if (!$simple) {
+		if ($simple === false) {
 			$database->BeginTransaction();
-			$database->Query('UPDATE documents SET download_count = download_count + 1 WHERE document_id = ANY($1) AND user_id != $2;', '{' . $document_id . '}', BeaconAPI::UserID());
+			if (is_null($user_id)) {
+				$database->Query('UPDATE documents SET download_count = download_count + 1 WHERE document_id = ANY($1);', '{' . $document_id . '}');
+			} else {
+				foreach ($documents as $document) {
+					if ($document->UserID() !== $user_id) {
+						$database->Query('UPDATE documents SET download_count = download_count + 1 WHERE document_id = $1;', $document->DocumentID());
+					}
+				}
+			}
 			$database->Commit();
 		}
 		
@@ -204,7 +214,7 @@ case 'POST':
 	$documents = array();
 	$database->BeginTransaction();
 	foreach ($items as $document) {
-		if ($single_mode) {
+		if ($single_mode && is_null($document_id) === false) {
 			$this_document_id = $document_id;
 		} else {
 			$this_document_id = $document['Identifier'];
@@ -215,7 +225,7 @@ case 'POST':
 			$database->Rollback();
 			BeaconAPI::ReplyError($reason, $document);
 		}
-		$documents[] = BeaconDocument::GetByDocumentID($this_document_id)[0];
+		$documents[] = BeaconDocument::GetSharedDocumentByID($this_document_id, $user_id)[0];
 	}
 	$database->Commit();
 	

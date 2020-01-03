@@ -91,6 +91,13 @@ $values = array(
 	)
 );
 
+$notes_path = '/history';
+if ($results->Field('stage') < 3) {
+	// It may seem odd, but preview releases should show notes for both alphas and betas.
+	$notes_path .= '?stage=1';
+}
+$notes_path .= '#build' . $results->Field('build_number');
+
 foreach ($arch_priority as $part) {
 	if (is_null($results->Field('win_' . $part . '_url')) === false) {
 		$values['win'] = array(
@@ -140,6 +147,7 @@ if ($html_mode) {
 	echo $html;
 } else {
 	$values['notes'] = $html;
+	$values['notes_url'] = BeaconCommon::AbsoluteURL($notes_path);
 	echo json_encode($values, JSON_PRETTY_PRINT);
 }
 

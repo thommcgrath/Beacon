@@ -14,6 +14,7 @@ class BeaconDocument implements JsonSerializable {
 	protected $download_count = 0;
 	protected $last_updated = null;
 	protected $user_id = '';
+	protected $owner_id = '';
 	protected $published = self::PUBLISH_STATUS_PRIVATE;
 	protected $map_mask = 0;
 	protected $difficulty_value = 0;
@@ -48,6 +49,10 @@ class BeaconDocument implements JsonSerializable {
 	
 	public function UserID() {
 		return $this->user_id;
+	}
+	
+	public function OwnerID() {
+		return $this->owner_id;
 	}
 	
 	public function IsPublic() {
@@ -196,14 +201,33 @@ class BeaconDocument implements JsonSerializable {
 	
 	public static function GetAll() {
 		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL());
+		$results = $database->Query(static::BuildSQL('user_id = owner_id'));
 		return self::GetFromResults($results);
 	}
 	
 	public static function GetByDocumentID(string $document_id) {
 		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('document_id = ANY($1)'), '{' . $document_id . '}');
+		$results = $database->Query(static::BuildSQL('document_id = ANY($1) AND user_id = owner_id'), '{' . $document_id . '}');
 		return self::GetFromResults($results);
+	}
+	
+	public static function GetDocumentByID(string $document_id) {
+		// Just an alias for GetByDocumentID to make sense with GetSharedDocumentByID
+		return self::GetByDocumentID($document_id);
+	}
+	
+	public static function GetSharedDocumentByID(string $document_id, $user_id) {
+		if (is_null($user_id)) {
+			return self::GetByDocumentID($document_id);
+		}
+		
+		$database = BeaconCommon::Database();
+		$results = $database->Query(static::BuildSQL('document_id = ANY($1) AND user_id = $2'), '{' . $document_id . '}', $user_id);
+		$documents = self::GetFromResults($results);
+		if (count($documents) === 0) {
+			$documents = self::GetByDocumentID($document_id);
+		}
+		return $documents;
 	}
 	
 	public static function Search(array $params, string $order_by = 'last_update DESC', int $count = 0, int $offset = 0, bool $count_only = false) {
@@ -259,6 +283,9 @@ class BeaconDocument implements JsonSerializable {
 			}
 		}
 		
+		// We want to list only "original" documents, not shared documents.
+		$clauses[] = 'user_id = owner_id';
+		
 		$database = BeaconCommon::Database();
 		if ($count_only) {
 			$sql = 'SELECT COUNT(document_id) AS document_count FROM allowed_documents WHERE ' . implode(' AND ', $clauses) . ';';
@@ -296,6 +323,7 @@ class BeaconDocument implements JsonSerializable {
 		$document->download_count = intval($results->Field('download_count'));
 		$document->last_updated = new DateTime($results->Field('last_update'));
 		$document->user_id = $results->Field('user_id');
+		$document->owner_id = $results->Field('owner_id');
 		$document->published = $results->Field('published');
 		$document->map_mask = intval($results->Field('map'));
 		$document->difficulty_value = floatval($results->Field('difficulty'));
@@ -332,6 +360,7 @@ class BeaconDocument implements JsonSerializable {
 			'download_count',
 			'last_update',
 			'user_id',
+			'owner_id',
 			'published',
 			'map',
 			'difficulty',
@@ -345,6 +374,7 @@ class BeaconDocument implements JsonSerializable {
 		return array(
 			'document_id' => $this->document_id,
 			'user_id' => $this->user_id,
+			'owner_id' => $this->owner_id,
 			'name' => $this->name,
 			'description' => $this->description,
 			'revision' => $this->revision,
@@ -358,7 +388,7 @@ class BeaconDocument implements JsonSerializable {
 	}
 	
 	public function CloudStoragePath() {
-		return static::GenerateCloudStoragePath($this->UserID(), $this->DocumentID());
+		return static::GenerateCloudStoragePath($this->OwnerID(), $this->DocumentID());
 	}
 	
 	public static function GenerateCloudStoragePath(string $user_id, string $document_id) {
@@ -397,7 +427,6 @@ class BeaconDocument implements JsonSerializable {
 			return false;
 		}
 		
-		
 		$database = BeaconCommon::Database();
 		$document_id = $document['Identifier'];
 		
@@ -407,14 +436,16 @@ class BeaconDocument implements JsonSerializable {
 		
 		// confirm write permission of the document
 		if ($new_document == false) {
-			$results = $database->Query('SELECT role FROM allowed_documents WHERE document_id = $1 AND user_id = $2;', $document_id, $user_id);
+			$results = $database->Query('SELECT role, owner_id FROM allowed_documents WHERE document_id = $1 AND user_id = $2;', $document_id, $user_id);
 			if ($results->RecordCount() == 0) {
 				$reason = 'Access denied for document ' . $document_id . '.';
 				return false;
 			}
 			$role = $results->Field('role');
+			$owner_id = $results->Field('owner_id');
 		} else {
 			$role = 'Owner';
+			$owner_id = $user_id;
 		}
 		
 		// gather document details
@@ -563,7 +594,7 @@ class BeaconDocument implements JsonSerializable {
 			}
 		}
 		
-		if (BeaconCloudStorage::PutFile(BeaconDocument::GenerateCloudStoragePath($user_id, $document_id), gzencode(json_encode($document))) === false) {
+		if (BeaconCloudStorage::PutFile(BeaconDocument::GenerateCloudStoragePath($owner_id, $document_id), gzencode(json_encode($document))) === false) {
 			$reason = 'Unable to upload document to cloud storage platform.';
 			return false;
 		}
@@ -575,7 +606,7 @@ class BeaconDocument implements JsonSerializable {
 			if ($new_document) {
 				$database->Query('INSERT INTO documents (document_id, user_id, title, description, map, difficulty, console_safe, mods, included_editors, last_update) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, CURRENT_TIMESTAMP);', $document_id, $user_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
 			} else {
-				$database->Query('UPDATE documents SET revision = revision + 1, title = $3, description = $4, map = $5, difficulty = $6, console_safe = $7, mods = $8, included_editors = $9, last_update = CURRENT_TIMESTAMP WHERE document_id = $1 AND user_id = $2;', $document_id, $user_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
+				$database->Query('UPDATE documents SET revision = revision + 1, title = $3, description = $4, map = $5, difficulty = $6, console_safe = $7, mods = $8, included_editors = $9, last_update = CURRENT_TIMESTAMP WHERE document_id = $1 AND user_id = $2;', $document_id, $owner_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
 			}
 			foreach ($guests_to_add as $guest_id) {
 				$database->Query('INSERT INTO guest_documents (document_id, user_id) VALUES ($1, $2);', $document_id, $guest_id);
