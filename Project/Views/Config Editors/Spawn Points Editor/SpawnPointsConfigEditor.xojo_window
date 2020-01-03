@@ -484,6 +484,9 @@ End
 		  
 		  Me.LeftItems.Append(AddButton)
 		  Me.LeftItems.Append(DuplicateButton)
+		  
+		  // Sometimes Xojo feels like changing the value of this property for... reasons
+		  Me.Borders = BeaconUI.BorderBottom
 		End Sub
 	#tag EndEvent
 	#tag Event
