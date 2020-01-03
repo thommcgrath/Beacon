@@ -155,27 +155,13 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Function CheckError(HTTPStatus As Integer, HTTPResponse As MemoryBlock) As Boolean
-		  Select Case HTTPStatus
-		  Case 401
-		    Self.mStatus = "Error: Authorization failed."
-		  Case 429
-		    Self.mStatus = "Error: Rate limit has been exceeded."
-		  Case 503
-		    Self.mStatus = "Error: Nitrado is offline for maintenance."
-		  Case 0
-		    If HTTPResponse <> Nil And HTTPResponse.Size > 0 Then
-		      Self.mStatus = "Connection error: " + HTTPResponse.StringValue(0, HTTPResponse.Size).GuessEncoding
-		    Else
-		      Self.mStatus = "Connection error"
-		    End If
-		  Else
-		    Self.mErrored = False
-		    Return False
-		  End Select
-		  
-		  Self.mErrored = True
-		  Self.mFinished = True
-		  Return True
+		  Var Message As String
+		  If NitradoDeploymentEngine.CheckResponseForError(HTTPStatus, HTTPResponse, Message) Then
+		    Self.mStatus = Message
+		    Self.mFinished = True
+		    Self.mErrored = True
+		    Return True
+		  End If
 		End Function
 	#tag EndMethod
 

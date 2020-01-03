@@ -586,26 +586,52 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Function CheckError(HTTPStatus As Integer, HTTPResponse As MemoryBlock) As Boolean
+		  Var Message As String
+		  If Self.CheckResponseForError(HTTPStatus, HTTPResponse, Message) Then
+		    Self.mStatus = Message
+		    Self.mFinished = True
+		    Self.mErrored = True
+		    Return True
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function CheckResponseForError(HTTPStatus As Integer, HTTPResponse As MemoryBlock, ByRef Message As String) As Boolean
 		  Select Case HTTPStatus
 		  Case 401
-		    Self.mStatus = "Error: Authorization failed."
+		    Message = "Error: Authorization failed."
 		  Case 429
-		    Self.mStatus = "Error: Rate limit has been exceeded."
+		    Message = "Error: Rate limit has been exceeded."
 		  Case 503
-		    Self.mStatus = "Error: Nitrado is offline for maintenance."
+		    Message = "Error: Nitrado is offline for maintenance."
+		  Case 504
+		    Message = "Error: Nitrado appears to be having an unplanned outage."
+		  Case 500
+		    Var TempMessage As String
+		    Try
+		      Var Parsed As Variant = Beacon.ParseJSON(HTTPResponse)
+		      If Parsed.Type = Variant.TypeObject And Parsed.ObjectValue IsA Dictionary And Dictionary(Parsed.ObjectValue).HasKey("message") Then
+		        TempMessage = "Nitrado Error: " + Dictionary(Parsed.ObjectValue).Value("message").StringValue
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		    If TempMessage <> "" Then
+		      Message = TempMessage
+		    Else
+		      Message = "Error: Nitrado responded with an error but no message."
+		    End If
 		  Case 0
 		    If HTTPResponse <> Nil And HTTPResponse.Size > 0 Then
-		      Self.mStatus = "Connection error: " + HTTPResponse.StringValue(0, HTTPResponse.Size).GuessEncoding
+		      Message = "Connection error: " + HTTPResponse.StringValue(0, HTTPResponse.Size).GuessEncoding
 		    Else
-		      Self.mStatus = "Connection error"
+		      Message = "Connection error"
 		    End If
 		  Else
-		    Self.mErrored = False
+		    Message = ""
 		    Return False
 		  End Select
 		  
-		  Self.mErrored = True
-		  Self.mFinished = True
 		  Return True
 		End Function
 	#tag EndMethod
