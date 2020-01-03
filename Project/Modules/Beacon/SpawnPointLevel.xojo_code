@@ -31,7 +31,8 @@ Protected Class SpawnPointLevel
 		  // See note Formula
 		  
 		  Var Levels As New Beacon.SpawnPointLevel(0, 0, 0)
-		  Levels.UserLevels(Difficulty) = New Beacon.Range(MinLevel, MaxLevel)
+		  Levels.MinLevel = Max(Ceil(MinLevel / Difficulty), 1.0)
+		  Levels.MaxLevel = Max(Ceil(MaxLevel / Difficulty), 1.0) + 0.999999
 		  Return Levels
 		End Function
 	#tag EndMethod
@@ -76,17 +77,10 @@ Protected Class SpawnPointLevel
 
 	#tag Method, Flags = &h0
 		Function UserLevels(AtDifficulty As Double) As Beacon.Range
-		  Var MinLevel As Integer = Round(AtDifficulty * Round(Self.MinLevel + (0.0 * (Self.MaxLevel - Self.MinLevel))))
-		  Var MaxLevel As Integer = Round(AtDifficulty * Round(Self.MinLevel + (1.0 * (Self.MaxLevel - Self.MinLevel))))
+		  Var MinLevel As Integer = Round(AtDifficulty) * Floor(Self.MinLevel + (0.0 * (Self.MaxLevel - Self.MinLevel)))
+		  Var MaxLevel As Integer = Round(AtDifficulty) * Floor(Self.MinLevel + (1.0 * (Self.MaxLevel - Self.MinLevel)))
 		  Return New Beacon.Range(MinLevel, MaxLevel)
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub UserLevels(AtDifficulty As Double, Assigns UserLevels As Beacon.Range)
-		  Self.MinLevel = Round(UserLevels.Min / AtDifficulty)
-		  Self.MaxLevel = Round(UserLevels.Max / AtDifficulty) + 0.99999999
-		End Sub
 	#tag EndMethod
 
 
@@ -95,16 +89,18 @@ Protected Class SpawnPointLevel
 		This maximizes the likihood of max level creatures.
 		A dino level is computed as `Floor(MinLevel + (RNG * (MaxLevel - MinLevel))) * Difficulty`
 		Examples:
-		Round(1.0 + (0.95 * (30.999999 - 1.0))) = 29 * Difficulty = 145
-		Round(1.0 + (0.96 * (30.999999 - 1.0))) = 30 * Difficulty = 150
+		Floor(1.0 + (0.95 * (30.999999 - 1.0))) = 29 * Difficulty = 145
+		Floor(1.0 + (0.97 * (30.999999 - 1.0))) = 30 * Difficulty = 150
+		Floor(1.0 + (1.00 * (30.999999 - 1.0))) = 30 * Difficulty = 150
 		
 		Without the nines, the formulas would look like:
-		Round(1.0 + (0.95 * (30 - 1.0))) = 29 * Difficulty = 145
-		Round(1.0 + (0.96 * (30 - 1.0))) = 29 * Difficulty = 145
+		Floor(1.0 + (0.95 * (30 - 1.0))) = 28 * Difficulty = 140
+		Floor(1.0 + (0.97 * (30 - 1.0))) = 29 * Difficulty = 145
+		Floor(1.0 + (1.00 * (30 - 1.0))) = 30 * Difficulty = 150
 		Only a perfect 1.0 RNG value would produce a 150
 		
 		And a value of 31 would mean a level 155 would be possible
-		Round(1.0 + (1.0 * (31 - 1.0))) = 31 * Difficulty = 155
+		Floor(1.0 + (1.00 * (31 - 1.0))) = 31 * Difficulty = 155
 	#tag EndNote
 
 

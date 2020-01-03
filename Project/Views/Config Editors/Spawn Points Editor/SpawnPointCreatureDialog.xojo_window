@@ -1175,9 +1175,7 @@ End
 		  Var Entry As New Beacon.MutableSpawnPointSetEntry(Self.mTargetCreature)
 		  
 		  If Self.LevelOverrideMinField.Value <> "" And Self.LevelOverrideMaxField.Value <> "" Then
-		    Var MinLevel As Double = Self.LevelOverrideMinField.DoubleValue / Self.mDifficulty
-		    Var MaxLevel As Double = (Self.LevelOverrideMaxField.DoubleValue / Self.mDifficulty) + MinLevel
-		    Entry.Append(New Beacon.SpawnPointLevel(MinLevel, MaxLevel, 0))
+		    Entry.Append(Beacon.SpawnPointLevel.FromUserLevel(Self.LevelOverrideMinField.DoubleValue, Self.LevelOverrideMaxField.DoubleValue, Self.mDifficulty))
 		  End If
 		  If Self.LevelMultiplierMinField.Value <> "" Then
 		    Entry.MinLevelMultiplier = Self.LevelMultiplierMinField.DoubleValue
