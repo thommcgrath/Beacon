@@ -90,7 +90,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
       Top             =   52
       Transparent     =   False
       Underline       =   False
-      Value           =   "Ark allows choosing a different creature to spawn whenever the target creature is chosen from any spawn set in this spawn point. This is most commonly used for adding Alpha creatures wherever the normal variant could spawn. With a replacement defined, the target creature will always be replaced, so if you want the target creature to still spawn, you must include it as an option here. For example, if choosing to replace Raptors with Alpha Raptors will always spawn Alpha Raptors unless you also include Raptor in the replacement creature list."
+      Value           =   "Ark allows choosing a different creature to spawn whenever the target creature is chosen from this spawn set. This is most commonly used for adding Alpha creatures wherever the normal variant could spawn. With a replacement defined, the target creature will always be replaced, so if you want the target creature to still spawn, you must include it as an option here. For example, if choosing to replace Raptors with Alpha Raptors will always spawn Alpha Raptors unless you also include Raptor in the replacement creature list."
       Visible         =   True
       Width           =   620
    End
