@@ -442,12 +442,14 @@ End
 		Sub Open()
 		  Self.SwapButtons()
 		  
-		  // If Self.mUIMode = Self.UIModeDuplicate Then
-		  // Self.ModeLabel.Visible = False
-		  // Self.ModeMenu.Visible = False
-		  // Self.LoadDefaultsCheck.Visible = False
-		  // Self.List.Height = Self.List.Height + (Self.ModeMenu.Bottom - Self.List.Bottom)
-		  // End If
+		  If Self.mUIMode = Self.UIModeDuplicate Then
+		    Self.ModeLabel.Visible = False
+		    Self.LoadDefaultsCheck.Visible = False
+		    Self.OverrideRadio.Visible = False
+		    Self.RemoveRadio.Visible = False
+		    Self.AppendRadio.Visible = False
+		    Self.List.Height = Self.List.Height + (Self.RemoveRadio.Bottom - Self.List.Bottom)
+		  End If
 		  
 		  Self.UpdateFilter()
 		End Sub
