@@ -2,38 +2,18 @@
 Protected Class Engram
 	#tag Method, Flags = &h0
 		Function AsDictionary() As Dictionary
-		  Dim Environments() As String
-		  If Self.ValidForMap(Beacon.Maps.TheIsland) Then
-		    Environments.AddRow("Island")
-		  End If
-		  If Self.ValidForMap(Beacon.Maps.ScorchedEarth) Then
-		    Environments.AddRow("Scorched")
-		  End If
-		  If Self.ValidForMap(Beacon.Maps.TheCenter) Then
-		    Environments.AddRow("Center")
-		  End If
-		  If Self.ValidForMap(Beacon.Maps.Ragnarok) Then
-		    Environments.AddRow("Ragnarok")
-		  End If
-		  If Self.ValidForMap(Beacon.Maps.Aberration) Then
-		    Environments.AddRow("Aberration")
-		  End If
-		  If Self.ValidForMap(Beacon.Maps.Extinction) Then
-		    Environments.AddRow("Extinction")
-		  End If
-		  If Self.ValidForMap(Beacon.Maps.Valguero) Then
-		    Environments.AddRow("Valguero")
-		  End If
-		  If Self.ValidForMap(Beacon.Maps.Genesis) Then
-		    Environments.AddRow("Genesis")
+		  Var Tags() As String
+		  If Self.CanBeBlueprint Then
+		    Tags.AddRow("blueprintable")
 		  End If
 		  
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
+		  Dict.Value("object_id") = Self.ID
 		  Dict.Value("path") = Self.Path
 		  Dict.Value("label") = Self.Label
 		  Dict.Value("mod_id") = Self.ModID
-		  Dict.Value("availability") = Environments
-		  Dict.Value("can_blueprint") = Self.CanBeBlueprint
+		  Dict.Value("availability") = Self.Availability
+		  Dict.Value("tags") = Tags
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -86,42 +66,52 @@ Protected Class Engram
 		  Self.Label = Source.Value("label")
 		  Self.mAvailability = 0
 		  Self.mPath = Source.Value("path")
-		  Self.mID = New v4UUID
-		  Self.mModName = ""
-		  Self.ModID = ""
 		  Self.mResourceURL = Source.Value("resource_url")
 		  Self.mSpawnCode = Source.Value("spawn")
 		  
 		  If Source.Value("mod_id") <> Nil Then
 		    Self.mModName = Source.Value("mod_name")
 		    Self.ModID = Source.Value("mod_id")
+		  Else
+		    Self.mModName = ""
+		    Self.ModID = ""
 		  End If
 		  
-		  Dim Environments() As Variant = Source.Value("environments")
-		  For Each Environment As String In Environments
-		    Dim Map As Beacon.Map
-		    Select Case Environment
-		    Case "island"
-		      Map = Beacon.Maps.TheIsland
-		    Case "scorched"
-		      Map = Beacon.Maps.ScorchedEarth
-		    Case "center"
-		      Map = Beacon.Maps.TheCenter
-		    Case "ragnarok"
-		      Map = Beacon.Maps.Ragnarok
-		    Case "abberation", "aberration"
-		      Map = Beacon.Maps.Aberration
-		    Case "extinction"
-		      Map = Beacon.Maps.Extinction
-		    Case "valguero"
-		      Map = Beacon.Maps.Valguero
-		    Case "genesis"
-		      Map = Beacon.Maps.Genesis
-		    End Select
-		    If Map <> Nil Then
-		      Self.ValidForMap(Map) = True
-		    End If
-		  Next
+		  If Source.HasKey("id") Then
+		    Self.mID = Source.Value("id").StringValue
+		  Else
+		    Self.mID = new v4UUID
+		  End If
+		  
+		  If Source.HasKey("availability") Then
+		    Self.mAvailability = Source.Value("availability").UInt64Value
+		  ElseIf Source.HasKey("environments") Then
+		    Var Environments() As Variant = Source.Value("environments")
+		    For Each Environment As String In Environments
+		      Dim Map As Beacon.Map
+		      Select Case Environment
+		      Case "island"
+		        Map = Beacon.Maps.TheIsland
+		      Case "scorched"
+		        Map = Beacon.Maps.ScorchedEarth
+		      Case "center"
+		        Map = Beacon.Maps.TheCenter
+		      Case "ragnarok"
+		        Map = Beacon.Maps.Ragnarok
+		      Case "abberation", "aberration"
+		        Map = Beacon.Maps.Aberration
+		      Case "extinction"
+		        Map = Beacon.Maps.Extinction
+		      Case "valguero"
+		        Map = Beacon.Maps.Valguero
+		      Case "genesis"
+		        Map = Beacon.Maps.Genesis
+		      End Select
+		      If Map <> Nil Then
+		        Self.ValidForMap(Map) = True
+		      End If
+		    Next
+		  End If
 		End Sub
 	#tag EndMethod
 

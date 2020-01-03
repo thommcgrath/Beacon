@@ -613,12 +613,12 @@ End
 		  
 		  Panel.SelectedPanelIndex = PageLoading
 		  
-		  Dim UIDs() As String
+		  Dim EngramIDs() As String
 		  For Each Engram As BeaconAPI.Engram In DeletedEngrams
-		    UIDs.AddRow(Engram.UID)
+		    EngramIDs.AddRow(Engram.ID)
 		  Next
 		  
-		  Dim Request As New BeaconAPI.Request("engram.php", "DELETE", UIDs.Join(","), "text/plain", AddressOf APICallback_EngramsDelete)
+		  Dim Request As New BeaconAPI.Request("engram", "DELETE", EngramIDs.Join(","), "text/plain", AddressOf APICallback_EngramsDelete)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.Socket.Start(Request)
 		  
@@ -726,7 +726,7 @@ End
 		  Next
 		  
 		  Dim Content As String = Beacon.GenerateJSON(Dicts, False)
-		  Dim Request As New BeaconAPI.Request("engram.php", "POST", Content, "application/json", AddressOf APICallback_EngramsPost)
+		  Dim Request As New BeaconAPI.Request("engram", "POST", Content, "application/json", AddressOf APICallback_EngramsPost)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.Socket.Start(Request)
 		  
