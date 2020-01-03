@@ -525,7 +525,7 @@ End
 		  End If
 		  
 		  Self.List.RemoveAllRows()
-		  Dim MapLabels As New Dictionary
+		  Var MapLabels As New Dictionary
 		  For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
 		    If Not SpawnPoint.ValidForMask(Self.mAvailability) Then
 		      Continue

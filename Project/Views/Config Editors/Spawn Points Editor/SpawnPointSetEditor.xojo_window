@@ -1811,7 +1811,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double = Me.DoubleValue
+		  Var Value As Double = Me.DoubleValue
 		  If Value = 0 Then
 		    Return
 		  End If

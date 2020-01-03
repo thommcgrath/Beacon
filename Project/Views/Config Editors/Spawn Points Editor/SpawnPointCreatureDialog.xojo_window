@@ -170,6 +170,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -213,6 +214,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -256,6 +258,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -334,6 +337,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -482,6 +486,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -525,6 +530,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -568,6 +574,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -611,6 +618,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -654,6 +662,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -697,6 +706,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -1298,7 +1308,9 @@ End
 		  Var Entry As New Beacon.MutableSpawnPointSetEntry(Self.mTargetCreature)
 		  
 		  If Self.LevelOverrideMinField.Value <> "" And Self.LevelOverrideMaxField.Value <> "" Then
-		    Entry.Append(New Beacon.SpawnPointLevel(Self.LevelOverrideMinField.DoubleValue / Self.mDifficulty, Self.LevelOverrideMaxField.DoubleValue / Self.mDifficulty, 0))
+		    Var MinLevel As Double = Self.LevelOverrideMinField.DoubleValue / Self.mDifficulty
+		    Var MaxLevel As Double = (Self.LevelOverrideMaxField.DoubleValue / Self.mDifficulty) + MinLevel
+		    Entry.Append(New Beacon.SpawnPointLevel(MinLevel, MaxLevel, 0))
 		  End If
 		  If Self.LevelMultiplierMinField.Value <> "" Then
 		    Entry.MinLevelMultiplier = Self.LevelMultiplierMinField.DoubleValue
@@ -2068,14 +2080,6 @@ End
 		Group="Deprecated"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="mDifficulty"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

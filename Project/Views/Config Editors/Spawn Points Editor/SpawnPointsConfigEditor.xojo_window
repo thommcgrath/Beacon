@@ -336,8 +336,8 @@ End
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.SpawnPoints
 		  Static ConfigName As String = BeaconConfigs.SpawnPoints.ConfigName
 		  
-		  Dim Document As Beacon.Document = Self.Document
-		  Dim Config As BeaconConfigs.SpawnPoints
+		  Var Document As Beacon.Document = Self.Document
+		  Var Config As BeaconConfigs.SpawnPoints
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.SpawnPoints(Self.mConfigRef.Value)
@@ -386,9 +386,9 @@ End
 		    Return
 		  End If
 		  
-		  Dim AvailableSpace As Integer = Self.Width - Self.MainSeparator.Width
-		  Dim ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - SpawnPointEditor.MinimumWidth)
-		  Dim EditorWidth As Integer = AvailableSpace - ListWidth
+		  Var AvailableSpace As Integer = Self.Width - Self.MainSeparator.Width
+		  Var ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - SpawnPointEditor.MinimumWidth)
+		  Var EditorWidth As Integer = AvailableSpace - ListWidth
 		  
 		  Self.ControlToolbar.Width = ListWidth
 		  Self.MainSeparator.Left = ListWidth
@@ -476,10 +476,10 @@ End
 #tag Events ControlToolbar
 	#tag Event
 		Sub Open()
-		  Dim AddButton As New BeaconToolbarItem("AddButton", IconToolbarAdd)
+		  Var AddButton As New BeaconToolbarItem("AddButton", IconToolbarAdd)
 		  AddButton.HelpTag = "Override a spawn point."
 		  
-		  Dim DuplicateButton As New BeaconToolbarItem("DuplicateButton", IconToolbarClone, False)
+		  Var DuplicateButton As New BeaconToolbarItem("DuplicateButton", IconToolbarClone, False)
 		  DuplicateButton.HelpTag = "Duplicate the selected spawn point."
 		  
 		  Me.LeftItems.Append(AddButton)
