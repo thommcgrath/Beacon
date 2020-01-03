@@ -160,6 +160,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		    End If
 		    
 		    SpawnPoint = New Beacon.SpawnPoint(SpawnPoint)
+		    SpawnPoint.mSets.ResizeTo(-1)
 		    If Dict.HasKey("Label") Then
 		      SpawnPoint.mLabel = Dict.Value("Label")
 		    End If
