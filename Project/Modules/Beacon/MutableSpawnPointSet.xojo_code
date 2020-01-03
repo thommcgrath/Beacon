@@ -103,6 +103,15 @@ Inherits Beacon.SpawnPointSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub LevelOffsetBeforeMultiplier(Assigns Value As Boolean)
+		  If Self.mOffsetBeforeMultiplier <> Value Then
+		    Self.mOffsetBeforeMultiplier = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub MinDistanceFromPlayersMultiplier(Assigns Value As NullableDouble)
 		  If Self.mMinDistanceFromPlayersMultiplier <> Value Then
 		    Self.mMinDistanceFromPlayersMultiplier = Value

@@ -403,7 +403,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Top             =   118
       Transparent     =   False
       Underline       =   False
-      Value           =   "Spawn Chance:"
+      Value           =   "Weight:"
       Visible         =   True
       Width           =   108
    End
@@ -1046,143 +1046,9 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Top             =   286
       Transparent     =   False
       Underline       =   False
-      Value           =   "Level Multiplier:"
+      Value           =   "Level Range:"
       Visible         =   True
       Width           =   108
-   End
-   Begin UITweaks.ResizedLabel PercentLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   22
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   232
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   27
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   "0"
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   118
-      Transparent     =   False
-      Underline       =   False
-      Value           =   "%"
-      Visible         =   True
-      Width           =   15
-   End
-   Begin UITweaks.ResizedLabel ZeroPercentLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   22
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   259
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   28
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   "3"
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   118
-      Transparent     =   False
-      Underline       =   False
-      Value           =   "0%"
-      Visible         =   True
-      Width           =   25
-   End
-   Begin UITweaks.ResizedLabel OneHundredPercentLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   22
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   459
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   29
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   "0"
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   118
-      Transparent     =   False
-      Underline       =   False
-      Value           =   "100%"
-      Visible         =   True
-      Width           =   37
-   End
-   Begin Slider SpawnChanceSlider
-      AllowAutoDeactivate=   True
-      AllowLiveScrolling=   True
-      Enabled         =   True
-      Height          =   23
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   296
-      LineStep        =   1
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MaximumValue    =   100
-      MinimumValue    =   0
-      PageStep        =   20
-      Scope           =   2
-      TabIndex        =   30
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TickMarkStyle   =   "0"
-      Tooltip         =   ""
-      Top             =   118
-      Transparent     =   False
-      Value           =   0
-      Visible         =   True
-      Width           =   151
    End
 End
 #tag EndWindow
@@ -1248,7 +1114,7 @@ End
 		    Self.OffsetFields(2).DoubleValue = CommonOffset.Z
 		  End If
 		  If CommonSpawnChance <> Nil Then
-		    Self.SpawnChanceField.DoubleValue = CommonSpawnChance * 100
+		    Self.SpawnChanceField.DoubleValue = CommonSpawnChance
 		  End If
 		  If CommonMinLevelMultiplier <> Nil Then
 		    Self.LevelMultiplierMinField.DoubleValue = CommonMinLevelMultiplier
@@ -1275,13 +1141,14 @@ End
 
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Document As Beacon.Document, Entries() As Beacon.MutableSpawnPointSetEntry)
+		Sub Constructor(Document As Beacon.Document, Entries() As Beacon.MutableSpawnPointSetEntry, OffsetBeforeMultiplier As Boolean)
 		  Self.mSettingUp = True
 		  
 		  Self.mDifficulty = Document.DifficultyValue
 		  Self.mMods = Document.Mods
 		  Self.mEntries = Entries
 		  Self.mMultiEditMode = Entries.LastRowIndex > 0
+		  Self.mOffsetBeforeMultiplier = OffsetBeforeMultiplier
 		  
 		  If Entries.LastRowIndex > 0 Then
 		    Self.mMultiEditMode = True
@@ -1330,13 +1197,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Document As Beacon.Document, Entry As Beacon.MutableSpawnPointSetEntry = Nil) As Beacon.MutableSpawnPointSetEntry
+		Shared Function Present(Parent As Window, Document As Beacon.Document, Set As Beacon.SpawnPointSet, Entry As Beacon.MutableSpawnPointSetEntry = Nil) As Beacon.MutableSpawnPointSetEntry
 		  Var Entries() As Beacon.MutableSpawnPointSetEntry
 		  If Entry <> Nil Then
 		    Entries.AddRow(Entry)
 		  End If
 		  
-		  Var Results() As Beacon.MutableSpawnPointSetEntry = Present(Parent, Document, Entries)
+		  Var Results() As Beacon.MutableSpawnPointSetEntry = Present(Parent, Document, Set, Entries)
 		  If Results = Nil Or Results.LastRowIndex = -1 Then
 		    Return Nil
 		  End If
@@ -1346,14 +1213,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Document As Beacon.Document, Entries() As Beacon.MutableSpawnPointSetEntry) As Beacon.MutableSpawnPointSetEntry()
+		Shared Function Present(Parent As Window, Document As Beacon.Document, Set As Beacon.SpawnPointSet, Entries() As Beacon.MutableSpawnPointSetEntry) As Beacon.MutableSpawnPointSetEntry()
 		  Var NewEntries() As Beacon.MutableSpawnPointSetEntry
 		  
 		  If Parent = Nil Then
 		    Return NewEntries
 		  End If
 		  
-		  Var Win As New SpawnPointCreatureDialog(Document, Entries)
+		  Var Win As New SpawnPointCreatureDialog(Document, Entries, Set.LevelOffsetBeforeMultiplier)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  If Win.mCancelled Then
 		    Win.Close
@@ -1371,7 +1238,7 @@ End
 		Private Sub UpdateEffectiveLevel()
 		  Var Entry As Beacon.MutableSpawnPointSetEntry = Self.CreateEntry
 		  
-		  Var Range As Beacon.Range = Entry.LevelRangeForDifficulty(Self.mDifficulty)
+		  Var Range As Beacon.Range = Entry.LevelRangeForDifficulty(Self.mDifficulty, Self.mOffsetBeforeMultiplier)
 		  Self.EffectiveMinLevelField.Value = Range.Min.PrettyText
 		  Self.EffectiveMaxLevelField.Value = Range.Max.PrettyText
 		End Sub
@@ -1400,6 +1267,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mMultiEditMode As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOffsetBeforeMultiplier As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1468,8 +1339,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
-		  MinValue = 0
-		  MaxValue = 100
+		  MinValue = 0.00001
+		  MaxValue = 1000000
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1482,8 +1353,6 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub TextChange()
-		  Self.SpawnChanceSlider.Value = Me.DoubleValue
-		  
 		  If Self.mSettingUp Then
 		    Return
 		  End If
@@ -1752,22 +1621,23 @@ End
 		    
 		    If Self.mEditedFields.IndexOf(Self.SpawnChanceField) > -1 Then
 		      If Self.SpawnChanceField.Value <> "" Then
-		        Entry.SpawnChance = Self.SpawnChanceField.DoubleValue / 100
+		        Entry.SpawnChance = Self.SpawnChanceField.DoubleValue
 		      Else
 		        Entry.SpawnChance = Nil
 		      End If
 		    End If
 		    
 		    Var Levels As Beacon.SpawnPointLevel = Entry.LevelForDifficulty(Self.mDifficulty)
-		    Var MinLevel, MaxLevel As Double
+		    Var MinLevel, MaxLevel As Integer
 		    If Levels <> Nil Then
-		      MinLevel = Levels.MinLevel
-		      MaxLevel = Levels.MaxLevel
+		      Var UserLevels As Beacon.Range = Levels.UserLevels(Self.mDifficulty)
+		      MinLevel = UserLevels.Min
+		      MaxLevel = UserLevels.Max
 		    End If
 		    Var ReplaceLevels As Boolean
 		    If Self.mEditedFields.IndexOf(Self.LevelOverrideMinField) > -1 Then
 		      If Self.LevelOverrideMinField.Value <> "" Then
-		        MinLevel = Self.LevelOverrideMinField.DoubleValue / Self.mDifficulty
+		        MinLevel = Round(Self.LevelOverrideMinField.DoubleValue)
 		      Else
 		        MinLevel = 0
 		      End If
@@ -1775,7 +1645,7 @@ End
 		    End If
 		    If Self.mEditedFields.IndexOf(Self.LevelOverrideMaxField) > -1 Then
 		      If Self.LevelOverrideMaxField.Value <> "" Then
-		        MaxLevel = Self.LevelOverrideMaxField.DoubleValue / Self.mDifficulty
+		        MaxLevel = Round(Self.LevelOverrideMaxField.DoubleValue)
 		      Else
 		        MaxLevel = 0
 		      End If
@@ -1784,7 +1654,7 @@ End
 		    If ReplaceLevels Then
 		      Entry.LevelCount = 0
 		      If MinLevel > 0 And MaxLevel > 0 Then
-		        Entry.Append(New Beacon.SpawnPointLevel(MinLevel, MaxLevel, 0)) // Yes, this should be 0
+		        Entry.Append(Beacon.SpawnPointLevel.FromUserLevel(MinLevel, MaxLevel, Self.mDifficulty))
 		      End If
 		    End If
 		    
@@ -1831,17 +1701,6 @@ End
 		Sub Action()
 		  Self.mCancelled = True
 		  Self.Hide
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events SpawnChanceSlider
-	#tag Event
-		Sub ValueChanged()
-		  If Self.mSettingUp Or Self.Focus = Self.SpawnChanceField Then
-		    Return
-		  End If
-		  
-		  Self.SpawnChanceField.DoubleValue = Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -184,7 +184,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		    End If
 		  Next
 		  If Candidate = Nil And NilDefault = False Then
-		    Candidate = New Beacon.SpawnPointLevel(1.0, 30.0, Difficulty)
+		    Candidate = Beacon.SpawnPointLevel.FromUserLevel(1.0 * Difficulty, 30.0 * Difficulty, Difficulty)
 		  End If
 		  Return Candidate
 		End Function
@@ -197,10 +197,11 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LevelRangeForDifficulty(Difficulty As Double) As Beacon.Range
+		Function LevelRangeForDifficulty(Difficulty As Double, OffsetBeforeMultiplier As Boolean) As Beacon.Range
 		  Var Levels As Beacon.SpawnPointLevel = Self.LevelForDifficulty(Difficulty)
 		  Var MinLevelOffset, MaxLevelOffset As Double = 0.0
 		  Var MinLevelMultiplier, MaxLevelMultiplier As Double = 1.0
+		  
 		  If Self.MinLevelOffset <> Nil Then
 		    MinLevelOffset = Self.MinLevelOffset
 		  End If
@@ -213,8 +214,17 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		  If Self.MaxLevelMultiplier <> Nil Then
 		    MaxLevelMultiplier = Self.MaxLevelMultiplier
 		  End If
-		  Var MinLevel As Integer = Round((Floor(Levels.MinLevel) + MinLevelOffset) * Difficulty * MinLevelMultiplier)
-		  Var MaxLevel As Integer = Round((Floor(Levels.MaxLevel) + MaxLevelOffset) * Difficulty * MaxLevelMultiplier)
+		  
+		  Var UserLevels As Beacon.Range = Levels.UserLevels(Difficulty)
+		  Var MinLevel, MaxLevel As Integer
+		  If OffsetBeforeMultiplier Then
+		    MinLevel = Round((UserLevels.Min * MinLevelMultiplier) + MinLevelOffset)
+		    MaxLevel = Round((UserLevels.Max * MaxLevelMultiplier) + MaxLevelOffset)
+		  Else
+		    MinLevel = Round((UserLevels.Min + MinLevelOffset) * MinLevelMultiplier)
+		    MaxLevel = Round((UserLevels.Max + MaxLevelOffset) * MaxLevelMultiplier)
+		  End If
+		  
 		  Return New Beacon.Range(MinLevel, MaxLevel)
 		End Function
 	#tag EndMethod

@@ -53,6 +53,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  Self.mMinDistanceFromPlayersMultiplier = Source.mMinDistanceFromPlayersMultiplier
 		  Self.mMinDistanceFromStructuresMultiplier = Source.mMinDistanceFromStructuresMultiplier
 		  Self.mMinDistanceFromTamedDinosMultiplier = Source.mMinDistanceFromTamedDinosMultiplier
+		  Self.mOffsetBeforeMultiplier = Source.mOffsetBeforeMultiplier
 		  
 		  Self.mEntries.ResizeTo(Source.mEntries.LastRowIndex)
 		  For I As Integer = 0 To Source.mEntries.LastRowIndex
@@ -197,6 +198,10 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		    Next
 		  End If
 		  
+		  If SaveData.HasKey("OffsetBeforeMultiplier") Then
+		    Set.LevelOffsetBeforeMultiplier = SaveData.Value("OffsetBeforeMultiplier").BooleanValue
+		  End If
+		  
 		  Set.Modified = False
 		  Return New Beacon.SpawnPointSet(Set)
 		End Function
@@ -273,6 +278,12 @@ Implements Beacon.DocumentItem,Beacon.Countable
 	#tag Method, Flags = &h0
 		Function Label() As String
 		  Return Self.mLabel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LevelOffsetBeforeMultiplier() As Boolean
+		  Return Self.mOffsetBeforeMultiplier
 		End Function
 	#tag EndMethod
 
@@ -402,6 +413,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  SaveData.Value("Label") = Self.Label
 		  SaveData.Value("Weight") = Self.Weight
 		  SaveData.Value("Entries") = Entries
+		  SaveData.Value("OffsetBeforeMultiplier") = Self.mOffsetBeforeMultiplier
 		  If Self.mGroupOffset <> Nil Then
 		    SaveData.Value("GroupOffset") = Self.mGroupOffset.SaveData
 		  End If
@@ -480,6 +492,10 @@ Implements Beacon.DocumentItem,Beacon.Countable
 
 	#tag Property, Flags = &h1
 		Protected mModified As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mOffsetBeforeMultiplier As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

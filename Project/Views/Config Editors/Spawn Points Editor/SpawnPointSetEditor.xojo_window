@@ -33,7 +33,7 @@ Begin BeaconContainer SpawnPointSetEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   336
+      Height          =   304
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -79,7 +79,7 @@ Begin BeaconContainer SpawnPointSetEditor
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
          HeadingIndex    =   -1
-         Height          =   248
+         Height          =   216
          Index           =   -2147483648
          InitialParent   =   "EntriesGroup"
          InitialValue    =   ""
@@ -132,7 +132,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   358
+         Top             =   326
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -164,7 +164,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   358
+         Top             =   326
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -196,7 +196,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   358
+         Top             =   326
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -211,7 +211,7 @@ Begin BeaconContainer SpawnPointSetEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   336
+      Height          =   304
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -257,7 +257,7 @@ Begin BeaconContainer SpawnPointSetEditor
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
          HeadingIndex    =   -1
-         Height          =   248
+         Height          =   216
          Index           =   -2147483648
          InitialParent   =   "ReplaceGroup"
          InitialValue    =   ""
@@ -310,7 +310,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   358
+         Top             =   326
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -342,7 +342,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   358
+         Top             =   326
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -374,7 +374,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   358
+         Top             =   326
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -569,7 +569,7 @@ Begin BeaconContainer SpawnPointSetEditor
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   248
+      Height          =   280
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -584,7 +584,7 @@ Begin BeaconContainer SpawnPointSetEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   410
+      Top             =   378
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -617,7 +617,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   616
+         Top             =   584
          Transparent     =   False
          Underline       =   False
          Value           =   "(Water Only) Min Height:"
@@ -652,7 +652,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   582
+         Top             =   550
          Transparent     =   False
          Underline       =   False
          Value           =   "Spread Radius:"
@@ -687,7 +687,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   548
+         Top             =   516
          Transparent     =   False
          Underline       =   False
          Value           =   "Distance from Tames Multiplier:"
@@ -722,7 +722,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   514
+         Top             =   482
          Transparent     =   False
          Underline       =   False
          Value           =   "Distance from Structures Multiplier:"
@@ -757,7 +757,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   480
+         Top             =   448
          Transparent     =   False
          Underline       =   False
          Value           =   "Distance from Players Multiplier:"
@@ -792,7 +792,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   446
+         Top             =   414
          Transparent     =   False
          Underline       =   False
          Value           =   "Offset (X, Y, Z):"
@@ -836,7 +836,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   616
+         Top             =   584
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -881,7 +881,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   582
+         Top             =   550
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -926,7 +926,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   548
+         Top             =   516
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -971,7 +971,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   514
+         Top             =   482
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1016,7 +1016,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   480
+         Top             =   448
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1061,7 +1061,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   446
+         Top             =   414
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1106,7 +1106,7 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   446
+         Top             =   414
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -1151,13 +1151,45 @@ Begin BeaconContainer SpawnPointSetEditor
          TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   446
+         Top             =   414
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
          Value           =   ""
          Visible         =   True
          Width           =   80
+      End
+      Begin CheckBox OffsetBeforeMultiplierCheck
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Caption         =   "Add Level Offset Before Multiplier"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "AdvancedGroup"
+         Italic          =   False
+         Left            =   280
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   14
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   "When enabled, any level multipliers will be applied before adding any level offsets. When disabled, offsets are added first, then the multipliers are used."
+         Top             =   618
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         VisualState     =   "0"
+         Width           =   464
       End
    End
 End
@@ -1242,11 +1274,11 @@ End
 		      Figures.AddRow("Offset: " + Entry.Offset.X.PrettyText + "," + Entry.Offset.Y.PrettyText + "," + Entry.Offset.Z.PrettyText)
 		    End If
 		    If Entry.SpawnChance <> Nil Then
-		      Figures.AddRow("Chance: " + Entry.SpawnChance.Value.ToString("0%"))
+		      Figures.AddRow("Weight: " + Entry.SpawnChance.Value.PrettyText)
 		    End If
-		    If Entry.LevelCount > 0 Then
+		    If Entry.LevelCount > 0 Or Entry.MinLevelOffset <> Nil Or Entry.MaxLevelOffset <> Nil Or Entry.MinLevelMultiplier <> Nil Or Entry.MaxLevelMultiplier <> Nil Then
 		      Var Difficulty As Double = Self.Document.DifficultyValue
-		      Var LevelRange As Beacon.Range = Entry.LevelRangeForDifficulty(Difficulty)
+		      Var LevelRange As Beacon.Range = Entry.LevelRangeForDifficulty(Difficulty, Set.LevelOffsetBeforeMultiplier)
 		      Figures.AddRow("Level Range Override: " + LevelRange.Min.PrettyText() + " to " + LevelRange.Max.PrettyText())
 		    End If
 		    Figures.Sort
@@ -1328,6 +1360,7 @@ End
 		  
 		  Self.NameField.Value = Set.Label
 		  Self.WeightField.DoubleValue = Set.Weight
+		  Self.OffsetBeforeMultiplierCheck.Value = Set.LevelOffsetBeforeMultiplier
 		  
 		  If Set.GroupOffset <> Nil Then
 		    Self.OffsetFields(0).DoubleValue = Set.GroupOffset.X
@@ -1528,12 +1561,12 @@ End
 		    Entries.AddRow(Me.RowTagAt(I))
 		  Next
 		  
-		  Var UpdatedEntries() As Beacon.MutableSpawnPointSetEntry = SpawnPointCreatureDialog.Present(Self, Self.Document, Entries)
+		  Var Set As Beacon.MutableSpawnPointSet = Self.SpawnSet
+		  Var UpdatedEntries() As Beacon.MutableSpawnPointSetEntry = SpawnPointCreatureDialog.Present(Self, Self.Document, Set, Entries)
 		  If UpdatedEntries = Nil Or UpdatedEntries.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
-		  Var Set As Beacon.MutableSpawnPointSet = Self.SpawnSet
 		  For Each Entry As Beacon.MutableSpawnPointSetEntry In Entries
 		    Set.Remove(Entry)
 		  Next
@@ -1549,12 +1582,12 @@ End
 #tag Events EntryAddButton
 	#tag Event
 		Sub Action()
-		  Var Entry As Beacon.MutableSpawnPointSetEntry = SpawnPointCreatureDialog.Present(Self, Self.Document)
+		  Var Set As Beacon.MutableSpawnPointSet = Self.SpawnSet
+		  Var Entry As Beacon.MutableSpawnPointSetEntry = SpawnPointCreatureDialog.Present(Self, Self.Document, Set)
 		  If Entry = Nil Then
 		    Return
 		  End If
 		  
-		  Var Set As Beacon.MutableSpawnPointSet = Self.SpawnSet
 		  Set.Append(Entry)
 		  
 		  Var Entries(0) As Beacon.MutableSpawnPointSetEntry
@@ -2059,6 +2092,21 @@ End
 		Function AllowContents(index as Integer, Value As String) As Boolean
 		  Return Value = ""
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events OffsetBeforeMultiplierCheck
+	#tag Event
+		Sub Action()
+		  If Self.mSettingUp Or Self.SpawnSet = Nil Then
+		    Return
+		  End If
+		  
+		  Self.SpawnSet.LevelOffsetBeforeMultiplier = Me.Value
+		  Self.UpdateEntriesList(Self.SpawnSet)
+		  If Self.SpawnSet.Modified Then
+		    RaiseEvent Changed
+		  End If
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

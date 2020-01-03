@@ -246,6 +246,10 @@ Implements Iterable
 		      Members.AddRow("NPCRandomSpawnClassWeights=(" + Replacements.Join(",") + ")")
 		    End If
 		    
+		    If IncludeMinLevelMultiplier Or IncludeMaxLevelMultiplier Or IncludeMinLevelOffset Or IncludeMaxLevelOffset Or IncludeLevelOverride Then
+		      Members.AddRow("bAddLevelOffsetBeforeMultiplier=" + If(Set.LevelOffsetBeforeMultiplier, "true", "false"))
+		    End If
+		    
 		    RenderedEntries.AddRow("(" + Members.Join(",") + ")")
 		  Next
 		  
@@ -477,6 +481,10 @@ Implements Iterable
 		            
 		            If Entry.HasKey("SpawnMinDistanceFromTamedDinosMultiplier") Then
 		              Set.MinDistanceFromTamedDinosMultiplier = Entry.Value("SpawnMinDistanceFromTamedDinosMultiplier").DoubleValue
+		            End If
+		            
+		            If Entry.HasKey("bAddLevelOffsetBeforeMultiplier") Then
+		              Set.LevelOffsetBeforeMultiplier = Entry.Value("bAddLevelOffsetBeforeMultiplier").StringValue = "true"
 		            End If
 		            
 		            If Entry.HasKey("GroupSpawnOffset") Then
