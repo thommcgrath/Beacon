@@ -659,7 +659,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       HasHorizontalScrollbar=   False
       HasVerticalScrollbar=   True
       HeadingIndex    =   -1
-      Height          =   328
+      Height          =   296
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Item	Armor	Durability	Damage	Ammo	Hypo	Hyper	Generic	Weight"
@@ -678,13 +678,48 @@ Begin ConfigEditor StatLimitsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   168
+      Top             =   200
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   959
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
+   End
+   Begin Label CautionLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   True
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   17
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextAlignment   =   "2"
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   168
+      Transparent     =   False
+      Underline       =   False
+      Value           =   "The items shown here are examples. Stat limits will permanently affect all items in the game."
+      Visible         =   True
+      Width           =   959
    End
 End
 #tag EndWindow
