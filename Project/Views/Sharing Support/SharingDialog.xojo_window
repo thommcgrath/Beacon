@@ -90,9 +90,9 @@ Begin BeaconDialog SharingDialog
          AutoHideScrollbars=   True
          Bold            =   False
          Border          =   True
-         ColumnCount     =   1
+         ColumnCount     =   2
          ColumnsResizable=   False
-         ColumnWidths    =   ""
+         ColumnWidths    =   "*,312"
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   26
@@ -101,14 +101,14 @@ Begin BeaconDialog SharingDialog
          EnableDragReorder=   False
          GridLinesHorizontal=   0
          GridLinesVertical=   0
-         HasHeading      =   False
+         HasHeading      =   True
          HeadingIndex    =   -1
          Height          =   130
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "WriteAccessGroup"
-         InitialValue    =   ""
+         InitialValue    =   "Username	Identifier"
          Italic          =   False
          Left            =   40
          LockBottom      =   True
@@ -172,6 +172,28 @@ Begin BeaconDialog SharingDialog
          Value           =   "Users listed here will be able to make changes to this document and deploy changes to servers. Only the document owner may add or remove users."
          Visible         =   True
          Width           =   520
+      End
+      Begin ProgressWheel UsernameLookupSpinner
+         AllowAutoDeactivate=   True
+         Enabled         =   True
+         Height          =   16
+         Index           =   -2147483648
+         InitialParent   =   "WriteAccessGroup"
+         Left            =   544
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   4
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   542
+         Transparent     =   False
+         Visible         =   False
+         Width           =   16
       End
    End
    Begin Label MessageLabel
@@ -504,7 +526,6 @@ Begin BeaconDialog SharingDialog
       End
    End
    Begin Timer StatusCheckTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   200
@@ -513,7 +534,6 @@ Begin BeaconDialog SharingDialog
       TabPanelIndex   =   0
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -538,6 +558,12 @@ End
 		  
 		  Dim Win As New SharingDialog(Document)
 		  Win.ShowModalWithin(Parent.TrueWindow)
+		  
+		  If Win.mUsersChanged Then
+		    Parent.TrueWindow.ShowAlert("Write access changes will not be made effective until you save your document.", "Adding or removing a user updates the encryption keys inside your document, so it is necessary to save the document before newly authorized users are able to access it.")
+		  End If
+		  
+		  Win.Close
 		End Sub
 	#tag EndMethod
 
@@ -587,9 +613,45 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UserLookupReplyCallback(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  Try
+		    Var Dicts() As Variant
+		    Var Parsed As Variant = Response.JSON
+		    If IsNull(Parsed) = False And Parsed.Type = Variant.TypeObject And Parsed.ObjectValue IsA Dictionary Then
+		      Dicts.AddRow(Parsed)
+		    Else
+		      Dicts = Parsed
+		    End If
+		    
+		    Var Usernames As New Dictionary
+		    For Each UserDict As Dictionary In Dicts
+		      Var UserID As String = UserDict.Value("user_id").StringValue
+		      Var Username As String = UserDict.Value("username_full").StringValue
+		      Usernames.Value(UserID) = Username
+		    Next
+		    
+		    For I As Integer = 0 To Self.UserList.RowCount - 1
+		      Var UserID As String = Self.UserList.CellValueAt(I, 1)
+		      If Usernames.HasKey(UserID) Then
+		        Self.UserList.CellValueAt(I, 0) = Usernames.Value(UserID).StringValue
+		      End If
+		    Next
+		  Catch Err As RuntimeException
+		    
+		  End Try
+		  
+		  Self.UsernameLookupSpinner.Visible = False
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mDocument As Beacon.Document
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUsersChanged As Boolean
 	#tag EndProperty
 
 
@@ -598,11 +660,16 @@ End
 #tag Events AddUserButton
 	#tag Event
 		Sub Action()
-		  Dim UserID, PublicKey As String
-		  If ShareWithUserDialog.Present(Self, UserID, PublicKey) Then
-		    Self.UserList.AddRow(UserID)
-		    Self.UserList.Sort
+		  Dim UserID, Username, PublicKey As String
+		  If ShareWithUserDialog.Present(Self, UserID, Username, PublicKey) Then
+		    If Self.mDocument.HasUser(UserID) = False Then
+		      Self.UserList.AddRow(Username, UserID)
+		      Self.UserList.Sort
+		    End If
+		    
+		    // Even if the user is already on the document, call AddUser in case the public key has changed
 		    Self.mDocument.AddUser(UserID, PublicKey)
+		    Self.mUsersChanged = True
 		  End If
 		End Sub
 	#tag EndEvent
@@ -617,10 +684,12 @@ End
 		    If UserID = App.IdentityManager.CurrentIdentity.Identifier Then
 		      Continue
 		    End If
-		    Me.AddRow(UserID)
+		    Me.AddRow("", UserID)
 		  Next
 		  
 		  Me.SortingColumn = 0
+		  
+		  Self.
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -636,6 +705,7 @@ End
 		    If Me.Selected(I) Then
 		      Self.mDocument.RemoveUser(Me.CellValueAt(I, 0))
 		      Me.RemoveRowAt(I)
+		      Self.mUsersChanged = True
 		    End If
 		  Next
 		End Sub
@@ -649,7 +719,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Self.Close
+		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -698,6 +768,13 @@ End
 		Sub Action()
 		  Var Request As New BeaconAPI.Request(BeaconAPI.URL("/document/" + Self.mDocument.DocumentID + "/publish"), "GET", AddressOf StatusCheckReplyCallback)
 		  APISocket.Start(Request)
+		  
+		  Var Users() As String = Self.mDocument.GetUsers
+		  If Users.LastRowIndex > -1 Then
+		    Var UsersLookup As New BeaconAPI.Request(BeaconAPI.URL("/user/" + EncodeURLComponent(Users.Join(","))), "GET", AddressOf UserLookupReplyCallback)
+		    APISocket.Start(UsersLookup)
+		    Self.UsernameLookupSpinner.Visible = True
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

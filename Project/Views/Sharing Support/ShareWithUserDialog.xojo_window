@@ -212,7 +212,7 @@ Begin BeaconDialog ShareWithUserDialog
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlign       =   0
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -220,7 +220,7 @@ Begin BeaconDialog ShareWithUserDialog
       Top             =   52
       Transparent     =   False
       Underline       =   False
-      Value           =   "User ID:"
+      Value           =   "User:"
       Visible         =   True
       Width           =   61
    End
@@ -263,7 +263,6 @@ Begin BeaconDialog ShareWithUserDialog
    End
    Begin URLConnection UserLookupSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -275,7 +274,7 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, ByRef UserID As String, ByRef PublicKey As String) As Boolean
+		Shared Function Present(Parent As Window, ByRef UserID As String, ByRef Username As String, ByRef PublicKey As String) As Boolean
 		  If Parent = Nil Then
 		    Return False
 		  End If
@@ -286,6 +285,7 @@ End
 		  If Not Cancelled Then
 		    UserID = Win.mUserID
 		    PublicKey = Win.mPublicKey
+		    Username = Win.mUserName
 		  End If
 		  Win.Close
 		  Return Not Cancelled
@@ -305,16 +305,26 @@ End
 		Private mUserID As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mUserName As String
+	#tag EndProperty
+
 
 #tag EndWindowCode
 
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
+		  Var EnteredValue As String = Self.UserIDField.Value
+		  If v4UUID.IsValid(EnteredValue) Or (EnteredValue.Length > 9 And EnteredValue.Right(9).BeginsWith("#")) Or Beacon.ValidateEmail(EnteredValue) Then
+		    Self.UserLookupSocket.Send("GET", BeaconAPI.URL("/user/" + EncodeURLComponent(EnteredValue.ReplaceAll(",", ",,"))))
+		  Else
+		    Self.ShowAlert("User cannot be identified with the given value.", "Please enter the UUID, email address, or full username with suffix (such as User#ABCD1234) to continue.")
+		    Return
+		  End If
+		  
 		  Me.Enabled = False
 		  Self.Spinner.Visible = True
-		  Self.UserLookupSocket.Send("GET", BeaconAPI.URL("/user/" + EncodeURLComponent(Self.UserIDField.Value)))
-		  
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -343,6 +353,7 @@ End
 		    Try
 		      Dim UserData As Dictionary = Beacon.ParseJSON(Content)
 		      Self.mUserID = UserData.Value("user_id")
+		      Self.mUserName = UserData.Value("username_full")
 		      Self.mPublicKey = BeaconEncryption.PEMDecodePublicKey(UserData.Value("public_key"))
 		      Self.mCancelled = False
 		      Self.Hide

@@ -384,6 +384,12 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasUser(UserID As String) As Boolean
+		  Return Self.mEncryptedPasswords.HasKey(UserID.Lowercase)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ImplementedConfigs() As Beacon.ConfigGroup()
 		  Dim Groups() As Beacon.ConfigGroup
 		  For Each Entry As DictionaryEntry In Self.mConfigGroups
