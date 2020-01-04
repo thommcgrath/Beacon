@@ -349,6 +349,18 @@ class BeaconUser implements JsonSerializable {
 		}
 	}
 	
+	public static function GetByExtendedUsername(string $username) {
+		$display_name = substr($username, 0, -9);
+		$suffix = strtolower(substr($username, -8));
+		
+		$database = BeaconCommon::Database();
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE username = $1 AND SUBSTRING(LOWER(user_id::TEXT) FROM 1 FOR 8) = $2;', $display_name, $suffix);
+		$users = static::GetFromResults($results);
+		if (count($users) == 1) {
+			return $users[0];
+		}
+	}
+	
 	protected static function GetFromResults(BeaconRecordSet $results) {
 		if ($results === null || $results->RecordCount() === 0) {
 			return array();
@@ -383,6 +395,10 @@ class BeaconUser implements JsonSerializable {
 		}
 		
 		return true;
+	}
+	
+	public static function IsExtendedUsername(string $username) {
+		return preg_match('/#[a-fA-F0-9]{8}$/', $username) === 1;
 	}
 }
 

@@ -57,17 +57,29 @@ case 'GET':
 		}
 		BeaconAPI::ReplySuccess($user);
 	} else {
-		// legacy support
-		$identifiers = explode(',', BeaconAPI::ObjectID());
+		// lookup support
+		$identifiers = BeaconAPI::ObjectID();
+		$identifiers = str_replace(',,', '78d6b5c4-7069-42c2-9f81-c6408baefc05', $identifiers);
+		$identifiers = explode(',', $identifiers);
+		for ($i = 0; $i < count($identifiers); $i++) {
+			$identifiers[$i] = str_replace('78d6b5c4-7069-42c2-9f81-c6408baefc05', ',', $identifiers[$i]);
+		}
 		$users = array();
 		foreach ($identifiers as $identifier) {
 			if (BeaconCommon::IsUUID($identifier)) {
 				$user = BeaconUser::GetByUserID($identifier);
+			} elseif (BeaconUser::ValidateEmail($identifier)) {
+				$user = BeaconUser::GetByEmail($identifier);
+			} elseif (BeaconUser::IsExtendedUsername($identifier)) {
+				$user = BeaconUser::GetByExtendedUsername($identifier);
+			} else {
+				$user = null;
 			}
 			if (!is_null($user)) {
 				// don't use the regular method that includes lots of values
 				$users[] = array(
 					'user_id' => $user->UserID(),
+					'username_full' => $user->Username() . '#' . $user->Suffix(),
 					'public_key' => $user->PublicKey()
 				);
 			}
