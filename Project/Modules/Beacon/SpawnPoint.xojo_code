@@ -166,6 +166,8 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		    End If
 		    If Dict.HasKey("Limits") Then
 		      SpawnPoint.mLimits = Dictionary(Dict.Value("Limits").ObjectValue).Clone
+		    Else
+		      SpawnPoint.mLimits = New Dictionary
 		    End If
 		    If Dict.HasKey("Sets") Then
 		      Var SetSaveData() As Variant = Dict.Value("Sets")
