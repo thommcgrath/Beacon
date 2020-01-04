@@ -688,8 +688,6 @@ End
 		  Next
 		  
 		  Me.SortingColumn = 0
-		  
-		  Self.
 		End Sub
 	#tag EndEvent
 	#tag Event
