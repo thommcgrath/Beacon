@@ -339,6 +339,13 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  Self.SwapButtons()
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Mods As Beacon.StringList, Limit As NullableDouble, SelectedCreatures() As Beacon.Creature, DefinedCreatures() As Beacon.Creature)
 		  If SelectedCreatures.LastRowIndex = -1 Then

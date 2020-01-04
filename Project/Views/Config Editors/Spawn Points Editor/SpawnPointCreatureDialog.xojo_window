@@ -1056,6 +1056,8 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
+		  Self.SwapButtons()
+		  
 		  If Self.mTargetCreature <> Nil Then
 		    Self.CreatureNameLabel.Value = Self.mTargetCreature.Label
 		    Self.CreatureNameLabel.Italic = False
