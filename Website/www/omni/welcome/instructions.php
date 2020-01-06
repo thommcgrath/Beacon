@@ -56,6 +56,20 @@ BeaconTemplate::StartStyles(); ?>
 	margin-top: 6px;
 }
 
+@media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi) {
+	#img_signin_menu {
+		background-image: url(/omni/welcome/menu@2x.png);
+	}
+	
+	#img_signin_options {
+		background-image: url(/omni/welcome/options@2x.png);
+	}
+	
+	#img_signin_fields {
+		background-image: url(/omni/welcome/fields@2x.png);
+	}
+}
+
 </style><?php
 BeaconTemplate::FinishStyles();
 
@@ -63,7 +77,7 @@ BeaconTemplate::FinishStyles();
 	<div id="img_signin_menu" class="img_signin separator-color">&nbsp;</div>
 	<div class="signin_text">
 		<h4>Open the menu</h4>
-		<p>Use the icon with the 3 lines, shown circled in red here.</p>
+		<p>Use the icon with the 3 dots, shown circled in red here.</p>
 	</div>
 	<div class="push">&nbsp;</div>
 </div>
@@ -83,7 +97,7 @@ BeaconTemplate::FinishStyles();
 	<div class="signin_text">
 		<h4>Login or create your account</h4>
 		<p>Click &quot;Login with Email&quot; if given the option, which will display the login form. Otherwise Beacon will bring you directly to the form.</p>
-		<p>Enter your email address and password, or click &quot;Create or Recover Beacon Account&quot; to setup a password. Follow the steps in Beacon.</p>
+		<p>Enter your email address and password, or click &quot;Create or Recover Account&quot; to setup a password. Follow the steps in Beacon.</p>
 	</div>
 	<div class="push">&nbsp;</div>
 </div>
