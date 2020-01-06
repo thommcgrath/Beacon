@@ -116,7 +116,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       LockTop         =   True
       MacButtonStyle  =   "0"
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -187,7 +187,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -223,7 +223,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   5
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "3"
@@ -258,7 +258,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   6
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "3"
@@ -293,7 +293,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       LockTop         =   True
       MacButtonStyle  =   "0"
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -325,7 +325,7 @@ Begin BeaconDialog SpawnPointLimitDialog
       LockTop         =   True
       MacButtonStyle  =   "0"
       Scope           =   2
-      TabIndex        =   8
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""

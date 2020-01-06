@@ -116,7 +116,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
       LockTop         =   True
       MacButtonStyle  =   "0"
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -148,7 +148,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "3"
@@ -297,7 +297,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
          RowSelectionType=   "1"
          Scope           =   2
          SelectionChangeBlocked=   False
-         TabIndex        =   1
+         TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
@@ -331,7 +331,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
          LockTop         =   True
          MacButtonStyle  =   "0"
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
          Tooltip         =   ""
@@ -364,7 +364,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
       LockTop         =   False
       MacButtonStyle  =   "0"
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -396,7 +396,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
       LockTop         =   False
       MacButtonStyle  =   "0"
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""

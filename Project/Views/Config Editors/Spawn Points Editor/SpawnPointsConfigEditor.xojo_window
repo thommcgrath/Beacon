@@ -102,7 +102,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       RowSelectionType=   "1"
       Scope           =   2
       SelectionChangeBlocked=   False
-      TabIndex        =   1
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -135,7 +135,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       LockTop         =   False
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -163,7 +163,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   4
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -187,7 +187,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   2
       TabPanelIndex   =   0
       Tooltip         =   ""
       Top             =   0
@@ -245,7 +245,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
          LockTop         =   False
          Scope           =   2
          ScrollSpeed     =   20
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""
@@ -274,7 +274,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
          LockTop         =   True
          Scope           =   2
          ScrollSpeed     =   20
-         TabIndex        =   1
+         TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
          Tooltip         =   ""

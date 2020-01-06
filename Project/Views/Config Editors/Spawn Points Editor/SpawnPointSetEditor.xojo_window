@@ -1187,6 +1187,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Top             =   618
          Transparent     =   False
          Underline       =   False
+         Value           =   False
          Visible         =   True
          VisualState     =   "0"
          Width           =   464

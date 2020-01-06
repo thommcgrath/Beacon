@@ -83,7 +83,7 @@ Begin ContainerControl CreatureStatContainer
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "2"
@@ -119,7 +119,7 @@ Begin ContainerControl CreatureStatContainer
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   1
+         TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "3"
@@ -197,7 +197,7 @@ Begin ContainerControl CreatureStatContainer
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "2"
@@ -233,7 +233,7 @@ Begin ContainerControl CreatureStatContainer
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   4
+         TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "3"
@@ -311,7 +311,7 @@ Begin ContainerControl CreatureStatContainer
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   6
+         TabIndex        =   7
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "2"
@@ -347,7 +347,7 @@ Begin ContainerControl CreatureStatContainer
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   7
+         TabIndex        =   6
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "3"
@@ -425,7 +425,7 @@ Begin ContainerControl CreatureStatContainer
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   9
+         TabIndex        =   10
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "2"
@@ -461,7 +461,7 @@ Begin ContainerControl CreatureStatContainer
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   10
+         TabIndex        =   9
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "3"
@@ -539,7 +539,7 @@ Begin ContainerControl CreatureStatContainer
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   12
+         TabIndex        =   13
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "2"
@@ -575,7 +575,7 @@ Begin ContainerControl CreatureStatContainer
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   13
+         TabIndex        =   12
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "3"
@@ -653,7 +653,7 @@ Begin ContainerControl CreatureStatContainer
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   15
+         TabIndex        =   16
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "2"
@@ -689,7 +689,7 @@ Begin ContainerControl CreatureStatContainer
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   16
+         TabIndex        =   15
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "3"
@@ -767,7 +767,7 @@ Begin ContainerControl CreatureStatContainer
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   18
+         TabIndex        =   19
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "2"
@@ -803,7 +803,7 @@ Begin ContainerControl CreatureStatContainer
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   19
+         TabIndex        =   18
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "3"
@@ -881,7 +881,7 @@ Begin ContainerControl CreatureStatContainer
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   21
+         TabIndex        =   22
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "2"
@@ -917,7 +917,7 @@ Begin ContainerControl CreatureStatContainer
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   22
+         TabIndex        =   21
          TabPanelIndex   =   0
          TabStop         =   True
          TextAlignment   =   "3"

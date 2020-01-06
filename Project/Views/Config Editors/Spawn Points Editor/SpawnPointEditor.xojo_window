@@ -80,7 +80,7 @@ Begin BeaconContainer SpawnPointEditor
       ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   2
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -116,7 +116,7 @@ Begin BeaconContainer SpawnPointEditor
       ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   3
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -140,7 +140,7 @@ Begin BeaconContainer SpawnPointEditor
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   2
       TabPanelIndex   =   0
       Tooltip         =   ""
       Top             =   0
@@ -228,7 +228,7 @@ Begin BeaconContainer SpawnPointEditor
       LockTop         =   False
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   5
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -258,7 +258,7 @@ Begin BeaconContainer SpawnPointEditor
       LockTop         =   False
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   6
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -308,7 +308,7 @@ Begin BeaconContainer SpawnPointEditor
       RowSelectionType=   "1"
       Scope           =   2
       SelectionChangeBlocked=   False
-      TabIndex        =   7
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -361,7 +361,7 @@ Begin BeaconContainer SpawnPointEditor
       RowSelectionType=   "1"
       Scope           =   2
       SelectionChangeBlocked=   False
-      TabIndex        =   8
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""

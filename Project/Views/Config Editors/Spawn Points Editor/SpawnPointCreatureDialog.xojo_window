@@ -81,7 +81,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       LockTop         =   True
       MacButtonStyle  =   "0"
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -113,7 +113,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "3"
@@ -191,7 +191,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -235,7 +235,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -279,7 +279,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -315,7 +315,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   7
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "3"
@@ -358,7 +358,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   8
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -394,7 +394,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   9
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "3"
@@ -507,7 +507,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   12
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -551,7 +551,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   13
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -595,7 +595,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   14
+      TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -639,7 +639,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   15
+      TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -683,7 +683,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   16
+      TabIndex        =   19
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -727,7 +727,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   17
+      TabIndex        =   20
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -763,7 +763,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   18
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "3"
@@ -798,7 +798,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   19
+      TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "3"
@@ -833,7 +833,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   20
+      TabIndex        =   18
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "3"
@@ -868,7 +868,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       LockTop         =   False
       MacButtonStyle  =   "0"
       Scope           =   2
-      TabIndex        =   21
+      TabIndex        =   26
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -900,7 +900,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       LockTop         =   False
       MacButtonStyle  =   "0"
       Scope           =   2
-      TabIndex        =   22
+      TabIndex        =   25
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -932,7 +932,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   23
+      TabIndex        =   24
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "0"
@@ -967,7 +967,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   24
+      TabIndex        =   22
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -1002,7 +1002,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   25
+      TabIndex        =   23
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -1037,7 +1037,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   26
+      TabIndex        =   21
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "3"

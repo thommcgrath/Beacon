@@ -117,7 +117,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Creature:"
@@ -149,7 +149,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -179,7 +179,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -209,7 +209,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -242,7 +242,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   7
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Mode:"
@@ -273,7 +273,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
-      TabIndex        =   8
+      TabIndex        =   9
       TabPanelIndex   =   0
       Top             =   158
       Transparent     =   False
@@ -309,7 +309,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "1.0"
@@ -344,7 +344,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   1
+         TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Wild Damage:"
@@ -388,7 +388,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   4
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "1.0"
@@ -458,7 +458,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   4
+         TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Greater than 1.0 increases wild creature damage"
@@ -537,7 +537,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   6
+         TabIndex        =   7
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "1.0"
@@ -572,7 +572,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   7
+         TabIndex        =   6
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Tame Damage:"
@@ -616,7 +616,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   8
+         TabIndex        =   10
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "1.0"
@@ -686,7 +686,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   10
+         TabIndex        =   8
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Greater than 1.0 increases tamed creature damage"
@@ -859,7 +859,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   9
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -923,7 +923,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   11
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -955,7 +955,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   12
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Not Selected"

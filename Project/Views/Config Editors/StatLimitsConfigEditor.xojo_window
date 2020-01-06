@@ -46,7 +46,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   0
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -79,7 +79,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -112,7 +112,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -145,7 +145,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -178,7 +178,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -211,7 +211,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -244,7 +244,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -277,7 +277,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -318,7 +318,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   8
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -361,7 +361,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   9
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -404,7 +404,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   10
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -447,7 +447,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   11
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -490,7 +490,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   12
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -533,7 +533,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   13
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -576,7 +576,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   14
+      TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -619,7 +619,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   15
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
@@ -674,7 +674,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       RowSelectionType=   "0"
       Scope           =   2
       SelectionChangeBlocked=   False
-      TabIndex        =   16
+      TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -708,7 +708,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   17
+      TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"

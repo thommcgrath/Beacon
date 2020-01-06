@@ -110,7 +110,7 @@ Begin BeaconDialog AddSpawnPointDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   6
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "3"
@@ -332,7 +332,7 @@ Begin BeaconDialog AddSpawnPointDialog
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   13
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -363,7 +363,7 @@ Begin BeaconDialog AddSpawnPointDialog
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   14
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -393,7 +393,7 @@ Begin BeaconDialog AddSpawnPointDialog
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   15
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
@@ -423,7 +423,7 @@ Begin BeaconDialog AddSpawnPointDialog
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   16
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
