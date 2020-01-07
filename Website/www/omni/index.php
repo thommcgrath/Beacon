@@ -217,7 +217,7 @@ if (is_null($session)) {
 		</thead>
 		<tbody>
 			<tr>
-				<td>Loot Drops<br><span class="smaller text-lighter">Beacon's original purpose, editing loot drops, it what it does best.</span></td>
+				<td>Loot Drops<br><span class="smaller text-lighter">Beacon's original purpose, editing loot drops, is what it does best.</span></td>
 				<td class="text-center">&#10687;</td>
 				<td class="text-center">&#10687;</td>
 			</tr>
@@ -247,6 +247,21 @@ if (is_null($session)) {
 				<td class="text-center bullet-column">&#10687;</td>
 			</tr>
 			<tr>
+				<td>Day and Night Cycle<br><span class="smaller text-lighter">Change the length of Ark's days and nights using minutes instead of multipliers.</span></td>
+				<td class="text-center bullet-column">&#10687;</td>
+				<td class="text-center bullet-column">&#10687;</td>
+			</tr>
+			<tr>
+				<td>Player and Creature Stat Multipliers<br><span class="smaller text-lighter">Change the stats of players, wild creatures, and tamed creatures.</span></td>
+				<td class="text-center bullet-column">&#10687;</td>
+				<td class="text-center bullet-column">&#10687;</td>
+			</tr>
+			<tr>
+				<td>Item Stat Limits<br><span class="smaller text-lighter">Globally limit item stats to precise admin-defined amounts, just like official servers.</span></td>
+				<td class="text-center bullet-column">&#10687;</td>
+				<td class="text-center bullet-column">&#10687;</td>
+			</tr>
+			<tr>
 				<td>Crafting Costs<br><span class="smaller text-lighter">Change the cost of any craftable item in Ark.</span></td>
 				<td class="text-center bullet-column">&nbsp;</td>
 				<td class="text-center bullet-column">&#10687;</td>
@@ -272,8 +287,13 @@ if (is_null($session)) {
 				<td class="text-center bullet-column">&#10687;</td>
 			</tr>
 			<tr>
-				<td>More config types on the way<br><span class="smaller text-lighter">Support for more config control such as spawn map, breeding timers, and detailed harvest rates are planned for Omni.</span></td>
+				<td>Creature Spawn Points<br><span class="smaller text-lighter">Add, remove, or change the creatures available on any map. Want to add lots of Featherlights to The Island, or put one really high level Pteranodon on Aberration? It's possible.</span></td>
 				<td class="text-center bullet-column">&nbsp;</td>
+				<td class="text-center bullet-column">&#10687;</td>
+			</tr>
+			<tr>
+				<td>More config types on the way<br><span class="smaller text-lighter">With each major release, Beacon adds new editor types to both the free edition and Beacon Omni.</span></td>
+				<td class="text-center bullet-column">&#10687;</td>
 				<td class="text-center bullet-column">&#10687;</td>
 			</tr>
 		</tbody>
