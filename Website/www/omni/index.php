@@ -203,6 +203,7 @@ if (is_null($session)) {
 	<h1>Do more with Beacon Omni</h1>
 	<p>Beacon does a lot for free. Loot drops, server control, file sharing, and more. But when it's time to get into more advanced configuration like crafting costs and player experience, then it's time to upgrade to Beacon Omni.</p>
 	<p>All users of Beacon can use all features, however Omni-only config types will not be included in generated Game.ini and GameUserSettings.ini files.</p>
+	<blockquote class="italic">Beacon has lots of new features coming very soon. <a href="/blog/beacon_1_3_availability_and_ark">Read more about these new features and an upcoming price change</a>.</blockquote>
 	<div class="double_column">
 		<div class="column text-center"><button id="buy-button" class="default"><?php echo htmlentities($buy_button_caption); ?></button><br><span class="smaller"><?php echo htmlentities($subtext); ?> See <a href="<?php echo $account_link; ?>">your account control panel</a> for more details.</span></div>
 		<div class="column text-center">Unable to purchase for some reason? Learn more about Beacon's <em><a href="stw">Share The Wealth</a></em> program.</div>
