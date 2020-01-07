@@ -667,7 +667,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("AddObject", IconToolbarAdd, "Define a new creature or engram"))
+		  Me.LeftItems.Append(New BeaconToolbarItem("AddObject", IconToolbarAdd, "Define a new blueprint"))
 		  
 		  Me.RightItems.Append(New BeaconToolbarItem("ImportFile", IconToolbarFile, "Import from file"))
 		  Me.RightItems.Append(New BeaconToolbarItem("ImportURL", IconToolbarLink, "Import from website"))
