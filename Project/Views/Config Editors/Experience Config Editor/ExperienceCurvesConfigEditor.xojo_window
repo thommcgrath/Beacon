@@ -125,9 +125,9 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       AutoHideScrollbars=   True
       Bold            =   False
       Border          =   False
-      ColumnCount     =   3
+      ColumnCount     =   5
       ColumnsResizable=   False
-      ColumnWidths    =   "100,200,150"
+      ColumnWidths    =   "75,*,*,*,*"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
@@ -143,7 +143,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Level	Required Experience	Ascension Required"
+      InitialValue    =   "Level	Level XP	Total XP	Ascension Required	Time in Tek Bed"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -413,10 +413,14 @@ End
 		Private Sub UpdateList(SelectLevels() As Integer)
 		  Self.List.RemoveAllRows
 		  
-		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(False)
-		  Dim Levels() As UInt64
-		  Dim AscensionLevels, MaxLevel As Integer
-		  Dim IndexOffset As Integer
+		  Const TekBedMultiplier = 0.0003
+		  Const TekBedMinRate = 0.05
+		  Const TekBedMaxRate = 0.8
+		  
+		  Var Config As BeaconConfigs.ExperienceCurves = Self.Config(False)
+		  Var Levels() As UInt64
+		  Var AscensionLevels, MaxLevel As Integer
+		  Var IndexOffset As Integer
 		  If Self.ViewingPlayerStats Then
 		    Levels = Config.PlayerLevels
 		    AscensionLevels = Config.AscensionLevels
@@ -428,12 +432,26 @@ End
 		    IndexOffset = 1
 		  End If
 		  
+		  Var LastXP As UInt64
 		  For I As Integer = 0 To Levels.LastRowIndex
-		    Dim Level As Integer = I + IndexOffset
-		    Dim XP As UInt64 = Levels(I)
-		    Dim IsAscensionLevel As Boolean = Level > (MaxLevel - AscensionLevels)
+		    Var Level As Integer = I + IndexOffset
+		    Var TotalXP As UInt64 = Levels(I)
+		    Var LevelXP As UInt64 = TotalXP - LastXP
+		    Var IsAscensionLevel As Boolean = Level > (MaxLevel - AscensionLevels)
+		    LastXP = TotalXP
 		    
-		    Self.List.AddRow(Format(Level, "0,"), Format(XP, "-0,"), If(IsAscensionLevel, "Yes", "No"))
+		    Var TekBedRate As Double = Min(Max(LevelXP * TekBedMultiplier, TekBedMinRate), TekBedMaxRate)
+		    Var TekBedSeconds As UInt64 = Round(LevelXP / TekBedRate)
+		    
+		    Var Columns(-1) As String
+		    Columns.ResizeTo(Max(Self.ColumnAscension, Self.ColumnLevel, Self.ColumnLevelXP, Self.ColumnTime, Self.ColumnTotalXP))
+		    Columns(Self.ColumnLevel) = Format(Level, "0,")
+		    Columns(Self.ColumnLevelXP) = Format(LevelXP, "-0,")
+		    Columns(Self.ColumnTotalXP) = Format(TotalXP, "-0,")
+		    Columns(Self.ColumnAscension) = If(IsAscensionLevel, "Yes", "No")
+		    Columns(Self.ColumnTime) = Beacon.SecondsToString(TekBedSeconds)
+		    
+		    Self.List.AddRow(Columns)
 		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectLevels.IndexOf(Level) > -1
 		  Next
 		  
@@ -451,6 +469,22 @@ End
 	#tag Property, Flags = &h21
 		Private mConfigRef As WeakRef
 	#tag EndProperty
+
+
+	#tag Constant, Name = ColumnAscension, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnLevel, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnLevelXP, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnTime, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnTotalXP, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -506,9 +540,11 @@ End
 #tag Events List
 	#tag Event
 		Sub Open()
-		  Me.ColumnAlignmentAt(0) = Listbox.Alignments.Right
-		  Me.ColumnAlignmentAt(1) = Listbox.Alignments.Right
-		  Me.ColumnAlignmentAt(2) = Listbox.Alignments.Center
+		  Me.ColumnAlignmentAt(Self.ColumnLevel) = Listbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.ColumnLevelXP) = Listbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.ColumnTotalXP) = Listbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.ColumnAscension) = Listbox.Alignments.Center
+		  Me.ColumnAlignmentAt(Self.ColumnTime) = Listbox.Alignments.Left
 		End Sub
 	#tag EndEvent
 	#tag Event

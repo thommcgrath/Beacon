@@ -426,9 +426,9 @@ Begin BeaconDialog ExperienceWizard
       AutoHideScrollbars=   True
       Bold            =   False
       Border          =   True
-      ColumnCount     =   2
+      ColumnCount     =   3
       ColumnsResizable=   False
-      ColumnWidths    =   "100,*"
+      ColumnWidths    =   "75,*,*"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
@@ -444,7 +444,7 @@ Begin BeaconDialog ExperienceWizard
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Level	Total XP"
+      InitialValue    =   "Level	Level XP	Total XP"
       Italic          =   False
       Left            =   20
       LockBottom      =   False
@@ -770,10 +770,10 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, StartingLevel As Integer, StartingXP As UInt64) As UInt64()
-		  Dim Win As New ExperienceWizard(StartingLevel, StartingXP)
+		  Var Win As New ExperienceWizard(StartingLevel, StartingXP)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
-		  Dim Levels() As UInt64
+		  Var Levels() As UInt64
 		  If Not Win.mCancelled Then
 		    For I As Integer = 0 To Win.List.RowCount - 1
 		      Levels.AddRow(Win.List.RowTagAt(I))
@@ -787,23 +787,26 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Dim Curve As Beacon.Curve = Self.Designer.Curve
-		  Dim AdditionalLevels As Integer = Max(CDbl(Self.LevelCountField.Value), 1)
-		  Dim AdditionalXP As UInt64 = Max(CDbl(Self.XPField.Value), 0)
-		  Dim StartingLevel As Integer = Self.mStartingLevel
-		  Dim StartingXP As UInt64 = Self.mStartingXP
-		  Dim EndingLevel As Integer = (StartingLevel + AdditionalLevels) - 1
-		  Dim EndingXP As UInt64 = StartingXP + AdditionalXP
-		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
-		  Dim Allowed As Boolean = EndingXP <= BeaconConfigs.ExperienceCurves.MaxSupportedXP
+		  Var Curve As Beacon.Curve = Self.Designer.Curve
+		  Var AdditionalLevels As Integer = Max(CDbl(Self.LevelCountField.Value), 1)
+		  Var AdditionalXP As UInt64 = Max(CDbl(Self.XPField.Value), 0)
+		  Var StartingLevel As Integer = Self.mStartingLevel
+		  Var StartingXP As UInt64 = Self.mStartingXP
+		  Var EndingLevel As Integer = (StartingLevel + AdditionalLevels) - 1
+		  Var EndingXP As UInt64 = StartingXP + AdditionalXP
+		  Var ScrollPosition As Integer = Self.List.ScrollPosition
+		  Var Allowed As Boolean = EndingXP <= BeaconConfigs.ExperienceCurves.MaxSupportedXP
 		  
 		  Self.List.RemoveAllRows()
+		  Var LastXP As UInt64 = StartingXP
 		  For Level As Integer = 1 To AdditionalLevels
-		    Dim Progress As Double = Level / AdditionalLevels
-		    Dim LevelXP As UInt64 = Round(Curve.Evaluate(Progress, StartingXP, EndingXP))
+		    Var Progress As Double = Level / AdditionalLevels
+		    Var TotalXP As UInt64 = Round(Curve.Evaluate(Progress, StartingXP, EndingXP))
+		    Var LevelXP As UInt64 = TotalXP - LastXP
+		    LastXP = TotalXP
 		    
-		    Self.List.AddRow(Format((Level - 1) + StartingLevel, "0,"), Format(LevelXP, "0,"))
-		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = LevelXP
+		    Self.List.AddRow(Format((Level - 1) + StartingLevel, "0,"), Format(LevelXP, "0,"), Format(TotalXP, "0,"))
+		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = TotalXP
 		  Next
 		  Self.List.ScrollPosition = ScrollPosition
 		  
@@ -859,10 +862,10 @@ End
 #tag Events Designer
 	#tag Event
 		Sub Changed()
-		  Dim SettingUp As Boolean = Self.mSettingUp
+		  Var SettingUp As Boolean = Self.mSettingUp
 		  Self.mSettingUp = True
 		  
-		  Dim Curve As Beacon.Curve = Me.Curve
+		  Var Curve As Beacon.Curve = Me.Curve
 		  
 		  Self.PointFields(0).Value = Format(Curve.Point(1).X, "0.000")
 		  Self.PointFields(1).Value = Format(Curve.Point(1).Y, "0.000")
@@ -880,6 +883,7 @@ End
 		Sub Open()
 		  Me.ColumnAlignmentAt(0) = Listbox.Alignments.Right
 		  Me.ColumnAlignmentAt(1) = Listbox.Alignments.Right
+		  Me.ColumnAlignmentAt(2) = Listbox.Alignments.Right
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -906,7 +910,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Curve As New Beacon.Curve(CDbl(Self.PointFields(0).Value), CDbl(Self.PointFields(1).Value), CDbl(Self.PointFields(2).Value), CDbl(Self.PointFields(3).Value))
+		  Var Curve As New Beacon.Curve(CDbl(Self.PointFields(0).Value), CDbl(Self.PointFields(1).Value), CDbl(Self.PointFields(2).Value), CDbl(Self.PointFields(3).Value))
 		  Self.Designer.Curve = Curve
 		End Sub
 	#tag EndEvent
