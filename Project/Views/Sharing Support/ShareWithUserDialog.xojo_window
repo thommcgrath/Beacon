@@ -340,7 +340,7 @@ End
 #tag Events HelpLink
 	#tag Event
 		Sub Action()
-		  ShowURL(Beacon.WebURL("/help/sharing_beacon_documents_with"))
+		  ShowURL(Beacon.WebURL("/help/sharing_beacon_documents"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
