@@ -89,8 +89,8 @@ class BeaconBot(discord.Client):
 			for role in add_roles:
 				await member.add_roles(role)
 			
-		await message.channel.send('Ok, I\'ve set your platform to {0}. If I got this wrong, just reply with `PC`, `Xbox`, or `PlayStation` and I\'ll correct it for you.')
-		await message.channel.send('You can now access the Beacon Discord server\'s general channel.'.format(desired_platform_name))
+		await message.channel.send('Ok, I\'ve set your platform to {0}. If I got this wrong, just reply with `PC`, `Xbox`, or `PlayStation` and I\'ll correct it for you.'.format(desired_platform_name))
+		await message.channel.send('You can now access the Beacon Discord server\'s general channel.')
 			
 	def doWordsMatch(self, left_word, right_word):
 		if left_word == '' or right_word == '':
