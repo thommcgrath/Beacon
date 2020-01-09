@@ -615,6 +615,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UserLookupReplyCallback(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  Try
 		    Var Dicts() As Variant
 		    Var Parsed As Variant = Response.JSON
