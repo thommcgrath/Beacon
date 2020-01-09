@@ -1,9 +1,18 @@
 #!/usr/bin/python3.6
-import discord, re, phonetics, Levenshtein, argparse;
+import discord, re, phonetics, Levenshtein, argparse, fcntl, sys, os, logging
 
 class BeaconBot(discord.Client):
+	logger = None;
+	
+	def __init__(self, logger):
+		super().__init__()
+		self.logger = logger
+	
+	def logMessage(self, message):
+		self.logger.info(message)
+	
 	async def on_ready(self):
-		print('Ready')
+		self.logMessage('Bot is ready')
 	
 	async def on_member_join(self, member):
 		channel = member.dm_channel
@@ -68,6 +77,7 @@ class BeaconBot(discord.Client):
 					break
 		
 		if desired_platform_name == '':
+			self.logMessage('Could not determine platform: User ' + message.author.name + ' said `' + message.content + '`')
 			await message.channel.send('Sorry, I didn\'t understand which platform you meant. Try saying `PC`, `Xbox`, or `PlayStation`.')
 			return
 		
@@ -88,7 +98,8 @@ class BeaconBot(discord.Client):
 				await member.remove_roles(role)
 			for role in add_roles:
 				await member.add_roles(role)
-			
+		
+		self.logMessage('Assigned user ' + message.author.name + ' the platform ' + desired_platform_name + ' based on message `' + message.content + '`')	
 		await message.channel.send('Ok, I\'ve set your platform to {0}. If I got this wrong, just reply with `PC`, `Xbox`, or `PlayStation` and I\'ll correct it for you.'.format(desired_platform_name))
 		await message.channel.send('You can now access the Beacon Discord server\'s general channel.')
 			
@@ -107,5 +118,24 @@ parser = argparse.ArgumentParser(description='Run the Beacon Discord bot')
 parser.add_argument('token', help='The token issued by Discord for the bot')
 args = parser.parse_args()
 
-client = BeaconBot();
-client.run(args.token)
+pid_file = os.path.expanduser('~/beaconbot.pid')
+pid_pointer = open(pid_file, 'w')
+try:
+	fcntl.lockf(pid_pointer, fcntl.LOCK_EX | fcntl.LOCK_NB)
+	pid_pointer.write(str(os.getpid()))
+except IOError:
+	sys.exit(-1)
+
+log_file = os.path.expanduser('~/beaconbot.log')
+logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
+logger = logging.getLogger(__name__)
+
+try:
+	client = BeaconBot(logger);
+	client.run(args.token)
+except Exception as err:
+	logger.error(err)
+finally:
+	fcntl.lockf(pid_pointer, fcntl.LOCK_UN)
+	pid_pointer.close()
+	os.unlink(pid_file)
