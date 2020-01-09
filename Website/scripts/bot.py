@@ -18,42 +18,54 @@ class BeaconBot(discord.Client):
 		if message.author.id == self.user.id:
 			return
 		
+		desired_platform_name = ''
 		words = message.content.lower()
 		words = re.sub(r'([^\s\w]|_)+', '', words)
 		words = words.split()
 		metaphones = []
 		for word in words:
-			metaphones.append(phonetics.metaphone(word))
-		
-		desired_platform_name = ''
-		pc_keywords = ['AN', 'ANTS', 'PK', 'STM'];
-		xbox_keywords = ['SPKS', 'SP'];
-		playstation_keywords = ['S', 'PLSTXN'];
-		
-		for left_word in metaphones:
-			for right_word in pc_keywords:
-				if self.doWordsMatch(left_word, right_word) == True:
+			for word in words:
+				if word == 'pc' or word == 'steam' or word == 'windows' or word == 'win':
 					desired_platform_name = 'PC'
 					break
-				
-			if desired_platform_name != '':
-				break
-				
-			for right_word in xbox_keywords:
-				if self.doWordsMatch(left_word, right_word) == True:
+				elif word == 'xbox' or word == 'xb' or word == 'xb1':
 					desired_platform_name = 'Xbox'
 					break
-			
-			if desired_platform_name != '':
-				break
-			
-			for right_word in playstation_keywords:
-				if self.doWordsMatch(left_word, right_word) == True:
+				elif word == 'ps4' or word == 'ps' or word == 'playstation':
 					desired_platform_name = 'PlayStation'
 					break
+				else:
+					metaphones.append(phonetics.metaphone(word))
+		
+		if desired_platform_name == '':
+			pc_keywords = ['ANTS', 'PK', 'STM'];
+			xbox_keywords = ['SPKS'];
+			playstation_keywords = ['PLSTXN'];
 			
-			if desired_platform_name != '':
-				break
+			for left_word in metaphones:
+				for right_word in pc_keywords:
+					if self.doWordsMatch(left_word, right_word) == True:
+						desired_platform_name = 'PC'
+						break
+					
+				if desired_platform_name != '':
+					break
+					
+				for right_word in xbox_keywords:
+					if self.doWordsMatch(left_word, right_word) == True:
+						desired_platform_name = 'Xbox'
+						break
+				
+				if desired_platform_name != '':
+					break
+				
+				for right_word in playstation_keywords:
+					if self.doWordsMatch(left_word, right_word) == True:
+						desired_platform_name = 'PlayStation'
+						break
+				
+				if desired_platform_name != '':
+					break
 		
 		if desired_platform_name == '':
 			await message.channel.send('Sorry, I didn\'t understand which platform you meant. Try saying `PC`, `Xbox`, or `PlayStation`.')
@@ -77,7 +89,8 @@ class BeaconBot(discord.Client):
 			for role in add_roles:
 				await member.add_roles(role)
 			
-		await message.channel.send('Ok, I\'ve set your platform to {0}. You can now access the Beacon Discord server\'s general channel.'.format(desired_platform_name))
+		await message.channel.send('Ok, I\'ve set your platform to {0}. If I got this wrong, just reply with `PC`, `Xbox`, or `PlayStation` and I\'ll correct it for you.')
+		await message.channel.send('You can now access the Beacon Discord server\'s general channel.'.format(desired_platform_name))
 			
 	def doWordsMatch(self, left_word, right_word):
 		if left_word == '' or right_word == '':
