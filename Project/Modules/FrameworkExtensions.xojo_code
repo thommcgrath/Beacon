@@ -405,34 +405,38 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Sub SQLDateTimeWithOffset(Extends Source As DateTime, Assigns Value As String)
-		  Dim Validator As New Regex
+		  Var Validator As New Regex
 		  Validator.SearchPattern = "^(\d{4})-(\d{2})-(\d{2})( (\d{2}):(\d{2}):(\d{2})(\.\d+)?\s*((\+|-)(\d{1,2})(:?(\d{2}))?)?)?$"
 		  
-		  Dim Matches As RegexMatch = Validator.Search(Value)
+		  Var Matches As RegexMatch = Validator.Search(Value)
 		  If Matches = Nil Then
-		    Dim Err As New UnsupportedFormatException
+		    Var Err As New UnsupportedFormatException
 		    Err.Message = "Invalid SQL timestamp"
 		    Raise Err
 		    Return
 		  End If
 		  
-		  Dim Year As Integer = Val(Matches.SubExpressionString(1))
-		  Dim Month As Integer = Val(Matches.SubExpressionString(2))
-		  Dim Day As Integer = Val(Matches.SubExpressionString(3))
-		  Dim Hour As Integer
-		  Dim Minute As Integer
-		  Dim Second As Integer
-		  Dim Offset As Double
-		  Dim ExpressionCount As Integer = Matches.SubExpressionCount
+		  Var Year As Integer = Val(Matches.SubExpressionString(1))
+		  Var Month As Integer = Val(Matches.SubExpressionString(2))
+		  Var Day As Integer = Val(Matches.SubExpressionString(3))
+		  Var Hour As Integer
+		  Var Minute As Integer
+		  Var Second As Integer
+		  Var Nanosecond As Integer
+		  Var Offset As Double
+		  Var ExpressionCount As Integer = Matches.SubExpressionCount
 		  
 		  If ExpressionCount >= 8 And Matches.SubExpressionString(4) <> "" Then
 		    Hour = Val(Matches.SubExpressionString(5))
 		    Minute = Val(Matches.SubExpressionString(6))
 		    Second = Val(Matches.SubExpressionString(7))
+		    If ExpressionCount >= 9 Then
+		      Nanosecond = Val("0" + Matches.SubExpressionString(8)) * 1000000000
+		    End If
 		    
 		    If ExpressionCount >= 12 And Matches.SubExpressionString(9) <> "" Then
-		      Dim OffsetHour As Integer = Val(Matches.SubExpressionString(11))
-		      Dim OffsetMinute As Integer
+		      Var OffsetHour As Integer = Val(Matches.SubExpressionString(11))
+		      Var OffsetMinute As Integer
 		      If ExpressionCount >= 14 And Matches.SubExpressionString(13) <> "" Then
 		        OffsetMinute = Val(Matches.SubExpressionString(13))
 		      End If
@@ -443,7 +447,7 @@ Protected Module FrameworkExtensions
 		    End If
 		  End If
 		  
-		  Source.Constructor(Year, Month, Day, Hour, Minute, Second, 0, New TimeZone(Offset))
+		  Source.Constructor(Year, Month, Day, Hour, Minute, Second, Nanosecond, New TimeZone(Offset))
 		End Sub
 	#tag EndMethod
 
@@ -574,6 +578,8 @@ Protected Module FrameworkExtensions
 		      Next
 		    End If
 		    Stream.Close
+		    
+		    File.ModificationDateTime = DateTime.Now
 		    
 		    Lock.Leave
 		    Return True
