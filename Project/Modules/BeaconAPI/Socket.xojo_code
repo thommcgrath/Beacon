@@ -60,10 +60,14 @@ Protected Class Socket
 
 	#tag Method, Flags = &h21
 		Private Sub Socket_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
-		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  
-		  Var Response As New BeaconAPI.Response(URL, HTTPStatus, Content)
+		  Var Headers As New Dictionary
+		  For Each Header As Pair In Sender.ResponseHeaders
+		    Headers.Value(Header.Left) = Header.Right
+		  Next
+		  
+		  Var Response As New BeaconAPI.Response(URL, HTTPStatus, Content, Headers)
 		  Self.ActiveRequest.InvokeCallback(Response)
 		  Self.ActiveRequest = Nil
 		  

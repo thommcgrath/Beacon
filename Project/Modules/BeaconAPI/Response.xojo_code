@@ -7,12 +7,13 @@ Protected Class Response
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(URL As String, HTTPStatus As Integer, Content As MemoryBlock)
+		Sub Constructor(URL As String, HTTPStatus As Integer, Content As MemoryBlock, Headers As Dictionary)
 		  Self.mURL = URL
 		  Self.mContent = Content
 		  Self.mHTTPStatus = HTTPStatus
 		  Self.mJSONParsed = False
 		  Self.mJSON = Nil
+		  Self.mHeaders = Headers
 		  Self.mMessage = ""
 		  
 		  Try
@@ -35,6 +36,16 @@ Protected Class Response
 	#tag Method, Flags = &h0
 		Function Content() As MemoryBlock
 		  Return Self.mContent
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Header(Name As String) As String
+		  If Self.mHeaders = Nil Then
+		    Return ""
+		  End If
+		  
+		  Return Self.mHeaders.Lookup(Name, "").StringValue
 		End Function
 	#tag EndMethod
 
@@ -77,6 +88,10 @@ Protected Class Response
 
 	#tag Property, Flags = &h21
 		Private mContent As MemoryBlock
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHeaders As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
