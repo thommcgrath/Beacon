@@ -314,7 +314,7 @@ abstract class BeaconCloudStorage {
 		}
 		
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT remote_path, content_type, size_in_bytes, modified, deleted, header FROM usercloud WHERE remote_path LIKE $1;', "$remote_path%");
+		$results = $database->Query('SELECT remote_path, content_type, size_in_bytes, modified, deleted, header, hash FROM usercloud WHERE remote_path LIKE $1;', "$remote_path%");
 		$files = array();
 		while (!$results->EOF()) {
 			$files[] = array(
@@ -323,7 +323,8 @@ abstract class BeaconCloudStorage {
 				'size' => intval($results->Field('size_in_bytes')),
 				'modified' => $results->Field('modified'),
 				'deleted' => $results->Field('deleted'),
-				'header' => $results->Field('header')
+				'header' => $results->Field('header'),
+				'hash' => $results->Field('hash')
 			);
 			$results->MoveNext();
 		}
