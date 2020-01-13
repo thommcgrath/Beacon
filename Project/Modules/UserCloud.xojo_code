@@ -311,9 +311,7 @@ Protected Module UserCloud
 		  
 		  Var EncryptedContents As MemoryBlock = BeaconEncryption.SymmetricEncrypt(App.IdentityManager.CurrentIdentity.UserCloudKey, Contents)
 		  
-		  Var Request As New BeaconAPI.Request("file" + RemotePath, "PUT", EncryptedContents, "application/octet-stream", AddressOf Callback_PutFile)
-		  Request.RequestHeader("X-Beacon-File-Modified") = LocalFile.ModificationDateTime.SQLDateTimeWithOffset
-		  SendRequest(Request)
+		  SendRequest(New BeaconAPI.Request("file" + RemotePath, "PUT", EncryptedContents, "application/octet-stream", AddressOf Callback_PutFile))
 		  
 		  Var ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "PUT"
