@@ -10,14 +10,14 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_GetFile(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
-		  Dim Th As New GetThread(Request, Response)
+		  Var Th As New GetThread(Request, Response)
 		  Th.Start
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_ListFiles(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
-		  Dim Th As New ListThread(Request, Response)
+		  Var Th As New ListThread(Request, Response)
 		  Th.Start
 		End Sub
 	#tag EndMethod
@@ -28,10 +28,10 @@ Protected Module UserCloud
 		    // Do what?
 		    If Response.HTTPStatus = 446 Then
 		      // This response means the path is not allowed, so we're going to delete the local file
-		      Dim URL As String = Response.URL
-		      Dim BaseURL As String = BeaconAPI.URL("/file")
-		      Dim RemotePath As String = URL.Middle(BaseURL.Length)
-		      Dim LocalFile As FolderItem = LocalFile(RemotePath)
+		      Var URL As String = Response.URL
+		      Var BaseURL As String = BeaconAPI.URL("/file")
+		      Var RemotePath As String = URL.Middle(BaseURL.Length)
+		      Var LocalFile As FolderItem = LocalFile(RemotePath)
 		      Try
 		        If LocalFile.Exists Then
 		          LocalFile.Remove
@@ -44,19 +44,19 @@ Protected Module UserCloud
 		  End If
 		  
 		  // So where do we put the file now?
-		  Dim URL As String = Response.URL
-		  Dim BaseURL As String = BeaconAPI.URL("/file")
+		  Var URL As String = Response.URL
+		  Var BaseURL As String = BeaconAPI.URL("/file")
 		  If Not URL.BeginsWith(BaseURL) Then
 		    // What the hell is going on here?
 		    CleanupRequest(Request)
 		    Return
 		  End If
 		  
-		  Dim RemotePath As String = URL.Middle(BaseURL.Length)
-		  Dim LocalFile As FolderItem = LocalFile(RemotePath)
+		  Var RemotePath As String = URL.Middle(BaseURL.Length)
+		  Var LocalFile As FolderItem = LocalFile(RemotePath)
 		  If LocalFile.Exists Then
 		    Try
-		      Dim Details As Dictionary = Response.JSON
+		      Var Details As Dictionary = Response.JSON
 		      LocalFile.ModificationDateTime = NewDateFromSQLDateTime(Details.Value("modified")).LocalTime
 		    Catch Err As RuntimeException
 		      
@@ -74,7 +74,7 @@ Protected Module UserCloud
 		  End If
 		  
 		  For I As Integer = Folder.Count - 1 DownTo 0
-		    Dim Child As FolderItem = Folder.ChildAt(I)
+		    Var Child As FolderItem = Folder.ChildAt(I)
 		    If Not Child.IsFolder Then
 		      Continue
 		    End If
@@ -99,12 +99,12 @@ Protected Module UserCloud
 		    If Not IsBusy Then
 		      CleanupEmptyFolders(LocalFile("/"))
 		      
-		      Dim Actions() As Dictionary
+		      Var Actions() As Dictionary
 		      For Each Dict As Dictionary In SyncActions
 		        Actions.AddRow(Dict)
 		      Next
 		      NotificationKit.Post(Notification_SyncFinished, Actions)
-		      Redim SyncActions(-1)
+		      SyncActions.ResizeTo(-1)
 		      
 		      If SyncWhenFinished Then
 		        SyncWhenFinished = False
@@ -117,7 +117,7 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h1
 		Protected Function Delete(RemotePath As String) As Boolean
-		  Dim LocalFile As FolderItem = LocalFile(RemotePath, False)
+		  Var LocalFile As FolderItem = LocalFile(RemotePath, False)
 		  If LocalFile <> Nil And LocalFile.DeepDelete Then
 		    SendRequest(New BeaconAPI.Request("file" + RemotePath, "DELETE", AddressOf Callback_DeleteFile))
 		    Sync()
@@ -133,7 +133,7 @@ Protected Module UserCloud
 		  End If
 		  
 		  For I As Integer = 0 To Folder.Count - 1
-		    Dim Child As FolderItem = Folder.ChildAt(I)
+		    Var Child As FolderItem = Folder.ChildAt(I)
 		    If Child.Name.BeginsWith(".") Then
 		      Continue
 		    End If
@@ -158,12 +158,12 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h1
 		Protected Function List(Prefix As String = "/") As String()
-		  Dim Paths As New Dictionary
+		  Var Paths As New Dictionary
 		  DiscoverPaths("", LocalFile("/"), Paths)
 		  
-		  Dim Results() As String
+		  Var Results() As String
 		  
-		  Dim Keys() As Variant = Paths.Keys
+		  Var Keys() As Variant = Paths.Keys
 		  For Each Key As String In Keys
 		    If Not Key.BeginsWith(Prefix) Then
 		      Continue
@@ -186,7 +186,7 @@ Protected Module UserCloud
 		    RemotePath = RemotePath.Middle(1)
 		  End If
 		  
-		  Dim LocalFolder As FolderItem = App.ApplicationSupport
+		  Var LocalFolder As FolderItem = App.ApplicationSupport
 		  If Not LocalFolder.CheckIsFolder(Create) Then
 		    Return Nil
 		  End If
@@ -199,7 +199,7 @@ Protected Module UserCloud
 		    Return Nil
 		  End If
 		  
-		  Dim Components() As String = RemotePath.Split("/")
+		  Var Components() As String = RemotePath.Split("/")
 		  If Components.LastRowIndex = -1 Then
 		    Return LocalFolder
 		  End If
@@ -217,7 +217,7 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h1
 		Protected Function Read(RemotePath As String) As MemoryBlock
-		  Dim LocalFile As FolderItem = LocalFile(RemotePath)
+		  Var LocalFile As FolderItem = LocalFile(RemotePath)
 		  If LocalFile = Nil Or Not LocalFile.Exists Then
 		    Return Nil
 		  End If
@@ -231,14 +231,14 @@ Protected Module UserCloud
 		  SendRequest(New BeaconAPI.Request("file" + RemotePath, "GET", AddressOf Callback_GetFile))
 		  
 		  If Not LocalFile.Exists Then
-		    Dim Stream As BinaryStream = BinaryStream.Create(LocalFile, True)
+		    Var Stream As BinaryStream = BinaryStream.Create(LocalFile, True)
 		    Stream.Close // Make a 0 byte file to track the modification date
 		    
 		    LocalFile.CreationDateTime = ModificationDate
 		  End If
 		  LocalFile.ModificationDateTime = ModificationDate
 		  
-		  Dim ActionDict As New Dictionary
+		  Var ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "GET"
 		  ActionDict.Value("Path") = RemotePath
 		  SyncActions.AddRow(ActionDict)
@@ -251,7 +251,7 @@ Protected Module UserCloud
 		    PendingRequests = New Dictionary
 		  End If
 		  
-		  Dim Fresh As Boolean = PendingRequests.KeyCount = 0
+		  Var Fresh As Boolean = PendingRequests.KeyCount = 0
 		  
 		  Request.Authenticate(Preferences.OnlineToken)
 		  PendingRequests.Value(Request.RequestID) = Request
@@ -291,7 +291,7 @@ Protected Module UserCloud
 	#tag Method, Flags = &h21
 		Private Sub SyncActual()
 		  SyncKey = ""
-		  Redim SyncActions(-1)
+		  SyncActions.ResizeTo(-1)
 		  SendRequest(New BeaconAPI.Request("file", "GET", AddressOf Callback_ListFiles))
 		End Sub
 	#tag EndMethod
@@ -302,18 +302,20 @@ Protected Module UserCloud
 		    Return
 		  End If
 		  
-		  Dim Stream As BinaryStream = BinaryStream.Open(LocalFile, False)
-		  Dim Contents As MemoryBlock = Stream.Read(Stream.Length)
+		  Var Stream As BinaryStream = BinaryStream.Open(LocalFile, False)
+		  Var Contents As MemoryBlock = Stream.Read(Stream.Length)
 		  Stream.Close
 		  
-		  Dim Compressor As New _GZipString
+		  Var Compressor As New _GZipString
 		  Contents = Compressor.Compress(Contents, _GZipString.DefaultCompression)
 		  
-		  Dim EncryptedContents As MemoryBlock = BeaconEncryption.SymmetricEncrypt(App.IdentityManager.CurrentIdentity.UserCloudKey, Contents)
+		  Var EncryptedContents As MemoryBlock = BeaconEncryption.SymmetricEncrypt(App.IdentityManager.CurrentIdentity.UserCloudKey, Contents)
 		  
-		  SendRequest(New BeaconAPI.Request("file" + RemotePath, "PUT", EncryptedContents, "application/octet-stream", AddressOf Callback_PutFile))
+		  Var Request As New BeaconAPI.Request("file" + RemotePath, "PUT", EncryptedContents, "application/octet-stream", AddressOf Callback_PutFile)
+		  Request.RequestHeader("X-Beacon-File-Modified") = LocalFile.ModificationDateTime.SQLDateTimeWithOffset
+		  SendRequest(Request)
 		  
-		  Dim ActionDict As New Dictionary
+		  Var ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "PUT"
 		  ActionDict.Value("Path") = RemotePath
 		  SyncActions.AddRow(ActionDict)
@@ -322,7 +324,7 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h1
 		Protected Function Write(RemotePath As String, Content As MemoryBlock) As Boolean
-		  Dim LocalFile As FolderItem = LocalFile(RemotePath)
+		  Var LocalFile As FolderItem = LocalFile(RemotePath)
 		  If LocalFile.Write(Content) Then
 		    Sync()
 		    Return True

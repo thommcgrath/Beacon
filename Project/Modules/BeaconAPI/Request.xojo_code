@@ -2,39 +2,19 @@
 Protected Class Request
 	#tag Method, Flags = &h0
 		Sub Authenticate(Token As String)
-		  Self.mAuthHeader = "Session " + Token
-		  Self.mAuthUser = ""
-		  Self.mAuthPassword = ""
+		  Self.RequestHeader("Authorization") = "Session " + Token
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Authenticate(Username As String, Password As String)
-		  Self.mAuthHeader = "Basic " + EncodeBase64(Username + ":" + Password, 0)
+		  Self.RequestHeader("Authorization") = "Basic " + EncodeBase64(Username + ":" + Password, 0)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Authenticated() As Boolean
-		  Return Self.mAuthHeader <> ""
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function AuthHeader() As String
-		  Return Self.mAuthHeader
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function AuthPassword() As String
-		  Return Self.mAuthPassword
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function AuthUser() As String
-		  Return Self.mAuthUser
+		  Return Self.mRequestHeaders <> Nil And Self.mRequestHeaders.HasKey("Authorization")
 		End Function
 	#tag EndMethod
 
@@ -122,6 +102,44 @@ Protected Class Request
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
+		Function RequestHeader(Header As String) As String
+		  If Self.mRequestHeaders = Nil Then
+		    Return ""
+		  End If
+		  
+		  Return Self.mRequestHeaders.Lookup(Header, "")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RequestHeader(Header As String, Assigns Value As String)
+		  If Self.mRequestHeaders = Nil Then
+		    Self.mRequestHeaders = New Dictionary
+		  End If
+		  
+		  If Value.Length = 0 Then
+		    If Self.mRequestHeaders.HasKey(Header) Then
+		      Self.mRequestHeaders.Remove(Header)
+		    End If
+		  Else
+		    Self.mRequestHeaders.Value(Header) = Value
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RequestHeaders() As String()
+		  Var Headers() As String
+		  If Self.mRequestHeaders <> Nil Then
+		    For Each Entry As DictionaryEntry In Self.mRequestHeaders
+		      Headers.AddRow(Entry.Key.StringValue)
+		    Next
+		  End If
+		  Return Headers
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function RequestID() As String
 		  Return Self.mRequestID
 		End Function
@@ -155,18 +173,6 @@ Protected Class Request
 
 
 	#tag Property, Flags = &h1
-		Protected mAuthHeader As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mAuthPassword As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mAuthUser As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
 		Protected mCallback As ReplyCallback
 	#tag EndProperty
 
@@ -180,6 +186,10 @@ Protected Class Request
 
 	#tag Property, Flags = &h1
 		Protected mPayload As MemoryBlock
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mRequestHeaders As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

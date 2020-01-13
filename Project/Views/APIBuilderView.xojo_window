@@ -632,7 +632,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Shared Function BuildCURLCode(Request As BeaconAPI.Request) As String
-		  Dim Cmd As String = "curl"
+		  Var Cmd As String = "curl"
 		  If Request.Method <> "GET" Then
 		    Cmd = Cmd + " --request '" + Request.Method + "'"
 		    If Request.Query <> "" Then
@@ -642,9 +642,10 @@ End
 		      Cmd = Cmd + " --header 'Content-Type: " + Request.ContentType + "'"
 		    End If
 		  End If
-		  If Request.Authenticated Then
-		    Cmd = Cmd + " --header 'Authorization: " + Request.AuthHeader + "'"
-		  End If
+		  Var Headers() As String
+		  For Each Header As String In Headers
+		    Cmd = Cmd + " --header '" + Header.ReplaceAll("'", "\'") + ": " + Request.RequestHeader(Header).ReplaceAll("'", "\'") + "'"
+		  Next
 		  Cmd = Cmd + " " + Request.URL
 		  If Request.Method = "GET" And Request.Query <> "" Then
 		    Cmd = Cmd + "?" + Request.Query
@@ -655,16 +656,16 @@ End
 
 	#tag Method, Flags = &h21
 		Private Shared Function BuildHTTPCode(Request As BeaconAPI.Request) As String
-		  Dim StringEOL As String = EndOfLine
-		  Dim EOL As String = StringEOL // Really hate that it takes 2 lines of code to do this
+		  Var StringEOL As String = EndOfLine
+		  Var EOL As String = StringEOL // Really hate that it takes 2 lines of code to do this
 		  
-		  Dim URL As String = Request.URL
-		  Dim SchemeEnd As Integer = URL.IndexOf("://")
+		  Var URL As String = Request.URL
+		  Var SchemeEnd As Integer = URL.IndexOf("://")
 		  URL = URL.Middle(SchemeEnd + 3)
 		  
-		  Dim HostEnd As Integer = URL.IndexOf("/")
-		  Dim Host As String = URL.Left(HostEnd)
-		  Dim Path As String = URL.Middle(HostEnd)
+		  Var HostEnd As Integer = URL.IndexOf("/")
+		  Var Host As String = URL.Left(HostEnd)
+		  Var Path As String = URL.Middle(HostEnd)
 		  
 		  If Request.Method = "GET" Then
 		    If Request.Query <> "" Then
@@ -672,13 +673,14 @@ End
 		    End If
 		  End If
 		  
-		  Dim Lines() As String
+		  Var Lines() As String
 		  Lines.AddRow(Request.Method + " " + Path + " HTTP/1.1")
 		  Lines.AddRow("Host: " + Host)
 		  
-		  If Request.Authenticated Then
-		    Lines.AddRow("Authorization: " + Request.AuthHeader)
-		  End If
+		  Var Headers() As String
+		  For Each Header As String In Headers
+		    Lines.AddRow(Header + ": " + Request.RequestHeader(Header))
+		  Next
 		  
 		  If Request.Method <> "GET" Then
 		    If Request.ContentType <> "" Then
@@ -694,13 +696,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Shared Function BuildPHPCode(Request As BeaconAPI.Request) As String
-		  Dim StringEOL As String = EndOfLine
-		  Dim EOL As String = StringEOL // Really hate that it takes 2 lines of code to do this
-		  Dim Authenticated As Boolean = Request.Authenticated
+		  Var EOL As String = EndOfLine
+		  Var Authenticated As Boolean = Request.Authenticated
 		  
-		  Dim Lines() As String
+		  Var Lines() As String
 		  
-		  Dim URL As String = Request.URL
+		  Var URL As String = Request.URL
 		  If Request.Method = "GET" Then
 		    If Request.Query <> "" Then
 		      URL = URL + "?" + Request.Query
@@ -766,12 +767,12 @@ End
 #tag Events BuildButton
 	#tag Event
 		Sub Action()
-		  Dim Path As String = PathField.Value
-		  Dim Method As String = MethodMenu.SelectedRowValue
-		  Dim Body As String = BodyField.Value
-		  Dim ContentType As String = ContentTypeField.Value
+		  Var Path As String = PathField.Value
+		  Var Method As String = MethodMenu.SelectedRowValue
+		  Var Body As String = BodyField.Value
+		  Var ContentType As String = ContentTypeField.Value
 		  
-		  Dim Request As BeaconAPI.Request
+		  Var Request As BeaconAPI.Request
 		  Try
 		    If BodyField.Enabled Then
 		      Request = New BeaconAPI.Request(Path, Method, Body, ContentType, AddressOf APICallback_DoNothing)

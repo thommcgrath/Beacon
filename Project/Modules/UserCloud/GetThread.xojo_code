@@ -9,7 +9,7 @@ Inherits Thread
 		    Return
 		  End If
 		  
-		  Dim Content As MemoryBlock = Self.mResponse.Content
+		  Var Content As MemoryBlock = Self.mResponse.Content
 		  If BeaconEncryption.IsEncrypted(Content) Then
 		    Try
 		      Content = BeaconEncryption.SymmetricDecrypt(App.IdentityManager.CurrentIdentity.UserCloudKey, Content)
@@ -19,27 +19,27 @@ Inherits Thread
 		      Return
 		    End Try
 		    
-		    Dim Decompressor As New _GZipString
+		    Var Decompressor As New _GZipString
 		    Content = Decompressor.Decompress(Content)
 		  End If
 		  
 		  // So where do we put the file now?
-		  Dim URL As String = Self.mResponse.URL
-		  Dim BaseURL As String = BeaconAPI.URL("/file")
+		  Var URL As String = Self.mResponse.URL
+		  Var BaseURL As String = BeaconAPI.URL("/file")
 		  If Not URL.BeginsWith(BaseURL) Then
 		    // What the hell is going on here?
 		    CleanupRequest(Self.mRequest)
 		    Return
 		  End If
 		  
-		  Dim RemotePath As String = URL.Middle(BaseURL.Length)
-		  Dim LocalFile As FolderItem = LocalFile(RemotePath)
+		  Var RemotePath As String = URL.Middle(BaseURL.Length)
+		  Var LocalFile As FolderItem = LocalFile(RemotePath)
 		  If LocalFile <> Nil Then
 		    Try
 		      If LocalFile.Exists Then
-		        Dim CreationDate As DateTime = LocalFile.CreationDateTime
-		        Dim ModificationDate As DateTime = LocalFile.ModificationDateTime
-		        Dim Stream As BinaryStream = BinaryStream.Open(LocalFile, True)
+		        Var CreationDate As DateTime = LocalFile.CreationDateTime
+		        Var ModificationDate As DateTime = LocalFile.ModificationDateTime
+		        Var Stream As BinaryStream = BinaryStream.Open(LocalFile, True)
 		        Stream.BytePosition = 0
 		        Stream.Length = 0
 		        Stream.Write(Content)
@@ -47,7 +47,7 @@ Inherits Thread
 		        LocalFile.CreationDateTime = CreationDate
 		        LocalFile.ModificationDateTime = ModificationDate
 		      Else
-		        Dim Stream As BinaryStream = BinaryStream.Create(LocalFile, True)
+		        Var Stream As BinaryStream = BinaryStream.Create(LocalFile, True)
 		        Stream.Write(Content)
 		        Stream.Close
 		      End If

@@ -10,14 +10,14 @@ Inherits Thread
 		  End If
 		  
 		  Try
-		    Dim List() As Variant = Beacon.ParseJSON(Self.mResponse.Content)
-		    Dim SyncedPaths As New Dictionary
+		    Var List() As Variant = Beacon.ParseJSON(Self.mResponse.Content)
+		    Var SyncedPaths As New Dictionary
 		    For Each Dict As Dictionary In List
-		      Dim RemotePath As String = Dict.Value("path")
+		      Var RemotePath As String = Dict.Value("path")
 		      SyncedPaths.Value(RemotePath) = True
 		      
-		      Dim LocalFile As FolderItem = LocalFile(RemotePath, False)
-		      Dim IsDeleted As Boolean = Dict.Value("deleted")
+		      Var LocalFile As FolderItem = LocalFile(RemotePath, False)
+		      Var IsDeleted As Boolean = Dict.Value("deleted")
 		      If (LocalFile = Nil Or LocalFile.Exists = False) And IsDeleted Then
 		        Continue
 		      End If
@@ -25,20 +25,20 @@ Inherits Thread
 		        LocalFile = LocalFile(RemotePath, True)
 		      End If
 		      
-		      Dim ServerModifiedText As String = Dict.Value("modified")
-		      Dim ServerModified As DateTime = NewDateFromSQLDateTime(ServerModifiedText).LocalTime
+		      Var ServerModifiedText As String = Dict.Value("modified")
+		      Var ServerModified As DateTime = NewDateFromSQLDateTime(ServerModifiedText).LocalTime
 		      
 		      If LocalFile.Exists And LocalFile.ModificationDate <> Nil Then
-		        Dim LocalModified As DateTime = LocalFile.ModificationDateTime
-		        Dim FilesAreDifferent As Boolean = LocalModified <> ServerModified
-		        Dim LocalIsNewer As Boolean = LocalModified > ServerModified
+		        Var LocalModified As DateTime = LocalFile.ModificationDateTime
+		        Var FilesAreDifferent As Boolean = LocalModified.SecondsFrom1970 <> ServerModified.SecondsFrom1970
+		        Var LocalIsNewer As Boolean = LocalModified > ServerModified
 		        If LocalIsNewer Then
 		          // Put the file
 		          UploadFileTo(LocalFile, RemotePath)
 		        ElseIf LocalIsNewer = False And IsDeleted = True Then
 		          // Delete the file
 		          LocalFile.Remove
-		          Dim ActionDict As New Dictionary
+		          Var ActionDict As New Dictionary
 		          ActionDict.Value("Action") = "DELETE"
 		          ActionDict.Value("Path") = RemotePath
 		          SyncActions.AddRow(ActionDict)
@@ -52,16 +52,16 @@ Inherits Thread
 		      End If
 		    Next
 		    
-		    Dim Paths As New Dictionary
+		    Var Paths As New Dictionary
 		    DiscoverPaths("", LocalFile("/"), Paths)
 		    
-		    Dim Keys() As Variant = Paths.Keys
+		    Var Keys() As Variant = Paths.Keys
 		    For Each Path As String In Keys
 		      If SyncedPaths.HasKey(Path) Then
 		        Continue
 		      End If
 		      
-		      Dim File As FolderItem = Paths.Value(Path)
+		      Var File As FolderItem = Paths.Value(Path)
 		      UploadFileTo(File, Path)
 		    Next
 		  Catch Err As RuntimeException

@@ -7,7 +7,7 @@ Protected Class Socket
 		    Return
 		  End If
 		  
-		  Dim Request As BeaconAPI.Request = Self.Queue(0)
+		  Var Request As BeaconAPI.Request = Self.Queue(0)
 		  Self.Queue.RemoveRowAt(0)
 		  
 		  Self.ActiveRequest = Request
@@ -19,15 +19,15 @@ Protected Class Socket
 		    Self.Socket.ClearRequestHeaders()
 		  #endif
 		  
-		  Dim URL As String = Request.URL
-		  If Request.Authenticated Then
-		    Self.Socket.RequestHeader("Authorization") = Request.AuthHeader
-		  End If
-		  
+		  Var URL As String = Request.URL
+		  Var Headers() As String = Request.RequestHeaders
+		  For Each Header As String In Headers
+		    Self.Socket.RequestHeader(Header) = Request.RequestHeader(Header)
+		  Next
 		  Self.Socket.RequestHeader("Cache-Control") = "no-cache"
 		  
 		  If Request.Method = "GET" Then
-		    Dim Query As String = Request.Query
+		    Var Query As String = Request.Query
 		    If Query <> "" Then
 		      URL = URL + "?" + Query
 		    End If
@@ -63,7 +63,7 @@ Protected Class Socket
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  
-		  Dim Response As New BeaconAPI.Response(URL, HTTPStatus, Content)
+		  Var Response As New BeaconAPI.Response(URL, HTTPStatus, Content)
 		  Self.ActiveRequest.InvokeCallback(Response)
 		  Self.ActiveRequest = Nil
 		  
