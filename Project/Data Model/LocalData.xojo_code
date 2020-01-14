@@ -1481,8 +1481,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM custom_presets WHERE object_id = ?1;", PresetID)
 		  If Results.RowCount = 1 Then
 		    Try
-		      Dim Changes As RowSet = Self.SQLSelect("UPDATE custom_presets SET label = ?2, contents = ?3 WHERE object_id = ?1 AND label != ?2 AND contents != ?3;", PresetID, Preset.Label, Contents)
-		      Imported = Changes.RowCount = 1
+		      Var RowsToChange As RowSet = Self.SQLSelect("SELECT object_id FROM custom_presets WHERE object_id = ?1 AND label != ?2 AND contents != ?3;", PresetID, Preset.Label, Contents)
+		      If RowsToChange.RowCount > 0 Then
+		        Self.SQLExecute("UPDATE custom_presets SET label = ?2, contents = ?3 WHERE object_id = ?1 AND label != ?2 AND contents != ?3;", PresetID, Preset.Label, Contents)
+		        Imported = True
+		      End If
 		    Catch Err As RuntimeException
 		      Imported = False
 		    End Try
