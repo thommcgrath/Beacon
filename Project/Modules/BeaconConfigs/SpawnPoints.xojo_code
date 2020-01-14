@@ -367,6 +367,7 @@ Implements Iterable
 		      
 		      Var Clone As Beacon.MutableSpawnPoint = SpawnPoint.MutableVersion
 		      Clone.ResizeTo(-1)
+		      Clone.LimitsString = "{}"
 		      
 		      // make changes
 		      If Dict.HasKey("NPCSpawnEntries") Then
