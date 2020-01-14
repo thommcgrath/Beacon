@@ -2358,8 +2358,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var Idx As Integer = Labels.IndexOf(Label)
 		      Labels(I) = Label
 		      If Idx > -1 Then
-		        Dict.Value(Points(Idx).Path) = Points(Idx).Label + " (" + Points(Idx).ModName + ")"
-		        Label = Label + " (" + Points(I).ModName + ")"
+		        Var Filtered As UInt64 = Points(Idx).Availability And Availability
+		        Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Filtered)
+		        Dict.Value(Points(Idx).Path) = Points(Idx).Label + " (" + Maps.Label + ")"
+		        
+		        Filtered = Points(I).Availability And Availability
+		        Maps = Beacon.Maps.ForMask(Filtered)
+		        Label = Label + " (" + Maps.Label + ")"
 		      End If
 		      
 		      Dict.Value(Points(I).Path) = Label

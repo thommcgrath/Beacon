@@ -136,7 +136,7 @@ Begin BeaconDialog AddSpawnPointDialog
       ColumnWidths    =   ""
       DataField       =   ""
       DataSource      =   ""
-      DefaultRowHeight=   34
+      DefaultRowHeight=   26
       DropIndicatorVisible=   False
       Enabled         =   True
       FontName        =   "System"
@@ -539,12 +539,7 @@ End
 		      Continue
 		    End If
 		    
-		    Var ComboMask As UInt64 = SpawnPoint.Availability And Self.mAvailability
-		    If Not MapLabels.HasKey(ComboMask) Then
-		      MapLabels.Value(ComboMask) = Beacon.Maps.ForMask(ComboMask).Label
-		    End If
-		    
-		    Self.List.AddRow(Labels.Lookup(SpawnPoint.Path, SpawnPoint.Label).StringValue + EndOfLine + "Exists on " + MapLabels.Value(ComboMask))
+		    Self.List.AddRow(Labels.Lookup(SpawnPoint.Path, SpawnPoint.Label).StringValue)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = SpawnPoint
 		  Next
 		  Self.List.SortingColumn = 0
