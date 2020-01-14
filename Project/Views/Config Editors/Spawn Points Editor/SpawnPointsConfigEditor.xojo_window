@@ -527,6 +527,7 @@ End
 		    Var Config As BeaconConfigs.SpawnPoints = Self.Config(True)
 		    For Each Target As Beacon.SpawnPoint In TargetSpawnPoints
 		      Var SpawnPoint As New Beacon.MutableSpawnPoint(Target)
+		      SpawnPoint.Mode = SourceSpawnPoint.Mode
 		      SpawnPoint.LimitsString = SourceLimits
 		      SpawnPoint.SetsString = SourceSets
 		      Config.Add(SpawnPoint)

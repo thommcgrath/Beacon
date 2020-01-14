@@ -460,7 +460,7 @@ End
 		Private Sub CheckActionEnabled()
 		  Self.LoadDefaultsCheck.Enabled = Self.OverrideRadio.Value
 		  
-		  Var Enabled As Boolean = Self.List.SelectedRowCount > 0 And (Self.OverrideRadio.Value Or Self.AppendRadio.Value Or Self.RemoveRadio.Value)
+		  Var Enabled As Boolean = Self.List.SelectedRowCount > 0 And (Self.mUIMode <> Self.UIModeAdd Or Self.OverrideRadio.Value Or Self.AppendRadio.Value Or Self.RemoveRadio.Value)
 		  If Self.ActionButton.Enabled <> Enabled Then
 		    Self.ActionButton.Enabled = Enabled
 		  End If
