@@ -420,7 +420,8 @@ End
 #tag Events HelpButton
 	#tag Event
 		Sub Action()
-		  Var HelpURL As String = Beacon.WebURL("/help/editing_creature_spawn_points#limits")
+		  Var Title, Body, HelpURL As String
+		  Call LocalData.SharedInstance.GetConfigHelp(BeaconConfigs.SpawnPoints.ConfigName, Title, Body, HelpURL)
 		  ShowURL(HelpURL)
 		End Sub
 	#tag EndEvent
