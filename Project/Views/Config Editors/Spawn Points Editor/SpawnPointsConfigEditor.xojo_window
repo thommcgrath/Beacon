@@ -720,8 +720,6 @@ End
 		    End If
 		    
 		    Var NewPoint As Beacon.SpawnPoint = PathMap.Value(Point.Path)
-		    
-		    Self.List.CellValueAt(I, 0) = NewPoint.Label
 		    Self.List.RowTagAt(I) = NewPoint
 		  Next
 		End Sub
