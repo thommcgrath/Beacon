@@ -331,6 +331,14 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  #Pragma Unused UserData
+		  
+		  Self.UpdateList()
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.SpawnPoints
@@ -423,6 +431,8 @@ End
 		    Selected.Value(SpawnPoint.ObjectID) = True
 		  Next
 		  
+		  Var Labels As Dictionary = LocalData.SharedInstance.SpawnPointLabels(Self.Document.MapCompatibility)
+		  
 		  Self.List.SelectionChangeBlocked = True
 		  Self.List.RowCount = Config.Count
 		  For I As Integer = 0 To SpawnPoints.LastRowIndex
@@ -436,7 +446,7 @@ End
 		      Prefix = "Remove from"
 		    End Select
 		    
-		    Self.List.CellValueAt(I, 0) = Prefix + " " + SpawnPoints(I).Label
+		    Self.List.CellValueAt(I, 0) = Prefix + " " + Labels.Lookup(SpawnPoints(I).Path, SpawnPoints(I).Label).StringValue
 		    Self.List.RowTagAt(I) = SpawnPoints(I)
 		    Self.List.Selected(I) = Selected.HasKey(SpawnPoints(I).ObjectID)
 		  Next

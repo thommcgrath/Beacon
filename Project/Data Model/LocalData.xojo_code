@@ -2341,6 +2341,38 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SpawnPointLabels(Availability As UInt64) As Dictionary
+		  If Self.mSpawnLabelCacheMask <> Availability Then
+		    Var Points() As Beacon.SpawnPoint = Self.SearchForSpawnPoints("", New Beacon.StringList)
+		    Var Labels() As String
+		    Var Dict As New Dictionary
+		    Labels.ResizeTo(Points.LastRowIndex)
+		    
+		    For I As Integer = 0 To Points.LastRowIndex
+		      If Points(I).ValidForMask(Availability) = False Then
+		        Continue
+		      End If
+		      
+		      Var Label As String = Points(I).Label
+		      Var Idx As Integer = Labels.IndexOf(Label)
+		      Labels(I) = Label
+		      If Idx > -1 Then
+		        Dict.Value(Points(Idx).Path) = Points(Idx).Label + " (" + Points(Idx).ModName + ")"
+		        Label = Label + " (" + Points(I).ModName + ")"
+		      End If
+		      
+		      Dict.Value(Points(I).Path) = Label
+		    Next
+		    
+		    Self.mSpawnLabelCacheDict = Dict
+		    Self.mSpawnLabelCacheMask = Availability
+		  End If
+		  
+		  Return Self.mSpawnLabelCacheDict
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub SQLExecute(SQLString As String, ParamArray Values() As Variant)
 		  Self.mLock.Enter
@@ -2545,6 +2577,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mPresets() As Beacon.Preset
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSpawnLabelCacheDict As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSpawnLabelCacheMask As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

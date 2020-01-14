@@ -526,6 +526,8 @@ End
 		    End Select
 		  End If
 		  
+		  Var Labels As Dictionary = LocalData.SharedInstance.SpawnPointLabels(Self.mAvailability)
+		  
 		  Self.List.RemoveAllRows()
 		  Var MapLabels As New Dictionary
 		  For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
@@ -542,7 +544,7 @@ End
 		      MapLabels.Value(ComboMask) = Beacon.Maps.ForMask(ComboMask).Label
 		    End If
 		    
-		    Self.List.AddRow(SpawnPoint.Label + EndOfLine + "Exists on " + MapLabels.Value(ComboMask))
+		    Self.List.AddRow(Labels.Lookup(SpawnPoint.Path, SpawnPoint.Label).StringValue + EndOfLine + "Exists on " + MapLabels.Value(ComboMask))
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = SpawnPoint
 		  Next
 		  Self.List.SortingColumn = 0
