@@ -696,11 +696,6 @@ End
 #tag EndEvents
 #tag Events Editor
 	#tag Event
-		Sub ContentsChanged()
-		  Self.Changed = Self.Changed Or Self.Config(False).Modified
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Function GetDocument() As Beacon.Document
 		  Return Self.Document
 		End Function
@@ -723,6 +718,8 @@ End
 		    Var NewPoint As Beacon.SpawnPoint = PathMap.Value(Point.Path)
 		    Self.List.RowTagAt(I) = NewPoint
 		  Next
+		  
+		  Self.Changed = Self.Config(False).Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents

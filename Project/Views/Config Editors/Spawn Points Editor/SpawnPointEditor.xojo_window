@@ -378,6 +378,12 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub ContentsChanged()
+		  RaiseEvent Changed
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub EmbeddingFinished()
 		  Self.SetsListWidth = Preferences.SpawnPointEditorSetsSplitterPosition
 		  Self.LimitsListHeight = Preferences.SpawnPointEditorLimitsSplitterPosition
