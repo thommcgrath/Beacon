@@ -50,6 +50,7 @@ ChangesAssociations=yes
 #endif
 SignTool=TheZAZ /d $qBeacon$q /du $qhttps://beaconapp.cc$q $f
 WizardStyle=modern
+SetupIconFile=../../Artwork/App.ico
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
