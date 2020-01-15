@@ -2058,7 +2058,7 @@ End
 #tag Events OffsetFields
 	#tag Event
 		Sub GetRange(index as Integer, ByRef MinValue As Double, ByRef MaxValue As Double)
-		  MinValue = 0.00001
+		  MinValue = -1000000
 		  MaxValue = 1000000
 		End Sub
 	#tag EndEvent
