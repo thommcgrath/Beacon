@@ -143,7 +143,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
@@ -159,7 +159,7 @@ Begin BeaconDialog SpawnPointCreatureDialog
       Underline       =   False
       Value           =   "Not Selected"
       Visible         =   True
-      Width           =   342
+      Width           =   258
    End
    Begin RangeField OffsetFields
       AllowAutoDeactivate=   True
