@@ -796,6 +796,25 @@ End
 		    Self.SetsList.SelectedRowIndex = Self.SetsList.LastRowIndex
 		    Self.SetsList.Sort
 		    Self.SetsList.EnsureSelectionIsVisible
+		  Case "WizardButton"
+		    Var Organizer As New SpawnSetOrganizer
+		    For Each Point As Beacon.MutableSpawnPoint In Self.mSpawnPoints
+		      Organizer.Attach(Point)
+		    Next
+		    
+		    If SpawnSetWizard.Present(Self, Organizer, Self.Document.Mods) = False Then
+		      Return
+		    End If
+		    
+		    Self.SetsList.AddRow(Organizer.Label(Self.mSpawnPoints.LastRowIndex > 0))
+		    Self.SetsList.RowTagAt(Self.SetsList.LastRowIndex) = Organizer
+		    Self.SetsList.SelectedRowIndex = Self.SetsList.LastRowIndex
+		    Self.SetsList.Sort
+		    Self.SetsList.EnsureSelectionIsVisible
+		    
+		    Self.UpdateLimitsList
+		    
+		    RaiseEvent Changed
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -804,6 +823,10 @@ End
 		  Var AddButton As New BeaconToolbarItem("AddButton", IconToolbarAdd)
 		  AddButton.HelpTag = "Create a new spawn set."
 		  Me.LeftItems.Append(AddButton)
+		  
+		  Var WizardButton As New BeaconToolbarItem("WizardButton", IconToolbarWizard)
+		  WizardButton.HelpTag = "Quickly add a creature to this spawn point using a wizard."
+		  Me.LeftItems.Append(WizardButton)
 		End Sub
 	#tag EndEvent
 	#tag Event

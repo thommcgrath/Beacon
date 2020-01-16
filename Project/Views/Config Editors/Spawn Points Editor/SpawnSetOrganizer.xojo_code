@@ -26,6 +26,30 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function FindUniqueSetLabel(Label As String) As String
+		  Var Counter As Integer = 1
+		  Var TestLabel As String = Label
+		  
+		  Do
+		    Var Bound As Integer = Self.mSets.KeyCount - 1
+		    For I As Integer = 0 To Bound
+		      Var Point As Beacon.MutableSpawnPoint = Self.mSets.Key(I)
+		      For Each Set As Beacon.SpawnPointSet In Point
+		        If Set.Label = TestLabel Then
+		          Counter = Counter + 1
+		          TestLabel = Label + " " + Counter.ToString
+		          Continue Do
+		        End If
+		      Next
+		    Next
+		    
+		    Return TestLabel
+		  Loop
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Label() As String
 		  // Part of the Beacon.NamedItem interface.
 		  
@@ -128,6 +152,18 @@ Implements Beacon.NamedItem
 		    Return Self.mSets.Value(Point)
 		  End If
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SetLimit(Creature As Beacon.Creature, Limit As NullableDouble, OnlyIfNotSet As Boolean)
+		  Var Bound As Integer = Self.mSets.KeyCount - 1
+		  For I As Integer = 0 To Bound
+		    Var Point As Beacon.MutableSpawnPoint = Self.mSets.Key(I)
+		    If OnlyIfNotSet = False Or Point.Limit(Creature) = 1 Then
+		      Point.Limit(Creature) = Limit
+		    End If
+		  Next
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
