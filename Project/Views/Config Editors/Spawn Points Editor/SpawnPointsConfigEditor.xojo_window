@@ -428,7 +428,7 @@ End
 		  Var SpawnPoints() As Beacon.SpawnPoint = Config.All
 		  Var Selected As New Dictionary
 		  For Each SpawnPoint As Beacon.SpawnPoint In SelectedPoints
-		    Selected.Value(SpawnPoint.ObjectID) = True
+		    Selected.Value(SpawnPoint.UniqueKey) = True
 		  Next
 		  
 		  Var Labels As Dictionary = LocalData.SharedInstance.SpawnPointLabels(Self.Document.MapCompatibility)
@@ -448,7 +448,7 @@ End
 		    
 		    Self.List.CellValueAt(I, 0) = Prefix + " " + Labels.Lookup(SpawnPoints(I).Path, SpawnPoints(I).Label).StringValue
 		    Self.List.RowTagAt(I) = SpawnPoints(I)
-		    Self.List.Selected(I) = Selected.HasKey(SpawnPoints(I).ObjectID)
+		    Self.List.Selected(I) = Selected.HasKey(SpawnPoints(I).UniqueKey)
 		  Next
 		  Self.List.SortingColumn = 0
 		  Self.List.Sort
@@ -707,15 +707,15 @@ End
 		  Var PathMap As New Dictionary
 		  For Each Point As Beacon.SpawnPoint In Points
 		    Config.Add(Point)
-		    PathMap.Value(Point.Path) = Point
+		    PathMap.Value(Point.UniqueKey) = Point
 		  Next
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    Var Point As Beacon.SpawnPoint = Self.List.RowTagAt(I)
-		    If Not PathMap.HasKey(Point.Path) Then
+		    If Not PathMap.HasKey(Point.UniqueKey) Then
 		      Continue
 		    End If
 		    
-		    Var NewPoint As Beacon.SpawnPoint = PathMap.Value(Point.Path)
+		    Var NewPoint As Beacon.SpawnPoint = PathMap.Value(Point.UniqueKey)
 		    Self.List.RowTagAt(I) = NewPoint
 		  Next
 		  

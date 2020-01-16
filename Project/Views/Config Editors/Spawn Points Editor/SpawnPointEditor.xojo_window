@@ -792,8 +792,8 @@ End
 		    Next
 		    
 		    Self.SetsList.AddRow(Organizer.Label(Self.mSpawnPoints.LastRowIndex > 0))
-		    Self.SetsList.RowTagAt(Self.SetsList.LastRowIndex) = Organizer
-		    Self.SetsList.SelectedRowIndex = Self.SetsList.LastRowIndex
+		    Self.SetsList.RowTagAt(Self.SetsList.LastAddedRowIndex) = Organizer
+		    Self.SetsList.SelectedRowIndex = Self.SetsList.LastAddedRowIndex
 		    Self.SetsList.Sort
 		    Self.SetsList.EnsureSelectionIsVisible
 		  End Select

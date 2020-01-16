@@ -422,7 +422,7 @@ End
 		    For Each Replacement As Beacon.Creature In Replacements
 		      Var Weight As Double = Self.mSpawnSet.CreatureReplacementWeight(Self.mTargetCreature, Replacement)
 		      Self.ReplacementsList.AddRow(Weight.PrettyText, Replacement.Label)
-		      Self.ReplacementsList.RowTagAt(Self.ReplacementsList.LastRowIndex) = Replacement
+		      Self.ReplacementsList.RowTagAt(Self.ReplacementsList.LastAddedRowIndex) = Replacement
 		    Next
 		  End If
 		  
@@ -530,7 +530,7 @@ End
 		  Self.ReplacementsList.SelectionChangeBlocked = True
 		  For Each Creature As Beacon.Creature In Creatures
 		    Self.ReplacementsList.AddRow("50", Creature.Label)
-		    Self.ReplacementsList.RowTagAt(Self.ReplacementsList.LastRowIndex) = Creature
+		    Self.ReplacementsList.RowTagAt(Self.ReplacementsList.LastAddedRowIndex) = Creature
 		  Next
 		  Self.ReplacementsList.Sort
 		  Self.ReplacementsList.SelectionChangeBlocked = False
