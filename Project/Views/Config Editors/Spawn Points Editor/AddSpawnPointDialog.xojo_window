@@ -529,7 +529,6 @@ End
 		  Var Labels As Dictionary = LocalData.SharedInstance.SpawnPointLabels(Self.mAvailability)
 		  
 		  Self.List.RemoveAllRows()
-		  Var MapLabels As New Dictionary
 		  For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
 		    If Not SpawnPoint.ValidForMask(Self.mAvailability) Then
 		      Continue
