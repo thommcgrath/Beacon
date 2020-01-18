@@ -1562,6 +1562,43 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function LootSourceLabels(Availability As UInt64) As Dictionary
+		  If Self.mDropsLabelCacheMask <> Availability Then
+		    Var Drops() As Beacon.LootSource = Self.SearchForLootSources("", New Beacon.StringList, True)
+		    Var Labels() As String
+		    Var Dict As New Dictionary
+		    Labels.ResizeTo(Drops.LastRowIndex)
+		    
+		    For I As Integer = 0 To Drops.LastRowIndex
+		      If Drops(I).ValidForMask(Availability) = False Then
+		        Continue
+		      End If
+		      
+		      Var Label As String = Drops(I).Label
+		      Var Idx As Integer = Labels.IndexOf(Label)
+		      Labels(I) = Label
+		      If Idx > -1 Then
+		        Var Filtered As UInt64 = Drops(Idx).Availability And Availability
+		        Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Filtered)
+		        Dict.Value(Drops(Idx).ClassString) = Drops(Idx).Label + " (" + Maps.Label + ")"
+		        
+		        Filtered = Drops(I).Availability And Availability
+		        Maps = Beacon.Maps.ForMask(Filtered)
+		        Label = Label + " (" + Maps.Label + ")"
+		      End If
+		      
+		      Dict.Value(Drops(I).ClassString) = Label
+		    Next
+		    
+		    Self.mDropsLabelCacheDict = Dict
+		    Self.mDropsLabelCacheMask = Availability
+		  End If
+		  
+		  Return Self.mDropsLabelCacheDict
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function MigrateData(Source As FolderItem, FromSchemaVersion As Integer) As Boolean
 		  If Not Self.mBase.AttachDatabase(Source, "legacy") Then
@@ -2550,6 +2587,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mCreatureCache As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDropsLabelCacheDict As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDropsLabelCacheMask As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

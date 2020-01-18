@@ -462,8 +462,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub Operator_Redim(Bound As Integer)
-		  Redim Self.mSets(Bound)
-		  Self.mModified = True
+		  Self.ResizeTo(Bound)
 		End Sub
 	#tag EndMethod
 
@@ -507,6 +506,13 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Function RequiredItemSets() As Integer
 		  Return Self.mRequiredItemSets
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ResizeTo(NewBound As Integer)
+		  Redim Self.mSets(NewBound)
+		  Self.mModified = True
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

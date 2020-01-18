@@ -45,10 +45,9 @@ Begin BeaconDialog LootSourceWizard
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   550
       Begin UITweaks.ResizedPushButton SelectionActionButton
@@ -1141,7 +1140,6 @@ Begin BeaconDialog LootSourceWizard
          HasBackColor    =   False
          Height          =   118
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   130
          LockBottom      =   False
@@ -1167,7 +1165,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Dim HasExperimentalSources As Boolean = LocalData.SharedInstance.HasExperimentalLootSources(Self.mMods)
+		  Var HasExperimentalSources As Boolean = LocalData.SharedInstance.HasExperimentalLootSources(Self.mMods)
 		  If HasExperimentalSources Then
 		    Self.SelectionExperimentalCheck.Value = Preferences.ShowExperimentalLootSources
 		  Else
@@ -1176,14 +1174,14 @@ End
 		  End If
 		  Self.BuildSourceList()
 		  
-		  Dim Mask As UInt64 = Self.mMask
+		  Var Mask As UInt64 = Self.mMask
 		  If Self.mSource <> Nil Then
 		    If Self.mDuplicateSource Then
 		      Self.ShowSelect()
 		    Else
 		      If Self.mSource.IsOfficial Then
 		        Self.CustomizeCancelButton.Caption = "Cancel"
-		        Redim Self.mDestinations(0)
+		        Self.mDestinations.ResizeTo(0)
 		        Self.mDestinations(0) = New Beacon.MutableLootSource(Self.mSource)   
 		        Self.ShowCustomize()
 		      Else
@@ -1195,8 +1193,8 @@ End
 		  End If
 		  
 		  Self.DefineMapsSelector.Mask = Mask
-		  Dim DesiredWinHeight As Integer = Self.DefineMapsSelector.Top + Self.DefineMapsSelector.Height + 6 + Self.DefineActionButton.Height + 20
-		  Dim Diff As Integer = DesiredWinHeight - Self.Height
+		  Var DesiredWinHeight As Integer = Self.DefineMapsSelector.Top + Self.DefineMapsSelector.Height + 6 + Self.DefineActionButton.Height + 20
+		  Var Diff As Integer = DesiredWinHeight - Self.Height
 		  Self.Height = Self.Height + Diff
 		  
 		  Self.SwapButtons()
@@ -1206,8 +1204,11 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BuildSourceList()
-		  Dim CurrentSources() As Beacon.LootSource = Self.mConfig.DefinedSources
-		  Dim AllowedLootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.mMods, Preferences.ShowExperimentalLootSources)
+		  Var Data As LocalData = LocalData.SharedInstance
+		  Var Labels As Dictionary = Data.LootSourceLabels(Self.mMask)
+		  
+		  Var CurrentSources() As Beacon.LootSource = Self.mConfig.DefinedSources
+		  Var AllowedLootSources() As Beacon.LootSource = Data.SearchForLootSources("", Self.mMods, Preferences.ShowExperimentalLootSources)
 		  For X As Integer = AllowedLootSources.LastRowIndex DownTo 0
 		    If Not AllowedLootSources(X).ValidForMask(Self.mMask) Then
 		      AllowedLootSources.RemoveRowAt(X)
@@ -1224,26 +1225,26 @@ End
 		  Next
 		  Beacon.Sort(AllowedLootSources)
 		  
-		  Dim Selections() As String
+		  Var Selections() As String
 		  For I As Integer = 0 To Self.SourceList.RowCount - 1
 		    If Not Self.SourceList.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Dim Source As Beacon.LootSource = Self.SourceList.RowTagAt(I)
+		    Var Source As Beacon.LootSource = Self.SourceList.RowTagAt(I)
 		    Selections.AddRow(Source.ClassString)
 		  Next
 		  
-		  Dim ScrollPosition As Integer = Self.SourceList.ScrollPosition
+		  Var ScrollPosition As Integer = Self.SourceList.ScrollPosition
 		  Self.SourceList.RemoveAllRows
 		  
-		  Dim MapLabels As New Dictionary
+		  Var MapLabels As New Dictionary
 		  For Each Source As Beacon.LootSource In AllowedLootSources
-		    Dim RowText As String = Source.Label
+		    Var RowText As String = Labels.Lookup(Source.ClassString, Source.Label)
 		    If Source.Notes <> "" Then
 		      RowText = RowText + EndOfLine + Source.Notes
 		    Else
-		      Dim ComboMask As UInt64 = Source.Availability And Self.mMask
+		      Var ComboMask As UInt64 = Source.Availability And Self.mMask
 		      If Not MapLabels.HasKey(ComboMask) Then
 		        MapLabels.Value(ComboMask) = Beacon.Maps.ForMask(ComboMask).Label
 		      End If
@@ -1264,14 +1265,14 @@ End
 		    Return
 		  End If
 		  
-		  Redim Self.mDestinations(-1)
+		  Self.mDestinations.ResizeTo(-1)
 		  
 		  For I As Integer = 0 To Self.SourceList.RowCount - 1
 		    If Not Self.SourceList.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Dim Source As Beacon.LootSource = SourceList.RowTagAt(I)
+		    Var Source As Beacon.LootSource = SourceList.RowTagAt(I)
 		    
 		    If Source.Experimental And Not Preferences.HasShownExperimentalWarning Then
 		      If Self.ShowConfirm(Language.ExperimentalWarningMessage, Language.ReplacePlaceholders(Language.ExperimentalWarningExplanation, Source.Label), Language.ExperimentalWarningActionCaption, Language.ExperimentalWarningCancelCaption) Then
@@ -1307,16 +1308,16 @@ End
 		  End If
 		  Parent = Parent.TrueWindow
 		  
-		  Dim Maps() As Beacon.Map = Beacon.Maps.ForMask(Mask)
+		  Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Mask)
 		  If Maps.LastRowIndex = -1 Then
 		    Parent.ShowAlert("Beacon does not know which loot sources to show because no maps have been selected.", "Use the menu currently labelled """ + Language.LabelForConfig(BeaconConfigs.LootDrops.ConfigName) + """ to select ""Maps"" and choose tha maps for this file.")
 		    Return False
 		  End If
 		  
-		  Dim Win As New LootSourceWizard(Config, Mask, Mods, Source, Source <> Nil And Duplicate = True)
+		  Var Win As New LootSourceWizard(Config, Mask, Mods, Source, Source <> Nil And Duplicate = True)
 		  Win.ShowModalWithin(Parent)
 		  
-		  Dim Cancelled As Boolean = Win.mCancelled
+		  Var Cancelled As Boolean = Win.mCancelled
 		  Win.Close
 		  
 		  Return Not Cancelled
@@ -1325,7 +1326,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowCustomize()
-		  Dim BasedOn As Beacon.LootSource
+		  Var BasedOn As Beacon.LootSource
 		  If Self.mSource <> Nil Then
 		    BasedOn = Self.mSource
 		  Else
@@ -1336,7 +1337,7 @@ End
 		  Self.CustomizeMaxSetsField.Value = Format(BasedOn.MaxItemSets, "-0")
 		  Self.CustomizePreventDuplicatesCheck.Value = BasedOn.SetsRandomWithoutReplacement
 		  
-		  Dim Presets() As Beacon.Preset = Beacon.Data.Presets()
+		  Var Presets() As Beacon.Preset = Beacon.Data.Presets()
 		  
 		  Self.CustomizePresetsList.RemoveAllRows()
 		  For Each Preset As Beacon.Preset In Presets
@@ -1347,9 +1348,9 @@ End
 		  Next
 		  Self.CustomizePresetsList.Sort
 		  
-		  Dim Scrolled, HasUsedPresets As Boolean
+		  Var Scrolled, HasUsedPresets As Boolean
 		  For I As Integer = 0 To Self.CustomizePresetsList.RowCount - 1
-		    Dim Preset As Beacon.Preset = Self.CustomizePresetsList.RowTagAt(I)
+		    Var Preset As Beacon.Preset = Self.CustomizePresetsList.RowTagAt(I)
 		    For Each Set As Beacon.ItemSet In BasedOn
 		      If Set.SourcePresetID = Preset.PresetID Then
 		        HasUsedPresets = True
@@ -1477,13 +1478,13 @@ End
 		    Return
 		  End If
 		  
-		  Dim PrecisionX As Double = 1 / G.ScaleX
-		  Dim PrecisionY As Double = 1 / G.ScaleY
+		  Var PrecisionX As Double = 1 / G.ScaleX
+		  Var PrecisionY As Double = 1 / G.ScaleY
 		  
-		  Dim Source As Beacon.LootSource = Me.RowTagAt(Row)
-		  Dim Icon As Picture = LocalData.SharedInstance.IconForLootSource(Source, BackgroundColor)
-		  Dim SpaceWidth As Integer = Me.ColumnAt(Column).WidthActual
-		  Dim SpaceHeight As Integer = Me.DefaultRowHeight
+		  Var Source As Beacon.LootSource = Me.RowTagAt(Row)
+		  Var Icon As Picture = LocalData.SharedInstance.IconForLootSource(Source, BackgroundColor)
+		  Var SpaceWidth As Integer = Me.ColumnAt(Column).WidthActual
+		  Var SpaceHeight As Integer = Me.DefaultRowHeight
 		  
 		  G.DrawPicture(Icon, NearestMultiple((SpaceWidth - Icon.Width) / 2, PrecisionX), NearestMultiple((SpaceHeight - Icon.Height) / 2, PrecisionY))
 		End Sub
@@ -1494,8 +1495,8 @@ End
 		    Return False
 		  End If
 		  
-		  Dim Source1 As Beacon.LootSource = Me.RowTagAt(Row1)
-		  Dim Source2 As Beacon.LootSource = Me.RowTagAt(Row2)
+		  Var Source1 As Beacon.LootSource = Me.RowTagAt(Row1)
+		  Var Source2 As Beacon.LootSource = Me.RowTagAt(Row2)
 		  
 		  If Source1.SortValue > Source2.SortValue Then
 		    Result = 1
@@ -1522,31 +1523,31 @@ End
 #tag Events DefineActionButton
 	#tag Event
 		Sub Action()
-		  Dim ClassString As String = Self.DefineClassField.Value.Trim
+		  Var ClassString As String = Self.DefineClassField.Value.Trim
 		  If Not ClassString.EndsWith("_C") Then
 		    Self.ShowAlert("Invalid class string", "Ark class strings always end in _C. Check your class string and try again.")
 		    Return
 		  End If
 		  
-		  Dim Destination As Beacon.MutableLootSource
-		  Dim Source As Beacon.LootSource = Beacon.Data.GetLootSource(ClassString)
+		  Var Destination As Beacon.MutableLootSource
+		  Var Source As Beacon.LootSource = Beacon.Data.GetLootSource(ClassString)
 		  If Source <> Nil Then
 		    Destination = New Beacon.MutableLootSource(Source)
 		  Else
-		    Dim Label As String = Self.DefineNameField.Value.Trim
+		    Var Label As String = Self.DefineNameField.Value.Trim
 		    If Label = "" Then
 		      Self.ShowAlert("No label provided", "A loot source without a name isn't very useful is it? Enter a name and try again.")
 		      Return
 		    End If
 		    
-		    Dim MinMultiplier As Double = CDbl(Self.DefineMinMultiplierField.Value)
-		    Dim MaxMultiplier As Double = CDbl(Self.DefineMaxMultiplierField.Value)
+		    Var MinMultiplier As Double = CDbl(Self.DefineMinMultiplierField.Value)
+		    Var MaxMultiplier As Double = CDbl(Self.DefineMaxMultiplierField.Value)
 		    If MinMultiplier <= 0 Or MaxMultiplier <= 0 Then
 		      Self.ShowAlert("Invalid multipliers", "The loot source multipliers must be greater than 0. If you do not know these values - which is common - set them to 1.0 to be safe.")
 		      Return
 		    End If
 		    
-		    Dim Mask As UInt64 = Self.DefineMapsSelector.Mask
+		    Var Mask As UInt64 = Self.DefineMapsSelector.Mask
 		    If Mask = 0 Then
 		      Self.ShowAlert("Please select a map", "Your loot source should be available to at least one map.")
 		      Return
@@ -1560,7 +1561,7 @@ End
 		    Destination.UseBlueprints = False
 		  End If
 		  
-		  Redim Self.mDestinations(0)
+		  Self.mDestinations.ResizeTo(0)
 		  Self.mDestinations(0) = Destination
 		  
 		  Self.ShowCustomize()
@@ -1583,31 +1584,31 @@ End
 #tag Events CustomizeActionButton
 	#tag Event
 		Sub Action()
-		  Dim MinItemSets As Integer = Floor(CDbl(Self.CustomizeMinSetsField.Value))
-		  Dim MaxItemSets As Integer = Floor(CDbl(Self.CustomizeMaxSetsField.Value))
-		  Dim PreventDuplicates As Boolean = Self.CustomizePreventDuplicatesCheck.Value
-		  Dim AppendMode As Boolean = If(Self.mSource <> Nil, Self.mSource.AppendMode, False)
-		  Dim ReconfigurePresets As Boolean = Self.CustomizeReconfigureCheckbox.Value
+		  Var MinItemSets As Integer = Floor(CDbl(Self.CustomizeMinSetsField.Value))
+		  Var MaxItemSets As Integer = Floor(CDbl(Self.CustomizeMaxSetsField.Value))
+		  Var PreventDuplicates As Boolean = Self.CustomizePreventDuplicatesCheck.Value
+		  Var AppendMode As Boolean = If(Self.mSource <> Nil, Self.mSource.AppendMode, False)
+		  Var ReconfigurePresets As Boolean = Self.CustomizeReconfigureCheckbox.Value
 		  
-		  Dim AllowedPresets(), AdditionalPresets() As String
+		  Var AllowedPresets(), AdditionalPresets() As String
 		  For I As Integer = 0 To Self.CustomizePresetsList.RowCount - 1
 		    If Not Self.CustomizePresetsList.CellCheckBoxValueAt(I, 0) Then
 		      Continue
 		    End If
 		    
-		    Dim Preset As Beacon.Preset = Self.CustomizePresetsList.RowTagAt(I)
+		    Var Preset As Beacon.Preset = Self.CustomizePresetsList.RowTagAt(I)
 		    AllowedPresets.AddRow(Preset.PresetID)
 		    AdditionalPresets.AddRow(Preset.PresetID)
 		  Next
 		  
-		  Dim SourceSets() As Beacon.ItemSet
+		  Var SourceSets() As Beacon.ItemSet
 		  If Self.mSource <> Nil Then
 		    For Each Set As Beacon.ItemSet In Self.mSource
 		      If Set.SourcePresetID = "" Or AllowedPresets.IndexOf(Set.SourcePresetID) > -1 Or LocalData.SharedInstance.GetPreset(Set.SourcePresetID) = Nil Then
 		        SourceSets.AddRow(Set)
 		      End If
 		      
-		      Dim Idx As Integer = AdditionalPresets.IndexOf(Set.SourcePresetID)
+		      Var Idx As Integer = AdditionalPresets.IndexOf(Set.SourcePresetID)
 		      If Idx > -1 Then
 		        AdditionalPresets.RemoveRowAt(Idx)
 		      End If
@@ -1616,7 +1617,7 @@ End
 		  
 		  For Each Destination As Beacon.MutableLootSource In Self.mDestinations
 		    // Clear the current contents
-		    Redim Destination(-1)
+		    Destination.ResizeTo(-1)
 		    
 		    // Add the clones
 		    For Each Set As Beacon.ItemSet In SourceSets
@@ -1625,12 +1626,12 @@ End
 		    
 		    // Add newly selected presets
 		    For Each PresetID As String In AdditionalPresets
-		      Dim Preset As Beacon.Preset = LocalData.SharedInstance.GetPreset(PresetID)
+		      Var Preset As Beacon.Preset = LocalData.SharedInstance.GetPreset(PresetID)
 		      If Preset = Nil Then
 		        Continue
 		      End If
 		      
-		      Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Destination, Self.mMask, Self.mMods)
+		      Var Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Destination, Self.mMask, Self.mMods)
 		      Destination.Append(Set)
 		    Next
 		    
@@ -1645,7 +1646,7 @@ End
 		    Destination.SetsRandomWithoutReplacement = PreventDuplicates
 		    Destination.AppendMode = AppendMode
 		    
-		    Dim Idx As Integer = Self.mConfig.IndexOf(Destination)
+		    Var Idx As Integer = Self.mConfig.IndexOf(Destination)
 		    If Idx = -1 Then
 		      Self.mConfig.Append(Destination)
 		    Else

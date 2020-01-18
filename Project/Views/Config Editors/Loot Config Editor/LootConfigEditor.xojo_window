@@ -418,17 +418,17 @@ End
 		    Return
 		  End If
 		  
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Issue.UserData)
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Issue.UserData)
 		  Select Case Info.FullName
 		  Case "Beacon.LootSource"
-		    Dim Source As Beacon.LootSource = Issue.UserData
+		    Var Source As Beacon.LootSource = Issue.UserData
 		    Call Self.GoToChild(Source)
 		  Case "Dictionary"
-		    Dim Dict As Dictionary = Issue.UserData
-		    Dim Source As Beacon.LootSource
-		    Dim Set As Beacon.ItemSet
-		    Dim Entry As Beacon.SetEntry
-		    Dim Option As Beacon.SetEntryOption
+		    Var Dict As Dictionary = Issue.UserData
+		    Var Source As Beacon.LootSource
+		    Var Set As Beacon.ItemSet
+		    Var Entry As Beacon.SetEntry
+		    Var Option As Beacon.SetEntryOption
 		    If Dict.HasKey("LootSource") Then
 		      Source = Dict.Value("LootSource")
 		      If Dict.HasKey("ItemSet") Then
@@ -486,7 +486,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub AddLootSource(LootSource As Beacon.LootSource)
-		  Dim Arr(0) As Beacon.LootSource
+		  Var Arr(0) As Beacon.LootSource
 		  Arr(0) = LootSource
 		  Self.AddLootSources(Arr)
 		End Sub
@@ -509,7 +509,7 @@ End
 		    End If
 		  Next
 		  
-		  Dim Config As BeaconConfigs.LootDrops = Self.Config(True)
+		  Var Config As BeaconConfigs.LootDrops = Self.Config(True)
 		  For Each Source As Beacon.LootSource In Sources
 		    If Config.HasLootSource(Source) Then
 		      Config.Remove(Source)
@@ -528,8 +528,8 @@ End
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.LootDrops
 		  Static ConfigName As String = BeaconConfigs.LootDrops.ConfigName
 		  
-		  Dim Document As Beacon.Document = Self.Document
-		  Dim Config As BeaconConfigs.LootDrops
+		  Var Document As Beacon.Document = Self.Document
+		  Var Config As BeaconConfigs.LootDrops
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.LootDrops(Self.mConfigRef.Value)
@@ -575,7 +575,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RebuildAllItemSets()
-		  Dim NumChanges As UInteger = Self.Config(True).ReconfigurePresets(Self.Document.MapCompatibility, Self.Document.Mods)
+		  Var NumChanges As UInteger = Self.Config(True).ReconfigurePresets(Self.Document.MapCompatibility, Self.Document.Mods)
 		  If NumChanges = 0 Then
 		    Self.ShowAlert("No item sets changed", "All item sets are already configured according to their presets.")
 		    Return
@@ -599,7 +599,7 @@ End
 		  End If
 		  
 		  If RequireConfirmation Then
-		    Dim Dialog As New MessageDialog
+		    Var Dialog As New MessageDialog
 		    Dialog.Title = ""
 		    If Self.List.SelectedRowCount = 1 Then
 		      Dialog.Message = "Are you sure you want to delete the selected loot source?"
@@ -610,7 +610,7 @@ End
 		    Dialog.ActionButton.Caption = "Delete"
 		    Dialog.CancelButton.Visible = True
 		    
-		    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		    Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
 		    If Choice = Dialog.CancelButton Then
 		      Return
 		    End If
@@ -634,9 +634,9 @@ End
 		    Return
 		  End If
 		  
-		  Dim AvailableSpace As Integer = Self.Width - Self.FadedSeparator1.Width
-		  Dim ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - LootSourceEditor.MinimumWidth)
-		  Dim EditorWidth As Integer = AvailableSpace - ListWidth
+		  Var AvailableSpace As Integer = Self.Width - Self.FadedSeparator1.Width
+		  Var ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - LootSourceEditor.MinimumWidth)
+		  Var EditorWidth As Integer = AvailableSpace - ListWidth
 		  
 		  Self.Header.Width = ListWidth
 		  Self.FadedSeparator1.Left = ListWidth
@@ -656,14 +656,14 @@ End
 		    Return
 		  End If
 		  
-		  Dim Config As BeaconConfigs.LootDrops = Self.Config(False)
-		  Dim CurrentSources() As Beacon.LootSource = Config.DefinedSources
-		  Dim Map As New Dictionary
+		  Var Config As BeaconConfigs.LootDrops = Self.Config(False)
+		  Var CurrentSources() As Beacon.LootSource = Config.DefinedSources
+		  Var Map As New Dictionary
 		  For Each Source As Beacon.LootSource In CurrentSources
 		    Map.Value(Source.ClassString) = True
 		  Next
 		  
-		  Dim DuplicateSource As Beacon.LootSource
+		  Var DuplicateSource As Beacon.LootSource
 		  If DuplicateSelected Then
 		    DuplicateSource = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		  End If
@@ -671,7 +671,7 @@ End
 		  If LootSourceWizard.Present(Self, Config, Self.Document.MapCompatibility, Self.Document.Mods, DuplicateSource, DuplicateSelected) Then
 		    Call Self.Config(True) // Actually saves the config to the document 
 		    CurrentSources = Config.DefinedSources
-		    Dim NewSources() As Beacon.LootSource
+		    Var NewSources() As Beacon.LootSource
 		    For Each Source As Beacon.LootSource In CurrentSources
 		      If Not Map.HasKey(Source.ClassString) Then
 		        NewSources.AddRow(Source)
@@ -685,16 +685,18 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateSourceList(SelectedSources() As Beacon.LootSource = Nil)
-		  Dim VisibleSources() As Beacon.LootSource = Self.Config(False).DefinedSources
+		  Var Labels As Dictionary = LocalData.SharedInstance.LootSourceLabels(Self.Document.MapCompatibility)
+		  
+		  Var VisibleSources() As Beacon.LootSource = Self.Config(False).DefinedSources
 		  Beacon.Sort(VisibleSources)
 		  
-		  Dim SelectedClasses() As String
+		  Var SelectedClasses() As String
 		  If SelectedSources <> Nil Then
 		    For Each Source As Beacon.LootSource In SelectedSources
 		      SelectedClasses.AddRow(Source.ClassString)
 		    Next
 		  Else
-		    Dim Bound As Integer = Self.List.RowCount - 1
+		    Var Bound As Integer = Self.List.RowCount - 1
 		    For I As Integer = 0 To Bound
 		      If Self.List.Selected(I) Then
 		        SelectedClasses.AddRow(Beacon.LootSource(Self.List.RowTagAt(I)).ClassString)
@@ -705,11 +707,11 @@ End
 		  Self.List.RowCount = VisibleSources.LastRowIndex + 1
 		  
 		  Self.mBlockSelectionChanged = True
-		  Dim Selection() As Beacon.LootSource
+		  Var Selection() As Beacon.LootSource
 		  For I As Integer = 0 To VisibleSources.LastRowIndex
 		    Self.List.RowTagAt(I) = VisibleSources(I)
 		    Self.List.CellValueAt(I, 0) = "" // Causes a redraw of the cell
-		    Self.List.CellValueAt(I, 1) = VisibleSources(I).Label
+		    Self.List.CellValueAt(I, 1) = Labels.Lookup(VisibleSources(I).ClassString, VisibleSources(I).Label)
 		    If SelectedClasses.IndexOf(VisibleSources(I).ClassString) > -1 Then
 		      Self.List.Selected(I) = True
 		      Selection.AddRow(VisibleSources(I))
@@ -733,10 +735,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  Dim TotalCount As UInteger = Self.List.RowCount
-		  Dim SelectedCount As UInteger = Self.List.SelectedRowCount
+		  Var TotalCount As UInteger = Self.List.RowCount
+		  Var SelectedCount As UInteger = Self.List.SelectedRowCount
 		  
-		  Dim Caption As String = Format(TotalCount, "0,") + " " + If(TotalCount = 1, "Loot Source", "Loot Sources")
+		  Var Caption As String = Format(TotalCount, "0,") + " " + If(TotalCount = 1, "Loot Source", "Loot Sources")
 		  If SelectedCount > 0 Then
 		    Caption = Format(SelectedCount, "0,") + " of " + Caption + " Selected"
 		  End If
@@ -769,14 +771,14 @@ End
 #tag Events Header
 	#tag Event
 		Sub Open()
-		  Dim AddButton As New BeaconToolbarItem("AddSource", IconToolbarAdd)
+		  Var AddButton As New BeaconToolbarItem("AddSource", IconToolbarAdd)
 		  AddButton.HasMenu = True
 		  AddButton.HelpTag = "Define an additional loot source. Hold to quickly add a source from a menu."
 		  
-		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
+		  Var DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
 		  DuplicateButton.HelpTag = "Duplicate the selected loot source."
 		  
-		  Dim RebuildButton As New BeaconToolbarItem("Rebuild", IconToolbarRebuild, Self.Config(False).LastRowIndex > -1)
+		  Var RebuildButton As New BeaconToolbarItem("Rebuild", IconToolbarRebuild, Self.Config(False).LastRowIndex > -1)
 		  RebuildButton.HelpTag = "Rebuild all item sets using their presets."
 		  
 		  Me.LeftItems.Append(AddButton)
@@ -806,13 +808,15 @@ End
 		Sub BuildMenu(Item As BeaconToolbarItem, Menu As MenuItem)
 		  Select Case Item.Name
 		  Case "AddSource"
-		    Dim LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.Document.Mods, Preferences.ShowExperimentalLootSources)
-		    Dim HasExperimentalSources As Boolean = LocalData.SharedInstance.HasExperimentalLootSources(Self.Document.Mods)
-		    Dim Config As BeaconConfigs.LootDrops = Self.Config(False)
-		    Dim Mask As UInt64 = Self.Document.MapCompatibility
+		    Var Data As LocalData = LocalData.SharedInstance
+		    Var Labels As Dictionary = Data.LootSourceLabels(Self.Document.MapCompatibility)
+		    Var LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.Document.Mods, Preferences.ShowExperimentalLootSources)
+		    Var HasExperimentalSources As Boolean = LocalData.SharedInstance.HasExperimentalLootSources(Self.Document.Mods)
+		    Var Config As BeaconConfigs.LootDrops = Self.Config(False)
+		    Var Mask As UInt64 = Self.Document.MapCompatibility
 		    If Config <> Nil Then
 		      For I As Integer = LootSources.LastRowIndex DownTo 0
-		        Dim Source As Beacon.LootSource = LootSources(I)
+		        Var Source As Beacon.LootSource = LootSources(I)
 		        If Config.HasLootSource(Source) Or Source.ValidForMask(Mask) = False Then
 		          LootSources.RemoveRowAt(I)
 		          Continue For I
@@ -821,7 +825,7 @@ End
 		    End If
 		    
 		    If LootSources.LastRowIndex = -1 Then
-		      Dim Warning As MenuItem
+		      Var Warning As MenuItem
 		      If Mask = 0 Then
 		        Warning = New MenuItem("List is empty because no maps have been selected.")
 		      Else
@@ -835,13 +839,13 @@ End
 		    Beacon.Sort(LootSources)
 		    
 		    For Each LootSource As Beacon.LootSource In LootSources
-		      Menu.AddMenu(New MenuItem(LootSource.Label, LootSource))
+		      Menu.AddMenu(New MenuItem(Labels.Lookup(LootSource.ClassString, LootSource.Label), LootSource))
 		    Next
 		    
 		    If HasExperimentalSources Then
 		      Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
 		      
-		      Dim ExpItem As New MenuItem("Show Experimental Sources", "toggle_experimental")
+		      Var ExpItem As New MenuItem("Show Experimental Sources", "toggle_experimental")
 		      ExpItem.HasCheckMark = Preferences.ShowExperimentalLootSources
 		      Menu.AddMenu(ExpItem)
 		    End If
@@ -856,7 +860,7 @@ End
 		      Return
 		    End If
 		    
-		    Dim Tag As Variant = ChosenItem.Tag
+		    Var Tag As Variant = ChosenItem.Tag
 		    If Tag = Nil Then
 		      Return
 		    End If
@@ -868,7 +872,7 @@ End
 		        Self.UpdateSourceList()
 		      End Select
 		    ElseIf Tag.Type = Variant.TypeObject And Tag.ObjectValue IsA Beacon.LootSource Then
-		      Dim Source As Beacon.LootSource = ChosenItem.Tag
+		      Var Source As Beacon.LootSource = ChosenItem.Tag
 		      Self.AddLootSource(Source)
 		      Self.Focus = Self.List
 		    End If
@@ -887,14 +891,14 @@ End
 		    Return
 		  End If
 		  
-		  Dim PrecisionX As Double = 1 / G.ScaleX
-		  Dim PrecisionY As Double = 1 / G.ScaleY
+		  Var PrecisionX As Double = 1 / G.ScaleX
+		  Var PrecisionY As Double = 1 / G.ScaleY
 		  
 		  If Column = 0 Then
-		    Dim Source As Beacon.LootSource = Me.RowTagAt(Row)
-		    Dim Icon As Picture = LocalData.SharedInstance.IconForLootSource(Source, BackgroundColor)
-		    Dim SpaceWidth As Integer = Me.ColumnAt(Column).WidthActual
-		    Dim SpaceHeight As Integer = Me.DefaultRowHeight
+		    Var Source As Beacon.LootSource = Me.RowTagAt(Row)
+		    Var Icon As Picture = LocalData.SharedInstance.IconForLootSource(Source, BackgroundColor)
+		    Var SpaceWidth As Integer = Me.ColumnAt(Column).WidthActual
+		    Var SpaceHeight As Integer = Me.DefaultRowHeight
 		    
 		    G.DrawPicture(Icon, NearestMultiple((SpaceWidth - Icon.Width) / 2, PrecisionX), NearestMultiple((SpaceHeight - Icon.Height) / 2, PrecisionY))
 		  End If
@@ -926,11 +930,11 @@ End
 		    Return
 		  End If
 		  
-		  Dim Lines() As String
-		  Dim Dicts() As Dictionary
+		  Var Lines() As String
+		  Var Dicts() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Dim Source As Beacon.LootSource = Me.RowTagAt(I)
+		      Var Source As Beacon.LootSource = Me.RowTagAt(I)
 		      Dicts.AddRow(Source.Export)
 		      If Source.IsValid(Self.Document) Then
 		        Lines.AddRow("ConfigOverrideSupplyCrateItems=" + Source.StringValue(Self.Document.Difficulty))
@@ -938,7 +942,7 @@ End
 		    End If
 		  Next
 		  
-		  Dim RawData As String
+		  Var RawData As String
 		  If Dicts.LastRowIndex = 0 Then
 		    RawData = Beacon.GenerateJSON(Dicts(0), False)
 		  Else
@@ -952,8 +956,8 @@ End
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
 		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		    Dim Parsed As Variant
+		    Var Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
+		    Var Parsed As Variant
 		    Try
 		      Parsed = Beacon.ParseJSON(Contents)
 		    Catch Err As RuntimeException
@@ -961,12 +965,12 @@ End
 		      Return
 		    End Try
 		    
-		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
-		    Dim Dicts() As Dictionary
+		    Var Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
+		    Var Dicts() As Dictionary
 		    If Info.FullName = "Dictionary" Then
 		      Dicts.AddRow(Parsed)
 		    ElseIf Info.FullName = "Object()" Then
-		      Dim Values() As Variant = Parsed
+		      Var Values() As Variant = Parsed
 		      For Each Dict As Dictionary In Values
 		        Dicts.AddRow(Dict)
 		      Next
@@ -975,7 +979,7 @@ End
 		      Return
 		    End If
 		    
-		    Dim Sources() As Beacon.LootSource
+		    Var Sources() As Beacon.LootSource
 		    For Each Dict As Dictionary In Dicts
 		      Sources.AddRow(Beacon.LootSource.ImportFromBeacon(Dict))
 		    Next
@@ -993,7 +997,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Sources() As Beacon.LootSource
+		  Var Sources() As Beacon.LootSource
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
 		      Sources.AddRow(Me.RowTagAt(I))
@@ -1012,7 +1016,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function RowIsInvalid(Row As Integer) As Boolean
-		  Dim Source As Beacon.LootSource = Me.RowTagAt(Row)
+		  Var Source As Beacon.LootSource = Me.RowTagAt(Row)
 		  Return Not Source.IsValid(Self.Document)
 		End Function
 	#tag EndEvent
@@ -1023,7 +1027,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Config As BeaconConfigs.LootDrops = Self.Config(False)
+		    Var Config As BeaconConfigs.LootDrops = Self.Config(False)
 		    If LootSourceWizard.Present(Self, Config, Self.Document.MapCompatibility, Self.Document.Mods, Me.RowTagAt(I)) Then
 		      Call Self.Config(True) // Actually saves the config to the document
 		      Self.UpdateSourceList()
@@ -1043,7 +1047,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PresentLootSourceEditor(Source As Beacon.LootSource)
-		  Dim Config As BeaconConfigs.LootDrops = Self.Config(False)
+		  Var Config As BeaconConfigs.LootDrops = Self.Config(False)
 		  If LootSourceWizard.Present(Self, Config, Self.Document.MapCompatibility, Self.Document.Mods, Source) Then
 		    Call Self.Config(True) // Actually saves the config to the document
 		    Self.UpdateSourceList()
