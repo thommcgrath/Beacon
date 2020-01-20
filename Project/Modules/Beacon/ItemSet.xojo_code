@@ -121,12 +121,14 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  
 		  Dim Qualities() As Beacon.Quality = Beacon.Qualities.All
 		  
-		  For Each Entry As Beacon.PresetEntry In Preset
-		    If Not Entry.ValidForMask(Mask) Or Not Entry.SafeForMods(Mods) Then
+		  For Each PresetEntry As Beacon.PresetEntry In Preset
+		    If PresetEntry.ValidForMask(Mask) = False Or PresetEntry.SafeForMods(Mods) = False Then
 		      Continue
 		    End If
 		    
-		    If Entry.RespectQualityModifier Then
+		    Var Entry As New Beacon.SetEntry(PresetEntry)
+		    
+		    If PresetEntry.RespectQualityModifier Then
 		      Dim MinQualityIndex, MaxQualityIndex As Integer
 		      For I As Integer = 0 To Qualities.LastRowIndex
 		        If Qualities(I) = Entry.MinQuality Then
@@ -149,7 +151,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      Entry.MaxQuality = Qualities(MaxQualityIndex)
 		    End If
 		    
-		    If Entry.RespectQuantityMultiplier Then
+		    If PresetEntry.RespectQuantityMultiplier Then
 		      Dim MinQuantityRaw As Double = Entry.MinQuantity
 		      Dim MaxQuantityRaw As Double = Entry.MaxQuantity
 		      For Each Multiplier As Double In QuantityMultipliers
@@ -160,7 +162,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      Entry.MaxQuantity = Round(MaxQuantityRaw)
 		    End If
 		    
-		    If Entry.CanBeBlueprint And Entry.RespectBlueprintMultiplier Then
+		    If PresetEntry.CanBeBlueprint And PresetEntry.RespectBlueprintMultiplier Then
 		      Dim BlueprintChanceRaw As Double = Entry.ChanceToBeBlueprint
 		      For Each Multiplier As Double In BlueprintMultipliers
 		        BlueprintChanceRaw = BlueprintChanceRaw * Multiplier
@@ -168,7 +170,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      Entry.ChanceToBeBlueprint = Max(Min(BlueprintChanceRaw, 1.0), 0.0)
 		    End If
 		    
-		    Set.Append(New Beacon.SetEntry(Entry))
+		    Set.Append(Entry)
 		  Next
 		  
 		  Set.MinNumItems = Preset.MinItems
