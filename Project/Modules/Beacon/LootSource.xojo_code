@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LootSource
-Implements Beacon.Countable,Beacon.DocumentItem, Beacon.NamedItem
+Implements Beacon.Countable,Beacon.DocumentItem,Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function AddSet(Set As Beacon.ItemSet, Replace As Boolean) As Beacon.ItemSet
 		  // If the set is already in this loot source, create a new one
@@ -24,12 +24,6 @@ Implements Beacon.Countable,Beacon.DocumentItem, Beacon.NamedItem
 		  Self.Modified = True
 		  Return Set
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "AddSet" )  Sub Append(Item As Beacon.ItemSet)
-		  Call Self.AddSet(Item, False)
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -308,7 +302,7 @@ Implements Beacon.Countable,Beacon.DocumentItem, Beacon.NamedItem
 		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromConfig(Child, LootSource.Multipliers, Difficulty)
 		    Dim Hash As String = Set.Hash
 		    If Set <> Nil And AddedHashes.HasKey(Hash) = False Then
-		      LootSource.Append(Set)
+		      Call LootSource.AddSet(Set, False)
 		      AddedHashes.Value(Hash) = True
 		    End If
 		  Next

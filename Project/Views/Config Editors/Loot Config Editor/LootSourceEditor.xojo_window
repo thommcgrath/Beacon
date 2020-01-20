@@ -485,7 +485,7 @@ End
 		Private Sub AddSets(Sets() As Beacon.ItemSet)
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    For Each NewSet As Beacon.ItemSet In Sets
-		      Source.Append(New Beacon.ItemSet(NewSet))
+		      Call Source.AddSet(New Beacon.ItemSet(NewSet), False)
 		    Next
 		  Next
 		  
@@ -662,8 +662,7 @@ End
 		      Set = New Beacon.ItemSet()
 		    End If
 		    
-		    Source.Append(Set)
-		    NewItemSets.AddRow(Set)
+		    NewItemSets.AddRow(Source.AddSet(Set, False))
 		  Next
 		  
 		  Self.UpdateUI(NewItemSets)

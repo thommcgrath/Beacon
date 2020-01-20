@@ -1621,7 +1621,7 @@ End
 		    
 		    // Add the clones
 		    For Each Set As Beacon.ItemSet In SourceSets
-		      Destination.Append(New Beacon.ItemSet(Set))
+		      Call Destination.AddSet(New Beacon.ItemSet(Set), False)
 		    Next
 		    
 		    // Add newly selected presets
@@ -1631,8 +1631,7 @@ End
 		        Continue
 		      End If
 		      
-		      Var Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Destination, Self.mMask, Self.mMods)
-		      Destination.Append(Set)
+		      Call Destination.AddSet(Beacon.ItemSet.FromPreset(Preset, Destination, Self.mMask, Self.mMods), False)
 		    Next
 		    
 		    // Rebuild if necessary
