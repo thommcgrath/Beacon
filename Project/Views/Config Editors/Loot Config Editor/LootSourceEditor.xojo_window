@@ -431,7 +431,7 @@ End
 	#tag Event
 		Sub EnableMenuItems()
 		  Self.BuildPresetMenu(DocumentAddItemSet)
-		  If Self.SetList.SelectedRowCount > 0 Then
+		  If Self.SetList.CanDelete Then
 		    DocumentRemoveItemSet.Enable
 		  End If
 		End Sub
@@ -458,7 +458,7 @@ End
 
 	#tag MenuHandler
 		Function DocumentRemoveItemSet() As Boolean Handles DocumentRemoveItemSet.Action
-			Self.RemoveSelectedItemSets(True)
+			Self.SetList.DoClear
 			Return True
 			
 		End Function
@@ -466,25 +466,34 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub AddSet(Set As Beacon.ItemSet)
-		  Dim Added As Boolean
-		  
+		Private Function ActiveMask() As UInt64
+		  Var CombinedMask As UInt64
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    If Source.IndexOf(Set) = -1 Then
-		      Source.Append(New Beacon.ItemSet(Set))
-		      Added = True
-		    End If
+		    CombinedMask = CombinedMask Or Source.Availability
+		  Next
+		  Return CombinedMask And Self.Document.MapCompatibility
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub AddSet(ParamArray Sets() As Beacon.ItemSet)
+		  Self.AddSets(Sets)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub AddSets(Sets() As Beacon.ItemSet)
+		  For Each Source As Beacon.LootSource In Self.mSources
+		    For Each NewSet As Beacon.ItemSet In Sets
+		      Source.Append(New Beacon.ItemSet(NewSet))
+		    Next
 		  Next
 		  
-		  If Added Then
-		    SetList.AddRow(Set.Label)
-		    SetList.RowTagAt(SetList.LastAddedRowIndex) = Set
-		    SetList.SelectedRowIndex = SetList.LastAddedRowIndex
-		    Self.mSorting = True
-		    SetList.Sort
-		    Self.mSorting = False
-		    RaiseEvent Updated
-		  End If
+		  Self.UpdateUI(Sets)
+		  RaiseEvent Updated
+		  
+		  Self.Editor.ShowSettings(True)
+		  Self.Editor.SetFocus()
 		End Sub
 	#tag EndMethod
 
@@ -640,38 +649,29 @@ End
 		Private Function HandlePresetMenu(Sender As MenuItem) As Boolean
 		  Dim SelectedPreset As Beacon.Preset = Sender.Tag
 		  
-		  If SelectedPreset = Nil Then
-		    Self.ShowNewSet()
-		    Return True
-		  End If
+		  Var Mask As UInt64 = Self.Document.MapCompatibility
+		  Var Mods As Beacon.StringList = Self.Document.Mods
+		  Var NewItemSets() As Beacon.ItemSet
 		  
-		  Dim Added As Boolean
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(SelectedPreset, Source, Self.Document.MapCompatibility, Self.Document.Mods)
-		    If Source.IndexOf(Set) = -1 Then
-		      Source.Append(Set)
-		      Added = True
+		    Var Set As Beacon.ItemSet
+		    If SelectedPreset <> Nil Then
+		      Set = Beacon.ItemSet.FromPreset(SelectedPreset, Source, Mask, Mods)
 		    End If
+		    If Set = Nil Then
+		      Set = New Beacon.ItemSet()
+		    End If
+		    
+		    Source.Append(Set)
+		    NewItemSets.AddRow(Set)
 		  Next
 		  
-		  If Added Then
-		    Self.RebuildSetList()
-		    Dim Found As Boolean
-		    For I As Integer = 0 To SetList.RowCount - 1
-		      Dim Set As Beacon.ItemSet = SetList.RowTagAt(I)
-		      If Set.SourcePresetID = SelectedPreset.PresetID Then
-		        Found = True
-		        SetList.SelectedRowIndex = I
-		        Exit
-		      End If
-		    Next
-		    If Not Found Then
-		      Self.ShowAlert("Preset added but not shown", "Because you have multiple loot sources selected, the preset was added to each source, but was configured differently for each. It is not common to all your selected sources, so it isn't currently listed.")
-		    Else
-		      Self.SetList.SetFocus
-		    End If
-		    RaiseEvent Updated
-		  End If
+		  Self.UpdateUI(NewItemSets)
+		  RaiseEvent Updated
+		  
+		  Self.Editor.ShowSettings(True)
+		  Self.Editor.SetFocus()
+		  
 		  Return True
 		End Function
 	#tag EndMethod
@@ -692,122 +692,6 @@ End
 		Private Function MinSimulatorPosition() As Integer
 		  Return Self.SettingsContainer.Top + Self.SettingsContainer.Height + Self.HintsContainer.Height + 200
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub RebuildSetList()
-		  If Self.SetList = Nil Then
-		    Return
-		  End If
-		  
-		  Dim SelectedSetNames() As String
-		  For I As Integer = 0 To Self.SetList.RowCount - 1
-		    If Self.SetList.Selected(I) Then
-		      SelectedSetNames.AddRow(Self.SetList.CellValueAt(I, 0))
-		    End If
-		  Next
-		  
-		  Self.RebuildSetList(SelectedSetNames)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub RebuildSetList(SelectedSetNames() As String)
-		  Self.mUpdating = True
-		  
-		  // Find sets that are common to all sources
-		  Dim Sets As New Dictionary
-		  Dim Weights As New Dictionary
-		  Dim MatchWeight As Integer = Self.mSources.LastRowIndex + 1
-		  
-		  For Each Source As Beacon.LootSource In Self.mSources
-		    For Each Set As Beacon.ItemSet In Source
-		      Dim Hash As String = Set.Hash
-		      Sets.Value(Hash) = Set
-		      Weights.Value(Hash) = Weights.Lookup(Hash, 0).IntegerValue + 1
-		    Next
-		  Next
-		  
-		  // Now each common set will have a value of MatchWeight in Weights
-		  Dim Hashes() As Variant = Weights.Keys
-		  Dim CommonSets() As Beacon.ItemSet
-		  For Each Hash As String In Hashes
-		    If Weights.Value(Hash).IntegerValue = MatchWeight Then
-		      CommonSets.AddRow(New Beacon.ItemSet(Sets.Value(Hash)))
-		    End If
-		  Next
-		  
-		  Self.mTotalSetCount = Sets.KeyCount
-		  Self.mVisibleSetCount = CommonSets.LastRowIndex + 1
-		  
-		  SetList.RemoveAllRows
-		  For Each Set As Beacon.ItemSet In CommonSets
-		    SetList.AddRow(Set.Label)
-		    SetList.RowTagAt(SetList.LastAddedRowIndex) = Set
-		    SetList.Selected(SetList.LastAddedRowIndex) = SelectedSetNames.IndexOf(Set.Label) > -1
-		  Next
-		  Self.mSorting = True
-		  SetList.Sort
-		  Self.mSorting = False
-		  
-		  If Self.SimulatorVisible Then
-		    Self.Simulator.Simulate()
-		  End If
-		  Self.mUpdating = False
-		  Self.UpdateStatus()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub RemoveSelectedItemSets(RequireConfirmation As Boolean)
-		  If SetList.SelectedRowCount = 0 Then
-		    Return
-		  End If
-		  
-		  Dim Sets() As Beacon.ItemSet
-		  For I As Integer = 0 To SetList.RowCount - 1
-		    If SetList.Selected(I) Then
-		      Sets.AddRow(SetList.RowTagAt(I))
-		    End If
-		  Next
-		  
-		  If RequireConfirmation Then
-		    Dim Dialog As New MessageDialog
-		    Dialog.Title = ""
-		    If SetList.SelectedRowCount = 1 Then
-		      Dialog.Message = "Are you sure you want to delete the item set """ + Sets(0).Label + """?"
-		    Else
-		      Dialog.Message = "Are you sure you want to delete these " + Str(SetList.SelectedRowCount, "-0") + " item sets?"
-		    End If
-		    Dialog.Explanation = "This action cannot be undone."
-		    Dialog.ActionButton.Caption = "Delete"
-		    Dialog.CancelButton.Visible = True
-		    
-		    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
-		    If Choice = Dialog.CancelButton Then
-		      Return
-		    End If
-		  End If
-		  
-		  Dim Updated As Boolean
-		  For Each Set As Beacon.ItemSet In Sets
-		    For Each Source As Beacon.LootSource In Self.mSources
-		      Dim Idx As Integer = Source.IndexOf(Set)
-		      If Idx > -1 Then
-		        Source.Remove(Idx)
-		        Updated = True
-		      End If
-		    Next
-		  Next
-		  For I As Integer = SetList.RowCount - 1 DownTo 0
-		    If SetList.Selected(I) Then
-		      SetList.RemoveRowAt(I)
-		    End If
-		  Next
-		  If Updated Then
-		    RaiseEvent Updated
-		  End If
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -835,15 +719,6 @@ End
 		  If Self.mSavePositions Then
 		    Preferences.ItemSetsSplitterPosition = ListWidth
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub ShowNewSet()
-		  Self.AddSet(New Beacon.ItemSet)
-		  RaiseEvent Updated()
-		  Self.Editor.ShowSettings(True)
-		  Self.Editor.SetFocus()
 		End Sub
 	#tag EndMethod
 
@@ -922,10 +797,15 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Sources(Assigns Values() As Beacon.LootSource)
-		  Redim Self.mSources(Values.LastRowIndex)
-		  For I As Integer = 0 To Self.mSources.LastRowIndex
-		    Self.mSources(I) = Values(I)
-		  Next
+		  If Values = Nil Then
+		    Self.mSources.ResizeTo(-1)
+		  Else
+		    Self.mSources.ResizeTo(Values.LastRowIndex)
+		    For I As Integer = 0 To Values.LastRowIndex
+		      Self.mSources(I) = Values(I)
+		    Next
+		  End If
+		  
 		  If Self.mSources.LastRowIndex = 0 Then
 		    Self.Header.Simulate.Enabled = True
 		    Self.Simulator.Simulate(Self.mSources(0))
@@ -957,7 +837,8 @@ End
 		  Self.HintsContainer.Notes = CommonNotes
 		  
 		  Self.SettingsContainer.LootSources = Values
-		  Self.RebuildSetList()
+		  
+		  Self.UpdateUI
 		End Sub
 	#tag EndMethod
 
@@ -967,18 +848,77 @@ End
 		    Return
 		  End If
 		  
-		  Dim HiddenSetCount As Integer = Self.mTotalSetCount - Self.mVisibleSetCount
 		  Dim Caption As String
 		  If Self.SetList.SelectedRowCount > 0 Then
-		    Caption = Format(Self.SetList.SelectedRowCount, "0") + " of " + Str(Self.mVisibleSetCount, "0") + " Item " + If(Self.mVisibleSetCount = 1, "Set", "Sets") + " Selected"
+		    Caption = Format(Self.SetList.SelectedRowCount, "0") + " of " + Str(Self.SetList.RowCount, "0") + " Item " + If(Self.SetList.RowCount = 1, "Set", "Sets") + " Selected"
 		  Else
-		    Caption = Str(Self.mVisibleSetCount, "0") + " Item " + If(Self.mVisibleSetCount = 1, "Set", "Sets")
-		  End If
-		  If HiddenSetCount > 0 Then
-		    Caption = Caption + ", " + Str(HiddenSetCount, "0") + " Item " + If(HiddenSetCount = 1, "Set", "Sets") + " Hidden"
+		    Caption = Str(Self.SetList.RowCount, "0") + " Item " + If(Self.SetList.RowCount = 1, "Set", "Sets")
 		  End If
 		  
 		  Self.StatusBar1.Caption = Caption
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateUI()
+		  Self.UpdateUI(Nil)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateUI(SelectSets() As Beacon.ItemSet)
+		  Self.SetList.SelectionChangeBlocked = True
+		  
+		  Var CombinedSets As New Dictionary
+		  For Each Source As Beacon.LootSource In Self.mSources
+		    For Each Set As Beacon.ItemSet In Source
+		      Var Hash As String = Set.Hash
+		      Var Organizer As ItemSetOrganizer
+		      If CombinedSets.HasKey(Hash) Then
+		        Organizer = CombinedSets.Value(Hash)
+		      Else
+		        Organizer = New ItemSetOrganizer(Set)
+		        CombinedSets.Value(Hash) = Organizer
+		      End If
+		      Organizer.Attach(Source, Set)
+		    Next
+		  Next
+		  
+		  If CombinedSets <> Nil And CombinedSets.KeyCount > 0 Then
+		    Var SelectedSets() As String
+		    If SelectSets = Nil Then
+		      For I As Integer = 0 To Self.SetList.RowCount - 1
+		        If Self.SetList.Selected(I) Then
+		          SelectedSets.AddRow(ItemSetOrganizer(Self.SetList.RowTagAt(I)).Template.ID)
+		        End If
+		      Next
+		    Else
+		      For Each Set As Beacon.ItemSet In SelectSets
+		        SelectedSets.AddRow(Set.Hash)
+		      Next
+		    End If
+		    
+		    Var ExtendedLabels As Boolean = Self.mSources.LastRowIndex > 0
+		    
+		    Self.SetList.RowCount = CombinedSets.KeyCount
+		    Self.SetList.DefaultRowHeight = If(ExtendedLabels, 34, 26)
+		    For RowIndex As Integer = 0 To CombinedSets.KeyCount - 1
+		      Var Hash As String = CombinedSets.Key(RowIndex)
+		      Var Organizer As ItemSetOrganizer = CombinedSets.Value(Hash)
+		      
+		      Self.SetList.CellValueAt(RowIndex, 0) = Organizer.Label(ExtendedLabels)
+		      Self.SetList.RowTagAt(RowIndex) = Organizer
+		      Self.SetList.Selected(RowIndex) = Organizer.Matches(SelectedSets)
+		    Next
+		  Else
+		    Self.SetList.RowCount = 0
+		  End If
+		  
+		  Self.UpdateStatus
+		  
+		  Self.SetList.SortingColumn = 0
+		  Self.SetList.Sort
+		  Self.SetList.SelectionChangeBlocked = False
 		End Sub
 	#tag EndMethod
 
@@ -1052,7 +992,7 @@ End
 		  End If
 		  
 		  If Me.SelectedRowCount = 1 Then
-		    Editor.Set = New Beacon.ItemSet(Me.RowTagAt(Me.SelectedRowIndex))
+		    Editor.Set = ItemSetOrganizer(Me.RowTagAt(Me.SelectedRowIndex)).Template
 		    Editor.Enabled = True
 		    Panel.SelectedPanelIndex = 1
 		  Else
@@ -1076,19 +1016,42 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  Self.RemoveSelectedItemSets(Warn)
+		  Var Organizers() As ItemSetOrganizer
+		  Var Bound As Integer = Me.RowCount - 1
+		  For I As Integer = 0 To Bound
+		    If Me.Selected(I) = False Then
+		      Continue
+		    End If
+		    
+		    Organizers.AddRow(Me.RowTagAt(I))
+		  Next
+		  
+		  If Warn And Self.ShowDeleteConfirmation(Organizers, "item set", "item sets") = False Then
+		    Return
+		  End If
+		  
+		  For Each Organizer As ItemSetOrganizer In Organizers
+		    Var Sources() As Beacon.LootSource = Organizer.Sources
+		    For Each Source As Beacon.LootSource In Sources
+		      Var Set As Beacon.ItemSet = Organizer.SetForSource(Source)
+		      Source.Remove(Set)
+		    Next
+		  Next
+		  
+		  RaiseEvent Updated
+		  Self.UpdateUI()
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Dicts() As Dictionary
+		  Var Dicts() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Dim Set As Beacon.ItemSet = Me.RowTagAt(I)
-		    Dim Dict As Dictionary = Set.Export
+		    Var Organizer As ItemSetOrganizer = Me.RowTagAt(I)
+		    Var Dict As Dictionary = Organizer.Template.Export
 		    If Dict <> Nil Then
 		      Dicts.AddRow(Dict)
 		    End If
@@ -1097,7 +1060,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Contents As String
+		  Var Contents As String
 		  If Dicts.LastRowIndex = 0 Then
 		    Contents = Beacon.GenerateJSON(Dicts(0), False)
 		  Else
@@ -1114,8 +1077,8 @@ End
 		  End If
 		  
 		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		    Dim Parsed As Variant
+		    Var Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
+		    Var Parsed As Variant
 		    Try
 		      Parsed = Beacon.ParseJSON(Contents)
 		    Catch Err As RuntimeException
@@ -1123,12 +1086,12 @@ End
 		      Return
 		    End Try
 		    
-		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
-		    Dim Dicts() As Dictionary
+		    Var Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
+		    Var Dicts() As Dictionary
 		    If Info.FullName = "Dictionary" Then
 		      Dicts.AddRow(Parsed)
 		    ElseIf Info.FullName = "Object()" Then
-		      Dim Values() As Variant = Parsed
+		      Var Values() As Variant = Parsed
 		      For Each Dict As Dictionary In Values
 		        Dicts.AddRow(Dict)
 		      Next
@@ -1137,27 +1100,18 @@ End
 		      Return
 		    End If
 		    
-		    Dim Updated As Boolean
-		    Dim SetNames() As String
-		    For Each Source As Beacon.LootSource In Self.mSources
-		      For Each Dict As Dictionary In Dicts
-		        Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Dict)
-		        If Set <> Nil Then
-		          Source.Append(Set)
-		          Updated = True
-		          If SetNames.IndexOf(Set.Label) = -1 Then
-		            SetNames.AddRow(Set.Label)
-		          End If
-		        End If
-		      Next
+		    Var NewItemSets() As Beacon.ItemSet
+		    For Each Dict As Dictionary In Dicts
+		      Var Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Dict)
+		      If Set = Nil Then
+		        Continue
+		      End If
+		      
+		      NewItemSets.AddRow(Set)
 		    Next
-		    
-		    Self.RebuildSetList(SetNames)
-		    If Updated Then
-		      RaiseEvent Updated
-		    End If
+		    Self.AddSets(NewItemSets)
 		  ElseIf Board.TextAvailable And Board.Text.Left(1) = "(" Then
-		    Dim Contents As String = Board.Text
+		    Var Contents As String = Board.Text
 		    If Contents.Left(2) = "((" Then
 		      // This may be multiple item sets from the dev kit, so wrap it up like a full loot source
 		      // No additional wrapping necessary, but we need to make sure the next clause is not hit
@@ -1166,7 +1120,7 @@ End
 		      Contents = "(" + Contents + ")"
 		    End If
 		    
-		    Dim Lines() As String
+		    Var Lines() As String
 		    For Each Source As Beacon.LootSource In Self.mSources
 		      Lines.AddRow("ConfigOverrideSupplyCrateItems=(SupplyCrateClassString=""" + Source.ClassString + """,MinItemSets=1,MaxItemSets=3,NumItemSetsPower=1.000000,bSetsRandomWithoutReplacement=true,ItemSets=" + Contents + ")")
 		    Next
@@ -1181,7 +1135,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
-		  Dim Targets() As Beacon.ItemSet
+		  Dim Targets() As ItemSetOrganizer
 		  If Me.SelectedRowCount = 0 Then
 		    Dim Idx As Integer = Me.RowFromXY(X, Y)
 		    If Idx = -1 Then
@@ -1200,37 +1154,26 @@ End
 		    Return False
 		  End If
 		  
-		  Dim Presets(), Preset As Beacon.Preset
-		  Dim PresetFound As Boolean
-		  For Each Set As Beacon.ItemSet In Targets
-		    If Set.SourcePresetID = "" Or PresetFound = True Then
+		  Dim Preset As Beacon.Preset
+		  For Each Organizer As ItemSetOrganizer In Targets
+		    If Organizer.Template.SourcePresetID = "" Or Preset <> Nil Then
 		      Continue
 		    End If
 		    
-		    If Presets.LastRowIndex = -1 Then
-		      Presets = Beacon.Data.Presets
-		    End If
-		    
-		    For I As Integer = 0 To Presets.LastRowIndex
-		      If Presets(I).PresetID = Set.SourcePresetID Then
-		        Preset = Presets(I)
-		        PresetFound = True
-		        Exit For I
-		      End If
-		    Next
+		    Preset = Beacon.Data.GetPreset(Organizer.Template.SourcePresetID)
 		  Next
 		  
 		  Dim CreateItem As New MenuItem("Create Preset…", Targets)
 		  CreateItem.Name = "createpreset"
 		  CreateItem.Enabled = Targets.LastRowIndex = 0
-		  If PresetFound And CreateItem.Enabled Then
+		  If Preset <> Nil And CreateItem.Enabled Then
 		    CreateItem.Value = "Update """ + Preset.Label + """ Preset…"
 		  End If
 		  Base.AddMenu(CreateItem)
 		  
 		  Dim ReconfigureItem As New MenuItem("Rebuild From Preset", Targets)
 		  ReconfigureItem.Name = "reconfigure"
-		  ReconfigureItem.Enabled = PresetFound
+		  ReconfigureItem.Enabled = Preset <> Nil
 		  If ReconfigureItem.Enabled Then
 		    If Targets.LastRowIndex = 0 Then
 		      ReconfigureItem.Value = "Rebuild From """ + Preset.Label + """ Preset"
@@ -1263,59 +1206,65 @@ End
 		    Return False
 		  End If
 		  
-		  Dim Targets() As Beacon.ItemSet = HitItem.Tag
+		  Var Targets() As ItemSetOrganizer = HitItem.Tag
 		  
 		  Select Case HitItem.Name
 		  Case "createpreset"
 		    If Targets.LastRowIndex = 0 Then
-		      Dim Target As Beacon.ItemSet = Targets(0)
-		      Dim NewPreset As Beacon.Preset = MainWindow.Presets.CreatePreset(Target)
-		      Dim Updated As Boolean
-		      If NewPreset <> Nil Then
-		        For Each Source As Beacon.LootSource In Self.mSources
-		          Dim Idx As Integer = Source.IndexOf(Target)
-		          If Idx > -1 Then
-		            Dim NewSet As New Beacon.ItemSet(Target)
-		            Call NewSet.ReconfigureWithPreset(NewPreset, Source, Self.Document)
-		            Source(Idx) = NewSet
-		            Updated = True
-		          End If
-		        Next
-		        
-		        If Updated Then
-		          Self.RebuildSetList()
-		          RaiseEvent Updated
-		        End If
-		      End If
-		    End If
-		  Case "reconfigure"
-		    Dim Updated As Boolean
-		    For Each Set As Beacon.ItemSet In Targets
-		      If Set.SourcePresetID = "" Then
-		        Continue
+		      Var Organizer As ItemSetOrganizer = Targets(0)
+		      
+		      Var NewPreset As Beacon.Preset = MainWindow.Presets.CreatePreset(Organizer.Template)
+		      If NewPreset = Nil Then
+		        Return True
 		      End If
 		      
-		      // Yes, ItemSet.ReconfigureWithPreset can get its own preset. But thanks to multi-editing, it is faster to grab it once first.
-		      Dim Preset As Beacon.Preset = Beacon.Data.GetPreset(Set.SourcePresetID)
-		      If Preset = Nil Then
-		        Continue
-		      End If
-		      
-		      For Each Source As Beacon.LootSource In Self.mSources
-		        Dim NewSet As New Beacon.ItemSet(Set)
-		        If Not NewSet.ReconfigureWithPreset(Preset, Source, Self.Document) Then
+		      Var AffectedItemSets() As Beacon.ItemSet
+		      Var Sources() As Beacon.LootSource = Organizer.Sources
+		      For Each Source As Beacon.LootSource In Sources
+		        Var Set As Beacon.ItemSet = Organizer.SetForSource(Source)
+		        If Set = Nil Then
 		          Continue
 		        End If
 		        
-		        Dim Idx As Integer = Source.IndexOf(Set)
-		        If Idx > -1 Then
-		          Source(Idx) = NewSet
-		          Updated = True
+		        If Set.ReconfigureWithPreset(NewPreset, Source, Self.Document) Then
+		          AffectedItemSets.AddRow(Set)
+		        End If
+		      Next
+		      
+		      If AffectedItemSets.LastRowIndex > -1 Then
+		        Self.UpdateUI(AffectedItemSets)
+		        RaiseEvent Updated
+		      End If
+		    End If
+		  Case "reconfigure"
+		    Var AffectedItemSets() As Beacon.ItemSet
+		    Var Presets As New Dictionary
+		    For Each Organizer As ItemSetOrganizer In Targets
+		      Var Sources() As Beacon.LootSource = Organizer.Sources
+		      
+		      For Each Source As Beacon.LootSource In Sources
+		        Var Set As Beacon.ItemSet = Organizer.SetForSource(Source)
+		        If Set = Nil Or Set.SourcePresetID = "" Then
+		          Continue
+		        End If
+		        
+		        If Not Presets.HasKey(Set.SourcePresetID) Then
+		          Var LoadedPreset As Beacon.Preset = Beacon.Data.GetPreset(Set.SourcePresetID)
+		          If LoadedPreset = Nil Then
+		            Continue
+		          End If
+		          Presets.Value(Set.SourcePresetID) = LoadedPreset
+		        End If
+		        
+		        Var Preset As Beacon.Preset = Presets.Value(Set.SourcePresetID)
+		        
+		        If Set.ReconfigureWithPreset(Preset, Source, Self.Document) Then
+		          AffectedItemSets.AddRow(Set)
 		        End If
 		      Next
 		    Next
 		    
-		    If Not Updated Then
+		    If AffectedItemSets.LastRowIndex = -1 Then
 		      If Targets.LastRowIndex = 0 Then
 		        Self.ShowAlert("No changes made", "This item set is already identical to the preset.")
 		      Else
@@ -1324,7 +1273,7 @@ End
 		      Return True
 		    End If
 		    
-		    Self.RebuildSetList()
+		    Self.UpdateUI(AffectedItemSets)
 		    RaiseEvent Updated
 		    
 		    If Targets.LastRowIndex > 0 Then
@@ -1333,21 +1282,21 @@ End
 		    End If
 		  Case "copyjson"
 		    If Targets.LastRowIndex = 0 Then
-		      Dim Dict As Dictionary = Targets(0).Export()
-		      Dim Board As New Clipboard
-		      Board.Text = Beacon.GenerateJSON(Dict, False)
+		      Var Dict As Dictionary = Targets(0).Template.Export()
+		      Var Board As New Clipboard
+		      Board.Text = Beacon.GenerateJSON(Dict, True)
 		    Else
-		      Dim Arr() As Dictionary
-		      For Each Target As Beacon.ItemSet In Targets
-		        Arr.AddRow(Target.Export())
+		      Var Arr() As Dictionary
+		      For Each Organizer As ItemSetOrganizer In Targets
+		        Arr.AddRow(Organizer.Template.Export())
 		      Next
-		      Dim Board As New Clipboard
-		      Board.Text = Beacon.GenerateJSON(Arr, False)
+		      Var Board As New Clipboard
+		      Board.Text = Beacon.GenerateJSON(Arr, True)
 		    End If
 		  Case "copyconfig"
-		    Dim Multipliers As Beacon.Range
-		    Dim UseBlueprints As Boolean
-		    Dim Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
+		    Var Multipliers As Beacon.Range
+		    Var UseBlueprints As Boolean
+		    Var Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
 		    If Self.mSources.LastRowIndex = 0 Then
 		      Multipliers = Self.mSources(0).Multipliers
 		      UseBlueprints = Self.mSources(0).UseBlueprints
@@ -1356,12 +1305,12 @@ End
 		      UseBlueprints = False
 		    End If
 		    
-		    Dim Parts() As String
-		    For Each Target As Beacon.ItemSet In Targets
-		      Parts.AddRow(Target.StringValue(Multipliers, UseBlueprints, Difficulty))
+		    Var Parts() As String
+		    For Each Organizer As ItemSetOrganizer In Targets
+		      Parts.AddRow(Organizer.Template.StringValue(Multipliers, UseBlueprints, Difficulty))
 		    Next
 		    
-		    Dim Board As New Clipboard
+		    Var Board As New Clipboard
 		    If Parts.LastRowIndex = 0 Then
 		      Board.Text = Parts(0)
 		    Else
@@ -1374,8 +1323,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function RowIsInvalid(Row As Integer) As Boolean
-		  Dim Set As Beacon.ItemSet = Me.RowTagAt(Row)
-		  Return Not Set.IsValid(Self.Document)
+		  Return ItemSetOrganizer(Me.RowTagAt(Row)).Template.IsValid(Self.Document) = False
 		End Function
 	#tag EndEvent
 #tag EndEvents
@@ -1395,11 +1343,13 @@ End
 		  End If
 		  
 		  Dim Dicts() As Variant
+		  #Pragma BreakOnExceptions Off
 		  Try
 		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
 		  Catch Err As TypeMismatchException
 		    Dicts.AddRow(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
 		  End Try
+		  #Pragma BreakOnExceptions Default
 		  
 		  Dim Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
 		  
@@ -1411,31 +1361,13 @@ End
 		    End If
 		  Next
 		  
-		  Dim Updated As Boolean
-		  Dim SetNames() As String
-		  For Each SourceLootSource As Beacon.LootSource In SourceLootSources
-		    Dim DestinationLootSource As Beacon.LootSource
-		    For I As Integer = 0 To Self.mSources.LastRowIndex
-		      If SourceLootSource.ClassString = Self.mSources(I).ClassString Then
-		        DestinationLootSource = Self.mSources(I)
-		        Exit For I
-		      End If
+		  Var NewItemSets() As Beacon.ItemSet
+		  For Each Source As Beacon.LootSource In SourceLootSources
+		    For Each Set As Beacon.ItemSet In Source
+		      NewItemSets.AddRow(Set)
 		    Next
-		    If DestinationLootSource <> Nil Then
-		      For Each Set As Beacon.ItemSet In SourceLootSource
-		        DestinationLootSource.Append(Set)
-		        Updated = True
-		        If SetNames.IndexOf(Set.Label) = -1 Then
-		          SetNames.AddRow(Set.Label)
-		        End If
-		      Next
-		    End If
 		  Next
-		  
-		  Self.RebuildSetList(SetNames)
-		  If Updated Then
-		    RaiseEvent Updated
-		  End If
+		  Self.AddSets(NewItemSets)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1458,7 +1390,7 @@ End
 		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddSet"
-		    Self.ShowNewSet()
+		    Self.AddSet(New Beacon.ItemSet)
 		  Case "Simulate"
 		    Self.SimulatorVisible = True
 		    Self.Simulator.Simulate(Self.mSources(0))
@@ -1497,19 +1429,9 @@ End
 		    Return
 		  End If
 		  
-		  Dim SelIndex As Integer = SetList.SelectedRowIndex
-		  Dim OriginalSet As Beacon.ItemSet = SetList.RowTagAt(SelIndex)
-		  Dim NewSet As Beacon.ItemSet = Editor.Set
-		  
-		  For Each Source As Beacon.LootSource In Self.mSources
-		    Dim Idx As Integer = Source.IndexOf(OriginalSet)
-		    If Idx > -1 Then
-		      Source(Idx) = New Beacon.ItemSet(NewSet)
-		    End If
-		  Next
-		  
-		  SetList.CellValueAt(SelIndex, 0) = NewSet.Label
-		  SetList.RowTagAt(SelIndex) = New Beacon.ItemSet(NewSet)
+		  Var Organizer As ItemSetOrganizer = Self.SetList.RowTagAt(Self.SetList.SelectedRowIndex)
+		  Organizer.Replicate()
+		  Self.SetList.CellValueAt(Self.SetList.SelectedRowIndex, 0) = Organizer.Template.Label
 		  
 		  Self.mSorting = True
 		  SetList.Sort
@@ -1517,7 +1439,7 @@ End
 		  
 		  RaiseEvent Updated
 		  
-		  If Self.SimulatorVisible Then
+		  If Self.SimulatorVisible And Self.mSources.LastRowIndex = 0 Then
 		    Self.Simulator.Simulate(Self.mSources(0))
 		  End If
 		End Sub

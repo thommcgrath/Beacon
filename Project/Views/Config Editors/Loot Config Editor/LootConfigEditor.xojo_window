@@ -477,7 +477,9 @@ End
 
 	#tag MenuHandler
 		Function DocumentRemoveBeacon() As Boolean Handles DocumentRemoveBeacon.Action
-			Self.RemoveSelectedBeacons(True)
+			If Self.List.CanDelete Then
+			Self.List.DoClear
+			End If
 			Return True
 			
 		End Function
@@ -589,41 +591,6 @@ End
 		  Else
 		    Self.ShowAlert(Str(NumChanges, "-0") + " item sets changed", "Rebuilding changed " + Str(NumChanges, "-0") + " item sets to match their presets.")
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub RemoveSelectedBeacons(RequireConfirmation As Boolean)
-		  If Self.List.SelectedRowCount = 0 Then
-		    Return
-		  End If
-		  
-		  If RequireConfirmation Then
-		    Var Dialog As New MessageDialog
-		    Dialog.Title = ""
-		    If Self.List.SelectedRowCount = 1 Then
-		      Dialog.Message = "Are you sure you want to delete the selected loot source?"
-		    Else
-		      Dialog.Message = "Are you sure you want to delete these " + Str(Self.List.SelectedRowCount, "-0") + " loot sources?"
-		    End If
-		    Dialog.Explanation = "This action cannot be undone."
-		    Dialog.ActionButton.Caption = "Delete"
-		    Dialog.CancelButton.Visible = True
-		    
-		    Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
-		    If Choice = Dialog.CancelButton Then
-		      Return
-		    End If
-		  End If
-		  
-		  For I As Integer = Self.List.RowCount - 1 DownTo 0
-		    If Self.List.Selected(I) Then
-		      Self.Config(True).Remove(Beacon.LootSource(Self.List.RowTagAt(I)))
-		      Self.List.RemoveRowAt(I)
-		    End If
-		  Next
-		  
-		  Self.Changed = Self.Document.Modified
 		End Sub
 	#tag EndMethod
 
@@ -921,7 +888,30 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  Self.RemoveSelectedBeacons(Warn)
+		  If Self.List.SelectedRowCount = 0 Then
+		    Return
+		  End If
+		  
+		  Var Sources() As Beacon.LootSource
+		  For I As Integer = 0 To Self.List.RowCount - 1
+		    If Self.List.Selected(I) = False Then
+		      Continue
+		    End If
+		    
+		    Sources.AddRow(Self.List.RowTagAt(I))
+		  Next
+		  
+		  If Warn And Self.ShowDeleteConfirmation(Sources, "loot source", "loot sources") = False Then
+		    Return
+		  End If
+		  
+		  Var Config As BeaconConfigs.LootDrops = Self.Config(True)
+		  For Each Source As Beacon.LootSource In Sources
+		    Config.Remove(Source)
+		  Next
+		  
+		  Self.Changed = Self.Document.Modified
+		  Self.UpdateSourceList()
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1021,7 +1011,12 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub DoubleClick()
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount = 1
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformEdit()
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue

@@ -34,13 +34,29 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mSetWeight = 500
 		  Self.mItemsRandomWithoutReplacement = True
 		  Self.mLabel = "Untitled Item Set"
+		  Self.mID = New v4UUID
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.ItemSet)
 		  Self.Constructor()
-		  
+		  Self.mID = Source.mID
+		  Self.CopyFrom(Source)
+		  Self.mLastModifiedTime = Source.mLastModifiedTime
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
+		  For Each Entry As Beacon.SetEntry In Self.mEntries
+		    Entry.ConsumeMissingEngrams(Engrams)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub CopyFrom(Source As Beacon.ItemSet)
 		  Self.mItemsRandomWithoutReplacement = Source.mItemsRandomWithoutReplacement
 		  Self.mMaxNumItems = Source.mMaxNumItems
 		  Self.mMinNumItems = Source.mMinNumItems
@@ -51,19 +67,11 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mHash = Source.mHash
 		  Self.mLastSaveTime = Source.mLastSaveTime
 		  Self.mLastHashTime = Source.mLastHashTime
-		  Self.mLastModifiedTime = Source.mLastModifiedTime
+		  Self.mLastModifiedTime = System.Microseconds
 		  
-		  Redim Self.mEntries(Source.mEntries.LastRowIndex)
+		  Self.mEntries.ResizeTo(Source.mEntries.LastRowIndex)
 		  For I As Integer = 0 To Source.mEntries.LastRowIndex
 		    Self.mEntries(I) = New Beacon.SetEntry(Source.mEntries(I))
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
-		  For Each Entry As Beacon.SetEntry In Self.mEntries
-		    Entry.ConsumeMissingEngrams(Engrams)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -222,6 +230,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      Return True
 		    End If
 		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ID() As v4UUID
+		  Return Self.mID
 		End Function
 	#tag EndMethod
 
@@ -406,10 +420,15 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Return 1
 		  End If
 		  
-		  Dim SelfHash As String = Self.Hash
-		  Dim OtherHash As String = Other.Hash
+		  // If they have the same ID, they are the same. End of story.
+		  If Self.mID = Other.mID Then
+		    Return 0
+		  End If
 		  
-		  Return SelfHash.Compare(OtherHash, ComparisonOptions.CaseInsensitive)
+		  // If the do not have the same ID, we must sort them alphabetically but without equating two sets with the same label
+		  Var SelfComparison As String = Self.mLabel + " " + Self.mID
+		  Var OtherComparison As String = Other.mLabel + " " + Other.mID
+		  Return SelfComparison.Compare(OtherComparison, ComparisonOptions.CaseInsensitive, Locale.Current)
 		End Function
 	#tag EndMethod
 
@@ -650,6 +669,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Property, Flags = &h21
 		Private mHash As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mID As v4UUID
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0

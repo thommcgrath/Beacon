@@ -1581,14 +1581,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      If Idx > -1 Then
 		        Var Filtered As UInt64 = Drops(Idx).Availability And Availability
 		        Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Filtered)
-		        Dict.Value(Drops(Idx).ClassString) = Drops(Idx).Label + " (" + Maps.Label + ")"
+		        Dict.Value(Drops(Idx).Path) = Drops(Idx).Label + " (" + Maps.Label + ")"
 		        
 		        Filtered = Drops(I).Availability And Availability
 		        Maps = Beacon.Maps.ForMask(Filtered)
 		        Label = Label + " (" + Maps.Label + ")"
 		      End If
 		      
-		      Dict.Value(Drops(I).ClassString) = Label
+		      Dict.Value(Drops(I).Path) = Label
 		    Next
 		    
 		    Self.mDropsLabelCacheDict = Dict
