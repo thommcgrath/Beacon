@@ -11,20 +11,26 @@ if (isset($_GET['version'])) {
 	if ((string)(int)$_GET['version'] == $_GET['version']) {
 		$min_version = intval($_GET['version']);
 	} else {
-		if (preg_match('/^(\d+)\.(\d+)\.(\d+)(([a-z]+)(\d+))?$/', $_GET['version'], $matches) == 1) {
+		if (preg_match('/^(\d+)\.(\d+)(\.(\d+))?(([ab\.]+)(\d+))?$/', $_GET['version'], $matches) == 1) {
 			$major_version = intval($matches[1]);
 			$minor_version = intval($matches[2]);
-			$bug_version = intval($matches[3]);
+			if (isset($matches[3])) {
+				$bug_version = intval($matches[4]);
+			} else {
+				$bug_version = 0;
+			}
 			$stage_code = 3;
 			$non_release_version = 0;
-			if (isset($matches[4])) {
-				$non_release_version = intval($matches[6]);
-				switch ($matches[5]) {
+			if (isset($matches[5])) {
+				$non_release_version = intval($matches[7]);
+				switch ($matches[6]) {
 				case 'a':
 					$stage_code = 1;
 					break;
 				case 'b':
 					$stage_code = 2;
+					break;
+				case '.':
 					break;
 				default:
 					$stage_code = 0;
