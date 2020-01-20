@@ -299,6 +299,30 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function FindUniqueLabel(DesiredLabel As String, Siblings() As String) As String
+		  Var Counter As Integer = 1
+		  
+		  Var Words() As String = DesiredLabel.Split(" ")
+		  If Words.LastRowIndex > 0 And IsNumeric(Words(Words.LastRowIndex)) Then
+		    Counter = Val(Words(Words.LastRowIndex))
+		    Words.RemoveRowAt(Words.LastRowIndex)
+		    DesiredLabel = Words.Join(" ")
+		  End If
+		  
+		  Var TestLabel As String = DesiredLabel
+		  
+		  Do
+		    If Siblings.IndexOf(TestLabel) = -1 Then
+		      Return TestLabel
+		    End If
+		    
+		    Counter = Counter + 1
+		    TestLabel = DesiredLabel + " " + Counter.ToString
+		  Loop
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function GenerateJSON(Source As Variant, Pretty As Boolean) As String
 		  Const UseMBS = False

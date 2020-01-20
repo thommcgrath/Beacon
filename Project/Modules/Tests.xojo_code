@@ -20,6 +20,7 @@ Protected Module Tests
 		    TestObjectResolution()
 		    TestBlueprintSerialization()
 		    TestLimitCalculations()
+		    TestNamingThings()
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -176,6 +177,33 @@ Protected Module Tests
 		  
 		  MidRead = Original.Middle(5, 200)
 		  Call Assert(MidRead = "blast the vent core!", "Incorrect MemoryBlock.Middle read when length is greater than size.")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestNamingThings()
+		  Var Siblings() As String
+		  Siblings.AddRow("New Item Set")
+		  
+		  // This is a test for proper incrementing
+		  Var Label As String = Beacon.FindUniqueLabel("New Item Set", Siblings)
+		  If Not Assert(Label = "New Item Set 2", "Name not unique, expected ""New Item Set 2"" but got """ + Label + """") Then
+		    Return
+		  End If
+		  Siblings.AddRow(Label)
+		  
+		  // This test confirms the incrementing is sequential and will not return 2 again
+		  Label = Beacon.FindUniqueLabel("New Item Set", Siblings)
+		  If Not Assert(Label = "New Item Set 3", "Name not unique, expected ""New Item Set 3"" but got """ + Label + """") Then
+		    Return
+		  End If
+		  Siblings.AddRow(Label)
+		  
+		  // This test confirms the sequence continues even if the desired label already has a trailing number
+		  Label = Beacon.FindUniqueLabel("New Item Set 3", Siblings)
+		  If Not Assert(Label = "New Item Set 4", "Name not unique, expected ""New Item Set 4"" but got """ + Label + """") Then
+		    Return
+		  End If
 		End Sub
 	#tag EndMethod
 
