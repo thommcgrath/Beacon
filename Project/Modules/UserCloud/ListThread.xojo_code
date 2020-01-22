@@ -16,6 +16,18 @@ Inherits Thread
 		      Var RemotePath As String = Dict.Value("path")
 		      SyncedPaths.Value(RemotePath) = True
 		      
+		      If SetupIndexDatabase Then
+		        Try
+		          Var Results As RowSet = mIndex.SelectSQL("SELECT remote_path FROM actions WHERE remote_path = ?1;", RemotePath)
+		          If Results.RowCount > 0 Then
+		            // Since there is an action pending, we do nothing
+		            Continue
+		          End If
+		        Catch Err As DatabaseException
+		          App.Log("Unable to determine action for path " + RemotePath + ": " + Err.Message)
+		        End Try
+		      End If
+		      
 		      Var LocalFile As FolderItem = LocalFile(RemotePath, False)
 		      Var IsDeleted As Boolean = Dict.Value("deleted")
 		      If (LocalFile = Nil Or LocalFile.Exists = False) And IsDeleted Then
@@ -25,45 +37,66 @@ Inherits Thread
 		        LocalFile = LocalFile(RemotePath, True)
 		      End If
 		      
-		      Var ServerModifiedText As String = Dict.Value("modified")
-		      Var ServerModified As DateTime = NewDateFromSQLDateTime(ServerModifiedText).LocalTime
+		      Var ServerModified As DateTime = NewDateFromSQLDateTime(Dict.Value("modified")).LocalTime
+		      Var ServerHash As String = Dict.Value("hash")
+		      Var ServerSize As Integer = Dict.Value("size")
 		      
-		      If LocalFile.Exists And LocalFile.ModificationDate <> Nil Then
-		        Var LocalModified As DateTime = LocalFile.ModificationDateTime
-		        Var FilesAreDifferent As Boolean = LocalModified.SecondsFrom1970 <> ServerModified.SecondsFrom1970
-		        Var LocalIsNewer As Boolean = LocalModified > ServerModified
+		      If LocalFile.Exists Then
+		        Var LocalModified As DateTime
+		        Var LocalHash As String
+		        Var LocalSize As Integer
+		        
+		        If SetupIndexDatabase Then
+		          Try
+		            Var Results As RowSet = mIndex.SelectSQL("SELECT * FROM usercloud WHERE remote_path = ?1;", RemotePath)
+		            If Results.RowCount = 1 Then
+		              LocalModified = NewDateFromSQLDateTime(Results.Column("modified").StringValue)
+		              LocalHash = Results.Column("hash").StringValue
+		              LocalSize = Results.Column("size_in_bytes").IntegerValue
+		            End If
+		          Catch Err As DatabaseException
+		            App.Log("Unable to local file in cloud index: " + Err.Message)
+		          End Try
+		        End If
+		        
+		        Var FilesAreDifferent As Boolean = ServerSize <> LocalSize Or ServerHash <> LocalHash
+		        Var LocalIsNewer As Boolean = FilesAreDifferent And (LocalModified = Nil Or LocalModified.SecondsFrom1970 > ServerModified.SecondsFrom1970)
 		        If LocalIsNewer Then
 		          // Put the file
 		          UploadFileTo(LocalFile, RemotePath)
 		        ElseIf LocalIsNewer = False And IsDeleted = True Then
 		          // Delete the file
-		          LocalFile.Remove
-		          Var ActionDict As New Dictionary
-		          ActionDict.Value("Action") = "DELETE"
-		          ActionDict.Value("Path") = RemotePath
-		          SyncActions.AddRow(ActionDict)
+		          RemoveFileFrom(LocalFile, RemotePath)
 		        ElseIf FilesAreDifferent = True And LocalIsNewer = False Then
 		          // Retrieve the file
-		          RequestFileFrom(LocalFile, RemotePath, ServerModified)
+		          RequestFileFrom(LocalFile, RemotePath, ServerModified, ServerSize, ServerHash)
 		        End If
 		      ElseIf IsDeleted = False Then
 		        // Retrieve the file
-		        RequestFileFrom(LocalFile, RemotePath, ServerModified)
+		        RequestFileFrom(LocalFile, RemotePath, ServerModified, ServerSize, ServerHash)
 		      End If
 		    Next
 		    
-		    Var Paths As New Dictionary
-		    DiscoverPaths("", LocalFile("/"), Paths)
-		    
-		    Var Keys() As Variant = Paths.Keys
-		    For Each Path As String In Keys
-		      If SyncedPaths.HasKey(Path) Then
-		        Continue
-		      End If
-		      
-		      Var File As FolderItem = Paths.Value(Path)
-		      UploadFileTo(File, Path)
-		    Next
+		    If SetupIndexDatabase Then
+		      Try
+		        Var Files As RowSet = mIndex.SelectSQL("SELECT * FROM actions;")
+		        While Not Files.AfterLastRow
+		          Var RemotePath As String = Files.Column("remote_path").StringValue
+		          Var Action As String = Files.Column("action").StringValue
+		          Var LocalFile As FolderItem = LocalFile(RemotePath, False)
+		          
+		          Select Case Action
+		          Case "PUT"
+		            UploadFileTo(LocalFile, RemotePath)
+		          Case "DELETE"
+		            RemoveFileFrom(LocalFile, RemotePath)
+		          End Select
+		          
+		          Files.MoveToNextRow
+		        Wend
+		      Catch Err As DatabaseException
+		      End Try
+		    End If
 		  Catch Err As RuntimeException
 		    App.Log("UserCloud was unable to list files due to exception: " + Err.Explanation)
 		  End Try
