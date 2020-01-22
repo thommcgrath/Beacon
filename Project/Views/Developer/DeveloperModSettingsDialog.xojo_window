@@ -308,7 +308,7 @@ End
 		  Self.WorkshopMod.PullURL = Self.PullURLField.Value
 		  Dim Payload As String = Beacon.GenerateJSON(Self.WorkshopMod.AsDictionary, False)
 		  
-		  Dim Request As New BeaconAPI.Request("mod.php", "POST", Payload, "application/json", AddressOf APICallback_SaveMod)
+		  Dim Request As New BeaconAPI.Request("mod", "POST", Payload, "application/json", AddressOf APICallback_SaveMod)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.Socket.Start(Request)
 		End Sub

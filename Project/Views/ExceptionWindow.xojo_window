@@ -652,7 +652,7 @@ End
 		    Fields.Value("user_id") = Self.mExceptionDetails.Value("UserID")
 		  End If
 		  
-		  SimpleHTTP.Post(Beacon.WebURL("/reportaproblem.php"), Fields, AddressOf Reporter_Callback, Nil)
+		  SimpleHTTP.Post(Beacon.WebURL("/reportaproblem"), Fields, AddressOf Reporter_Callback, Nil)
 		End Sub
 	#tag EndMethod
 
@@ -777,7 +777,7 @@ End
 #tag Events PermissionPolicyLabel
 	#tag Event
 		Sub Open()
-		  Me.URL = Beacon.WebURL("/privacy.php")
+		  Me.URL = Beacon.WebURL("/help/about_user_privacy")
 		End Sub
 	#tag EndEvent
 #tag EndEvents

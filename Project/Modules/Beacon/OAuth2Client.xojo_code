@@ -83,7 +83,7 @@ Protected Class OAuth2Client
 		    AddHandler mCheckSocket.ContentReceived, WeakAddressOf mCheckSocket_ContentReceived
 		  End If
 		  
-		  Self.mCheckSocket.Send("GET", Self.AuthURL + "lookup.php?requestid=" + EncodeURLComponent(Self.mRequestID))
+		  Self.mCheckSocket.Send("GET", Self.AuthURL + "lookup?requestid=" + EncodeURLComponent(Self.mRequestID))
 		End Sub
 	#tag EndMethod
 
@@ -205,7 +205,7 @@ Protected Class OAuth2Client
 
 	#tag Method, Flags = &h21
 		Private Function RedirectURI() As String
-		  Return Self.AuthURL() + "complete.php"
+		  Return Self.AuthURL() + "complete"
 		End Function
 	#tag EndMethod
 

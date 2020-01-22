@@ -255,7 +255,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dim Version As Integer = App.BuildNumber
 		  
 		  Dim LastSync As String = Self.Variable("sync_time")
-		  Dim CheckURL As String = Beacon.WebURL("/download/classes.php?version=" + Version.ToString)
+		  Dim CheckURL As String = Beacon.WebURL("/download/classes?version=" + Version.ToString)
 		  If LastSync <> "" Then
 		    CheckURL = CheckURL + "&changes_since=" + EncodeURLComponent(LastSync)
 		  End If

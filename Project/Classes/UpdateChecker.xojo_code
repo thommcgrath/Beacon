@@ -51,7 +51,7 @@ Protected Class UpdateChecker
 		    End Try
 		  #endif
 		  
-		  Self.mSocket.Send("GET", Beacon.WebURL("/updates.php?" + SimpleHTTP.BuildFormData(Params)))
+		  Self.mSocket.Send("GET", Beacon.WebURL("/updates?" + SimpleHTTP.BuildFormData(Params)))
 		End Sub
 	#tag EndMethod
 

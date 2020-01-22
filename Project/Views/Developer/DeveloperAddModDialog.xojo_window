@@ -303,7 +303,7 @@ End
 		  Dict.Value("mod_id") = ModID
 		  Dim Payload As String = Beacon.GenerateJSON(Dict, False)
 		  
-		  Dim Request As New BeaconAPI.Request("mod.php", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)
+		  Dim Request As New BeaconAPI.Request("mod", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.Socket.Start(Request)
 		End Sub

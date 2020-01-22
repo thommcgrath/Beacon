@@ -621,7 +621,7 @@ Implements NotificationKit.Receiver
 		Private Sub LaunchQueue_GettingStarted()
 		  Dim Notification As New Beacon.UserNotification("How about a nice tutorial video?")
 		  Notification.SecondaryMessage = "Click here to watch a video for first-time users of Beacon, or just to get a better understanding of how loot works."
-		  Notification.ActionURL = Beacon.WebURL("/help/gettingstarted.php")
+		  Notification.ActionURL = Beacon.WebURL("/videos/introduction_to_loot_drops_with")
 		  Notification.DoNotResurrect = True
 		  
 		  LocalData.SharedInstance.SaveNotification(Notification)
@@ -942,7 +942,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub ShowBugReporter(ExceptionHash As String = "")
-		  Dim Path As String = "/reportaproblem.php?build=" + Self.BuildNumber.ToString
+		  Dim Path As String = "/reportaproblem?build=" + Self.BuildNumber.ToString
 		  If ExceptionHash <> "" Then
 		    Path = Path + "&exception=" + ExceptionHash
 		  End If
@@ -970,7 +970,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub ShowReleaseNotes()
-		  ShowURL(Beacon.WebURL("/history.php?stage=" + Self.StageCode.ToString(Locale.Raw, "0") + "#build" + Self.BuildNumber.ToString(Locale.Raw, "0")))
+		  ShowURL(Beacon.WebURL("/history?stage=" + Self.StageCode.ToString(Locale.Raw, "0") + "#build" + Self.BuildNumber.ToString(Locale.Raw, "0")))
 		End Sub
 	#tag EndMethod
 

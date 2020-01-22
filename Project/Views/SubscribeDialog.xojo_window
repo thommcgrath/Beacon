@@ -554,7 +554,7 @@ End
 		  
 		  SubscribeSocket.AllowCertificateValidation = True
 		  SubscribeSocket.SetRequestContent(FormString, "application/x-www-form-urlencoded")
-		  SubscribeSocket.Send("POST", Beacon.WebURL("/subscribe.php"))
+		  SubscribeSocket.Send("POST", Beacon.WebURL("/subscribe"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -568,7 +568,7 @@ End
 #tag Events PrivacyPolicyButton
 	#tag Event
 		Sub Action()
-		  ShowURL(Beacon.WebURL("/privacy.php"))
+		  ShowURL(Beacon.WebURL("/help/about_user_privacy"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

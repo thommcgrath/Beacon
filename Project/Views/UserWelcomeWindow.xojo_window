@@ -1679,7 +1679,7 @@ End
 		  Fields.Value("email") = Self.ConfirmAddressField.Value.Trim
 		  Fields.Value("key") = Self.mConfirmEncryptionKey
 		  Self.CheckForConfirmationSocket.SetFormData(Fields)
-		  Self.CheckForConfirmationSocket.Send("POST", Beacon.WebURL("/account/login/verify.php"))
+		  Self.CheckForConfirmationSocket.Send("POST", Beacon.WebURL("/account/login/verify"))
 		End Sub
 	#tag EndMethod
 
@@ -1861,7 +1861,7 @@ End
 		  
 		  Self.SubmitIdentitySocket.RequestHeader("X-BEACON-UPGRADE-ENCRYPTION") = "True"
 		  Self.SubmitIdentitySocket.SetFormData(Fields)
-		  Self.SubmitIdentitySocket.Send("POST", Beacon.WebURL("/account/login/password.php"))
+		  Self.SubmitIdentitySocket.Send("POST", Beacon.WebURL("/account/login/password"))
 		  
 		  Self.SetSubmitIdentityStatus(If(Self.mUseRecoverLanguage, "Changing password…", "Creating account…"))
 		End Sub
@@ -1935,7 +1935,7 @@ End
 #tag Events PrivacyPolicyLabel
 	#tag Event
 		Sub Action()
-		  ShowURL(Beacon.WebURL("/privacy.php"))
+		  ShowURL(Beacon.WebURL("/help/about_user_privacy"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -2027,7 +2027,7 @@ End
 		    Fields.Value("email") = Self.ConfirmAddressField.Value.Trim
 		    Fields.Value("key") = Self.mConfirmEncryptionKey
 		    Self.ConfirmCodeCreationSocket.SetFormData(Fields)
-		    Self.ConfirmCodeCreationSocket.Send("POST", Beacon.WebURL("/account/login/email.php"))
+		    Self.ConfirmCodeCreationSocket.Send("POST", Beacon.WebURL("/account/login/email"))
 		    
 		    Self.ConfirmAddressField.ReadOnly = True
 		    Self.ConfirmCodeField.ReadOnly = False
@@ -2057,7 +2057,7 @@ End
 		  Fields.Value("email") = Self.ConfirmAddressField.Value.Trim
 		  
 		  Self.VerifyConfirmationCodeSocket.SetFormData(Fields)
-		  Self.VerifyConfirmationCodeSocket.Send("POST", Beacon.WebURL("/account/login/verify.php"))
+		  Self.VerifyConfirmationCodeSocket.Send("POST", Beacon.WebURL("/account/login/verify"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -2100,7 +2100,7 @@ End
 #tag Events IdentityRandomNameButton
 	#tag Event
 		Sub Action()
-		  Self.IdentitySuggestionSocket.Send("GET", Beacon.WebURL("/account/login/suggest.php"))
+		  Self.IdentitySuggestionSocket.Send("GET", Beacon.WebURL("/account/login/suggest"))
 		  Me.Enabled = False
 		End Sub
 	#tag EndEvent
