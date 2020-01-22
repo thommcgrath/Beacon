@@ -27,25 +27,15 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function FindUniqueSetLabel(Label As String) As String
-		  Var Counter As Integer = 1
-		  Var TestLabel As String = Label
-		  
-		  Do
-		    Var Bound As Integer = Self.mSets.KeyCount - 1
-		    For I As Integer = 0 To Bound
-		      Var Point As Beacon.MutableSpawnPoint = Self.mSets.Key(I)
-		      For Each Set As Beacon.SpawnPointSet In Point
-		        If Set.Label = TestLabel Then
-		          Counter = Counter + 1
-		          TestLabel = Label + " " + Counter.ToString
-		          Continue Do
-		        End If
-		      Next
+		  Var Siblings() As String
+		  For Each Entry As DictionaryEntry In Self.mSets
+		    Var Point As Beacon.SpawnPoint = Entry.Key
+		    For Each Set As Beacon.SpawnPointSet In Point
+		      Siblings.AddRow(Set.Label)
 		    Next
-		    
-		    Return TestLabel
-		  Loop
+		  Next
 		  
+		  Return Beacon.FindUniqueLabel(Label, Siblings)
 		End Function
 	#tag EndMethod
 
