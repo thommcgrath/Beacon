@@ -1,22 +1,29 @@
 #tag Class
 Protected Class LootSource
-Implements Beacon.Countable,Beacon.DocumentItem
+Implements Beacon.Countable,Beacon.DocumentItem,Beacon.NamedItem
 	#tag Method, Flags = &h0
-		Sub Append(Item As Beacon.ItemSet)
-		  // Check for duplicates and rename if necessary.
-		  For I As Integer = 0 To Self.mSets.LastRowIndex
-		    If Self.mSets(I) = Item Then
-		      Item.Label = Item.Label.AddSuffix("Copy")
-		      
-		      // Recurse so the check starts over
-		      Self.Append(Item)
-		      Return
+		Function AddSet(Set As Beacon.ItemSet, Replace As Boolean) As Beacon.ItemSet
+		  // If the set is already in this loot source, create a new one
+		  Var Idx As Integer = Self.IndexOf(Set)
+		  If Idx > -1 Then
+		    If Replace Then
+		      // Remove the set so it is not counted when finding a unique label
+		      Self.mSets.RemoveRowAt(Idx)
+		    Else
+		      // Create a new item set. Use CopyFrom so the identifier is not copied
+		      Var Clone As New Beacon.ItemSet
+		      Clone.CopyFrom(Set)
+		      Set = Clone
 		    End If
-		  Next
+		  End If
 		  
-		  Self.mSets.AddRow(Item)
+		  // Make sure the name is unique
+		  Set.Label = Beacon.FindUniqueLabel(Set.Label, Self.ItemSetLabels)
+		  
+		  Self.mSets.AddRow(Set)
 		  Self.Modified = True
-		End Sub
+		  Return Set
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -295,7 +302,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromConfig(Child, LootSource.Multipliers, Difficulty)
 		    Dim Hash As String = Set.Hash
 		    If Set <> Nil And AddedHashes.HasKey(Hash) = False Then
-		      LootSource.Append(Set)
+		      Call LootSource.AddSet(Set, False)
 		      AddedHashes.Value(Hash) = True
 		    End If
 		  Next
@@ -333,13 +340,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Insert(Index As Integer, Item As Beacon.ItemSet)
-		  Self.mSets.AddRowAt(Index, Item)
-		  Self.mModified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function IsOfficial() As Boolean
 		  Return Self.mIsOfficial
 		End Function
@@ -353,6 +353,16 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    End If
 		  Next
 		  Return Self.mSets.LastRowIndex > -1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ItemSetLabels() As String()
+		  Var Labels() As String
+		  For Each Set As Beacon.ItemSet In Self.mSets
+		    Labels.AddRow(Set.Label)
+		  Next
+		  Return Labels
 		End Function
 	#tag EndMethod
 
@@ -462,8 +472,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub Operator_Redim(Bound As Integer)
-		  Redim Self.mSets(Bound)
-		  Self.mModified = True
+		  Self.ResizeTo(Bound)
 		End Sub
 	#tag EndMethod
 
@@ -478,6 +487,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mSets(Index) = Value
 		  Self.mModified = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Path() As String
+		  Return Beacon.UnknownBlueprintPath("LootSources", Self.ClassString)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -497,6 +512,15 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Remove(Set As Beacon.ItemSet)
+		  Var Idx As Integer = Self.IndexOf(Set)
+		  If Idx > -1 Then
+		    Self.Remove(Idx)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
 		  Self.mSets.RemoveRowAt(Index)
 		  Self.mModified = True
@@ -507,6 +531,13 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Function RequiredItemSets() As Integer
 		  Return Self.mRequiredItemSets
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ResizeTo(NewBound As Integer)
+		  Redim Self.mSets(NewBound)
+		  Self.mModified = True
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

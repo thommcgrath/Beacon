@@ -88,7 +88,7 @@ Implements Iterable
 		      
 		      Source.MinItemSets = 1
 		      Source.MaxItemSets = 1
-		      Source.Append(Set)
+		      Call Source.AddSet(Set, False)
 		      
 		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, ConfigOverrideSupplyCrateItems, Source.StringValue(DifficultyConfig)))
 		    Next
