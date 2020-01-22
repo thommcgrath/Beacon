@@ -170,7 +170,7 @@ $prerelease = $database->Query("SELECT mac_url, win_64_url, win_combo_url, win_3
 	<div class="column">
 		<p><strong>Mac</strong></p>
 		<ul>
-			<li>El Capitan (10.11), Sierra (10.12), High Sierra (10.13), Mojave (10.14), or newer.</li>
+			<li>El Capitan (10.11), Sierra (10.12), High Sierra (10.13), Mojave (10.14), Catalina (10.15), or newer.</li>
 		</ul>
 	</div>
 	<div class="column">
