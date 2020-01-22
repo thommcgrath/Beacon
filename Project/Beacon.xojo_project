@@ -402,6 +402,7 @@ Class=SpawnSetOrganizer;Views/Config Editors/Spawn Points Editor/SpawnSetOrganiz
 Interface=NamedItem;Modules/Beacon/NamedItem.xojo_code;&h000000002D4B87FF;&h0000000055ADDFFF;false
 Window=SpawnPointReplacementsDialog;Views/Config Editors/Spawn Points Editor/SpawnPointReplacementsDialog.xojo_window;&h000000005F5EE7FF;&h000000007ED5DFFF;false
 Window=SpawnPointCreatureDialog;Views/Config Editors/Spawn Points Editor/SpawnPointCreatureDialog.xojo_window;&h00000000686287FF;&h000000007ED5DFFF;false
+Window=SpawnSetWizard;Views/Config Editors/Spawn Points Editor/SpawnSetWizard.xojo_window;&h000000003E75B7FF;&h000000007ED5DFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=3
