@@ -498,12 +498,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBooleanVariable(Key As String) As Boolean
+		Function GetBooleanVariable(Key As String, Default As Boolean = False) As Boolean
 		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RowCount = 1 Then
 		    Return Results.Column("value").BooleanValue
 		  Else
-		    Return False
+		    Return Default
 		  End If
 		End Function
 	#tag EndMethod
@@ -620,12 +620,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetDoubleVariable(Key As String) As Double
+		Function GetDoubleVariable(Key As String, Default As Double = 0.0) As Double
 		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RowCount = 1 Then
 		    Return Results.Column("value").DoubleValue
 		  Else
-		    Return 0.0
+		    Return Default
 		  End If
 		End Function
 	#tag EndMethod
@@ -708,12 +708,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetIntegerVariable(Key As String) As Integer
+		Function GetIntegerVariable(Key As String, Default As Integer = 0) As Integer
 		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RowCount = 1 Then
 		    Return Results.Column("value").IntegerValue
 		  Else
-		    Return 0
+		    Return Default
 		  End If
 		End Function
 	#tag EndMethod
@@ -881,7 +881,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetStringVariable(Key As String) As String
+		Function GetStringVariable(Key As String, Default As String = "") As String
 		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RowCount = 1 Then
 		    Dim StringValue As String = Results.Column("value").StringValue
@@ -889,12 +889,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      If Encodings.UTF8.IsValidData(StringValue) Then
 		        StringValue = StringValue.DefineEncoding(Encodings.UTF8)
 		      Else
-		        Return ""
+		        Return Default
 		      End If
 		    End If
 		    Return StringValue
 		  Else
-		    Return ""
+		    Return Default
 		  End If
 		End Function
 	#tag EndMethod
