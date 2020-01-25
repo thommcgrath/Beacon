@@ -594,11 +594,11 @@ End
 
 	#tag Event
 		Sub SetupUI()
-		  Self.mOfficialDaySeconds = Val(LocalData.SharedInstance.Variable("Day Length Seconds"))
+		  Self.mOfficialDaySeconds = LocalData.SharedInstance.GetDoubleVariable("Day Length Seconds")
 		  If Self.mOfficialDaySeconds = 0 Then
 		    Self.mOfficialDaySeconds = 2400
 		  End If
-		  Self.mOfficialNightSeconds = Val(LocalData.SharedInstance.Variable("Night Length Seconds"))
+		  Self.mOfficialNightSeconds = LocalData.SharedInstance.GetDoubleVariable("Night Length Seconds")
 		  If Self.mOfficialNightSeconds = 0 Then
 		    Self.mOfficialNightSeconds = 1200
 		  End If
