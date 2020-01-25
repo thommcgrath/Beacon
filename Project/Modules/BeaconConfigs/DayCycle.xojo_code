@@ -127,7 +127,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndComputedProperty
 
 
-	#tag Constant, Name = AllowZeroMultipliers, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
+	#tag Constant, Name = AllowZeroMultipliers, Type = Boolean, Dynamic = False, Default = \"True", Scope = Private
 	#tag EndConstant
 
 
