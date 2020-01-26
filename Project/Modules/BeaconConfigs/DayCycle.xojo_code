@@ -65,8 +65,8 @@ Inherits Beacon.ConfigGroup
 		  NightSpeedMultiplier = ParsedData.DoubleValue("NightTimeSpeedScale", NightSpeedMultiplier)
 		  
 		  Dim Config As New BeaconConfigs.DayCycle()
-		  Config.DaySpeedMultiplier = DaySpeedMultiplier * OverallCycleMultiplier
-		  Config.NightSpeedMultiplier = NightSpeedMultiplier * OverallCycleMultiplier
+		  Config.DaySpeedMultiplier = DaySpeedMultiplier / (1 / OverallCycleMultiplier)
+		  Config.NightSpeedMultiplier = NightSpeedMultiplier / (1 / OverallCycleMultiplier)
 		  If Config.Modified Then
 		    Return Config
 		  End If
