@@ -112,7 +112,7 @@ Begin BeaconContainer CraftingCostEditor
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Resource	Quantity	Prevent Subtitutions"
+      InitialValue    =   "Resource	Quantity	Prevent Substitutions"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
