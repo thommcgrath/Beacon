@@ -146,7 +146,7 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function ModName() As String
-		  If Self.mModID <> LocalData.UserModID Then
+		  If IsNull(Self.mModID) = False And Self.mModID <> LocalData.UserModID Then
 		    Return Self.mModName
 		  End If
 		  
