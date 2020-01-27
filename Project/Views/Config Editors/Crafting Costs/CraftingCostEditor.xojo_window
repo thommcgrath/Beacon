@@ -352,6 +352,7 @@ End
 		    Self.mTarget.Remove(Engram)
 		    Self.Changed = True
 		  Next
+		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
 	#tag Event
