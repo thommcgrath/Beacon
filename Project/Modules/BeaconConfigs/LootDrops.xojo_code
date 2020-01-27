@@ -7,49 +7,7 @@ Implements Iterable
 		  Dim ConfigName As String = ConfigKey
 		  
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    If Source.IsValid(Document) Then
-		      Continue
-		    End If
-		    
-		    If Source.Count < Source.RequiredItemSets Then
-		      Issues.AddRow(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " needs at least " +Source.RequiredItemSets.ToString + " " + if(Source.RequiredItemSets = 1, "item set", "item sets") + " to work correctly.", Source))
-		    Else
-		      For Each Set As Beacon.ItemSet In Source
-		        If Set.IsValid(Document) Then
-		          Continue
-		        End If
-		        
-		        If Set.Count = 0 Then
-		          Issues.AddRow(New Beacon.Issue(ConfigName, "Item set " + Set.Label + " of loot source " + Source.Label + " is empty.", Self.AssembleLocationDict(Source, Set)))
-		        Else
-		          For Each Entry As Beacon.SetEntry In Set
-		            If Entry.IsValid(Document) Then
-		              Continue
-		            End If
-		            
-		            If Entry.Count = 0 Then
-		              Issues.AddRow(New Beacon.Issue(ConfigName, "An entry in item set " + Set.Label + " of loot source " + Source.Label + " has no engrams selected.", Self.AssembleLocationDict(Source, Set, Entry)))
-		            Else
-		              For Each Option As Beacon.SetEntryOption In Entry
-		                If Option.IsValid(Document) Then
-		                  Continue
-		                End If
-		                
-		                If Option.Engram = Nil Then
-		                  Issues.AddRow(New Beacon.Issue(ConfigName, "The engram is missing for an option of an entry in " + Set.Label + " of loot source " + Source.Label + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
-		                ElseIf Document.Mods.Count > 0 And Document.Mods.IndexOf(Option.Engram.ModID) = -1 Then
-		                  Issues.AddRow(New Beacon.Issue(ConfigName, Option.Engram.Label + " is provided by a mod that is currently disabled.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
-		                ElseIf Option.Engram.IsTagged("Generic") Or Option.Engram.IsTagged("Blueprint") Then
-		                  Issues.AddRow(New Beacon.Issue(ConfigName, Option.Engram.Label + " is a generic item intended for crafting recipes. It cannot spawn in a drop.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
-		                Else
-		                  Issues.AddRow(New Beacon.Issue(ConfigName, "Beacon does not know the blueprint for " + Option.Engram.ClassString + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
-		                End If
-		              Next
-		            End If
-		          Next
-		        End If
-		      Next
-		    End If
+		    Self.DetectLootSourceIssues(Source, ConfigName, Document, Issues)
 		  Next
 		End Sub
 	#tag EndEvent
@@ -182,6 +140,84 @@ Implements Iterable
 		  Next
 		  Return Results
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DetectItemSetIssues(Source As Beacon.LootSource, Set As Beacon.ItemSet, ConfigName As String, Document As Beacon.Document, Issues() As Beacon.Issue)
+		  Try
+		    If Set.IsValid(Document) Then
+		      Return
+		    End If
+		    
+		    If Set.Count = 0 Then
+		      Issues.AddRow(New Beacon.Issue(ConfigName, "Item set " + Set.Label + " of loot source " + Source.Label + " is empty.", Self.AssembleLocationDict(Source, Set)))
+		    Else
+		      For Each Entry As Beacon.SetEntry In Set
+		        Self.DetectSetEntryIssues(Source, Set, Entry, ConfigName, Document, Issues)
+		      Next
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DetectLootSourceIssues(Source As Beacon.LootSource, ConfigName As String, Document As Beacon.Document, Issues() As Beacon.Issue)
+		  Try
+		    If Source.IsValid(Document) Then
+		      Return
+		    End If
+		    
+		    If Source.Count < Source.RequiredItemSets Then
+		      Issues.AddRow(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " needs at least " + Source.RequiredItemSets.ToString + " " + if(Source.RequiredItemSets = 1, "item set", "item sets") + " to work correctly.", Source))
+		    Else
+		      For Each Set As Beacon.ItemSet In Source
+		        Self.DetectItemSetIssues(Source, Set, ConfigName, Document, Issues)
+		      Next
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DetectSetEntryIssues(Source As Beacon.LootSource, Set As Beacon.ItemSet, Entry As Beacon.SetEntry, ConfigName As String, Document As Beacon.Document, Issues() As Beacon.Issue)
+		  Try
+		    If Entry.IsValid(Document) Then
+		      Return
+		    End If
+		    
+		    If Entry.Count = 0 Then
+		      Issues.AddRow(New Beacon.Issue(ConfigName, "An entry in item set " + Set.Label + " of loot source " + Source.Label + " has no engrams selected.", Self.AssembleLocationDict(Source, Set, Entry)))
+		    Else
+		      For Each Option As Beacon.SetEntryOption In Entry
+		        Self.DetectSetEntryOptionIssues(Source, Set, Entry, Option, ConfigName, Document, Issues)
+		      Next
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DetectSetEntryOptionIssues(Source As Beacon.LootSource, Set As Beacon.ItemSet, Entry As Beacon.SetEntry, Option As Beacon.SetEntryOption, ConfigName As String, Document As Beacon.Document, Issues() As Beacon.Issue)
+		  Try
+		    If Option.IsValid(Document) Then
+		      Return
+		    End If
+		    
+		    If Option.Engram = Nil Then
+		      Issues.AddRow(New Beacon.Issue(ConfigName, "The engram is missing for an option of an entry in " + Set.Label + " of loot source " + Source.Label + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		    ElseIf Document.Mods.Count > 0 And Document.Mods.IndexOf(Option.Engram.ModID) = -1 Then
+		      Issues.AddRow(New Beacon.Issue(ConfigName, Option.Engram.Label + " is provided by a mod that is currently disabled.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		    ElseIf Option.Engram.IsTagged("Generic") Or Option.Engram.IsTagged("Blueprint") Then
+		      Issues.AddRow(New Beacon.Issue(ConfigName, Option.Engram.Label + " is a generic item intended for crafting recipes. It cannot spawn in a drop.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		    Else
+		      Issues.AddRow(New Beacon.Issue(ConfigName, "Beacon does not know the blueprint for " + Option.Engram.ClassString + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
