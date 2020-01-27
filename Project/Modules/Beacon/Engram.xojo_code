@@ -83,6 +83,8 @@ Implements Beacon.Blueprint
 		    End If
 		    Engram.mIsValid = True
 		  End If
+		  Engram.mModID = LocalData.UserModID
+		  Engram.mModName = LocalData.UserModName
 		  Engram.mPath = Path
 		  Engram.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Path.Lowercase)
 		  Engram.mTags.AddRow("blueprintable")
