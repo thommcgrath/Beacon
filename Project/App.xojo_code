@@ -66,7 +66,7 @@ Implements NotificationKit.Receiver
 		    Self.Log("Beacon " + Str(Self.BuildNumber, "-0") + " for Windows.")
 		  #EndIf
 		  
-		  Dim Lock As New Mutex("com.thezaz.beacon")
+		  Dim Lock As New Mutex("com.thezaz.beacon" + If(DebugBuild, ".debug", ""))
 		  If Not Lock.TryEnter Then
 		    #If TargetWin32
 		      Dim StartTime As Double = System.Microseconds
