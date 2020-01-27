@@ -983,9 +983,9 @@ End
 		    End If
 		    
 		    EngramList.AddRow("", Engram.Label, Engram.ModName, Weight)
-		    EngramList.RowTagAt(EngramList.SelectedRowIndex) = Engram
-		    Self.mEngramRowIndexes.Value(Engram.Path) = EngramList.SelectedRowIndex
-		    EngramList.CellCheckBoxValueAt(EngramList.SelectedRowIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.Path)
+		    EngramList.RowTagAt(EngramList.LastAddedRowIndex) = Engram
+		    Self.mEngramRowIndexes.Value(Engram.Path) = EngramList.LastAddedRowIndex
+		    EngramList.CellCheckBoxValueAt(EngramList.LastAddedRowIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.Path)
 		  Next
 		  Self.ListUnknownEngrams()
 		End Sub

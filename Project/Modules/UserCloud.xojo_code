@@ -184,14 +184,23 @@ Protected Module UserCloud
 		    Return LocalFolder
 		  End If
 		  
+		  Var Encoding As TextEncoding = RemotePath.Encoding
+		  If Encoding = Nil Then
+		    If Encodings.UTF16.IsValidData(RemotePath) Then
+		      Encoding = Encodings.UTF16
+		    Else
+		      Encoding = Encodings.UTF8
+		    End If
+		  End If
+		  
 		  For I As Integer = 0 To Components.LastRowIndex - 1
-		    LocalFolder = LocalFolder.Child(DecodeURLComponent(Components(I)).DefineEncoding(Encodings.UTF8))
+		    LocalFolder = LocalFolder.Child(DecodeURLComponent(Components(I), Encoding))
 		    If Not LocalFolder.CheckIsFolder(Create) Then
 		      Return Nil
 		    End If
 		  Next
 		  
-		  Return LocalFolder.Child(DecodeURLComponent(Components(Components.LastRowIndex)).DefineEncoding(Encodings.UTF8))
+		  Return LocalFolder.Child(DecodeURLComponent(Components(Components.LastRowIndex), Encoding))
 		End Function
 	#tag EndMethod
 

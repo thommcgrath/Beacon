@@ -229,7 +229,10 @@ Inherits Beacon.Thread
 		        Blueprint = Beacon.Engram.CreateFromPath(Path)
 		      End If
 		    Case "spawndino"
-		      Blueprint = New Beacon.MutableCreature(Path, New v4UUID)
+		      Blueprint = Beacon.Data.GetCreatureByPath(Path)
+		      If Blueprint = Nil Then
+		        Blueprint = Beacon.Creature.CreateFromPath(Path)
+		      End If
 		    End Select
 		    
 		    If Blueprint = Nil Then
