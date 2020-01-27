@@ -409,6 +409,7 @@ Implements NotificationKit.Receiver
 		      Try
 		        File = New FolderItem(Path, FolderItem.PathModes.Native)
 		      Catch Err As RuntimeException
+		        Self.Log("Tried to open " + Path + " but got an exception: " + Err.Message)
 		      End Try
 		      If File <> Nil And File.Exists Then
 		        Self.OpenFile(File, False)
@@ -737,8 +738,8 @@ Implements NotificationKit.Receiver
 		      Exit
 		    End If
 		    
-		    Dim Command As String = DefineEncoding(Sender.Read(Pos + 1), Encodings.UTF8)
-		    Command = Command.Left(Command.Length) // Drop the null byte
+		    Dim Command As String = DefineEncoding(Sender.Read(Pos), Encodings.UTF8)
+		    Call Sender.Read(1) // To drop the null byte from the buffer
 		    Self.Log("Received command line data: " + Command)
 		    Self.HandleCommandLineData(Command, False)
 		  Loop
