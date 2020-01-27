@@ -1367,7 +1367,6 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateCalculations(Force As Boolean = False)
 		  Var Config As BeaconConfigs.DayCycle = Self.Config(False)
-		  Var Values As New Dictionary
 		  
 		  Var DayMultiplier As Double = Config.DaySpeedMultiplier
 		  Var NightMultiplier As Double = Config.NightSpeedMultiplier
