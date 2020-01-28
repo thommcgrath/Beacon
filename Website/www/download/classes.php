@@ -2,6 +2,26 @@
 	
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
+$request_method = strtoupper($_SERVER['REQUEST_METHOD']);
+if ($request_method == 'OPTIONS') {
+	header('Access-Control-Allow-Origin: *');
+	header('Access-Control-Allow-Methods: GET, OPTIONS');
+	header('Access-Control-Max-Age: 1728000');
+	header('Content-Type: text/plain; charset=utf-8');
+	header('Content-Length: 0');
+	http_response_code(204);
+	exit;
+} elseif ($request_method != 'GET') {
+	http_response_code(405);
+	echo '<h1>Method not allowed</h1>';
+	exit;
+}
+
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, OPTIONS');
+header('Access-Control-Allow-Headers: DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range');
+header('Access-Control-Expose-Headers: Content-Length,Content-Range');
+
 $since = null;
 if (array_key_exists('changes_since', $_GET)) {
 	$since = New DateTime($_GET['changes_since']);
