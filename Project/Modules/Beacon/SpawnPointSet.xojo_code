@@ -377,7 +377,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 	#tag Method, Flags = &h0
 		Function ReplacementCreatures(FromCreature As Beacon.Creature) As Beacon.Creature()
 		  Var Arr() As Beacon.Creature
-		  If Not Self.mReplacements.HasKey(FromCreature.Path) Then
+		  If FromCreature = Nil Or Self.mReplacements.HasKey(FromCreature.Path) = False Then
 		    Return Arr
 		  End If
 		  
