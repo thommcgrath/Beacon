@@ -61,6 +61,16 @@ Protected Class IdentityManager
 		  #Pragma Unused Request
 		  #Pragma Unused Response
 		  
+		  If Not Response.Success Then
+		    Try
+		      App.Log("Merge request failed: " + Response.HTTPStatus.ToString + " " + Response.Message)
+		    Catch Err As RuntimeException
+		      App.Log("Merge request failed: " + Response.HTTPStatus.ToString + " " + EncodeBase64(Response.Content))
+		    End Try
+		    
+		    Break
+		  End If
+		  
 		  Self.FinishProcess()
 		End Sub
 	#tag EndMethod
@@ -193,6 +203,29 @@ Protected Class IdentityManager
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Shared Function FindMergedIdentity(UserID As v4UUID) As Beacon.Identity
+		  Var Folder As FolderItem = App.ApplicationSupport.Child("Merged Identities")
+		  If Folder = Nil Or Folder.CheckIsFolder(False) = False Then
+		    Return Nil
+		  End If
+		  
+		  Var File As FolderItem = Folder.Child(UserID.StringValue + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
+		  If File.Exists = False Then
+		    Return Nil
+		  End If
+		  
+		  Try
+		    Var Content As String = File.Read(Encodings.UTF8)
+		    Var Dict As Dictionary = Beacon.ParseJSON(Content)
+		    Var Identity As Beacon.Identity = Beacon.Identity.Import(Dict)
+		    Return Identity
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub FinishProcess()
 		  Self.mProcessCount = Self.mProcessCount - 1
@@ -230,7 +263,7 @@ Protected Class IdentityManager
 		    Return
 		  End If
 		  
-		  If Destination.Identifier = Source.Identifier Or Destination.LoginKey = "" Then
+		  If Destination.Identifier = Source.Identifier Or Destination.LoginKey = "" Or Source.LoginKey <> "" Then
 		    // Not eligible for merging
 		    Return
 		  End If
@@ -241,14 +274,24 @@ Protected Class IdentityManager
 		  Dim Signature As String = EncodeHex(Source.Sign(SignedValue))
 		  
 		  Dim MergeKeys As New Dictionary
-		  MergeKeys.Value("user_id") = Destination.Identifier
-		  MergeKeys.Value("login_key") = Destination.LoginKey
+		  MergeKeys.Value("action") = "merge"
+		  MergeKeys.Value("user_id") = Source.Identifier
 		  MergeKeys.Value("signed_value") = SignedValue
 		  MergeKeys.Value("signature") = Signature
 		  
 		  Dim Request As New BeaconAPI.Request("user", "POST", Beacon.GenerateJSON(MergeKeys, False), "application/json", AddressOf APICallback_MergeUser)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(Request)
+		  
+		  Var Folder As FolderItem = App.ApplicationSupport.Child("Merged Identities")
+		  If Folder = Nil Or Folder.CheckIsFolder(True) = False Then
+		    Return
+		  End If
+		  
+		  Var File As FolderItem = Folder.Child(Source.Identifier + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
+		  If File <> Nil And File.Write(Beacon.GenerateJSON(Source.Export, True)) Then
+		    App.Log("Merged identity has been saved to " + File.NativePath)
+		  End If
 		End Sub
 	#tag EndMethod
 

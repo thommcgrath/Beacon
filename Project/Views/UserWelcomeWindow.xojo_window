@@ -1552,6 +1552,28 @@ Begin Window UserWelcomeWindow
          Visible         =   False
          Width           =   172
       End
+      Begin ProgressWheel WelcomePageSpinner
+         AllowAutoDeactivate=   True
+         Enabled         =   True
+         Height          =   16
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Left            =   236
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   7
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   324
+         Transparent     =   False
+         Visible         =   False
+         Width           =   16
+      End
    End
    Begin Canvas SidebarCanvas
       AcceptFocus     =   False
@@ -1704,6 +1726,11 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub HandleAnonymous()
+		  Self.ContinueAnonymousButton.Enabled = False
+		  Self.ContinueAuthenticatedButton.Enabled = False
+		  Self.DisableOnlineButton.Enabled = False
+		  Self.WelcomePageSpinner.Visible = True
+		  
 		  Preferences.OnlineEnabled = True
 		  Preferences.OnlineToken = ""
 		  App.IdentityManager.Create()
@@ -1727,6 +1754,11 @@ End
 		      Message = "Please try again. If the problem persists help, see " + Beacon.WebURL("/help") + " for more help options."
 		    End If
 		    Self.ShowAlert("There was an error setting up your user.", Message)
+		    
+		    Self.ContinueAnonymousButton.Enabled = True
+		    Self.ContinueAuthenticatedButton.Enabled = True
+		    Self.DisableOnlineButton.Enabled = True
+		    Self.WelcomePageSpinner.Visible = False
 		  Else
 		    Self.Close()
 		  End If

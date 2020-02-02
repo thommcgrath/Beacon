@@ -272,17 +272,43 @@ Protected Class Document
 		  End If
 		  
 		  If Version >= 4 And Dict.HasKey("EncryptionKeys") And Dict.Value("EncryptionKeys") IsA Dictionary Then
-		    Dim Passwords As Dictionary = Dict.Value("EncryptionKeys")
-		    If Passwords.HasKey(Identity.Identifier.Lowercase) Then
+		    Var PossibleIdentities(0) As Beacon.Identity
+		    PossibleIdentities(0) = Identity
+		    
+		    Var Passwords As Dictionary = Dict.Value("EncryptionKeys")
+		    For Each Entry As DictionaryEntry In Passwords
+		      Var UserID As String = Entry.Key
+		      If UserID = Identity.Identifier Then
+		        Continue
+		      End If
+		      
+		      Var MergedIdentity As Beacon.Identity = IdentityManager.FindMergedIdentity(UserID)
+		      If MergedIdentity <> Nil Then
+		        PossibleIdentities.AddRow(MergedIdentity)
+		      End If
+		    Next
+		    
+		    For Each PossibleIdentity As Beacon.Identity In PossibleIdentities
+		      If Passwords.HasKey(PossibleIdentity.Identifier.Lowercase) = False Then
+		        Continue
+		      End If
+		      
 		      Try
-		        Dim DocumentPassword As String = Crypto.RSADecrypt(DecodeBase64(Passwords.Value(Identity.Identifier.Lowercase)), Identity.PrivateKey)
+		        Var DocumentPassword As String = Crypto.RSADecrypt(DecodeBase64(Passwords.Value(PossibleIdentity.Identifier.Lowercase)), PossibleIdentity.PrivateKey)
 		        Doc.mDocumentPassword = DocumentPassword
 		        Doc.mEncryptedPasswords = Passwords
+		        
+		        If Passwords.HasKey(Identity.Identifier.Lowercase) = False Then
+		          // Add a password for the current user
+		          Doc.AddUser(Identity.Identifier, Identity.PublicKey)
+		        End If
+		        
+		        Exit
 		      Catch Err As RuntimeException
 		        // Leave the encryption fresh
 		        Break
 		      End Try
-		    End If
+		    Next
 		  End If
 		  
 		  // New config system
