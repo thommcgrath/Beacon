@@ -128,44 +128,12 @@ function SaveUser(array $values, string &$message) {
 	if (isset($values['action']) && strtolower($values['action']) === 'merge') {
 		// merge an anonymous user into the currently authenticated user
 		
-		$message = 'This feature is currently disabled.';
-		return null;
-		
-		if (is_null($user)) {
-			$message = 'Target user does not exist.';
+		if (isset($values['private_key']) == false) {
+			$message = 'Private key not included.';
 			return null;
 		}
 		
-		if (is_null($user->LoginKey()) == false) {
-			$message = 'Target user already has a password.';
-			return null;
-		}
-		
-		if (BeaconCommon::HasAllKeys($values, 'signed_value', 'signature') == false) {
-			$message = 'Missing signature and signed_value keys.';
-			return null;
-		}
-		
-		$signed_value = $values['signed_value'];
-		$signature = $values['signature'];
-		
-		if (BeaconEncryption::RSAVerify($user->PublicKey(), $signed_value, hex2bin($signature)) == false) {
-			$message = 'Ownership of user ' . $user_id . ' could not be proven.';
-			return null;
-		}
-		
-		try {
-			$database->BeginTransaction();
-			$database->Query('UPDATE documents SET user_id = $1 WHERE user_id = $2;', $authenticated_user->UserID(), $user->UserID());
-			$database->Query('UPDATE mods SET user_id = $1 WHERE user_id = $2;', $authenticated_user->UserID(), $user->UserID());
-			$database->Query('UPDATE sessions SET user_id = $1 WHERE user_id = $2;', $authenticated_user->UserID(), $user->UserID());
-			$database->Query('DELETE FROM users WHERE user_id = $1;', $user->UserID());
-			$database->Commit();
-			return $authenticated_user;
-		} catch (Exception $e) {
-			$message = $e->getMessage();
-			return null;
-		}
+		return MergeUsers($authenticated_user, $user, $values['private_key'], $message);
 	}
 	
 	if (array_key_exists('login_key', $values)) {
@@ -255,6 +223,142 @@ function SaveUser(array $values, string &$message) {
 		
 		return BeaconUser::GetByUserID($user_id);;
 	}
+}
+
+function MergeUsers($into_user, $from_user, string $from_user_private_key, string &$message) {
+	if (is_null($into_user) || is_null($from_user) || is_a($into_user, 'BeaconUser') == false || is_a($from_user, 'BeaconUser') == false) {
+		$message = 'Merge process requires exactly two existing users.';
+		return null;
+	}
+	if ($into_user->IsAnonymous() || $from_user->IsAnonymous() == false) {
+		$message = 'Only an anonymous user may be merged into a named user.';
+		return null;
+	}
+	
+	// In order for this to work, the user must not have used their cloud storage at all, so that
+	// we can copy the cloud key from the other user.
+	
+	$from_has_files = $from_user->HasFiles();
+	if ($from_has_files && $into_user->HasEncryptedFiles()) {
+		$message = 'The named user already has encrypted files so their encryption key cannot be changed.';
+		return null;
+	}
+	
+	// If it is already PEM-encoded, then nothing will happen.
+	$pem_private_key = BeaconEncryption::PrivateKeyToPEM($from_user_private_key);
+	$pem_public_key = BeaconEncryption::PublicKeyToPEM($from_user->PublicKey());
+	
+	$decrypted = '';
+	try {
+		// To verify the private key is correct, we're going to encrypt something with the
+		// public key stored in the database and decrypt using the provided private key.
+		$test_value = BeaconCommon::GenerateUUID();
+		$encrypted = BeaconEncryption::RSAEncrypt($pem_public_key, $test_value);
+		$decrypted = BeaconEncryption::RSADecrypt($pem_private_key, $encrypted);
+	} catch (Exception $err) {
+		$message = $err->getMessage();
+		return null;
+	}
+	if ($decrypted !== $test_value) {
+		$message = 'Unable to confirm ownership of the source user.';
+		return null;
+	}
+	
+	$files_to_delete = array();
+	$database = BeaconCommon::Database();
+	$database->BeginTransaction();
+	if ($from_has_files) {
+		if ($from_user->HasEncryptedFiles()) {
+			// So we're going to copy the cloud key from $from_user into $into_user
+			try {
+				$results = $database->Query('SELECT usercloud_key FROM users WHERE user_id = $1;', $from_user->UserID());
+				$cloud_key = BeaconEncryption::RSADecrypt($pem_private_key, hex2bin($results->Field('usercloud_key')));
+				$database->Query('UPDATE users SET usercloud_key = $2 WHERE user_id = $1;', $into_user->UserID(), bin2hex(BeaconEncryption::RSAEncrypt($into_user->PublicKey(), $cloud_key)));
+			} catch (Exception $err) {
+				$database->Rollback();
+				$message = 'Unable to migrate cloud encryption key: ' . $err->getMessage();
+				return null;
+			}
+		}
+		
+		$list = BeaconCloudStorage::ListFiles('/' . $from_user->UserID() . '/');
+		foreach ($list as $fileinfo) {
+			if ($fileinfo['size'] == 0 || $fileinfo['deleted'] == true) {
+				continue;
+			}
+			
+			$is_encrypted = is_null($fileinfo['header']) == false;
+			$old_path = $fileinfo['path'];
+			$new_path = str_replace('/' . $from_user->UserID() . '/', '/' . $into_user->UserID() . '/', $old_path);
+			
+			$contents = BeaconCloudStorage::GetFile($old_path);
+			if (empty($contents)) {
+				// We checked the size before, it should have something, so we need to fail.
+				$database->Rollback();
+				$message = 'Failed to load cloud file ' . $old_path;
+				return null;
+			}
+			
+			if (substr($old_path, -7) == '.beacon' && substr($old_path, 37, 11) == '/Documents/') {
+				// This is a document. Yay. The objective here is to change the encryption key inside the file.
+				if (BeaconCommon::IsCompressed($contents)) {
+					$temp_contents = gzdecode($contents);
+				} else {
+					$temp_contents = $contents;
+				}
+				$document = json_decode($temp_contents, true);
+				unset($temp_contents);
+				
+				
+				if (isset($document['Version']) && $document['Version'] >= 4 && isset($document['EncryptionKeys'])) {
+					$keys = $document['EncryptionKeys'];
+					if (array_key_exists($from_user->UserID(), $keys)) {
+						$encrypted_key = base64_decode($keys[$from_user->UserID()]);
+						try {
+							$decrypted_key = BeaconEncryption::RSADecrypt($pem_private_key, $encrypted_key);
+							$encrypted_key = BeaconEncryption::RSAEncrypt($into_user->PublicKey(), $decrypted_key);
+							$keys[$into_user->UserID()] = base64_encode($encrypted_key);
+							unset($keys[$from_user->UserID()]);
+							$document['EncryptionKeys'] = $keys;
+							$encoded = json_encode($document);
+							unset($document);
+							if (is_string($encoded)) {
+								$contents = gzencode($encoded);
+							}
+							unset($encoded);
+						} catch (Exception $err) {
+							// Something failed. Too bad.
+							$database->Rollback();
+							echo 'Exception while updating document ' . $err->getMessage();
+							exit;
+						}
+					}
+				}
+			}
+			
+			$files_to_delete[] = $old_path;
+			if (BeaconCloudStorage::PutFile($new_path, $contents) == false) {
+				$database->Rollback();
+				$message = 'Failed to upload cloud file to ' . $new_path;
+				return null;
+			}
+		}
+	}
+	
+	if ($into_user->MergeUsers($from_user->UserID()) == false) {
+		$database->Rollback();
+		$message = 'Failed to remove the old user from the database.';
+		return null;
+	}
+	
+	$database->Commit();
+	
+	foreach ($files_to_delete as $remote_path) {
+		BeaconCloudStorage::DeleteFile($remote_path);
+	}
+	
+	// Grab a fresh copy of the user object
+	return BeaconUser::GetByUserID($into_user->UserID());
 }
 
 ?>

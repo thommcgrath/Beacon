@@ -255,6 +255,7 @@ class BeaconUser implements JsonSerializable {
 			foreach ($user_ids as $user_id) {
 				$database->Query('UPDATE sessions SET user_id = $2 WHERE user_id = $1;', $user_id, $this->user_id);
 				$database->Query('UPDATE documents SET user_id = $2 WHERE user_id = $1;', $user_id, $this->user_id);
+				$database->Query('UPDATE guest_documents SET user_id = $2 WHERE user_id = $1;', $user_id, $this->user_id);
 				$database->Query('UPDATE mods SET user_id = $2 WHERE user_id = $1;', $user_id, $this->user_id);
 				$database->Query('UPDATE oauth_tokens SET user_id = $2 WHERE user_id = $1;', $user_id, $this->user_id);
 				$database->Query('DELETE FROM users WHERE user_id = $1;', $user_id);
@@ -399,6 +400,18 @@ class BeaconUser implements JsonSerializable {
 	
 	public static function IsExtendedUsername(string $username) {
 		return preg_match('/#[a-fA-F0-9]{8}$/', $username) === 1;
+	}
+	
+	public function HasFiles() {
+		$database = BeaconCommon::Database();
+		$results = $database->Query('SELECT COUNT(remote_path) AS num_files FROM usercloud WHERE remote_path LIKE $1 AND size_in_bytes > 0 AND deleted = FALSE;', '/' . $this->UserID() . '/%');
+		return $results->Field('num_files') > 0;
+	}
+	
+	public function HasEncryptedFiles() {
+		$database = BeaconCommon::Database();
+		$results = $database->Query('SELECT COUNT(remote_path) AS num_files FROM usercloud WHERE remote_path LIKE $1 AND size_in_bytes > 0 AND deleted = FALSE AND header IS NOT NULL;', '/' . $this->UserID() . '/%');
+		return $results->Field('num_files') > 0;
 	}
 }
 
