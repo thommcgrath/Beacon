@@ -18,7 +18,7 @@ Inherits Thread
 		      
 		      If SetupIndexDatabase Then
 		        Try
-		          Var Results As RowSet = mIndex.SelectSQL("SELECT remote_path FROM actions WHERE remote_path = ?1;", RemotePath)
+		          Var Results As RowSet = mIndex.SelectSQL("SELECT remote_path FROM actions WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath)
 		          If Results.RowCount > 0 Then
 		            // Since there is an action pending, we do nothing
 		            Continue
@@ -48,7 +48,7 @@ Inherits Thread
 		        
 		        If SetupIndexDatabase Then
 		          Try
-		            Var Results As RowSet = mIndex.SelectSQL("SELECT * FROM usercloud WHERE remote_path = ?1;", RemotePath)
+		            Var Results As RowSet = mIndex.SelectSQL("SELECT * FROM usercloud WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath)
 		            If Results.RowCount = 1 Then
 		              LocalModified = NewDateFromSQLDateTime(Results.Column("modified").StringValue)
 		              LocalHash = Results.Column("hash").StringValue
@@ -79,7 +79,7 @@ Inherits Thread
 		    
 		    If SetupIndexDatabase Then
 		      Try
-		        Var Files As RowSet = mIndex.SelectSQL("SELECT * FROM actions;")
+		        Var Files As RowSet = mIndex.SelectSQL("SELECT * FROM actions WHERE user_id = ?1;", UserID)
 		        While Not Files.AfterLastRow
 		          Var RemotePath As String = Files.Column("remote_path").StringValue
 		          Var Action As String = Files.Column("action").StringValue

@@ -144,7 +144,7 @@ Protected Module UserCloud
 		  Var Results() As String
 		  If SetupIndexDatabase Then
 		    Try
-		      Var Files As RowSet = mIndex.SelectSQL("SELECT remote_path FROM usercloud ORDER BY remote_path;")
+		      Var Files As RowSet = mIndex.SelectSQL("SELECT remote_path FROM usercloud WHERE user_id = ?1 ORDER BY remote_path;", UserID)
 		      While Not Files.AfterLastRow
 		        Var RemotePath As String = Files.Column("remote_path").StringValue
 		        If RemotePath.BeginsWith(Prefix) Then
@@ -178,7 +178,7 @@ Protected Module UserCloud
 		  If Not LocalFolder.CheckIsFolder(Create) Then
 		    Return Nil
 		  End If
-		  LocalFolder = LocalFolder.Child(App.IdentityManager.CurrentIdentity.Identifier)
+		  LocalFolder = LocalFolder.Child(UserID)
 		  If Not LocalFolder.CheckIsFolder(Create) Then
 		    Return Nil
 		  End If
@@ -232,9 +232,10 @@ Protected Module UserCloud
 		  
 		  If SetupIndexDatabase Then
 		    Try
+		      Var UserID As String = UserID
 		      mIndex.BeginTransaction
-		      mIndex.ExecuteSQL("DELETE FROM usercloud WHERE remote_path = ?1;", RemotePath)
-		      mIndex.ExecuteSQL("DELETE FROM actions WHERE remote_path = ?1;", RemotePath)
+		      mIndex.ExecuteSQL("DELETE FROM usercloud WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath)
+		      mIndex.ExecuteSQL("DELETE FROM actions WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath)
 		      mIndex.CommitTransaction
 		    Catch Err As DatabaseException
 		      App.Log("Unable to remove cloud file from local index: " + Err.Message)
@@ -257,14 +258,15 @@ Protected Module UserCloud
 		  
 		  If SetupIndexDatabase Then
 		    Try
+		      Var UserID As String = UserID
 		      mIndex.BeginTransaction
-		      Var Results As RowSet = mIndex.SelectSQL("SELECT remote_path FROM usercloud WHERE remote_path = ?1;", RemotePath)
+		      Var Results As RowSet = mIndex.SelectSQL("SELECT remote_path FROM usercloud WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath)
 		      If Results.RowCount > 0 Then
-		        mIndex.ExecuteSQL("UPDATE usercloud SET size_in_bytes = ?2, hash = ?3, modified = ?4 WHERE remote_path = ?1;", RemotePath, ServerSizeBytes, ServerHash, ModificationDate.SQLDateTimeWithOffset)
+		        mIndex.ExecuteSQL("UPDATE usercloud SET size_in_bytes = ?3, hash = ?4, modified = ?5 WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath, ServerSizeBytes, ServerHash, ModificationDate.SQLDateTimeWithOffset)
 		      Else
-		        mIndex.ExecuteSQL("INSERT INTO usercloud (remote_path, size_in_bytes, hash, modified) VALUES (?1, ?2, ?3, ?4);", RemotePath, ServerSizeBytes, ServerHash, ModificationDate.SQLDateTimeWithOffset)
+		        mIndex.ExecuteSQL("INSERT INTO usercloud (user_id, remote_path, size_in_bytes, hash, modified) VALUES (?1, ?2, ?3, ?4, ?5);", UserID, RemotePath, ServerSizeBytes, ServerHash, ModificationDate.SQLDateTimeWithOffset)
 		      End If
-		      mIndex.ExecuteSQL("DELETE FROM actions WHERE remote_path = ?1;", RemotePath)
+		      mIndex.ExecuteSQL("DELETE FROM actions WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath)
 		      mIndex.CommitTransaction
 		    Catch Err As DatabaseException
 		      App.Log("Unable to add cloud file to local index: " + Err.Message)
@@ -307,15 +309,16 @@ Protected Module UserCloud
 		  End If
 		  
 		  Try
-		    Var Results As RowSet = mIndex.SelectSQL("SELECT action FROM actions WHERE remote_path = ?1;", RemotePath)
+		    Var UserID As String = UserID
+		    Var Results As RowSet = mIndex.SelectSQL("SELECT action FROM actions WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath)
 		    If Results.RowCount = 0 Then
 		      mIndex.BeginTransaction
-		      mIndex.ExecuteSQL("INSERT INTO actions (remote_path, action) VALUES (?1, ?2);", RemotePath, Action)
+		      mIndex.ExecuteSQL("INSERT INTO actions (user_id, remote_path, action) VALUES (?1, ?2, ?3);", UserID, RemotePath, Action)
 		      mIndex.CommitTransaction
 		    Else
 		      If Results.Column("action").StringValue <> Action Then
 		        mIndex.BeginTransaction
-		        mIndex.ExecuteSQL("UPDATE actions SET action = ?2 WHERE remote_path = ?1;", RemotePath, Action)
+		        mIndex.ExecuteSQL("UPDATE actions SET action = ?3 WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath, Action)
 		        mIndex.CommitTransaction
 		      End If
 		    End If
@@ -376,14 +379,21 @@ Protected Module UserCloud
 		    End Try
 		  End If
 		  
-		  If Created Then
+		  If Created = False And Index.UserVersion < 2 Then
 		    Try
-		      Index.ExecuteSQL("CREATE TABLE usercloud (remote_path TEXT NOT NULL UNIQUE, size_in_bytes INTEGER NOT NULL, hash TEXT NOT NULL, modified TEXT NOT NULL);")
-		      Index.ExecuteSQL("CREATE TABLE actions (remote_path TEXT NOT NULL UNIQUE, action TEXT NOT NULL);")
-		      Index.ExecuteSQL("PRAGMA foreign_keys = ON;")
-		      Index.ExecuteSQL("PRAGMA journal_mode = WAL;")
+		      Index.ExecuteSQL("ALTER TABLE usercloud RENAME TO usercloud_old;")
+		      Index.ExecuteSQL("ALTER TABLE actions RENAME TO actions_old;")
+		      
+		      If Not SetupIndexSchema(Index) Then
+		        Return False
+		      End If
+		      
+		      Index.ExecuteSQL("INSERT INTO usercloud (user_id, remote_path, size_in_bytes, hash, modified) SELECT ?1 AS user_id, remote_path, size_in_bytes, hash, modified FROM usercloud_old;", UserID)
+		      Index.ExecuteSQL("INSERT INTO actions (user_id, remote_path, action) SELECT ?1 AS user_id, remote_path, action FROM actions_old;", UserID)
+		      Index.ExecuteSQL("DROP TABLE usercloud_old;")
+		      Index.ExecuteSQL("DROP TABLE actions_old;")
 		    Catch Err As DatabaseException
-		      App.Log("Could not create database schema: " + Err.Message)
+		      App.Log("Could not update database schema: " + Err.Message)
 		      Index.Close
 		      Try
 		        Index.DatabaseFile.Remove
@@ -392,10 +402,38 @@ Protected Module UserCloud
 		      End Try
 		      Return False
 		    End Try
+		  ElseIf Created Then
+		    If Not SetupIndexSchema(Index) Then
+		      Return False
+		    End If
 		  End If
 		  
 		  mIndex = Index
 		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SetupIndexSchema(Index As SQLiteDatabase) As Boolean
+		  Try
+		    Index.ExecuteSQL("CREATE TABLE usercloud (user_id TEXT NOT NULL, remote_path TEXT NOT NULL, size_in_bytes INTEGER NOT NULL, hash TEXT NOT NULL, modified TEXT NOT NULL);")
+		    Index.ExecuteSQL("CREATE TABLE actions (user_id TEXT NOT NULL, remote_path TEXT NOT NULL, action TEXT NOT NULL);")
+		    Index.ExecuteSQL("CREATE UNIQUE INDEX usercloud_user_id_remote_path_idx ON usercloud(user_id, remote_path);")
+		    Index.ExecuteSQL("CREATE UNIQUE INDEX actions_user_id_remote_path_idx ON actions(user_id, remote_path);")
+		    Index.ExecuteSQL("PRAGMA foreign_keys = ON;")
+		    Index.ExecuteSQL("PRAGMA journal_mode = WAL;")
+		    Index.UserVersion = 2
+		    Return True
+		  Catch Err As DatabaseException
+		    App.Log("Could not create database schema: " + Err.Message)
+		    Index.Close
+		    Try
+		      Index.DatabaseFile.Remove
+		    Catch IOErr As IOException
+		      App.Log("Also unable to delete the database file at " + Index.DatabaseFile.NativePath + ": " + IOErr.Message)
+		    End Try
+		    Return False
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -453,15 +491,16 @@ Protected Module UserCloud
 		    Var EncryptedContentsHash As String = EncodeHex(Crypto.SHA256(EncryptedContents)).Lowercase
 		    Var EncryptedContentsSize As Integer = EncryptedContents.Size
 		    Var Modified As String = DateTime.Now.SQLDateTimeWithOffset
+		    Var UserID As String = UserID
 		    Try
 		      mIndex.BeginTransaction
-		      Var Results As RowSet = mIndex.SelectSQL("SELECT remote_path FROM usercloud WHERE remote_path = ?1;", RemotePath)
+		      Var Results As RowSet = mIndex.SelectSQL("SELECT remote_path FROM usercloud WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath)
 		      If Results.RowCount > 0 Then
-		        mIndex.ExecuteSQL("UPDATE usercloud SET size_in_bytes = ?2, hash = ?3, modified = ?4 WHERE remote_path = ?1;", RemotePath, EncryptedContentsSize, EncryptedContentsHash, Modified)
+		        mIndex.ExecuteSQL("UPDATE usercloud SET size_in_bytes = ?3, hash = ?4, modified = ?5 WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath, EncryptedContentsSize, EncryptedContentsHash, Modified)
 		      Else
-		        mIndex.ExecuteSQL("INSERT INTO usercloud (remote_path, size_in_bytes, hash, modified) VALUES (?1, ?2, ?3, ?4);", RemotePath, EncryptedContentsSize, EncryptedContentsHash, Modified)
+		        mIndex.ExecuteSQL("INSERT INTO usercloud (user_id, remote_path, size_in_bytes, hash, modified) VALUES (?1, ?2, ?3, ?4, ?5);", UserID, RemotePath, EncryptedContentsSize, EncryptedContentsHash, Modified)
 		      End If
-		      mIndex.ExecuteSQL("DELETE FROM actions WHERE remote_path = ?1;", RemotePath)
+		      mIndex.ExecuteSQL("DELETE FROM actions WHERE user_id = ?1 AND remote_path = ?2;", UserID, RemotePath)
 		      mIndex.CommitTransaction
 		    Catch Err As DatabaseException
 		      App.Log("Unable to add cloud file to local index: " + Err.Message)
@@ -473,6 +512,12 @@ Protected Module UserCloud
 		  ActionDict.Value("Path") = RemotePath
 		  SyncActions.AddRow(ActionDict)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function UserID() As String
+		  Return App.IdentityManager.CurrentIdentity.Identifier.Lowercase
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
