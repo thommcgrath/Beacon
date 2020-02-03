@@ -117,6 +117,10 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h1
 		Protected Function Delete(RemotePath As String) As Boolean
+		  If RemotePath.BeginsWith("/") = False Then
+		    RemotePath = "/" + RemotePath
+		  End If
+		  
 		  Var LocalFile As FolderItem = LocalFile(RemotePath, False)
 		  If LocalFile <> Nil And LocalFile.DeepDelete Then
 		    SendRequest(New BeaconAPI.Request("file" + RemotePath, "DELETE", AddressOf Callback_DeleteFile))
