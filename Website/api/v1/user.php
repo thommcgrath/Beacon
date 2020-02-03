@@ -127,6 +127,10 @@ function SaveUser(array $values, string &$message) {
 	
 	if (isset($values['action']) && strtolower($values['action']) === 'merge') {
 		// merge an anonymous user into the currently authenticated user
+		
+		$message = 'This feature is currently disabled.';
+		return null;
+		
 		if (is_null($user)) {
 			$message = 'Target user does not exist.';
 			return null;
