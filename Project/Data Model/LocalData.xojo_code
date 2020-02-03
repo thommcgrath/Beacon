@@ -498,12 +498,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBooleanVariable(Key As String) As Boolean
+		Function GetBooleanVariable(Key As String, Default As Boolean = False) As Boolean
 		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RowCount = 1 Then
 		    Return Results.Column("value").BooleanValue
 		  Else
-		    Return False
+		    Return Default
 		  End If
 		End Function
 	#tag EndMethod
@@ -620,12 +620,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetDoubleVariable(Key As String) As Double
+		Function GetDoubleVariable(Key As String, Default As Double = 0.0) As Double
 		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RowCount = 1 Then
 		    Return Results.Column("value").DoubleValue
 		  Else
-		    Return 0.0
+		    Return Default
 		  End If
 		End Function
 	#tag EndMethod
@@ -708,12 +708,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetIntegerVariable(Key As String) As Integer
+		Function GetIntegerVariable(Key As String, Default As Integer = 0) As Integer
 		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RowCount = 1 Then
 		    Return Results.Column("value").IntegerValue
 		  Else
-		    Return 0
+		    Return Default
 		  End If
 		End Function
 	#tag EndMethod
@@ -881,7 +881,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetStringVariable(Key As String) As String
+		Function GetStringVariable(Key As String, Default As String = "") As String
 		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RowCount = 1 Then
 		    Dim StringValue As String = Results.Column("value").StringValue
@@ -889,12 +889,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      If Encodings.UTF8.IsValidData(StringValue) Then
 		        StringValue = StringValue.DefineEncoding(Encodings.UTF8)
 		      Else
-		        Return ""
+		        Return Default
 		      End If
 		    End If
 		    Return StringValue
 		  Else
-		    Return ""
+		    Return Default
 		  End If
 		End Function
 	#tag EndMethod
@@ -1560,6 +1560,43 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Results.MoveToNextRow
 		  Wend
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LootSourceLabels(Availability As UInt64) As Dictionary
+		  If Self.mDropsLabelCacheMask <> Availability Then
+		    Var Drops() As Beacon.LootSource = Self.SearchForLootSources("", New Beacon.StringList, True)
+		    Var Labels() As String
+		    Var Dict As New Dictionary
+		    Labels.ResizeTo(Drops.LastRowIndex)
+		    
+		    For I As Integer = 0 To Drops.LastRowIndex
+		      If Drops(I).ValidForMask(Availability) = False Then
+		        Continue
+		      End If
+		      
+		      Var Label As String = Drops(I).Label
+		      Var Idx As Integer = Labels.IndexOf(Label)
+		      Labels(I) = Label
+		      If Idx > -1 Then
+		        Var Filtered As UInt64 = Drops(Idx).Availability And Availability
+		        Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Filtered)
+		        Dict.Value(Drops(Idx).Path) = Drops(Idx).Label + " (" + Maps.Label + ")"
+		        
+		        Filtered = Drops(I).Availability And Availability
+		        Maps = Beacon.Maps.ForMask(Filtered)
+		        Label = Label + " (" + Maps.Label + ")"
+		      End If
+		      
+		      Dict.Value(Drops(I).Path) = Label
+		    Next
+		    
+		    Self.mDropsLabelCacheDict = Dict
+		    Self.mDropsLabelCacheMask = Availability
+		  End If
+		  
+		  Return Self.mDropsLabelCacheDict
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -2554,6 +2591,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mCreatureCache As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDropsLabelCacheDict As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDropsLabelCacheMask As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

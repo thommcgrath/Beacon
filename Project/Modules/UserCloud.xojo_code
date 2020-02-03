@@ -123,32 +123,11 @@ Protected Module UserCloud
 		  
 		  Var LocalFile As FolderItem = LocalFile(RemotePath, False)
 		  If LocalFile <> Nil And LocalFile.DeepDelete Then
-		    SendRequest(New BeaconAPI.Request("file" + RemotePath, "DELETE", AddressOf Callback_DeleteFile))
+		    SetActionForPath(RemotePath, "DELETE")
 		    Sync()
 		    Return True
 		  End If
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub DiscoverPaths(BasePath As String, Folder As FolderItem, Destination As Dictionary)
-		  If Not Folder.IsFolder Then
-		    Return
-		  End If
-		  
-		  For I As Integer = 0 To Folder.Count - 1
-		    Var Child As FolderItem = Folder.ChildAt(I)
-		    If Child.Name.BeginsWith(".") Then
-		      Continue
-		    End If
-		    
-		    If Child.IsFolder Then
-		      DiscoverPaths(BasePath + "/" + EncodeURLComponent(Child.Name), Child, Destination)
-		    Else
-		      Destination.Value(BasePath + "/" + EncodeURLComponent(Child.Name)) = Child
-		    End If
-		  Next
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
@@ -162,20 +141,21 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h1
 		Protected Function List(Prefix As String = "/") As String()
-		  Var Paths As New Dictionary
-		  DiscoverPaths("", LocalFile("/"), Paths)
-		  
 		  Var Results() As String
-		  
-		  Var Keys() As Variant = Paths.Keys
-		  For Each Key As String In Keys
-		    If Not Key.BeginsWith(Prefix) Then
-		      Continue
-		    End If
-		    
-		    Results.AddRow(Key)
-		  Next
-		  
+		  If SetupIndexDatabase Then
+		    Try
+		      Var Files As RowSet = mIndex.SelectSQL("SELECT remote_path FROM usercloud ORDER BY remote_path;")
+		      While Not Files.AfterLastRow
+		        Var RemotePath As String = Files.Column("remote_path").StringValue
+		        If RemotePath.BeginsWith(Prefix) Then
+		          Results.AddRow(Files.Column("remote_path").StringValue)
+		        End If
+		        Files.MoveToNextRow
+		      Wend
+		    Catch Err As DatabaseException
+		      App.Log("Unable to list cloud files: " + Err.Message)
+		    End Try
+		  End If
 		  Return Results
 		End Function
 	#tag EndMethod
@@ -240,7 +220,31 @@ Protected Module UserCloud
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub RequestFileFrom(LocalFile As FolderItem, RemotePath As String, ModificationDate As DateTime)
+		Private Sub RemoveFileFrom(LocalFile As FolderItem, RemotePath As String)
+		  LocalFile.Remove
+		  
+		  SendRequest(New BeaconAPI.Request("file" + RemotePath, "DELETE", AddressOf Callback_DeleteFile))
+		  
+		  Var ActionDict As New Dictionary
+		  ActionDict.Value("Action") = "DELETE"
+		  ActionDict.Value("Path") = RemotePath
+		  SyncActions.AddRow(ActionDict)
+		  
+		  If SetupIndexDatabase Then
+		    Try
+		      mIndex.BeginTransaction
+		      mIndex.ExecuteSQL("DELETE FROM usercloud WHERE remote_path = ?1;", RemotePath)
+		      mIndex.ExecuteSQL("DELETE FROM actions WHERE remote_path = ?1;", RemotePath)
+		      mIndex.CommitTransaction
+		    Catch Err As DatabaseException
+		      App.Log("Unable to remove cloud file from local index: " + Err.Message)
+		    End Try
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RequestFileFrom(LocalFile As FolderItem, RemotePath As String, ModificationDate As DateTime, ServerSizeBytes As Integer, ServerHash As String)
 		  SendRequest(New BeaconAPI.Request("file" + RemotePath, "GET", AddressOf Callback_GetFile))
 		  
 		  If Not LocalFile.Exists Then
@@ -250,6 +254,22 @@ Protected Module UserCloud
 		    LocalFile.CreationDateTime = ModificationDate
 		  End If
 		  LocalFile.ModificationDateTime = ModificationDate
+		  
+		  If SetupIndexDatabase Then
+		    Try
+		      mIndex.BeginTransaction
+		      Var Results As RowSet = mIndex.SelectSQL("SELECT remote_path FROM usercloud WHERE remote_path = ?1;", RemotePath)
+		      If Results.RowCount > 0 Then
+		        mIndex.ExecuteSQL("UPDATE usercloud SET size_in_bytes = ?2, hash = ?3, modified = ?4 WHERE remote_path = ?1;", RemotePath, ServerSizeBytes, ServerHash, ModificationDate.SQLDateTimeWithOffset)
+		      Else
+		        mIndex.ExecuteSQL("INSERT INTO usercloud (remote_path, size_in_bytes, hash, modified) VALUES (?1, ?2, ?3, ?4);", RemotePath, ServerSizeBytes, ServerHash, ModificationDate.SQLDateTimeWithOffset)
+		      End If
+		      mIndex.ExecuteSQL("DELETE FROM actions WHERE remote_path = ?1;", RemotePath)
+		      mIndex.CommitTransaction
+		    Catch Err As DatabaseException
+		      App.Log("Unable to add cloud file to local index: " + Err.Message)
+		    End Try
+		  End If
 		  
 		  Var ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "GET"
@@ -274,6 +294,109 @@ Protected Module UserCloud
 		    NotificationKit.Post(Notification_SyncStarted, Nil)
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SetActionForPath(RemotePath As String, Action As String)
+		  If Not SetupIndexDatabase Then
+		    Return
+		  End If
+		  
+		  If RemotePath.BeginsWith("/") = False Then
+		    RemotePath = "/" + RemotePath
+		  End If
+		  
+		  Try
+		    Var Results As RowSet = mIndex.SelectSQL("SELECT action FROM actions WHERE remote_path = ?1;", RemotePath)
+		    If Results.RowCount = 0 Then
+		      mIndex.BeginTransaction
+		      mIndex.ExecuteSQL("INSERT INTO actions (remote_path, action) VALUES (?1, ?2);", RemotePath, Action)
+		      mIndex.CommitTransaction
+		    Else
+		      If Results.Column("action").StringValue <> Action Then
+		        mIndex.BeginTransaction
+		        mIndex.ExecuteSQL("UPDATE actions SET action = ?2 WHERE remote_path = ?1;", RemotePath, Action)
+		        mIndex.CommitTransaction
+		      End If
+		    End If
+		  Catch Err As DatabaseException
+		    App.Log("Unable to add " + Action + " action to cloud index: " + Err.Message)
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SetupIndexDatabase() As Boolean
+		  If mIndex <> Nil Then
+		    Return True
+		  End If
+		  
+		  Var DatabaseFile As FolderItem = App.ApplicationSupport
+		  If Not DatabaseFile.CheckIsFolder(True) Then
+		    Return False
+		  End If
+		  DatabaseFile = DatabaseFile.Child("Cloud")
+		  If Not DatabaseFile.CheckIsFolder(True) Then
+		    Return False
+		  End If
+		  DatabaseFile = DatabaseFile.Child("Index.sqlite")
+		  
+		  Var Index As New SQLiteDatabase
+		  Index.DatabaseFile = DatabaseFile
+		  
+		  Var Created As Boolean
+		  
+		  If Index.DatabaseFile.Exists Then
+		    Try
+		      Index.Connect
+		    Catch DBErr As DatabaseException
+		      App.Log("Unable to connect to database at " + Index.DatabaseFile.NativePath + ": " + DBErr.Message)
+		      Try
+		        Index.DatabaseFile.Remove
+		      Catch IOErr As IOException
+		        App.Log("Unable to remove bad database at " + Index.DatabaseFile.NativePath + ": " + IOErr.Message)
+		        Return False
+		      End Try
+		      Try
+		        Index.CreateDatabase
+		        Created = True
+		      Catch CreateErr As RuntimeException
+		        // Docs say IOException, but I'm not confident
+		        App.Log("Unable to create replacement database at " + Index.DatabaseFile.NativePath + ": " + CreateErr.Message)
+		        Return False
+		      End Try
+		    End Try
+		  Else
+		    Try
+		      Index.CreateDatabase
+		      Created = True
+		    Catch CreateErr As RuntimeException
+		      App.Log("Unable to create database at " + Index.DatabaseFile.NativePath + ": " + CreateErr.Message)
+		      Return False
+		    End Try
+		  End If
+		  
+		  If Created Then
+		    Try
+		      Index.ExecuteSQL("CREATE TABLE usercloud (remote_path TEXT NOT NULL UNIQUE, size_in_bytes INTEGER NOT NULL, hash TEXT NOT NULL, modified TEXT NOT NULL);")
+		      Index.ExecuteSQL("CREATE TABLE actions (remote_path TEXT NOT NULL UNIQUE, action TEXT NOT NULL);")
+		      Index.ExecuteSQL("PRAGMA foreign_keys = ON;")
+		      Index.ExecuteSQL("PRAGMA journal_mode = WAL;")
+		    Catch Err As DatabaseException
+		      App.Log("Could not create database schema: " + Err.Message)
+		      Index.Close
+		      Try
+		        Index.DatabaseFile.Remove
+		      Catch IOErr As IOException
+		        App.Log("Also unable to delete the database file at " + Index.DatabaseFile.NativePath + ": " + IOErr.Message)
+		      End Try
+		      Return False
+		    End Try
+		  End If
+		  
+		  mIndex = Index
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
@@ -326,6 +449,25 @@ Protected Module UserCloud
 		  
 		  SendRequest(New BeaconAPI.Request("file" + RemotePath, "PUT", EncryptedContents, "application/octet-stream", AddressOf Callback_PutFile))
 		  
+		  If SetupIndexDatabase Then
+		    Var EncryptedContentsHash As String = EncodeHex(Crypto.SHA256(EncryptedContents)).Lowercase
+		    Var EncryptedContentsSize As Integer = EncryptedContents.Size
+		    Var Modified As String = DateTime.Now.SQLDateTimeWithOffset
+		    Try
+		      mIndex.BeginTransaction
+		      Var Results As RowSet = mIndex.SelectSQL("SELECT remote_path FROM usercloud WHERE remote_path = ?1;", RemotePath)
+		      If Results.RowCount > 0 Then
+		        mIndex.ExecuteSQL("UPDATE usercloud SET size_in_bytes = ?2, hash = ?3, modified = ?4 WHERE remote_path = ?1;", RemotePath, EncryptedContentsSize, EncryptedContentsHash, Modified)
+		      Else
+		        mIndex.ExecuteSQL("INSERT INTO usercloud (remote_path, size_in_bytes, hash, modified) VALUES (?1, ?2, ?3, ?4);", RemotePath, EncryptedContentsSize, EncryptedContentsHash, Modified)
+		      End If
+		      mIndex.ExecuteSQL("DELETE FROM actions WHERE remote_path = ?1;", RemotePath)
+		      mIndex.CommitTransaction
+		    Catch Err As DatabaseException
+		      App.Log("Unable to add cloud file to local index: " + Err.Message)
+		    End Try
+		  End If
+		  
 		  Var ActionDict As New Dictionary
 		  ActionDict.Value("Action") = "PUT"
 		  ActionDict.Value("Path") = RemotePath
@@ -337,12 +479,18 @@ Protected Module UserCloud
 		Protected Function Write(RemotePath As String, Content As MemoryBlock) As Boolean
 		  Var LocalFile As FolderItem = LocalFile(RemotePath)
 		  If LocalFile.Write(Content) Then
+		    SetActionForPath(RemotePath, "PUT")
+		    
 		    Sync()
 		    Return True
 		  End If
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mIndex As SQLiteDatabase
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private PendingRequests As Dictionary

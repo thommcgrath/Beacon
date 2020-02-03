@@ -31,7 +31,7 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBooleanVariable(Key As String) As Boolean
+		Function GetBooleanVariable(Key As String, Default As Boolean = False) As Boolean
 		  
 		End Function
 	#tag EndMethod
@@ -55,7 +55,7 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetDoubleVariable(Key As String) As Double
+		Function GetDoubleVariable(Key As String, Default As Double = 0.0) As Double
 		  
 		End Function
 	#tag EndMethod
@@ -79,7 +79,7 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetIntegerVariable(Key As String) As Integer
+		Function GetIntegerVariable(Key As String, Default As Integer = 0) As Integer
 		  
 		End Function
 	#tag EndMethod
@@ -121,7 +121,7 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetStringVariable(Key As String) As String
+		Function GetStringVariable(Key As String, Default As String = "") As String
 		  
 		End Function
 	#tag EndMethod

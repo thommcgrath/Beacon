@@ -65,8 +65,8 @@ Inherits Beacon.ConfigGroup
 		  NightSpeedMultiplier = ParsedData.DoubleValue("NightTimeSpeedScale", NightSpeedMultiplier)
 		  
 		  Dim Config As New BeaconConfigs.DayCycle()
-		  Config.DaySpeedMultiplier = DaySpeedMultiplier * OverallCycleMultiplier
-		  Config.NightSpeedMultiplier = NightSpeedMultiplier * OverallCycleMultiplier
+		  Config.DaySpeedMultiplier = DaySpeedMultiplier / (1 / OverallCycleMultiplier)
+		  Config.NightSpeedMultiplier = NightSpeedMultiplier / (1 / OverallCycleMultiplier)
 		  If Config.Modified Then
 		    Return Config
 		  End If
@@ -82,7 +82,11 @@ Inherits Beacon.ConfigGroup
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Value = Max(Value, 0.000001)
+			  #if AllowZeroMultipliers
+			    Value = Max(Value, 0)
+			  #else
+			    Value = Max(Value, 0.000001)
+			  #endif
 			  If Self.mDaySpeedMultiplier <> Value Then
 			    Self.mDaySpeedMultiplier = Value
 			    Self.Modified = True
@@ -108,7 +112,11 @@ Inherits Beacon.ConfigGroup
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Value = Max(Value, 0.000001)
+			  #if AllowZeroMultipliers
+			    Value = Max(Value, 0)
+			  #else
+			    Value = Max(Value, 0.000001)
+			  #endif
 			  If Self.mNightSpeedMultiplier <> Value Then
 			    Self.mNightSpeedMultiplier = Value
 			    Self.Modified = True
@@ -117,6 +125,10 @@ Inherits Beacon.ConfigGroup
 		#tag EndSetter
 		NightSpeedMultiplier As Double
 	#tag EndComputedProperty
+
+
+	#tag Constant, Name = AllowZeroMultipliers, Type = Boolean, Dynamic = False, Default = \"True", Scope = Private
+	#tag EndConstant
 
 
 	#tag ViewBehavior

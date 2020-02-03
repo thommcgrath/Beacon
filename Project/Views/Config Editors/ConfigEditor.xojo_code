@@ -13,8 +13,7 @@ Inherits BeaconSubview
 	#tag Event
 		Sub Open()
 		  RaiseEvent Open
-		  Self.SettingUp = True
-		  RaiseEvent SetupUI
+		  Self.SetupUI()
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
@@ -24,9 +23,7 @@ Inherits BeaconSubview
 		Function DocumentRestoreConfigToDefault() As Boolean Handles DocumentRestoreConfigToDefault.Action
 			If Self.ShowConfirm("Are you sure you want to restore """ + Self.ConfigLabel + """ to default settings?", "Wherever possible, this will remove the config options from your file completely, restoring settings to Ark's default values. You cannot undo this action.", "Restore", "Cancel") Then
 			RaiseEvent RestoreToDefault
-			Self.SettingUp = True
-			RaiseEvent SetupUI
-			Self.SettingUp = False
+			Self.SetupUI()
 			Self.Changed = True
 			End If
 			
@@ -74,10 +71,7 @@ Inherits BeaconSubview
 
 	#tag Method, Flags = &h0
 		Sub ImportFinished()
-		  Dim Value As Boolean = Self.SettingUp
-		  Self.SettingUp = True
-		  RaiseEvent SetupUI
-		  Self.SettingUp = Value
+		  Self.SetupUI()
 		End Sub
 	#tag EndMethod
 
@@ -140,7 +134,19 @@ Inherits BeaconSubview
 
 	#tag Method, Flags = &h1
 		Protected Sub SetupUI()
+		  Var SettingUp As Boolean = Self.SettingUp
+		  Self.SettingUp = True
+		  Var FocusControl As RectControl = Self.Focus
+		  #if TargetMacOS
+		    ClearFocus()
+		  #else
+		    Self.SetFocus()
+		  #endif
 		  RaiseEvent SetupUI
+		  If FocusControl <> Nil Then
+		    FocusControl.SetFocus()
+		  End If
+		  Self.SettingUp = SettingUp
 		End Sub
 	#tag EndMethod
 

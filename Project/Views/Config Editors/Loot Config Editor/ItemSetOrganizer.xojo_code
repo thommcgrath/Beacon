@@ -1,12 +1,12 @@
 #tag Class
-Protected Class SpawnSetOrganizer
+Protected Class ItemSetOrganizer
 Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
-		Sub Attach(Point As Beacon.MutableSpawnPoint, Set As Beacon.SpawnPointSet = Nil)
+		Sub Attach(Source As Beacon.LootSource, Set As Beacon.ItemSet = Nil)
 		  If Set <> Nil Then
-		    Self.mSets.Value(Point) = Set.MutableVersion
+		    Self.mSets.Value(Source) = Set
 		  Else
-		    Self.mSets.Value(Point) = Nil
+		    Self.mSets.Value(Source) = Nil
 		  End If
 		End Sub
 	#tag EndMethod
@@ -14,14 +14,14 @@ Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mSets = New Dictionary
-		  Self.mTemplate = New Beacon.MutableSpawnPointSet()
+		  Self.mTemplate = New Beacon.ItemSet()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Template As Beacon.SpawnPointSet)
+		Sub Constructor(Template As Beacon.ItemSet)
 		  Self.mSets = New Dictionary
-		  Self.mTemplate = New Beacon.MutableSpawnPointSet(Template)
+		  Self.mTemplate = New Beacon.ItemSet(Template)
 		End Sub
 	#tag EndMethod
 
@@ -29,8 +29,8 @@ Implements Beacon.NamedItem
 		Function FindUniqueSetLabel(Label As String) As String
 		  Var Siblings() As String
 		  For Each Entry As DictionaryEntry In Self.mSets
-		    Var Point As Beacon.SpawnPoint = Entry.Key
-		    For Each Set As Beacon.SpawnPointSet In Point
+		    Var LootSource As Beacon.LootSource = Entry.Key
+		    For Each Set As Beacon.ItemSet In LootSource
 		      Siblings.AddRow(Set.Label)
 		    Next
 		  Next
@@ -54,13 +54,13 @@ Implements Beacon.NamedItem
 		  End If
 		  
 		  If Self.mSubLabel = "" Then
-		    Var PointNames() As String
-		    Var Points() As Beacon.MutableSpawnPoint = Self.Points
-		    For Each Point As Beacon.MutableSpawnPoint In Points
-		      PointNames.AddRow(Point.Label)
+		    Var SourceNames() As String
+		    Var Sources() As Beacon.LootSource = Self.Sources
+		    For Each Source As Beacon.LootSource In Sources
+		      SourceNames.AddRow(Source.Label)
 		    Next
-		    PointNames.Sort
-		    Self.mSubLabel = Language.EnglishOxfordList(PointNames)
+		    SourceNames.Sort
+		    Self.mSubLabel = Language.EnglishOxfordList(SourceNames)
 		  End If
 		  
 		  Return Self.Template.Label + EndOfLine + Self.mSubLabel
@@ -68,33 +68,14 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Matches(Set As Beacon.SpawnPointSet) As Boolean
+		Function Matches(Set As Beacon.ItemSet) As Boolean
 		  If Self.mTemplate.ID = Set.ID Or Self.mTemplate.Hash = Set.Hash Then
 		    Return True
 		  End If
 		  
 		  For Each Entry As DictionaryEntry In Self.mSets
-		    Var OtherSet As Beacon.SpawnPointSet = Entry.Value
+		    Var OtherSet As Beacon.ItemSet = Entry.Value
 		    If OtherSet.ID = Set.ID or OtherSet.Hash = Set.Hash Then
-		      Return True
-		    End If
-		  Next
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Matches(Values() As String) As Boolean
-		  Var PossibleValues() As String
-		  PossibleValues.AddRow(Self.mTemplate.ID)
-		  PossibleValues.AddRow(Self.mTemplate.Hash)
-		  For Each Entry As DictionaryEntry In Self.mSets
-		    Var Set As Beacon.SpawnPointSet = Entry.Value
-		    PossibleValues.AddRow(Set.ID)
-		    PossibleValues.AddRow(Set.Hash)
-		  Next
-		  
-		  For Each Value As String In Values
-		    If PossibleValues.IndexOf(Value) > -1 Then
 		      Return True
 		    End If
 		  Next
@@ -108,8 +89,52 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Points() As Beacon.MutableSpawnPoint()
-		  Var Arr() As Beacon.MutableSpawnPoint
+		Function Matches(Values() As String) As Boolean
+		  Var PossibleValues() As String
+		  PossibleValues.AddRow(Self.mTemplate.ID)
+		  PossibleValues.AddRow(Self.mTemplate.Hash)
+		  For Each Entry As DictionaryEntry In Self.mSets
+		    Var Set As Beacon.ItemSet = Entry.Value
+		    PossibleValues.AddRow(Set.ID)
+		    PossibleValues.AddRow(Set.Hash)
+		  Next
+		  
+		  For Each Value As String In Values
+		    If PossibleValues.IndexOf(Value) > -1 Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Replicate()
+		  Var Bound As Integer = Self.mSets.KeyCount - 1
+		  For I As Integer = 0 To Bound
+		    Var Source As Beacon.LootSource = Self.mSets.Key(I)
+		    Var Set As Beacon.ItemSet = Self.mSets.Value(Source)
+		    
+		    If Set = Nil Then
+		      Set = Source.AddSet(New Beacon.ItemSet(Self.mTemplate), True)
+		      Self.mSets.Value(Source) = Set
+		    End If
+		    
+		    Set.CopyFrom(Self.mTemplate)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SetForSource(Source As Beacon.LootSource) As Beacon.ItemSet
+		  If Self.mSets.HasKey(Source) Then
+		    Return Self.mSets.Value(Source)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Sources() As Beacon.LootSource()
+		  Var Arr() As Beacon.LootSource
 		  For Each Entry As DictionaryEntry In Self.mSets
 		    Arr.AddRow(Entry.Key)
 		  Next
@@ -118,46 +143,7 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Replicate()
-		  Var Bound As Integer = Self.mSets.KeyCount - 1
-		  For I As Integer = 0 To Bound
-		    Var Point As Beacon.MutableSpawnPoint = Self.mSets.Key(I)
-		    Var Set As Beacon.MutableSpawnPointSet = Self.mSets.Value(Point)
-		    
-		    If Set <> Nil Then
-		      Point.RemoveSet(Set)
-		      Set.CopyFrom(Self.mTemplate)
-		    Else
-		      Set = New Beacon.MutableSpawnPointSet(Self.mTemplate)
-		      Self.mSets.Value(Point) = Set
-		    End If
-		    Point.AddSet(Set, True)
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SetForPoint(Point As Beacon.MutableSpawnPoint) As Beacon.SpawnPointSet
-		  If Self.mSets.HasKey(Point) Then
-		    Return Self.mSets.Value(Point)
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub SetLimit(Creature As Beacon.Creature, Limit As NullableDouble, OnlyIfNotSet As Boolean)
-		  Var Bound As Integer = Self.mSets.KeyCount - 1
-		  For I As Integer = 0 To Bound
-		    Var Point As Beacon.MutableSpawnPoint = Self.mSets.Key(I)
-		    If OnlyIfNotSet = False Or Point.Limit(Creature) = 1 Then
-		      Point.Limit(Creature) = Limit
-		    End If
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Template() As Beacon.MutableSpawnPointSet
+		Function Template() As Beacon.ItemSet
 		  Return Self.mTemplate
 		End Function
 	#tag EndMethod
@@ -172,7 +158,7 @@ Implements Beacon.NamedItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mTemplate As Beacon.MutableSpawnPointSet
+		Private mTemplate As Beacon.ItemSet
 	#tag EndProperty
 
 

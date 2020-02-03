@@ -96,7 +96,7 @@ Begin BeaconContainer CraftingCostEditor
       Border          =   False
       ColumnCount     =   3
       ColumnsResizable=   False
-      ColumnWidths    =   "*,90,110"
+      ColumnWidths    =   "*,90,135"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
@@ -112,7 +112,7 @@ Begin BeaconContainer CraftingCostEditor
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Resource	Quantity	No Cost Scaling"
+      InitialValue    =   "Resource	Quantity	Prevent Substitutions"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
