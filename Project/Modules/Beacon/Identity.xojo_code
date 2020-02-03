@@ -244,6 +244,12 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsAnonymous() As Boolean
+		  Return Self.mLoginKey.Length = 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsBanned() As Boolean
 		  Return Self.mBanned
 		End Function

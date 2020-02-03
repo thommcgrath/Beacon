@@ -71,6 +71,7 @@ Protected Class IdentityManager
 		    Break
 		  End If
 		  
+		  Self.RefreshUserDetails()
 		  Self.FinishProcess()
 		End Sub
 	#tag EndMethod
@@ -263,21 +264,20 @@ Protected Class IdentityManager
 		    Return
 		  End If
 		  
-		  If Destination.Identifier = Source.Identifier Or Destination.LoginKey = "" Or Source.LoginKey <> "" Then
+		  If Destination.Identifier = Source.Identifier Or Destination.IsAnonymous = True Or Source.IsAnonymous = False Then
 		    // Not eligible for merging
 		    Return
 		  End If
 		  
 		  Self.StartProcess()
 		  
-		  Dim SignedValue As String = New v4UUID
-		  Dim Signature As String = EncodeHex(Source.Sign(SignedValue))
+		  // Yeah, the private key should never leave the computer, but there's no way to handle this
+		  // otherwise. And, to be fair, the key and user are about to be discarded anyway.
 		  
 		  Dim MergeKeys As New Dictionary
 		  MergeKeys.Value("action") = "merge"
 		  MergeKeys.Value("user_id") = Source.Identifier
-		  MergeKeys.Value("signed_value") = SignedValue
-		  MergeKeys.Value("signature") = Signature
+		  MergeKeys.Value("private_key") = Source.PrivateKey
 		  
 		  Dim Request As New BeaconAPI.Request("user", "POST", Beacon.GenerateJSON(MergeKeys, False), "application/json", AddressOf APICallback_MergeUser)
 		  Request.Authenticate(Preferences.OnlineToken)

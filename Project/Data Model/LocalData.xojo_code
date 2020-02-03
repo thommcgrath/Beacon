@@ -2505,8 +2505,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Results.MoveToNextRow()
 		  Wend
 		  
-		  Dim Content As String = Beacon.GenerateJSON(Dicts, False)
-		  Call UserCloud.Write("Engrams.json", Content)
+		  If Dicts.Count > 0 Then
+		    Dim Content As String = Beacon.GenerateJSON(Dicts, False)
+		    Call UserCloud.Write("Engrams.json", Content)
+		  Else
+		    Call UserCloud.Delete("Engrams.json")
+		  End If
 		End Sub
 	#tag EndMethod
 
