@@ -267,6 +267,25 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Close()
+		  NotificationKit.Ignore(Self, UserCloud.Notification_SyncFinished, IdentityManager.Notification_IdentityChanged)
+		  
+		  If Self.mBase <> Nil Then
+		    Try
+		      Self.SQLExecute("PRAGMA optimize;")
+		      Self.mBase.Close
+		    Catch Err As RuntimeException
+		    End Try
+		    Self.mBase = Nil
+		  End If
+		  
+		  If mInstance = Self Then
+		    mInstance = Nil
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Commit()
 		  If Self.mTransactions.LastRowIndex = -1 Then
@@ -470,13 +489,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Call UserCloud.Delete("/Presets/" + Preset.PresetID.Lowercase + BeaconFileTypes.BeaconPreset.PrimaryExtension)
 		  
 		  Self.LoadPresets()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Destructor()
-		  NotificationKit.Ignore(Self, UserCloud.Notification_SyncFinished, IdentityManager.Notification_IdentityChanged)
-		  Self.SQLExecute("PRAGMA optimize;")
 		End Sub
 	#tag EndMethod
 

@@ -16,6 +16,8 @@ Implements NotificationKit.Receiver
 		    // Whatever
 		  End Try
 		  
+		  LocalData.SharedInstance.Close
+		  
 		  If Self.mMutex <> Nil Then
 		    Self.mMutex.Leave
 		  End If
