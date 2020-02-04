@@ -419,7 +419,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Dim Migrated As Boolean
 		  If MigrateFile <> Nil And MigrateFile.Exists And CurrentSchemaVersion < Self.SchemaVersion Then
-		    Migrated = Self.MigrateData(MigrateFile, CurrentSchemaVersion)
+		    Try
+		      Migrated = Self.MigrateData(MigrateFile, CurrentSchemaVersion)
+		    Catch Err As RuntimeException
+		      App.Log("Database migration failed: " + Trim(Introspection.GetType(Err).FullName + " " + Err.Message))
+		    End Try
 		  End If
 		  If ShouldImportCloud And Migrated = False Then
 		    // Per https://github.com/thommcgrath/Beacon/issues/191 cloud data should be imported
