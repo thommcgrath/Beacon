@@ -71,9 +71,15 @@ Inherits Beacon.ConfigGroup
 		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
 		  #Pragma Unused Document
 		  
-		  Dict.Value("PlayerStats") = Self.PlayerStats
-		  Dict.Value("TamedStats") = Self.TamedStats
-		  Dict.Value("WildStats") = Self.WildStats
+		  If Self.PlayerStats.Count > 0 Then
+		    Dict.Value("PlayerStats") = Self.PlayerStats
+		  End If
+		  If Self.TamedStats.Count > 0 Then
+		    Dict.Value("TamedStats") = Self.TamedStats
+		  End If
+		  If Self.WildStats.Count > 0 Then
+		    Dict.Value("WildStats") = Self.WildStats
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -131,11 +137,14 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Function PlayerBaseMultiplier(Stat As Beacon.Stat) As Double
 		  If Self.PlayerStats.HasKey(Stat.Key) Then
-		    Dim Dict As Dictionary = Self.PlayerStats.Value(Stat.Key)
-		    Return Dict.Lookup("Base", 1.0)
-		  Else
-		    Return 1.0
+		    Try
+		      Dim Dict As Dictionary = Self.PlayerStats.Value(Stat.Key)
+		      Return Dict.Lookup("Base", 1.0)
+		    Catch Err As RuntimeException
+		    End Try
 		  End If
+		  
+		  Return 1.0
 		End Function
 	#tag EndMethod
 
@@ -145,7 +154,7 @@ Inherits Beacon.ConfigGroup
 		    Return
 		  End If
 		  
-		  Dim Dict As Dictionary
+		  Var Dict As Dictionary
 		  If Self.PlayerStats.HasKey(Stat.Key) Then
 		    Dict = Self.PlayerStats.Value(Stat.Key)
 		  Else
@@ -163,19 +172,28 @@ Inherits Beacon.ConfigGroup
 		  Else
 		    Dict.Value("Base") = Value
 		  End If
-		  Self.PlayerStats.Value(Stat.Key) = Dict
-		  Self.Modified = True
+		  
+		  If Dict.Count > 0 Then
+		    Self.PlayerStats.Value(Stat.Key) = Dict
+		    Self.Modified = True
+		  ElseIf Self.PlayerStats.HasKey(Stat.Key) Then
+		    Self.PlayerStats.Remove(Stat.Key)
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function PlayerPerLevelMultiplier(Stat As Beacon.Stat) As Double
 		  If Self.PlayerStats.HasKey(Stat.Key) Then
-		    Dim Dict As Dictionary = Self.PlayerStats.Value(Stat.Key)
-		    Return Dict.Lookup("PerLevel", 1.0)
-		  Else
-		    Return 1.0
+		    Try
+		      Dim Dict As Dictionary = Self.PlayerStats.Value(Stat.Key)
+		      Return Dict.Lookup("PerLevel", 1.0)
+		    Catch Err As RuntimeException
+		    End Try
 		  End If
+		  
+		  Return 1.0
 		End Function
 	#tag EndMethod
 
@@ -185,7 +203,7 @@ Inherits Beacon.ConfigGroup
 		    Return
 		  End If
 		  
-		  Dim Dict As Dictionary
+		  Var Dict As Dictionary
 		  If Self.PlayerStats.HasKey(Stat.Key) Then
 		    Dict = Self.PlayerStats.Value(Stat.Key)
 		  Else
@@ -203,19 +221,28 @@ Inherits Beacon.ConfigGroup
 		  Else
 		    Dict.Value("PerLevel") = Value
 		  End If
-		  Self.PlayerStats.Value(Stat.Key) = Dict
-		  Self.Modified = True
+		  
+		  If Dict.Count > 0 Then
+		    Self.PlayerStats.Value(Stat.Key) = Dict
+		    Self.Modified = True
+		  ElseIf Self.PlayerStats.HasKey(Stat.Key) Then
+		    Self.PlayerStats.Remove(Stat.Key)
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function TamedAddMultiplier(Stat As Beacon.Stat) As Double
 		  If Self.TamedStats.HasKey(Stat.Key) Then
-		    Dim Dict As Dictionary = Self.TamedStats.Value(Stat.Key)
-		    Return Dict.Lookup("Add", Stat.TamedAddDefault)
-		  Else
-		    Return Stat.TamedAddDefault
+		    Try
+		      Dim Dict As Dictionary = Self.TamedStats.Value(Stat.Key)
+		      Return Dict.Lookup("Add", Stat.TamedAddDefault)
+		    Catch Err As RuntimeException
+		    End Try
 		  End If
+		  
+		  Return Stat.TamedAddDefault
 		End Function
 	#tag EndMethod
 
@@ -225,7 +252,7 @@ Inherits Beacon.ConfigGroup
 		    Return
 		  End If
 		  
-		  Dim Dict As Dictionary
+		  Var Dict As Dictionary
 		  If Self.TamedStats.HasKey(Stat.Key) Then
 		    Dict = Self.TamedStats.Value(Stat.Key)
 		  Else
@@ -243,19 +270,28 @@ Inherits Beacon.ConfigGroup
 		  Else
 		    Dict.Value("Add") = Value
 		  End If
-		  Self.TamedStats.Value(Stat.Key) = Dict
-		  Self.Modified = True
+		  
+		  If Dict.Count > 0 Then
+		    Self.TamedStats.Value(Stat.Key) = Dict
+		    Self.Modified = True
+		  ElseIf Self.TamedStats.HasKey(Stat.Key) Then
+		    Self.TamedStats.Remove(Stat.Key)
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function TamedAffinityMultiplier(Stat As Beacon.Stat) As Double
 		  If Self.TamedStats.HasKey(Stat.Key) Then
-		    Dim Dict As Dictionary = Self.TamedStats.Value(Stat.Key)
-		    Return Dict.Lookup("Affinity", Stat.TamedAffinityDefault)
-		  Else
-		    Return Stat.TamedAffinityDefault
+		    Try
+		      Dim Dict As Dictionary = Self.TamedStats.Value(Stat.Key)
+		      Return Dict.Lookup("Affinity", Stat.TamedAffinityDefault)
+		    Catch Err As RuntimeException
+		    End Try
 		  End If
+		  
+		  Return Stat.TamedAffinityDefault
 		End Function
 	#tag EndMethod
 
@@ -265,7 +301,7 @@ Inherits Beacon.ConfigGroup
 		    Return
 		  End If
 		  
-		  Dim Dict As Dictionary
+		  Var Dict As Dictionary
 		  If Self.TamedStats.HasKey(Stat.Key) Then
 		    Dict = Self.TamedStats.Value(Stat.Key)
 		  Else
@@ -283,19 +319,28 @@ Inherits Beacon.ConfigGroup
 		  Else
 		    Dict.Value("Affinity") = Value
 		  End If
-		  Self.TamedStats.Value(Stat.Key) = Dict
-		  Self.Modified = True
+		  
+		  If Dict.Count > 0 Then
+		    Self.TamedStats.Value(Stat.Key) = Dict
+		    Self.Modified = True
+		  ElseIf Self.TamedStats.HasKey(Stat.Key) Then
+		    Self.TamedStats.Remove(Stat.Key)
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function TamedPerLevelMultiplier(Stat As Beacon.Stat) As Double
 		  If Self.TamedStats.HasKey(Stat.Key) Then
-		    Dim Dict As Dictionary = Self.TamedStats.Value(Stat.Key)
-		    Return Dict.Lookup("PerLevel", Stat.TamedDefault)
-		  Else
-		    Return Stat.TamedDefault
+		    Try
+		      Dim Dict As Dictionary = Self.TamedStats.Value(Stat.Key)
+		      Return Dict.Lookup("PerLevel", Stat.TamedDefault)
+		    Catch Err As RuntimeException
+		    End Try
 		  End If
+		  
+		  Return Stat.TamedDefault
 		End Function
 	#tag EndMethod
 
@@ -305,7 +350,7 @@ Inherits Beacon.ConfigGroup
 		    Return
 		  End If
 		  
-		  Dim Dict As Dictionary
+		  Var Dict As Dictionary
 		  If Self.TamedStats.HasKey(Stat.Key) Then
 		    Dict = Self.TamedStats.Value(Stat.Key)
 		  Else
@@ -323,19 +368,28 @@ Inherits Beacon.ConfigGroup
 		  Else
 		    Dict.Value("PerLevel") = Value
 		  End If
-		  Self.TamedStats.Value(Stat.Key) = Dict
-		  Self.Modified = True
+		  
+		  If Dict.Count > 0 Then
+		    Self.TamedStats.Value(Stat.Key) = Dict
+		    Self.Modified = True
+		  ElseIf Self.TamedStats.HasKey(Stat.Key) Then
+		    Self.TamedStats.Remove(Stat.Key)
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function WildPerLevelMultiplier(Stat As Beacon.Stat) As Double
 		  If Self.WildStats.HasKey(Stat.Key) Then
-		    Dim Dict As Dictionary = Self.WildStats.Value(Stat.Key)
-		    Return Dict.Lookup("PerLevel", Stat.WildDefault)
-		  Else
-		    Return Stat.WildDefault
+		    Try
+		      Dim Dict As Dictionary = Self.WildStats.Value(Stat.Key)
+		      Return Dict.Lookup("PerLevel", Stat.WildDefault)
+		    Catch Err As RuntimeException
+		    End Try
 		  End If
+		  
+		  Return Stat.WildDefault
 		End Function
 	#tag EndMethod
 
@@ -345,7 +399,7 @@ Inherits Beacon.ConfigGroup
 		    Return
 		  End If
 		  
-		  Dim Dict As Dictionary
+		  Var Dict As Dictionary
 		  If Self.WildStats.HasKey(Stat.Key) Then
 		    Dict = Self.WildStats.Value(Stat.Key)
 		  Else
@@ -363,8 +417,14 @@ Inherits Beacon.ConfigGroup
 		  Else
 		    Dict.Value("PerLevel") = Value
 		  End If
-		  Self.WildStats.Value(Stat.Key) = Dict
-		  Self.Modified = True
+		  
+		  If Dict.Count > 0 Then
+		    Self.WildStats.Value(Stat.Key) = Dict
+		    Self.Modified = True
+		  ElseIf Self.WildStats.HasKey(Stat.Key) Then
+		    Self.WildStats.Remove(Stat.Key)
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 
