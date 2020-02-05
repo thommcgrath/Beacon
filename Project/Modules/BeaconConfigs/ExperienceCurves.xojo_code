@@ -8,9 +8,7 @@ Inherits Beacon.ConfigGroup
 		  Dim ConfigName As String = ConfigKey
 		  Dim Locale As Locale = Locale.Current
 		  
-		  If Self.mPlayerLevels.LastRowIndex = -1 And Self.mDinoLevels.LastRowIndex > -1 Then
-		    Issues.AddRow(New Beacon.Issue(ConfigName, "Ark requires player experience to be defined if editing dino experience."))
-		  ElseIf Self.PlayerLevelCap <= Self.AscensionLevels Then
+		  If Self.mPlayerLevels.LastRowIndex > -1 And Self.PlayerLevelCap <= Self.AscensionLevels Then
 		    Issues.AddRow(New Beacon.Issue(ConfigName, "Must define at least " + Self.AscensionLevels.ToString(Locale) + " player levels to handle ascension correctly."))
 		  End If
 		  
@@ -45,39 +43,49 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
-		  If Self.mPlayerLevels.LastRowIndex = -1 Then
+		  If Self.mPlayerLevels.LastRowIndex > -1 Then
+		    Dim MaxXP As UInt64 = Self.PlayerMaxExperience
+		    
+		    // Index 0 is level 2!
+		    // Index 150 is level 152
+		    // Index 178 is level 180
+		    // This is because players start at level 1, not level 0. Then the 0-based array needs to be accounted for.
+		    Var Chunks() As String
+		    Var LastXP As UInt64
+		    For Index As Integer = 0 To Self.mPlayerLevels.LastRowIndex
+		      Var XP As UInt64 = Self.mPlayerLevels(Index)
+		      If XP = LastXP And Chunks.LastRowIndex > -1 Then
+		        Chunks.RemoveRowAt(Chunks.LastRowIndex)
+		      End If
+		      Chunks.AddRow("ExperiencePointsForLevel[" + Index.ToString + "]=" + XP.ToString)
+		      LastXP = XP
+		    Next
+		    
+		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Chunks.Join(",") + ")"))
+		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsPlayer", MaxXP.ToString))
+		  ElseIf Self.mPlayerLevels.LastRowIndex = -1 And Self.mDinoLevels.LastRowIndex > -1 Then
+		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", ""))
+		  Else
 		    Return
 		  End If
 		  
-		  Dim MaxXP As UInt64 = Self.PlayerMaxExperience
-		  
-		  // Index 0 is level 2!
-		  // Index 150 is level 152
-		  // Index 178 is level 180
-		  // This is because players start at level 1, not level 0. Then the 0-based array needs to be accounted for.
-		  Dim Chunks() As String
-		  For Index As Integer = 0 To Self.mPlayerLevels.LastRowIndex
-		    Dim XP As UInt64 = Self.mPlayerLevels(Index)
-		    Chunks.AddRow("ExperiencePointsForLevel[" + Index.ToString + "]=" + XP.ToString)
-		  Next
-		  
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Chunks.Join(",") + ")"))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsPlayer", MaxXP.ToString))
-		  
-		  If Self.mDinoLevels.LastRowIndex = -1 Then
-		    Return
+		  If Self.mDinoLevels.LastRowIndex > -1 Then
+		    Var Chunks() As String
+		    Var MaxXP As UInt64 = Self.DinoMaxExperience
+		    
+		    Var LastXP As UInt64
+		    For Index As Integer = 0 To Self.mDinoLevels.LastRowIndex
+		      Var XP As UInt64 = Self.mDinoLevels(Index)
+		      If XP = LastXP And Chunks.LastRowIndex > -1 Then
+		        Chunks.RemoveRowAt(Chunks.LastRowIndex)
+		      End If
+		      Chunks.AddRow("ExperiencePointsForLevel[" + Index.ToString + "]=" + XP.ToString)
+		      LastXP = XP
+		    Next
+		    
+		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Chunks.Join(",") + ")"))
+		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsDino", MaxXP.ToString))
 		  End If
-		  
-		  Redim Chunks(-1)
-		  MaxXP = Self.DinoMaxExperience
-		  
-		  For Index As Integer = 0 To Self.mDinoLevels.LastRowIndex
-		    Dim XP As UInt64 = Self.mDinoLevels(Index)
-		    Chunks.AddRow("ExperiencePointsForLevel[" + Index.ToString + "]=" + XP.ToString)
-		  Next
-		  
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Chunks.Join(",") + ")"))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsDino", MaxXP.ToString))
 		End Sub
 	#tag EndEvent
 
@@ -259,7 +267,6 @@ Inherits Beacon.ConfigGroup
 		    Return Nil
 		  End If
 		  
-		  Dim PlayerExperience As Boolean = True
 		  Dim Values As Variant = ParsedData.Value("LevelExperienceRampOverrides")
 		  Dim ValuesInfo As Introspection.TypeInfo = Introspection.GetType(Values)
 		  Dim Overrides() As Variant
@@ -271,58 +278,66 @@ Inherits Beacon.ConfigGroup
 		    Return Nil
 		  End If
 		  
+		  Const IdxPlayerData = 0
+		  Const IdxTameData = 1
+		  
 		  Dim Config As New BeaconConfigs.ExperienceCurves
 		  Config.mWasPerfectImport = True
-		  For Each Dict As Dictionary In Overrides
-		    Dim Levels() As UInt64
-		    For Each Entry As DictionaryEntry In Dict
-		      Dim Key As String = Entry.Key
-		      If Key.BeginsWith("ExperiencePointsForLevel") Then
-		        Dim OpenTagPosition As Integer = Key.IndexOf("[")
-		        Dim CloseTagPosition As Integer = Key.IndexOf(OpenTagPosition, "]")
-		        If OpenTagPosition = -1 Or CloseTagPosition = -1 Then
+		  
+		  Var Bound As Integer = Min(Overrides.LastRowIndex, 1)
+		  For Idx As Integer = 0 To Bound
+		    Try
+		      Var Dict As Dictionary = Overrides(Idx)
+		      Dim Levels() As UInt64
+		      For Each Entry As DictionaryEntry In Dict
+		        Dim Key As String = Entry.Key
+		        If Key.BeginsWith("ExperiencePointsForLevel") Then
+		          Dim OpenTagPosition As Integer = Key.IndexOf("[")
+		          Dim CloseTagPosition As Integer = Key.IndexOf(OpenTagPosition, "]")
+		          If OpenTagPosition = -1 Or CloseTagPosition = -1 Then
+		            Continue
+		          End If
+		          OpenTagPosition = OpenTagPosition + 1
+		          Dim IndexTxt As String = Key.Middle(OpenTagPosition, CloseTagPosition - OpenTagPosition)
+		          Dim Index As Integer = Integer.FromString(IndexTxt)
+		          If Levels.LastRowIndex < Index Then
+		            Redim Levels(Index)
+		          End If
+		          Levels(Index) = Entry.Value
+		        End If
+		      Next
+		      
+		      // Now make sure there are no gaps. If there are, fill in
+		      // the gap with the average of the surrounding values
+		      For I As Integer = 0 To Levels.LastRowIndex
+		        If Levels(I) <> 0 Then
 		          Continue
 		        End If
-		        OpenTagPosition = OpenTagPosition + 1
-		        Dim IndexTxt As String = Key.Middle(OpenTagPosition, CloseTagPosition - OpenTagPosition)
-		        Dim Index As Integer = Integer.FromString(IndexTxt)
-		        If Levels.LastRowIndex < Index Then
-		          Redim Levels(Index)
+		        
+		        Dim PreviousXP, NextXP As UInt64
+		        Dim LowIndex, HighIndex As Integer
+		        PreviousXP = FindLowValue(Levels, I, LowIndex)
+		        NextXP = FindHighValue(Levels, I, HighIndex)
+		        If LowIndex = -1 Or HighIndex = -1 Then
+		          Continue
 		        End If
-		        Levels(Index) = Entry.Value
-		      End If
-		    Next
-		    
-		    // Now make sure there are no gaps. If there are, fill in
-		    // the gap with the average of the surrounding values
-		    For I As Integer = 0 To Levels.LastRowIndex
-		      If Levels(I) <> 0 Then
-		        Continue
-		      End If
-		      
-		      Dim PreviousXP, NextXP As UInt64
-		      Dim LowIndex, HighIndex As Integer
-		      PreviousXP = FindLowValue(Levels, I, LowIndex)
-		      NextXP = FindHighValue(Levels, I, HighIndex)
-		      If LowIndex = -1 Or HighIndex = -1 Then
-		        Continue
-		      End If
-		      
-		      Dim Range As Integer = HighIndex - LowIndex
-		      Dim Difference As UInt64 = NextXP - PreviousXP
-		      Dim XPPerLevel As UInt64 = Round(Difference / Range)
-		      For X As Integer = LowIndex + 1 To HighIndex - 1
-		        Levels(X) = PreviousXP + (XPPerLevel * (X - LowIndex))
-		        Config.mWasPerfectImport = False
+		        
+		        Dim Range As Integer = HighIndex - LowIndex
+		        Dim Difference As UInt64 = NextXP - PreviousXP
+		        Dim XPPerLevel As UInt64 = Round(Difference / Range)
+		        For X As Integer = LowIndex + 1 To HighIndex - 1
+		          Levels(X) = PreviousXP + (XPPerLevel * (X - LowIndex))
+		          Config.mWasPerfectImport = False
+		        Next
 		      Next
-		    Next
-		    
-		    If PlayerExperience Then
-		      Config.mPlayerLevels = Levels
-		      PlayerExperience = False
-		    Else
-		      Config.mDinoLevels = Levels
-		    End If
+		      
+		      If Idx = IdxPlayerData Then
+		        Config.mPlayerLevels = Levels
+		      ElseIf Idx = IdxTameData Then
+		        Config.mDinoLevels = Levels
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
 		  Next
 		  Return Config
 		End Function
