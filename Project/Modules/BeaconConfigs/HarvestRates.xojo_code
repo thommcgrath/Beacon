@@ -16,8 +16,8 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused SourceDocument
 		  
 		  For Each Entry As DictionaryEntry In Self.mOverrides
-		    Dim ClassString As String = Entry.Key
-		    Dim Rate As Double = Entry.Value
+		    Var ClassString As String = Entry.Key
+		    Var Rate As Double = Entry.Value
 		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "HarvestResourceItemAmountClassMultipliers", "(ClassName=""" + ClassString + """,Multiplier=" + Rate.PrettyText + ")"))
 		  Next
 		  
@@ -77,7 +77,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function Classes() As String()
-		  Dim Results() As String
+		  Var Results() As String
 		  For Each Entry As DictionaryEntry In Self.mOverrides
 		    Results.AddRow(Entry.Key)
 		  Next
@@ -116,13 +116,13 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
-		  Dim HarvestAmountMultiplier As Double = ParsedData.DoubleValue("HarvestAmountMultiplier", 1.0, True)
-		  Dim HarvestHealthMultiplier As Double = ParsedData.DoubleValue("HarvestHealthMultiplier", 1.0, True)
-		  Dim PlayerHarvestingDamageMultiplier As Double = ParsedData.DoubleValue("PlayerHarvestingDamageMultiplier", 1.0, True)
-		  Dim DinoHarvestingDamageMultiplier As Double = ParsedData.DoubleValue("DinoHarvestingDamageMultiplier", 1.0, True)
-		  Dim ClampResourceHarvestDamage As Boolean = ParsedData.BooleanValue("ClampResourceHarvestDamage", False, True)
-		  Dim UseOptimizedRates As Boolean = False
-		  Dim Overrides As New Dictionary
+		  Var HarvestAmountMultiplier As Double = ParsedData.DoubleValue("HarvestAmountMultiplier", 1.0, True)
+		  Var HarvestHealthMultiplier As Double = ParsedData.DoubleValue("HarvestHealthMultiplier", 1.0, True)
+		  Var PlayerHarvestingDamageMultiplier As Double = ParsedData.DoubleValue("PlayerHarvestingDamageMultiplier", 1.0, True)
+		  Var DinoHarvestingDamageMultiplier As Double = ParsedData.DoubleValue("DinoHarvestingDamageMultiplier", 1.0, True)
+		  Var ClampResourceHarvestDamage As Boolean = ParsedData.BooleanValue("ClampResourceHarvestDamage", False, True)
+		  Var UseOptimizedRates As Boolean = False
+		  Var Overrides As New Dictionary
 		  
 		  If CommandLineOptions <> Nil And CommandLineOptions.HasKey("UseOptimizedHarvestingHealth") Then
 		    Try
@@ -132,14 +132,14 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  
 		  If ParsedData.HasKey("HarvestResourceItemAmountClassMultipliers") Then
-		    Dim AutoValue As Variant = ParsedData.Value("HarvestResourceItemAmountClassMultipliers")
-		    Dim Dicts() As Dictionary
-		    Dim Info As Introspection.TypeInfo = Introspection.GetType(AutoValue)
+		    Var AutoValue As Variant = ParsedData.Value("HarvestResourceItemAmountClassMultipliers")
+		    Var Dicts() As Dictionary
+		    Var Info As Introspection.TypeInfo = Introspection.GetType(AutoValue)
 		    Select Case Info.FullName
 		    Case "Dictionary"
 		      Dicts.AddRow(AutoValue)
 		    Case "Object()"
-		      Dim ArrayValue() As Variant = AutoValue
+		      Var ArrayValue() As Variant = AutoValue
 		      For Each Dict As Dictionary In ArrayValue
 		        Dicts.AddRow(Dict)
 		      Next
@@ -150,8 +150,8 @@ Inherits Beacon.ConfigGroup
 		        Continue
 		      End If   
 		      
-		      Dim Multiplier As Double = Dict.Value("Multiplier")
-		      Dim ClassString As String = Dict.Value("ClassName")
+		      Var Multiplier As Double = Dict.Value("Multiplier")
+		      Var ClassString As String = Dict.Value("ClassName")
 		      
 		      If ClassString <> "" And ClassString.EndsWith("_C") And Multiplier > 0 Then
 		        Overrides.Value(ClassString) = Multiplier
@@ -160,7 +160,7 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  
 		  // Use the public properties here to toggle modified ...
-		  Dim Config As New BeaconConfigs.HarvestRates
+		  Var Config As New BeaconConfigs.HarvestRates
 		  Config.HarvestAmountMultiplier = HarvestAmountMultiplier
 		  Config.HarvestHealthMultiplier = HarvestHealthMultiplier
 		  Config.PlayerHarvestingDamageMultiplier = PlayerHarvestingDamageMultiplier

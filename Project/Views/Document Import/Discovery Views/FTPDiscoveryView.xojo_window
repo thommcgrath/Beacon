@@ -920,8 +920,8 @@ End
 		Private Sub APICallback_DetectPath(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
 		  
-		  Dim Info As Introspection.TypeInfo
-		  Dim Dict As Dictionary
+		  Var Info As Introspection.TypeInfo
+		  Var Dict As Dictionary
 		  If Response.JSON <> Nil Then
 		    Info = Introspection.GetType(Response.JSON)
 		    If Info.FullName = "Dictionary" Then
@@ -935,9 +935,9 @@ End
 		  
 		  If Response.Success Then
 		    // Discovery was able to find the path and the user doesn't need to do any further work.
-		    Dim Path As String = Dict.Value("path")
+		    Var Path As String = Dict.Value("path")
 		    
-		    Dim Engines(0) As Beacon.DiscoveryEngine
+		    Var Engines(0) As Beacon.DiscoveryEngine
 		    Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, Path, App.IdentityManager.CurrentIdentity)
 		    Self.ShouldFinish(Engines)
 		    
@@ -967,9 +967,9 @@ End
 		    Return
 		  End If
 		  
-		  Dim Dict As Dictionary = Response.JSON
-		  Dim Files() As Variant = Dict.Value("files")
-		  Dim Children() As String
+		  Var Dict As Dictionary = Response.JSON
+		  Var Files() As Variant = Dict.Value("files")
+		  Var Children() As String
 		  For Each Child As String In Files
 		    Children.AddRow(Child)
 		  Next
@@ -1047,8 +1047,8 @@ End
 #tag Events BrowseActionButton
 	#tag Event
 		Sub Action()
-		  Dim GameIniPath As String = Self.Browser.CurrentPath
-		  Dim Components() As String = GameIniPath.Split("/")
+		  Var GameIniPath As String = Self.Browser.CurrentPath
+		  Var Components() As String = GameIniPath.Split("/")
 		  If Components.LastRowIndex <= 2 Then
 		    Self.ShowAlert("FTP Access Too Restrictive", "Beacon needs to be able to access this server's ""Logs"" folder too, to learn more about the server than the config files can provide. The path to this server's Game.ini does not allow access to other directories needed within Ark's ""Saved"" directory.")
 		    Return
@@ -1058,8 +1058,8 @@ End
 		  Components(Components.LastRowIndex) = "" // Remove Config but retain trailing slash
 		  
 		  // Should now equal the "Saved" directory
-		  Dim InitialPath As String = Components.Join("/")
-		  Dim Engines(0) As Beacon.DiscoveryEngine
+		  Var InitialPath As String = Components.Join("/")
+		  Var Engines(0) As Beacon.DiscoveryEngine
 		  Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, InitialPath, App.IdentityManager.CurrentIdentity)
 		  Self.ShouldFinish(Engines)
 		End Sub
@@ -1075,17 +1075,17 @@ End
 #tag Events Browser
 	#tag Event
 		Sub NeedsChildrenForPath(Path As String)
-		  Dim Fields As Dictionary = Self.FormDataFromProfile()
+		  Var Fields As Dictionary = Self.FormDataFromProfile()
 		  If Fields = Nil Then
 		    Return
 		  End If
 		  Fields.Value("path") = Path
 		  
 		  // For now, append an empty list
-		  Dim Empty() As String
+		  Var Empty() As String
 		  Me.AppendChildren(Empty)
 		  
-		  Dim Request As New BeaconAPI.Request("ftp", "GET", Fields, WeakAddressOf APICallback_ListPath)
+		  Var Request As New BeaconAPI.Request("ftp", "GET", Fields, WeakAddressOf APICallback_ListPath)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.BrowseSocket.Start(Request)
 		End Sub
@@ -1125,8 +1125,8 @@ End
 		  
 		  Self.ViewPanel.SelectedPanelIndex = Self.PageDiscovering
 		  
-		  Dim Fields As Dictionary = Self.FormDataFromProfile()
-		  Dim Request As New BeaconAPI.Request("ftp/path", "GET", Fields, WeakAddressOf APICallback_DetectPath)
+		  Var Fields As Dictionary = Self.FormDataFromProfile()
+		  Var Request As New BeaconAPI.Request("ftp/path", "GET", Fields, WeakAddressOf APICallback_DetectPath)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(Request)
 		End Sub

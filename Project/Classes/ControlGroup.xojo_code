@@ -80,17 +80,11 @@ Implements Iterable
 		      Continue
 		    End If
 		    
-		    Dim Ctl As RectControl = RectControl(Ref.Value)
+		    Var Ctl As RectControl = RectControl(Ref.Value)
 		    Ctl.Top = Ctl.Top + Y
 		    Ctl.Left = Ctl.Left + X
 		  Next
 		  Self.mBounds.Offset(X, Y)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Operator_Redim(Bound As Integer)
-		  Redim Self.mMembers(Bound)
 		End Sub
 	#tag EndMethod
 
@@ -112,12 +106,18 @@ Implements Iterable
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub ResizeTo(Bound As Integer)
+		  Self.mMembers.ResizeTo(Bound)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub UpdateBounds()
-		  Dim Top, Left, Bottom, Right As Integer
-		  Dim First As Boolean = True
+		  Var Top, Left, Bottom, Right As Integer
+		  Var First As Boolean = True
 		  For I As Integer = 0 To Self.mMembers.LastRowIndex
-		    Dim Ctl As RectControl = RectControl(Self.mMembers(I).Value)
+		    Var Ctl As RectControl = RectControl(Self.mMembers(I).Value)
 		    If Ctl = Nil Then
 		      Continue
 		    End If
@@ -149,7 +149,7 @@ Implements Iterable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Dim Diff As Integer = Value - Self.Bottom
+			  Var Diff As Integer = Value - Self.Bottom
 			  Self.Offset(0, Diff)
 			End Set
 		#tag EndSetter
@@ -173,7 +173,7 @@ Implements Iterable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Dim Diff As Integer = Value - Self.Left
+			  Var Diff As Integer = Value - Self.Left
 			  Self.Offset(Diff, 0)
 			End Set
 		#tag EndSetter
@@ -196,7 +196,7 @@ Implements Iterable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Dim Diff As Integer = Value - Self.Right
+			  Var Diff As Integer = Value - Self.Right
 			  Self.Offset(Diff, 0)
 			End Set
 		#tag EndSetter
@@ -211,7 +211,7 @@ Implements Iterable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Dim Diff As Integer = Value - Self.Top
+			  Var Diff As Integer = Value - Self.Top
 			  Self.Offset(0, Diff)
 			End Set
 		#tag EndSetter

@@ -319,12 +319,12 @@ End
 		  End If
 		  
 		  Try
-		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
-		    Dim Data As Dictionary = Response.Value("data")
-		    Dim GameServer As Dictionary = Data.Value("gameserver")
+		    Var Response As Dictionary = Beacon.ParseJSON(Content)
+		    Var Data As Dictionary = Response.Value("data")
+		    Var GameServer As Dictionary = Data.Value("gameserver")
 		    
-		    Dim ServerStatus As String = GameServer.Value("status")
-		    Dim Started, Enabled As Boolean
+		    Var ServerStatus As String = GameServer.Value("status")
+		    Var Started, Enabled As Boolean
 		    Select Case ServerStatus
 		    Case "started"
 		      Self.ServerStatusField.Value = "Running"
@@ -432,7 +432,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RefreshServerStatus()
-		  Dim Headers As New Dictionary
+		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.Auth.AccessToken
 		  
 		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers", AddressOf Callback_ServerStatus, Nil, Headers)
@@ -492,22 +492,22 @@ End
 		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "PowerButton"
-		    Dim Headers As New Dictionary
+		    Var Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Self.Auth.AccessToken
 		    
 		    If Item.Toggled Then
-		      Dim StopMessage As String = StopMessageDialog.Present(Self)
+		      Var StopMessage As String = StopMessageDialog.Present(Self)
 		      If StopMessage = "" Then
 		        Return
 		      End If
 		      
-		      Dim FormData As New Dictionary
+		      Var FormData As New Dictionary
 		      FormData.Value("message") = "Server stopped by Beacon (https://beaconapp.cc)"
 		      FormData.Value("stop_message") = StopMessage
 		      
 		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/stop", FormData, AddressOf Callback_ServerToggle, Nil, Headers)
 		    Else
-		      Dim FormData As New Dictionary
+		      Var FormData As New Dictionary
 		      FormData.Value("message") = "Server started by Beacon (https://beaconapp.cc)"
 		      
 		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/restart", FormData, AddressOf Callback_ServerToggle, Nil, Headers)

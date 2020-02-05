@@ -2,13 +2,13 @@
 Protected Module UITweaks
 	#tag Method, Flags = &h0
 		Sub ResizeForPlatform(Extends Target As Global.RectControl, IdealHeight As Integer)
-		  Dim Diff As Integer = Max(IdealHeight - Target.Height, 0)
+		  Var Diff As Integer = Max(IdealHeight - Target.Height, 0)
 		  If Diff = 0 Then
 		    Return
 		  End If
 		  
-		  Dim TopOffset As Integer = Floor(Diff / 2)
-		  Dim BottomOffset As Integer = Diff - TopOffset
+		  Var TopOffset As Integer = Floor(Diff / 2)
+		  Var BottomOffset As Integer = Diff - TopOffset
 		  
 		  Target.Top = Target.Top - TopOffset
 		  Target.Height = Target.Height + BottomOffset
@@ -17,12 +17,12 @@ Protected Module UITweaks
 
 	#tag Method, Flags = &h0
 		Sub SwapButtons(Extends Win As Window, PanelIndex As Integer = -1)
-		  Dim DefaultButton As PushButton
-		  Dim CancelButton As PushButton
-		  Dim ControlCount As Integer = Win.ControlCount
+		  Var DefaultButton As PushButton
+		  Var CancelButton As PushButton
+		  Var ControlCount As Integer = Win.ControlCount
 		  For I As Integer = 0 To ControlCount - 1
-		    Dim Ctl As Control = Win.Control(I)
-		    Dim ControlPanelIndex As Integer = Ctl.PanelIndex
+		    Var Ctl As Control = Win.Control(I)
+		    Var ControlPanelIndex As Integer = Ctl.PanelIndex
 		    #if TargetWin32 And Target64Bit
 		      // Bug <feedback://showreport?report_id=54283>
 		      #if XojoVersion >= 2018.03 And XojoVersion < 2018.04
@@ -41,7 +41,7 @@ Protected Module UITweaks
 		        CancelButton = PushButton(Ctl)
 		      End If
 		    ElseIf Ctl IsA PagePanel Then
-		      Dim PanelCount As Integer = PagePanel(Ctl).PanelCount
+		      Var PanelCount As Integer = PagePanel(Ctl).PanelCount
 		      For Idx As Integer = 0 To PanelCount - 1
 		        Win.SwapButtons(Idx)
 		      Next
@@ -51,10 +51,10 @@ Protected Module UITweaks
 		    Return
 		  End If
 		  
-		  Dim LeftButton As PushButton = if(DefaultButton.Left < CancelButton.Left, DefaultButton, CancelButton)
-		  Dim RightButton As PushButton = if(DefaultButton.Left < CancelButton.Left, CancelButton, DefaultButton)
-		  Dim LeftRect As New Rect(LeftButton.Left, LeftButton.Top, LeftButton.Width, LeftButton.Height)
-		  Dim RightRect As New Rect(RightButton.Left, RightButton.Top, RightButton.Width, RightButton.Height)
+		  Var LeftButton As PushButton = if(DefaultButton.Left < CancelButton.Left, DefaultButton, CancelButton)
+		  Var RightButton As PushButton = if(DefaultButton.Left < CancelButton.Left, CancelButton, DefaultButton)
+		  Var LeftRect As New Rect(LeftButton.Left, LeftButton.Top, LeftButton.Width, LeftButton.Height)
+		  Var RightRect As New Rect(RightButton.Left, RightButton.Top, RightButton.Width, RightButton.Height)
 		  
 		  #if TargetWindows
 		    DefaultButton.Left = LeftRect.Left

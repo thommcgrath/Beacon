@@ -22,8 +22,8 @@ Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
 		Function ClassString() As String
 		  If Self.IsValid Then
-		    Dim Components() As String = Self.mPath.Split("/")
-		    Dim Tail As String = Components(Components.LastRowIndex)
+		    Var Components() As String = Self.mPath.Split("/")
+		    Var Tail As String = Components(Components.LastRowIndex)
 		    Components = Tail.Split(".")
 		    Return Components(Components.LastRowIndex) + "_C"
 		  Else
@@ -60,7 +60,7 @@ Implements Beacon.Blueprint
 		  Self.mModID = Source.mModID
 		  Self.mModName = Source.mModName
 		  
-		  Redim Self.mTags(-1)
+		  Self.mTags.ResizeTo(-1)
 		  For Each Tag As String In Source.mTags
 		    Self.mTags.AddRow(Tag)
 		  Next
@@ -75,7 +75,7 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Shared Function CreateFromPath(Path As String) As Beacon.Engram
-		  Dim Engram As New Beacon.Engram
+		  Var Engram As New Beacon.Engram
 		  If Path.Length > 6 And Path.Left(6) = "/Game/" Then
 		    If Path.Right(2) = "_C" Then
 		      // Appears to be a BlueprintGeneratedClass Path
@@ -156,19 +156,19 @@ Implements Beacon.Blueprint
 		    Return ""
 		  End If
 		  
-		  Dim Idx As Integer = Self.mPath.IndexOf(6, "/")
+		  Var Idx As Integer = Self.mPath.IndexOf(6, "/")
 		  If Idx = -1 Then
 		    Return "Unknown"
 		  End If
-		  Dim Name As String = Self.mPath.Middle(6, Idx - 6)
+		  Var Name As String = Self.mPath.Middle(6, Idx - 6)
 		  Select Case Name
 		  Case "PrimalEarth"
 		    Return "Ark Prime"
 		  Case "ScorchedEarth"
 		    Return "Scorched Earth"
 		  Case "Mods"
-		    Dim StartAt As Integer = Idx + 1
-		    Dim EndAt As Integer = Self.mPath.IndexOf(StartAt, "/")
+		    Var StartAt As Integer = Idx + 1
+		    Var EndAt As Integer = Self.mPath.IndexOf(StartAt, "/")
 		    If EndAt = -1 Then
 		      EndAt = Self.mPath.Length
 		    End If
@@ -197,8 +197,8 @@ Implements Beacon.Blueprint
 		    Return 1
 		  End If
 		  
-		  Dim SelfPath As String = If(Self.IsValid, Self.Path, Self.ClassString)
-		  Dim OtherPath As String = If(Other.IsValid, Other.Path, Other.ClassString)
+		  Var SelfPath As String = If(Self.IsValid, Self.Path, Self.ClassString)
+		  Var OtherPath As String = If(Other.IsValid, Other.Path, Other.ClassString)
 		  Return SelfPath.Compare(OtherPath, ComparisonOptions.CaseSensitive)
 		End Function
 	#tag EndMethod
@@ -215,8 +215,8 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function Tags() As String()
-		  Dim Clone() As String
-		  Redim Clone(Self.mTags.LastRowIndex)
+		  Var Clone() As String
+		  Clone.ResizeTo(Self.mTags.LastRowIndex)
 		  For I As Integer = 0 To Self.mTags.LastRowIndex
 		    Clone(I) = Self.mTags(I)
 		  Next

@@ -56,7 +56,7 @@ Inherits Beacon.SetEntry
 
 	#tag Method, Flags = &h0
 		Function Export() As Dictionary
-		  Dim Dict As Dictionary = Super.Export
+		  Var Dict As Dictionary = Super.Export
 		  Dict.Value("Availability") = Self.mAvailability
 		  Dict.Value("RespectQualityModifier") = Self.mRespectQualityModifier
 		  Dict.Value("RespectQuantityMultiplier") = Self.mRespectQuantityMultiplier
@@ -67,12 +67,12 @@ Inherits Beacon.SetEntry
 
 	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.PresetEntry
-		  Dim SetEntry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Dict)
+		  Var SetEntry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Dict)
 		  If SetEntry = Nil Then
 		    Return Nil
 		  End If
 		  
-		  Dim Entry As New Beacon.PresetEntry(SetEntry)
+		  Var Entry As New Beacon.PresetEntry(SetEntry)
 		  Entry.mAvailability = Dict.Lookup("Availability", Entry.mAvailability)
 		  Entry.mRespectQualityModifier = Dict.Lookup("RespectQualityModifier", Entry.mRespectQualityModifier)
 		  Entry.mRespectQuantityMultiplier = Dict.Lookup("RespectQuantityMultiplier", Entry.mRespectQuantityMultiplier)

@@ -2,19 +2,19 @@
 Protected Class LogFile
 	#tag Method, Flags = &h0
 		Shared Function Analyze(Contents As String) As Beacon.LogFile
-		  Dim Encoding As TextEncoding = Contents.Encoding
+		  Var Encoding As TextEncoding = Contents.Encoding
 		  Contents = Contents.ReplaceLineEndings(EndOfLine)
-		  Dim Lines() As String = Contents.Split(EndOfLine)
+		  Var Lines() As String = Contents.Split(EndOfLine)
 		  
-		  Dim File As New Beacon.LogFile
+		  Var File As New Beacon.LogFile
 		  
 		  For Each Line As String In Lines
-		    Dim StartPos As Integer = Line.IndexOf("CommandLine: ")
+		    Var StartPos As Integer = Line.IndexOf("CommandLine: ")
 		    If StartPos = -1 Then
 		      Continue
 		    End If
 		    
-		    Dim EndPos As Integer
+		    Var EndPos As Integer
 		    StartPos = StartPos + 13
 		    If (Line.Middle(StartPos, 1) = "=") Then
 		      StartPos = StartPos + 1
@@ -23,11 +23,11 @@ Protected Class LogFile
 		      EndPos = Line.Length
 		    End If
 		    
-		    Dim LineContent As String = Line.Middle(StartPos, EndPos - StartPos)
-		    Dim InQuotes As Boolean
-		    Dim Chars() As String = LineContent.Split("")
-		    Dim Buffer As New MemoryBlock(0)
-		    Dim Params() As String
+		    Var LineContent As String = Line.Middle(StartPos, EndPos - StartPos)
+		    Var InQuotes As Boolean
+		    Var Chars() As String = LineContent.Split("")
+		    Var Buffer As New MemoryBlock(0)
+		    Var Params() As String
 		    For Each Char As String In Chars
 		      If Char = """" Then
 		        If InQuotes Then
@@ -54,7 +54,7 @@ Protected Class LogFile
 		      Buffer = New MemoryBlock(0)
 		    End If
 		    
-		    Dim StartupParams() As String = Params(0).Split("?")
+		    Var StartupParams() As String = Params(0).Split("?")
 		    Params.RemoveRowAt(0)
 		    
 		    File.mMaps = Beacon.Maps.MaskForIdentifier(StartupParams(0))
@@ -62,7 +62,7 @@ Protected Class LogFile
 		    
 		    StartupParams.RemoveRowAt(0) // The Listen statement
 		    
-		    Dim Merged() As String
+		    Var Merged() As String
 		    For Each Param As String In StartupParams
 		      Merged.AddRow(Param)
 		    Next
@@ -72,13 +72,13 @@ Protected Class LogFile
 		    Params.ResizeTo(-1)
 		    StartupParams.ResizeTo(-1)
 		    
-		    Dim Options As New Dictionary
+		    Var Options As New Dictionary
 		    For Each Param As String In Merged
 		      If Param = "" Then
 		        Continue
 		      End If
 		      
-		      Dim EqualsPos As Integer = Param.IndexOf("=")
+		      Var EqualsPos As Integer = Param.IndexOf("=")
 		      If EqualsPos > -1 Then
 		        Options.Value(Param.Left(EqualsPos)) = Param.Middle(EqualsPos + 1)
 		      Else

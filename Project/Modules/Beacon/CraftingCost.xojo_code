@@ -44,19 +44,19 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Export() As Dictionary
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  
 		  If Self.mEngram <> Nil Then
 		    Dict.Value("Engram") = Self.mEngram.ClassString
 		  End If
 		  
-		  Dim Resources() As Dictionary
+		  Var Resources() As Dictionary
 		  For I As Integer = 0 To Self.mResources.LastRowIndex
-		    Dim Engram As Beacon.Engram = Self.mResources(I)
-		    Dim Quantity As Integer = Self.mQuantities(I)
-		    Dim RequireExact As Boolean = Self.mRequireExacts(I)
+		    Var Engram As Beacon.Engram = Self.mResources(I)
+		    Var Quantity As Integer = Self.mQuantities(I)
+		    Var RequireExact As Boolean = Self.mRequireExacts(I)
 		    
-		    Dim Resource As New Dictionary
+		    Var Resource As New Dictionary
 		    Resource.Value("Class") = Engram.ClassString
 		    Resource.Value("Quantity") = Quantity
 		    Resource.Value("Exact") = RequireExact
@@ -71,11 +71,11 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.CraftingCost
-		  Dim Cost As New Beacon.CraftingCost
+		  Var Cost As New Beacon.CraftingCost
 		  
 		  If Dict.HasKey("Engram") Then
-		    Dim ClassString As String = Dict.Value("Engram")
-		    Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
+		    Var ClassString As String = Dict.Value("Engram")
+		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
 		    If Engram = Nil Then
 		      Engram = Beacon.Engram.CreateFromClass(ClassString)
 		    End If
@@ -83,12 +83,12 @@ Implements Beacon.NamedItem
 		  End If
 		  
 		  If Dict.HasKey("Resources") Then
-		    Dim Resources() As Variant = Dict.Value("Resources")
+		    Var Resources() As Variant = Dict.Value("Resources")
 		    For Each Resource As Dictionary In Resources
-		      Dim ClassString As String = Resource.Lookup("Class", "")
-		      Dim Quantity As Integer = Resource.Lookup("Quantity", 1)
-		      Dim RequireExact As Boolean = Resource.Lookup("Exact", False)
-		      Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
+		      Var ClassString As String = Resource.Lookup("Class", "")
+		      Var Quantity As Integer = Resource.Lookup("Quantity", 1)
+		      Var RequireExact As Boolean = Resource.Lookup("Exact", False)
+		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
 		      If Engram = Nil Then
 		        Engram = Beacon.Engram.CreateFromClass(ClassString)
 		      End If
@@ -105,30 +105,30 @@ Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Shared Function ImportFromConfig(Dict As Dictionary) As Beacon.CraftingCost
 		  Try
-		    Dim ClassString As String = Dict.Lookup("ItemClassString", "")
+		    Var ClassString As String = Dict.Lookup("ItemClassString", "")
 		    If ClassString = "" Then
 		      Return Nil
 		    End If
 		    
-		    Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
+		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
 		    If Engram = Nil Then
 		      Engram = Beacon.Engram.CreateFromClass(ClassString)
 		    End If
 		    
-		    Dim Cost As New Beacon.CraftingCost(Engram)
+		    Var Cost As New Beacon.CraftingCost(Engram)
 		    If Dict.HasKey("BaseCraftingResourceRequirements") Then
-		      Dim Resources() As Variant = Dict.Value("BaseCraftingResourceRequirements")
+		      Var Resources() As Variant = Dict.Value("BaseCraftingResourceRequirements")
 		      For Each Resource As Dictionary In Resources
-		        Dim ResourceClass As String = Resource.Lookup("ResourceItemTypeString", "")
+		        Var ResourceClass As String = Resource.Lookup("ResourceItemTypeString", "")
 		        If ResourceClass = "" Then
 		          Continue
 		        End If
-		        Dim ResourceEngram As Beacon.Engram = Beacon.Data.GetEngramByClass(ResourceClass)
+		        Var ResourceEngram As Beacon.Engram = Beacon.Data.GetEngramByClass(ResourceClass)
 		        If ResourceEngram = Nil Then
 		          ResourceEngram = Beacon.Engram.CreateFromClass(ResourceClass)
 		        End If
-		        Dim Quantity As Integer = Resource.Lookup("BaseResourceRequirement", 1)
-		        Dim RequireExact As Boolean = Resource.Lookup("bCraftingRequireExactResourceType", False)
+		        Var Quantity As Integer = Resource.Lookup("BaseResourceRequirement", 1)
+		        Var RequireExact As Boolean = Resource.Lookup("bCraftingRequireExactResourceType", False)
 		        Cost.Append(ResourceEngram, Quantity, RequireExact)
 		      Next
 		    End If
@@ -225,9 +225,9 @@ Implements Beacon.NamedItem
 		  End If
 		  
 		  // Try to sort by name first, otherwise sort by object id for lack of a better option
-		  Dim SelfName As String = If(Self.mEngram <> Nil, Self.mEngram.Label, "")
-		  Dim OtherName As String = If(Other.mEngram <> Nil, Other.mEngram.Label, "")
-		  Dim Result As Integer = SelfName.Compare(OtherName, ComparisonOptions.CaseSensitive)
+		  Var SelfName As String = If(Self.mEngram <> Nil, Self.mEngram.Label, "")
+		  Var OtherName As String = If(Other.mEngram <> Nil, Other.mEngram.Label, "")
+		  Var Result As Integer = SelfName.Compare(OtherName, ComparisonOptions.CaseSensitive)
 		  If Result = 0 Then
 		    Result = Self.mObjectID.StringValue.Compare(Other.mObjectID.StringValue, ComparisonOptions.CaseSensitive)
 		  End If
@@ -254,7 +254,7 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Sub Remove(Resource As Beacon.Engram)
-		  Dim Idx As Integer = Self.IndexOf(Resource)
+		  Var Idx As Integer = Self.IndexOf(Resource)
 		  If Idx > -1 Then
 		    Self.Remove(Idx)
 		  End If
@@ -302,15 +302,15 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function StringValue() As String
-		  Dim Components() As String
+		  Var Components() As String
 		  For I As Integer = 0 To Self.mResources.LastRowIndex
-		    Dim ClassString As String = Self.mResources(I).ClassString
-		    Dim QuantityString As String = Self.mQuantities(I).ToString(Locale.Raw, "0")
-		    Dim RequireExactString As String = If(Self.mRequireExacts(I), "true", "false")
+		    Var ClassString As String = Self.mResources(I).ClassString
+		    Var QuantityString As String = Self.mQuantities(I).ToString(Locale.Raw, "0")
+		    Var RequireExactString As String = If(Self.mRequireExacts(I), "true", "false")
 		    Components.AddRow("(ResourceItemTypeString=""" + ClassString + """,BaseResourceRequirement=" + QuantityString + ",bCraftingRequireExactResourceType=" + RequireExactString + ")")
 		  Next
 		  
-		  Dim Pieces() As String
+		  Var Pieces() As String
 		  Pieces.AddRow("ItemClassString=""" + If(Self.mEngram <> Nil, Self.mEngram.ClassString, "") + """")
 		  Pieces.AddRow("BaseCraftingResourceRequirements=(" + Components.Join(",") + ")")
 		  Return "(" + Pieces.Join(",") + ")"

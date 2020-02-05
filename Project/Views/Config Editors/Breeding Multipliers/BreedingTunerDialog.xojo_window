@@ -318,7 +318,7 @@ End
 		Sub Open()
 		  Self.CreaturesList.ColumnTypeAt(Self.ColumnChecked) = Listbox.CellTypes.CheckBox
 		  
-		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.StringList)
+		  Var Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.StringList)
 		  For Each Creature As Beacon.Creature In Creatures
 		    If Creature.IncubationTime = 0 Or Creature.MatureTime = 0 Then
 		      Continue
@@ -341,13 +341,13 @@ End
 		      Self.CreaturesList.CellCheckBoxValueAt(I, Self.ColumnChecked) = True
 		    Next
 		  Else
-		    Dim Creatures() As String = List.Split(",")
+		    Var Creatures() As String = List.Split(",")
 		    For I As Integer = 0 To Creatures.LastRowIndex
 		      Creatures(I) = Creatures(I).Trim
 		    Next
 		    
 		    For I As Integer = 0 To Self.CreaturesList.RowCount - 1
-		      Dim ClassString As String = Beacon.Creature(Self.CreaturesList.RowTagAt(I)).ClassString
+		      Var ClassString As String = Beacon.Creature(Self.CreaturesList.RowTagAt(I)).ClassString
 		      Self.CreaturesList.CellCheckBoxValueAt(I, Self.ColumnChecked) = Creatures.IndexOf(ClassString) > -1
 		    Next
 		  End If
@@ -360,7 +360,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckEnabled()
-		  Dim Enabled As Boolean = Self.mLastCheckedList <> ""
+		  Var Enabled As Boolean = Self.mLastCheckedList <> ""
 		  If Self.ActionButton.Enabled <> Enabled Then
 		    Self.ActionButton.Enabled = Enabled
 		  End If
@@ -381,9 +381,9 @@ End
 		    Return 0
 		  End If
 		  
-		  Dim Win As New BreedingTunerDialog(MatureSpeedMultiplier)
+		  Var Win As New BreedingTunerDialog(MatureSpeedMultiplier)
 		  Win.ShowModalWithin(Parent.TrueWindow)
-		  Dim Multiplier As Double = Win.mChosenMultiplier
+		  Var Multiplier As Double = Win.mChosenMultiplier
 		  Win.Close
 		  
 		  Return Multiplier
@@ -430,7 +430,7 @@ End
 		Sub Action()
 		  Const Threshold = 0.95
 		  
-		  Dim Creatures() As Beacon.Creature
+		  Var Creatures() As Beacon.Creature
 		  For I As Integer = 0 To Self.CreaturesList.RowCount - 1
 		    If Self.CreaturesList.CellCheckBoxValueAt(I, Self.ColumnChecked) Then
 		      Creatures.AddRow(Self.CreaturesList.RowTagAt(I))
@@ -438,18 +438,18 @@ End
 		  Next
 		  
 		  // Get fastest maturing creature
-		  Dim FastestMature As UInt64
+		  Var FastestMature As UInt64
 		  For Each Creature As Beacon.Creature In Creatures
-		    Dim MatureSeconds As UInt64 = Creature.MatureTime / Self.mMatureSpeedMultiplier
+		    Var MatureSeconds As UInt64 = Creature.MatureTime / Self.mMatureSpeedMultiplier
 		    If FastestMature = 0 Or MatureSeconds < FastestMature Then
 		      FastestMature = MatureSeconds
 		    End If
 		  Next
 		  
 		  // Reduce the target by a set amount and compute the imprint multiplier
-		  Dim TargetCuddleSeconds As UInt64 = FastestMature * Threshold
-		  Dim OfficialCuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period")
-		  Dim ImprintMultiplier As Double = TargetCuddleSeconds / OfficialCuddlePeriod
+		  Var TargetCuddleSeconds As UInt64 = FastestMature * Threshold
+		  Var OfficialCuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period")
+		  Var ImprintMultiplier As Double = TargetCuddleSeconds / OfficialCuddlePeriod
 		  
 		  Preferences.BreedingTunerCreatures = Self.mLastCheckedList
 		  Self.mChosenMultiplier = ImprintMultiplier
@@ -466,7 +466,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Classes() As String
+		  Var Classes() As String
 		  For I As Integer = 0 To Self.CreaturesList.RowCount - 1
 		    If Self.CreaturesList.CellCheckBoxValueAt(I, Column) Then
 		      Classes.AddRow(Beacon.Creature(Self.CreaturesList.RowTagAt(I)).ClassString)

@@ -280,9 +280,9 @@ End
 		    Return False
 		  End If
 		  
-		  Dim Win As New ShareWithUserDialog
+		  Var Win As New ShareWithUserDialog
 		  Win.ShowModalWithin(Parent.TrueWindow)
-		  Dim Cancelled As Boolean = Win.mCancelled
+		  Var Cancelled As Boolean = Win.mCancelled
 		  If Not Cancelled Then
 		    UserID = Win.mUserID
 		    PublicKey = Win.mPublicKey
@@ -352,7 +352,7 @@ End
 		  
 		  If HTTPStatus = 200 Then
 		    Try
-		      Dim UserData As Dictionary = Beacon.ParseJSON(Content)
+		      Var UserData As Dictionary = Beacon.ParseJSON(Content)
 		      Self.mUserID = UserData.Value("user_id")
 		      Self.mUserName = UserData.Value("username_full")
 		      Self.mPublicKey = BeaconEncryption.PEMDecodePublicKey(UserData.Value("public_key"))
@@ -367,7 +367,7 @@ End
 		  Self.Spinner.Visible = False
 		  Self.ActionButton.Enabled = True
 		  
-		  Dim Message As String
+		  Var Message As String
 		  Select Case HTTPStatus
 		  Case 404
 		    Message = "User not found"

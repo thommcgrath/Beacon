@@ -19,7 +19,7 @@ Inherits Beacon.Preset
 		    Self.mModifierValues = New Dictionary
 		  End If
 		  
-		  Dim Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
+		  Var Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
 		  Dict.Value("Blueprint") = Value
 		  Self.mModifierValues.Value(ModifierID) = Dict
 		End Sub
@@ -87,7 +87,7 @@ Inherits Beacon.Preset
 		    Self.mModifierValues = New Dictionary
 		  End If
 		  
-		  Dim Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
+		  Var Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
 		  Dict.Value("MaxQuality") = Value
 		  Self.mModifierValues.Value(ModifierID) = Dict
 		End Sub
@@ -111,15 +111,9 @@ Inherits Beacon.Preset
 		    Self.mModifierValues = New Dictionary
 		  End If
 		  
-		  Dim Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
+		  Var Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
 		  Dict.Value("MinQuality") = Value
 		  Self.mModifierValues.Value(ModifierID) = Dict
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Operator_Redim(NewBound As Integer)
-		  Redim Self.mContents(NewBound)
 		End Sub
 	#tag EndMethod
 
@@ -147,7 +141,7 @@ Inherits Beacon.Preset
 		    Self.mModifierValues = New Dictionary
 		  End If
 		  
-		  Dim Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
+		  Var Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
 		  Dict.Value("Quantity") = Value
 		  Self.mModifierValues.Value(ModifierID) = Dict
 		End Sub
@@ -156,6 +150,12 @@ Inherits Beacon.Preset
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
 		  Self.mContents.RemoveRowAt(Index)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ResizeTo(NewBound As Integer)
+		  Self.mContents.ResizeTo(NewBound)
 		End Sub
 	#tag EndMethod
 

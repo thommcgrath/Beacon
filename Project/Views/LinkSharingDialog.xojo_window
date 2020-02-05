@@ -178,7 +178,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Win As New LinkSharingDialog
+		  Var Win As New LinkSharingDialog
 		  Win.LinkField.Value = Link
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		End Sub
@@ -190,7 +190,7 @@ End
 #tag Events CopyLinkButton
 	#tag Event
 		Sub Action()
-		  Dim Board As New Clipboard
+		  Var Board As New Clipboard
 		  Board.Text = Self.LinkField.Value
 		  
 		  Me.Caption = "Copied!"

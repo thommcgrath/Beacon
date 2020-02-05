@@ -213,7 +213,7 @@ End
 		Function CancelClose(appQuitting as Boolean) As Boolean
 		  #Pragma Unused AppQuitting
 		  
-		  Dim ModifiedViews() As BeaconSubview
+		  Var ModifiedViews() As BeaconSubview
 		  
 		  For Each View As BeaconSubview In Self.mSubviews
 		    If View.Changed Then
@@ -227,9 +227,9 @@ End
 		  Case 0
 		    Return Not Self.DiscardView(ModifiedViews(0))
 		  Else
-		    Dim NumChanges As Integer = ModifiedViews.LastRowIndex + 1
+		    Var NumChanges As Integer = ModifiedViews.LastRowIndex + 1
 		    
-		    Dim Dialog As New MessageDialog
+		    Var Dialog As New MessageDialog
 		    Dialog.Title = ""
 		    Dialog.Message = "You have " + NumChanges.ToString + " documents with unsaved changes. Do you want to review these changes before quitting?"
 		    Dialog.Explanation = "If you don't review your documents, all your changes will be lost."
@@ -238,7 +238,7 @@ End
 		    Dialog.AlternateActionButton.Caption = "Discard Changes"
 		    Dialog.AlternateActionButton.Visible = True
 		    
-		    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
+		    Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
 		    If Choice = Dialog.ActionButton Then
 		      For Each View As BeaconSubview In ModifiedViews
 		        If Not Self.DiscardView(View) Then
@@ -275,7 +275,7 @@ End
 	#tag Event
 		Sub Moved()
 		  If Self.mOpened Then
-		    Dim Bounds As Xojo.Rect = Self.Bounds
+		    Var Bounds As Xojo.Rect = Self.Bounds
 		    Preferences.MainWindowPosition = New Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
 		  End If
 		End Sub
@@ -283,19 +283,19 @@ End
 
 	#tag Event
 		Sub Open()
-		  Dim Bounds As Rect = Preferences.MainWindowPosition
+		  Var Bounds As Rect = Preferences.MainWindowPosition
 		  If Bounds <> Nil Then
 		    // Find the best screen
-		    Dim IdealScreen As Screen = Screen(0)
+		    Var IdealScreen As Screen = Screen(0)
 		    If ScreenCount > 1 Then
-		      Dim MaxArea As Integer
+		      Var MaxArea As Integer
 		      For I As Integer = 0 To ScreenCount - 1
-		        Dim ScreenBounds As New Rect(Screen(I).AvailableLeft, Screen(I).AvailableTop, Screen(I).AvailableWidth, Screen(I).AvailableHeight)
-		        Dim Intersection As Rect = ScreenBounds.Intersection(Bounds)
+		        Var ScreenBounds As New Rect(Screen(I).AvailableLeft, Screen(I).AvailableTop, Screen(I).AvailableWidth, Screen(I).AvailableHeight)
+		        Var Intersection As Rect = ScreenBounds.Intersection(Bounds)
 		        If Intersection = Nil Then
 		          Continue
 		        End If
-		        Dim Area As Integer = Intersection.Width * Intersection.Height
+		        Var Area As Integer = Intersection.Width * Intersection.Height
 		        If Area <= 0 Then
 		          Continue
 		        End If
@@ -306,12 +306,12 @@ End
 		      Next
 		    End If
 		    
-		    Dim AvailableBounds As New Rect(IdealScreen.AvailableLeft, IdealScreen.AvailableTop, IdealScreen.AvailableWidth, IdealScreen.AvailableHeight)
+		    Var AvailableBounds As New Rect(IdealScreen.AvailableLeft, IdealScreen.AvailableTop, IdealScreen.AvailableWidth, IdealScreen.AvailableHeight)
 		    
-		    Dim Width As Integer = Min(Max(Bounds.Width, Self.MinimumWidth), Self.MaximumWidth, AvailableBounds.Width)
-		    Dim Height As Integer = Min(Max(Bounds.Height, Self.MinimumHeight), Self.MaximumHeight, AvailableBounds.Height)
-		    Dim Left As Integer = Min(Max(Bounds.Left, AvailableBounds.Left), AvailableBounds.Right - Width)
-		    Dim Top As Integer = Min(Max(Bounds.Top, AvailableBounds.Top), AvailableBounds.Bottom - Height)
+		    Var Width As Integer = Min(Max(Bounds.Width, Self.MinimumWidth), Self.MaximumWidth, AvailableBounds.Width)
+		    Var Height As Integer = Min(Max(Bounds.Height, Self.MinimumHeight), Self.MaximumHeight, AvailableBounds.Height)
+		    Var Left As Integer = Min(Max(Bounds.Left, AvailableBounds.Left), AvailableBounds.Right - Width)
+		    Var Top As Integer = Min(Max(Bounds.Top, AvailableBounds.Top), AvailableBounds.Bottom - Height)
 		    Self.Bounds = New Xojo.Rect(Left, Top, Width, Height)
 		  End If
 		  
@@ -326,7 +326,7 @@ End
 	#tag Event
 		Sub Resized()
 		  If Self.mOpened Then
-		    Dim Bounds As Xojo.Rect = Self.Bounds
+		    Var Bounds As Xojo.Rect = Self.Bounds
 		    Preferences.MainWindowPosition = New Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
 		  End If
 		End Sub
@@ -424,7 +424,7 @@ End
 		    Self.ShowView(Nil)
 		  End If
 		  
-		  Dim ViewIndex As Integer = Self.mSubviews.IndexOf(View)
+		  Var ViewIndex As Integer = Self.mSubviews.IndexOf(View)
 		  If ViewIndex = -1 Then
 		    Return True
 		  End If
@@ -494,8 +494,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub SetupUpdateUI()
 		  If App.UpdateAvailable Then
-		    Dim Data As Dictionary = App.UpdateDetails
-		    Dim Preview As String = Data.Value("Preview")
+		    Var Data As Dictionary = App.UpdateDetails
+		    Var Preview As String = Data.Value("Preview")
 		    If Preview <> "" Then
 		      Self.mUpdateText = Preview + " Click here to update."
 		    Else
@@ -540,7 +540,7 @@ End
 		  View.Visible = True
 		  Self.mCurrentView = View
 		  
-		  Dim ViewIndex As Integer = Self.mSubviews.IndexOf(View)
+		  Var ViewIndex As Integer = Self.mSubviews.IndexOf(View)
 		  If ViewIndex = -1 Then
 		    Self.mSubviews.AddRow(View)
 		    ViewIndex = Self.mSubviews.LastRowIndex
@@ -668,7 +668,7 @@ End
 			    Return
 			  End If
 			  
-			  Dim UpdateBarHeight As Integer = If(Value, Self.UpdateBar.Height, 0)
+			  Var UpdateBarHeight As Integer = If(Value, Self.UpdateBar.Height, 0)
 			  
 			  Self.Views.Height = Self.Height - (Self.TabBar1.Height + UpdateBarHeight)
 			  Self.Views.Top = Self.Height - Self.Views.Height
@@ -747,11 +747,11 @@ End
 		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.FillRectangle(0, G.Height - 1, G.Width, 1)
 		  
-		  Dim Caption As String = Self.mUpdateText
-		  Dim MaxCaptionWidth As Integer = G.Width - 40
-		  Dim CaptionWidth As Integer = Min(Ceil(G.TextWidth(Caption)), MaxCaptionWidth)
-		  Dim CaptionLeft As Integer = Round((G.Width - CaptionWidth) / 2)
-		  Dim CaptionBaseline As Double = ((G.Height - 1) / 2) + (G.CapHeight / 2)
+		  Var Caption As String = Self.mUpdateText
+		  Var MaxCaptionWidth As Integer = G.Width - 40
+		  Var CaptionWidth As Integer = Min(Ceil(G.TextWidth(Caption)), MaxCaptionWidth)
+		  Var CaptionLeft As Integer = Round((G.Width - CaptionWidth) / 2)
+		  Var CaptionBaseline As Double = ((G.Height - 1) / 2) + (G.CapHeight / 2)
 		  
 		  G.DrawingColor = SystemColors.AlternateSelectedControlTextColor
 		  G.DrawText(Caption, CaptionLeft, CaptionBaseline, MaxCaptionWidth, True)
@@ -774,7 +774,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub MouseDrag(X As Integer, Y As Integer)
-		  Dim Inside As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height - 1)
+		  Var Inside As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height - 1)
 		  If Inside <> Self.mUpdateBarPressed Then
 		    Self.mUpdateBarPressed = Inside
 		    Self.UpdateBar.Invalidate
@@ -784,7 +784,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub MouseUp(X As Integer, Y As Integer)
-		  Dim Inside As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height - 1)
+		  Var Inside As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height - 1)
 		  If Inside Then
 		    Call App.HandleURL("beacon://action/checkforupdate")
 		  End If

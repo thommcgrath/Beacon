@@ -17,7 +17,7 @@ Inherits BeaconWindow
 
 	#tag Method, Flags = &h1
 		Protected Function CurrentView() As BeaconSubview
-		  Dim Page as BeaconSubview = GetPageAtIndex(Self.mCurrentIndex)
+		  Var Page as BeaconSubview = GetPageAtIndex(Self.mCurrentIndex)
 		  Return Page
 		End Function
 	#tag EndMethod
@@ -29,7 +29,7 @@ Inherits BeaconWindow
 		    Return
 		  End If
 		  
-		  Dim OldPage As BeaconSubview = Self.CurrentView
+		  Var OldPage As BeaconSubview = Self.CurrentView
 		  If OldPage <> Nil Then
 		    OldPage.SwitchedFrom()
 		  End If
@@ -37,7 +37,7 @@ Inherits BeaconWindow
 		  RaiseEvent SetCurrentPage(Index)
 		  Self.mCurrentIndex = Index
 		  
-		  Dim NewPage As BeaconSubview = Self.CurrentView
+		  Var NewPage As BeaconSubview = Self.CurrentView
 		  If NewPage <> Nil Then
 		    NewPage.SwitchedTo(UserData)
 		  End If

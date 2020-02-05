@@ -338,17 +338,17 @@ End
 
 	#tag Method, Flags = &h0
 		Sub AddFile(File As FolderItem, DetectSibling As Boolean = True)
-		  Dim Content As String = Self.ReadIniFile(File)
+		  Var Content As String = Self.ReadIniFile(File)
 		  If Content = "" Then
 		    Return
 		  End If
 		  
 		  Content  = Content.DefineEncoding(Encodings.UTF8)
-		  Dim Type As ConfigFileType = Self.DetectConfigType(Content)
+		  Var Type As ConfigFileType = Self.DetectConfigType(Content)
 		  Self.SetSwitcherForType(Type)
 		  
 		  If Self.ConfigArea.Value.Length <> 0 Then
-		    Dim Dialog As New MessageDialog
+		    Var Dialog As New MessageDialog
 		    Dialog.Title = ""
 		    Dialog.Message = "Would you like to replace the existing content, or add this file to it?"
 		    Select Case Type
@@ -363,7 +363,7 @@ End
 		    Dialog.CancelButton.Visible = True
 		    Dialog.AlternateActionButton.Caption = "Add To"
 		    Dialog.AlternateActionButton.Visible = True
-		    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		    Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
 		    
 		    Select Case Choice
 		    Case Dialog.ActionButton
@@ -381,7 +381,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim OtherFilename As String
+		  Var OtherFilename As String
 		  Select Case Type
 		  Case ConfigFileType.GameIni
 		    OtherFilename = "GameUserSettings.ini"
@@ -391,15 +391,15 @@ End
 		    Return
 		  End Select
 		  
-		  Dim OtherFile As FolderItem = File.Parent.Child(OtherFilename)
+		  Var OtherFile As FolderItem = File.Parent.Child(OtherFilename)
 		  If OtherFile <> Nil And OtherFile.Exists Then
 		    Self.AddFile(OtherFile, False)
 		  End If
 		  
 		  #if false
 		    If Self.mCurrentConfigType <> ConfigFileType.Combo Then
-		      Dim Other As FolderItem
-		      Dim Type As ConfigFileType = Self.DetectConfigType(Content)
+		      Var Other As FolderItem
+		      Var Type As ConfigFileType = Self.DetectConfigType(Content)
 		      Select Case Type
 		      Case ConfigFileType.GameIni    
 		        Self.mGameIniFile = File
@@ -415,7 +415,7 @@ End
 		        End If
 		      End Select
 		      If Other <> Nil And Other.Exists Then
-		        Dim AdditionalContent As String = Self.ReadIniFile(Other)
+		        Var AdditionalContent As String = Self.ReadIniFile(Other)
 		        If AdditionalContent <> "" Then
 		          Content = Content + EndOfLine + EndOfLine + AdditionalContent.DefineEncoding(Encodings.UTF8)
 		        End If
@@ -433,8 +433,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function DetectConfigType(Content As String, File As FolderItem = Nil) As ConfigFileType
-		  Dim GameIniPos As Integer = Content.IndexOf(Beacon.ShooterGameHeader)
-		  Dim SettingsIniPos As Integer = Content.IndexOf(Beacon.ServerSettingsHeader)
+		  Var GameIniPos As Integer = Content.IndexOf(Beacon.ShooterGameHeader)
+		  Var SettingsIniPos As Integer = Content.IndexOf(Beacon.ServerSettingsHeader)
 		  
 		  If GameIniPos > -1 And SettingsIniPos = -1 Then
 		    Return ConfigFileType.GameIni
@@ -467,9 +467,9 @@ End
 		Private Function ReadIniFile(File As FolderItem, Prompt As Boolean = True) As String
 		  Try
 		    #Pragma BreakOnExceptions False
-		    Dim Stream As TextInputStream = TextInputStream.Open(File)
+		    Var Stream As TextInputStream = TextInputStream.Open(File)
 		    #Pragma BreakOnExceptions Default
-		    Dim Contents As String = Stream.ReadAll()
+		    Var Contents As String = Stream.ReadAll()
 		    Stream.Close
 		    
 		    Contents = Contents.GuessEncoding
@@ -481,14 +481,14 @@ End
 		      Return ""
 		    End If
 		    
-		    Dim Dialog As New OpenFileDialog
+		    Var Dialog As New OpenFileDialog
 		    Dialog.InitialFolder = File.Parent
 		    Dialog.SuggestedFileName = File.Name
 		    Dialog.PromptText = "Select your " + File.Name + " file if you want to import it too"
 		    Dialog.ActionButtonCaption = "Import"
 		    Dialog.Filter = BeaconFileTypes.IniFile
 		    
-		    Dim Selected As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		    Var Selected As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		    If Selected = Nil Then
 		      Return ""
 		    End If
@@ -568,7 +568,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim Engines(0) As Beacon.DiscoveryEngine
+		  Var Engines(0) As Beacon.DiscoveryEngine
 		  Engines(0) = New Beacon.LocalDiscoveryEngine(Self.mGameIniContent, Self.mGameUserSettingsIniContent)
 		  Self.ShouldFinish(Engines)
 		End Sub
@@ -588,11 +588,11 @@ End
 		    Return
 		  End If
 		  
-		  Dim Dialog As New OpenFileDialog
+		  Var Dialog As New OpenFileDialog
 		  Dialog.SuggestedFileName = If(Self.mGameIniContent.Length > 0, "GameUserSettings.ini", "Game.ini")
 		  Dialog.Filter = BeaconFileTypes.IniFile
 		  
-		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File <> Nil Then
 		    Self.AddFile(File)
 		  End If
@@ -611,7 +611,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action()
-		  Dim SettingUp As Boolean = Self.mSettingUp
+		  Var SettingUp As Boolean = Self.mSettingUp
 		  Self.mSettingUp = True
 		  Select Case Me.SelectedIndex
 		  Case Self.GameIniIndex
@@ -628,7 +628,7 @@ End
 #tag Events Watcher
 	#tag Event
 		Sub ClipboardChanged(Content As String)
-		  Dim Type As ConfigFileType = Self.DetectConfigType(Content)
+		  Var Type As ConfigFileType = Self.DetectConfigType(Content)
 		  Self.SetSwitcherForType(Type)
 		End Sub
 	#tag EndEvent

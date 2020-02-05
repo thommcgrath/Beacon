@@ -740,27 +740,27 @@ End
 		  
 		  Self.mSources = LocalData.SharedInstance.SearchForLootSources("", New Beacon.StringList, Preferences.ShowExperimentalLootSources)
 		  
-		  Dim Win As MainWindow = MainWindow
+		  Var Win As MainWindow = MainWindow
 		  If Win <> Nil Then
-		    Dim Classes() As String
+		    Var Classes() As String
 		    For Each Source As Beacon.LootSource In Self.mSources
 		      Classes.AddRow(Source.ClassString)
 		    Next
 		    
-		    Dim Bound As UInteger = Win.ViewCount - 1
+		    Var Bound As UInteger = Win.ViewCount - 1
 		    For I As Integer = 0 To Bound
-		      Dim View As BeaconSubview = Win.ViewAtIndex(I)
+		      Var View As BeaconSubview = Win.ViewAtIndex(I)
 		      If Not (View IsA DocumentEditorView) Then
 		        Continue
 		      End If
 		      
-		      Dim Document As Beacon.Document = DocumentEditorView(View).Document
+		      Var Document As Beacon.Document = DocumentEditorView(View).Document
 		      If Document.HasConfigGroup(BeaconConfigs.LootDrops.ConfigName) Then
-		        Dim Config As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.LootDrops.ConfigName))
-		        Dim Sources As Beacon.LootSourceCollection = Config.DefinedSources
-		        Dim SourcesBound As Integer = Sources.LastRowIndex
+		        Var Config As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.LootDrops.ConfigName))
+		        Var Sources As Beacon.LootSourceCollection = Config.DefinedSources
+		        Var SourcesBound As Integer = Sources.LastRowIndex
 		        For X As Integer = 0 To SourcesBound
-		          Dim Source As Beacon.LootSource = Sources(X)
+		          Var Source As Beacon.LootSource = Sources(X)
 		          If Source.IsOfficial = False And Classes.IndexOf(Source.ClassString) = -1 Then
 		            Classes.AddRow(Source.ClassString)
 		            Self.mSources.AddRow(Source)
@@ -780,10 +780,10 @@ End
 		    Return False
 		  End If
 		  
-		  Dim Win As New PresetModifierEditor(Preset, EditModifierID)
+		  Var Win As New PresetModifierEditor(Preset, EditModifierID)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
-		  Dim Cancelled As Boolean = Win.mCancelled
+		  Var Cancelled As Boolean = Win.mCancelled
 		  Win.Close
 		  Return Not Cancelled
 		End Function
@@ -841,7 +841,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Modifier As Beacon.PresetModifier = Me.RowTagAt(Me.SelectedRowIndex)
+		  Var Modifier As Beacon.PresetModifier = Me.RowTagAt(Me.SelectedRowIndex)
 		  If Modifier = Nil Then
 		    // Create a new one
 		    Self.SetEditorVisible(True)
@@ -852,10 +852,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Dim Modifiers() As Beacon.PresetModifier = LocalData.SharedInstance.AllPresetModifiers
-		  Dim Actives() As String = Self.mPreset.ActiveModifierIDs()
+		  Var Modifiers() As Beacon.PresetModifier = LocalData.SharedInstance.AllPresetModifiers
+		  Var Actives() As String = Self.mPreset.ActiveModifierIDs()
 		  For Each Modifier As Beacon.PresetModifier In Modifiers
-		    Dim Editing As Boolean = Modifier.ModifierID = Self.mEditID
+		    Var Editing As Boolean = Modifier.ModifierID = Self.mEditID
 		    If Editing = True Or Actives.IndexOf(Modifier.ModifierID) = -1 Then
 		      Me.AddRow(Modifier.Label, Modifier)
 		      If Editing Then
@@ -887,8 +887,8 @@ End
 #tag Events GroupPatternField
 	#tag Event
 		Sub TextChange()
-		  Dim Modifier As New Beacon.PresetModifier("", Self.GroupPatternField.Value)
-		  Dim Matches() As Beacon.LootSource = Modifier.Matches(Self.mSources)
+		  Var Modifier As New Beacon.PresetModifier("", Self.GroupPatternField.Value)
+		  Var Matches() As Beacon.LootSource = Modifier.Matches(Self.mSources)
 		  
 		  Self.MatchesList.RemoveAllRows()
 		  For Each Match As Beacon.LootSource In Matches
@@ -902,10 +902,10 @@ End
 		Sub Action()
 		  Self.MinQualityField.CheckValue
 		  Self.MaxQualityField.CheckValue
-		  Dim MinQualityModifier As Integer = Self.MinQualityField.DoubleValue
-		  Dim MaxQualityModifier As Integer = Self.MaxQualityField.DoubleValue
-		  Dim QuantityMultiplier As Double = CDbl(Self.QuantityField.Value)
-		  Dim BlueprintMultiplier As Double = CDbl(Self.BlueprintField.Value)
+		  Var MinQualityModifier As Integer = Self.MinQualityField.DoubleValue
+		  Var MaxQualityModifier As Integer = Self.MaxQualityField.DoubleValue
+		  Var QuantityMultiplier As Double = CDbl(Self.QuantityField.Value)
+		  Var BlueprintMultiplier As Double = CDbl(Self.BlueprintField.Value)
 		  
 		  If MinQualityModifier = 0 And MaxQualityModifier = 0 And QuantityMultiplier = 1 And BlueprintMultiplier = 1 Then
 		    BeaconUI.ShowAlert("This modifier has no effect", "There's no reason to add this modifier, because it does not change the quality or quantity of items.")
@@ -917,7 +917,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Modifier As Beacon.PresetModifier = Self.GroupMenu.RowTagAt(Self.GroupMenu.SelectedRowIndex)
+		  Var Modifier As Beacon.PresetModifier = Self.GroupMenu.RowTagAt(Self.GroupMenu.SelectedRowIndex)
 		  If Modifier = Nil Then
 		    If Self.GroupNameField.Value.Trim = "" Or Self.GroupPatternField.Value.Trim = "" Then
 		      BeaconUI.ShowAlert("Group definition is not complete", "A new group must have both a name and pattern.")

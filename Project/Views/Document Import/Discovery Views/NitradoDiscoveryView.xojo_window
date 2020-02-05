@@ -340,10 +340,10 @@ End
 
 	#tag Event
 		Sub Resize()
-		  Dim ContentHeight As Integer = FindingLabel.Height + 12 + FindingProgress.Height
-		  Dim AvailableHeight As Integer = Self.Height - (52 + FindingCancelButton.Height)
+		  Var ContentHeight As Integer = FindingLabel.Height + 12 + FindingProgress.Height
+		  Var AvailableHeight As Integer = Self.Height - (52 + FindingCancelButton.Height)
 		  
-		  Dim ContentTop As Integer = 20 + ((AvailableHeight - ContentHeight) / 2)
+		  Var ContentTop As Integer = 20 + ((AvailableHeight - ContentHeight) / 2)
 		  FindingLabel.Top = ContentTop
 		  FindingProgress.Top = ContentTop + FindingLabel.Height + 12
 		  
@@ -380,7 +380,7 @@ End
 		  End Select
 		  
 		  Try
-		    Dim Reply As Dictionary = Beacon.ParseJSON(Content)
+		    Var Reply As Dictionary = Beacon.ParseJSON(Content)
 		    If Reply.HasKey("status") = False Or Reply.Value("status") <> "success" Then
 		      Self.ShowAlert("Nitrado API Error", "The request to list services was not successful.")
 		      Self.ShouldCancel()
@@ -389,30 +389,30 @@ End
 		    
 		    Self.List.RemoveAllRows
 		    
-		    Dim Data As Dictionary = Reply.Value("data")
-		    Dim Services() As Variant = Data.Value("services")
+		    Var Data As Dictionary = Reply.Value("data")
+		    Var Services() As Variant = Data.Value("services")
 		    For Each Service As Dictionary In Services
-		      Dim Type As String = Service.Value("type")
+		      Var Type As String = Service.Value("type")
 		      If Type <> "gameserver" Then
 		        Continue
 		      End If
 		      
-		      Dim Details As Dictionary = Service.Value("details")
+		      Var Details As Dictionary = Service.Value("details")
 		      If IsNull(Details) Or Details.HasKey("game") = False Then
 		        Continue
 		      End If
 		      
-		      Dim Game As String = Details.Value("game")
+		      Var Game As String = Details.Value("game")
 		      If Not Game.BeginsWith("Ark: Survival Evolved") Then
 		        Continue
 		      End If
 		      
-		      Dim ServerName As String = Details.Value("name")
+		      Var ServerName As String = Details.Value("name")
 		      If Service.Lookup("comment", Nil) <> Nil Then
 		        ServerName = Service.Value("comment")
 		      End If
 		      
-		      Dim Profile As New Beacon.NitradoServerProfile
+		      Var Profile As New Beacon.NitradoServerProfile
 		      Profile.Name = ServerName
 		      Profile.Address = Details.Value("address")
 		      Profile.ServiceID = Service.Value("id")
@@ -427,7 +427,7 @@ End
 		  Catch Err As RuntimeException
 		    
 		    App.LogAPIException(Err, CurrentMethodName, Status, Content)
-		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		    Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
 		    Self.ShowAlert("Nitrado API Error", "The Nitrado API responded in an unexpected manner. An unhandled " + Info.FullName + " was encountered.")
 		    Self.ShouldCancel()
 		  End Try
@@ -458,10 +458,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ListServers()
-		  Dim Headers As New Dictionary
+		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.AuthClient.AccessToken
 		  
-		  Dim URL As String = "https://api.nitrado.net/services"
+		  Var URL As String = "https://api.nitrado.net/services"
 		  SimpleHTTP.Get(URL, AddressOf Callback_ListServers, Nil, Headers)
 		End Sub
 	#tag EndMethod
@@ -522,13 +522,13 @@ End
 #tag Events ListActionButton
 	#tag Event
 		Sub Action()
-		  Dim Engines() As Beacon.NitradoDiscoveryEngine
+		  Var Engines() As Beacon.NitradoDiscoveryEngine
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.CellCheckBoxValueAt(I, 0) Then
 		      Continue
 		    End If
 		    
-		    Dim Profile As Beacon.NitradoServerProfile = Self.List.RowTagAt(I)
+		    Var Profile As Beacon.NitradoServerProfile = Self.List.RowTagAt(I)
 		    Engines.AddRow(New Beacon.NitradoDiscoveryEngine(Profile, Self.AuthClient.AccessToken))
 		  Next
 		  Self.ShouldFinish(Engines, "Nitrado", Self.AuthClient.AuthData)

@@ -570,7 +570,7 @@ End
 		    Self.Height = Self.CollapsedHeight
 		  End If
 		  
-		  Dim Visible As Boolean = Self.DisclosureTriangle1.Value
+		  Var Visible As Boolean = Self.DisclosureTriangle1.Value
 		  Self.MaxEntriesField.Visible = Visible
 		  Self.MaxEntriesLabel.Visible = Visible
 		  Self.MaxEntriesStepper.Visible = Visible
@@ -698,7 +698,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Integer = Val(Me.Value)
+		  Var Value As Integer = Val(Me.Value)
 		  If Value = 0 Then
 		    Return
 		  End If
@@ -729,7 +729,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Integer = Val(Me.Value)
+		  Var Value As Integer = Val(Me.Value)
 		  If Value = 0 Then
 		    Return
 		  End If
@@ -760,7 +760,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double = Me.DoubleValue
+		  Var Value As Double = Me.DoubleValue
 		  If Value = 0 Then
 		    Return
 		  End If

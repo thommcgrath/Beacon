@@ -10,7 +10,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h21
 		Private Shared Sub ComputeSimulationFigures(Pool() As Beacon.SetEntry, WeightScale As Integer, ByRef WeightSum As Double, ByRef Weights() As Double, ByRef WeightLookup As Dictionary)
-		  Redim Weights(-1)
+		  Weights.ResizeTo(-1)
 		  WeightLookup = New Dictionary
 		  WeightSum = 0
 		  
@@ -84,12 +84,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Export() As Dictionary
-		  Dim Children() As Dictionary
+		  Var Children() As Dictionary
 		  For Each Entry As Beacon.SetEntry In Self.mEntries
 		    Children.AddRow(Entry.Export)
 		  Next
 		  
-		  Dim Keys As New Dictionary
+		  Var Keys As New Dictionary
 		  Keys.Value("ItemEntries") = Children
 		  Keys.Value("bItemsRandomWithoutReplacement") = Self.ItemsRandomWithoutReplacement
 		  Keys.Value("Label") = Self.Label // Write "Label" so older versions of Beacon can read it
@@ -107,18 +107,18 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Shared Function FromPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource, Mask As UInt64, Mods As Beacon.StringList) As Beacon.ItemSet
-		  Dim Set As New Beacon.ItemSet
+		  Var Set As New Beacon.ItemSet
 		  Set.Label = Preset.Label
 		  // Weight is intentionally skipped, as that is relative to the source, no reason for a preset to alter that.
 		  Set.mSourcePresetID = Preset.PresetID
 		  
-		  Dim ActiveModifiers() As String = Preset.ActiveModifierIDs
-		  Dim QuantityMultipliers() As Double
-		  Dim MinQualityModifiers() As Integer
-		  Dim MaxQualityModifiers() As Integer
-		  Dim BlueprintMultipliers() As Double
+		  Var ActiveModifiers() As String = Preset.ActiveModifierIDs
+		  Var QuantityMultipliers() As Double
+		  Var MinQualityModifiers() As Integer
+		  Var MaxQualityModifiers() As Integer
+		  Var BlueprintMultipliers() As Double
 		  For Each ModifierID As String In ActiveModifiers
-		    Dim Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
+		    Var Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
 		    If Modifier <> Nil And Modifier.Matches(ForLootSource) Then
 		      QuantityMultipliers.AddRow(Preset.QuantityMultiplier(ModifierID))
 		      MinQualityModifiers.AddRow(Preset.MinQualityModifier(ModifierID))
@@ -127,7 +127,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    End If
 		  Next
 		  
-		  Dim Qualities() As Beacon.Quality = Beacon.Qualities.All
+		  Var Qualities() As Beacon.Quality = Beacon.Qualities.All
 		  
 		  For Each PresetEntry As Beacon.PresetEntry In Preset
 		    If PresetEntry.ValidForMask(Mask) = False Or PresetEntry.SafeForMods(Mods) = False Then
@@ -137,7 +137,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Var Entry As New Beacon.SetEntry(PresetEntry)
 		    
 		    If PresetEntry.RespectQualityModifier Then
-		      Dim MinQualityIndex, MaxQualityIndex As Integer
+		      Var MinQualityIndex, MaxQualityIndex As Integer
 		      For I As Integer = 0 To Qualities.LastRowIndex
 		        If Qualities(I) = Entry.MinQuality Then
 		          MinQualityIndex = I
@@ -160,8 +160,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    End If
 		    
 		    If PresetEntry.RespectQuantityMultiplier Then
-		      Dim MinQuantityRaw As Double = Entry.MinQuantity
-		      Dim MaxQuantityRaw As Double = Entry.MaxQuantity
+		      Var MinQuantityRaw As Double = Entry.MinQuantity
+		      Var MaxQuantityRaw As Double = Entry.MaxQuantity
 		      For Each Multiplier As Double In QuantityMultipliers
 		        MinQuantityRaw = MinQuantityRaw * Multiplier
 		        MaxQuantityRaw = MaxQuantityRaw * Multiplier
@@ -171,7 +171,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    End If
 		    
 		    If PresetEntry.CanBeBlueprint And PresetEntry.RespectBlueprintMultiplier Then
-		      Dim BlueprintChanceRaw As Double = Entry.ChanceToBeBlueprint
+		      Var BlueprintChanceRaw As Double = Entry.ChanceToBeBlueprint
 		      For Each Multiplier As Double In BlueprintMultipliers
 		        BlueprintChanceRaw = BlueprintChanceRaw * Multiplier
 		      Next
@@ -192,17 +192,17 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function Hash(ForPreset As Boolean = False) As String
 		  If Self.HashIsStale Or ForPreset Then
-		    Dim Entries() As String
-		    Redim Entries(Self.mEntries.LastRowIndex)
+		    Var Entries() As String
+		    Entries.ResizeTo(Self.mEntries.LastRowIndex)
 		    For I As Integer = 0 To Entries.LastRowIndex
 		      Entries(I) = Self.mEntries(I).Hash
 		    Next
 		    Entries.Sort
 		    
-		    Dim Locale As Locale = Locale.Raw
-		    Dim Format As String = "0.000"
+		    Var Locale As Locale = Locale.Raw
+		    Var Format As String = "0.000"
 		    
-		    Dim Parts(6) As String
+		    Var Parts(6) As String
 		    Parts(0) = Beacon.MD5(Entries.Join(",")).Lowercase
 		    Parts(1) = Self.MaxNumItems.ToString(Locale, Format)
 		    Parts(2) = Self.MinNumItems.ToString(Locale, Format)
@@ -243,7 +243,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.ItemSet
-		  Dim Set As New Beacon.ItemSet
+		  Var Set As New Beacon.ItemSet
 		  If Dict.HasKey("NumItemsPower") Then
 		    Set.NumItemsPower = Dict.Value("NumItemsPower")
 		  End If
@@ -263,14 +263,14 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Set.Label = Dict.Value("SetName")
 		  End If
 		  
-		  Dim Children() As Variant
+		  Var Children() As Variant
 		  If Dict.HasKey("ItemEntries") Then
 		    Children = Dict.Value("ItemEntries")
 		  ElseIf Dict.HasKey("Items") Then
 		    Children = Dict.Value("Items")
 		  End If
 		  For Each Child As Dictionary In Children
-		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Child)
+		    Var Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Child)
 		    If Entry <> Nil Then
 		      Set.Append(Entry)
 		    End If
@@ -294,7 +294,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Shared Function ImportFromConfig(Dict As Dictionary, Multipliers As Beacon.Range, Difficulty As BeaconConfigs.Difficulty) As Beacon.ItemSet
-		  Dim Set As New Beacon.ItemSet
+		  Var Set As New Beacon.ItemSet
 		  If Dict.HasKey("NumItemsPower") Then
 		    Set.NumItemsPower = Dict.Value("NumItemsPower")
 		  End If
@@ -308,12 +308,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Set.Label = Dict.Value("SetName")
 		  End If
 		  
-		  Dim Children() As Variant
+		  Var Children() As Variant
 		  If Dict.HasKey("ItemEntries") Then
 		    Children = Dict.Value("ItemEntries")
 		  End If
 		  For Each Child As Dictionary In Children
-		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromConfig(Child, Multipliers, Difficulty)
+		    Var Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromConfig(Child, Multipliers, Difficulty)
 		    If Entry <> Nil Then
 		      Set.Append(Entry)
 		    End If
@@ -366,8 +366,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Iterator() As Iterator
-		  Dim Entries() As Variant
-		  Redim Entries(Self.mEntries.LastRowIndex)
+		  Var Entries() As Variant
+		  Entries.ResizeTo(Self.mEntries.LastRowIndex)
 		  For I As Integer = 0 To Self.mEntries.LastRowIndex
 		    Entries(I) = Self.mEntries(I)
 		  Next
@@ -377,7 +377,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Shared Function Join(Sets() As Beacon.ItemSet, Separator As String, Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As String
-		  Dim Values() As String
+		  Var Values() As String
 		  For Each Set As Beacon.ItemSet In Sets
 		    Values.AddRow(Set.StringValue(Multipliers, UseBlueprints, Difficulty))
 		  Next
@@ -435,13 +435,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Operator_Redim(Bound As Integer)
-		  Redim Self.mEntries(Bound)
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Operator_Subscript(Index As Integer) As Beacon.SetEntry
 		  Return Self.mEntries(Index)
 		End Function
@@ -470,7 +463,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  End If
 		  
 		  // Don't compare hashes because it includes more data than presets will change.
-		  Dim Clone As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, ForLootSource, Mask, Mods)
+		  Var Clone As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, ForLootSource, Mask, Mods)
 		  If Self.SourcePresetID = Preset.PresetID And Self.Hash(True) = Clone.Hash(True) Then
 		    Return False
 		  End If
@@ -496,17 +489,24 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ResizeTo(Bound As Integer)
+		  Self.mEntries.ResizeTo(Bound)
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Simulate() As Beacon.SimulatedSelection()
-		  Dim Selections() As Beacon.SimulatedSelection
+		  Var Selections() As Beacon.SimulatedSelection
 		  If Self.mEntries.LastRowIndex = -1 Then
 		    Return Selections
 		  End If
 		  
-		  Dim NumEntries As Integer = Self.Count
-		  Dim MinEntries As Integer = Min(Self.MinNumItems, Self.MaxNumItems)
-		  Dim MaxEntries As Integer = Max(Self.MaxNumItems, Self.MinNumItems)
+		  Var NumEntries As Integer = Self.Count
+		  Var MinEntries As Integer = Min(Self.MinNumItems, Self.MaxNumItems)
+		  Var MaxEntries As Integer = Max(Self.MaxNumItems, Self.MinNumItems)
 		  
-		  Dim SelectedEntries() As Beacon.SetEntry
+		  Var SelectedEntries() As Beacon.SetEntry
 		  If NumEntries = MinEntries And MinEntries = MaxEntries And Self.ItemsRandomWithoutReplacement Then
 		    // All
 		    For Each Entry As Beacon.SetEntry In Self.mEntries
@@ -514,16 +514,16 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Next
 		  Else
 		    Const WeightScale = 100000
-		    Dim Pool() As Beacon.SetEntry
-		    Redim Pool(Self.mEntries.LastRowIndex)
+		    Var Pool() As Beacon.SetEntry
+		    Pool.ResizeTo(Self.mEntries.LastRowIndex)
 		    For I As Integer = 0 To Self.mEntries.LastRowIndex
 		      Pool(I) = New Beacon.SetEntry(Self.mEntries(I))
 		    Next
 		    
-		    Dim RecomputeFigures As Boolean = True
-		    Dim ChooseEntries As Integer = System.Random.InRange(MinEntries, MaxEntries)
-		    Dim WeightSum, Weights() As Double
-		    Dim WeightLookup As Dictionary
+		    Var RecomputeFigures As Boolean = True
+		    Var ChooseEntries As Integer = System.Random.InRange(MinEntries, MaxEntries)
+		    Var WeightSum, Weights() As Double
+		    Var WeightLookup As Dictionary
 		    For I As Integer = 1 To ChooseEntries
 		      If Pool.LastRowIndex = -1 Then
 		        Exit For I
@@ -535,12 +535,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      End If
 		      
 		      Do
-		        Dim Decision As Double = System.Random.InRange(WeightScale, WeightScale + (WeightSum * WeightScale)) - WeightScale
-		        Dim SelectedEntry As Beacon.SetEntry
+		        Var Decision As Double = System.Random.InRange(WeightScale, WeightScale + (WeightSum * WeightScale)) - WeightScale
+		        Var SelectedEntry As Beacon.SetEntry
 		        
 		        For X As Integer = 0 To Weights.LastRowIndex
 		          If Weights(X) >= Decision Then
-		            Dim SelectedWeight As Double = Weights(X)
+		            Var SelectedWeight As Double = Weights(X)
 		            SelectedEntry = WeightLookup.Value(SelectedWeight)
 		            Exit For X
 		          End If
@@ -567,7 +567,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  End If
 		  
 		  For Each Entry As Beacon.SetEntry In SelectedEntries
-		    Dim EntrySelections() As Beacon.SimulatedSelection = Entry.Simulate()
+		    Var EntrySelections() As Beacon.SimulatedSelection = Entry.Simulate()
 		    For Each Selection As Beacon.SimulatedSelection In EntrySelections
 		      Selections.AddRow(Selection)
 		    Next
@@ -584,7 +584,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function StringValue(Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As String
-		  Dim Values() As String
+		  Var Values() As String
 		  Values.AddRow("SetName=""" + Self.Label + """")
 		  Values.AddRow("MinNumItems=" + Self.MinNumItems.ToString)
 		  Values.AddRow("MaxNumItems=" + Self.MaxNumItems.ToString)
@@ -598,7 +598,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function TotalWeight() As Double
-		  Dim Value As Double
+		  Var Value As Double
 		  For Each Entry As Beacon.SetEntry In Self.mEntries
 		    Value = Value + Entry.RawWeight
 		  Next

@@ -20,7 +20,7 @@ Implements Beacon.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub ConsumeStats(Source As String)
-		  Dim Arr() As Object
+		  Var Arr() As Object
 		  Try
 		    Arr = Beacon.ParseJSON(Source)
 		  Catch Err As RuntimeException
@@ -29,18 +29,18 @@ Implements Beacon.MutableBlueprint
 		  
 		  For I As Integer = 0 To Arr.LastRowIndex
 		    Try
-		      Dim Dict As Dictionary = Dictionary(Arr(I))
+		      Var Dict As Dictionary = Dictionary(Arr(I))
 		      If Not Dict.HasAllKeys("stat_index", "base_value", "per_level_wild_multiplier", "per_level_tamed_multiplier", "add_multiplier", "affinity_multiplier") Then
 		        Continue
 		      End If
 		      
-		      Dim Index As Integer = Dict.Value("stat_index")
-		      Dim Stat As Beacon.Stat = Beacon.Stats.WithIndex(Index)
+		      Var Index As Integer = Dict.Value("stat_index")
+		      Var Stat As Beacon.Stat = Beacon.Stats.WithIndex(Index)
 		      If Stat = Nil Then
 		        Continue
 		      End If
 		      
-		      Dim Store As New Dictionary
+		      Var Store As New Dictionary
 		      Store.Value("Base") = Dict.Value("base_value").DoubleValue
 		      Store.Value("Wild") = Dict.Value("per_level_wild_multiplier").DoubleValue
 		      Store.Value("Tamed") = Dict.Value("per_level_tamed_multiplier").DoubleValue
@@ -63,7 +63,7 @@ Implements Beacon.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub IsTagged(Tag As String, Assigns Value As Boolean)
 		  Tag = Beacon.NormalizeTag(Tag)
-		  Dim Idx As Integer = Self.mTags.IndexOf(Tag)
+		  Var Idx As Integer = Self.mTags.IndexOf(Tag)
 		  If Idx > -1 And Value = False Then
 		    Self.mTags.RemoveRowAt(Idx)
 		  ElseIf Idx = -1 And Value = True Then
@@ -106,7 +106,7 @@ Implements Beacon.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Tags(Assigns Tags() As String)
-		  Redim Self.mTags(-1)
+		  Self.mTags.ResizeTo(-1)
 		  
 		  For Each Tag As String In Tags
 		    Tag = Beacon.NormalizeTag(Tag)

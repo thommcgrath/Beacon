@@ -13,11 +13,11 @@ Inherits BeaconSubview
 		    Return
 		  End If
 		  
-		  Dim ViewsToRemove() As String
-		  Dim ViewsToAdd() As BeaconSubview
+		  Var ViewsToRemove() As String
+		  Var ViewsToAdd() As BeaconSubview
 		  For Each Entry As DictionaryEntry In Self.mViews
-		    Dim ID As String = Entry.Key
-		    Dim View As BeaconSubview = Entry.Value
+		    Var ID As String = Entry.Key
+		    Var View As BeaconSubview = Entry.Value
 		    
 		    If View = Nil Or View.Closed Then
 		      ViewsToRemove.AddRow(ID)

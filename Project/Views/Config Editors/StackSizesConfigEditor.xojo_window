@@ -260,13 +260,13 @@ End
 		    Return
 		  End If
 		  
-		  Dim OtherConfig As BeaconConfigs.StackSizes = BeaconConfigs.StackSizes.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
+		  Var OtherConfig As BeaconConfigs.StackSizes = BeaconConfigs.StackSizes.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
 		  If OtherConfig = Nil Or OtherConfig.Count = 0 Then
 		    Return
 		  End If
 		  
-		  Dim Config As BeaconConfigs.StackSizes = Self.Config(True)
-		  Dim Classes() As String = OtherConfig.Classes
+		  Var Config As BeaconConfigs.StackSizes = Self.Config(True)
+		  Var Classes() As String = OtherConfig.Classes
 		  For Each ClassString As String In Classes
 		    Config.Override(ClassString) = OtherConfig.Override(ClassString)
 		  Next
@@ -293,8 +293,8 @@ End
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.StackSizes
 		  Static ConfigName As String = BeaconConfigs.StackSizes.ConfigName
 		  
-		  Dim Document As Beacon.Document = Self.Document
-		  Dim Config As BeaconConfigs.StackSizes
+		  Var Document As Beacon.Document = Self.Document
+		  Var Config As BeaconConfigs.StackSizes
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.StackSizes(Self.mConfigRef.Value)
@@ -322,11 +322,11 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddOverride()
-		  Dim CurrentEngrams() As Beacon.Engram
-		  Dim Config As BeaconConfigs.StackSizes = Self.Config(False)
-		  Dim Classes() As String = Config.Classes
+		  Var CurrentEngrams() As Beacon.Engram
+		  Var Config As BeaconConfigs.StackSizes = Self.Config(False)
+		  Var Classes() As String = Config.Classes
 		  For Each ClassString As String In Classes
-		    Dim Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
+		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
 		    If Engram = Nil Then
 		      Continue
 		    End If
@@ -334,7 +334,7 @@ End
 		    CurrentEngrams.AddRow(Engram)
 		  Next
 		  
-		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Stackables", CurrentEngrams, Self.Document.Mods, False)
+		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Stackables", CurrentEngrams, Self.Document.Mods, False)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
@@ -356,11 +356,11 @@ End
 		    Return
 		  End If
 		  
-		  Dim CurrentEngrams() As Beacon.Engram
-		  Dim Config As BeaconConfigs.StackSizes = Self.Config(False)
-		  Dim Classes() As String = Config.Classes
+		  Var CurrentEngrams() As Beacon.Engram
+		  Var Config As BeaconConfigs.StackSizes = Self.Config(False)
+		  Var Classes() As String = Config.Classes
 		  For Each ClassString As String In Classes
-		    Dim Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
+		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
 		    If Engram = Nil Then
 		      Continue
 		    End If
@@ -368,13 +368,13 @@ End
 		    CurrentEngrams.AddRow(Engram)
 		  Next
 		  
-		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Stackables", CurrentEngrams, Self.Document.Mods, True)
+		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Stackables", CurrentEngrams, Self.Document.Mods, True)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
-		  Dim SourceClass As String = Self.List.RowTagAt(Self.List.SelectedRowIndex)
-		  Dim Size As Integer = Config.Override(SourceClass)
+		  Var SourceClass As String = Self.List.RowTagAt(Self.List.SelectedRowIndex)
+		  Var Size As Integer = Config.Override(SourceClass)
 		  
 		  Config = Self.Config(True)
 		  
@@ -389,7 +389,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Dim Classes() As String
+		  Var Classes() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.Selected(I) Then
 		      Continue
@@ -403,7 +403,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectEngrams() As Beacon.Engram)
-		  Dim Classes() As String
+		  Var Classes() As String
 		  For Each Engram As Beacon.Engram In SelectEngrams
 		    Classes.AddRow(Engram.ClassString)
 		  Next
@@ -413,23 +413,23 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectClasses() As String)
-		  Dim Config As BeaconConfigs.StackSizes = Self.Config(False)
-		  Dim Classes() As String = Config.Classes
+		  Var Config As BeaconConfigs.StackSizes = Self.Config(False)
+		  Var Classes() As String = Config.Classes
 		  
-		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
+		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.SelectionChangeBlocked = True
 		  
 		  Self.List.RemoveAllRows()
 		  For Each ClassString As String In Classes
-		    Dim Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
-		    Dim EngramName As String
+		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
+		    Var EngramName As String
 		    If Engram <> Nil Then
 		      EngramName = Engram.Label
 		    Else
 		      EngramName = ClassString
 		    End If
 		    
-		    Dim Size As Integer = Config.Override(ClassString)
+		    Var Size As Integer = Config.Override(ClassString)
 		    Self.List.AddRow(EngramName, Size.ToString)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = ClassString
 		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectClasses.IndexOf(ClassString) > -1
@@ -468,7 +468,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Dim Config As BeaconConfigs.StackSizes = Self.Config(True)
+		  Var Config As BeaconConfigs.StackSizes = Self.Config(True)
 		  Config.GlobalMultiplier = CDbl(Me.Value)
 		  Self.Changed = True
 		  Self.SettingUp = False
@@ -478,10 +478,10 @@ End
 #tag Events Header
 	#tag Event
 		Sub Open()
-		  Dim AddButton As New BeaconToolbarItem("AddEngram", IconToolbarAdd)
+		  Var AddButton As New BeaconToolbarItem("AddEngram", IconToolbarAdd)
 		  AddButton.HelpTag = "Override the stack size of an engram."
 		  
-		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
+		  Var DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
 		  DuplicateButton.HelpTag = "Duplicate the selected stack size override."
 		  
 		  Me.LeftItems.Append(AddButton)
@@ -517,10 +517,10 @@ End
 		    Return
 		  End If
 		  
-		  Dim Size As Integer = Val(Me.CellValueAt(Row, Column))
-		  Dim ClassString As String = Me.RowTagAt(Row)
+		  Var Size As Integer = Val(Me.CellValueAt(Row, Column))
+		  Var ClassString As String = Me.RowTagAt(Row)
 		  
-		  Dim Config As BeaconConfigs.StackSizes = Self.Config(True)
+		  Var Config As BeaconConfigs.StackSizes = Self.Config(True)
 		  Config.Override(ClassString) = Size
 		  Self.Changed = True
 		End Sub
@@ -570,15 +570,15 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Items As New Dictionary
-		  Dim Config As BeaconConfigs.StackSizes = Self.Config(False)
+		  Var Items As New Dictionary
+		  Var Config As BeaconConfigs.StackSizes = Self.Config(False)
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Dim ClassString As String = Me.RowTagAt(I)
-		    Dim Size As Integer = Config.Override(ClassString)
+		    Var ClassString As String = Me.RowTagAt(I)
+		    Var Size As Integer = Config.Override(ClassString)
 		    Items.Value(ClassString) = Size
 		  Next
 		  
@@ -588,8 +588,8 @@ End
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
 		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Dim JSON As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
-		    Dim Items As Dictionary
+		    Var JSON As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
+		    Var Items As Dictionary
 		    Try
 		      Items = Beacon.ParseJSON(JSON)
 		    Catch Err As RuntimeException
@@ -600,11 +600,11 @@ End
 		      Return
 		    End If
 		    
-		    Dim Config As BeaconConfigs.StackSizes = Self.Config(True)
-		    Dim SelectClasses() As String
+		    Var Config As BeaconConfigs.StackSizes = Self.Config(True)
+		    Var SelectClasses() As String
 		    For Each Entry As DictionaryEntry In Items
-		      Dim ClassString As String = Entry.Key
-		      Dim Size As Integer = Entry.Value
+		      Var ClassString As String = Entry.Key
+		      Var Size As Integer = Entry.Value
 		      SelectClasses.AddRow(ClassString)
 		      Config.Override(ClassString) = Size
 		    Next
@@ -614,7 +614,7 @@ End
 		  End If
 		  
 		  If Board.TextAvailable Then
-		    Dim ImportText As String = Board.Text.GuessEncoding
+		    Var ImportText As String = Board.Text.GuessEncoding
 		    Self.Parse(ImportText, "Clipboard")
 		    Return
 		  End If

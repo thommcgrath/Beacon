@@ -9,7 +9,7 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Function BuildFTPParameters(File As String = "") As Dictionary
-		  Dim Fields As Dictionary = Self.mProfile.AsFormData
+		  Var Fields As Dictionary = Self.mProfile.AsFormData
 		  If File <> "" Then
 		    Fields.Value("path") = File
 		  End If
@@ -26,7 +26,7 @@ Implements Beacon.DiscoveryEngine
 		    Return
 		  End If
 		  
-		  Dim Dict As Dictionary = Response.JSON
+		  Var Dict As Dictionary = Response.JSON
 		  If Not Dict.HasAllKeys("Game.ini", "GameUserSettings.ini") Then
 		    Self.SetError("Unable to find Game.ini and GameUserSettings.ini files")
 		    Return
@@ -39,7 +39,7 @@ Implements Beacon.DiscoveryEngine
 		  End If
 		  
 		  If Dict.HasKey("Maps") Then
-		    Dim Maps() As Variant = Dict.Value("Maps")
+		    Var Maps() As Variant = Dict.Value("Maps")
 		    For Each Map As String In Maps
 		      Self.mMap = Self.mMap Or Beacon.Maps.MaskForIdentifier(Map)
 		    Next
@@ -67,7 +67,7 @@ Implements Beacon.DiscoveryEngine
 		  End If
 		  
 		  Try
-		    Dim Dict As Dictionary = Response.JSON
+		    Var Dict As Dictionary = Response.JSON
 		    
 		    Self.mGameIniContent = Dict.Value("content").StringValue.Trim
 		    
@@ -89,7 +89,7 @@ Implements Beacon.DiscoveryEngine
 		  End If
 		  
 		  Try
-		    Dim Dict As Dictionary = Response.JSON
+		    Var Dict As Dictionary = Response.JSON
 		    
 		    Self.mGameUserSettingsIniContent = Dict.Value("content").StringValue.Trim
 		    
@@ -119,7 +119,7 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub DiscoverServer()
-		  Dim DiscoveryRequest As New BeaconAPI.Request("ftp/discover", "GET", Self.BuildFTPParameters(Self.mInitialPath), AddressOf Callback_DiscoverServer)
+		  Var DiscoveryRequest As New BeaconAPI.Request("ftp/discover", "GET", Self.BuildFTPParameters(Self.mInitialPath), AddressOf Callback_DiscoverServer)
 		  DiscoveryRequest.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(DiscoveryRequest)
 		End Sub
@@ -127,7 +127,7 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub DownloadGameIni()
-		  Dim SettingsRequest As New BeaconAPI.Request("ftp", "GET", Self.BuildFTPParameters(Self.mProfile.GameIniPath), AddressOf Callback_DownloadGameIni)
+		  Var SettingsRequest As New BeaconAPI.Request("ftp", "GET", Self.BuildFTPParameters(Self.mProfile.GameIniPath), AddressOf Callback_DownloadGameIni)
 		  SettingsRequest.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(SettingsRequest)
 		End Sub
@@ -135,7 +135,7 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub DownloadGameUserSettingsIni()
-		  Dim SettingsRequest As New BeaconAPI.Request("ftp", "GET", Self.BuildFTPParameters(Self.mProfile.GameUserSettingsIniPath), AddressOf Callback_DownloadGameUserSettingsIni)
+		  Var SettingsRequest As New BeaconAPI.Request("ftp", "GET", Self.BuildFTPParameters(Self.mProfile.GameUserSettingsIniPath), AddressOf Callback_DownloadGameUserSettingsIni)
 		  SettingsRequest.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(SettingsRequest)
 		End Sub
@@ -185,8 +185,8 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub SetError(Err As RuntimeException)
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
-		  Dim Reason As String
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		  Var Reason As String
 		  If Err.Reason <> "" Then
 		    Reason = Err.Reason
 		  ElseIf Err.Message <> "" Then

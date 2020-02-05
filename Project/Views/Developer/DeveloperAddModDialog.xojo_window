@@ -248,7 +248,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Dialog As New MessageDialog
+		  Var Dialog As New MessageDialog
 		  Dialog.Title = ""
 		  Dialog.Message = "Mod was not registered"
 		  Dialog.Explanation = Response.Message
@@ -258,10 +258,10 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window) As Boolean
-		  Dim Win As New DeveloperAddModDialog
+		  Var Win As New DeveloperAddModDialog
 		  Win.SwapButtons()
 		  Win.ShowModalWithin(Parent.TrueWindow)
-		  Dim Success As Boolean = Win.mRegistered
+		  Var Success As Boolean = Win.mRegistered
 		  Win.Close
 		  Return Success
 		End Function
@@ -285,12 +285,12 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim ModID As String = ModIDField.Value.Trim
+		  Var ModID As String = ModIDField.Value.Trim
 		  If ModID.Left(4) = "http" Then
-		    Dim Regex As New Regex
+		    Var Regex As New Regex
 		    Regex.SearchPattern = "id=(\d+)"
 		    
-		    Dim Matches As RegexMatch = Regex.Search(ModID)
+		    Var Matches As RegexMatch = Regex.Search(ModID)
 		    If Matches = Nil Then
 		      MessageBox("This url does not appear to be a steam workshop url")
 		      Return
@@ -299,11 +299,11 @@ End
 		    ModID = Matches.SubExpressionString(1)
 		  End If
 		  
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("mod_id") = ModID
-		  Dim Payload As String = Beacon.GenerateJSON(Dict, False)
+		  Var Payload As String = Beacon.GenerateJSON(Dict, False)
 		  
-		  Dim Request As New BeaconAPI.Request("mod", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)
+		  Var Request As New BeaconAPI.Request("mod", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.Socket.Start(Request)
 		End Sub

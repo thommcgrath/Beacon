@@ -9,7 +9,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		    Self.mObservers = New Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Var Refs() As WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -95,7 +95,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		    Self.mObservers = New Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Var Refs() As WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -106,7 +106,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		      Continue
 		    End If
 		    
-		    Dim Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
+		    Var Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
 		    Observer.ObservedValueChanged(Self, Key, Value)
 		  Next
 		End Sub
@@ -123,25 +123,6 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Operator_Redim(NewBound As Integer)
-		  If NewBound = Self.mItems.LastRowIndex Then
-		    Return
-		  End If
-		  
-		  For I As Integer = Self.mItems.LastRowIndex DownTo NewBound + 1
-		    Dim OldValue As BeaconToolbarItem = Self.mItems(I)
-		    If OldValue <> Nil Then
-		      OldValue.RemoveObserver(Self, BeaconToolbarItem.KeyChanged)
-		    End If
-		  Next
-		  
-		  Redim Self.mItems(NewBound)
-		  
-		  Self.NotifyObservers(BeaconToolbarItem.KeyChanged, Nil)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Operator_Subscript(Index As Integer) As BeaconToolbarItem
 		  Return Self.mItems(Index)
 		End Function
@@ -150,7 +131,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 	#tag Method, Flags = &h0
 		Sub Operator_Subscript(Index As Integer, Assigns Value As BeaconToolbarItem)
 		  If Self.mItems(Index) <> Nil Then
-		    Dim OldValue As BeaconToolbarItem = Self.mItems(Index)
+		    Var OldValue As BeaconToolbarItem = Self.mItems(Index)
 		    OldValue.RemoveObserver(Self, BeaconToolbarItem.KeyChanged)
 		  End If
 		  
@@ -166,7 +147,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Dim OldValue As BeaconToolbarItem = Self.mItems(Index)
+		  Var OldValue As BeaconToolbarItem = Self.mItems(Index)
 		  If OldValue <> Nil Then
 		    OldValue.RemoveObserver(Self, BeaconToolbarItem.KeyChanged)
 		  End If
@@ -185,7 +166,7 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		    Self.mObservers = New Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Var Refs() As WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -199,6 +180,25 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 		  
 		  Self.mObservers.Value(Key) = Refs
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ResizeTo(NewBound As Integer)
+		  If NewBound = Self.mItems.LastRowIndex Then
+		    Return
+		  End If
+		  
+		  For I As Integer = Self.mItems.LastRowIndex DownTo NewBound + 1
+		    Var OldValue As BeaconToolbarItem = Self.mItems(I)
+		    If OldValue <> Nil Then
+		      OldValue.RemoveObserver(Self, BeaconToolbarItem.KeyChanged)
+		    End If
+		  Next
+		  
+		  Self.mItems.ResizeTo(NewBound)
+		  
+		  Self.NotifyObservers(BeaconToolbarItem.KeyChanged, Nil)
 		End Sub
 	#tag EndMethod
 

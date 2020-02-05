@@ -2,7 +2,7 @@
 Protected Module Stats
 	#tag Method, Flags = &h1
 		Protected Function All() As Beacon.Stat()
-		  Dim Arr(10) As Beacon.Stat
+		  Var Arr(10) As Beacon.Stat
 		  Arr(0) = CraftingSpeed
 		  Arr(1) = Food
 		  Arr(2) = Fortitude
@@ -70,7 +70,7 @@ Protected Module Stats
 
 	#tag Method, Flags = &h1
 		Protected Function Named(Key As String) As Beacon.Stat
-		  Dim Arr() As Beacon.Stat = All
+		  Var Arr() As Beacon.Stat = All
 		  For Each Stat As Beacon.Stat In Arr
 		    If Stat.Key = Key Then
 		      Return Stat
@@ -141,7 +141,7 @@ Protected Module Stats
 
 	#tag Method, Flags = &h1
 		Protected Function WithIndex(Index As Integer) As Beacon.Stat
-		  Dim Arr() As Beacon.Stat = All
+		  Var Arr() As Beacon.Stat = All
 		  For Each Stat As Beacon.Stat In Arr
 		    If Stat.Index = Index Then
 		      Return Stat

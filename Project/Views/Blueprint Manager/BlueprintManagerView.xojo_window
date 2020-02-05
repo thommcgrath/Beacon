@@ -410,12 +410,12 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function ClipboardHasCodes() As Boolean
-		  Dim Board As New Clipboard
+		  Var Board As New Clipboard
 		  If Not Board.TextAvailable Then
 		    Return False
 		  End If
 		  
-		  Dim Content As String = Board.Text
+		  Var Content As String = Board.Text
 		  Return Content.IndexOf("Blueprint") > -1 Or Content.IndexOf("giveitem") > -1 Or Content.IndexOf("spawndino") > -1
 		End Function
 	#tag EndMethod
@@ -476,7 +476,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ImportFromClipboard()
-		  Dim Board As New Clipboard
+		  Var Board As New Clipboard
 		  If Board.TextAvailable Then
 		    Self.ImportText(Board.Text)
 		  End If
@@ -519,7 +519,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function PromptForImportFile(Parent As Window) As FolderItem
-		  Dim Dialog As New OpenFileDialog
+		  Var Dialog As New OpenFileDialog
 		  Dialog.Filter = BeaconFileTypes.Text + BeaconFileTypes.CSVFile
 		  Return Dialog.ShowModalWithin(Parent.TrueWindow)
 		End Function
@@ -599,7 +599,7 @@ End
 		      End If
 		    End If
 		    
-		    Dim Blueprint As Beacon.Blueprint = Self.List.RowTagAt(Self.List.SelectedRowIndex)
+		    Var Blueprint As Beacon.Blueprint = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		    Self.Editor.ObjectID = Blueprint.ObjectID
 		    
 		    If Self.Pages.SelectedPanelIndex <> Self.PageEditor Then
@@ -613,7 +613,7 @@ End
 		      End If
 		    End If
 		    
-		    Dim Blueprints() As Beacon.Blueprint
+		    Var Blueprints() As Beacon.Blueprint
 		    For I As Integer = 0 To Self.List.RowCount - 1
 		      If Self.List.Selected(I) Then
 		        Blueprints.AddRow(Beacon.Blueprint(Self.List.RowTagAt(I)))
@@ -723,7 +723,7 @@ End
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
 		  If Warn Then
-		    Dim Message As String
+		    Var Message As String
 		    If Me.SelectedRowCount = 1 Then
 		      Message = "Are you sure you want to delete this object?"
 		    Else
@@ -735,7 +735,7 @@ End
 		    End If
 		  End If
 		  
-		  Dim Objects() As Beacon.Blueprint
+		  Var Objects() As Beacon.Blueprint
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
 		      Objects.AddRow(Beacon.Blueprint(Me.RowTagAt(I)))
@@ -751,13 +751,13 @@ End
 		Sub Finished()
 		  Self.Progress = BeaconSubview.ProgressNone
 		  
-		  Dim Blueprints() As Beacon.Blueprint = Me.Blueprints(True)
-		  Dim ImportedCount As Integer = LocalData.SharedInstance.SaveBlueprints(Blueprints, False)
-		  Dim SkippedCount As Integer = (Blueprints.LastRowIndex + 1) - ImportedCount
+		  Var Blueprints() As Beacon.Blueprint = Me.Blueprints(True)
+		  Var ImportedCount As Integer = LocalData.SharedInstance.SaveBlueprints(Blueprints, False)
+		  Var SkippedCount As Integer = (Blueprints.LastRowIndex + 1) - ImportedCount
 		  
 		  Self.SetupUI()
 		  
-		  Dim Messages() As String
+		  Var Messages() As String
 		  If ImportedCount = 1 Then
 		    Messages.AddRow("1 object was added.")
 		  ElseIf ImportedCount > 1 Then

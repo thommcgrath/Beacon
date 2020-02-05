@@ -2,13 +2,13 @@
 Protected Class DocumentURL
 	#tag Method, Flags = &h0
 		Sub Constructor(URL As String)
-		  Dim Pos As Integer = URL.IndexOf("://")
+		  Var Pos As Integer = URL.IndexOf("://")
 		  If Pos = -1 Then
 		    #if Not TargetIOS
 		      // Try as Xojo SaveInfo
 		      Try
-		        Dim StringValue As String = URL
-		        Dim File As FolderItem = FolderItem.DriveAt(0).FromSaveInfo(DecodeBase64(StringValue))
+		        Var StringValue As String = URL
+		        Var File As FolderItem = FolderItem.DriveAt(0).FromSaveInfo(DecodeBase64(StringValue))
 		        If File <> Nil Then
 		          URL = URLForFile(New BookmarkedFolderItem(File))
 		          Pos = URL.IndexOf("://")
@@ -19,7 +19,7 @@ Protected Class DocumentURL
 		    #endif
 		    
 		    If Pos = -1 Then
-		      Dim Err As New UnsupportedFormatException
+		      Var Err As New UnsupportedFormatException
 		      Err.Message = "Unable to determine scheme from URL " + URL
 		      Raise Err
 		    End If
@@ -38,7 +38,7 @@ Protected Class DocumentURL
 		    Self.mScheme = Self.TypeWeb
 		    Self.mOriginalURL = Self.TypeWeb + URL.Middle(Pos)
 		  Else
-		    Dim Err As New UnsupportedFormatException
+		    Var Err As New UnsupportedFormatException
 		    Err.Message = "Unknown document scheme " + Scheme
 		    Raise Err
 		  End Select
@@ -47,21 +47,21 @@ Protected Class DocumentURL
 		  If Pos > -1 Then
 		    Self.mQueryString = Self.mPath.Middle(Pos + 1)
 		    Self.mPath = Self.mPath.Left(Pos)
-		    Dim Parts() As String = Self.mQueryString.Split("&")
+		    Var Parts() As String = Self.mQueryString.Split("&")
 		    For Each Part As String In Parts
 		      Pos = Part.IndexOf("=")
 		      If Pos = -1 Then
 		        Continue
 		      End If
 		      
-		      Dim Key As String = DecodeURLComponent(Part.Left(Pos)).DefineEncoding(Encodings.UTF8)
-		      Dim Value As String = DecodeURLComponent(Part.Middle(Pos + 1)).DefineEncoding(Encodings.UTF8)
+		      Var Key As String = DecodeURLComponent(Part.Left(Pos)).DefineEncoding(Encodings.UTF8)
+		      Var Value As String = DecodeURLComponent(Part.Middle(Pos + 1)).DefineEncoding(Encodings.UTF8)
 		      
 		      Self.mQueryParams.Value(Key.Lowercase) = Value
 		    Next
 		  End If
 		  
-		  Dim HashData As String = Self.mScheme + "://" + Self.mPath
+		  Var HashData As String = Self.mScheme + "://" + Self.mPath
 		  Self.mHash = EncodeHex(Crypto.MD5(HashData))
 		End Sub
 	#tag EndMethod
@@ -73,7 +73,7 @@ Protected Class DocumentURL
 		    Return Nil
 		  End If
 		  
-		  Dim Result As BookmarkedFolderItem
+		  Var Result As BookmarkedFolderItem
 		  If Self.HasParam("saveinfo") Then
 		    Result = BookmarkedFolderItem.FromSaveInfo(Self.Param("saveinfo"))
 		  Else
@@ -98,7 +98,7 @@ Protected Class DocumentURL
 
 	#tag Method, Flags = &h0
 		Function Name() As String
-		  Dim Name As String
+		  Var Name As String
 		  
 		  If Self.HasParam("name") Then
 		    Name = Self.Param("name")
@@ -106,7 +106,7 @@ Protected Class DocumentURL
 		  
 		  If Name = "" Then
 		    // Get the last path component
-		    Dim Components() As String = Self.Path.Split("/")
+		    Var Components() As String = Self.Path.Split("/")
 		    Name = Components(Components.LastRowIndex)
 		    
 		    If Name.EndsWith(".beacon") Then
@@ -130,7 +130,7 @@ Protected Class DocumentURL
 		  
 		  Self.mQueryString = SimpleHTTP.BuildFormData(Self.mQueryParams)
 		  
-		  Dim Pos As Integer = Self.mOriginalURL.IndexOf("?")
+		  Var Pos As Integer = Self.mOriginalURL.IndexOf("?")
 		  If Pos > -1 Then
 		    Self.mOriginalURL = Self.mOriginalURL.Left(Pos)
 		  End If
@@ -165,7 +165,7 @@ Protected Class DocumentURL
 	#tag Method, Flags = &h0
 		Function Param(Key As String) As String
 		  If Not Self.mQueryParams.HasKey(Key.Lowercase) Then
-		    Dim Err As New KeyNotFoundException
+		    Var Err As New KeyNotFoundException
 		    Err.Message = "Key " + Key + " not found in query parameters"
 		    Raise Err
 		  End If
@@ -194,9 +194,9 @@ Protected Class DocumentURL
 
 	#tag Method, Flags = &h0
 		Shared Function URLForFile(File As BookmarkedFolderItem) As Beacon.DocumentURL
-		  Dim Path As String = File.URLPath
+		  Var Path As String = File.URLPath
 		  #if TargetMacOS
-		    Dim SaveInfo As String = File.SaveInfo
+		    Var SaveInfo As String = File.SaveInfo
 		    If SaveInfo <> "" Then
 		      If Path.IndexOf("?") = -1 Then
 		        Path = Path + "?saveinfo=" + SaveInfo

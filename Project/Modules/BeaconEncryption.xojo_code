@@ -7,8 +7,8 @@ Protected Module BeaconEncryption
 		  End If
 		  
 		  Try
-		    Dim crcg, c, t, x,b As UInt32
-		    Dim ch As UInt8
+		    Var crcg, c, t, x,b As UInt32
+		    Var ch As UInt8
 		    crcg = &hffffffff
 		    c = Data.Size - 1
 		    
@@ -37,7 +37,7 @@ Protected Module BeaconEncryption
 
 	#tag Method, Flags = &h1
 		Protected Function GetLength(Data As MemoryBlock) As UInt64
-		  Dim Header As BeaconEncryption.SymmetricHeader = BeaconEncryption.SymmetricHeader.FromMemoryBlock(Data)
+		  Var Header As BeaconEncryption.SymmetricHeader = BeaconEncryption.SymmetricHeader.FromMemoryBlock(Data)
 		  If Header <> Nil Then
 		    Return Header.Size + Header.EncryptedLength
 		  End If
@@ -46,7 +46,7 @@ Protected Module BeaconEncryption
 
 	#tag Method, Flags = &h1
 		Protected Function IsEncrypted(Data As MemoryBlock) As Boolean
-		  Dim Header As BeaconEncryption.SymmetricHeader = BeaconEncryption.SymmetricHeader.FromMemoryBlock(Data)
+		  Var Header As BeaconEncryption.SymmetricHeader = BeaconEncryption.SymmetricHeader.FromMemoryBlock(Data)
 		  Return Header <> Nil
 		End Function
 	#tag EndMethod
@@ -57,9 +57,9 @@ Protected Module BeaconEncryption
 		  Key = Key.ReplaceAll(Encodings.UTF8.Chr(13) + Encodings.UTF8.Chr(10), Encodings.UTF8.Chr(10))
 		  Key = Key.ReplaceAll(Encodings.UTF8.Chr(13), Encodings.UTF8.Chr(10))
 		  
-		  Dim Lines() As String = Key.Split(Encodings.UTF8.Chr(10))
+		  Var Lines() As String = Key.Split(Encodings.UTF8.Chr(10))
 		  If (Lines(0).IndexOf("BEGIN PRIVATE KEY") = -1 Or Lines(Lines.LastRowIndex).IndexOf("END PRIVATE KEY") = -1) And (Lines(0).IndexOf("BEGIN RSA PRIVATE KEY") = -1 Or Lines(Lines.LastRowIndex).IndexOf("END RSA PRIVATE KEY") = -1) Then
-		    Dim Err As New CryptoException
+		    Var Err As New CryptoException
 		    Err.Reason = "Text does not appear to be a PEM-encoded private key"
 		    Raise Err
 		  End If
@@ -69,7 +69,7 @@ Protected Module BeaconEncryption
 		  
 		  Key = Lines.Join(Encodings.UTF8.Chr(10))
 		  
-		  Dim Decoded As String = DecodeBase64(Key)
+		  Var Decoded As String = DecodeBase64(Key)
 		  #Pragma BreakOnExceptions Off
 		  Try
 		    Return Crypto.BERDecodePrivateKey(Decoded)
@@ -86,9 +86,9 @@ Protected Module BeaconEncryption
 		  Key = Key.ReplaceAll(Encodings.UTF8.Chr(13) + Encodings.UTF8.Chr(10), Encodings.UTF8.Chr(10))
 		  Key = Key.ReplaceAll(Encodings.UTF8.Chr(13), Encodings.UTF8.Chr(10))
 		  
-		  Dim Lines() As String = Key.Split(Encodings.UTF8.Chr(10))
+		  Var Lines() As String = Key.Split(Encodings.UTF8.Chr(10))
 		  If Lines(0).IndexOf("BEGIN PUBLIC KEY") = -1 Or Lines(Lines.LastRowIndex).IndexOf("END PUBLIC KEY") = -1 Then
-		    Dim Err As New CryptoException
+		    Var Err As New CryptoException
 		    Err.Reason = "Text does not appear to be a PEM-encoded public key"
 		    Raise Err
 		  End If
@@ -98,7 +98,7 @@ Protected Module BeaconEncryption
 		  
 		  Key = Lines.Join(Encodings.UTF8.Chr(10))
 		  
-		  Dim Decoded As String = DecodeBase64(Key)
+		  Var Decoded As String = DecodeBase64(Key)
 		  #Pragma BreakOnExceptions Off
 		  Try
 		    Return Crypto.BERDecodePublicKey(Decoded)
@@ -111,8 +111,8 @@ Protected Module BeaconEncryption
 
 	#tag Method, Flags = &h1
 		Protected Function PEMEncodePrivateKey(Key As String) As String
-		  Dim Base64 As String = EncodeBase64(Crypto.DEREncodePrivateKey(Key), 0)
-		  Dim Lines() As String = Array("-----BEGIN PRIVATE KEY-----")
+		  Var Base64 As String = EncodeBase64(Crypto.DEREncodePrivateKey(Key), 0)
+		  Var Lines() As String = Array("-----BEGIN PRIVATE KEY-----")
 		  While Base64.Length > 64
 		    Lines.AddRow(Base64.Left(64))
 		    Base64 = Base64.Middle(64)
@@ -127,8 +127,8 @@ Protected Module BeaconEncryption
 
 	#tag Method, Flags = &h1
 		Protected Function PEMEncodePublicKey(Key As String) As String
-		  Dim Base64 As String = EncodeBase64(DecodeHex(Key), 0)
-		  Dim Lines() As String = Array("-----BEGIN PUBLIC KEY-----")
+		  Var Base64 As String = EncodeBase64(DecodeHex(Key), 0)
+		  Var Lines() As String = Array("-----BEGIN PUBLIC KEY-----")
 		  While Base64.Length > 64
 		    Lines.AddRow(Base64.Left(64))
 		    Base64 = Base64.Middle(64)
@@ -163,9 +163,9 @@ Protected Module BeaconEncryption
 		    Return ""
 		  End If
 		  
-		  Dim Header As BeaconEncryption.SymmetricHeader = BeaconEncryption.SymmetricHeader.FromMemoryBlock(Data)
+		  Var Header As BeaconEncryption.SymmetricHeader = BeaconEncryption.SymmetricHeader.FromMemoryBlock(Data)
 		  If Header = Nil Then
-		    Dim Err As New CryptoException
+		    Var Err As New CryptoException
 		    Err.Reason = "Data is not properly encrypted"
 		    Raise Err
 		  End If
@@ -174,11 +174,11 @@ Protected Module BeaconEncryption
 		  
 		  Select Case Header.Version
 		  Case 1
-		    Dim Crypt As New M_Crypto.Blowfish_MTC(Key)
+		    Var Crypt As New M_Crypto.Blowfish_MTC(Key)
 		    Crypt.SetInitialVector(Header.Vector)
 		    Data = Crypt.DecryptCBC(Data)
 		  Case 2
-		    Dim Crypt As New M_Crypto.AES_MTC(Key, M_Crypto.AES_MTC.EncryptionBits.Bits256)
+		    Var Crypt As New M_Crypto.AES_MTC(Key, M_Crypto.AES_MTC.EncryptionBits.Bits256)
 		    Crypt.SetInitialVector(Header.Vector)
 		    Data = Crypt.DecryptCBC(Data)
 		  End Select
@@ -186,9 +186,9 @@ Protected Module BeaconEncryption
 		    Data = Data.Left(Header.Length)
 		  End If
 		  
-		  Dim ComputedChecksum As UInt32 = BeaconEncryption.CRC32(Data)
+		  Var ComputedChecksum As UInt32 = BeaconEncryption.CRC32(Data)
 		  If ComputedChecksum <> Header.Checksum Then
-		    Dim Err As New CryptoException
+		    Var Err As New CryptoException
 		    Err.Reason = "CRC32 checksum failed on decrypted data."
 		    Raise Err
 		  End If
@@ -203,19 +203,19 @@ Protected Module BeaconEncryption
 		    Return ""
 		  End If
 		  
-		  Dim Header As New BeaconEncryption.SymmetricHeader(Data, Version)
+		  Var Header As New BeaconEncryption.SymmetricHeader(Data, Version)
 		  
 		  Select Case Version
 		  Case 2
-		    Dim Crypt As New M_Crypto.AES_MTC(Key, M_Crypto.AES_MTC.EncryptionBits.Bits256)
+		    Var Crypt As New M_Crypto.AES_MTC(Key, M_Crypto.AES_MTC.EncryptionBits.Bits256)
 		    Crypt.SetInitialVector(Header.Vector)
 		    Return Header.Encoded + Crypt.EncryptCBC(Data)
 		  Case 1
-		    Dim Crypt As New M_Crypto.Blowfish_MTC(Key)
+		    Var Crypt As New M_Crypto.Blowfish_MTC(Key)
 		    Crypt.SetInitialVector(Header.Vector)
 		    Return Header.Encoded + Crypt.EncryptCBC(Data)
 		  Else
-		    Dim Err As New CryptoException
+		    Var Err As New CryptoException
 		    Err.Message = "Unknown symmetric version " + Version.ToString
 		    Raise Err
 		  End Select

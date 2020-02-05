@@ -10,7 +10,7 @@ Class v4UUID
 		      Declare Function UUID Lib "Cocoa" Selector "UUID" (Target As Ptr) As Ptr
 		      Declare Function UUIDString Lib "Cocoa" Selector "UUIDString" (Target As Ptr) As CFStringRef
 		      
-		      Dim NSUUID As Ptr = NSClassFromString("NSUUID")
+		      Var NSUUID As Ptr = NSClassFromString("NSUUID")
 		      If NSUUID <> Nil Then
 		        Self.mValue = UUIDString(UUID(NSUUID))
 		        Self.mValue = Self.mValue.Lowercase
@@ -23,9 +23,9 @@ Class v4UUID
 		        Soft Declare Function UUIDCreate Lib kLibrary Alias "UuidCreate" (ByRef Mem As WindowsUUID) As Integer
 		        Soft Declare Function UUIDToString Lib kLibrary Alias "UuidToStringA" (ByRef Mem As WindowsUUID, ByRef Result As CString) As Integer
 		        
-		        Dim UUID As WindowsUUID
+		        Var UUID As WindowsUUID
 		        If UUIDCreate(UUID) = 0 Then
-		          Dim Result As CString
+		          Var Result As CString
 		          If UUIDToString(UUID, Result) = 0 Then
 		            Self.mValue = Result
 		            Self.mValue = Self.mValue.DefineEncoding(Encodings.UTF8).Lowercase
@@ -45,7 +45,7 @@ Class v4UUID
 		Sub Constructor(Source As String)
 		  // Create a UUID from the given string
 		  If Not IsValid(Source) Then
-		    Dim Err As New UnsupportedFormatException
+		    Var Err As New UnsupportedFormatException
 		    Err.Message = "Supplied string is not a v4 UUID"
 		    Raise Err
 		  End If
@@ -69,9 +69,9 @@ Class v4UUID
 	#tag Method, Flags = &h21
 		Private Shared Function FormatBytes(Bytes As MemoryBlock) As String
 		  Bytes.LittleEndian = False
-		  Dim Pointer As Ptr = Bytes
+		  Var Pointer As Ptr = Bytes
 		  
-		  Dim Value As Byte = Pointer.Byte(6)
+		  Var Value As Byte = Pointer.Byte(6)
 		  Value = Value And CType(&b00001111, Byte)
 		  Value = Value Or CType(&b01000000, Byte)
 		  Pointer.Byte(6) = Value
@@ -81,7 +81,7 @@ Class v4UUID
 		  Value = Value Or CType(&b10000000, Byte)
 		  Pointer.Byte(8) = Value
 		  
-		  Dim Result As String = EncodeHex(Bytes).Lowercase()
+		  Var Result As String = EncodeHex(Bytes).Lowercase()
 		  Return Result.Left(8) + "-" + Result.Middle(8, 4) + "-" + Result.Middle(12, 4) + "-" + Result.Middle(16,4) + "-" + Result.Right(12)
 		End Function
 	#tag EndMethod

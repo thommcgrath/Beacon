@@ -208,8 +208,8 @@ End
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.CustomContent
 		  Static ConfigName As String = BeaconConfigs.CustomContent.ConfigName
 		  
-		  Dim Document As Beacon.Document = Self.Document
-		  Dim Config As BeaconConfigs.CustomContent
+		  Var Document As Beacon.Document = Self.Document
+		  Var Config As BeaconConfigs.CustomContent
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.CustomContent(Self.mConfigRef.Value)
@@ -261,8 +261,8 @@ End
 		    Return False
 		  End If
 		  
-		  Dim StartPos As Integer = Self.ConfigArea.SelectionStart
-		  Dim EndPos As Integer = StartPos + Max(Self.ConfigArea.SelectionLength, 1)
+		  Var StartPos As Integer = Self.ConfigArea.SelectionStart
+		  Var EndPos As Integer = StartPos + Max(Self.ConfigArea.SelectionLength, 1)
 		  For Each Range As Beacon.Range In Self.mEncryptedRanges
 		    If StartPos >= Range.Min And EndPos <= Range.Max Then
 		      Return True
@@ -273,38 +273,38 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ToggleEncryption()
-		  Dim Tag As String = BeaconConfigs.CustomContent.EncryptedTag
-		  Dim TagLen As Integer = Tag.Length
-		  Dim Source As String = Self.ConfigArea.Value
+		  Var Tag As String = BeaconConfigs.CustomContent.EncryptedTag
+		  Var TagLen As Integer = Tag.Length
+		  Var Source As String = Self.ConfigArea.Value
 		  
 		  If Self.SelectionIsEncrypted Then
-		    Dim StartPos As Integer = Self.ConfigArea.SelectionStart
+		    Var StartPos As Integer = Self.ConfigArea.SelectionStart
 		    For I As Integer = StartPos DownTo TagLen
 		      If Source.Middle((I - TagLen), TagLen) = Tag Then
 		        StartPos = I
 		        Exit For I
 		      End If
 		    Next
-		    Dim EndPos As Integer = Source.IndexOf(StartPos, Tag)
+		    Var EndPos As Integer = Source.IndexOf(StartPos, Tag)
 		    If EndPos = -1 Then
 		      Source = Source + Tag
 		      EndPos = Source.Length
 		    End If
 		    
-		    Dim ContentLen As Integer = EndPos - StartPos
-		    Dim Prefix As String = Source.Left(StartPos - TagLen)
-		    Dim Content As String = Source.Middle(StartPos, ContentLen)
-		    Dim Suffix As String = Source.Middle(EndPos + TagLen)
+		    Var ContentLen As Integer = EndPos - StartPos
+		    Var Prefix As String = Source.Left(StartPos - TagLen)
+		    Var Content As String = Source.Middle(StartPos, ContentLen)
+		    Var Suffix As String = Source.Middle(EndPos + TagLen)
 		    
 		    Self.ConfigArea.Value = Prefix + Content + Suffix
 		    Self.ConfigArea.SelectionStart = Prefix.Length
 		    Self.ConfigArea.SelectionLength = Content.Length
 		  Else
-		    Dim Start As Integer = Self.ConfigArea.SelectionStart
-		    Dim Length As Integer = Self.ConfigArea.SelectionLength
-		    Dim Prefix As String = Source.Left(Start)
-		    Dim Content As String = Source.Middle(Start, Length)
-		    Dim Suffix As String = Source.Right(Source.Length - (Start + Length))
+		    Var Start As Integer = Self.ConfigArea.SelectionStart
+		    Var Length As Integer = Self.ConfigArea.SelectionLength
+		    Var Prefix As String = Source.Left(Start)
+		    Var Content As String = Source.Middle(Start, Length)
+		    Var Suffix As String = Source.Right(Source.Length - (Start + Length))
 		    
 		    Self.ConfigArea.Value = Prefix + Tag + Content + Tag + Suffix
 		    Self.ConfigArea.SelectionStart = Prefix.Length + TagLen
@@ -319,7 +319,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Button As BeaconToolbarItem = Self.LeftButtons.EncryptButton
+		  Var Button As BeaconToolbarItem = Self.LeftButtons.EncryptButton
 		  If Self.SelectionIsEncrypted Then
 		    Button.HelpTag = "Convert the encrypted value to plain text."
 		    Button.Enabled = True
@@ -334,13 +334,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateTextColors()
-		  Redim Self.mEncryptedRanges(-1)
+		  Self.mEncryptedRanges.ResizeTo(-1)
 		  
-		  Dim Pos As Integer
-		  Dim Source As String = Self.ConfigArea.Value
-		  Dim Tag As String = BeaconConfigs.CustomContent.EncryptedTag
-		  Dim TagLen As Integer = Tag.Length
-		  Dim Styles As StyledText = Self.ConfigArea.StyledText
+		  Var Pos As Integer
+		  Var Source As String = Self.ConfigArea.Value
+		  Var Tag As String = BeaconConfigs.CustomContent.EncryptedTag
+		  Var TagLen As Integer = Tag.Length
+		  Var Styles As StyledText = Self.ConfigArea.StyledText
 		  If Styles <> Nil Then
 		    Styles.TextColor(0, Source.Length) = SystemColors.LabelColor
 		    Styles.Bold(0, Source.Length) = False
@@ -353,8 +353,8 @@ End
 		      Return
 		    End If
 		    
-		    Dim StartPos As Integer = Pos + TagLen
-		    Dim EndPos As Integer = Source.IndexOf(StartPos, Tag)
+		    Var StartPos As Integer = Pos + TagLen
+		    Var EndPos As Integer = Source.IndexOf(StartPos, Tag)
 		    If EndPos = -1 Then
 		      EndPos = Source.Length
 		    End If
@@ -409,7 +409,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action()
-		  Dim SettingUp As Boolean = Self.SettingUp
+		  Var SettingUp As Boolean = Self.SettingUp
 		  Self.SettingUp = True
 		  Select Case Me.SelectedIndex
 		  Case 1
@@ -434,10 +434,10 @@ End
 		    Return
 		  End If
 		  
-		  Dim SanitizedText As String = Self.SanitizeText(Me.Value)
+		  Var SanitizedText As String = Self.SanitizeText(Me.Value)
 		  If SanitizedText <> Me.Value Then
-		    Dim SelectionStart As Integer = Me.SelectionStart
-		    Dim SelectionLength As Integer = Me.SelectionLength
+		    Var SelectionStart As Integer = Me.SelectionStart
+		    Var SelectionLength As Integer = Me.SelectionLength
 		    Me.Value = SanitizedText
 		    Me.SelectionStart = SelectionStart
 		    Me.SelectionLength = SelectionLength

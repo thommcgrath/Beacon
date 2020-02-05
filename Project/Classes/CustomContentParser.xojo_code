@@ -3,7 +3,7 @@ Protected Class CustomContentParser
 	#tag Method, Flags = &h0
 		Function AddLine(Line As String) As Beacon.ConfigValue()
 		  If Self.mNestedParser <> Nil Then
-		    Dim Values() As Beacon.ConfigValue = Self.mNestedParser.AddLine(Line)
+		    Var Values() As Beacon.ConfigValue = Self.mNestedParser.AddLine(Line)
 		    If Values <> Nil Then
 		      // Finished
 		      Self.mNestedParser = Nil
@@ -33,9 +33,9 @@ Protected Class CustomContentParser
 		  End If
 		  
 		  If Line.BeginsWith("#Server ") Or Line.BeginsWith("#Servers ") Then
-		    Dim Pos As Integer = Line.IndexOf(7, " ") + 1
-		    Dim Def As String = Line.Middle(Pos).Trim
-		    Dim ProfileIDs() As String = Def.Split(",")
+		    Var Pos As Integer = Line.IndexOf(7, " ") + 1
+		    Var Def As String = Line.Middle(Pos).Trim
+		    Var ProfileIDs() As String = Def.Split(",")
 		    Self.mDiscardNestedParser = True
 		    If Self.mProfile <> Nil Then
 		      For Each ProfileID As String In ProfileIDs
@@ -51,14 +51,14 @@ Protected Class CustomContentParser
 		    Return Self.mValues
 		  End If
 		  
-		  Dim KeyPos As Integer = Line.IndexOf("=")
+		  Var KeyPos As Integer = Line.IndexOf("=")
 		  If KeyPos = -1 Then
 		    Return Nil
 		  End If
 		  
-		  Dim Key As String = Line.Left(KeyPos).Trim
-		  Dim Value As String = Line.Middle(KeyPos + 1).Trim
-		  Dim ConfigValue As New Beacon.ConfigValue(Self.mCurrentHeader, Key, Value)
+		  Var Key As String = Line.Left(KeyPos).Trim
+		  Var Value As String = Line.Middle(KeyPos + 1).Trim
+		  Var ConfigValue As New Beacon.ConfigValue(Self.mCurrentHeader, Key, Value)
 		  If Self.mSkippedKeys.IndexOf(ConfigValue.SimplifiedKey) = -1 Then
 		    Self.mValues.AddRow(ConfigValue)
 		  End If
@@ -78,13 +78,13 @@ Protected Class CustomContentParser
 
 	#tag Method, Flags = &h21
 		Private Shared Function GetSkippedKeys(Header As String, ExistingConfigs As Dictionary) As String()
-		  Dim SkippedKeys() As String
+		  Var SkippedKeys() As String
 		  If Not ExistingConfigs.HasKey(Header) Then
 		    Return SkippedKeys
 		  End If
 		  
-		  Dim Siblings As Dictionary = ExistingConfigs.Value(Header)
-		  Dim Keys() As Variant = Siblings.Keys
+		  Var Siblings As Dictionary = ExistingConfigs.Value(Header)
+		  Var Keys() As Variant = Siblings.Keys
 		  For Each Key As String In Keys
 		    SkippedKeys.AddRow(Key)
 		  Next
@@ -95,7 +95,7 @@ Protected Class CustomContentParser
 	#tag Method, Flags = &h0
 		Function RemainingValues() As Beacon.ConfigValue()
 		  If Self.mNestedParser <> Nil Then
-		    Dim Values() As Beacon.ConfigValue = Self.mNestedParser.RemainingValues()
+		    Var Values() As Beacon.ConfigValue = Self.mNestedParser.RemainingValues()
 		    If Values <> Nil Then
 		      // Finished
 		      Self.mNestedParser = Nil

@@ -6,7 +6,7 @@ Inherits Window
 		  RaiseEvent Close
 		  
 		  If Self.mWindowMenuItem <> Nil Then
-		    Dim WindowMenu As MenuItem = MainMenuBar.Child("WindowMenu")
+		    Var WindowMenu As MenuItem = MainMenuBar.Child("WindowMenu")
 		    For I As Integer = WindowMenu.Count - 1 DownTo 0
 		      If WindowMenu.MenuAt(I) = Self.mWindowMenuItem Then
 		        WindowMenu.RemoveMenuAt(I)
@@ -52,13 +52,13 @@ Inherits Window
 
 	#tag Event
 		Sub Open()
-		  Dim InitialWidth As Integer = Self.Width
+		  Var InitialWidth As Integer = Self.Width
 		  // Dumb workaround because contents are sizing 1 pixels too short.
 		  // A resize causes them to find their correct positions.
 		  Self.Width = InitialWidth + 1
 		  Self.Width = InitialWidth
 		  
-		  Dim MenuItem As New MenuItem(Self.Title)
+		  Var MenuItem As New MenuItem(Self.Title)
 		  AddHandler MenuItem.Action, WeakAddressOf Self.mWindowMenuItem_Action
 		  
 		  If MenuItem <> Nil Then
@@ -113,7 +113,7 @@ Inherits Window
 		    Declare Function SharedApplication Lib "Cocoa" Selector "sharedApplication" (Target As Ptr) As Ptr
 		    Declare Sub ActivateIgnoringOtherApps Lib "Cocoa" Selector "activateIgnoringOtherApps:" (Target As Ptr, Flag As Boolean)
 		    
-		    Dim SharedApp As Ptr = SharedApplication(NSClassFromString("NSApplication"))
+		    Var SharedApp As Ptr = SharedApplication(NSClassFromString("NSApplication"))
 		    ActivateIgnoringOtherApps(SharedApp, True)
 		  #elseif TargetWin32
 		    Declare Function BringWindowToTop Lib "User32" (Target As Int32) As Boolean

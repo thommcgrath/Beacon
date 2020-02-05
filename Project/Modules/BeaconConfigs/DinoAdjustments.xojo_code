@@ -6,7 +6,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
-		  Dim Behaviors() As Beacon.CreatureBehavior = Self.All
+		  Var Behaviors() As Beacon.CreatureBehavior = Self.All
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
 		    If Behavior.ProhibitSpawning Then
 		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "NPCReplacements", "(FromClassName=""" + Behavior.TargetClass + """,ToClassName="""")"))
@@ -41,9 +41,9 @@ Inherits Beacon.ConfigGroup
 		    Return
 		  End If
 		  
-		  Dim Dicts() As Variant = Dict.Value("Creatures")
+		  Var Dicts() As Variant = Dict.Value("Creatures")
 		  For Each CreatureDict As Dictionary In Dicts
-		    Dim Behavior As Beacon.CreatureBehavior = Beacon.CreatureBehavior.FromDictionary(CreatureDict)
+		    Var Behavior As Beacon.CreatureBehavior = Beacon.CreatureBehavior.FromDictionary(CreatureDict)
 		    If Behavior = Nil Then
 		      Return
 		    End If
@@ -57,9 +57,9 @@ Inherits Beacon.ConfigGroup
 		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
 		  #Pragma Unused Document
 		  
-		  Dim Dicts() As Dictionary
+		  Var Dicts() As Dictionary
 		  For Each Entry As DictionaryEntry In Self.mBehaviors
-		    Dim Behavior As Beacon.CreatureBehavior = Entry.Value
+		    Var Behavior As Beacon.CreatureBehavior = Entry.Value
 		    Dicts.AddRow(Behavior.ToDictionary)
 		  Next
 		  
@@ -70,9 +70,9 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function All() As Beacon.CreatureBehavior()
-		  Dim Behaviors() As Beacon.CreatureBehavior
+		  Var Behaviors() As Beacon.CreatureBehavior
 		  For Each Entry As DictionaryEntry In Self.mBehaviors
-		    Dim Behavior As Beacon.CreatureBehavior = Entry.Value
+		    Var Behavior As Beacon.CreatureBehavior = Entry.Value
 		    Behaviors.AddRow(New Beacon.CreatureBehavior(Behavior))
 		  Next
 		  Return Behaviors
@@ -85,7 +85,7 @@ Inherits Beacon.ConfigGroup
 		    Return Nil
 		  End If
 		  
-		  Dim Behavior As Beacon.CreatureBehavior = Beacon.CreatureBehavior(Self.mBehaviors.Value(TargetClass))
+		  Var Behavior As Beacon.CreatureBehavior = Beacon.CreatureBehavior(Self.mBehaviors.Value(TargetClass))
 		  Return New Beacon.CreatureBehavior(Behavior)
 		End Function
 	#tag EndMethod
@@ -117,20 +117,20 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
-		  Dim Config As New BeaconConfigs.DinoAdjustments()
+		  Var Config As New BeaconConfigs.DinoAdjustments()
 		  
-		  Dim Replacements() As Variant = ParsedData.AutoArrayValue("NPCReplacements")
+		  Var Replacements() As Variant = ParsedData.AutoArrayValue("NPCReplacements")
 		  For Each Entry As Variant In Replacements
 		    Try
-		      Dim Dict As Dictionary = Entry
+		      Var Dict As Dictionary = Entry
 		      If Dict.HasKey("FromClassName") = False Or Dict.HasKey("ToClassName") = False Then
 		        Continue
 		      End If
 		      
-		      Dim TargetClass As String = Dict.Value("FromClassName")
-		      Dim ReplacementClass As String = Dict.Value("ToClassName")
+		      Var TargetClass As String = Dict.Value("FromClassName")
+		      Var ReplacementClass As String = Dict.Value("ToClassName")
 		      
-		      Dim Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
+		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
 		      If ReplacementClass = "" Then
 		        Behavior.ProhibitSpawning = True
 		      Else
@@ -141,72 +141,72 @@ Inherits Beacon.ConfigGroup
 		    End Try
 		  Next
 		  
-		  Dim WildDamageMultipliers() As Variant = ParsedData.AutoArrayValue("DinoClassDamageMultipliers")
+		  Var WildDamageMultipliers() As Variant = ParsedData.AutoArrayValue("DinoClassDamageMultipliers")
 		  For Each Entry As Variant In WildDamageMultipliers
 		    Try
-		      Dim Dict As Dictionary = Entry
+		      Var Dict As Dictionary = Entry
 		      If Dict.HasKey("ClassName") = False Or Dict.HasKey("Multiplier") = False Then
 		        Continue
 		      End If
 		      
-		      Dim TargetClass As String = Dict.Value("ClassName")
-		      Dim Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
+		      Var TargetClass As String = Dict.Value("ClassName")
+		      Var Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
 		      
-		      Dim Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
+		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
 		      Behavior.DamageMultiplier = Multiplier
 		      Config.Behavior(TargetClass) = Behavior
 		    Catch Err As TypeMismatchException
 		    End Try
 		  Next
 		  
-		  Dim WildResistanceMultipliers() As Variant = ParsedData.AutoArrayValue("DinoClassResistanceMultipliers")
+		  Var WildResistanceMultipliers() As Variant = ParsedData.AutoArrayValue("DinoClassResistanceMultipliers")
 		  For Each Entry As Variant In WildResistanceMultipliers
 		    Try
-		      Dim Dict As Dictionary = Entry
+		      Var Dict As Dictionary = Entry
 		      If Dict.HasKey("ClassName") = False Or Dict.HasKey("Multiplier") = False Then
 		        Continue
 		      End If
 		      
-		      Dim TargetClass As String = Dict.Value("ClassName")
-		      Dim Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
+		      Var TargetClass As String = Dict.Value("ClassName")
+		      Var Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
 		      
-		      Dim Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
+		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
 		      Behavior.ResistanceMultiplier = Multiplier
 		      Config.Behavior(TargetClass) = Behavior
 		    Catch Err As TypeMismatchException
 		    End Try
 		  Next
 		  
-		  Dim TamedDamageMultipliers() As Variant = ParsedData.AutoArrayValue("TamedDinoClassDamageMultipliers")
+		  Var TamedDamageMultipliers() As Variant = ParsedData.AutoArrayValue("TamedDinoClassDamageMultipliers")
 		  For Each Entry As Variant In TamedDamageMultipliers
 		    Try
-		      Dim Dict As Dictionary = Entry
+		      Var Dict As Dictionary = Entry
 		      If Dict.HasKey("ClassName") = False Or Dict.HasKey("Multiplier") = False Then
 		        Continue
 		      End If
 		      
-		      Dim TargetClass As String = Dict.Value("ClassName")
-		      Dim Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
+		      Var TargetClass As String = Dict.Value("ClassName")
+		      Var Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
 		      
-		      Dim Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
+		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
 		      Behavior.TamedDamageMultiplier = Multiplier
 		      Config.Behavior(TargetClass) = Behavior
 		    Catch Err As TypeMismatchException
 		    End Try
 		  Next
 		  
-		  Dim TamedResistanceMultipliers() As Variant = ParsedData.AutoArrayValue("TamedDinoClassResistanceMultipliers")
+		  Var TamedResistanceMultipliers() As Variant = ParsedData.AutoArrayValue("TamedDinoClassResistanceMultipliers")
 		  For Each Entry As Variant In TamedResistanceMultipliers
 		    Try
-		      Dim Dict As Dictionary = Entry
+		      Var Dict As Dictionary = Entry
 		      If Dict.HasKey("ClassName") = False Or Dict.HasKey("Multiplier") = False Then
 		        Continue
 		      End If
 		      
-		      Dim TargetClass As String = Dict.Value("ClassName")
-		      Dim Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
+		      Var TargetClass As String = Dict.Value("ClassName")
+		      Var Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
 		      
-		      Dim Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
+		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
 		      Behavior.TamedResistanceMultiplier = Multiplier
 		      Config.Behavior(TargetClass) = Behavior
 		    Catch Err As TypeMismatchException
@@ -226,7 +226,7 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  
 		  For Each Entry As DictionaryEntry In Self.mBehaviors
-		    Dim Behavior As Beacon.CreatureBehavior = Entry.Value
+		    Var Behavior As Beacon.CreatureBehavior = Entry.Value
 		    If Behavior.Modified Then
 		      Return True
 		    End If
@@ -240,7 +240,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  If Not Value Then
 		    For Each Entry As DictionaryEntry In Self.mBehaviors
-		      Dim Behavior As Beacon.CreatureBehavior = Entry.Value
+		      Var Behavior As Beacon.CreatureBehavior = Entry.Value
 		      Behavior.Modified = False
 		    Next
 		  End If
@@ -249,7 +249,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h1
 		Protected Shared Function MutableBehavior(Config As BeaconConfigs.DinoAdjustments, ClassString As String) As Beacon.MutableCreatureBehavior
-		  Dim Behavior As Beacon.CreatureBehavior = Config.Behavior(ClassString)
+		  Var Behavior As Beacon.CreatureBehavior = Config.Behavior(ClassString)
 		  If Behavior <> Nil Then
 		    Return New Beacon.MutableCreatureBehavior(Behavior)
 		  Else

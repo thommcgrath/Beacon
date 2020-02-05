@@ -117,9 +117,9 @@ End
 		  Select Case Notification.Name
 		  Case LocalData.Notification_NewAppNotification
 		    Try
-		      Dim UserNotification As Beacon.UserNotification = Notification.UserData
+		      Var UserNotification As Beacon.UserNotification = Notification.UserData
 		      If UserNotification.Severity = Beacon.UserNotification.Severities.Elevated Then
-		        Dim Dialog As New MessageDialog
+		        Var Dialog As New MessageDialog
 		        Dialog.Title = ""
 		        Dialog.Message = UserNotification.Message
 		        Dialog.Explanation = UserNotification.SecondaryMessage
@@ -141,37 +141,37 @@ End
 		  G.FontUnit = FontUnits.Point
 		  G.FontSize = 0
 		  
-		  Dim OldUnreadCount As Integer = Self.UnreadCount
+		  Var OldUnreadCount As Integer = Self.UnreadCount
 		  
-		  Dim CloseIcon As Picture
-		  Dim CellWidth As Double = G.Width - (CellPadding * 2)
-		  Dim Pos As Double = VerticalOffset
-		  Dim ContentHeight As Integer
-		  Redim Self.mNotificationRects(Self.mNotifications.LastRowIndex)
-		  Redim Self.mCloseRects(Self.mNotifications.LastRowIndex)
+		  Var CloseIcon As Picture
+		  Var CellWidth As Double = G.Width - (CellPadding * 2)
+		  Var Pos As Double = VerticalOffset
+		  Var ContentHeight As Integer
+		  Self.mNotificationRects.ResizeTo(Self.mNotifications.LastRowIndex)
+		  Self.mCloseRects.ResizeTo(Self.mNotifications.LastRowIndex)
 		  For I As Integer = 0 To Self.mNotifications.LastRowIndex
-		    Dim DrawBottomBorder As Boolean = I < Self.mNotifications.LastRowIndex
+		    Var DrawBottomBorder As Boolean = I < Self.mNotifications.LastRowIndex
 		    
-		    Dim Message As String = Self.mNotifications(I).Message
-		    Dim MessageTop As Double = Pos + CellPadding
-		    Dim MessageHeight As Double = G.ActualStringHeight(Message, CellWidth)
-		    Dim MessageBaseline As Double = MessageTop + G.FontAscent
+		    Var Message As String = Self.mNotifications(I).Message
+		    Var MessageTop As Double = Pos + CellPadding
+		    Var MessageHeight As Double = G.ActualStringHeight(Message, CellWidth)
+		    Var MessageBaseline As Double = MessageTop + G.FontAscent
 		    G.DrawingColor = SystemColors.LabelColor
 		    G.DrawText(Message, CellPadding, MessageBaseline, CellWidth, False)
 		    
-		    Dim CellHeight As Double = CellPadding + MessageHeight + CellPadding
+		    Var CellHeight As Double = CellPadding + MessageHeight + CellPadding
 		    
-		    Dim SecondaryMessage As String = Self.mNotifications(I).SecondaryMessage
+		    Var SecondaryMessage As String = Self.mNotifications(I).SecondaryMessage
 		    If SecondaryMessage <> "" Then
-		      Dim SecondaryMessageTop As Double = MessageTop + MessageHeight + (CellPadding / 2)
-		      Dim SecondaryMessageHeight As Double = G.ActualStringHeight(SecondaryMessage, CellWidth)
-		      Dim SecondaryMessageBaseline As Double = SecondaryMessageTop + G.FontAscent
+		      Var SecondaryMessageTop As Double = MessageTop + MessageHeight + (CellPadding / 2)
+		      Var SecondaryMessageHeight As Double = G.ActualStringHeight(SecondaryMessage, CellWidth)
+		      Var SecondaryMessageBaseline As Double = SecondaryMessageTop + G.FontAscent
 		      G.DrawingColor = SystemColors.SecondaryLabelColor
 		      G.DrawText(SecondaryMessage, CellPadding, SecondaryMessageBaseline, CellWidth, False)
 		      CellHeight = CellHeight + SecondaryMessageHeight + (CellPadding / 2)
 		    End If
 		    
-		    Dim NotificationRect As New BeaconUI.Rect(0, Pos, G.Width, CellHeight)
+		    Var NotificationRect As New BeaconUI.Rect(0, Pos, G.Width, CellHeight)
 		    Self.mNotificationRects(I) = NotificationRect
 		    
 		    If CloseIcon = Nil Then
@@ -205,7 +205,7 @@ End
 		  
 		  Self.mContentOverflow = Max(ContentHeight - G.Height, 0)
 		  
-		  Dim NewUnreadCount As Integer = Self.UnreadCount
+		  Var NewUnreadCount As Integer = Self.UnreadCount
 		  
 		  If OldUnreadCount <> NewUnreadCount Then
 		    RaiseEvent UnreadCountChanged(NewUnreadCount)
@@ -215,14 +215,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RefreshNotifications()
-		  Dim OldUnreadCount As Integer = Self.UnreadCount
+		  Var OldUnreadCount As Integer = Self.UnreadCount
 		  
 		  Self.mNotifications = LocalData.SharedInstance.GetNotifications
-		  Redim Self.mNotificationRects(Self.mNotifications.LastRowIndex)
-		  Redim Self.mCloseRects(Self.mNotifications.LastRowIndex)
+		  Self.mNotificationRects.ResizeTo(Self.mNotifications.LastRowIndex)
+		  Self.mCloseRects.ResizeTo(Self.mNotifications.LastRowIndex)
 		  Self.DrawCanvas.Invalidate
 		  
-		  Dim NewUnreadCount As Integer = Self.UnreadCount
+		  Var NewUnreadCount As Integer = Self.UnreadCount
 		  
 		  If OldUnreadCount <> NewUnreadCount Then
 		    RaiseEvent UnreadCountChanged(NewUnreadCount)
@@ -232,7 +232,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function UnreadCount() As Integer
-		  Dim Count As Integer
+		  Var Count As Integer
 		  For Each Notification As Beacon.UserNotification In Self.mNotifications
 		    If Notification.Read = False Then
 		      Count = Count + 1
@@ -377,15 +377,15 @@ End
 		  
 		  Try
 		    If Self.mDownRect <> Nil And Self.mDownIndex <= Self.mNotifications.LastRowIndex And Self.mDownRect.Contains(X, Y) Then
-		      Dim OldUnreadCount As Integer = Self.UnreadCount
+		      Var OldUnreadCount As Integer = Self.UnreadCount
 		      If Not Self.mPressedOnClose Then
-		        Dim URL As String = Self.mNotifications(Self.mDownIndex).ActionURL
+		        Var URL As String = Self.mNotifications(Self.mDownIndex).ActionURL
 		        If Beacon.IsBeaconURL(URL) Then
 		          Call App.HandleURL(URL, True)
 		        ElseIf URL.BeginsWith("https://") Then
 		          ShowURL(URL)
 		        Else
-		          Dim Notification As New Beacon.UserNotification("Well this is embarrassing, but that notification is broken.")
+		          Var Notification As New Beacon.UserNotification("Well this is embarrassing, but that notification is broken.")
 		          Notification.SecondaryMessage = "Beacon does not know what to do with the URL " + URL
 		          LocalData.SharedInstance.SaveNotification(Notification)
 		        End If
@@ -398,7 +398,7 @@ End
 		      Self.mNotificationRects.RemoveRowAt(Self.mDownIndex)
 		      
 		      // Update counts. Painting should handle this, but just in case.
-		      Dim NewUnreadCount As Integer = Self.UnreadCount
+		      Var NewUnreadCount As Integer = Self.UnreadCount
 		      If OldUnreadCount <> NewUnreadCount Then
 		        RaiseEvent UnreadCountChanged(NewUnreadCount)
 		      End If

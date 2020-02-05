@@ -523,7 +523,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckEnabled()
-		  Dim Port As Integer
+		  Var Port As Integer
 		  If IsNumeric(Self.PortField.Value) Then
 		    Port = CDbl(Self.PortField.Value)
 		  End If
@@ -568,7 +568,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim Profile As New Beacon.ConnectorServerProfile
+		  Var Profile As New Beacon.ConnectorServerProfile
 		  Profile.Address = Self.AddressField.Value
 		  Profile.Port = CDbl(Self.PortField.Value)
 		  Profile.PreSharedKey = Self.KeyField.Value
@@ -603,7 +603,7 @@ End
 		Sub Connected()
 		  Me.Close
 		  
-		  Dim Engines(0) As Beacon.DiscoveryEngine
+		  Var Engines(0) As Beacon.DiscoveryEngine
 		  Engines(0) = New Beacon.ConnectorDiscoveryEngine(Self.Profile)
 		  Self.ShouldFinish(Engines)
 		End Sub
@@ -616,7 +616,7 @@ End
 		  
 		  Self.CheckEnabled()
 		  
-		  Dim Message As String
+		  Var Message As String
 		  Select Case Err.ErrorNumber
 		  Case TCPSocket.LostConnection
 		    Message = "A connection was established, but it has been lost."

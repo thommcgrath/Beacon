@@ -261,7 +261,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ManagerView(Create As Boolean = True) As BlueprintManagerView
-		  Dim View As BeaconSubview = Self.View("BlueprintManagerView")
+		  Var View As BeaconSubview = Self.View("BlueprintManagerView")
 		  If View = Nil Then
 		    If Create Then
 		      View = New BlueprintManagerView()
@@ -284,9 +284,9 @@ End
 #tag Events ImportURLButton
 	#tag Event
 		Sub Action()
-		  Dim Content As String = BlueprintManagerView.PromptForImportURL(Self)
+		  Var Content As String = BlueprintManagerView.PromptForImportURL(Self)
 		  If Content <> "" Then
-		    Dim View As BlueprintManagerView = Self.ManagerView
+		    Var View As BlueprintManagerView = Self.ManagerView
 		    Self.ShowView(View)
 		    View.ImportText(Content)
 		  End If
@@ -296,7 +296,7 @@ End
 #tag Events ImportClipboardButton
 	#tag Event
 		Sub Action()
-		  Dim View As BlueprintManagerView = Self.ManagerView
+		  Var View As BlueprintManagerView = Self.ManagerView
 		  Self.ShowView(View)
 		  View.ImportFromClipboard()
 		End Sub
@@ -305,9 +305,9 @@ End
 #tag Events ImportFileButton
 	#tag Event
 		Sub Action()
-		  Dim File As FolderItem = BlueprintManagerView.PromptForImportFile(Self)
+		  Var File As FolderItem = BlueprintManagerView.PromptForImportFile(Self)
 		  If File <> Nil Then
-		    Dim View As BlueprintManagerView = Self.ManagerView
+		    Var View As BlueprintManagerView = Self.ManagerView
 		    Self.ShowView(View)
 		    View.ImportFromFile(File)
 		  End If
@@ -317,7 +317,7 @@ End
 #tag Events ManageEngramsButton
 	#tag Event
 		Sub Action()
-		  Dim View As BlueprintManagerView = Self.ManagerView
+		  Var View As BlueprintManagerView = Self.ManagerView
 		  Self.ShowView(View)
 		End Sub
 	#tag EndEvent

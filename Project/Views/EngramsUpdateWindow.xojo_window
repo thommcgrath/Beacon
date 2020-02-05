@@ -161,14 +161,14 @@ End
 		  Case LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed
 		    Self.RevealTimer.RunMode = Timer.RunModes.Off
 		    
-		    Dim ImportDate As DateTime
+		    Var ImportDate As DateTime
 		    If Notification.UserData <> Nil And Notification.UserData IsA DateTime Then
 		      ImportDate = Notification.UserData
 		    Else
 		      ImportDate = LocalData.SharedInstance.LastSync
 		    End If
 		    
-		    Dim Dialog As New MessageDialog
+		    Var Dialog As New MessageDialog
 		    Dialog.Title = ""
 		    If IsNull(ImportDate) Then
 		      Dialog.Message = "Engram definitions have not been updated"
@@ -186,7 +186,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub ShowIfNecessary()
-		  Dim Win As New EngramsUpdateWindow
+		  Var Win As New EngramsUpdateWindow
 		  // Do not show it, the timer will do that
 		  #Pragma Unused Win
 		End Sub

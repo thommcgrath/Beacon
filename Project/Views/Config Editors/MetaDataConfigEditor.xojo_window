@@ -382,7 +382,7 @@ End
 	#tag Event
 		Sub RestoreToDefault()
 		  Self.Document.RemoveConfigGroup(BeaconConfigs.Metadata.ConfigName)
-		  Redim Self.Document.Mods(-1)
+		  Self.Document.Mods.ResizeTo(-1)
 		End Sub
 	#tag EndEvent
 
@@ -393,13 +393,13 @@ End
 		  Self.UncompressedCheckbox.Value = Not Self.Document.UseCompression
 		  Self.AllowUCSCheckbox.Value = Self.Document.AllowUCS
 		  
-		  Dim Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
-		  Dim ScrollPosition As Integer = Self.ModsList.ScrollPosition
-		  Dim ListIndex As Integer = Self.ModsList.SelectedRowIndex
+		  Var Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
+		  Var ScrollPosition As Integer = Self.ModsList.ScrollPosition
+		  Var ListIndex As Integer = Self.ModsList.SelectedRowIndex
 		  Self.ModsList.RemoveAllRows()
 		  For Each Details As Beacon.ModDetails In Mods
 		    Self.ModsList.AddRow("", If(Details.ConsoleSafe, "Yes", "No"), Details.Name)
-		    Dim Idx As Integer = Self.ModsList.LastAddedRowIndex
+		    Var Idx As Integer = Self.ModsList.LastAddedRowIndex
 		    Self.ModsList.RowTagAt(Idx) = Details
 		    Self.ModsList.CellCheckBoxValueAt(Idx, Self.ModColumnEnabled) = Self.Document.Mods.LastRowIndex = -1 Or Self.Document.Mods.IndexOf(Details.ModID) > -1
 		  Next
@@ -482,7 +482,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim AllChecked As Boolean = True
+		  Var AllChecked As Boolean = True
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.CellCheckBoxValueAt(I, Self.ModColumnEnabled) Then
 		      AllChecked = False
@@ -491,7 +491,7 @@ End
 		  Next
 		  
 		  If AllChecked Then
-		    Redim Self.Document.Mods(-1)
+		    Self.Document.Mods.ResizeTo(-1)
 		    Self.Changed = True
 		  Else
 		    For I As Integer = 0 To Me.RowCount - 1

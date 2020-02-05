@@ -763,12 +763,12 @@ End
 		  Self.mOAuthData = OAuthData
 		  
 		  // Make sure the importers and engines stay in order because they need to be matched up later
-		  Redim Self.mImporters(-1) // To empty the array
-		  Redim Self.mImporters(Engines.LastRowIndex)
-		  Redim Self.mParsedData(-1)
-		  Redim Self.mParsedData(Engines.LastRowIndex)
-		  Redim Self.mDocuments(-1)
-		  Redim Self.mDocuments(Engines.LastRowIndex)
+		  Self.mImporters.ResizeTo(-1) // To empty the array
+		  Self.mImporters.ResizeTo(Engines.LastRowIndex)
+		  Self.mParsedData.ResizeTo(-1)
+		  Self.mParsedData.ResizeTo(Engines.LastRowIndex)
+		  Self.mDocuments.ResizeTo(-1)
+		  Self.mDocuments.ResizeTo(Engines.LastRowIndex)
 		  
 		  Self.DiscoveryWatcher.RunMode = Timer.RunModes.Multiple
 		  
@@ -786,7 +786,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Finish()
-		  Dim Documents() As Beacon.Document
+		  Var Documents() As Beacon.Document
 		  For I As Integer = 0 To Self.mDocuments.LastRowIndex
 		    If Self.mDocuments(I) <> Nil Then
 		      Documents.AddRow(Self.mDocuments(I))
@@ -809,7 +809,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Importer_ThreadedParseFinished(Sender As Beacon.ImportThread, ParsedData As Dictionary)
-		  Dim Idx As Integer = -1
+		  Var Idx As Integer = -1
 		  For I As Integer = 0 To Self.mImporters.LastRowIndex
 		    If Self.mImporters(I) = Sender Then
 		      Self.mParsedData(I) = ParsedData
@@ -822,26 +822,26 @@ End
 		    Return
 		  End If
 		  
-		  Dim Engine As Beacon.DiscoveryEngine = Self.mEngines(Idx)
-		  Dim CommandLineOptions As Dictionary = Engine.CommandLineOptions
+		  Var Engine As Beacon.DiscoveryEngine = Self.mEngines(Idx)
+		  Var CommandLineOptions As Dictionary = Engine.CommandLineOptions
 		  If CommandLineOptions = Nil Then
 		    CommandLineOptions = New Dictionary
 		  End If
-		  Dim Document As New Beacon.Document
+		  Var Document As New Beacon.Document
 		  Document.MapCompatibility = Engine.Map
 		  
 		  Try
-		    Dim Maps() As Beacon.Map = Beacon.Maps.ForMask(Engine.Map)
+		    Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Engine.Map)
 		    If Maps.LastRowIndex = -1 Then
 		      Maps.AddRow(Beacon.Maps.TheIsland)
 		    End If
-		    Dim DifficultyTotal, DifficultyScale As Double
+		    Var DifficultyTotal, DifficultyScale As Double
 		    For Each Map As Beacon.Map In Maps
 		      DifficultyTotal = DifficultyTotal + Map.DifficultyScale
 		    Next
 		    DifficultyScale = DifficultyTotal / (Maps.LastRowIndex + 1)
 		    
-		    Dim DifficultyValue As Double
+		    Var DifficultyValue As Double
 		    If CommandLineOptions.HasKey("OverrideOfficialDifficulty") And CommandLineOptions.DoubleValue("OverrideOfficialDifficulty") > 0 Then
 		      DifficultyValue = CommandLineOptions.DoubleValue("OverrideOfficialDifficulty")
 		    ElseIf ParsedData.HasKey("OverrideOfficialDifficulty") And ParsedData.DoubleValue("OverrideOfficialDifficulty") > 0 Then
@@ -867,10 +867,10 @@ End
 		    
 		  End Try
 		  
-		  Dim Profile As Beacon.ServerProfile = Engine.Profile
+		  Var Profile As Beacon.ServerProfile = Engine.Profile
 		  If Profile <> Nil Then
 		    If ParsedData.HasKey("SessionName") Then
-		      Dim SessionNames() As Variant = ParsedData.AutoArrayValue("SessionName")
+		      Var SessionNames() As Variant = ParsedData.AutoArrayValue("SessionName")
 		      For Each SessionName As Variant In SessionNames
 		        Try
 		          Profile.Name = SessionName
@@ -883,8 +883,8 @@ End
 		    Document.Add(Profile)
 		  End If
 		  
-		  Dim ConfigNames() As String = BeaconConfigs.AllConfigNames()
-		  Dim PurchasedOmniVersion As Integer = App.IdentityManager.CurrentIdentity.OmniVersion
+		  Var ConfigNames() As String = BeaconConfigs.AllConfigNames()
+		  Var PurchasedOmniVersion As Integer = App.IdentityManager.CurrentIdentity.OmniVersion
 		  For Each ConfigName As String In ConfigNames
 		    If ConfigName = BeaconConfigs.Difficulty.ConfigName Or ConfigName = BeaconConfigs.CustomContent.ConfigName Then
 		      // Difficulty and custom content area special
@@ -896,17 +896,17 @@ End
 		      Continue For ConfigName
 		    End If
 		    
-		    Dim ConfigInfo As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(ConfigName)
-		    Dim Methods() As Introspection.MethodInfo = ConfigInfo.GetMethods
+		    Var ConfigInfo As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(ConfigName)
+		    Var Methods() As Introspection.MethodInfo = ConfigInfo.GetMethods
 		    For Each Signature As Introspection.MethodInfo In Methods
 		      Try
 		        If Signature.IsShared And Signature.Name = "FromImport" And Signature.GetParameters.LastRowIndex = 3 And Signature.ReturnType <> Nil And Signature.ReturnType.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) Then
-		          Dim Params(3) As Variant
+		          Var Params(3) As Variant
 		          Params(0) = ParsedData
 		          Params(1) = CommandLineOptions
 		          Params(2) = Document.MapCompatibility
 		          Params(3) = Document.Difficulty
-		          Dim Group As Beacon.ConfigGroup = Signature.Invoke(Nil, Params)
+		          Var Group As Beacon.ConfigGroup = Signature.Invoke(Nil, Params)
 		          If Group <> Nil Then
 		            Document.AddConfigGroup(Group)
 		          End If
@@ -920,11 +920,11 @@ End
 		  
 		  // Now figure out what configs we'll generate so CustomContent can figure out what NOT to capture.
 		  // Do not do this in the loop above to ensure all configs are loaded first, in case they rely on each other.
-		  Dim GameIniValues As New Dictionary
-		  Dim GameUserSettingsIniValues As New Dictionary
-		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
-		  Dim GenericProfile As New Beacon.GenericServerProfile(Document.Title, Beacon.Maps.All.Mask)
-		  Dim Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		  Var GameIniValues As New Dictionary
+		  Var GameUserSettingsIniValues As New Dictionary
+		  Var Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
+		  Var GenericProfile As New Beacon.GenericServerProfile(Document.Title, Beacon.Maps.All.Mask)
+		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  For Each Config As Beacon.ConfigGroup In Configs
 		    Var GameIniArray() As Beacon.ConfigValue = Config.GameIniValues(Document, Identity, GenericProfile)
 		    Var GameUserSettingsIniArray() As Beacon.ConfigValue = Config.GameUserSettingsIniValues(Document, Identity, GenericProfile)
@@ -942,7 +942,7 @@ End
 		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, GameUserSettingsIniArray)
 		  Next
 		  
-		  Dim CustomContent As New BeaconConfigs.CustomContent
+		  Var CustomContent As New BeaconConfigs.CustomContent
 		  Try
 		    CustomContent.GameIniContent(GameIniValues) = Sender.GameIniContent
 		  Catch Err As RuntimeException
@@ -977,10 +977,10 @@ End
 		    End If
 		  Next
 		  
-		  Redim Self.mEngines(-1)
-		  Redim Self.mImporters(-1)
-		  Redim Self.mParsedData(-1)
-		  Redim Self.mDocuments(-1)
+		  Self.mEngines.ResizeTo(-1)
+		  Self.mImporters.ResizeTo(-1)
+		  Self.mParsedData.ResizeTo(-1)
+		  Self.mDocuments.ResizeTo(-1)
 		  
 		  If Self.Views.SelectedPanelIndex <> 0 Then
 		    Self.Views.SelectedPanelIndex = 0
@@ -1244,13 +1244,13 @@ End
 #tag Events OtherDocsActionButton
 	#tag Event
 		Sub Action()
-		  Redim Self.mDocuments(-1)
+		  Self.mDocuments.ResizeTo(-1)
 		  For I As Integer = 0 To OtherDocsList.RowCount - 1
 		    If Not OtherDocsList.CellCheckBoxValueAt(I, 0) Then
 		      Continue
 		    End If
 		    
-		    Dim Doc As Beacon.Document = OtherDocsList.RowTagAt(I)
+		    Var Doc As Beacon.Document = OtherDocsList.RowTagAt(I)
 		    Self.mDocuments.AddRow(Doc)
 		  Next
 		  Self.Finish()
@@ -1273,7 +1273,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Enabled As Boolean
+		  Var Enabled As Boolean
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.CellCheckBoxValueAt(I, Column) Then
 		      Enabled = True
@@ -1309,16 +1309,16 @@ End
 #tag Events DiscoveryWatcher
 	#tag Event
 		Sub Action()
-		  Dim AllFinished As Boolean = True
-		  Dim SuccessCount As Integer
-		  Dim Errors As Boolean
+		  Var AllFinished As Boolean = True
+		  Var SuccessCount As Integer
+		  Var Errors As Boolean
 		  For I As Integer = 0 To Self.mEngines.LastRowIndex
-		    Dim Engine As Beacon.DiscoveryEngine = Self.mEngines(I)
-		    Dim Finished As Boolean
-		    Dim Status As String
+		    Var Engine As Beacon.DiscoveryEngine = Self.mEngines(I)
+		    Var Finished As Boolean
+		    Var Status As String
 		    If Engine.Finished And Not Engine.Errored Then
 		      If Self.mImporters(I) = Nil Then
-		        Dim Importer As New Beacon.ImportThread
+		        Var Importer As New Beacon.ImportThread
 		        Importer.GameIniContent = Engine.GameIniContent
 		        Importer.GameUserSettingsIniContent = Engine.GameUserSettingsIniContent
 		        AddHandler Importer.ThreadedParseFinished, WeakAddressOf Importer_ThreadedParseFinished      
@@ -1337,7 +1337,7 @@ End
 		        End If
 		      Else
 		        // Show importer progress
-		        Dim Progress As Integer = Round(Self.mImporters(I).Progress * 100)
+		        Var Progress As Integer = Round(Self.mImporters(I).Progress * 100)
 		        If Self.mImporters(I).Progress >= 1 Then
 		          Status = "Finishing…"
 		        Else
@@ -1371,8 +1371,8 @@ End
 		      Else
 		        Self.StatusActionButton.Visible = True
 		        #if TargetMacOS
-		          Dim CancelPos As Integer = Self.StatusActionButton.Left
-		          Dim ActionPos As Integer = Self.StatusCancelButton.Left
+		          Var CancelPos As Integer = Self.StatusActionButton.Left
+		          Var ActionPos As Integer = Self.StatusCancelButton.Left
 		          Self.StatusCancelButton.Left = CancelPos
 		          Self.StatusActionButton.Left = ActionPos
 		          Self.StatusActionButton.Default = True

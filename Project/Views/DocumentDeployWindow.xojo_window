@@ -454,7 +454,7 @@ End
 		  Self.ServerSelectionList.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
 		  
 		  For I As Integer = 0 To Self.mDocument.ServerProfileCount - 1
-		    Dim Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(I)
+		    Var Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(I)
 		    
 		    Self.ServerSelectionList.AddRow("", Profile.Name, Profile.SecondaryName)
 		    Self.ServerSelectionList.RowTagAt(Self.ServerSelectionList.LastAddedRowIndex) = Profile
@@ -471,16 +471,16 @@ End
 		    // Move to the next step
 		    Self.DeployingList.RemoveAllRows
 		    
-		    Dim Now As New DateTime(DateTime.Now.SecondsFrom1970, New TimeZone(0))
+		    Var Now As New DateTime(DateTime.Now.SecondsFrom1970, New TimeZone(0))
 		    Self.mDeployLabel = Str(Now.Year, "0000") + "-" + Str(Now.Month, "00") + "-" + Str(Now.Day, "00") + " " + Str(Now.Hour, "00") + "." + Str(Now.Minute, "00") + "." + Str(Now.Second, "00") + " GMT"
 		    
 		    For I As Integer = 0 To Self.mDocument.ServerProfileCount - 1
-		      Dim Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(I)
+		      Var Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(I)
 		      If Not Profile.Enabled Then
 		        Continue
 		      End If
 		      
-		      Dim DeploymentEngine As Beacon.DeploymentEngine
+		      Var DeploymentEngine As Beacon.DeploymentEngine
 		      Select Case Profile
 		      Case IsA Beacon.NitradoServerProfile
 		        DeploymentEngine = New Beacon.NitradoDeploymentEngine(Beacon.NitradoServerProfile(Profile), Self.mDocument.OAuthData(Profile.OAuthProvider))
@@ -505,7 +505,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Provider As String = Self.mOAuthQueue(0)
+		  Var Provider As String = Self.mOAuthQueue(0)
 		  Self.mOAuthQueue.RemoveRowAt(0)
 		  
 		  Self.Auth.Provider = Provider
@@ -530,8 +530,8 @@ End
 		    Return True
 		  End If
 		  
-		  Dim GameIniContent As String = Engine.BackupGameIni.Trim
-		  Dim GameUserSettingsIniContent As String = Engine.BackupGameUserSettingsIni.Trim
+		  Var GameIniContent As String = Engine.BackupGameIni.Trim
+		  Var GameUserSettingsIniContent As String = Engine.BackupGameUserSettingsIni.Trim
 		  If GameIniContent = "" And GameUserSettingsIniContent = "" Then
 		    Return True
 		  End If
@@ -541,7 +541,7 @@ End
 		    Return False
 		  End If
 		  
-		  Dim ServerFolder As FolderItem = Folder.Child(Beacon.SanitizeFilename(Engine.Name))
+		  Var ServerFolder As FolderItem = Folder.Child(Beacon.SanitizeFilename(Engine.Name))
 		  If ServerFolder = Nil Then
 		    App.Log("Unable to backup " + Engine.Name + ": Could not to get path to server backup folder")
 		    Return False
@@ -554,8 +554,8 @@ End
 		    End Try
 		  End If
 		  
-		  Dim Subfolder As FolderItem = ServerFolder.Child(Beacon.SanitizeFilename(Self.mDeployLabel))
-		  Dim Counter As Integer = 1
+		  Var Subfolder As FolderItem = ServerFolder.Child(Beacon.SanitizeFilename(Self.mDeployLabel))
+		  Var Counter As Integer = 1
 		  While Subfolder <> Nil And Subfolder.Exists
 		    Subfolder = ServerFolder.Child(Beacon.SanitizeFilename(Self.mDeployLabel + "-" + Str(Counter, "-0")))
 		    Counter = Counter + 1
@@ -571,9 +571,9 @@ End
 		    App.Log("Unable to backup " + Engine.Name + ": Could not create deployment folder " + Subfolder.NativePath + ": " + Err.Message)
 		  End Try
 		  
-		  Dim BackedUp As Boolean = True
+		  Var BackedUp As Boolean = True
 		  If GameIniContent <> "" Then
-		    Dim GameIniFile As FolderItem = Subfolder.Child("Game.ini")
+		    Var GameIniFile As FolderItem = Subfolder.Child("Game.ini")
 		    If GameIniFile = Nil Then
 		      App.Log("Unable to backup Game.ini for " + Engine.Name + ": Could not get path to Game.ini")
 		      BackedUp = False
@@ -583,7 +583,7 @@ End
 		    End If
 		  End If
 		  If GameUserSettingsIniContent <> "" Then
-		    Dim GameUserSettingsIniFile As FolderItem = Subfolder.Child("GameUserSettings.ini")
+		    Var GameUserSettingsIniFile As FolderItem = Subfolder.Child("GameUserSettings.ini")
 		    If GameUserSettingsIniFile = Nil Then
 		      App.Log("Unable to backup Game.ini for " + Engine.Name + ": Could not get path to GameUserSettings.ini")
 		      BackedUp = False
@@ -626,8 +626,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowResults()
-		  Dim Report() As String
-		  Dim SuccessCount, TotalCount As Integer
+		  Var Report() As String
+		  Var SuccessCount, TotalCount As Integer
 		  For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
 		    If DeploymentEngine.Errored Then
 		      Report.AddRow(DeploymentEngine.Name + ": " + DeploymentEngine.Status)
@@ -726,11 +726,11 @@ End
 		  Const RestartSupportedMixed = 1
 		  Const RestartSupportedAll = 2
 		  
-		  Dim SelectedCount As Integer
-		  Dim Supported As Integer = RestartSupportedUnknown
-		  Dim SupportsCustomStopMessage As Boolean
+		  Var SelectedCount As Integer
+		  Var Supported As Integer = RestartSupportedUnknown
+		  Var SupportsCustomStopMessage As Boolean
 		  For I As Integer = 0 To Self.mDocument.ServerProfileCount - 1
-		    Dim Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(I)
+		    Var Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(I)
 		    If Not Profile.Enabled Then
 		      Continue
 		    End If
@@ -739,7 +739,7 @@ End
 		    
 		    SelectedCount = SelectedCount + 1
 		    
-		    Dim CanRestart As Boolean = Profile.SupportsRestart
+		    Var CanRestart As Boolean = Profile.SupportsRestart
 		    If Supported = RestartSupportedUnknown Then
 		      Supported = If(CanRestart, RestartSupportedAll, RestartSupportedNone)
 		    ElseIf (CanRestart = True And Supported = RestartSupportedNone) Or (CanRestart = False And Supported = RestartSupportedAll) Then
@@ -749,9 +749,9 @@ End
 		    SupportsCustomStopMessage = SupportsCustomStopMessage Or Profile.SupportsCustomStopMessage
 		  Next
 		  
-		  Dim Predicate As String = If(SelectedCount = 1, "server", "servers")
-		  Dim Conjunction As String = If(SelectedCount = 1, "is", "are")
-		  Dim Reference As String = If(SelectedCount = 1, "it", "they")
+		  Var Predicate As String = If(SelectedCount = 1, "server", "servers")
+		  Var Conjunction As String = If(SelectedCount = 1, "is", "are")
+		  Var Reference As String = If(SelectedCount = 1, "it", "they")
 		  
 		  Select Case Supported
 		  Case RestartSupportedAll
@@ -769,7 +769,7 @@ End
 		  End Select
 		  
 		  // Prompt for server stop message here
-		  Dim StopMessage As String
+		  Var StopMessage As String
 		  If SupportsCustomStopMessage Then
 		    StopMessage = StopMessageDialog.Present(Self)
 		    If StopMessage = "" Then
@@ -783,12 +783,12 @@ End
 		  Self.Pages.SelectedPanelIndex = Self.PageDeploying
 		  
 		  For I As Integer = 0 To Self.mDocument.ServerProfileCount - 1
-		    Dim Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(I)
+		    Var Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(I)
 		    If Not Profile.Enabled Then
 		      Continue
 		    End If
 		    
-		    Dim Provider As String = Profile.OAuthProvider
+		    Var Provider As String = Profile.OAuthProvider
 		    If Provider <> "" And Self.mOAuthQueue.IndexOf(Provider) = -1 Then
 		      Self.mOAuthQueue.AddRow(Provider)
 		    End If
@@ -815,7 +815,7 @@ End
 #tag Events DeployingCancelButton
 	#tag Event
 		Sub Action()
-		  Dim AnyFinished As Boolean
+		  Var AnyFinished As Boolean
 		  
 		  For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
 		    If DeploymentEngine.Finished Then
@@ -873,13 +873,13 @@ End
 #tag Events DeployingWatchTimer
 	#tag Event
 		Sub Action()
-		  Dim Finished As Boolean = True
+		  Var Finished As Boolean = True
 		  For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
 		    Finished = Finished And DeploymentEngine.Finished
 		  Next
 		  
 		  If Finished Then
-		    Dim BackupsFolder As FolderItem = App.ApplicationSupport.Child("Backups")
+		    Var BackupsFolder As FolderItem = App.ApplicationSupport.Child("Backups")
 		    If Not BackupsFolder.Exists Then
 		      BackupsFolder.CreateFolder
 		    End If
@@ -894,7 +894,7 @@ End
 		    Me.RunMode = Timer.RunModes.Off
 		  Else
 		    For I As Integer = 0 To Self.DeployingList.RowCount - 1
-		      Dim DeploymentEngine As Beacon.DeploymentEngine = Self.DeployingList.RowTagAt(I)
+		      Var DeploymentEngine As Beacon.DeploymentEngine = Self.DeployingList.RowTagAt(I)
 		      Self.DeployingList.CellValueAt(I, 0) = DeploymentEngine.Name + EndOfLine + DeploymentEngine.Status
 		    Next
 		  End If

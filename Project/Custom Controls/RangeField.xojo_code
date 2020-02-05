@@ -137,10 +137,10 @@ Inherits UITweaks.ResizedTextField
 		#tag Setter
 			Set
 			  If CDbl(Self.Value.Trim) <> Value Then
-			    Dim MinValue, MaxValue As Double
+			    Var MinValue, MaxValue As Double
 			    RaiseEvent GetRange(MinValue, MaxValue)
 			    
-			    Dim Formatted As String
+			    Var Formatted As String
 			    If Value < MinValue Then
 			      Formatted = Self.Format(MinValue)
 			      RaiseEvent RangeError(Value, MinValue)

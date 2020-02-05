@@ -193,7 +193,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ShowAPIBuilder()
-		  Dim View As BeaconSubview = Self.View("APIBuilderView")
+		  Var View As BeaconSubview = Self.View("APIBuilderView")
 		  If View = Nil Then
 		    View = New APIBuilderView
 		  End If
@@ -209,7 +209,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ShowIdentity()
-		  Dim View As BeaconSubview = Self.View("IdentityView")
+		  Var View As BeaconSubview = Self.View("IdentityView")
 		  If View = Nil Then
 		    View = New IdentityView
 		  End If
@@ -219,7 +219,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ShowMods()
-		  Dim View As BeaconSubview = Self.View("ModsView")
+		  Var View As BeaconSubview = Self.View("ModsView")
 		  If View = Nil Then
 		    View = New ModsView
 		  End If
@@ -242,7 +242,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Item As String = Me.CellValueAt(Me.SelectedRowIndex, 0)
+		  Var Item As String = Me.CellValueAt(Me.SelectedRowIndex, 0)
 		  Select Case Item
 		  Case "API Guide"
 		    Self.ShowAPIGuide()

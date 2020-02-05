@@ -456,13 +456,13 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Creature, Mods As Beacon.StringList = Nil, AllowMultipleSelection As Boolean) As Beacon.Creature()
-		  Dim ExcludeBlueprints() As Beacon.Blueprint
+		  Var ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Creature As Beacon.Creature In Exclude
 		    ExcludeBlueprints.AddRow(Creature)
 		  Next
 		  
-		  Dim Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryCreatures, Subgroup, ExcludeBlueprints, Mods, AllowMultipleSelection)
-		  Dim Creatures() As Beacon.Creature
+		  Var Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryCreatures, Subgroup, ExcludeBlueprints, Mods, AllowMultipleSelection)
+		  Var Creatures() As Beacon.Creature
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Creature Then
 		      Creatures.AddRow(Beacon.Creature(Blueprint))
@@ -474,13 +474,13 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Engram, Mods As Beacon.StringList = Nil, AllowMultipleSelection As Boolean) As Beacon.Engram()
-		  Dim ExcludeBlueprints() As Beacon.Blueprint
+		  Var ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Engram As Beacon.Engram In Exclude
 		    ExcludeBlueprints.AddRow(Engram)
 		  Next
 		  
-		  Dim Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryEngrams, Subgroup, ExcludeBlueprints, Mods, AllowMultipleSelection)
-		  Dim Engrams() As Beacon.Engram
+		  Var Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryEngrams, Subgroup, ExcludeBlueprints, Mods, AllowMultipleSelection)
+		  Var Engrams() As Beacon.Engram
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Engram Then
 		      Engrams.AddRow(Beacon.Engram(Blueprint))
@@ -492,7 +492,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, Category As String, Subgroup As String, Exclude() As Beacon.Blueprint, Mods As Beacon.StringList = Nil, AllowMultipleSelection As Boolean) As Beacon.Blueprint()
-		  Dim Blueprints() As Beacon.Blueprint
+		  Var Blueprints() As Beacon.Blueprint
 		  If Parent = Nil Then
 		    Return Blueprints
 		  End If
@@ -501,7 +501,7 @@ End
 		    Mods = New Beacon.StringList
 		  End If
 		  
-		  Dim Win As New EngramSelectorDialog(Category, Subgroup, Exclude, Mods, AllowMultipleSelection)
+		  Var Win As New EngramSelectorDialog(Category, Subgroup, Exclude, Mods, AllowMultipleSelection)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  If Win.mCancelled Then
 		    Win.Close
@@ -519,8 +519,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Resize()
-		  Dim ButtonsHeight As Integer = (Self.RemoveFromSelectionsButton.Top + Self.RemoveFromSelectionsButton.Height) - Self.AddToSelectionsButton.Top
-		  Dim ButtonsTop As Integer = Self.SelectedList.Top + ((Self.SelectedList.Height - ButtonsHeight) / 2)
+		  Var ButtonsHeight As Integer = (Self.RemoveFromSelectionsButton.Top + Self.RemoveFromSelectionsButton.Height) - Self.AddToSelectionsButton.Top
+		  Var ButtonsTop As Integer = Self.SelectedList.Top + ((Self.SelectedList.Height - ButtonsHeight) / 2)
 		  Self.AddToSelectionsButton.Top = ButtonsTop
 		  Self.RemoveFromSelectionsButton.Top = Self.AddToSelectionsButton.Top + Self.AddToSelectionsButton.Height + 12
 		End Sub
@@ -528,14 +528,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UnmakeSelection()
-		  Dim SelectPaths() As String
+		  Var SelectPaths() As String
 		  For I As Integer = Self.SelectedList.RowCount - 1 DownTo 0
 		    If Not Self.SelectedList.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Dim Blueprint As Beacon.Blueprint = Self.SelectedList.RowTagAt(I)
-		    Dim Idx As Integer = Self.mExcluded.IndexOf(Blueprint.Path)
+		    Var Blueprint As Beacon.Blueprint = Self.SelectedList.RowTagAt(I)
+		    Var Idx As Integer = Self.mExcluded.IndexOf(Blueprint.Path)
 		    If Idx > -1 Then
 		      Self.mExcluded.RemoveRowAt(Idx)
 		    End If
@@ -547,7 +547,7 @@ End
 		  Self.List.SelectionChangeBlocked = True
 		  Self.UpdateFilter()
 		  For I As Integer = 0 To Self.List.RowCount - 1
-		    Dim Blueprint As Beacon.Blueprint = Self.List.RowTagAt(I)
+		    Var Blueprint As Beacon.Blueprint = Self.List.RowTagAt(I)
 		    Self.List.Selected(I) = SelectPaths.IndexOf(Blueprint.Path) > -1
 		  Next
 		  Self.List.EnsureSelectionIsVisible
@@ -557,11 +557,11 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
-		  Dim SearchText As String = Self.FilterField.Value
-		  Dim Tags As String = Self.Picker.Spec
+		  Var SearchText As String = Self.FilterField.Value
+		  Var Tags As String = Self.Picker.Spec
 		  
-		  Dim Blueprints() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)
-		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
+		  Var Blueprints() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints(Self.mCategory, SearchText, Self.mMods, Tags)
+		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.RemoveAllRows
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Self.mExcluded.IndexOf(Blueprint.Path) > -1 Then
@@ -713,7 +713,7 @@ End
 		  Self.SelectedList.Top = Self.List.Top
 		  Self.SelectedList.Height = Self.List.Height
 		  
-		  Dim ToggleButtonsHeight As Integer = AddToSelectionsButton.Height + RemoveFromSelectionsButton.Height + 12
+		  Var ToggleButtonsHeight As Integer = AddToSelectionsButton.Height + RemoveFromSelectionsButton.Height + 12
 		  Self.AddToSelectionsButton.Top = Self.SelectedList.Top + ((Self.SelectedList.Height - ToggleButtonsHeight) / 2)
 		  Self.RemoveFromSelectionsButton.Top = Self.AddToSelectionsButton.Top + Self.AddToSelectionsButton.Height + 12
 		End Sub

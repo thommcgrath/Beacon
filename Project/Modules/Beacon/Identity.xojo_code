@@ -2,7 +2,7 @@
 Protected Class Identity
 	#tag Method, Flags = &h0
 		Function Clone() As Beacon.Identity
-		  Dim Exported As Dictionary = Self.Export()
+		  Var Exported As Dictionary = Self.Export()
 		  Return Self.Import(Exported)
 		End Function
 	#tag EndMethod
@@ -19,15 +19,15 @@ Protected Class Identity
 		    Return 0
 		  End If
 		  
-		  Dim LeftString As String = EncodeHex(Left)
-		  Dim RightString As String = EncodeHex(Right)
+		  Var LeftString As String = EncodeHex(Left)
+		  Var RightString As String = EncodeHex(Right)
 		  Return StrComp(LeftString, RightString, REALbasic.StrCompLexical)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Dim PrivateKey, PublicKey As String
+		  Var PrivateKey, PublicKey As String
 		  If Crypto.RSAGenerateKeyPair(2048, PrivateKey, PublicKey) = False Or Crypto.RSAVerifyKey(PrivateKey) = False Or Crypto.RSAVerifyKey(PublicKey) = False Then
 		    Raise New CryptoException
 		  End If
@@ -50,7 +50,7 @@ Protected Class Identity
 
 	#tag Method, Flags = &h0
 		Function ConsumeUserDictionary(Dict As Dictionary) As Boolean
-		  Dim UserID As String = Dict.Value("user_id")
+		  Var UserID As String = Dict.Value("user_id")
 		  If Self.mIdentifier <> UserID Then
 		    Return False
 		  End If
@@ -75,7 +75,7 @@ Protected Class Identity
 		  
 		  Try
 		    If Dict.HasKey("signatures") Then
-		      Dim SignaturesDict As Dictionary = Dict.Value("signatures")
+		      Var SignaturesDict As Dictionary = Dict.Value("signatures")
 		      Self.mSignature = DecodeHex(SignaturesDict.Lookup(Self.SignatureVersion.ToString, ""))
 		    Else
 		      Self.mSignature = Nil
@@ -86,7 +86,7 @@ Protected Class Identity
 		  
 		  Try
 		    If Dict.HasKey("usercloud_key") And Dict.Value("usercloud_key") <> Nil Then
-		      Dim EncryptedCloudKey As String = Dict.Value("usercloud_key")
+		      Var EncryptedCloudKey As String = Dict.Value("usercloud_key")
 		      Self.mUsercloudKey = Self.Decrypt(DecodeHex(EncryptedCloudKey))
 		    End If
 		  Catch Err As RuntimeException
@@ -106,7 +106,7 @@ Protected Class Identity
 	#tag Method, Flags = &h0
 		Function Decrypt(Data As MemoryBlock) As MemoryBlock
 		  Try
-		    Dim Decrypted As MemoryBlock = Crypto.RSADecrypt(Data, Self.mPrivateKey)
+		    Var Decrypted As MemoryBlock = Crypto.RSADecrypt(Data, Self.mPrivateKey)
 		    Return Decrypted
 		  Catch Err As CryptoException
 		    Return Nil
@@ -122,7 +122,7 @@ Protected Class Identity
 
 	#tag Method, Flags = &h0
 		Function Export() As Dictionary
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("Identifier") = Self.mIdentifier
 		  Dict.Value("Public") = Self.mPublicKey
 		  Dict.Value("Private") = Self.mPrivateKey
@@ -146,30 +146,30 @@ Protected Class Identity
 	#tag Method, Flags = &h0
 		Shared Function FromUserDictionary(Dict As Dictionary, Password As String) As Beacon.Identity
 		  Try
-		    Dim PrivateKey As String
+		    Var PrivateKey As String
 		    
 		    If Password = "" Then
 		      Return Nil
 		    End If
 		    
 		    Try
-		      Dim Salt As MemoryBlock = DecodeHex(Dict.Value("private_key_salt"))
-		      Dim Iterations As Integer = Dict.Value("private_key_iterations")
-		      Dim Key As MemoryBlock = Crypto.PBKDF2(Salt, Password, Iterations, 56, Crypto.Algorithm.SHA512)
-		      Dim Decrypted As MemoryBlock = BeaconEncryption.SymmetricDecrypt(Key, DecodeHex(Dict.Value("private_key")))
+		      Var Salt As MemoryBlock = DecodeHex(Dict.Value("private_key_salt"))
+		      Var Iterations As Integer = Dict.Value("private_key_iterations")
+		      Var Key As MemoryBlock = Crypto.PBKDF2(Salt, Password, Iterations, 56, Crypto.Algorithm.SHA512)
+		      Var Decrypted As MemoryBlock = BeaconEncryption.SymmetricDecrypt(Key, DecodeHex(Dict.Value("private_key")))
 		      PrivateKey = BeaconEncryption.PEMDecodePrivateKey(Decrypted)
 		    Catch Err As RuntimeException
 		      Return Nil
 		    End Try
 		    
-		    Dim PublicKey As String = BeaconEncryption.PEMDecodePublicKey(Dict.Value("public_key"))
-		    Dim UserID As String = Dict.Value("user_id")
+		    Var PublicKey As String = BeaconEncryption.PEMDecodePublicKey(Dict.Value("public_key"))
+		    Var UserID As String = Dict.Value("user_id")
 		    
 		    If Not VerifyKeyPair(PublicKey, PrivateKey) Then
 		      Return Nil
 		    End If
 		    
-		    Dim Identity As New Beacon.Identity(UserID, PublicKey, PrivateKey)
+		    Var Identity As New Beacon.Identity(UserID, PublicKey, PrivateKey)
 		    If Not Identity.ConsumeUserDictionary(Dict) Then
 		      Return Nil
 		    End If
@@ -193,7 +193,7 @@ Protected Class Identity
 		    Return Nil
 		  End If
 		  
-		  Dim PublicKey, PrivateKey As String
+		  Var PublicKey, PrivateKey As String
 		  If Source.HasKey("Version") Then
 		    Select Case Source.Value("Version")
 		    Case 2
@@ -211,7 +211,7 @@ Protected Class Identity
 		    Return Nil
 		  End If
 		  
-		  Dim Identity As New Beacon.Identity(Source.Value("Identifier"), PublicKey, PrivateKey)
+		  Var Identity As New Beacon.Identity(Source.Value("Identifier"), PublicKey, PrivateKey)
 		  
 		  If Source.HasKey("Omni Version") Then
 		    Identity.mPurchasedOmniVersion = Source.Value("Omni Version")
@@ -284,7 +284,7 @@ Protected Class Identity
 		  End If
 		  
 		  // Case changes do matter
-		  Dim Result As Integer = StrComp(Self.mLoginKey, Other.mLoginKey, REALbasic.StrCompLexical)
+		  Var Result As Integer = StrComp(Self.mLoginKey, Other.mLoginKey, REALbasic.StrCompLexical)
 		  If Result <> 0 Then
 		    Return Result
 		  End If
@@ -302,15 +302,15 @@ Protected Class Identity
 		  End If
 		  
 		  // Compare expirations
-		  Dim Now As DateTime = DateTime.Now
-		  Dim Period As New DateInterval(30) // Yes, this says 30 years
-		  Dim SelfExpiration As DateTime
+		  Var Now As DateTime = DateTime.Now
+		  Var Period As New DateInterval(30) // Yes, this says 30 years
+		  Var SelfExpiration As DateTime
 		  If Self.mExpirationString <> "" Then
 		    SelfExpiration = NewDateFromSQLDateTime(Self.mExpirationString)
 		  Else
 		    SelfExpiration = Now + Period
 		  End If
-		  Dim OtherExpiration As DateTime
+		  Var OtherExpiration As DateTime
 		  If Other.mExpirationString <> "" Then
 		    OtherExpiration = NewDateFromSQLDateTime(Other.mExpirationString)
 		  Else
@@ -378,23 +378,23 @@ Protected Class Identity
 	#tag Method, Flags = &h0
 		Sub Validate()
 		  If Self.mSignature <> Nil Then
-		    Dim Fields(3) As String
+		    Var Fields(3) As String
 		    Fields(0) = Beacon.HardwareID
 		    Fields(1) = Self.mIdentifier.Lowercase
 		    Fields(2) = Self.mPurchasedOmniVersion.ToString(Locale.Raw)
 		    Fields(3) = If(Self.mBanned, "Banned", "Clean")
 		    
 		    If Self.mExpirationString <> "" Then
-		      Dim Expires As DateTime = NewDateFromSQLDateTime(Self.mExpirationString)
-		      Dim Now As DateTime = DateTime.Now
+		      Var Expires As DateTime = NewDateFromSQLDateTime(Self.mExpirationString)
+		      Var Now As DateTime = DateTime.Now
 		      If Now.SecondsFrom1970 < Expires.SecondsFrom1970 Then
 		        // Not Expired
 		        Fields.AddRow(Self.mExpirationString)
 		      End If
 		    End If
 		    
-		    Dim PublicKey As String = BeaconAPI.PublicKey
-		    Dim CheckData As String = Fields.Join(" ")
+		    Var PublicKey As String = BeaconAPI.PublicKey
+		    Var CheckData As String = Fields.Join(" ")
 		    If Crypto.RSAVerifySignature(CheckData, Self.mSignature, PublicKey) Then
 		      // It is valid, now return so the reset code below does not fire
 		      Return
@@ -413,14 +413,14 @@ Protected Class Identity
 		  End If
 		  
 		  Try
-		    Dim Original As MemoryBlock = Crypto.GenerateRandomBytes(12)
-		    Dim Encrypted As String = Crypto.RSAEncrypt(Original, PublicKey)
-		    Dim Decrypted As String = Crypto.RSADecrypt(Encrypted, PrivateKey)
+		    Var Original As MemoryBlock = Crypto.GenerateRandomBytes(12)
+		    Var Encrypted As String = Crypto.RSAEncrypt(Original, PublicKey)
+		    Var Decrypted As String = Crypto.RSADecrypt(Encrypted, PrivateKey)
 		    If Decrypted <> Original Then
 		      Return False
 		    End If
 		    
-		    Dim Signature As MemoryBlock = Crypto.RSASign(Original, PrivateKey)
+		    Var Signature As MemoryBlock = Crypto.RSASign(Original, PrivateKey)
 		    Return Crypto.RSAVerifySignature(Original, Signature, PublicKey)
 		  Catch Err As CryptoException
 		    Return False

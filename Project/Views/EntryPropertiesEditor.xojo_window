@@ -807,23 +807,23 @@ End
 #tag WindowCode
 	#tag Method, Flags = &h0
 		Sub ApplyTo(Entries() As Beacon.SetEntry)
-		  Dim MinQuantity As Integer = Val(MinQuantityField.Value)
-		  Dim MaxQuantity As Integer = Val(MaxQuantityField.Value)
+		  Var MinQuantity As Integer = Val(MinQuantityField.Value)
+		  Var MaxQuantity As Integer = Val(MaxQuantityField.Value)
 		  If MinQuantity > MaxQuantity Then
-		    Dim Temp As Integer = MaxQuantity
+		    Var Temp As Integer = MaxQuantity
 		    MaxQuantity = MinQuantity
 		    MinQuantity = Temp
 		  End If
 		  
-		  Dim MinQualityValue As Double = MinQualityMenu.Tag
-		  Dim MaxQualityValue As Double = MaxQualityMenu.Tag
+		  Var MinQualityValue As Double = MinQualityMenu.Tag
+		  Var MaxQualityValue As Double = MaxQualityMenu.Tag
 		  If MinQualityValue > MaxQualityValue Then
-		    Dim Temp As Double = MaxQualityValue
+		    Var Temp As Double = MaxQualityValue
 		    MaxQualityValue = MinQualityValue
 		    MinQualityValue = Temp
 		  End If
-		  Dim MinQuality As Beacon.Quality = Beacon.Qualities.ForBaseValue(MinQualityValue)
-		  Dim MaxQuality As Beacon.Quality = Beacon.Qualities.ForBaseValue(MaxQualityValue)
+		  Var MinQuality As Beacon.Quality = Beacon.Qualities.ForBaseValue(MinQualityValue)
+		  Var MaxQuality As Beacon.Quality = Beacon.Qualities.ForBaseValue(MaxQualityValue)
 		  
 		  For Each Entry As Beacon.SetEntry In Entries
 		    If EditMaxQuantityCheck.Value Then
@@ -850,7 +850,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ApplyTo(Entry As Beacon.SetEntry)
-		  Dim Arr(0) As Beacon.SetEntry
+		  Var Arr(0) As Beacon.SetEntry
 		  Arr(0) = Entry
 		  Self.ApplyTo(Arr)
 		End Sub
@@ -877,7 +877,7 @@ End
 		  EditMinQualityCheck.Value = Not EditMinQualityCheck.Visible
 		  EditMinQuantityCheck.Value = Not EditMaxQualityCheck.Visible
 		  
-		  Dim RightEdge As Integer
+		  Var RightEdge As Integer
 		  If EditMinQualityCheck.Visible Or EditMaxQualityCheck.Visible Or EditChanceCheck.Visible Or EditWeightCheck.Visible Then
 		    RightEdge = Min(EditMinQualityCheck.Left, EditMaxQualityCheck.Left, EditChanceCheck.Left, EditWeightCheck.Left) - 12
 		  Else
@@ -902,10 +902,10 @@ End
 		    Return
 		  End If
 		  
-		  Dim MinQuantities(), MaxQuantities() As Integer
-		  Dim MinQualities(), MaxQualities() As Double
-		  Dim TotalWeight, TotalChance As Double
-		  Dim CanBeBlueprint As Boolean
+		  Var MinQuantities(), MaxQuantities() As Integer
+		  Var MinQualities(), MaxQualities() As Double
+		  Var TotalWeight, TotalChance As Double
+		  Var CanBeBlueprint As Boolean
 		  For Each Entry As Beacon.SetEntry In Entries
 		    MinQuantities.AddRow(Entry.MinQuantity)
 		    MaxQuantities.AddRow(Entry.MaxQuantity)
@@ -958,9 +958,9 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Setup(Entry As Beacon.SetEntry)
-		  Dim Arr(0) As Beacon.SetEntry
+		  Var Arr(0) As Beacon.SetEntry
 		  If Entry = Nil Then
-		    Dim Default As New Beacon.SetEntry()
+		    Var Default As New Beacon.SetEntry()
 		    Default.Append(New Beacon.SetEntryOption(Beacon.Engram.CreateFromPath("/Game/Mods/Default.Default"), 1.0))
 		    Arr(0) = Default
 		  Else
@@ -1035,7 +1035,7 @@ End
 		Sub Open(index as Integer)
 		  Me.RemoveAllRows()
 		  
-		  Dim Qualities() As Beacon.Quality = Beacon.Qualities.All
+		  Var Qualities() As Beacon.Quality = Beacon.Qualities.All
 		  For Each Quality As Beacon.Quality In Qualities
 		    Me.AddRow(Language.LabelForQuality(Quality), Quality.BaseValue)
 		  Next

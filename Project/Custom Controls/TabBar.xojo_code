@@ -4,7 +4,7 @@ Inherits ControlCanvas
 Implements ObservationKit.Observer
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  Dim Point As New Xojo.Point(X, Y)
+		  Var Point As New Xojo.Point(X, Y)
 		  For I As Integer = 0 To Self.mTabRects.LastRowIndex
 		    If Self.mTabRects(I) = Nil Then
 		      Continue
@@ -63,7 +63,7 @@ Implements ObservationKit.Observer
 		    Return
 		  End If
 		  
-		  Dim Point As New Xojo.Point(X, Y)
+		  Var Point As New Xojo.Point(X, Y)
 		  If Self.mCloseBoxes(Self.mMouseDownIndex) <> Nil And Self.mCloseBoxes(Self.mMouseDownIndex).Contains(Point) Then
 		    RaiseEvent ShouldDismissView(Self.mMouseDownIndex)
 		  End If
@@ -78,25 +78,25 @@ Implements ObservationKit.Observer
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  Dim Count As Integer = Self.Count
-		  Dim MaxTotalTabWidth As Integer = (Count * Self.MaxTabWidth) + (Count - 1)
-		  Dim TabInsideWidth As Integer = Self.MaxTabWidth
-		  Dim Remainder As Integer
+		  Var Count As Integer = Self.Count
+		  Var MaxTotalTabWidth As Integer = (Count * Self.MaxTabWidth) + (Count - 1)
+		  Var TabInsideWidth As Integer = Self.MaxTabWidth
+		  Var Remainder As Integer
 		  If MaxTotalTabWidth > G.Width Then
 		    TabInsideWidth = Floor((G.Width - (Count - 1)) / Count)
 		    Remainder = G.Width - ((Count * TabInsideWidth) + (Count - 1))
 		  End If
 		  
-		  Dim IndeterminatePattern As Picture
+		  Var IndeterminatePattern As Picture
 		  
-		  Dim LeftPos As Integer = 0
+		  Var LeftPos As Integer = 0
 		  For I As Integer = 0 To Count - 1
-		    Dim TabWidth As Integer = TabInsideWidth
+		    Var TabWidth As Integer = TabInsideWidth
 		    If I < Remainder Then
 		      TabWidth = TabWidth + 1
 		    End If
 		    
-		    Dim Clip As Graphics = G.Clip(LeftPos, 0, TabWidth, G.Height)
+		    Var Clip As Graphics = G.Clip(LeftPos, 0, TabWidth, G.Height)
 		    If Self.mSelectedIndex <> I Then
 		      Clip.DrawingColor = SystemColors.ControlBackgroundColor
 		      Clip.FillRectangle(0, 0, Clip.Width, Clip.Height - 1)
@@ -104,9 +104,9 @@ Implements ObservationKit.Observer
 		      Clip.FillRectangle(0, Clip.Height - 1, Clip.Width, 1)
 		    End If
 		    
-		    Dim View As BeaconSubview = RaiseEvent ViewAtIndex(I)
-		    Dim CloseRect As Xojo.Rect = Self.mCloseBoxes(I)
-		    Dim BoxState As CloseBoxState = CloseBoxState.Normal
+		    Var View As BeaconSubview = RaiseEvent ViewAtIndex(I)
+		    Var CloseRect As Xojo.Rect = Self.mCloseBoxes(I)
+		    Var BoxState As CloseBoxState = CloseBoxState.Normal
 		    If CloseRect <> Nil Then
 		      If Self.mHoverRect = CloseRect Then
 		        If Self.mMouseDownIndex = I Then
@@ -128,9 +128,9 @@ Implements ObservationKit.Observer
 		    Self.mTabRects(I) = New Xojo.Rect(LeftPos, 0, TabWidth, G.Height)
 		    
 		    If View <> Nil And View.Progress <> BeaconSubview.ProgressNone Then
-		      Dim Progress As Graphics = G.Clip(Self.mTabRects(I).Left, Self.mTabRects(I).Top, Self.mTabRects(I).Width, Self.ProgressHeight)
+		      Var Progress As Graphics = G.Clip(Self.mTabRects(I).Left, Self.mTabRects(I).Top, Self.mTabRects(I).Width, Self.ProgressHeight)
 		      
-		      Dim ProgressBackColor As Color = SystemColors.QuaternaryLabelColor
+		      Var ProgressBackColor As Color = SystemColors.QuaternaryLabelColor
 		      Progress.DrawingColor = ProgressBackColor
 		      Progress.FillRectangle(0, 0, Progress.Width, Progress.Height)
 		      
@@ -143,8 +143,8 @@ Implements ObservationKit.Observer
 		        If System.Microseconds - Self.mLastCycleTime > Self.IndeterminateCyclePeriod Then
 		          Self.mLastCycleTime = System.Microseconds
 		        End If
-		        Dim CycleProgress As Double = (System.Microseconds - Self.mLastCycleTime) / Self.IndeterminateCyclePeriod
-		        Dim CycleOffset As Integer = IndeterminatePattern.Width * CycleProgress
+		        Var CycleProgress As Double = (System.Microseconds - Self.mLastCycleTime) / Self.IndeterminateCyclePeriod
+		        Var CycleOffset As Integer = IndeterminatePattern.Width * CycleProgress
 		        
 		        For X As Integer = IndeterminatePattern.Width * -1 To Progress.Width Step IndeterminatePattern.Width
 		          Progress.DrawPicture(IndeterminatePattern, X + CycleOffset, 0)
@@ -153,7 +153,7 @@ Implements ObservationKit.Observer
 		        CallLater.Cancel(Self.mUpdateIndeterminateKey)
 		        Self.mUpdateIndeterminateKey = CallLater.Schedule(10, WeakAddressOf UpdateIndeterminate)
 		      Else
-		        Dim FillWidth As Integer = Self.mTabRects(I).Width * View.Progress
+		        Var FillWidth As Integer = Self.mTabRects(I).Width * View.Progress
 		        Progress.DrawingColor = SystemColors.SelectedContentBackgroundColor
 		        Progress.FillRectangle(0, 0, FillWidth, Progress.Height)
 		      End If
@@ -185,32 +185,32 @@ Implements ObservationKit.Observer
 		  Const CellPadding = 4
 		  Const ButtonSize = 16
 		  
-		  Dim MaxCaptionWidth As Integer = G.Width - ((ButtonSize * 2) + (CellPadding * 4))
+		  Var MaxCaptionWidth As Integer = G.Width - ((ButtonSize * 2) + (CellPadding * 4))
 		  
-		  Dim Caption As String = View.ToolbarCaption
-		  Dim CaptionWidth As Double = Min(G.TextWidth(Caption), MaxCaptionWidth)
-		  Dim CaptionLeft As Double = (G.Width - CaptionWidth) / 2
-		  Dim CaptionBottom As Double = (G.Height / 2) + (G.CapHeight / 2)
+		  Var Caption As String = View.ToolbarCaption
+		  Var CaptionWidth As Double = Min(G.TextWidth(Caption), MaxCaptionWidth)
+		  Var CaptionLeft As Double = (G.Width - CaptionWidth) / 2
+		  Var CaptionBottom As Double = (G.Height / 2) + (G.CapHeight / 2)
 		  
 		  G.DrawingColor = SystemColors.ControlTextColor
 		  G.DrawText(Caption, CaptionLeft, CaptionBottom, MaxCaptionWidth, True)
 		  
-		  Dim ButtonTop As Double = (G.Height - ButtonSize) / 2
+		  Var ButtonTop As Double = (G.Height - ButtonSize) / 2
 		  
 		  If View.Changed Then
-		    Dim ModifiedIcon As Picture = BeaconUI.IconWithColor(IconModified, G.DrawingColor.AtOpacity(0.5))
+		    Var ModifiedIcon As Picture = BeaconUI.IconWithColor(IconModified, G.DrawingColor.AtOpacity(0.5))
 		    G.DrawPicture(ModifiedIcon, CellPadding, ButtonTop, ButtonSize, ButtonSize, 0, 0, ModifiedIcon.Width, ModifiedIcon.Height)
 		  End If
 		  
 		  If View.CanBeClosed Then
-		    Dim IconColor As Color = G.DrawingColor.AtOpacity(0.5)
+		    Var IconColor As Color = G.DrawingColor.AtOpacity(0.5)
 		    If BoxState <> CloseBoxState.Normal Then
 		      IconColor = G.DrawingColor
 		    End If
 		    
 		    CloseRect = New Xojo.Rect(G.Width - (ButtonSize + CellPadding), ButtonTop, ButtonSize, ButtonSize)
 		    
-		    Dim CloseIcon As Picture = BeaconUI.IconWithColor(IconClose, IconColor)
+		    Var CloseIcon As Picture = BeaconUI.IconWithColor(IconClose, IconColor)
 		    G.DrawPicture(CloseIcon, CloseRect.Left, CloseRect.Top, CloseRect.Width, CloseRect.Height, 0, 0, CloseIcon.Width, CloseIcon.Height)
 		    
 		    If BoxState = CloseBoxState.Pressed Then
@@ -223,8 +223,8 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h21
 		Private Sub MouseMove(X As Integer, Y As Integer)
-		  Dim HoverRect As Xojo.Rect
-		  Dim Point As New Xojo.Point(X, Y)
+		  Var HoverRect As Xojo.Rect
+		  Var Point As New Xojo.Point(X, Y)
 		  For I As Integer = 0 To Self.mCloseBoxes.LastRowIndex
 		    If Self.mCloseBoxes(I) = Nil Then
 		      Continue
@@ -288,17 +288,17 @@ Implements ObservationKit.Observer
 			  If Self.mCount <> Value Then
 			    Self.mCount = Value
 			    
-			    Dim OldBound As Integer = Self.mTabRects.LastRowIndex
-			    Dim NewBound As Integer = Value - 1
+			    Var OldBound As Integer = Self.mTabRects.LastRowIndex
+			    Var NewBound As Integer = Value - 1
 			    For I As Integer = OldBound + 1 To NewBound
-			      Dim View As BeaconSubview = RaiseEvent ViewAtIndex(I)
+			      Var View As BeaconSubview = RaiseEvent ViewAtIndex(I)
 			      If View <> Nil Then
 			        View.AddObserver(Self, "BeaconSubview.Progress")
 			      End If
 			    Next
 			    
-			    Redim Self.mTabRects(Value - 1)
-			    Redim Self.mCloseBoxes(Value - 1)
+			    Self.mTabRects.ResizeTo(Value - 1)
+			    Self.mCloseBoxes.ResizeTo(Value - 1)
 			    Self.SelectedIndex = Self.SelectedIndex
 			    Self.Invalidate
 			  End If

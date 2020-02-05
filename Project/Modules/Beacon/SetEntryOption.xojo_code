@@ -26,7 +26,7 @@ Implements Beacon.DocumentItem
 		    Return
 		  End If
 		  
-		  Dim ClassString As String = Self.mEngram.ClassString
+		  Var ClassString As String = Self.mEngram.ClassString
 		  For Each Engram As Beacon.Engram In Engrams
 		    If Engram.ClassString = ClassString Then
 		      Self.mEngram = New Beacon.Engram(Engram)
@@ -45,9 +45,9 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Export() As Dictionary
-		  Dim Path As String = Self.Engram.Path
+		  Var Path As String = Self.Engram.Path
 		  
-		  Dim Keys As New Dictionary
+		  Var Keys As New Dictionary
 		  If Path <> "" Then
 		    Keys.Value("Path") = Path
 		  End If
@@ -60,7 +60,7 @@ Implements Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function Hash() As String
 		  If Self.HashIsStale Then
-		    Dim Path As String
+		    Var Path As String
 		    If Self.mEngram = Nil Then
 		      Path = ""
 		    Else
@@ -83,8 +83,8 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.SetEntryOption
-		  Dim Weight As Double = Dict.Value("Weight")
-		  Dim Engram, BackupEngram As Beacon.Engram
+		  Var Weight As Double = Dict.Value("Weight")
+		  Var Engram, BackupEngram As Beacon.Engram
 		  
 		  If Dict.HasKey("Path") Then
 		    Engram = Beacon.Data.GetEngramByPath(Dict.Value("Path"))
@@ -107,7 +107,7 @@ Implements Beacon.DocumentItem
 		    Engram = BackupEngram
 		  End If
 		  
-		  Dim Option As New Beacon.SetEntryOption(Engram, Weight)
+		  Var Option As New Beacon.SetEntryOption(Engram, Weight)
 		  Option.Modified = False
 		  Return Option
 		End Function
@@ -141,8 +141,8 @@ Implements Beacon.DocumentItem
 		    Return 1
 		  End If
 		  
-		  Dim SelfHash As String = Self.Hash
-		  Dim OtherHash As String = Other.Hash
+		  Var SelfHash As String = Self.Hash
+		  Var OtherHash As String = Other.Hash
 		  
 		  Return SelfHash.Compare(OtherHash, ComparisonOptions.CaseInsensitive)
 		End Function

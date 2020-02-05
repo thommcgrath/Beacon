@@ -12,7 +12,7 @@ Protected Class OAuth2Client
 
 	#tag Method, Flags = &h0
 		Function AuthData() As Dictionary
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("Access Token") = Self.mAccessToken
 		  Dict.Value("Refresh Token") = Self.mRefreshToken
 		  If Self.mExpiration = Nil Then
@@ -51,7 +51,7 @@ Protected Class OAuth2Client
 		    Return
 		  End If
 		  
-		  Dim QueryParams As New Dictionary
+		  Var QueryParams As New Dictionary
 		  QueryParams.Value("grant_type") = "refresh_token"
 		  QueryParams.Value("client_id") = Self.mClientID
 		  QueryParams.Value("refresh_token") = Self.mRefreshToken
@@ -123,7 +123,7 @@ Protected Class OAuth2Client
 		    Return False
 		  End If
 		  
-		  Dim Now As DateTime = DateTime.Now
+		  Var Now As DateTime = DateTime.Now
 		  If Self.mExpiration.SecondsFrom1970 <= Now.SecondsFrom1970 Then
 		    #If DebugBuild
 		      System.DebugLog("Not authenticated because expiration has passed")
@@ -148,20 +148,20 @@ Protected Class OAuth2Client
 		  RaiseEvent DismissWaitingWindow()
 		  
 		  Try
-		    Dim Dict As Dictionary = Beacon.ParseJSON(Content.GuessEncoding)
+		    Var Dict As Dictionary = Beacon.ParseJSON(Content.GuessEncoding)
 		    
-		    Dim EncryptedSymmetricKeyBase64 As String = Dict.Value("encrypted_symmetric_key")
-		    Dim EncryptedPayloadBase64 As String = Dict.Value("encrypted_payload")
+		    Var EncryptedSymmetricKeyBase64 As String = Dict.Value("encrypted_symmetric_key")
+		    Var EncryptedPayloadBase64 As String = Dict.Value("encrypted_payload")
 		    
-		    Dim EncryptedSymmetricKey As MemoryBlock = DecodeBase64(EncryptedSymmetricKeyBase64)
-		    Dim EncryptedPayload As MemoryBlock = DecodeBase64(EncryptedPayloadBase64)
+		    Var EncryptedSymmetricKey As MemoryBlock = DecodeBase64(EncryptedSymmetricKeyBase64)
+		    Var EncryptedPayload As MemoryBlock = DecodeBase64(EncryptedPayloadBase64)
 		    
-		    Dim SymmetricKey As MemoryBlock = Self.mIdentity.Decrypt(EncryptedSymmetricKey)
-		    Dim Payload As String = BeaconEncryption.SymmetricDecrypt(SymmetricKey, EncryptedPayload)
+		    Var SymmetricKey As MemoryBlock = Self.mIdentity.Decrypt(EncryptedSymmetricKey)
+		    Var Payload As String = BeaconEncryption.SymmetricDecrypt(SymmetricKey, EncryptedPayload)
 		    
 		    Dict = Beacon.ParseJSON(Payload.GuessEncoding)
 		    
-		    Dim Expires As Integer = Dict.Value("expires_in")
+		    Var Expires As Integer = Dict.Value("expires_in")
 		    
 		    Self.mRefreshToken = Dict.Value("refresh_token")
 		    Self.mAccessToken = Dict.Value("access_token")
@@ -188,9 +188,9 @@ Protected Class OAuth2Client
 		Private Sub NewAuthorization()
 		  Self.mRequestID = New v4UUID
 		  
-		  Dim RequestID As String = New v4UUID
-		  Dim PublicKey As String = Self.mIdentity.PublicKey
-		  Dim URL As String = Self.AuthURL + "?provider=" + EncodeURLComponent(Self.mProvider) + "&requestid=" + EncodeURLComponent(RequestID) + "&pubkey=" + EncodeURLComponent(PublicKey)
+		  Var RequestID As String = New v4UUID
+		  Var PublicKey As String = Self.mIdentity.PublicKey
+		  Var URL As String = Self.AuthURL + "?provider=" + EncodeURLComponent(Self.mProvider) + "&requestid=" + EncodeURLComponent(RequestID) + "&pubkey=" + EncodeURLComponent(PublicKey)
 		  
 		  If StartAuthentication(URL, Self.mProvider) = False Then
 		    Return
@@ -219,7 +219,7 @@ Protected Class OAuth2Client
 		    Return
 		  End If
 		  
-		  Dim Dict As Dictionary
+		  Var Dict As Dictionary
 		  Try
 		    Dict = Beacon.ParseJSON(Content)
 		    

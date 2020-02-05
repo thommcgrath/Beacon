@@ -17,17 +17,17 @@ Implements Beacon.DiscoveryEngine
 		  End If
 		  
 		  Try
-		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
+		    Var Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.SetError("Could not download Game.ini")
 		      Return
 		    End If
 		    
-		    Dim Data As Dictionary = Response.Value("data")
-		    Dim TokenDict As Dictionary = Data.Value("token")
+		    Var Data As Dictionary = Response.Value("data")
+		    Var TokenDict As Dictionary = Data.Value("token")
 		    
-		    Dim Headers As New Dictionary
+		    Var Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		    
 		    SimpleHTTP.Get(TokenDict.Value("url"), AddressOf Callback_DownloadGameIni_Content, Nil, Headers)
@@ -49,7 +49,7 @@ Implements Beacon.DiscoveryEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As String = Content
+		    Var TextContent As String = Content
 		    Self.mGameIniContent = TextContent.Trim
 		    Self.DownloadGameUserSettingsIni
 		  Catch Err As RuntimeException
@@ -70,17 +70,17 @@ Implements Beacon.DiscoveryEngine
 		  End If
 		  
 		  Try
-		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
+		    Var Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.SetError("Could not download GameUserSettings.ini")
 		      Return
 		    End If
 		    
-		    Dim Data As Dictionary = Response.Value("data")
-		    Dim TokenDict As Dictionary = Data.Value("token")
+		    Var Data As Dictionary = Response.Value("data")
+		    Var TokenDict As Dictionary = Data.Value("token")
 		    
-		    Dim Headers As New Dictionary
+		    Var Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		    
 		    SimpleHTTP.Get(TokenDict.Value("url"), AddressOf Callback_DownloadGameUserSettingsIni_Content, Nil, Headers)
@@ -102,7 +102,7 @@ Implements Beacon.DiscoveryEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As String = Content
+		    Var TextContent As String = Content
 		    Self.mGameUserSettingsIniContent = TextContent.Trim
 		    
 		    Self.mStatus = "Finished"
@@ -126,20 +126,20 @@ Implements Beacon.DiscoveryEngine
 		  End If
 		  
 		  Try
-		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
-		    Dim Data As Dictionary = Response.Value("data")
-		    Dim GameServer As Dictionary = Data.Value("gameserver")
+		    Var Response As Dictionary = Beacon.ParseJSON(Content)
+		    Var Data As Dictionary = Response.Value("data")
+		    Var GameServer As Dictionary = Data.Value("gameserver")
 		    
-		    Dim Settings As Dictionary = GameServer.Value("settings")
+		    Var Settings As Dictionary = GameServer.Value("settings")
 		    
 		    Self.mCommandLineOptions = Settings.Value("start-param")
 		    
-		    Dim GameSpecific As Dictionary = GameServer.Value("game_specific")
+		    Var GameSpecific As Dictionary = GameServer.Value("game_specific")
 		    Self.mProfile.ConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
 		    
-		    Dim Config As Dictionary = Settings.Value("config")
-		    Dim MapText As String = Config.Value("map")
-		    Dim MapParts() As String = MapText.Split(",")
+		    Var Config As Dictionary = Settings.Value("config")
+		    Var MapText As String = Config.Value("map")
+		    Var MapParts() As String = MapText.Split(",")
 		    
 		    Self.mMap = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.LastRowIndex))
 		    Self.mProfile.GameShortcode = GameServer.Value("game")
@@ -182,10 +182,10 @@ Implements Beacon.DiscoveryEngine
 		Private Sub DownloadGameIni()
 		  Self.mStatus = "Downloading Game.ini…"
 		  
-		  Dim Headers As New Dictionary
+		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim FilePath As String = Self.mProfile.ConfigPath + "/Game.ini"
+		  Var FilePath As String = Self.mProfile.ConfigPath + "/Game.ini"
 		  
 		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/file_server/download?file=" + EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameIni, Nil, Headers)
 		End Sub
@@ -195,10 +195,10 @@ Implements Beacon.DiscoveryEngine
 		Private Sub DownloadGameUserSettingsIni()
 		  Self.mStatus = "Downloading GameUserSettings.ini…"
 		  
-		  Dim Headers As New Dictionary
+		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim FilePath As String = Self.mProfile.ConfigPath + "/GameUserSettings.ini"
+		  Var FilePath As String = Self.mProfile.ConfigPath + "/GameUserSettings.ini"
 		  
 		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/file_server/download?file=" + EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameUserSettingsIni, Nil, Headers)
 		End Sub
@@ -232,7 +232,7 @@ Implements Beacon.DiscoveryEngine
 		Private Sub GetServerStatus()
 		  Self.mStatus = "Getting server status…"
 		  
-		  Dim Headers As New Dictionary
+		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers", AddressOf Callback_GetServerStatus, Nil, Headers)
 		End Sub
@@ -258,8 +258,8 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub SetError(Err As RuntimeException)
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
-		  Dim Reason As String
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		  Var Reason As String
 		  If Err.Reason <> "" Then
 		    Reason = Err.Reason
 		  ElseIf Err.Message <> "" Then

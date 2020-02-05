@@ -8,10 +8,10 @@ Inherits ControlCanvas
 		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.FillRectangle(0, 0, G.Width, G.Height)
 		  
-		  Dim ContentLeft As Integer = 0
-		  Dim ContentTop As Integer = 0
-		  Dim ContentRight As Integer = G.Width
-		  Dim ContentBottom As Integer = G.Height
+		  Var ContentLeft As Integer = 0
+		  Var ContentTop As Integer = 0
+		  Var ContentRight As Integer = G.Width
+		  Var ContentBottom As Integer = G.Height
 		  
 		  If (Self.mBorders And BeaconUI.BorderTop) = BeaconUI.BorderTop Then
 		    ContentTop = ContentTop + 1
@@ -26,15 +26,15 @@ Inherits ControlCanvas
 		    ContentRight = ContentRight - 1
 		  End If
 		  
-		  Dim Clip As Graphics = G.Clip(ContentLeft, ContentTop, ContentRight - ContentLeft, ContentBottom - ContentTop)
+		  Var Clip As Graphics = G.Clip(ContentLeft, ContentTop, ContentRight - ContentLeft, ContentBottom - ContentTop)
 		  Clip.ClearRectangle(0, 0, Clip.Width, Clip.Height)
 		  Clip.FontName = "SmallSystem"
 		  Clip.FontSize = 0
 		  
-		  Dim CaptionSpace As Double = Clip.Width - 10
-		  Dim CaptionWidth As Double = Min(CaptionSpace, Clip.TextWidth(Self.Caption))
-		  Dim CaptionLeft As Double = (CaptionSpace - CaptionWidth) / 2
-		  Dim CaptionBottom As Double = (Clip.Height / 2) + (Clip.CapHeight / 2)
+		  Var CaptionSpace As Double = Clip.Width - 10
+		  Var CaptionWidth As Double = Min(CaptionSpace, Clip.TextWidth(Self.Caption))
+		  Var CaptionLeft As Double = (CaptionSpace - CaptionWidth) / 2
+		  Var CaptionBottom As Double = (Clip.Height / 2) + (Clip.CapHeight / 2)
 		  
 		  Clip.DrawingColor = SystemColors.LabelColor
 		  Clip.DrawText(Self.mCaption, CaptionLeft, CaptionBottom, CaptionSpace, True)
@@ -50,7 +50,7 @@ Inherits ControlCanvas
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Dim Mask As Integer = BeaconUI.BorderBottom Or BeaconUI.BorderLeft Or BeaconUI.BorderRight Or BeaconUI.BorderTop
+			  Var Mask As Integer = BeaconUI.BorderBottom Or BeaconUI.BorderLeft Or BeaconUI.BorderRight Or BeaconUI.BorderTop
 			  Value = Value And Mask
 			  If Self.mBorders <> Value Then
 			    Self.mBorders = Value

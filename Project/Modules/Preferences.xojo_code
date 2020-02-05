@@ -6,7 +6,7 @@ Protected Module Preferences
 		    Return
 		  End If
 		  
-		  Dim Recents() As Beacon.DocumentURL = RecentDocuments
+		  Var Recents() As Beacon.DocumentURL = RecentDocuments
 		  For I As Integer = Recents.LastRowIndex DownTo 0
 		    If Recents(I) = URL Then
 		      Recents.RemoveRowAt(I)
@@ -32,7 +32,7 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Function LastUsedConfigName(DocumentID As String) As String
-		  Dim Dict As Dictionary = mManager.DictionaryValue("Last Used Config", New Dictionary)
+		  Var Dict As Dictionary = mManager.DictionaryValue("Last Used Config", New Dictionary)
 		  If Dict.HasKey(DocumentID) Then
 		    Return Dict.Value(DocumentID)
 		  Else
@@ -43,7 +43,7 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Sub LastUsedConfigName(DocumentID As String, Assigns ConfigName As String)
-		  Dim Dict As Dictionary = mManager.DictionaryValue("Last Used Config", New Dictionary)
+		  Var Dict As Dictionary = mManager.DictionaryValue("Last Used Config", New Dictionary)
 		  Dict.Value(DocumentID) = ConfigName
 		  mManager.DictionaryValue("Last Used Config") = Dict
 		End Sub
@@ -56,15 +56,15 @@ Protected Module Preferences
 		  // When used with a freshly parsed file, the return type will be Auto()
 		  // Once the array is updated, the local copy will return Text()
 		  
-		  Dim Temp As Variant = mManager.VariantValue("Documents")
-		  Dim StoredData() As String
+		  Var Temp As Variant = mManager.VariantValue("Documents")
+		  Var StoredData() As String
 		  If Temp <> Nil Then
 		    If Temp.IsArray Then
 		      Select Case Temp.ArrayElementType
 		      Case Variant.TypeString
 		        StoredData = Temp
 		      Case Variant.TypeObject
-		        Dim Objects() As Variant = Temp
+		        Var Objects() As Variant = Temp
 		        For Each Element As Variant In Objects
 		          Try
 		            StoredData.AddRow(Element.StringValue)
@@ -81,7 +81,7 @@ Protected Module Preferences
 		    End If
 		  End If
 		  
-		  Dim Values() As Beacon.DocumentURL
+		  Var Values() As Beacon.DocumentURL
 		  For Each Value As String In StoredData
 		    Try
 		      Values.AddRow(New Beacon.DocumentURL(Value))
@@ -95,8 +95,8 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Sub RecentDocuments(Assigns Values() As Beacon.DocumentURL)
-		  Dim URLs() As String
-		  Redim URLs(Values.LastRowIndex)
+		  Var URLs() As String
+		  URLs.ResizeTo(Values.LastRowIndex)
 		  For I As Integer = 0 To Values.LastRowIndex
 		    URLs(I) = Values(I).URL
 		  Next
@@ -109,13 +109,13 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Function SelectedTag(Category As String, Subgroup As String) As String
-		  Dim Key As String = "Selected " + Category.TitleCase
+		  Var Key As String = "Selected " + Category.TitleCase
 		  If Subgroup <> "" Then
 		    Key = Key + "." + Subgroup.TitleCase
 		  End If
 		  Key = Key + " Tag"
 		  
-		  Dim Default As String
+		  Var Default As String
 		  
 		  Select Case Category
 		  Case Beacon.CategoryEngrams
@@ -140,7 +140,7 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Sub SelectedTag(Category As String, Subgroup As String, Assigns Value As String)
-		  Dim Key As String = "Selected " + Category.TitleCase
+		  Var Key As String = "Selected " + Category.TitleCase
 		  If Subgroup <> "" Then
 		    Key = Key + "." + Subgroup.TitleCase
 		  End If

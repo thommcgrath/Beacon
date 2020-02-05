@@ -202,45 +202,45 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As Window, SourceDocuments() As Beacon.Document, DestinationDocument As Beacon.Document, Callback As MergeFinishedCallback = Nil)
-		  Dim OAuthData As New Dictionary
+		  Var OAuthData As New Dictionary
 		  For Each Document As Beacon.Document In SourceDocuments
 		    For I As Integer = 0 To Document.ServerProfileCount - 1
-		      Dim Profile As Beacon.ServerProfile = Document.ServerProfile(I)
+		      Var Profile As Beacon.ServerProfile = Document.ServerProfile(I)
 		      If Profile.OAuthProvider <> "" Then
 		        OAuthData.Value(Profile.OAuthProvider) = Document.OAuthData(Profile.OAuthProvider)
 		      End If
 		    Next
 		  Next
 		  
-		  Dim MapMask As UInt64
+		  Var MapMask As UInt64
 		  For Each Document As Beacon.Document In SourceDocuments
 		    MapMask = MapMask Or Document.MapCompatibility
 		  Next
-		  Dim NewMaps() As Beacon.Map = Beacon.Maps.ForMask(MapMask)
+		  Var NewMaps() As Beacon.Map = Beacon.Maps.ForMask(MapMask)
 		  For I As Integer = NewMaps.LastRowIndex DownTo 0
 		    If DestinationDocument.SupportsMap(NewMaps(I)) Then
 		      NewMaps.RemoveRowAt(I)
 		    End If
 		  Next
-		  Dim OldMaps() As Beacon.Map = DestinationDocument.Maps
+		  Var OldMaps() As Beacon.Map = DestinationDocument.Maps
 		  For I As Integer = OldMaps.LastRowIndex DownTo 0
 		    If OldMaps(I).Matches(MapMask) Then
 		      OldMaps.RemoveRowAt(I)
 		    End If
 		  Next
 		  
-		  Dim Win As New DocumentMergerWindow
+		  Var Win As New DocumentMergerWindow
 		  Win.mDestination = DestinationDocument
 		  Win.mOAuthData = OAuthData
 		  Win.mCallback = Callback
-		  Dim Enabled As Boolean
-		  Dim UsePrefixes As Boolean = SourceDocuments.LastRowIndex > 0
+		  Var Enabled As Boolean
+		  Var UsePrefixes As Boolean = SourceDocuments.LastRowIndex > 0
 		  For Each Document As Beacon.Document In SourceDocuments
-		    Dim Prefix As String = If(UsePrefixes, Document.Title + ": ", "")
-		    Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
+		    Var Prefix As String = If(UsePrefixes, Document.Title + ": ", "")
+		    Var Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
 		    For Each Config As Beacon.ConfigGroup In Configs
-		      Dim CurrentConfig As Beacon.ConfigGroup = DestinationDocument.ConfigGroup(Config.ConfigName)
-		      Dim CellContent As String = Prefix + Language.LabelForConfig(Config)
+		      Var CurrentConfig As Beacon.ConfigGroup = DestinationDocument.ConfigGroup(Config.ConfigName)
+		      Var CellContent As String = Prefix + Language.LabelForConfig(Config)
 		      If Not Config.WasPerfectImport Then
 		        If Win.List.DefaultRowHeight <> 40 Then
 		          Win.List.DefaultRowHeight = 40
@@ -334,36 +334,36 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim PreviousMods As New Beacon.StringList(Self.mDestination.Mods)
+		  Var PreviousMods As New Beacon.StringList(Self.mDestination.Mods)
 		  
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.CellCheckBoxValueAt(I, 0) Or Self.List.RowTagAt(I) = Nil Then
 		      Continue
 		    End If
 		    
-		    Dim Tag As Variant = Self.List.RowTagAt(I)
+		    Var Tag As Variant = Self.List.RowTagAt(I)
 		    Select Case Tag.Type
 		    Case Variant.TypeObject
 		      Select Case Tag
 		      Case IsA Beacon.ConfigGroup
-		        Dim Config As Beacon.ConfigGroup = Tag
+		        Var Config As Beacon.ConfigGroup = Tag
 		        Self.mDestination.AddConfigGroup(Config)
 		      Case IsA Beacon.ServerProfile
-		        Dim Profile As Beacon.ServerProfile = Tag
+		        Var Profile As Beacon.ServerProfile = Tag
 		        Self.mDestination.Add(Profile)
 		        
 		        If Profile.OAuthProvider <> "" And Self.mOAuthData.HasKey(Profile.OAuthProvider) Then
-		          Dim OAuthData As Dictionary = Self.mOAuthData.Value(Profile.OAuthProvider)
+		          Var OAuthData As Dictionary = Self.mOAuthData.Value(Profile.OAuthProvider)
 		          If OAuthData <> Nil Then
 		            Self.mDestination.OAuthData(Profile.OAuthProvider) = OAuthData
 		          End If
 		        End If
 		      End Select
 		    Case Variant.TypeString
-		      Dim StringValue As String = Tag.StringValue
+		      Var StringValue As String = Tag.StringValue
 		      If StringValue.BeginsWith("Map") Then
-		        Dim Operator As String = StringValue.Middle(3, 1)
-		        Dim Mask As UInt64 = Val(StringValue.Middle(4))
+		        Var Operator As String = StringValue.Middle(3, 1)
+		        Var Mask As UInt64 = Val(StringValue.Middle(4))
 		        If Operator = "+" Then
 		          Self.mDestination.MapCompatibility = Self.mDestination.MapCompatibility Or Mask
 		        Else
@@ -374,7 +374,7 @@ End
 		  Next
 		  
 		  If Self.mDestination.Mods <> PreviousMods Then
-		    Dim Notification As New Beacon.UserNotification("The list of mods enabled for document """ + Self.mDestination.Title + """ has changed.")
+		    Var Notification As New Beacon.UserNotification("The list of mods enabled for document """ + Self.mDestination.Title + """ has changed.")
 		    Notification.SecondaryMessage = "You can change the enabled mods in the """ + Language.LabelForConfig(BeaconConfigs.Metadata.ConfigName) + """ config group."
 		    LocalData.SharedInstance.SaveNotification(Notification)
 		  End If

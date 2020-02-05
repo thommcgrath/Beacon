@@ -4,16 +4,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Function AddBlueprintToDatabase(Category As String, BlueprintData As Dictionary, ExtraValues As Dictionary = Nil) As Boolean
 		  Try
-		    Dim ObjectID As v4UUID = BlueprintData.Value("id").StringValue
-		    Dim Label As String = BlueprintData.Value("label")
-		    Dim ModID As v4UUID = Dictionary(BlueprintData.Value("mod")).Value("id").StringValue
-		    Dim Availability As Integer = BlueprintData.Value("availability").IntegerValue
-		    Dim Path As String = BlueprintData.Value("path").StringValue
-		    Dim ClassString As String = BlueprintData.Value("class_string").StringValue
-		    Dim TagString, TagStringForSearching As String
+		    Var ObjectID As v4UUID = BlueprintData.Value("id").StringValue
+		    Var Label As String = BlueprintData.Value("label")
+		    Var ModID As v4UUID = Dictionary(BlueprintData.Value("mod")).Value("id").StringValue
+		    Var Availability As Integer = BlueprintData.Value("availability").IntegerValue
+		    Var Path As String = BlueprintData.Value("path").StringValue
+		    Var ClassString As String = BlueprintData.Value("class_string").StringValue
+		    Var TagString, TagStringForSearching As String
 		    Try
-		      Dim Tags() As String
-		      Dim Temp() As Variant = BlueprintData.Value("tags")
+		      Var Tags() As String
+		      Var Temp() As Variant = BlueprintData.Value("tags")
 		      For Each Tag As String In Temp
 		        Tags.AddRow(Tag)
 		      Next
@@ -26,7 +26,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    // Set the extra values first so our values take priority without
 		    // using HasKey, which would cost performance
-		    Dim Columns As New Dictionary
+		    Var Columns As New Dictionary
 		    If ExtraValues <> Nil Then
 		      For Each Entry As DictionaryEntry In ExtraValues
 		        Columns.Value(Entry.Key) = Entry.Value
@@ -40,12 +40,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Columns.Value("class_string") = ClassString
 		    Columns.Value("tags") = TagString
 		    
-		    Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID.StringValue, Path.Lowercase)
+		    Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID.StringValue, Path.Lowercase)
 		    If Results.RowCount = 1 And ObjectID = Results.Column("object_id").StringValue Then
-		      Dim Assignments() As String
-		      Dim Values() As Variant
-		      Dim NextPlaceholder As Integer = 1
-		      Dim WhereClause As String
+		      Var Assignments() As String
+		      Var Values() As Variant
+		      Var NextPlaceholder As Integer = 1
+		      Var WhereClause As String
 		      For Each Entry As DictionaryEntry In Columns
 		        If Entry.Key = "object_id" Then
 		          WhereClause = "object_id = ?" + NextPlaceholder.ToString
@@ -64,9 +64,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id = ?1 AND source_table = ?3;", Results.Column("object_id").StringValue, Category)
 		      End If
 		      
-		      Dim ColumnNames(), Placeholders() As String
-		      Dim Values() As Variant
-		      Dim NextPlaceholder As Integer = 1
+		      Var ColumnNames(), Placeholders() As String
+		      Var Values() As Variant
+		      Var NextPlaceholder As Integer = 1
 		      For Each Entry As DictionaryEntry In Columns
 		        ColumnNames.AddRow(Entry.Key.StringValue)
 		        Placeholders.AddRow("?" + NextPlaceholder.ToString)
@@ -88,7 +88,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Sub AddPresetModifier(Modifier As Beacon.PresetModifier)
 		  Self.BeginTransaction()
-		  Dim Results As RowSet = Self.SQLSelect("SELECT mod_id FROM preset_modifiers WHERE object_id = ?1;", Modifier.ModifierID)
+		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id FROM preset_modifiers WHERE object_id = ?1;", Modifier.ModifierID)
 		  If Results.RowCount = 1 Then
 		    If Results.Column("mod_id").StringValue = Self.UserModID Then
 		      Self.SQLExecute("UPDATE preset_modifiers SET label = ?2, pattern = ?3 WHERE object_id = ?1;", Modifier.ModifierID, Modifier.Label, Modifier.Pattern)
@@ -102,8 +102,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function AllMods() As Beacon.ModDetails()
-		  Dim Mods() As Beacon.ModDetails
-		  Dim Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe FROM mods ORDER BY name;")
+		  Var Mods() As Beacon.ModDetails
+		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe FROM mods ORDER BY name;")
 		  While Not Results.AfterLastRow
 		    Mods.AddRow(New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue))
 		    Results.MoveToNextRow
@@ -114,15 +114,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function AllPresetModifiers() As Beacon.PresetModifier()
-		  Dim Results As RowSet = Self.SQLSelect("SELECT object_id, label, pattern FROM preset_modifiers ORDER BY label;")
-		  Dim Modifiers() As Beacon.PresetModifier
+		  Var Results As RowSet = Self.SQLSelect("SELECT object_id, label, pattern FROM preset_modifiers ORDER BY label;")
+		  Var Modifiers() As Beacon.PresetModifier
 		  While Not Results.AfterLastRow
-		    Dim Dict As New Dictionary
+		    Var Dict As New Dictionary
 		    Dict.Value("ModifierID") = Results.Column("object_id").StringValue
 		    Dict.Value("Pattern") = Results.Column("pattern").StringValue
 		    Dict.Value("Label") = Results.Column("label").StringValue
 		    
-		    Dim Modifier As Beacon.PresetModifier = Beacon.PresetModifier.FromDictionary(Dict)
+		    Var Modifier As Beacon.PresetModifier = Beacon.PresetModifier.FromDictionary(Dict)
 		    If Modifier <> Nil Then
 		      Modifiers.AddRow(Modifier)
 		    End If
@@ -135,15 +135,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function AllTags(Category As String = "") As String()
-		  Dim Results As RowSet
+		  Var Results As RowSet
 		  If Category <> "" Then
 		    Results = Self.SQLSelect("SELECT DISTINCT tags FROM searchable_tags WHERE source_table = $1 AND tags != '';", Category)
 		  Else
 		    Results = Self.SQLSelect("SELECT DISTINCT tags FROM searchable_tags WHERE tags != '';")
 		  End If
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  While Not Results.AfterLastRow
-		    Dim Tags() As String = Results.Column("tags").StringValue.Split(",")
+		    Var Tags() As String = Results.Column("tags").StringValue.Split(",")
 		    For Each Tag As String In Tags
 		      If Tag <> "object" Then
 		        Dict.Value(Tag) = True
@@ -152,8 +152,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Results.MoveToNextRow
 		  Wend
 		  
-		  Dim Keys() As Variant = Dict.Keys
-		  Dim Tags() As String
+		  Var Keys() As Variant = Dict.Keys
+		  Var Tags() As String
 		  For Each Key As String In Keys
 		    Tags.AddRow(Key)
 		  Next
@@ -171,7 +171,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.mTransactions.AddRowAt(0, "")
 		    Self.SQLExecute("BEGIN TRANSACTION;")
 		  Else
-		    Dim Savepoint As String = "Savepoint_" + EncodeHex(Crypto.GenerateRandomBytes(4))
+		    Var Savepoint As String = "Savepoint_" + EncodeHex(Crypto.GenerateRandomBytes(4))
 		    Self.mTransactions.AddRowAt(0, Savepoint)
 		    Self.SQLExecute("SAVEPOINT " + Savepoint + ";")
 		  End If
@@ -183,7 +183,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("PRAGMA foreign_keys = ON;")
 		  Self.SQLExecute("PRAGMA journal_mode = WAL;")
 		  
-		  Dim ModsOnDelete As String
+		  Var ModsOnDelete As String
 		  #if DebugBuild
 		    ModsOnDelete = "RESTRICT"
 		  #else
@@ -208,8 +208,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts5(tags, object_id, source_table);")
 		  
 		  Self.SQLExecute("CREATE VIEW blueprints AS SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryEngrams + "' AS category FROM engrams UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryCreatures + "' AS category FROM creatures UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategorySpawnPoints + "' AS category FROM spawn_points")
-		  Dim Categories() As String = Beacon.Categories
-		  Dim DeleteStatements() As String
+		  Var Categories() As String = Beacon.Categories
+		  Var DeleteStatements() As String
 		  For Each Category As String In Categories
 		    DeleteStatements.AddRow("DELETE FROM " + Category + " WHERE object_id = OLD.object_id;")
 		  Next
@@ -245,7 +245,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Self.mCheckingForUpdates = True
-		  Dim CheckURL As String = Self.ClassesURL()
+		  Var CheckURL As String = Self.ClassesURL()
 		  App.Log("Checking for engram updates from " + CheckURL)
 		  Self.mUpdater.Send("GET", CheckURL)
 		End Sub
@@ -253,10 +253,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function ClassesURL() As String
-		  Dim Version As Integer = App.BuildNumber
+		  Var Version As Integer = App.BuildNumber
 		  
-		  Dim LastSync As String = Self.Variable("sync_time")
-		  Dim CheckURL As String = Beacon.WebURL("/download/classes?version=" + Version.ToString)
+		  Var LastSync As String = Self.Variable("sync_time")
+		  Var CheckURL As String = Beacon.WebURL("/download/classes?version=" + Version.ToString)
 		  If LastSync <> "" Then
 		    CheckURL = CheckURL + "&changes_since=" + EncodeURLComponent(LastSync)
 		  End If
@@ -292,7 +292,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Dim Savepoint As String = Self.mTransactions(0)
+		  Var Savepoint As String = Self.mTransactions(0)
 		  Self.mTransactions.RemoveRowAt(0)
 		  
 		  If Savepoint = "" Then
@@ -308,8 +308,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function ConsoleSafeMods() As String()
-		  Dim Results As RowSet = Self.SQLSelect("SELECT mod_id FROM mods WHERE console_safe = 1;")
-		  Dim Mods() As String
+		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id FROM mods WHERE console_safe = 1;")
+		  Var Mods() As String
 		  While Not Results.AfterLastRow
 		    Mods.AddRow(Results.Column("mod_id").StringValue)
 		    Results.MoveToNextRow
@@ -325,10 +325,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.mSpawnPointCache = New Dictionary
 		  Self.mLock = New CriticalSection
 		  
-		  Dim AppSupport As FolderItem = App.ApplicationSupport
-		  Dim ShouldImportCloud As Boolean
+		  Var AppSupport As FolderItem = App.ApplicationSupport
+		  Var ShouldImportCloud As Boolean
 		  
-		  Dim LegacyFile As FolderItem = AppSupport.Child("Beacon.sqlite")
+		  Var LegacyFile As FolderItem = AppSupport.Child("Beacon.sqlite")
 		  If LegacyFile.Exists Then
 		    LegacyFile.Remove
 		  End If
@@ -347,20 +347,20 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    ShouldImportCloud = True
 		  End If
 		  
-		  Dim CurrentSchemaVersion As Integer = Self.mBase.UserVersion
-		  Dim MigrateFile As FolderItem
+		  Var CurrentSchemaVersion As Integer = Self.mBase.UserVersion
+		  Var MigrateFile As FolderItem
 		  If CurrentSchemaVersion <> Self.SchemaVersion Then
 		    Self.mBase.Close
 		    
-		    Dim BackupsFolder As FolderItem = AppSupport.Child("Old Libraries")
+		    Var BackupsFolder As FolderItem = AppSupport.Child("Old Libraries")
 		    If Not BackupsFolder.Exists Then
 		      BackupsFolder.CreateFolder
 		    End If
 		    
 		    // Relocate the current library
-		    Dim Counter As Integer = 1
+		    Var Counter As Integer = 1
 		    Do
-		      Dim Destination As FolderItem = BackupsFolder.Child("Library " + Str(CurrentSchemaVersion, "-0") + If(Counter > 1, "-" + Str(Counter, "-0"), "") + ".sqlite")
+		      Var Destination As FolderItem = BackupsFolder.Child("Library " + Str(CurrentSchemaVersion, "-0") + If(Counter > 1, "-" + Str(Counter, "-0"), "") + ".sqlite")
 		      If Destination.Exists Then
 		        Counter = Counter + 1
 		        Continue
@@ -371,16 +371,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Loop
 		    
 		    // See if there is already a library, such as if the user went switched backward and forward between versions
-		    Dim SearchFolders(1) As FolderItem
+		    Var SearchFolders(1) As FolderItem
 		    SearchFolders(0) = BackupsFolder
 		    SearchFolders(1) = AppSupport
-		    Dim SearchPrefix As String = "Library " + Str(Self.SchemaVersion, "-0")
-		    Dim SearchSuffix As String = ".sqlite"
+		    Var SearchPrefix As String = "Library " + Str(Self.SchemaVersion, "-0")
+		    Var SearchSuffix As String = ".sqlite"
 		    For Each SearchFolder As FolderItem In SearchFolders
-		      Dim Candidates() As FolderItem
-		      Dim Versions() As Integer
+		      Var Candidates() As FolderItem
+		      Var Versions() As Integer
 		      For I As Integer = 0 To SearchFolder.Count - 1
-		        Dim Filename As String = SearchFolder.ChildAt(I).Name
+		        Var Filename As String = SearchFolder.ChildAt(I).Name
 		        If Filename = SearchPrefix + SearchSuffix Then
 		          Candidates.AddRow(SearchFolder.ChildAt(I))
 		          Versions.AddRow(1)
@@ -393,7 +393,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      If Candidates.LastRowIndex > -1 Then
 		        Versions.SortWith(Candidates)
 		        
-		        Dim RestoreFile As FolderItem = Candidates(Candidates.LastRowIndex)
+		        Var RestoreFile As FolderItem = Candidates(Candidates.LastRowIndex)
 		        RestoreFile.MoveTo(AppSupport.Child("Library.sqlite"))
 		        
 		        Self.mBase = New SQLiteDatabase
@@ -417,7 +417,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("UPDATE mods SET console_safe = ?2 WHERE mod_id = ?1 AND console_safe != ?2;", Self.UserModID, True)
 		  Self.Commit()
 		  
-		  Dim Migrated As Boolean
+		  Var Migrated As Boolean
 		  If MigrateFile <> Nil And MigrateFile.Exists And CurrentSchemaVersion < Self.SchemaVersion Then
 		    Try
 		      Migrated = Self.MigrateData(MigrateFile, CurrentSchemaVersion)
@@ -436,7 +436,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub DeleteBlueprint(Blueprint As Beacon.Blueprint)
-		  Dim Arr(0) As Beacon.Blueprint
+		  Var Arr(0) As Beacon.Blueprint
 		  Arr(0) = Blueprint
 		  Self.DeleteBlueprints(Arr)
 		End Sub
@@ -444,7 +444,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub DeleteBlueprints(Blueprints() As Beacon.Blueprint)
-		  Dim ObjectIDs() As String
+		  Var ObjectIDs() As String
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    ObjectIDs.AddRow("'" + Blueprint.ObjectID + "'")
 		  Next
@@ -516,7 +516,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetBooleanVariable(Key As String, Default As Boolean = False) As Boolean
-		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
+		  Var Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RowCount = 1 Then
 		    Return Results.Column("value").BooleanValue
 		  Else
@@ -527,7 +527,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetConfigHelp(ConfigName As String, ByRef Title As String, ByRef Body As String, ByRef DetailURL As String) As Boolean
-		  Dim Results As RowSet = Self.SQLSelect("SELECT title, body, detail_url FROM config_help WHERE config_name = ?1;", ConfigName.Lowercase)
+		  Var Results As RowSet = Self.SQLSelect("SELECT title, body, detail_url FROM config_help WHERE config_name = ?1;", ConfigName.Lowercase)
 		  If Results.RowCount <> 1 Then
 		    Return False
 		  End If
@@ -620,12 +620,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function GetCustomEngrams() As Beacon.Engram()
 		  Try
-		    Dim RS As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE mods.mod_id = ?1;", Self.UserModID)
+		    Var RS As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE mods.mod_id = ?1;", Self.UserModID)
 		    If RS.RowCount = 0 Then
 		      Return Nil
 		    End If
 		    
-		    Dim Engrams() As Beacon.Engram = Self.RowSetToEngram(RS)
+		    Var Engrams() As Beacon.Engram = Self.RowSetToEngram(RS)
 		    For Each Engram As Beacon.Engram In Engrams
 		      Self.mEngramCache.Value(Engram.Path) = Engram
 		    Next
@@ -638,7 +638,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetDoubleVariable(Key As String, Default As Double = 0.0) As Double
-		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
+		  Var Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RowCount = 1 Then
 		    Return Results.Column("value").DoubleValue
 		  Else
@@ -726,7 +726,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetIntegerVariable(Key As String, Default As Integer = 0) As Integer
-		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
+		  Var Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RowCount = 1 Then
 		    Return Results.Column("value").IntegerValue
 		  Else
@@ -740,12 +740,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Try
-		    Dim Results As RowSet = Self.SQLSelect("SELECT " + Self.LootSourcesSelectColumns + " FROM loot_sources WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
+		    Var Results As RowSet = Self.SQLSelect("SELECT " + Self.LootSourcesSelectColumns + " FROM loot_sources WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
 		    If Results.RowCount = 0 Then
 		      Return Nil
 		    End If
 		    
-		    Dim Sources() As Beacon.LootSource = Self.RowSetToLootSource(Results)
+		    Var Sources() As Beacon.LootSource = Self.RowSetToLootSource(Results)
 		    Return Sources(0)
 		  Catch Err As UnsupportedOperationException
 		    Return Nil
@@ -755,10 +755,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetNotifications() As Beacon.UserNotification()
-		  Dim Notifications() As Beacon.UserNotification
-		  Dim Results As RowSet = Self.SQLSelect("SELECT * FROM notifications WHERE deleted = 0 ORDER BY moment DESC;")
+		  Var Notifications() As Beacon.UserNotification
+		  Var Results As RowSet = Self.SQLSelect("SELECT * FROM notifications WHERE deleted = 0 ORDER BY moment DESC;")
 		  While Not Results.AfterLastRow
-		    Dim Notification As New Beacon.UserNotification
+		    Var Notification As New Beacon.UserNotification
 		    Notification.Message = Results.Column("message").StringValue
 		    Notification.SecondaryMessage = Results.Column("secondary_message").StringValue
 		    Notification.ActionURL = Results.Column("action_url").StringValue
@@ -788,12 +788,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetPresetModifier(ModifierID As String) As Beacon.PresetModifier
-		  Dim Results As RowSet = Self.SQLSelect("SELECT object_id, label, pattern FROM preset_modifiers WHERE LOWER(object_id) = LOWER(?1);", ModifierID)
+		  Var Results As RowSet = Self.SQLSelect("SELECT object_id, label, pattern FROM preset_modifiers WHERE LOWER(object_id) = LOWER(?1);", ModifierID)
 		  If Results.RowCount <> 1 Then
 		    Return Nil
 		  End If
 		  
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("ModifierID") = Results.Column("object_id").StringValue
 		  Dict.Value("Pattern") = Results.Column("pattern").StringValue
 		  Dict.Value("Label") = Results.Column("label").StringValue
@@ -899,9 +899,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetStringVariable(Key As String, Default As String = "") As String
-		  Dim Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
+		  Var Results As RowSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RowCount = 1 Then
-		    Dim StringValue As String = Results.Column("value").StringValue
+		    Var StringValue As String = Results.Column("value").StringValue
 		    If StringValue.Encoding = Nil Then
 		      If Encodings.UTF8.IsValidData(StringValue) Then
 		        StringValue = StringValue.DefineEncoding(Encodings.UTF8)
@@ -919,13 +919,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function HasExperimentalLootSources(Mods As Beacon.StringList) As Boolean
 		  Try
-		    Dim Clauses(0) As String
+		    Var Clauses(0) As String
 		    Clauses(0) = "experimental = 1"
 		    
-		    Dim Values As New Dictionary
-		    Dim NextPlaceholder As Integer = 1
+		    Var Values As New Dictionary
+		    Var NextPlaceholder As Integer = 1
 		    If Mods.LastRowIndex > -1 Then
-		      Dim Placeholders() As String
+		      Var Placeholders() As String
 		      For Each ModID As String In Mods
 		        Placeholders.AddRow("?" + Str(NextPlaceholder))
 		        Values.Value(NextPlaceholder) = ModID
@@ -934,8 +934,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Clauses.AddRow("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
 		    End If
 		    
-		    Dim SQL As String = "SELECT COUNT(loot_sources.object_id) FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id) WHERE (" + Clauses.Join(") AND (") + ");"
-		    Dim Results As RowSet
+		    Var SQL As String = "SELECT COUNT(loot_sources.object_id) FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id) WHERE (" + Clauses.Join(") AND (") + ");"
+		    Var Results As RowSet
 		    If Values.KeyCount > 0 Then
 		      Results = Self.SQLSelect(SQL, Values)
 		    Else
@@ -953,13 +953,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Const IncludeExperimentalBadge = False
 		  
 		  // "Fix" background color to account for opacity. It's not perfect, but it's good.
-		  Dim BackgroundOpacity As Double = (255 - BackgroundColor.Alpha) / 255
+		  Var BackgroundOpacity As Double = (255 - BackgroundColor.Alpha) / 255
 		  BackgroundColor = SystemColors.UnderPageBackgroundColor.BlendWith(RGB(BackgroundColor.Red, BackgroundColor.Green, BackgroundColor.Blue), BackgroundOpacity)
 		  
-		  Dim PrimaryColor, AccentColor As Color
-		  Dim IconID As String
-		  Dim Results As RowSet = Self.SQLSelect("SELECT loot_source_icons.icon_id, loot_source_icons.icon_data, loot_sources.experimental FROM loot_sources INNER JOIN loot_source_icons ON (loot_sources.icon = loot_source_icons.icon_id) WHERE loot_sources.class_string = ?1;", Source.ClassString)
-		  Dim SpriteSheet, BadgeSheet As Picture
+		  Var PrimaryColor, AccentColor As Color
+		  Var IconID As String
+		  Var Results As RowSet = Self.SQLSelect("SELECT loot_source_icons.icon_id, loot_source_icons.icon_data, loot_sources.experimental FROM loot_sources INNER JOIN loot_source_icons ON (loot_sources.icon = loot_source_icons.icon_id) WHERE loot_sources.class_string = ?1;", Source.ClassString)
+		  Var SpriteSheet, BadgeSheet As Picture
 		  If Results.RowCount = 1 Then
 		    SpriteSheet = Results.Column("icon_data").PictureValue
 		    If IncludeExperimentalBadge And Results.Column("experimental").BooleanValue Then
@@ -998,21 +998,21 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  PrimaryColor = BeaconUI.FindContrastingColor(BackgroundColor, PrimaryColor)
 		  
-		  Dim Height As Integer = (SpriteSheet.Height / 2) / 3
-		  Dim Width As Integer = (SpriteSheet.Width / 2) / 3
+		  Var Height As Integer = (SpriteSheet.Height / 2) / 3
+		  Var Width As Integer = (SpriteSheet.Width / 2) / 3
 		  
 		  If BadgeSheet <> Nil Then
-		    Dim BadgesMask As New Picture(BadgeSheet.Width, BadgeSheet.Height)
+		    Var BadgesMask As New Picture(BadgeSheet.Width, BadgeSheet.Height)
 		    BadgesMask.Graphics.DrawingColor = &cFFFFFF
 		    BadgesMask.Graphics.FillRectangle(0, 0, BadgesMask.Width, BadgesMask.Height)
 		    BadgesMask.Graphics.DrawPicture(BadgeSheet, 0, 0)
 		    
-		    Dim Badges As Picture = New Picture(BadgeSheet.Width, BadgeSheet.Height)
+		    Var Badges As Picture = New Picture(BadgeSheet.Width, BadgeSheet.Height)
 		    Badges.Graphics.DrawingColor = &cFFFFFF
 		    Badges.Graphics.FillRectangle(0, 0, Badges.Graphics.Width, Badges.Graphics.Height)
 		    Badges.ApplyMask(BadgesMask)
 		    
-		    Dim Sprites As Picture = New Picture(SpriteSheet.Width, SpriteSheet.Height, 32)
+		    Var Sprites As Picture = New Picture(SpriteSheet.Width, SpriteSheet.Height, 32)
 		    Sprites.Graphics.DrawPicture(SpriteSheet, 0, 0)
 		    Sprites.Graphics.DrawPicture(Badges.Piece(0, 0, Width, Height), 0, Height)
 		    Sprites.Graphics.DrawPicture(Badges.Piece(Width, 0, Width * 2, Height * 2), Width, Height * 2)
@@ -1024,25 +1024,25 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    SpriteSheet = Sprites
 		  End If
 		  
-		  Dim Highlight1x As Picture = SpriteSheet.Piece(0, 0, Width, Height)
-		  Dim Highlight2x As Picture = SpriteSheet.Piece(Width, 0, Width * 2, Height * 2)
-		  Dim Highlight3x As Picture = SpriteSheet.Piece(Width * 3, 0, Width * 3, Height * 3)
-		  Dim HighlightMask As New Picture(Width, Height, Array(Highlight1x, Highlight2x, Highlight3x))
+		  Var Highlight1x As Picture = SpriteSheet.Piece(0, 0, Width, Height)
+		  Var Highlight2x As Picture = SpriteSheet.Piece(Width, 0, Width * 2, Height * 2)
+		  Var Highlight3x As Picture = SpriteSheet.Piece(Width * 3, 0, Width * 3, Height * 3)
+		  Var HighlightMask As New Picture(Width, Height, Array(Highlight1x, Highlight2x, Highlight3x))
 		  
-		  Dim Color1x As Picture = SpriteSheet.Piece(0, Height, Width, Height)
-		  Dim Color2x As Picture = SpriteSheet.Piece(Width, Height * 2, Width * 2, Height * 2)
-		  Dim Color3x As Picture = SpriteSheet.Piece(Width * 3, Height * 3, Width * 3, Height * 3)
-		  Dim ColorMask As New Picture(Width, Height, Array(Color1x, Color2x, Color3x))
+		  Var Color1x As Picture = SpriteSheet.Piece(0, Height, Width, Height)
+		  Var Color2x As Picture = SpriteSheet.Piece(Width, Height * 2, Width * 2, Height * 2)
+		  Var Color3x As Picture = SpriteSheet.Piece(Width * 3, Height * 3, Width * 3, Height * 3)
+		  Var ColorMask As New Picture(Width, Height, Array(Color1x, Color2x, Color3x))
 		  
-		  Dim Highlight As Picture = HighlightMask.WithColor(PrimaryColor)
-		  Dim Fill As Picture = ColorMask.WithColor(AccentColor)
+		  Var Highlight As Picture = HighlightMask.WithColor(PrimaryColor)
+		  Var Fill As Picture = ColorMask.WithColor(AccentColor)
 		  
-		  Dim Bitmaps() As Picture
+		  Var Bitmaps() As Picture
 		  For Factor As Integer = 1 To 3
-		    Dim HighlightRep As Picture = Highlight.BestRepresentation(Width, Height, Factor)
-		    Dim ColorRep As Picture = Fill.BestRepresentation(Width, Height, Factor)
+		    Var HighlightRep As Picture = Highlight.BestRepresentation(Width, Height, Factor)
+		    Var ColorRep As Picture = Fill.BestRepresentation(Width, Height, Factor)
 		    
-		    Dim Combined As New Picture(Width * Factor, Width * Factor)
+		    Var Combined As New Picture(Width * Factor, Width * Factor)
 		    Combined.VerticalResolution = 72 * Factor
 		    Combined.HorizontalResolution = 72 * Factor
 		    Combined.Graphics.DrawPicture(HighlightRep, 0, 0, Combined.Width, Combined.Height, 0, 0, HighlightRep.Width, HighlightRep.Height)
@@ -1051,7 +1051,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Bitmaps.AddRow(Combined)
 		  Next
 		  
-		  Dim Icon As New Picture(Width, Height, Bitmaps)
+		  Var Icon As New Picture(Width, Height, Bitmaps)
 		  Self.IconCache.Value(IconID) = Icon
 		  Return Icon
 		End Function
@@ -1074,14 +1074,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Function ImportCloudEngrams() As Boolean
-		  Dim EngramsUpdated As Boolean = False
-		  Dim EngramsContent As MemoryBlock = UserCloud.Read("/Engrams.json")
+		  Var EngramsUpdated As Boolean = False
+		  Var EngramsContent As MemoryBlock = UserCloud.Read("/Engrams.json")
 		  If EngramsContent = Nil Then
 		    Return False
 		  End If
-		  Dim Blueprints() As Variant
+		  Var Blueprints() As Variant
 		  Try
-		    Dim StringContent As String = EngramsContent
+		    Var StringContent As String = EngramsContent
 		    Blueprints = Beacon.ParseJSON(StringContent.DefineEncoding(Encodings.UTF8))
 		  Catch Err As RuntimeException
 		    Return False
@@ -1090,18 +1090,18 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.DeleteDataForMod(Self.UserModID)
 		  For Each Dict As Dictionary In Blueprints
 		    Try
-		      Dim Category As String = Dict.Value("category")
-		      Dim Path As String = Dict.Value("path") 
-		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE LOWER(path) = ?1;", Path.Lowercase)
+		      Var Category As String = Dict.Value("category")
+		      Var Path As String = Dict.Value("path") 
+		      Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE LOWER(path) = ?1;", Path.Lowercase)
 		      If Results.RowCount <> 0 Then
 		        Continue
 		      End If
 		      
-		      Dim ObjectID As v4UUID = Dict.Value("object_id").StringValue
-		      Dim ClassString As String = Dict.Value("class_string")
-		      Dim Label As String = Dict.Value("label")         
-		      Dim Availability As UInt64 = Dict.Value("availability")
-		      Dim Tags As String = Dict.Value("tags")
+		      Var ObjectID As v4UUID = Dict.Value("object_id").StringValue
+		      Var ClassString As String = Dict.Value("class_string")
+		      Var Label As String = Dict.Value("label")         
+		      Var Availability As UInt64 = Dict.Value("availability")
+		      Var Tags As String = Dict.Value("tags")
 		      Self.SQLExecute("INSERT INTO " + Category + " (object_id, class_string, label, path, availability, tags, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  ObjectID.StringValue, ClassString, Label, Path, Availability, Tags, Self.UserModID)      
 		      Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, ?3);", ObjectID.StringValue, Tags, Category)
 		      EngramsUpdated = True
@@ -1124,7 +1124,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.BeginTransaction()
 		  Var PresetPaths() As String = UserCloud.List("/Presets/")
 		  For Each RemotePath As String In PresetPaths
-		    Dim PresetContents As MemoryBlock = UserCloud.Read(RemotePath)
+		    Var PresetContents As MemoryBlock = UserCloud.Read(RemotePath)
 		    If PresetContents <> Nil Then
 		      Call Self.ImportPreset(PresetContents)
 		    End If
@@ -1138,9 +1138,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub ImportCloudFiles(Actions() As Dictionary)
-		  Dim EngramsUpdated, PresetsUpdated As Boolean
+		  Var EngramsUpdated, PresetsUpdated As Boolean
 		  For Each Action As Dictionary In Actions
-		    Dim RemotePath As String = Action.Value("Path")
+		    Var RemotePath As String = Action.Value("Path")
 		    If RemotePath = "/Engrams.json" Then
 		      Select Case Action.Value("Action")
 		      Case "DELETE"
@@ -1150,7 +1150,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        EngramsUpdated = Self.ImportCloudEngrams() Or EngramsUpdated
 		      End Select
 		    ElseIf RemotePath.BeginsWith("/Presets") Then
-		      Dim PresetID As String = RemotePath.Middle(8, 36)
+		      Var PresetID As String = RemotePath.Middle(8, 36)
 		      Select Case Action.Value("Action")
 		      Case "DELETE"
 		        Self.BeginTransaction()
@@ -1158,7 +1158,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.Commit()
 		        PresetsUpdated = True
 		      Case "GET"
-		        Dim PresetContents As MemoryBlock = UserCloud.Read(RemotePath)
+		        Var PresetContents As MemoryBlock = UserCloud.Read(RemotePath)
 		        If PresetContents = Nil Then
 		          Continue
 		        End If
@@ -1178,7 +1178,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Function ImportInner(Content As String) As Boolean
-		  Dim ChangeDict As Dictionary
+		  Var ChangeDict As Dictionary
 		  Try
 		    ChangeDict = Beacon.ParseJSON(Content)
 		  Catch Err As RuntimeException
@@ -1186,7 +1186,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return False
 		  End Try
 		  
-		  Dim RequiredKeys() As String = Array("mods", "loot_source_icons", "loot_sources", "engrams", "presets", "preset_modifiers", "timestamp", "is_full", "beacon_version")
+		  Var RequiredKeys() As String = Array("mods", "loot_source_icons", "loot_sources", "engrams", "presets", "preset_modifiers", "timestamp", "is_full", "beacon_version")
 		  For Each RequiredKey As String In RequiredKeys
 		    If Not ChangeDict.HasKey(RequiredKey) Then
 		      App.Log("Cannot import classes because key '" + RequiredKey + "' is missing.")
@@ -1194,14 +1194,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		  Next
 		  
-		  Dim FileVersion As Integer = ChangeDict.Value("beacon_version")
+		  Var FileVersion As Integer = ChangeDict.Value("beacon_version")
 		  If FileVersion <> 4 Then
 		    App.Log("Cannot import classes because file format is not correct for this version. Get correct classes from " + Self.ClassesURL())
 		    Return False
 		  End If
 		  
-		  Dim PayloadTimestamp As DateTime = NewDateFromSQLDateTime(ChangeDict.Value("timestamp"))
-		  Dim LastSync As DateTime = Self.LastSync
+		  Var PayloadTimestamp As DateTime = NewDateFromSQLDateTime(ChangeDict.Value("timestamp"))
+		  Var LastSync As DateTime = Self.LastSync
 		  If IsNull(LastSync) = False And LastSync.SecondsFrom1970 >= PayloadTimestamp.SecondsFrom1970 Then
 		    Return False
 		  End If
@@ -1209,10 +1209,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Try
 		    Self.BeginTransaction()
 		    
-		    Dim EngramsChanged As Boolean
+		    Var EngramsChanged As Boolean
 		    
 		    // Drop indexes
-		    Dim Categories() As String = Beacon.Categories
+		    Var Categories() As String = Beacon.Categories
 		    For Each Category As String In Categories
 		      Self.SQLExecute("DROP INDEX " + Category +"_class_string_idx;")
 		      Self.SQLExecute("DROP INDEX " + Category + "_path_idx;")
@@ -1220,7 +1220,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.SQLExecute("DROP INDEX loot_sources_sort_order_idx;")
 		    Self.SQLExecute("DROP INDEX loot_sources_path_idx;")
 		    
-		    Dim ShouldTruncate As Boolean = ChangeDict.Value("is_full") = 1
+		    Var ShouldTruncate As Boolean = ChangeDict.Value("is_full") = 1
 		    If ShouldTruncate Then
 		      Self.SQLExecute("DELETE FROM loot_sources WHERE mod_id != ?1;", Self.UserModID)
 		      Self.SQLExecute("DELETE FROM blueprints WHERE mod_id != ?1;", Self.UserModID)
@@ -1230,17 +1230,17 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    
 		    // Caution!! This field always contains all mods.
-		    Dim Mods() As Variant = ChangeDict.Value("mods")
-		    Dim RetainMods() As String
+		    Var Mods() As Variant = ChangeDict.Value("mods")
+		    Var RetainMods() As String
 		    RetainMods.AddRow(Self.UserModID)
 		    For Each ModData As Dictionary In Mods
-		      Dim ModID As String = ModData.Value("mod_id")
-		      Dim ModName As String = ModData.Value("name")
-		      Dim ConsoleSafe As Boolean = ModData.Value("console_safe")
+		      Var ModID As String = ModData.Value("mod_id")
+		      Var ModName As String = ModData.Value("name")
+		      Var ConsoleSafe As Boolean = ModData.Value("console_safe")
 		      
 		      ModID = ModID.Lowercase
 		      
-		      Dim Results As RowSet = Self.SQLSelect("SELECT name, console_safe FROM mods WHERE mod_id = ?1;", ModID)
+		      Var Results As RowSet = Self.SQLSelect("SELECT name, console_safe FROM mods WHERE mod_id = ?1;", ModID)
 		      If Results.RowCount = 1 Then
 		        If ModName.Compare(Results.Column("name").StringValue, ComparisonOptions.CaseSensitive) <> 0 Or ConsoleSafe <> Results.Column("console_safe").BooleanValue Then
 		          Self.SQLExecute("UPDATE mods SET name = ?2, console_safe = ?3 WHERE mod_id = ?1;", ModID, ModName, ConsoleSafe)
@@ -1251,9 +1251,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      
 		      RetainMods.AddRow(ModID)
 		    Next
-		    Dim ModResults As RowSet = Self.SQLSelect("SELECT mod_id FROM mods;")
+		    Var ModResults As RowSet = Self.SQLSelect("SELECT mod_id FROM mods;")
 		    While Not ModResults.AfterLastRow
-		      Dim ModID As String = ModResults.Column("mod_id").StringValue.Lowercase
+		      Var ModID As String = ModResults.Column("mod_id").StringValue.Lowercase
 		      If RetainMods.IndexOf(ModID) = -1 Then
 		        Self.DeleteDataForMod(ModID)
 		        Self.SQLExecute("DELETE FROM mods WHERE mod_id = ?1;", ModID)
@@ -1262,10 +1262,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Wend
 		    
 		    // When deleting, loot_source_icons must be done after loot_sources
-		    Dim Deletions() As Variant = ChangeDict.Value("deletions")
-		    Dim DeleteIcons() As v4UUID
+		    Var Deletions() As Variant = ChangeDict.Value("deletions")
+		    Var DeleteIcons() As v4UUID
 		    For Each Deletion As Dictionary In Deletions
-		      Dim ObjectID As v4UUID = Deletion.Value("object_id").StringValue
+		      Var ObjectID As v4UUID = Deletion.Value("object_id").StringValue
 		      Select Case Deletion.Value("group")
 		      Case "loot_sources"
 		        Self.SQLExecute("DELETE FROM loot_sources WHERE object_id = ?1;", ObjectID.StringValue)
@@ -1281,14 +1281,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Self.SQLExecute("DELETE FROM loot_source_icons WHERE icon_id = ?1;", IconID.StringValue)
 		    Next
 		    
-		    Dim LootSourceIcons() As Variant = ChangeDict.Value("loot_source_icons")
+		    Var LootSourceIcons() As Variant = ChangeDict.Value("loot_source_icons")
 		    For Each Dict As Dictionary In LootSourceIcons
-		      Dim IconID As String = Dict.Value("id")
-		      Dim IconData As MemoryBlock = DecodeBase64(Dict.Value("icon_data"))
+		      Var IconID As String = Dict.Value("id")
+		      Var IconData As MemoryBlock = DecodeBase64(Dict.Value("icon_data"))
 		      
 		      IconID = IconID.Lowercase
 		      
-		      Dim Results As RowSet = Self.SQLSelect("SELECT icon_id FROM loot_source_icons WHERE icon_id = ?1;", IconID)
+		      Var Results As RowSet = Self.SQLSelect("SELECT icon_id FROM loot_source_icons WHERE icon_id = ?1;", IconID)
 		      If Results.RowCount = 1 Then
 		        Self.SQLExecute("UPDATE loot_source_icons SET icon_data = ?2 WHERE icon_id = ?1;", IconID, IconData)
 		      Else
@@ -1299,24 +1299,24 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Self.IconCache = Nil
 		    End If
 		    
-		    Dim LootSources() As Variant = ChangeDict.Value("loot_sources")
+		    Var LootSources() As Variant = ChangeDict.Value("loot_sources")
 		    For Each Dict As Dictionary In LootSources
-		      Dim ObjectID As v4UUID = Dict.Value("id").StringValue
-		      Dim Label As String = Dict.Value("label")
-		      Dim ModID As v4UUID = Dictionary(Dict.Value("mod")).Value("id").StringValue
-		      Dim Availability As Integer = Dict.Value("availability")
-		      Dim Path As String = Dict.Value("path")
-		      Dim ClassString As String = Dict.Value("class_string")
-		      Dim MultiplierMin As Double = Dictionary(Dict.Value("multipliers")).Value("min")
-		      Dim MultiplierMax As Double = Dictionary(Dict.Value("multipliers")).Value("max")
-		      Dim UIColor As String = Dict.Value("ui_color")
-		      Dim SortOrder As Integer = Dict.Value("sort_order")
-		      Dim Experimental As Boolean = Dict.Value("experimental")
-		      Dim Notes As String = Dict.Value("notes")
-		      Dim IconID As v4UUID = Dict.Value("icon").StringValue
-		      Dim Requirements As String = Dict.Lookup("requirements", "{}")
+		      Var ObjectID As v4UUID = Dict.Value("id").StringValue
+		      Var Label As String = Dict.Value("label")
+		      Var ModID As v4UUID = Dictionary(Dict.Value("mod")).Value("id").StringValue
+		      Var Availability As Integer = Dict.Value("availability")
+		      Var Path As String = Dict.Value("path")
+		      Var ClassString As String = Dict.Value("class_string")
+		      Var MultiplierMin As Double = Dictionary(Dict.Value("multipliers")).Value("min")
+		      Var MultiplierMax As Double = Dictionary(Dict.Value("multipliers")).Value("max")
+		      Var UIColor As String = Dict.Value("ui_color")
+		      Var SortOrder As Integer = Dict.Value("sort_order")
+		      Var Experimental As Boolean = Dict.Value("experimental")
+		      Var Notes As String = Dict.Value("notes")
+		      Var IconID As v4UUID = Dict.Value("icon").StringValue
+		      Var Requirements As String = Dict.Lookup("requirements", "{}")
 		      
-		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM loot_sources WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID.StringValue, Path.Lowercase)
+		      Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM loot_sources WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID.StringValue, Path.Lowercase)
 		      If Results.RowCount = 1 And ObjectID = Results.Column("object_id").StringValue Then
 		        Self.SQLExecute("UPDATE loot_sources SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, multiplier_min = ?7, multiplier_max = ?8, uicolor = ?9, sort_order = ?10, icon = ?11, experimental = ?12, notes = ?13, requirements = ?14 WHERE object_id = ?1;", ObjectID.StringValue, ModID.StringValue, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, IconID.StringValue, Experimental, Notes, Requirements)
 		      Else
@@ -1329,32 +1329,32 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Next
 		    
 		    If ChangeDict.HasKey("engrams") Then
-		      Dim Engrams() As Variant = ChangeDict.Value("engrams")
+		      Var Engrams() As Variant = ChangeDict.Value("engrams")
 		      For Each Dict As Dictionary In Engrams
-		        Dim Imported As Boolean = Self.AddBlueprintToDatabase(Beacon.CategoryEngrams, Dict)
+		        Var Imported As Boolean = Self.AddBlueprintToDatabase(Beacon.CategoryEngrams, Dict)
 		        EngramsChanged = EngramsChanged Or Imported
 		      Next
 		    End If
 		    
 		    If ChangeDict.HasKey("creatures") Then
-		      Dim Creatures() As Variant = ChangeDict.Value("creatures")
+		      Var Creatures() As Variant = ChangeDict.Value("creatures")
 		      For Each Dict As Dictionary In Creatures
-		        Dim ExtraColumns As New Dictionary
+		        Var ExtraColumns As New Dictionary
 		        ExtraColumns.Value("incubation_time") = Dict.Value("incubation_time")
 		        ExtraColumns.Value("mature_time") = Dict.Value("mature_time")
 		        If IsNull(Dict.Value("stats")) = False Then
 		          ExtraColumns.Value("stats") = Beacon.GenerateJSON(Dict.Value("stats"), False)
 		        End If
 		        
-		        Dim Imported As Boolean = Self.AddBlueprintToDatabase(Beacon.CategoryCreatures, Dict, ExtraColumns)
+		        Var Imported As Boolean = Self.AddBlueprintToDatabase(Beacon.CategoryCreatures, Dict, ExtraColumns)
 		        EngramsChanged = EngramsChanged Or Imported
 		      Next
 		    End If
 		    
 		    If ChangeDict.HasKey("spawn_points") Then
-		      Dim SpawnPoints() As Variant = ChangeDict.Value("spawn_points")
+		      Var SpawnPoints() As Variant = ChangeDict.Value("spawn_points")
 		      For Each Dict As Dictionary In SpawnPoints
-		        Dim ExtraColumns As New Dictionary
+		        Var ExtraColumns As New Dictionary
 		        If IsNull(Dict.Value("groups")) = False Then
 		          ExtraColumns.Value("groups") = Beacon.GenerateJSON(Dict.Value("groups"), False)
 		        End If
@@ -1362,20 +1362,20 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          ExtraColumns.Value("limits") = Beacon.GenerateJSON(Dict.Value("limits"), False)
 		        End If
 		        
-		        Dim Imported As Boolean = Self.AddBlueprintToDatabase(Beacon.CategorySpawnPoints, Dict, ExtraColumns)
+		        Var Imported As Boolean = Self.AddBlueprintToDatabase(Beacon.CategorySpawnPoints, Dict, ExtraColumns)
 		        EngramsChanged = EngramsChanged Or Imported
 		      Next
 		    End If
 		    
-		    Dim ReloadPresets As Boolean
-		    Dim Presets() As Variant = ChangeDict.Value("presets")
+		    Var ReloadPresets As Boolean
+		    Var Presets() As Variant = ChangeDict.Value("presets")
 		    For Each Dict As Dictionary In Presets
-		      Dim ObjectID As v4UUID = Dict.Value("id").StringValue
-		      Dim Label As String = Dict.Value("label")
-		      Dim Contents As String = Dict.Value("contents")
+		      Var ObjectID As v4UUID = Dict.Value("id").StringValue
+		      Var Label As String = Dict.Value("label")
+		      Var Contents As String = Dict.Value("contents")
 		      
 		      ReloadPresets = True
-		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM official_presets WHERE object_id = ?1;", ObjectID.StringValue)
+		      Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM official_presets WHERE object_id = ?1;", ObjectID.StringValue)
 		      If Results.RowCount = 1 Then
 		        Self.SQLExecute("UPDATE official_presets SET label = ?2, contents = ?3 WHERE object_id = ?1;", ObjectID.StringValue, Label, Contents)
 		      Else
@@ -1383,15 +1383,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      End If
 		    Next
 		    
-		    Dim PresetModifiers() As Variant = ChangeDict.Value("preset_modifiers")
+		    Var PresetModifiers() As Variant = ChangeDict.Value("preset_modifiers")
 		    For Each Dict As Dictionary In PresetModifiers
-		      Dim ObjectID As v4UUID = Dict.Value("id").StringValue
-		      Dim Label As String = Dict.Value("label")
-		      Dim Pattern As String = Dict.Value("pattern")
-		      Dim ModID As v4UUID = Dictionary(Dict.Value("mod")).Value("id").StringValue
+		      Var ObjectID As v4UUID = Dict.Value("id").StringValue
+		      Var Label As String = Dict.Value("label")
+		      Var Pattern As String = Dict.Value("pattern")
+		      Var ModID As v4UUID = Dictionary(Dict.Value("mod")).Value("id").StringValue
 		      
 		      ReloadPresets = True
-		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM preset_modifiers WHERE object_id = ?1;", ObjectID.StringValue)
+		      Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM preset_modifiers WHERE object_id = ?1;", ObjectID.StringValue)
 		      If Results.RowCount = 1 Then
 		        Self.SQLExecute("UPDATE preset_modifiers SET label = ?2, pattern = ?3, mod_id = ?4 WHERE object_id = ?1;", ObjectID.StringValue, Label, Pattern, ModID.StringValue)
 		      Else
@@ -1400,19 +1400,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Next
 		    
 		    If ChangeDict.HasKey("help_topics") Then
-		      Dim HelpTopics() As Variant = ChangeDict.Value("help_topics")
+		      Var HelpTopics() As Variant = ChangeDict.Value("help_topics")
 		      For Each Dict As Dictionary In HelpTopics
-		        Dim ConfigName As String = Dict.Value("topic")
-		        Dim Title As String = Dict.Value("title")
-		        Dim Body As String = Dict.Value("body")
-		        Dim DetailURL As String
+		        Var ConfigName As String = Dict.Value("topic")
+		        Var Title As String = Dict.Value("title")
+		        Var Body As String = Dict.Value("body")
+		        Var DetailURL As String
 		        If Dict.Value("detail_url") <> Nil Then
 		          DetailURL = Dict.Value("detail_url")
 		        End If
 		        
 		        ConfigName = ConfigName.Lowercase
 		        
-		        Dim Results As RowSet = Self.SQLSelect("SELECT config_name FROM config_help WHERE config_name = ?1;", ConfigName)
+		        Var Results As RowSet = Self.SQLSelect("SELECT config_name FROM config_help WHERE config_name = ?1;", ConfigName)
 		        If Results.RowCount = 1 Then
 		          Self.SQLExecute("UPDATE config_help SET title = ?2, body = ?3, detail_url = ?4 WHERE config_name = ?1;", ConfigName, Title, Body, DetailURL)
 		        Else
@@ -1422,12 +1422,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    
 		    If ChangeDict.HasKey("game_variables") Then
-		      Dim HelpTopics() As Variant = ChangeDict.Value("game_variables")
+		      Var HelpTopics() As Variant = ChangeDict.Value("game_variables")
 		      For Each Dict As Dictionary In HelpTopics
-		        Dim Key As String = Dict.Value("key")
-		        Dim Value As String = Dict.Value("value")
+		        Var Key As String = Dict.Value("key")
+		        Var Value As String = Dict.Value("value")
 		        
-		        Dim Results As RowSet = Self.SQLSelect("SELECT key FROM game_variables WHERE key = ?1;", Key)
+		        Var Results As RowSet = Self.SQLSelect("SELECT key FROM game_variables WHERE key = ?1;", Key)
 		        If Results.RowCount = 1 Then
 		          Self.SQLExecute("UPDATE game_variables SET value = ?2 WHERE key = ?1;", Key, Value)
 		        Else
@@ -1471,9 +1471,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub ImportLocalClasses()
-		  Dim File As FolderItem = App.ResourcesFolder.Child("Classes.json")
+		  Var File As FolderItem = App.ResourcesFolder.Child("Classes.json")
 		  If File.Exists Then
-		    Dim Content As MemoryBlock = File.Read(Encodings.UTF8)
+		    Var Content As MemoryBlock = File.Read(Encodings.UTF8)
 		    If Content <> Nil Then
 		      Self.Import(Content)
 		    End If
@@ -1483,20 +1483,20 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Function ImportPreset(PresetContents As MemoryBlock) As Boolean
-		  Dim Contents As String = DefineEncoding(PresetContents, Encodings.UTF8)
-		  Dim Preset As Beacon.Preset
-		  Dim PresetID As String
+		  Var Contents As String = DefineEncoding(PresetContents, Encodings.UTF8)
+		  Var Preset As Beacon.Preset
+		  Var PresetID As String
 		  Try
-		    Dim Dict As Dictionary = Beacon.ParseJSON(Contents)
+		    Var Dict As Dictionary = Beacon.ParseJSON(Contents)
 		    Preset = Beacon.Preset.FromDictionary(Dict)
 		    PresetID = Preset.PresetID
 		  Catch Err As RuntimeException
 		    Return False
 		  End Try
 		  
-		  Dim Imported As Boolean
+		  Var Imported As Boolean
 		  Self.BeginTransaction()
-		  Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM custom_presets WHERE user_id = ?1 AND object_id = ?2;", Self.UserID, PresetID)
+		  Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM custom_presets WHERE user_id = ?1 AND object_id = ?2;", Self.UserID, PresetID)
 		  If Results.RowCount = 1 Then
 		    Try
 		      Var RowsToChange As RowSet = Self.SQLSelect("SELECT object_id FROM custom_presets WHERE user_id = ?1 AND object_id = ?2 AND label != ?3 AND contents != ?4;", Self.UserID, PresetID, Preset.Label, Contents)
@@ -1518,7 +1518,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function IsPresetCustom(Preset As Beacon.Preset) As Boolean
-		  Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM custom_presets WHERE user_id = ?1 AND LOWER(object_id) = LOWER(?2);", Self.UserID, Preset.PresetID)
+		  Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM custom_presets WHERE user_id = ?1 AND LOWER(object_id) = LOWER(?2);", Self.UserID, Preset.PresetID)
 		  Return Results.RowCount = 1
 		End Function
 	#tag EndMethod
@@ -1537,7 +1537,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function LastSync() As DateTime
-		  Dim LastSync As String = Self.Variable("sync_time")
+		  Var LastSync As String = Self.Variable("sync_time")
 		  If LastSync = "" Then
 		    Return Nil
 		  End If
@@ -1548,7 +1548,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub LoadPresets()
-		  Redim Self.mPresets(-1)
+		  Self.mPresets.ResizeTo(-1)
 		  Self.BeginTransaction()
 		  Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id = ?1;", Self.UserModID) // Loading the presets will refill all the needed custom modifiers
 		  Self.LoadPresets(Self.SQLSelect("SELECT object_id, contents FROM official_presets WHERE LOWER(object_id) NOT IN (SELECT LOWER(object_id) FROM custom_presets WHERE user_id = ?1)", Self.UserID), Beacon.Preset.Types.BuiltIn)
@@ -1561,12 +1561,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Sub LoadPresets(Results As RowSet, Type As Beacon.Preset.Types)
 		  While Not Results.AfterLastRow
-		    Dim Dict As Dictionary = Beacon.ParseJSON(Results.Column("contents").StringValue)
-		    Dim Preset As Beacon.Preset = Beacon.Preset.FromDictionary(Dict)
+		    Var Dict As Dictionary = Beacon.ParseJSON(Results.Column("contents").StringValue)
+		    Var Preset As Beacon.Preset = Beacon.Preset.FromDictionary(Dict)
 		    If Preset <> Nil Then
 		      If Type <> Beacon.Preset.Types.BuiltIn And Preset.PresetID <> Results.Column("object_id").StringValue Then
 		        // To work around https://github.com/thommcgrath/Beacon/issues/64
-		        Dim Contents As String = Beacon.GenerateJSON(Preset.ToDictionary, False)
+		        Var Contents As String = Beacon.GenerateJSON(Preset.ToDictionary, False)
 		        Self.BeginTransaction()
 		        Self.SQLExecute("UPDATE custom_presets SET LOWER(object_id) = LOWER(?3), contents = ?4 WHERE user_id = ?1 AND object_id = ?2;", Self.UserID, Results.Column("object_id").StringValue, Preset.PresetID, Contents)
 		        Self.Commit()
@@ -1626,8 +1626,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  App.Log("Migrating data from schema " + Str(FromSchemaVersion, "-0") + " at " + Source.NativePath)
 		  
-		  Dim MigrateLegacyCustomEngrams As Boolean = FromSchemaVersion <= 5
-		  Dim Commands() As String
+		  Var MigrateLegacyCustomEngrams As Boolean = FromSchemaVersion <= 5
+		  Var Commands() As String
 		  
 		  // Mods
 		  If FromSchemaVersion >= 6 Then
@@ -1722,11 +1722,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End Try
 		    
 		    If MigrateLegacyCustomEngrams Then
-		      Dim Results As RowSet = Self.SQLSelect("SELECT path, class_string, label, availability, can_blueprint FROM legacy.engrams WHERE built_in = 0;")
+		      Var Results As RowSet = Self.SQLSelect("SELECT path, class_string, label, availability, can_blueprint FROM legacy.engrams WHERE built_in = 0;")
 		      While Not Results.AfterLastRow
 		        Try
-		          Dim ObjectID As New v4UUID
-		          Dim Tags As String = If(Results.Column("can_blueprint").BooleanValue, "object,blueprintable", "object")
+		          Var ObjectID As New v4UUID
+		          Var Tags As String = If(Results.Column("can_blueprint").BooleanValue, "object,blueprintable", "object")
 		          Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, path, class_string, label, availability, tags) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID.StringValue, Self.UserModID, Results.Column("path").StringValue, Results.Column("class_string").StringValue, Results.Column("label").StringValue, Results.Column("availability").IntegerValue, Tags)
 		          Self.SQLExecute("INSERT INTO searchable_tags (object_id, source_table, tags) VALUES (?1, ?2, ?3);", ObjectID.StringValue, "engrams", Tags)
 		        Catch Err As UnsupportedOperationException
@@ -1746,22 +1746,22 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.mBase.RemoveDatabase("legacy")
 		  
 		  If FromSchemaVersion <= 2 Then
-		    Dim SupportFolder As FolderItem = App.ApplicationSupport
-		    Dim PresetsFolder As FolderItem = SupportFolder.Child("Presets")
+		    Var SupportFolder As FolderItem = App.ApplicationSupport
+		    Var PresetsFolder As FolderItem = SupportFolder.Child("Presets")
 		    If PresetsFolder.Exists Then
 		      For I As Integer = PresetsFolder.Count - 1 DownTo 0
-		        Dim File As FolderItem = PresetsFolder.ChildAt(I)
+		        Var File As FolderItem = PresetsFolder.ChildAt(I)
 		        If Not File.IsType(BeaconFileTypes.BeaconPreset) Then
 		          File.Remove
 		          Continue
 		        End If
 		        
-		        Dim Content As String = File.Read(Encodings.UTF8)
+		        Var Content As String = File.Read(Encodings.UTF8)
 		        
 		        Try
-		          Dim Dict As Dictionary = Beacon.ParseJSON(Content)
-		          Dim PresetID As String = Dict.Value("ID")
-		          Dim Label As String = Dict.Value("Label")
+		          Var Dict As Dictionary = Beacon.ParseJSON(Content)
+		          Var PresetID As String = Dict.Value("ID")
+		          Var Label As String = Dict.Value("Label")
 		          
 		          Self.BeginTransaction()
 		          Self.SQLExecute("INSERT OR REPLACE INTO custom_presets (user_id, object_id, label, contents) VALUES (?1, LOWER(?2), ?3, ?4);", Self.UserID, PresetID, Label, Content)
@@ -1781,8 +1781,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  If FromSchemaVersion < 9 Then
-		    Dim Extension As String = BeaconFileTypes.BeaconPreset.PrimaryExtension
-		    Dim Results As RowSet = Self.SQLSelect("SELECT object_id, contents FROM custom_presets WHERE user_id = ?1;", Self.UserID)
+		    Var Extension As String = BeaconFileTypes.BeaconPreset.PrimaryExtension
+		    Var Results As RowSet = Self.SQLSelect("SELECT object_id, contents FROM custom_presets WHERE user_id = ?1;", Self.UserID)
 		    While Not Results.AfterLastRow
 		      Call UserCloud.Write("/Presets/" + Results.Column("object_id").StringValue.Lowercase + Extension, Results.Column("contents").StringValue)
 		      Results.MoveToNextRow
@@ -1804,15 +1804,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Dim SyncOriginal As DateTime = Self.LastSync
-		  Dim Success As Boolean
+		  Var SyncOriginal As DateTime = Self.LastSync
+		  Var Success As Boolean
 		  For I As Integer = 0 To Self.mPendingImports.LastRowIndex
-		    Dim Content As String = Self.mPendingImports(I)
+		    Var Content As String = Self.mPendingImports(I)
 		    Self.mPendingImports.RemoveRowAt(I)
 		    
 		    Success = Self.ImportInner(Content) Or Success
 		  Next
-		  Dim SyncNew As DateTime = Self.LastSync
+		  Var SyncNew As DateTime = Self.LastSync
 		  
 		  If SyncOriginal <> SyncNew Then
 		    NotificationKit.Post(Self.Notification_DatabaseUpdated, SyncNew)
@@ -1837,8 +1837,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Dim ExpectedHash As String = Sender.ResponseHeader("Content-MD5")
-		  Dim ComputedHash As String = EncodeHex(Crypto.MD5(Content))
+		  Var ExpectedHash As String = Sender.ResponseHeader("Content-MD5")
+		  Var ComputedHash As String = EncodeHex(Crypto.MD5(Content))
 		  
 		  If ComputedHash <> ExpectedHash Then
 		    App.Log("Engram update hash mismatch. Expected " + ExpectedHash + ", computed " + ComputedHash + ".")
@@ -1873,7 +1873,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Self.mNextSyncImportAll = False
 		      Self.ImportCloudFiles()
 		    Else
-		      Dim Actions() As Dictionary = Notification.UserData
+		      Var Actions() As Dictionary = Notification.UserData
 		      Self.ImportCloudFiles(Actions)
 		    End If
 		  Case IdentityManager.Notification_IdentityChanged
@@ -1885,7 +1885,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function Presets() As Beacon.Preset()
-		  Dim Results() As Beacon.Preset
+		  Var Results() As Beacon.Preset
 		  For Each Preset As Beacon.Preset In Self.mPresets
 		    Results.AddRow(New Beacon.Preset(Preset))
 		  Next
@@ -1910,7 +1910,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Dim Savepoint As String = Self.mTransactions(0)
+		  Var Savepoint As String = Self.mTransactions(0)
 		  Self.mTransactions.RemoveRowAt(0)
 		  
 		  If Savepoint = "" Then
@@ -1926,9 +1926,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Shared Function RowSetToCreature(Results As RowSet) As Beacon.Creature()
-		  Dim Creatures() As Beacon.Creature
+		  Var Creatures() As Beacon.Creature
 		  While Not Results.AfterLastRow
-		    Dim Creature As New Beacon.MutableCreature(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
+		    Var Creature As New Beacon.MutableCreature(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
 		    Creature.Label = Results.Column("label").StringValue
 		    Creature.Availability = Results.Column("availability").IntegerValue
 		    Creature.TagString = Results.Column("tags").StringValue
@@ -1954,9 +1954,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Shared Function RowSetToEngram(Results As RowSet) As Beacon.Engram()
-		  Dim Engrams() As Beacon.Engram
+		  Var Engrams() As Beacon.Engram
 		  While Not Results.AfterLastRow
-		    Dim Engram As New Beacon.MutableEngram(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
+		    Var Engram As New Beacon.MutableEngram(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
 		    Engram.Label = Results.Column("label").StringValue
 		    Engram.Availability = Results.Column("availability").IntegerValue
 		    Engram.TagString = Results.Column("tags").StringValue
@@ -1971,10 +1971,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Shared Function RowSetToLootSource(Results As RowSet) As Beacon.LootSource()
-		  Dim Sources() As Beacon.LootSource
+		  Var Sources() As Beacon.LootSource
 		  While Not Results.AfterLastRow
-		    Dim HexColor As String = Results.Column("uicolor").StringValue
-		    Dim RedHex, GreenHex, BlueHex, AlphaHex As String = "00"
+		    Var HexColor As String = Results.Column("uicolor").StringValue
+		    Var RedHex, GreenHex, BlueHex, AlphaHex As String = "00"
 		    If HexColor.Length = 3 Then
 		      RedHex = HexColor.Middle(0, 1) + HexColor.Middle(0, 1)
 		      GreenHex = HexColor.Middle(1, 1) + HexColor.Middle(1, 1)
@@ -1995,7 +1995,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      AlphaHex = HexColor.Middle(6, 2)
 		    End If
 		    
-		    Dim Requirements As Dictionary
+		    Var Requirements As Dictionary
 		    #Pragma BreakOnExceptions Off
 		    Try
 		      Requirements = Beacon.ParseJSON(Results.Column("requirements").StringValue)
@@ -2004,7 +2004,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End Try
 		    #Pragma BreakOnExceptions Default
 		    
-		    Dim Source As New Beacon.MutableLootSource(Results.Column("class_string").StringValue, True)
+		    Var Source As New Beacon.MutableLootSource(Results.Column("class_string").StringValue, True)
 		    Source.Label = Results.Column("label").StringValue
 		    Source.Availability = Results.Column("availability").IntegerValue
 		    Source.Multipliers = New Beacon.Range(Results.Column("multiplier_min").DoubleValue, Results.Column("multiplier_max").DoubleValue)
@@ -2015,10 +2015,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Source.Notes = Results.Column("notes").StringValue
 		    
 		    If Requirements.HasKey("mandatory_item_sets") Then
-		      Dim SetDicts() As Variant = Requirements.Value("mandatory_item_sets")
-		      Dim Sets() As Beacon.ItemSet
+		      Var SetDicts() As Variant = Requirements.Value("mandatory_item_sets")
+		      Var Sets() As Beacon.ItemSet
 		      For Each Dict As Dictionary In SetDicts
-		        Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Dict)
+		        Var Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Dict)
 		        If Set <> Nil Then
 		          Sets.AddRow(Set)
 		        End If
@@ -2039,9 +2039,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Shared Function RowSetToSpawnPoint(Results As RowSet) As Beacon.SpawnPoint()
-		  Dim SpawnPoints() As Beacon.SpawnPoint
+		  Var SpawnPoints() As Beacon.SpawnPoint
 		  While Not Results.AfterLastRow
-		    Dim Point As New Beacon.MutableSpawnPoint(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
+		    Var Point As New Beacon.MutableSpawnPoint(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
 		    Point.Label = Results.Column("label").StringValue
 		    Point.Availability = Results.Column("availability").IntegerValue
 		    Point.TagString = Results.Column("tags").StringValue
@@ -2059,7 +2059,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function SaveBlueprint(Blueprint As Beacon.Blueprint, Replace As Boolean = True) As Boolean
-		  Dim Arr(0) As Beacon.Blueprint
+		  Var Arr(0) As Beacon.Blueprint
 		  Arr(0) = Blueprint
 		  Return (Self.SaveBlueprints(Arr, Replace) = 1)
 		End Function
@@ -2067,15 +2067,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function SaveBlueprints(Blueprints() As Beacon.Blueprint, Replace As Boolean = True) As Integer
-		  Dim CountSaved As Integer
+		  Var CountSaved As Integer
 		  
 		  Self.BeginTransaction()
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    Try
-		      Dim Update As Boolean
-		      Dim ObjectID As v4UUID
-		      Dim Results As RowSet = Self.SQLSelect("SELECT object_id, mod_id FROM blueprints WHERE object_id = ?1 OR LOWER(path) = ?2;", Blueprint.ObjectID.StringValue, Blueprint.Path.Lowercase)
-		      Dim CacheDict As Dictionary
+		      Var Update As Boolean
+		      Var ObjectID As v4UUID
+		      Var Results As RowSet = Self.SQLSelect("SELECT object_id, mod_id FROM blueprints WHERE object_id = ?1 OR LOWER(path) = ?2;", Blueprint.ObjectID.StringValue, Blueprint.Path.Lowercase)
+		      Var CacheDict As Dictionary
 		      If Results.RowCount = 1 Then
 		        ObjectID = Results.Column("object_id").StringValue
 		        
@@ -2083,7 +2083,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Continue
 		        End If
 		        
-		        Dim ModID As v4UUID = Results.Column("mod_id").StringValue
+		        Var ModID As v4UUID = Results.Column("mod_id").StringValue
 		        If ModID <> Self.UserModID Then
 		          Continue
 		        End If
@@ -2097,8 +2097,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        ObjectID = Blueprint.ObjectID
 		      End If
 		      
-		      Dim Category As String = Blueprint.Category
-		      Dim Columns As New Dictionary
+		      Var Category As String = Blueprint.Category
+		      Var Columns As New Dictionary
 		      Columns.Value("object_id") = ObjectID.StringValue
 		      Columns.Value("path") = Blueprint.Path
 		      Columns.Value("class_string") = Blueprint.ClassString
@@ -2109,7 +2109,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      
 		      Select Case Blueprint
 		      Case IsA Beacon.Creature
-		        Dim Creature As Beacon.Creature = Beacon.Creature(Blueprint)
+		        Var Creature As Beacon.Creature = Beacon.Creature(Blueprint)
 		        If Creature.IncubationTime > 0 And Creature.MatureTime > 0 Then
 		          Columns.Value("incubation_time") = Creature.IncubationTime
 		          Columns.Value("mature_time") = Creature.MatureTime
@@ -2127,10 +2127,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      End Select
 		      
 		      If Update Then
-		        Dim Assignments() As String
-		        Dim Values() As Variant
-		        Dim NextPlaceholder As Integer = 1
-		        Dim WhereClause As String
+		        Var Assignments() As String
+		        Var Values() As Variant
+		        Var NextPlaceholder As Integer = 1
+		        Var WhereClause As String
 		        For Each Entry As DictionaryEntry In Columns
 		          If Entry.Key = "object_id" Then
 		            WhereClause = "object_id = ?" + NextPlaceholder.ToString
@@ -2144,9 +2144,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.SQLExecute("UPDATE " + Category + " SET " + Assignments.Join(", ") + " WHERE " + WhereClause + ";", Values)
 		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?3 WHERE object_id = ?2 AND source_table = ?1;", Category, ObjectID.StringValue, Blueprint.TagString)
 		      Else
-		        Dim ColumnNames(), Placeholders() As String
-		        Dim Values() As Variant
-		        Dim NextPlaceholder As Integer = 1
+		        Var ColumnNames(), Placeholders() As String
+		        Var Values() As Variant
+		        Var NextPlaceholder As Integer = 1
 		        For Each Entry As DictionaryEntry In Columns
 		          ColumnNames.AddRow(Entry.Key.StringValue)
 		          Placeholders.AddRow("?" + NextPlaceholder.ToString)
@@ -2194,15 +2194,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Self.BeginTransaction()
-		  Dim Results As RowSet = Self.SQLSelect("SELECT deleted, read FROM notifications WHERE notification_id = ?1;", Notification.Identifier)
-		  Dim Deleted As Boolean = Results.RowCount = 1 And Results.Column("deleted").BooleanValue = True
-		  Dim Read As Boolean = Results.RowCount = 1 And Results.Column("read").BooleanValue
+		  Var Results As RowSet = Self.SQLSelect("SELECT deleted, read FROM notifications WHERE notification_id = ?1;", Notification.Identifier)
+		  Var Deleted As Boolean = Results.RowCount = 1 And Results.Column("deleted").BooleanValue = True
+		  Var Read As Boolean = Results.RowCount = 1 And Results.Column("read").BooleanValue
 		  If Notification.DoNotResurrect And (Deleted Or Read)  Then
 		    Self.Rollback
 		    Return
 		  End If
 		  
-		  Dim Notify As Boolean = Results.RowCount = 0 Or Deleted Or Read
+		  Var Notify As Boolean = Results.RowCount = 0 Or Deleted Or Read
 		  Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification_id, message, secondary_message, moment, read, action_url, user_data, deleted) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.SQLDateTimeWithOffset, If(Notification.Read Or Notification.Severity = Beacon.UserNotification.Severities.Elevated, 1, 0), Notification.ActionURL, If(Notification.UserData <> Nil, Beacon.GenerateJSON(Notification.UserData, False), "{}"))
 		  Self.Commit
 		  
@@ -2220,7 +2220,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub SavePreset(Preset As Beacon.Preset, Reload As Boolean)
-		  Dim Content As String = Beacon.GenerateJSON(Preset.ToDictionary, False)
+		  Var Content As String = Beacon.GenerateJSON(Preset.ToDictionary, False)
 		  
 		  Self.BeginTransaction()
 		  Self.SQLExecute("INSERT OR REPLACE INTO custom_presets (user_id, object_id, label, contents) VALUES (?1, LOWER(?2), ?3, ?4);", Self.UserID, Preset.PresetID, Preset.Label, Content)
@@ -2244,19 +2244,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Function SearchForBlueprints(Category As String, SearchText As String, Mods As Beacon.StringList, Tags As String, ExtraClauses() As String, ExtraValues() As Variant) As Beacon.Blueprint()
-		  Dim Blueprints() As Beacon.Blueprint
+		  Var Blueprints() As Beacon.Blueprint
 		  
 		  Try
-		    Dim NextPlaceholder As Integer = 1
-		    Dim Clauses() As String
-		    Dim Values As New Dictionary
+		    Var NextPlaceholder As Integer = 1
+		    Var Clauses() As String
+		    Var Values As New Dictionary
 		    If SearchText <> "" Then
 		      Clauses.AddRow("LOWER(label) LIKE LOWER(?" + Str(NextPlaceholder) + ") OR LOWER(class_string) LIKE LOWER(?" + Str(NextPlaceholder) + ")")
 		      Values.Value(NextPlaceholder) = "%" + SearchText + "%"
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
 		    
-		    Dim SQL As String
+		    Var SQL As String
 		    Select Case Category
 		    Case Beacon.CategoryEngrams
 		      SQL = Self.EngramSelectSQL
@@ -2269,7 +2269,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End Select
 		    
 		    If Mods <> Nil And Mods.LastRowIndex > -1 Then
-		      Dim Placeholders() As String
+		      Var Placeholders() As String
 		      For Each ModID As String In Mods
 		        Placeholders.AddRow("?" + NextPlaceholder.ToString)
 		        Values.Value(NextPlaceholder) = ModID
@@ -2299,7 +2299,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    SQL = SQL + " ORDER BY label;"
 		    
-		    Dim Results As RowSet
+		    Var Results As RowSet
 		    If Values.KeyCount = 0 Then
 		      Results = Self.SQLSelect(SQL)
 		    Else
@@ -2308,19 +2308,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    Select Case Category
 		    Case Beacon.CategoryEngrams
-		      Dim Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
+		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
 		      For Each Engram As Beacon.Engram In Engrams
 		        Self.mEngramCache.Value(Engram.Path) = Engram
 		        Blueprints.AddRow(Engram)
 		      Next
 		    Case Beacon.CategoryCreatures
-		      Dim Creatures() As Beacon.Creature = Self.RowSetToCreature(Results)
+		      Var Creatures() As Beacon.Creature = Self.RowSetToCreature(Results)
 		      For Each Creature As Beacon.Creature In Creatures
 		        Self.mCreatureCache.Value(Creature.Path) = Creature
 		        Blueprints.AddRow(Creature)
 		      Next
 		    Case Beacon.CategorySpawnPoints
-		      Dim SpawnPoints() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(Results)
+		      Var SpawnPoints() As Beacon.SpawnPoint = Self.RowSetToSpawnPoint(Results)
 		      For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
 		        Self.mSpawnPointCache.Value(SpawnPoint.Path) = SpawnPoint
 		        Blueprints.AddRow(SpawnPoint)
@@ -2338,14 +2338,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function SearchForLootSources(SearchText As String, Mods As Beacon.StringList, IncludeExperimental As Boolean) As Beacon.LootSource()
 		  // Part of the Beacon.DataSource interface.
 		  
-		  Dim Sources() As Beacon.LootSource
+		  Var Sources() As Beacon.LootSource
 		  
 		  Try
-		    Dim Clauses() As String
-		    Dim Values As New Dictionary
-		    Dim NextPlaceholder As Integer = 1
+		    Var Clauses() As String
+		    Var Values As New Dictionary
+		    Var NextPlaceholder As Integer = 1
 		    If Mods.LastRowIndex > -1 Then
-		      Dim Placeholders() As String
+		      Var Placeholders() As String
 		      For Each ModID As String In Mods
 		        Placeholders.AddRow("?" + Str(NextPlaceholder))
 		        Values.Value(NextPlaceholder) = ModID
@@ -2362,13 +2362,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Clauses.AddRow("experimental = 0")
 		    End If
 		    
-		    Dim SQL As String = "SELECT " + Self.LootSourcesSelectColumns + ", mods.mod_id, mods.name AS mod_name FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id)"
+		    Var SQL As String = "SELECT " + Self.LootSourcesSelectColumns + ", mods.mod_id, mods.name AS mod_name FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id)"
 		    If Clauses.LastRowIndex > -1 Then
 		      SQL = SQL + " WHERE (" + Clauses.Join(") AND (") + ")"
 		    End If
 		    SQL = SQL + " ORDER BY label;"
 		    
-		    Dim Results As RowSet
+		    Var Results As RowSet
 		    If Values.KeyCount > 0 Then
 		      Results = Self.SQLSelect(SQL, Values)
 		    Else
@@ -2389,7 +2389,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  If mInstance = Nil And Create = True Then
 		    mInstance = New LocalData
 		    Beacon.Data = mInstance
-		    Dim Results As RowSet = mInstance.SQLSelect("SELECT EXISTS(SELECT 1 FROM blueprints) AS populated;")
+		    Var Results As RowSet = mInstance.SQLSelect("SELECT EXISTS(SELECT 1 FROM blueprints) AS populated;")
 		    If Results.Column("populated").BooleanValue = False Then
 		      mInstance.ImportLocalClasses()
 		    End If
@@ -2444,8 +2444,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  If Values.LastRowIndex = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
 		    // Dictionary keys are placeholder values, values are... values
-		    Dim Dict As Dictionary = Values(0)
-		    Redim Values(-1)
+		    Var Dict As Dictionary = Values(0)
+		    Values.ResizeTo(-1)
 		    
 		    Try
 		      // I know this line looks insane, but it's correct. Placeholders start at 1.
@@ -2453,20 +2453,20 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Values.AddRow(Dict.Value(I))
 		      Next
 		    Catch Err As TypeMismatchException
-		      Redim Values(-1)
+		      Values.ResizeTo(-1)
 		    End Try
 		  ElseIf Values.LastRowIndex = 0 And Values(0).IsArray Then
 		    Values = Values(0)
 		  End If
 		  
 		  For I As Integer = 0 To Values.LastRowIndex
-		    Dim Value As Variant = Values(I)
+		    Var Value As Variant = Values(I)
 		    If Value.Type <> Variant.TypeObject Then
 		      Continue
 		    End If
 		    Select Case Value.ObjectValue
 		    Case IsA MemoryBlock
-		      Dim Mem As MemoryBlock = Value
+		      Var Mem As MemoryBlock = Value
 		      Values(I) = Mem.StringValue(0, Mem.Size)
 		    End Select
 		  Next
@@ -2476,7 +2476,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.mLock.Leave
 		  Catch Err As DatabaseException
 		    Self.mLock.Leave
-		    Dim Cloned As New UnsupportedOperationException
+		    Var Cloned As New UnsupportedOperationException
 		    Cloned.Message = Err.Message + EndOfLine + SQLString
 		    Raise Cloned
 		  End Try
@@ -2489,8 +2489,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  If Values.LastRowIndex = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
 		    // Dictionary keys are placeholder values, values are... values
-		    Dim Dict As Dictionary = Values(0)
-		    Redim Values(-1)
+		    Var Dict As Dictionary = Values(0)
+		    Values.ResizeTo(-1)
 		    
 		    Try
 		      // I know this line looks insane, but it's correct. Placeholders start at 1.
@@ -2498,29 +2498,29 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Values.AddRow(Dict.Value(I))
 		      Next
 		    Catch Err As TypeMismatchException
-		      Redim Values(-1)
+		      Values.ResizeTo(-1)
 		    End Try
 		  End If
 		  
 		  For I As Integer = 0 To Values.LastRowIndex
-		    Dim Value As Variant = Values(I)
+		    Var Value As Variant = Values(I)
 		    If Value.Type <> Variant.TypeObject Then
 		      Continue
 		    End If
 		    Select Case Value.ObjectValue
 		    Case IsA MemoryBlock
-		      Dim Mem As MemoryBlock = Value
+		      Var Mem As MemoryBlock = Value
 		      Values(I) = Mem.StringValue(0, Mem.Size)
 		    End Select
 		  Next
 		  
 		  Try
-		    Dim Results As RowSet = Self.mBase.SelectSQL(SQLString, Values)
+		    Var Results As RowSet = Self.mBase.SelectSQL(SQLString, Values)
 		    Self.mLock.Leave
 		    Return Results
 		  Catch Err As DatabaseException
 		    Self.mLock.Leave
-		    Dim Cloned As New UnsupportedOperationException
+		    Var Cloned As New UnsupportedOperationException
 		    Cloned.Message = Err.Message + EndOfLine + SQLString
 		    Raise Cloned
 		  End Try
@@ -2549,10 +2549,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub SyncUserEngramsActual()
-		  Dim Results As RowSet = Self.SQLSelect("SELECT class_string, path, tags, object_id, label, availability, category FROM blueprints WHERE mod_id = ?1;", Self.UserModID)
-		  Dim Dicts() As Dictionary
+		  Var Results As RowSet = Self.SQLSelect("SELECT class_string, path, tags, object_id, label, availability, category FROM blueprints WHERE mod_id = ?1;", Self.UserModID)
+		  Var Dicts() As Dictionary
 		  While Not Results.AfterLastRow
-		    Dim Dict As New Dictionary  
+		    Var Dict As New Dictionary  
 		    Dict.Value("class_string") = Results.Column("class_string").StringValue  
 		    Dict.Value("path") = Results.Column("path").StringValue  
 		    Dict.Value("tags") = Results.Column("tags").StringValue
@@ -2566,7 +2566,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Wend
 		  
 		  If Dicts.Count > 0 Then
-		    Dim Content As String = Beacon.GenerateJSON(Dicts, False)
+		    Var Content As String = Beacon.GenerateJSON(Dicts, False)
 		    Call UserCloud.Write("Engrams.json", Content)
 		  Else
 		    Call UserCloud.Delete("Engrams.json")
@@ -2583,7 +2583,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function Variable(Key As String) As String
 		  Try
-		    Dim Results As RowSet = Self.SQLSelect("SELECT value FROM variables WHERE LOWER(key) = LOWER(?1);", Key)
+		    Var Results As RowSet = Self.SQLSelect("SELECT value FROM variables WHERE LOWER(key) = LOWER(?1);", Key)
 		    If Results.RowCount = 1 Then
 		      Return Results.Column("value").StringValue
 		    End If

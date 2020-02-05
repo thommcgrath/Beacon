@@ -1697,7 +1697,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckForConfirmedEmail()
-		  Dim Fields As New Dictionary
+		  Var Fields As New Dictionary
 		  Fields.Value("email") = Self.ConfirmAddressField.Value.Trim
 		  Fields.Value("key") = Self.mConfirmEncryptionKey
 		  Self.CheckForConfirmationSocket.SetFormData(Fields)
@@ -1749,7 +1749,7 @@ End
 		Private Sub IdentityManager_Finished(Sender As IdentityManager)
 		  If Sender.CurrentIdentity = Nil Then
 		    // Error
-		    Dim Message As String = Sender.LastError
+		    Var Message As String = Sender.LastError
 		    If Message = "" Then
 		      Message = "Please try again. If the problem persists help, see " + Beacon.WebURL("/help") + " for more help options."
 		    End If
@@ -1883,7 +1883,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SubmitIdentity(AllowInsecurePassword As Boolean)
-		  Dim Fields As New Dictionary
+		  Var Fields As New Dictionary
 		  Fields.Value("email") = Self.mConfirmedAddress
 		  Fields.Value("code") = Self.mConfirmedCode
 		  Fields.Value("key") = Self.mConfirmEncryptionKey
@@ -2055,7 +2055,7 @@ End
 		  If Self.mConfirmEncryptionKey = "" Then
 		    Self.mConfirmEncryptionKey = New v4UUID
 		    
-		    Dim Fields As New Dictionary
+		    Var Fields As New Dictionary
 		    Fields.Value("email") = Self.ConfirmAddressField.Value.Trim
 		    Fields.Value("key") = Self.mConfirmEncryptionKey
 		    Self.ConfirmCodeCreationSocket.SetFormData(Fields)
@@ -2083,7 +2083,7 @@ End
 		  Self.ConfirmCodeField.Visible = False
 		  Self.ConfirmCodeLabel.Visible = False
 		  
-		  Dim Fields As New Dictionary
+		  Var Fields As New Dictionary
 		  Fields.Value("code") = Self.ConfirmCodeField.Value.Trim
 		  Fields.Value("key") = Self.mConfirmEncryptionKey
 		  Fields.Value("email") = Self.ConfirmAddressField.Value.Trim
@@ -2239,10 +2239,10 @@ End
 		    // Success
 		    
 		    Try
-		      Dim Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
-		      Dim Verified As Boolean = Dict.Value("verified")
+		      Var Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
+		      Var Verified As Boolean = Dict.Value("verified")
 		      If Verified Then
-		        Dim Code As String = Dict.Value("code")
+		        Var Code As String = Dict.Value("code")
 		        Self.ConfirmCodeField.Value = Code
 		        Self.mConfirmedAddress = Dict.Value("email")
 		        Self.mConfirmedCode = Dict.Value("code")
@@ -2284,8 +2284,8 @@ End
 		    // Success
 		    
 		    Try
-		      Dim Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
-		      Dim Verified As Boolean = Dict.Value("verified")
+		      Var Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
+		      Var Verified As Boolean = Dict.Value("verified")
 		      If Verified Then
 		        If Self.mConfirmedEmailScheduleKey <> "" Then
 		          CallLater.Cancel(Self.mConfirmedEmailScheduleKey)
@@ -2337,8 +2337,8 @@ End
 		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
 		    Try
-		      Dim Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
-		      Dim Username As String = Dict.Value("username")
+		      Var Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
+		      Var Username As String = Dict.Value("username")
 		      Self.IdentityUsernameField.Value = Username
 		    Catch Err As RuntimeException
 		      Self.ShowError("Cannot get a username suggestion.", Err)
@@ -2367,8 +2367,8 @@ End
 		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
 		    Try
-		      Dim Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
-		      Dim SessionID As String = Dict.Value("session_id")
+		      Var Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
+		      Var SessionID As String = Dict.Value("session_id")
 		      
 		      Preferences.OnlineToken = SessionID
 		      Preferences.OnlineEnabled = True
@@ -2414,8 +2414,8 @@ End
 		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
 		    Try
-		      Dim Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
-		      Dim SessionID As String = Dict.Value("session_id")
+		      Var Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
+		      Var SessionID As String = Dict.Value("session_id")
 		      
 		      Preferences.OnlineToken = SessionID
 		      Preferences.OnlineEnabled = True

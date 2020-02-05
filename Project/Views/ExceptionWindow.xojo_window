@@ -635,13 +635,13 @@ End
 		Private Sub BeginChecking()
 		  Self.Pages.SelectedPanelIndex = Self.PageStart
 		  
-		  Dim Trace() As StackFrame = Self.mExceptionDetails.Value("Trace")
-		  Dim Lines() As String
+		  Var Trace() As StackFrame = Self.mExceptionDetails.Value("Trace")
+		  Var Lines() As String
 		  For Each Frame As StackFrame In Trace
 		    Lines.AddRow(Frame.Name)
 		  Next
 		  
-		  Dim Fields As New Dictionary
+		  Var Fields As New Dictionary
 		  Fields.Value("build") = App.BuildNumber.ToString
 		  Fields.Value("hash") = Self.mExceptionHash
 		  Fields.Value("type") = Self.mExceptionDetails.Value("Type")
@@ -658,18 +658,18 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present(Dict As Dictionary)
-		  Dim Trace() As StackFrame = Dict.Value("Trace")
-		  Dim Lines() As String
+		  Var Trace() As StackFrame = Dict.Value("Trace")
+		  Var Lines() As String
 		  Lines.AddRow(Dict.Value("Type"))
 		  Lines.AddRow(Dict.Value("Reason"))
 		  For Each Frame As StackFrame In Trace
 		    Lines.AddRow(Frame.Name)
 		  Next
 		  
-		  Dim HashContent As String = Lines.Join(Encodings.UTF8.Chr(10))
-		  Dim Hash As String = EncodeHex(Crypto.SHA1(HashContent))
+		  Var HashContent As String = Lines.Join(Encodings.UTF8.Chr(10))
+		  Var Hash As String = EncodeHex(Crypto.SHA1(HashContent))
 		  
-		  Dim Win As New ExceptionWindow
+		  Var Win As New ExceptionWindow
 		  Win.mExceptionHash = Hash.Lowercase
 		  Win.mExceptionDetails = Dict
 		  Win.ShowModal()
@@ -687,7 +687,7 @@ End
 		  End If
 		  
 		  Try
-		    Dim Dict As Dictionary = Beacon.ParseJSON(Content)
+		    Var Dict As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Dict.HasKey("solution") And Dict.Value("solution") <> Nil Then
 		      Self.Pages.SelectedPanelIndex = Self.PageSolutionFound

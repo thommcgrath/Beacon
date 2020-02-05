@@ -37,7 +37,7 @@ Protected Class Quality
 
 	#tag Method, Flags = &h0
 		Function Value(CrateQualityMultiplier As Double, Difficulty As BeaconConfigs.Difficulty) As Double
-		  Dim CrateArbitraryQuality As Double = CrateQualityMultiplier + ((CrateQualityMultiplier - 1) * 0.2)
+		  Var CrateArbitraryQuality As Double = CrateQualityMultiplier + ((CrateQualityMultiplier - 1) * 0.2)
 		  Return Self.mBaseValue / (Difficulty.BaseArbitraryQuality * CrateArbitraryQuality)
 		  
 		  // Todo: Self.mBaseValue / (Difficulty.BaseArbitraryQuality * CrateArbitraryQuality) / RatingValueMultiplier

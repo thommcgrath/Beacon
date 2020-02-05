@@ -6,23 +6,23 @@ Protected Module FrameworkExtensions
 		  // but it seems to be missing a pixel per line in most cases. This code will work
 		  // around the issue, and will remain correct even if the bug is fixed.
 		  
-		  Dim ExpectedLineHeight As Double = G.TextHeight
-		  Dim ActualLineHeight As Double = G.TextHeight("A", 100)
-		  Dim LineHeightDelta As Double = ExpectedLineHeight - ActualLineHeight
+		  Var ExpectedLineHeight As Double = G.TextHeight
+		  Var ActualLineHeight As Double = G.TextHeight("A", 100)
+		  Var LineHeightDelta As Double = ExpectedLineHeight - ActualLineHeight
 		  
-		  Dim Height As Double = G.TextHeight(Source, WrapWidth)
-		  Dim LineCount As Double = Height / ActualLineHeight
+		  Var Height As Double = G.TextHeight(Source, WrapWidth)
+		  Var LineCount As Double = Height / ActualLineHeight
 		  Return Height + (LineCount * LineHeightDelta)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function AddSuffix(Extends Title As String, Suffix As String) As String
-		  Dim Words() As String = Title.Split(" ")
+		  Var Words() As String = Title.Split(" ")
 		  If Words.LastRowIndex >= 0 And Words(Words.LastRowIndex) = Suffix Then
 		    Words.AddRow("2")
 		  ElseIf Words.LastRowIndex >= 1 And Words(Words.LastRowIndex - 1) = Suffix Then
-		    Dim CopyNum As Integer
+		    Var CopyNum As Integer
 		    #Pragma BreakOnExceptions Off
 		    Try
 		      CopyNum = Integer.FromString(Words(Words.LastRowIndex), Locale.Raw) + 1
@@ -96,7 +96,7 @@ Protected Module FrameworkExtensions
 		    Return Nil
 		  End If
 		  
-		  Dim Clone As New Dictionary
+		  Var Clone As New Dictionary
 		  For Each Entry As DictionaryEntry In Source
 		    If Entry.Value <> Nil And Entry.Value IsA Dictionary Then
 		      Clone.Value(Entry.Key) = Dictionary(Entry.Value).Clone()
@@ -110,7 +110,7 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function Clone(Extends Source As MemoryBlock) As MemoryBlock
-		  Dim Replica As New MemoryBlock(Source.Size)
+		  Var Replica As New MemoryBlock(Source.Size)
 		  Replica.LittleEndian = Source.LittleEndian
 		  Replica.StringValue(0, Replica.Size) = Source.StringValue(0, Source.Size)
 		  Return Replica
@@ -119,8 +119,8 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function Clone(Extends Source() As String) As String()
-		  Dim Result() As String
-		  Redim Result(Source.LastRowIndex)
+		  Var Result() As String
+		  Result.ResizeTo(Source.LastRowIndex)
 		  For I As Integer = 0 To Source.LastRowIndex
 		    Result(I) = Source(I)
 		  Next
@@ -173,7 +173,7 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function DoubleValue(Extends Dict As Dictionary, Key As Variant, ResolveWithFirst As Boolean = False) As Double
-		  Dim Value As Variant = Dict.Value(Key)
+		  Var Value As Variant = Dict.Value(Key)
 		  Return VariantToDouble(Value, ResolveWithFirst)
 		End Function
 	#tag EndMethod
@@ -192,12 +192,12 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function Extension(Extends File As FolderItem) As String
-		  Dim Name As String = File.Name
+		  Var Name As String = File.Name
 		  If Name.IndexOf(".") = -1 Then
 		    Return ""
 		  End If
 		  
-		  Dim Parts() As String = Name.Split(".")
+		  Var Parts() As String = Name.Split(".")
 		  Return Parts(Parts.LastRowIndex)
 		End Function
 	#tag EndMethod
@@ -211,8 +211,8 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h1
 		Protected Function FieldAtPosition(Source As String, Separator As String, OneBasedIndex As Integer) As String
 		  // Replaces NthField
-		  Dim Fields() As String = Source.Split(Separator)
-		  Dim Index As Integer = OneBasedIndex - 1
+		  Var Fields() As String = Source.Split(Separator)
+		  Var Index As Integer = OneBasedIndex - 1
 		  If Index < 0 Or Index > Fields.LastRowIndex Then
 		    Return ""
 		  Else
@@ -234,15 +234,15 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function IntegerValue(Extends Value As Variant) As Integer
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Value)
 		  Select Case Info.Name
 		  Case "Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64"
 		    Return Value
 		  Case "Double", "Single"
-		    Dim DoubleValue As Double = Value
+		    Var DoubleValue As Double = Value
 		    Return Round(DoubleValue)
 		  Case "String"
-		    Dim StringValue As String = Value
+		    Var StringValue As String = Value
 		    Return Val(StringValue)
 		  Else
 		    Return 0
@@ -276,7 +276,7 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function LocalTime(Extends Source As DateTime) As DateTime
-		  Dim Now As DateTime = DateTime.Now
+		  Var Now As DateTime = DateTime.Now
 		  Return New DateTime(Source.SecondsFrom1970, Now.Timezone)
 		End Function
 	#tag EndMethod
@@ -284,10 +284,10 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function Middle(Extends Source As MemoryBlock, Offset As UInteger, Length As UInteger) As MemoryBlock
 		  Offset = Min(Offset, Source.Size)
-		  Dim Bound As UInteger = Min(Offset + Length, Source.Size)
+		  Var Bound As UInteger = Min(Offset + Length, Source.Size)
 		  Length = Bound - Offset
 		  
-		  Dim Mem As New MemoryBlock(Length)
+		  Var Mem As New MemoryBlock(Length)
 		  Mem.LittleEndian = Source.LittleEndian
 		  Mem.StringValue(0, Length) = Source.StringValue(Offset, Length)
 		  Return Mem
@@ -301,10 +301,10 @@ Protected Module FrameworkExtensions
 		  End If
 		  
 		  Offset = Min(Offset, Source.Size)
-		  Dim Bound As UInteger = Min(Offset + Length, Source.Size)
-		  Dim TailLength As UInteger = Source.Size - Bound
+		  Var Bound As UInteger = Min(Offset + Length, Source.Size)
+		  Var TailLength As UInteger = Source.Size - Bound
 		  Length = Bound - Offset
-		  Dim Delta As Integer = NewData.Size - Length
+		  Var Delta As Integer = NewData.Size - Length
 		  
 		  If TailLength > 0 Then
 		    If Delta > 0 Then
@@ -324,12 +324,12 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function NearestMultiple(Original As Double, Factor As Double) As Double
-		  Dim Whole As Integer = Floor(Original)
+		  Var Whole As Integer = Floor(Original)
 		  If Whole = Original Then
 		    Return Original
 		  End If
 		  
-		  Dim Multiplier As Double = 1 / Factor
+		  Var Multiplier As Double = 1 / Factor
 		  Return Round(Original * Multiplier) / Multiplier
 		End Function
 	#tag EndMethod
@@ -342,7 +342,7 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function NewDateFromSQLDateTime(SQLDateTime As String) As DateTime
-		  Dim Now As DateTime = DateTime.Now
+		  Var Now As DateTime = DateTime.Now
 		  Now.SQLDateTimeWithOffset = SQLDateTime
 		  Return Now
 		End Function
@@ -351,8 +351,8 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function Read(Extends File As FolderItem) As MemoryBlock
 		  Try
-		    Dim Stream As BinaryStream = BinaryStream.Open(File, False)
-		    Dim Contents As MemoryBlock = Stream.Read(Stream.Length)
+		    Var Stream As BinaryStream = BinaryStream.Open(File, False)
+		    Var Contents As MemoryBlock = Stream.Read(Stream.Length)
 		    Stream.Close
 		    Return Contents
 		  Catch Err As RuntimeException
@@ -364,8 +364,8 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function Read(Extends File As FolderItem, Encoding As TextEncoding) As String
 		  Try
-		    Dim Stream As TextInputStream = TextInputStream.Open(File)
-		    Dim Contents As String = Stream.ReadAll(Encoding)
+		    Var Stream As TextInputStream = TextInputStream.Open(File)
+		    Var Contents As String = Stream.ReadAll(Encoding)
 		    Stream.Close
 		    Return Contents
 		  Catch Err As RuntimeException
@@ -394,10 +394,10 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function SQLDateTimeWithOffset(Extends Source As DateTime) As String
-		  Dim Zone As TimeZone = Source.Timezone
-		  Dim Offset As Double = Abs(Zone.SecondsFromGMT / 3600)
-		  Dim Hours As Integer = Floor(Offset)
-		  Dim Minutes As Integer = (Offset - Floor(Offset)) * 60
+		  Var Zone As TimeZone = Source.Timezone
+		  Var Offset As Double = Abs(Zone.SecondsFromGMT / 3600)
+		  Var Hours As Integer = Floor(Offset)
+		  Var Minutes As Integer = (Offset - Floor(Offset)) * 60
 		  
 		  Return Str(Source.Year, "0000") + "-" + Str(Source.Month, "00") + "-" + Str(Source.Day, "00") + " " + Str(Source.Hour, "00") + ":" + Str(Source.Minute, "00") + ":" + Str(Source.Second, "00") + If(Zone.SecondsFromGMT < 0, "-", "+") + Str(Hours, "00") + ":" + Str(Minutes, "00")
 		End Function
@@ -469,8 +469,8 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ToString(Extends Source() As String) As String()
-		  Dim Result() As String
-		  Redim Result(Source.LastRowIndex)
+		  Var Result() As String
+		  Result.ResizeTo(Source.LastRowIndex)
 		  For I As Integer = 0 To Source.LastRowIndex
 		    Result(I) = Source(I)
 		  Next
@@ -480,8 +480,8 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function TotalSeconds(Extends Interval As DateInterval) As UInt64
-		  Dim Now As DateTime = DateTime.Now
-		  Dim Future As DateTime = Now + Interval
+		  Var Now As DateTime = DateTime.Now
+		  Var Future As DateTime = Now + Interval
 		  Return Future.SecondsFrom1970 - Now.SecondsFrom1970
 		End Function
 	#tag EndMethod
@@ -493,15 +493,15 @@ Protected Module FrameworkExtensions
 		  End If
 		  
 		  If Value.IsArray Then
-		    Dim Elements() As Variant
+		    Var Elements() As Variant
 		    Try
 		      Elements = Value
 		    Catch Err As RuntimeException
 		    End Try
 		    
-		    Dim Possibles() As Double
+		    Var Possibles() As Double
 		    For Each Possible As Variant In Elements
-		      Dim Decoded As Double = VariantToDouble(Possible, ResolveWithFirst)
+		      Var Decoded As Double = VariantToDouble(Possible, ResolveWithFirst)
 		      Possibles.AddRow(Decoded)
 		    Next
 		    If Possibles.LastRowIndex = -1 Then
@@ -546,7 +546,7 @@ Protected Module FrameworkExtensions
 		  If Locks = Nil Then
 		    Locks = New Dictionary
 		  End If
-		  Dim Lock As CriticalSection
+		  Var Lock As CriticalSection
 		  If Locks.HasKey(File.NativePath) Then
 		    Lock = Locks.Value(File.NativePath)
 		  Else
@@ -557,7 +557,7 @@ Protected Module FrameworkExtensions
 		  Try
 		    Lock.Enter
 		    
-		    Dim Stream As BinaryStream
+		    Var Stream As BinaryStream
 		    If File.Exists Then
 		      Stream = BinaryStream.Open(File, True)
 		      Stream.BytePosition = 0
@@ -566,13 +566,13 @@ Protected Module FrameworkExtensions
 		      Stream = BinaryStream.Create(File, True)
 		    End If
 		    
-		    Dim CurrentThread As Thread = App.CurrentThread
+		    Var CurrentThread As Thread = App.CurrentThread
 		    If CurrentThread = Nil Then
 		      Stream.Write(Contents)
 		    Else
 		      Const ChunkSize = 1024000
 		      For I As Integer = 0 To Contents.Size - 1 Step ChunkSize
-		        Dim Chunk As String = Contents.StringValue(I, Min(ChunkSize, Contents.Size - I))
+		        Var Chunk As String = Contents.StringValue(I, Min(ChunkSize, Contents.Size - I))
 		        Stream.Write(Chunk)
 		        CurrentThread.Sleep(10)
 		      Next

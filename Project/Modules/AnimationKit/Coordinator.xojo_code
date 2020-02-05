@@ -14,7 +14,7 @@ Protected Class Coordinator
 
 	#tag Method, Flags = &h21
 		Private Sub Animator_Run(Sender As Timer)
-		  Dim AddedTasks(), RemovedTasks() As AnimationKit.Task
+		  Var AddedTasks(), RemovedTasks() As AnimationKit.Task
 		  For I As Integer = Self.Tasks.LastRowIndex DownTo 0
 		    If Self.Tasks(I).Cancelled Then
 		      RemovedTasks.AddRow(Self.Tasks(I))
@@ -22,7 +22,7 @@ Protected Class Coordinator
 		    End If
 		  Next
 		  
-		  Dim Now As Double = System.Microseconds
+		  Var Now As Double = System.Microseconds
 		  
 		  For Each Task As AnimationKit.Task In Self.Tasks
 		    If Task.Completed(Now) Or Now - Task.LastFrameTime >= Self.FramePeriod Then
@@ -31,7 +31,7 @@ Protected Class Coordinator
 		  Next
 		  
 		  For I As Integer = Self.Tasks.LastRowIndex DownTo 0
-		    Dim Task As AnimationKit.Task = Self.Tasks(I)
+		    Var Task As AnimationKit.Task = Self.Tasks(I)
 		    If Task.Completed(Now) Then
 		      RemovedTasks.AddRow(Task)
 		      Self.Tasks.RemoveRowAt(I)

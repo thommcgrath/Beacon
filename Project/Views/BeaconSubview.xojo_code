@@ -47,7 +47,7 @@ Implements ObservationKit.Observable
 		    Self.mObservers = New Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Var Refs() As WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -95,7 +95,7 @@ Implements ObservationKit.Observable
 		    Callback.Invoke(Self)
 		  End If
 		  
-		  Dim Dialog As New MessageDialog
+		  Var Dialog As New MessageDialog
 		  Dialog.Title = ""
 		  Dialog.Message = "Do you want to save the changes made to the document """ + Self.Title + """?"
 		  Dialog.Explanation = "Your changes will be lost if you don't save them."
@@ -104,7 +104,7 @@ Implements ObservationKit.Observable
 		  Dialog.AlternateActionButton.Caption = "Don't Save"
 		  Dialog.AlternateActionButton.Visible = True
 		  
-		  Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
 		  Select Case Choice
 		  Case Dialog.ActionButton
 		    Return RaiseEvent ShouldSave()
@@ -142,7 +142,7 @@ Implements ObservationKit.Observable
 		    Self.mObservers = New Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Var Refs() As WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -153,7 +153,7 @@ Implements ObservationKit.Observable
 		      Continue
 		    End If
 		    
-		    Dim Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
+		    Var Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
 		    Observer.ObservedValueChanged(Self, Key, Value)
 		  Next
 		End Sub
@@ -167,7 +167,7 @@ Implements ObservationKit.Observable
 		    Self.mObservers = New Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Var Refs() As WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -198,7 +198,7 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function ViewID() As String
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Self)
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Self)
 		  Return Info.Name
 		End Function
 	#tag EndMethod

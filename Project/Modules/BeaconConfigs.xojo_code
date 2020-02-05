@@ -25,7 +25,7 @@ Protected Module BeaconConfigs
 		  If Human = True Then
 		    Static HumanNames() As String
 		    If HumanNames.LastRowIndex = -1 Then
-		      Redim HumanNames(Names.LastRowIndex)
+		      HumanNames.ResizeTo(Names.LastRowIndex)
 		      For I As Integer = 0 To Names.LastRowIndex
 		        HumanNames(I) = Language.LabelForConfig(Names(I))
 		      Next
@@ -46,19 +46,19 @@ Protected Module BeaconConfigs
 
 	#tag Method, Flags = &h1
 		Protected Function ConfigPurchased(ConfigName As String, PurchasedVersion As Integer) As Boolean
-		  Dim Info As Introspection.TypeInfo = TypeInfoForConfigName(ConfigName)
+		  Var Info As Introspection.TypeInfo = TypeInfoForConfigName(ConfigName)
 		  If Info = Nil Then
 		    Return True
 		  End If
 		  
-		  Dim ConfigAttributes() As Introspection.AttributeInfo = Info.GetAttributes
+		  Var ConfigAttributes() As Introspection.AttributeInfo = Info.GetAttributes
 		  For Each ConfigAttribute As Introspection.AttributeInfo In ConfigAttributes
 		    If ConfigAttribute.Name <> "OmniVersion" Then
 		      Continue
 		    End If
 		    
-		    Dim AttributeValue As Variant = ConfigAttribute.Value
-		    Dim RequiredVersion As Integer
+		    Var AttributeValue As Variant = ConfigAttribute.Value
+		    Var RequiredVersion As Integer
 		    Select Case AttributeValue.Type
 		    Case Variant.TypeInt32
 		      RequiredVersion = AttributeValue.Int32Value
@@ -79,14 +79,14 @@ Protected Module BeaconConfigs
 
 	#tag Method, Flags = &h1
 		Protected Function CreateInstance(GroupName As String) As Beacon.ConfigGroup
-		  Dim Info As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
+		  Var Info As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
 		  If Info = Nil Or Info.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) = False Then
 		    Return Nil
 		  End If 
 		  
-		  Dim Constructors() As Introspection.ConstructorInfo = Info.GetConstructors
+		  Var Constructors() As Introspection.ConstructorInfo = Info.GetConstructors
 		  For Each Signature As Introspection.ConstructorInfo In Constructors
-		    Dim Params() As Introspection.ParameterInfo = Signature.GetParameters
+		    Var Params() As Introspection.ParameterInfo = Signature.GetParameters
 		    If Params.LastRowIndex = -1 Then
 		      Return Signature.Invoke()
 		    End If
@@ -96,16 +96,16 @@ Protected Module BeaconConfigs
 
 	#tag Method, Flags = &h1
 		Protected Function CreateInstance(GroupName As String, GroupData As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document) As Beacon.ConfigGroup
-		  Dim Info As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
+		  Var Info As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
 		  If Info = Nil Or Info.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) = False Then
 		    Return Nil
 		  End If 
 		  
-		  Dim Constructors() As Introspection.ConstructorInfo = Info.GetConstructors
+		  Var Constructors() As Introspection.ConstructorInfo = Info.GetConstructors
 		  For Each Signature As Introspection.ConstructorInfo In Constructors
-		    Dim Params() As Introspection.ParameterInfo = Signature.GetParameters
+		    Var Params() As Introspection.ParameterInfo = Signature.GetParameters
 		    If Params.LastRowIndex = 2 And Params(0).IsByRef = False And Params(0).ParameterType.FullName = "Dictionary" And Params(1).IsByRef = False And Params(1).ParameterType.FullName = "Beacon.Identity" And Params(2).IsByRef = False And Params(2).ParameterType.FullName = "Beacon.Document" Then
-		      Dim Values(2) As Variant
+		      Var Values(2) As Variant
 		      Values(0) = GroupData
 		      Values(1) = Identity
 		      Values(2) = Document

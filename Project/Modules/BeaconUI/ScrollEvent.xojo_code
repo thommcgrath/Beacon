@@ -20,11 +20,11 @@ Protected Class ScrollEvent
 		      Declare Function GetMomentumPhase Lib "Cocoa.framework" Selector "momentumPhase" (Target As Ptr) As Integer
 		      Declare Function GetPhase Lib "Cocoa.framework" Selector "phase" (Target As Ptr) As Integer
 		      
-		      Dim NSApplication As Ptr = objc_getClass("NSApplication")
+		      Var NSApplication As Ptr = objc_getClass("NSApplication")
 		      If NSApplication <> Nil Then
-		        Dim SharedApplication As Ptr = GetSharedApplication(NSApplication)
+		        Var SharedApplication As Ptr = GetSharedApplication(NSApplication)
 		        If SharedApplication <> Nil Then
-		          Dim EventObject As Ptr = GetCurrentEvent(SharedApplication)
+		          Var EventObject As Ptr = GetCurrentEvent(SharedApplication)
 		          If EventObject <> Nil Then
 		            If RespondsToSelector(EventObject,sel_registerName("momentumPhase")) Then
 		              Self.mMomentumPhase = GetMomentumPhase(EventObject)
@@ -33,7 +33,7 @@ Protected Class ScrollEvent
 		              Self.mPhase = GetPhase(EventObject)
 		            End If
 		            If RespondsToSelector(EventObject,sel_registerName("scrollingDeltaY")) Then
-		              Dim Factor As Integer = LineHeight
+		              Var Factor As Integer = LineHeight
 		              If RespondsToSelector(EventObject,sel_registerName("hasPreciseScrollingDeltas")) And HasPreciseScrollingDeltas(EventObject) Then
 		                Factor = 1
 		              End If

@@ -510,11 +510,11 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BuildPresetMenu(Parent As MenuItem)
-		  Dim Presets() As Beacon.Preset = Beacon.Data.Presets
-		  Dim Groups As New Dictionary
-		  Dim GroupNames() As String
+		  Var Presets() As Beacon.Preset = Beacon.Data.Presets
+		  Var Groups As New Dictionary
+		  Var GroupNames() As String
 		  For Each Preset As Beacon.Preset In Presets
-		    Dim Arr() As Beacon.Preset
+		    Var Arr() As Beacon.Preset
 		    If Groups.HasKey(Preset.Grouping) Then
 		      Arr = Groups.Value(Preset.Grouping)
 		    End If
@@ -531,16 +531,16 @@ End
 		    Parent.RemoveMenuAt(I)
 		  Next
 		  
-		  Dim EmptySetItem As New MenuItem("New Empty Set", Nil)
+		  Var EmptySetItem As New MenuItem("New Empty Set", Nil)
 		  AddHandler EmptySetItem.Action, WeakAddressOf Self.HandlePresetMenu
 		  Parent.AddMenu(EmptySetItem)
 		  
-		  Dim HasTarget As Boolean = Self.mSources.LastRowIndex > -1
+		  Var HasTarget As Boolean = Self.mSources.LastRowIndex > -1
 		  
 		  For Each Group As String In GroupNames
-		    Dim Arr() As Beacon.Preset = Groups.Value(Group)
-		    Dim Names() As String
-		    Dim Items() As Beacon.Preset
+		    Var Arr() As Beacon.Preset = Groups.Value(Group)
+		    Var Names() As String
+		    Var Items() As Beacon.Preset
 		    For Each Preset As Beacon.Preset In Arr
 		      If Preset.ValidForMask(Self.Document.MapCompatibility) Then
 		        Names.AddRow(Preset.Label)
@@ -555,12 +555,12 @@ End
 		    
 		    Parent.AddMenu(New MenuItem(MenuItem.TextSeparator))
 		    
-		    Dim Header As New MenuItem(Group)
+		    Var Header As New MenuItem(Group)
 		    Header.Enabled = False
 		    Parent.AddMenu(Header)
 		    
 		    For Each Preset As Beacon.Preset In Items
-		      Dim PresetItem As New MenuItem(Preset.Label, Preset)
+		      Var PresetItem As New MenuItem(Preset.Label, Preset)
 		      PresetItem.Enabled = HasTarget
 		      AddHandler PresetItem.Action, WeakAddressOf Self.HandlePresetMenu
 		      Parent.AddMenu(PresetItem)
@@ -647,7 +647,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function HandlePresetMenu(Sender As MenuItem) As Boolean
-		  Dim SelectedPreset As Beacon.Preset = Sender.Tag
+		  Var SelectedPreset As Beacon.Preset = Sender.Tag
 		  
 		  Var Mask As UInt64 = Self.Document.MapCompatibility
 		  Var Mods As Beacon.StringList = Self.Document.Mods
@@ -700,9 +700,9 @@ End
 		    Return
 		  End If
 		  
-		  Dim AvailableSpace As Integer = Self.Width - Self.FadedSeparator1.Width
-		  Dim ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - Self.EditorMinWidth)
-		  Dim EditorWidth As Integer = AvailableSpace - ListWidth
+		  Var AvailableSpace As Integer = Self.Width - Self.FadedSeparator1.Width
+		  Var ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - Self.EditorMinWidth)
+		  Var EditorWidth As Integer = AvailableSpace - ListWidth
 		  
 		  Self.Header.Width = ListWidth
 		  Self.HintsContainer.Width = ListWidth
@@ -754,7 +754,7 @@ End
 		  
 		  Preferences.SimulatorVisible = Value
 		  
-		  Dim NewPosition As Integer
+		  Var NewPosition As Integer
 		  If Value Then
 		    NewPosition = Self.Height - Preferences.SimulatorSize
 		    Self.Simulator.Height = Preferences.SimulatorSize
@@ -768,8 +768,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim Curve As AnimationKit.Curve = AnimationKit.Curve.CreateEaseOut
-		  Dim Duration As Double = 0.15
+		  Var Curve As AnimationKit.Curve = AnimationKit.Curve.CreateEaseOut
+		  Var Duration As Double = 0.15
 		  
 		  If Self.mSimulatorTask <> Nil Then
 		    Self.mSimulatorTask.Cancel
@@ -786,7 +786,7 @@ End
 	#tag Method, Flags = &h0
 		Function Sources() As Beacon.LootSource()
 		  // Clone the array, but not the items
-		  Dim Results() As Beacon.LootSource
+		  Var Results() As Beacon.LootSource
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    Results.AddRow(Source)
 		  Next
@@ -813,7 +813,7 @@ End
 		    Self.Simulator.Clear()
 		  End If
 		  
-		  Dim CommonNotes As String
+		  Var CommonNotes As String
 		  If Self.mSources.LastRowIndex > -1 Then
 		    CommonNotes = Self.mSources(0).Notes
 		    For I As Integer = 1 To Self.mSources.LastRowIndex
@@ -847,7 +847,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Caption As String
+		  Var Caption As String
 		  If Self.SetList.SelectedRowCount > 0 Then
 		    Caption = Format(Self.SetList.SelectedRowCount, "0") + " of " + Str(Self.SetList.RowCount, "0") + " Item " + If(Self.SetList.RowCount = 1, "Set", "Sets") + " Selected"
 		  Else
@@ -1134,9 +1134,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
-		  Dim Targets() As ItemSetOrganizer
+		  Var Targets() As ItemSetOrganizer
 		  If Me.SelectedRowCount = 0 Then
-		    Dim Idx As Integer = Me.RowFromXY(X, Y)
+		    Var Idx As Integer = Me.RowFromXY(X, Y)
 		    If Idx = -1 Then
 		      Return False
 		    End If
@@ -1153,7 +1153,7 @@ End
 		    Return False
 		  End If
 		  
-		  Dim Preset As Beacon.Preset
+		  Var Preset As Beacon.Preset
 		  For Each Organizer As ItemSetOrganizer In Targets
 		    If Organizer.Template.SourcePresetID = "" Or Preset <> Nil Then
 		      Continue
@@ -1162,7 +1162,7 @@ End
 		    Preset = Beacon.Data.GetPreset(Organizer.Template.SourcePresetID)
 		  Next
 		  
-		  Dim CreateItem As New MenuItem("Create Preset…", Targets)
+		  Var CreateItem As New MenuItem("Create Preset…", Targets)
 		  CreateItem.Name = "createpreset"
 		  CreateItem.Enabled = Targets.LastRowIndex = 0
 		  If Preset <> Nil And CreateItem.Enabled Then
@@ -1170,7 +1170,7 @@ End
 		  End If
 		  Base.AddMenu(CreateItem)
 		  
-		  Dim ReconfigureItem As New MenuItem("Rebuild From Preset", Targets)
+		  Var ReconfigureItem As New MenuItem("Rebuild From Preset", Targets)
 		  ReconfigureItem.Name = "reconfigure"
 		  ReconfigureItem.Enabled = Preset <> Nil
 		  If ReconfigureItem.Enabled Then
@@ -1185,12 +1185,12 @@ End
 		  If Keyboard.OptionKey Then
 		    Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
 		    
-		    Dim CopyJSONItem As New MenuItem("Copy JSON", Targets)
+		    Var CopyJSONItem As New MenuItem("Copy JSON", Targets)
 		    CopyJSONItem.Name = "copyjson"
 		    CopyJSONItem.Enabled = True
 		    Base.AddMenu(CopyJSONItem)
 		    
-		    Dim CopyConfigItem As New MenuItem("Copy Config Part", Targets)
+		    Var CopyConfigItem As New MenuItem("Copy Config Part", Targets)
 		    CopyConfigItem.Name = "copyconfig"
 		    CopyConfigItem.Enabled = True
 		    Base.AddMenu(CopyConfigItem)
@@ -1341,7 +1341,7 @@ End
 		    Self.ImportProgress = Nil
 		  End If
 		  
-		  Dim Dicts() As Variant
+		  Var Dicts() As Variant
 		  #Pragma BreakOnExceptions Off
 		  Try
 		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
@@ -1350,11 +1350,11 @@ End
 		  End Try
 		  #Pragma BreakOnExceptions Default
 		  
-		  Dim Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
+		  Var Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
 		  
-		  Dim SourceLootSources() As Beacon.LootSource
+		  Var SourceLootSources() As Beacon.LootSource
 		  For Each ConfigDict As Dictionary In Dicts
-		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Difficulty)
+		    Var Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Difficulty)
 		    If Source <> Nil Then
 		      SourceLootSources.AddRow(Source)
 		    End If
@@ -1373,11 +1373,11 @@ End
 #tag Events Header
 	#tag Event
 		Sub Open()
-		  Dim AddButton As New BeaconToolbarItem("AddSet", IconToolbarAdd)
+		  Var AddButton As New BeaconToolbarItem("AddSet", IconToolbarAdd)
 		  AddButton.HasMenu = True
 		  AddButton.HelpTag = "Add a new empty item set. Hold to add a preset from a menu."
 		  
-		  Dim SimulateButton As New BeaconToolbarItem("Simulate", IconToolbarSimulate)
+		  Var SimulateButton As New BeaconToolbarItem("Simulate", IconToolbarSimulate)
 		  SimulateButton.Enabled = False
 		  SimulateButton.HelpTag = "Simulate loot selection for this loot source."
 		  
@@ -1478,7 +1478,7 @@ End
 #tag Events SettingsContainer
 	#tag Event
 		Sub Resized()
-		  Dim ListTop As Integer = Me.Top + Me.Height
+		  Var ListTop As Integer = Me.Top + Me.Height
 		  
 		  If Self.HintsContainer.Visible Then
 		    If Self.HintsContainer.Top = ListTop Then
@@ -1504,7 +1504,7 @@ End
 		      Return
 		    End If
 		    
-		    Dim Diff As Integer = ListTop - Self.SetList.Top
+		    Var Diff As Integer = ListTop - Self.SetList.Top
 		    Self.SetList.Top = Self.SetList.Top + Diff
 		    Self.SetList.Height = Self.SetList.Height - Diff
 		  #endif

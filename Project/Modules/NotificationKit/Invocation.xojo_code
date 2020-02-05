@@ -10,7 +10,7 @@ Private Class Invocation
 	#tag Method, Flags = &h0
 		Sub Invoke()
 		  If Self.mReceiver.Value <> Nil Then
-		    Dim Receiver As NotificationKit.Receiver = NotificationKit.Receiver(Self.mReceiver.Value)
+		    Var Receiver As NotificationKit.Receiver = NotificationKit.Receiver(Self.mReceiver.Value)
 		    Receiver.NotificationKit_NotificationReceived(Self.mNotification)
 		  End If
 		End Sub

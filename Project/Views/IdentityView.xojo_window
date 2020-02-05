@@ -431,7 +431,7 @@ End
 		  
 		  Select Case Notification.Name
 		  Case IdentityManager.Notification_IdentityChanged
-		    Dim Identity As Beacon.Identity = Notification.UserData
+		    Var Identity As Beacon.Identity = Notification.UserData
 		    Self.UpdateUI(Identity)
 		  End Select
 		End Sub
@@ -439,27 +439,27 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowExportIdentity()
-		  Dim Dialog As New SaveFileDialog
+		  Var Dialog As New SaveFileDialog
 		  Dialog.Filter = BeaconFileTypes.BeaconIdentity
 		  Dialog.SuggestedFileName = "Identity Backup" + BeaconFileTypes.BeaconIdentity.PrimaryExtension
 		  
-		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File = Nil Then
 		    Return
 		  End If
 		  
-		  Dim Dict As Dictionary = App.IdentityManager.CurrentIdentity.Export
-		  Dim Writer As New Beacon.JSONWriter(Dict, File)
+		  Var Dict As Dictionary = App.IdentityManager.CurrentIdentity.Export
+		  Var Writer As New Beacon.JSONWriter(Dict, File)
 		  Writer.Start
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub ShowImportIdentity()
-		  Dim Dialog As New OpenFileDialog
+		  Var Dialog As New OpenFileDialog
 		  Dialog.Filter = BeaconFileTypes.BeaconIdentity
 		  
-		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File = Nil Then
 		    Return
 		  End If

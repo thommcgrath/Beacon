@@ -157,7 +157,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
-		  Dim Config As New BeaconConfigs.StatLimits()
+		  Var Config As New BeaconConfigs.StatLimits()
 		  
 		  For Index As Integer = 0 To Config.mValues.LastRowIndex
 		    Var ValueTestOne As Double = ParsedData.DoubleValue("ItemStatClamps[" + Index.ToString + "]", 100.0, True)

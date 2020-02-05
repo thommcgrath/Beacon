@@ -16,7 +16,7 @@ Protected Class Document
 		  
 		  Self.mServerProfiles.AddRow(Profile.Clone)
 		  If Profile.IsConsole Then
-		    Dim SafeMods() As String = Beacon.Data.ConsoleSafeMods
+		    Var SafeMods() As String = Beacon.Data.ConsoleSafeMods
 		    If Self.mMods = Nil Or Self.mMods.LastRowIndex = -1 Then
 		      Self.mMods = SafeMods
 		    Else
@@ -52,7 +52,7 @@ Protected Class Document
 		  End If
 		  
 		  If Create Then
-		    Dim Group As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName)
+		    Var Group As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName)
 		    If Group <> Nil Then
 		      Group.IsImplicit = True
 		      Self.AddConfigGroup(Group)
@@ -104,12 +104,12 @@ Protected Class Document
 
 	#tag Method, Flags = &h21
 		Private Shared Function FromLegacy(Parsed As Variant, Identity As Beacon.Identity) As Beacon.Document
-		  Dim Doc As new Beacon.Document
-		  Dim LootSources() As Variant
-		  Dim Version As Integer
+		  Var Doc As new Beacon.Document
+		  Var LootSources() As Variant
+		  Var Version As Integer
 		  
 		  If Parsed.Type = Variant.TypeObject And Parsed.ObjectValue IsA Dictionary Then
-		    Dim Dict As Dictionary = Parsed
+		    Var Dict As Dictionary = Parsed
 		    Try
 		      If Dict.HasKey("LootSources") Then
 		        LootSources = Dict.Value("LootSources")
@@ -134,24 +134,24 @@ Protected Class Document
 		      Else
 		        Doc.mMapCompatibility = 0
 		      End If
-		      Dim DifficultyConfig As New BeaconConfigs.Difficulty
+		      Var DifficultyConfig As New BeaconConfigs.Difficulty
 		      If Dict.HasKey("DifficultyValue") Then
 		        DifficultyConfig.MaxDinoLevel = Dict.Value("DifficultyValue") * 30
 		      End If
 		      Doc.AddConfigGroup(DifficultyConfig)
 		      If Dict.HasKey("ConsoleModsOnly") Then
-		        Dim ConsoleModsOnly As Boolean = Dict.Value("ConsoleModsOnly")
+		        Var ConsoleModsOnly As Boolean = Dict.Value("ConsoleModsOnly")
 		        If ConsoleModsOnly Then
 		          Doc.mMods = Beacon.Data.ConsoleSafeMods()
 		        End If
 		      End If
 		      
 		      If Dict.HasKey("Secure") Then
-		        Dim SecureDict As Dictionary = ReadSecureData(Dict.Value("Secure"), Identity)
+		        Var SecureDict As Dictionary = ReadSecureData(Dict.Value("Secure"), Identity)
 		        If SecureDict <> Nil Then
-		          Dim ServerDicts() As Variant = SecureDict.Value("Servers")
+		          Var ServerDicts() As Variant = SecureDict.Value("Servers")
 		          For Each ServerDict As Dictionary In ServerDicts
-		            Dim Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
+		            Var Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
 		            If Profile <> Nil Then
 		              Doc.mServerProfiles.AddRow(Profile)
 		            End If
@@ -162,21 +162,21 @@ Protected Class Document
 		          End If
 		        End If
 		      ElseIf Dict.HasKey("FTPServers") Then
-		        Dim ServerDicts() As Variant = Dict.Value("FTPServers")
+		        Var ServerDicts() As Variant = Dict.Value("FTPServers")
 		        For Each ServerDict As Dictionary In ServerDicts
-		          Dim FTPInfo As Dictionary = ReadSecureData(ServerDict, Identity, True)
+		          Var FTPInfo As Dictionary = ReadSecureData(ServerDict, Identity, True)
 		          If FTPInfo <> Nil And FTPInfo.HasAllKeys("Description", "Host", "Port", "User", "Pass", "Path") Then
-		            Dim Profile As New Beacon.FTPServerProfile
+		            Var Profile As New Beacon.FTPServerProfile
 		            Profile.Name = FTPInfo.Value("Description")
 		            Profile.Host = FTPInfo.Value("Host")
 		            Profile.Port = FTPInfo.Value("Port")
 		            Profile.Username = FTPInfo.Value("User")
 		            Profile.Password = FTPInfo.Value("Pass")
 		            
-		            Dim Path As String = FTPInfo.Value("Path")
-		            Dim Components() As String = Path.Split("/")
+		            Var Path As String = FTPInfo.Value("Path")
+		            Var Components() As String = Path.Split("/")
 		            If Components.LastRowIndex > -1 Then
-		              Dim LastComponent As String = Components(Components.LastRowIndex)
+		              Var LastComponent As String = Components(Components.LastRowIndex)
 		              If LastComponent.Length > 4 And LastComponent.Right(4) = ".ini" Then
 		                Components.RemoveRowAt(Components.LastRowIndex)
 		              End If
@@ -200,15 +200,15 @@ Protected Class Document
 		    Return Nil
 		  End If
 		  
-		  Dim Presets() As Beacon.Preset
+		  Var Presets() As Beacon.Preset
 		  If Version < 2 Then
 		    // Will need this in a few lines
 		    Presets = Beacon.Data.Presets
 		  End If
 		  If LootSources.LastRowIndex > -1 Then
-		    Dim Drops As New BeaconConfigs.LootDrops
+		    Var Drops As New BeaconConfigs.LootDrops
 		    For Each LootSource As Dictionary In LootSources
-		      Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(LootSource)
+		      Var Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(LootSource)
 		      If Source <> Nil Then
 		        If Version < 2 Then
 		          // Match item set names to presets
@@ -216,7 +216,7 @@ Protected Class Document
 		            For Each Preset As Beacon.Preset In Presets
 		              If Set.Label = Preset.Label Then
 		                // Here's a hack to make assigning a preset possible: save current entries
-		                Dim Entries() As Beacon.SetEntry
+		                Var Entries() As Beacon.SetEntry
 		                For Each Entry As Beacon.SetEntry In Set
 		                  Entries.AddRow(New Beacon.SetEntry(Entry))
 		                Next
@@ -225,7 +225,7 @@ Protected Class Document
 		                Call Set.ReconfigureWithPreset(Preset, Source, Beacon.Maps.TheIsland.Mask, Doc.Mods)
 		                
 		                // Now "deconfigure" it
-		                Redim Set(Entries.LastRowIndex)
+		                Set.ResizeTo(Entries.LastRowIndex)
 		                For I As Integer = 0 To Entries.LastRowIndex
 		                  Set(I) = Entries(I)
 		                Next
@@ -248,16 +248,16 @@ Protected Class Document
 
 	#tag Method, Flags = &h0
 		Shared Function FromString(Contents As String, Identity As Beacon.Identity) As Beacon.Document
-		  Dim Parsed As Variant
+		  Var Parsed As Variant
 		  Try
 		    Parsed = Beacon.ParseJSON(Contents)
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
 		  
-		  Dim Doc As New Beacon.Document
-		  Dim Version As Integer = 1
-		  Dim Dict As Dictionary
+		  Var Doc As New Beacon.Document
+		  Var Version As Integer = 1
+		  Var Dict As Dictionary
 		  If Parsed IsA Dictionary Then
 		    Dict = Parsed
 		    Version = Dict.Lookup("Version", 0)
@@ -313,11 +313,11 @@ Protected Class Document
 		  
 		  // New config system
 		  If Dict.HasKey("Configs") Then
-		    Dim Groups As Dictionary = Dict.Value("Configs")
+		    Var Groups As Dictionary = Dict.Value("Configs")
 		    For Each Entry As DictionaryEntry In Groups
-		      Dim GroupName As String = Entry.Key
-		      Dim GroupData As Dictionary = Entry.Value
-		      Dim Instance As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName, GroupData, Identity, Doc)
+		      Var GroupName As String = Entry.Key
+		      Var GroupData As Dictionary = Entry.Value
+		      Var Instance As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName, GroupData, Identity, Doc)
 		      If Instance <> Nil Then
 		        Doc.mConfigGroups.Value(GroupName) = Instance
 		      End If
@@ -325,12 +325,12 @@ Protected Class Document
 		  End If
 		  
 		  If Dict.HasKey("Mods") Then
-		    Dim Mods As Beacon.StringList = Beacon.StringList.FromVariant(Dict.Value("Mods"))
+		    Var Mods As Beacon.StringList = Beacon.StringList.FromVariant(Dict.Value("Mods"))
 		    If Mods <> Nil Then
 		      Doc.mMods = Mods
 		    End If
 		  ElseIf Dict.HasKey("ConsoleModsOnly") Then
-		    Dim ConsoleModsOnly As Boolean = Dict.Value("ConsoleModsOnly")
+		    Var ConsoleModsOnly As Boolean = Dict.Value("ConsoleModsOnly")
 		    If ConsoleModsOnly Then
 		      Doc.mMods = Beacon.Data.ConsoleSafeMods()
 		    End If
@@ -348,11 +348,11 @@ Protected Class Document
 		    Doc.UseCompression = True
 		  End If
 		  
-		  Dim SecureDict As Dictionary
+		  Var SecureDict As Dictionary
 		  If Dict.HasKey("EncryptedData") Then
 		    Try
 		      Doc.mLastSecureData = Dict.Value("EncryptedData")
-		      Dim Decrypted As String = Doc.Decrypt(Doc.mLastSecureData)
+		      Var Decrypted As String = Doc.Decrypt(Doc.mLastSecureData)
 		      Doc.mLastSecureHash = Beacon.Hash(Decrypted)
 		      SecureDict = Beacon.ParseJSON(Decrypted)
 		    Catch Err As RuntimeException
@@ -362,9 +362,9 @@ Protected Class Document
 		    SecureDict = ReadSecureData(Dict.Value("Secure"), Identity)
 		  End If
 		  If SecureDict <> Nil Then
-		    Dim ServerDicts() As Variant = SecureDict.Value("Servers")
+		    Var ServerDicts() As Variant = SecureDict.Value("Servers")
 		    For Each ServerDict As Dictionary In ServerDicts
-		      Dim Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
+		      Var Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
 		      If Profile <> Nil Then
 		        Doc.mServerProfiles.AddRow(Profile)
 		      End If
@@ -395,7 +395,7 @@ Protected Class Document
 
 	#tag Method, Flags = &h0
 		Function GetUsers() As String()
-		  Dim Users() As String
+		  Var Users() As String
 		  For Each Entry As DictionaryEntry In Self.mEncryptedPasswords
 		    Users.AddRow(Entry.Key)
 		  Next
@@ -417,7 +417,7 @@ Protected Class Document
 
 	#tag Method, Flags = &h0
 		Function ImplementedConfigs() As Beacon.ConfigGroup()
-		  Dim Groups() As Beacon.ConfigGroup
+		  Var Groups() As Beacon.ConfigGroup
 		  For Each Entry As DictionaryEntry In Self.mConfigGroups
 		    Groups.AddRow(Entry.Value)
 		  Next
@@ -434,9 +434,9 @@ Protected Class Document
 		    Return False
 		  End If
 		  
-		  Dim Configs() As Beacon.ConfigGroup = Self.ImplementedConfigs()
+		  Var Configs() As Beacon.ConfigGroup = Self.ImplementedConfigs()
 		  For Each Config As Beacon.ConfigGroup In Configs
-		    Dim Issues() As Beacon.Issue = Config.Issues(Self, Identity)
+		    Var Issues() As Beacon.Issue = Config.Issues(Self, Identity)
 		    If Issues <> Nil And Issues.LastRowIndex > -1 Then
 		      Return False
 		    End If
@@ -456,8 +456,8 @@ Protected Class Document
 
 	#tag Method, Flags = &h0
 		Function Maps() As Beacon.Map()
-		  Dim Possibles() As Beacon.Map = Beacon.Maps.All
-		  Dim Matches() As Beacon.Map
+		  Var Possibles() As Beacon.Map = Beacon.Maps.All
+		  Var Matches() As Beacon.Map
 		  For Each Map As Beacon.Map In Possibles
 		    If Map.Matches(Self.mMapCompatibility) Then
 		      Matches.AddRow(Map)
@@ -470,7 +470,7 @@ Protected Class Document
 	#tag Method, Flags = &h0
 		Function Metadata(Create As Boolean = False) As BeaconConfigs.Metadata
 		  Static GroupName As String = BeaconConfigs.Metadata.ConfigName
-		  Dim Group As Beacon.ConfigGroup = Self.ConfigGroup(GroupName, Create)
+		  Var Group As Beacon.ConfigGroup = Self.ConfigGroup(GroupName, Create)
 		  If Group <> Nil Then
 		    Return BeaconConfigs.Metadata(Group)
 		  End If
@@ -488,7 +488,7 @@ Protected Class Document
 		  End If
 		  
 		  For Each Entry As DictionaryEntry In Self.mConfigGroups
-		    Dim Group As Beacon.ConfigGroup = Entry.Value
+		    Var Group As Beacon.ConfigGroup = Entry.Value
 		    If Group.Modified Then
 		      Return True
 		    End If
@@ -508,7 +508,7 @@ Protected Class Document
 		  
 		  If Value = False Then
 		    For Each Entry As DictionaryEntry In Self.mConfigGroups
-		      Dim Group As Beacon.ConfigGroup = Entry.Value
+		      Var Group As Beacon.ConfigGroup = Entry.Value
 		      Group.Modified = False
 		    Next
 		    
@@ -555,8 +555,8 @@ Protected Class Document
 		  Else
 		    If Self.mOAuthDicts.HasKey(Provider) Then
 		      // Need to compare
-		      Dim OldJSON As String = Beacon.GenerateJSON(Self.mOAuthDicts.Value(Provider), False)
-		      Dim NewJSON As String = Beacon.GenerateJSON(Dict, False)
+		      Var OldJSON As String = Beacon.GenerateJSON(Self.mOAuthDicts.Value(Provider), False)
+		      Var NewJSON As String = Beacon.GenerateJSON(Dict, False)
 		      If OldJSON = NewJSON Then
 		        Return
 		      End If
@@ -584,19 +584,19 @@ Protected Class Document
 		    Return Nil
 		  End If
 		  
-		  Dim Key As MemoryBlock = Identity.Decrypt(DecodeHex(SecureDict.Value("Key")))
+		  Var Key As MemoryBlock = Identity.Decrypt(DecodeHex(SecureDict.Value("Key")))
 		  If Key = Nil Then
 		    Return Nil
 		  End If
 		  
-		  Dim ExpectedHash As String = SecureDict.Lookup("Hash", "")
-		  Dim Vector As MemoryBlock = DecodeHex(SecureDict.Value("Vector"))
-		  Dim Encrypted As MemoryBlock = DecodeHex(SecureDict.Value("Content"))
-		  Dim AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
+		  Var ExpectedHash As String = SecureDict.Lookup("Hash", "")
+		  Var Vector As MemoryBlock = DecodeHex(SecureDict.Value("Vector"))
+		  Var Encrypted As MemoryBlock = DecodeHex(SecureDict.Value("Content"))
+		  Var AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
 		  AES.SetKey(Key)
 		  AES.SetInitialVector(Vector)
 		  
-		  Dim Decrypted As String
+		  Var Decrypted As String
 		  Try
 		    Decrypted = AES.DecryptCBC(Encrypted)
 		  Catch Err As RuntimeException
@@ -604,7 +604,7 @@ Protected Class Document
 		  End Try
 		  
 		  If SkipHashVerification = False Then
-		    Dim ComputedHash As String = Beacon.Hash(Decrypted)
+		    Var ComputedHash As String = Beacon.Hash(Decrypted)
 		    If ComputedHash <> ExpectedHash Then
 		      Return Nil
 		    End If
@@ -615,7 +615,7 @@ Protected Class Document
 		  End If
 		  Decrypted = Decrypted.DefineEncoding(Encodings.UTF8)
 		  
-		  Dim DecryptedDict As Dictionary
+		  Var DecryptedDict As Dictionary
 		  Try
 		    DecryptedDict = Beacon.ParseJSON(Decrypted)
 		  Catch Err As RuntimeException
@@ -704,27 +704,27 @@ Protected Class Document
 		    Self.AddUser(Identity.Identifier, Identity.PublicKey)
 		  End If
 		  
-		  Dim Document As New Dictionary
+		  Var Document As New Dictionary
 		  Document.Value("Version") = Self.DocumentVersion
 		  Document.Value("Identifier") = Self.DocumentID
 		  Document.Value("Trust") = Self.TrustKey
 		  Document.Value("EncryptionKeys") = Self.mEncryptedPasswords
 		  
-		  Dim ModsList() As String = Self.Mods
+		  Var ModsList() As String = Self.Mods
 		  Document.Value("Mods") = ModsList
 		  Document.Value("UseCompression") = Self.UseCompression
 		  Document.Value("Timestamp") = DateTime.Now.SQLDateTimeWithOffset
 		  Document.Value("AllowUCS") = Self.AllowUCS
 		  
-		  Dim Groups As New Dictionary
+		  Var Groups As New Dictionary
 		  For Each Entry As DictionaryEntry In Self.mConfigGroups
-		    Dim Group As Beacon.ConfigGroup = Entry.Value
-		    Dim GroupData As Dictionary = Group.ToDictionary(Self)
+		    Var Group As Beacon.ConfigGroup = Entry.Value
+		    Var GroupData As Dictionary = Group.ToDictionary(Self)
 		    If GroupData = Nil Then
 		      GroupData = New Dictionary
 		    End If
 		    
-		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Group)
+		    Var Info As Introspection.TypeInfo = Introspection.GetType(Group)
 		    Groups.Value(Info.Name) = GroupData
 		  Next
 		  Document.Value("Configs") = Groups
@@ -733,8 +733,8 @@ Protected Class Document
 		    Document.Value("Map") = Self.mMapCompatibility
 		  End If
 		  
-		  Dim EncryptedData As New Dictionary
-		  Dim Profiles() As Dictionary
+		  Var EncryptedData As New Dictionary
+		  Var Profiles() As Dictionary
 		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
 		    Profiles.AddRow(Profile.ToDictionary)
 		  Next
@@ -743,8 +743,8 @@ Protected Class Document
 		    EncryptedData.Value("OAuth") = Self.mOAuthDicts
 		  End If
 		  
-		  Dim Content As String = Beacon.GenerateJSON(EncryptedData, False)
-		  Dim Hash As String = Beacon.Hash(Content)
+		  Var Content As String = Beacon.GenerateJSON(EncryptedData, False)
+		  Var Hash As String = Beacon.Hash(Content)
 		  If Hash <> Self.mLastSecureHash Then
 		    Self.mLastSecureData = Self.Encrypt(Content)
 		    Self.mLastSecureHash = Hash
@@ -757,9 +757,9 @@ Protected Class Document
 
 	#tag Method, Flags = &h0
 		Function UsesOmniFeaturesWithoutOmni(Identity As Beacon.Identity) As Beacon.ConfigGroup()
-		  Dim OmniVersion As Integer = Identity.OmniVersion
-		  Dim Configs() As Beacon.ConfigGroup = Self.ImplementedConfigs()
-		  Dim ExcludedConfigs() As Beacon.ConfigGroup
+		  Var OmniVersion As Integer = Identity.OmniVersion
+		  Var Configs() As Beacon.ConfigGroup = Self.ImplementedConfigs()
+		  Var ExcludedConfigs() As Beacon.ConfigGroup
 		  For Each Config As Beacon.ConfigGroup In Configs
 		    If Config.Purchased(OmniVersion) = False Then
 		      ExcludedConfigs.AddRow(Config)
@@ -790,7 +790,7 @@ Protected Class Document
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Dim Metadata As BeaconConfigs.Metadata = Self.Metadata
+			  Var Metadata As BeaconConfigs.Metadata = Self.Metadata
 			  If Metadata <> Nil Then
 			    Return Metadata.Description
 			  End If
@@ -807,7 +807,7 @@ Protected Class Document
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Dim Difficulty As BeaconConfigs.Difficulty = Self.Difficulty
+			  Var Difficulty As BeaconConfigs.Difficulty = Self.Difficulty
 			  If Difficulty <> Nil Then
 			    Return Difficulty.DifficultyValue
 			  Else
@@ -844,11 +844,11 @@ Protected Class Document
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Dim Limit As UInt64 = Beacon.Maps.All.Mask
+			  Var Limit As UInt64 = Beacon.Maps.All.Mask
 			  Value = Value And Limit
 			  If Self.mMapCompatibility <> Value Then
 			    If Self.mMods <> Nil And Self.mMods.Count > 0 Then
-			      Dim Maps() As Beacon.Map = Beacon.Maps.ForMask(Value)
+			      Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Value)
 			      For Each Map As Beacon.Map In Maps
 			        Self.mMods.Append(Map.ProvidedByModID)
 			      Next
@@ -921,7 +921,7 @@ Protected Class Document
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Dim Metadata As BeaconConfigs.Metadata = Self.Metadata
+			  Var Metadata As BeaconConfigs.Metadata = Self.Metadata
 			  If Metadata <> Nil Then
 			    Return Metadata.Title
 			  End If

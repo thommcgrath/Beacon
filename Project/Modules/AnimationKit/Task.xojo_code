@@ -10,7 +10,7 @@ Protected Class Task
 		Function Completed(Time As Double) As Boolean
 		  #Pragma Unused Time
 		  
-		  Dim Err As New UnsupportedOperationException
+		  Var Err As New UnsupportedOperationException
 		  Err.Reason = "Subclasses of AnimationKit.Task must override the Completed method."
 		  Raise Err
 		End Function
@@ -35,7 +35,7 @@ Protected Class Task
 		  
 		  Self.PrivateLastFrameTime = Time
 		  
-		  Dim Final As Boolean = Self.Completed(Time)
+		  Var Final As Boolean = Self.Completed(Time)
 		  RaiseEvent Perform(Final, Time)
 		  If Final Then
 		    RaiseEvent Completed

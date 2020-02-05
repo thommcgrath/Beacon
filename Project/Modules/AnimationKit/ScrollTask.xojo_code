@@ -3,7 +3,7 @@ Protected Class ScrollTask
 Inherits AnimationKit.Task
 	#tag Event
 		Sub Perform(Final As Boolean, Time As Double)
-		  Dim Item As Object = Self.Item
+		  Var Item As Object = Self.Item
 		  If Item = Nil Then
 		    Return
 		  End If
@@ -12,25 +12,25 @@ Inherits AnimationKit.Task
 		    Return
 		  End If
 		  
-		  Dim Target As AnimationKit.Scrollable = AnimationKit.Scrollable(Item)
+		  Var Target As AnimationKit.Scrollable = AnimationKit.Scrollable(Item)
 		  
 		  If Final Then
 		    Self.Apply(Target, Self.Minimum, Self.Maximum, Self.Position)
 		    Return
 		  End If
 		  
-		  Dim Elapsed As Double = Self.ElapsedTime(Time)
-		  Dim Duration As Double = Self.DurationInSeconds * 1000000
-		  Dim Minimum As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartMinimum, Self.Minimum)
-		  Dim Maximum As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartMaximum, Self.Maximum)
-		  Dim Position As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartPosition, Self.Position)
+		  Var Elapsed As Double = Self.ElapsedTime(Time)
+		  Var Duration As Double = Self.DurationInSeconds * 1000000
+		  Var Minimum As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartMinimum, Self.Minimum)
+		  Var Maximum As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartMaximum, Self.Maximum)
+		  Var Position As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartPosition, Self.Position)
 		  Self.Apply(Target, Minimum, Maximum, Position)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Started()
-		  Dim Item As Object = Self.Item
+		  Var Item As Object = Self.Item
 		  If Item = Nil Then
 		    Return
 		  End If
@@ -39,7 +39,7 @@ Inherits AnimationKit.Task
 		    Return
 		  End If
 		  
-		  Dim Target As AnimationKit.Scrollable = AnimationKit.Scrollable(Item)
+		  Var Target As AnimationKit.Scrollable = AnimationKit.Scrollable(Item)
 		  Self.StartMinimum = Target.ScrollMinimum
 		  Self.StartMaximum = Target.ScrollMaximum
 		  Self.StartPosition = Target.ScrollPosition

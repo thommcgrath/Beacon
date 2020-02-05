@@ -30,18 +30,18 @@ Inherits FolderItem
 		    Declare Sub Autorelease Lib "Cocoa" Selector "autorelease" (Target As Ptr)
 		    Declare Function StartAccessingSecurityScopedResource Lib "Cocoa" Selector "startAccessingSecurityScopedResource" (Target As Ptr) As Boolean
 		    
-		    Dim Mem As MemoryBlock = DecodeBase64(SaveInfo)
-		    Dim DataRef As Ptr = DataWithBytes(Alloc(objc_getClass("NSData")), Mem, Mem.Size)
+		    Var Mem As MemoryBlock = DecodeBase64(SaveInfo)
+		    Var DataRef As Ptr = DataWithBytes(Alloc(objc_getClass("NSData")), Mem, Mem.Size)
 		    Autorelease(DataRef)
 		    
-		    Dim ErrorRef As Ptr
-		    Dim FileURL As Ptr = URLByResolvingBookmarkData(objc_getClass("NSURL"), DataRef, 1024, Nil, False, ErrorRef)
+		    Var ErrorRef As Ptr
+		    Var FileURL As Ptr = URLByResolvingBookmarkData(objc_getClass("NSURL"), DataRef, 1024, Nil, False, ErrorRef)
 		    If FileURL <> Nil And StartAccessingSecurityScopedResource(FileURL) Then
 		      Declare Function Retain Lib "Cocoa" Selector "retain" (Target As Ptr) As Ptr
 		      Call Retain(FileURL)
 		      
-		      Dim Path As String = AbsoluteString(FileURL)
-		      Dim File As New BookmarkedFolderItem(Path, FolderItem.PathModes.URL)
+		      Var Path As String = AbsoluteString(FileURL)
+		      Var File As New BookmarkedFolderItem(Path, FolderItem.PathModes.URL)
 		      File.mBookmark = FileURL
 		      Return File
 		    Else
@@ -50,7 +50,7 @@ Inherits FolderItem
 		      App.Log("Unable to resolve saveinfo for: " + Str(ErrorCode(ErrorRef)) + " " + ErrorDescription(ErrorRef))
 		    End If
 		  #else
-		    Dim File As FolderItem = FolderItem.DriveAt(0).FromSaveInfo(DecodeBase64(SaveInfo))
+		    Var File As FolderItem = FolderItem.DriveAt(0).FromSaveInfo(DecodeBase64(SaveInfo))
 		    Return New BookmarkedFolderItem(File)
 		  #endif
 		End Function
@@ -67,13 +67,13 @@ Inherits FolderItem
 		    Declare Function DataLength Lib "Cocoa" Selector "length" (Target As Ptr) As UInteger
 		    Declare Sub DataBytes Lib "Cocoa" Selector "getBytes:length:" (Target As Ptr, Buffer As Ptr, Length As UInteger)
 		    
-		    Dim ErrorRef as Ptr
-		    Dim NSURL As Ptr = objc_getClass("NSURL")
-		    Dim FileURL As Ptr = URLWithString(NSURL, Self.URLPath)
+		    Var ErrorRef as Ptr
+		    Var NSURL As Ptr = objc_getClass("NSURL")
+		    Var FileURL As Ptr = URLWithString(NSURL, Self.URLPath)
 		    If FileURL <> Nil Then
-		      Dim DataRef As Ptr = BookmarkDataWithOptions(FileURL, 2048, Nil, Nil, ErrorRef)
+		      Var DataRef As Ptr = BookmarkDataWithOptions(FileURL, 2048, Nil, Nil, ErrorRef)
 		      If DataRef <> Nil Then
-		        Dim Mem As New MemoryBlock(DataLength(DataRef))
+		        Var Mem As New MemoryBlock(DataLength(DataRef))
 		        DataBytes(DataRef, Mem, Mem.Size)
 		        Return EncodeBase64(Mem, 0)
 		      Else

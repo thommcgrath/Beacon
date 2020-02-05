@@ -9,10 +9,10 @@ Inherits AnimationKit.Task
 		    Return
 		  End If
 		  
-		  Dim Duration As Double = Self.DurationInSeconds * 1000000
-		  Dim LoopElapsed As Double = Self.ElapsedTime(Time) Mod Duration
-		  Dim PercentComplete As Double = LoopElapsed / Duration
-		  Dim Frame As Integer = Round(Self.Frames.LastRowIndex * PercentComplete)
+		  Var Duration As Double = Self.DurationInSeconds * 1000000
+		  Var LoopElapsed As Double = Self.ElapsedTime(Time) Mod Duration
+		  Var PercentComplete As Double = LoopElapsed / Duration
+		  Var Frame As Integer = Round(Self.Frames.LastRowIndex * PercentComplete)
 		  
 		  If Frame <> Self.CurrentFrame Then
 		    Self.CurrentFrame = Frame

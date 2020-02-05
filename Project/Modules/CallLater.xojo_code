@@ -18,7 +18,7 @@ Protected Module CallLater
 		    Return
 		  End If
 		  
-		  Dim CallbackTimer As CallLater.TriggerTimer = Timers.Value(Key)
+		  Var CallbackTimer As CallLater.TriggerTimer = Timers.Value(Key)
 		  Timers.Remove(Key)
 		  CallbackTimer.RunMode = Timer.RunModes.Off
 		  CallbackTimer.Callback = Nil
@@ -28,7 +28,7 @@ Protected Module CallLater
 
 	#tag Method, Flags = &h1
 		Protected Function Schedule(Delay As Integer, Callback As CallLater.CallNoParams) As String
-		  Dim CallTimer As New CallLater.TriggerTimer
+		  Var CallTimer As New CallLater.TriggerTimer
 		  CallTimer.Period = Delay
 		  CallTimer.RunMode = Timer.RunModes.Single
 		  CallTimer.Key = Crypto.GenerateRandomBytes(20)
@@ -45,7 +45,7 @@ Protected Module CallLater
 
 	#tag Method, Flags = &h1
 		Protected Function Schedule(Delay As Integer, Callback As CallLater.CallWithArg, Argument As Variant) As String
-		  Dim CallTimer As New CallLater.TriggerTimer
+		  Var CallTimer As New CallLater.TriggerTimer
 		  CallTimer.Period = Delay
 		  CallTimer.RunMode = Timer.RunModes.Single
 		  CallTimer.Key = Crypto.GenerateRandomBytes(20)

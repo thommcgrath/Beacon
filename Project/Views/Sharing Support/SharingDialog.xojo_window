@@ -556,7 +556,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Win As New SharingDialog(Document)
+		  Var Win As New SharingDialog(Document)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  If Win.mUsersChanged Then
@@ -662,7 +662,7 @@ End
 #tag Events AddUserButton
 	#tag Event
 		Sub Action()
-		  Dim UserID, Username, PublicKey As String
+		  Var UserID, Username, PublicKey As String
 		  If ShareWithUserDialog.Present(Self, UserID, Username, PublicKey) Then
 		    If Self.mDocument.HasUser(UserID) = False Then
 		      Self.UserList.AddRow(Username, UserID)
@@ -679,7 +679,7 @@ End
 #tag Events UserList
 	#tag Event
 		Sub Open()
-		  Dim Users() As String = Self.mDocument.GetUsers()
+		  Var Users() As String = Self.mDocument.GetUsers()
 		  Users.Sort
 		  
 		  For Each UserID As String In Users
@@ -695,7 +695,7 @@ End
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
 		  If Warn Then
-		    Dim UserCount As Integer = Me.SelectedRowCount
+		    Var UserCount As Integer = Me.SelectedRowCount
 		    If Not Self.ShowConfirm("Are you sure you want to stop sharing this document with " + Language.NounWithQuantity(UserCount, "user", "users") + "?", "Changes will not be made until the document is saved. This document will no longer appear in the user's cloud documents and the user will be unable to save a new version.", "Stop Sharing", "Cancel") Then
 		      Return
 		    End If
@@ -733,7 +733,7 @@ End
 #tag Events CopyLinkButton
 	#tag Event
 		Sub Action()
-		  Dim Board As New Clipboard
+		  Var Board As New Clipboard
 		  Board.Text = Self.DownloadLinkLabel.Value
 		  
 		  Me.Caption = "Copied!"

@@ -316,27 +316,27 @@ End
 		  #Pragma Unused Initial
 		  
 		  If Self.mCopyrightGroup <> Nil Then
-		    Dim Left As Integer = (Self.Width - Self.mCopyrightGroup.Width) / 2
-		    Dim Top As Integer = Self.Height - (Self.mCopyrightGroup.Height + 20)
-		    Dim DeltaX As Integer = Left - Self.mCopyrightGroup.Left
-		    Dim DeltaY As Integer = Top - Self.mCopyrightGroup.Top
+		    Var Left As Integer = (Self.Width - Self.mCopyrightGroup.Width) / 2
+		    Var Top As Integer = Self.Height - (Self.mCopyrightGroup.Height + 20)
+		    Var DeltaX As Integer = Left - Self.mCopyrightGroup.Left
+		    Var DeltaY As Integer = Top - Self.mCopyrightGroup.Top
 		    Self.mCopyrightGroup.Offset(DeltaX, DeltaY)
 		  End If
 		  
 		  If Self.mMainGroup <> Nil Then
-		    Dim AvailableTop As Integer = 60
-		    Dim AvailableBottom As Integer
+		    Var AvailableTop As Integer = 60
+		    Var AvailableBottom As Integer
 		    If Self.mCopyrightGroup <> Nil Then
 		      AvailableBottom = Self.mCopyrightGroup.Top - 20
 		    Else
 		      AvailableBottom = Self.CopyrightLabel.Top - 20
 		    End If
-		    Dim AvailableHeight As Integer = AvailableBottom - AvailableTop
+		    Var AvailableHeight As Integer = AvailableBottom - AvailableTop
 		    
-		    Dim Left As Integer = (Self.Width - Self.mMainGroup.Width) / 2
-		    Dim Top As Integer = AvailableTop + Max((AvailableHeight - Self.mMainGroup.Height) / 3, 0)
-		    Dim DeltaX As Integer = Left - Self.mMainGroup.Left
-		    Dim DeltaY As Integer = Top - Self.mMainGroup.Top
+		    Var Left As Integer = (Self.Width - Self.mMainGroup.Width) / 2
+		    Var Top As Integer = AvailableTop + Max((AvailableHeight - Self.mMainGroup.Height) / 3, 0)
+		    Var DeltaX As Integer = Left - Self.mMainGroup.Left
+		    Var DeltaY As Integer = Top - Self.mMainGroup.Top
 		    Self.mMainGroup.Offset(DeltaX, DeltaY)
 		  End If
 		End Sub
@@ -355,7 +355,7 @@ End
 		  
 		  Select Case Notification.Name
 		  Case LocalData.Notification_DatabaseUpdated
-		    Dim LastSync As DateTime = Notification.UserData
+		    Var LastSync As DateTime = Notification.UserData
 		    If IsNull(LastSync) Then
 		      LastSync = LocalData.SharedInstance.LastSync
 		    End If
@@ -415,7 +415,7 @@ End
 #tag Events SyncLabel
 	#tag Event
 		Sub Open()
-		  Dim LastSync As DateTime = LocalData.SharedInstance.LastSync
+		  Var LastSync As DateTime = LocalData.SharedInstance.LastSync
 		  If IsNull(LastSync) Then
 		    Me.Value = "No engram data available"
 		  Else
@@ -429,7 +429,7 @@ End
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  Dim TitleIcon As Picture
+		  Var TitleIcon As Picture
 		  If App.IdentityManager.CurrentIdentity <> Nil And App.IdentityManager.CurrentIdentity.OmniVersion > 0 Then
 		    TitleIcon = IconBeaconOmniText
 		  Else

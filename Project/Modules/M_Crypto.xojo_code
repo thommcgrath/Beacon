@@ -2,7 +2,7 @@
 Protected Module M_Crypto
 	#tag Method, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Private Sub CopyStringToMutableMemoryBlock(s As MemoryBlock, mb As Xojo.Core.MutableMemoryBlock)
-		  dim temp as new Xojo.Core.MemoryBlock( s, s.Size )
+		  Var temp as new Xojo.Core.MemoryBlock( s, s.Size )
 		  mb.Left( s.size ) = temp.Left( s.Size )
 		End Sub
 	#tag EndMethod
@@ -12,9 +12,9 @@ Protected Module M_Crypto
 		  // Tries to use declares to let the native system functions handle this.
 		  // Otherwise, falls back to manual creation.
 		  
-		  dim result as string
+		  Var result as string
 		  
-		  dim useDeclares as boolean = true
+		  Var useDeclares as boolean = true
 		  
 		  try
 		    
@@ -24,11 +24,11 @@ Protected Module M_Crypto
 		      soft declare function UUID lib "Cocoa" selector "UUID" ( clsRef as ptr ) as ptr
 		      soft declare function UUIDString lib "Cocoa" selector "UUIDString" ( obj_id as ptr ) as cfstringref
 		      
-		      dim classPtr as Ptr = NSClassFromString( "NSUUID" ) 
+		      Var classPtr as Ptr = NSClassFromString( "NSUUID" ) 
 		      if classPtr = nil then
 		        useDeclares = false
 		      else
-		        dim NSUUID as ptr = UUID( classPtr )
+		        Var NSUUID as ptr = UUID( classPtr )
 		        
 		        result = UUIDString( NSUUID )
 		      end if
@@ -45,11 +45,11 @@ Protected Module M_Crypto
 		        soft declare function UUIDCreate lib kLibName alias "UuidCreate" ( ByRef uuid as WindowsUUID ) as Integer
 		        soft declare function UUIDToString lib kLibName alias "UuidToStringA" ( ByRef inUUID as WindowsUUID, ByRef outString as CString ) As Integer
 		        
-		        dim uuid as WindowsUUID
+		        Var uuid as WindowsUUID
 		        if UUIDCreate( uuid ) <> 0 then
 		          useDeclares = false
 		        else
-		          dim out as CString
+		          Var out as CString
 		          if UUIDToString( uuid, out ) <> 0 then
 		            useDeclares = false
 		          else
@@ -73,10 +73,10 @@ Protected Module M_Crypto
 		        soft declare sub UUIDGenerate lib kLibName alias "uuid_generate" ( ByRef uuid as LinuxUUID )
 		        soft declare sub UUIDUnparse lib kLibName alias "uuid_unparse_upper" ( ByRef uuid As LinuxUUID, ByRef out As LinuxUUIDString )
 		        
-		        dim uuid as LinuxUUID
+		        Var uuid as LinuxUUID
 		        UUIDGenerate( uuid )
 		        
-		        dim out as LinuxUUIDString
+		        Var out as LinuxUUIDString
 		        UUIDUnparse( uuid, out )
 		        
 		        result = out.Data
@@ -115,14 +115,14 @@ Protected Module M_Crypto
 		    
 		    System.DebugLog CurrentMethodName + ": Generating manually"
 		    
-		    dim randomBytes as MemoryBlock = Crypto.GenerateRandomBytes( 16 )
+		    Var randomBytes as MemoryBlock = Crypto.GenerateRandomBytes( 16 )
 		    randomBytes.LittleEndian = false
-		    dim p as Ptr = randomBytes
+		    Var p as Ptr = randomBytes
 		    
 		    //
 		    // Adjust seventh byte
 		    //
-		    dim value as byte = p.Byte( 6 )
+		    Var value as byte = p.Byte( 6 )
 		    value = value and CType( &b00001111, Byte ) // Turn off the first four bits
 		    value = value or CType( &b01000000, Byte ) // Turn on the second bit
 		    p.Byte(6) = value
@@ -146,18 +146,18 @@ Protected Module M_Crypto
 
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function GetEncrypter(fromCode As String) As M_Crypto.Encrypter
-		  dim result as M_Crypto.Encrypter
+		  Var result as M_Crypto.Encrypter
 		  
-		  dim rx as new RegEx
+		  Var rx as new RegEx
 		  rx.SearchPattern = kRxEncryptCode
 		  
-		  dim match as RegExMatch = rx.Search( fromCode )
+		  Var match as RegExMatch = rx.Search( fromCode )
 		  
 		  if match isa object then
 		    
 		    select case match.SubExpressionString( 1 )
 		    case "aes"
-		      dim bits as integer = 128
+		      Var bits as integer = 128
 		      if match.SubExpressionCount > 2 then
 		        bits = match.SubExpressionString( 2 ).Val
 		      end if
@@ -195,15 +195,15 @@ Protected Module M_Crypto
 		    return ""
 		  end if
 		  
-		  dim temp as MemoryBlock = mb.Data
+		  Var temp as MemoryBlock = mb.Data
 		  return temp.StringValue( 0, mb.Size )
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Private Function StringToMutableMemoryBlock(s As MemoryBlock) As Xojo.Core.MutableMemoryBlock
-		  dim temp as new Xojo.Core.MemoryBlock( s, s.Size )
-		  dim mb as new Xojo.Core.MutableMemoryBlock( s.Size )
+		  Var temp as new Xojo.Core.MemoryBlock( s, s.Size )
+		  Var mb as new Xojo.Core.MutableMemoryBlock( s.Size )
 		  mb.Left( s.Size ) = temp.Left( s.Size )
 		  return mb
 		End Function

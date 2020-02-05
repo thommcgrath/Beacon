@@ -4,7 +4,7 @@ Inherits Beacon.ServerProfile
 	#tag Event
 		Sub ReadFromDictionary(Dict As Dictionary)
 		  If Not Dict.HasAllKeys("Address", "Port", "Encryption Key") Then
-		    Dim Err As KeyNotFoundException
+		    Var Err As KeyNotFoundException
 		    Err.Message = "Missing ConnectorServerProfile keys"
 		    Raise Err
 		  End If

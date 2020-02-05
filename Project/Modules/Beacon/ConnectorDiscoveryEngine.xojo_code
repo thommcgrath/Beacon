@@ -114,7 +114,7 @@ Implements Beacon.DiscoveryEngine
 		  
 		  Select Case Message.Value("Command")
 		  Case "Log"
-		    Dim LogContents As String
+		    Var LogContents As String
 		    If Not Sender.UnpackFile(Message, LogContents) Then
 		      Self.mErrored = True
 		      Self.mFinished = True
@@ -124,7 +124,7 @@ Implements Beacon.DiscoveryEngine
 		    
 		    Self.ProcessLogContents(LogContents.GuessEncoding)
 		  Case "Get Game.ini"
-		    Dim FileContents As String
+		    Var FileContents As String
 		    If Not Sender.UnpackFile(Message, FileContents) Then
 		      Self.mErrored = True
 		      Self.mFinished = True
@@ -135,7 +135,7 @@ Implements Beacon.DiscoveryEngine
 		    Self.mGameIniContent = FileContents.GuessEncoding
 		    Self.RunNextTask()
 		  Case "Get GameUserSettings.ini"
-		    Dim FileContents As String
+		    Var FileContents As String
 		    If Not Sender.UnpackFile(Message, FileContents) Then
 		      Self.mErrored = True
 		      Self.mFinished = True
@@ -161,7 +161,7 @@ Implements Beacon.DiscoveryEngine
 		Private Sub ProcessLogContents(Contents As String)
 		  Self.mStatus = "Analyzing log file…"
 		  
-		  Dim File As Beacon.LogFile = Beacon.LogFile.Analyze(Contents)
+		  Var File As Beacon.LogFile = Beacon.LogFile.Analyze(Contents)
 		  If File = Nil Then
 		    Self.mErrored = True
 		    Self.mFinished = True
@@ -196,7 +196,7 @@ Implements Beacon.DiscoveryEngine
 		Private Sub TaskDownloadGameIni()
 		  Self.mStatus = "Getting Game.ini…"
 		  
-		  Dim Message As New Dictionary
+		  Var Message As New Dictionary
 		  Message.Value("Command") = "Get Game.ini"
 		  
 		  Self.mSocket.Write(Message)
@@ -207,7 +207,7 @@ Implements Beacon.DiscoveryEngine
 		Private Sub TaskDownloadGameUserSettingsIni()
 		  Self.mStatus = "Getting GameUserSettings.ini…"
 		  
-		  Dim Message As New Dictionary
+		  Var Message As New Dictionary
 		  Message.Value("Command") = "Get GameUserSettings.ini"
 		  
 		  Self.mSocket.Write(Message)
@@ -218,7 +218,7 @@ Implements Beacon.DiscoveryEngine
 		Private Sub TaskDownloadLogFile()
 		  Self.mStatus = "Getting log file…"
 		  
-		  Dim Message As New Dictionary
+		  Var Message As New Dictionary
 		  Message.Value("Command") = "Log"
 		  
 		  Self.mSocket.Write(Message)

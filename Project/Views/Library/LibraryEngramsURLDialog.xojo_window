@@ -208,7 +208,7 @@ End
 		Sub Open()
 		  Self.SwapButtons()
 		  
-		  Dim Board As New Clipboard
+		  Var Board As New Clipboard
 		  If Board.TextAvailable And (Board.Text.Left(7) = "http://" Or Board.Text.Left(8) = "https://") Then
 		    URLField.Value = Board.Text
 		  End If
@@ -218,9 +218,9 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window) As String
-		  Dim Win As New LibraryEngramsURLDialog
+		  Var Win As New LibraryEngramsURLDialog
 		  Win.ShowModalWithin(Parent.TrueWindow)
-		  Dim Content As String = Win.mContent
+		  Var Content As String = Win.mContent
 		  Win.Close
 		  Return Content
 		End Function
@@ -259,7 +259,7 @@ End
 #tag Events URLField
 	#tag Event
 		Sub TextChange()
-		  Dim URL As String = Me.Value.Trim
+		  Var URL As String = Me.Value.Trim
 		  ActionButton.Enabled = Spinner.Visible = False And (URL.Left(7) = "http://" Or URL.Left(8) = "https://")
 		End Sub
 	#tag EndEvent

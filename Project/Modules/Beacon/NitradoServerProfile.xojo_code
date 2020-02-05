@@ -43,7 +43,7 @@ Inherits Beacon.ServerProfile
 		    Return Super.Operator_Compare(Other)
 		  End If
 		  
-		  Dim OtherServiceID As Integer = Beacon.NitradoServerProfile(Other).ServiceID
+		  Var OtherServiceID As Integer = Beacon.NitradoServerProfile(Other).ServiceID
 		  If Self.ServiceID > OtherServiceID Then
 		    Return 1
 		  ElseIf Self.ServiceID < OtherServiceID Then

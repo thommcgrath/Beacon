@@ -185,7 +185,7 @@ End
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Dim Amount, Maximum As Integer
+			  Var Amount, Maximum As Integer
 			  
 			  If Value < 0 Then
 			    Maximum = 0
@@ -225,7 +225,7 @@ End
 			  Select Case Self.mDocumentURL.Scheme
 			  Case Beacon.DocumentURL.TypeLocal
 			    Try
-			      Dim File As New FolderItem(Self.mDocumentURL.URL, FolderItem.PathModes.URL)
+			      Var File As New FolderItem(Self.mDocumentURL.URL, FolderItem.PathModes.URL)
 			      Self.URLLabel.Value = File.NativePath
 			    Catch Err As RuntimeException
 			      Self.URLLabel.Value = Self.mDocumentURL.URL

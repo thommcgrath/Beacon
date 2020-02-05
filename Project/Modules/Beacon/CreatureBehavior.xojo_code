@@ -2,7 +2,7 @@
 Protected Class CreatureBehavior
 	#tag Method, Flags = &h0
 		Function Clone(NewTarget As String) As Beacon.CreatureBehavior
-		  Dim Result As New Beacon.CreatureBehavior(Self)
+		  Var Result As New Beacon.CreatureBehavior(Self)
 		  Result.mTargetClass = NewTarget
 		  Return Result
 		End Function
@@ -51,8 +51,8 @@ Protected Class CreatureBehavior
 		    Return Nil
 		  End If
 		  
-		  Dim ClassString As String = Dict.Value("Class")
-		  Dim Behavior As New Beacon.CreatureBehavior(ClassString)
+		  Var ClassString As String = Dict.Value("Class")
+		  Var Behavior As New Beacon.CreatureBehavior(ClassString)
 		  If Dict.HasKey("Prohibit Spawning") Then
 		    Behavior.mProhibitSpawning = Dict.Value("Prohibit Spawning")
 		  ElseIf Dict.HasKey("Replacement Class") Then
@@ -130,7 +130,7 @@ Protected Class CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Function ToDictionary() As Dictionary
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("Class") = Self.mTargetClass
 		  If Self.mProhibitSpawning Then
 		    Dict.Value("Prohibit Spawning") = True

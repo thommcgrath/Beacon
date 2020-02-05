@@ -291,10 +291,10 @@ End
 	#tag Event
 		Sub Open()
 		  If Self.mController.Document <> Nil Then
-		    Dim DocumentID As String = Self.mController.Document.DocumentID
-		    Dim ConfigName As String = Preferences.LastUsedConfigName(DocumentID)
+		    Var DocumentID As String = Self.mController.Document.DocumentID
+		    Var ConfigName As String = Preferences.LastUsedConfigName(DocumentID)
 		    For I As Integer = 0 To Self.ConfigMenu.RowCount - 1
-		      Dim Tag As Variant = Self.ConfigMenu.RowTagAt(I)
+		      Var Tag As Variant = Self.ConfigMenu.RowTagAt(I)
 		      If (Tag.Type = Variant.TypeText And Tag.StringValue = ConfigName) Or (Tag.Type = Variant.TypeString And Tag.StringValue = ConfigName) Then
 		        Self.ConfigMenu.SelectedRowIndex = I
 		        Exit For I
@@ -356,7 +356,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim File As BookmarkedFolderItem = Self.AutosaveFile(True)
+		  Var File As BookmarkedFolderItem = Self.AutosaveFile(True)
 		  If File <> Nil And Self.mController.SaveACopy(Beacon.DocumentURL.URLForFile(File)) <> Nil Then
 		    Self.AutosaveTimer.Reset
 		  End If
@@ -370,7 +370,7 @@ End
 		  End If
 		  
 		  If Self.mAutosaveFile = Nil Or Not Self.mAutosaveFile.Exists Then
-		    Dim Folder As FolderItem = App.AutosaveFolder(CreateFolder)
+		    Var Folder As FolderItem = App.AutosaveFolder(CreateFolder)
 		    If Folder = Nil Then
 		      Return Nil
 		    End If
@@ -404,7 +404,7 @@ End
 		      Return
 		    End If
 		    
-		    Dim Win As DocumentDeployWindow = DocumentDeployWindow.Create(Self.Document)
+		    Var Win As DocumentDeployWindow = DocumentDeployWindow.Create(Self.Document)
 		    If Win <> Nil Then
 		      Self.mDeployWindow = New WeakRef(Win)
 		      Win.Show()
@@ -435,16 +435,16 @@ End
 		  If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
 		    DocumentImportWindow(Self.mImportWindowRef.Value).Show()
 		  Else
-		    Dim OtherDocuments() As Beacon.Document
+		    Var OtherDocuments() As Beacon.Document
 		    For I As Integer = 0 To Self.mEditorRefs.KeyCount - 1
-		      Dim Key As Variant = Self.mEditorRefs.Key(I)
-		      Dim Ref As WeakRef = Self.mEditorRefs.Value(Key)
+		      Var Key As Variant = Self.mEditorRefs.Key(I)
+		      Var Ref As WeakRef = Self.mEditorRefs.Value(Key)
 		      If Ref <> Nil And Ref.Value <> Nil And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Document.DocumentID <> Self.Document.DocumentID Then
 		        OtherDocuments.AddRow(DocumentEditorView(Ref.Value).Document)
 		      End If
 		    Next
 		    
-		    Dim Ref As DocumentImportWindow
+		    Var Ref As DocumentImportWindow
 		    If ForDeployment Then
 		      Ref = DocumentImportWindow.Present(AddressOf ImportAndDeployCallback, Self.Document, OtherDocuments, True)
 		    Else
@@ -457,14 +457,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CleanupAutosave()
-		  Dim AutosaveFile As FolderItem = Self.AutosaveFile()
+		  Var AutosaveFile As FolderItem = Self.AutosaveFile()
 		  If AutosaveFile <> Nil And AutosaveFile.Exists Then
 		    Try
 		      AutosaveFile.Remove
 		    Catch Err As IOException
 		      App.Log("Autosave " + AutosaveFile.NativePath + " did not delete: " + Err.Message + " (code: " + Err.ErrorNumber.ToString + ")")
 		      Try
-		        Dim Destination As FolderItem = SpecialFolder.Temporary.Child("Beacon Autosave")
+		        Var Destination As FolderItem = SpecialFolder.Temporary.Child("Beacon Autosave")
 		        If Not Destination.Exists Then
 		          Destination.CreateFolder
 		        End If
@@ -512,23 +512,23 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function ContinueWithoutExcludedConfigs() As Boolean
-		  Dim ExcludedConfigs() As Beacon.ConfigGroup = Self.Document.UsesOmniFeaturesWithoutOmni(App.IdentityManager.CurrentIdentity)
+		  Var ExcludedConfigs() As Beacon.ConfigGroup = Self.Document.UsesOmniFeaturesWithoutOmni(App.IdentityManager.CurrentIdentity)
 		  If ExcludedConfigs.LastRowIndex = -1 Then
 		    Return True
 		  End If
 		  
-		  Dim HumanNames() As String
+		  Var HumanNames() As String
 		  For Each Config As Beacon.ConfigGroup In ExcludedConfigs
 		    HumanNames.AddRow("""" + Language.LabelForConfig(Config) + """")
 		  Next
 		  HumanNames.Sort
 		  
-		  Dim Message, Explanation As String
+		  Var Message, Explanation As String
 		  If HumanNames.LastRowIndex = 0 Then
 		    Message = "You are using an editor that will not be included in your config files."
 		    Explanation = "The " + HumanNames(0) + " editor requires Beacon Omni, which you have not purchased. Beacon will not generate its content for your config files. Do you still want to continue?"
 		  Else
-		    Dim GroupList As String = HumanNames.EnglishOxfordList()
+		    Var GroupList As String = HumanNames.EnglishOxfordList()
 		    Message = "You are using editors that will not be included in your config files."
 		    Explanation = "The " + GroupList + " editors require Beacon Omni, which you have not purchased. Beacon will not generate their content for your config files. Do you still want to continue?"
 		  End If
@@ -539,14 +539,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CopyFromDocuments(SourceDocuments As Variant)
-		  Dim Documents() As Beacon.Document = SourceDocuments
+		  Var Documents() As Beacon.Document = SourceDocuments
 		  DocumentMergerWindow.Present(Self, Documents, Self.Document, WeakAddressOf MergeCallback)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub CopyFromDocumentsAndDeploy(SourceDocuments As Variant)
-		  Dim Documents() As Beacon.Document = SourceDocuments
+		  Var Documents() As Beacon.Document = SourceDocuments
 		  DocumentMergerWindow.Present(Self, Documents, Self.Document, WeakAddressOf MergeAndDeployCallback)
 		End Sub
 	#tag EndMethod
@@ -576,7 +576,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim ConfigName As String = Issue.ConfigName
+		  Var ConfigName As String = Issue.ConfigName
 		  For I As Integer = 0 To Self.ConfigMenu.RowCount - 1
 		    If Self.ConfigMenu.RowTagAt(I) = ConfigName Then
 		      Self.ConfigMenu.SelectedRowIndex = I
@@ -584,7 +584,7 @@ End
 		    End If
 		  Next
 		  
-		  Dim View As ConfigEditor = Self.CurrentPanel
+		  Var View As ConfigEditor = Self.CurrentPanel
 		  If View <> Nil Then
 		    View.GoToIssue(Issue)
 		  End If
@@ -641,7 +641,7 @@ End
 		    Self.Progress = BeaconSubview.ProgressNone
 		  End If
 		  
-		  Dim Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save!", Beacon.UserNotification.Severities.Elevated)
+		  Var Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save!", Beacon.UserNotification.Severities.Elevated)
 		  Notification.SecondaryMessage = Reason
 		  Notification.UserData = New Dictionary
 		  Notification.UserData.Value("DocumentID") = If(Sender.Document <> Nil, Sender.Document.DocumentID, "")
@@ -677,9 +677,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub MergeCallback()
-		  Dim Keys() As Variant = Self.Panels.Keys
+		  Var Keys() As Variant = Self.Panels.Keys
 		  For Each Key As Variant In Keys
-		    Dim Panel As ConfigEditor = Self.Panels.Value(Key)
+		    Var Panel As ConfigEditor = Self.Panels.Value(Key)
 		    If Panel <> Nil Then
 		      Panel.ImportFinished()
 		    End If
@@ -709,7 +709,7 @@ End
 		  Select Case Notification.Name
 		  Case IdentityManager.Notification_IdentityChanged
 		    // Simply toggle the menu to force a redraw
-		    Dim ListIndex As Integer = Self.ConfigMenu.SelectedRowIndex
+		    Var ListIndex As Integer = Self.ConfigMenu.SelectedRowIndex
 		    Self.ConfigMenu.SelectedRowIndex = -1
 		    Self.ConfigMenu.SelectedRowIndex = ListIndex
 		  End Select
@@ -767,18 +767,18 @@ End
 		    Self.ToolbarCaption = Self.mController.Name
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		  Case DocumentSaveToCloudWindow.StateSaveLocal
-		    Dim Dialog As New SaveFileDialog
+		    Var Dialog As New SaveFileDialog
 		    Dialog.SuggestedFileName = Self.mController.Name + BeaconFileTypes.BeaconDocument.PrimaryExtension
 		    Dialog.Filter = BeaconFileTypes.BeaconDocument
 		    
-		    Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		    Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		    If File = Nil Then
 		      Return
 		    End If
 		    
 		    If Self.Document.Title.BeginsWith("Untitled Document") Then
-		      Dim Filename As String = File.Name
-		      Dim Extension As String = BeaconFileTypes.BeaconDocument.PrimaryExtension
+		      Var Filename As String = File.Name
+		      Var Extension As String = BeaconFileTypes.BeaconDocument.PrimaryExtension
 		      If Filename.EndsWith(Extension) Then
 		        Filename = Filename.Left(Filename.Length - Extension.Length).Trim
 		      End If
@@ -836,7 +836,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateHelpForConfig(ConfigName As String)
-		  Dim Title, Body, DetailURL As String
+		  Var Title, Body, DetailURL As String
 		  Call LocalData.SharedInstance.GetConfigHelp(ConfigName, Title, Body, DetailURL)
 		  Self.HelpDrawer.Title = Title
 		  Self.HelpDrawer.Body = Body
@@ -949,19 +949,19 @@ End
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  Dim BaseColor As Color = SystemColors.SystemYellowColor
-		  Dim BackgroundColor As Color = BaseColor.AtOpacity(0.2)
-		  Dim TextColor As Color = SystemColors.LabelColor
-		  Dim BorderColor As Color = SystemColors.SeparatorColor
+		  Var BaseColor As Color = SystemColors.SystemYellowColor
+		  Var BackgroundColor As Color = BaseColor.AtOpacity(0.2)
+		  Var TextColor As Color = SystemColors.LabelColor
+		  Var BorderColor As Color = SystemColors.SeparatorColor
 		  
 		  G.DrawingColor = BackgroundColor
 		  G.FillRectangle(0, 0, G.Width, G.Height - 1)
 		  G.DrawingColor = BorderColor
 		  G.DrawLine(0, G.Height - 1, G.Width, G.Height - 1)
 		  
-		  Dim TextWidth As Double = G.TextWidth(Self.OmniWarningText)
-		  Dim TextLeft As Double = (G.Width - TextWidth) / 2
-		  Dim TextBaseline As Double = (G.Height / 2) + (G.CapHeight / 2)
+		  Var TextWidth As Double = G.TextWidth(Self.OmniWarningText)
+		  Var TextLeft As Double = (G.Width - TextWidth) / 2
+		  Var TextBaseline As Double = (G.Height / 2) + (G.CapHeight / 2)
 		  G.DrawingColor = TextColor
 		  G.DrawText(Self.OmniWarningText, TextLeft, TextBaseline, G.Width - 40, True)
 		  
@@ -983,7 +983,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub MouseDrag(X As Integer, Y As Integer)
-		  Dim ShouldBePressed As Boolean = X >= 0 And X < Me.Width And Y >= 0 And Y < Me.Height
+		  Var ShouldBePressed As Boolean = X >= 0 And X < Me.Width And Y >= 0 And Y < Me.Height
 		  If Self.mDrawOmniBannerPressed <> ShouldBePressed Then
 		    Self.mDrawOmniBannerPressed = ShouldBePressed
 		    Self.OmniNoticeBanner.Invalidate
@@ -1003,14 +1003,14 @@ End
 #tag Events BeaconToolbar1
 	#tag Event
 		Sub Open()
-		  Dim ImportButton As New BeaconToolbarItem("ImportButton", IconToolbarImport, "Import config files…")
-		  Dim ExportButton As New BeaconToolbarItem("ExportButton", IconToolbarExport, Self.ReadyToExport, "Save new config files…")
+		  Var ImportButton As New BeaconToolbarItem("ImportButton", IconToolbarImport, "Import config files…")
+		  Var ExportButton As New BeaconToolbarItem("ExportButton", IconToolbarExport, Self.ReadyToExport, "Save new config files…")
 		  #if DeployEnabled
-		    Dim DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToExport, "Make config changes live")
+		    Var DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToExport, "Make config changes live")
 		  #endif
-		  Dim ShareButton As New BeaconToolbarItem("ShareButton", IconToolbarShare, "Copy link to this document")
+		  Var ShareButton As New BeaconToolbarItem("ShareButton", IconToolbarShare, "Copy link to this document")
 		  
-		  Dim HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarHelp, False, "Toggle help panel")
+		  Var HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarHelp, False, "Toggle help panel")
 		  
 		  Me.LeftItems.Append(ImportButton)
 		  Me.LeftItems.Append(ExportButton)
@@ -1059,21 +1059,21 @@ End
 #tag Events ConfigMenu
 	#tag Event
 		Sub Change()
-		  Dim TagVar As Variant
+		  Var TagVar As Variant
 		  If Me.SelectedRowIndex > -1 Then
 		    TagVar = Me.RowTagAt(Me.SelectedRowIndex)
 		  End If
-		  Dim NewPanel As ConfigEditor
-		  Dim Embed As Boolean
+		  Var NewPanel As ConfigEditor
+		  Var Embed As Boolean
 		  If IsNull(TagVar) = False And (TagVar.Type = Variant.TypeString Or TagVar.Type = Variant.TypeText) Then
-		    Dim Tag As String = TagVar.StringValue
+		    Var Tag As String = TagVar.StringValue
 		    Self.UpdateHelpForConfig(Tag)
 		    
 		    If Self.mController.Document <> Nil Then
 		      Preferences.LastUsedConfigName(Self.mController.Document.DocumentID) = Tag
 		    End If
 		    
-		    Dim HistoryIndex As Integer = Self.mPanelHistory.IndexOf(Tag)
+		    Var HistoryIndex As Integer = Self.mPanelHistory.IndexOf(Tag)
 		    If HistoryIndex > 0 Then
 		      Self.mPanelHistory.RemoveRowAt(HistoryIndex)
 		    End If
@@ -1082,9 +1082,9 @@ End
 		    // Close older panels
 		    If Self.mPanelHistory.LastRowIndex > 2 Then
 		      For I As Integer = Self.mPanelHistory.LastRowIndex DownTo 3
-		        Dim PanelTag As String = Self.mPanelHistory(I)
+		        Var PanelTag As String = Self.mPanelHistory(I)
 		        If Self.Panels.HasKey(PanelTag) Then
-		          Dim Panel As ConfigEditor = Self.Panels.Value(PanelTag)
+		          Var Panel As ConfigEditor = Self.Panels.Value(PanelTag)
 		          RemoveHandler Panel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
 		          Panel.Close
 		          Self.Panels.Remove(PanelTag)
@@ -1155,11 +1155,11 @@ End
 		  Self.CurrentPanel = NewPanel
 		  
 		  If Self.CurrentPanel <> Nil Then
-		    Dim RequiresPurchase As Boolean
+		    Var RequiresPurchase As Boolean
 		    If IsNull(TagVar) = False And (TagVar.Type = Variant.TypeString Or TagVar.Type = Variant.TypeText) Then
 		      RequiresPurchase = Not BeaconConfigs.ConfigPurchased(TagVar.StringValue, If(App.IdentityManager.CurrentIdentity <> Nil, App.IdentityManager.CurrentIdentity.OmniVersion, 0))
 		    End If
-		    Dim TopOffset As Integer
+		    Var TopOffset As Integer
 		    If RequiresPurchase Then
 		      TopOffset = (Self.OmniNoticeBanner.Top + Self.OmniNoticeBanner.Height) - Self.PagePanel1.Top
 		    End If
@@ -1185,7 +1185,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Dim Labels(), Tags() As String
+		  Var Labels(), Tags() As String
 		  Labels.AddRow("Maps")
 		  Tags.AddRow("maps")
 		  #if DeployEnabled
@@ -1193,7 +1193,7 @@ End
 		    Tags.AddRow("deployments")
 		  #endif
 		  
-		  Dim Names() As String = BeaconConfigs.AllConfigNames
+		  Var Names() As String = BeaconConfigs.AllConfigNames
 		  For Each Name As String In Names
 		    Labels.AddRow(Language.LabelForConfig(Name))
 		    Tags.AddRow(Name)

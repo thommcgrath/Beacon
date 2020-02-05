@@ -327,16 +327,16 @@ End
 		    Return
 		  End If
 		  
-		  Dim OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
+		  Var OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
 		  If OtherConfig = Nil Or OtherConfig.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
-		  Dim Config As BeaconConfigs.CraftingCosts = Self.Config(True)
-		  Dim NewCosts() As Beacon.CraftingCost
+		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(True)
+		  Var NewCosts() As Beacon.CraftingCost
 		  For I As Integer = 0 To OtherConfig.LastRowIndex
-		    Dim CraftingCost As Beacon.CraftingCost = OtherConfig(I)
-		    Dim Idx As Integer = Config.IndexOf(CraftingCost)
+		    Var CraftingCost As Beacon.CraftingCost = OtherConfig(I)
+		    Var Idx As Integer = Config.IndexOf(CraftingCost)
 		    If Idx > -1 Then
 		      Config(Idx) = CraftingCost
 		    Else
@@ -380,7 +380,7 @@ End
 		  End If
 		  
 		  Try
-		    Dim Cost As Beacon.CraftingCost = Issue.UserData
+		    Var Cost As Beacon.CraftingCost = Issue.UserData
 		    If Cost <> Nil Then
 		      Self.UpdateList(Cost)
 		    End If
@@ -395,8 +395,8 @@ End
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.CraftingCosts
 		  Static ConfigName As String = BeaconConfigs.CraftingCosts.ConfigName
 		  
-		  Dim Document As Beacon.Document = Self.Document
-		  Dim Config As BeaconConfigs.CraftingCosts
+		  Var Document As Beacon.Document = Self.Document
+		  Var Config As BeaconConfigs.CraftingCosts
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.CraftingCosts(Self.mConfigRef.Value)
@@ -429,9 +429,9 @@ End
 		    Return
 		  End If
 		  
-		  Dim AvailableSpace As Integer = Self.Width - Self.ListSeparator.Width
-		  Dim ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - CraftingCostEditor.MinimumWidth)
-		  Dim EditorWidth As Integer = AvailableSpace - ListWidth
+		  Var AvailableSpace As Integer = Self.Width - Self.ListSeparator.Width
+		  Var ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - CraftingCostEditor.MinimumWidth)
+		  Var EditorWidth As Integer = AvailableSpace - ListWidth
 		  
 		  Self.Header.Width = ListWidth
 		  Self.HeaderSeparator.Width = ListWidth
@@ -447,8 +447,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddEngram()
-		  Dim CurrentEngrams() As Beacon.Engram
-		  Dim Config As BeaconConfigs.CraftingCosts = Self.Config(False)
+		  Var CurrentEngrams() As Beacon.Engram
+		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
 		  For I As Integer = 0 To Config.LastRowIndex
 		    If Config(I).Engram = Nil Then
 		      Continue
@@ -457,16 +457,16 @@ End
 		    CurrentEngrams.AddRow(Config(I).Engram)
 		  Next
 		  
-		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, False)
+		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, False)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
 		  Config = Self.Config(True)
 		  
-		  Dim NewCosts() As Beacon.CraftingCost
+		  Var NewCosts() As Beacon.CraftingCost
 		  For Each Engram As Beacon.Engram In NewEngrams
-		    Dim Cost As New Beacon.CraftingCost(Engram)
+		    Var Cost As New Beacon.CraftingCost(Engram)
 		    Config.Append(Cost)
 		    NewCosts.AddRow(Cost)
 		  Next
@@ -482,8 +482,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim CurrentEngrams() As Beacon.Engram
-		  Dim Config As BeaconConfigs.CraftingCosts = Self.Config(False)
+		  Var CurrentEngrams() As Beacon.Engram
+		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
 		  For I As Integer = 0 To Config.LastRowIndex
 		    If Config(I).Engram = Nil Then
 		      Continue
@@ -492,17 +492,17 @@ End
 		    CurrentEngrams.AddRow(Config(I).Engram)
 		  Next
 		  
-		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, True)
+		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, True)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
-		  Dim SourceCost As Beacon.CraftingCost = Self.List.RowTagAt(Self.List.SelectedRowIndex)
+		  Var SourceCost As Beacon.CraftingCost = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		  Config = Self.Config(True)
 		  
-		  Dim NewCosts() As Beacon.CraftingCost
+		  Var NewCosts() As Beacon.CraftingCost
 		  For Each Engram As Beacon.Engram In NewEngrams
-		    Dim Cost As New Beacon.CraftingCost(SourceCost)
+		    Var Cost As New Beacon.CraftingCost(SourceCost)
 		    Cost.Engram = Engram
 		    Config.Append(Cost)
 		    NewCosts.AddRow(Cost)
@@ -515,7 +515,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Dim Arr() As Beacon.CraftingCost
+		  Var Arr() As Beacon.CraftingCost
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.Selected(I) Then
 		      Continue
@@ -529,18 +529,18 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectItems() As Beacon.CraftingCost)
-		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
+		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.SelectionChangeBlocked = True
 		  
-		  Dim ObjectIDs() As String
+		  Var ObjectIDs() As String
 		  For Each Item As Beacon.CraftingCost In SelectItems
 		    ObjectIDs.AddRow(Item.ObjectID)
 		  Next
 		  
 		  Self.List.RemoveAllRows
-		  Dim Config As BeaconConfigs.CraftingCosts = Self.Config(False)
+		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
 		  For I As Integer = 0 To Config.LastRowIndex
-		    Dim Cost As Beacon.CraftingCost = Config(I)
+		    Var Cost As Beacon.CraftingCost = Config(I)
 		    Self.List.AddRow(If(Cost.Engram <> Nil, Cost.Engram.Label, "No Engram Selected"))
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Cost
 		    Self.List.Selected(Self.List.LastAddedRowIndex) = ObjectIDs.IndexOf(Cost.ObjectID) > -1
@@ -555,7 +555,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectItem As Beacon.CraftingCost)
-		  Dim Arr() As Beacon.CraftingCost
+		  Var Arr() As Beacon.CraftingCost
 		  If SelectItem <> Nil Then
 		    Arr.AddRow(SelectItem)
 		  End If
@@ -566,10 +566,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  Dim TotalItems As Integer = Self.List.RowCount
-		  Dim SelectedItems As Integer = Self.List.SelectedRowCount
+		  Var TotalItems As Integer = Self.List.RowCount
+		  Var SelectedItems As Integer = Self.List.SelectedRowCount
 		  
-		  Dim Noun As String = If(TotalItems = 1, "Engram", "Engrams")
+		  Var Noun As String = If(TotalItems = 1, "Engram", "Engrams")
 		  
 		  If SelectedItems > 0 Then
 		    Self.ListStatusBar.Caption = Str(SelectedItems, "-0") + " of " + Str(TotalItems, "-0") + " " + Noun + " Selected"
@@ -612,10 +612,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Dim AddButton As New BeaconToolbarItem("AddEngram", IconToolbarAdd)
+		  Var AddButton As New BeaconToolbarItem("AddEngram", IconToolbarAdd)
 		  AddButton.HelpTag = "Change the crafting cost for a new item."
 		  
-		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
+		  Var DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
 		  DuplicateButton.HelpTag = "Duplicate the selected crafting override."
 		  
 		  Me.LeftItems.Append(AddButton)
@@ -704,13 +704,13 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Dicts() As Dictionary
+		  Var Dicts() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Dim Cost As Beacon.CraftingCost = Me.RowTagAt(I)
+		    Var Cost As Beacon.CraftingCost = Me.RowTagAt(I)
 		    Dicts.AddRow(Cost.Export)
 		  Next
 		  
@@ -720,21 +720,21 @@ End
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
 		  If Board.TextAvailable And Board.Text.IndexOf("ConfigOverrideItemCraftingCosts") > -1 Then
-		    Dim ImportText As String = Board.Text.GuessEncoding
+		    Var ImportText As String = Board.Text.GuessEncoding
 		    Self.Parse(ImportText, "Clipboard")
 		    Return
 		  End If
 		  
 		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Dim Dicts() As Variant
+		    Var Dicts() As Variant
 		    Try
-		      Dim Contents As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
+		      Var Contents As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
 		      Dicts = Beacon.ParseJSON(Contents)
 		      
-		      Dim Costs() As Beacon.CraftingCost
-		      Dim Config As BeaconConfigs.CraftingCosts = Self.Config(True)
+		      Var Costs() As Beacon.CraftingCost
+		      Var Config As BeaconConfigs.CraftingCosts = Self.Config(True)
 		      For Each Dict As Dictionary In Dicts
-		        Dim Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(Dict)
+		        Var Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(Dict)
 		        If Cost <> Nil Then
 		          Config.Append(Cost)
 		          Costs.AddRow(Cost)

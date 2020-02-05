@@ -16,7 +16,7 @@ Protected Class PreferencesManager
 		    Return Default
 		  End If
 		  
-		  Dim Value As Variant = Self.mValues.Value(Key)
+		  Var Value As Variant = Self.mValues.Value(Key)
 		  If IsNull(Value) Or Value.Type <> Variant.TypeString Then
 		    Return Default
 		  End If
@@ -39,7 +39,7 @@ Protected Class PreferencesManager
 		    Return Default
 		  End If
 		  
-		  Dim Value As Variant = Self.mValues.Value(Key)
+		  Var Value As Variant = Self.mValues.Value(Key)
 		  If IsNull(Value) Or Value.Type <> Variant.TypeBoolean Then
 		    Return Default
 		  End If
@@ -76,10 +76,10 @@ Protected Class PreferencesManager
 
 	#tag Method, Flags = &h0
 		Sub ColorValue(Key As String, Assigns Value As Color)
-		  Dim RedHex As String = Value.Red.ToHex(2)
-		  Dim GreenHex As String = Value.Green.ToHex(2)
-		  Dim BlueHex As String = Value.Blue.ToHex(2)
-		  Dim AlphaHex As String = Value.Alpha.ToHex(2)
+		  Var RedHex As String = Value.Red.ToHex(2)
+		  Var GreenHex As String = Value.Green.ToHex(2)
+		  Var BlueHex As String = Value.Blue.ToHex(2)
+		  Var AlphaHex As String = Value.Alpha.ToHex(2)
 		  
 		  Self.BeginTransaction()
 		  Self.mValues.Value(Key) = RedHex + GreenHex + BlueHex + AlphaHex
@@ -93,20 +93,20 @@ Protected Class PreferencesManager
 		    Return Default
 		  End If
 		  
-		  Dim Value As Variant = Self.mValues.Value(Key)
+		  Var Value As Variant = Self.mValues.Value(Key)
 		  If IsNull(Value) Or Value.Type <> Variant.TypeString Then
 		    Return Default
 		  End If
 		  
-		  Dim StringValue As String = Value.StringValue
+		  Var StringValue As String = Value.StringValue
 		  If StringValue.Length < 8 Then
 		    Return Default
 		  End If
 		  
-		  Dim RedHex As String = StringValue.Middle(0, 2)
-		  Dim GreenHex As String = StringValue.Middle(2, 2)
-		  Dim BlueHex As String = StringValue.Middle(4, 2)
-		  Dim AlphaHex As String = StringValue.Middle(6, 2)
+		  Var RedHex As String = StringValue.Middle(0, 2)
+		  Var GreenHex As String = StringValue.Middle(2, 2)
+		  Var BlueHex As String = StringValue.Middle(4, 2)
+		  Var AlphaHex As String = StringValue.Middle(6, 2)
 		  
 		  Return Color.RGB(Integer.FromHex(RedHex), Integer.FromHex(GreenHex), Integer.FromHex(BlueHex), Integer.FromHex(AlphaHex))
 		End Function
@@ -128,8 +128,8 @@ Protected Class PreferencesManager
 		  Self.mFile = File
 		  
 		  If Self.mFile.Exists Then
-		    Dim Stream As TextInputStream = TextInputStream.Open(Self.mFile)
-		    Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
+		    Var Stream As TextInputStream = TextInputStream.Open(Self.mFile)
+		    Var Contents As String = Stream.ReadAll(Encodings.UTF8)
 		    Stream.Close
 		    
 		    Self.Constructor(Contents)
@@ -161,7 +161,7 @@ Protected Class PreferencesManager
 		    Return Default
 		  End If
 		  
-		  Dim Value As Variant = Self.mValues.Value(Key)
+		  Var Value As Variant = Self.mValues.Value(Key)
 		  If IsNull(Value) Or (Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary) = False Then
 		    Return Default
 		  End If
@@ -184,7 +184,7 @@ Protected Class PreferencesManager
 		    Return Default
 		  End If
 		  
-		  Dim Value As Variant = Self.mValues.Value(Key)
+		  Var Value As Variant = Self.mValues.Value(Key)
 		  If IsNull(Value) Or Value.Type <> Variant.TypeDouble Then
 		    Return Default
 		  End If
@@ -207,7 +207,7 @@ Protected Class PreferencesManager
 		    Return Default
 		  End If
 		  
-		  Dim Value As Variant = Self.mValues.Value(Key)
+		  Var Value As Variant = Self.mValues.Value(Key)
 		  If IsNull(Value) Or Value.Type <> Variant.TypeInt32 Then
 		    Return Default
 		  End If
@@ -230,19 +230,19 @@ Protected Class PreferencesManager
 		    Return Default
 		  End If
 		  
-		  Dim Value As Variant = Self.mValues.Value(Key)
+		  Var Value As Variant = Self.mValues.Value(Key)
 		  If IsNull(Value) Or (Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary) = False Then
 		    Return Default
 		  End If
 		  
-		  Dim Dict As Dictionary = Value
+		  Var Dict As Dictionary = Value
 		  Return New Point(Dict.Value("Left"), Dict.Value("Top"))
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub PointValue(Key As String, Assigns Value As Point)
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("Left") = Value.X
 		  Dict.Value("Top") = Value.Y
 		  
@@ -258,19 +258,19 @@ Protected Class PreferencesManager
 		    Return Default
 		  End If
 		  
-		  Dim Value As Variant = Self.mValues.Value(Key)
+		  Var Value As Variant = Self.mValues.Value(Key)
 		  If IsNull(Value) Or (Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary) = False Then
 		    Return Default
 		  End If
 		  
-		  Dim Dict As Dictionary = Value
+		  Var Dict As Dictionary = Value
 		  Return New Rect(Dict.Value("Left"), Dict.Value("Top"), Dict.Value("Width"), Dict.Value("Height"))
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub RectValue(Key As String, Assigns Value As Rect)
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("Left") = Value.Left
 		  Dict.Value("Top") = Value.Top
 		  Dict.Value("Width") = Value.Width
@@ -299,19 +299,19 @@ Protected Class PreferencesManager
 		    Return Default
 		  End If
 		  
-		  Dim Value As Variant = Self.mValues.Value(Key)
+		  Var Value As Variant = Self.mValues.Value(Key)
 		  If IsNull(Value) Or (Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary) = False Then
 		    Return Default
 		  End If
 		  
-		  Dim Dict As Dictionary = Value
+		  Var Dict As Dictionary = Value
 		  Return New Size(Dict.Value("Width"), Dict.Value("Height"))
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub SizeValue(Key As String, Assigns Value As Size)
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("Width") = Value.Width
 		  Dict.Value("Height") = Value.Height
 		  
@@ -327,7 +327,7 @@ Protected Class PreferencesManager
 		    Return Default
 		  End If
 		  
-		  Dim Value As Variant = Self.mValues.Value(Key)
+		  Var Value As Variant = Self.mValues.Value(Key)
 		  If IsNull(Value) Or Value.Type <> Variant.TypeString Then
 		    Return Default
 		  End If

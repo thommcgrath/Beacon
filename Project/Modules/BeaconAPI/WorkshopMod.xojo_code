@@ -2,7 +2,7 @@
 Protected Class WorkshopMod
 	#tag Method, Flags = &h0
 		Function AsDictionary() As Dictionary
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("mod_id") = Self.mModID
 		  If Self.mPullURL <> "" Then
 		    Dict.Value("pull_url") = Self.mPullURL

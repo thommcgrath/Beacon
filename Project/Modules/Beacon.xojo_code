@@ -8,10 +8,10 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Sub AddTags(Extends Blueprint As Beacon.MutableBlueprint, TagsToAdd() As String)
-		  Dim Tags() As String = Blueprint.Tags
-		  Dim Changed As Boolean
+		  Var Tags() As String = Blueprint.Tags
+		  Var Changed As Boolean
 		  For I As Integer = 0 To TagsToAdd.LastRowIndex
-		    Dim Tag As String  = Beacon.NormalizeTag(TagsToAdd(I))
+		    Var Tag As String  = Beacon.NormalizeTag(TagsToAdd(I))
 		    
 		    If Tag = "object" Then
 		      Continue
@@ -36,9 +36,9 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function AutoArrayValue(Extends Dict As Dictionary, Key As String) As Variant()
-		  Dim Entries() As Variant
+		  Var Entries() As Variant
 		  If Dict.HasKey(Key) Then
-		    Dim Value As Variant = Dict.Value(Key)
+		    Var Value As Variant = Dict.Value(Key)
 		    If IsNull(Value) = False And Value.IsArray And Value.ArrayElementType = Variant.TypeObject Then
 		      Entries = Value
 		    Else
@@ -119,21 +119,21 @@ Protected Module Beacon
 		  Case "Boolean"
 		    Return True
 		  Case "String"
-		    Dim StringValue As String = Value
+		    Var StringValue As String = Value
 		    Value = If(StringValue = "true", True, False)
 		    Return True
 		  Case "Integer"
-		    Dim IntegerValue As Integer = Value
+		    Var IntegerValue As Integer = Value
 		    Value = If(IntegerValue >= 1, True, False)
 		    Return True
 		  Case "Double"
-		    Dim DoubleValue As Double = Value
+		    Var DoubleValue As Double = Value
 		    Value = If(DoubleValue >= 1, True, False)
 		    Return True
 		  Else
 		    #Pragma BreakOnExceptions False
 		    Try
-		      Dim VariantValue As Variant = Value
+		      Var VariantValue As Variant = Value
 		      Value = VariantValue.BooleanValue
 		      Return True
 		    Catch Err As TypeMismatchException
@@ -150,7 +150,7 @@ Protected Module Beacon
 		  
 		  #Pragma BreakOnExceptions False
 		  Try
-		    Dim DoubleValue As Double = Value
+		    Var DoubleValue As Double = Value
 		    Value = DoubleValue
 		    Return True
 		  Catch Err As TypeMismatchException
@@ -180,21 +180,21 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function ComputeMaxDinoLevel(Offset As Double, Steps As Integer) As Integer
-		  Dim DifficultyValue As Double = (Offset * (Steps - 0.5)) + 0.5
+		  Var DifficultyValue As Double = (Offset * (Steps - 0.5)) + 0.5
 		  Return DifficultyValue * 30
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function CreateCSV(Blueprints() As Beacon.Blueprint) As String
-		  Dim Columns(4) As String
+		  Var Columns(4) As String
 		  Columns(0) = """Path"""
 		  Columns(1) = """Label"""
 		  Columns(2) = """Availability Mask"""
 		  Columns(3) = """Tags"""
 		  Columns(4) = """Group"""
 		  
-		  Dim Lines(0) As String
+		  Var Lines(0) As String
 		  Lines(0) = Columns.Join(",")
 		  
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
@@ -212,7 +212,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function Creatures(Extends Blueprints() As Beacon.Blueprint) As Beacon.Creature()
-		  Dim Creatures() As Beacon.Creature
+		  Var Creatures() As Beacon.Creature
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Creature Then
 		      Creatures.AddRow(Beacon.Creature(Blueprint))
@@ -266,7 +266,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function DifficultyScale(Extends Maps() As Beacon.Map) As Double
-		  Dim Scale As Double
+		  Var Scale As Double
 		  For Each Map As Beacon.Map In Maps
 		    Scale = Max(Scale, Map.DifficultyScale)
 		  Next
@@ -289,7 +289,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function Engrams(Extends Blueprints() As Beacon.Blueprint) As Beacon.Engram()
-		  Dim Engrams() As Beacon.Engram
+		  Var Engrams() As Beacon.Engram
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Engram Then
 		      Engrams.AddRow(Beacon.Engram(Blueprint))
@@ -328,7 +328,7 @@ Protected Module Beacon
 		  Const UseMBS = False
 		  
 		  #if UseMBS
-		    Dim Temp As JSONMBS = JSONMBS.Convert(Source)
+		    Var Temp As JSONMBS = JSONMBS.Convert(Source)
 		    Return Temp.ToString(Pretty)
 		  #else
 		    Return Xojo.GenerateJSON(Source, Pretty)
@@ -339,7 +339,7 @@ Protected Module Beacon
 	#tag Method, Flags = &h21
 		Private Function GetLastValueAsType(Values() As Object, FullName As String, Default As Variant) As Variant
 		  For I As Integer = Values.LastRowIndex DownTo 0
-		    Dim ValueName As String = NameOfValue(Values(I))
+		    Var ValueName As String = NameOfValue(Values(I))
 		    If ValueName = FullName Then
 		      Return Values(I)
 		    End If
@@ -354,17 +354,17 @@ Protected Module Beacon
 		    Return Default
 		  End If
 		  
-		  Dim Value As Variant = Dict.Value(Key)
+		  Var Value As Variant = Dict.Value(Key)
 		  If IsNull(Value) Then
 		    Return Default
 		  End If
 		  
-		  Dim ValueName As String = NameOfValue(Value)
+		  Var ValueName As String = NameOfValue(Value)
 		  If ValueName.BeginsWith("Unknown") Then
 		    Return Default
 		  End If
 		  If ValueName = "Object()" And AllowArray Then
-		    Dim Arr() As Object = Value
+		    Var Arr() As Object = Value
 		    Return GetLastValueAsType(Arr, FullName, Default)
 		  ElseIf ValueName = FullName Then
 		    Return Value
@@ -382,8 +382,8 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 		Function GlobalPosition(Extends Target As Window) As Point
-		  Dim Left As Integer = Target.Left
-		  Dim Top As Integer = Target.Top
+		  Var Left As Integer = Target.Left
+		  Var Top As Integer = Target.Top
 		  
 		  While Target IsA ContainerControl
 		    Target = ContainerControl(Target).Window
@@ -400,7 +400,7 @@ Protected Module Beacon
 		  // This function will check for UTF-8 and UTF-16 Byte Order Marks,
 		  // remove them, and convert to UTF-8.
 		  
-		  Dim Mem As MemoryBlock = Value
+		  Var Mem As MemoryBlock = Value
 		  If Mem.Size >= 3 And Mem.StringValue(0, 3) = Encodings.ASCII.Chr(239) + Encodings.ASCII.Chr(187) + Encodings.ASCII.Chr(191) Then
 		    // The rare UTF-8 BOM
 		    Return Mem.StringValue(3, Mem.Size - 3).DefineEncoding(Encodings.UTF8)
@@ -418,9 +418,9 @@ Protected Module Beacon
 		    Static EncodingsList() As TextEncoding
 		    If EncodingsList.LastRowIndex = -1 Then
 		      EncodingsList = Array(Encodings.UTF8, Encodings.UTF16LE, Encodings.UTF16BE)
-		      Dim Bound As Integer = Encodings.Count - 1
+		      Var Bound As Integer = Encodings.Count - 1
 		      For I As Integer = 0 To Bound
-		        Dim Encoding As TextEncoding = Encodings.Item(I)
+		        Var Encoding As TextEncoding = Encodings.Item(I)
 		        If EncodingsList.IndexOf(Encoding) = -1 Then
 		          EncodingsList.AddRow(Encoding)
 		        End If
@@ -428,7 +428,7 @@ Protected Module Beacon
 		    End If
 		    
 		    For Each Encoding As TextEncoding In EncodingsList
-		      Dim TestVersion As String = Value.DefineEncoding(Encoding)
+		      Var TestVersion As String = Value.DefineEncoding(Encoding)
 		      If TestVersion.IndexOf(TestValue) > -1 Then
 		        Return TestVersion.ConvertEncoding(Encodings.UTF8)
 		      End If
@@ -443,13 +443,13 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function HardwareID() As String
 		  #if TargetDesktop
-		    Dim Root As Global.FolderItem = FolderItem.DriveAt(0)
+		    Var Root As Global.FolderItem = FolderItem.DriveAt(0)
 		    If Root = Nil Or Root.Exists = False Then
 		      // What the hell is this?
 		      Return ""
 		    End If
 		    
-		    Dim Created As DateTime = Root.CreationDateTime
+		    Var Created As DateTime = Root.CreationDateTime
 		    If Created = Nil Then
 		      // Seriously?
 		      Return ""
@@ -475,13 +475,13 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function IsBeaconURL(ByRef Value As String) As Boolean
-		  Dim PossiblePrefixes() As String
+		  Var PossiblePrefixes() As String
 		  PossiblePrefixes.AddRow(Beacon.URLScheme + "://")
 		  PossiblePrefixes.AddRow("https://app.beaconapp.cc/")
 		  
-		  Dim URLLength As Integer = Value.Length
+		  Var URLLength As Integer = Value.Length
 		  For Each PossiblePrefix As String In PossiblePrefixes
-		    Dim PrefixLength As Integer = PossiblePrefix.Length
+		    Var PrefixLength As Integer = PossiblePrefix.Length
 		    If URLLength > PrefixLength And Value.Left(PrefixLength) = PossiblePrefix Then
 		      Value = Value.Middle(PrefixLength)
 		      Return True
@@ -498,7 +498,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function Label(Extends Maps() As Beacon.Map) As String
-		  Dim Names() As String
+		  Var Names() As String
 		  For Each Map As Beacon.Map In Maps
 		    Names.AddRow(Map.Name)
 		  Next
@@ -510,7 +510,7 @@ Protected Module Beacon
 		  ElseIf Names.LastRowIndex = 1 Then
 		    Return Names(0) + " & " + Names(1)
 		  Else
-		    Dim Tail As String = Names(Names.LastRowIndex)
+		    Var Tail As String = Names(Names.LastRowIndex)
 		    Names.RemoveRowAt(Names.LastRowIndex)
 		    Return Names.Join(", ") + ", & " + Tail
 		  End If
@@ -597,10 +597,10 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function MakeHumanReadable(Source As String) As String
-		  Dim Chars() As String
-		  Dim SourceChars() As String = Source.Split("")
+		  Var Chars() As String
+		  Var SourceChars() As String = Source.Split("")
 		  For Each Char As String In SourceChars
-		    Dim Codepoint As Integer = Asc(Char)
+		    Var Codepoint As Integer = Asc(Char)
 		    If Codepoint = 32 Or (Codepoint >= 48 And Codepoint <= 57) Or (Codepoint >= 97 And Codepoint <= 122) Then
 		      Chars.AddRow(Char)
 		    ElseIf CodePoint >= 65 And Codepoint <= 90 Then
@@ -622,7 +622,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function Mask(Extends Maps() As Beacon.Map) As UInt64
-		  Dim Bits As UInt64
+		  Var Bits As UInt64
 		  For Each Map As Beacon.Map In Maps
 		    Bits = Bits Or Map.Mask
 		  Next
@@ -638,12 +638,12 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h21
 		Private Function NameOfValue(Value As Variant) As String
-		  Dim ValueName As String
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
+		  Var ValueName As String
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Value)
 		  If Info <> Nil Then
 		    ValueName = Info.FullName
 		  Else
-		    Dim Type As Integer
+		    Var Type As Integer
 		    If Value.IsArray Then
 		      Type = Value.ArrayElementType
 		    Else
@@ -711,9 +711,9 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function NormalizeTag(Tag As String) As String
-		  Dim TagString As String = Tag.Lowercase.Trim
+		  Var TagString As String = Tag.Lowercase.Trim
 		  
-		  Dim Sanitizer As New RegEx
+		  Var Sanitizer As New RegEx
 		  Sanitizer.Options.ReplaceAllMatches = True
 		  Sanitizer.SearchPattern = "\s+"
 		  Sanitizer.ReplacementPattern = "_"
@@ -732,7 +732,7 @@ Protected Module Beacon
 		  Const UseMBS = False
 		  
 		  #if UseMBS
-		    Dim Temp As New JSONMBS(Source)
+		    Var Temp As New JSONMBS(Source)
 		    Return Temp.Convert
 		  #else
 		    Return Xojo.ParseJSON(Source)
@@ -742,12 +742,12 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function PrettyText(Value As Double, DecimalPlaces As Integer = 6) As String
-		  Dim Multiplier As UInteger = 1
-		  Dim Places As Integer = 0
-		  Dim Format As String = "0"
+		  Var Multiplier As UInteger = 1
+		  Var Places As Integer = 0
+		  Var Format As String = "0"
 		  
 		  While Places < DecimalPlaces
-		    Dim TestValue As Double = Value * Multiplier
+		    Var TestValue As Double = Value * Multiplier
 		    If Abs(TestValue - Floor(TestValue)) < 0.0000001 Then
 		      Exit
 		    End If
@@ -760,7 +760,7 @@ Protected Module Beacon
 		    Format = Format.Left(1) + "." + Format.Middle(1)
 		  End If
 		  
-		  Dim RoundedValue As Double = Round(Value * Multiplier) / Multiplier
+		  Var RoundedValue As Double = Round(Value * Multiplier) / Multiplier
 		  Return RoundedValue.ToString(Locale.Raw, Format)
 		End Function
 	#tag EndMethod
@@ -773,12 +773,12 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 		Function PrimaryExtension(Extends Type As FileType) As String
-		  Dim Extensions() As String = Type.Extensions.Split(";")
+		  Var Extensions() As String = Type.Extensions.Split(";")
 		  If Extensions.LastRowIndex = -1 Then
 		    Return ""
 		  End If
 		  
-		  Dim Extension As String = Extensions(0)
+		  Var Extension As String = Extensions(0)
 		  If Extension.Left(1) <> "." Then
 		    Extension = "." + Extension
 		  End If
@@ -795,16 +795,16 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Sub RemoveTags(Extends Blueprint As Beacon.MutableBlueprint, TagsToRemove() As String)
-		  Dim Tags() As String = Blueprint.Tags
-		  Dim Changed As Boolean
+		  Var Tags() As String = Blueprint.Tags
+		  Var Changed As Boolean
 		  For I As Integer = 0 To TagsToRemove.LastRowIndex
-		    Dim Tag As String  = Beacon.NormalizeTag(TagsToRemove(I))
+		    Var Tag As String  = Beacon.NormalizeTag(TagsToRemove(I))
 		    
 		    If Tag = "object" Then
 		      Continue
 		    End If
 		    
-		    Dim Idx As Integer = Tags.IndexOf(Tag)
+		    Var Idx As Integer = Tags.IndexOf(Tag)
 		    If Idx = -1 Then
 		      Continue
 		    End If
@@ -858,8 +858,8 @@ Protected Module Beacon
 		  If Mods = Nil Then
 		    Mods = New Beacon.StringList
 		  End If
-		  Dim Blueprints() As Beacon.Blueprint = Source.SearchForBlueprints(CategoryCreatures, SearchText, Mods, Tags)
-		  Dim Creatures() As Beacon.Creature
+		  Var Blueprints() As Beacon.Blueprint = Source.SearchForBlueprints(CategoryCreatures, SearchText, Mods, Tags)
+		  Var Creatures() As Beacon.Creature
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Creature Then
 		      Creatures.AddRow(Beacon.Creature(Blueprint))
@@ -874,8 +874,8 @@ Protected Module Beacon
 		  If Mods = Nil Then
 		    Mods = New Beacon.StringList
 		  End If
-		  Dim Blueprints() As Beacon.Blueprint = Source.SearchForBlueprints(CategoryEngrams, SearchText, Mods, Tags)
-		  Dim Engrams() As Beacon.Engram
+		  Var Blueprints() As Beacon.Blueprint = Source.SearchForBlueprints(CategoryEngrams, SearchText, Mods, Tags)
+		  Var Engrams() As Beacon.Engram
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Engram Then
 		      Engrams.AddRow(Beacon.Engram(Blueprint))
@@ -908,16 +908,16 @@ Protected Module Beacon
 		  Const SecondsPerHour = 3600
 		  Const SecondsPerMinute = 60
 		  
-		  Dim Days As Integer = Floor(Seconds / SecondsPerDay)
+		  Var Days As Integer = Floor(Seconds / SecondsPerDay)
 		  Seconds = Seconds - (Days * SecondsPerDay)
 		  
-		  Dim Hours As Integer = Floor(Seconds / SecondsPerHour)
+		  Var Hours As Integer = Floor(Seconds / SecondsPerHour)
 		  Seconds = Seconds - (Hours * SecondsPerHour)
 		  
-		  Dim Minutes As Integer = Floor(Seconds / SecondsPerMinute)
+		  Var Minutes As Integer = Floor(Seconds / SecondsPerMinute)
 		  Seconds = Seconds - (Minutes * SecondsPerMinute)
 		  
-		  Dim Parts() As String
+		  Var Parts() As String
 		  If Days > 0 Then
 		    Parts.AddRow(Str(Days, "-0") + "d")
 		  End If
@@ -936,13 +936,13 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Sub Sort(Sources() As Beacon.LootSource)
-		  Dim Bound As Integer = Sources.LastRowIndex
+		  Var Bound As Integer = Sources.LastRowIndex
 		  If Bound = -1 Then
 		    Return
 		  End If
 		  
-		  Dim Order() As Integer
-		  Redim Order(Bound)
+		  Var Order() As Integer
+		  Order.ResizeTo(Bound)
 		  For I As Integer = 0 To Bound
 		    Order(I) = Sources(I).SortValue
 		  Next
@@ -953,13 +953,13 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Sub Sort(Qualities() As Beacon.Quality)
-		  Dim Bound As Integer = Qualities.LastRowIndex
+		  Var Bound As Integer = Qualities.LastRowIndex
 		  If Bound = -1 Then
 		    Return
 		  End If
 		  
-		  Dim Order() As Double
-		  Redim Order(Bound)
+		  Var Order() As Double
+		  Order.ResizeTo(Bound)
 		  For I As Integer = 0 To Bound
 		    Order(I) = Qualities(I).BaseValue
 		  Next
@@ -970,7 +970,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function TagString(Extends Blueprint As Beacon.Blueprint) As String
-		  Dim Tags() As String = Blueprint.Tags
+		  Var Tags() As String = Blueprint.Tags
 		  If Tags.IndexOf("object") = -1 Then
 		    Tags.AddRowAt(0, "object")
 		  End If
@@ -980,8 +980,8 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Sub TagString(Extends Blueprint As Beacon.MutableBlueprint, Assigns Value As String)
-		  Dim Tags() As String = Value.Split(",")
-		  Dim Idx As Integer = Tags.IndexOf("object")
+		  Var Tags() As String = Value.Split(",")
+		  Var Idx As Integer = Tags.IndexOf("object")
 		  If Idx > -1 Then
 		    Tags.RemoveRowAt(Idx)
 		  End If
@@ -1008,7 +1008,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function ValidateEmail(Address As String) As Boolean
-		  Dim Validator As New RegEx
+		  Var Validator As New RegEx
 		  Validator.SearchPattern = "^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|""(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$"
 		  Return Validator.Search(Address) <> Nil
 		End Function
@@ -1036,7 +1036,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Sub ValidForMask(Extends Blueprint As Beacon.MutableBlueprint, Mask As UInt64, Assigns Value As Boolean)
-		  Dim Availability As UInt64 = Blueprint.Availability
+		  Var Availability As UInt64 = Blueprint.Availability
 		  If Value Then
 		    Availability = Availability Or Mask
 		  Else
@@ -1055,9 +1055,9 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function WebURL(Path As String = "/") As String
 		  #if DebugBuild
-		    Dim Domain As String = "https://lab.beaconapp.cc"
+		    Var Domain As String = "https://lab.beaconapp.cc"
 		  #else
-		    Dim Domain As String = "https://beaconapp.cc"
+		    Var Domain As String = "https://beaconapp.cc"
 		  #endif
 		  If Path.Length = 0 Or Path.Left(1) <> "/" Then
 		    Path = "/" + Path

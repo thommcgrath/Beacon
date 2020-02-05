@@ -2,9 +2,9 @@
 Protected Class EngramSet
 	#tag Method, Flags = &h0
 		Function ActiveEngrams() As BeaconAPI.Engram()
-		  Dim Engrams() As BeaconAPI.Engram
+		  Var Engrams() As BeaconAPI.Engram
 		  For Each Entry As DictionaryEntry In Self.mNewEngrams
-		    Dim Engram As BeaconAPI.Engram = Entry.Value
+		    Var Engram As BeaconAPI.Engram = Entry.Value
 		    Engrams.AddRow(New BeaconAPI.Engram(Engram))
 		  Next
 		  Return Engrams
@@ -18,7 +18,7 @@ Protected Class EngramSet
 		  End If
 		  
 		  If Self.mNewEngrams.HasKey(Engram.ID) Then
-		    Dim PreviousEngram As BeaconAPI.Engram = Self.mNewEngrams.Value(Engram.ID)
+		    Var PreviousEngram As BeaconAPI.Engram = Self.mNewEngrams.Value(Engram.ID)
 		    If Engram.Hash = PreviousEngram.Hash Then
 		      Return
 		    End If
@@ -31,7 +31,7 @@ Protected Class EngramSet
 
 	#tag Method, Flags = &h0
 		Sub ClearModifications(Revert As Boolean = True)
-		  Dim Source, Destination As Dictionary
+		  Var Source, Destination As Dictionary
 		  If Revert Then
 		    Source = Self.mOriginalEngrams
 		    Destination = Self.mNewEngrams
@@ -42,7 +42,7 @@ Protected Class EngramSet
 		  
 		  Destination.RemoveAll
 		  For Each Entry As DictionaryEntry In Source
-		    Dim Engram As BeaconAPI.Engram = Entry.Value
+		    Var Engram As BeaconAPI.Engram = Entry.Value
 		    Destination.Value(Entry.Key) = New BeaconAPI.Engram(Engram)
 		  Next
 		End Sub
@@ -54,7 +54,7 @@ Protected Class EngramSet
 		  Self.mNewEngrams = New Dictionary
 		  
 		  For Each Source As Dictionary In Sources
-		    Dim Engram As New BeaconAPI.Engram(Source)
+		    Var Engram As New BeaconAPI.Engram(Source)
 		    Self.mOriginalEngrams.Value(Engram.ID) = Engram
 		    Self.mNewEngrams.Value(Engram.ID) = Engram
 		  Next
@@ -63,14 +63,14 @@ Protected Class EngramSet
 
 	#tag Method, Flags = &h0
 		Function EngramsToDelete() As BeaconAPI.Engram()
-		  Dim NewClasses() As String
+		  Var NewClasses() As String
 		  For Each Entry As DictionaryEntry In Self.mNewEngrams
 		    NewClasses.AddRow(BeaconAPI.Engram(Entry.Value).Path)
 		  Next
 		  
-		  Dim DeleteEngrams() As BeaconAPI.Engram
+		  Var DeleteEngrams() As BeaconAPI.Engram
 		  For Each Entry As DictionaryEntry In Self.mOriginalEngrams
-		    Dim Engram As BeaconAPI.Engram = Entry.Value
+		    Var Engram As BeaconAPI.Engram = Entry.Value
 		    If NewClasses.IndexOf(Engram.Path) = -1 Then
 		      DeleteEngrams.AddRow(New BeaconAPI.Engram(Engram))
 		    End If
@@ -82,17 +82,17 @@ Protected Class EngramSet
 
 	#tag Method, Flags = &h0
 		Function EngramsToSave() As BeaconAPI.Engram()
-		  Dim OriginalClasses As New Dictionary
+		  Var OriginalClasses As New Dictionary
 		  For Each Entry As DictionaryEntry In Self.mOriginalEngrams
 		    OriginalClasses.Value(BeaconAPI.Engram(Entry.Value).Path) = BeaconAPI.Engram(Entry.Value)
 		  Next
 		  
-		  Dim NewEngrams() As BeaconAPI.Engram
+		  Var NewEngrams() As BeaconAPI.Engram
 		  For Each Entry As DictionaryEntry In Self.mNewEngrams
-		    Dim Engram As BeaconAPI.Engram = Entry.Value
+		    Var Engram As BeaconAPI.Engram = Entry.Value
 		    If OriginalClasses.HasKey(Engram.Path) Then
 		      // Might be changed
-		      Dim OriginalEngram As BeaconAPI.Engram = OriginalClasses.Value(Engram.Path)
+		      Var OriginalEngram As BeaconAPI.Engram = OriginalClasses.Value(Engram.Path)
 		      If Engram.Hash <> OriginalEngram.Hash Then
 		        NewEngrams.AddRow(New BeaconAPI.Engram(Engram))
 		      End If

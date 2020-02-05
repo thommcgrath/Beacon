@@ -810,13 +810,13 @@ End
 
 	#tag MenuHandler
 		Function FileExport() As Boolean Handles FileExport.Action
-			Dim Dialog As New SaveFileDialog
+			Var Dialog As New SaveFileDialog
 			Dialog.Filter = BeaconFileTypes.BeaconPreset
 			Dialog.SuggestedFileName = Self.mPreset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension
 			
-			Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+			Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 			If File <> Nil Then
-			Dim Writer As New Beacon.JSONWriter(Self.mPreset.ToDictionary, File)
+			Var Writer As New Beacon.JSONWriter(Self.mPreset.ToDictionary, File)
 			Writer.Start
 			End If
 			Return True
@@ -832,11 +832,11 @@ End
 
 	#tag MenuHandler
 		Function FileSaveAs() As Boolean Handles FileSaveAs.Action
-			Dim Dialog As New SaveFileDialog
+			Var Dialog As New SaveFileDialog
 			Dialog.Filter = BeaconFileTypes.BeaconPreset
 			Dialog.SuggestedFileName = Self.mPreset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension
 			
-			Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+			Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 			If File <> Nil Then
 			Self.mSaveFile = File
 			Self.Save()
@@ -848,7 +848,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub AddEntriesToList(Entries() As Beacon.PresetEntry)
-		  Dim Maps() As Beacon.Map = Self.FilteredMaps()
+		  Var Maps() As Beacon.Map = Self.FilteredMaps()
 		  For Each Entry As Beacon.PresetEntry In Entries
 		    Self.ContentsList.AddRow("")
 		    Self.PutEntryInRow(Entry, Self.ContentsList.LastAddedRowIndex, Maps)
@@ -879,8 +879,8 @@ End
 		    If Not Self.ContentsList.Selected(I) Then
 		      Continue
 		    End If
-		    Dim Entry As Beacon.PresetEntry = Self.ContentsList.RowTagAt(I)
-		    Dim Idx As Integer = Self.mPreset.IndexOf(Entry)
+		    Var Entry As Beacon.PresetEntry = Self.ContentsList.RowTagAt(I)
+		    Var Idx As Integer = Self.mPreset.IndexOf(Entry)
 		    If Idx > -1 Then
 		      Self.mPreset.Remove(Idx)  
 		      Self.Changed = True
@@ -893,13 +893,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub EditSelectedEntries()
-		  Dim Entries() As Beacon.PresetEntry
+		  Var Entries() As Beacon.PresetEntry
 		  For I As Integer = 0 To ContentsList.RowCount - 1
 		    If Not ContentsList.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Dim Entry As Beacon.PresetEntry = ContentsList.RowTagAt(I)
+		    Var Entry As Beacon.PresetEntry = ContentsList.RowTagAt(I)
 		    Call Entry.UniqueID // Triggers generation if necessary so we can compare when done
 		    Entries.AddRow(Entry)
 		  Next
@@ -908,15 +908,15 @@ End
 		    Return
 		  End If
 		  
-		  Dim NewEntries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, New Beacon.StringList, Entries)
+		  Var NewEntries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, New Beacon.StringList, Entries)
 		  If NewEntries = Nil Then
 		    Return
 		  End If
 		  
-		  Dim Maps() As Beacon.Map = Self.FilteredMaps()
+		  Var Maps() As Beacon.Map = Self.FilteredMaps()
 		  For Each NewEntry As Beacon.SetEntry In NewEntries
-		    Dim OriginalEntry As Beacon.PresetEntry
-		    Dim OriginalIndex As Integer = -1
+		    Var OriginalEntry As Beacon.PresetEntry
+		    Var OriginalIndex As Integer = -1
 		    For I As Integer = 0 To Self.mPreset.LastRowIndex
 		      If Self.mPreset(I).UniqueID = NewEntry.UniqueID Then
 		        OriginalEntry = Self.mPreset(I)
@@ -930,7 +930,7 @@ End
 		      Return
 		    End If
 		    
-		    Dim Item As New Beacon.PresetEntry(NewEntry)
+		    Var Item As New Beacon.PresetEntry(NewEntry)
 		    Item.Availability = OriginalEntry.Availability
 		    Item.RespectQualityModifier = OriginalEntry.RespectQualityModifier
 		    Item.RespectQuantityMultiplier = OriginalEntry.RespectQuantityMultiplier
@@ -951,9 +951,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function FilteredMaps() As Beacon.Map()
-		  Dim Maps() As Beacon.Map
+		  Var Maps() As Beacon.Map
 		  For I As Integer = 0 To Self.MapSelector.SegmentCount - 1
-		    Dim Cell As Segment = Self.MapSelector.SegmentAt(I)
+		    Var Cell As Segment = Self.MapSelector.SegmentAt(I)
 		    If Not Cell.Selected Then
 		      Continue
 		    End If
@@ -999,7 +999,7 @@ End
 		    Index = Self.ContentsList.LastAddedRowIndex
 		  End If
 		  
-		  Dim MapsValid, MapsInvalid As Integer
+		  Var MapsValid, MapsInvalid As Integer
 		  For Each Map As Beacon.Map In Maps
 		    If Entry.ValidForMap(Map) Then
 		      MapsValid = MapsValid + 1
@@ -1036,7 +1036,7 @@ End
 		  If Self.mSaveFile = Nil Then
 		    Beacon.Data.SavePreset(Self.mPreset)
 		  Else
-		    Dim Writer As New Beacon.JSONWriter(Self.mPreset.ToDictionary, Self.mSaveFile)
+		    Var Writer As New Beacon.JSONWriter(Self.mPreset.ToDictionary, Self.mSaveFile)
 		    Writer.Start
 		  End If
 		  Self.Changed = False
@@ -1046,7 +1046,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function SelectedEntries() As Beacon.PresetEntry()
-		  Dim Entries() As Beacon.PresetEntry
+		  Var Entries() As Beacon.PresetEntry
 		  For I As Integer = Self.ContentsList.RowCount - 1 DownTo 0
 		    If Self.ContentsList.Selected(I) Then
 		      Entries.AddRow(Self.ContentsList.RowTagAt(I))
@@ -1058,14 +1058,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddDialog()
-		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, New Beacon.StringList)
+		  Var Entries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, New Beacon.StringList)
 		  If Entries = Nil Or Entries.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  Self.ContentsList.SelectedRowIndex = -1
-		  Dim Maps() As Beacon.Map = Self.FilteredMaps
+		  Var Maps() As Beacon.Map = Self.FilteredMaps
 		  For Each Entry As Beacon.SetEntry In Entries
-		    Dim Item As New Beacon.PresetEntry(Entry)
+		    Var Item As New Beacon.PresetEntry(Entry)
 		    Self.PutEntryInRow(Item, -1, Maps, True)
 		    Self.mPreset.Append(Item)
 		    Self.Changed = True
@@ -1078,7 +1078,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowModifierEditor(Edit As Boolean)
-		  Dim EditID As String
+		  Var EditID As String
 		  If Edit And Self.ModifiersList.SelectedRowCount = 1 Then
 		    EditID = Self.ModifiersList.RowTagAt(Self.ModifiersList.SelectedRowIndex)
 		  End If
@@ -1091,7 +1091,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateMinAndMaxFields()
-		  Dim Focus As RectControl = Self.Window.Focus
+		  Var Focus As RectControl = Self.Window.Focus
 		  
 		  If Focus <> Self.MinItemsField Then
 		    Self.MinItemsField.Value = Str(Self.mPreset.MinItems)
@@ -1113,7 +1113,7 @@ End
 		  Self.mUpdating = True
 		  Self.Changed = False
 		  
-		  Dim Mask As UInt64 = Preferences.LastPresetMapFilter
+		  Var Mask As UInt64 = Preferences.LastPresetMapFilter
 		  Self.MapSelector.SegmentAt(0).Selected = (Mask And Beacon.Maps.TheIsland.Mask) = Beacon.Maps.TheIsland.Mask
 		  Self.MapSelector.SegmentAt(1).Selected = (Mask And Beacon.Maps.ScorchedEarth.Mask) = Beacon.Maps.ScorchedEarth.Mask
 		  Self.MapSelector.SegmentAt(2).Selected = (Mask And Beacon.Maps.Aberration.Mask) = Beacon.Maps.Aberration.Mask
@@ -1123,11 +1123,11 @@ End
 		  Self.MapSelector.SegmentAt(6).Selected = (Mask And Beacon.Maps.Ragnarok.Mask) = Beacon.Maps.Ragnarok.Mask
 		  Self.MapSelector.SegmentAt(7).Selected = (Mask And Beacon.Maps.Valguero.Mask) = Beacon.Maps.Valguero.Mask
 		  
-		  Dim Maps() As Beacon.Map = Self.FilteredMaps()
-		  Dim SelectedEntries() As String
+		  Var Maps() As Beacon.Map = Self.FilteredMaps()
+		  Var SelectedEntries() As String
 		  For I As Integer = 0 To Self.ContentsList.RowCount - 1
 		    If Self.ContentsList.Selected(I) Then
-		      Dim Entry As Beacon.PresetEntry = Self.ContentsList.RowTagAt(I)
+		      Var Entry As Beacon.PresetEntry = Self.ContentsList.RowTagAt(I)
 		      SelectedEntries.AddRow(Entry.UniqueID)
 		    End If
 		  Next
@@ -1141,22 +1141,22 @@ End
 		  Self.GroupingField.Value = Self.mPreset.Grouping
 		  Self.UpdateMinAndMaxFields
 		  
-		  Dim AppliedModifiers() As String = Self.mPreset.ActiveModifierIDs
-		  Dim Modifiers() As Beacon.PresetModifier = LocalData.SharedInstance.AllPresetModifiers
+		  Var AppliedModifiers() As String = Self.mPreset.ActiveModifierIDs
+		  Var Modifiers() As Beacon.PresetModifier = LocalData.SharedInstance.AllPresetModifiers
 		  Self.ModifiersList.RemoveAllRows()
 		  For Each Modifier As Beacon.PresetModifier In Modifiers
 		    If AppliedModifiers.IndexOf(Modifier.ModifierID) = -1 Then
 		      Continue
 		    End If
 		    
-		    Dim QuantityMultiplier As Double = Self.mPreset.QuantityMultiplier(Modifier)
-		    Dim MinQualityModifier As Integer = Self.mPreset.MinQualityModifier(Modifier)
-		    Dim MaxQualityModifier As Integer = Self.mPreset.MaxQualityModifier(Modifier)
-		    Dim BlueprintMultiplier As Double = Self.mPreset.BlueprintMultiplier(Modifier)
+		    Var QuantityMultiplier As Double = Self.mPreset.QuantityMultiplier(Modifier)
+		    Var MinQualityModifier As Integer = Self.mPreset.MinQualityModifier(Modifier)
+		    Var MaxQualityModifier As Integer = Self.mPreset.MaxQualityModifier(Modifier)
+		    Var BlueprintMultiplier As Double = Self.mPreset.BlueprintMultiplier(Modifier)
 		    
-		    Dim QuantityLabel As String = "x " + QuantityMultiplier.ToString(Locale.Current)
-		    Dim BlueprintLabel As String = "x " + BlueprintMultiplier.ToString(Locale.Current)
-		    Dim MinQualityLabel, MaxQualityLabel As String
+		    Var QuantityLabel As String = "x " + QuantityMultiplier.ToString(Locale.Current)
+		    Var BlueprintLabel As String = "x " + BlueprintMultiplier.ToString(Locale.Current)
+		    Var MinQualityLabel, MaxQualityLabel As String
 		    If MinQualityModifier = 0 Then
 		      MinQualityLabel = "No Change"
 		    Else
@@ -1276,11 +1276,11 @@ End
 		  
 		  Self.mUpdating = True
 		  
-		  Dim Maps() As Beacon.Map = Self.FilteredMaps
+		  Var Maps() As Beacon.Map = Self.FilteredMaps
 		  Preferences.LastPresetMapFilter = Maps.Mask
 		  
 		  For I As Integer = ContentsList.RowCount - 1 DownTo 0
-		    Dim Entry As Beacon.PresetEntry = ContentsList.RowTagAt(I)
+		    Var Entry As Beacon.PresetEntry = ContentsList.RowTagAt(I)
 		    Self.PutEntryInRow(Entry, I, Maps, ContentsList.Selected(I))
 		  Next
 		  
@@ -1303,19 +1303,19 @@ End
 		    Return
 		  End If
 		  
-		  Dim ChangeAll As Boolean = (Keyboard.CommandKey And TargetMacOS) Or (Keyboard.ControlKey And TargetWindows)
+		  Var ChangeAll As Boolean = (Keyboard.CommandKey And TargetMacOS) Or (Keyboard.ControlKey And TargetWindows)
 		  
 		  Select Case Column
 		  Case Self.ColumnIncluded
-		    Dim State As Checkbox.VisualStates = Me.CellCheckBoxStateAt(Row, Column)
+		    Var State As Checkbox.VisualStates = Me.CellCheckBoxStateAt(Row, Column)
 		    If State = Checkbox.VisualStates.Indeterminate Then
 		      Return
 		    End If
 		    
-		    Dim Maps() As Beacon.Map = Self.FilteredMaps
+		    Var Maps() As Beacon.Map = Self.FilteredMaps
 		    If ChangeAll Then
 		      For I As Integer = Me.RowCount - 1 DownTo 0
-		        Dim Entry As Beacon.PresetEntry = Me.RowTagAt(I)
+		        Var Entry As Beacon.PresetEntry = Me.RowTagAt(I)
 		        For Each Map As Beacon.Map In Maps
 		          If Entry.ValidForMap(Map) <> (State = Checkbox.VisualStates.Checked) Then
 		            Entry.ValidForMap(Map) = (State = Checkbox.VisualStates.Checked)
@@ -1325,7 +1325,7 @@ End
 		        Next
 		      Next
 		    Else
-		      Dim Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
+		      Var Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
 		      For Each Map As Beacon.Map In Maps
 		        If Entry.ValidForMap(Map) <> (State = Checkbox.VisualStates.Checked) Then
 		          Entry.ValidForMap(Map) = (State = Checkbox.VisualStates.Checked)
@@ -1335,11 +1335,11 @@ End
 		    End If
 		    Return
 		  Case Self.ColumnQuantity
-		    Dim Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
+		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
 		    
 		    If ChangeAll Then
 		      For I As Integer = Me.RowCount - 1 DownTo 0
-		        Dim Entry As Beacon.PresetEntry = Me.RowTagAt(I)
+		        Var Entry As Beacon.PresetEntry = Me.RowTagAt(I)
 		        If Entry.RespectQuantityMultiplier <> Checked Then
 		          Entry.RespectQuantityMultiplier = Checked
 		          Me.CellCheckBoxValueAt(I, Column) = Checked
@@ -1347,18 +1347,18 @@ End
 		        End If
 		      Next
 		    Else
-		      Dim Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
+		      Var Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
 		      If Entry.RespectQuantityMultiplier <> Checked Then
 		        Entry.RespectQuantityMultiplier = Checked
 		        Self.Changed = True
 		      End If
 		    End If
 		  Case Self.ColumnQuality
-		    Dim Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
+		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
 		    
 		    If ChangeAll Then
 		      For I As Integer = Me.RowCount - 1 DownTo 0
-		        Dim Entry As Beacon.PresetEntry = Me.RowTagAt(I)
+		        Var Entry As Beacon.PresetEntry = Me.RowTagAt(I)
 		        If Entry.RespectQualityModifier <> Checked Then
 		          Entry.RespectQualityModifier = Checked
 		          Me.CellCheckBoxValueAt(I, Column) = Checked
@@ -1366,18 +1366,18 @@ End
 		        End If
 		      Next
 		    Else
-		      Dim Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
+		      Var Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
 		      If Entry.RespectQualityModifier <> Checked Then
 		        Entry.RespectQualityModifier = Checked
 		        Self.Changed = True
 		      End If
 		    End If
 		  Case Self.ColumnBlueprint
-		    Dim Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
+		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
 		    
 		    If ChangeAll Then
 		      For I As Integer = Me.RowCount - 1 DownTo 0
-		        Dim Entry As Beacon.PresetEntry = Me.RowTagAt(I)
+		        Var Entry As Beacon.PresetEntry = Me.RowTagAt(I)
 		        If Entry.RespectBlueprintMultiplier <> Checked Then
 		          Entry.RespectBlueprintMultiplier = Checked
 		          Me.CellCheckBoxValueAt(I, Column) = Checked
@@ -1385,7 +1385,7 @@ End
 		        End If
 		      Next
 		    Else
-		      Dim Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
+		      Var Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
 		      If Entry.RespectBlueprintMultiplier <> Checked Then
 		        Entry.RespectBlueprintMultiplier = Checked
 		        Self.Changed = True
@@ -1399,7 +1399,7 @@ End
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
-		  Dim Item As MenuItem
+		  Var Item As MenuItem
 		  
 		  Item = New MenuItem
 		  Item.Value = "Create Blueprint Entry"
@@ -1414,30 +1414,30 @@ End
 		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
 		  Select Case hitItem.Tag
 		  Case "createblueprintentry"
-		    Dim Maps() As Beacon.Map = Beacon.Maps.All
-		    Dim NewEntries As New Dictionary
+		    Var Maps() As Beacon.Map = Beacon.Maps.All
+		    Var NewEntries As New Dictionary
 		    For Each Map As Beacon.Map In Maps
-		      Dim Entries() As Beacon.PresetEntry
+		      Var Entries() As Beacon.PresetEntry
 		      For I As Integer = 0 To Me.RowCount - 1
 		        If Not Me.Selected(I) Then
 		          Continue
 		        End If
 		        
-		        Dim Entry As Beacon.PresetEntry = Me.RowTagAt(I)
+		        Var Entry As Beacon.PresetEntry = Me.RowTagAt(I)
 		        If Entry.ValidForMap(Map) Then
 		          Entries.AddRow(Entry)
 		        End If
 		      Next
 		      
-		      Dim BlueprintEntry As Beacon.SetEntry = Beacon.SetEntry.CreateBlueprintEntry(Entries)
+		      Var BlueprintEntry As Beacon.SetEntry = Beacon.SetEntry.CreateBlueprintEntry(Entries)
 		      If BlueprintEntry <> Nil Then
-		        Dim Hash As String = BlueprintEntry.Hash
+		        Var Hash As String = BlueprintEntry.Hash
 		        If NewEntries.HasKey(Hash) Then
-		          Dim Entry As Beacon.PresetEntry = NewEntries.Value(Hash)
+		          Var Entry As Beacon.PresetEntry = NewEntries.Value(Hash)
 		          Entry.ValidForMap(Map) = True
 		          NewEntries.Value(Hash) = Entry
 		        Else
-		          Dim Entry As New Beacon.PresetEntry(BlueprintEntry)
+		          Var Entry As New Beacon.PresetEntry(BlueprintEntry)
 		          Entry.Availability = 0
 		          Entry.ValidForMap(Map) = True
 		          NewEntries.Value(Hash) = Entry
@@ -1457,9 +1457,9 @@ End
 		    Next
 		    Me.SelectedRowIndex = -1
 		    
-		    Dim SelectedMaps() As Beacon.Map = Self.FilteredMaps()
+		    Var SelectedMaps() As Beacon.Map = Self.FilteredMaps()
 		    For Each Entry As DictionaryEntry In NewEntries
-		      Dim Item As Beacon.PresetEntry = Entry.Value
+		      Var Item As Beacon.PresetEntry = Entry.Value
 		      Item.RespectQualityModifier = False
 		      Item.RespectQuantityMultiplier = False
 		      Self.PutEntryInRow(Item, -1, SelectedMaps, True)
@@ -1530,7 +1530,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Integer = Max(CDbl(Me.Value), 1)
+		  Var Value As Integer = Max(CDbl(Me.Value), 1)
 		  If Self.mPreset.MaxItems <> Value Then
 		    Self.mPreset.MaxItems = Value
 		    Self.Changed = True
@@ -1554,7 +1554,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Integer = Max(CDbl(Me.Value), 1)
+		  Var Value As Integer = Max(CDbl(Me.Value), 1)
 		  If Self.mPreset.MinItems <> Value Then
 		    Self.mPreset.MinItems = Value
 		    Self.Changed = True
@@ -1578,7 +1578,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As String = Me.Value.Trim
+		  Var Value As String = Me.Value.Trim
 		  If Value <> "" And StrComp(Self.mPreset.Grouping, Value, 0) <> 0 Then
 		    Self.mPreset.Grouping = Value
 		    Self.Changed = True
@@ -1593,7 +1593,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As String = Me.Value.Trim
+		  Var Value As String = Me.Value.Trim
 		  If Value <> "" And StrComp(Self.mPreset.Label, Value, 0) <> 0 Then
 		    Self.mPreset.Label = Value
 		    Self.Changed = True
@@ -1634,7 +1634,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim ModifierID As String = Self.ModifiersList.RowTagAt(I)
+		    Var ModifierID As String = Self.ModifiersList.RowTagAt(I)
 		    Self.mPreset.ClearModifier(ModifierID)
 		    Self.ModifiersList.RemoveRowAt(I)
 		    Self.Changed = True
@@ -1643,14 +1643,14 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Modifiers As New Dictionary
+		  Var Modifiers As New Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Dim ModifierID As String = Me.RowTagAt(I)
-		    Dim Dict As New Dictionary
+		    Var ModifierID As String = Me.RowTagAt(I)
+		    Var Dict As New Dictionary
 		    Dict.Value("Quantity") = Self.mPreset.QuantityMultiplier(ModifierID)
 		    Dict.Value("MinQuality") = Self.mPreset.MinQualityModifier(ModifierID)
 		    Dict.Value("MaxQuality") = Self.mPreset.MaxQualityModifier(ModifierID)
@@ -1668,12 +1668,12 @@ End
 		  End If
 		  
 		  Try
-		    Dim Data As String = Board.RawData(Self.ModifierClipboardType).DefineEncoding(Encodings.UTF8)
-		    Dim Modifiers As Dictionary = Beacon.ParseJSON(Data)
+		    Var Data As String = Board.RawData(Self.ModifierClipboardType).DefineEncoding(Encodings.UTF8)
+		    Var Modifiers As Dictionary = Beacon.ParseJSON(Data)
 		    
 		    For Each Entry As DictionaryEntry In Modifiers
-		      Dim ModifierID As String = Entry.Key
-		      Dim Dict As Dictionary = Entry.Value
+		      Var ModifierID As String = Entry.Key
+		      Var Dict As Dictionary = Entry.Value
 		      
 		      If Dict.HasKey("Quantity") Then
 		        Self.mPreset.QuantityMultiplier(ModifierID) = Dict.Value("Quantity")

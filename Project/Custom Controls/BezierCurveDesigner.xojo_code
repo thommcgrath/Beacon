@@ -3,7 +3,7 @@ Protected Class BezierCurveDesigner
 Inherits ControlCanvas
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  Dim Point As New Point(X, Y)
+		  Var Point As New Point(X, Y)
 		  
 		  If Self.mHandle1Rect <> Nil And Self.mHandle1Rect.Contains(Point) Then
 		    Self.mHandle1DownPoint = Point
@@ -27,28 +27,28 @@ Inherits ControlCanvas
 		  End If
 		  
 		  If Self.mHandle1DownPoint <> Nil Then
-		    Dim DeltaX As Double = (X - Self.mHandle1DownPoint.X) / Self.Viewport.Width
-		    Dim DeltaY As Double = (Y - Self.mHandle1DownPoint.Y) / Self.Viewport.Height
+		    Var DeltaX As Double = (X - Self.mHandle1DownPoint.X) / Self.Viewport.Width
+		    Var DeltaY As Double = (Y - Self.mHandle1DownPoint.Y) / Self.Viewport.Height
 		    If DeltaX = 0 And DeltaY = 0 Then
 		      Return
 		    End If
 		    Self.mHandle1DownPoint = New Point(X, Y)
 		    
-		    Dim Point1 As Point = Self.Curve.Point(1)
-		    Dim Point2 As Point = Self.Curve.Point(2)
+		    Var Point1 As Point = Self.Curve.Point(1)
+		    Var Point2 As Point = Self.Curve.Point(2)
 		    Point1 = New Point(Point1.X + DeltaX, Point1.Y - DeltaY)
 		    
 		    Self.Curve = New Beacon.Curve(Point1, Point2)
 		  ElseIf Self.mHandle2DownPoint <> Nil Then
-		    Dim DeltaX As Double = (X - Self.mHandle2DownPoint.X) / Self.Viewport.Width
-		    Dim DeltaY As Double = (Y - Self.mHandle2DownPoint.Y) / Self.Viewport.Height
+		    Var DeltaX As Double = (X - Self.mHandle2DownPoint.X) / Self.Viewport.Width
+		    Var DeltaY As Double = (Y - Self.mHandle2DownPoint.Y) / Self.Viewport.Height
 		    If DeltaX = 0 And DeltaY = 0 Then
 		      Return
 		    End If
 		    Self.mHandle2DownPoint = New Point(X, Y)
 		    
-		    Dim Point1 As Point = Self.Curve.Point(1)
-		    Dim Point2 As Point = Self.Curve.Point(2)
+		    Var Point1 As Point = Self.Curve.Point(1)
+		    Var Point2 As Point = Self.Curve.Point(2)
 		    Point2 = New Point(Point2.X + DeltaX, Point2.Y - DeltaY)
 		    
 		    Self.Curve = New Beacon.Curve(Point1, Point2)
@@ -58,7 +58,7 @@ Inherits ControlCanvas
 
 	#tag Event
 		Sub MouseMove(X As Integer, Y As Integer)
-		  Dim Point As New Point(X, Y)
+		  Var Point As New Point(X, Y)
 		  If (Self.mHandle1Rect <> Nil And Self.mHandle1Rect.Contains(Point)) Or (Self.mHandle2Rect <> Nil And Self.mHandle2Rect.Contains(Point)) Then
 		    #if BeaconUI.CursorsEnabled
 		      Self.MouseCursor = System.Cursors.ArrowAllDirections
@@ -102,9 +102,9 @@ Inherits ControlCanvas
 		  G.FontName = "SmallSystem"
 		  G.FontSize = 0
 		  
-		  Dim Viewport As Rect = Self.Viewport
+		  Var Viewport As Rect = Self.Viewport
 		  
-		  Dim YLegend As New TextShape
+		  Var YLegend As New TextShape
 		  YLegend.Value = "Level"
 		  YLegend.Rotation = -1.5708
 		  YLegend.X = Viewport.Left - 6
@@ -114,7 +114,7 @@ Inherits ControlCanvas
 		  YLegend.FillColor = SystemColors.LabelColor
 		  G.DrawObject(YLegend)
 		  
-		  Dim XLegend As New TextShape
+		  Var XLegend As New TextShape
 		  XLegend.Value = "Experience"
 		  XLegend.X = Viewport.Left + (Viewport.Width / 2)
 		  XLegend.Y = Viewport.Bottom + 6 + G.CapHeight
@@ -130,20 +130,20 @@ Inherits ControlCanvas
 		  G.DrawLine(Viewport.Left, Viewport.Top - 1, Viewport.Right, Viewport.Top - 1)
 		  G.DrawLine(Viewport.Right, Viewport.Top, Viewport.Right, Viewport.Bottom - 1)
 		  
-		  Dim Clip As Graphics = G.Clip(Viewport.Left, Viewport.Top, Viewport.Width, Viewport.Height)
+		  Var Clip As Graphics = G.Clip(Viewport.Left, Viewport.Top, Viewport.Width, Viewport.Height)
 		  If Self.Curve <> Nil Then
 		    #if Self.ShowCrosshair
 		      If Self.mHoverPoint <> Nil And Viewport.Contains(Self.mHoverPoint) Then
-		        Dim Localized As Point = Viewport.Localize(Self.mHoverPoint)
+		        Var Localized As Point = Viewport.Localize(Self.mHoverPoint)
 		        
 		        #if false
-		          Dim Time As Double = Localized.X / Viewport.Width
-		          Dim Intersect As Point = Self.Curve.Evaluate(Time, Viewport.Localize(Viewport))
+		          Var Time As Double = Localized.X / Viewport.Width
+		          Var Intersect As Point = Self.Curve.Evaluate(Time, Viewport.Localize(Viewport))
 		        #endif
-		        Dim X As Integer = Localized.X
-		        Dim Y As Integer = Self.Curve.Evaluate(X / Viewport.Width, 0, Viewport.Width)
+		        Var X As Integer = Localized.X
+		        Var Y As Integer = Self.Curve.Evaluate(X / Viewport.Width, 0, Viewport.Width)
 		        
-		        Dim YLine As New CurveShape
+		        Var YLine As New CurveShape
 		        YLine.X = 0
 		        YLine.Y = Clip.Height - Y
 		        YLine.X2 = Viewport.Right
@@ -151,7 +151,7 @@ Inherits ControlCanvas
 		        YLine.BorderColor = SystemColors.TertiaryLabelColor
 		        Clip.DrawObject(YLine)
 		        
-		        Dim XLine As New CurveShape
+		        Var XLine As New CurveShape
 		        XLine.X = X
 		        XLine.Y = 0
 		        XLine.X2 = X
@@ -162,7 +162,7 @@ Inherits ControlCanvas
 		    #endif
 		    
 		    
-		    Dim Path1 As New CurveShape
+		    Var Path1 As New CurveShape
 		    Path1.X = 0
 		    Path1.Y = Clip.Height
 		    Path1.X2 = Self.Curve.Point(1).X * Clip.Width
@@ -170,7 +170,7 @@ Inherits ControlCanvas
 		    Path1.BorderColor = SystemColors.QuaternaryLabelColor
 		    Clip.DrawObject(Path1)
 		    
-		    Dim Path2 As New CurveShape
+		    Var Path2 As New CurveShape
 		    Path2.X = Clip.Width
 		    Path2.Y = 0
 		    Path2.X2 = Self.Curve.Point(2).X * Clip.Width
@@ -178,7 +178,7 @@ Inherits ControlCanvas
 		    Path2.BorderColor = Path1.BorderColor
 		    Clip.DrawObject(Path2)
 		    
-		    Dim Shape As New CurveShape
+		    Var Shape As New CurveShape
 		    Shape.X = 0
 		    Shape.X2 = Clip.Width
 		    Shape.Y = Clip.Height
@@ -191,7 +191,7 @@ Inherits ControlCanvas
 		    Shape.BorderColor = SystemColors.SystemBlueColor
 		    Clip.DrawObject(Shape)
 		    
-		    Dim Handle1 As New OvalShape
+		    Var Handle1 As New OvalShape
 		    Handle1.X = Path1.X2
 		    Handle1.Y = Path1.Y2
 		    Handle1.Width = 10
@@ -202,7 +202,7 @@ Inherits ControlCanvas
 		    G.DrawObject(Handle1, Viewport.Left, Viewport.Top)
 		    Self.mHandle1Rect = New Rect((Handle1.X - Floor(Handle1.Width / 2)) + Viewport.Left, (Handle1.Y - Floor(Handle1.Height / 2)) + Viewport.Top, Handle1.Width, Handle1.Height)
 		    
-		    Dim Handle2 As New OvalShape
+		    Var Handle2 As New OvalShape
 		    Handle2.X = Path2.X2
 		    Handle2.Y = Path2.Y2
 		    Handle2.Width = Handle1.Width

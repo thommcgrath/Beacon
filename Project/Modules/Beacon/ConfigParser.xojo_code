@@ -17,10 +17,10 @@ Private Class ConfigParser
 		        Self.SubParser = Nil
 		        Return True
 		      Case Self.TypeArray
-		        Dim Values() As Variant = Self.mValue
+		        Var Values() As Variant = Self.mValue
 		        Values.AddRow(Self.SubParser.Value)
 		        Self.mValue = Values
-		        Dim Consumed As Boolean = Self.SubParser.ConsumedLastChar
+		        Var Consumed As Boolean = Self.SubParser.ConsumedLastChar
 		        Self.SubParser = Nil
 		        
 		        If Consumed Then
@@ -49,7 +49,7 @@ Private Class ConfigParser
 		        Self.SubParser = New Beacon.ConfigParser(Self.Level + 1)
 		        Self.Type = Self.TypeArray
 		        
-		        Dim Values() As Variant
+		        Var Values() As Variant
 		        Self.mValue = Values
 		      Else
 		        Self.Buffer.AddRow(Char)
@@ -57,7 +57,7 @@ Private Class ConfigParser
 		    Case "="
 		      If Not Self.KeyFound Then
 		        Self.Key = Self.Buffer.Join("").Trim
-		        Redim Self.Buffer(-1)
+		        Self.Buffer.ResizeTo(-1)
 		        Self.Type = Self.TypePair
 		        Self.SubParser = New Beacon.ConfigParser(Self.Level) // Same level
 		        // We want the subparser to know the key was found too. The ( will start a new
@@ -73,7 +73,7 @@ Private Class ConfigParser
 		      Else
 		        Self.ConsumedLastChar = False
 		        Self.mValue = Self.Buffer.Join("")
-		        Redim Self.Buffer(-1)
+		        Self.Buffer.ResizeTo(-1)
 		        Self.KeyFound = False
 		        Return True
 		      End If

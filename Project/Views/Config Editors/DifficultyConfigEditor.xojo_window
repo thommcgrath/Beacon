@@ -461,7 +461,7 @@ End
 
 	#tag Event
 		Sub SetupUI()
-		  Dim Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
+		  Var Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
 		  Self.MaxDinoLevelField.Value = Str(Difficulty.MaxDinoLevel, "0")
 		  Self.FillReferenceFields(Difficulty)
 		End Sub
@@ -493,7 +493,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Integer = Val(Me.Value)
+		  Var Value As Integer = Val(Me.Value)
 		  If Value <= 0 Then
 		    Return
 		  End If

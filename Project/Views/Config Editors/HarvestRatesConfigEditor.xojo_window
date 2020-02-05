@@ -560,13 +560,13 @@ End
 		    Return
 		  End If
 		  
-		  Dim OtherConfig As BeaconConfigs.HarvestRates = BeaconConfigs.HarvestRates.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
+		  Var OtherConfig As BeaconConfigs.HarvestRates = BeaconConfigs.HarvestRates.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
 		  If OtherConfig = Nil Or OtherConfig.Count = 0 Then
 		    Return
 		  End If
 		  
-		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(True)
-		  Dim Classes() As String = OtherConfig.Classes
+		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
+		  Var Classes() As String = OtherConfig.Classes
 		  For Each ClassString As String In Classes
 		    Config.Override(ClassString) = OtherConfig.Override(ClassString)
 		  Next
@@ -583,7 +583,7 @@ End
 
 	#tag Event
 		Sub SetupUI()
-		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(False)
+		  Var Config As BeaconConfigs.HarvestRates = Self.Config(False)
 		  Self.HarvestAmountMultiplierField.Value = Format(Config.HarvestAmountMultiplier, "0.0#####")
 		  Self.HarvestHealthMultiplierField.Value = Format(Config.HarvestHealthMultiplier, "0.0#####")
 		  Self.PlayerHarvestDamageMultiplierField.Value = Format(Config.PlayerHarvestingDamageMultiplier, "0.0#####")
@@ -599,8 +599,8 @@ End
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.HarvestRates
 		  Static ConfigName As String = BeaconConfigs.HarvestRates.ConfigName
 		  
-		  Dim Document As Beacon.Document = Self.Document
-		  Dim Config As BeaconConfigs.HarvestRates
+		  Var Document As Beacon.Document = Self.Document
+		  Var Config As BeaconConfigs.HarvestRates
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.HarvestRates(Self.mConfigRef.Value)
@@ -628,11 +628,11 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddOverride()
-		  Dim CurrentEngrams() As Beacon.Engram
-		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(False)
-		  Dim Classes() As String = Config.Classes
+		  Var CurrentEngrams() As Beacon.Engram
+		  Var Config As BeaconConfigs.HarvestRates = Self.Config(False)
+		  Var Classes() As String = Config.Classes
 		  For Each ClassString As String In Classes
-		    Dim Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
+		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
 		    If Engram = Nil Then
 		      Continue
 		    End If
@@ -640,7 +640,7 @@ End
 		    CurrentEngrams.AddRow(Engram)
 		  Next
 		  
-		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Harvesting", CurrentEngrams, Self.Document.Mods, False)
+		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Harvesting", CurrentEngrams, Self.Document.Mods, False)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
@@ -662,11 +662,11 @@ End
 		    Return
 		  End If
 		  
-		  Dim CurrentEngrams() As Beacon.Engram
-		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(False)
-		  Dim Classes() As String = Config.Classes
+		  Var CurrentEngrams() As Beacon.Engram
+		  Var Config As BeaconConfigs.HarvestRates = Self.Config(False)
+		  Var Classes() As String = Config.Classes
 		  For Each ClassString As String In Classes
-		    Dim Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
+		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
 		    If Engram = Nil Then
 		      Continue
 		    End If
@@ -674,13 +674,13 @@ End
 		    CurrentEngrams.AddRow(Engram)
 		  Next
 		  
-		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Harvesting", CurrentEngrams, Self.Document.Mods, True)
+		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Harvesting", CurrentEngrams, Self.Document.Mods, True)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
-		  Dim SourceClass As String = Self.List.RowTagAt(Self.List.SelectedRowIndex)
-		  Dim Rate As Double = Config.Override(SourceClass)
+		  Var SourceClass As String = Self.List.RowTagAt(Self.List.SelectedRowIndex)
+		  Var Rate As Double = Config.Override(SourceClass)
 		  
 		  Config = Self.Config(True)
 		  
@@ -695,7 +695,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Dim Classes() As String
+		  Var Classes() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.Selected(I) Then
 		      Continue
@@ -709,7 +709,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectEngrams() As Beacon.Engram)
-		  Dim Classes() As String
+		  Var Classes() As String
 		  For Each Engram As Beacon.Engram In SelectEngrams
 		    Classes.AddRow(Engram.ClassString)
 		  Next
@@ -719,24 +719,24 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectClasses() As String)
-		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(False)
-		  Dim Classes() As String = Config.Classes
+		  Var Config As BeaconConfigs.HarvestRates = Self.Config(False)
+		  Var Classes() As String = Config.Classes
 		  
-		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
+		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.SelectionChangeBlocked = True
 		  
 		  Self.List.RemoveAllRows()
 		  For Each ClassString As String In Classes
-		    Dim Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
-		    Dim EngramName As String
+		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
+		    Var EngramName As String
 		    If Engram <> Nil Then
 		      EngramName = Engram.Label
 		    Else
 		      EngramName = ClassString
 		    End If
 		    
-		    Dim Rate As Double = Config.Override(ClassString)
-		    Dim EffectiveRate As Double = Round(Rate) * Round(Config.HarvestAmountMultiplier)
+		    Var Rate As Double = Config.Override(ClassString)
+		    Var EffectiveRate As Double = Round(Rate) * Round(Config.HarvestAmountMultiplier)
 		    Self.List.AddRow(EngramName, Rate.PrettyText, EffectiveRate.PrettyText)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = ClassString
 		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectClasses.IndexOf(ClassString) > -1
@@ -777,7 +777,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(True)
+		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
 		  Config.HarvestAmountMultiplier = CDbl(Me.Value)
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
@@ -788,10 +788,10 @@ End
 #tag Events Header
 	#tag Event
 		Sub Open()
-		  Dim AddButton As New BeaconToolbarItem("AddEngram", IconToolbarAdd)
+		  Var AddButton As New BeaconToolbarItem("AddEngram", IconToolbarAdd)
 		  AddButton.HelpTag = "Override the harvest rate of an engram."
 		  
-		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
+		  Var DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
 		  DuplicateButton.HelpTag = "Duplicate the selected harvest rate override."
 		  
 		  Me.LeftItems.Append(AddButton)
@@ -828,13 +828,13 @@ End
 		    Return
 		  End If
 		  
-		  Dim Rate As Double = CDbl(Me.CellValueAt(Row, Column))
+		  Var Rate As Double = CDbl(Me.CellValueAt(Row, Column))
 		  If Rate <= 0 Then
 		    Rate = 1
 		  End If
-		  Dim ClassString As String = Me.RowTagAt(Row)
+		  Var ClassString As String = Me.RowTagAt(Row)
 		  
-		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(True)
+		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
 		  Config.Override(ClassString) = Rate
 		  Self.Changed = True
 		  Self.UpdateList()
@@ -858,7 +858,7 @@ End
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
 		  If Warn Then
-		    Dim Message As String
+		    Var Message As String
 		    If Me.SelectedRowCount = 1 Then
 		      Message = "Are you sure you want to delete the """ + Me.CellValueAt(Me.SelectedRowIndex, 0) + """ harvest rate override?"
 		    Else
@@ -870,13 +870,13 @@ End
 		    End If
 		  End If
 		  
-		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(True)
+		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Dim ClassString As String = Me.RowTagAt(I)
+		    Var ClassString As String = Me.RowTagAt(I)
 		    Config.Override(ClassString) = 0
 		  Next
 		  Self.Changed = True
@@ -885,15 +885,15 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Items As New Dictionary
-		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(False)
+		  Var Items As New Dictionary
+		  Var Config As BeaconConfigs.HarvestRates = Self.Config(False)
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Dim ClassString As String = Me.RowTagAt(I)
-		    Dim Rate As Double = Config.Override(ClassString)
+		    Var ClassString As String = Me.RowTagAt(I)
+		    Var Rate As Double = Config.Override(ClassString)
 		    Items.Value(ClassString) = Rate
 		  Next
 		  
@@ -903,8 +903,8 @@ End
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
 		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Dim JSON As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
-		    Dim Items As Dictionary
+		    Var JSON As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
+		    Var Items As Dictionary
 		    Try
 		      Items = Beacon.ParseJSON(JSON)
 		    Catch Err As RuntimeException
@@ -915,11 +915,11 @@ End
 		      Return
 		    End If
 		    
-		    Dim Config As BeaconConfigs.HarvestRates = Self.Config(True)
-		    Dim SelectClasses() As String
+		    Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
+		    Var SelectClasses() As String
 		    For Each Entry As DictionaryEntry In Items
-		      Dim ClassString As String = Entry.Key
-		      Dim Rate As Double = Entry.Value
+		      Var ClassString As String = Entry.Key
+		      Var Rate As Double = Entry.Value
 		      SelectClasses.AddRow(ClassString)
 		      Config.Override(ClassString) = Rate
 		    Next
@@ -929,7 +929,7 @@ End
 		  End If
 		  
 		  If Board.TextAvailable Then
-		    Dim ImportText As String = Board.Text.GuessEncoding
+		    Var ImportText As String = Board.Text.GuessEncoding
 		    Self.Parse(ImportText, "Clipboard")
 		    Return
 		  End If
@@ -944,7 +944,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(True)
+		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
 		  Config.UseOptimizedRates = Me.Value
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
@@ -959,7 +959,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(True)
+		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
 		  Config.HarvestHealthMultiplier = CDbl(Me.Value)
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
@@ -975,7 +975,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(True)
+		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
 		  Config.PlayerHarvestingDamageMultiplier = CDbl(Me.Value)
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
@@ -991,7 +991,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(True)
+		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
 		  Config.DinoHarvestingDamageMultiplier = CDbl(Me.Value)
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False
@@ -1007,7 +1007,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(True)
+		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
 		  Config.ClampResourceHarvestDamage = Me.Value
 		  Self.Changed = Config.Modified
 		  Self.SettingUp = False

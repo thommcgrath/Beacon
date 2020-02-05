@@ -998,8 +998,8 @@ End
 		    Return False
 		  End If
 		  
-		  Dim ConfiguredBehaviors() As Beacon.CreatureBehavior = Config.All
-		  Dim ConfiguredClasses(), DisabledClasses() As String
+		  Var ConfiguredBehaviors() As Beacon.CreatureBehavior = Config.All
+		  Var ConfiguredClasses(), DisabledClasses() As String
 		  For Each Behavior As Beacon.CreatureBehavior In ConfiguredBehaviors
 		    If Behavior.TargetClass = EditClass Then
 		      Continue
@@ -1010,11 +1010,11 @@ End
 		    End If
 		  Next
 		  
-		  Dim Win As New DinoAdjustmentDialog(ConfiguredClasses, DisabledClasses, Mods)
+		  Var Win As New DinoAdjustmentDialog(ConfiguredClasses, DisabledClasses, Mods)
 		  If EditClass <> "" Then
 		    Win.SelectedClass = EditClass
 		    
-		    Dim Behavior As Beacon.CreatureBehavior = Config.Behavior(EditClass)
+		    Var Behavior As Beacon.CreatureBehavior = Config.Behavior(EditClass)
 		    If Behavior <> Nil Then
 		      If Behavior.ProhibitSpawning Then
 		        Win.ModeDisableRadio.Value = True
@@ -1036,8 +1036,8 @@ End
 		    Return False
 		  End If
 		  
-		  Dim TargetClass As String = Win.SelectedClass
-		  Dim Behavior As New Beacon.MutableCreatureBehavior(TargetClass)
+		  Var TargetClass As String = Win.SelectedClass
+		  Var Behavior As New Beacon.MutableCreatureBehavior(TargetClass)
 		  If Win.ModeDisableRadio.Value Then
 		    Behavior.ProhibitSpawning = True
 		  ElseIf Win.ModeReplaceRadio.Value Then
@@ -1102,7 +1102,7 @@ End
 			  Else
 			    Self.TargetDinoNameLabel.Italic = False
 			    
-			    Dim Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Self.mSelectedClass)
+			    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Self.mSelectedClass)
 			    If Creature <> Nil Then
 			      Self.TargetDinoNameLabel.Value = Creature.Label
 			    Else
@@ -1137,7 +1137,7 @@ End
 			  Else
 			    Self.ReplacementDinoNameLabel.Italic = False
 			    
-			    Dim Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Self.mSelectedReplacement)
+			    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Self.mSelectedReplacement)
 			    If Creature <> Nil Then
 			      Self.ReplacementDinoNameLabel.Value = Creature.Label
 			    Else
@@ -1201,7 +1201,7 @@ End
 #tag Events Pages
 	#tag Event
 		Sub Change()
-		  Dim OriginalHeight As Integer = Me.Height
+		  Var OriginalHeight As Integer = Me.Height
 		  Select Case Me.SelectedPanelIndex
 		  Case Self.PageMultipliers
 		    Me.Height = Self.HeightMultipliers
@@ -1210,7 +1210,7 @@ End
 		  Case Self.PageDisable
 		    Me.Height = Self.HeightDisable
 		  End Select
-		  Dim Delta As Integer = Me.Height - OriginalHeight
+		  Var Delta As Integer = Me.Height - OriginalHeight
 		  Self.Height = Self.Height + Delta
 		End Sub
 	#tag EndEvent
@@ -1218,20 +1218,20 @@ End
 #tag Events ChooseReplacementButton
 	#tag Event
 		Sub Action()
-		  Dim Exclude() As Beacon.Creature
-		  Dim SelectedCreature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Self.mSelectedClass)
+		  Var Exclude() As Beacon.Creature
+		  Var SelectedCreature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Self.mSelectedClass)
 		  If SelectedCreature <> Nil Then
 		    Exclude.AddRow(SelectedCreature)
 		  End If
 		  For Each ClassString As String In Self.DisabledClasses
-		    Dim Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)
+		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)
 		    If Creature <> Nil Then
 		      Exclude.AddRow(Creature)
 		    End If
 		  Next
 		  
 		  // Do include mods here, because only dinos actually present in game files should be selectable
-		  Dim Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.Mods, False)
+		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.Mods, False)
 		  If Creatures <> Nil And Creatures.LastRowIndex = 0 Then
 		    Self.SelectedReplacement = Creatures(0).ClassString
 		  End If
@@ -1252,10 +1252,10 @@ End
 		      Return
 		    End If
 		  ElseIf Self.ModeMultipliersRadio.Value Then
-		    Dim DamageMultiplier As Double = CDbl(Self.WildDamageField.Value)
-		    Dim ResistanceMultiplier As Double = CDbl(Self.WildResistanceField.Value)
-		    Dim TamedDamageMultiplier As Double = CDbl(Self.TameDamageField.Value)
-		    Dim TamedResistanceMultiplier As Double = CDbl(Self.TameResistanceField.Value)
+		    Var DamageMultiplier As Double = CDbl(Self.WildDamageField.Value)
+		    Var ResistanceMultiplier As Double = CDbl(Self.WildResistanceField.Value)
+		    Var TamedDamageMultiplier As Double = CDbl(Self.TameDamageField.Value)
+		    Var TamedResistanceMultiplier As Double = CDbl(Self.TameResistanceField.Value)
 		    
 		    If DamageMultiplier < 0 Or ResistanceMultiplier < 0 Or TamedDamageMultiplier < 0 Or TamedResistanceMultiplier < 0 Then
 		      Self.ShowAlert("You have a multiplier that doesn't make sense", "It's ok to make the multipliers really small, but they must be at least zero.")
@@ -1283,16 +1283,16 @@ End
 #tag Events ChooseTargetButton
 	#tag Event
 		Sub Action()
-		  Dim Exclude() As Beacon.Creature
+		  Var Exclude() As Beacon.Creature
 		  For Each ClassString As String In Self.ConfiguredClasses
-		    Dim Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)
+		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)
 		    If Creature <> Nil Then
 		      Exclude.AddRow(Creature)
 		    End If
 		  Next
 		  
 		  // Do not include the mods list here, we intentionally want all creatures available
-		  Dim Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, False)
+		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, False)
 		  If Creatures <> Nil And Creatures.LastRowIndex = 0 Then
 		    Self.SelectedClass = Creatures(0).ClassString
 		  End If

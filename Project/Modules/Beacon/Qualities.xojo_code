@@ -2,7 +2,7 @@
 Protected Module Qualities
 	#tag Method, Flags = &h1
 		Protected Function All() As Beacon.Quality()
-		  Dim Qualities(9) As Beacon.Quality
+		  Var Qualities(9) As Beacon.Quality
 		  Qualities(0) = Tier1
 		  Qualities(1) = Tier2
 		  Qualities(2) = Tier3
@@ -19,7 +19,7 @@ Protected Module Qualities
 
 	#tag Method, Flags = &h1
 		Protected Function ForBaseValue(BaseValue As Double) As Beacon.Quality
-		  Dim List() As Beacon.Quality = All
+		  Var List() As Beacon.Quality = All
 		  For I As Integer = 0 To List.LastRowIndex
 		    If BaseValue < List(I).BaseValue Then
 		      If I = 0 Then
@@ -35,7 +35,7 @@ Protected Module Qualities
 
 	#tag Method, Flags = &h1
 		Protected Function ForKey(Key As String) As Beacon.Quality
-		  Dim List() As Beacon.Quality = All
+		  Var List() As Beacon.Quality = All
 		  For Each Quality As Beacon.Quality In List
 		    If Quality.Key = Key Then
 		      Return Quality
@@ -47,9 +47,9 @@ Protected Module Qualities
 
 	#tag Method, Flags = &h1
 		Protected Function ForValue(Value As Double, CrateQualityMultiplier As Double, Difficulty As BeaconConfigs.Difficulty) As Beacon.Quality
-		  Dim CrateArbitraryQuality As Double = CrateQualityMultiplier + ((CrateQualityMultiplier - 1) * 0.2)
-		  Dim Multiplier As Double = CrateArbitraryQuality * Difficulty.BaseArbitraryQuality
-		  Dim Quality As Double = Value * Multiplier
+		  Var CrateArbitraryQuality As Double = CrateQualityMultiplier + ((CrateQualityMultiplier - 1) * 0.2)
+		  Var Multiplier As Double = CrateArbitraryQuality * Difficulty.BaseArbitraryQuality
+		  Var Quality As Double = Value * Multiplier
 		  
 		  // Thanks to math, we can get the quality as 15.99999 instead of 16. So rounding it is.
 		  Quality = Round(Quality * 10000) / 10000

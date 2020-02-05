@@ -987,7 +987,7 @@ End
 		Shared Function FormatStat(Value As Double) As String
 		  Value = Round(Value * 100) / 100
 		  
-		  Dim Formatter As String = "-0,"
+		  Var Formatter As String = "-0,"
 		  If Value - Floor(Value) <> 0 Then
 		    Formatter = Formatter + ".0#"
 		  End If
@@ -998,13 +998,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Resize()
-		  Dim AvailableWidth As Integer = Self.Group.Width - 64
-		  Dim FieldWidth As Integer = Self.MultiplierField(0).Width
-		  Dim LabelWidths As Integer = Floor((AvailableWidth - FieldWidth) / 2)
-		  Dim Remainder As Integer = AvailableWidth - (FieldWidth + (LabelWidths * 2))
-		  Dim LeftLabelWidth As Integer = LabelWidths + Remainder
-		  Dim RightLabelWidth As Integer = LabelWidths
-		  Dim StartingLeft As Integer = Self.Group.Left + 20
+		  Var AvailableWidth As Integer = Self.Group.Width - 64
+		  Var FieldWidth As Integer = Self.MultiplierField(0).Width
+		  Var LabelWidths As Integer = Floor((AvailableWidth - FieldWidth) / 2)
+		  Var Remainder As Integer = AvailableWidth - (FieldWidth + (LabelWidths * 2))
+		  Var LeftLabelWidth As Integer = LabelWidths + Remainder
+		  Var RightLabelWidth As Integer = LabelWidths
+		  Var StartingLeft As Integer = Self.Group.Left + 20
 		  
 		  For I As Integer = 0 To 9
 		    If BaseLabel(I) <> Nil Then
@@ -1029,8 +1029,8 @@ End
 		  End If
 		  
 		  Self.mSettingUp = True
-		  Dim Stats() As Beacon.Stat = Beacon.Stats.All
-		  Dim Focus As RectControl = Self.Focus
+		  Var Stats() As Beacon.Stat = Beacon.Stats.All
+		  Var Focus As RectControl = Self.Focus
 		  If IncludeFocusControl Then
 		    Focus = Nil
 		  End If
@@ -1039,8 +1039,8 @@ End
 		      Continue
 		    End If
 		    
-		    Dim PerLevel As Double = Creature.StatBaseValue(Stat) * Creature.StatValue(Stat, Key)
-		    Dim Multiplier As Double
+		    Var PerLevel As Double = Creature.StatBaseValue(Stat) * Creature.StatValue(Stat, Key)
+		    Var Multiplier As Double
 		    Select Case Key
 		    Case Beacon.Creature.KeyWild
 		      Multiplier = Config.WildPerLevelMultiplier(Stat)
@@ -1060,9 +1060,9 @@ End
 		      End If
 		    End If
 		    
-		    Dim StatBaseLabel As Label = BaseLabel(Stat.Index)
-		    Dim StatMultiplierField As TextField = MultiplierField(Stat.Index)
-		    Dim StatComputedLabel As Label = ComputedLabel(Stat.Index)
+		    Var StatBaseLabel As Label = BaseLabel(Stat.Index)
+		    Var StatMultiplierField As TextField = MultiplierField(Stat.Index)
+		    Var StatComputedLabel As Label = ComputedLabel(Stat.Index)
 		    
 		    If StatBaseLabel <> Nil Then
 		      StatBaseLabel.Value = Self.FormatStat(PerLevel) + If(Stat.IsPercentage, "%", "") + " x"
@@ -1073,7 +1073,7 @@ End
 		    End If
 		    
 		    If StatComputedLabel <> Nil Then
-		      Dim Amount As Double = PerLevel * Multiplier
+		      Var Amount As Double = PerLevel * Multiplier
 		      StatComputedLabel.Value = "= " + Self.FormatStat(Amount) + If(Stat.IsPercentage, "%", "")
 		    End If
 		  Next
@@ -1115,7 +1115,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Multiplier As Double = CDbl(Me.Value)
+		  Var Multiplier As Double = CDbl(Me.Value)
 		  RaiseEvent MultiplierUpdated(Index, Multiplier)
 		End Sub
 	#tag EndEvent

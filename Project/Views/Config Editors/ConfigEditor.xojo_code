@@ -77,11 +77,11 @@ Inherits BeaconSubview
 
 	#tag Method, Flags = &h1
 		Protected Sub Parse(Content As String, Source As String)
-		  Dim Parser As New Beacon.ImportThread
+		  Var Parser As New Beacon.ImportThread
 		  AddHandler Parser.Finished, AddressOf Parser_Finished
 		  AddHandler Parser.UpdateUI, AddressOf Parser_UpdateUI
 		  
-		  Dim Win As New ImporterWindow
+		  Var Win As New ImporterWindow
 		  Win.Source = Source
 		  Win.ShowWithin(Self.TrueWindow)
 		  
@@ -100,7 +100,7 @@ Inherits BeaconSubview
 		  RemoveHandler Sender.Finished, AddressOf Parser_Finished
 		  RemoveHandler Sender.UpdateUI, AddressOf Parser_UpdateUI
 		  
-		  Dim Win As ImporterWindow = Self.mParserWindows.Value(Sender)
+		  Var Win As ImporterWindow = Self.mParserWindows.Value(Sender)
 		  Win.Close
 		  Self.mParserWindows.Remove(Sender)
 		  
@@ -110,14 +110,14 @@ Inherits BeaconSubview
 
 	#tag Method, Flags = &h21
 		Private Sub Parser_UpdateUI(Sender As Beacon.ImportThread)
-		  Dim Win As ImporterWindow = Self.mParserWindows.Value(Sender)
+		  Var Win As ImporterWindow = Self.mParserWindows.Value(Sender)
 		  Win.Progress = Sender.Progress
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Shared Function SanitizeText(Source As String, ASCIIOnly As Boolean = True) As String
-		  Dim Sanitizer As New RegEx
+		  Var Sanitizer As New RegEx
 		  If ASCIIOnly Then
 		    Sanitizer.SearchPattern = "[^\x0A\x0D\x20-\x7E]+"
 		  Else

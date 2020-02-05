@@ -65,9 +65,9 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Dim Maps() As Beacon.Map = Beacon.Maps.All
-		  Dim OfficialMaps(), OtherMaps() As Beacon.Map
-		  Dim OfficialMasks(), OtherMasks() As UInt64
+		  Var Maps() As Beacon.Map = Beacon.Maps.All
+		  Var OfficialMaps(), OtherMaps() As Beacon.Map
+		  Var OfficialMasks(), OtherMasks() As UInt64
 		  For Each Map As Beacon.Map In Maps
 		    If Map.Official Then
 		      OfficialMaps.AddRow(Map)
@@ -81,15 +81,15 @@ End
 		  OfficialMasks.SortWith(OfficialMaps)
 		  OtherMasks.SortWith(OtherMaps)
 		  
-		  Dim OfficialLeft As Integer = Boxes(0).Left
-		  Dim OfficialNextTop As Integer = Boxes(0).Top
-		  Dim OtherLeft As Integer = Boxes(0).Left + Boxes(0).Width + 12
-		  Dim OtherNextTop As Integer = Boxes(0).Top
+		  Var OfficialLeft As Integer = Boxes(0).Left
+		  Var OfficialNextTop As Integer = Boxes(0).Top
+		  Var OtherLeft As Integer = Boxes(0).Left + Boxes(0).Width + 12
+		  Var OtherNextTop As Integer = Boxes(0).Top
 		  
 		  Boxes(0).Close
 		  
 		  For Each Map As Beacon.Map In OfficialMaps
-		    Dim Box As New Boxes
+		    Var Box As New Boxes
 		    Box.Mask = Map.Mask
 		    Box.Caption = Map.Name
 		    Box.Top = OfficialNextTop
@@ -98,7 +98,7 @@ End
 		    Self.mBoxes.AddRow(Box)
 		  Next
 		  For Each Map As Beacon.Map In OtherMaps
-		    Dim Box As New Boxes
+		    Var Box As New Boxes
 		    Box.Mask = Map.Mask
 		    Box.Caption = Map.Name
 		    Box.Top = OtherNextTop
@@ -118,7 +118,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function CheckedMask() As UInt64
-		  Dim Combined As UInt64
+		  Var Combined As UInt64
 		  For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
 		    If Box.VisualState = CheckBox.VisualStates.Checked Then
 		      Combined = Combined Or Box.Mask
@@ -130,7 +130,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub SetWithMasks(Masks() As UInt64)
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  For Each Mask As UInt64 In Masks
 		    For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
 		      If (Mask And Box.Mask) = Box.Mask Then
@@ -139,9 +139,9 @@ End
 		    Next
 		  Next
 		  
-		  Dim MaskCount As Integer = Masks.LastRowIndex + 1
+		  Var MaskCount As Integer = Masks.LastRowIndex + 1
 		  For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
-		    Dim Count As Integer = Dict.Lookup(Box.Mask, 0)
+		    Var Count As Integer = Dict.Lookup(Box.Mask, 0)
 		    If Count = 0 Then
 		      Box.VisualState = Checkbox.VisualStates.Unchecked
 		    ElseIf Count = MaskCount Then
@@ -155,7 +155,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function UncheckedMask() As UInt64
-		  Dim Combined As UInt64
+		  Var Combined As UInt64
 		  For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
 		    If Box.VisualState = CheckBox.VisualStates.Unchecked Then
 		      Combined = Combined Or Box.Mask
@@ -178,7 +178,7 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Dim Combined As UInt64
+			  Var Combined As UInt64
 			  For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
 			    If Box.Value Then
 			      Combined = Combined Or Box.Mask

@@ -8,9 +8,9 @@ Inherits AnimationKit.Task
 		    Return
 		  End If
 		  
-		  Dim Elapsed As Double = Self.ElapsedTime(Time)
-		  Dim Duration As Double = Self.DurationInSeconds * 1000000
-		  Dim Value As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartValue, Self.EndValue)
+		  Var Elapsed As Double = Self.ElapsedTime(Time)
+		  Var Duration As Double = Self.DurationInSeconds * 1000000
+		  Var Value As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartValue, Self.EndValue)
 		  AnimationKit.ValueAnimator(Self.Item).AnimationStep(Self.Identifier, Value)
 		End Sub
 	#tag EndEvent

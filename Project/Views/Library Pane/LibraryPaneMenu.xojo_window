@@ -93,7 +93,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Sub RebuildMenu()
-		  Dim Links() As Pair
+		  Var Links() As Pair
 		  Links.AddRow("Check for Updates" : "beacon://action/checkforupdate")
 		  Links.AddRow("Update Engrams" : "beacon://action/checkforengrams")
 		  If Preferences.OnlineEnabled Then
@@ -130,7 +130,7 @@ End
 		Sub SetContents(Links() As Pair)
 		  If Self.mLabelsBound = Links.LastRowIndex Then
 		    // Possibly unchanged
-		    Dim Changed As Boolean
+		    Var Changed As Boolean
 		    For I As Integer = 0 To Links.LastRowIndex
 		      If If(Links(I) <> Nil, Links(I).Left, "") <> Self.Labels(I).Value And If(Links(I) <> Nil, Links(I).Right, "") <> Self.Labels(I).URL Then
 		        Changed = True
@@ -150,13 +150,13 @@ End
 		  Self.mLabelsBound = 0
 		  
 		  For I As Integer = 0 To Links.LastRowIndex
-		    Dim LastBottom As Integer = 20
+		    Var LastBottom As Integer = 20
 		    If I > 0 Then
 		      LastBottom = Self.Labels(I - 1).Top + Self.Labels(I - 1).Height
 		    End If
 		    
 		    If I > Self.mLabelsBound Then
-		      Dim NewLabel As New Labels
+		      Var NewLabel As New Labels
 		      Self.mLabelsBound = NewLabel.Index
 		    End If
 		    
@@ -183,7 +183,7 @@ End
 #tag Events Labels
 	#tag Event
 		Sub Action(index as Integer)
-		  Dim URL As String = Self.Labels(Index).URL
+		  Var URL As String = Self.Labels(Index).URL
 		  If URL = "" Then
 		    Return
 		  End If
@@ -192,10 +192,10 @@ End
 		  Case "beacon://releasenotes"
 		    App.ShowReleaseNotes()
 		  Case "beacon://enableonline"
-		    Dim WelcomeWindow As New UserWelcomeWindow(False)
+		    Var WelcomeWindow As New UserWelcomeWindow(False)
 		    WelcomeWindow.ShowModal()
 		  Case "beacon://signin"
-		    Dim WelcomeWindow As New UserWelcomeWindow(True)
+		    Var WelcomeWindow As New UserWelcomeWindow(True)
 		    WelcomeWindow.ShowModal()
 		  Case "beacon://showaccount"
 		    ShowURL(Beacon.WebURL("/account/auth?session_id=" + Preferences.OnlineToken + "&return=" + EncodeURLComponent(Beacon.WebURL("/account/"))))
@@ -210,7 +210,7 @@ End
 		    Preferences.OnlineToken = ""
 		    App.IdentityManager.CurrentIdentity = Nil
 		    Self.RebuildMenu()
-		    Dim WelcomeWindow As New UserWelcomeWindow(False)
+		    Var WelcomeWindow As New UserWelcomeWindow(False)
 		    WelcomeWindow.ShowModal()
 		  Case "beacon://syncusercloud"
 		    UserCloud.Sync(True)

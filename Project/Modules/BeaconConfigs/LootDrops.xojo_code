@@ -4,7 +4,7 @@ Inherits Beacon.ConfigGroup
 Implements Iterable
 	#tag Event
 		Sub DetectIssues(Document As Beacon.Document, Issues() As Beacon.Issue)
-		  Dim ConfigName As String = ConfigKey
+		  Var ConfigName As String = ConfigKey
 		  
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    Self.DetectLootSourceIssues(Source, ConfigName, Document, Issues)
@@ -14,7 +14,7 @@ Implements Iterable
 
 	#tag Event
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
-		  Dim DifficultyConfig As BeaconConfigs.Difficulty = SourceDocument.Difficulty
+		  Var DifficultyConfig As BeaconConfigs.Difficulty = SourceDocument.Difficulty
 		  If DifficultyConfig = Nil Then
 		    DifficultyConfig = New BeaconConfigs.Difficulty
 		    DifficultyConfig.IsImplicit = True
@@ -58,7 +58,7 @@ Implements Iterable
 		      Continue
 		    End If
 		    
-		    Dim StringValue As String = Source.StringValue(DifficultyConfig)
+		    Var StringValue As String = Source.StringValue(DifficultyConfig)
 		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, ConfigOverrideSupplyCrateItems, StringValue))
 		  Next
 		End Sub
@@ -71,12 +71,12 @@ Implements Iterable
 		  
 		  If Dict.HasKey("Contents") Then
 		    // Only keep the most recent of the duplicates
-		    Dim Contents() As Variant = Dict.Value("Contents")
-		    Dim UniqueClasses As New Dictionary
+		    Var Contents() As Variant = Dict.Value("Contents")
+		    Var UniqueClasses As New Dictionary
 		    For Each DropDict As Dictionary In Contents
-		      Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(DropDict)
+		      Var Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(DropDict)
 		      If Source <> Nil Then
-		        Dim Idx As Integer = UniqueClasses.Lookup(Source.ClassString, -1)
+		        Var Idx As Integer = UniqueClasses.Lookup(Source.ClassString, -1)
 		        If Idx = -1 Then
 		          Self.mSources.AddRow(Source)
 		          UniqueClasses.Value(Source.ClassString) = Self.mSources.LastRowIndex
@@ -93,7 +93,7 @@ Implements Iterable
 		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
 		  #Pragma Unused Document
 		  
-		  Dim Contents() As Dictionary
+		  Var Contents() As Dictionary
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    Contents.AddRow(Source.Export)
 		  Next
@@ -111,7 +111,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h21
 		Private Shared Function AssembleLocationDict(Source As Beacon.LootSource, ItemSet As Beacon.ItemSet = Nil, Entry As Beacon.SetEntry = Nil, Option As Beacon.SetEntryOption = Nil) As Dictionary
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("LootSource") = Source
 		  If ItemSet <> Nil Then
 		    Dict.Value("ItemSet") = ItemSet
@@ -134,7 +134,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function DefinedSources() As Beacon.LootSourceCollection
-		  Dim Results As New Beacon.LootSourceCollection
+		  Var Results As New Beacon.LootSourceCollection
 		  For Each LootSource As Beacon.LootSource In Self.mSources
 		    Results.Append(LootSource)
 		  Next
@@ -302,8 +302,8 @@ Implements Iterable
 		Function Iterator() As Iterator
 		  // Part of the Iterable interface.
 		  
-		  Dim Items() As Variant
-		  Redim Items(Self.mSources.LastRowIndex)
+		  Var Items() As Variant
+		  Items.ResizeTo(Self.mSources.LastRowIndex)
 		  For I As Integer = Items.FirstRowIndex To Items.LastRowIndex
 		    Items(I) = Self.mSources(I)
 		  Next
@@ -345,15 +345,6 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Operator_Redim(NewUBound As Integer)
-		  If NewUBound <> Self.mSources.LastRowIndex Then
-		    Redim Self.mSources(NewUBound)
-		    Self.Modified = True
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Operator_Subscript(Index As Integer) As Beacon.LootSource
 		  Return Self.mSources(Index)
 		End Function
@@ -372,7 +363,7 @@ Implements Iterable
 		    Return 0
 		  End If
 		  
-		  Dim NumChanged As UInteger
+		  Var NumChanged As UInteger
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    NumChanged = NumChanged + Source.ReconfigurePresets(Mask, Mods)
 		  Next
@@ -382,7 +373,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Source As Beacon.LootSource)
-		  Dim Idx As Integer = Self.IndexOf(Source)
+		  Var Idx As Integer = Self.IndexOf(Source)
 		  If Idx > -1 Then
 		    Self.Remove(Idx)
 		  End If
@@ -402,10 +393,19 @@ Implements Iterable
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub ResizeTo(NewUBound As Integer)
+		  If NewUBound <> Self.mSources.LastRowIndex Then
+		    Self.mSources.ResizeTo(NewUBound)
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Searcher_EngramsFound(Sender As Beacon.EngramSearcherThread)
-		  Dim Blueprints() As Beacon.Blueprint = Sender.Blueprints(True)
-		  Dim Engrams() As Beacon.Engram = Blueprints.Engrams
+		  Var Blueprints() As Beacon.Blueprint = Sender.Blueprints(True)
+		  Var Engrams() As Beacon.Engram = Blueprints.Engrams
 		  
 		  For Each Source As Beacon.LootSource In Self
 		    Source.ConsumeMissingEngrams(Engrams)
@@ -428,7 +428,7 @@ Implements Iterable
 		Sub TryToResolveIssues(InputContent As String, Callback As Beacon.ConfigGroup.ResolveIssuesCallback)
 		  Self.mResolveIssuesCallback = Callback
 		  
-		  Dim Searcher As New Beacon.EngramSearcherThread
+		  Var Searcher As New Beacon.EngramSearcherThread
 		  AddHandler Searcher.EngramsFound, AddressOf Searcher_EngramsFound
 		  AddHandler Searcher.Finished, AddressOf Searcher_Finished
 		  Searcher.Search(InputContent, False)

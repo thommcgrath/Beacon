@@ -9,7 +9,7 @@ Implements ObservationKit.Observable
 		    Self.mObservers = New Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Var Refs() As WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -50,7 +50,7 @@ Implements ObservationKit.Observable
 		Private Sub mPulseTimer_Action(Sender As Timer)
 		  #Pragma Unused Sender
 		  
-		  Dim Amount As Double = Self.PulseAmount
+		  Var Amount As Double = Self.PulseAmount
 		  If Self.mLastPulseAmount <> Amount Then
 		    Self.NotifyObservers("PulseAmount", Amount)
 		    Self.mLastPulseAmount = Amount
@@ -78,7 +78,7 @@ Implements ObservationKit.Observable
 		    Self.mObservers = New Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Var Refs() As WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -89,7 +89,7 @@ Implements ObservationKit.Observable
 		      Continue
 		    End If
 		    
-		    Dim Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
+		    Var Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
 		    Observer.ObservedValueChanged(Self, Key, Value)
 		  Next
 		End Sub
@@ -103,7 +103,7 @@ Implements ObservationKit.Observable
 		    Self.mObservers = New Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Var Refs() As WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -208,8 +208,8 @@ Implements ObservationKit.Observable
 			    Return 0
 			  End If
 			  
-			  Dim Elapsed As Double = (System.Microseconds - Self.mLastPulseTime) - (Self.PulseTimeout * 1000)
-			  Dim Amount As Double = Elapsed / (Self.PulseDuration * 1000)
+			  Var Elapsed As Double = (System.Microseconds - Self.mLastPulseTime) - (Self.PulseTimeout * 1000)
+			  Var Amount As Double = Elapsed / (Self.PulseDuration * 1000)
 			  If Amount >= 1.0 Then
 			    Self.mLastPulseTime = System.Microseconds
 			  End If

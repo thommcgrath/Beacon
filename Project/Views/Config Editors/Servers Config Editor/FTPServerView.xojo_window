@@ -915,7 +915,7 @@ End
 #tag Events MapMenu
 	#tag Event
 		Sub Change()
-		  Dim Mask As UInt64
+		  Var Mask As UInt64
 		  If Me.SelectedRowIndex = -1 Then
 		    Mask = Beacon.Maps.All.Mask
 		  Else
@@ -929,7 +929,7 @@ End
 		Sub Open()
 		  Me.AddRow("All Maps", Beacon.Maps.All.Mask)
 		  
-		  Dim Maps() As Beacon.Map = Beacon.Maps.All
+		  Var Maps() As Beacon.Map = Beacon.Maps.All
 		  For Each Map As Beacon.Map In Maps
 		    Me.AddRow(Map.Name, Map.Mask)
 		  Next

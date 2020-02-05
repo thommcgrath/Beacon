@@ -26,7 +26,7 @@ Inherits Beacon.ConfigGroup
 		Private Function Decrypt(Input As String, Identity As Beacon.Identity, Document As Beacon.Document) As String
 		  Try
 		    #Pragma BreakOnExceptions False
-		    Dim Decrypted As String = Document.Decrypt(Input).DefineEncoding(Encodings.UTF8)
+		    Var Decrypted As String = Document.Decrypt(Input).DefineEncoding(Encodings.UTF8)
 		    #Pragma BreakOnExceptions Default
 		    If Self.mEncryptedValues = Nil Then
 		      Self.mEncryptedValues = New Dictionary
@@ -38,34 +38,34 @@ Inherits Beacon.ConfigGroup
 		  
 		  Try
 		    #Pragma BreakOnExceptions False
-		    Dim SecureDict As Dictionary = Beacon.ParseJSON(Input)
+		    Var SecureDict As Dictionary = Beacon.ParseJSON(Input)
 		    #Pragma BreakOnExceptions Default
 		    If Not SecureDict.HasAllKeys("Key", "Vector", "Content", "Hash") Then
 		      Return ""
 		    End If
 		    
-		    Dim Key As MemoryBlock = Identity.Decrypt(DecodeHex(SecureDict.Value("Key")))
+		    Var Key As MemoryBlock = Identity.Decrypt(DecodeHex(SecureDict.Value("Key")))
 		    If Key = Nil Then
 		      Return ""
 		    End If
 		    
-		    Dim Vector As MemoryBlock = DecodeHex(SecureDict.Value("Vector"))
-		    Dim Encrypted As MemoryBlock = DecodeHex(SecureDict.Value("Content"))
-		    Dim ExpectedHash As String = SecureDict.Value("Hash")
+		    Var Vector As MemoryBlock = DecodeHex(SecureDict.Value("Vector"))
+		    Var Encrypted As MemoryBlock = DecodeHex(SecureDict.Value("Content"))
+		    Var ExpectedHash As String = SecureDict.Value("Hash")
 		    
 		    #if Not TargetiOS
-		      Dim AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
+		      Var AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
 		      AES.SetKey(Key)
 		      AES.SetInitialVector(Vector)
 		      
-		      Dim Decrypted As String
+		      Var Decrypted As String
 		      Try
 		        Decrypted = AES.DecryptCBC(Encrypted)
 		      Catch Err As RuntimeException
 		        Return ""
 		      End Try
 		      
-		      Dim ComputedHash As String = EncodeHex(Crypto.SHA512(Decrypted))
+		      Var ComputedHash As String = EncodeHex(Crypto.SHA512(Decrypted))
 		      If ComputedHash <> ExpectedHash Then
 		        Return ""
 		      End If
@@ -98,12 +98,12 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h21
 		Private Function Encrypt(Input As String, Document As Beacon.Document) As String
 		  Try
-		    Dim Hash As String = EncodeHex(Crypto.SHA512(Input))
+		    Var Hash As String = EncodeHex(Crypto.SHA512(Input))
 		    If Self.mEncryptedValues <> Nil And Self.mEncryptedValues.HasKey(Hash) Then
 		      Return Self.mEncryptedValues.Value(Hash)
 		    End If
 		    
-		    Dim Encrypted As String = Document.Encrypt(Input.ConvertEncoding(Encodings.UTF8))
+		    Var Encrypted As String = Document.Encrypt(Input.ConvertEncoding(Encodings.UTF8))
 		    If Self.mEncryptedValues = Nil Then
 		      Self.mEncryptedValues = New Dictionary
 		    End If
@@ -117,14 +117,14 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h21
 		Private Function FilterIniText(Input As String) As String
-		  Dim EOL As String = Encodings.ASCII.Chr(10)
+		  Var EOL As String = Encodings.ASCII.Chr(10)
 		  Input = Input.ReplaceLineEndings(EOL)
 		  
-		  Dim InsideBeaconSection As Boolean
-		  Dim Lines() As String = Input.Split(EOL)
-		  Dim FilteredLines() As String
+		  Var InsideBeaconSection As Boolean
+		  Var Lines() As String = Input.Split(EOL)
+		  Var FilteredLines() As String
 		  For I As Integer = 0 To Lines.LastRowIndex
-		    Dim Line As String = Lines(I).Trim
+		    Var Line As String = Lines(I).Trim
 		    If Line = "[Beacon]" Then
 		      InsideBeaconSection = True
 		    ElseIf Line.BeginsWith("[") And Line.EndsWith("]") Then
@@ -150,12 +150,12 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Sub GameIniContent(SupportedConfigs As Dictionary = Nil, Assigns Value As String)
 		  If SupportedConfigs <> Nil Then
-		    Dim ConfigValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ShooterGameHeader, Value, SupportedConfigs, Nil)
-		    Dim ConfigDict As New Dictionary
+		    Var ConfigValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ShooterGameHeader, Value, SupportedConfigs, Nil)
+		    Var ConfigDict As New Dictionary
 		    Beacon.ConfigValue.FillConfigDict(ConfigDict, ConfigValues)
 		    
-		    Dim Errored As Boolean
-		    Dim Rewritten As String = Beacon.Rewriter.Rewrite("", ConfigDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
+		    Var Errored As Boolean
+		    Var Rewritten As String = Beacon.Rewriter.Rewrite("", ConfigDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
 		    If Not Errored Then
 		      Value = Rewritten
 		    End If
@@ -174,7 +174,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Identity
 		  #Pragma Unused Mask
 		  
-		  Dim Err As UnsupportedOperationException
+		  Var Err As UnsupportedOperationException
 		  Err.Message = "Do not call this one!"
 		  Raise Err
 		End Function
@@ -203,16 +203,16 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Sub GameUserSettingsIniContent(SupportedConfigs As Dictionary = Nil, Assigns Value As String)
 		  If SupportedConfigs <> Nil Then
-		    Dim ConfigValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ServerSettingsHeader, Value, SupportedConfigs, Nil)
+		    Var ConfigValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ServerSettingsHeader, Value, SupportedConfigs, Nil)
 		    
-		    Dim ProtectedKeys As New Dictionary
+		    Var ProtectedKeys As New Dictionary
 		    ProtectedKeys.Value("ServerSettings.ServerAdminPassword") = True
 		    ProtectedKeys.Value("ServerSettings.ServerPassword") = True
 		    ProtectedKeys.Value("AuctionHouse.MarketID") = True
 		    
 		    // Make sure passwords get encrypted on save
 		    For I As Integer = ConfigValues.LastRowIndex DownTo 0
-		      Dim ConfigValue As Beacon.ConfigValue = ConfigValues(I)
+		      Var ConfigValue As Beacon.ConfigValue = ConfigValues(I)
 		      If ConfigValue.Value = "" Then
 		        Continue
 		      End If
@@ -222,11 +222,11 @@ Inherits Beacon.ConfigGroup
 		      End If
 		    Next
 		    
-		    Dim ConfigDict As New Dictionary
+		    Var ConfigDict As New Dictionary
 		    Beacon.ConfigValue.FillConfigDict(ConfigDict, ConfigValues)
 		    
-		    Dim Errored As Boolean
-		    Dim Rewritten As String = Beacon.Rewriter.Rewrite("", ConfigDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
+		    Var Errored As Boolean
+		    Var Rewritten As String = Beacon.Rewriter.Rewrite("", ConfigDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
 		    If Not Errored Then
 		      Value = Rewritten
 		    End If
@@ -245,7 +245,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Identity
 		  #Pragma Unused Mask
 		  
-		  Dim Err As UnsupportedOperationException
+		  Var Err As UnsupportedOperationException
 		  Err.Message = "Do not call this one!"
 		  Raise Err
 		End Function
@@ -270,10 +270,10 @@ Inherits Beacon.ConfigGroup
 		  Source = Source.ReplaceAll(Self.EncryptedTag, "")
 		  Source = Source.ReplaceLineEndings(Encodings.ASCII.Chr(10))
 		  
-		  Dim Lines() As String = Source.Split(Encodings.ASCII.Chr(10))
-		  Dim Parser As New CustomContentParser(InitialHeader, ExistingConfigs, Profile)
+		  Var Lines() As String = Source.Split(Encodings.ASCII.Chr(10))
+		  Var Parser As New CustomContentParser(InitialHeader, ExistingConfigs, Profile)
 		  For Each Line As String In Lines
-		    Dim ShouldAlwaysBeNil() As Beacon.ConfigValue = Parser.AddLine(Line)
+		    Var ShouldAlwaysBeNil() As Beacon.ConfigValue = Parser.AddLine(Line)
 		    If ShouldAlwaysBeNil <> Nil Then
 		      Break
 		    End If
@@ -286,7 +286,7 @@ Inherits Beacon.ConfigGroup
 		Private Function ReadContent(Input As String, Identity As Beacon.Identity, Document As Beacon.Document) As String
 		  Input = Input.GuessEncoding
 		  
-		  Dim Pos As Integer
+		  Var Pos As Integer
 		  Self.mEncryptedValues = New Dictionary
 		  
 		  Do
@@ -295,16 +295,16 @@ Inherits Beacon.ConfigGroup
 		      Return Input
 		    End If
 		    
-		    Dim StartPos As Integer = Pos + Self.EncryptedTag.Length
-		    Dim EndPos As Integer = Input.IndexOf(StartPos, Self.EncryptedTag)
+		    Var StartPos As Integer = Pos + Self.EncryptedTag.Length
+		    Var EndPos As Integer = Input.IndexOf(StartPos, Self.EncryptedTag)
 		    If EndPos = -1 Then
 		      EndPos = Input.Length
 		    End If
 		    
-		    Dim Prefix As String = Input.Left(StartPos)
-		    Dim Suffix As String = Input.Right(Input.Length - EndPos)
-		    Dim EncryptedContent As String = Input.Middle(StartPos, EndPos - StartPos)
-		    Dim DecryptedContent As String = Self.Decrypt(EncryptedContent, Identity, Document)
+		    Var Prefix As String = Input.Left(StartPos)
+		    Var Suffix As String = Input.Right(Input.Length - EndPos)
+		    Var EncryptedContent As String = Input.Middle(StartPos, EndPos - StartPos)
+		    Var DecryptedContent As String = Self.Decrypt(EncryptedContent, Identity, Document)
 		    
 		    If DecryptedContent = "" Then
 		      Prefix = Prefix.Left(Prefix.Length - Self.EncryptedTag.Length)
@@ -327,7 +327,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h21
 		Private Function WriteContent(Input As String, Document As Beacon.Document) As String
-		  Dim Pos As Integer
+		  Var Pos As Integer
 		  
 		  Do
 		    Pos = Input.IndexOf(Pos, Self.EncryptedTag)
@@ -335,16 +335,16 @@ Inherits Beacon.ConfigGroup
 		      Return Input
 		    End If
 		    
-		    Dim StartPos As Integer = Pos + Self.EncryptedTag.Length
-		    Dim EndPos As Integer = Input.IndexOf(StartPos, Self.EncryptedTag)
+		    Var StartPos As Integer = Pos + Self.EncryptedTag.Length
+		    Var EndPos As Integer = Input.IndexOf(StartPos, Self.EncryptedTag)
 		    If EndPos = -1 Then
 		      EndPos = Input.Length
 		    End If
 		    
-		    Dim Prefix As String = Input.Left(StartPos)
-		    Dim Suffix As String = Input.Right(Input.Length - EndPos)
-		    Dim DecryptedContent As String = Input.Middle(StartPos, EndPos - StartPos)
-		    Dim EncryptedContent As String = Self.Encrypt(DecryptedContent, Document)
+		    Var Prefix As String = Input.Left(StartPos)
+		    Var Suffix As String = Input.Right(Input.Length - EndPos)
+		    Var DecryptedContent As String = Input.Middle(StartPos, EndPos - StartPos)
+		    Var EncryptedContent As String = Self.Encrypt(DecryptedContent, Document)
 		    
 		    Input = Prefix + EncryptedContent + Suffix
 		    Pos = Prefix.Length + EncryptedContent.Length + Self.EncryptedTag.Length

@@ -15,12 +15,12 @@ Inherits TCPSocket
 		  Self.Buffer.Append(Self.ReadAll)
 		  
 		  While Self.Buffer <> Nil And Self.Buffer.Size > 0
-		    Dim PayloadLen As UInt64 = BeaconEncryption.GetLength(Self.Buffer)
+		    Var PayloadLen As UInt64 = BeaconEncryption.GetLength(Self.Buffer)
 		    If PayloadLen = 0 Then
 		      Return
 		    End If
 		    
-		    Dim Payload As MemoryBlock
+		    Var Payload As MemoryBlock
 		    If Self.Buffer.Size < PayloadLen Then
 		      Return
 		    ElseIf Self.Buffer.Size > PayloadLen Then
@@ -31,8 +31,8 @@ Inherits TCPSocket
 		      Self.Buffer = New MemoryBlock(0)
 		    End If
 		    
-		    Dim Key As String = If(Self.ConnectionKey <> "", Self.ConnectionKey, Self.PreSharedKey)
-		    Dim Decrypted As MemoryBlock
+		    Var Key As String = If(Self.ConnectionKey <> "", Self.ConnectionKey, Self.PreSharedKey)
+		    Var Decrypted As MemoryBlock
 		    Try
 		      Decrypted = BeaconEncryption.SymmetricDecrypt(Key, Payload)
 		    Catch Err As RuntimeException
@@ -46,7 +46,7 @@ Inherits TCPSocket
 		      Return
 		    End Try
 		    
-		    Dim Dict As Dictionary
+		    Var Dict As Dictionary
 		    Try
 		      Dict = Xojo.ParseJSON(Decrypted)
 		    Catch Err As RuntimeException
@@ -80,7 +80,7 @@ Inherits TCPSocket
 
 	#tag Event
 		Sub Error(err As RuntimeException)
-		  Dim Message As String
+		  Var Message As String
 		  Select Case Err.ErrorNumber
 		  Case TCPSocket.LostConnection
 		    Message = "A connection was established, but it has been lost."
@@ -158,8 +158,8 @@ Inherits TCPSocket
 		  End If
 		  
 		  Try
-		    Dim Stream As TextInputStream = TextInputStream.Open(File)
-		    Dim Contents As String = Stream.ReadAll(Nil)
+		    Var Stream As TextInputStream = TextInputStream.Open(File)
+		    Var Contents As String = Stream.ReadAll(Nil)
 		    Stream.Close
 		    
 		    Return PackFile(Dict, Contents, Compressed)
@@ -172,10 +172,10 @@ Inherits TCPSocket
 	#tag Method, Flags = &h0
 		Shared Function PackFile(Dict As Dictionary, Contents As String, Compressed As Boolean) As Boolean
 		  Try
-		    Dim Hash As String = EncodeHex(Crypto.SHA512(Contents)).Lowercase
+		    Var Hash As String = EncodeHex(Crypto.SHA512(Contents)).Lowercase
 		    
 		    If Compressed Then
-		      Dim Compressor As New _GZipString
+		      Var Compressor As New _GZipString
 		      Contents = Compressor.Compress(Contents, _GZipString.BestCompression)
 		    End If
 		    
@@ -193,7 +193,7 @@ Inherits TCPSocket
 
 	#tag Method, Flags = &h0
 		Shared Function PrepareKey(Value As String) As String
-		  Dim Reg As New RegEx
+		  Var Reg As New RegEx
 		  Reg.SearchPattern = "^[a-f0-9]{64}$"
 		  
 		  If Reg.Search(Value.Lowercase) <> Nil Then
@@ -208,7 +208,7 @@ Inherits TCPSocket
 
 	#tag Method, Flags = &h0
 		Sub SendSimpleCommand(Command As String)
-		  Dim Message As New Dictionary
+		  Var Message As New Dictionary
 		  Message.Value("Command") = Command
 		  Self.Write(Message)
 		End Sub
@@ -218,7 +218,7 @@ Inherits TCPSocket
 		Private Sub TimeoutElapsed()
 		  Self.mTimeoutKey = ""
 		  
-		  Dim Err As New RuntimeException
+		  Var Err As New RuntimeException
 		  Err.ErrorNumber = Self.TimeoutError
 		  Err.Message = "A connection was not established after " + Self.TimeoutSeconds.ToString + " seconds."
 		  RaiseEvent Error(Err)
@@ -233,15 +233,15 @@ Inherits TCPSocket
 		    Return False
 		  End If
 		  
-		  Dim Content As String = Dict.Value("Contents")
-		  Dim Hash As String = Dict.Value("SHA512")
-		  Dim Compressed As Boolean = Dict.Lookup("Compressed", False).BooleanValue
+		  Var Content As String = Dict.Value("Contents")
+		  Var Hash As String = Dict.Value("SHA512")
+		  Var Compressed As Boolean = Dict.Lookup("Compressed", False).BooleanValue
 		  Content = DecodeBase64(Content)
 		  If Compressed Then
-		    Dim Compressor As New _GZipString
+		    Var Compressor As New _GZipString
 		    Content = Compressor.Decompress(Content)
 		  End If
-		  Dim ComputedHash As String = EncodeHex(Crypto.SHA512(Content)).Lowercase
+		  Var ComputedHash As String = EncodeHex(Crypto.SHA512(Content)).Lowercase
 		  
 		  If ComputedHash = Hash Then
 		    Contents = Content
@@ -255,10 +255,10 @@ Inherits TCPSocket
 		  Message.Value("Nonce") = Self.NextOutboundNonce
 		  Self.NextOutboundNonce = Self.NextOutboundNonce + 1
 		  
-		  Dim Decrypted As String = Xojo.GenerateJSON(Message, False)
-		  Dim Payload As MemoryBlock = BeaconEncryption.SymmetricEncrypt(Self.ConnectionKey, Decrypted)
+		  Var Decrypted As String = Xojo.GenerateJSON(Message, False)
+		  Var Payload As MemoryBlock = BeaconEncryption.SymmetricEncrypt(Self.ConnectionKey, Decrypted)
 		  #if DebugBuild
-		    Dim PredictedLength As UInt64 = BeaconEncryption.GetLength(Payload)
+		    Var PredictedLength As UInt64 = BeaconEncryption.GetLength(Payload)
 		    If Payload.Size <> PredictedLength Then
 		      Break
 		    End If

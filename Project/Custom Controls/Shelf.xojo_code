@@ -18,7 +18,7 @@ Implements ObservationKit.Observer
 
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  Dim Point As New BeaconUI.Point(X,Y)
+		  Var Point As New BeaconUI.Point(X,Y)
 		  
 		  For I As Integer = 0 To Self.mHitRects.LastRowIndex
 		    If Self.mHitRects(I) = Nil Then
@@ -45,8 +45,8 @@ Implements ObservationKit.Observer
 		    Return
 		  End If
 		  
-		  Dim Point As New BeaconUI.Point(X,Y)
-		  Dim TargetRect As BeaconUI.Rect = Self.mHitRects(Self.mMouseDownItem)
+		  Var Point As New BeaconUI.Point(X,Y)
+		  Var TargetRect As BeaconUI.Rect = Self.mHitRects(Self.mMouseDownItem)
 		  If TargetRect.Contains(Point) = True And Self.mPressed = False Then
 		    Self.mPressed = True
 		    Self.Invalidate
@@ -65,7 +65,7 @@ Implements ObservationKit.Observer
 
 	#tag Event
 		Sub MouseMove(X As Integer, Y As Integer)
-		  Dim Point As New BeaconUI.Point(X,Y)
+		  Var Point As New BeaconUI.Point(X,Y)
 		  For I As Integer = 0 To Self.mHitRects.LastRowIndex
 		    If Self.mHitRects(I) = Nil Then
 		      Continue
@@ -85,8 +85,8 @@ Implements ObservationKit.Observer
 		    Return
 		  End If
 		  
-		  Dim Point As New BeaconUI.Point(X,Y)
-		  Dim TargetRect As BeaconUI.Rect = Self.mHitRects(Self.mMouseDownItem)
+		  Var Point As New BeaconUI.Point(X,Y)
+		  Var TargetRect As BeaconUI.Rect = Self.mHitRects(Self.mMouseDownItem)
 		  If TargetRect.Contains(Point) = True Then
 		    Self.mPressed = False
 		    If Self.SelectedIndex = Self.mMouseDownItem Then
@@ -115,10 +115,10 @@ Implements ObservationKit.Observer
 		  G.FontSize = 10
 		  G.FontUnit = FontUnits.Point
 		  
-		  Dim PrecisionX As Double = 1 / G.ScaleX
-		  Dim PrecisionY As Double = 1 / G.ScaleY
+		  Var PrecisionX As Double = 1 / G.ScaleX
+		  Var PrecisionY As Double = 1 / G.ScaleY
 		  
-		  Dim CellPadding, CellSpacing As Double
+		  Var CellPadding, CellSpacing As Double
 		  If Self.IsVertical Then
 		    CellSpacing = Min((G.Width - Self.IconSize) / 4, 6)
 		  Else
@@ -126,7 +126,7 @@ Implements ObservationKit.Observer
 		  End If
 		  CellPadding = CellSpacing
 		  
-		  Dim FlexibleSpaceCount, StaticSpaceCount As Integer
+		  Var FlexibleSpaceCount, StaticSpaceCount As Integer
 		  For I As Integer = 0 To Self.mItems.LastRowIndex
 		    Select Case Self.mItems(I).Type
 		    Case ShelfItem.TypeNormal, ShelfItem.TypeSpacer
@@ -136,7 +136,7 @@ Implements ObservationKit.Observer
 		    End Select
 		  Next
 		  
-		  Dim AvailableSpace,MaximumCellWidth As Double
+		  Var AvailableSpace,MaximumCellWidth As Double
 		  If Self.IsVertical Then
 		    AvailableSpace = G.Height - ((StaticSpaceCount + 1) * CellSpacing)
 		    MaximumCellWidth = G.Width - (CellSpacing * 2)
@@ -146,10 +146,10 @@ Implements ObservationKit.Observer
 		  End If
 		  MaximumCellWidth = Max(MaximumCellWidth, Self.IconSize + (CellPadding * 2))
 		  
-		  Dim CellWidth As Double = Self.IconSize + (CellPadding * 2)
-		  Dim CellHeight As Double = CellWidth
+		  Var CellWidth As Double = Self.IconSize + (CellPadding * 2)
+		  Var CellHeight As Double = CellWidth
 		  
-		  Dim MaxCaptionWidth As Double
+		  Var MaxCaptionWidth As Double
 		  For I As Integer = 0 To Self.mItems.LastRowIndex
 		    If Self.mItems(I).Type <> ShelfItem.TypeNormal Then
 		      Continue
@@ -162,18 +162,18 @@ Implements ObservationKit.Observer
 		    CellHeight = Self.IconSize + (CellPadding * 3) + Self.TextHeight
 		  End If
 		  
-		  Dim RequiredSpace As Double = (StaticSpaceCount * If(Self.IsVertical, CellHeight, CellWidth)) + ((StaticSpaceCount + 1) * CellSpacing)
-		  Dim FlexibleSpaceSize As Double = Max(Floor(AvailableSpace - RequiredSpace) / FlexibleSpaceCount, 0)
+		  Var RequiredSpace As Double = (StaticSpaceCount * If(Self.IsVertical, CellHeight, CellWidth)) + ((StaticSpaceCount + 1) * CellSpacing)
+		  Var FlexibleSpaceSize As Double = Max(Floor(AvailableSpace - RequiredSpace) / FlexibleSpaceCount, 0)
 		  
-		  Dim CellDeltaX, CellDeltay As Double
+		  Var CellDeltaX, CellDeltay As Double
 		  If Self.IsVertical Then
 		    CellDeltaX = (G.Width - CellWidth) / 2
 		  Else
 		    CellDeltaY = (G.Height - CellHeight) / 2
 		  End If
 		  
-		  Dim NextPos As Double = CellSpacing
-		  Redim Self.mHitRects(Self.mItems.LastRowIndex)
+		  Var NextPos As Double = CellSpacing
+		  Self.mHitRects.ResizeTo(Self.mItems.LastRowIndex)
 		  For I As Integer = 0 To Self.mItems.LastRowIndex
 		    If Self.mItems(I).Type = ShelfItem.TypeSpacer Then
 		      Self.mHitRects(I) = Nil
@@ -185,8 +185,8 @@ Implements ObservationKit.Observer
 		      Continue For I
 		    End If
 		    
-		    Dim IconColor As Color = SystemColors.SecondaryLabelColor
-		    Dim CellRect As New BeaconUI.Rect(If(Self.IsVertical, 0, NextPos) + CellDeltaX, If(Self.IsVertical, NextPos, 0) + CellDeltaY, CellWidth, CellHeight)
+		    Var IconColor As Color = SystemColors.SecondaryLabelColor
+		    Var CellRect As New BeaconUI.Rect(If(Self.IsVertical, 0, NextPos) + CellDeltaX, If(Self.IsVertical, NextPos, 0) + CellDeltaY, CellWidth, CellHeight)
 		    Self.mHitRects(I) = CellRect
 		    
 		    If Self.mSelectedIndex = I Then
@@ -195,12 +195,12 @@ Implements ObservationKit.Observer
 		      IconColor = SystemColors.AlternateSelectedControlTextColor
 		    End If
 		    
-		    Dim IconRect As New BeaconUI.Rect(NearestMultiple(CellRect.Left + ((CellRect.Width - Self.IconSize) / 2), PrecisionX), NearestMultiple(CellRect.Top + CellSpacing, PrecisionY), Self.IconSize, Self.IconSize)
-		    Dim Icon As Picture = BeaconUI.IconWithColor(Self.mItems(I).Icon, IconColor)
+		    Var IconRect As New BeaconUI.Rect(NearestMultiple(CellRect.Left + ((CellRect.Width - Self.IconSize) / 2), PrecisionX), NearestMultiple(CellRect.Top + CellSpacing, PrecisionY), Self.IconSize, Self.IconSize)
+		    Var Icon As Picture = BeaconUI.IconWithColor(Self.mItems(I).Icon, IconColor)
 		    G.DrawPicture(Icon, NearestMultiple(IconRect.Left, PrecisionX), NearestMultiple(IconRect.Top, PrecisionY), NearestMultiple(IconRect.Width, PrecisionX), NearestMultiple(IconRect.Height, PrecisionY), 0, 0, Icon.Width, Icon.Height)
 		    
 		    If Self.mItems(I).NotificationColor <> ShelfItem.NotificationColors.None Then
-		      Dim PulseColor As Color
+		      Var PulseColor As Color
 		      If Self.mSelectedIndex = I Then
 		        PulseColor = SystemColors.AlternateSelectedControlTextColor
 		      Else
@@ -226,25 +226,25 @@ Implements ObservationKit.Observer
 		        End Select
 		      End If
 		      
-		      Dim PulseAmount As Double = Self.mItems(I).PulseAmount
-		      Dim DotRect As New BeaconUI.Rect(IconRect.Right - Self.NotificationDotSize, IconRect.Top, Self.NotificationDotSize, Self.NotificationDotSize)
+		      Var PulseAmount As Double = Self.mItems(I).PulseAmount
+		      Var DotRect As New BeaconUI.Rect(IconRect.Right - Self.NotificationDotSize, IconRect.Top, Self.NotificationDotSize, Self.NotificationDotSize)
 		      
 		      G.DrawingColor = PulseColor
 		      G.FillOval(DotRect.Left, DotRect.Top, DotRect.Width, DotRect.Height)
 		      If PulseAmount > 0 Then
-		        Dim PrecisePulseSize As Double = Self.NotificationDotSize + ((Self.NotificationDotSize * 2) * PulseAmount)
-		        Dim PulseSize As Double = NearestMultiple(PrecisePulseSize, PrecisionX * 2)
+		        Var PrecisePulseSize As Double = Self.NotificationDotSize + ((Self.NotificationDotSize * 2) * PulseAmount)
+		        Var PulseSize As Double = NearestMultiple(PrecisePulseSize, PrecisionX * 2)
 		        G.DrawingColor = PulseColor.AtOpacity(1.0 - PulseAmount)
 		        G.DrawOval(DotRect.Left - ((PulseSize - Self.NotificationDotSize) / 2), DotRect.Top - ((PulseSize - Self.NotificationDotSize) / 2), PulseSize, PulseSize)
 		      End If
 		    End If
 		    
 		    If Self.DrawCaptions Then
-		      Dim Caption As String = Self.mItems(I).Caption
-		      Dim CaptionY As Double = IconRect.Bottom + CellSpacing + Self.TextHeight
-		      Dim CaptionWidth As Double = G.TextWidth(Caption)
+		      Var Caption As String = Self.mItems(I).Caption
+		      Var CaptionY As Double = IconRect.Bottom + CellSpacing + Self.TextHeight
+		      Var CaptionWidth As Double = G.TextWidth(Caption)
 		      CaptionWidth = Min(CaptionWidth, CellRect.Width - (CellPadding * 2))
-		      Dim CaptionX As Double = CellRect.Left + ((CellRect.Width - CaptionWidth) / 2)
+		      Var CaptionX As Double = CellRect.Left + ((CellRect.Width - CaptionWidth) / 2)
 		      
 		      G.DrawingColor = IconColor
 		      G.DrawText(Caption, NearestMultiple(CaptionX, PrecisionX), NearestMultiple(CaptionY, PrecisionY), NearestMultiple(CellRect.Width, PrecisionX), True)
@@ -354,7 +354,7 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h21
 		Private Sub ShowHoverToolTip()
-		  Dim Point As New BeaconUI.Point(Self.MouseX, Self.MouseY)
+		  Var Point As New BeaconUI.Point(Self.MouseX, Self.MouseY)
 		  For I As Integer = 0 To Self.mHitRects.LastRowIndex
 		    If Self.mHitRects(I) = Nil Then
 		      Continue

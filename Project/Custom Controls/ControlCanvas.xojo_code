@@ -47,7 +47,7 @@ Inherits Canvas
 		    Return False
 		  End If
 		  
-		  Dim WheelData As New BeaconUI.ScrollEvent(Self.ScrollSpeed, DeltaX, DeltaY)
+		  Var WheelData As New BeaconUI.ScrollEvent(Self.ScrollSpeed, DeltaX, DeltaY)
 		  Return MouseWheel(X, Y, WheelData.ScrollX, WheelData.ScrollY, WheelData)
 		End Function
 	#tag EndEvent
@@ -69,7 +69,7 @@ Inherits Canvas
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  If Not Self.Transparent Then
-		    Dim TempColor As Color = G.DrawingColor
+		    Var TempColor As Color = G.DrawingColor
 		    If Self.Window.HasBackgroundColor Then
 		      G.DrawingColor = Self.Window.BackgroundColor
 		    Else

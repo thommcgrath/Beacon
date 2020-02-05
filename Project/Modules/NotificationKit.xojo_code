@@ -7,7 +7,7 @@ Protected Module NotificationKit
 		  End If
 		  
 		  For Each Key As String In Keys
-		    Dim Refs() As WeakRef
+		    Var Refs() As WeakRef
 		    If mReceivers.HasKey(Key) Then
 		      Refs = mReceivers.Value(Key)
 		    End If
@@ -34,7 +34,7 @@ Protected Module NotificationKit
 		    Return
 		  End If
 		  
-		  Dim Notification As NotificationKit.Invocation = mPendingNotifications(0)
+		  Var Notification As NotificationKit.Invocation = mPendingNotifications(0)
 		  mPendingNotifications.RemoveRowAt(0)
 		  
 		  Notification.Invoke
@@ -47,7 +47,7 @@ Protected Module NotificationKit
 		    Return
 		  End If
 		  
-		  Dim Refs() As WeakRef = mReceivers.Value(Notification.Name)
+		  Var Refs() As WeakRef = mReceivers.Value(Notification.Name)
 		  For I As Integer = Refs.LastRowIndex DownTo 0
 		    If Refs(I).Value = Nil Then
 		      Refs.RemoveRowAt(I)
@@ -60,7 +60,7 @@ Protected Module NotificationKit
 		  End If
 		  
 		  For Each Ref As WeakRef In Refs
-		    Dim Receiver As NotificationKit.Receiver = NotificationKit.Receiver(Ref.Value)
+		    Var Receiver As NotificationKit.Receiver = NotificationKit.Receiver(Ref.Value)
 		    mPendingNotifications.AddRow(New NotificationKit.Invocation(Notification, Receiver))
 		  Next
 		  
@@ -90,7 +90,7 @@ Protected Module NotificationKit
 		  End If
 		  
 		  For Each Key As String In Keys
-		    Dim Refs() As WeakRef
+		    Var Refs() As WeakRef
 		    If mReceivers.HasKey(Key) Then
 		      Refs = mReceivers.Value(Key)
 		    End If

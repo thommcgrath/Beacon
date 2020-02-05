@@ -107,23 +107,23 @@ Implements Beacon.DeploymentEngine
 		    Return
 		  End If
 		  
-		  Dim Command As String = Message.Value("Command")
+		  Var Command As String = Message.Value("Command")
 		  Select Case Command
 		  Case "Status"
-		    Dim Stopped As Boolean = Message.Lookup("Status", "stopped") = "stopped"
+		    Var Stopped As Boolean = Message.Lookup("Status", "stopped") = "stopped"
 		    If Stopped Then
 		      Self.RunNextTask()
 		      Return
 		    End If
 		    
 		    Self.mServerWasStarted = True
-		    Dim StopCommand As New Dictionary
+		    Var StopCommand As New Dictionary
 		    StopCommand.Value("Command") = "Stop"
 		    StopCommand.Value("Message") = Self.mStopMessage
 		    Sender.Write(StopCommand)
 		    Self.mStatus = "Stopping server…"
 		  Case "Stop"
-		    Dim Stopped As Boolean = Message.Lookup("Success", False).BooleanValue
+		    Var Stopped As Boolean = Message.Lookup("Success", False).BooleanValue
 		    If Not Stopped Then
 		      Self.SetError("Server did not stop when requested.")
 		      Return
@@ -131,7 +131,7 @@ Implements Beacon.DeploymentEngine
 		    
 		    Self.RunNextTask()
 		  Case "Start"
-		    Dim Started As Boolean = Message.Lookup("Success", False).BooleanValue
+		    Var Started As Boolean = Message.Lookup("Success", False).BooleanValue
 		    If Not Started Then
 		      Self.SetError("Server did not start when requested.")
 		      Return
@@ -139,7 +139,7 @@ Implements Beacon.DeploymentEngine
 		    
 		    Self.RunNextTask()
 		  Case "Log"
-		    Dim LogContents As String
+		    Var LogContents As String
 		    If Not Sender.UnpackFile(Message, LogContents) Then
 		      Self.SetError("Unable to unpack log file.")
 		      Return
@@ -147,7 +147,7 @@ Implements Beacon.DeploymentEngine
 		    
 		    Self.ProcessLogContents(LogContents.GuessEncoding)
 		  Case "Get Game.ini"
-		    Dim FileContents As String
+		    Var FileContents As String
 		    If Not Sender.UnpackFile(Message, FileContents) Then
 		      Self.SetError("Unable to unpack Game.ini.")
 		      Return
@@ -156,7 +156,7 @@ Implements Beacon.DeploymentEngine
 		    Self.mGameIniOriginal = FileContents
 		    Self.RunNextTask()
 		  Case "Get GameUserSettings.ini"
-		    Dim FileContents As String
+		    Var FileContents As String
 		    If Not Sender.UnpackFile(Message, FileContents) Then
 		      Self.SetError("Unable to unpack GameUserSettings.ini.")
 		      Return
@@ -165,7 +165,7 @@ Implements Beacon.DeploymentEngine
 		    Self.mGameUserSettingsOriginal = FileContents
 		    Self.RunNextTask()
 		  Case "Put Game.ini"
-		    Dim Success As Boolean = Message.Lookup("Success", False).BooleanValue
+		    Var Success As Boolean = Message.Lookup("Success", False).BooleanValue
 		    If Not Success Then
 		      Self.SetError("Server was unable to unpack updated Game.ini.")
 		      Return
@@ -173,7 +173,7 @@ Implements Beacon.DeploymentEngine
 		    
 		    Self.RunNextTask()
 		  Case "Put GameUserSettings.ini"
-		    Dim Success As Boolean = Message.Lookup("Success", False).BooleanValue
+		    Var Success As Boolean = Message.Lookup("Success", False).BooleanValue
 		    If Not Success Then
 		      Self.SetError("Server was unable to unpack updated GameUserSettings.ini.")
 		      Return
@@ -181,7 +181,7 @@ Implements Beacon.DeploymentEngine
 		    
 		    Self.RunNextTask()
 		  Case "Param"
-		    Dim Success As Boolean = Message.Lookup("Success", False).BooleanValue
+		    Var Success As Boolean = Message.Lookup("Success", False).BooleanValue
 		    If Not Success Then
 		      Self.SetError("Unable to set command line parameter.")
 		      Return
@@ -205,7 +205,7 @@ Implements Beacon.DeploymentEngine
 		Private Sub ProcessLogContents(Contents As String)
 		  Self.mStatus = "Analyzing log file…"
 		  
-		  Dim File As Beacon.LogFile = Beacon.LogFile.Analyze(Contents)
+		  Var File As Beacon.LogFile = Beacon.LogFile.Analyze(Contents)
 		  If File = Nil Then
 		    Self.SetError("There was an error while analyzing the log file")
 		    Return
@@ -213,23 +213,23 @@ Implements Beacon.DeploymentEngine
 		  
 		  Self.mMap = File.Maps
 		  
-		  Dim Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
-		  Dim CommandLineOptions() As Beacon.ConfigValue
+		  Var Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
+		  Var CommandLineOptions() As Beacon.ConfigValue
 		  For Each Group As Beacon.ConfigGroup In Groups
 		    If Group.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
 		      Continue
 		    End If
 		    
-		    Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, Self.mIdentity, Self.mProfile)
+		    Var Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, Self.mIdentity, Self.mProfile)
 		    For Each Option As Beacon.ConfigValue In Options
 		      CommandLineOptions.AddRow(Option)
 		    Next
 		  Next
 		  
-		  Dim StartParams As Dictionary = File.Options
+		  Var StartParams As Dictionary = File.Options
 		  For Each ConfigValue As Beacon.ConfigValue In CommandLineOptions
-		    Dim Key As String = ConfigValue.Key
-		    Dim Value As String = ConfigValue.Value
+		    Var Key As String = ConfigValue.Key
+		    Var Value As String = ConfigValue.Value
 		    
 		    If Not StartParams.HasKey(Key) Then
 		      Continue
@@ -328,7 +328,7 @@ Implements Beacon.DeploymentEngine
 		  
 		  Self.mStatus = "Setting command line parameters…"
 		  
-		  Dim Message As New Dictionary
+		  Var Message As New Dictionary
 		  Message.Value("Command") = "Param"
 		  Message.Value("Param") = Self.mCommandLineChanges(0).Key
 		  Message.Value("Value") = Self.mCommandLineChanges(0).Value
@@ -357,7 +357,7 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub TaskUploadGameIni()
-		  Dim Message As New Dictionary
+		  Var Message As New Dictionary
 		  Message.Value("Command") = "Put Game.ini"
 		  If Not Self.mSocket.PackFile(Message, Self.mGameIniRewritten, True) Then
 		    Self.SetError("Unable to pack Game.ini for transport to server…")
@@ -369,7 +369,7 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub TaskUploadGameUserSettings()
-		  Dim Message As New Dictionary
+		  Var Message As New Dictionary
 		  Message.Value("Command") = "Put GameUserSettings.ini"
 		  If Not Self.mSocket.PackFile(Message, Self.mGameUserSettingsRewritten, True) Then
 		    Self.SetError("Unable to pack GameUserSettings.ini for transport to server…")

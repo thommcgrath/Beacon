@@ -6,10 +6,10 @@ Inherits Beacon.Thread
 		  Self.mFinished = False
 		  Self.Invalidate
 		  
-		  Dim LineEnding As String = Self.LineEndingChar()
+		  Var LineEnding As String = Self.LineEndingChar()
 		  
 		  // Normalize line endings
-		  Dim Content As String = Self.mGameUserSettingsIniContent.ReplaceLineEndings(LineEnding) + LineEnding + Self.mGameIniContent.ReplaceLineEndings(LineEnding)
+		  Var Content As String = Self.mGameUserSettingsIniContent.ReplaceLineEndings(LineEnding) + LineEnding + Self.mGameIniContent.ReplaceLineEndings(LineEnding)
 		  
 		  // Fix smart quotes
 		  Content = Content.SanitizeIni
@@ -19,7 +19,7 @@ Inherits Beacon.Thread
 		  
 		  Self.mParsedData = New Dictionary
 		  
-		  Dim Lines() As String = Content.Split(LineEnding)
+		  Var Lines() As String = Content.Split(LineEnding)
 		  Self.mCharactersTotal = Self.mCharactersTotal + ((Lines.LastRowIndex + 1) * LineEnding.Length) // To account for the trailing line ending characters we're adding
 		  For Each Line As String In Lines
 		    If Self.mCancelled Then
@@ -33,7 +33,7 @@ Inherits Beacon.Thread
 		    End If
 		    
 		    Try
-		      Dim Value As Variant = Self.Import(Line + LineEnding)
+		      Var Value As Variant = Self.Import(Line + LineEnding)
 		      If Value = Nil Then
 		        Continue
 		      End If
@@ -41,13 +41,13 @@ Inherits Beacon.Thread
 		        Continue
 		      End If
 		      
-		      Dim Key As String = Beacon.Pair(Value).Key
+		      Var Key As String = Beacon.Pair(Value).Key
 		      Value = Beacon.Pair(Value).Value
 		      
 		      If Self.mParsedData.HasKey(Key) Then
-		        Dim ExistingValue As Variant = Self.mParsedData.Value(Key)
+		        Var ExistingValue As Variant = Self.mParsedData.Value(Key)
 		        
-		        Dim ValueArray() As Variant
+		        Var ValueArray() As Variant
 		        If ExistingValue.IsArray Then
 		          ValueArray = ExistingValue
 		        Else
@@ -108,9 +108,9 @@ Inherits Beacon.Thread
 
 	#tag Method, Flags = &h21
 		Private Function Import(Content As String) As Variant
-		  Dim Parser As New Beacon.ConfigParser
-		  Dim Value As Variant
-		  Dim Characters() As String = Content.Split("")
+		  Var Parser As New Beacon.ConfigParser
+		  Var Value As Variant
+		  Var Characters() As String = Content.Split("")
 		  For Each Char As String In Characters
 		    If Self.mCancelled Then
 		      Return Nil
@@ -172,19 +172,19 @@ Inherits Beacon.Thread
 		  End If
 		  
 		  If Input.IsArray And Input.ArrayElementType = Variant.TypeObject Then
-		    Dim ArrayValue() As Variant = Input
-		    Dim IsDict As Boolean = True
+		    Var ArrayValue() As Variant = Input
+		    Var IsDict As Boolean = True
 		    For Each Item As Variant In ArrayValue
 		      IsDict = IsDict And Item.Type = Variant.TypeObject And Item.ObjectValue IsA Beacon.Pair
 		    Next
 		    If IsDict Then
-		      Dim Dict As New Dictionary
+		      Var Dict As New Dictionary
 		      For Each Item As Beacon.Pair In ArrayValue
 		        Dict.Value(Item.Key) = ToXojoType(Item.Value)
 		      Next
 		      Return Dict
 		    Else
-		      Dim Items() As Variant
+		      Var Items() As Variant
 		      For Each Item As Variant In ArrayValue
 		        Items.AddRow(ToXojoType(Item))
 		      Next
@@ -194,24 +194,24 @@ Inherits Beacon.Thread
 		  
 		  Select Case Input.Type
 		  Case Variant.TypeObject
-		    Dim ObjectValue As Object = Input.ObjectValue
+		    Var ObjectValue As Object = Input.ObjectValue
 		    Select Case ObjectValue
 		    Case IsA Beacon.Pair
-		      Dim Original As Beacon.Pair = Input
+		      Var Original As Beacon.Pair = Input
 		      Return New Beacon.Pair(Original.Key, ToXojoType(Original.Value))
 		    End Select
 		  Case Variant.TypeString
-		    Dim StringValue As String = Input.StringValue
+		    Var StringValue As String = Input.StringValue
 		    If StringValue = "true" Then
 		      Return True
 		    ElseIf StringValue = "false" Then
 		      Return False
 		    Else
-		      Dim IsNumeric As Boolean
+		      Var IsNumeric As Boolean
 		      If StringValue.Length > 0 Then
 		        IsNumeric = True
-		        Dim DecimalPoints As Integer
-		        Dim Characters() As String = StringValue.Split("")
+		        Var DecimalPoints As Integer
+		        Var Characters() As String = StringValue.Split("")
 		        For Each Char As String In Characters
 		          Select Case Char
 		          Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
@@ -264,7 +264,7 @@ Inherits Beacon.Thread
 		#tag Setter
 			Set
 			  If Self.ThreadState <> Thread.ThreadStates.NotRunning Then
-			    Dim Err As New RuntimeException
+			    Var Err As New RuntimeException
 			    Err.Reason = "Importer is already running"
 			    Raise Err
 			  End If
@@ -284,7 +284,7 @@ Inherits Beacon.Thread
 		#tag Setter
 			Set
 			  If Self.ThreadState <> Thread.ThreadStates.NotRunning Then
-			    Dim Err As New RuntimeException
+			    Var Err As New RuntimeException
 			    Err.Reason = "Importer is already running"
 			    Raise Err
 			  End If

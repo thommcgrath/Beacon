@@ -21,7 +21,7 @@ Implements Beacon.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub IsTagged(Tag As String, Assigns Value As Boolean)
 		  Tag = Beacon.NormalizeTag(Tag)
-		  Dim Idx As Integer = Self.mTags.IndexOf(Tag)
+		  Var Idx As Integer = Self.mTags.IndexOf(Tag)
 		  If Idx > -1 And Value = False Then
 		    Self.mTags.RemoveRowAt(Idx)
 		  ElseIf Idx = -1 And Value = True Then
@@ -58,7 +58,7 @@ Implements Beacon.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Tags(Assigns Tags() As String)
-		  Redim Self.mTags(-1)
+		  Self.mTags.ResizeTo(-1)
 		  
 		  For Each Tag As String In Tags
 		    Tag = Beacon.NormalizeTag(Tag)

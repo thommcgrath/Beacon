@@ -56,15 +56,15 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
-		  Dim OverallCycleMultiplier As Double = 1.0
-		  Dim DaySpeedMultiplier As Double = 1.0
-		  Dim NightSpeedMultiplier As Double = 1.0
+		  Var OverallCycleMultiplier As Double = 1.0
+		  Var DaySpeedMultiplier As Double = 1.0
+		  Var NightSpeedMultiplier As Double = 1.0
 		  
 		  OverallCycleMultiplier = ParsedData.DoubleValue("DayCycleSpeedScale", OverallCycleMultiplier)
 		  DaySpeedMultiplier = ParsedData.DoubleValue("DayTimeSpeedScale", DaySpeedMultiplier)
 		  NightSpeedMultiplier = ParsedData.DoubleValue("NightTimeSpeedScale", NightSpeedMultiplier)
 		  
-		  Dim Config As New BeaconConfigs.DayCycle()
+		  Var Config As New BeaconConfigs.DayCycle()
 		  Config.DaySpeedMultiplier = DaySpeedMultiplier / (1 / OverallCycleMultiplier)
 		  Config.NightSpeedMultiplier = NightSpeedMultiplier / (1 / OverallCycleMultiplier)
 		  If Config.Modified Then

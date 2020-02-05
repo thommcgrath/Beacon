@@ -59,27 +59,27 @@ Protected Class Encrypter
 
 	#tag Method, Flags = &h0
 		Function Decrypt(data As String, isFinalBlock As Boolean = True) As String
-		  dim mb as Xojo.Core.MutableMemoryBlock = StringToMutableMemoryBlock( data )
+		  Var mb as Xojo.Core.MutableMemoryBlock = StringToMutableMemoryBlock( data )
 		  self.Decrypt( UseFunction, mb, isFinalBlock )
-		  dim result as string = MemoryBlockToString( mb )
+		  Var result as string = MemoryBlockToString( mb )
 		  return result
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function DecryptCBC(data As String, isFinalBlock As Boolean = True) As String
-		  dim mb as Xojo.Core.MutableMemoryBlock = StringToMutableMemoryBlock( data )
+		  Var mb as Xojo.Core.MutableMemoryBlock = StringToMutableMemoryBlock( data )
 		  self.Decrypt( Functions.CBC, mb, isFinalBlock )
-		  dim result as string = MemoryBlockToString( mb )
+		  Var result as string = MemoryBlockToString( mb )
 		  return result
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function DecryptECB(data As String, isFinalBlock As Boolean = True) As String
-		  dim mb as Xojo.Core.MutableMemoryBlock = StringToMutableMemoryBlock( data )
+		  Var mb as Xojo.Core.MutableMemoryBlock = StringToMutableMemoryBlock( data )
 		  self.Decrypt( Functions.ECB, mb, isFinalBlock )
-		  dim result as string = MemoryBlockToString( mb )
+		  Var result as string = MemoryBlockToString( mb )
 		  return result
 		End Function
 	#tag EndMethod
@@ -92,8 +92,8 @@ Protected Class Encrypter
 		    return
 		  end if
 		  
-		  dim originalSize as integer = data.Size
-		  dim dataPtr as ptr = data.Data
+		  Var originalSize as integer = data.Size
+		  Var dataPtr as ptr = data.Data
 		  
 		  select case PaddingMethod
 		  case Padding.PKCS
@@ -102,7 +102,7 @@ Protected Class Encrypter
 		    // it's not present
 		    //
 		    
-		    dim stripCount as integer = dataPtr.Byte( originalSize - 1 )
+		    Var stripCount as integer = dataPtr.Byte( originalSize - 1 )
 		    if stripCount = 0 or stripCount > BlockSize or stripCount > originalSize then
 		      //
 		      // These are impossible with PKCS
@@ -111,8 +111,8 @@ Protected Class Encrypter
 		      raise new M_Crypto.InvalidPaddingException
 		    end if
 		    
-		    dim lastIndex as integer = originalSize - 2
-		    dim firstIndex as integer = originalSize - stripCount
+		    Var lastIndex as integer = originalSize - 2
+		    Var firstIndex as integer = originalSize - stripCount
 		    if firstIndex < 0 then
 		      firstIndex = 0
 		    end if
@@ -139,13 +139,13 @@ Protected Class Encrypter
 		    // BlockSize + 1 if specified and if possible.
 		    //
 		    
-		    dim stripCount as integer = dataPtr.Byte( data.Size - 1 )
+		    Var stripCount as integer = dataPtr.Byte( data.Size - 1 )
 		    if stripCount = 0 or stripCount > ( BlockSize + 1 ) or stripCount > data.Size then
 		      raise new M_Crypto.InvalidPaddingException
 		    end if
 		    
-		    dim lastIndex as integer = originalSize - 2
-		    dim firstIndex as integer = originalSize - stripCount
+		    Var lastIndex as integer = originalSize - 2
+		    Var firstIndex as integer = originalSize - stripCount
 		    if firstIndex < 0 then
 		      firstIndex = 0
 		    end if
@@ -162,14 +162,14 @@ Protected Class Encrypter
 		    data.Remove firstIndex, stripCount
 		    
 		  case Padding.NullsOnly
-		    dim lastIndex as integer = originalSize - 1
-		    dim firstIndex as integer = originalSize - BlockSize
+		    Var lastIndex as integer = originalSize - 1
+		    Var firstIndex as integer = originalSize - BlockSize
 		    if firstIndex < 0 then
 		      firstIndex = 0
 		    end if
 		    for index as integer = lastIndex downto firstIndex
 		      if dataPtr.Byte( index ) <> 0 then
-		        dim newSize as integer = index + 1
+		        Var newSize as integer = index + 1
 		        if originalSize > newSize then
 		          data.Remove newSize, originalSize - newSize
 		        end if
@@ -214,34 +214,34 @@ Protected Class Encrypter
 
 	#tag Method, Flags = &h0
 		Function Encrypt(data As String, isFinalBlock As Boolean = True) As String
-		  dim mb as Xojo.Core.MutableMemoryBlock = StringToMutableMemoryBlock( data )
+		  Var mb as Xojo.Core.MutableMemoryBlock = StringToMutableMemoryBlock( data )
 		  self.Encrypt( UseFunction, mb, isFinalBlock )
-		  dim result as string = MemoryBlockToString( mb )
+		  Var result as string = MemoryBlockToString( mb )
 		  return result
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function EncryptCBC(data As String, isFinalBlock As Boolean = True) As String
-		  dim mb as Xojo.Core.MutableMemoryBlock = StringToMutableMemoryBlock( data )
+		  Var mb as Xojo.Core.MutableMemoryBlock = StringToMutableMemoryBlock( data )
 		  self.Encrypt( Functions.CBC, mb, isFinalBlock )
-		  dim result as string = MemoryBlockToString( mb )
+		  Var result as string = MemoryBlockToString( mb )
 		  return result
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function EncryptECB(data As String, isFinalBlock As Boolean = True) As String
-		  dim mb as Xojo.Core.MutableMemoryBlock = StringToMutableMemoryBlock( data )
+		  Var mb as Xojo.Core.MutableMemoryBlock = StringToMutableMemoryBlock( data )
 		  self.Encrypt( Functions.ECB, mb, isFinalBlock )
-		  dim result as string = MemoryBlockToString( mb )
+		  Var result as string = MemoryBlockToString( mb )
 		  return result
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function GetCurrentThreadId() As Integer
-		  dim t as Thread = App.CurrentThread
+		  Var t as Thread = App.CurrentThread
 		  if t is nil then
 		    return 0
 		  else
@@ -261,7 +261,7 @@ Protected Class Encrypter
 		    return vector
 		  end if
 		  
-		  dim newVector as memoryblock = DecodeHex( vector )
+		  Var newVector as memoryblock = DecodeHex( vector )
 		  if newVector.size = BlockSize then
 		    return newVector
 		  else
@@ -276,8 +276,8 @@ Protected Class Encrypter
 		    return
 		  end if
 		  
-		  dim originalSize as integer = data.Size
-		  dim padToAdd as byte = BlockSize - ( originalSize mod BlockSize )
+		  Var originalSize as integer = data.Size
+		  Var padToAdd as byte = BlockSize - ( originalSize mod BlockSize )
 		  if padToAdd = BlockSize then
 		    padToAdd = 0
 		  end if
@@ -290,9 +290,9 @@ Protected Class Encrypter
 		      padToAdd = BlockSize
 		    end if
 		    
-		    dim adder as new Xojo.Core.MemoryBlock( padToAdd )
-		    dim adderLastIndex as integer = adder.Size - 1
-		    dim adderPtr as ptr = adder.Data
+		    Var adder as new Xojo.Core.MemoryBlock( padToAdd )
+		    Var adderLastIndex as integer = adder.Size - 1
+		    Var adderPtr as ptr = adder.Data
 		    
 		    for i as integer = 0 to adderLastIndex
 		      adderPtr.Byte( i ) = padToAdd
@@ -313,7 +313,7 @@ Protected Class Encrypter
 		    if padToAdd = 0 then
 		      padToAdd = BlockSize
 		    end if
-		    dim adder as new Xojo.Core.MemoryBlock( padToAdd )
+		    Var adder as new Xojo.Core.MemoryBlock( padToAdd )
 		    adder.Data.Byte( adder.Size - 1 ) = padToAdd
 		    data.Append adder
 		    
@@ -322,7 +322,7 @@ Protected Class Encrypter
 		    // Adds nulls to the end
 		    //
 		    if padToAdd <> 0 then
-		      dim adder as new Xojo.Core.MemoryBlock( padToAdd )
+		      Var adder as new Xojo.Core.MemoryBlock( padToAdd )
 		      data.Append adder
 		    end if
 		    
@@ -333,7 +333,7 @@ Protected Class Encrypter
 	#tag Method, Flags = &h1
 		Protected Sub RaiseErrorIf(test As Boolean, msg As String)
 		  if test then
-		    dim err as new CryptoException
+		    Var err as new CryptoException
 		    err.Message = msg
 		    raise err
 		  end if
@@ -348,8 +348,8 @@ Protected Class Encrypter
 
 	#tag Method, Flags = &h0
 		Attributes( Hidden )  Sub SelfTest()
-		  dim errMsg as string
-		  dim raiseError as boolean
+		  Var errMsg as string
+		  Var raiseError as boolean
 		  
 		  if RaiseEvent DoSelfTest( errMsg ) = false or errMsg <> "" then
 		    raiseError = true
@@ -359,7 +359,7 @@ Protected Class Encrypter
 		    if errMsg = "" then
 		      errMsg = "SelfTest has not been implemented or unknown error"
 		    end if
-		    dim err as new RuntimeException
+		    Var err as new RuntimeException
 		    err.Message = errMsg
 		    raise err
 		  end if

@@ -494,7 +494,7 @@ End
 
 	#tag Event
 		Sub Open()
-		  Dim PreferredSize As Size = Preferences.EntryEditorSize
+		  Var PreferredSize As Size = Preferences.EntryEditorSize
 		  
 		  Self.Picker.Tags = LocalData.SharedInstance.AllTags(Beacon.CategoryEngrams)
 		  Self.Picker.Spec = Preferences.SelectedTag(Beacon.CategoryEngrams, "Looting")
@@ -531,7 +531,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub EnableButtons()
-		  Dim Enabled As Boolean = Self.EngramSearcher.ThreadState = Thread.ThreadStates.NotRunning
+		  Var Enabled As Boolean = Self.EngramSearcher.ThreadState = Thread.ThreadStates.NotRunning
 		  Self.ActionButton.Enabled = Enabled And Self.mSelectedEngrams.KeyCount >= 1
 		  Self.CancelButton.Enabled = Enabled
 		End Sub
@@ -540,13 +540,13 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ListUnknownEngrams()
 		  For Each Entry As DictionaryEntry In Self.mSelectedEngrams
-		    Dim Path As String = Entry.Key
-		    Dim Option As Beacon.SetEntryOption = Entry.Value
+		    Var Path As String = Entry.Key
+		    Var Option As Beacon.SetEntryOption = Entry.Value
 		    
-		    Dim Idx As Integer = Self.mEngramRowIndexes.Lookup(Path, -1)
+		    Var Idx As Integer = Self.mEngramRowIndexes.Lookup(Path, -1)
 		    If Idx = -1 Then
-		      Dim WeightValue As Double = Option.Weight * 100
-		      Dim Weight As String = WeightValue.PrettyText
+		      Var WeightValue As Double = Option.Weight * 100
+		      Var Weight As String = WeightValue.PrettyText
 		      
 		      EngramList.AddRow("", Option.Engram.Label, Option.Engram.ModName, Weight)
 		      EngramList.RowTagAt(EngramList.LastAddedRowIndex) = Option.Engram
@@ -565,7 +565,7 @@ End
 		    Return EntryMultiEditor.Present(Parent, Sources)
 		  End If
 		  
-		  Dim Win As New EntryEditor(Mods)
+		  Var Win As New EntryEditor(Mods)
 		  
 		  If Sources <> Nil And Sources.LastRowIndex = 0 Then
 		    Win.mOriginalEntry = New Beacon.SetEntry(Sources(0))
@@ -575,7 +575,7 @@ End
 		  Win.SetupUI(Prefilter)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
-		  Dim Entries() As Beacon.SetEntry = Win.mCreatedEntries
+		  Var Entries() As Beacon.SetEntry = Win.mCreatedEntries
 		  Win.Close
 		  If Entries.LastRowIndex = -1 Then
 		    Return Nil
@@ -611,18 +611,18 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
-		  Dim SearchText As String = Self.FilterField.Value
-		  Dim Tags As String = Self.Picker.Spec
+		  Var SearchText As String = Self.FilterField.Value
+		  Var Tags As String = Self.Picker.Spec
 		  
-		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText, Self.mMods, Tags)
+		  Var Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText, Self.mMods, Tags)
 		  EngramList.RemoveAllRows
 		  
-		  Dim PerfectMatch As Boolean
+		  Var PerfectMatch As Boolean
 		  Self.mEngramRowIndexes = New Dictionary
 		  For Each Engram As Beacon.Engram In Engrams
-		    Dim Weight As String = ""
+		    Var Weight As String = ""
 		    If Self.mSelectedEngrams.HasKey(Engram.Path) Then
-		      Dim WeightValue As Double = Beacon.SetEntryOption(Self.mSelectedEngrams.Value(Engram.Path)).Weight * 100
+		      Var WeightValue As Double = Beacon.SetEntryOption(Self.mSelectedEngrams.Value(Engram.Path)).Weight * 100
 		      Weight = WeightValue.PrettyText
 		    End If
 		    
@@ -665,11 +665,11 @@ End
 		    Return
 		  End If
 		  
-		  Dim FullSimulation As Boolean = Self.mSelectedEngrams.KeyCount = 1 Or Self.AllowMultipleEntries = False Or (Self.SingleEntryCheck.Value And Self.SingleEntryCheck.Visible)
+		  Var FullSimulation As Boolean = Self.mSelectedEngrams.KeyCount = 1 Or Self.AllowMultipleEntries = False Or (Self.SingleEntryCheck.Value And Self.SingleEntryCheck.Visible)
 		  
-		  Dim Entry As New Beacon.SetEntry
+		  Var Entry As New Beacon.SetEntry
 		  For Each Item As DictionaryEntry In Self.mSelectedEngrams
-		    Dim Option As Beacon.SetEntryOption = Item.Value
+		    Var Option As Beacon.SetEntryOption = Item.Value
 		    Entry.Append(Option)
 		    If Not FullSimulation Then
 		      SimulationGroup.Caption = "Simulation of " + Option.Engram.Label
@@ -679,11 +679,11 @@ End
 		  
 		  EntryPropertiesEditor1.ApplyTo(Entry)
 		  
-		  Dim Selections() As Beacon.SimulatedSelection = Entry.Simulate
-		  Dim GroupedItems As New Dictionary
+		  Var Selections() As Beacon.SimulatedSelection = Entry.Simulate
+		  Var GroupedItems As New Dictionary
 		  For Each Selection As Beacon.SimulatedSelection In Selections
-		    Dim Description As String = Selection.Description
-		    Dim Quantity As Integer
+		    Var Description As String = Selection.Description
+		    Var Quantity As Integer
 		    If GroupedItems.HasKey(Description) Then
 		      Quantity = GroupedItems.Value(Description)
 		    End If
@@ -691,8 +691,8 @@ End
 		  Next
 		  
 		  For Each Item As DictionaryEntry In GroupedItems
-		    Dim Description As String = Item.Key
-		    Dim Quantity As Integer = Item.Value
+		    Var Description As String = Item.Key
+		    Var Quantity As Integer = Item.Value
 		    SimulatedResultsList.AddRow(Str(Quantity, "0") + "x " + Description)
 		  Next
 		End Sub
@@ -773,7 +773,7 @@ End
 #tag Events EngramList
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
-		  Dim Engram As Beacon.Engram = Me.RowTagAt(Row)
+		  Var Engram As Beacon.Engram = Me.RowTagAt(Row)
 		  
 		  Select Case Column
 		  Case Self.ColumnIncluded
@@ -803,7 +803,7 @@ End
 		    Self.UpdateSimulation()
 		  Case Self.ColumnWeight
 		    If Self.mSelectedEngrams.HasKey(Engram.Path) Then
-		      Dim Weight As Double = Abs(CDbl(Me.CellValueAt(Row, Column))) / 100
+		      Var Weight As Double = Abs(CDbl(Me.CellValueAt(Row, Column))) / 100
 		      Self.mSelectedEngrams.Value(Engram.Path) = New Beacon.SetEntryOption(Engram, Weight)
 		      Self.UpdateSelectionUI()
 		      Self.UpdateSimulation()
@@ -829,14 +829,14 @@ End
 		    ElseIf Me.CellCheckBoxValueAt(Row1, Column) = False And Me.CellCheckBoxValueAt(Row2, Column) = True Then
 		      Result = 1
 		    Else
-		      Dim Engram1 As Beacon.Engram = Me.RowTagAt(Row1)
-		      Dim Engram2 As Beacon.Engram = Me.RowTagAt(Row2)
+		      Var Engram1 As Beacon.Engram = Me.RowTagAt(Row1)
+		      Var Engram2 As Beacon.Engram = Me.RowTagAt(Row2)
 		      
 		      Result = StrComp(Engram1.Label, Engram2.Label, 0)
 		    End If
 		  Case Self.ColumnWeight
-		    Dim Weight1 As Double = Val(Me.CellValueAt(Row1, Column))
-		    Dim Weight2 As Double = Val(Me.CellValueAt(Row2, Column))
+		    Var Weight1 As Double = Val(Me.CellValueAt(Row1, Column))
+		    Var Weight2 As Double = Val(Me.CellValueAt(Row2, Column))
 		    If Weight1 > Weight2 Then
 		      Result = 1
 		    ElseIf Weight2 > Weight1 Then
@@ -903,15 +903,15 @@ End
 		    Return
 		  End If
 		  
-		  Dim Options() As Beacon.SetEntryOption
+		  Var Options() As Beacon.SetEntryOption
 		  For Each Entry As DictionaryEntry In Self.mSelectedEngrams
 		    Options.AddRow(Entry.Value)
 		  Next
 		  
-		  Dim Entries() As Beacon.SetEntry
+		  Var Entries() As Beacon.SetEntry
 		  If Self.mOriginalEntry <> Nil Then
-		    Dim Entry As New Beacon.SetEntry(Self.mOriginalEntry)
-		    Redim Entry(-1)
+		    Var Entry As New Beacon.SetEntry(Self.mOriginalEntry)
+		    Entry.ResizeTo(-1)
 		    For Each Option As Beacon.SetEntryOption In Options
 		      Entry.Append(Option)
 		    Next
@@ -919,7 +919,7 @@ End
 		  ElseIf Options.LastRowIndex > 0 Then
 		    If SingleEntryCheck.Value Then
 		      // Merge all into one
-		      Dim Entry As New Beacon.SetEntry
+		      Var Entry As New Beacon.SetEntry
 		      For Each Option As Beacon.SetEntryOption In Options
 		        Entry.Append(Option)
 		      Next
@@ -927,13 +927,13 @@ End
 		    Else
 		      // Multiple entries
 		      For Each Option As Beacon.SetEntryOption In Options
-		        Dim Entry As New Beacon.SetEntry
+		        Var Entry As New Beacon.SetEntry
 		        Entry.Append(Option)    
 		        Entries.AddRow(Entry)
 		      Next
 		    End If
 		  ElseIf Options.LastRowIndex = 0 Then
-		    Dim Entry As New Beacon.SetEntry
+		    Var Entry As New Beacon.SetEntry
 		    Entry.Append(Options(0))
 		    Entries.AddRow(Entry)
 		  Else
@@ -969,16 +969,16 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub EngramsFound()
-		  Dim ParsedBlueprints() As Beacon.Blueprint = Me.Blueprints(True)
+		  Var ParsedBlueprints() As Beacon.Blueprint = Me.Blueprints(True)
 		  For Each Blueprint As Beacon.Blueprint In ParsedBlueprints
 		    If Not (Blueprint IsA Beacon.Engram) Then
 		      Continue
 		    End If
 		    
-		    Dim Engram As Beacon.Engram = Beacon.Engram(Blueprint)
-		    Dim Weight As String = ""
+		    Var Engram As Beacon.Engram = Beacon.Engram(Blueprint)
+		    Var Weight As String = ""
 		    If Self.mSelectedEngrams.HasKey(Engram.Path) Then
-		      Dim WeightValue As Double = Beacon.SetEntryOption(Self.mSelectedEngrams.Value(Engram.Path)).Weight * 100
+		      Var WeightValue As Double = Beacon.SetEntryOption(Self.mSelectedEngrams.Value(Engram.Path)).Weight * 100
 		      Weight = WeightValue.PrettyText
 		    End If
 		    

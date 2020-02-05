@@ -805,8 +805,8 @@ End
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.StatLimits
 		  Static ConfigName As String = BeaconConfigs.StatLimits.ConfigName
 		  
-		  Dim Document As Beacon.Document = Self.Document
-		  Dim Config As BeaconConfigs.StatLimits
+		  Var Document As Beacon.Document = Self.Document
+		  Var Config As BeaconConfigs.StatLimits
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.StatLimits(Self.mConfigRef.Value)

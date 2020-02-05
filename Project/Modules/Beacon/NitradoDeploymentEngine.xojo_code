@@ -46,7 +46,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
+		    Var Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.mErrored = True
@@ -54,10 +54,10 @@ Implements Beacon.DeploymentEngine
 		      Return
 		    End If
 		    
-		    Dim Data As Dictionary = Response.Value("data")
-		    Dim TokenDict As Dictionary = Data.Value("token")
+		    Var Data As Dictionary = Response.Value("data")
+		    Var TokenDict As Dictionary = Data.Value("token")
 		    
-		    Dim Headers As New Dictionary
+		    Var Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		    
 		    SimpleHTTP.Get(TokenDict.Value("url"), AddressOf Callback_DownloadGameIni_Content, Nil, Headers)
@@ -79,7 +79,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As String = Content
+		    Var TextContent As String = Content
 		    Self.mGameIniOriginal = TextContent
 		    Self.RunNextTask()
 		  Catch Err As RuntimeException
@@ -100,7 +100,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
+		    Var Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.mErrored = True
@@ -108,10 +108,10 @@ Implements Beacon.DeploymentEngine
 		      Return
 		    End If
 		    
-		    Dim Data As Dictionary = Response.Value("data")
-		    Dim TokenDict As Dictionary = Data.Value("token")
+		    Var Data As Dictionary = Response.Value("data")
+		    Var TokenDict As Dictionary = Data.Value("token")
 		    
-		    Dim Headers As New Dictionary
+		    Var Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		    
 		    SimpleHTTP.Get(TokenDict.Value("url"), AddressOf Callback_DownloadGameUserSettingsIni_Content, Nil, Headers)
@@ -161,7 +161,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
+		    Var Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.mServerStopTime = DateTime.Now
@@ -169,10 +169,10 @@ Implements Beacon.DeploymentEngine
 		      Return
 		    End If
 		    
-		    Dim Data As Dictionary = Response.Value("data")
-		    Dim TokenDict As Dictionary = Data.Value("token")
+		    Var Data As Dictionary = Response.Value("data")
+		    Var TokenDict As Dictionary = Data.Value("token")
 		    
-		    Dim Headers As New Dictionary
+		    Var Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		    
 		    SimpleHTTP.Get(TokenDict.Value("url"), AddressOf Callback_DownloadLogFile_Content, Nil, Headers)
@@ -200,22 +200,22 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim EOL As String = Encodings.ASCII.Chr(10)
-		    Dim Lines() As String = CType(Content, String).ReplaceLineEndings(EOL).Split(EOL)
-		    Dim TimestampFound As Boolean
+		    Var EOL As String = Encodings.ASCII.Chr(10)
+		    Var Lines() As String = CType(Content, String).ReplaceLineEndings(EOL).Split(EOL)
+		    Var TimestampFound As Boolean
 		    For I As Integer = Lines.LastRowIndex DownTo 0
-		      Dim Line As String = Lines(I)
+		      Var Line As String = Lines(I)
 		      If Line.IndexOf("Log file closed") = -1 Then
 		        Continue
 		      End If
 		      
-		      Dim Year As Integer = Val(Line.Middle(1, 4))
-		      Dim Month As Integer = Val(Line.Middle(6, 2))
-		      Dim Day As Integer = Val(Line.Middle(9, 2))
-		      Dim Hour As Integer = Val(Line.Middle(12, 2))
-		      Dim Minute As Integer = Val(Line.Middle(15, 2))
-		      Dim Second As Integer = Val(Line.Middle(18, 2))
-		      Dim Nanosecond As Integer = (Val(Line.Middle(21, 3)) / 1000) * 1000000000
+		      Var Year As Integer = Val(Line.Middle(1, 4))
+		      Var Month As Integer = Val(Line.Middle(6, 2))
+		      Var Day As Integer = Val(Line.Middle(9, 2))
+		      Var Hour As Integer = Val(Line.Middle(12, 2))
+		      Var Minute As Integer = Val(Line.Middle(15, 2))
+		      Var Second As Integer = Val(Line.Middle(18, 2))
+		      Var Nanosecond As Integer = (Val(Line.Middle(21, 3)) / 1000) * 1000000000
 		      
 		      Self.mServerStopTime = New DateTime(Year, Month, Day, Hour, Minute, Second, Nanosecond, New TimeZone(0))
 		      TimestampFound = True
@@ -243,7 +243,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
+		    Var Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.mErrored = True
@@ -271,7 +271,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
+		    Var Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.mErrored = True
@@ -298,7 +298,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
+		    Var Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.mErrored = True
@@ -329,15 +329,15 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
-		    Dim Data As Dictionary = Response.Value("data")
-		    Dim GameServer As Dictionary = Data.Value("gameserver")
+		    Var Response As Dictionary = Beacon.ParseJSON(Content)
+		    Var Data As Dictionary = Response.Value("data")
+		    Var GameServer As Dictionary = Data.Value("gameserver")
 		    
 		    If Self.mMask = 0 Then
-		      Dim Settings As Dictionary = GameServer.Value("settings")
-		      Dim Config As Dictionary = Settings.Value("config")
-		      Dim MapText As String = Config.Value("map")
-		      Dim MapParts() As String = MapText.Split(",")
+		      Var Settings As Dictionary = GameServer.Value("settings")
+		      Var Config As Dictionary = Settings.Value("config")
+		      Var MapText As String = Config.Value("map")
+		      Var MapParts() As String = MapText.Split(",")
 		      Self.mMask = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.LastRowIndex))
 		    End If
 		    
@@ -354,8 +354,8 @@ Implements Beacon.DeploymentEngine
 		      Self.mWatchForStatusStopCallbackKey = CallLater.Schedule(5000, AddressOf WatchStatusForStop)
 		    Case "stopped"
 		      // Ok to continue... maybe
-		      Dim Settings As Dictionary = GameServer.Value("settings")
-		      Dim GeneralSettings As Dictionary = Settings.Value("general")
+		      Var Settings As Dictionary = GameServer.Value("settings")
+		      Var GeneralSettings As Dictionary = Settings.Value("general")
 		      Self.mExpertMode = GeneralSettings.Value("expertMode") = "true"
 		      
 		      If Self.mDidRebuildStart = False And Self.mExpertMode = False Then
@@ -365,23 +365,23 @@ Implements Beacon.DeploymentEngine
 		        Return
 		      End If
 		      
-		      Dim Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
-		      Dim CommandLineOptions() As Beacon.ConfigValue
+		      Var Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
+		      Var CommandLineOptions() As Beacon.ConfigValue
 		      For Each Group As Beacon.ConfigGroup In Groups
 		        If Group.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
 		          Continue
 		        End If
 		        
-		        Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, Self.mIdentity, Self.mProfile)
+		        Var Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, Self.mIdentity, Self.mProfile)
 		        For Each Option As Beacon.ConfigValue In Options
 		          CommandLineOptions.AddRow(Option)
 		        Next
 		      Next
 		      
-		      Dim StartParams As Dictionary = Settings.Value("start-param")
+		      Var StartParams As Dictionary = Settings.Value("start-param")
 		      For Each ConfigValue As Beacon.ConfigValue In CommandLineOptions
-		        Dim Key As String = ConfigValue.Key
-		        Dim Value As String = ConfigValue.Value
+		        Var Key As String = ConfigValue.Key
+		        Var Value As String = ConfigValue.Value
 		        
 		        If Not StartParams.HasKey(Key) Then
 		          Continue
@@ -392,7 +392,7 @@ Implements Beacon.DeploymentEngine
 		        End If
 		      Next
 		      
-		      Dim GameSpecific As Dictionary = GameServer.Value("game_specific")
+		      Var GameSpecific As Dictionary = GameServer.Value("game_specific")
 		      Self.mLogFilePath = GameSpecific.Value("path") + "ShooterGame/Saved/Logs/ShooterGame.log"
 		      Self.mConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
 		      
@@ -421,7 +421,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
+		    Var Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.mErrored = True
@@ -448,7 +448,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
+		    Var Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.mErrored = True
@@ -477,7 +477,7 @@ Implements Beacon.DeploymentEngine
 		  
 		  Try
 		    
-		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
+		    Var Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.mErrored = True
@@ -485,11 +485,11 @@ Implements Beacon.DeploymentEngine
 		      Return
 		    End If
 		    
-		    Dim Data As Dictionary = Response.Value("data")
-		    Dim TokenDict As Dictionary = Data.Value("token")
-		    Dim Token As String = TokenDict.Value("token")
+		    Var Data As Dictionary = Response.Value("data")
+		    Var TokenDict As Dictionary = Data.Value("token")
+		    Var Token As String = TokenDict.Value("token")
 		    
-		    Dim Headers As New Dictionary
+		    Var Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		    Headers.Value("token") = Token
 		    
@@ -532,7 +532,7 @@ Implements Beacon.DeploymentEngine
 		  
 		  Try
 		    
-		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
+		    Var Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.mErrored = True
@@ -540,11 +540,11 @@ Implements Beacon.DeploymentEngine
 		      Return
 		    End If
 		    
-		    Dim Data As Dictionary = Response.Value("data")
-		    Dim TokenDict As Dictionary = Data.Value("token")
-		    Dim Token As String = TokenDict.Value("token")
+		    Var Data As Dictionary = Response.Value("data")
+		    Var TokenDict As Dictionary = Data.Value("token")
+		    Var Token As String = TokenDict.Value("token")
 		    
-		    Dim Headers As New Dictionary
+		    Var Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		    Headers.Value("token") = Token
 		    
@@ -655,10 +655,10 @@ Implements Beacon.DeploymentEngine
 		Private Sub DownloadGameIni()
 		  Self.mStatus = "Downloading Game.ini…"
 		  
-		  Dim Headers As New Dictionary
+		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim FilePath As String = Self.mConfigPath + "/Game.ini"
+		  Var FilePath As String = Self.mConfigPath + "/Game.ini"
 		  
 		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString() + "/gameservers/file_server/download?file=" + EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameIni, Nil, Headers)
 		End Sub
@@ -668,10 +668,10 @@ Implements Beacon.DeploymentEngine
 		Private Sub DownloadGameUserSettingsIni()
 		  Self.mStatus = "Downloading GameUserSettings.ini…"
 		  
-		  Dim Headers As New Dictionary
+		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim FilePath As String = Self.mConfigPath + "/GameUserSettings.ini"
+		  Var FilePath As String = Self.mConfigPath + "/GameUserSettings.ini"
 		  
 		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString() + "/gameservers/file_server/download?file=" + EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameUserSettingsIni, Nil, Headers)
 		End Sub
@@ -681,7 +681,7 @@ Implements Beacon.DeploymentEngine
 		Private Sub DownloadLogFile()
 		  Self.mStatus = "Downloading Log File…"
 		  
-		  Dim Headers As New Dictionary
+		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
 		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/file_server/download?file=" + EncodeURLComponent(Self.mLogFilePath), AddressOf Callback_DownloadLogFile, Nil, Headers)
@@ -698,10 +698,10 @@ Implements Beacon.DeploymentEngine
 		  
 		  Self.mStatus = "Enabling expert mode…"
 		  
-		  Dim Headers As New Dictionary
+		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim FormData As New Dictionary
+		  Var FormData As New Dictionary
 		  FormData.Value("category") = "general"
 		  FormData.Value("key") = "expertMode"
 		  FormData.Value("value") = "true"
@@ -740,10 +740,10 @@ Implements Beacon.DeploymentEngine
 		Private Sub MakeConfigBackup()
 		  Self.mStatus = "Making config backup…"
 		  
-		  Dim Headers As New Dictionary
+		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim FormData As New Dictionary
+		  Var FormData As New Dictionary
 		  FormData.Value("name") = "Beacon " + Self.mLabel
 		  
 		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/settings/sets", FormData, AddressOf Callback_MakeConfigBackup, Nil, Headers)
@@ -792,8 +792,8 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub SetError(Err As RuntimeException)
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
-		  Dim Reason As String
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		  Var Reason As String
 		  If Err.Reason <> "" Then
 		    Reason = Err.Reason
 		  ElseIf Err.Message <> "" Then
@@ -818,10 +818,10 @@ Implements Beacon.DeploymentEngine
 		  
 		  Self.mStatus = "Setting command line parameters…"
 		  
-		  Dim Headers As New Dictionary
+		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim FormData As New Dictionary
+		  Var FormData As New Dictionary
 		  FormData.Value("category") = "start-param"
 		  FormData.Value("key") = Self.mCommandLineChanges(0).Key
 		  FormData.Value("value") = Self.mCommandLineChanges(0).Value
@@ -839,10 +839,10 @@ Implements Beacon.DeploymentEngine
 		  
 		  Self.mStatus = "Starting server…"
 		  
-		  Dim Headers As New Dictionary
+		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim FormData As New Dictionary
+		  Var FormData As New Dictionary
 		  FormData.Value("message") = "Server started by Beacon (https://beaconapp.cc)"
 		  
 		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/restart", FormData, AddressOf Callback_ServerStart, Nil, Headers)
@@ -865,10 +865,10 @@ Implements Beacon.DeploymentEngine
 		Private Sub StopServer()
 		  Self.mStatus = "Stopping server…"
 		  
-		  Dim Headers As New Dictionary
+		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim FormData As New Dictionary
+		  Var FormData As New Dictionary
 		  FormData.Value("message") = "Server is being updated by Beacon (https://beaconapp.cc)"
 		  FormData.Value("stop_message") = Self.mStopMessage
 		  
@@ -880,10 +880,10 @@ Implements Beacon.DeploymentEngine
 		Private Sub UploadGameIni()
 		  Self.mStatus = "Uploading Game.ini…"
 		  
-		  Dim Headers As New Dictionary
+		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim Fields As New Dictionary
+		  Var Fields As New Dictionary
 		  Fields.Value("path") = Self.mConfigPath
 		  Fields.Value("file") = "Game.ini"
 		  
@@ -895,10 +895,10 @@ Implements Beacon.DeploymentEngine
 		Private Sub UploadGameUserSettingsIni()
 		  Self.mStatus = "Uploading GameUserSettings.ini…"
 		  
-		  Dim Headers As New Dictionary
+		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim Fields As New Dictionary
+		  Var Fields As New Dictionary
 		  Fields.Value("path") = Self.mConfigPath
 		  Fields.Value("file") = "GameUserSettings.ini"
 		  
@@ -908,15 +908,15 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub WaitNitradoIdle()
-		  Dim Now As DateTime = DateTime.Now
-		  Dim SecondsToWait As Double = Double.FromString(Beacon.Data.GetStringVariable("Nitrado Wait Seconds"))
+		  Var Now As DateTime = DateTime.Now
+		  Var SecondsToWait As Double = Double.FromString(Beacon.Data.GetStringVariable("Nitrado Wait Seconds"))
 		  SecondsToWait = SecondsToWait - (Now.SecondsFrom1970 - Self.mServerStopTime.SecondsFrom1970)
 		  If SecondsToWait < 10 Then // Don't need to be THAT precise
 		    Self.RunNextTask()
 		    Return
 		  End If
 		  
-		  Dim ResumeTime As DateTime = Now + New DateInterval(0, 0, 0, 0, 0, Floor(SecondsToWait), (SecondsToWait - Floor(SecondsToWait)) * 1000000000)
+		  Var ResumeTime As DateTime = Now + New DateInterval(0, 0, 0, 0, 0, Floor(SecondsToWait), (SecondsToWait - Floor(SecondsToWait)) * 1000000000)
 		  
 		  Self.mStatus = "Waiting per Nitrado recommendations. Will resume at " + ResumeTime.ToString(Locale.Current, DateTime.FormatStyles.None, DateTime.FormatStyles.Medium) + "…"
 		  Self.mWaitNitradoCallbackKey = CallLater.Schedule(SecondsToWait * 1000, AddressOf WaitNitradoIdle)
@@ -931,7 +931,7 @@ Implements Beacon.DeploymentEngine
 		    Self.mStatus = "Stopping server…"
 		  End If
 		  
-		  Dim Headers As New Dictionary
+		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers", AddressOf Callback_ServerStatus, Nil, Headers)
 		End Sub

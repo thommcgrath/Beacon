@@ -46,7 +46,7 @@ Implements Beacon.Blueprint
 		  Self.mMatureTime = Source.mMatureTime
 		  Self.mStats = Source.mStats.Clone
 		  
-		  Redim Self.mTags(-1)
+		  Self.mTags.ResizeTo(-1)
 		  For Each Tag As String In Source.mTags
 		    Self.mTags.AddRow(Tag)
 		  Next
@@ -157,8 +157,8 @@ Implements Beacon.Blueprint
 		    Return 1
 		  End If
 		  
-		  Dim SelfPath As String = Self.Path
-		  Dim OtherPath As String = Other.Path
+		  Var SelfPath As String = Self.Path
+		  Var OtherPath As String = Other.Path
 		  Return SelfPath.Compare(OtherPath, ComparisonOptions.CaseSensitive)
 		End Function
 	#tag EndMethod
@@ -199,7 +199,7 @@ Implements Beacon.Blueprint
 		    Return Self.MissingStatValue
 		  End If
 		  
-		  Dim Dict As Dictionary = Self.mStats.Value(Stat.Index)
+		  Var Dict As Dictionary = Self.mStats.Value(Stat.Index)
 		  Return Dict.Lookup(Key, Self.MissingStatValue)
 		End Function
 	#tag EndMethod
@@ -212,8 +212,8 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function Tags() As String()
-		  Dim Clone() As String
-		  Redim Clone(Self.mTags.LastRowIndex)
+		  Var Clone() As String
+		  Clone.ResizeTo(Self.mTags.LastRowIndex)
 		  For I As Integer = 0 To Self.mTags.LastRowIndex
 		    Clone(I) = Self.mTags(I)
 		  Next

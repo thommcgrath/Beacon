@@ -4,8 +4,8 @@ Inherits Beacon.Thread
 	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
 		Sub Run()
-		  Dim StartTime As Double = System.Microseconds
-		  Dim StartTriggered As Boolean
+		  Var StartTime As Double = System.Microseconds
+		  Var StartTriggered As Boolean
 		  
 		  Const DebugEventDelay = 1
 		  
@@ -13,12 +13,12 @@ Inherits Beacon.Thread
 		  If Self.mTryAsCSV Then
 		    #Pragma BreakOnExceptions False
 		    Try
-		      Dim CarriageReturn As String = Encodings.UTF8.Chr(13)
+		      Var CarriageReturn As String = Encodings.UTF8.Chr(13)
 		      
-		      Dim Characters() As String = Self.mContents.Trim.ReplaceLineEndings(CarriageReturn).Split("")
-		      Dim Lines() As Variant
-		      Dim ColumnBuffer(), Columns() As String
-		      Dim Started, InQuotes As Boolean
+		      Var Characters() As String = Self.mContents.Trim.ReplaceLineEndings(CarriageReturn).Split("")
+		      Var Lines() As Variant
+		      Var ColumnBuffer(), Columns() As String
+		      Var Started, InQuotes As Boolean
 		      For Each Character As String In Characters
 		        If Self.ShouldStop Then
 		          Return
@@ -43,15 +43,15 @@ Inherits Beacon.Thread
 		            End If
 		          ElseIf Character = "," Then
 		            Columns.AddRow(ColumnBuffer.Join(""))
-		            Redim ColumnBuffer(-1)
+		            ColumnBuffer.ResizeTo(-1)
 		            Started = False
 		          ElseIf Character = CarriageReturn Then
 		            // Next line
 		            Columns.AddRow(ColumnBuffer.Join(""))
 		            Lines.AddRow(Columns)
-		            Redim ColumnBuffer(-1)
+		            ColumnBuffer.ResizeTo(-1)
 		            Columns = Array("") // To create a new array
-		            Redim Columns(-1)
+		            Columns.ResizeTo(-1)
 		            Started = False
 		          Else
 		            ColumnBuffer.AddRow(Character)
@@ -61,15 +61,15 @@ Inherits Beacon.Thread
 		      Columns.AddRow(ColumnBuffer.Join(""))
 		      Lines.AddRow(Columns)
 		      
-		      Dim LastPushTime As Double = System.Microseconds
-		      Dim FoundSinceLastPush As Boolean
+		      Var LastPushTime As Double = System.Microseconds
+		      Var FoundSinceLastPush As Boolean
 		      
-		      Dim HeaderColumns() As String
+		      Var HeaderColumns() As String
 		      If Lines.LastRowIndex >= 0 Then
 		        HeaderColumns = Lines(0)
 		        Lines.RemoveRowAt(0)
 		      End If
-		      Dim PathColumnIdx, LabelColumnIdx, MaskColumnIdx, BlueprintColumnIdx, TagsColumnIndx, GroupColumnIdx As Integer
+		      Var PathColumnIdx, LabelColumnIdx, MaskColumnIdx, BlueprintColumnIdx, TagsColumnIndx, GroupColumnIdx As Integer
 		      PathColumnIdx = HeaderColumns.IndexOf("Path")
 		      LabelColumnIdx = HeaderColumns.IndexOf("Label")
 		      MaskColumnIdx = HeaderColumns.IndexOf("Availability Mask")
@@ -77,10 +77,10 @@ Inherits Beacon.Thread
 		      GroupColumnIdx = HeaderColumns.IndexOf("Group")
 		      BlueprintColumnIdx = HeaderColumns.IndexOf("Can Blueprint")
 		      
-		      Dim AllAvailabilityMask As UInt64 = Beacon.Maps.All.Mask
+		      Var AllAvailabilityMask As UInt64 = Beacon.Maps.All.Mask
 		      
 		      If PathColumnIdx = -1 Or LabelColumnIdx = -1 Then
-		        Dim Err As New UnsupportedFormatException
+		        Var Err As New UnsupportedFormatException
 		        Err.Message = "CSV import requires at least Path and Label columns. Make sure the data includes a header row."
 		        Raise Err
 		      End If
@@ -94,10 +94,10 @@ Inherits Beacon.Thread
 		          Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		        End If
 		        
-		        Dim Path As String = Columns(PathColumnIdx)
-		        Dim Label As String = Columns(LabelColumnIdx)
-		        Dim Availability As UInt64
-		        Dim Tags() As String
+		        Var Path As String = Columns(PathColumnIdx)
+		        Var Label As String = Columns(LabelColumnIdx)
+		        Var Availability As UInt64
+		        Var Tags() As String
 		        If MaskColumnIdx > -1 Then
 		          Availability = UInt64.FromString(Columns(MaskColumnIdx))
 		        Else
@@ -106,18 +106,18 @@ Inherits Beacon.Thread
 		        If TagsColumnIndx > -1 Then
 		          Tags = Columns(TagsColumnIndx).Split(",")
 		        ElseIf BlueprintColumnIdx > -1 Then
-		          Dim CanBlueprint As Boolean = If(Columns(BlueprintColumnIdx) = "True", True, False)
+		          Var CanBlueprint As Boolean = If(Columns(BlueprintColumnIdx) = "True", True, False)
 		          If CanBlueprint Then
 		            Tags.AddRow("blueprintable")
 		          End If
 		        End If
 		        
-		        Dim Category As String = "engrams"
+		        Var Category As String = "engrams"
 		        If GroupColumnIdx > -1 Then
 		          Category = Columns(GroupColumnIdx)
 		        End If
 		        
-		        Dim Blueprint As Beacon.MutableBlueprint
+		        Var Blueprint As Beacon.MutableBlueprint
 		        Select Case Category
 		        Case Beacon.CategoryEngrams
 		          Blueprint = New Beacon.MutableEngram(Path, New v4UUID)
@@ -159,12 +159,12 @@ Inherits Beacon.Thread
 		  
 		  Const QuotationCharacters = "'‘’""“”"
 		  
-		  Dim Regex As New Regex
+		  Var Regex As New Regex
 		  Regex.Options.CaseSensitive = False
 		  Regex.SearchPattern = "(giveitem|spawndino)\s+([" + QuotationCharacters + "]Blueprint[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "]BlueprintGeneratedClass[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)_C[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "])"
 		  
-		  Dim Match As RegexMatch = Regex.Search(Self.mContents)
-		  Dim Paths As New Dictionary
+		  Var Match As RegexMatch = Regex.Search(Self.mContents)
+		  Var Paths As New Dictionary
 		  Do
 		    If Self.ShouldStop Then
 		      Return
@@ -178,8 +178,8 @@ Inherits Beacon.Thread
 		      Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		    End If
 		    
-		    Dim Command As String = Match.SubExpressionString(1)
-		    Dim Path As String
+		    Var Command As String = Match.SubExpressionString(1)
+		    Var Path As String
 		    If Match.SubExpressionCount >= 3 And Match.SubExpressionString(3) <> "" Then
 		      Path = Match.SubExpressionString(3)
 		    ElseIf Match.SubExpressionCount >= 5 And Match.SubExpressionString(5) <> "" Then
@@ -206,9 +206,9 @@ Inherits Beacon.Thread
 		    Return
 		  End If
 		  
-		  Dim Keys() As Variant = Paths.Keys
-		  Dim LastPushTime As Double = System.Microseconds
-		  Dim FoundSinceLastPush As Boolean
+		  Var Keys() As Variant = Paths.Keys
+		  Var LastPushTime As Double = System.Microseconds
+		  Var FoundSinceLastPush As Boolean
 		  For Each Key As String In Keys
 		    If Self.ShouldStop Then
 		      Return
@@ -219,9 +219,9 @@ Inherits Beacon.Thread
 		      Self.mPendingTriggers.AddRow(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		    End If
 		    
-		    Dim Command As String = Paths.Value(Key)
-		    Dim Path As String = Key
-		    Dim Blueprint As Beacon.Blueprint
+		    Var Command As String = Paths.Value(Key)
+		    Var Path As String = Key
+		    Var Blueprint As Beacon.Blueprint
 		    Select Case Command
 		    Case "giveitem"
 		      Blueprint = Beacon.Data.GetEngramByPath(Path)
@@ -269,8 +269,8 @@ Inherits Beacon.Thread
 
 	#tag Method, Flags = &h0
 		Function Blueprints(ClearList As Boolean) As Beacon.Blueprint()
-		  Dim Arr() As Beacon.Blueprint
-		  Redim Arr(Self.mBlueprints.LastRowIndex)
+		  Var Arr() As Beacon.Blueprint
+		  Arr.ResizeTo(Self.mBlueprints.LastRowIndex)
 		  
 		  Self.mBlueprintsLock.Enter
 		  
@@ -279,7 +279,7 @@ Inherits Beacon.Thread
 		  Next
 		  
 		  If ClearList Then
-		    Redim Self.mBlueprints(-1)
+		    Self.mBlueprints.ResizeTo(-1)
 		  End If
 		  
 		  Self.mBlueprintsLock.Leave
@@ -321,7 +321,7 @@ Inherits Beacon.Thread
 		  Self.mContents = Content
 		  Self.mTryAsCSV = TryCSV
 		  Self.mBlueprintsLock.Enter
-		  Redim Self.mBlueprints(-1)
+		  Self.mBlueprints.ResizeTo(-1)
 		  Self.mBlueprintsLock.Leave
 		  Self.Start
 		End Sub

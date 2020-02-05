@@ -5,7 +5,7 @@ Inherits Beacon.ConfigGroup
 		Sub DetectIssues(Document As Beacon.Document, Issues() As Beacon.Issue)
 		  #Pragma Unused Document
 		  
-		  Dim ConfigName As String = ConfigKey
+		  Var ConfigName As String = ConfigKey
 		  For I As Integer = 0 To Self.mCosts.LastRowIndex
 		    If Self.mCosts(I).IsValid Then
 		      Continue
@@ -28,7 +28,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused SourceDocument
 		  
 		  For Each Cost As Beacon.CraftingCost In Self.mCosts
-		    Dim StringValue As String = Cost.StringValue
+		    Var StringValue As String = Cost.StringValue
 		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts", StringValue))
 		  Next
 		End Sub
@@ -40,9 +40,9 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Document
 		  
 		  If Dict.HasKey("Costs") Then
-		    Dim Costs() As Variant = Dict.Value("Costs")
+		    Var Costs() As Variant = Dict.Value("Costs")
 		    For Each CostData As Dictionary In Costs
-		      Dim Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(CostData)
+		      Var Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(CostData)
 		      If Cost <> Nil Then
 		        Self.mCosts.AddRow(Cost)
 		      End If
@@ -55,7 +55,7 @@ Inherits Beacon.ConfigGroup
 		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
 		  #Pragma Unused Document
 		  
-		  Dim Costs() As Dictionary
+		  Var Costs() As Dictionary
 		  For Each Cost As Beacon.CraftingCost In Self.mCosts
 		    Costs.AddRow(Cost.Export)
 		  Next
@@ -70,7 +70,7 @@ Inherits Beacon.ConfigGroup
 		    Return
 		  End If
 		  
-		  Dim Idx As Integer = Self.IndexOf(Cost)
+		  Var Idx As Integer = Self.IndexOf(Cost)
 		  If Idx = -1 Then
 		    Self.mCosts.AddRow(Cost)
 		    Self.Modified = True
@@ -94,9 +94,9 @@ Inherits Beacon.ConfigGroup
 		    Return Nil
 		  End If
 		  
-		  Dim Values As Variant = ParsedData.Value("ConfigOverrideItemCraftingCosts")
-		  Dim ValuesInfo As Introspection.TypeInfo = Introspection.GetType(Values)
-		  Dim Overrides() As Variant
+		  Var Values As Variant = ParsedData.Value("ConfigOverrideItemCraftingCosts")
+		  Var ValuesInfo As Introspection.TypeInfo = Introspection.GetType(Values)
+		  Var Overrides() As Variant
 		  If ValuesInfo.FullName = "Object()" Then
 		    Overrides = Values
 		  ElseIf ValuesInfo.FullName = "Dictionary" Then
@@ -105,9 +105,9 @@ Inherits Beacon.ConfigGroup
 		    Return Nil
 		  End If
 		  
-		  Dim Config As New BeaconConfigs.CraftingCosts
+		  Var Config As New BeaconConfigs.CraftingCosts
 		  For Each Dict As Dictionary In Overrides
-		    Dim Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromConfig(Dict)
+		    Var Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromConfig(Dict)
 		    If Cost <> Nil Then
 		      Config.Append(Cost)
 		    End If
@@ -139,7 +139,7 @@ Inherits Beacon.ConfigGroup
 		    Return
 		  End If
 		  
-		  Dim Idx As Integer = Self.IndexOf(Cost)
+		  Var Idx As Integer = Self.IndexOf(Cost)
 		  If Idx = -1 Then
 		    Self.mCosts.AddRowAt(Index, Cost)
 		    Self.Modified = True
@@ -180,12 +180,6 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Operator_Redim(NewBound As Integer)
-		  Redim Self.mCosts(NewBound)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Operator_Subscript(Index As Integer) As Beacon.CraftingCost
 		  Return Self.mCosts(Index)
 		End Function
@@ -204,7 +198,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub Remove(Cost As Beacon.CraftingCost)
-		  Dim Idx As Integer = Self.IndexOf(Cost)
+		  Var Idx As Integer = Self.IndexOf(Cost)
 		  If Idx > -1 Then
 		    Self.Remove(Idx)
 		  End If
@@ -215,6 +209,12 @@ Inherits Beacon.ConfigGroup
 		Sub Remove(Index As Integer)
 		  Self.mCosts.RemoveRowAt(Index)
 		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ResizeTo(NewBound As Integer)
+		  Self.mCosts.ResizeTo(NewBound)
 		End Sub
 	#tag EndMethod
 

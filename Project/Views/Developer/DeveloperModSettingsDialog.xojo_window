@@ -287,7 +287,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As Window, WorkshopMod As BeaconAPI.WorkshopMod)
-		  Dim Win As New DeveloperModSettingsDialog
+		  Var Win As New DeveloperModSettingsDialog
 		  Win.WorkshopMod = WorkshopMod
 		  Win.PullURLField.Value = WorkshopMod.PullURL
 		  Win.ShowModalWithin(Parent.TrueWindow)
@@ -306,9 +306,9 @@ End
 	#tag Event
 		Sub Action()
 		  Self.WorkshopMod.PullURL = Self.PullURLField.Value
-		  Dim Payload As String = Beacon.GenerateJSON(Self.WorkshopMod.AsDictionary, False)
+		  Var Payload As String = Beacon.GenerateJSON(Self.WorkshopMod.AsDictionary, False)
 		  
-		  Dim Request As New BeaconAPI.Request("mod", "POST", Payload, "application/json", AddressOf APICallback_SaveMod)
+		  Var Request As New BeaconAPI.Request("mod", "POST", Payload, "application/json", AddressOf APICallback_SaveMod)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.Socket.Start(Request)
 		End Sub
@@ -324,7 +324,7 @@ End
 #tag Events PullURLField
 	#tag Event
 		Sub TextChange()
-		  Dim URL As String = Me.Value.Trim
+		  Var URL As String = Me.Value.Trim
 		  ActionButton.Enabled = URL = "" Or URL.Left(8) = "https://" Or URL.Left(7) = "http://"
 		End Sub
 	#tag EndEvent

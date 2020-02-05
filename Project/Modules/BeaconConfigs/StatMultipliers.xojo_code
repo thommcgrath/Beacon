@@ -7,43 +7,43 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  
 		  For Each Entry As DictionaryEntry In Self.PlayerStats
-		    Dim Stat As Beacon.Stat = Beacon.Stats.Named(Entry.Key)
-		    Dim Dict As Dictionary = Entry.Value
+		    Var Stat As Beacon.Stat = Beacon.Stats.Named(Entry.Key)
+		    Var Dict As Dictionary = Entry.Value
 		    
 		    If Dict.HasKey("Base") And Stat.PlayerBaseCapped = False Then
-		      Dim Multiplier As Double = Dict.Value("Base")
+		      Var Multiplier As Double = Dict.Value("Base")
 		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PlayerBaseStatMultipliers[" + Str(Stat.Index, "0") + "]", Multiplier.PrettyText))
 		    End If
 		    If Dict.HasKey("PerLevel") And Stat.PlayerPerLevelEditable = True Then
-		      Dim Multiplier As Double = Dict.Value("PerLevel")
+		      Var Multiplier As Double = Dict.Value("PerLevel")
 		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_Player[" + Str(Stat.Index, "0") + "]", Multiplier.PrettyText))
 		    End If
 		  Next
 		  
 		  For Each Entry As DictionaryEntry In Self.TamedStats
-		    Dim Stat As Beacon.Stat = Beacon.Stats.Named(Entry.Key)
-		    Dim Dict As Dictionary = Entry.Value
+		    Var Stat As Beacon.Stat = Beacon.Stats.Named(Entry.Key)
+		    Var Dict As Dictionary = Entry.Value
 		    
 		    If Dict.HasKey("PerLevel") Then
-		      Dim Multiplier As Double = Dict.Value("PerLevel")
+		      Var Multiplier As Double = Dict.Value("PerLevel")
 		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_DinoTamed[" + Str(Stat.Index, "0") + "]", Multiplier.PrettyText))
 		    End If
 		    If Dict.HasKey("Add") Then
-		      Dim Multiplier As Double = Dict.Value("Add")
+		      Var Multiplier As Double = Dict.Value("Add")
 		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_DinoTamed_Add[" + Str(Stat.Index, "0") + "]", Multiplier.PrettyText))
 		    End If
 		    If Dict.HasKey("Affinity") Then
-		      Dim Multiplier As Double = Dict.Value("Affinity")
+		      Var Multiplier As Double = Dict.Value("Affinity")
 		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_DinoTamed_Affinity[" + Str(Stat.Index, "0") + "]", Multiplier.PrettyText))
 		    End If
 		  Next
 		  
 		  For Each Entry As DictionaryEntry In Self.WildStats
-		    Dim Stat As Beacon.Stat = Beacon.Stats.Named(Entry.Key)
-		    Dim Dict As Dictionary = Entry.Value
+		    Var Stat As Beacon.Stat = Beacon.Stats.Named(Entry.Key)
+		    Var Dict As Dictionary = Entry.Value
 		    
 		    If Dict.HasKey("PerLevel") Then
-		      Dim Multiplier As Double = Dict.Value("PerLevel")
+		      Var Multiplier As Double = Dict.Value("PerLevel")
 		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PerLevelStatsMultiplier_DinoWild[" + Str(Stat.Index, "0") + "]", Multiplier.PrettyText))
 		    End If
 		  Next
@@ -105,16 +105,16 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
-		  Dim Config As New BeaconConfigs.StatMultipliers()
-		  Dim Stats() As Beacon.Stat = Beacon.Stats.All
+		  Var Config As New BeaconConfigs.StatMultipliers()
+		  Var Stats() As Beacon.Stat = Beacon.Stats.All
 		  
 		  For Each Stat As Beacon.Stat In Stats
-		    Dim PlayerBaseKey As String = "PlayerBaseStatMultipliers[" + Str(Stat.Index, "0") + "]"
-		    Dim PlayerPerLevelKey As String = "PerLevelStatsMultiplier_Player[" + Str(Stat.Index, "0") + "]"
-		    Dim TamedPerLevelKey As String = "PerLevelStatsMultiplier_DinoTamed[" + Str(Stat.Index, "0") + "]"
-		    Dim TamedAddKey As String = "PerLevelStatsMultiplier_DinoTamed_Add[" + Str(Stat.Index, "0") + "]"
-		    Dim TamedAffinityKey As String = "PerLevelStatsMultiplier_DinoTamed_Affinity[" + Str(Stat.Index, "0") + "]"
-		    Dim WildPerLevelKey As String = "PerLevelStatsMultiplier_DinoWild[" + Str(Stat.Index, "0") + "]"
+		    Var PlayerBaseKey As String = "PlayerBaseStatMultipliers[" + Str(Stat.Index, "0") + "]"
+		    Var PlayerPerLevelKey As String = "PerLevelStatsMultiplier_Player[" + Str(Stat.Index, "0") + "]"
+		    Var TamedPerLevelKey As String = "PerLevelStatsMultiplier_DinoTamed[" + Str(Stat.Index, "0") + "]"
+		    Var TamedAddKey As String = "PerLevelStatsMultiplier_DinoTamed_Add[" + Str(Stat.Index, "0") + "]"
+		    Var TamedAffinityKey As String = "PerLevelStatsMultiplier_DinoTamed_Affinity[" + Str(Stat.Index, "0") + "]"
+		    Var WildPerLevelKey As String = "PerLevelStatsMultiplier_DinoWild[" + Str(Stat.Index, "0") + "]"
 		    
 		    If Stat.PlayerBaseCapped = False Then
 		      Config.PlayerBaseMultiplier(Stat) = ParsedData.DoubleValue(PlayerBaseKey, 1.0, True)
@@ -138,7 +138,7 @@ Inherits Beacon.ConfigGroup
 		Function PlayerBaseMultiplier(Stat As Beacon.Stat) As Double
 		  If Self.PlayerStats.HasKey(Stat.Key) Then
 		    Try
-		      Dim Dict As Dictionary = Self.PlayerStats.Value(Stat.Key)
+		      Var Dict As Dictionary = Self.PlayerStats.Value(Stat.Key)
 		      Return Dict.Lookup("Base", 1.0)
 		    Catch Err As RuntimeException
 		    End Try
@@ -187,7 +187,7 @@ Inherits Beacon.ConfigGroup
 		Function PlayerPerLevelMultiplier(Stat As Beacon.Stat) As Double
 		  If Self.PlayerStats.HasKey(Stat.Key) Then
 		    Try
-		      Dim Dict As Dictionary = Self.PlayerStats.Value(Stat.Key)
+		      Var Dict As Dictionary = Self.PlayerStats.Value(Stat.Key)
 		      Return Dict.Lookup("PerLevel", 1.0)
 		    Catch Err As RuntimeException
 		    End Try
@@ -236,7 +236,7 @@ Inherits Beacon.ConfigGroup
 		Function TamedAddMultiplier(Stat As Beacon.Stat) As Double
 		  If Self.TamedStats.HasKey(Stat.Key) Then
 		    Try
-		      Dim Dict As Dictionary = Self.TamedStats.Value(Stat.Key)
+		      Var Dict As Dictionary = Self.TamedStats.Value(Stat.Key)
 		      Return Dict.Lookup("Add", Stat.TamedAddDefault)
 		    Catch Err As RuntimeException
 		    End Try
@@ -285,7 +285,7 @@ Inherits Beacon.ConfigGroup
 		Function TamedAffinityMultiplier(Stat As Beacon.Stat) As Double
 		  If Self.TamedStats.HasKey(Stat.Key) Then
 		    Try
-		      Dim Dict As Dictionary = Self.TamedStats.Value(Stat.Key)
+		      Var Dict As Dictionary = Self.TamedStats.Value(Stat.Key)
 		      Return Dict.Lookup("Affinity", Stat.TamedAffinityDefault)
 		    Catch Err As RuntimeException
 		    End Try
@@ -334,7 +334,7 @@ Inherits Beacon.ConfigGroup
 		Function TamedPerLevelMultiplier(Stat As Beacon.Stat) As Double
 		  If Self.TamedStats.HasKey(Stat.Key) Then
 		    Try
-		      Dim Dict As Dictionary = Self.TamedStats.Value(Stat.Key)
+		      Var Dict As Dictionary = Self.TamedStats.Value(Stat.Key)
 		      Return Dict.Lookup("PerLevel", Stat.TamedDefault)
 		    Catch Err As RuntimeException
 		    End Try
@@ -383,7 +383,7 @@ Inherits Beacon.ConfigGroup
 		Function WildPerLevelMultiplier(Stat As Beacon.Stat) As Double
 		  If Self.WildStats.HasKey(Stat.Key) Then
 		    Try
-		      Dim Dict As Dictionary = Self.WildStats.Value(Stat.Key)
+		      Var Dict As Dictionary = Self.WildStats.Value(Stat.Key)
 		      Return Dict.Lookup("PerLevel", Stat.WildDefault)
 		    Catch Err As RuntimeException
 		    End Try

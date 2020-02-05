@@ -2738,14 +2738,14 @@ End
 		Sub Resize(Initial As Boolean)
 		  #Pragma Unused Initial
 		  
-		  Dim CreatureAvailableWidth As Integer = Self.Width - 118
-		  Dim CreatureGroupWidth As Integer = Floor(CreatureAvailableWidth / 4)
-		  Dim CreatureRemainder As Integer = CreatureAvailableWidth - (CreatureGroupWidth * 4)
+		  Var CreatureAvailableWidth As Integer = Self.Width - 118
+		  Var CreatureGroupWidth As Integer = Floor(CreatureAvailableWidth / 4)
+		  Var CreatureRemainder As Integer = CreatureAvailableWidth - (CreatureGroupWidth * 4)
 		  
-		  Dim FirstWidth As Integer = CreatureGroupWidth + If(CreatureRemainder > 0, 1, 0)
-		  Dim SecondWidth As Integer = CreatureGroupWidth + If(CreatureRemainder > 1, 1, 0)
-		  Dim ThirdWidth As Integer = CreatureGroupWidth + If(CreatureRemainder > 2, 1, 0)
-		  Dim FourthWidth As Integer = CreatureGroupWidth
+		  Var FirstWidth As Integer = CreatureGroupWidth + If(CreatureRemainder > 0, 1, 0)
+		  Var SecondWidth As Integer = CreatureGroupWidth + If(CreatureRemainder > 1, 1, 0)
+		  Var ThirdWidth As Integer = CreatureGroupWidth + If(CreatureRemainder > 2, 1, 0)
+		  Var FourthWidth As Integer = CreatureGroupWidth
 		  
 		  Self.WildCreatureStats.Width = FirstWidth
 		  Self.TamedCreatureStats.Left = Self.WildCreatureStats.Left + FirstWidth
@@ -2775,8 +2775,8 @@ End
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.StatMultipliers
 		  Static ConfigName As String = BeaconConfigs.StatMultipliers.ConfigName
 		  
-		  Dim Document As Beacon.Document = Self.Document
-		  Dim Config As BeaconConfigs.StatMultipliers
+		  Var Document As Beacon.Document = Self.Document
+		  Var Config As BeaconConfigs.StatMultipliers
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.StatMultipliers(Self.mConfigRef.Value)
@@ -2808,8 +2808,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim Creature As Beacon.Creature = Self.CreatureMenu.RowTagAt(Self.CreatureMenu.SelectedRowIndex)
-		  Dim Config As BeaconConfigs.StatMultipliers = Self.Config(False)
+		  Var Creature As Beacon.Creature = Self.CreatureMenu.RowTagAt(Self.CreatureMenu.SelectedRowIndex)
+		  Var Config As BeaconConfigs.StatMultipliers = Self.Config(False)
 		  
 		  Self.WildCreatureStats.UpdateFigures(Beacon.Creature.KeyWild, Config, Creature, OnlyStatIndex, Self.SettingUp)
 		  Self.TamedCreatureStats.UpdateFigures(Beacon.Creature.KeyTamed, Config, Creature, OnlyStatIndex, Self.SettingUp)
@@ -2820,9 +2820,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdatePlayerUI(OnlyStatIndex As Integer = -1)
-		  Dim Stats() As Beacon.Stat = Beacon.Stats.All
-		  Dim Config As BeaconConfigs.StatMultipliers = Self.Config(False)
-		  Dim Focus As RectControl = Self.Focus
+		  Var Stats() As Beacon.Stat = Beacon.Stats.All
+		  Var Config As BeaconConfigs.StatMultipliers = Self.Config(False)
+		  Var Focus As RectControl = Self.Focus
 		  If Self.SettingUp Then
 		    Focus = Nil
 		  End If
@@ -2831,15 +2831,15 @@ End
 		      Continue
 		    End If
 		    
-		    Dim BaseField As TextField = PlayerBaseField(Stat.Index)
-		    Dim BaseLabel As Label = PlayerBaseLabel(Stat.Index)
-		    Dim PerLevelAmountLabel As Label = PlayerPerLevelAmountLabel(Stat.Index)
-		    Dim PerLevelMultiplierField As TextField = PlayerPerLevelMultiplierField(Stat.Index)
-		    Dim PerLevelMultiplierLabel As Label = PlayerPerLevelMultiplierLabel(Stat.Index)
-		    Dim PerLevelComputedLabel As Label = PlayerPerLevelComputedLabel(Stat.Index)
+		    Var BaseField As TextField = PlayerBaseField(Stat.Index)
+		    Var BaseLabel As Label = PlayerBaseLabel(Stat.Index)
+		    Var PerLevelAmountLabel As Label = PlayerPerLevelAmountLabel(Stat.Index)
+		    Var PerLevelMultiplierField As TextField = PlayerPerLevelMultiplierField(Stat.Index)
+		    Var PerLevelMultiplierLabel As Label = PlayerPerLevelMultiplierLabel(Stat.Index)
+		    Var PerLevelComputedLabel As Label = PlayerPerLevelComputedLabel(Stat.Index)
 		    
 		    If BaseField <> Nil And Focus <> BaseField Then
-		      Dim BaseAmount As Double = Stat.PlayerBase
+		      Var BaseAmount As Double = Stat.PlayerBase
 		      If Not Stat.PlayerBaseCapped Then
 		        BaseAmount = BaseAmount * Config.PlayerBaseMultiplier(Stat)
 		      End If
@@ -2859,7 +2859,7 @@ End
 		    End If
 		    
 		    If PerLevelComputedLabel <> Nil Then
-		      Dim PerLevelAmount As Double = Stat.PlayerPerLevelAmount * Config.PlayerPerLevelMultiplier(Stat)
+		      Var PerLevelAmount As Double = Stat.PlayerPerLevelAmount * Config.PlayerPerLevelMultiplier(Stat)
 		      PerLevelComputedLabel.Value = "= " + CreatureStatContainer.FormatStat(PerLevelAmount) + If(Stat.IsPercentage, "%", "")
 		    End If
 		  Next
@@ -2881,13 +2881,13 @@ End
 		    Return
 		  End If
 		  
-		  Dim Stat As Beacon.Stat = Beacon.Stats.WithIndex(Index)
+		  Var Stat As Beacon.Stat = Beacon.Stats.WithIndex(Index)
 		  If IsNull(Stat) Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Dim Multiplier As Double = CDbl(Me.Value)
+		  Var Multiplier As Double = CDbl(Me.Value)
 		  Self.Config(True).PlayerPerLevelMultiplier(Stat) = Multiplier
 		  Self.Changed = True
 		  Self.SettingUp = False
@@ -2902,14 +2902,14 @@ End
 		    Return
 		  End If
 		  
-		  Dim Stat As Beacon.Stat = Beacon.Stats.WithIndex(Index)
+		  Var Stat As Beacon.Stat = Beacon.Stats.WithIndex(Index)
 		  If IsNull(Stat) Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Dim DesiredBase As Double = CDbl(Me.Value)
-		  Dim Multiplier As Double = DesiredBase / Stat.PlayerBase
+		  Var DesiredBase As Double = CDbl(Me.Value)
+		  Var Multiplier As Double = DesiredBase / Stat.PlayerBase
 		  Self.Config(True).PlayerBaseMultiplier(Stat) = Multiplier
 		  Self.Changed = True
 		  Self.SettingUp = False
@@ -2930,14 +2930,14 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Dim Health As Beacon.Stat = Beacon.Stats.Health
-		  Dim Creatures() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategoryCreatures, "", Self.Document.Mods, "")
+		  Var Health As Beacon.Stat = Beacon.Stats.Health
+		  Var Creatures() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategoryCreatures, "", Self.Document.Mods, "")
 		  For Each Blueprint As Beacon.Blueprint In Creatures
 		    If Not Blueprint IsA Beacon.Creature Then
 		      Continue
 		    End If
 		    
-		    Dim Creature As Beacon.Creature = Beacon.Creature(Blueprint)
+		    Var Creature As Beacon.Creature = Beacon.Creature(Blueprint)
 		    If Creature.StatBaseValue(Health) = Beacon.Creature.MissingStatValue Then
 		      Continue
 		    End If

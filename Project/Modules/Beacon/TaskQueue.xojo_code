@@ -16,7 +16,7 @@ Protected Class TaskQueue
 
 	#tag Method, Flags = &h1
 		Protected Sub ClearTasks()
-		  Redim Self.mTasks(-1)
+		  Self.mTasks.ResizeTo(-1)
 		  Self.mNextIndex = 0
 		End Sub
 	#tag EndMethod
@@ -29,7 +29,7 @@ Protected Class TaskQueue
 
 	#tag Method, Flags = &h1
 		Protected Sub InsertTask(Tasks() As Beacon.TaskQueue.QueueItem)
-		  Dim TargetIndex As Integer = Self.mNextIndex
+		  Var TargetIndex As Integer = Self.mNextIndex
 		  For Each Task As Beacon.TaskQueue.QueueItem In Tasks
 		    If Task <> Nil Then
 		      Self.mTasks.AddRowAt(TargetIndex, Task)
@@ -56,7 +56,7 @@ Protected Class TaskQueue
 		    Return
 		  End If
 		  
-		  Dim Task As Beacon.TaskQueue.QueueItem = Self.mTasks(Self.mNextIndex)
+		  Var Task As Beacon.TaskQueue.QueueItem = Self.mTasks(Self.mNextIndex)
 		  Self.mNextIndex = Self.mNextIndex + 1
 		  Task.Invoke()
 		End Sub

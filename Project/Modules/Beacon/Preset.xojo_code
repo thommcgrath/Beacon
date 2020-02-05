@@ -3,7 +3,7 @@ Protected Class Preset
 Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Function ActiveModifierIDs() As String()
-		  Dim IDs() As String
+		  Var IDs() As String
 		  For Each Entry As DictionaryEntry In Self.mModifierValues
 		    IDs.AddRow(Entry.Key)
 		  Next
@@ -23,7 +23,7 @@ Implements Beacon.Countable
 		    Return 1.0
 		  End If
 		  
-		  Dim Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
+		  Var Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
 		  Return Dict.Lookup("Blueprint", 1.0)
 		End Function
 	#tag EndMethod
@@ -51,11 +51,11 @@ Implements Beacon.Countable
 		  
 		  Self.mModifierValues = New Dictionary
 		  For Each Entry As DictionaryEntry In Source.mModifierValues
-		    Dim Dict As Dictionary = Entry.Value
+		    Var Dict As Dictionary = Entry.Value
 		    Self.mModifierValues.Value(Entry.Key) = Dict.Clone
 		  Next
 		  
-		  Redim Self.mContents(Source.mContents.LastRowIndex)
+		  Self.mContents.ResizeTo(Source.mContents.LastRowIndex)
 		  For I As Integer = 0 To Self.mContents.LastRowIndex
 		    Self.mContents(I) = New Beacon.PresetEntry(Source.mContents(I))
 		  Next
@@ -76,7 +76,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Shared Function FromDictionary(Dict As Dictionary) As Beacon.Preset
-		  Dim Preset As New Beacon.Preset
+		  Var Preset As New Beacon.Preset
 		  If Dict.HasKey("ID") Then
 		    // Don't use lookup here to prevent creating the UUID unless necessary
 		    Preset.mPresetID = Dict.Value("ID")
@@ -90,24 +90,24 @@ Implements Beacon.Countable
 		  Preset.mMaxItems = Dict.Lookup("Max", Preset.MaxItems)
 		  
 		  If Dict.HasKey("Entries") Then
-		    Dim Contents() As Variant = Dict.Value("Entries")
+		    Var Contents() As Variant = Dict.Value("Entries")
 		    For Each EntryDict As Dictionary In Contents
-		      Dim Entry As Beacon.PresetEntry = Beacon.PresetEntry.ImportFromBeacon(EntryDict)
+		      Var Entry As Beacon.PresetEntry = Beacon.PresetEntry.ImportFromBeacon(EntryDict)
 		      If Entry <> Nil Then
 		        Preset.mContents.AddRow(Entry)
 		      End If
 		    Next
 		  ElseIf Dict.HasKey("Contents") Then
-		    Dim Contents As Dictionary = Dict.Value("Contents")
+		    Var Contents As Dictionary = Dict.Value("Contents")
 		    If Contents <> Nil Then
 		      For Each Set As DictionaryEntry In Contents
-		        Dim ValidForIsland As Boolean = (Set.Key = "Common" Or Set.Key = "Island")
-		        Dim ValidForScorched As Boolean = (Set.Key = "Common" Or Set.Key = "Scorched")
-		        Dim Items() As Variant = Set.Value
+		        Var ValidForIsland As Boolean = (Set.Key = "Common" Or Set.Key = "Island")
+		        Var ValidForScorched As Boolean = (Set.Key = "Common" Or Set.Key = "Scorched")
+		        Var Items() As Variant = Set.Value
 		        For Each Item As Dictionary In Items
-		          Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Item)
+		          Var Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Item)
 		          If Entry <> Nil Then
-		            Dim Child As New Beacon.PresetEntry(Entry)
+		            Var Child As New Beacon.PresetEntry(Entry)
 		            Child.ValidForMap(Beacon.Maps.TheIsland) = ValidForIsland
 		            Child.ValidForMap(Beacon.Maps.ScorchedEarth) = ValidForScorched
 		            Preset.mContents.AddRow(Child)
@@ -119,14 +119,14 @@ Implements Beacon.Countable
 		  
 		  If Dict.HasKey("Modifier Definitions") Then
 		    // Only import the unknown ones. All get exported anyway.
-		    Dim Definitions() As Variant = Dict.Value("Modifier Definitions")
+		    Var Definitions() As Variant = Dict.Value("Modifier Definitions")
 		    For Each Definition As Dictionary In Definitions
 		      If Not Definition.HasKey("ModifierID") Then
 		        Continue
 		      End If
 		      
-		      Dim ModifierID As String = Definition.Value("ModifierID")
-		      Dim Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
+		      Var ModifierID As String = Definition.Value("ModifierID")
+		      Var Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
 		      If Modifier = Nil Then
 		        Modifier = Beacon.PresetModifier.FromDictionary(Definition)
 		        If Modifier <> Nil Then
@@ -137,26 +137,26 @@ Implements Beacon.Countable
 		  End If
 		  
 		  If Dict.HasKey("Modifiers") Then
-		    Dim Modifiers As Dictionary = Dict.Value("Modifiers")
+		    Var Modifiers As Dictionary = Dict.Value("Modifiers")
 		    For Each Set As DictionaryEntry In Modifiers
-		      Dim Item As Dictionary = Set.Value
-		      Dim ModifierID As String = Set.Key
-		      Dim MinQuality As Integer = If(Item.HasKey("MinQuality"), Item.Value("MinQuality"), Item.Lookup("Quality", 0))
-		      Dim MaxQuality As Integer = If(Item.HasKey("MaxQuality"), Item.Value("MaxQuality"), Item.Lookup("Quality", 0))
-		      Dim Quantity As Double = Item.Lookup("Quantity", 1.0)
-		      Dim Blueprint As Double = Item.Lookup("Blueprint", 1.0)
+		      Var Item As Dictionary = Set.Value
+		      Var ModifierID As String = Set.Key
+		      Var MinQuality As Integer = If(Item.HasKey("MinQuality"), Item.Value("MinQuality"), Item.Lookup("Quality", 0))
+		      Var MaxQuality As Integer = If(Item.HasKey("MaxQuality"), Item.Value("MaxQuality"), Item.Lookup("Quality", 0))
+		      Var Quantity As Double = Item.Lookup("Quantity", 1.0)
+		      Var Blueprint As Double = Item.Lookup("Blueprint", 1.0)
 		      
 		      If MinQuality = 0 And MaxQuality = 0 And Quantity = 1 And Blueprint = 1 Then
 		        Continue
 		      End If
 		      
-		      Dim IDs() As String = SourceKindToModifierID(ModifierID)
+		      Var IDs() As String = SourceKindToModifierID(ModifierID)
 		      If IDs.LastRowIndex = -1 Then
 		        IDs.AddRow(ModifierID)
 		      End If
 		      
 		      For Each ID As String In IDs
-		        Dim ModifierDict As New Dictionary
+		        Var ModifierDict As New Dictionary
 		        ModifierDict.Value("MinQuality") = MinQuality
 		        ModifierDict.Value("MaxQuality") = MaxQuality
 		        ModifierDict.Value("Quantity") = Quantity
@@ -177,12 +177,12 @@ Implements Beacon.Countable
 		  End If
 		  
 		  Try
-		    Dim Bytes As String = File.Read(Encodings.UTF8)
+		    Var Bytes As String = File.Read(Encodings.UTF8)
 		    If Bytes = "" Then
 		      Return Nil
 		    End If
 		    
-		    Dim Dict As Dictionary = Beacon.ParseJSON(Bytes)
+		    Var Dict As Dictionary = Beacon.ParseJSON(Bytes)
 		    Return Beacon.Preset.FromDictionary(Dict)
 		  Catch Err As RuntimeException
 		    Return Nil
@@ -219,8 +219,8 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function Iterator() As Iterator
-		  Dim Contents() As Variant
-		  Redim Contents(Self.mContents.LastRowIndex)
+		  Var Contents() As Variant
+		  Contents.ResizeTo(Self.mContents.LastRowIndex)
 		  For I As Integer = 0 To Self.mContents.LastRowIndex
 		    Contents(I) = Self.mContents(I)
 		  Next
@@ -252,7 +252,7 @@ Implements Beacon.Countable
 		    Return 0
 		  End If
 		  
-		  Dim Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
+		  Var Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
 		  If Dict.HasKey("MaxQuality") Then
 		    Return Dict.Value("MaxQuality")
 		  Else
@@ -279,7 +279,7 @@ Implements Beacon.Countable
 		    Return 0
 		  End If
 		  
-		  Dim Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
+		  Var Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
 		  If Dict.HasKey("MinQuality") Then
 		    Return Dict.Value("MinQuality")
 		  Else
@@ -315,14 +315,14 @@ Implements Beacon.Countable
 		    Return 1.0
 		  End If
 		  
-		  Dim Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
+		  Var Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
 		  Return Dict.Lookup("Quantity", 1.0)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Shared Function SourceKindToModifierID(Kind As String) As String()
-		  Dim IDs() As String
+		  Var IDs() As String
 		  Select Case Kind
 		  Case "Bonus"
 		    IDs.AddRow(Beacon.PresetModifier.BonusCratesID)
@@ -344,8 +344,8 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function ToDictionary() As Dictionary
-		  Dim Hashes() As String
-		  Dim Contents() As Dictionary
+		  Var Hashes() As String
+		  Var Contents() As Dictionary
 		  For Each Entry As Beacon.PresetEntry In Self.mContents
 		    Hashes.AddRow(Entry.Hash)
 		    Contents.AddRow(Entry.Export)
@@ -354,16 +354,16 @@ Implements Beacon.Countable
 		  
 		  // Export every definition, even though built-ins will be dropped on read. This preserves
 		  // the file in the future if a built-in is dropped.
-		  Dim Definitions() As Dictionary
+		  Var Definitions() As Dictionary
 		  For Each Entry As DictionaryEntry In Self.mModifierValues
-		    Dim ModifierID As String = Entry.Key
-		    Dim Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
+		    Var ModifierID As String = Entry.Key
+		    Var Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
 		    If Modifier <> Nil Then
 		      Definitions.AddRow(Modifier.ToDictionary)
 		    End If
 		  Next
 		  
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("Version") = 2
 		  Dict.Value("ID") = Self.PresetID
 		  Dict.Value("Label") = Self.Label

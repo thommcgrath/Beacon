@@ -253,12 +253,12 @@ End
 		    Return StateSaveLocal
 		  End If
 		  
-		  Dim Win As New DocumentSaveToCloudWindow
+		  Var Win As New DocumentSaveToCloudWindow
 		  Win.mController = Controller
 		  Win.TitleField.Value = Controller.Name
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
-		  Dim State As Integer = Win.mResponseState
+		  Var State As Integer = Win.mResponseState
 		  Win.Close
 		  
 		  Return State
@@ -290,7 +290,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim NewURL As String = Beacon.DocumentURL.TypeCloud + "://" + BeaconAPI.URL("/document/" + Self.mController.Document.DocumentID).Middle(8)
+		  Var NewURL As String = Beacon.DocumentURL.TypeCloud + "://" + BeaconAPI.URL("/document/" + Self.mController.Document.DocumentID).Middle(8)
 		  Self.mController.Document.Title = Self.TitleField.Value
 		  Self.mController.SaveAs(NewURL)
 		  Self.mResponseState = Self.StateSaved

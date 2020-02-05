@@ -38,9 +38,9 @@ Implements NotificationKit.Receiver
 		  FileOpen.Enable
 		  FileImport.Enable
 		  
-		  Dim Counter As Integer = 1
+		  Var Counter As Integer = 1
 		  For I As Integer = 0 To WindowCount - 1
-		    Dim Win As Window = Window(I)
+		    Var Win As Window = Window(I)
 		    If Win IsA BeaconWindow Then
 		      BeaconWindow(Win).UpdateWindowMenu()
 		      Counter = Counter + 1
@@ -52,7 +52,7 @@ Implements NotificationKit.Receiver
 	#tag Event
 		Function HandleAppleEvent(theEvent As AppleEvent, eventClass As String, eventID As String) As Boolean
 		  If eventClass = "GURL" And eventID = "GURL" Then
-		    Dim URL As String = theEvent.StringParam("----")
+		    Var URL As String = theEvent.StringParam("----")
 		    Return Self.HandleURL(URL)
 		  Else
 		    Return False
@@ -68,11 +68,11 @@ Implements NotificationKit.Receiver
 		    Self.Log("Beacon " + Str(Self.BuildNumber, "-0") + " for Windows.")
 		  #EndIf
 		  
-		  Dim Lock As New Mutex("com.thezaz.beacon" + If(DebugBuild, ".debug", ""))
+		  Var Lock As New Mutex("com.thezaz.beacon" + If(DebugBuild, ".debug", ""))
 		  If Not Lock.TryEnter Then
 		    #If TargetWin32
-		      Dim StartTime As Double = System.Microseconds
-		      Dim PushSocket As New IPCSocket
+		      Var StartTime As Double = System.Microseconds
+		      Var PushSocket As New IPCSocket
 		      PushSocket.Path = Self.ApplicationSupport.Child("ipc").NativePath
 		      PushSocket.Connect
 		      Do Until PushSocket.IsConnected Or System.Microseconds - StartTime > 5000000
@@ -100,7 +100,7 @@ Implements NotificationKit.Receiver
 		    #EndIf
 		  End If
 		  
-		  Dim UpdatesFolder As FolderItem = Self.ApplicationSupport.Child("Updates")
+		  Var UpdatesFolder As FolderItem = Self.ApplicationSupport.Child("Updates")
 		  If UpdatesFolder <> Nil And UpdatesFolder.Exists Then
 		    Call UpdatesFolder.DeepDelete
 		  End If
@@ -112,7 +112,7 @@ Implements NotificationKit.Receiver
 		  
 		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged)
 		  
-		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
+		  Var IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
 		  Self.mIdentityManager = New IdentityManager(IdentityFile)
 		  AddHandler mIdentityManager.NeedsLogin, WeakAddressOf mIdentityManager_NeedsLogin
 		  
@@ -159,10 +159,10 @@ Implements NotificationKit.Receiver
 
 	#tag MenuHandler
 		Function FileImport() As Boolean Handles FileImport.Action
-			Dim Dialog As New OpenFileDialog
+			Var Dialog As New OpenFileDialog
 			Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.JsonFile + BeaconFileTypes.BeaconIdentity
 			
-			Dim File As FolderItem = Dialog.ShowModal
+			Var File As FolderItem = Dialog.ShowModal
 			If File <> Nil Then
 			Self.OpenFile(File, True)
 			End If
@@ -215,25 +215,25 @@ Implements NotificationKit.Receiver
 
 	#tag MenuHandler
 		Function HelpCreateOfflineAuthorizationRequest() As Boolean Handles HelpCreateOfflineAuthorizationRequest.Action
-			Dim Dialog As New SaveFileDialog
+			Var Dialog As New SaveFileDialog
 			Dialog.SuggestedFileName = "Authorization Request" + BeaconFileTypes.BeaconAuth.PrimaryExtension
 			
-			Dim File As FolderItem = Dialog.ShowModal()
+			Var File As FolderItem = Dialog.ShowModal()
 			If File = Nil Then
 			Return True
 			End If
 			
-			Dim Identity As Beacon.Identity = Self.IdentityManager.CurrentIdentity
+			Var Identity As Beacon.Identity = Self.IdentityManager.CurrentIdentity
 			
-			Dim HardwareID As String = Beacon.HardwareID
-			Dim Signed As MemoryBlock = Identity.Sign(HardwareID)
+			Var HardwareID As String = Beacon.HardwareID
+			Var Signed As MemoryBlock = Identity.Sign(HardwareID)
 			
-			Dim Dict As New Dictionary
+			Var Dict As New Dictionary
 			Dict.Value("UserID") = Identity.Identifier
 			Dict.Value("Signed") = EncodeHex(Signed)
 			Dict.Value("Device") = HardwareID
 			
-			Dim JSON As String = Beacon.GenerateJSON(Dict, False)
+			Var JSON As String = Beacon.GenerateJSON(Dict, False)
 			If Not File.Write(JSON) Then
 			BeaconUI.ShowAlert("Could not create offline authorization request.", "There was a problem writing the file to disk.")
 			End If
@@ -279,7 +279,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function AutosaveFolder(Create As Boolean = False) As FolderItem
-		  Dim Folder As FolderItem = Self.ApplicationSupport.Child("Autosave")
+		  Var Folder As FolderItem = Self.ApplicationSupport.Child("Autosave")
 		  If Folder = Nil Then
 		    Return Nil
 		  End If
@@ -302,7 +302,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function BuildVersion() As String
-		  Dim VersionString As String = Str(Self.MajorVersion, "0") + "." + Str(Self.MinorVersion, "0")
+		  Var VersionString As String = Str(Self.MajorVersion, "0") + "." + Str(Self.MinorVersion, "0")
 		  If Self.BugVersion > 0 Or (Self.StageCode = Application.Final And Self.NonReleaseVersion > 0) Or Self.StageCode <> Application.Final Then
 		    VersionString = VersionString + "." + Str(Self.BugVersion, "0")
 		  End If
@@ -364,7 +364,7 @@ Implements NotificationKit.Receiver
 		    Return True
 		  End If
 		  
-		  Dim WelcomeWindow As New UserWelcomeWindow
+		  Var WelcomeWindow As New UserWelcomeWindow
 		  WelcomeWindow.ShowModal()
 		  
 		  Return Preferences.OnlineEnabled
@@ -373,8 +373,8 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub HandleCommandLineData(Data As String, URLOnly As Boolean)
-		  Dim Char, BreakChar, Arg As String
-		  Dim Args() As String
+		  Var Char, BreakChar, Arg As String
+		  Var Args() As String
 		  
 		  BreakChar = " "
 		  For I As Integer = 0 To Data.Length - 1
@@ -401,13 +401,13 @@ Implements NotificationKit.Receiver
 		  End If
 		  
 		  If Args.LastRowIndex > 0 Then
-		    Dim Path As String = DefineEncoding(Args(1), Encodings.UTF8)
+		    Var Path As String = DefineEncoding(Args(1), Encodings.UTF8)
 		    If Beacon.IsBeaconURL(Path) Then
 		      // Given a url
 		      Call Self.HandleURL(Path, True)
 		    ElseIf URLOnly = False Then
 		      // Given a file
-		      Dim File As FolderItem
+		      Var File As FolderItem
 		      Try
 		        File = New FolderItem(Path, FolderItem.PathModes.Native)
 		      Catch Err As RuntimeException
@@ -427,24 +427,24 @@ Implements NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Error)
-		  Dim Stack() As StackFrame = Error.StackFrames
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Error)
+		  Var Stack() As StackFrame = Error.StackFrames
 		  While Stack.LastRowIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
 		    Stack.RemoveRowAt(0)
 		  Wend
 		  
-		  Dim Location As String = "Unknown"
+		  Var Location As String = "Unknown"
 		  If Stack.LastRowIndex >= 0 Then
 		    Location = Stack(0).Name
 		  End If
-		  Dim Reason As String = Error.Reason
+		  Var Reason As String = Error.Reason
 		  If Reason = "" Then
 		    Reason = Error.Message
 		  End If
 		  
 		  Self.Log("Unhandled " + Info.FullName + " in " + Location + ": " + Reason)
 		  
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("Object") = Error
 		  Dict.Value("Reason") = Error.Explanation
 		  Dict.Value("Location") = Location
@@ -469,8 +469,8 @@ Implements NotificationKit.Receiver
 		  End If
 		  
 		  If URL.Left(7) = "action/" Then
-		    Dim Instructions As String = URL.Middle(7)
-		    Dim ParamsPos As Integer = Instructions.IndexOf("?")
+		    Var Instructions As String = URL.Middle(7)
+		    Var ParamsPos As Integer = Instructions.IndexOf("?")
 		    If ParamsPos > -1 Then
 		      Instructions = Instructions.Left(ParamsPos)
 		    End If
@@ -506,14 +506,14 @@ Implements NotificationKit.Receiver
 		      Break
 		    End Select
 		  Else
-		    Dim LegacyURL As String = "thezaz.com/beacon/documents.php/"
-		    Dim Idx As Integer = URL.IndexOf(LegacyURL)
+		    Var LegacyURL As String = "thezaz.com/beacon/documents.php/"
+		    Var Idx As Integer = URL.IndexOf(LegacyURL)
 		    If Idx > -1 Then
-		      Dim DocID As String = URL.Middle(Idx + LegacyURL.Length)
+		      Var DocID As String = URL.Middle(Idx + LegacyURL.Length)
 		      URL = BeaconAPI.URL("/document/" + DocID)
 		    End If
 		    
-		    Dim FileURL As String = "https://" + URL
+		    Var FileURL As String = "https://" + URL
 		    MainWindow.Documents.OpenURL(FileURL)
 		  End If
 		  
@@ -523,11 +523,11 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function HelpFile(Topic As String) As FolderItem
-		  Dim HelpFolder As FolderItem = Self.ApplicationSupport.Child("Help")
-		  Dim HelpFile As FolderItem = HelpFolder.Child(Topic)
+		  Var HelpFolder As FolderItem = Self.ApplicationSupport.Child("Help")
+		  Var HelpFile As FolderItem = HelpFolder.Child(Topic)
 		  
 		  If HelpFile = Nil Or HelpFile.Exists = False Then
-		    Dim SourceFile As Folderitem = Self.ResourcesFolder.Child("Help").Child(Topic)
+		    Var SourceFile As Folderitem = Self.ResourcesFolder.Child("Help").Child(Topic)
 		    If SourceFile = Nil Or SourceFile.Exists = False Then
 		      Return Nil
 		    End If
@@ -556,11 +556,11 @@ Implements NotificationKit.Receiver
 		    ParentWindow = MainWindow
 		  End If
 		  
-		  Dim Stream As TextInputStream = TextInputStream.Open(File)
-		  Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
+		  Var Stream As TextInputStream = TextInputStream.Open(File)
+		  Var Contents As String = Stream.ReadAll(Encodings.UTF8)
 		  Stream.Close
 		  
-		  Dim Dict As Dictionary
+		  Var Dict As Dictionary
 		  Try
 		    Dict = Beacon.ParseJSON(Contents)
 		  Catch Err As RuntimeException
@@ -568,7 +568,7 @@ Implements NotificationKit.Receiver
 		    Return
 		  End Try
 		  
-		  Dim Identity As Beacon.Identity
+		  Var Identity As Beacon.Identity
 		  If Beacon.Identity.IsUserDictionary(Dict) Then
 		    // Password is needed to decrypt
 		    Identity = IdentityDecryptDialog.ShowDecryptIdentityDict(ParentWindow, Dict)
@@ -598,8 +598,8 @@ Implements NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Dim Limit As DateTime = Self.BuildDateTime + New DateInterval(0, 0, 30)
-		  Dim Now As DateTime = DateTime.Now
+		  Var Limit As DateTime = Self.BuildDateTime + New DateInterval(0, 0, 30)
+		  Var Now As DateTime = DateTime.Now
 		  If Now > Limit Then
 		    BeaconUI.ShowAlert("This beta has expired.", "Please download a new version from " + Beacon.WebURL("/download/"))
 		    Quit
@@ -622,7 +622,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_GettingStarted()
-		  Dim Notification As New Beacon.UserNotification("How about a nice tutorial video?")
+		  Var Notification As New Beacon.UserNotification("How about a nice tutorial video?")
 		  Notification.SecondaryMessage = "Click here to watch a video for first-time users of Beacon, or just to get a better understanding of how loot works."
 		  Notification.ActionURL = Beacon.WebURL("/videos/introduction_to_loot_drops_with")
 		  Notification.DoNotResurrect = True
@@ -640,7 +640,7 @@ Implements NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Dim Notification As New Beacon.UserNotification("Welcome to Beacon!")
+		  Var Notification As New Beacon.UserNotification("Welcome to Beacon!")
 		  Notification.SecondaryMessage = "Beacon has an announcement list used to inform users of important updates and changes. Click here to sign up."
 		  Notification.ActionURL = "beacon://action/shownewsletterprompt"
 		  Notification.DoNotResurrect = True
@@ -655,7 +655,7 @@ Implements NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_PrivacyCheck()
 		  If Self.mIdentityManager.CurrentIdentity = Nil Then
-		    Dim WelcomeWindow As New UserWelcomeWindow
+		    Var WelcomeWindow As New UserWelcomeWindow
 		    WelcomeWindow.ShowModal()
 		  Else
 		    Self.NextLaunchQueueTask()
@@ -693,8 +693,8 @@ Implements NotificationKit.Receiver
 		  
 		  Self.mLogLock.Enter
 		  
-		  Dim Now As DateTime = DateTime.Now
-		  Dim DetailedMessage As String = Now.ToString(Locale.Raw) + Str(Now.Nanosecond / 1000000000, ".0000000000") + " " + Now.TimeZone.Abbreviation + Encodings.UTF8.Chr(9) + Message
+		  Var Now As DateTime = DateTime.Now
+		  Var DetailedMessage As String = Now.ToString(Locale.Raw) + Str(Now.Nanosecond / 1000000000, ".0000000000") + " " + Now.TimeZone.Abbreviation + Encodings.UTF8.Chr(9) + Message
 		  
 		  #if DebugBuild
 		    System.DebugLog(DetailedMessage)
@@ -702,8 +702,8 @@ Implements NotificationKit.Receiver
 		    Try
 		      Self.mQueuedLogMessages.AddRow(DetailedMessage)
 		      
-		      Dim LogFile As FolderItem = Self.ApplicationSupport.Child("Events.log")
-		      Dim Stream As TextOutputStream = TextOutputStream.Open(LogFile)
+		      Var LogFile As FolderItem = Self.ApplicationSupport.Child("Events.log")
+		      Var Stream As TextOutputStream = TextOutputStream.Open(LogFile)
 		      While Self.mQueuedLogMessages.LastRowIndex > -1
 		        Stream.WriteLine(Self.mQueuedLogMessages(0))
 		        Self.mQueuedLogMessages.Remove(0)
@@ -722,8 +722,8 @@ Implements NotificationKit.Receiver
 		  If Err = Nil Then
 		    Return
 		  End If
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
-		  Dim Base64 As String
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		  Var Base64 As String
 		  If RawContent <> Nil And RawContent.Size > 0 Then
 		    Base64 = EncodeBase64(RawContent, 0)
 		  End If
@@ -734,13 +734,13 @@ Implements NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Sub mHandoffSocket_DataReceived(Sender As IPCSocket)
 		  Do
-		    Dim Buffer As String = DefineEncoding(Sender.Lookahead, Encodings.UTF8)
-		    Dim Pos As Integer = Buffer.IndexOf(Encodings.UTF8.Chr(0))
+		    Var Buffer As String = DefineEncoding(Sender.Lookahead, Encodings.UTF8)
+		    Var Pos As Integer = Buffer.IndexOf(Encodings.UTF8.Chr(0))
 		    If Pos = -1 Then
 		      Exit
 		    End If
 		    
-		    Dim Command As String = DefineEncoding(Sender.Read(Pos), Encodings.UTF8)
+		    Var Command As String = DefineEncoding(Sender.Read(Pos), Encodings.UTF8)
 		    Call Sender.Read(1) // To drop the null byte from the buffer
 		    Self.Log("Received command line data: " + Command)
 		    Self.HandleCommandLineData(Command, False)
@@ -750,7 +750,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub mHandoffSocket_Error(Sender As IPCSocket, Err As RuntimeException)
-		  Dim Code As Integer = Err.ErrorNumber
+		  Var Code As Integer = Err.ErrorNumber
 		  If Code = 102 Then
 		    Call CallLater.Schedule(100, AddressOf Sender.Listen)
 		  Else
@@ -764,7 +764,7 @@ Implements NotificationKit.Receiver
 		  #Pragma Unused Sender
 		  
 		  If Self.CurrentThread = Nil Then
-		    Dim WelcomeWindow As New UserWelcomeWindow
+		    Var WelcomeWindow As New UserWelcomeWindow
 		    WelcomeWindow.ShowModal()
 		  End If
 		End Sub
@@ -774,7 +774,7 @@ Implements NotificationKit.Receiver
 		Private Function mOpenRecent_ClearMenu(Sender As MenuItem) As Boolean
 		  #Pragma Unused Sender
 		  
-		  Dim Documents() As Beacon.DocumentURL
+		  Var Documents() As Beacon.DocumentURL
 		  Preferences.RecentDocuments = Documents
 		  Return True
 		End Function
@@ -782,7 +782,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Function mOpenRecent_OpenFile(Sender As MenuItem) As Boolean
-		  Dim Document As Beacon.DocumentURL = Sender.Tag
+		  Var Document As Beacon.DocumentURL = Sender.Tag
 		  MainWindow.Documents.OpenURL(Document)
 		  Return True
 		End Function
@@ -800,7 +800,7 @@ Implements NotificationKit.Receiver
 		Private Sub mUpdateChecker_UpdateAvailable(Sender As UpdateChecker, Version As String, PreviewText As String, Notes As String, NotesURL As String, URL As String, Signature As String)
 		  #Pragma Unused Sender
 		  
-		  Dim Data As New Dictionary
+		  Var Data As New Dictionary
 		  Data.Value("Version") = Version
 		  Data.Value("Notes") = Notes
 		  Data.Value("Download") = URL
@@ -821,7 +821,7 @@ Implements NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Dim Task As LaunchQueueTask = Self.mLaunchQueue(0)
+		  Var Task As LaunchQueueTask = Self.mLaunchQueue(0)
 		  Self.mLaunchQueue.RemoveRowAt(0)
 		  
 		  Task.Invoke()
@@ -853,7 +853,7 @@ Implements NotificationKit.Receiver
 		  
 		  If File.IsType(BeaconFileTypes.JsonFile) Then
 		    Try
-		      Dim Content As String = File.Read(Encodings.UTF8)
+		      Var Content As String = File.Read(Encodings.UTF8)
 		      LocalData.SharedInstance.Import(Content)
 		    Catch Err As RuntimeException
 		      
@@ -884,7 +884,7 @@ Implements NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Dim Dialog As New MessageDialog
+		  Var Dialog As New MessageDialog
 		  Dialog.Title = ""
 		  Dialog.Message = "Unable to open file"
 		  Dialog.Explanation = "Beacon doesn't know what to do with the file " + File.Name
@@ -904,9 +904,9 @@ Implements NotificationKit.Receiver
 		    FileOpenRecent.RemoveMenuAt(0)
 		  Wend
 		  
-		  Dim Documents() As Beacon.DocumentURL = Preferences.RecentDocuments
+		  Var Documents() As Beacon.DocumentURL = Preferences.RecentDocuments
 		  For Each Document As Beacon.DocumentURL In Documents
-		    Dim Item As New MenuItem(Document.Name)
+		    Var Item As New MenuItem(Document.Name)
 		    Item.Tag = Document
 		    Item.Enable
 		    AddHandler Item.Action, WeakAddressOf mOpenRecent_OpenFile
@@ -915,12 +915,12 @@ Implements NotificationKit.Receiver
 		  If Documents.LastRowIndex > -1 Then
 		    FileOpenRecent.AddMenu(New MenuItem(MenuItem.TextSeparator))
 		    
-		    Dim Item As New MenuItem("Clear Menu")
+		    Var Item As New MenuItem("Clear Menu")
 		    Item.Enable
 		    AddHandler Item.Action, WeakAddressOf mOpenRecent_ClearMenu
 		    FileOpenRecent.AddMenu(Item)
 		  Else
-		    Dim Item As New MenuItem("No Items")
+		    Var Item As New MenuItem("No Items")
 		    Item.Enabled = False
 		    FileOpenRecent.AddMenu(Item)
 		  End If
@@ -932,11 +932,11 @@ Implements NotificationKit.Receiver
 		  #if TargetMacOS
 		    Return Self.ExecutableFile.Parent.Parent.Child("Resources")
 		  #else
-		    Dim Parent As FolderItem = Self.ExecutableFile.Parent
+		    Var Parent As FolderItem = Self.ExecutableFile.Parent
 		    If Parent.Child("Resources").Exists Then
 		      Return Parent.Child("Resources")
 		    Else
-		      Dim Name As String = Self.ExecutableFile.Name.Left(Self.ExecutableFile.Name.Length - 4)
+		      Var Name As String = Self.ExecutableFile.Name.Left(Self.ExecutableFile.Name.Length - 4)
 		      Return Parent.Child(Name + " Resources")
 		    End If
 		  #endif
@@ -945,7 +945,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub ShowBugReporter(ExceptionHash As String = "")
-		  Dim Path As String = "/reportaproblem?build=" + Self.BuildNumber.ToString
+		  Var Path As String = "/reportaproblem?build=" + Self.BuildNumber.ToString
 		  If ExceptionHash <> "" Then
 		    Path = Path + "&exception=" + ExceptionHash
 		  End If
@@ -961,7 +961,7 @@ Implements NotificationKit.Receiver
 		    Declare Function GetSharedWorkspace Lib "Cocoa" Selector "sharedWorkspace" (Target As Ptr) As Ptr
 		    Declare Sub SelectFile Lib "Cocoa" Selector "selectFile:inFileViewerRootedAtPath:" (Target As Ptr, Path As CFStringRef, RootPath As CFStringRef)
 		    
-		    Dim Workspace As Ptr = GetSharedWorkspace(objc_getClass("NSWorkspace"))
+		    Var Workspace As Ptr = GetSharedWorkspace(objc_getClass("NSWorkspace"))
 		    If Workspace <> Nil Then
 		      SelectFile(Workspace, File.NativePath, "")
 		    End If

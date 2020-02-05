@@ -8,7 +8,7 @@ Protected Class ServerProfile
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  Dim Err As New UnsupportedOperationException
+		  Var Err As New UnsupportedOperationException
 		  Err.Reason = "Do not instantiate this class, only its subclasses."
 		  Raise Err
 		End Sub
@@ -17,7 +17,7 @@ Protected Class ServerProfile
 	#tag Method, Flags = &h0
 		Sub Constructor(Dict As Dictionary)
 		  If Not Dict.HasAllKeys("Name", "Profile ID", "Enabled") Then
-		    Dim Err As New KeyNotFoundException
+		    Var Err As New KeyNotFoundException
 		    Err.Reason = "Incomplete server profile"
 		    Raise Err
 		  End If
@@ -42,7 +42,7 @@ Protected Class ServerProfile
 		    Return Nil
 		  End If
 		  
-		  Dim Provider As String = Dict.Value("Provider")
+		  Var Provider As String = Dict.Value("Provider")
 		  Select Case Provider
 		  Case "Nitrado"
 		    Return New Beacon.NitradoServerProfile(Dict)
@@ -124,10 +124,10 @@ Protected Class ServerProfile
 
 	#tag Method, Flags = &h0
 		Function ToDictionary() As Dictionary
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  RaiseEvent WriteToDictionary(Dict)
 		  If Not Dict.HasKey("Provider") Then
-		    Dim Err As New KeyNotFoundException
+		    Var Err As New KeyNotFoundException
 		    Err.Reason = "No provider was set in Beacon.ServerProfile.WriteToDictionary"
 		    Raise Err
 		  End If

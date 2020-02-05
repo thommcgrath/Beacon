@@ -260,8 +260,8 @@ End
 #tag WindowCode
 	#tag Method, Flags = &h0
 		Function Blueprints() As Beacon.Blueprint()
-		  Dim Blueprints() As Beacon.Blueprint
-		  Redim Blueprints(Self.mBlueprints.LastRowIndex)
+		  Var Blueprints() As Beacon.Blueprint
+		  Blueprints.ResizeTo(Self.mBlueprints.LastRowIndex)
 		  For I As Integer = 0 To Self.mBlueprints.LastRowIndex
 		    Blueprints(I) = Self.mBlueprints(I).Clone
 		  Next
@@ -272,7 +272,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Blueprints(Assigns Blueprints() As Beacon.Blueprint)
 		  If Self.Modified Then
-		    Dim Dialog As New MessageDialog
+		    Var Dialog As New MessageDialog
 		    Dialog.Title = ""
 		    Dialog.Message = "Do you want to save changes to these objects"
 		    Dialog.Explanation = "If you do not save now, your changes will be lost."
@@ -281,7 +281,7 @@ End
 		    Dialog.AlternateActionButton.Caption = "Don't Save"
 		    Dialog.AlternateActionButton.Visible = True
 		    
-		    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		    Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
 		    Select Case Choice
 		    Case Dialog.ActionButton
 		      // Build and save the object
@@ -294,12 +294,12 @@ End
 		  End If
 		  
 		  If Blueprints <> Nil Then
-		    Redim Self.mBlueprints(Blueprints.LastRowIndex)
+		    Self.mBlueprints.ResizeTo(Blueprints.LastRowIndex)
 		    For I As Integer = 0 To Blueprints.LastRowIndex
 		      Self.mBlueprints(I) = Blueprints(I).MutableClone
 		    Next
 		  Else
-		    Redim Self.mBlueprints(-1)
+		    Self.mBlueprints.ResizeTo(-1)
 		  End If
 		  
 		  Self.SetupUI()
@@ -331,9 +331,9 @@ End
 		    Return
 		  End If
 		  
-		  Dim Blueprints() As Beacon.Blueprint
+		  Var Blueprints() As Beacon.Blueprint
 		  For Each Blueprint As Beacon.Blueprint In Self.mBlueprints
-		    Dim Saved As Beacon.Blueprint = LocalData.SharedInstance.GetBlueprintByObjectID(Blueprint.ObjectID)
+		    Var Saved As Beacon.Blueprint = LocalData.SharedInstance.GetBlueprintByObjectID(Blueprint.ObjectID)
 		    If Saved <> Nil Then
 		      Blueprints.AddRow(Saved)
 		    End If
@@ -345,11 +345,11 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Save()
-		  Dim AddTags() As String = Self.Picker.RequiredTags
-		  Dim RemoveTags() As String = Self.Picker.ExcludedTags
+		  Var AddTags() As String = Self.Picker.RequiredTags
+		  Var RemoveTags() As String = Self.Picker.ExcludedTags
 		  
-		  Dim AddMask As UInt64 = Self.MapSelector.CheckedMask
-		  Dim ClearMask As UInt64 = Self.MapSelector.UncheckedMask
+		  Var AddMask As UInt64 = Self.MapSelector.CheckedMask
+		  Var ClearMask As UInt64 = Self.MapSelector.UncheckedMask
 		  
 		  For Each Blueprint As Beacon.MutableBlueprint In Self.mBlueprints
 		    Blueprint.Availability = (Blueprint.Availability Or AddMask) And Not ClearMask
@@ -372,23 +372,23 @@ End
 		  Self.Picker.ClearSelections()
 		  Self.Picker.Tags = LocalData.SharedInstance.AllTags()
 		  
-		  Dim Masks() As UInt64
-		  Dim Tags As New Dictionary
+		  Var Masks() As UInt64
+		  Var Tags As New Dictionary
 		  For Each Blueprint As Beacon.Blueprint In Self.mBlueprints
 		    Masks.AddRow(Blueprint.Availability)
 		    
-		    Dim BlueprintTags() As String = Blueprint.Tags
+		    Var BlueprintTags() As String = Blueprint.Tags
 		    For Each Tag As String In BlueprintTags
 		      Tags.Value(Tag) = Tags.Lookup(Tag, 0) + 1
 		    Next
 		  Next
 		  
-		  Dim BlueprintCount As Integer = Self.mBlueprints.LastRowIndex + 1
+		  Var BlueprintCount As Integer = Self.mBlueprints.LastRowIndex + 1
 		  Self.MapSelector.SetWithMasks(Masks)
 		  
-		  Dim CommonTags() As String
+		  Var CommonTags() As String
 		  For I As Integer = 0 To Tags.KeyCount - 1
-		    Dim Tag As String = Tags.Key(I)
+		    Var Tag As String = Tags.Key(I)
 		    If Tags.Lookup(Tag, 0) = BlueprintCount Then
 		      CommonTags.AddRow(Tag)
 		    End If
@@ -448,7 +448,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim NewHeight As Integer = Max(Me.Height + Delta, (Self.PickerHelp.Top + Self.PickerHelp.Height) - Self.PickerLabel.Top)
+		  Var NewHeight As Integer = Max(Me.Height + Delta, (Self.PickerHelp.Top + Self.PickerHelp.Height) - Self.PickerLabel.Top)
 		  Delta = NewHeight - Me.Height
 		  Me.Height = NewHeight
 		  

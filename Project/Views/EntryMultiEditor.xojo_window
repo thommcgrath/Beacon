@@ -134,7 +134,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, Sources() As Beacon.SetEntry) As Beacon.SetEntry()
-		  Dim Win As New EntryMultiEditor
+		  Var Win As New EntryMultiEditor
 		  Win.Editor.Setup(Sources)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  If Win.mCancelled Then
@@ -142,8 +142,8 @@ End
 		    Return Nil
 		  End If
 		  
-		  Dim Entries() As Beacon.SetEntry
-		  Redim Entries(Sources.LastRowIndex)
+		  Var Entries() As Beacon.SetEntry
+		  Entries.ResizeTo(Sources.LastRowIndex)
 		  For I As Integer = 0 To Sources.LastRowIndex
 		    Entries(I) = New Beacon.SetEntry(Sources(I))
 		  Next

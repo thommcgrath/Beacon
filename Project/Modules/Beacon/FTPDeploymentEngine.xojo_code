@@ -29,7 +29,7 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Function BuildFTPParameters(File As String) As Dictionary
-		  Dim Fields As Dictionary = Self.mProfile.AsFormData
+		  Var Fields As Dictionary = Self.mProfile.AsFormData
 		  If File <> "" Then
 		    Fields.Value("path") = File
 		  End If
@@ -49,7 +49,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim Dict As Dictionary = Response.JSON
+		    Var Dict As Dictionary = Response.JSON
 		    If Dict.HasKey("ftp_mode") Then
 		      Self.mProfile.Mode = Dict.Value("ftp_mode")
 		    End If
@@ -75,7 +75,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim Dict As Dictionary = Response.JSON
+		    Var Dict As Dictionary = Response.JSON
 		    If Dict.HasKey("ftp_mode") Then
 		      Self.mProfile.Mode = Dict.Value("ftp_mode")
 		    End If
@@ -143,7 +143,7 @@ Implements Beacon.DeploymentEngine
 		Private Sub DownloadGameIni()
 		  Self.mStatus = "Downloading Game.ini…"
 		  
-		  Dim Request As New BeaconAPI.Request("ftp", "GET", Self.BuildFTPParameters(Self.mProfile.GameIniPath), AddressOf Callback_DownloadGameIni)
+		  Var Request As New BeaconAPI.Request("ftp", "GET", Self.BuildFTPParameters(Self.mProfile.GameIniPath), AddressOf Callback_DownloadGameIni)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.mSocket.Start(Request)
 		End Sub
@@ -153,7 +153,7 @@ Implements Beacon.DeploymentEngine
 		Private Sub DownloadGameUserSettingsIni()
 		  Self.mStatus = "Downloading GameUserSettings.ini…"
 		  
-		  Dim Request As New BeaconAPI.Request("ftp", "GET", Self.BuildFTPParameters(Self.mProfile.GameUserSettingsIniPath), AddressOf Callback_DownloadGameUserSettingsIni)
+		  Var Request As New BeaconAPI.Request("ftp", "GET", Self.BuildFTPParameters(Self.mProfile.GameUserSettingsIniPath), AddressOf Callback_DownloadGameUserSettingsIni)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.mSocket.Start(Request)
 		End Sub
@@ -180,10 +180,10 @@ Implements Beacon.DeploymentEngine
 		    Return
 		  End If
 		  
-		  Dim Content As String = Sender.UpdatedContent
+		  Var Content As String = Sender.UpdatedContent
 		  
 		  Self.mStatus = "Uploading Game.ini"
-		  Dim Request As New BeaconAPI.Request("ftp?" + SimpleHTTP.BuildFormData(Self.BuildFTPParameters(Self.mProfile.GameIniPath)), "POST", Content, "text/plain", AddressOf Callback_UploadGameIni)
+		  Var Request As New BeaconAPI.Request("ftp?" + SimpleHTTP.BuildFormData(Self.BuildFTPParameters(Self.mProfile.GameIniPath)), "POST", Content, "text/plain", AddressOf Callback_UploadGameIni)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.mSocket.Start(Request)
 		End Sub
@@ -196,10 +196,10 @@ Implements Beacon.DeploymentEngine
 		    Return
 		  End If
 		  
-		  Dim Content As String = Sender.UpdatedContent
+		  Var Content As String = Sender.UpdatedContent
 		  
 		  Self.mStatus = "Uploading GameUserSettings.ini"
-		  Dim Request As New BeaconAPI.Request("ftp?" + SimpleHTTP.BuildFormData(Self.BuildFTPParameters(Self.mProfile.GameUserSettingsIniPath)), "POST", Content, "text/plain", AddressOf Callback_UploadGameUserSettingsIni)
+		  Var Request As New BeaconAPI.Request("ftp?" + SimpleHTTP.BuildFormData(Self.BuildFTPParameters(Self.mProfile.GameUserSettingsIniPath)), "POST", Content, "text/plain", AddressOf Callback_UploadGameUserSettingsIni)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.mSocket.Start(Request)
 		End Sub
@@ -219,8 +219,8 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub SetError(Err As RuntimeException)
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
-		  Dim Reason As String
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		  Var Reason As String
 		  If Err.Reason <> "" Then
 		    Reason = Err.Reason
 		  ElseIf Err.Message <> "" Then

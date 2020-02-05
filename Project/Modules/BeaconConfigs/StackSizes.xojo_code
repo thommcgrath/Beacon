@@ -7,8 +7,8 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused SourceDocument
 		  
 		  For Each Entry As DictionaryEntry In Self.mOverrides
-		    Dim ClassString As String = Entry.Key
-		    Dim StackSize As Integer = Entry.Value
+		    Var ClassString As String = Entry.Key
+		    Var StackSize As Integer = Entry.Value
 		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemMaxQuantity", "(ItemClassString=""" + ClassString + """,Quantity=(MaxItemQuantity=" + StackSize.ToString + ",bIgnoreMultiplier=true))"))
 		  Next
 		End Sub
@@ -45,7 +45,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function Classes() As String()
-		  Dim Results() As String
+		  Var Results() As String
 		  For Each Entry As DictionaryEntry In Self.mOverrides
 		    Results.AddRow(Entry.Key)
 		  Next
@@ -78,18 +78,18 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
-		  Dim GlobalMultiplier As Double = ParsedData.DoubleValue("ItemStackSizeMultiplier", 1.0, True)
-		  Dim Overrides As New Dictionary
+		  Var GlobalMultiplier As Double = ParsedData.DoubleValue("ItemStackSizeMultiplier", 1.0, True)
+		  Var Overrides As New Dictionary
 		  
 		  If ParsedData.HasKey("ConfigOverrideItemMaxQuantity") Then
-		    Dim AutoValue As Variant = ParsedData.Value("ConfigOverrideItemMaxQuantity")
-		    Dim Dicts() As Dictionary  
-		    Dim Info As Introspection.TypeInfo = Introspection.GetType(AutoValue)
+		    Var AutoValue As Variant = ParsedData.Value("ConfigOverrideItemMaxQuantity")
+		    Var Dicts() As Dictionary  
+		    Var Info As Introspection.TypeInfo = Introspection.GetType(AutoValue)
 		    Select Case Info.FullName
 		    Case "Dictionary"
 		      Dicts.AddRow(AutoValue)
 		    Case "Object()"
-		      Dim ArrayValue() As Variant = AutoValue
+		      Var ArrayValue() As Variant = AutoValue
 		      For Each Dict As Dictionary In ArrayValue
 		        Dicts.AddRow(Dict)
 		      Next
@@ -100,9 +100,9 @@ Inherits Beacon.ConfigGroup
 		        Continue
 		      End If   
 		      
-		      Dim Quantity As Dictionary = Dict.Value("Quantity")
-		      Dim ClassString As String = Dict.Value("ItemClassString")
-		      Dim StackSize As Integer = Quantity.Lookup("MaxItemQuantity", 0)
+		      Var Quantity As Dictionary = Dict.Value("Quantity")
+		      Var ClassString As String = Dict.Value("ItemClassString")
+		      Var StackSize As Integer = Quantity.Lookup("MaxItemQuantity", 0)
 		      
 		      If ClassString <> "" And ClassString.EndsWith("_C") And StackSize > 0 Then
 		        Overrides.Value(ClassString) = StackSize
@@ -114,7 +114,7 @@ Inherits Beacon.ConfigGroup
 		    Return Nil
 		  End If
 		  
-		  Dim Config As New BeaconConfigs.StackSizes
+		  Var Config As New BeaconConfigs.StackSizes
 		  Config.mGlobalMultiplier = GlobalMultiplier
 		  Config.mOverrides = Overrides
 		  Return Config

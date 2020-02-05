@@ -11,7 +11,7 @@ Protected Module BeaconAPI
 
 	#tag Method, Flags = &h1
 		Protected Function URL(Path As String = "/") As String
-		  Dim URL As String = Beacon.WebURL()
+		  Var URL As String = Beacon.WebURL()
 		  If Path.Length = 0 Or Path.Left(1) <> "/" Then
 		    Path = "/" + Path
 		  End If

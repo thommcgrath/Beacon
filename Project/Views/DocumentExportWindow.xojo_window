@@ -472,7 +472,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckButtons()
-		  Dim Rewriting As Boolean = Self.IsRewriting
+		  Var Rewriting As Boolean = Self.IsRewriting
 		  Self.RewriteFileButton.Enabled = Rewriting = False And (Self.Switcher.SelectedIndex = 1 Or Self.Switcher.SelectedIndex = 2)
 		  Self.CopyButton.Enabled = Rewriting = False And Self.ContentArea.Value <> ""
 		  Self.SaveButton.Enabled = Self.CopyButton.Enabled And Self.CurrentMode <> ""
@@ -488,19 +488,19 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckClipboard()
-		  Dim Mode As String = Self.CurrentMode
+		  Var Mode As String = Self.CurrentMode
 		  If Mode = "" Then
 		    Self.SetClipboardButtonCaption(False, Self.RewriteClipboard)
 		    Return
 		  End If
 		  
-		  Dim Board As New Clipboard
+		  Var Board As New Clipboard
 		  If Board.TextAvailable = False Then
 		    Self.SetClipboardButtonCaption(False, Self.RewriteClipboard)
 		    Return
 		  End If
 		  
-		  Dim SearchingFor As String
+		  Var SearchingFor As String
 		  Select Case Mode
 		  Case Beacon.RewriteModeGameIni
 		    SearchingFor = "[" + Beacon.ShooterGameHeader + "]"
@@ -532,7 +532,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function IsRewriting() As Boolean
-		  Dim Rewriters(3) As Beacon.Rewriter
+		  Var Rewriters(3) As Beacon.Rewriter
 		  Rewriters(0) = Self.ClipboardRewriter
 		  Rewriters(1) = Self.FileRewriter
 		  Rewriters(2) = Self.GameIniRewriter
@@ -548,10 +548,10 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As Window, Document As Beacon.Document)
-		  Dim Win As New DocumentExportWindow
+		  Var Win As New DocumentExportWindow
 		  Win.mDocument = Document
 		  
-		  Dim Maps() As Beacon.Map = Document.Maps
+		  Var Maps() As Beacon.Map = Document.Maps
 		  If Maps.LastRowIndex = 0 Then
 		    Win.MapMenu.AddRow(Maps(0).Name, Maps(0).Mask)
 		  ElseIf Maps.LastRowIndex > 0 Then
@@ -571,7 +571,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RefreshContentArea()
-		  Dim IntendedContent As String
+		  Var IntendedContent As String
 		  Select Case Self.Switcher.SelectedIndex
 		  Case 1
 		    IntendedContent = Self.mGameUserSettingsContent
@@ -613,41 +613,41 @@ End
 		  Self.mLastRewrittenHash = ""
 		  Self.mCurrentProfile = New Beacon.GenericServerProfile(Self.mDocument.Title, Self.CurrentMask)
 		  
-		  Dim Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  
 		  Self.GameIniRewriter.Rewrite("", Beacon.RewriteModeGameIni, Self.mDocument, Identity, False, Self.mCurrentProfile)
 		  Self.GameUserSettingsRewriter.Rewrite("", Beacon.RewriteModeGameUserSettingsIni, Self.mDocument, Identity, False, Self.mCurrentProfile)
 		  
-		  Dim CLIDict As New Dictionary
-		  Dim Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
+		  Var CLIDict As New Dictionary
+		  Var Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
 		  For Each Group As Beacon.ConfigGroup In Groups
-		    Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, Identity, Self.mCurrentProfile)
+		    Var Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, Identity, Self.mCurrentProfile)
 		    If Options <> Nil And Options.LastRowIndex > -1 Then
 		      Beacon.ConfigValue.FillConfigDict(CLIDict, Options)
 		    End If
 		  Next
-		  Dim Maps() As Beacon.Map = Beacon.Maps.ForMask(Self.mCurrentProfile.Mask)
-		  Dim QuestionParameters As String
+		  Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Self.mCurrentProfile.Mask)
+		  Var QuestionParameters As String
 		  If Maps.LastRowIndex = 0 Then
 		    QuestionParameters = Maps(0).Identifier + "?listen"
 		  Else
 		    QuestionParameters = "Map?listen"
 		  End If
 		  If CLIDict.HasKey("?") Then
-		    Dim Dict As Dictionary = CLIDict.Value("?")
-		    Dim Keys() As Variant = Dict.Keys
+		    Var Dict As Dictionary = CLIDict.Value("?")
+		    Var Keys() As Variant = Dict.Keys
 		    For Each Key As Variant In Keys
-		      Dim Arr() As String = Dict.Value(Key)
+		      Var Arr() As String = Dict.Value(Key)
 		      QuestionParameters = QuestionParameters + "?" + Arr.Join("?")
 		    Next
 		  End If
-		  Dim Parameters(0) As String
+		  Var Parameters(0) As String
 		  Parameters(0) = """" + QuestionParameters + """"
 		  If CLIDict.HasKey("-") Then
-		    Dim Dict As Dictionary = CLIDict.Value("-")
-		    Dim Keys() As Variant = Dict.Keys
+		    Var Dict As Dictionary = CLIDict.Value("-")
+		    Var Keys() As Variant = Dict.Keys
 		    For Each Key As Variant In Keys
-		      Dim Arr() As String = Dict.Value(Key)
+		      Var Arr() As String = Dict.Value(Key)
 		      For Each Command As String In Arr
 		        Parameters.AddRow("-" + Command)
 		      Next
@@ -699,7 +699,7 @@ End
 	#tag ComputedProperty, Flags = &h21
 		#tag Getter
 			Get
-			  Dim Mask As UInt64
+			  Var Mask As UInt64
 			  If Self.MapMenu.SelectedRowIndex = -1 Then
 			    Mask = Beacon.Maps.All.Mask
 			  Else
@@ -784,14 +784,14 @@ End
 #tag Events SaveButton
 	#tag Event
 		Sub Action()
-		  Dim Dialog As New SaveFileDialog
+		  Var Dialog As New SaveFileDialog
 		  Dialog.Filter = BeaconFileTypes.IniFile
 		  Dialog.SuggestedFileName = Self.CurrentFilename
 		  If Dialog.SuggestedFileName = "" Then
 		    Return
 		  End If
 		  
-		  Dim File As FolderItem = Dialog.ShowModal()
+		  Var File As FolderItem = Dialog.ShowModal()
 		  If File = Nil Then
 		    Return
 		  End If
@@ -805,7 +805,7 @@ End
 #tag Events CopyButton
 	#tag Event
 		Sub Action()
-		  Dim Board As New Clipboard
+		  Var Board As New Clipboard
 		  Board.Text = Self.ContentArea.Value
 		  Self.mLastRewrittenHash = EncodeHex(MD5(Board.Text))
 		  Me.Caption = "Copied!"
@@ -816,7 +816,7 @@ End
 #tag Events RewriteClipboardButton
 	#tag Event
 		Sub Action()
-		  Dim Board As New Clipboard
+		  Var Board As New Clipboard
 		  Self.ClipboardRewriter.Rewrite(Board.Text, Self.CurrentMode, Self.mDocument, App.IdentityManager.CurrentIdentity, True, Self.mCurrentProfile)
 		  
 		  Self.mLastRewrittenHash = ""
@@ -834,8 +834,8 @@ End
 #tag Events RewriteFileButton
 	#tag Event
 		Sub Action()
-		  Dim Mode As String = Self.CurrentMode
-		  Dim RequiredHeader As String
+		  Var Mode As String = Self.CurrentMode
+		  Var RequiredHeader As String
 		  Select Case Mode
 		  Case Beacon.RewriteModeGameIni
 		    RequiredHeader = "[" + Beacon.ShooterGameHeader + "]"
@@ -845,19 +845,19 @@ End
 		    Return
 		  End Select
 		  
-		  Dim Dialog As New OpenFileDialog
+		  Var Dialog As New OpenFileDialog
 		  Dialog.Filter = BeaconFileTypes.IniFile
 		  Dialog.SuggestedFileName = Self.CurrentFilename
 		  Dialog.ActionButtonCaption = "Update"
 		  
-		  Dim File As FolderItem = Dialog.ShowModal()
+		  Var File As FolderItem = Dialog.ShowModal()
 		  If File = Nil Or Not File.Exists Then
 		    Return
 		  End If
 		  
-		  Dim Content As String
+		  Var Content As String
 		  Try
-		    Dim InStream As TextInputStream = TextInputStream.Open(File)
+		    Var InStream As TextInputStream = TextInputStream.Open(File)
 		    Content = InStream.ReadAll()
 		    InStream.Close
 		  Catch Err As IOException
@@ -963,7 +963,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Board As New Clipboard
+		  Var Board As New Clipboard
 		  Board.Text = Me.UpdatedContent
 		  
 		  Self.mLastRewrittenHash = EncodeHex(Crypto.MD5(Me.UpdatedContent))

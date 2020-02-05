@@ -439,7 +439,7 @@ End
 		  Case Self.Notification_CloseDrawer
 		    Self.Dismiss
 		  Case Self.Notification_ShowPane
-		    Dim Pane As Integer = Notification.UserData
+		    Var Pane As Integer = Notification.UserData
 		    Self.ShowPage(Pane)
 		  End Select
 		End Sub
@@ -472,12 +472,12 @@ End
 		  End If
 		  
 		  If Self.Views.SelectedPanelIndex <> Index Then
-		    Dim OldPage As LibrarySubview = Self.CurrentView
+		    Var OldPage As LibrarySubview = Self.CurrentView
 		    If OldPage <> Nil Then
 		      OldPage.SwitchedFrom()
 		    End If
 		    
-		    Dim NewPage As LibrarySubview = Self.ViewAtIndex(Index)
+		    Var NewPage As LibrarySubview = Self.ViewAtIndex(Index)
 		    If NewPage <> Nil Then
 		      Self.Views.SelectedPanelIndex = Index
 		      NewPage.SwitchedTo(UserData)

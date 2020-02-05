@@ -135,12 +135,12 @@ Protected Class Curve
 		  
 		  Time = 1 - Max(Min(Time, 1), 0)
 		  
-		  Dim V0 As Double = Self.C0.Y * Self.B0(Time)
-		  Dim V1 As Double = Self.C1.Y * Self.B1(Time)
-		  Dim V2 As Double = Self.C2.Y * Self.B2(Time)
-		  Dim V3 As Double = Self.C3.Y * Self.B3(Time)
+		  Var V0 As Double = Self.C0.Y * Self.B0(Time)
+		  Var V1 As Double = Self.C1.Y * Self.B1(Time)
+		  Var V2 As Double = Self.C2.Y * Self.B2(Time)
+		  Var V3 As Double = Self.C3.Y * Self.B3(Time)
 		  
-		  Dim Y As Double = V0 + V1 + V2 + V3
+		  Var Y As Double = V0 + V1 + V2 + V3
 		  Return StartValue + ((EndValue - StartValue) * Y)
 		End Function
 	#tag EndMethod

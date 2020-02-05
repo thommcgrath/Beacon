@@ -10,15 +10,15 @@ Inherits Thread
 		    Self.mLock.Enter
 		  #endif
 		  Try
-		    Dim Source As Dictionary
-		    Dim Compress As Boolean = False
+		    Var Source As Dictionary
+		    Var Compress As Boolean = False
 		    If Self.mSource <> Nil Then
 		      Source = Self.mSource
 		    ElseIf Self.mSourceDocument <> Nil And Self.mSourceIdentity <> Nil Then
 		      Source = Self.mSourceDocument.ToDictionary(Self.mSourceIdentity)
 		      Compress = Self.mSourceDocument.UseCompression
 		    Else
-		      Dim Err As New NilObjectException
+		      Var Err As New NilObjectException
 		      Err.Reason = "No source dictionary or document."
 		      Raise Err
 		    End If
@@ -81,15 +81,15 @@ Inherits Thread
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target32Bit or Target64Bit))
 		Shared Function WriteSynchronous(Source As Dictionary, File As FolderItem, Compress As Boolean) As Boolean
 		  If Compress Then
-		    Dim Content As String = Beacon.GenerateJSON(Source, False)
+		    Var Content As String = Beacon.GenerateJSON(Source, False)
 		    
-		    Dim Compressor As New _GZipString
+		    Var Compressor As New _GZipString
 		    Compressor.UseHeaders = True
 		    
-		    Dim Bytes As MemoryBlock = Compressor.Compress(Content, _GZipString.DefaultCompression)
+		    Var Bytes As MemoryBlock = Compressor.Compress(Content, _GZipString.DefaultCompression)
 		    Return File.Write(Bytes)
 		  Else
-		    Dim Content As String = Beacon.GenerateJSON(Source, True)
+		    Var Content As String = Beacon.GenerateJSON(Source, True)
 		    Return File.Write(Content)
 		  End If
 		End Function

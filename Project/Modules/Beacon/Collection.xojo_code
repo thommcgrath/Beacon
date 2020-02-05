@@ -9,7 +9,7 @@ Implements Countable,Beacon.Countable,Iterable
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Bound As Integer = -1)
-		  Redim Self.mItems(Bound)
+		  Self.mItems.ResizeTo(Bound)
 		End Sub
 	#tag EndMethod
 
@@ -69,12 +69,6 @@ Implements Countable,Beacon.Countable,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Operator_Redim(Bound As Integer)
-		  Redim Self.mItems(Bound)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Operator_Subscript(Index As Integer) As Variant
 		  Return Self.mItems(Index)
 		End Function
@@ -89,6 +83,12 @@ Implements Countable,Beacon.Countable,Iterable
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
 		  Self.mItems.RemoveRowAt(Index)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ResizeTo(Bound As Integer)
+		  Self.mItems.ResizeTo(Bound)
 		End Sub
 	#tag EndMethod
 

@@ -8,7 +8,7 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Function All() As Beacon.Map()
-		  Dim Maps(7) As Beacon.Map
+		  Var Maps(7) As Beacon.Map
 		  Maps(0) = Beacon.Maps.TheIsland
 		  Maps(1) = Beacon.Maps.ScorchedEarth
 		  Maps(2) = Beacon.Maps.Aberration
@@ -30,8 +30,8 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Function ForMask(Mask As UInt64) As Beacon.Map()
-		  Dim Possibles() As Beacon.Map = All
-		  Dim Matches() As Beacon.Map
+		  Var Possibles() As Beacon.Map = All
+		  Var Matches() As Beacon.Map
 		  For Each Map As Beacon.Map In Possibles
 		    If (Map.Mask And Mask) > 0 Then
 		      Matches.AddRow(Map)
@@ -50,8 +50,8 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Function GuessMap(Sources() As Beacon.LootSource) As UInt64
-		  Dim List() As Beacon.Map = All
-		  Dim Counts As New Dictionary
+		  Var List() As Beacon.Map = All
+		  Var Counts As New Dictionary
 		  
 		  For Each Map As Beacon.Map In List
 		    For Each Source As Beacon.LootSource In Sources
@@ -64,11 +64,11 @@ Protected Module Maps
 		    Next
 		  Next
 		  
-		  Dim BestMask As UInt64
-		  Dim MaxCount As UInteger
+		  Var BestMask As UInt64
+		  Var MaxCount As UInteger
 		  For Each Entry As DictionaryEntry In Counts
-		    Dim Mask As UInt64 = Entry.Key
-		    Dim Count As UInteger = Entry.Value
+		    Var Mask As UInt64 = Entry.Key
+		    Var Count As UInteger = Entry.Value
 		    
 		    If Count > MaxCount Then
 		      BestMask = Mask
@@ -86,7 +86,7 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Function MaskForIdentifier(Identifier As String) As UInt64
-		  Dim Possibles() As Beacon.Map = All
+		  Var Possibles() As Beacon.Map = All
 		  For Each Map As Beacon.Map In Possibles
 		    If Map.Identifier = Identifier Then
 		      Return Map

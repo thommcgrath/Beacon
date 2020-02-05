@@ -227,8 +227,8 @@ End
 		    ItemSetInfo = GetTypeInfo(Beacon.ItemSet)
 		  End If
 		  
-		  Dim Selections() As Beacon.SimulatedSelection
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Self.mTarget)
+		  Var Selections() As Beacon.SimulatedSelection
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Self.mTarget)
 		  If Info.IsSubclassOf(LootSourceInfo) Then
 		    Selections = Beacon.LootSource(Self.mTarget).Simulate()
 		  ElseIf Info.IsSubclassOf(ItemSetInfo) Then
@@ -237,10 +237,10 @@ End
 		    Return
 		  End If
 		  
-		  Dim GroupedItems As New Dictionary
+		  Var GroupedItems As New Dictionary
 		  For Each Selection As Beacon.SimulatedSelection In Selections
-		    Dim Description As String = Selection.Description
-		    Dim Quantity As Integer
+		    Var Description As String = Selection.Description
+		    Var Quantity As Integer
 		    If GroupedItems.HasKey(Description) Then
 		      Quantity = GroupedItems.Value(Description)
 		    End If
@@ -248,8 +248,8 @@ End
 		  Next
 		  
 		  For Each Item As DictionaryEntry In GroupedItems
-		    Dim Description As String = Item.Key
-		    Dim Quantity As Integer = Item.Value
+		    Var Description As String = Item.Key
+		    Var Quantity As Integer = Item.Value
 		    List.AddRow(Str(Quantity, "0") + "x " + Description)
 		  Next
 		  
@@ -301,7 +301,7 @@ End
 		Sub ResizerDragged(DeltaX As Integer, DeltaY As Integer)
 		  #Pragma Unused DeltaX
 		  
-		  Dim NewSize As Integer = Self.Height - DeltaY
+		  Var NewSize As Integer = Self.Height - DeltaY
 		  RaiseEvent ShouldResize(NewSize)
 		End Sub
 	#tag EndEvent

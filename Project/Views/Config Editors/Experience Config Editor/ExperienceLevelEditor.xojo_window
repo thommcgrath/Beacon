@@ -433,7 +433,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckActionEnabled()
-		  Dim XP As UInt64 = CDbl(Self.XPField.Value)
+		  Var XP As UInt64 = CDbl(Self.XPField.Value)
 		  Self.ActionButton.Enabled = XP >= Self.mMinXP And XP <= Self.mMaxXP
 		End Sub
 	#tag EndMethod
@@ -450,10 +450,10 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, Level As Integer, ByRef LevelXP As UInt64, MinXP As UInt64, MaxXP As UInt64) As Boolean
-		  Dim Win As New ExperienceLevelEditor(Level, LevelXP, MinXP, MaxXP)
+		  Var Win As New ExperienceLevelEditor(Level, LevelXP, MinXP, MaxXP)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
-		  Dim Cancelled As Boolean = Win.mCancelled
+		  Var Cancelled As Boolean = Win.mCancelled
 		  If Not Cancelled Then
 		    LevelXP = CDbl(Win.XPField.Value)
 		  End If

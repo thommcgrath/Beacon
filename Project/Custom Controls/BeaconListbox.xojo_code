@@ -5,21 +5,21 @@ Inherits Listbox
 		Function CellBackgroundPaint(g As Graphics, row As Integer, column As Integer) As Boolean
 		  #Pragma Unused Column
 		  
-		  Dim ColumnWidth As Integer = Self.ColumnAt(Column).WidthActual
-		  Dim RowHeight As Integer = Self.DefaultRowHeight
+		  Var ColumnWidth As Integer = Self.ColumnAt(Column).WidthActual
+		  Var RowHeight As Integer = Self.DefaultRowHeight
 		  
-		  Dim RowInvalid, RowSelected As Boolean
+		  Var RowInvalid, RowSelected As Boolean
 		  If Row < Self.RowCount Then
 		    RowInvalid = RowIsInvalid(Row)
 		    RowSelected = Self.Selected(Row)
 		  End If
 		  
 		  // To ensure a consistent drawing experience. Partially obscure rows traditionally have a truncated g.height value.
-		  Dim Clip As Graphics = G.Clip(0, 0, ColumnWidth, RowHeight)
+		  Var Clip As Graphics = G.Clip(0, 0, ColumnWidth, RowHeight)
 		  
 		  // Need to fill with color first so translucent system colors can apply correctly
 		  #if TargetMacOS
-		    Dim OSMajor, OSMinor, OSBug As Integer
+		    Var OSMajor, OSMinor, OSBug As Integer
 		    UpdateChecker.OSVersion(OSMajor, OSMinor, OSBug)
 		    If Self.Transparent And OSMajor >= 10 And OSMinor >= 14 Then
 		      Clip.ClearRectangle(0, 0, Clip.Width, Clip.Height)
@@ -32,8 +32,8 @@ Inherits Listbox
 		    Clip.FillRectangle(0, 0, Clip.Width, Clip.Height)
 		  #endif
 		  
-		  Dim BackgroundColor, TextColor, SecondaryTextColor As Color
-		  Dim IsHighlighted As Boolean = Self.Highlighted And Self.Window.Focus = Self
+		  Var BackgroundColor, TextColor, SecondaryTextColor As Color
+		  Var IsHighlighted As Boolean = Self.Highlighted And Self.Window.Focus = Self
 		  If RowSelected Then
 		    If IsHighlighted Then
 		      BackgroundColor = If(RowInvalid, SystemColors.SystemRedColor, SystemColors.SelectedContentBackgroundColor)
@@ -63,15 +63,15 @@ Inherits Listbox
 		  Const CellPadding = 4
 		  Const LineSpacing = 6
 		  
-		  Dim Contents As String = Me.CellValueAt(Row, Column).ReplaceLineEndings(EndOfLine)
-		  Dim Lines() As String = Contents.Split(EndOfLine)
-		  Dim MaxDrawWidth As Integer = ColumnWidth - (CellPadding * 4)
+		  Var Contents As String = Me.CellValueAt(Row, Column).ReplaceLineEndings(EndOfLine)
+		  Var Lines() As String = Contents.Split(EndOfLine)
+		  Var MaxDrawWidth As Integer = ColumnWidth - (CellPadding * 4)
 		  
 		  If Lines.LastRowIndex = -1 Then
 		    Return True
 		  End If
 		  
-		  Dim IsChecked As Boolean = Self.ColumnTypeAt(Column) = Listbox.CellTypes.CheckBox Or Self.CellTypeAt(Row, Column) = Listbox.CellTypes.CheckBox
+		  Var IsChecked As Boolean = Self.ColumnTypeAt(Column) = Listbox.CellTypes.CheckBox Or Self.CellTypeAt(Row, Column) = Listbox.CellTypes.CheckBox
 		  If IsChecked Then
 		    MaxDrawWidth = MaxDrawWidth - 20
 		  End If
@@ -81,19 +81,19 @@ Inherits Listbox
 		  Clip.Bold = RowInvalid
 		  
 		  // Need to compute the combined height of the lines
-		  Dim TotalTextHeight As Double = Clip.CapHeight
+		  Var TotalTextHeight As Double = Clip.CapHeight
 		  Clip.FontName = "SmallSystem"
 		  Clip.Bold = False
 		  TotalTextHeight = TotalTextHeight + ((Clip.CapHeight + LineSpacing) * Lines.LastRowIndex)
 		  Clip.FontName = "System"
 		  Clip.Bold = RowInvalid
 		  
-		  Dim DrawTop As Double = (Clip.Height - TotalTextHeight) / 2
+		  Var DrawTop As Double = (Clip.Height - TotalTextHeight) / 2
 		  For I As Integer = 0 To Lines.LastRowIndex
-		    Dim LineWidth As Integer = Min(Ceil(Clip.TextWidth(Lines(I))), MaxDrawWidth)
+		    Var LineWidth As Integer = Min(Ceil(Clip.TextWidth(Lines(I))), MaxDrawWidth)
 		    
-		    Dim DrawLeft As Integer
-		    Dim Align As Listbox.Alignments = Self.CellAlignmentAt(Row, Column)
+		    Var DrawLeft As Integer
+		    Var Align As Listbox.Alignments = Self.CellAlignmentAt(Row, Column)
 		    If Align = Listbox.Alignments.Default Then
 		      Align = Self.ColumnAlignmentAt(Column)
 		    End If
@@ -106,8 +106,8 @@ Inherits Listbox
 		      DrawLeft = Clip.Width - (LineWidth + CellPadding)
 		    End Select
 		    
-		    Dim LineHeight As Double = Clip.CapHeight
-		    Dim LinePosition As Integer = Round(DrawTop + LineHeight)
+		    Var LineHeight As Double = Clip.CapHeight
+		    Var LinePosition As Integer = Round(DrawTop + LineHeight)
 		    
 		    If Not CellTextPaint(Clip, Row, Column, Lines(I), TextColor, DrawLeft, LinePosition, IsHighlighted) Then
 		      Clip.DrawingColor = If(I = 0, TextColor, SecondaryTextColor)
@@ -151,33 +151,33 @@ Inherits Listbox
 
 	#tag Event
 		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
-		  Dim Board As New Clipboard
-		  Dim CanCopy As Boolean = RaiseEvent CanCopy()
-		  Dim CanDelete As Boolean = RaiseEvent CanDelete()
-		  Dim CanPaste As Boolean = RaiseEvent CanPaste(Board)
+		  Var Board As New Clipboard
+		  Var CanCopy As Boolean = RaiseEvent CanCopy()
+		  Var CanDelete As Boolean = RaiseEvent CanDelete()
+		  Var CanPaste As Boolean = RaiseEvent CanPaste(Board)
 		  
-		  Dim CutItem As New MenuItem("Cut", "cut")
+		  Var CutItem As New MenuItem("Cut", "cut")
 		  CutItem.Shortcut = "X"
 		  CutItem.Enabled = CanCopy And CanDelete
 		  Base.AddMenu(CutItem)
 		  
-		  Dim CopyItem As New MenuItem("Copy", "copy")
+		  Var CopyItem As New MenuItem("Copy", "copy")
 		  CopyItem.Shortcut = "C"
 		  CopyItem.Enabled = CanCopy
 		  Base.AddMenu(CopyItem)
 		  
-		  Dim PasteItem As New MenuItem("Paste", "paste")
+		  Var PasteItem As New MenuItem("Paste", "paste")
 		  PasteItem.Shortcut = "V"
 		  PasteItem.Enabled = CanPaste
 		  Base.AddMenu(PasteItem)
 		  
-		  Dim DeleteItem As New MenuItem("Delete", "clear")
+		  Var DeleteItem As New MenuItem("Delete", "clear")
 		  DeleteItem.Enabled = CanDelete
 		  Base.AddMenu(DeleteItem)
 		  
 		  Call ConstructContextualMenu(Base, X, Y)
 		  
-		  Dim Bound As Integer = Base.Count - 1
+		  Var Bound As Integer = Base.Count - 1
 		  For I As Integer = 0 To Bound
 		    If Base.MenuAt(I) = DeleteItem And I < Bound Then
 		      Base.AddMenuAt(I + 1, New MenuItem(MenuItem.TextSeparator))
@@ -229,10 +229,10 @@ Inherits Listbox
 		    Return
 		  End If
 		  
-		  Dim Board As New Clipboard
-		  Dim CanCopy As Boolean = RaiseEvent CanCopy()
-		  Dim CanDelete As Boolean = RaiseEvent CanDelete()
-		  Dim CanPaste As Boolean = RaiseEvent CanPaste(Board)
+		  Var Board As New Clipboard
+		  Var CanCopy As Boolean = RaiseEvent CanCopy()
+		  Var CanDelete As Boolean = RaiseEvent CanDelete()
+		  Var CanPaste As Boolean = RaiseEvent CanPaste(Board)
 		  
 		  EditCopy.Enabled = CanCopy
 		  EditCut.Enabled = CanCopy And CanDelete
@@ -315,7 +315,7 @@ Inherits Listbox
 
 	#tag Method, Flags = &h0
 		Function CanPaste() As Boolean
-		  Dim Board As New Clipboard
+		  Var Board As New Clipboard
 		  Return RaiseEvent CanPaste(Board)
 		End Function
 	#tag EndMethod
@@ -334,14 +334,14 @@ Inherits Listbox
 
 	#tag Method, Flags = &h0
 		Sub DoCopy()
-		  Dim Board As New Clipboard
+		  Var Board As New Clipboard
 		  RaiseEvent PerformCopy(Board)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub DoCut()
-		  Dim Board As New Clipboard
+		  Var Board As New Clipboard
 		  RaiseEvent PerformCopy(Board)
 		  RaiseEvent PerformClear(False)
 		End Sub
@@ -355,7 +355,7 @@ Inherits Listbox
 
 	#tag Method, Flags = &h0
 		Sub DoPaste()
-		  Dim Board As New Clipboard
+		  Var Board As New Clipboard
 		  RaiseEvent PerformPaste(Board)
 		End Sub
 	#tag EndMethod
@@ -366,16 +366,16 @@ Inherits Listbox
 		    Return
 		  End If
 		  
-		  Dim ViewportHeight As Integer = Self.Height
+		  Var ViewportHeight As Integer = Self.Height
 		  If Self.HasHeader Then
 		    ViewportHeight = ViewportHeight - Self.HeaderHeight
 		  End If
 		  If Self.HasBorder Then
 		    ViewportHeight = ViewportHeight - 2
 		  End If
-		  Dim VisibleStart As Integer = Self.ScrollPosition
-		  Dim VisibleEnd As Integer = VisibleStart + Floor(ViewportHeight / Self.DefaultRowHeight)
-		  Dim AtLeastOneVisible As Boolean
+		  Var VisibleStart As Integer = Self.ScrollPosition
+		  Var VisibleEnd As Integer = VisibleStart + Floor(ViewportHeight / Self.DefaultRowHeight)
+		  Var AtLeastOneVisible As Boolean
 		  
 		  For I As Integer = 0 To Self.RowCount - 1
 		    If Self.Selected(I) Then
@@ -384,7 +384,7 @@ Inherits Listbox
 		  Next
 		  If Not AtLeastOneVisible Then
 		    If Animated Then
-		      Dim Task As New AnimationKit.ScrollTask(Self)
+		      Var Task As New AnimationKit.ScrollTask(Self)
 		      Task.DurationInSeconds = 0.4
 		      Task.Position = Self.SelectedRowIndex
 		      Task.Curve = AnimationKit.Curve.CreateEaseOut
@@ -433,13 +433,13 @@ Inherits Listbox
 		  Self.SelectionChangeBlocked = True
 		  
 		  #if TargetWindows
-		    Dim ScrollerVisible As Boolean = Self.HasVerticalScrollbar
+		    Var ScrollerVisible As Boolean = Self.HasVerticalScrollbar
 		    If ScrollerVisible Then
 		      Self.HasVerticalScrollbar = False
 		    End If
 		  #endif
 		  
-		  Dim Count As Integer = Self.RowCount
+		  Var Count As Integer = Self.RowCount
 		  While Count < Value
 		    Self.AddRow("")
 		    Count = Count + 1

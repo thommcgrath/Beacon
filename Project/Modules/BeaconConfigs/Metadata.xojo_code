@@ -87,10 +87,10 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Difficulty
 		  
 		  If ParsedData.HasKey("SessionName") Then
-		    Dim SessionNames() As Variant = ParsedData.AutoArrayValue("SessionName")
+		    Var SessionNames() As Variant = ParsedData.AutoArrayValue("SessionName")
 		    For Each SessionName As Variant In SessionNames
 		      Try
-		        Dim Config As New BeaconConfigs.Metadata
+		        Var Config As New BeaconConfigs.Metadata
 		        Config.Title = SessionName
 		        Return Config
 		      Catch Err As TypeMismatchException

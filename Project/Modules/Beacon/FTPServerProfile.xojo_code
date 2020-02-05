@@ -4,7 +4,7 @@ Inherits Beacon.ServerProfile
 	#tag Event
 		Sub ReadFromDictionary(Dict As Dictionary)
 		  If Not Dict.HasAllKeys("Host", "Port", "User", "Pass", "Game.ini Path", "GameUserSettings.ini Path") Then
-		    Dim Err As KeyNotFoundException
+		    Var Err As KeyNotFoundException
 		    Err.Message = "Missing FTPServerProfile keys"
 		    Raise Err
 		  End If
@@ -37,7 +37,7 @@ Inherits Beacon.ServerProfile
 
 	#tag Method, Flags = &h0
 		Function AsFormData() As Dictionary
-		  Dim Fields As New Dictionary
+		  Var Fields As New Dictionary
 		  Fields.Value("host") = Self.Host
 		  Fields.Value("port") = Self.Port.ToString
 		  Fields.Value("user") = Self.Username

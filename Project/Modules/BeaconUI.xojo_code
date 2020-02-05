@@ -15,12 +15,12 @@ Protected Module BeaconUI
 		    Return Color1
 		  End If
 		  
-		  Dim Color1Percent As Double = 1.0 - Color2Percent
+		  Var Color1Percent As Double = 1.0 - Color2Percent
 		  
-		  Dim Red As Integer = (Color1.Red * Color1Percent) + (Color2.Red * Color2Percent)
-		  Dim Green As Integer = (Color1.Green * Color1Percent) + (Color2.Green * Color2Percent)
-		  Dim Blue As Integer = (Color1.Blue * Color1Percent) + (Color2.Blue * Color2Percent)
-		  Dim Alpha As Integer = (Color1.Alpha * Color1Percent) + (Color2.Alpha * Color2Percent)
+		  Var Red As Integer = (Color1.Red * Color1Percent) + (Color2.Red * Color2Percent)
+		  Var Green As Integer = (Color1.Green * Color1Percent) + (Color2.Green * Color2Percent)
+		  Var Blue As Integer = (Color1.Blue * Color1Percent) + (Color2.Blue * Color2Percent)
+		  Var Alpha As Integer = (Color1.Alpha * Color1Percent) + (Color2.Alpha * Color2Percent)
 		  
 		  Return RGB(Red, Green, Blue, Alpha)
 		End Function
@@ -30,7 +30,7 @@ Protected Module BeaconUI
 		Function CapHeight(Extends G As Graphics) As Double
 		  #if TargetMacOS
 		    Declare Function objc_getClass Lib "Cocoa.framework" (ClassName As CString) As Ptr
-		    Dim NSFont As Ptr = objc_getClass("NSFont")
+		    Var NSFont As Ptr = objc_getClass("NSFont")
 		    If NSFont = Nil Then
 		      #if DebugBuild
 		        System.DebugLog("Unable to get class reference to NSFont.")
@@ -38,7 +38,7 @@ Protected Module BeaconUI
 		      Return G.FontAscent * 0.8
 		    End If
 		    
-		    Dim FontObject As Ptr
+		    Var FontObject As Ptr
 		    If G.FontName = "SmallSystem" And G.FontSize = 0 Then
 		      If G.Bold Then
 		        Declare Function SystemFontOfSize Lib "Cocoa.framework" Selector "boldSystemFontOfSize:" (Target As Ptr, Size As CGFloat) As Ptr
@@ -91,48 +91,48 @@ Protected Module BeaconUI
 		    Const LOGPIXELSY = 90
 		    
 		    // We want to get the screen's DC first
-		    Dim Context As Integer = GetDC(Win.Handle)
-		    Dim HorizontalScale As Double = GetDeviceCaps(Context, LOGPIXELSX) / 96
-		    Dim VerticalScale As Double = GetDeviceCaps(Context, LOGPIXELSY) / 96
+		    Var Context As Integer = GetDC(Win.Handle)
+		    Var HorizontalScale As Double = GetDeviceCaps(Context, LOGPIXELSX) / 96
+		    Var VerticalScale As Double = GetDeviceCaps(Context, LOGPIXELSY) / 96
 		    
-		    Dim BitmapHandle As Integer
-		    Dim PicWidth As Integer = Win.Width * HorizontalScale
-		    Dim PicHeight As Integer = Win.Height * VerticalScale
+		    Var BitmapHandle As Integer
+		    Var PicWidth As Integer = Win.Width * HorizontalScale
+		    Var PicHeight As Integer = Win.Height * VerticalScale
 		    BitmapHandle = CreateCompatibleBitmap(Context, PicWidth, PicHeight)
 		    If BitmapHandle = 0 Then
 		      Return Nil
 		    End If
 		    
-		    Dim BitsPerPixel As Integer
+		    Var BitsPerPixel As Integer
 		    #if Target32Bit
-		      Dim BitmapInfo As New MemoryBlock(24)
+		      Var BitmapInfo As New MemoryBlock(24)
 		      GetObjectA(BitmapHandle, 24, BitmapInfo)
 		      BitsPerPixel = BitmapInfo.UInt8Value(18)
 		    #else
-		      Dim BitmapInfo As New MemoryBlock(48)
+		      Var BitmapInfo As New MemoryBlock(48)
 		      GetObjectA(BitmapHandle, 48, BitmapInfo)
 		      BitsPerPixel = BitmapInfo.UInt8Value(18)
 		    #endif
 		    
 		    DeleteObject(BitmapHandle)
 		    
-		    Dim WindowPic As New Picture(PicWidth, PicHeight, BitsPerPixel)
+		    Var WindowPic As New Picture(PicWidth, PicHeight, BitsPerPixel)
 		    WindowPic.HorizontalResolution = 72 * HorizontalScale
 		    WindowPic.VerticalResolution = 72 * VerticalScale
 		    
-		    Dim DestinationContext As Ptr = WindowPic.Graphics.Handle(Graphics.HandleTypes.HDC)
+		    Var DestinationContext As Ptr = WindowPic.Graphics.Handle(Graphics.HandleTypes.HDC)
 		    Const CAPTUREBLT = &h40000000
 		    Const SRCCOPY = &hCC0020
 		    BitBlt(DestinationContext, 0, 0, PicWidth, PicHeight, Context, 0, 0, SRCCOPY + CAPTUREBLT )
 		    
-		    Dim Pics() As Picture
+		    Var Pics() As Picture
 		    For Scale As Double = 1.0 To 3.0
 		      If Scale = HorizontalScale And Scale = VerticalScale Then
 		        Pics.AddRow(WindowPic)
 		        Continue
 		      End If
 		      
-		      Dim Pic As New Picture(Win.Width * Scale, Win.Height * Scale)
+		      Var Pic As New Picture(Win.Width * Scale, Win.Height * Scale)
 		      Pic.HorizontalResolution = 72 * Scale
 		      Pic.VerticalResolution = 72 * Scale
 		      Pic.Graphics.DrawPicture(WindowPic, 0, 0, Pic.Width, Pic.Height, 0, 0, WindowPic.Width, WindowPic.Height)
@@ -149,8 +149,8 @@ Protected Module BeaconUI
 
 	#tag Method, Flags = &h0
 		Function ContrastAgainst(Extends LeftColor As Color, RightColor As Color) As Double
-		  Dim LeftLuminance As Double = LeftColor.Luminance
-		  Dim RightLuminance As Double = RightColor.Luminance
+		  Var LeftLuminance As Double = LeftColor.Luminance
+		  Var RightLuminance As Double = RightColor.Luminance
 		  If LeftLuminance > RightLuminance Then
 		    Return (LeftLuminance + 0.05) / (RightLuminance + 0.05)
 		  Else
@@ -161,7 +161,7 @@ Protected Module BeaconUI
 
 	#tag Method, Flags = &h0
 		Function CreateWeightIndicator(OffsetPercent As Double, WeightPercent As Double, WidthInPoints As Integer, HeightInPoints As Integer, Scale As Double = 1.0) As Picture
-		  Dim Pic As New Picture(WidthInPoints * Scale, HeightInPoints * Scale)
+		  Var Pic As New Picture(WidthInPoints * Scale, HeightInPoints * Scale)
 		  ' Pic.Graphics.ScaleX = Scale
 		  ' Pic.Graphics.ScaleY = Scale
 		  ' Pic.HorizontalResolution = 72 * Scale
@@ -173,24 +173,24 @@ Protected Module BeaconUI
 		  Pic.Graphics.DrawingColor = &cFFFFFF
 		  Pic.Graphics.FillOval(2 * Scale, 2 * Scale, Pic.Width - (4 * Scale) , Pic.Height - (4 * Scale))
 		  
-		  Dim CenterPoint As New Xojo.Point(Pic.Width / 2, Pic.Height / 2)
+		  Var CenterPoint As New Xojo.Point(Pic.Width / 2, Pic.Height / 2)
 		  
-		  Dim Angles(1) As Double
+		  Var Angles(1) As Double
 		  Angles(0) = (360 * OffsetPercent) - 90
 		  Angles(1) = (360 * (OffsetPercent + WeightPercent)) - 90
 		  
-		  Dim Radius As Double = Min(Pic.Width, Pic.Height) / 2
-		  Dim Distance As Double = Radius * 1.5
-		  Dim Points(2) As Integer
+		  Var Radius As Double = Min(Pic.Width, Pic.Height) / 2
+		  Var Distance As Double = Radius * 1.5
+		  Var Points(2) As Integer
 		  Points(1) = Round(CenterPoint.X)
 		  Points(2) = Round(CenterPoint.Y)
 		  For Each Angle As Double In Angles
 		    While Angle >= 270
 		      Angle = Angle - 360
 		    Wend
-		    Dim Rads As Double = Angle * 0.01745329252
-		    Dim LegX As Double = CenterPoint.X + (Distance * Cos(Rads))
-		    Dim LegY As Double = CenterPoint.Y + (Distance * Sin(Rads))
+		    Var Rads As Double = Angle * 0.01745329252
+		    Var LegX As Double = CenterPoint.X + (Distance * Cos(Rads))
+		    Var LegY As Double = CenterPoint.Y + (Distance * Sin(Rads))
 		    Points.AddRow(Round(LegX))
 		    Points.AddRow(Round(LegY))
 		  Next
@@ -198,12 +198,12 @@ Protected Module BeaconUI
 		  Pic.Graphics.DrawingColor = &c000000
 		  Pic.Graphics.FillPolygon(Points)
 		  
-		  Dim Mask As New Picture(Pic.Width, Pic.Height, 32)
+		  Var Mask As New Picture(Pic.Width, Pic.Height, 32)
 		  Mask.Graphics.DrawingColor = &c000000
 		  Mask.Graphics.FillOval(0, 0, Mask.Width, Mask.Height)
 		  Pic.ApplyMask(Mask)
 		  
-		  Dim Final As New Picture(Pic.Width, Pic.Height, 32)
+		  Var Final As New Picture(Pic.Width, Pic.Height, 32)
 		  Final.Graphics.DrawPicture(Pic, 0, 0)
 		  
 		  Return New Picture(WidthInPoints, HeightInPoints, Array(Final))
@@ -219,8 +219,8 @@ Protected Module BeaconUI
 	#tag Method, Flags = &h1
 		Protected Function FindContrastingColor(BackgroundColor As Color, ForegroundColor As Color) As Color
 		  For Percent As Double = 0.0 To 1.0 Step 0.01
-		    Dim Darker As Color = ForegroundColor.Darker(Percent)
-		    Dim Lighter As Color = ForegroundColor.Lighter(Percent)
+		    Var Darker As Color = ForegroundColor.Darker(Percent)
+		    Var Lighter As Color = ForegroundColor.Lighter(Percent)
 		    If Darker.ContrastAgainst(BackgroundColor) >= 4.5 Then
 		      Return Darker
 		    ElseIf Lighter.ContrastAgainst(BackgroundColor) >= 4.5 Then
@@ -228,8 +228,8 @@ Protected Module BeaconUI
 		    End If
 		  Next
 		  
-		  Dim WhiteContrast As Double = BackgroundColor.ContrastAgainst(&cFFFFFF)
-		  Dim BlackContrast As Double = BackgroundColor.ContrastAgainst(&c000000)
+		  Var WhiteContrast As Double = BackgroundColor.ContrastAgainst(&cFFFFFF)
+		  Var BlackContrast As Double = BackgroundColor.ContrastAgainst(&c000000)
 		  If WhiteContrast > BlackContrast Then
 		    Return &cFFFFFF
 		  Else
@@ -242,13 +242,13 @@ Protected Module BeaconUI
 		Sub FixTabFont(Extends Panel As TabPanel)
 		  #if TargetCocoa
 		    Declare Function objc_getClass Lib "Cocoa.framework" (ClassName As CString) As Ptr
-		    Dim NSFont As Ptr = objc_getClass("NSFont")
+		    Var NSFont As Ptr = objc_getClass("NSFont")
 		    If NSFont = Nil Then
 		      Return
 		    End If
 		    
 		    Declare Function SystemFontOfSize Lib "Cocoa.framework" Selector "systemFontOfSize:" (Target As Ptr, Size As CGFloat) As Ptr
-		    Dim FontObject As Ptr = SystemFontOfSize(NSFont, 0)
+		    Var FontObject As Ptr = SystemFontOfSize(NSFont, 0)
 		    
 		    Declare Function GetPointSize Lib "Cocoa.framework" Selector "pointSize" (Target As Ptr) As CGFloat
 		    
@@ -263,20 +263,20 @@ Protected Module BeaconUI
 
 	#tag Method, Flags = &h1
 		Protected Function IconWithColor(Icon As Picture, FillColor As Color, Overlay As Picture = Nil) As Picture
-		  Dim Width As Integer = Icon.Width
-		  Dim Height As Integer = Icon.Height
+		  Var Width As Integer = Icon.Width
+		  Var Height As Integer = Icon.Height
 		  
-		  Dim Bitmaps() As Picture
+		  Var Bitmaps() As Picture
 		  For Factor As Integer = 1 To 3
-		    Dim ScaledIcon As Picture = Icon.BestRepresentation(Width, Height, Factor)
+		    Var ScaledIcon As Picture = Icon.BestRepresentation(Width, Height, Factor)
 		    
-		    Dim Pic As New Picture(Width * Factor, Height * Factor)
+		    Var Pic As New Picture(Width * Factor, Height * Factor)
 		    Pic.VerticalResolution = 72 * Factor
 		    Pic.HorizontalResolution = 72 * Factor
 		    Pic.Graphics.DrawingColor = RGB(FillColor.Red, FillColor.Green, FillColor.Blue)
 		    Pic.Graphics.FillRectangle(0, 0, Pic.Width, Pic.Height)
 		    
-		    Dim Mask As New Picture(Width * Factor, Height * Factor)
+		    Var Mask As New Picture(Width * Factor, Height * Factor)
 		    Mask.VerticalResolution = 72 * Factor
 		    Mask.HorizontalResolution = 72 * Factor
 		    Mask.Graphics.DrawingColor = &cFFFFFF
@@ -284,7 +284,7 @@ Protected Module BeaconUI
 		    Mask.Graphics.DrawPicture(ScaledIcon, 0, 0, Pic.Width, Pic.Height, 0, 0, ScaledIcon.Width, ScaledIcon.Height)
 		    
 		    If Overlay <> Nil Then
-		      Dim OverlayIcon As Picture = Overlay.BestRepresentation(Width, Height, Factor)
+		      Var OverlayIcon As Picture = Overlay.BestRepresentation(Width, Height, Factor)
 		      Mask.Graphics.DrawPicture(OverlayIcon, 0, 0, Mask.Width, Mask.Height, 0, 0, OverlayIcon.Width, OverlayIcon.Height)
 		    End If
 		    
@@ -314,9 +314,9 @@ Protected Module BeaconUI
 
 	#tag Method, Flags = &h0
 		Function Luminance(Extends Source As Color) As Double
-		  Dim Red As Double = (Source.Red / 255)
-		  Dim Green As Double = (Source.Green / 255)
-		  Dim Blue As Double = (Source.Blue / 255)
+		  Var Red As Double = (Source.Red / 255)
+		  Var Green As Double = (Source.Green / 255)
+		  Var Blue As Double = (Source.Blue / 255)
 		  
 		  Red = If(Red <= 0.03928, Red / 12.92, ((Red + 0.055) / 1.055) ^ 2.4)
 		  Green = If(Green <= 0.03928, Green / 12.92, ((Green + 0.055) / 1.055) ^ 2.4)
@@ -328,7 +328,7 @@ Protected Module BeaconUI
 
 	#tag Method, Flags = &h0
 		Function Piece(Extends Source As Picture, Left As Integer, Top As Integer, Width As Integer, Height As Integer) As Picture
-		  Dim Pic As New Picture(Width, Height)
+		  Var Pic As New Picture(Width, Height)
 		  Pic.Graphics.DrawPicture(Source, 0, 0, Width, Height, Left, Top, Width, Height)
 		  Return Pic
 		End Function
@@ -336,18 +336,18 @@ Protected Module BeaconUI
 
 	#tag Method, Flags = &h0
 		Sub ResizeCells(Extends Target As SegmentedButton)
-		  Dim CellCount As Integer = Target.SegmentCount
-		  Dim AvailableWidth As Integer = Target.Width - (CellCount + 3)
-		  Dim BaseCellWidth As Integer = Floor(AvailableWidth / CellCount)
-		  Dim Remainder As Integer = AvailableWidth - (BaseCellWidth * CellCount)
+		  Var CellCount As Integer = Target.SegmentCount
+		  Var AvailableWidth As Integer = Target.Width - (CellCount + 3)
+		  Var BaseCellWidth As Integer = Floor(AvailableWidth / CellCount)
+		  Var Remainder As Integer = AvailableWidth - (BaseCellWidth * CellCount)
 		  
 		  For I As Integer = 0 To CellCount - 1
-		    Dim CellWidth As Integer = BaseCellWidth
+		    Var CellWidth As Integer = BaseCellWidth
 		    If I < Remainder Then
 		      CellWidth = CellWidth + 1
 		    End If
 		    
-		    Dim Cell As Segment = Target.SegmentAt(I)
+		    Var Cell As Segment = Target.SegmentAt(I)
 		    Cell.Width = CellWidth
 		  Next
 		End Sub
@@ -367,7 +367,7 @@ Protected Module BeaconUI
 		    Win = Nil
 		  End Try
 		  
-		  Dim Dialog As New MessageDialog
+		  Var Dialog As New MessageDialog
 		  Dialog.Title = ""
 		  Dialog.Message = Message
 		  Dialog.Explanation = Explanation
@@ -376,7 +376,7 @@ Protected Module BeaconUI
 		    If Win = Nil Or Win.Type = Window.Types.Sheet Then
 		      Call Dialog.ShowModal()
 		    Else
-		      Dim FocusControl As RectControl = Win.Focus
+		      Var FocusControl As RectControl = Win.Focus
 		      Win.Focus = Nil
 		      Call Dialog.ShowModalWithin(Win)
 		      Win.Focus = FocusControl
@@ -401,7 +401,7 @@ Protected Module BeaconUI
 		    Win = Nil
 		  End Try
 		  
-		  Dim Dialog As New MessageDialog
+		  Var Dialog As New MessageDialog
 		  Dialog.Title = ""
 		  Dialog.Message = Message
 		  Dialog.Explanation = Explanation
@@ -413,9 +413,9 @@ Protected Module BeaconUI
 		    If Win = Nil Or Win.Type = Window.Types.Sheet Then
 		      Return Dialog.ShowModal() = Dialog.ActionButton
 		    Else
-		      Dim FocusControl As RectControl = Win.Focus
+		      Var FocusControl As RectControl = Win.Focus
 		      Win.Focus = Nil
-		      Dim Result As Boolean = Dialog.ShowModalWithin(Win) = Dialog.ActionButton
+		      Var Result As Boolean = Dialog.ShowModalWithin(Win) = Dialog.ActionButton
 		      Win.Focus = FocusControl
 		      Return Result
 		    End If
