@@ -151,9 +151,19 @@ class BeaconDocument implements JsonSerializable {
 		return $this->console_safe;
 	}
 	
+	public function PreloadContent() {
+		if (is_null($this->content) == false) {
+			return;
+		}
+		
+		$this->content = BeaconCloudStorage::GetFile($this->CloudStoragePath(), true);
+	}	
+	
 	public function Content(bool $compressed = false, bool $parsed = true) {
-		if (is_null($this->content)) {
-			$this->content = BeaconCloudStorage::GetFile($this->CloudStoragePath());
+		try {
+			$this->PreloadContent();
+		} catch (Exception $err) {
+			return '';
 		}
 		
 		$content = $this->content;

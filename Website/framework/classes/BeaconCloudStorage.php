@@ -168,7 +168,7 @@ abstract class BeaconCloudStorage {
 			
 			$url = static::BuildSignedURL($remote_path, 'GET');
 			$remote_handle = @fopen($url, 'rb');
-			if (!$remote_handle) {
+			if (strpos($http_response_header[0], ' 200 ') === false || is_null($remote_handle)) {
 				$database->Rollback();
 				return static::FAILED_TO_WARM_CACHE;
 			}
@@ -331,12 +331,16 @@ abstract class BeaconCloudStorage {
 		return $files;
 	}
 	
-	public static function GetFile(string $remote_path) {
+	public static function GetFile(string $remote_path, bool $with_exceptions = false) {
 		$remote_path = static::CleanupRemotePath($remote_path);
 		
 		$local_path = static::WarmFile($remote_path);
 		if (is_int($local_path)) {
-			return '';
+			if ($with_exceptions) {
+				throw new Exception('Failed to retrieve file from storage server', $local_path);
+			} else {
+				return '';
+			}
 		}
 		
 		return file_get_contents($local_path);

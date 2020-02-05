@@ -150,10 +150,6 @@ case 'GET':
 			if ($simple) {
 				BeaconAPI::ReplySuccess($documents[0]);
 			} else {
-				header('Content-Type: application/octet-stream');
-				header('Content-Disposition: attachment; filename="' . preg_replace('/[^a-z09\-_ \(\)]/i', '', $documents[0]->Name()) . '.beacon"');
-				http_response_code(200);
-				
 				$best_option = '*';
 				$accept = isset($_SERVER['HTTP_ACCEPT_ENCODING']) ? strtolower(trim($_SERVER['HTTP_ACCEPT_ENCODING'])) : '';
 				if ($accept !== '') {
@@ -181,7 +177,17 @@ case 'GET':
 				if ($compressed) {
 					header('Content-Encoding: gzip');
 				}
-				echo $documents[0]->Content($compressed, false);
+				try {
+					$documents[0]->PreloadContent(); // If there is an error, this one will fire the exception
+					echo $documents[0]->Content($compressed, false); // This one returns an empty string on error, but will call the preload if needed.
+					header('Content-Type: application/octet-stream');
+					header('Content-Disposition: attachment; filename="' . preg_replace('/[^a-z09\-_ \(\)]/i', '', $documents[0]->Name()) . '.beacon"');
+					http_response_code(200);
+				} catch (Exception $err) {
+					http_response_code(500);
+					header('Content-Type: application/json');
+					echo json_encode(['message' => $err->getMessage(), 'error' => true, 'code' => $err->getCode()]);
+				}
 				exit;
 			}
 		} else {
