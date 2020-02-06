@@ -36,8 +36,8 @@ class BeaconEngram extends BeaconBlueprint {
 			return null;
 		}
 		$obj->entry_string = $row->Field('entry_string');
-		$obj->required_points = intval($row->Field('required_points'));
-		$obj->required_level = intval($row->Field('required_level'));
+		$obj->required_points = $row->Field('required_points');
+		$obj->required_level = $row->Field('required_level');
 		return $obj;
 	}
 	
@@ -58,11 +58,11 @@ class BeaconEngram extends BeaconBlueprint {
 	}
 	
 	public function RequiredPoints() {
-		return $this->required_points;
+		return is_null($this->required_points) ? null : intval($this->required_points);
 	}
 	
 	public function RequiredLevel() {
-		return $this->required_level;
+		return is_null($this->required_level) ? null : intval($this->required_level);
 	}
 	
 	public function jsonSerialize() {
