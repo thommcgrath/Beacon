@@ -501,8 +501,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SelectDocument(Document As Beacon.DocumentURL)
+		  If Self.List = Nil Then
+		    Return
+		  End If
+		  
 		  For I As Integer = Self.List.RowCount - 1 DownTo 0
-		    Self.List.Selected(I) = Beacon.DocumentURL(Self.List.RowTagAt(I)) = Document
+		    Var RowTag As Variant = Self.List.RowTagAt(I)
+		    Self.List.Selected(I) = If(IsNull(RowTag) = False And RowTag IsA Beacon.DocumentURL, Beacon.DocumentURL(RowTag) = Document, False)
 		  Next
 		End Sub
 	#tag EndMethod
