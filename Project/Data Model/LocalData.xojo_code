@@ -1366,29 +1366,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If ChangeDict.HasKey("engrams") Then
 		      Var Engrams() As Variant = ChangeDict.Value("engrams")
 		      For Each Dict As Dictionary In Engrams
-		        // This block of code is a bit weird. All values should be nil of any values are nil.
-		        // Futher, to save performance, a Lookup is called for points and level ONLY if the
-		        // engram entry is not nil. This way if entry_string is missing or nil, no time is
-		        // spent calling Lookup for the other two values that would be discarded anyway.
-		        Var EntryString As Variant = Dict.Lookup("entry_string", Nil)
-		        Var RequiredPoints As Variant
-		        Var RequiredLevel As Variant
-		        If IsNull(EntryString) = False Then
-		          RequiredPoints = Dict.Lookup("required_points", Nil)
-		          RequiredLevel = Dict.Lookup("required_level", Nil)
-		        End If
-		        If IsNull(EntryString) Or IsNull(RequiredPoints) Or IsNull(RequiredLevel) Then
-		          EntryString = Nil
-		          RequiredPoints = Nil
-		          RequiredLevel = Nil
-		        End If
-		        
 		        Var ExtraColumns As New Dictionary
-		        ExtraColumns.Value("entry_string") = EntryString
-		        ExtraColumns.Value("required_points") = RequiredPoints
-		        ExtraColumns.Value("required_level") = RequiredLevel
+		        Var EntryString As Variant = Dict.Lookup("entry_string", Nil)
+		        If IsNull(EntryString) = False Then
+		          ExtraColumns.Value("entry_string") = EntryString
+		          ExtraColumns.Value("required_points") = Dict.Lookup("required_points", Nil)
+		          ExtraColumns.Value("required_level") = Dict.Lookup("required_level", Nil)
+		        End If
 		        
-		        Var Imported As Boolean = Self.AddBlueprintToDatabase(Beacon.CategoryEngrams, Dict)
+		        Var Imported As Boolean = Self.AddBlueprintToDatabase(Beacon.CategoryEngrams, Dict, ExtraColumns)
 		        EngramsChanged = EngramsChanged Or Imported
 		      Next
 		    End If
