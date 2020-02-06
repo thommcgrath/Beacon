@@ -36,8 +36,8 @@ class BeaconEngram extends BeaconBlueprint {
 			return null;
 		}
 		$obj->entry_string = $row->Field('entry_string');
-		$obj->required_points = $row->Field('required_points');
-		$obj->required_level = $row->Field('required_level');
+		$obj->required_points = intval($row->Field('required_points'));
+		$obj->required_level = intval($row->Field('required_level'));
 		return $obj;
 	}
 	
