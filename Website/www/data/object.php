@@ -136,6 +136,23 @@ function PrepareCreatureTable(BeaconCreature $creature, array &$properties) {
 function PrepareEngramTable(BeaconEngram $engram, array &$properties) {
 	$properties['Blueprintable'] = $engram->CanBlueprint() ? 'Yes' : 'No';
 	$properties['Harvestable'] = $engram->Harvestable() ? 'Yes' : 'No';
+	
+	if (is_null($engram->EntryString()) == false) {
+		$properties['Unlock Code'] = '`' . $engram->UnlockCode() . '`';
+		$properties['Engram Specifier'] = $engram->EntryString();
+		
+		if (is_null($engram->RequiredPoints())) {
+			$properties['Required Points'] = 'Tek';
+		} else {
+			$properties['Required Points'] = $engram->RequiredPoints();
+		}
+		
+		if (is_null($engram->RequiredLevel())) {
+			$properties['Required Level'] = 'Tek';
+		} else {
+			$properties['Required Level'] = $engram->RequiredLevel();
+		}
+	}
 }
 
 function PrepareLootSourceTable(BeaconLootSource $loot_source, array &$properties) {
