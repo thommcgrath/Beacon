@@ -19,6 +19,12 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub EngramEntryString(Assigns Value As String)
+		  Self.mEngramEntryString = Value.Trim
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub IsTagged(Tag As String, Assigns Value As Boolean)
 		  Tag = Beacon.NormalizeTag(Tag)
 		  Var Idx As Integer = Self.mTags.IndexOf(Tag)
@@ -53,6 +59,18 @@ Implements Beacon.MutableBlueprint
 		Sub Path(Assigns Value As String)
 		  Self.mPath = Value
 		  Self.mIsValid = Self.mPath.Length > 6 And Self.mPath.Left(6) = "/Game/"
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RequiredPlayerLevel(Assigns Level As UInt16)
+		  Self.mRequiredPlayerLevel = Level
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RequiredUnlockPoints(Assigns Points As UInt16)
+		  Self.mRequiredUnlockPoints = Points
 		End Sub
 	#tag EndMethod
 

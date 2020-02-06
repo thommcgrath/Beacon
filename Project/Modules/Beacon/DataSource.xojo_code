@@ -67,6 +67,12 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetEngramByEntryString(EntryString As String) As Beacon.Engram
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetEngramByID(EngramID As v4UUID) As Beacon.Engram
 		  
 		End Function
@@ -170,6 +176,12 @@ Protected Interface DataSource
 
 	#tag Method, Flags = &h0
 		Function SearchForBlueprints(Category As String, SearchText As String, Mods As Beacon.StringList, Tags As String) As Beacon.Blueprint()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SearchForEngramEntries(SearchText As String, Mods As Beacon.StringList, Tags As String) As Beacon.Engram()
 		  
 		End Function
 	#tag EndMethod

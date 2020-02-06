@@ -195,7 +195,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE mods (mod_id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, console_safe INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_source_icons (icon_id TEXT NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT NOT NULL, sort_order INTEGER NOT NULL, icon TEXT NOT NULL REFERENCES loot_source_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}');")
-		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '');")
+		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', entry_string TEXT, required_level INTEGER, required_points INTEGER);")
 		  Self.SQLExecute("CREATE TABLE official_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_presets (user_id TEXT NOT NULL, object_id TEXT NOT NULL, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, pattern TEXT NOT NULL);")
@@ -222,11 +222,33 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX custom_presets_user_id_object_id_idx ON custom_presets(user_id, object_id);")
+		  Self.SQLExecute("CREATE INDEX engrams_entry_string_idx ON engrams(entry_string);")
 		  
 		  Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe) VALUES (?1, ?2, ?3);", Self.UserModID, Self.UserModName, True)
 		  Self.Commit()
 		  
 		  Self.mBase.UserVersion = Self.SchemaVersion
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CacheEngram(Engram As Beacon.Engram)
+		  Var Arr(0) As Beacon.Engram
+		  Arr(0) = Engram
+		  Self.CacheEngrams(Arr)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CacheEngrams(Engrams() As Beacon.Engram)
+		  For Each Engram As Beacon.Engram In Engrams
+		    Self.mEngramCache.Value(Engram.ClassString) = Engram
+		    Self.mEngramCache.Value(Engram.Path) = Engram
+		    Self.mEngramCache.Value(Engram.ObjectID.StringValue) = Engram
+		    If Engram.HasUnlockDetails Then
+		      Self.mEngramCache.Value(Engram.EngramEntryString) = Engram
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -626,9 +648,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    
 		    Var Engrams() As Beacon.Engram = Self.RowSetToEngram(RS)
-		    For Each Engram As Beacon.Engram In Engrams
-		      Self.mEngramCache.Value(Engram.Path) = Engram
-		    Next
+		    Self.CacheEngrams(Engrams)
 		    Return Engrams
 		  Catch Err As UnsupportedOperationException
 		    Return Nil
@@ -663,16 +683,37 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      End If
 		      
 		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
-		      Self.mEngramCache.Value(Engrams(0).ClassString) = Engrams(0)
-		      For Each Engram As Beacon.Engram In Engrams
-		        Self.mEngramCache.Value(Engram.Path) = Engram
-		        Self.mEngramCache.Value(Engram.ObjectID.StringValue) = Engram
-		      Next
+		      Self.CacheEngrams(Engrams)
 		    Catch Err As UnsupportedOperationException
 		      Return Nil
 		    End Try
 		  End If
 		  Return Self.mEngramCache.Value(ClassString)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramByEntryString(EntryString As String) As Beacon.Engram
+		  // Part of the Beacon.DataSource interface.
+		  
+		  If EntryString.Length < 2 Or EntryString.Right(2) <> "_C" Then
+		    EntryString = EntryString + "_C"
+		  End If
+		  
+		  If Self.mEngramCache.HasKey(EntryString) = False Then
+		    Try
+		      Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE entry_string IS NOT NULL AND LOWER(entry_string) = ?1;", EntryString.Lowercase)
+		      If Results.RowCount = 0 Then
+		        Return Nil
+		      End If
+		      
+		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
+		      Self.CacheEngrams(Engrams)
+		    Catch Err As UnsupportedOperationException
+		      Return Nil
+		    End Try
+		  End If
+		  Return Self.mEngramCache.Value(EntryString)
 		End Function
 	#tag EndMethod
 
@@ -688,10 +729,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      End If
 		      
 		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
-		      For Each Engram As Beacon.Engram In Engrams
-		        Self.mEngramCache.Value(Engram.Path) = Engram
-		        Self.mEngramCache.Value(Engram.ObjectID.StringValue) = Engram
-		      Next
+		      Self.CacheEngrams(Engrams)
 		    Catch Err As UnsupportedOperationException
 		      Return Nil
 		    End Try
@@ -712,10 +750,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      End If
 		      
 		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
-		      For Each Engram As Beacon.Engram In Engrams
-		        Self.mEngramCache.Value(Engram.Path) = Engram
-		        Self.mEngramCache.Value(Engram.ObjectID.StringValue) = Engram
-		      Next
+		      Self.CacheEngrams(Engrams)
 		    Catch Err As UnsupportedOperationException
 		      Return Nil
 		    End Try
@@ -1331,6 +1366,28 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If ChangeDict.HasKey("engrams") Then
 		      Var Engrams() As Variant = ChangeDict.Value("engrams")
 		      For Each Dict As Dictionary In Engrams
+		        // This block of code is a bit weird. All values should be nil of any values are nil.
+		        // Futher, to save performance, a Lookup is called for points and level ONLY if the
+		        // engram entry is not nil. This way if entry_string is missing or nil, no time is
+		        // spent calling Lookup for the other two values that would be discarded anyway.
+		        Var EntryString As Variant = Dict.Lookup("entry_string", Nil)
+		        Var RequiredPoints As Variant
+		        Var RequiredLevel As Variant
+		        If IsNull(EntryString) = False Then
+		          RequiredPoints = Dict.Lookup("required_points", Nil)
+		          RequiredLevel = Dict.Lookup("required_level", Nil)
+		        End If
+		        If IsNull(EntryString) Or IsNull(RequiredPoints) Or IsNull(RequiredLevel) Then
+		          EntryString = Nil
+		          RequiredPoints = Nil
+		          RequiredLevel = Nil
+		        End If
+		        
+		        Var ExtraColumns As New Dictionary
+		        ExtraColumns.Value("entry_string") = EntryString
+		        ExtraColumns.Value("required_points") = RequiredPoints
+		        ExtraColumns.Value("required_level") = RequiredLevel
+		        
 		        Var Imported As Boolean = Self.AddBlueprintToDatabase(Beacon.CategoryEngrams, Dict)
 		        EngramsChanged = EngramsChanged Or Imported
 		      Next
@@ -1641,8 +1698,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  // Engrams
-		  If FromSchemaVersion >= 9 Then
+		  If FromSchemaVersion >= 14 Then
 		    Commands.AddRow("INSERT INTO engrams SELECT * FROM legacy.engrams;")
+		  ElseIf FromSchemaVersion >= 9 Then
+		    Commands.AddRow("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) SELECT object_id, mod_id, label, availability, path, class_string, tags FROM legacy.engrams;")
 		  ElseIf FromSchemaVersion >= 6 Then
 		    Commands.AddRow("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) SELECT object_id, mod_id, label, availability, path, class_string, '' AS tags FROM legacy.engrams WHERE mod_id = '" + Self.UserModID + "' AND can_blueprint = 0;")
 		    Commands.AddRow("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) SELECT object_id, mod_id, label, availability, path, class_string, 'blueprintable' AS tags FROM legacy.engrams WHERE mod_id = '" + Self.UserModID + "' AND can_blueprint = 1;")
@@ -1962,6 +2021,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Engram.TagString = Results.Column("tags").StringValue
 		    Engram.ModID = Results.Column("mod_id").StringValue
 		    Engram.ModName = Results.Column("mod_name").StringValue
+		    If IsNull(Results.Column("entry_string").Value) = False And IsNull(Results.Column("required_points").Value) = False And IsNull(Results.Column("required_level").Value) = False Then
+		      Engram.EngramEntryString = Results.Column("entry_string").StringValue
+		      Engram.RequiredPlayerLevel = Results.Column("required_level").IntegerValue
+		      Engram.RequiredUnlockPoints = Results.Column("required_points").IntegerValue
+		    End If
+		    
 		    Engrams.AddRow(Engram)
 		    Results.MoveToNextRow
 		  Wend
@@ -2168,6 +2233,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        If CacheDict.HasKey(Blueprint.ClassString) Then
 		          CacheDict.Remove(Blueprint.ClassString)
 		        End If
+		        If Blueprint IsA Beacon.Engram And Beacon.Engram(Blueprint).HasUnlockDetails Then
+		          CacheDict.Remove(Beacon.Engram(Blueprint).EngramEntryString)
+		        End If
 		      End If
 		      
 		      CountSaved = CountSaved + 1
@@ -2310,7 +2378,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Case Beacon.CategoryEngrams
 		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
 		      For Each Engram As Beacon.Engram In Engrams
-		        Self.mEngramCache.Value(Engram.Path) = Engram
+		        Self.CacheEngram(Engram)
 		        Blueprints.AddRow(Engram)
 		      Next
 		    Case Beacon.CategoryCreatures
@@ -2331,6 +2399,21 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End Try
 		  
 		  Return Blueprints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SearchForEngramEntries(SearchText As String, Mods As Beacon.StringList, Tags As String) As Beacon.Engram()
+		  Var ExtraClauses() As String = Array("entry_string IS NOT NULL")
+		  Var ExtraValues() As Variant
+		  Var Blueprints() As Beacon.Blueprint = Self.SearchForBlueprints(Beacon.CategoryEngrams, SearchText, Mods, Tags, ExtraClauses, ExtraValues)
+		  Var Engrams() As Beacon.Engram
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    If Blueprint IsA Beacon.Engram Then
+		      Engrams.AddRow(Beacon.Engram(Blueprint))
+		    End If
+		  Next
+		  Return Engrams
 		End Function
 	#tag EndMethod
 
@@ -2690,7 +2773,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = CreatureSelectSQL, Type = String, Dynamic = False, Default = \"SELECT creatures.object_id\x2C creatures.path\x2C creatures.label\x2C creatures.availability\x2C creatures.tags\x2C creatures.incubation_time\x2C creatures.mature_time\x2C creatures.stats\x2C mods.mod_id\x2C mods.name AS mod_name FROM creatures INNER JOIN mods ON (creatures.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT engrams.object_id\x2C engrams.path\x2C engrams.label\x2C engrams.availability\x2C engrams.tags\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT engrams.object_id\x2C engrams.path\x2C engrams.label\x2C engrams.availability\x2C engrams.tags\x2C engrams.entry_string\x2C engrams.required_level\x2C engrams.required_points\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = LootSourcesSelectColumns, Type = String, Dynamic = False, Default = \"class_string\x2C label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements", Scope = Private
@@ -2714,7 +2797,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = Notification_PresetsChanged, Type = String, Dynamic = False, Default = \"Presets Changed", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"13", Scope = Private
+	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"14", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.availability\x2C spawn_points.tags\x2C spawn_points.groups\x2C spawn_points.limits\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private

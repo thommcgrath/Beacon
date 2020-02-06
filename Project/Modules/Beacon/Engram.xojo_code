@@ -93,6 +93,12 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function EngramEntryString() As String
+		  Return Self.mEngramEntryString
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function FromDictionary(Dict As Dictionary) As Beacon.Engram
 		  If Dict.HasKey("Category") = False Or Dict.Value("Category") <> Beacon.CategoryEngrams Then
 		    Return Nil
@@ -115,6 +121,12 @@ Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
 		Function GeneratedClassBlueprintPath() As String
 		  Return "BlueprintGeneratedClass'" + Self.mPath + "_C'"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasUnlockDetails() As Boolean
+		  Return Self.mEngramEntryString.Length > 0
 		End Function
 	#tag EndMethod
 
@@ -214,6 +226,18 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function RequiredPlayerLevel() As UInt16
+		  Return Self.mRequiredPlayerLevel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RequiredUnlockPoints() As UInt16
+		  Return Self.mRequiredUnlockPoints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Tags() As String()
 		  Var Clone() As String
 		  Clone.ResizeTo(Self.mTags.LastRowIndex)
@@ -245,6 +269,10 @@ Implements Beacon.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
+		Protected mEngramEntryString As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mIsValid As Boolean
 	#tag EndProperty
 
@@ -266,6 +294,14 @@ Implements Beacon.Blueprint
 
 	#tag Property, Flags = &h1
 		Protected mPath As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mRequiredPlayerLevel As UInt16
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mRequiredUnlockPoints As UInt16
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
