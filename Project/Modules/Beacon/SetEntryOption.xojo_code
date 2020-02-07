@@ -115,7 +115,19 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function IsValid(Document As Beacon.Document) As Boolean
-		  Return Self.mEngram <> Nil And Self.mEngram.IsValid And IsNull(Self.mEngram.ModID) = False And (Document.Mods.LastRowIndex = -1 Or Document.Mods.IndexOf(Self.mEngram.ModID) > -1) And Self.mEngram.IsTagged("Generic") = False And Self.mEngram.IsTagged("Blueprint") = False
+		  If Self.mEngram = Nil Or Self.mEngram.IsValid = False Or IsNull(Self.mEngram.ModID) Then
+		    Return False
+		  End If
+		  
+		  If Document.Mods.LastRowIndex > -1 And Document.Mods.IndexOf(Self.mEngram.ModID) = -1 Then
+		    Return False
+		  End If
+		  
+		  If Self.mEngram.IsTagged("Generic") Or Self.mEngram.IsTagged("Blueprint") Then
+		    Return False
+		  End If
+		  
+		  Return True
 		End Function
 	#tag EndMethod
 
