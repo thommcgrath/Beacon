@@ -74,6 +74,22 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function CreateFromEntryString(EntryString As String) As Beacon.Engram
+		  Var Base As String = EntryString
+		  If Base.BeginsWith("EngramEntry_") Then
+		    Base = Base.Middle(12)
+		  End If
+		  
+		  Var Engram As Beacon.Engram = CreateFromPath(Beacon.UnknownBlueprintPath("Engrams", "PrimalItemMystery_" + Base + "_C"))
+		  If Engram <> Nil Then
+		    Engram.mEngramEntryString = EntryString
+		  End If
+		  
+		  Return Engram
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function CreateFromPath(Path As String) As Beacon.Engram
 		  Var Engram As New Beacon.Engram
 		  If Path.Length > 6 And Path.Left(6) = "/Game/" Then
@@ -93,7 +109,7 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function EngramEntryString() As String
+		Function EntryString() As String
 		  Return Self.mEngramEntryString
 		End Function
 	#tag EndMethod

@@ -246,7 +246,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.mEngramCache.Value(Engram.Path) = Engram
 		    Self.mEngramCache.Value(Engram.ObjectID.StringValue) = Engram
 		    If Engram.HasUnlockDetails Then
-		      Self.mEngramCache.Value(Engram.EngramEntryString) = Engram
+		      Self.mEngramCache.Value(Engram.EntryString) = Engram
 		    End If
 		  Next
 		End Sub
@@ -2008,7 +2008,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Engram.ModID = Results.Column("mod_id").StringValue
 		    Engram.ModName = Results.Column("mod_name").StringValue
 		    If IsNull(Results.Column("entry_string").Value) = False And IsNull(Results.Column("required_points").Value) = False And IsNull(Results.Column("required_level").Value) = False Then
-		      Engram.EngramEntryString = Results.Column("entry_string").StringValue
+		      Engram.EntryString = Results.Column("entry_string").StringValue
 		      Engram.RequiredPlayerLevel = Results.Column("required_level").IntegerValue
 		      Engram.RequiredUnlockPoints = Results.Column("required_points").IntegerValue
 		    End If
@@ -2220,7 +2220,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          CacheDict.Remove(Blueprint.ClassString)
 		        End If
 		        If Blueprint IsA Beacon.Engram And Beacon.Engram(Blueprint).HasUnlockDetails Then
-		          CacheDict.Remove(Beacon.Engram(Blueprint).EngramEntryString)
+		          CacheDict.Remove(Beacon.Engram(Blueprint).EntryString)
 		        End If
 		      End If
 		      

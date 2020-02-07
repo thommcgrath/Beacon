@@ -19,7 +19,7 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub EngramEntryString(Assigns Value As String)
+		Sub EntryString(Assigns Value As String)
 		  Self.mEngramEntryString = Value.Trim
 		End Sub
 	#tag EndMethod

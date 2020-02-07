@@ -84,6 +84,8 @@ Protected Module Language
 		    Return "Creature Spawn Points"
 		  Case BeaconConfigs.StatLimits.ConfigName
 		    Return "Item Stat Limits"
+		  Case BeaconConfigs.EngramControl.ConfigName
+		    Return "Engram Control"
 		  End Select
 		End Function
 	#tag EndMethod
