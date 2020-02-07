@@ -16,14 +16,19 @@ Inherits Beacon.ConfigGroup
 		  Var Whitelisting As Boolean = Self.OnlyAllowSpecifiedEngrams
 		  For Each Entry As DictionaryEntry In Self.mBehaviors
 		    Var Behaviors As Dictionary = Entry.Value
-		    Var EntryString As String = Behaviors.Value("EntryString")
+		    
+		    // Get the entry string from the engram if available, or use the backup if not available.
+		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Entry.Key)
+		    Var EntryString As String
+		    If Engram <> Nil And Engram.HasUnlockDetails Then
+		      EntryString = Engram.EntryString
+		    Else
+		      EntryString = Behaviors.Value("EntryString")
+		    End If
 		    
 		    If Behaviors.HasKey("AutoUnlockLevel") Then
-		      Var AutoUnlockLevel As NullableDouble = Behaviors.Value("AutoUnlockLevel")
-		      If IsNull(AutoUnlockLevel) = False Then
-		        Var Level As Integer = Round(AutoUnlockLevel.Value)
-		        Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks", "(EngramClassName=""" + EntryString + """,LevelToAutoUnlock=" + Level.ToString + ")"))
-		      End If
+		      Var AutoUnlockLevel As Integer = Round(Behaviors.Value("AutoUnlockLevel").DoubleValue)
+		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks", "(EngramClassName=""" + EntryString + """,LevelToAutoUnlock=" + AutoUnlockLevel.ToString + ")"))
 		    End If
 		    
 		    Var Arguments() As String
@@ -70,6 +75,50 @@ Inherits Beacon.ConfigGroup
 		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "OverridePlayerLevelEngramPoints"))
 		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "bAutoUnlockAllEngrams"))
 		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks"))
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
+		  #Pragma Unused Identity
+		  #Pragma Unused Document
+		  
+		  If Dict.HasKey("Whitelist Mode") Then
+		    Self.mOnlyAllowSpecifiedEngrams = Dict.Value("Whitelist Mode").BooleanValue
+		  End If
+		  
+		  If Dict.HasKey("Auto Unlock All") Then
+		    Self.mAutoUnlockAllEngrams = Dict.Value("Auto Unlock All").BooleanValue
+		  End If
+		  
+		  If Dict.HasKey("Points Per Level") Then
+		    Var Values() As Variant = Dict.Value("Points Per Level")
+		    Self.mPointsPerLevel.ResizeTo(Values.LastRowIndex)
+		    For Idx As Integer = Self.mPointsPerLevel.FirstRowIndex To Self.mPointsPerLevel.LastRowIndex
+		      Self.mPointsPerLevel(Idx) = Values(Idx)
+		    Next
+		  End If
+		  
+		  If Dict.HasKey("Engrams") Then
+		    Self.mBehaviors = Dict.Value("Engrams")
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
+		  #Pragma Unused Document
+		  
+		  If Self.mBehaviors.Count > 0 Then
+		    Dict.Value("Engrams") = Self.mBehaviors
+		  End If
+		  
+		  If Self.mPointsPerLevel.LastRowIndex > -1 Then
+		    Dict.Value("Points Per Level") = Self.mPointsPerLevel
+		  End If
+		  
+		  Dict.Value("Auto Unlock All") = Self.mAutoUnlockAllEngrams
+		  Dict.Value("Whitelist Mode") = Self.mOnlyAllowSpecifiedEngrams
 		End Sub
 	#tag EndEvent
 
@@ -294,8 +343,6 @@ Inherits Beacon.ConfigGroup
 		        If Details.HasKey("EngramPointsCost") And Details.Value("EngramPointsCost").Type = Variant.TypeDouble Then
 		          Config.RequiredPoints(Engram) = Details.Value("EngramPointsCost").DoubleValue
 		        End If
-		        
-		        Break
 		      Catch Err As RuntimeException
 		      End Try
 		    Next
