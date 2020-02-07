@@ -59,6 +59,9 @@ Implements Beacon.Blueprint
 		  Self.mIsValid = Source.mIsValid
 		  Self.mModID = Source.mModID
 		  Self.mModName = Source.mModName
+		  Self.mEngramEntryString = Source.mEngramEntryString
+		  Self.mRequiredPlayerLevel = Source.mRequiredPlayerLevel
+		  Self.mRequiredUnlockPoints = Source.mRequiredUnlockPoints
 		  
 		  Self.mTags.ResizeTo(-1)
 		  For Each Tag As String In Source.mTags
@@ -242,13 +245,13 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function RequiredPlayerLevel() As UInt16
+		Function RequiredPlayerLevel() As NullableDouble
 		  Return Self.mRequiredPlayerLevel
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function RequiredUnlockPoints() As UInt16
+		Function RequiredUnlockPoints() As NullableDouble
 		  Return Self.mRequiredUnlockPoints
 		End Function
 	#tag EndMethod
@@ -313,11 +316,11 @@ Implements Beacon.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mRequiredPlayerLevel As UInt16
+		Protected mRequiredPlayerLevel As NullableDouble
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mRequiredUnlockPoints As UInt16
+		Protected mRequiredUnlockPoints As NullableDouble
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

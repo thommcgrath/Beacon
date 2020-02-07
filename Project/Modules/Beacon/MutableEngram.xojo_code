@@ -63,13 +63,13 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RequiredPlayerLevel(Assigns Level As UInt16)
+		Sub RequiredPlayerLevel(Assigns Level As NullableDouble)
 		  Self.mRequiredPlayerLevel = Level
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RequiredUnlockPoints(Assigns Points As UInt16)
+		Sub RequiredUnlockPoints(Assigns Points As NullableDouble)
 		  Self.mRequiredUnlockPoints = Points
 		End Sub
 	#tag EndMethod

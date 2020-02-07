@@ -2007,10 +2007,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Engram.TagString = Results.Column("tags").StringValue
 		    Engram.ModID = Results.Column("mod_id").StringValue
 		    Engram.ModName = Results.Column("mod_name").StringValue
-		    If IsNull(Results.Column("entry_string").Value) = False And IsNull(Results.Column("required_points").Value) = False And IsNull(Results.Column("required_level").Value) = False Then
+		    If IsNull(Results.Column("entry_string").Value) = False Then
 		      Engram.EntryString = Results.Column("entry_string").StringValue
-		      Engram.RequiredPlayerLevel = Results.Column("required_level").IntegerValue
-		      Engram.RequiredUnlockPoints = Results.Column("required_points").IntegerValue
+		      
+		      If IsNull(Results.Column("required_points").Value) = False And IsNull(Results.Column("required_level").Value) = False Then
+		        Engram.RequiredPlayerLevel = Results.Column("required_level").IntegerValue
+		        Engram.RequiredUnlockPoints = Results.Column("required_points").IntegerValue
+		      End If
 		    End If
 		    
 		    Engrams.AddRow(Engram)
