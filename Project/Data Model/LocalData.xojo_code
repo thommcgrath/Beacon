@@ -2394,7 +2394,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function SearchForEngramEntries(SearchText As String, Mods As Beacon.StringList, Tags As String) As Beacon.Engram()
 		  Var ExtraClauses() As String = Array("entry_string IS NOT NULL")
-		  Var ExtraValues() As Variant
+		  Var ExtraValues(0) As Variant
 		  Var Blueprints() As Beacon.Blueprint = Self.SearchForBlueprints(Beacon.CategoryEngrams, SearchText, Mods, Tags, ExtraClauses, ExtraValues)
 		  Var Engrams() As Beacon.Engram
 		  For Each Blueprint As Beacon.Blueprint In Blueprints

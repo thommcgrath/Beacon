@@ -1130,6 +1130,8 @@ End
 		        NewPanel = New SpawnPointsConfigEditor(Self.mController)
 		      Case BeaconConfigs.StatLimits.ConfigName
 		        NewPanel = New StatLimitsConfigEditor(Self.mController)
+		      Case BeaconConfigs.EngramControl.ConfigName
+		        NewPanel = New EngramControlConfigEditor(Self.mController)
 		      End Select
 		      If NewPanel <> Nil Then
 		        Self.Panels.Value(Tag) = NewPanel

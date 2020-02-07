@@ -146,7 +146,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h21
 		Private Function BehaviorForEngram(Engram As Beacon.Engram, Key As String) As Variant
-		  If Self.mBehaviors.HasKey(Engram.Path) Then
+		  If Not Self.mBehaviors.HasKey(Engram.Path) Then
 		    Return Nil
 		  End If
 		  
