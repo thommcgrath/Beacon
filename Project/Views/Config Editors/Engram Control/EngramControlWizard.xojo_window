@@ -331,9 +331,12 @@ End
 		  Case Self.IndexUnlockNaturally
 		    Var Engrams() As Beacon.Engram = LocalData.SharedInstance.SearchForEngramEntries("", Self.mDocument.Mods, "")
 		    For Each Engram As Beacon.Engram In Engrams
-		      If IsNull(Engram.RequiredPlayerLevel) = False Then
-		        Config.AutoUnlockEngram(Engram) = Engram.RequiredPlayerLevel
+		      Var Level As NullableDouble = Config.RequiredPlayerLevel(Engram)
+		      If IsNull(Level) Then
+		        Level = Engram.RequiredPlayerLevel
 		      End If
+		      
+		      Config.AutoUnlockEngram(Engram) = Level
 		    Next
 		    Config.AutoUnlockAllEngrams = False
 		  Case Self.IndexUnlockUnobtainable
