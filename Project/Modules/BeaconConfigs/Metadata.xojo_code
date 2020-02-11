@@ -6,6 +6,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused SourceDocument
 		  
 		  Values.AddRow(New Beacon.ConfigValue("SessionSettings", "SessionName", Profile.Name))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "bUseSingleplayerSettings", "False"))
 		  
 		  If App.IdentityManager.CurrentIdentity.IsBanned Then
 		    Var Messages() As String
