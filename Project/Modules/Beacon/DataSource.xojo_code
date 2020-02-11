@@ -151,6 +151,12 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function OfficialPlayerLevelData() As Beacon.PlayerLevelData
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Presets() As Beacon.Preset()
 		  
 		End Function

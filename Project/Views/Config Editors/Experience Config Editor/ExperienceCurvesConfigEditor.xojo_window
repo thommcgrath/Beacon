@@ -279,12 +279,12 @@ End
 		  End If
 		  
 		  Var Config As BeaconConfigs.ExperienceCurves = Self.Config(True)
-		  Config.PlayerLevelCap = LocalData.SharedInstance.GetIntegerVariable("Player Level Cap")
+		  Config.PlayerLevelCap = 1
 		  
-		  Var TextList As String = LocalData.SharedInstance.GetStringVariable("Player Default Experience")
-		  Var List() As String = TextList.Split(",")
-		  For I As Integer = 0 To List.LastRowIndex
-		    Config.PlayerExperience(I) = UInt64.FromString(List(I))
+		  Var LevelData As Beacon.PlayerLevelData = LocalData.SharedInstance.OfficialPlayerLevelData
+		  Config.PlayerLevelCap = LevelData.MaxLevel
+		  For Level As Integer = 2 To LevelData.MaxLevel
+		    Config.PlayerExperience(Level - 2) = LevelData.ExperienceForLevel(Level)
 		  Next
 		  
 		  Self.UpdateList()

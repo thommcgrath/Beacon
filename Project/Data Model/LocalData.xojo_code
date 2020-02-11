@@ -1500,6 +1500,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
 		    End If
 		    
+		    Self.mOfficialPlayerLevelData = Nil
+		    
 		    Return True
 		  Catch Err As RuntimeException
 		    Self.Rollback()
@@ -1926,6 +1928,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.SyncUserEngrams()
 		  End Select
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function OfficialPlayerLevelData() As Beacon.PlayerLevelData
+		  If Self.mOfficialPlayerLevelData = Nil Then
+		    Self.mOfficialPlayerLevelData = Beacon.PlayerLevelData.FromString(Self.GetStringVariable("Player Leveling"))
+		  End If
+		  Return Self.mOfficialPlayerLevelData
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -2724,6 +2735,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mNextSyncImportAll As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOfficialPlayerLevelData As Beacon.PlayerLevelData
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

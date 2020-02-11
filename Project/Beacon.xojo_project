@@ -409,6 +409,7 @@ Class=NullableBoolean;Modules/FrameworkExtensions/NullableBoolean.xojo_code;&h00
 Folder=Engram Control;Views/Config Editors/Engram Control;&h000000000D6457FF;&h00000000434D97FF;false
 Window=EngramControlConfigEditor;Views/Config Editors/Engram Control/EngramControlConfigEditor.xojo_window;&h0000000040F69FFF;&h000000000D6457FF;false
 Window=EngramControlWizard;Views/Config Editors/Engram Control/EngramControlWizard.xojo_window;&h0000000038CD3FFF;&h000000000D6457FF;false
+Class=PlayerLevelData;Modules/Beacon/PlayerLevelData.xojo_code;&h000000003C9FAFFF;&h0000000055ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=3
