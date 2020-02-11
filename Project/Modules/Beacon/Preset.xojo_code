@@ -299,7 +299,7 @@ Implements Beacon.Countable
 		  If Self.mPresetID = "" Then
 		    Self.mPresetID = New v4UUID
 		  End If
-		  Return Self.mPresetID
+		  Return Self.mPresetID.Lowercase
 		End Function
 	#tag EndMethod
 

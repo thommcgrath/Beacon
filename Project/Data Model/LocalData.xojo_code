@@ -487,7 +487,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Self.BeginTransaction()
-		  Self.SQLExecute("DELETE FROM custom_presets WHERE user_id = ?1 AND LOWER(object_id) = LOWER(?2);", Self.UserID, Preset.PresetID)
+		  Self.SQLExecute("DELETE FROM custom_presets WHERE user_id = ?1 AND object_id = ?2;", Self.UserID, Preset.PresetID)
 		  Self.Commit()
 		  
 		  Call UserCloud.Delete("/Presets/" + Preset.PresetID.Lowercase + BeaconFileTypes.BeaconPreset.PrimaryExtension)
@@ -1154,7 +1154,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Select Case Action.Value("Action")
 		      Case "DELETE"
 		        Self.BeginTransaction()
-		        Self.SQLExecute("DELETE FROM custom_presets WHERE user_id = ?1 AND LOWER(object_id) = ?2;", Self.UserID, PresetID.Lowercase)
+		        Self.SQLExecute("DELETE FROM custom_presets WHERE user_id = ?1 AND object_id = ?2;", Self.UserID, PresetID.Lowercase)
 		        Self.Commit()
 		        PresetsUpdated = True
 		      Case "GET"
@@ -1518,7 +1518,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function IsPresetCustom(Preset As Beacon.Preset) As Boolean
-		  Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM custom_presets WHERE user_id = ?1 AND LOWER(object_id) = LOWER(?2);", Self.UserID, Preset.PresetID)
+		  Dim Results As RowSet = Self.SQLSelect("SELECT object_id FROM custom_presets WHERE user_id = ?1 AND object_id = ?);", Self.UserID, Preset.PresetID)
 		  Return Results.RowCount = 1
 		End Function
 	#tag EndMethod
@@ -1551,9 +1551,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Redim Self.mPresets(-1)
 		  Self.BeginTransaction()
 		  Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id = ?1;", Self.UserModID) // Loading the presets will refill all the needed custom modifiers
-		  Self.LoadPresets(Self.SQLSelect("SELECT object_id, contents FROM official_presets WHERE LOWER(object_id) NOT IN (SELECT LOWER(object_id) FROM custom_presets WHERE user_id = ?1)", Self.UserID), Beacon.Preset.Types.BuiltIn)
-		  Self.LoadPresets(Self.SQLSelect("SELECT object_id, contents FROM custom_presets WHERE user_id = ?1 AND LOWER(object_id) IN (SELECT LOWER(object_id) FROM official_presets)", Self.UserID), Beacon.Preset.Types.CustomizedBuiltIn)
-		  Self.LoadPresets(Self.SQLSelect("SELECT object_id, contents FROM custom_presets WHERE user_id = ?1 AND LOWER(object_id) NOT IN (SELECT LOWER(object_id) FROM official_presets)", Self.UserID), Beacon.Preset.Types.Custom)
+		  Self.LoadPresets(Self.SQLSelect("SELECT object_id, contents FROM official_presets WHERE object_id NOT IN (SELECT object_id FROM custom_presets WHERE user_id = ?1)", Self.UserID), Beacon.Preset.Types.BuiltIn)
+		  Self.LoadPresets(Self.SQLSelect("SELECT object_id, contents FROM custom_presets WHERE user_id = ?1 AND object_id IN (SELECT object_id FROM official_presets)", Self.UserID), Beacon.Preset.Types.CustomizedBuiltIn)
+		  Self.LoadPresets(Self.SQLSelect("SELECT object_id, contents FROM custom_presets WHERE user_id = ?1 AND object_id NOT IN (SELECT object_id FROM official_presets)", Self.UserID), Beacon.Preset.Types.Custom)
 		  Self.Commit()
 		End Sub
 	#tag EndMethod
@@ -1568,7 +1568,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        // To work around https://github.com/thommcgrath/Beacon/issues/64
 		        Dim Contents As String = Beacon.GenerateJSON(Preset.ToDictionary, False)
 		        Self.BeginTransaction()
-		        Self.SQLExecute("UPDATE custom_presets SET LOWER(object_id) = LOWER(?3), contents = ?4 WHERE user_id = ?1 AND object_id = ?2;", Self.UserID, Results.Column("object_id").StringValue, Preset.PresetID, Contents)
+		        Self.SQLExecute("UPDATE custom_presets SET object_id = ?3, contents = ?4 WHERE user_id = ?1 AND object_id = ?2;", Self.UserID, Results.Column("object_id").StringValue, Preset.PresetID, Contents)
 		        Self.Commit()
 		      End If
 		      
@@ -1683,7 +1683,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  If FromSchemaVersion >= 13 Then
 		    Commands.AddRow("INSERT INTO custom_presets SELECT * FROM legacy.custom_presets;")
 		  ElseIf FromSchemaVersion >= 3 Then
-		    Commands.AddRow("INSERT INTO custom_presets (user_id, object_id, label, contents) SELECT '" + Self.UserID + "' AS user_id, object_id, label, contents FROM legacy.custom_presets;")
+		    Commands.AddRow("INSERT INTO custom_presets (user_id, object_id, label, contents) SELECT '" + Self.UserID + "' AS user_id, LOWER(object_id), label, contents FROM legacy.custom_presets;")
 		  End If
 		  
 		  // Creatures
@@ -1764,7 +1764,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Dim Label As String = Dict.Value("Label")
 		          
 		          Self.BeginTransaction()
-		          Self.SQLExecute("INSERT OR REPLACE INTO custom_presets (user_id, object_id, label, contents) VALUES (?1, LOWER(?2), ?3, ?4);", Self.UserID, PresetID, Label, Content)
+		          Self.SQLExecute("INSERT OR REPLACE INTO custom_presets (user_id, object_id, label, contents) VALUES (?1, ?2, ?3, ?4);", Self.UserID, PresetID.Lowercase, Label, Content)
 		          Self.Commit()
 		          
 		          File.Remove
@@ -2223,7 +2223,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dim Content As String = Beacon.GenerateJSON(Preset.ToDictionary, False)
 		  
 		  Self.BeginTransaction()
-		  Self.SQLExecute("INSERT OR REPLACE INTO custom_presets (user_id, object_id, label, contents) VALUES (?1, LOWER(?2), ?3, ?4);", Self.UserID, Preset.PresetID, Preset.Label, Content)
+		  Self.SQLExecute("INSERT OR REPLACE INTO custom_presets (user_id, object_id, label, contents) VALUES (?1, ?2, ?3, ?4);", Self.UserID, Preset.PresetID, Preset.Label, Content)
 		  Self.Commit()
 		  
 		  Call UserCloud.Write("/Presets/" + Preset.PresetID.Lowercase + BeaconFileTypes.BeaconPreset.PrimaryExtension, Content)
