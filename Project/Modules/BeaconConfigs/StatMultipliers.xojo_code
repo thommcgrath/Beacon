@@ -8,6 +8,9 @@ Inherits Beacon.ConfigGroup
 		  
 		  For Each Entry As DictionaryEntry In Self.PlayerStats
 		    Dim Stat As Beacon.Stat = Beacon.Stats.Named(Entry.Key)
+		    If Not (Entry.Value IsA Dictionary) Then
+		      Continue
+		    End If
 		    Dim Dict As Dictionary = Entry.Value
 		    
 		    If Dict.HasKey("Base") And Stat.PlayerBaseCapped = False Then
@@ -22,6 +25,9 @@ Inherits Beacon.ConfigGroup
 		  
 		  For Each Entry As DictionaryEntry In Self.TamedStats
 		    Dim Stat As Beacon.Stat = Beacon.Stats.Named(Entry.Key)
+		    If Not (Entry.Value IsA Dictionary) Then
+		      Continue
+		    End If
 		    Dim Dict As Dictionary = Entry.Value
 		    
 		    If Dict.HasKey("PerLevel") Then
@@ -40,6 +46,9 @@ Inherits Beacon.ConfigGroup
 		  
 		  For Each Entry As DictionaryEntry In Self.WildStats
 		    Dim Stat As Beacon.Stat = Beacon.Stats.Named(Entry.Key)
+		    If Not (Entry.Value IsA Dictionary) Then
+		      Continue
+		    End If
 		    Dim Dict As Dictionary = Entry.Value
 		    
 		    If Dict.HasKey("PerLevel") Then
