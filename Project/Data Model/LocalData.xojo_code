@@ -324,6 +324,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.mCreatureCache = New Dictionary
 		  Self.mSpawnPointCache = New Dictionary
 		  Self.mLock = New CriticalSection
+		  Self.mDropsLabelCacheDict = New Dictionary
+		  Self.mSpawnLabelCacheDict = New Dictionary
 		  
 		  Dim AppSupport As FolderItem = App.ApplicationSupport
 		  Dim ShouldImportCloud As Boolean
