@@ -630,7 +630,7 @@ End
 	#tag Method, Flags = &h0
 		Function GoToChild(ItemSet As Beacon.ItemSet, Entry As Beacon.SetEntry = Nil, Option As Beacon.SetEntryOption = Nil) As Boolean
 		  For I As Integer = 0 To Self.SetList.RowCount - 1
-		    If Self.SetList.RowTagAt(I) = ItemSet Then
+		    If ItemSetOrganizer(Self.SetList.RowTagAt(I)).Template = ItemSet Then
 		      Self.SetList.SelectedRowIndex = I
 		      Self.SetList.EnsureSelectionIsVisible()
 		      If Entry <> Nil Then

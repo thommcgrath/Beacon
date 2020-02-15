@@ -2,6 +2,23 @@
 Protected Class CodeArea
 Inherits TextArea
 	#tag Event
+		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  
+		  #if TargetWindows
+		    Base.AddMenu(EditCut)
+		    Base.AddMenu(EditCopy)
+		    Base.AddMenu(EditPaste)
+		    Base.AddMenu(EditClear)
+		    Return True
+		  #else
+		    #Pragma Unused Base
+		  #endif
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  RaiseEvent Open
 		  Self.FontUnit = FontUnits.Point
