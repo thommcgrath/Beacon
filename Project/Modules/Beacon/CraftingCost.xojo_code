@@ -237,12 +237,20 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Quantity(Index As Integer) As Integer
+		  If Index < Self.mQuantities.FirstRowIndex Or Index > Self.mQuantities.LastRowIndex Then
+		    Return 0
+		  End If
+		  
 		  Return Self.mQuantities(Index)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Quantity(Index As Integer, Assigns Value As Integer)
+		  If Index < Self.mQuantities.FirstRowIndex Or Index > Self.mQuantities.LastRowIndex Then
+		    Return
+		  End If
+		  
 		  Value = Min(Max(Value, 1), 65535)
 		  
 		  If Self.mQuantities(Index) <> Value Then
@@ -263,21 +271,35 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mQuantities.RemoveRowAt(Index)
-		  Self.mRequireExacts.RemoveRowAt(Index)
-		  Self.mResources.RemoveRowAt(Index)
+		  If Index >= Self.mQuantities.FirstRowIndex And Index <= Self.mQuantities.LastRowIndex Then
+		    Self.mQuantities.RemoveRowAt(Index)
+		  End If
+		  If Index >= Self.mRequireExacts.FirstRowIndex And Index <= Self.mRequireExacts.LastRowIndex Then
+		    Self.mRequireExacts.RemoveRowAt(Index)
+		  End If
+		  If Index >= Self.mResources.FirstRowIndex And Index <= Self.mResources.LastRowIndex Then
+		    Self.mResources.RemoveRowAt(Index)
+		  End If
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function RequireExactResource(Index As Integer) As Boolean
+		  If Index < Self.mRequireExacts.FirstRowIndex Or Index > Self.mRequireExacts.LastRowIndex Then
+		    Return False
+		  End If
+		  
 		  Return Self.mRequireExacts(Index)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub RequireExactResource(Index As Integer, Assigns Value As Boolean)
+		  If Index < Self.mRequireExacts.FirstRowIndex Or Index > Self.mRequireExacts.LastRowIndex Then
+		    Return
+		  End If
+		  
 		  If Self.mRequireExacts(Index) <> Value Then
 		    Self.mRequireExacts(Index) = Value
 		    Self.Modified = True
@@ -287,12 +309,20 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Resource(Index As Integer) As Beacon.Engram
+		  If Index < Self.mResources.FirstRowIndex Or Index > Self.mResources.LastRowIndex Then
+		    Return Nil
+		  End If
+		  
 		  Return Self.mResources(Index)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Resource(Index As Integer, Assigns Value As Beacon.Engram)
+		  If Index < Self.mResources.FirstRowIndex Or Index > Self.mResources.LastRowIndex Then
+		    Return
+		  End If
+		  
 		  If Self.mResources(Index) <> Value Then
 		    Self.mResources(Index) = Value
 		    Self.Modified = True
