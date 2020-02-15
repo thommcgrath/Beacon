@@ -34,6 +34,23 @@ Protected Module Beacon
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function AreElementsEqual(Items() As Variant) As Boolean
+		  If Items = Nil Or Items.LastRowIndex <= 0 Then
+		    Return True
+		  End If
+		  
+		  Var CommonValue As Variant = Items(0)
+		  For Idx As Integer = 1 To Items.LastRowIndex
+		    If CommonValue <> Items(Idx) Then
+		      Return False
+		    End If
+		  Next
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function AutoArrayValue(Extends Dict As Dictionary, Key As String) As Variant()
 		  Var Entries() As Variant
@@ -633,6 +650,23 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function MD5(Value As MemoryBlock) As String
 		  Return EncodeHex(Crypto.MD5(Value))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Merge(Array1() As Beacon.Engram, Array2() As Beacon.Engram) As Beacon.Engram()
+		  Var Unique As New Dictionary
+		  For Each Engram As Beacon.Engram In Array1
+		    Unique.Value(Engram.Path) = Engram
+		  Next
+		  For Each Engram As Beacon.Engram In Array2
+		    Unique.Value(Engram.Path) = Engram
+		  Next
+		  Var Merged() As Beacon.Engram
+		  For Each Entry As DictionaryEntry In Unique
+		    Merged.AddRow(Entry.Value)
+		  Next
+		  Return Merged
 		End Function
 	#tag EndMethod
 

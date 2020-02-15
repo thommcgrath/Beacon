@@ -426,35 +426,60 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ShowDeleteConfirmation(Extends Win As Window, Items() As Beacon.NamedItem, SingularNoun As String, PluralNoun As String) As Boolean
-		  Return ShowDeleteConfirmation(Win, Items, SingularNoun, PluralNoun)
+		Function ShowDeleteConfirmation(Extends Win As Window, Items() As Beacon.NamedItem, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
+		  Return ShowDeleteConfirmation(Win, Items, SingularNoun, PluralNoun, Restore)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ShowDeleteConfirmation(Extends Win As Window, Names() As String, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
+		  Return ShowDeleteConfirmation(Win, Names, SingularNoun, PluralNoun, Restore)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ShowDeleteConfirmation(Win As Window = Nil, Items() As Beacon.NamedItem, SingularNoun As String, PluralNoun As String) As Boolean
+		Protected Function ShowDeleteConfirmation(Win As Window = Nil, Items() As Beacon.NamedItem, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
 		  Var Names() As String
-		  Var UseGenericNames As Boolean
 		  For Each Item As Beacon.NamedItem In Items
-		    Var Name As String = Item.Label
-		    If Names.IndexOf(Name) > -1 Then
+		    Names.AddRow(Item.Label)
+		  Next
+		  Return ShowDeleteConfirmation(Win, Names, SingularNoun, PluralNoun, Restore)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ShowDeleteConfirmation(Win As Window = Nil, Names() As String, SingularNoun As String, PluralNoun As String, Restore As Boolean = False) As Boolean
+		  Var UniqueNames() As String
+		  Var UseGenericNames As Boolean
+		  For Each Name As String In Names
+		    If UniqueNames.IndexOf(Name) > -1 Then
 		      UseGenericNames = True
 		    Else
-		      Names.AddRow(Name)
+		      UniqueNames.AddRow(Name)
 		    End If
 		  Next
-		  UseGenericNames = UseGenericNames Or Names.Count > 8
+		  UseGenericNames = UseGenericNames Or UniqueNames.Count > 8
 		  
 		  Var Message As String
-		  If UseGenericNames Then
-		    Message = "Are you sure you want to delete these " + Items.Count.ToString + " " + PluralNoun + "?"
-		  ElseIf Names.LastRowIndex = 0 Then
-		    Message = "Are you sure you want to delete the " + SingularNoun + " " + Names(0) + "?"
+		  If Restore Then
+		    If UseGenericNames Then
+		      Message = "Are you sure you want to restore these " + Names.Count.ToString + " " + PluralNoun + " to their default settings?"
+		    ElseIf Names.LastRowIndex = 0 Then
+		      Message = "Are you sure you want to restore the " + SingularNoun + " " + UniqueNames(0) + " to its default settings?"
+		    Else
+		      Message = "Are you sure you want to restore the " + PluralNoun + " " + Language.EnglishOxfordList(UniqueNames) + " to their default settings?"
+		    End If
 		  Else
-		    Message = "Are you sure you want to delete the " + PluralNoun + " " + Language.EnglishOxfordList(Names) + "?"
+		    If UseGenericNames Then
+		      Message = "Are you sure you want to delete these " + Names.Count.ToString + " " + PluralNoun + "?"
+		    ElseIf Names.LastRowIndex = 0 Then
+		      Message = "Are you sure you want to delete the " + SingularNoun + " " + UniqueNames(0) + "?"
+		    Else
+		      Message = "Are you sure you want to delete the " + PluralNoun + " " + Language.EnglishOxfordList(UniqueNames) + "?"
+		    End If
 		  End If
 		  
-		  Return ShowConfirm(Win, Message, "This action cannot be undone.", "Delete", "Cancel")
+		  Return ShowConfirm(Win, Message, "This action cannot be undone.", If(Restore, "Restore", "Delete"), "Cancel")
 		End Function
 	#tag EndMethod
 

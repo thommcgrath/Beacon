@@ -1,6 +1,18 @@
 #tag Class
 Class NullableBoolean
 	#tag Method, Flags = &h0
+		Function BooleanValue() As Boolean
+		  Return Self.mValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromBoolean(Value As Boolean) As NullableBoolean
+		  Return Value
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Boolean) As Integer
 		  If Self.mValue <> Other Then
 		    Return -1
@@ -35,7 +47,7 @@ Class NullableBoolean
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Value() As Boolean
+		Attributes( Deprecated = "BooleanValue" )  Function Value() As Boolean
 		  Return Self.mValue
 		End Function
 	#tag EndMethod

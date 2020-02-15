@@ -1,5 +1,5 @@
 #tag Window
-Begin Window EngramControlWizard
+Begin BeaconDialog EngramControlWizard
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
@@ -71,7 +71,7 @@ Begin Window EngramControlWizard
       Height          =   20
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Unlock all at spawn\nUnlock all except Tek at spawn\nUnlock all while leveling\nUnlock unobtainable while leveling\nUnlock Tek at level:\nGrant exact points needed per level"
+      InitialValue    =   "Unlock all at spawn\nUnlock all except Tek at spawn\nUnlock all while leveling\nUnlock unobtainable while leveling\nUnlock Tek at level:\nGrant exact points needed per level\nMake everything unlockable at level:"
       Italic          =   False
       Left            =   86
       LockBottom      =   False
@@ -199,6 +199,7 @@ Begin Window EngramControlWizard
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
@@ -237,6 +238,13 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  Self.SwapButtons()
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Sub Constructor(Document As Beacon.Document)
 		  Self.mDocument = Document
@@ -273,6 +281,9 @@ End
 	#tag Constant, Name = IndexGrantExactPoints, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = IndexMakeEverythingAvailableAtLevel, Type = Double, Dynamic = False, Default = \"6", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = IndexUnlockAll, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
@@ -294,7 +305,7 @@ End
 #tag Events TemplateMenu
 	#tag Event
 		Sub Change()
-		  Self.TekLevelField.Visible = Me.SelectedRowIndex = Self.IndexUnlockTek
+		  Self.TekLevelField.Visible = Me.SelectedRowIndex = Self.IndexUnlockTek Or Me.SelectedRowIndex = Self.IndexMakeEverythingAvailableAtLevel
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -310,57 +321,59 @@ End
 		    AddWhenFinished = True
 		  End If
 		  
+		  Var Engrams() As Beacon.Engram = Beacon.Merge(Config.SpecifiedEngrams, LocalData.SharedInstance.SearchForEngramEntries("", Self.mDocument.Mods, ""))
+		  
 		  // Do the work
 		  Select Case Self.TemplateMenu.SelectedRowIndex
 		  Case Self.IndexUnlockAll
-		    Var Engrams() As Beacon.Engram = LocalData.SharedInstance.SearchForEngramEntries("", Self.mDocument.Mods, "")
 		    For Each Engram As Beacon.Engram In Engrams
-		      Config.AutoUnlockEngram(Engram) = 0
+		      Config.AutoUnlockEngram(Engram) = True
+		      Config.RequiredPlayerLevel(Engram) = 0
+		      Config.Hidden(Engram) = False
 		    Next
 		    Config.AutoUnlockAllEngrams = False
 		  Case Self.IndexUnlockAllNoTek
-		    Var Engrams() As Beacon.Engram = LocalData.SharedInstance.SearchForEngramEntries("", Self.mDocument.Mods, "object NOT tek")
 		    For Each Engram As Beacon.Engram In Engrams
-		      Config.AutoUnlockEngram(Engram) = 0
-		    Next
-		    Engrams = LocalData.SharedInstance.SearchForEngramEntries("", Self.mDocument.Mods, "object AND tek")
-		    For Each Engram As Beacon.Engram In Engrams
-		      Config.AutoUnlockEngram(Engram) = Nil
+		      If Engram.IsTagged("tek") Then
+		        Continue
+		      End If
+		      Config.AutoUnlockEngram(Engram) = True
+		      Config.RequiredPlayerLevel(Engram) = 0
+		      Config.Hidden(Engram) = False
 		    Next
 		    Config.AutoUnlockAllEngrams = False
 		  Case Self.IndexUnlockNaturally
-		    Var Engrams() As Beacon.Engram = LocalData.SharedInstance.SearchForEngramEntries("", Self.mDocument.Mods, "")
 		    For Each Engram As Beacon.Engram In Engrams
-		      Var Level As NullableDouble = Config.RequiredPlayerLevel(Engram)
-		      If IsNull(Level) Then
-		        Level = Engram.RequiredPlayerLevel
-		      End If
-		      
-		      Config.AutoUnlockEngram(Engram) = Level
+		      Config.AutoUnlockEngram(Engram) = True
+		      Config.Hidden(Engram) = False
 		    Next
 		    Config.AutoUnlockAllEngrams = False
 		  Case Self.IndexUnlockUnobtainable
-		    Var Engrams() As Beacon.Engram = LocalData.SharedInstance.SearchForEngramEntries("", Self.mDocument.Mods, "")
 		    Var Mask As UInt64 = Self.mDocument.MapCompatibility
 		    For Each Engram As Beacon.Engram In Engrams
-		      If Engram.ValidForMask(Mask) = False Then
-		        Config.AutoUnlockEngram(Engram) = Engram.RequiredPlayerLevel
-		      Else
-		        Config.AutoUnlockEngram(Engram) = Nil
-		      End If
-		    Next
-		    Config.AutoUnlockAllEngrams = False
-		  Case Self.IndexGrantExactPoints
-		    Config.LevelsDefined = 0 // Reset
-		    
-		    Var Engrams() As Beacon.Engram = LocalData.SharedInstance.SearchForEngramEntries("", Self.mDocument.Mods, "")
-		    Var Organizer As New Dictionary
-		    For Each Engram As Beacon.Engram In Engrams
-		      // If the engram is auto unlocked, don't include it here
-		      If IsNull(Config.AutoUnlockEngram(Engram)) = False Then
+		      If Engram.ValidForMask(Mask) Then
 		        Continue
 		      End If
 		      
+		      Config.AutoUnlockEngram(Engram) = True
+		      Config.Hidden(Engram) = False
+		    Next
+		    Config.AutoUnlockAllEngrams = False
+		  Case Self.IndexGrantExactPoints
+		    Var PlayerLevelCap As Integer = LocalData.SharedInstance.OfficialPlayerLevelData.MaxLevel
+		    If Self.mDocument.HasConfigGroup(BeaconConfigs.ExperienceCurves.ConfigName) Then
+		      Var ExperienceConfig As BeaconConfigs.ExperienceCurves = BeaconConfigs.ExperienceCurves(Self.mDocument.ConfigGroup(BeaconConfigs.ExperienceCurves.ConfigName, False))
+		      If ExperienceConfig <> Nil Then
+		        PlayerLevelCap = Max(PlayerLevelCap, ExperienceConfig.PlayerLevelCap)
+		      End If
+		    End If
+		    Config.LevelsDefined = PlayerLevelCap
+		    
+		    For Level As Integer = 1 To PlayerLevelCap
+		      Config.PointsForLevel(Level) = 0
+		    Next
+		    
+		    For Each Engram As Beacon.Engram In Engrams
 		      Var Level As NullableDouble = Config.RequiredPlayerLevel(Engram)
 		      If IsNull(Level) Then
 		        Level = Engram.RequiredPlayerLevel
@@ -369,34 +382,43 @@ End
 		        End If
 		      End If
 		      
-		      Var Points As NullableDouble = Config.RequiredPoints(Engram)
-		      If IsNull(Points) Then
-		        Points = Engram.RequiredUnlockPoints
+		      Var Points As NullableDouble
+		      If IsNull(Config.AutoUnlockEngram(Engram)) Or Config.AutoUnlockEngram(Engram).BooleanValue = False Then
+		        Points = Config.RequiredPoints(Engram)
 		        If IsNull(Points) Then
-		          Continue
+		          Points = Engram.RequiredUnlockPoints
+		          If IsNull(Points) Then
+		            Continue
+		          End If
 		        End If
 		      End If
 		      
-		      Var ActualLevel As Integer = Round(Level.Value)
-		      Var ActualPoints As Integer = Round(Points.Value)
-		      Config.PointsForLevel(ActualLevel) = Config.PointsForLevel(ActualLevel) + ActualPoints
+		      Var ActualLevel As Integer = Level.IntegerValue
+		      Var ActualPoints As Integer = If(IsNull(Points), 0, Points.IntegerValue)
+		      Var CurrentPoints As NullableDouble = Config.PointsForLevel(ActualLevel)
+		      Config.PointsForLevel(ActualLevel) = If(IsNull(CurrentPoints), 0, CurrentPoints.IntegerValue) + ActualPoints
 		    Next
-		    
-		    Var PlayerLevelCap As Integer = LocalData.SharedInstance.GetIntegerVariable("Player Level Cap")
-		    If Self.mDocument.HasConfigGroup(BeaconConfigs.ExperienceCurves.ConfigName) Then
-		      Var ExperienceConfig As BeaconConfigs.ExperienceCurves = BeaconConfigs.ExperienceCurves(Self.mDocument.ConfigGroup(BeaconConfigs.ExperienceCurves.ConfigName, False))
-		      If ExperienceConfig <> Nil Then
-		        PlayerLevelCap = Max(PlayerLevelCap, ExperienceConfig.PlayerLevelCap)
-		      End If
-		    End If
-		    Config.LevelsDefined = Max(Config.LevelsDefined, PlayerLevelCap)
 		  Case Self.IndexUnlockTek
-		    Var Engrams() As Beacon.Engram = LocalData.SharedInstance.SearchForEngramEntries("", Self.mDocument.Mods, "object AND tek")
 		    Var Level As Integer = Round(Self.TekLevelField.DoubleValue)
 		    For Each Engram As Beacon.Engram In Engrams
-		      Config.AutoUnlockEngram(Engram) = Level
+		      If Not Engram.IsTagged("tek") Then
+		        Continue
+		      End If
+		      Config.AutoUnlockEngram(Engram) = True
+		      Config.RequiredPlayerLevel(Engram) = Level
+		      Config.Hidden(Engram) = False
 		    Next
 		    Config.AutoUnlockAllEngrams = False
+		  Case Self.IndexMakeEverythingAvailableAtLevel
+		    Var Level As Integer = Round(Self.TekLevelField.DoubleValue)
+		    For Each Engram As Beacon.Engram In Engrams
+		      If IsNull(Config.Hidden(Engram)) Then
+		        Config.Hidden(Engram) = False
+		      End If
+		      If IsNull(Engram.RequiredUnlockPoints) = False Then
+		        Config.RequiredPlayerLevel(Engram) = Level
+		      End If
+		    Next
 		  End Select
 		  
 		  If AddWhenFinished Then
@@ -667,14 +689,6 @@ End
 		Group="Deprecated"
 		InitialValue="True"
 		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="mDocument"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

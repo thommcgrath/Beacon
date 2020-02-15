@@ -355,19 +355,8 @@ Implements ObservationKit.Observer
 		  End If
 		  
 		  Var Item As BeaconToolbarItem = Self.ItemWithName(Self.mPressedName)
-		  Var Menu As New MenuItem
-		  RaiseEvent BuildMenu(Item, Menu)
 		  Self.mMouseHeld = True
-		  
-		  If Menu.Count = 0 Then
-		    Return
-		  End If
-		  
-		  Var Position As Point = Self.Window.GlobalPosition
-		  Var Choice As MenuItem = Menu.PopUp(Position.X + Self.Left + Item.Rect.Left, Position.Y + Self.Top + Item.Rect.Bottom)
-		  If Choice <> Nil Then
-		    RaiseEvent HandleMenuAction(Item, Choice)
-		  End If
+		  Self.ShowMenu(Item)
 		End Sub
 	#tag EndMethod
 
@@ -514,6 +503,23 @@ Implements ObservationKit.Observer
 		  End If
 		  
 		  App.ShowTooltip(Self.mHoverItem.HelpTag, System.MouseX, System.MouseY + 16)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowMenu(Item As BeaconToolbarItem)
+		  Var Menu As New MenuItem
+		  RaiseEvent BuildMenu(Item, Menu)
+		  
+		  If Menu.Count = 0 Then
+		    Return
+		  End If
+		  
+		  Var Position As Point = Self.Window.GlobalPosition
+		  Var Choice As MenuItem = Menu.PopUp(Position.X + Self.Left + Item.Rect.Left, Position.Y + Self.Top + Item.Rect.Bottom)
+		  If Choice <> Nil Then
+		    RaiseEvent HandleMenuAction(Item, Choice)
+		  End If
 		End Sub
 	#tag EndMethod
 

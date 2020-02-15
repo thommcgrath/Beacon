@@ -4,62 +4,100 @@ Inherits Beacon.ConfigGroup
 	#tag Event
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
 		  #Pragma Unused Profile
-		  #Pragma Unused SourceDocument
 		  
-		  For Each Points As Integer In Self.mPointsPerLevel
+		  Var Levels As Integer = Self.LevelsDefined
+		  Var OfficialLevels As Beacon.PlayerLevelData = Beacon.Data.OfficialPlayerLevelData
+		  For Level As Integer = 1 To Levels
+		    Var PointsForLevel As NullableDouble = Self.PointsForLevel(Level)
+		    Var Points As Integer
+		    If IsNull(PointsForLevel) Then
+		      Points = OfficialLevels.PointsForLevel(Level)
+		    Else
+		      Points = PointsForLevel.IntegerValue
+		    End If
 		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverridePlayerLevelEngramPoints", Points.ToString))
 		  Next
 		  
 		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "bOnlyAllowSpecifiedEngrams", If(Self.OnlyAllowSpecifiedEngrams, "True", "False")))
 		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "bAutoUnlockAllEngrams", If(Self.AutoUnlockAllEngrams, "True", "False")))
 		  
+		  Var UnlockEntries(), OverrideEntries() As String
+		  Var UnlockConfigs(), OverrideConfigs() As Beacon.ConfigValue
 		  Var Whitelisting As Boolean = Self.OnlyAllowSpecifiedEngrams
 		  For Each Entry As DictionaryEntry In Self.mBehaviors
 		    Var Behaviors As Dictionary = Entry.Value
 		    
 		    // Get the entry string from the engram if available, or use the backup if not available.
 		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Entry.Key)
+		    If Engram <> Nil And SourceDocument.Mods.Count > 0 And SourceDocument.Mods.IndexOf(Engram.ModID) = -1 Then
+		      // Don't include items for disabled mods
+		      Continue
+		    End If
 		    Var EntryString As String
 		    If Engram <> Nil And Engram.HasUnlockDetails Then
 		      EntryString = Engram.EntryString
 		    Else
-		      EntryString = Behaviors.Value("EntryString")
+		      EntryString = Behaviors.Value(Self.KeyEntryString)
 		    End If
 		    
-		    If Behaviors.HasKey("AutoUnlockLevel") Then
-		      Var AutoUnlockLevel As Integer = Round(Behaviors.Value("AutoUnlockLevel").DoubleValue)
-		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks", "(EngramClassName=""" + EntryString + """,LevelToAutoUnlock=" + AutoUnlockLevel.ToString + ")"))
+		    If Self.mAutoUnlockAllEngrams = False And Behaviors.HasKey(Self.KeyAutoUnlockLevel) And Behaviors.Value(Self.KeyAutoUnlockLevel).BooleanValue = True Then
+		      Var Level As Integer
+		      Var FoundLevel As Boolean
+		      If Behaviors.HasKey(Self.KeyPlayerLevel) And IsNull(Behaviors.Value(Self.KeyPlayerLevel)) = False Then
+		        Level = Behaviors.Value(Self.KeyPlayerLevel).IntegerValue
+		        FoundLevel = True
+		      ElseIf IsNull(Engram.RequiredPlayerLevel) = False Then
+		        Level = Engram.RequiredPlayerLevel.IntegerValue
+		        FoundLevel = True
+		      End If
+		      If FoundLevel Then
+		        UnlockEntries.AddRow(EntryString)
+		        UnlockConfigs.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks", "(EngramClassName=""" + EntryString + """,LevelToAutoUnlock=" + Level.ToString + ")"))
+		      End If
 		    End If
 		    
 		    Var Arguments() As String
-		    If Behaviors.HasKey("Hidden") Then
-		      Var Hidden As Boolean = Behaviors.Value("Hidden").BooleanValue
+		    If Behaviors.HasKey(Self.KeyHidden) Then
+		      Var Hidden As Boolean = Behaviors.Value(Self.KeyHidden).BooleanValue
 		      If Hidden <> Whitelisting Then
 		        Arguments.AddRow("EngramHidden=" + If(Hidden, "True", "False"))
 		      End If
 		    End If
 		    
-		    If Behaviors.HasKey("RemovePrerequisites") Then
-		      Var RemovePrereq As Boolean = Behaviors.Value("RemovePrerequisites").BooleanValue
-		      If RemovePrereq = True Then
-		        Arguments.AddRow("RemoveEngramPreReq=True")
+		    If Not Self.EffectivelyHidden(Engram) Then
+		      If Behaviors.HasKey(Self.KeyRemovePrerequisites) Then
+		        Var RemovePrereq As Boolean = Behaviors.Value(Self.KeyRemovePrerequisites).BooleanValue
+		        If RemovePrereq = True Then
+		          Arguments.AddRow("RemoveEngramPreReq=True")
+		        End If
 		      End If
-		    End If
-		    
-		    If Behaviors.HasKey("PlayerLevel") Then
-		      Var Level As Integer = Round(Behaviors.Value("PlayerLevel").DoubleValue)
-		      Arguments.AddRow("EngramLevelRequirement=" + Level.ToString)
-		    End If
-		    
-		    If Behaviors.HasKey("PlayerPoints") Then
-		      Var Points As Integer = Round(Behaviors.Value("PlayerPoints").DoubleValue)
-		      Arguments.AddRow("EngramPointsCost=" + Points.ToString)
+		      
+		      If Behaviors.HasKey(Self.KeyPlayerLevel) Then
+		        Var Level As Integer = Round(Behaviors.Value(Self.KeyPlayerLevel).DoubleValue)
+		        Arguments.AddRow("EngramLevelRequirement=" + Level.ToString)
+		      End If
+		      
+		      If Behaviors.HasKey(Self.KeyUnlockPoints) Then
+		        Var Points As Integer = Round(Behaviors.Value(Self.KeyUnlockPoints).DoubleValue)
+		        Arguments.AddRow("EngramPointsCost=" + Points.ToString)
+		      End If
 		    End If
 		    
 		    If Arguments.LastRowIndex > -1 Then
 		      Arguments.AddRowAt(0, "EngramClassName=""" + EntryString + """")
-		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideNamedEngramEntries", "(" + Arguments.Join(",") + ")"))
+		      OverrideEntries.AddRow(EntryString)
+		      OverrideConfigs.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideNamedEngramEntries", "(" + Arguments.Join(",") + ")"))
 		    End If
+		  Next
+		  
+		  UnlockEntries.SortWith(UnlockConfigs)
+		  OverrideEntries.SortWith(OverrideConfigs)
+		  
+		  For Each Config As Beacon.ConfigValue In UnlockConfigs
+		    Values.AddRow(Config)
+		  Next
+		  For Each Config As Beacon.ConfigValue In OverrideConfigs
+		    Values.AddRow(Config)
 		  Next
 		End Sub
 	#tag EndEvent
@@ -95,7 +133,11 @@ Inherits Beacon.ConfigGroup
 		    Var Values() As Variant = Dict.Value("Points Per Level")
 		    Self.mPointsPerLevel.ResizeTo(Values.LastRowIndex)
 		    For Idx As Integer = Self.mPointsPerLevel.FirstRowIndex To Self.mPointsPerLevel.LastRowIndex
-		      Self.mPointsPerLevel(Idx) = Values(Idx)
+		      If IsNull(Values(Idx)) Then
+		        Self.mPointsPerLevel(Idx) = Nil
+		      Else
+		        Self.mPointsPerLevel(Idx) = Values(Idx).IntegerValue
+		      End If
 		    Next
 		  End If
 		  
@@ -114,7 +156,17 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  
 		  If Self.mPointsPerLevel.LastRowIndex > -1 Then
-		    Dict.Value("Points Per Level") = Self.mPointsPerLevel
+		    Var Levels() As Variant
+		    Var Bound As Integer = Self.LevelsDefined - 1
+		    Levels.ResizeTo(Bound)
+		    For I As Integer = 0 To Bound
+		      If IsNull(Self.mPointsPerLevel(I)) Then
+		        Levels(I) = Nil
+		      Else
+		        Levels(I) = Self.mPointsPerLevel(I).IntegerValue
+		      End If
+		    Next
+		    Dict.Value("Points Per Level") = Levels
 		  End If
 		  
 		  Dict.Value("Auto Unlock All") = Self.mAutoUnlockAllEngrams
@@ -124,23 +176,65 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Function AutoUnlockEngram(Engram As Beacon.Engram) As NullableDouble
-		  Var Value As Variant = Self.BehaviorForEngram(Engram, "AutoUnlockLevel")
+		Function AutoUnlockEngram(Engram As Beacon.Engram) As NullableBoolean
+		  Var Value As Variant = Self.BehaviorForEngram(Engram, Self.KeyAutoUnlockLevel)
 		  If IsNull(Value) Then
 		    Return Nil
 		  Else
-		    Return Value.DoubleValue
+		    Return Value.BooleanValue
 		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AutoUnlockEngram(Engram As Beacon.Engram, Assigns Level As NullableDouble)
-		  If IsNull(Level) Then
-		    Self.BehaviorForEngram(Engram, "AutoUnlockLevel") = Nil
+		Sub AutoUnlockEngram(Engram As Beacon.Engram, Assigns ShouldUnlock As NullableBoolean)
+		  If IsNull(ShouldUnlock) Then
+		    Self.BehaviorForEngram(Engram, Self.KeyAutoUnlockLevel) = Nil
 		  Else
-		    Self.BehaviorForEngram(Engram, "AutoUnlockLevel") = Level.Value
+		    Self.BehaviorForEngram(Engram, Self.KeyAutoUnlockLevel) = ShouldUnlock.Value
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BehaviorDict(Engram As Beacon.Engram) As Dictionary
+		  If Self.mBehaviors.HasKey(Engram.Path) Then
+		    Var Dict As Dictionary = Self.mBehaviors.Value(Engram.Path)
+		    Return Dict.Clone
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub BehaviorDict(Engram As Beacon.Engram, Assigns Dict As Dictionary)
+		  If IsNull(Dict) Or Dict.HasKey(Self.KeyEntryString) = False Then
+		    If Self.mBehaviors.HasKey(Engram.Path) Then
+		      Self.mBehaviors.Remove(Engram.Path)
+		      Self.Modified = True
+		    End If
+		    Return
+		  End If
+		  
+		  Var Behavior As New Dictionary
+		  Behavior.Value(Self.KeyEntryString) = Dict.Value(Self.KeyEntryString)
+		  If Dict.HasKey(Self.KeyAutoUnlockLevel) And IsNull(Dict.Value(Self.KeyAutoUnlockLevel)) = False Then
+		    Behavior.Value(Self.KeyAutoUnlockLevel) = Dict.Value(Self.KeyAutoUnlockLevel).IntegerValue
+		  End If
+		  If Dict.HasKey(Self.KeyHidden) And IsNull(Dict.Value(Self.KeyHidden)) = False Then
+		    Behavior.Value(Self.KeyHidden) = Dict.Value(Self.KeyHidden).BooleanValue
+		  End If
+		  If Dict.HasKey(Self.KeyPlayerLevel) And IsNull(Dict.Value(Self.KeyPlayerLevel)) = False Then
+		    Behavior.Value(Self.KeyPlayerLevel) = Dict.Value(Self.KeyPlayerLevel).IntegerValue
+		  End If
+		  If Dict.HasKey(Self.KeyRemovePrerequisites) And IsNull(Dict.Value(Self.KeyRemovePrerequisites)) = False Then
+		    Behavior.Value(Self.KeyRemovePrerequisites) = Dict.Value(Self.KeyRemovePrerequisites).BooleanValue
+		  End If
+		  If Dict.HasKey(Self.KeyUnlockPoints) And IsNull(Dict.Value(Self.KeyUnlockPoints)) = False Then
+		    Behavior.Value(Self.KeyUnlockPoints) = Dict.Value(Self.KeyUnlockPoints).IntegerValue
+		  End If
+		  
+		  Self.mBehaviors.Value(Engram.Path) = Behavior
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -173,7 +267,7 @@ Inherits Beacon.ConfigGroup
 		    
 		    Dict.Remove(Key)
 		    If Engram.HasUnlockDetails Then
-		      Dict.Value("EntryString") = Engram.EntryString
+		      Dict.Value(Self.KeyEntryString) = Engram.EntryString
 		    End If
 		    Self.mBehaviors.Value(Engram.Path) = Dict
 		    Self.Modified = True
@@ -189,7 +283,7 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  
 		  If Engram.HasUnlockDetails Then
-		    Dict.Value("EntryString") = Engram.EntryString
+		    Dict.Value(Self.KeyEntryString) = Engram.EntryString
 		  End If
 		  Dict.Value(Key) = Value
 		  Self.mBehaviors.Value(Engram.Path) = Dict
@@ -235,6 +329,16 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function EntryString(ForEngram As Beacon.Engram) As String
+		  If ForEngram.HasUnlockDetails Then
+		    Return ForEngram.EntryString
+		  ElseIf Self.mBehaviors.HasKey(ForEngram.Path) Then
+		    Return Dictionary(Self.mBehaviors.Value(ForEngram.Path)).Lookup(Self.KeyEntryString, "").StringValue
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.EngramControl
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
@@ -261,42 +365,6 @@ Inherits Beacon.ConfigGroup
 		      Catch Err As RuntimeException
 		      End Try
 		      Config.PointsForLevel(Level) = Points
-		    Next
-		  End If
-		  
-		  If ParsedData.HasKey("EngramEntryAutoUnlocks") Then
-		    Var ParsedValue As Variant = ParsedData.Value("EngramEntryAutoUnlocks")
-		    Var Unlocks() As Variant
-		    If ParsedValue.IsArray Then
-		      Unlocks = ParsedValue
-		    Else
-		      Unlocks.AddRow(ParsedValue)
-		    End If
-		    
-		    For Idx As Integer = Unlocks.FirstRowIndex To Unlocks.LastRowIndex
-		      Var Details As Dictionary
-		      Try
-		        Details = Unlocks(Idx)
-		      Catch Err As RuntimeException
-		        Continue
-		      End Try
-		      
-		      If Not Details.HasAllKeys("EngramClassName", "LevelToAutoUnlock") Then
-		        Continue
-		      End If
-		      
-		      Try
-		        Var EntryString As String = Details.Value("EngramClassName")
-		        Var Level As Integer = Details.Value("LevelToAutoUnlock")
-		        
-		        Var Engram As Beacon.Engram = Beacon.Data.GetEngramByEntryString(EntryString)
-		        If Engram = Nil Then
-		          Engram = Beacon.Engram.CreateFromEntryString(EntryString)
-		        End If
-		        
-		        Config.AutoUnlockEngram(Engram) = Level
-		      Catch Err As RuntimeException
-		      End Try
 		    Next
 		  End If
 		  
@@ -348,6 +416,43 @@ Inherits Beacon.ConfigGroup
 		    Next
 		  End If
 		  
+		  If ParsedData.HasKey("EngramEntryAutoUnlocks") Then
+		    Var ParsedValue As Variant = ParsedData.Value("EngramEntryAutoUnlocks")
+		    Var Unlocks() As Variant
+		    If ParsedValue.IsArray Then
+		      Unlocks = ParsedValue
+		    Else
+		      Unlocks.AddRow(ParsedValue)
+		    End If
+		    
+		    For Idx As Integer = Unlocks.FirstRowIndex To Unlocks.LastRowIndex
+		      Var Details As Dictionary
+		      Try
+		        Details = Unlocks(Idx)
+		      Catch Err As RuntimeException
+		        Continue
+		      End Try
+		      
+		      If Not Details.HasAllKeys("EngramClassName", "LevelToAutoUnlock") Then
+		        Continue
+		      End If
+		      
+		      Try
+		        Var EntryString As String = Details.Value("EngramClassName")
+		        Var Level As Integer = Details.Value("LevelToAutoUnlock")
+		        
+		        Var Engram As Beacon.Engram = Beacon.Data.GetEngramByEntryString(EntryString)
+		        If Engram = Nil Then
+		          Engram = Beacon.Engram.CreateFromEntryString(EntryString)
+		        End If
+		        
+		        Config.AutoUnlockEngram(Engram) = True
+		        Config.RequiredPlayerLevel(Engram) = Level
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
+		  End If
+		  
 		  If Config.Modified Then
 		    Return Config
 		  End If
@@ -356,7 +461,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function Hidden(Engram As Beacon.Engram) As NullableBoolean
-		  Var Value As Variant = Self.BehaviorForEngram(Engram, "Hidden")
+		  Var Value As Variant = Self.BehaviorForEngram(Engram, Self.KeyHidden)
 		  If IsNull(Value) Then
 		    Return Nil
 		  Else
@@ -368,16 +473,22 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Sub Hidden(Engram As Beacon.Engram, Assigns Hidden As NullableBoolean)
 		  If IsNull(Hidden) Then
-		    Self.BehaviorForEngram(Engram, "Hidden") = Nil
+		    Self.BehaviorForEngram(Engram, Self.KeyHidden) = Nil
 		  Else
-		    Self.BehaviorForEngram(Engram, "Hidden") = Hidden.Value
+		    Self.BehaviorForEngram(Engram, Self.KeyHidden) = Hidden.Value
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function LevelsDefined() As Integer
-		  Return Self.mPointsPerLevel.LastRowIndex + 1
+		  For I As Integer = Self.mPointsPerLevel.LastRowIndex DownTo 0
+		    If IsNull(Self.mPointsPerLevel(I)) = False Then
+		      Return I + 1
+		    End If
+		  Next
+		  
+		  Return 0
 		End Function
 	#tag EndMethod
 
@@ -394,12 +505,12 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function PointsForLevel(Level As Integer) As Integer
+		Function PointsForLevel(Level As Integer) As NullableDouble
 		  // This is 1-based, as the player starts at level 1.
 		  
 		  Var Idx As Integer = Level - 1
 		  If Idx < Self.mPointsPerLevel.FirstRowIndex Or Idx > Self.mPointsPerLevel.LastRowIndex Then
-		    Return 0
+		    Return Nil
 		  End If
 		  
 		  Return Self.mPointsPerLevel(Idx)
@@ -407,7 +518,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub PointsForLevel(Level As Integer, Assigns Points As Integer)
+		Sub PointsForLevel(Level As Integer, Assigns Points As NullableDouble)
 		  // This is 1-based, as the player starts at level 1.
 		  
 		  Var Idx As Integer = Level - 1
@@ -417,7 +528,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  Var Modified As Boolean = Self.Modified
 		  Do Until Self.mPointsPerLevel.LastRowIndex >= Idx
-		    Self.mPointsPerLevel.AddRow(0)
+		    Self.mPointsPerLevel.AddRow(Nil)
 		    Modified = True
 		  Loop
 		  
@@ -442,7 +553,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function RemovePrerequisites(Engram As Beacon.Engram) As NullableBoolean
-		  Var Value As Variant = Self.BehaviorForEngram(Engram, "RemovePrerequisites")
+		  Var Value As Variant = Self.BehaviorForEngram(Engram, Self.KeyRemovePrerequisites)
 		  If IsNull(Value) Then
 		    Return Nil
 		  Else
@@ -454,16 +565,16 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Sub RemovePrerequisites(Engram As Beacon.Engram, Assigns Value As NullableBoolean)
 		  If IsNull(Value) Then
-		    Self.BehaviorForEngram(Engram, "RemovePrerequisites") = Nil
+		    Self.BehaviorForEngram(Engram, Self.KeyRemovePrerequisites) = Nil
 		  Else
-		    Self.BehaviorForEngram(Engram, "RemovePrerequisites") = Value.Value
+		    Self.BehaviorForEngram(Engram, Self.KeyRemovePrerequisites) = Value.Value
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function RequiredPlayerLevel(Engram As Beacon.Engram) As NullableDouble
-		  Var Value As Variant = Self.BehaviorForEngram(Engram, "RequiredLevel")
+		  Var Value As Variant = Self.BehaviorForEngram(Engram, Self.KeyPlayerLevel)
 		  If IsNull(Value) Then
 		    Return Nil
 		  Else
@@ -475,16 +586,16 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Sub RequiredPlayerLevel(Engram As Beacon.Engram, Assigns Level As NullableDouble)
 		  If IsNull(Level) Then
-		    Self.BehaviorForEngram(Engram, "PlayerLevel") = Nil
+		    Self.BehaviorForEngram(Engram, Self.KeyPlayerLevel) = Nil
 		  Else
-		    Self.BehaviorForEngram(Engram, "PlayerLevel") = Level.Value
+		    Self.BehaviorForEngram(Engram, Self.KeyPlayerLevel) = Level.Value
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function RequiredPoints(Engram As Beacon.Engram) As NullableDouble
-		  Var Value As Variant = Self.BehaviorForEngram(Engram, "RequiredPoints")
+		  Var Value As Variant = Self.BehaviorForEngram(Engram, Self.KeyUnlockPoints)
 		  If IsNull(Value) Then
 		    Return Nil
 		  Else
@@ -496,9 +607,9 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Sub RequiredPoints(Engram As Beacon.Engram, Assigns Points As NullableDouble)
 		  If IsNull(Points) Then
-		    Self.BehaviorForEngram(Engram, "PlayerPoints") = Nil
+		    Self.BehaviorForEngram(Engram, Self.KeyUnlockPoints) = Nil
 		  Else
-		    Self.BehaviorForEngram(Engram, "PlayerPoints") = Points.Value
+		    Self.BehaviorForEngram(Engram, Self.KeyUnlockPoints) = Points.Value
 		  End If
 		End Sub
 	#tag EndMethod
@@ -507,10 +618,10 @@ Inherits Beacon.ConfigGroup
 		Function SpecifiedEngrams() As Beacon.Engram()
 		  Var Engrams() As Beacon.Engram
 		  For Each Entry As DictionaryEntry In Self.mBehaviors
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByEntryString(Entry.Key)
+		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Entry.Key)
 		    If Engram = Nil Then
 		      Var Dict As Dictionary = Entry.Value
-		      Engram = Beacon.Engram.CreateFromEntryString(Dict.Value("EntryString"))
+		      Engram = Beacon.Engram.CreateFromEntryString(Dict.Value(Self.KeyEntryString))
 		    End If
 		    If Engram <> Nil Then
 		      Engrams.AddRow(Engram)
@@ -562,7 +673,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPointsPerLevel() As Integer
+		Private mPointsPerLevel() As NullableDouble
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -584,6 +695,24 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Constant, Name = ConfigKey, Type = Text, Dynamic = False, Default = \"EngramControl", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = KeyAutoUnlockLevel, Type = String, Dynamic = False, Default = \"Auto Unlock Level", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = KeyEntryString, Type = String, Dynamic = False, Default = \"Entry String", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = KeyHidden, Type = String, Dynamic = False, Default = \"Hidden", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = KeyPlayerLevel, Type = String, Dynamic = False, Default = \"Player Level", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = KeyRemovePrerequisites, Type = String, Dynamic = False, Default = \"Remove Prerequisites", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = KeyUnlockPoints, Type = String, Dynamic = False, Default = \"Unlock Points", Scope = Private
 	#tag EndConstant
 
 
