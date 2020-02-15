@@ -1720,7 +1720,7 @@ End
 	#tag Event
 		Sub Open()
 		  Me.LeftItems.Append(New BeaconToolbarItem("AutoTuneButton", IconToolbarWizard, "Automatically compute imprint interval to give at least a specified imprinting on all creatures."))
-		  Me.LeftItems.Append(New BeaconToolbarItem("ShareLinkButton", IconToolbarShare, "Generates a link so you can share this breeding chart."))
+		  Me.LeftItems.Append(New BeaconToolbarItem("ShareLinkButton", IconToolbarLink, "Generates a link so you can share this breeding chart."))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
