@@ -966,7 +966,7 @@ Implements NotificationKit.Receiver
 		      SelectFile(Workspace, File.NativePath, "")
 		    End If
 		  #else
-		    File.Launch
+		    File.Open
 		  #endif
 		End Sub
 	#tag EndMethod
