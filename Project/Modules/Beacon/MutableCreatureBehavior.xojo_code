@@ -24,22 +24,10 @@ Inherits Beacon.CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ReplacementClass(Assigns Value As String)
-		  If Self.mReplacementClass = Value Then
-		    Return
-		  End If
-		  
-		  Self.mReplacementClass = Value
-		  Self.mModified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub ReplacementCreature(Assigns Value As Beacon.Creature)
-		  If Value = Nil Then
-		    Self.ReplacementClass = ""
-		  Else
-		    Self.ReplacementClass = Value.ClassString
+		  If Self.mReplacementCreature <> Value Then
+		    Self.mReplacementCreature = Value
+		    Self.mModified = True
 		  End If
 		End Sub
 	#tag EndMethod

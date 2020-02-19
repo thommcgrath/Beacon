@@ -159,13 +159,13 @@ End
 		  
 		  Var Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
 		  Var Behaviors() As Beacon.CreatureBehavior = OtherConfig.All
-		  Var Classes() As String
+		  Var Paths() As String
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
-		    Config.Behavior(Behavior.TargetClass) = Behavior
-		    Classes.AddRow(Behavior.TargetClass)
+		    Config.Add(Behavior)
+		    Paths.AddRow(Behavior.TargetCreature.Path)
 		  Next
 		  Self.Changed = True
-		  Self.UpdateList(Classes)
+		  Self.UpdateList(Paths)
 		End Sub
 	#tag EndEvent
 
@@ -220,8 +220,8 @@ End
 		  End If
 		  
 		  // See the comment in ShowAdd
-		  Var ClassString As String = Self.List.RowTagAt(Self.List.SelectedRowIndex)
-		  If DinoAdjustmentDialog.Present(Self, ClassString, Self.Config(False), Self.Document.Mods) Then
+		  Var Creature As Beacon.Creature = Self.List.RowTagAt(Self.List.SelectedRowIndex)
+		  If DinoAdjustmentDialog.Present(Self, Creature, Self.Config(False), Self.Document.Mods) Then
 		    Call Self.Config(True)
 		    Self.UpdateList()
 		    Self.Changed = True
@@ -235,7 +235,7 @@ End
 		  // added to the document if it wasn't already. Calling Self.Config(True) has the
 		  // side effect of doing that
 		  Var Config As BeaconConfigs.DinoAdjustments = Self.Config(False)
-		  If DinoAdjustmentDialog.Present(Self, "", Config, Self.Document.Mods) Then
+		  If DinoAdjustmentDialog.Present(Self, Nil, Config, Self.Document.Mods) Then
 		    Call Self.Config(True)
 		    Self.UpdateList()
 		    Self.Changed = True
@@ -250,8 +250,8 @@ End
 		  End If
 		  
 		  Var Config As BeaconConfigs.DinoAdjustments = Self.Config(False)
-		  Var SelectedClass As String = Self.List.RowTagAt(Self.List.SelectedRowIndex)
-		  Var SelectedBehavior As Beacon.CreatureBehavior = Config.Behavior(SelectedClass)
+		  Var SelectedCreature As Beacon.Creature = Self.List.RowTagAt(Self.List.SelectedRowIndex)
+		  Var SelectedBehavior As Beacon.CreatureBehavior = Config.Behavior(SelectedCreature)
 		  If SelectedBehavior = Nil Then
 		    Return
 		  End If
@@ -270,63 +270,63 @@ End
 		    Return
 		  End If
 		  Config = Self.Config(True)
-		  Var SelectClasses() As String
+		  Var SelectPaths() As String
 		  For Each Creature As Beacon.Creature In Creatures
-		    Var Behavior As Beacon.CreatureBehavior = SelectedBehavior.Clone(Creature.ClassString)
-		    Config.Behavior(Behavior.TargetClass) = Behavior
-		    SelectClasses.AddRow(Behavior.TargetClass)
+		    Var Behavior As Beacon.CreatureBehavior = SelectedBehavior.Clone(Creature)
+		    Config.Add(Behavior)
+		    SelectPaths.AddRow(Behavior.TargetCreature.Path)
 		  Next
-		  Self.UpdateList(SelectClasses)
+		  Self.UpdateList(SelectPaths)
 		  Self.Changed = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Var Classes() As String
+		  Var Paths() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
-		      Classes.AddRow(Self.List.RowTagAt(I))
+		      Paths.AddRow(Beacon.Creature(Self.List.RowTagAt(I)).Path)
 		    End If
 		  Next
-		  Self.UpdateList(Classes)
+		  Self.UpdateList(Paths)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateList(SelectClasses() As String)
+		Private Sub UpdateList(SelectCreatures() As Beacon.Creature)
+		  Var Paths() As String
+		  For Each Creature As Beacon.Creature In SelectCreatures
+		    Paths.AddRow(Creature.Path)
+		  Next
+		  Self.UpdateList(Paths)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateList(SelectPaths() As String)
 		  Self.List.RemoveAllRows
 		  
 		  Var Behaviors() As Beacon.CreatureBehavior = Self.Config(False).All
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
 		    Var Creature As Beacon.Creature = Behavior.TargetCreature
-		    Var Label As String
-		    If Creature <> Nil Then
-		      Label = Creature.Label
-		    Else
-		      Label = Behavior.TargetClass
-		    End If
+		    Var Label As String = Creature.Label
 		    
 		    If Behavior.ProhibitSpawning Then
 		      Label = Label + EndOfLine + "Disabled"
 		      Self.List.AddRow(Label)
-		    ElseIf Behavior.ReplacementClass <> "" Then
-		      Creature = Behavior.ReplacementCreature
-		      If Creature <> Nil Then
-		        Label = Label + EndOfLine + "Replaced with " + Creature.Label
-		      Else
-		        Label = Label + EndOfLIne + "Replaced with " + Behavior.ReplacementClass
-		      End If
+		    ElseIf IsNull(Behavior.ReplacementCreature) = False Then
+		      Label = Label + EndOfLine + "Replaced with " + Behavior.ReplacementCreature.Label
 		      Self.List.AddRow(Label)
 		    Else
 		      Self.List.AddRow(Label, Format(Behavior.DamageMultiplier, "0.0#####"), Format(Behavior.ResistanceMultiplier, "0.0#####"), Format(Behavior.TamedDamageMultiplier, "0.0#####"), Format(Behavior.TamedResistanceMultiplier, "0.0#####"))
 		    End If
 		    
-		    If SelectClasses.IndexOf(Behavior.TargetClass) > -1 Then
+		    If SelectPaths.IndexOf(Behavior.TargetCreature.Path) > -1 Then
 		      Self.List.Selected(Self.List.LastAddedRowIndex) = True
 		    End If
 		    
-		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Behavior.TargetClass
+		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Behavior.TargetCreature
 		  Next
 		  
 		  Self.List.Sort()
@@ -420,12 +420,7 @@ End
 		      Continue
 		    End If
 		    
-		    Var ClassString As String = Me.RowTagAt(I)
-		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)
-		    If Creature = Nil Then
-		      Creature = Beacon.Creature.CreateFromClass(ClassString)
-		    End If
-		    
+		    Var Creature As Beacon.Creature = Me.RowTagAt(I)
 		    Creatures.AddRow(Creature)
 		  Next
 		  
@@ -436,7 +431,7 @@ End
 		  Var Changed As Boolean = Self.Changed
 		  Var Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
 		  For Each Creature As Beacon.Creature In Creatures
-		    Config.RemoveBehavior(Creature.ClassString)
+		    Config.RemoveBehavior(Creature)
 		    Changed = True
 		  Next
 		  
@@ -453,8 +448,8 @@ End
 		      Continue
 		    End If
 		    
-		    Var ClassString As String = Me.RowTagAt(I)
-		    Var Behavior As Beacon.CreatureBehavior = Config.Behavior(ClassString)
+		    Var Creature As Beacon.Creature = Me.RowTagAt(I)
+		    Var Behavior As Beacon.CreatureBehavior = Config.Behavior(Creature)
 		    If Behavior = Nil Then
 		      Continue
 		    End If
@@ -480,17 +475,18 @@ End
 		    End If
 		    
 		    Var Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
-		    Var SelectClasses() As String
+		    Var SelectPaths() As String
 		    For Each Entry As Dictionary In Items
 		      Var Behavior As Beacon.CreatureBehavior = Beacon.CreatureBehavior.FromDictionary(Entry)
 		      If Behavior = Nil Then
 		        Continue
 		      End If
 		      
-		      Config.Behavior(Behavior.TargetClass) = Behavior
+		      SelectPaths.AddRow(Behavior.TargetCreature.Path)
+		      Config.Add(Behavior)
 		    Next
 		    Self.Changed = True
-		    Self.UpdateList(SelectClasses)
+		    Self.UpdateList(SelectPaths)
 		    Return
 		  End If
 		  

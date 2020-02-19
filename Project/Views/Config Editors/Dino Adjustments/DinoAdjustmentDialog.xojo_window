@@ -982,16 +982,16 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(ConfiguredClasses() As String, DisabledClasses() As String, Mods As Beacon.StringList)
-		  Self.ConfiguredClasses = ConfiguredClasses
-		  Self.DisabledClasses = DisabledClasses
+		Private Sub Constructor(ConfiguredCreatures() As Beacon.Creature, DisabledCreatures() As Beacon.Creature, Mods As Beacon.StringList)
+		  Self.ConfiguredCreatures = ConfiguredCreatures
+		  Self.DisabledCreatures = DisabledCreatures
 		  Self.Mods = Mods
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, EditClass As String, Config As BeaconConfigs.DinoAdjustments, Mods As Beacon.StringList) As Boolean
+		Shared Function Present(Parent As Window, EditCreature As Beacon.Creature, Config As BeaconConfigs.DinoAdjustments, Mods As Beacon.StringList) As Boolean
 		  // This one needs the whole config because there are a lot of factors to showing the creatures in the menus
 		  
 		  If Parent = Nil Or Config = Nil Then
@@ -999,27 +999,27 @@ End
 		  End If
 		  
 		  Var ConfiguredBehaviors() As Beacon.CreatureBehavior = Config.All
-		  Var ConfiguredClasses(), DisabledClasses() As String
+		  Var ConfiguredCreatures(), DisabledCreatures() As Beacon.Creature
 		  For Each Behavior As Beacon.CreatureBehavior In ConfiguredBehaviors
-		    If Behavior.TargetClass = EditClass Then
+		    If Behavior.TargetCreature = EditCreature Then
 		      Continue
 		    End If
-		    ConfiguredClasses.AddRow(Behavior.TargetClass)
+		    ConfiguredCreatures.AddRow(Behavior.TargetCreature)
 		    If Behavior.ProhibitSpawning Then
-		      DisabledClasses.AddRow(Behavior.TargetClass)
+		      DisabledCreatures.AddRow(Behavior.TargetCreature)
 		    End If
 		  Next
 		  
-		  Var Win As New DinoAdjustmentDialog(ConfiguredClasses, DisabledClasses, Mods)
-		  If EditClass <> "" Then
-		    Win.SelectedClass = EditClass
+		  Var Win As New DinoAdjustmentDialog(ConfiguredCreatures, DisabledCreatures, Mods)
+		  If IsNull(EditCreature) = False Then
+		    Win.SelectedCreature = EditCreature
 		    
-		    Var Behavior As Beacon.CreatureBehavior = Config.Behavior(EditClass)
+		    Var Behavior As Beacon.CreatureBehavior = Config.Behavior(EditCreature)
 		    If Behavior <> Nil Then
 		      If Behavior.ProhibitSpawning Then
 		        Win.ModeDisableRadio.Value = True
 		      ElseIf Behavior.ReplacementClass <> "" Then
-		        Win.SelectedReplacement = Behavior.ReplacementClass
+		        Win.SelectedReplacement = Behavior.ReplacementCreature
 		        Win.ModeReplaceRadio.Value = True
 		      Else
 		        Win.WildDamageField.Value = Format(Behavior.DamageMultiplier, "0.0#####")
@@ -1036,12 +1036,12 @@ End
 		    Return False
 		  End If
 		  
-		  Var TargetClass As String = Win.SelectedClass
-		  Var Behavior As New Beacon.MutableCreatureBehavior(TargetClass)
+		  Var TargetCreature As Beacon.Creature = Win.SelectedCreature
+		  Var Behavior As New Beacon.MutableCreatureBehavior(TargetCreature)
 		  If Win.ModeDisableRadio.Value Then
 		    Behavior.ProhibitSpawning = True
 		  ElseIf Win.ModeReplaceRadio.Value Then
-		    Behavior.ReplacementClass = Win.SelectedReplacement
+		    Behavior.ReplacementCreature = Win.SelectedReplacement
 		  Else
 		    Behavior.DamageMultiplier = CDbl(Win.WildDamageField.Value)
 		    Behavior.ResistanceMultiplier = CDbl(Win.WildResistanceField.Value)
@@ -1049,10 +1049,10 @@ End
 		    Behavior.TamedResistanceMultiplier = CDbl(Win.TameResistanceField.Value)
 		  End If
 		  
-		  If EditClass <> "" And TargetClass <> EditClass Then
-		    Config.RemoveBehavior(EditClass)
+		  If IsNull(EditCreature) = False And TargetCreature <> EditCreature Then
+		    Config.RemoveBehavior(EditCreature)
 		  End If
-		  Config.Behavior(TargetClass) = Behavior
+		  Config.Behavior(TargetCreature) = Behavior
 		  
 		  Return True
 		End Function
@@ -1064,11 +1064,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private ConfiguredClasses() As String
+		Private ConfiguredCreatures() As Beacon.Creature
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private DisabledClasses() As String
+		Private DisabledCreatures() As Beacon.Creature
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1076,46 +1076,40 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectedClass As String
+		Private mSelectedCreature As Beacon.Creature
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectedReplacement As String
+		Private mSelectedReplacement As Beacon.Creature
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h21
 		#tag Getter
 			Get
-			  Return Self.mSelectedClass
+			  Return Self.mSelectedCreature
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mSelectedClass = Value Then
+			  If Self.mSelectedCreature = Value Then
 			    Return
 			  End If
 			  
-			  Self.mSelectedClass = Value
-			  If Self.mSelectedClass = "" Then
+			  Self.mSelectedCreature = Value
+			  If IsNull(Self.mSelectedCreature) Then
 			    Self.TargetDinoNameLabel.Italic = True
 			    Self.TargetDinoNameLabel.Value = "No Selection"
 			  Else
 			    Self.TargetDinoNameLabel.Italic = False
-			    
-			    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Self.mSelectedClass)
-			    If Creature <> Nil Then
-			      Self.TargetDinoNameLabel.Value = Creature.Label
-			    Else
-			      Self.TargetDinoNameLabel.Value = Self.mSelectedClass
-			    End If
+			    Self.TargetDinoNameLabel.Value = Self.mSelectedCreature.Label
 			  End If
 			  
-			  If Self.mSelectedReplacement = Self.mSelectedClass Then
-			    Self.SelectedReplacement = ""
+			  If Self.mSelectedReplacement = Self.mSelectedCreature Then
+			    Self.SelectedReplacement = Nil
 			  End If
 			End Set
 		#tag EndSetter
-		Private SelectedClass As String
+		Private SelectedCreature As Beacon.Creature
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h21
@@ -1131,22 +1125,16 @@ End
 			  End If
 			  
 			  Self.mSelectedReplacement = Value
-			  If Self.mSelectedReplacement = "" Then
+			  If IsNull(Self.mSelectedReplacement) Then
 			    Self.ReplacementDinoNameLabel.Italic = True
 			    Self.ReplacementDinoNameLabel.Value = "No Selection"
 			  Else
 			    Self.ReplacementDinoNameLabel.Italic = False
-			    
-			    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Self.mSelectedReplacement)
-			    If Creature <> Nil Then
-			      Self.ReplacementDinoNameLabel.Value = Creature.Label
-			    Else
-			      Self.ReplacementDinoNameLabel.Value = Self.mSelectedReplacement
-			    End If
+			    Self.ReplacementDinoNameLabel.Value = Self.mSelectedReplacement.Label
 			  End If
 			End Set
 		#tag EndSetter
-		Private SelectedReplacement As String
+		Private SelectedReplacement As Beacon.Creature
 	#tag EndComputedProperty
 
 
@@ -1219,21 +1207,17 @@ End
 	#tag Event
 		Sub Action()
 		  Var Exclude() As Beacon.Creature
-		  Var SelectedCreature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Self.mSelectedClass)
-		  If SelectedCreature <> Nil Then
-		    Exclude.AddRow(SelectedCreature)
+		  If IsNull(Self.SelectedCreature) Then
+		    Exclude.AddRow(Self.SelectedCreature)
 		  End If
-		  For Each ClassString As String In Self.DisabledClasses
-		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)
-		    If Creature <> Nil Then
-		      Exclude.AddRow(Creature)
-		    End If
+		  For Each Creature As Beacon.Creature In Self.DisabledCreatures
+		    Exclude.AddRow(Creature)
 		  Next
 		  
 		  // Do include mods here, because only dinos actually present in game files should be selectable
 		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.Mods, False)
 		  If Creatures <> Nil And Creatures.LastRowIndex = 0 Then
-		    Self.SelectedReplacement = Creatures(0).ClassString
+		    Self.SelectedReplacement = Creatures(0)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1241,13 +1225,13 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  If Self.SelectedClass = "" Then
+		  If IsNull(Self.SelectedCreature) Then
 		    Self.ShowAlert("You haven't selected a creature", "That's an important step, right?")
 		    Return
 		  End If
 		  
 		  If Self.ModeReplaceRadio.Value Then
-		    If Self.SelectedReplacement = "" Then
+		    If IsNull(Self.SelectedReplacement) Then
 		      Self.ShowAlert("You haven't selected a replacement creature", "If you wan to replace the creature with nothing, choose the ""Disable Creature"" button.")
 		      Return
 		    End If
@@ -1284,17 +1268,14 @@ End
 	#tag Event
 		Sub Action()
 		  Var Exclude() As Beacon.Creature
-		  For Each ClassString As String In Self.ConfiguredClasses
-		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)
-		    If Creature <> Nil Then
-		      Exclude.AddRow(Creature)
-		    End If
+		  For Each Creature As Beacon.Creature In Self.ConfiguredCreatures
+		    Exclude.AddRow(Creature)
 		  Next
 		  
 		  // Do not include the mods list here, we intentionally want all creatures available
 		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, False)
 		  If Creatures <> Nil And Creatures.LastRowIndex = 0 Then
-		    Self.SelectedClass = Creatures(0).ClassString
+		    Self.SelectedCreature = Creatures(0)
 		  End If
 		End Sub
 	#tag EndEvent
