@@ -30,6 +30,15 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
+		Sub MergeFrom(Other As Beacon.ConfigGroup)
+		  Var Source As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts(Other)
+		  For Idx As Integer = 0 To Source.LastRowIndex
+		    Self.Append(Source(Idx))
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
 		  #Pragma Unused Identity
 		  #Pragma Unused Document

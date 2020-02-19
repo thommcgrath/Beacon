@@ -65,6 +65,20 @@ Implements Iterable
 	#tag EndEvent
 
 	#tag Event
+		Sub MergeFrom(Other As Beacon.ConfigGroup)
+		  Var Source As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Other)
+		  For Each Drop As Beacon.LootSource In Source
+		    Var Idx As Integer = Self.IndexOf(Drop)
+		    If Idx > -1 Then
+		      Self.Operator_Subscript(Idx) = Drop
+		    Else
+		      Self.Append(Drop)
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
 		  #Pragma Unused Identity
 		  #Pragma Unused Document

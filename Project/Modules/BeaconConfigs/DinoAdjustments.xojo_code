@@ -35,6 +35,16 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
+		Sub MergeFrom(Other As Beacon.ConfigGroup)
+		  Var Source As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments(Other)
+		  Var Behaviors() As Beacon.CreatureBehavior = Source.All
+		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
+		    Self.Add(Behavior)
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
 		  #Pragma Unused Identity
 		  #Pragma Unused Document

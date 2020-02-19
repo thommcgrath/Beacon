@@ -2,6 +2,26 @@
 Protected Class CustomContent
 Inherits Beacon.ConfigGroup
 	#tag Event
+		Sub MergeFrom(Other As Beacon.ConfigGroup)
+		  Var Source As BeaconConfigs.CustomContent = BeaconConfigs.CustomContent(Other)
+		  Var MergedGameIni As String = Self.mGameIniContent + Encodings.ASCII.Chr(10) + Encodings.ASCII.Chr(10) + Source.mGameIniContent
+		  Var MergedGameUserSettingsIni As String = Self.mGameUserSettingsIniContent + Encodings.ASCII.Chr(10) + Encodings.ASCII.Chr(10) + Source.mGameUserSettingsIniContent
+		  MergedGameIni = MergedGameIni.Trim
+		  MergedGameUserSettingsIni = MergedGameUserSettingsIni.Trim
+		  
+		  If Self.mGameIniContent <> MergedGameIni Or Self.mGameUserSettingsIniContent <> MergedGameUserSettingsIni Then
+		    Self.Modified = True
+		    Self.mGameIniContent = MergedGameIni
+		    Self.mGameUserSettingsIniContent = MergedGameUserSettingsIni
+		    
+		    For Each Entry As DictionaryEntry In Source.mEncryptedValues
+		      Self.mEncryptedValues.Value(Entry.Key) = Entry.Value
+		    Next
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
 		  Self.mGameIniContent = Self.ReadContent(Dict.Lookup("Game.ini", ""), Identity, Document)
 		  Self.mGameUserSettingsIniContent = Self.ReadContent(Dict.Lookup("GameUserSettings.ini", ""), Identity, Document)

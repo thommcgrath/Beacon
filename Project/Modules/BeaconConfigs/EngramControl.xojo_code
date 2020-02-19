@@ -103,6 +103,22 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
+		Sub MergeFrom(Other As Beacon.ConfigGroup)
+		  Var Source As BeaconConfigs.EngramControl = BeaconConfigs.EngramControl(Other)
+		  For Each Entry As DictionaryEntry In Source.mBehaviors
+		    Self.mBehaviors.Value(Entry.Key) = Entry.Value
+		    Self.Modified = True
+		  Next
+		  
+		  Self.mPointsPerLevel.ResizeTo(Max(Self.mPointsPerLevel.LastRowIndex, Source.mPointsPerLevel.LastRowIndex))
+		  For Idx As Integer = 0 To Source.mPointsPerLevel.LastRowIndex
+		    Self.mPointsPerLevel(Idx) = Source.mPointsPerLevel(Idx)
+		    Self.Modified = True
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub NonGeneratedKeys(Keys() As Beacon.ConfigKey)
 		  // Include all the keys here to prevent them from going into Custom Config when
 		  // Beacon generates lines that are slightly different than imported.

@@ -22,6 +22,17 @@ Implements Iterable
 	#tag EndEvent
 
 	#tag Event
+		Sub MergeFrom(Other As Beacon.ConfigGroup)
+		  Var Source As BeaconConfigs.SpawnPoints = BeaconConfigs.SpawnPoints(Other)
+		  
+		  For Each Entry As DictionaryEntry In Source.mSpawnPoints
+		    Var SpawnPoint As Beacon.SpawnPoint = Entry.Value
+		    Self.Add(New Beacon.SpawnPoint(SpawnPoint))
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub NonGeneratedKeys(Keys() As Beacon.ConfigKey)
 		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "ConfigOverrideNPCSpawnEntriesContainer"))
 		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "ConfigAddNPCSpawnEntriesContainer"))

@@ -865,7 +865,7 @@ End
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
-
+		    
 		    Var Engram As Beacon.Engram = Me.RowTagAt(I)
 		    Var Rate As Double = Config.Override(Engram)
 		    Items.Value(Engram.Path) = Rate

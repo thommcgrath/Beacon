@@ -83,6 +83,33 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Merge(Other As Beacon.ConfigGroup) As Boolean
+		  If Not Self.SupportsMerging Or Other = Nil Then
+		    Return False
+		  End If
+		  
+		  Var SelfInfo As Introspection.TypeInfo = Introspection.GetType(Self)
+		  Var OtherInfo As Introspection.TypeInfo = Introspection.GetType(Other)
+		  If SelfInfo.FullName <> OtherInfo.FullName Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Cannot merge " + OtherInfo.FullName + " into " + SelfInfo.FullName
+		    Raise Err
+		  End If
+		  
+		  Try
+		    Var WasModified As Boolean = Self.mModified
+		    Self.mModified = False
+		    RaiseEvent MergeFrom(Other)
+		    Var MergeMadeChanges As Boolean = Self.mModified
+		    Self.mModified = Self.mModified Or WasModified
+		    Return MergeMadeChanges
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  Return Self.mModified
 		End Function
@@ -112,6 +139,12 @@ Protected Class ConfigGroup
 	#tag DelegateDeclaration, Flags = &h0
 		Delegate Sub ResolveIssuesCallback()
 	#tag EndDelegateDeclaration
+
+	#tag Method, Flags = &h0
+		Function SupportsMerging() As Boolean
+		  Return IsEventImplemented("MergeFrom")
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ToDictionary(Document As Beacon.Document) As Dictionary
@@ -153,6 +186,10 @@ Protected Class ConfigGroup
 
 	#tag Hook, Flags = &h0
 		Event GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event MergeFrom(Other As Beacon.ConfigGroup)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
