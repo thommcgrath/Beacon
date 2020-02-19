@@ -80,13 +80,13 @@ Inherits Beacon.ConfigGroup
 		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
 		  #Pragma Unused Document
 		  
-		  If Self.PlayerStats.Count > 0 Then
+		  If Self.PlayerStats.KeyCount > 0 Then
 		    Dict.Value("PlayerStats") = Self.PlayerStats
 		  End If
-		  If Self.TamedStats.Count > 0 Then
+		  If Self.TamedStats.KeyCount > 0 Then
 		    Dict.Value("TamedStats") = Self.TamedStats
 		  End If
-		  If Self.WildStats.Count > 0 Then
+		  If Self.WildStats.KeyCount > 0 Then
 		    Dict.Value("WildStats") = Self.WildStats
 		  End If
 		End Sub
@@ -182,7 +182,7 @@ Inherits Beacon.ConfigGroup
 		    Dict.Value("Base") = Value
 		  End If
 		  
-		  If Dict.Count > 0 Then
+		  If Dict.KeyCount > 0 Then
 		    Self.PlayerStats.Value(Stat.Key) = Dict
 		    Self.Modified = True
 		  ElseIf Self.PlayerStats.HasKey(Stat.Key) Then
@@ -231,7 +231,7 @@ Inherits Beacon.ConfigGroup
 		    Dict.Value("PerLevel") = Value
 		  End If
 		  
-		  If Dict.Count > 0 Then
+		  If Dict.KeyCount > 0 Then
 		    Self.PlayerStats.Value(Stat.Key) = Dict
 		    Self.Modified = True
 		  ElseIf Self.PlayerStats.HasKey(Stat.Key) Then
@@ -280,7 +280,7 @@ Inherits Beacon.ConfigGroup
 		    Dict.Value("Add") = Value
 		  End If
 		  
-		  If Dict.Count > 0 Then
+		  If Dict.KeyCount > 0 Then
 		    Self.TamedStats.Value(Stat.Key) = Dict
 		    Self.Modified = True
 		  ElseIf Self.TamedStats.HasKey(Stat.Key) Then
@@ -329,7 +329,7 @@ Inherits Beacon.ConfigGroup
 		    Dict.Value("Affinity") = Value
 		  End If
 		  
-		  If Dict.Count > 0 Then
+		  If Dict.KeyCount > 0 Then
 		    Self.TamedStats.Value(Stat.Key) = Dict
 		    Self.Modified = True
 		  ElseIf Self.TamedStats.HasKey(Stat.Key) Then
@@ -378,7 +378,7 @@ Inherits Beacon.ConfigGroup
 		    Dict.Value("PerLevel") = Value
 		  End If
 		  
-		  If Dict.Count > 0 Then
+		  If Dict.KeyCount > 0 Then
 		    Self.TamedStats.Value(Stat.Key) = Dict
 		    Self.Modified = True
 		  ElseIf Self.TamedStats.HasKey(Stat.Key) Then
@@ -427,7 +427,7 @@ Inherits Beacon.ConfigGroup
 		    Dict.Value("PerLevel") = Value
 		  End If
 		  
-		  If Dict.Count > 0 Then
+		  If Dict.KeyCount > 0 Then
 		    Self.WildStats.Value(Stat.Key) = Dict
 		    Self.Modified = True
 		  ElseIf Self.WildStats.HasKey(Stat.Key) Then

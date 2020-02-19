@@ -404,6 +404,13 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  Self.RadiusField.DoubleValue = Self.RadiusSlider.Value
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Organizer As SpawnSetOrganizer, Mods As Beacon.StringList)
 		  Self.mOrganizer = Organizer

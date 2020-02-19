@@ -155,7 +155,7 @@ Protected Class Identity
 		    Try
 		      Var Salt As MemoryBlock = DecodeHex(Dict.Value("private_key_salt"))
 		      Var Iterations As Integer = Dict.Value("private_key_iterations")
-		      Var Key As MemoryBlock = Crypto.PBKDF2(Salt, Password, Iterations, 56, Crypto.Algorithm.SHA512)
+			  Var Key As MemoryBlock = Crypto.PBKDF2(Salt, Password, Iterations, 56, Crypto.HashAlgorithms.SHA512)
 		      Var Decrypted As MemoryBlock = BeaconEncryption.SymmetricDecrypt(Key, DecodeHex(Dict.Value("private_key")))
 		      PrivateKey = BeaconEncryption.PEMDecodePrivateKey(Decrypted)
 		    Catch Err As RuntimeException

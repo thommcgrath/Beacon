@@ -266,12 +266,12 @@ End
 		  End If
 		  
 		  Var Config As BeaconConfigs.StackSizes = Self.Config(True)
-		  Var Classes() As String = OtherConfig.Classes
-		  For Each ClassString As String In Classes
-		    Config.Override(ClassString) = OtherConfig.Override(ClassString)
+		  Var Engrams() As Beacon.Engram = OtherConfig.Engrams
+		  For Each Engram As Beacon.Engram In Engrams
+		    Config.Override(Engram) = OtherConfig.Override(Engram)
 		  Next
 		  Self.Changed = True
-		  Self.UpdateList(Classes)
+		  Self.UpdateList(Engrams)
 		End Sub
 	#tag EndEvent
 
@@ -322,17 +322,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddOverride()
-		  Var CurrentEngrams() As Beacon.Engram
 		  Var Config As BeaconConfigs.StackSizes = Self.Config(False)
-		  Var Classes() As String = Config.Classes
-		  For Each ClassString As String In Classes
-		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
-		    If Engram = Nil Then
-		      Continue
-		    End If
-		    
-		    CurrentEngrams.AddRow(Engram)
-		  Next
+		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
 		  
 		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Stackables", CurrentEngrams, Self.Document.Mods, False)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
@@ -342,7 +333,7 @@ End
 		  Config = Self.Config(True)
 		  
 		  For Each Engram As Beacon.Engram In NewEngrams
-		    Config.Override(Engram.ClassString) = 100
+		    Config.Override(Engram) = 100
 		  Next
 		  
 		  Self.UpdateList(NewEngrams)
@@ -356,30 +347,21 @@ End
 		    Return
 		  End If
 		  
-		  Var CurrentEngrams() As Beacon.Engram
 		  Var Config As BeaconConfigs.StackSizes = Self.Config(False)
-		  Var Classes() As String = Config.Classes
-		  For Each ClassString As String In Classes
-		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
-		    If Engram = Nil Then
-		      Continue
-		    End If
-		    
-		    CurrentEngrams.AddRow(Engram)
-		  Next
+		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
 		  
 		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Stackables", CurrentEngrams, Self.Document.Mods, True)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
-		  Var SourceClass As String = Self.List.RowTagAt(Self.List.SelectedRowIndex)
-		  Var Size As Integer = Config.Override(SourceClass)
+		  Var SourceEngram As Beacon.Engram = Self.List.RowTagAt(Self.List.SelectedRowIndex)
+		  Var Size As Integer = Config.Override(SourceEngram)
 		  
 		  Config = Self.Config(True)
 		  
 		  For Each Engram As Beacon.Engram In NewEngrams
-		    Config.Override(Engram.ClassString) = Size
+		    Config.Override(Engram) = Size
 		  Next
 		  
 		  Self.UpdateList(NewEngrams)
@@ -389,50 +371,42 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Var Classes() As String
+		  Var Paths() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Classes.AddRow(Self.List.RowTagAt(I))
+		    Paths.AddRow(Beacon.Engram(Self.List.RowTagAt(I)).Path)
 		  Next
-		  Self.UpdateList(Classes)
+		  Self.UpdateList(Paths)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectEngrams() As Beacon.Engram)
-		  Var Classes() As String
+		  Var Paths() As String
 		  For Each Engram As Beacon.Engram In SelectEngrams
-		    Classes.AddRow(Engram.ClassString)
+		    Paths.AddRow(Engram.Path)
 		  Next
-		  Self.UpdateList(Classes) 
+		  Self.UpdateList(Paths) 
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateList(SelectClasses() As String)
+		Private Sub UpdateList(SelectPaths() As String)
 		  Var Config As BeaconConfigs.StackSizes = Self.Config(False)
-		  Var Classes() As String = Config.Classes
+		  Var Engrams() As Beacon.Engram = Config.Engrams
 		  
 		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.SelectionChangeBlocked = True
 		  
 		  Self.List.RemoveAllRows()
-		  For Each ClassString As String In Classes
-		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
-		    Var EngramName As String
-		    If Engram <> Nil Then
-		      EngramName = Engram.Label
-		    Else
-		      EngramName = ClassString
-		    End If
-		    
-		    Var Size As Integer = Config.Override(ClassString)
-		    Self.List.AddRow(EngramName, Size.ToString)
-		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = ClassString
-		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectClasses.IndexOf(ClassString) > -1
+		  For Each Engram As Beacon.Engram In Engrams
+		    Var Size As Integer = Config.Override(Engram)
+		    Self.List.AddRow(Engram.Label, Size.ToString)
+		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Engram
+		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectPaths.IndexOf(Engram.Path) > -1
 		  Next
 		  
 		  Self.List.SortingColumn = 0
@@ -518,10 +492,10 @@ End
 		  End If
 		  
 		  Var Size As Integer = Val(Me.CellValueAt(Row, Column))
-		  Var ClassString As String = Me.RowTagAt(Row)
+		  Var Engram As Beacon.Engram = Me.RowTagAt(Row)
 		  
 		  Var Config As BeaconConfigs.StackSizes = Self.Config(True)
-		  Config.Override(ClassString) = Size
+		  Config.Override(Engram) = Size
 		  Self.Changed = True
 		End Sub
 	#tag EndEvent
@@ -562,7 +536,7 @@ End
 		  
 		  Var Config As BeaconConfigs.StackSizes = Self.Config(True)
 		  For Each Engram As Beacon.Engram In Engrams
-		    Config.Override(Engram.ClassString) = 0
+		    Config.Override(Engram) = 0
 		  Next
 		  Self.Changed = True
 		  Self.UpdateList()
@@ -577,9 +551,9 @@ End
 		      Continue
 		    End If
 		    
-		    Var ClassString As String = Me.RowTagAt(I)
-		    Var Size As Integer = Config.Override(ClassString)
-		    Items.Value(ClassString) = Size
+		    Var Engram As Beacon.Engram = Me.RowTagAt(I)
+		    Var Size As Integer = Config.Override(Engram)
+		    Items.Value(Engram.Path) = Size
 		  Next
 		  
 		  Board.AddRawData(Beacon.GenerateJSON(Items, False), Self.kClipboardType)
@@ -601,15 +575,28 @@ End
 		    End If
 		    
 		    Var Config As BeaconConfigs.StackSizes = Self.Config(True)
-		    Var SelectClasses() As String
+		    Var SelectPaths() As String
 		    For Each Entry As DictionaryEntry In Items
-		      Var ClassString As String = Entry.Key
+		      Var Path As String = Entry.Key
+		      Var Engram As Beacon.Engram
+		      If Path.BeginsWith("/Game/") Then
+		        Engram = Beacon.Data.GetEngramByPath(Path)
+		        If IsNull(Engram) Then
+		          Engram = Beacon.Engram.CreateFromPath(Path)
+		        End If
+		      Else
+		        Engram = Beacon.Data.GetEngramByClass(Path)
+		        If IsNull(Engram) Then
+		          Engram = Beacon.Engram.CreateFromClass(Path)
+		        End If
+		      End If
+		      
 		      Var Size As Integer = Entry.Value
-		      SelectClasses.AddRow(ClassString)
-		      Config.Override(ClassString) = Size
+		      SelectPaths.AddRow(Engram.Path)
+		      Config.Override(Engram) = Size
 		    Next
 		    Self.Changed = True
-		    Self.UpdateList(SelectClasses)
+		    Self.UpdateList(SelectPaths)
 		    Return
 		  End If
 		  

@@ -566,12 +566,12 @@ End
 		  End If
 		  
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
-		  Var Classes() As String = OtherConfig.Classes
-		  For Each ClassString As String In Classes
-		    Config.Override(ClassString) = OtherConfig.Override(ClassString)
+		  Var Engrams() As Beacon.Engram = OtherConfig.Engrams
+		  For Each Engram As Beacon.Engram In Engrams
+		    Config.Override(Engram) = OtherConfig.Override(Engram)
 		  Next
 		  Self.Changed = True
-		  Self.UpdateList(Classes)
+		  Self.UpdateList(Engrams)
 		End Sub
 	#tag EndEvent
 
@@ -628,17 +628,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddOverride()
-		  Var CurrentEngrams() As Beacon.Engram
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(False)
-		  Var Classes() As String = Config.Classes
-		  For Each ClassString As String In Classes
-		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
-		    If Engram = Nil Then
-		      Continue
-		    End If
-		    
-		    CurrentEngrams.AddRow(Engram)
-		  Next
+		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
 		  
 		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Harvesting", CurrentEngrams, Self.Document.Mods, False)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
@@ -648,7 +639,7 @@ End
 		  Config = Self.Config(True)
 		  
 		  For Each Engram As Beacon.Engram In NewEngrams
-		    Config.Override(Engram.ClassString) = 1.0
+		    Config.Override(Engram) = 1.0
 		  Next
 		  
 		  Self.UpdateList(NewEngrams)
@@ -662,30 +653,21 @@ End
 		    Return
 		  End If
 		  
-		  Var CurrentEngrams() As Beacon.Engram
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(False)
-		  Var Classes() As String = Config.Classes
-		  For Each ClassString As String In Classes
-		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
-		    If Engram = Nil Then
-		      Continue
-		    End If
-		    
-		    CurrentEngrams.AddRow(Engram)
-		  Next
+		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
 		  
 		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Harvesting", CurrentEngrams, Self.Document.Mods, True)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
-		  Var SourceClass As String = Self.List.RowTagAt(Self.List.SelectedRowIndex)
-		  Var Rate As Double = Config.Override(SourceClass)
+		  Var SourceEngram As Beacon.Engram = Self.List.RowTagAt(Self.List.SelectedRowIndex)
+		  Var Rate As Double = Config.Override(SourceEngram)
 		  
 		  Config = Self.Config(True)
 		  
 		  For Each Engram As Beacon.Engram In NewEngrams
-		    Config.Override(Engram.ClassString) = Rate
+		    Config.Override(Engram) = Rate
 		  Next
 		  
 		  Self.UpdateList(NewEngrams)
@@ -695,51 +677,43 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Var Classes() As String
+		  Var Paths() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Classes.AddRow(Self.List.RowTagAt(I))
+		    Paths.AddRow(Beacon.Engram(Self.List.RowTagAt(I)).Path)
 		  Next
-		  Self.UpdateList(Classes)
+		  Self.UpdateList(Paths)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectEngrams() As Beacon.Engram)
-		  Var Classes() As String
+		  Var Paths() As String
 		  For Each Engram As Beacon.Engram In SelectEngrams
-		    Classes.AddRow(Engram.ClassString)
+		    Paths.AddRow(Engram.Path)
 		  Next
-		  Self.UpdateList(Classes) 
+		  Self.UpdateList(Paths) 
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateList(SelectClasses() As String)
+		Private Sub UpdateList(SelectPaths() As String)
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(False)
-		  Var Classes() As String = Config.Classes
+		  Var Engrams() As Beacon.Engram = Config.Engrams
 		  
 		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.SelectionChangeBlocked = True
 		  
 		  Self.List.RemoveAllRows()
-		  For Each ClassString As String In Classes
-		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
-		    Var EngramName As String
-		    If Engram <> Nil Then
-		      EngramName = Engram.Label
-		    Else
-		      EngramName = ClassString
-		    End If
-		    
-		    Var Rate As Double = Config.Override(ClassString)
+		  For Each Engram As Beacon.Engram In Engrams
+		    Var Rate As Double = Config.Override(Engram)
 		    Var EffectiveRate As Double = Round(Rate) * Round(Config.HarvestAmountMultiplier)
-		    Self.List.AddRow(EngramName, Rate.PrettyText, EffectiveRate.PrettyText)
-		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = ClassString
-		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectClasses.IndexOf(ClassString) > -1
+		    Self.List.AddRow(Engram.Label, Rate.PrettyText, EffectiveRate.PrettyText)
+		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Engram
+		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectPaths.IndexOf(Engram.Path) > -1
 		  Next
 		  
 		  Self.List.Sort
@@ -832,10 +806,10 @@ End
 		  If Rate <= 0 Then
 		    Rate = 1
 		  End If
-		  Var ClassString As String = Me.RowTagAt(Row)
+		  Var Engram As Beacon.Engram = Me.RowTagAt(Row)
 		  
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
-		  Config.Override(ClassString) = Rate
+		  Config.Override(Engram) = Rate
 		  Self.Changed = True
 		  Self.UpdateList()
 		End Sub
@@ -876,8 +850,8 @@ End
 		      Continue
 		    End If
 		    
-		    Var ClassString As String = Me.RowTagAt(I)
-		    Config.Override(ClassString) = 0
+		    Var Engram As Beacon.Engram = Me.RowTagAt(I)
+		    Config.Override(Engram) = 0
 		  Next
 		  Self.Changed = True
 		  Self.UpdateList()
@@ -891,10 +865,10 @@ End
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
-		    
-		    Var ClassString As String = Me.RowTagAt(I)
-		    Var Rate As Double = Config.Override(ClassString)
-		    Items.Value(ClassString) = Rate
+
+		    Var Engram As Beacon.Engram = Me.RowTagAt(I)
+		    Var Rate As Double = Config.Override(Engram)
+		    Items.Value(Engram.Path) = Rate
 		  Next
 		  
 		  Board.AddRawData(Beacon.GenerateJSON(Items, False), Self.kClipboardType)
@@ -916,15 +890,28 @@ End
 		    End If
 		    
 		    Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
-		    Var SelectClasses() As String
+		    Var SelectEngrams() As Beacon.Engram
 		    For Each Entry As DictionaryEntry In Items
-		      Var ClassString As String = Entry.Key
+		      Var Path As String = Entry.Key
+		      Var Engram As Beacon.Engram
+		      If Path.BeginsWith("/Game/") Then
+		        Engram = Beacon.Data.GetEngramByPath(Path)
+		        If IsNull(Engram) Then
+		          Engram = Beacon.Engram.CreateFromPath(Path)
+		        End If
+		      Else
+		        Engram = Beacon.Data.GetEngramByClass(Path)
+		        If IsNull(Engram) Then
+		          Engram = Beacon.Engram.CreateFromClass(Path)
+		        End If
+		      End If
+		      
 		      Var Rate As Double = Entry.Value
-		      SelectClasses.AddRow(ClassString)
-		      Config.Override(ClassString) = Rate
+		      SelectEngrams.AddRow(Engram)
+		      Config.Override(Engram) = Rate
 		    Next
 		    Self.Changed = True
-		    Self.UpdateList(SelectClasses)
+		    Self.UpdateList(SelectEngrams)
 		    Return
 		  End If
 		  

@@ -1082,6 +1082,12 @@ Protected Module Beacon
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ValidForMods(Extends Blueprint As Beacon.Blueprint, Mods As Beacon.StringList) As Boolean
+		  Return IsNull(Mods) Or Mods.Count = 0 Or IsNull(Blueprint.ModID) Or Mods.IndexOf(Blueprint.ModID) > -1
+		End Function
+	#tag EndMethod
+
 	#tag DelegateDeclaration, Flags = &h21
 		Private Delegate Function ValueAdapter(ByRef Value As Variant, DesiredTypeName As String) As Boolean
 	#tag EndDelegateDeclaration
