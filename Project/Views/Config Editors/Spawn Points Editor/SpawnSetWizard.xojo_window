@@ -234,6 +234,7 @@ Begin BeaconDialog SpawnSetWizard
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
