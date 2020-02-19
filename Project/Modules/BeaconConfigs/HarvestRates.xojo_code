@@ -12,13 +12,16 @@ Inherits Beacon.ConfigGroup
 
 	#tag Event
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
-		  #Pragma Unused Profile
-		  #Pragma Unused SourceDocument
-		  
 		  For Each Entry As DictionaryEntry In Self.mOverrides
-		    Dim ClassString As String = Entry.Key
-		    Dim Rate As Double = Entry.Value
-		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "HarvestResourceItemAmountClassMultipliers", "(ClassName=""" + ClassString + """,Multiplier=" + Rate.PrettyText + ")"))
+		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Entry.Key)
+		    If IsNull(Engram) Then
+		      Engram = Beacon.Engram.CreateFromPath(Entry.Key)
+		    End If
+		    If IsNull(Engram) = False And Engram.ValidForMask(Profile.Mask) And Engram.ValidForMods(SourceDocument.Mods) Then
+		      Var ClassString As String = Engram.ClassString
+		      Var Rate As Double = Entry.Value
+		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "HarvestResourceItemAmountClassMultipliers", "(ClassName=""" + ClassString + """,Multiplier=" + Rate.PrettyText + ")"))
+		    End If
 		  Next
 		  
 		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PlayerHarvestingDamageMultiplier", Self.mPlayerHarvestingDamageMultiplier.PrettyText))
@@ -56,7 +59,24 @@ Inherits Beacon.ConfigGroup
 		  Self.mPlayerHarvestingDamageMultiplier = Dict.DoubleValue("Player Harvesting Damage Multiplier", 1.0)
 		  Self.mDinoHarvestingDamageMultiplier = Dict.DoubleValue("Dino Harvesting Damage Multiplier", 1.0)
 		  
-		  Self.mOverrides = Dict.DictionaryValue("Overrides", New Dictionary)
+		  If Dict.HasKey("Rates") Then
+		    Self.mOverrides = Dict.DictionaryValue("Rates", New Dictionary)
+		  Else
+		    Self.mOverrides = New Dictionary
+		    Var Rates As Dictionary = Dict.DictionaryValue("Overrides", New Dictionary)
+		    For Each Entry As DictionaryEntry In Rates
+		      Try
+		        Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(Entry.Key)
+		        If IsNull(Engram) Then
+		          Engram = Beacon.Engram.CreateFromClass(Entry.Key)
+		        End If
+		        If IsNull(Engram) = False Then
+		          Self.mOverrides.Value(Engram.Path) = Entry.Value.DoubleValue
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -64,9 +84,21 @@ Inherits Beacon.ConfigGroup
 		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
 		  #Pragma Unused Document
 		  
+		  Var LegacyOverrides As New Dictionary
+		  For Each Entry As DictionaryEntry In Self.mOverrides
+		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Entry.Key)
+		    If IsNull(Engram) Then
+		      Engram = Beacon.Engram.CreateFromPath(Entry.Key)
+		    End If
+		    If IsNull(Engram) = False Then
+		      LegacyOverrides.Value(Engram.ClassString) = Entry.Value
+		    End If
+		  Next
+		  
 		  Dict.Value("Harvest Amount Multiplier") = Self.mHarvestAmountMultiplier
 		  Dict.Value("Harvest Health Multiplier") = Self.mHarvestHealthMultiplier
-		  Dict.Value("Overrides") = Self.mOverrides
+		  Dict.Value("Rates") = Self.mOverrides
+		  Dict.Value("Overrides") = LegacyOverrides
 		  Dict.Value("Use Optimized Rates") = Self.mUseOptimizedRates
 		  Dict.Value("Clamp Resource Harvest Damage") = Self.mClampResourceHarvestDamage
 		  Dict.Value("Player Harvesting Damage Multiplier") = Self.mPlayerHarvestingDamageMultiplier
@@ -74,16 +106,6 @@ Inherits Beacon.ConfigGroup
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h0
-		Function Classes() As String()
-		  Dim Results() As String
-		  For Each Entry As DictionaryEntry In Self.mOverrides
-		    Results.AddRow(Entry.Key)
-		  Next
-		  Return Results
-		End Function
-	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Shared Function ConfigName() As String
@@ -111,18 +133,34 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Engrams() As Beacon.Engram()
+		  Var Results() As Beacon.Engram
+		  For Each Entry As DictionaryEntry In Self.mOverrides
+		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Entry.Key)
+		    If IsNull(Engram) Then
+		      Engram = Beacon.Engram.CreateFromPath(Entry.Key)
+		    End If
+		    If IsNull(Engram) = False Then
+		      Results.AddRow(Engram)
+		    End If
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As BeaconConfigs.HarvestRates
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
-		  Dim HarvestAmountMultiplier As Double = ParsedData.DoubleValue("HarvestAmountMultiplier", 1.0, True)
-		  Dim HarvestHealthMultiplier As Double = ParsedData.DoubleValue("HarvestHealthMultiplier", 1.0, True)
-		  Dim PlayerHarvestingDamageMultiplier As Double = ParsedData.DoubleValue("PlayerHarvestingDamageMultiplier", 1.0, True)
-		  Dim DinoHarvestingDamageMultiplier As Double = ParsedData.DoubleValue("DinoHarvestingDamageMultiplier", 1.0, True)
-		  Dim ClampResourceHarvestDamage As Boolean = ParsedData.BooleanValue("ClampResourceHarvestDamage", False, True)
-		  Dim UseOptimizedRates As Boolean = False
-		  Dim Overrides As New Dictionary
+		  Var HarvestAmountMultiplier As Double = ParsedData.DoubleValue("HarvestAmountMultiplier", 1.0, True)
+		  Var HarvestHealthMultiplier As Double = ParsedData.DoubleValue("HarvestHealthMultiplier", 1.0, True)
+		  Var PlayerHarvestingDamageMultiplier As Double = ParsedData.DoubleValue("PlayerHarvestingDamageMultiplier", 1.0, True)
+		  Var DinoHarvestingDamageMultiplier As Double = ParsedData.DoubleValue("DinoHarvestingDamageMultiplier", 1.0, True)
+		  Var ClampResourceHarvestDamage As Boolean = ParsedData.BooleanValue("ClampResourceHarvestDamage", False, True)
+		  Var UseOptimizedRates As Boolean = False
+		  Var Overrides As New Dictionary
 		  
 		  If CommandLineOptions <> Nil And CommandLineOptions.HasKey("UseOptimizedHarvestingHealth") Then
 		    Try
@@ -132,14 +170,14 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  
 		  If ParsedData.HasKey("HarvestResourceItemAmountClassMultipliers") Then
-		    Dim AutoValue As Variant = ParsedData.Value("HarvestResourceItemAmountClassMultipliers")
-		    Dim Dicts() As Dictionary
-		    Dim Info As Introspection.TypeInfo = Introspection.GetType(AutoValue)
+		    Var AutoValue As Variant = ParsedData.Value("HarvestResourceItemAmountClassMultipliers")
+		    Var Dicts() As Dictionary
+		    Var Info As Introspection.TypeInfo = Introspection.GetType(AutoValue)
 		    Select Case Info.FullName
 		    Case "Dictionary"
 		      Dicts.AddRow(AutoValue)
 		    Case "Object()"
-		      Dim ArrayValue() As Variant = AutoValue
+		      Var ArrayValue() As Variant = AutoValue
 		      For Each Dict As Dictionary In ArrayValue
 		        Dicts.AddRow(Dict)
 		      Next
@@ -150,17 +188,21 @@ Inherits Beacon.ConfigGroup
 		        Continue
 		      End If   
 		      
-		      Dim Multiplier As Double = Dict.Value("Multiplier")
-		      Dim ClassString As String = Dict.Value("ClassName")
+		      Var Multiplier As Double = Dict.Value("Multiplier")
+		      Var ClassString As String = Dict.Value("ClassName")
 		      
 		      If ClassString <> "" And ClassString.EndsWith("_C") And Multiplier > 0 Then
-		        Overrides.Value(ClassString) = Multiplier
+		        Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
+		        If IsNull(Engram) Then
+		          Engram = Beacon.Engram.CreateFromClass(ClassString)
+		        End If
+		        Overrides.Value(Engram.Path) = Multiplier
 		      End If
 		    Next
 		  End If
 		  
 		  // Use the public properties here to toggle modified ...
-		  Dim Config As New BeaconConfigs.HarvestRates
+		  Var Config As New BeaconConfigs.HarvestRates
 		  Config.HarvestAmountMultiplier = HarvestAmountMultiplier
 		  Config.HarvestHealthMultiplier = HarvestHealthMultiplier
 		  Config.PlayerHarvestingDamageMultiplier = PlayerHarvestingDamageMultiplier
@@ -184,18 +226,24 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Override(ClassString As String) As Double
-		  Return Self.mOverrides.Lookup(ClassString, 0)
+		Function Override(Engram As Beacon.Engram) As Double
+		  If Engram <> Nil Then
+		    Return Self.mOverrides.Lookup(Engram.Path, 0)
+		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Override(ClassString As String, Assigns Rate As Double)
-		  If Rate <= 0 And Self.mOverrides.HasKey(ClassString) Then
-		    Self.mOverrides.Remove(ClassString)
+		Sub Override(Engram As Beacon.Engram, Assigns Rate As Double)
+		  If IsNull(Engram) Then
+		    Return
+		  End If
+		  
+		  If Rate <= 0 And Self.mOverrides.HasKey(Engram.Path) Then
+		    Self.mOverrides.Remove(Engram.Path)
 		    Self.Modified = True
-		  ElseIf Rate > 0 And Self.mOverrides.Lookup(ClassString, 0) <> Rate Then
-		    Self.mOverrides.Value(ClassString) = Rate
+		  ElseIf Rate > 0 And Self.mOverrides.Lookup(Engram.Path, 0) <> Rate Then
+		    Self.mOverrides.Value(Engram.Path) = Rate
 		    Self.Modified = True
 		  End If
 		End Sub
