@@ -152,20 +152,20 @@ End
 		    Return
 		  End If
 		  
-		  Dim OtherConfig As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
+		  Var OtherConfig As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
 		  If OtherConfig = Nil Then
 		    Return
 		  End If
 		  
-		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
-		  Dim Behaviors() As Beacon.CreatureBehavior = OtherConfig.All
-		  Dim Classes() As String
+		  Var Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
+		  Var Behaviors() As Beacon.CreatureBehavior = OtherConfig.All
+		  Var Paths() As String
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
-		    Config.Behavior(Behavior.TargetClass) = Behavior
-		    Classes.AddRow(Behavior.TargetClass)
+		    Config.Add(Behavior)
+		    Paths.AddRow(Behavior.TargetCreature.Path)
 		  Next
 		  Self.Changed = True
-		  Self.UpdateList(Classes)
+		  Self.UpdateList(Paths)
 		End Sub
 	#tag EndEvent
 
@@ -186,8 +186,8 @@ End
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.DinoAdjustments
 		  Static ConfigName As String = BeaconConfigs.DinoAdjustments.ConfigName
 		  
-		  Dim Document As Beacon.Document = Self.Document
-		  Dim Config As BeaconConfigs.DinoAdjustments
+		  Var Document As Beacon.Document = Self.Document
+		  Var Config As BeaconConfigs.DinoAdjustments
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.DinoAdjustments(Self.mConfigRef.Value)
@@ -220,8 +220,8 @@ End
 		  End If
 		  
 		  // See the comment in ShowAdd
-		  Dim ClassString As String = Self.List.RowTagAt(Self.List.SelectedRowIndex)
-		  If DinoAdjustmentDialog.Present(Self, ClassString, Self.Config(False), Self.Document.Mods) Then
+		  Var Creature As Beacon.Creature = Self.List.RowTagAt(Self.List.SelectedRowIndex)
+		  If DinoAdjustmentDialog.Present(Self, Creature, Self.Config(False), Self.Document.Mods) Then
 		    Call Self.Config(True)
 		    Self.UpdateList()
 		    Self.Changed = True
@@ -234,8 +234,8 @@ End
 		  // If this returns true, the config will have changed so we should make sure it gets
 		  // added to the document if it wasn't already. Calling Self.Config(True) has the
 		  // side effect of doing that
-		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(False)
-		  If DinoAdjustmentDialog.Present(Self, "", Config, Self.Document.Mods) Then
+		  Var Config As BeaconConfigs.DinoAdjustments = Self.Config(False)
+		  If DinoAdjustmentDialog.Present(Self, Nil, Config, Self.Document.Mods) Then
 		    Call Self.Config(True)
 		    Self.UpdateList()
 		    Self.Changed = True
@@ -249,84 +249,84 @@ End
 		    Return
 		  End If
 		  
-		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(False)
-		  Dim SelectedClass As String = Self.List.RowTagAt(Self.List.SelectedRowIndex)
-		  Dim SelectedBehavior As Beacon.CreatureBehavior = Config.Behavior(SelectedClass)
+		  Var Config As BeaconConfigs.DinoAdjustments = Self.Config(False)
+		  Var SelectedCreature As Beacon.Creature = Self.List.RowTagAt(Self.List.SelectedRowIndex)
+		  Var SelectedBehavior As Beacon.CreatureBehavior = Config.Behavior(SelectedCreature)
 		  If SelectedBehavior = Nil Then
 		    Return
 		  End If
 		  
-		  Dim Behaviors() As Beacon.CreatureBehavior = Config.All
-		  Dim CurrentCreatures() As Beacon.Creature
+		  Var Behaviors() As Beacon.CreatureBehavior = Config.All
+		  Var CurrentCreatures() As Beacon.Creature
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
-		    Dim Creature As Beacon.Creature = Behavior.TargetCreature
+		    Var Creature As Beacon.Creature = Behavior.TargetCreature
 		    If Creature <> Nil Then
 		      CurrentCreatures.AddRow(Creature)
 		    End If
 		  Next
 		  
-		  Dim Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", CurrentCreatures, True)
+		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", CurrentCreatures, True)
 		  If Creatures.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  Config = Self.Config(True)
-		  Dim SelectClasses() As String
+		  Var SelectPaths() As String
 		  For Each Creature As Beacon.Creature In Creatures
-		    Dim Behavior As Beacon.CreatureBehavior = SelectedBehavior.Clone(Creature.ClassString)
-		    Config.Behavior(Behavior.TargetClass) = Behavior
-		    SelectClasses.AddRow(Behavior.TargetClass)
+		    Var Behavior As Beacon.CreatureBehavior = SelectedBehavior.Clone(Creature)
+		    Config.Add(Behavior)
+		    SelectPaths.AddRow(Behavior.TargetCreature.Path)
 		  Next
-		  Self.UpdateList(SelectClasses)
+		  Self.UpdateList(SelectPaths)
 		  Self.Changed = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Dim Classes() As String
+		  Var Paths() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
-		      Classes.AddRow(Self.List.RowTagAt(I))
+		      Paths.AddRow(Beacon.Creature(Self.List.RowTagAt(I)).Path)
 		    End If
 		  Next
-		  Self.UpdateList(Classes)
+		  Self.UpdateList(Paths)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateList(SelectClasses() As String)
+		Private Sub UpdateList(SelectCreatures() As Beacon.Creature)
+		  Var Paths() As String
+		  For Each Creature As Beacon.Creature In SelectCreatures
+		    Paths.AddRow(Creature.Path)
+		  Next
+		  Self.UpdateList(Paths)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateList(SelectPaths() As String)
 		  Self.List.RemoveAllRows
 		  
-		  Dim Behaviors() As Beacon.CreatureBehavior = Self.Config(False).All
+		  Var Behaviors() As Beacon.CreatureBehavior = Self.Config(False).All
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
-		    Dim Creature As Beacon.Creature = Behavior.TargetCreature
-		    Dim Label As String
-		    If Creature <> Nil Then
-		      Label = Creature.Label
-		    Else
-		      Label = Behavior.TargetClass
-		    End If
+		    Var Creature As Beacon.Creature = Behavior.TargetCreature
+		    Var Label As String = Creature.Label
 		    
 		    If Behavior.ProhibitSpawning Then
 		      Label = Label + EndOfLine + "Disabled"
 		      Self.List.AddRow(Label)
-		    ElseIf Behavior.ReplacementClass <> "" Then
-		      Creature = Behavior.ReplacementCreature
-		      If Creature <> Nil Then
-		        Label = Label + EndOfLine + "Replaced with " + Creature.Label
-		      Else
-		        Label = Label + EndOfLIne + "Replaced with " + Behavior.ReplacementClass
-		      End If
+		    ElseIf IsNull(Behavior.ReplacementCreature) = False Then
+		      Label = Label + EndOfLine + "Replaced with " + Behavior.ReplacementCreature.Label
 		      Self.List.AddRow(Label)
 		    Else
 		      Self.List.AddRow(Label, Format(Behavior.DamageMultiplier, "0.0#####"), Format(Behavior.ResistanceMultiplier, "0.0#####"), Format(Behavior.TamedDamageMultiplier, "0.0#####"), Format(Behavior.TamedResistanceMultiplier, "0.0#####"))
 		    End If
 		    
-		    If SelectClasses.IndexOf(Behavior.TargetClass) > -1 Then
+		    If SelectPaths.IndexOf(Behavior.TargetCreature.Path) > -1 Then
 		      Self.List.Selected(Self.List.LastAddedRowIndex) = True
 		    End If
 		    
-		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Behavior.TargetClass
+		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Behavior.TargetCreature
 		  Next
 		  
 		  Self.List.Sort()
@@ -366,10 +366,10 @@ End
 		Sub Open()
 		  Me.Caption = Self.ConfigLabel
 		  
-		  Dim AddButton As New BeaconToolbarItem("AddCreature", IconToolbarAdd)
+		  Var AddButton As New BeaconToolbarItem("AddCreature", IconToolbarAdd)
 		  AddButton.HelpTag = "Define new creature adjustments"
 		  
-		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
+		  Var DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
 		  DuplicateButton.HelpTag = "Duplicate the selected creature adjustments."
 		  
 		  Me.LeftItems.Append(AddButton)
@@ -420,12 +420,7 @@ End
 		      Continue
 		    End If
 		    
-		    Var ClassString As String = Me.RowTagAt(I)
-		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)
-		    If Creature = Nil Then
-		      Creature = Beacon.Creature.CreateFromClass(ClassString)
-		    End If
-		    
+		    Var Creature As Beacon.Creature = Me.RowTagAt(I)
 		    Creatures.AddRow(Creature)
 		  Next
 		  
@@ -436,7 +431,7 @@ End
 		  Var Changed As Boolean = Self.Changed
 		  Var Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
 		  For Each Creature As Beacon.Creature In Creatures
-		    Config.RemoveBehavior(Creature.ClassString)
+		    Config.RemoveBehavior(Creature)
 		    Changed = True
 		  Next
 		  
@@ -446,15 +441,15 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Dicts() As Dictionary
-		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(False)
+		  Var Dicts() As Dictionary
+		  Var Config As BeaconConfigs.DinoAdjustments = Self.Config(False)
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Dim ClassString As String = Me.RowTagAt(I)
-		    Dim Behavior As Beacon.CreatureBehavior = Config.Behavior(ClassString)
+		    Var Creature As Beacon.Creature = Me.RowTagAt(I)
+		    Var Behavior As Beacon.CreatureBehavior = Config.Behavior(Creature)
 		    If Behavior = Nil Then
 		      Continue
 		    End If
@@ -468,8 +463,8 @@ End
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
 		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Dim JSON As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
-		    Dim Items() As Variant
+		    Var JSON As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
+		    Var Items() As Variant
 		    Try
 		      Items = Beacon.ParseJSON(JSON)
 		    Catch Err As RuntimeException
@@ -479,23 +474,24 @@ End
 		      Return
 		    End If
 		    
-		    Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
-		    Dim SelectClasses() As String
+		    Var Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
+		    Var SelectPaths() As String
 		    For Each Entry As Dictionary In Items
-		      Dim Behavior As Beacon.CreatureBehavior = Beacon.CreatureBehavior.FromDictionary(Entry)
+		      Var Behavior As Beacon.CreatureBehavior = Beacon.CreatureBehavior.FromDictionary(Entry)
 		      If Behavior = Nil Then
 		        Continue
 		      End If
 		      
-		      Config.Behavior(Behavior.TargetClass) = Behavior
+		      SelectPaths.AddRow(Behavior.TargetCreature.Path)
+		      Config.Add(Behavior)
 		    Next
 		    Self.Changed = True
-		    Self.UpdateList(SelectClasses)
+		    Self.UpdateList(SelectPaths)
 		    Return
 		  End If
 		  
 		  If Board.TextAvailable Then
-		    Dim ImportText As String = Board.Text.GuessEncoding
+		    Var ImportText As String = Board.Text.GuessEncoding
 		    Self.Parse(ImportText, "Clipboard")
 		    Return
 		  End If

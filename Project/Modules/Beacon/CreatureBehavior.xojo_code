@@ -1,23 +1,29 @@
 #tag Class
 Protected Class CreatureBehavior
 	#tag Method, Flags = &h0
-		Function Clone(NewTarget As String) As Beacon.CreatureBehavior
+		Function Clone(NewTarget As Beacon.Creature) As Beacon.CreatureBehavior
 		  Dim Result As New Beacon.CreatureBehavior(Self)
-		  Result.mTargetClass = NewTarget
+		  Result.mTargetCreature = NewTarget
 		  Return Result
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Creature As Beacon.Creature)
-		  Self.Constructor(Creature.ClassString)
+		  Self.mTargetCreature = Creature
+		  Self.mDamageMultiplier = 1.0
+		  Self.mResistanceMultiplier = 1.0
+		  Self.mTamedDamageMultiplier = 1.0
+		  Self.mTamedResistanceMultiplier = 1.0
+		  Self.mProhibitSpawning = False
+		  Self.mReplacementCreature = Nil
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.CreatureBehavior)
-		  Self.mTargetClass = Source.mTargetClass
-		  Self.mReplacementClass = Source.mReplacementClass
+		  Self.mTargetCreature = Source.mTargetCreature
+		  Self.mReplacementCreature = Source.mReplacementCreature
 		  Self.mProhibitSpawning = Source.mProhibitSpawning
 		  Self.mModified = Source.mModified
 		  Self.mDamageMultiplier = Source.mDamageMultiplier
@@ -29,13 +35,11 @@ Protected Class CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Sub Constructor(ClassString As String)
-		  Self.mTargetClass = ClassString
-		  Self.mDamageMultiplier = 1.0
-		  Self.mResistanceMultiplier = 1.0
-		  Self.mTamedDamageMultiplier = 1.0
-		  Self.mTamedResistanceMultiplier = 1.0
-		  Self.mProhibitSpawning = False
-		  Self.mReplacementClass = ""
+		  Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)
+		  If IsNull(Creature) Then
+		    Creature = Beacon.Creature.CreateFromClass(ClassString)
+		  End If
+		  Self.Constructor(Creature)
 		End Sub
 	#tag EndMethod
 
@@ -47,16 +51,36 @@ Protected Class CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Shared Function FromDictionary(Dict As Dictionary) As Beacon.CreatureBehavior
-		  If Not Dict.HasKey("Class") Then
+		  Var Creature As Beacon.Creature
+		  If Dict.HasKey("Path") Then
+		    Creature = Beacon.Data.GetCreatureByPath(Dict.Value("Path").StringValue)
+		    If IsNull(Creature) Then
+		      Creature = Beacon.Creature.CreateFromPath(Dict.Value("Path").StringValue)
+		    End If
+		  ElseIf Dict.HasKey("Class") Then
+		    Creature = Beacon.Data.GetCreatureByClass(Dict.Value("Class").StringValue)
+		    If IsNull(Creature) Then
+		      Creature = Beacon.Creature.CreateFromClass(Dict.Value("Class").StringValue)
+		    End If
+		  Else
 		    Return Nil
 		  End If
 		  
-		  Dim ClassString As String = Dict.Value("Class")
-		  Dim Behavior As New Beacon.CreatureBehavior(ClassString)
+		  Var Behavior As New Beacon.CreatureBehavior(Creature)
 		  If Dict.HasKey("Prohibit Spawning") Then
 		    Behavior.mProhibitSpawning = Dict.Value("Prohibit Spawning")
+		  ElseIf Dict.HasKey("Replacement Path") Then
+		    Var Replacement As Beacon.Creature = Beacon.Data.GetCreatureByPath(Dict.Value("Replacement Path").StringValue)
+		    If IsNull(Replacement) Then
+		      Replacement = Beacon.Creature.CreateFromPath(Dict.Value("Replacement Path").StringValue)
+		    End If
+		    Behavior.mReplacementCreature = Replacement
 		  ElseIf Dict.HasKey("Replacement Class") Then
-		    Behavior.mReplacementClass = Dict.Value("Replacement Class")
+		    Var Replacement As Beacon.Creature = Beacon.Data.GetCreatureByClass(Dict.Value("Replacement Class").StringValue)
+		    If IsNull(Replacement) Then
+		      Replacement = Beacon.Creature.CreateFromClass(Dict.Value("Replacement Class").StringValue)
+		    End If
+		    Behavior.mReplacementCreature = Replacement
 		  Else
 		    Behavior.mDamageMultiplier = Dict.Lookup("Damage Multiplier", 1.0)
 		    Behavior.mResistanceMultiplier = Dict.Lookup("Resistance Multiplier", 1.0)
@@ -88,13 +112,13 @@ Protected Class CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Function ReplacementClass() As String
-		  Return Self.mReplacementClass
+		  Return Self.mReplacementCreature.ClassString
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ReplacementCreature() As Beacon.Creature
-		  Return Beacon.Data.GetCreatureByClass(Self.mReplacementClass)
+		  Return Self.mReplacementCreature
 		End Function
 	#tag EndMethod
 
@@ -118,24 +142,26 @@ Protected Class CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Function TargetClass() As String
-		  Return Self.mTargetClass
+		  Return Self.mTargetCreature.ClassString
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function TargetCreature() As Beacon.Creature
-		  Return Beacon.Data.GetCreatureByClass(Self.mTargetClass)
+		  Return Self.mTargetCreature
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ToDictionary() As Dictionary
 		  Dim Dict As New Dictionary
-		  Dict.Value("Class") = Self.mTargetClass
+		  Dict.Value("Class") = Self.mTargetCreature.ClassString
+		  Dict.Value("Path") = Self.mTargetCreature.Path
 		  If Self.mProhibitSpawning Then
 		    Dict.Value("Prohibit Spawning") = True
-		  ElseIf Self.mReplacementClass <> "" Then
-		    Dict.Value("Replacement Class") = Self.mReplacementClass
+		  ElseIf IsNull(Self.mReplacementCreature) = False Then
+		    Dict.Value("Replacement Class") = Self.mReplacementCreature.ClassString
+		    Dict.Value("Replacement Path") = Self.mReplacementCreature.Path
 		  Else
 		    If Self.mDamageMultiplier <> 1.0 Then
 		      Dict.Value("Damage Multiplier") = Self.mDamageMultiplier
@@ -168,7 +194,7 @@ Protected Class CreatureBehavior
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mReplacementClass As String
+		Protected mReplacementCreature As Beacon.Creature
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -184,7 +210,7 @@ Protected Class CreatureBehavior
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mTargetClass As String
+		Protected mTargetCreature As Beacon.Creature
 	#tag EndProperty
 
 
