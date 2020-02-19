@@ -424,7 +424,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Try
 		      Migrated = Self.MigrateData(MigrateFile, CurrentSchemaVersion)
 		    Catch Err As RuntimeException
-		      App.Log("Database migration failed: " + Trim(Introspection.GetType(Err).FullName + " " + Err.Message))
+		      Var Message As String = Introspection.GetType(Err).FullName + " " + Err.Message
+		      App.Log("Database migration failed: " + Message.Trim)
 		    End Try
 		  End If
 		  If ShouldImportCloud And Migrated = False Then
