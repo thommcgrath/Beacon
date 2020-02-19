@@ -81,16 +81,6 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "StackSizes.Engrams" )  Function Classes() As String()
-		  Var Results() As String
-		  For Each Entry As DictionaryEntry In Self.mOverrides
-		    Results.AddRow(Entry.Key)
-		  Next
-		  Return Results
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Shared Function ConfigName() As String
 		  Return "StackSizes"
 		End Function
@@ -203,24 +193,6 @@ Inherits Beacon.ConfigGroup
 		    Self.Modified = True
 		  ElseIf StackSize > 0 And Self.mOverrides.Lookup(Engram.Path, 0) <> StackSize Then
 		    Self.mOverrides.Value(Engram.Path) = StackSize
-		    Self.Modified = True
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "StackSizes.Override(Beacon.Engram)" )  Function Override(ClassString As String) As Integer
-		  Return Self.mOverrides.Lookup(ClassString, 0)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "StackSizes.Override(Beacon.Engram) = Integer" )  Sub Override(ClassString As String, Assigns StackSize As Integer)
-		  If StackSize <= 0 And Self.mOverrides.HasKey(ClassString) Then
-		    Self.mOverrides.Remove(ClassString)
-		    Self.Modified = True
-		  ElseIf StackSize > 0 And Self.mOverrides.Lookup(ClassString, 0) <> StackSize Then
-		    Self.mOverrides.Value(ClassString) = StackSize
 		    Self.Modified = True
 		  End If
 		End Sub
