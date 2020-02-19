@@ -14,22 +14,17 @@ Inherits Beacon.ConfigGroup
 		    If Self.mCosts(I).Engram = Nil Then
 		      Issues.AddRow(New Beacon.Issue(ConfigName, "Crafting cost has no engram", Self.mCosts(I)))
 		    End If
-		    
-		    If Self.mCosts(I).LastRowIndex = -1 Then
-		      Issues.AddRow(New Beacon.Issue(ConfigName, "Crafting cost override of """ + Self.mCosts(I).Label + """ has no resources.", Self.mCosts(I)))
-		    End If
 		  Next
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
-		  #Pragma Unused Profile
-		  #Pragma Unused SourceDocument
-		  
 		  For Each Cost As Beacon.CraftingCost In Self.mCosts
-		    Dim StringValue As String = Cost.StringValue
-		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts", StringValue))
+		    If IsNull(Cost.Engram) = False And Cost.Engram.ValidForMask(Profile.Mask) And Cost.Engram.ValidForMods(SourceDocument.Mods) Then
+		      Var StringValue As String = Cost.StringValue
+		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts", StringValue))
+		    End If
 		  Next
 		End Sub
 	#tag EndEvent
