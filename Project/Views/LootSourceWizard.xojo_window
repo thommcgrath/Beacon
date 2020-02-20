@@ -1240,7 +1240,7 @@ End
 		  
 		  Var MapLabels As New Dictionary
 		  For Each Source As Beacon.LootSource In AllowedLootSources
-		    Var RowText As String = Labels.Lookup(Source.ClassString, Source.Label)
+		    Var RowText As String = Labels.Lookup(Source.Path, Source.Label)
 		    If Source.Notes <> "" Then
 		      RowText = RowText + EndOfLine + Source.Notes
 		    Else

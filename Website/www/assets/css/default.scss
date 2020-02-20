@@ -954,6 +954,13 @@ ul.object_list {
 	}
 }
 
+.notice-block {
+	border-width: 1px;
+	border-style: solid;
+	text-align: center;
+	padding: 16px;
+}
+
 @media (min-width: $breakpoint_mini) {
 	#header_logo {
 		height: 80px;

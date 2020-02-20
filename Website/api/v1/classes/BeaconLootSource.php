@@ -6,9 +6,11 @@ class BeaconLootSource extends BeaconBlueprint {
 	private $ui_color;
 	private $icon_id;
 	private $sort_order;
+	private $modern_sort_order;
 	private $experimental;
 	private $notes;
 	private $requirements = '{}';
+	private $simple_label;
 	
 	protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
@@ -17,9 +19,11 @@ class BeaconLootSource extends BeaconBlueprint {
 		$columns[] = 'uicolor';
 		$columns[] = 'icon';
 		$columns[] = 'sort';
+		$columns[] = 'modern_sort';
 		$columns[] = 'experimental';
 		$columns[] = 'notes';
 		$columns[] = 'requirements';
+		$columns[] = 'simple_label';
 		return $columns;
 	}
 	
@@ -41,8 +45,10 @@ class BeaconLootSource extends BeaconBlueprint {
 			return $this->ui_color;
 		case 'icon':
 			return $this->icon_id;
-		case 'sort_order':
+		case 'sort':
 			return $this->sort_order;
+		case 'modern_sort':
+			return $this->modern_sort_order;
 		case 'required_item_sets':
 			return 1;
 		case 'experimental':
@@ -51,6 +57,8 @@ class BeaconLootSource extends BeaconBlueprint {
 			return $this->notes;
 		case 'requirements':
 			return $this->requirements;
+		case 'simple_label':
+			return $this->simple_label;
 		default:
 			parent::GetColumnValue($column);
 		}
@@ -65,10 +73,16 @@ class BeaconLootSource extends BeaconBlueprint {
 		$obj->multiplier_max = floatval($row->Field('multiplier_max'));
 		$obj->ui_color = $row->Field('uicolor');
 		$obj->icon_id = $row->Field('icon');
-		$obj->sort_order = intval($row->Field('sort'));
+		if (is_null($row->Field('sort')) == false) {
+			$obj->sort_order = intval($row->Field('sort'));
+		}
+		if (is_null($row->Field('modern_sort')) == false) {
+			$obj->modern_sort_order = intval($row->Field('modern_sort'));
+		}
 		$obj->experimental = boolval($row->Field('experimental'));
 		$obj->notes = $row->Field('notes');
 		$obj->requirements = $row->Field('requirements');
+		$obj->simple_label = $row->Field('simple_label');
 		return $obj;
 	}
 	
@@ -81,10 +95,12 @@ class BeaconLootSource extends BeaconBlueprint {
 		$json['ui_color'] = $this->ui_color;
 		$json['icon'] = $this->icon_id;
 		$json['sort_order'] = $this->sort_order;
+		$json['sort'] = is_null($this->modern_sort_order) ? $this->sort_order : $this->modern_sort_order;
 		$json['required_item_sets'] = 1;
 		$json['experimental'] = $this->experimental;
 		$json['notes'] = $this->notes;
 		$json['requirements'] = $this->requirements;
+		$json['simple_label'] = is_null($this->simple_label) ? $json['label'] : $this->simple_label;
 		return $json;
 	}
 	

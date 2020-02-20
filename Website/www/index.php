@@ -174,7 +174,7 @@ BeaconTemplate::FinishStyles();
 	<div id="index_features">
 		<div class="feature">
 			<h2>Over <?php echo floor($official_source_count / 5) * 5; ?> loot sources and counting<br><span class="subtitle text-red">Beacon knows them all, so you can get going quicker</span></h2>
-			<p>Normal drops, cave crates, boss loot, beaver dams&hellip; whatever you want to change. Plus support for custom loot sources, such as those provided by mod maps or not officially supported by Ark.</p>
+			<p>Normal drops, cave crates, boss loot, beaver dams&hellip; whatever you want to change. Plus support for custom loot sources, such as those provided by mod maps or not officially supported by Ark. Plus, Beacon has support for an additional <?php echo $unofficial_source_count; ?> unofficial loot sources, such as the Orbital Supply Drop events and creature inventories.</p>
 		</div>
 		<div class="feature">
 			<h2>No need to start from scratch<br><span class="subtitle text-green">Unless you want to, that's cool too</span></h2>

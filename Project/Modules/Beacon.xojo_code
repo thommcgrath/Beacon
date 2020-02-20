@@ -978,7 +978,7 @@ Protected Module Beacon
 		  Var Order() As Integer
 		  Order.ResizeTo(Bound)
 		  For I As Integer = 0 To Bound
-		    Order(I) = Sources(I).SortValue
+		    Order(I) = Sources(I).SortValue.ToString(Locale.Raw, "0000") + Sources(I).Label + Sources(I).ClassString
 		  Next
 		  
 		  Order.SortWith(Sources)

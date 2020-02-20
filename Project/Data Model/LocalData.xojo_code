@@ -219,7 +219,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.SQLExecute("CREATE INDEX " + Category + "_class_string_idx ON " + Category + "(class_string);")
 		    Self.SQLExecute("CREATE UNIQUE INDEX " + Category + "_path_idx ON " + Category + "(path);")
 		  Next
-		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
+		  Self.SQLExecute("CREATE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX custom_presets_user_id_object_id_idx ON custom_presets(user_id, object_id);")
 		  Self.SQLExecute("CREATE INDEX engrams_entry_string_idx ON engrams(entry_string);")
@@ -1252,11 +1252,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    // Drop indexes
 		    Var Categories() As String = Beacon.Categories
 		    For Each Category As String In Categories
-		      Self.SQLExecute("DROP INDEX " + Category +"_class_string_idx;")
-		      Self.SQLExecute("DROP INDEX " + Category + "_path_idx;")
+		      Self.SQLExecute("DROP INDEX IF EXISTS " + Category +"_class_string_idx;")
+		      Self.SQLExecute("DROP INDEX IF EXISTS " + Category + "_path_idx;")
 		    Next
-		    Self.SQLExecute("DROP INDEX loot_sources_sort_order_idx;")
-		    Self.SQLExecute("DROP INDEX loot_sources_path_idx;")
+		    Self.SQLExecute("DROP INDEX IF EXISTS loot_sources_sort_order_idx;")
+		    Self.SQLExecute("DROP INDEX IF EXISTS loot_sources_path_idx;")
 		    
 		    Var ShouldTruncate As Boolean = ChangeDict.Value("is_full") = 1
 		    If ShouldTruncate Then
@@ -1348,7 +1348,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var MultiplierMin As Double = Dictionary(Dict.Value("multipliers")).Value("min")
 		      Var MultiplierMax As Double = Dictionary(Dict.Value("multipliers")).Value("max")
 		      Var UIColor As String = Dict.Value("ui_color")
-		      Var SortOrder As Integer = Dict.Value("sort_order")
+		      Var SortOrder As Integer = If(Dict.HasKey("sort"), Dict.Value("sort").IntegerValue, Dict.Value("sort_order").IntegerValue)
 		      Var Experimental As Boolean = Dict.Value("experimental")
 		      Var Notes As String = Dict.Value("notes")
 		      Var IconID As v4UUID = Dict.Value("icon").StringValue
@@ -1487,7 +1487,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Self.SQLExecute("CREATE INDEX " + Category + "_class_string_idx ON " + Category + "(class_string);")
 		      Self.SQLExecute("CREATE UNIQUE INDEX " + Category + "_path_idx ON " + Category + "(path);")
 		    Next
-		    Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
+		    Self.SQLExecute("CREATE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
 		    Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
 		    
 		    Self.Variable("sync_time") = PayloadTimestamp.SQLDateTimeWithOffset
@@ -2454,7 +2454,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If Clauses.LastRowIndex > -1 Then
 		      SQL = SQL + " WHERE (" + Clauses.Join(") AND (") + ")"
 		    End If
-		    SQL = SQL + " ORDER BY label;"
+		    SQL = SQL + " ORDER BY sort_order, label;"
 		    
 		    Var Results As RowSet
 		    If Values.KeyCount > 0 Then
