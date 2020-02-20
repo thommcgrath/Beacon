@@ -739,6 +739,7 @@ ALTER TABLE public.guest_documents OWNER TO thommcgrath;
 CREATE VIEW public.allowed_documents AS
  SELECT documents.document_id,
     documents.user_id,
+    documents.user_id AS owner_id,
     documents.title,
     documents.description,
     documents.map,
@@ -755,6 +756,7 @@ CREATE VIEW public.allowed_documents AS
 UNION
  SELECT documents.document_id,
     guest_documents.user_id,
+    documents.user_id AS owner_id,
     documents.title,
     documents.description,
     documents.map,
@@ -839,6 +841,11 @@ CREATE TABLE public.engrams (
     path public.citext NOT NULL,
     class_string public.citext NOT NULL,
     availability integer DEFAULT 0 NOT NULL,
+    entry_string public.citext,
+    required_points integer,
+    required_level integer,
+    CONSTRAINT engrams_check CHECK ((((entry_string IS NULL) AND (required_points IS NULL) AND (required_level IS NULL)) OR (entry_string IS NOT NULL))),
+    CONSTRAINT engrams_entry_string_check CHECK ((entry_string OPERATOR(public.~) '_C$'::public.citext)),
     CONSTRAINT engrams_path_check CHECK ((path OPERATOR(public.~~) '/%'::public.citext))
 )
 INHERITS (public.objects);
@@ -858,10 +865,13 @@ CREATE TABLE public.loot_sources (
     multiplier_max numeric(6,4) NOT NULL,
     uicolor text NOT NULL,
     icon uuid NOT NULL,
-    sort integer NOT NULL,
+    sort integer,
     experimental boolean DEFAULT false NOT NULL,
     notes text DEFAULT ''::text NOT NULL,
     requirements jsonb DEFAULT '{}'::jsonb NOT NULL,
+    modern_sort integer,
+    simple_label public.citext,
+    CONSTRAINT loot_sources_check CHECK ((((sort IS NULL) AND (min_version >= 10303300) AND (modern_sort IS NOT NULL)) OR (sort IS NOT NULL))),
     CONSTRAINT loot_sources_class_string_check1 CHECK ((class_string OPERATOR(public.~~) '%_C'::public.citext)),
     CONSTRAINT loot_sources_uicolor_check1 CHECK ((uicolor ~* '^[0-9a-fA-F]{8}$'::text))
 )
@@ -869,6 +879,13 @@ INHERITS (public.objects);
 
 
 ALTER TABLE public.loot_sources OWNER TO thommcgrath;
+
+--
+-- Name: COLUMN loot_sources.simple_label; Type: COMMENT; Schema: public; Owner: thommcgrath
+--
+
+COMMENT ON COLUMN public.loot_sources.simple_label IS 'simple_label is a more ambiguous name that relies on the client to perform disambiguation';
+
 
 --
 -- Name: spawn_points; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -1488,8 +1505,7 @@ ALTER TABLE public.sessions OWNER TO thommcgrath;
 
 CREATE TABLE public.spawn_point_creatures (
     group_id uuid NOT NULL,
-    creature_id uuid NOT NULL,
-    max_percentage numeric(5,4)
+    creature_id uuid NOT NULL
 );
 
 
@@ -1508,6 +1524,19 @@ CREATE TABLE public.spawn_point_groups (
 
 
 ALTER TABLE public.spawn_point_groups OWNER TO thommcgrath;
+
+--
+-- Name: spawn_point_limits; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.spawn_point_limits (
+    spawn_point_id uuid NOT NULL,
+    creature_id uuid NOT NULL,
+    max_percentage numeric(5,4)
+);
+
+
+ALTER TABLE public.spawn_point_limits OWNER TO thommcgrath;
 
 --
 -- Name: stw_applicants; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -1673,6 +1702,7 @@ CREATE TABLE public.users (
     email_id uuid,
     username public.citext,
     usercloud_key public.hex,
+    banned boolean DEFAULT false NOT NULL,
     CONSTRAINT users_check CHECK ((((email_id IS NULL) AND (username IS NULL) AND (private_key_iterations IS NULL) AND (private_key_salt IS NULL) AND (private_key IS NULL)) OR ((email_id IS NOT NULL) AND (username IS NOT NULL) AND (private_key_iterations IS NOT NULL) AND (private_key_salt IS NOT NULL) AND (private_key IS NOT NULL))))
 );
 
@@ -2398,6 +2428,14 @@ ALTER TABLE ONLY public.spawn_point_creatures
 
 ALTER TABLE ONLY public.spawn_point_groups
     ADD CONSTRAINT spawn_point_groups_pkey PRIMARY KEY (group_id);
+
+
+--
+-- Name: spawn_point_limits spawn_point_limits_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.spawn_point_limits
+    ADD CONSTRAINT spawn_point_limits_pkey PRIMARY KEY (spawn_point_id, creature_id);
 
 
 --
@@ -3275,6 +3313,22 @@ ALTER TABLE ONLY public.spawn_point_groups
 
 
 --
+-- Name: spawn_point_limits spawn_point_limits_creature_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.spawn_point_limits
+    ADD CONSTRAINT spawn_point_limits_creature_id_fkey FOREIGN KEY (creature_id) REFERENCES public.creatures(object_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: spawn_point_limits spawn_point_limits_spawn_point_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.spawn_point_limits
+    ADD CONSTRAINT spawn_point_limits_spawn_point_id_fkey FOREIGN KEY (spawn_point_id) REFERENCES public.spawn_points(object_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: spawn_points spawn_points_mod_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -3651,6 +3705,13 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_point_creatures TO theza
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_point_groups TO thezaz_website;
+
+
+--
+-- Name: TABLE spawn_point_limits; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.spawn_point_limits TO thezaz_website;
 
 
 --
