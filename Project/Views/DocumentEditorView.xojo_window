@@ -292,14 +292,7 @@ End
 		Sub Open()
 		  If Self.mController.Document <> Nil Then
 		    Var DocumentID As String = Self.mController.Document.DocumentID
-		    Var ConfigName As String = Preferences.LastUsedConfigName(DocumentID)
-		    For I As Integer = 0 To Self.ConfigMenu.RowCount - 1
-		      Var Tag As Variant = Self.ConfigMenu.RowTagAt(I)
-		      If (Tag.Type = Variant.TypeText And Tag.StringValue = ConfigName) Or (Tag.Type = Variant.TypeString And Tag.StringValue = ConfigName) Then
-		        Self.ConfigMenu.SelectedRowIndex = I
-		        Exit For I
-		      End If
-		    Next
+		    Self.CurrentConfigName = Preferences.LastUsedConfigName(DocumentID)
 		  End If
 		  
 		  NotificationKit.Watch(Self, IdentityManager.Notification_IdentityChanged)
@@ -576,13 +569,7 @@ End
 		    Return
 		  End If
 		  
-		  Var ConfigName As String = Issue.ConfigName
-		  For I As Integer = 0 To Self.ConfigMenu.RowCount - 1
-		    If Self.ConfigMenu.RowTagAt(I) = ConfigName Then
-		      Self.ConfigMenu.SelectedRowIndex = I
-		      Exit For I
-		    End If
-		  Next
+		  Self.CurrentConfigName = Issue.ConfigName
 		  
 		  Var View As ConfigEditor = Self.CurrentPanel
 		  If View <> Nil Then
@@ -709,9 +696,9 @@ End
 		  Select Case Notification.Name
 		  Case IdentityManager.Notification_IdentityChanged
 		    // Simply toggle the menu to force a redraw
-		    Var ListIndex As Integer = Self.ConfigMenu.SelectedRowIndex
-		    Self.ConfigMenu.SelectedRowIndex = -1
-		    Self.ConfigMenu.SelectedRowIndex = ListIndex
+		    Var CurrentConfig As String = Self.CurrentConfigName
+		    Self.CurrentConfigName = ""
+		    Self.CurrentConfigName = CurrentConfig
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -876,6 +863,145 @@ End
 	#tag EndMethod
 
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mCurrentConfigName
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mCurrentConfigName = Value Then
+			    Return
+			  End If
+			  Self.mCurrentConfigName = Value
+			  
+			  Var NewPanel As ConfigEditor
+			  Var Embed As Boolean
+			  If Value.Length > 0 Then
+			    Self.UpdateHelpForConfig(Value)
+			    
+			    If Self.mController.Document <> Nil Then
+			      Preferences.LastUsedConfigName(Self.mController.Document.DocumentID) = Value
+			    End If
+			    
+			    Var HistoryIndex As Integer = Self.mPanelHistory.IndexOf(Value)
+			    If HistoryIndex > 0 Then
+			      Self.mPanelHistory.RemoveRowAt(HistoryIndex)
+			    End If
+			    Self.mPanelHistory.AddRowAt(0, Value)
+			    
+			    // Close older panels
+			    If Self.mPanelHistory.LastRowIndex > 2 Then
+			      For I As Integer = Self.mPanelHistory.LastRowIndex DownTo 3
+			        Var PanelTag As String = Self.mPanelHistory(I)
+			        If Self.Panels.HasKey(PanelTag) Then
+			          Var Panel As ConfigEditor = Self.Panels.Value(PanelTag)
+			          RemoveHandler Panel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
+			          Panel.Close
+			          Self.Panels.Remove(PanelTag)
+			        End If
+			      Next
+			    End If
+			    
+			    If Self.Panels.HasKey(Value) Then
+			      NewPanel = Self.Panels.Value(Value)
+			    Else
+			      Select Case Value
+			      Case "maps"
+			        NewPanel = New MapsConfigEditor(Self.mController)
+			      Case "deployments"
+			        NewPanel = New ServersConfigEditor(Self.mController)
+			      Case BeaconConfigs.LootDrops.ConfigName
+			        NewPanel = New LootConfigEditor(Self.mController)
+			      Case BeaconConfigs.Difficulty.ConfigName
+			        NewPanel = New DifficultyConfigEditor(Self.mController)
+			      Case BeaconConfigs.LootScale.ConfigName
+			        NewPanel = New LootScaleConfigEditor(Self.mController)
+			      Case BeaconConfigs.Metadata.ConfigName
+			        NewPanel = New MetaDataConfigEditor(Self.mController)
+			      Case BeaconConfigs.ExperienceCurves.ConfigName
+			        NewPanel = New ExperienceCurvesConfigEditor(Self.mController)
+			      Case BeaconConfigs.CustomContent.ConfigName
+			        NewPanel = New CustomContentConfigEditor(Self.mController)
+			      Case BeaconConfigs.CraftingCosts.ConfigName
+			        NewPanel = New CraftingCostsConfigEditor(Self.mController)
+			      Case BeaconConfigs.StackSizes.ConfigName
+			        NewPanel = New StackSizesConfigEditor(Self.mController)
+			      Case BeaconConfigs.BreedingMultipliers.ConfigName
+			        NewPanel = New BreedingMultipliersConfigEditor(Self.mController)
+			      Case BeaconConfigs.HarvestRates.ConfigName
+			        NewPanel = New HarvestRatesConfigEditor(Self.mController)
+			      Case BeaconConfigs.DinoAdjustments.ConfigName
+			        NewPanel = New DinoAdjustmentsConfigEditor(Self.mController)
+			      Case BeaconConfigs.StatMultipliers.ConfigName
+			        NewPanel = New StatMultipliersConfigEditor(Self.mController)
+			      Case BeaconConfigs.DayCycle.ConfigName
+			        NewPanel = New DayCycleConfigEditor(Self.mController)
+			      Case BeaconConfigs.SpawnPoints.ConfigName
+			        NewPanel = New SpawnPointsConfigEditor(Self.mController)
+			      Case BeaconConfigs.StatLimits.ConfigName
+			        NewPanel = New StatLimitsConfigEditor(Self.mController)
+			      Case BeaconConfigs.EngramControl.ConfigName
+			        NewPanel = New EngramControlConfigEditor(Self.mController)
+			      End Select
+			      If NewPanel <> Nil Then
+			        Self.Panels.Value(Value) = NewPanel
+			        Embed = True
+			      End If
+			    End If
+			  Else
+			    Self.UpdateHelpForConfig("")
+			  End If
+			  
+			  If Self.CurrentPanel = NewPanel Then
+			    Return
+			  End If
+			  
+			  If Self.CurrentPanel <> Nil Then
+			    Self.CurrentPanel.RemoveObserver(Self, "MinimumWidth")
+			    Self.CurrentPanel.RemoveObserver(Self, "MinimumHeight")
+			    Self.CurrentPanel.SwitchedFrom()
+			    Self.CurrentPanel.Visible = False
+			    Self.CurrentPanel = Nil
+			  End If
+			  
+			  Self.CurrentPanel = NewPanel
+			  
+			  If Self.CurrentPanel <> Nil Then
+			    Var RequiresPurchase As Boolean
+			    If Value.Length > 0 Then
+			      RequiresPurchase = Not BeaconConfigs.ConfigPurchased(Value, If(App.IdentityManager.CurrentIdentity <> Nil, App.IdentityManager.CurrentIdentity.OmniVersion, 0))
+			    End If
+			    Var TopOffset As Integer
+			    If RequiresPurchase Then
+			      TopOffset = (Self.OmniNoticeBanner.Top + Self.OmniNoticeBanner.Height) - Self.PagePanel1.Top
+			    End If
+			    If Embed Then
+			      AddHandler Self.CurrentPanel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
+			      Self.CurrentPanel.EmbedWithinPanel(Self.PagePanel1, 1, 0, TopOffset, Self.PagePanel1.Width, Self.PagePanel1.Height - TopOffset)
+			    Else
+			      Self.CurrentPanel.Top = Self.PagePanel1.Top + TopOffset
+			      Self.CurrentPanel.Height = Self.PagePanel1.Height - TopOffset
+			    End If
+			    Self.OmniNoticeBanner.Visible = RequiresPurchase
+			    Self.CurrentPanel.Visible = True  
+			    Self.CurrentPanel.SwitchedTo()
+			    Self.CurrentPanel.AddObserver(Self, "MinimumWidth")
+			    Self.CurrentPanel.AddObserver(Self, "MinimumHeight")
+			    Self.PagePanel1.SelectedPanelIndex = 1
+			  Else
+			    Self.PagePanel1.SelectedPanelIndex = 0
+			  End If
+			  
+			  Self.ConfigMenu.SelectByTag(Value)
+			  
+			  Self.UpdateMinimumDimensions()
+			End Set
+		#tag EndSetter
+		CurrentConfigName As String
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private CurrentPanel As ConfigEditor
 	#tag EndProperty
@@ -886,6 +1012,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mController As Beacon.DocumentController
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCurrentConfigName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1063,126 +1193,11 @@ End
 		  If Me.SelectedRowIndex > -1 Then
 		    TagVar = Me.RowTagAt(Me.SelectedRowIndex)
 		  End If
-		  Var NewPanel As ConfigEditor
-		  Var Embed As Boolean
 		  If IsNull(TagVar) = False And (TagVar.Type = Variant.TypeString Or TagVar.Type = Variant.TypeText) Then
-		    Var Tag As String = TagVar.StringValue
-		    Self.UpdateHelpForConfig(Tag)
-		    
-		    If Self.mController.Document <> Nil Then
-		      Preferences.LastUsedConfigName(Self.mController.Document.DocumentID) = Tag
-		    End If
-		    
-		    Var HistoryIndex As Integer = Self.mPanelHistory.IndexOf(Tag)
-		    If HistoryIndex > 0 Then
-		      Self.mPanelHistory.RemoveRowAt(HistoryIndex)
-		    End If
-		    Self.mPanelHistory.AddRowAt(0, Tag)
-		    
-		    // Close older panels
-		    If Self.mPanelHistory.LastRowIndex > 2 Then
-		      For I As Integer = Self.mPanelHistory.LastRowIndex DownTo 3
-		        Var PanelTag As String = Self.mPanelHistory(I)
-		        If Self.Panels.HasKey(PanelTag) Then
-		          Var Panel As ConfigEditor = Self.Panels.Value(PanelTag)
-		          RemoveHandler Panel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
-		          Panel.Close
-		          Self.Panels.Remove(PanelTag)
-		        End If
-		      Next
-		    End If
-		    
-		    If Self.Panels.HasKey(Tag) Then
-		      NewPanel = Self.Panels.Value(Tag)
-		    Else
-		      Select Case Tag
-		      Case "maps"
-		        NewPanel = New MapsConfigEditor(Self.mController)
-		      Case "deployments"
-		        NewPanel = New ServersConfigEditor(Self.mController)
-		      Case BeaconConfigs.LootDrops.ConfigName
-		        NewPanel = New LootConfigEditor(Self.mController)
-		      Case BeaconConfigs.Difficulty.ConfigName
-		        NewPanel = New DifficultyConfigEditor(Self.mController)
-		      Case BeaconConfigs.LootScale.ConfigName
-		        NewPanel = New LootScaleConfigEditor(Self.mController)
-		      Case BeaconConfigs.Metadata.ConfigName
-		        NewPanel = New MetaDataConfigEditor(Self.mController)
-		      Case BeaconConfigs.ExperienceCurves.ConfigName
-		        NewPanel = New ExperienceCurvesConfigEditor(Self.mController)
-		      Case BeaconConfigs.CustomContent.ConfigName
-		        NewPanel = New CustomContentConfigEditor(Self.mController)
-		      Case BeaconConfigs.CraftingCosts.ConfigName
-		        NewPanel = New CraftingCostsConfigEditor(Self.mController)
-		      Case BeaconConfigs.StackSizes.ConfigName
-		        NewPanel = New StackSizesConfigEditor(Self.mController)
-		      Case BeaconConfigs.BreedingMultipliers.ConfigName
-		        NewPanel = New BreedingMultipliersConfigEditor(Self.mController)
-		      Case BeaconConfigs.HarvestRates.ConfigName
-		        NewPanel = New HarvestRatesConfigEditor(Self.mController)
-		      Case BeaconConfigs.DinoAdjustments.ConfigName
-		        NewPanel = New DinoAdjustmentsConfigEditor(Self.mController)
-		      Case BeaconConfigs.StatMultipliers.ConfigName
-		        NewPanel = New StatMultipliersConfigEditor(Self.mController)
-		      Case BeaconConfigs.DayCycle.ConfigName
-		        NewPanel = New DayCycleConfigEditor(Self.mController)
-		      Case BeaconConfigs.SpawnPoints.ConfigName
-		        NewPanel = New SpawnPointsConfigEditor(Self.mController)
-		      Case BeaconConfigs.StatLimits.ConfigName
-		        NewPanel = New StatLimitsConfigEditor(Self.mController)
-		      Case BeaconConfigs.EngramControl.ConfigName
-		        NewPanel = New EngramControlConfigEditor(Self.mController)
-		      End Select
-		      If NewPanel <> Nil Then
-		        Self.Panels.Value(Tag) = NewPanel
-		        Embed = True
-		      End If
-		    End If
+		    Self.CurrentConfigName = TagVar.StringValue
 		  Else
-		    Self.UpdateHelpForConfig("")
+		    Self.CurrentConfigName = ""
 		  End If
-		  
-		  If Self.CurrentPanel = NewPanel Then
-		    Return
-		  End If
-		  
-		  If Self.CurrentPanel <> Nil Then
-		    Self.CurrentPanel.RemoveObserver(Self, "MinimumWidth")
-		    Self.CurrentPanel.RemoveObserver(Self, "MinimumHeight")
-		    Self.CurrentPanel.SwitchedFrom()
-		    Self.CurrentPanel.Visible = False
-		    Self.CurrentPanel = Nil
-		  End If
-		  
-		  Self.CurrentPanel = NewPanel
-		  
-		  If Self.CurrentPanel <> Nil Then
-		    Var RequiresPurchase As Boolean
-		    If IsNull(TagVar) = False And (TagVar.Type = Variant.TypeString Or TagVar.Type = Variant.TypeText) Then
-		      RequiresPurchase = Not BeaconConfigs.ConfigPurchased(TagVar.StringValue, If(App.IdentityManager.CurrentIdentity <> Nil, App.IdentityManager.CurrentIdentity.OmniVersion, 0))
-		    End If
-		    Var TopOffset As Integer
-		    If RequiresPurchase Then
-		      TopOffset = (Self.OmniNoticeBanner.Top + Self.OmniNoticeBanner.Height) - Self.PagePanel1.Top
-		    End If
-		    If Embed Then
-		      AddHandler Self.CurrentPanel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
-		      Self.CurrentPanel.EmbedWithinPanel(Self.PagePanel1, 1, 0, TopOffset, Self.PagePanel1.Width, Self.PagePanel1.Height - TopOffset)
-		    Else
-		      Self.CurrentPanel.Top = Self.PagePanel1.Top + TopOffset
-		      Self.CurrentPanel.Height = Self.PagePanel1.Height - TopOffset
-		    End If
-		    Self.OmniNoticeBanner.Visible = RequiresPurchase
-		    Self.CurrentPanel.Visible = True  
-		    Self.CurrentPanel.SwitchedTo()
-		    Self.CurrentPanel.AddObserver(Self, "MinimumWidth")
-		    Self.CurrentPanel.AddObserver(Self, "MinimumHeight")
-		    Self.PagePanel1.SelectedPanelIndex = 1
-		  Else
-		    Self.PagePanel1.SelectedPanelIndex = 0
-		  End If
-		  
-		  Self.UpdateMinimumDimensions()
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1457,5 +1472,13 @@ End
 		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="CurrentConfigName"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 #tag EndViewBehavior
