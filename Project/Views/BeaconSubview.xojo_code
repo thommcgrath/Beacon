@@ -135,6 +135,12 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub GetEditorMenuItems(Items() As MenuItem)
+		  RaiseEvent GetEditorMenuItems(Items)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub NotifyObservers(Key As String, Value As Variant)
 		  // Part of the ObservationKit.Observable interface.
 		  
@@ -193,6 +199,7 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Sub SwitchedTo(UserData As Variant = Nil)
 		  RaiseEvent Shown(UserData)
+		  NotificationKit.Post(Self.Notification_ViewShown, Nil)
 		End Sub
 	#tag EndMethod
 
@@ -218,6 +225,10 @@ Implements ObservationKit.Observable
 
 	#tag Hook, Flags = &h0
 		Event EnableMenuItems()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event GetEditorMenuItems(Items() As MenuItem)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -347,6 +358,9 @@ Implements ObservationKit.Observable
 		ToolbarCaption As String
 	#tag EndComputedProperty
 
+
+	#tag Constant, Name = Notification_ViewShown, Type = String, Dynamic = False, Default = \"BeaconSubview Shown", Scope = Public
+	#tag EndConstant
 
 	#tag Constant, Name = ProgressIndeterminate, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant

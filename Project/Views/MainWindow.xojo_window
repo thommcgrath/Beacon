@@ -260,7 +260,7 @@ End
 
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, App.Notification_UpdateFound)
+		  NotificationKit.Ignore(Self, App.Notification_UpdateFound, BeaconSubview.Notification_ViewShown)
 		End Sub
 	#tag EndEvent
 
@@ -316,7 +316,7 @@ End
 		  End If
 		  
 		  Self.UpdateSizeForView(Self.DashboardPane1)
-		  NotificationKit.Watch(Self, App.Notification_UpdateFound)
+		  NotificationKit.Watch(Self, App.Notification_UpdateFound, BeaconSubview.Notification_ViewShown)
 		  Self.SetupUpdateUI()
 		  
 		  Self.mOpened = True
@@ -411,6 +411,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CurrentView() As BeaconSubview
+		  Return Self.mCurrentView
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function DiscardView(View As BeaconSubview) As Boolean
 		  If View = DashboardPane1 Then
 		    Return False
@@ -463,6 +469,8 @@ End
 		  Select Case Notification.Name
 		  Case App.Notification_UpdateFound
 		    Self.SetupUpdateUI()
+		  Case BeaconSubview.Notification_ViewShown
+		    Self.UpdateEditorMenu()
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -534,6 +542,7 @@ End
 		    Self.DashboardPane1.SwitchedTo()
 		    Self.UpdateSizeForView(Self.DashboardPane1)
 		    Self.Title = "Beacon"
+		    Self.UpdateEditorMenu()
 		    Return
 		  End If
 		  
@@ -567,6 +576,7 @@ End
 		  Self.mCurrentView.AddObserver(Self, "MinimumHeight")
 		  Self.mCurrentView.AddObserver(Self, "MinimumWidth")
 		  Self.Views.SelectedPanelIndex = 1
+		  Self.UpdateEditorMenu()
 		End Sub
 	#tag EndMethod
 
@@ -588,6 +598,34 @@ End
 		Function Tools() As LibraryPaneTools
 		  Return Self.LibraryPane1.ToolsPane
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateEditorMenu()
+		  Var Menu As MenuItem = EditorMenu
+		  
+		  For I As Integer = Menu.LastRowIndex DownTo 0
+		    If Menu.MenuAt(I) IsA ConfigGroupMenuItem Then
+		      Exit For I
+		    End If
+		    Menu.RemoveMenuAt(I)
+		  Next
+		  
+		  Var Items() As MenuItem
+		  If Self.CurrentView <> Nil Then
+		    Self.CurrentView.GetEditorMenuItems(Items)
+		  End If
+		  
+		  If Items.LastRowIndex = -1 Then
+		    Return
+		  End If
+		  
+		  Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		  
+		  For Each Item As MenuItem In Items
+		    Menu.AddMenu(Item)
+		  Next
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

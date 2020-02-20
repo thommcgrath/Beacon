@@ -154,7 +154,6 @@ Begin BeaconContainer ItemSetEditor
       HasBackColor    =   False
       Height          =   23
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -238,12 +237,6 @@ End
 		  
 		  Self.UpdateEntryList()
 		  RaiseEvent Updated
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub EnableMenuItems()
-		  
 		End Sub
 	#tag EndMethod
 

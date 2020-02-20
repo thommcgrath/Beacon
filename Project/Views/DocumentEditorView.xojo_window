@@ -282,8 +282,14 @@ End
 		  
 		  If Self.CurrentPanel <> Nil Then
 		    Self.CurrentPanel.EnableMenuItems()
-		  Else
-		    DocumentRestoreConfigToDefault.Value = "Restore Config to Default"
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub GetEditorMenuItems(Items() As MenuItem)
+		  If Self.CurrentPanel <> Nil Then
+		    Self.CurrentPanel.GetEditorMenuItems(Items)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -985,7 +991,7 @@ End
 			      Self.CurrentPanel.Height = Self.PagePanel1.Height - TopOffset
 			    End If
 			    Self.OmniNoticeBanner.Visible = RequiresPurchase
-			    Self.CurrentPanel.Visible = True  
+			    Self.CurrentPanel.Visible = True
 			    Self.CurrentPanel.SwitchedTo()
 			    Self.CurrentPanel.AddObserver(Self, "MinimumWidth")
 			    Self.CurrentPanel.AddObserver(Self, "MinimumHeight")

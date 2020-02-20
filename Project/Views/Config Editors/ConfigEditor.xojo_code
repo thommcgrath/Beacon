@@ -3,10 +3,30 @@ Protected Class ConfigEditor
 Inherits BeaconSubview
 	#tag Event
 		Sub EnableMenuItems()
-		  DocumentRestoreConfigToDefault.Enable
-		  DocumentRestoreConfigToDefault.Value = "Restore """ + Self.ConfigLabel + """ to Default"
+		  If Self.SupportsRestore() Then
+		    EditorMenu.Child("DocumentRestoreConfigToDefault").Enable
+		  End If
 		  
 		  RaiseEvent EnableMenuItems
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub GetEditorMenuItems(Items() As MenuItem)
+		  Var RestoreItem As New MenuItem("Restore """ + Self.ConfigLabel + """ to Default", "restore")
+		  RestoreItem.Name = "DocumentRestoreConfigToDefault"
+		  RestoreItem.AutoEnabled = False
+		  RestoreItem.Enabled = Self.SupportsRestore()
+		  Items.AddRow(RestoreItem)
+		  
+		  Items.AddRow(New MenuItem(MenuItem.TextSeparator))
+		  
+		  Var PreCount As Integer = Items.Count
+		  RaiseEvent GetEditorMenuItems(Items)
+		  If Items.Count = PreCount Then
+		    // Nothing was added, drop the separator
+		    Items.RemoveRowAt(Items.LastRowIndex)
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -21,6 +41,10 @@ Inherits BeaconSubview
 
 	#tag MenuHandler
 		Function DocumentRestoreConfigToDefault() As Boolean Handles DocumentRestoreConfigToDefault.Action
+			If Not Self.SupportsRestore Then
+			Return True
+			End If
+			
 			If Self.ShowConfirm("Are you sure you want to restore """ + Self.ConfigLabel + """ to default settings?", "Wherever possible, this will remove the config options from your file completely, restoring settings to Ark's default values. You cannot undo this action.", "Restore", "Cancel") Then
 			RaiseEvent RestoreToDefault
 			Self.SetupUI()
@@ -150,9 +174,19 @@ Inherits BeaconSubview
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SupportsRestore() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event EnableMenuItems()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event GetEditorMenuItems(Items() As MenuItem)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

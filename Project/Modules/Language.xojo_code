@@ -86,6 +86,10 @@ Protected Module Language
 		    Return "Item Stat Limits"
 		  Case BeaconConfigs.EngramControl.ConfigName
 		    Return "Engram Control"
+		  Case "deployments"
+		    Return "Servers"
+		  Case "maps"
+		    Return "Maps"
 		  End Select
 		End Function
 	#tag EndMethod

@@ -335,6 +335,14 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub RemoveAllRows(Extends Menu As MenuItem)
+		  For I As Integer = Menu.LastRowIndex DownTo 0
+		    Menu.RemoveMenuAt(I)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ResizeCells(Extends Target As SegmentedButton)
 		  Var CellCount As Integer = Target.SegmentCount
 		  Var AvailableWidth As Integer = Target.Width - (CellCount + 3)

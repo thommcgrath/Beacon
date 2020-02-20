@@ -429,15 +429,6 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub EnableMenuItems()
-		  Self.BuildPresetMenu(DocumentAddItemSet)
-		  If Self.SetList.CanDelete Then
-		    DocumentRemoveItemSet.Enable
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Open()
 		  Self.UpdateStatus()
 		End Sub
@@ -584,47 +575,6 @@ End
 		Private Function Document() As Beacon.Document
 		  Return RaiseEvent GetDocument
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub EnableMenuItems()
-		  Self.BuildPresetMenu(DocumentAddItemSet)
-		  
-		  #if false
-		    AddItemSetEmpty.Enable
-		    AddItemSetDesertClothClothing.Enable
-		    AddItemSetPlatformSaddles.Enable
-		    AddItemSetAdobeHousing.Enable
-		    AddItemSetAdvancedFirearms.Enable
-		    AddItemSetAdvancedFurniture.Enable
-		    AddItemSetBasicFurniture.Enable
-		    AddItemSetChitinArmor.Enable
-		    AddItemSetClothClothing.Enable
-		    AddItemSetFlakArmor.Enable
-		    AddItemSetGhillieSuit.Enable
-		    AddItemSetHideClothing.Enable
-		    AddItemSetLargeSaddles.Enable
-		    AddItemSetMediumSaddles.Enable
-		    AddItemSetMetalHousing.Enable
-		    AddItemSetMetalTools.Enable
-		    AddItemSetRiotArmor.Enable
-		    AddItemSetSimpleFirearms.Enable
-		    AddItemSetSmallSaddles.Enable
-		    AddItemSetStoneHousing.Enable
-		    AddItemSetStoneTools.Enable
-		    AddItemSetSupplies.Enable
-		    AddItemSetThatchHousing.Enable
-		    AddItemSetWoodHousing.Enable
-		    AddItemSetFurArmor.Enable
-		    AddItemSetGardening.Enable
-		  #endif
-		  If SetList.SelectedRowCount > 0 Then
-		    DocumentRemoveItemSet.Enable
-		  End If
-		  If SetList.SelectedRowCount = 1 Then
-		    Editor.EnableMenuItems
-		  End If
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -1005,7 +955,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.SelectedRowCount > -1
+		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -1129,7 +1079,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelectedRowCount > -1
+		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event

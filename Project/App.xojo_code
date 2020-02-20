@@ -110,6 +110,18 @@ Implements NotificationKit.Receiver
 		  #EndIf
 		  Self.RebuildRecentMenu
 		  
+		  Var ConfigNames() As String = BeaconConfigs.AllConfigNames.Clone
+		  ConfigNames.AddRow("deployments")
+		  ConfigNames.AddRow("maps")
+		  Var ConfigLabels() As String
+		  For Each ConfigName As String In ConfigNames
+		    ConfigLabels.AddRow(Language.LabelForConfig(ConfigName))
+		  Next
+		  ConfigLabels.SortWith(ConfigNames)
+		  For Each ConfigName As String In ConfigNames
+		    EditorMenu.AddMenu(New ConfigGroupMenuItem(ConfigName))
+		  Next
+		  
 		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged)
 		  
 		  Var IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)

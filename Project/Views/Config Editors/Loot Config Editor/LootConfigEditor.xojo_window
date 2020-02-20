@@ -318,15 +318,47 @@ End
 #tag WindowCode
 	#tag Event
 		Sub EnableMenuItems()
-		  DocumentAddBeacon.Enable
-		  
-		  If Self.List.SelectedRowCount > 0 Then
-		    DocumentDuplicateBeacon.Enable
-		    DocumentRemoveBeacon.Enable
-		    DocumentRebuildPresets.Enable
+		  EditorMenu.Child("DocumentRebuildPresets").Enable
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub GetEditorMenuItems(Items() As MenuItem)
+		  #if false
+		    Var AddLootSourceItem As New MenuItem("Add Loot Source…")
+		    AddLootSourceItem.Name = "DocumentAddBeacon"
+		    AddLootSourceItem.AutoEnabled = False
+		    Items.AddRow(AddLootSourceItem)
 		    
-		    Self.Editor.EnableMenuItems()
-		  End If
+		    Var DuplicateLootSourceItem As New MenuItem("Duplicate Loot Source")
+		    DuplicateLootSourceItem.Name = "DocumentDuplicateBeacon"
+		    DuplicateLootSourceItem.AutoEnabled = False
+		    Items.AddRow(DuplicateLootSourceItem)
+		    
+		    Var RemoveLootSourceItem As New MenuItem("Remove Loot Source")
+		    RemoveLootSourceItem.Name = "DocumentRemoveBeacon"
+		    RemoveLootSourceItem.AutoEnabled = False
+		    Items.AddRow(RemoveLootSourceItem)
+		    
+		    Items.AddRow(New MenuItem(MenuItem.TextSeparator))
+		    
+		    Var AddItemSetItem As New MenuItem("Add Item Set")
+		    AddItemSetItem.Name = "DocumentAddItemSet"
+		    AddItemSetItem.AutoEnabled = False
+		    Items.AddRow(AddItemSetItem)
+		    
+		    Var RemoveItemSetItem As New MenuItem("Remove Item Set")
+		    RemoveItemSetItem.Name = "DocumentRemoveItemSet"
+		    RemoveItemSetItem.AutoEnabled = False
+		    Items.AddRow(RemoveItemSetItem)
+		    
+		    Items.AddRow(New MenuItem(MenuItem.TextSeparator))
+		  #endif
+		  
+		  Var RebuildItem As New MenuItem("Rebuild Item Sets from Presets")
+		  RebuildItem.Name = "DocumentRebuildPresets"
+		  RebuildItem.AutoEnabled = False
+		  Items.AddRow(RebuildItem)
 		End Sub
 	#tag EndEvent
 

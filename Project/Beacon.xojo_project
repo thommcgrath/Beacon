@@ -413,6 +413,7 @@ MultiImage=IconToolbarSettings;Icons/IconToolbarSettings.xojo_image;&h0000000014
 Class=PlayerLevelData;Modules/Beacon/PlayerLevelData.xojo_code;&h000000003C9FAFFF;&h0000000055ADDFFF;false
 Window=EngramControlPointOverrideWindow;Views/Config Editors/Engram Control/EngramControlPointOverrideWindow.xojo_window;&h00000000454B97FF;&h000000000D6457FF;false
 Window=EngramControlEngramOverrideWizard;Views/Config Editors/Engram Control/EngramControlEngramOverrideWizard.xojo_window;&h00000000559F5FFF;&h000000000D6457FF;false
+Class=ConfigGroupMenuItem;Custom Controls/ConfigGroupMenuItem.xojo_code;&h0000000062BD87FF;&h0000000030DCFFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=3
