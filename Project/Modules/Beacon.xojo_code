@@ -944,7 +944,7 @@ Protected Module Beacon
 		  Dim Order() As String
 		  Redim Order(Bound)
 		  For I As Integer = 0 To Bound
-		    Order(I) = Sources(I).SortValue.ToString(Locale.Raw, "0000") + Sources(I).Label
+		    Order(I) = Sources(I).SortValue.ToString(Locale.Raw, "0000") + Sources(I).Label + Sources(I).ClassString
 		  Next
 		  
 		  Order.SortWith(Sources)
