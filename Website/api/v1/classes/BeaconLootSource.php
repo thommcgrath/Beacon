@@ -24,7 +24,7 @@ class BeaconLootSource extends BeaconBlueprint {
 	}
 	
 	protected static function TableName() {
-		return 'loot_sources';
+		return 'loot_sources_sorted';
 	}
 	
 	protected static function SortColumn() {

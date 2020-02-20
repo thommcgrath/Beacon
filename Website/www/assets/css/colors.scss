@@ -479,6 +479,18 @@
 		}
 	}
 	
+	.notice-warning {
+		border-color: mix($text-red, $background-color, 35%);
+		color: $text-red;
+		background-color: mix($text-red, $background-color, 3%);
+	}
+	
+	.notice-caution {
+		border-color: mix($text-yellow, $background-color, 35%);
+		color: $text-yellow;
+		background-color: mix($text-yellow, $background-color, 3%);
+	}
+	
 	@media print {
 		table.generic {
 			border-color: #d9d9d9;
