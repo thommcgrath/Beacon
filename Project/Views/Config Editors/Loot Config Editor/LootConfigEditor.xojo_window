@@ -686,7 +686,7 @@ End
 		  For I As Integer = 0 To VisibleSources.LastRowIndex
 		    Self.List.RowTagAt(I) = VisibleSources(I)
 		    Self.List.CellValueAt(I, 0) = "" // Causes a redraw of the cell
-		    Self.List.CellValueAt(I, 1) = Labels.Lookup(VisibleSources(I).ClassString, VisibleSources(I).Label)
+		    Self.List.CellValueAt(I, 1) = Labels.Lookup(VisibleSources(I).Path, VisibleSources(I).Label)
 		    If SelectedClasses.IndexOf(VisibleSources(I).ClassString) > -1 Then
 		      Self.List.Selected(I) = True
 		      Selection.AddRow(VisibleSources(I))
@@ -814,7 +814,7 @@ End
 		    Beacon.Sort(LootSources)
 		    
 		    For Each LootSource As Beacon.LootSource In LootSources
-		      Menu.AddMenu(New MenuItem(Labels.Lookup(LootSource.ClassString, LootSource.Label), LootSource))
+		      Menu.AddMenu(New MenuItem(Labels.Lookup(LootSource.Path, LootSource.Label), LootSource))
 		    Next
 		    
 		    If HasExperimentalSources Then
