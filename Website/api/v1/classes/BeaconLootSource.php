@@ -17,6 +17,7 @@ class BeaconLootSource extends BeaconBlueprint {
 		$columns[] = 'uicolor';
 		$columns[] = 'icon';
 		$columns[] = 'sort';
+		$columns[] = 'modern_sort';
 		$columns[] = 'experimental';
 		$columns[] = 'notes';
 		$columns[] = 'requirements';
@@ -24,7 +25,7 @@ class BeaconLootSource extends BeaconBlueprint {
 	}
 	
 	protected static function TableName() {
-		return 'loot_sources_sorted';
+		return 'loot_sources';
 	}
 	
 	protected static function SortColumn() {
@@ -65,7 +66,11 @@ class BeaconLootSource extends BeaconBlueprint {
 		$obj->multiplier_max = floatval($row->Field('multiplier_max'));
 		$obj->ui_color = $row->Field('uicolor');
 		$obj->icon_id = $row->Field('icon');
-		$obj->sort_order = intval($row->Field('sort'));
+		if (is_null($row->Field('modern_sort'))) {
+			$obj->sort_order = intval($row->Field('sort'));
+		} else {
+			$obj->sort_order = intval($row->Field('modern_sort'));
+		}
 		$obj->experimental = boolval($row->Field('experimental'));
 		$obj->notes = $row->Field('notes');
 		$obj->requirements = $row->Field('requirements');
