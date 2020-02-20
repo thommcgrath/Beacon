@@ -10,6 +10,7 @@ class BeaconLootSource extends BeaconBlueprint {
 	private $experimental;
 	private $notes;
 	private $requirements = '{}';
+	private $simple_label;
 	
 	protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
@@ -22,6 +23,7 @@ class BeaconLootSource extends BeaconBlueprint {
 		$columns[] = 'experimental';
 		$columns[] = 'notes';
 		$columns[] = 'requirements';
+		$columns[] = 'simple_label';
 		return $columns;
 	}
 	
@@ -55,6 +57,8 @@ class BeaconLootSource extends BeaconBlueprint {
 			return $this->notes;
 		case 'requirements':
 			return $this->requirements;
+		case 'simple_label':
+			return $this->simple_label;
 		default:
 			parent::GetColumnValue($column);
 		}
@@ -78,6 +82,7 @@ class BeaconLootSource extends BeaconBlueprint {
 		$obj->experimental = boolval($row->Field('experimental'));
 		$obj->notes = $row->Field('notes');
 		$obj->requirements = $row->Field('requirements');
+		$obj->simple_label = $row->Field('simple_label');
 		return $obj;
 	}
 	
@@ -95,6 +100,7 @@ class BeaconLootSource extends BeaconBlueprint {
 		$json['experimental'] = $this->experimental;
 		$json['notes'] = $this->notes;
 		$json['requirements'] = $this->requirements;
+		$json['simple_label'] = is_null($this->simple_label) ? $json['label'] : $this->simple_label;
 		return $json;
 	}
 	
