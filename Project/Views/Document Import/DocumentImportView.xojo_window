@@ -896,26 +896,14 @@ End
 		      Continue For ConfigName
 		    End If
 		    
-		    Var ConfigInfo As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(ConfigName)
-		    Var Methods() As Introspection.MethodInfo = ConfigInfo.GetMethods
-		    For Each Signature As Introspection.MethodInfo In Methods
-		      Try
-		        If Signature.IsShared And Signature.Name = "FromImport" And Signature.GetParameters.LastRowIndex = 3 And Signature.ReturnType <> Nil And Signature.ReturnType.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) Then
-		          Var Params(3) As Variant
-		          Params(0) = ParsedData
-		          Params(1) = CommandLineOptions
-		          Params(2) = Document.MapCompatibility
-		          Params(3) = Document.Difficulty
-		          Var Group As Beacon.ConfigGroup = Signature.Invoke(Nil, Params)
-		          If Group <> Nil Then
-		            Document.AddConfigGroup(Group)
-		          End If
-		          Continue For ConfigName
-		        End If
-		      Catch Err As RuntimeException
-		        
-		      End Try
-		    Next
+		    Var Group As Beacon.ConfigGroup
+		    Try
+		      Group = BeaconConfigs.CreateInstance(ConfigName, ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty)
+		    Catch Err As RuntimeException
+		    End Try
+		    If Group <> Nil Then
+		      Document.AddConfigGroup(Group)
+		    End If
 		  Next
 		  
 		  // Now figure out what configs we'll generate so CustomContent can figure out what NOT to capture.

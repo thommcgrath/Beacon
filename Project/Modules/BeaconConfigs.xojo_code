@@ -114,6 +114,26 @@ Protected Module BeaconConfigs
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function CreateInstance(GroupName As String, ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As Beacon.ConfigGroup
+		  Var ConfigInfo As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
+		  Var Methods() As Introspection.MethodInfo = ConfigInfo.GetMethods
+		  For Each Signature As Introspection.MethodInfo In Methods
+		    Try
+		      If Signature.IsShared And Signature.Name = "FromImport" And Signature.GetParameters.LastRowIndex = 3 And Signature.ReturnType <> Nil And Signature.ReturnType.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) Then
+		        Var Params(3) As Variant
+		        Params(0) = ParsedData
+		        Params(1) = CommandLineOptions
+		        Params(2) = MapCompatibility
+		        Params(3) = Difficulty
+		        Return Signature.Invoke(Nil, Params)
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Purchased(Extends Config As Beacon.ConfigGroup, PurchasedVersion As Integer) As Boolean
 		  Return ConfigPurchased(Config.ConfigName, PurchasedVersion)
