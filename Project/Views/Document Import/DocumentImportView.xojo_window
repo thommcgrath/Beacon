@@ -757,10 +757,14 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub BeginDiscovery(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
+		Private Sub BeginDiscovery(Engines() As Beacon.DiscoveryEngine, Accounts As Beacon.ExternalAccountManager)
 		  Self.mEngines = Engines
-		  Self.mOAuthProvider = OAuthProvider
-		  Self.mOAuthData = OAuthData
+		  If Accounts <> Nil Then
+		    If Self.mAccounts = Nil Then
+		      Self.mAccounts = New Beacon.ExternalAccountManager
+		    End If
+		    Self.mAccounts.Import(Accounts)
+		  End If
 		  
 		  // Make sure the importers and engines stay in order because they need to be matched up later
 		  Self.mImporters.ResizeTo(-1) // To empty the array
@@ -860,9 +864,7 @@ End
 		  End Try
 		  
 		  Try
-		    If Self.mOAuthData <> Nil And Self.mOAuthProvider <> "" Then
-		      Document.OAuthData(Self.mOAuthProvider) = Self.mOAuthData
-		    End If
+		    Document.Accounts.Import(Self.mAccounts)
 		  Catch Err As RuntimeException
 		    
 		  End Try
@@ -1025,6 +1027,10 @@ End
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
+		Private mAccounts As Beacon.ExternalAccountManager
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDeployRequired As Boolean
 	#tag EndProperty
 
@@ -1038,14 +1044,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mImporters() As Beacon.ImportThread
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mOAuthData As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mOAuthProvider As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1166,8 +1164,8 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
-		  Self.BeginDiscovery(Engines, OAuthProvider, OAuthData)
+		Sub Finished(Engines() As Beacon.DiscoveryEngine, Accounts As Beacon.ExternalAccountManager)
+		  Self.BeginDiscovery(Engines, Accounts)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1187,8 +1185,8 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
-		  Self.BeginDiscovery(Engines, OAuthProvider, OAuthData)
+		Sub Finished(Engines() As Beacon.DiscoveryEngine, Accounts As Beacon.ExternalAccountManager)
+		  Self.BeginDiscovery(Engines, Accounts)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1208,8 +1206,8 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
-		  Self.BeginDiscovery(Engines, OAuthProvider, OAuthData)
+		Sub Finished(Engines() As Beacon.DiscoveryEngine, Accounts As Beacon.ExternalAccountManager)
+		  Self.BeginDiscovery(Engines, Accounts)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1289,8 +1287,8 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
-		  Self.BeginDiscovery(Engines, OAuthProvider, OAuthData)
+		Sub Finished(Engines() As Beacon.DiscoveryEngine, Accounts As Beacon.ExternalAccountManager)
+		  Self.BeginDiscovery(Engines, Accounts)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

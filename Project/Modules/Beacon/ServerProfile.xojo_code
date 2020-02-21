@@ -27,6 +27,10 @@ Protected Class ServerProfile
 		  Self.mProfileID = Dict.Value("Profile ID")
 		  Self.mPlatform = Dict.Lookup("Platform", Self.PlatformUnknown)
 		  
+		  If Dict.HasKey("External Account") Then
+		    Self.mExternalAccountUUID = Dict.Value("External Account").StringValue
+		  End If
+		  
 		  RaiseEvent ReadFromDictionary(Dict)
 		  
 		  Self.Modified = False
@@ -57,12 +61,6 @@ Protected Class ServerProfile
 	#tag Method, Flags = &h0
 		Function Mask() As UInt64
 		  Return Beacon.Maps.All.Mask
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function OAuthProvider() As String
-		  
 		End Function
 	#tag EndMethod
 
@@ -135,8 +133,19 @@ Protected Class ServerProfile
 		  Dict.Value("Profile ID") = Self.ProfileID // Do not call mProfileID here in order to force generation
 		  Dict.Value("Enabled") = Self.Enabled
 		  Dict.Value("Platform") = Self.mPlatform
+		  If Self.mExternalAccountUUID <> Nil Then
+		    Dict.Value("External Account") = Self.mExternalAccountUUID.StringValue
+		  End If
 		  Return Dict
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UpdateDetailsFrom(Profile As Beacon.ServerProfile)
+		  // Doesn't normally do anything
+		  
+		  #Pragma Unused Profile
+		End Sub
 	#tag EndMethod
 
 
@@ -169,6 +178,23 @@ Protected Class ServerProfile
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mExternalAccountUUID
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mExternalAccountUUID <> Value Then
+			    Self.mExternalAccountUUID = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		ExternalAccountUUID As v4UUID
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mPlatform = Beacon.ServerProfile.PlatformXbox Or Self.mPlatform = Beacon.ServerProfile.PlatformPlayStation Or Self.mPlatform = Beacon.ServerProfile.PlatformSwitch
 			End Get
 		#tag EndGetter
@@ -177,6 +203,10 @@ Protected Class ServerProfile
 
 	#tag Property, Flags = &h21
 		Private mEnabled As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mExternalAccountUUID As v4UUID
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

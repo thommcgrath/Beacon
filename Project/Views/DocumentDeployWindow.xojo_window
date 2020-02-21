@@ -483,7 +483,7 @@ End
 		      Var DeploymentEngine As Beacon.DeploymentEngine
 		      Select Case Profile
 		      Case IsA Beacon.NitradoServerProfile
-		        DeploymentEngine = New Beacon.NitradoDeploymentEngine(Beacon.NitradoServerProfile(Profile), Self.mDocument.OAuthData(Profile.OAuthProvider))
+		        DeploymentEngine = New Beacon.NitradoDeploymentEngine(Beacon.NitradoServerProfile(Profile))
 		      Case IsA Beacon.FTPServerProfile
 		        DeploymentEngine = New Beacon.FTPDeploymentEngine(Beacon.FTPServerProfile(Profile))
 		      Case IsA Beacon.ConnectorServerProfile
@@ -505,18 +505,20 @@ End
 		    Return
 		  End If
 		  
-		  Var Provider As String = Self.mOAuthQueue(0)
+		  Var Account As Beacon.ExternalAccount = Self.mDocument.Accounts.GetByUUID(Self.mOAuthQueue(0))
 		  Self.mOAuthQueue.RemoveRowAt(0)
 		  
-		  Self.Auth.Provider = Provider
-		  If Self.Auth.Provider <> Provider Then
-		    Self.ShowAlert("This version of Beacon does not support " + Provider + " servers.", "This probably means an upgrade is available.")
+		  If Account = Nil Then
+		    Self.AuthenticateNext()
 		    Return
 		  End If
 		  
-		  Self.Auth.AuthData = Self.mDocument.OAuthData(Provider)
+		  If Not Self.Auth.SetAccount(Account) Then
+		    Self.ShowAlert("This version of Beacon does not support " + Account.Provider + " servers.", "This probably means an upgrade is available.")
+		    Return
+		  End If
 		  
-		  Self.mCurrentProvider = Provider
+		  Self.mCurrentProvider = Account.Provider
 		  Self.Auth.Authenticate(App.IdentityManager.CurrentIdentity)
 		End Sub
 	#tag EndMethod
@@ -735,7 +737,7 @@ End
 		      Continue
 		    End If
 		    
-		    Self.DeployingList.AddRow(Profile.Name + EndOfLine + If(Profile.OAuthProvider <> "", "Authenticating…", "Waiting…"))
+		    Self.DeployingList.AddRow(Profile.Name + EndOfLine + If(Profile.ExternalAccountUUID <> Nil, "Authenticating…", "Waiting…"))
 		    
 		    SelectedCount = SelectedCount + 1
 		    
@@ -788,9 +790,8 @@ End
 		      Continue
 		    End If
 		    
-		    Var Provider As String = Profile.OAuthProvider
-		    If Provider <> "" And Self.mOAuthQueue.IndexOf(Provider) = -1 Then
-		      Self.mOAuthQueue.AddRow(Provider)
+		    If Profile.ExternalAccountUUID <> Nil And Self.mOAuthQueue.IndexOf(Profile.ExternalAccountUUID) = -1 Then
+		      Self.mOAuthQueue.AddRow(Profile.ExternalAccountUUID)
 		    End If
 		  Next
 		  
@@ -835,7 +836,7 @@ End
 #tag Events Auth
 	#tag Event
 		Sub Authenticated()
-		  Self.mDocument.OAuthData(Self.mCurrentProvider) = Me.AuthData
+		  Self.mDocument.Accounts.Add(Me.Account)
 		  Self.AuthenticateNext()
 		End Sub
 	#tag EndEvent

@@ -28,12 +28,6 @@ Inherits Beacon.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function OAuthProvider() As String
-		  Return "Nitrado"
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.ServerProfile) As Integer
 		  If Other = Nil Then
 		    Return 1
@@ -70,6 +64,21 @@ Inherits Beacon.ServerProfile
 		Function SupportsRestart() As Boolean
 		  Return True
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UpdateDetailsFrom(Profile As Beacon.ServerProfile)
+		  Super.UpdateDetailsFrom(Profile)
+		  
+		  If Not (Profile IsA Beacon.NitradoServerProfile) Then
+		    Return
+		  End If
+		  
+		  Var NitradoProfile As Beacon.NitradoServerProfile = Beacon.NitradoServerProfile(Profile)
+		  Self.Address = NitradoProfile.Address
+		  Self.ConfigPath = NitradoProfile.ConfigPath
+		  Self.GameShortcode = NitradoProfile.GameShortcode
+		End Sub
 	#tag EndMethod
 
 

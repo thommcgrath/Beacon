@@ -32,6 +32,16 @@ Implements Beacon.DeploymentEngine
 		  Self.mIdentity = Identity
 		  Self.mStopMessage = StopMessage
 		  
+		  Var Account As Beacon.ExternalAccount = Document.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID)
+		  If Account = Nil Then
+		    Self.mStatus = "Missing Nitrado access token"
+		    Self.mErrored = True
+		    Self.mFinished = True
+		    Return
+		  Else
+		    Self.mAccessToken = Account.AccessToken
+		  End If
+		  
 		  Self.RunNextTask()
 		End Sub
 	#tag EndMethod
@@ -637,9 +647,8 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Profile As Beacon.NitradoServerProfile, OAuthData As Dictionary)
+		Sub Constructor(Profile As Beacon.NitradoServerProfile)
 		  Self.mProfile = Profile
-		  Self.mAccessToken = OAuthData.Value("Access Token")
 		  
 		  Self.mGameIniRewriter = New Beacon.Rewriter
 		  AddHandler mGameIniRewriter.Finished, WeakAddressOf mGameIniRewriter_Finished

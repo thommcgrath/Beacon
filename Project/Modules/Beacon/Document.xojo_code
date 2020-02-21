@@ -1,6 +1,12 @@
 #tag Class
 Protected Class Document
 	#tag Method, Flags = &h0
+		Function Accounts() As Beacon.ExternalAccountManager
+		  Return Self.mAccounts
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Add(Profile As Beacon.ServerProfile)
 		  If Profile = Nil Then
 		    Return
@@ -74,6 +80,7 @@ Protected Class Document
 		  Self.UseCompression = True
 		  Self.mDocumentPassword = Crypto.GenerateRandomBytes(32)
 		  Self.mEncryptedPasswords = New Dictionary
+		  Self.mAccounts = New Beacon.ExternalAccountManager
 		End Sub
 	#tag EndMethod
 
@@ -149,17 +156,15 @@ Protected Class Document
 		      If Dict.HasKey("Secure") Then
 		        Var SecureDict As Dictionary = ReadSecureData(Dict.Value("Secure"), Identity)
 		        If SecureDict <> Nil Then
-		          Var ServerDicts() As Variant = SecureDict.Value("Servers")
-		          For Each ServerDict As Dictionary In ServerDicts
-		            Var Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
-		            If Profile <> Nil Then
-		              Doc.mServerProfiles.AddRow(Profile)
-		            End If
-		          Next
-		          
 		          If SecureDict.HasKey("OAuth") Then
-		            Doc.mOAuthDicts = SecureDict.Value("OAuth")
+		            Var AccountManager As Beacon.ExternalAccountManager = Beacon.ExternalAccountManager.FromLegacyDict(SecureDict.Value("OAuth"))
+		            If IsNull(AccountManager) = False Then
+		              Doc.mAccounts = AccountManager
+		            End If
 		          End If
+		          
+		          Var ServerDicts() As Variant = SecureDict.Value("Servers")
+		          LoadServerProfiles(Doc, ServerDicts)
 		        End If
 		      ElseIf Dict.HasKey("FTPServers") Then
 		        Var ServerDicts() As Variant = Dict.Value("FTPServers")
@@ -362,17 +367,21 @@ Protected Class Document
 		    SecureDict = ReadSecureData(Dict.Value("Secure"), Identity)
 		  End If
 		  If SecureDict <> Nil Then
-		    Var ServerDicts() As Variant = SecureDict.Value("Servers")
-		    For Each ServerDict As Dictionary In ServerDicts
-		      Var Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
-		      If Profile <> Nil Then
-		        Doc.mServerProfiles.AddRow(Profile)
+		    Var AccountManager As Beacon.ExternalAccountManager
+		    Try
+		      If SecureDict.HasKey("ExternalAccounts") Then
+		        AccountManager = Beacon.ExternalAccountManager.FromDict(SecureDict.Value("ExternalAccounts"))
+		      ElseIf SecureDict.HasKey("OAuth") Then
+		        AccountManager = Beacon.ExternalAccountManager.FromLegacyDict(SecureDict.Value("OAuth"))
 		      End If
-		    Next
-		    
-		    If SecureDict.HasKey("OAuth") Then
-		      Doc.mOAuthDicts = SecureDict.Value("OAuth")
+		    Catch Err As RuntimeException
+		    End Try
+		    If IsNull(AccountManager) = False Then
+		      Doc.mAccounts = AccountManager
 		    End If
+		    
+		    Var ServerDicts() As Variant = SecureDict.Value("Servers")
+		    LoadServerProfiles(Doc, ServerDicts)
 		  End If
 		  
 		  If Dict.HasKey("Trust") Then
@@ -454,6 +463,30 @@ Protected Class Document
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Sub LoadServerProfiles(Document As Beacon.Document, ServerDicts() As Variant)
+		  Var NitradoAccount As Beacon.ExternalAccount
+		  For Each ServerDict As Dictionary In ServerDicts
+		    Var Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
+		    If Profile <> Nil Then
+		      If Profile IsA Beacon.NitradoServerProfile And Profile.ExternalAccountUUID = Nil Then
+		        If IsNull(NitradoAccount) Then
+		          Var NitradoAccounts() As Beacon.ExternalAccount = Document.mAccounts.ForProvider(Beacon.ExternalAccount.ProviderNitrado)
+		          If NitradoAccounts.Count = 1 Then
+		            NitradoAccount = NitradoAccounts(0)
+		          End If
+		        End If
+		        If IsNull(NitradoAccount) = False Then
+		          Profile.ExternalAccountUUID = NitradoAccount.UUID
+		        End If
+		      End If
+		      
+		      Document.mServerProfiles.AddRow(Profile)
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Maps() As Beacon.Map()
 		  Var Possibles() As Beacon.Map = Beacon.Maps.All
@@ -487,6 +520,10 @@ Protected Class Document
 		    Return True
 		  End If
 		  
+		  If Self.mAccounts.Modified Then
+		    Return True
+		  End If
+		  
 		  For Each Entry As DictionaryEntry In Self.mConfigGroups
 		    Var Group As Beacon.ConfigGroup = Entry.Value
 		    If Group.Modified Then
@@ -517,6 +554,7 @@ Protected Class Document
 		    Next
 		    
 		    Self.mMods.Modified = False
+		    Self.mAccounts.Modified = False
 		  End If
 		End Sub
 	#tag EndMethod
@@ -531,40 +569,6 @@ Protected Class Document
 		Sub NewIdentifier()
 		  Self.mIdentifier = New v4UUID
 		  Self.mModified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function OAuthData(Provider As String) As Dictionary
-		  If Self.mOAuthDicts <> Nil And Self.mOAuthDicts.HasKey(Provider) Then
-		    Return Dictionary(Self.mOAuthDicts.Value(Provider)).Clone
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub OAuthData(Provider As String, Assigns Dict As Dictionary)
-		  If Self.mOAuthDicts = Nil Then
-		    Self.mOAuthDicts = New Dictionary
-		  End If
-		  If Dict = Nil Then
-		    If Self.mOAuthDicts.HasKey(Provider) Then
-		      Self.mOAuthDicts.Remove(Provider)
-		      Self.mModified = True
-		    End If
-		  Else
-		    If Self.mOAuthDicts.HasKey(Provider) Then
-		      // Need to compare
-		      Var OldJSON As String = Beacon.GenerateJSON(Self.mOAuthDicts.Value(Provider), False)
-		      Var NewJSON As String = Beacon.GenerateJSON(Dict, False)
-		      If OldJSON = NewJSON Then
-		        Return
-		      End If
-		    End If
-		    
-		    Self.mOAuthDicts.Value(Provider) = Dict.Clone
-		    Self.mModified = True
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -739,8 +743,8 @@ Protected Class Document
 		    Profiles.AddRow(Profile.ToDictionary)
 		  Next
 		  EncryptedData.Value("Servers") = Profiles
-		  If Self.mOAuthDicts <> Nil Then
-		    EncryptedData.Value("OAuth") = Self.mOAuthDicts
+		  If Self.mAccounts.Count > 0 Then
+		    EncryptedData.Value("ExternalAccounts") = Self.mAccounts.AsDictionary
 		  End If
 		  
 		  Var Content As String = Beacon.GenerateJSON(EncryptedData, False)
@@ -818,19 +822,9 @@ Protected Class Document
 		DifficultyValue As Double
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return False
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  // Do Nothing
-			End Set
-		#tag EndSetter
-		Attributes( Deprecated ) IsPublic As Boolean
-	#tag EndComputedProperty
+	#tag Property, Flags = &h21
+		Private mAccounts As Beacon.ExternalAccountManager
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mAllowUCS As Boolean
@@ -900,10 +894,6 @@ Protected Class Document
 
 	#tag Property, Flags = &h21
 		Private mMods As Beacon.StringList
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mOAuthDicts As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

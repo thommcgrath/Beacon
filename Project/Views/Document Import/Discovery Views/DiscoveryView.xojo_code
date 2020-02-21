@@ -72,17 +72,17 @@ Inherits ContainerControl
 
 	#tag Method, Flags = &h1
 		Protected Sub ShouldFinish(Engines() As Beacon.DiscoveryEngine)
-		  Self.ShouldFinish(Engines, "", Nil)
+		  Self.ShouldFinish(Engines, Nil)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ShouldFinish(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
+		Protected Sub ShouldFinish(Engines() As Beacon.DiscoveryEngine, Accounts As Beacon.ExternalAccountManager)
 		  If Self.mClosed Then
 		    Return
 		  End If
 		  
-		  RaiseEvent Finished(Engines, OAuthProvider, OAuthData)
+		  RaiseEvent Finished(Engines, Accounts)
 		End Sub
 	#tag EndMethod
 
@@ -96,7 +96,7 @@ Inherits ContainerControl
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
+		Event Finished(Engines() As Beacon.DiscoveryEngine, Accounts As Beacon.ExternalAccountManager)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

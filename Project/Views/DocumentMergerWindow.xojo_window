@@ -215,14 +215,9 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As Window, SourceDocuments() As Beacon.Document, DestinationDocument As Beacon.Document, Callback As MergeFinishedCallback = Nil)
-		  Var OAuthData As New Dictionary
+		  Var Accounts As New Beacon.ExternalAccountManager
 		  For Each Document As Beacon.Document In SourceDocuments
-		    For I As Integer = 0 To Document.ServerProfileCount - 1
-		      Var Profile As Beacon.ServerProfile = Document.ServerProfile(I)
-		      If Profile.OAuthProvider <> "" Then
-		        OAuthData.Value(Profile.OAuthProvider) = Document.OAuthData(Profile.OAuthProvider)
-		      End If
-		    Next
+		    Accounts.Import(Document.Accounts)
 		  Next
 		  
 		  Var MapMask As UInt64
@@ -255,7 +250,7 @@ End
 		  
 		  Var Win As New DocumentMergerWindow
 		  Win.mDestination = DestinationDocument
-		  Win.mOAuthData = OAuthData
+		  Win.mExternalAccounts = Accounts
 		  Win.mCallback = Callback
 		  Win.mConfigCounts = New Dictionary
 		  
@@ -304,6 +299,7 @@ End
 		    For I As Integer = 0 To Document.ServerProfileCount - 1
 		      For X As Integer = 0 To DestinationDocument.ServerProfileCount - 1
 		        If DestinationDocument.ServerProfile(X) = Document.ServerProfile(I) Then
+		          DestinationDocument.ServerProfile(X).UpdateDetailsFrom(Document.ServerProfile(I))
 		          Continue For I
 		        End If
 		      Next
@@ -365,7 +361,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOAuthData As Dictionary
+		Private mExternalAccounts As Beacon.ExternalAccountManager
 	#tag EndProperty
 
 
@@ -566,11 +562,9 @@ End
 		        Var Profile As Beacon.ServerProfile = Tag
 		        Self.mDestination.Add(Profile)
 		        
-		        If Profile.OAuthProvider <> "" And Self.mOAuthData.HasKey(Profile.OAuthProvider) Then
-		          Var OAuthData As Dictionary = Self.mOAuthData.Value(Profile.OAuthProvider)
-		          If OAuthData <> Nil Then
-		            Self.mDestination.OAuthData(Profile.OAuthProvider) = OAuthData
-		          End If
+		        If Profile.ExternalAccountUUID <> Nil Then
+		          Var Account As Beacon.ExternalAccount = Self.mExternalAccounts.GetByUUID(Profile.ExternalAccountUUID)
+		          Self.mDestination.Accounts.Add(Account)
 		        End If
 		      End Select
 		    Case Variant.TypeString

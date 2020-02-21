@@ -125,20 +125,6 @@ Inherits Beacon.ConfigGroup
 		Description As String
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return False
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  // Do Nothing
-			End Set
-		#tag EndSetter
-		Attributes( Deprecated ) IsPublic As Boolean
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h21
 		Private mDescription As String
 	#tag EndProperty

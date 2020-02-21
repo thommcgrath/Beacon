@@ -294,9 +294,16 @@ End
 
 	#tag Event
 		Sub Open()
-		  Self.Auth.Provider = Beacon.OAuth2Client.ProviderNitrado
-		  Self.Auth.AuthData = Self.mDocument.OAuthData("Nitrado")
-		  Self.Auth.Authenticate(App.IdentityManager.CurrentIdentity)
+		  Var Account As Beacon.ExternalAccount = Self.mDocument.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID)
+		  If Self.Auth.SetAccount(Account) Then
+		    Self.Auth.Authenticate(App.IdentityManager.CurrentIdentity)
+		  Else
+		    If Account <> Nil Then
+		      Self.ShowAlert("Unsupported external account", "This version of Beacon does not support accounts from " + Account.Provider + ". This means there is probably an update available.")
+		    Else
+		      Self.ShowAlert("Missing Nitrado account", "The Nitrado account for " + Self.mProfile.Name + " appears to be missing.")
+		    End If
+		  End If
 		  
 		  Self.Controls.Caption = Self.mProfile.Name
 		  
@@ -433,7 +440,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub RefreshServerStatus()
 		  Var Headers As New Dictionary
-		  Headers.Value("Authorization") = "Bearer " + Self.Auth.AccessToken
+		  Headers.Value("Authorization") = "Bearer " + Self.mDocument.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID).AccessToken
 		  
 		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers", AddressOf Callback_ServerStatus, Nil, Headers)
 		End Sub
@@ -458,7 +465,7 @@ End
 #tag Events Auth
 	#tag Event
 		Sub Authenticated()
-		  Self.mDocument.OAuthData("Nitrado") = Me.AuthData
+		  Self.mDocument.Accounts.Add(Me.Account)
 		  Self.RefreshServerStatus()
 		End Sub
 	#tag EndEvent
@@ -493,7 +500,7 @@ End
 		  Select Case Item.Name
 		  Case "PowerButton"
 		    Var Headers As New Dictionary
-		    Headers.Value("Authorization") = "Bearer " + Self.Auth.AccessToken
+		    Headers.Value("Authorization") = "Bearer " + Self.mDocument.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID).AccessToken
 		    
 		    If Item.Toggled Then
 		      Var StopMessage As String = StopMessageDialog.Present(Self)
