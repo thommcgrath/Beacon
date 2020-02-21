@@ -29,6 +29,9 @@ Inherits Beacon.ConfigGroup
 		    
 		    // Get the entry string from the engram if available, or use the backup if not available.
 		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Entry.Key)
+		    If IsNull(Engram) Then
+		      Engram = Beacon.Engram.CreateFromPath(Entry.Key)
+		    End If
 		    If Engram <> Nil And SourceDocument.Mods.Count > 0 And SourceDocument.Mods.IndexOf(Engram.ModID) = -1 Then
 		      // Don't include items for disabled mods
 		      Continue
