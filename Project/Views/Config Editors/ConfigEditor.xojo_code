@@ -13,20 +13,20 @@ Inherits BeaconSubview
 
 	#tag Event
 		Sub GetEditorMenuItems(Items() As MenuItem)
+		  Items.AddRow(New MenuItem(MenuItem.TextSeparator))
+		  
+		  Var PreCount As Integer = Items.Count
+		  RaiseEvent GetEditorMenuItems(Items)
+		  If Items.Count > PreCount Then
+		    // Something was added, so we need another separator
+		    Items.AddRow(New MenuItem(MenuItem.TextSeparator))
+		  End If
+		  
 		  Var RestoreItem As New MenuItem("Restore """ + Self.ConfigLabel + """ to Default", "restore")
 		  RestoreItem.Name = "DocumentRestoreConfigToDefault"
 		  RestoreItem.AutoEnabled = False
 		  RestoreItem.Enabled = Self.SupportsRestore()
 		  Items.AddRow(RestoreItem)
-		  
-		  Items.AddRow(New MenuItem(MenuItem.TextSeparator))
-		  
-		  Var PreCount As Integer = Items.Count
-		  RaiseEvent GetEditorMenuItems(Items)
-		  If Items.Count = PreCount Then
-		    // Nothing was added, drop the separator
-		    Items.RemoveRowAt(Items.LastRowIndex)
-		  End If
 		End Sub
 	#tag EndEvent
 
