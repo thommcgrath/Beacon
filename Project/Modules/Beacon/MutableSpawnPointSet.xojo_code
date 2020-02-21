@@ -47,7 +47,7 @@ Inherits Beacon.SpawnPointSet
 		      Options.Remove(ToCreature.Path)
 		    End If
 		  Else
-		    Options.Value(ToCreature.Path) = Weight.Value
+		    Options.Value(ToCreature.Path) = Weight.DoubleValue
 		  End If
 		  
 		  If Options.KeyCount = 0 And Self.mReplacements.HasKey(FromCreature.Path) Then

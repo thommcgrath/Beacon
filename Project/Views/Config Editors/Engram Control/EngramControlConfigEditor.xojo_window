@@ -403,7 +403,7 @@ End
 		      End If
 		      
 		      If Config.AutoUnlockAllEngrams Or (IsNull(AutoUnlock) = False And AutoUnlock.BooleanValue = True) Then
-		        If IsNull(RequiredLevel) = False And RequiredLevel.Value > 0 Then
+		        If IsNull(RequiredLevel) = False And RequiredLevel.IntegerValue > 0 Then
 		          Behaviors.AddRow("Auto unlocks at " + If(RequiredLevel.IntegerValue > 0, "level " + RequiredLevel.IntegerValue.ToString, "spawn"))
 		        Else
 		          Behaviors.AddRow("Auto unlocks at spawn")
@@ -417,7 +417,7 @@ End
 		      End If
 		      
 		      Var RemovePreq As NullableBoolean = Config.RemovePrerequisites(Engram)
-		      If IsNull(RemovePreq) = False And RemovePreq.Value Then
+		      If IsNull(RemovePreq) = False And RemovePreq.BooleanValue Then
 		        Behaviors.AddRow("Prerequisites removed")
 		      End If
 		      

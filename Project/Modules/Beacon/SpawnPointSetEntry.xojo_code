@@ -318,7 +318,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		  Dict.Value("Creature") = Self.mCreature.Path
 		  Dict.Value("Type") = "SpawnPointSetEntry"
 		  If Self.mChance <> Nil Then
-		    Dict.Value("SpawnChance") = Self.mChance.Value
+		    Dict.Value("SpawnChance") = Self.mChance.DoubleValue
 		  End If
 		  If Self.mOffset <> Nil Then
 		    Dict.Value("Offset") = Self.mOffset.SaveData
@@ -332,19 +332,19 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		    Dict.Value("Levels") = Levels
 		  End If
 		  If Self.mMaxLevelMultiplier <> Nil Then
-		    Dict.Value("MaxLevelMultiplier") = Self.mMaxLevelMultiplier.Value
+		    Dict.Value("MaxLevelMultiplier") = Self.mMaxLevelMultiplier.DoubleValue
 		  End If
 		  If Self.mMaxLevelOffset <> Nil Then
-		    Dict.Value("MaxLevelOffset") = Self.mMaxLevelOffset.Value
+		    Dict.Value("MaxLevelOffset") = Self.mMaxLevelOffset.DoubleValue
 		  End If
 		  If Self.mMinLevelMultiplier <> Nil Then
-		    Dict.Value("MinLevelMultiplier") = Self.mMinLevelMultiplier.Value
+		    Dict.Value("MinLevelMultiplier") = Self.mMinLevelMultiplier.DoubleValue
 		  End If
 		  If Self.mMinLevelOffset <> Nil Then
-		    Dict.Value("MinLevelOffset") = Self.mMinLevelOffset.Value
+		    Dict.Value("MinLevelOffset") = Self.mMinLevelOffset.DoubleValue
 		  End If
 		  If Self.mLevelOverride <> Nil Then
-		    Dict.Value("LevelOverride") = Self.mLevelOverride.Value
+		    Dict.Value("LevelOverride") = Self.mLevelOverride.DoubleValue
 		  End If
 		  Return Dict
 		End Function

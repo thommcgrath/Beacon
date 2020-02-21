@@ -442,7 +442,6 @@ End
 		    Return False
 		  End If
 		  
-		  Var Group As Beacon.ConfigGroup = Tag
 		  Var Menu As New MenuItem
 		  Var Mode As Integer = Me.CellTagAt(Row, Column)
 		  Var IsImported As Boolean = Me.CellCheckBoxValueAt(Row, 0)

@@ -418,19 +418,19 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		    SaveData.Value("GroupOffset") = Self.mGroupOffset.SaveData
 		  End If
 		  If Self.mSpreadRadius <> Nil Then
-		    SaveData.Value("SpreadRadius") = Self.mSpreadRadius.Value
+		    SaveData.Value("SpreadRadius") = Self.mSpreadRadius.DoubleValue
 		  End If
 		  If Self.mWaterOnlyMinimumHeight <> Nil Then
-		    SaveData.Value("WaterOnlyMinimumHeight") = Self.mWaterOnlyMinimumHeight.Value
+		    SaveData.Value("WaterOnlyMinimumHeight") = Self.mWaterOnlyMinimumHeight.DoubleValue
 		  End If
 		  If Self.mMinDistanceFromPlayersMultiplier <> Nil Then
-		    SaveData.Value("MinDistanceFromPlayersMultiplier") = Self.mMinDistanceFromPlayersMultiplier.Value
+		    SaveData.Value("MinDistanceFromPlayersMultiplier") = Self.mMinDistanceFromPlayersMultiplier.DoubleValue
 		  End If
 		  If Self.mMinDistanceFromStructuresMultiplier <> Nil Then
-		    SaveData.Value("MinDistanceFromStructuresMultiplier") = Self.mMinDistanceFromStructuresMultiplier.Value
+		    SaveData.Value("MinDistanceFromStructuresMultiplier") = Self.mMinDistanceFromStructuresMultiplier.DoubleValue
 		  End If
 		  If Self.mMinDistanceFromTamedDinosMultiplier <> Nil Then
-		    SaveData.Value("MinDistanceFromTamedDinosMultiplier") = Self.mMinDistanceFromTamedDinosMultiplier.Value
+		    SaveData.Value("MinDistanceFromTamedDinosMultiplier") = Self.mMinDistanceFromTamedDinosMultiplier.DoubleValue
 		  End If
 		  If Self.mReplacements.KeyCount > 0 Then
 		    SaveData.Value("Replacements") = Self.mReplacements

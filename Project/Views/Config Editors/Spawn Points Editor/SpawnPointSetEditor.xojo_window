@@ -1275,7 +1275,7 @@ End
 		      Figures.AddRow("Offset: " + Entry.Offset.X.PrettyText + "," + Entry.Offset.Y.PrettyText + "," + Entry.Offset.Z.PrettyText)
 		    End If
 		    If Entry.SpawnChance <> Nil Then
-		      Figures.AddRow("Weight: " + Entry.SpawnChance.Value.PrettyText)
+		      Figures.AddRow("Weight: " + Entry.SpawnChance.DoubleValue.PrettyText)
 		    End If
 		    If Entry.LevelCount > 0 Or Entry.MinLevelOffset <> Nil Or Entry.MaxLevelOffset <> Nil Or Entry.MinLevelMultiplier <> Nil Or Entry.MaxLevelMultiplier <> Nil Then
 		      Var Difficulty As Double = Self.Document.DifficultyValue

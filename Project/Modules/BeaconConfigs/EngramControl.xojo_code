@@ -170,7 +170,7 @@ Inherits Beacon.ConfigGroup
 		Sub WriteDictionary(Dict As Dictionary, Document As Beacon.Document)
 		  #Pragma Unused Document
 		  
-		  If Self.mBehaviors.Count > 0 Then
+		  If Self.mBehaviors.KeyCount > 0 Then
 		    Dict.Value("Engrams") = Self.mBehaviors
 		  End If
 		  
@@ -210,7 +210,7 @@ Inherits Beacon.ConfigGroup
 		  If IsNull(ShouldUnlock) Then
 		    Self.BehaviorForEngram(Engram, Self.KeyAutoUnlockLevel) = Nil
 		  Else
-		    Self.BehaviorForEngram(Engram, Self.KeyAutoUnlockLevel) = ShouldUnlock.Value
+		    Self.BehaviorForEngram(Engram, Self.KeyAutoUnlockLevel) = ShouldUnlock.BooleanValue
 		  End If
 		End Sub
 	#tag EndMethod
@@ -330,7 +330,7 @@ Inherits Beacon.ConfigGroup
 		  If IsNull(Hidden) Then
 		    Return Self.OnlyAllowSpecifiedEngrams
 		  Else
-		    Return Hidden.Value
+		    Return Hidden.BooleanValue
 		  End If
 		End Function
 	#tag EndMethod
@@ -494,7 +494,7 @@ Inherits Beacon.ConfigGroup
 		  If IsNull(Hidden) Then
 		    Self.BehaviorForEngram(Engram, Self.KeyHidden) = Nil
 		  Else
-		    Self.BehaviorForEngram(Engram, Self.KeyHidden) = Hidden.Value
+		    Self.BehaviorForEngram(Engram, Self.KeyHidden) = Hidden.BooleanValue
 		  End If
 		End Sub
 	#tag EndMethod
@@ -586,7 +586,7 @@ Inherits Beacon.ConfigGroup
 		  If IsNull(Value) Then
 		    Self.BehaviorForEngram(Engram, Self.KeyRemovePrerequisites) = Nil
 		  Else
-		    Self.BehaviorForEngram(Engram, Self.KeyRemovePrerequisites) = Value.Value
+		    Self.BehaviorForEngram(Engram, Self.KeyRemovePrerequisites) = Value.BooleanValue
 		  End If
 		End Sub
 	#tag EndMethod
@@ -607,7 +607,7 @@ Inherits Beacon.ConfigGroup
 		  If IsNull(Level) Then
 		    Self.BehaviorForEngram(Engram, Self.KeyPlayerLevel) = Nil
 		  Else
-		    Self.BehaviorForEngram(Engram, Self.KeyPlayerLevel) = Level.Value
+		    Self.BehaviorForEngram(Engram, Self.KeyPlayerLevel) = Level.IntegerValue
 		  End If
 		End Sub
 	#tag EndMethod
@@ -628,7 +628,7 @@ Inherits Beacon.ConfigGroup
 		  If IsNull(Points) Then
 		    Self.BehaviorForEngram(Engram, Self.KeyUnlockPoints) = Nil
 		  Else
-		    Self.BehaviorForEngram(Engram, Self.KeyUnlockPoints) = Points.Value
+		    Self.BehaviorForEngram(Engram, Self.KeyUnlockPoints) = Points.IntegerValue
 		  End If
 		End Sub
 	#tag EndMethod

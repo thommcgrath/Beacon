@@ -1102,7 +1102,7 @@ End
 		    Next
 		    
 		    If CommonLimit <> Nil Then
-		      Limits.Value(Creature.Path) = CommonLimit.Value
+		      Limits.Value(Creature.Path) = CommonLimit.IntegerValue
 		    End If
 		  Next
 		  
