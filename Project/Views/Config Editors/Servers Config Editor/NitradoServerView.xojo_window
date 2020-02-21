@@ -26,10 +26,8 @@ Begin ServerViewContainer NitradoServerView
    Visible         =   True
    Width           =   600
    Begin Beacon.OAuth2Client Auth
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Provider        =   ""
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -133,7 +131,6 @@ Begin ServerViewContainer NitradoServerView
       Width           =   110
    End
    Begin Timer RefreshTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0

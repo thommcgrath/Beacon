@@ -45,7 +45,6 @@ Begin BeaconDialog DocumentDeployWindow
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -427,15 +426,12 @@ Begin BeaconDialog DocumentDeployWindow
       End
    End
    Begin Beacon.OAuth2Client Auth
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Provider        =   ""
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Timer DeployingWatchTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0

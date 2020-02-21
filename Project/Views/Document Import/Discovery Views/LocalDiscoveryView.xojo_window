@@ -300,7 +300,6 @@ Begin DiscoveryView LocalDiscoveryView
       Width           =   560
    End
    Begin ClipboardWatcher Watcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2

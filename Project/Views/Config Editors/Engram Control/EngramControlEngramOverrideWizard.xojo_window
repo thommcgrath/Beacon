@@ -289,6 +289,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Top             =   126
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   "0"
       Width           =   216
@@ -477,6 +478,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Top             =   226
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   "0"
       Width           =   216
@@ -509,6 +511,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Top             =   94
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   False
       VisualState     =   "0"
       Width           =   80
@@ -541,6 +544,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Top             =   126
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   False
       VisualState     =   "0"
       Width           =   80
@@ -573,6 +577,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Top             =   159
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   False
       VisualState     =   "0"
       Width           =   80
@@ -605,6 +610,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Top             =   193
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   False
       VisualState     =   "0"
       Width           =   80
@@ -637,6 +643,7 @@ Begin BeaconDialog EngramControlEngramOverrideWizard
       Top             =   226
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   False
       VisualState     =   "0"
       Width           =   80
