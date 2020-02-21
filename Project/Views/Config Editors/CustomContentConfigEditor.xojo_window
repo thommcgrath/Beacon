@@ -179,8 +179,103 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub EnableMenuItems()
+		  If EditorMenu.Child("EditorLookforSupportedConfigLines") <> Nil Then
+		    EditorMenu.Child("EditorLookforSupportedConfigLines").Enable
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub GetEditorMenuItems(Items() As MenuItem)
+		  Var ScanItem As New MenuItem("Setup Guided Editors")
+		  ScanItem.Name = "EditorLookforSupportedConfigLines"
+		  ScanItem.Enabled = True
+		  Items.AddRow(ScanItem)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  NotificationKit.Watch(Self, App.Notification_AppearanceChanged)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub ParsingFinished(ParsedData As Dictionary)
+		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		  Var Document As Beacon.Document = Self.Document
+		  Var ConfigNames() As String = BeaconConfigs.AllConfigNames
+		  Var CommandLineOptions As New Dictionary
+		  Var CreatedEditorNames() As String
+		  Var GenericProfile As New Beacon.GenericServerProfile(Document.Title, Beacon.Maps.All.Mask)
+		  Var GameIniValues As New Dictionary
+		  Var GameUserSettingsIniValues As New Dictionary
+		  
+		  Var ImportedConfigs() As Beacon.ConfigGroup
+		  For Each ConfigName As String In ConfigNames
+		    If ConfigName = BeaconConfigs.CustomContent.ConfigName Then
+		      Continue
+		    End If
+		    
+		    If BeaconConfigs.ConfigPurchased(ConfigName, Identity.OmniVersion) = False Then
+		      // Do not import code for groups that the user has not purchased
+		      Continue
+		    End If
+		    
+		    Var CreatedConfig As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(ConfigName, ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty)
+		    If CreatedConfig = Nil Then
+		      Continue
+		    End If
+		    
+		    ImportedConfigs.AddRow(CreatedConfig)
+		    
+		    If Document.HasConfigGroup(ConfigName) Then
+		      Var CurrentConfig As Beacon.ConfigGroup = Document.ConfigGroup(ConfigName, False)
+		      If CurrentConfig <> Nil Then
+		        If Not CurrentConfig.Merge(CreatedConfig) Then
+		          Continue
+		        End If
+		      Else
+		        Document.AddConfigGroup(CreatedConfig)
+		      End If
+		    Else
+		      Document.AddConfigGroup(CreatedConfig)
+		    End If
+		    
+		    Var GameIniArray() As Beacon.ConfigValue = CreatedConfig.GameIniValues(Document, Identity, GenericProfile)
+		    Var GameUserSettingsIniArray() As Beacon.ConfigValue = CreatedConfig.GameUserSettingsIniValues(Document, Identity, GenericProfile)
+		    Var NonGeneratedKeys() As Beacon.ConfigKey = CreatedConfig.NonGeneratedKeys(Identity)
+		    For Each Key As Beacon.ConfigKey In NonGeneratedKeys
+		      Select Case Key.File
+		      Case "Game.ini"
+		        GameIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
+		      Case "GameUserSettings.ini"
+		        GameUserSettingsIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
+		      End Select
+		    Next
+		    
+		    Beacon.ConfigValue.FillConfigDict(GameIniValues, GameIniArray)
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, GameUserSettingsIniArray)
+		    
+		    CreatedEditorNames.AddRow(Language.LabelForConfig(ConfigName))
+		  Next
+		  
+		  If CreatedEditorNames.Count > 0 Then
+		    Var Config As BeaconConfigs.CustomContent = Self.Config(True)
+		    Config.GameIniContent(GameIniValues) = Config.GameIniContent
+		    Config.GameUserSettingsIniContent(GameUserSettingsIniValues) = Config.GameUserSettingsIniContent
+		  End If
+		  
+		  Self.SetupUI()
+		  
+		  If CreatedEditorNames.Count = 0 Then
+		    Self.ShowAlert("No supported editor content found", "Beacon was unable to find any lines in either Game.ini or GameUserSettings.ini that it has a guided editor for.")
+		  ElseIf CreatedEditorNames.Count = 1 Then
+		    Self.ShowAlert("Finished converting Custom Config Content", "Beacon found and setup the a guided editor for " + CreatedEditorNames(0) + ".")
+		  Else
+		    Self.ShowAlert("Finished converting Custom Config Content", "Beacon found and setup the following guided editors: " + Language.EnglishOxfordList(CreatedEditorNames) + ".")
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -202,6 +297,14 @@ End
 		  End Select
 		End Sub
 	#tag EndEvent
+
+
+	#tag MenuHandler
+		Function EditorLookforSupportedConfigLines() As Boolean Handles EditorLookforSupportedConfigLines.Action
+			Self.LookForSupportedContent()
+			Return True
+		End Function
+	#tag EndMenuHandler
 
 
 	#tag Method, Flags = &h1
@@ -241,6 +344,20 @@ End
 		  Self.mGameIniState = New TextAreaState
 		  
 		  Super.Constructor(Controller)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LookForSupportedContent(Confirm As Boolean = True)
+		  If Confirm Then
+		    If Not Self.ShowConfirm("Do you want Beacon to search your Custom Config Content for lines that are supported by guided editors?", "Beacon will import your Custom Config Content and automatically setup guided editors for the lines it can support. Config lines will be merged according to Beacon's standard config merging guidelines.", "Continue", "Cancel") Then
+		      Return
+		    End If
+		  End If
+		  
+		  Var Config As BeaconConfigs.CustomContent = Self.Config(False)
+		  Var Combined As String = Config.GameUserSettingsIniContent + Encodings.ASCII.Chr(10) + Encodings.ASCII.Chr(10) + Config.GameIniContent
+		  Self.Parse(Combined, "Custom Config Content")
 		End Sub
 	#tag EndMethod
 
