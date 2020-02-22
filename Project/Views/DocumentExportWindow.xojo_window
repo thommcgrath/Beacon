@@ -271,7 +271,7 @@ Begin BeaconDialog DocumentExportWindow
       Visible         =   True
       Width           =   900
    End
-   Begin PopupMenu MapMenu
+   Begin PopupMenu ProfileMenu
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
@@ -546,17 +546,27 @@ End
 		  Var Win As New DocumentExportWindow
 		  Win.mDocument = Document
 		  
-		  Var Maps() As Beacon.Map = Document.Maps
-		  If Maps.LastRowIndex = 0 Then
-		    Win.MapMenu.AddRow(Maps(0).Name, Maps(0).Mask)
-		  ElseIf Maps.LastRowIndex > 0 Then
-		    Win.MapMenu.AddRow("All Maps", Beacon.Maps.All.Mask)
-		    For Each Map As Beacon.Map In Maps
-		      Win.MapMenu.AddRow(Map.Name, Map.Mask)
+		  Var ProfileBound As Integer = Document.ServerProfileCount - 1
+		  If ProfileBound > -1 Then
+		    // The menu will show the profiles
+		    For I As Integer = 0 To ProfileBound
+		      Var Profile As Beacon.ServerProfile = Document.ServerProfile(I)
+		      Win.ProfileMenu.AddRow(Profile.Name, Profile)
 		    Next
+		  Else
+		    // The menu will show maps instead
+		    Var Maps() As Beacon.Map = Document.Maps
+		    If Maps.LastRowIndex = 0 Then
+		      Win.ProfileMenu.AddRow(Maps(0).Name, New Beacon.GenericServerProfile(Maps(0).Name, Maps(0).Mask))
+		    ElseIf Maps.LastRowIndex > 0 Then
+		      Win.ProfileMenu.AddRow("All Maps", New Beacon.GenericServerProfile("All Maps", Beacon.Maps.All.Mask))
+		      For Each Map As Beacon.Map In Maps
+		        Win.ProfileMenu.AddRow(Map.Name, New Beacon.GenericServerProfile(Map.Name, Map.Mask))
+		      Next
+		    End If
 		  End If
-		  If Win.MapMenu.RowCount > 0 Then
-		    Win.MapMenu.SelectedRowIndex = 0
+		  If Win.ProfileMenu.RowCount > 0 Then
+		    Win.ProfileMenu.SelectedRowIndex = 0
 		  End If
 		  
 		  Win.Setup()
@@ -606,7 +616,11 @@ End
 		  Self.mGameUserSettingsContent = ""
 		  Self.mCommandLineContent = ""
 		  Self.mLastRewrittenHash = ""
-		  Self.mCurrentProfile = New Beacon.GenericServerProfile(Self.mDocument.Title, Self.CurrentMask)
+		  If Self.ProfileMenu.SelectedRowIndex = -1 Then
+		    Self.mCurrentProfile = New Beacon.GenericServerProfile(Self.mDocument.Title, Beacon.Maps.All.Mask)
+		  Else
+		    Self.mCurrentProfile = Self.ProfileMenu.RowTagAt(Self.ProfileMenu.SelectedRowIndex)
+		  End If
 		  
 		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  
@@ -695,10 +709,10 @@ End
 		#tag Getter
 			Get
 			  Var Mask As UInt64
-			  If Self.MapMenu.SelectedRowIndex = -1 Then
+			  If Self.ProfileMenu.SelectedRowIndex = -1 Then
 			    Mask = Beacon.Maps.All.Mask
 			  Else
-			    Mask = Self.MapMenu.RowTagAt(Self.MapMenu.SelectedRowIndex)
+			    Mask = Beacon.ServerProfile(Self.ProfileMenu.RowTagAt(Self.ProfileMenu.SelectedRowIndex)).Mask
 			  End If
 			  Return Mask
 			End Get
@@ -733,7 +747,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCurrentProfile As Beacon.GenericServerProfile
+		Private mCurrentProfile As Beacon.ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -873,7 +887,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events MapMenu
+#tag Events ProfileMenu
 	#tag Event
 		Sub Change()
 		  Self.Setup()
