@@ -32,6 +32,12 @@ Inherits Beacon.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DeployCapable() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.ServerProfile) As Integer
 		  If Other = Nil Then
 		    Return 1

@@ -303,7 +303,7 @@ End
 		          Continue For I
 		        End If
 		      Next
-		      Win.List.AddRow("", "Server Link: " + Document.ServerProfile(I).Name)
+		      Win.List.AddRow("", Document.ServerProfile(I).LinkPrefix + " Link: " + Document.ServerProfile(I).Name)
 		      Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0) = True
 		      Win.List.RowTagAt(Win.List.LastAddedRowIndex) = Document.ServerProfile(I)
 		      If UseMergeUI Then

@@ -307,6 +307,38 @@ Begin DiscoveryView LocalDiscoveryView
       Scope           =   2
       TabPanelIndex   =   0
    End
+   Begin UITweaks.ResizedPopupMenu MapMenu
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   151
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      SelectedRowIndex=   0
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   356
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   214
+   End
 End
 #tag EndWindow
 
@@ -331,6 +363,19 @@ End
 		  Self.AcceptFileDrop(BeaconFileTypes.IniFile)
 		  Self.ConfigArea.AcceptFileDrop(BeaconFileTypes.IniFile)
 		  Self.SwapButtons()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resize()
+		  Const NaturalMenuWidth = 200
+		  
+		  Var MinLeft As Integer = Self.ChooseFileButton.Left + Self.ChooseFileButton.Width + 12
+		  Var MaxWidth As Integer = Self.CancelButton.Left - (MinLeft + 12)
+		  Var MenuWidth As Integer = Min(NaturalMenuWidth, MaxWidth)
+		  
+		  Self.MapMenu.Width = MenuWidth
+		  Self.MapMenu.Left = MinLeft + ((MaxWidth - MenuWidth) / 2)
 		End Sub
 	#tag EndEvent
 
@@ -376,6 +421,13 @@ End
 		    Self.ConfigArea.Value = Content.Trim
 		  End If
 		  
+		  Select Case Type
+		  Case ConfigFileType.GameIni
+		    Self.mGameIniFile = File
+		  Case ConfigFileType.GameUserSettingsIni
+		    Self.mGameUserSettingsIniFile = File
+		  End Select
+		  
 		  If Not DetectSibling Then
 		    Return
 		  End If
@@ -394,39 +446,6 @@ End
 		  If OtherFile <> Nil And OtherFile.Exists Then
 		    Self.AddFile(OtherFile, False)
 		  End If
-		  
-		  #if false
-		    If Self.mCurrentConfigType <> ConfigFileType.Combo Then
-		      Var Other As FolderItem
-		      Var Type As ConfigFileType = Self.DetectConfigType(Content)
-		      Select Case Type
-		      Case ConfigFileType.GameIni    
-		        Self.mGameIniFile = File
-		        If Self.mCurrentConfigType <> ConfigFileType.GameUserSettingsIni Then
-		          Other = File.Parent.Child("GameUserSettings.ini")
-		          Self.mGameUserSettingsFile = Other
-		        End If
-		      Case ConfigFileType.GameUserSettingsIni    
-		        Self.mGameUserSettingsFile = File
-		        If Self.mCurrentConfigType <> ConfigFileType.GameIni Then
-		          Other = File.Parent.Child("Game.ini")
-		          Self.mGameIniFile = Other
-		        End If
-		      End Select
-		      If Other <> Nil And Other.Exists Then
-		        Var AdditionalContent As String = Self.ReadIniFile(Other)
-		        If AdditionalContent <> "" Then
-		          Content = Content + EndOfLine + EndOfLine + AdditionalContent.DefineEncoding(Encodings.UTF8)
-		        End If
-		      End If
-		    End If
-		    
-		    If Self.ConfigArea.Text = "" Then
-		      Self.ConfigArea.Text = Content
-		    Else
-		      Self.ConfigArea.Text = Self.ConfigArea.Text.Trim + EndOfLine + EndOfLine + Content
-		    End If
-		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -518,7 +537,15 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mGameIniFile As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mGameUserSettingsIniContent As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGameUserSettingsIniFile As FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -567,8 +594,15 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
+		  Var Profile As New Beacon.LocalServerProfile
+		  Profile.Mask = Self.MapMenu.RowTagAt(Self.MapMenu.SelectedRowIndex)
+		  If Self.mGameIniFile <> Nil And Self.mGameUserSettingsIniFile <> Nil Then
+		    Profile.GameIniFile = New BookmarkedFolderItem(Self.mGameIniFile.NativePath, FolderItem.PathModes.Native)
+		    Profile.GameUserSettingsIniFile = New BookmarkedFolderItem(Self.mGameUserSettingsIniFile.NativePath, FolderItem.PathModes.Native)
+		  End If
+		  
 		  Var Engines(0) As Beacon.DiscoveryEngine
-		  Engines(0) = New Beacon.LocalDiscoveryEngine(Self.mGameIniContent, Self.mGameUserSettingsIniContent)
+		  Engines(0) = New Beacon.LocalDiscoveryEngine(Self.mGameIniContent, Self.mGameUserSettingsIniContent, Profile)
 		  Self.ShouldFinish(Engines)
 		End Sub
 	#tag EndEvent
@@ -629,6 +663,17 @@ End
 		Sub ClipboardChanged(Content As String)
 		  Var Type As ConfigFileType = Self.DetectConfigType(Content)
 		  Self.SetSwitcherForType(Type)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MapMenu
+	#tag Event
+		Sub Open()
+		  Var Maps() As Beacon.Map = Beacon.Maps.All
+		  For Each Map As Beacon.Map In Maps
+		    Me.AddRow(Map.Name, Map.Mask)
+		  Next
+		  Me.SelectedRowIndex = 0
 		End Sub
 	#tag EndEvent
 #tag EndEvents

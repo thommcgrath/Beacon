@@ -742,7 +742,16 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function ReadyToDeploy() As Boolean
-		  Return Self.Document <> Nil And Self.Document.ServerProfileCount > 0
+		  If Self.Document = Nil Or Self.Document.ServerProfileCount = 0 Then
+		    Return False
+		  End If
+		  
+		  Var Bound As Integer = Self.Document.ServerProfileCount - 1
+		  For I As Integer = 0 To Bound
+		    If Self.Document.ServerProfile(I) <> Nil And Self.Document.ServerProfile(I).DeployCapable Then
+		      Return True
+		    End If
+		  Next
 		End Function
 	#tag EndMethod
 

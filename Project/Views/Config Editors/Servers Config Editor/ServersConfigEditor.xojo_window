@@ -325,6 +325,8 @@ End
 		      View = New FTPServerView(Beacon.FTPServerProfile(Profile))
 		    Case IsA Beacon.ConnectorServerProfile
 		      View = New ConnectorServerView(Beacon.ConnectorServerProfile(Profile))
+		    Case IsA Beacon.LocalServerProfile
+		      View = New LocalServerView(Beacon.LocalServerProfile(Profile))
 		    Else
 		      Self.CurrentProfileID = ""
 		      Return

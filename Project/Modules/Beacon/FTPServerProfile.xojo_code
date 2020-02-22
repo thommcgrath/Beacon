@@ -55,6 +55,12 @@ Inherits Beacon.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DeployCapable() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Mask() As UInt64
 		  Return Self.mMask
 		End Function

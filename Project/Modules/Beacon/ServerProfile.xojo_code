@@ -38,6 +38,12 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DeployCapable() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function FromDictionary(Dict As Dictionary) As Beacon.ServerProfile
 		  // This isn't a great design because the factory needs to know about all its subclasses, but
 		  // there aren't better alternatives. Xojo's dead code stripping prevents a lookup from working.
@@ -54,7 +60,15 @@ Protected Class ServerProfile
 		    Return New Beacon.FTPServerProfile(Dict)
 		  Case "Connector"
 		    Return New Beacon.ConnectorServerProfile(Dict)
+		  Case "Local"
+		    Return New Beacon.LocalServerProfile(Dict)
 		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LinkPrefix() As String
+		  Return "Server"
 		End Function
 	#tag EndMethod
 

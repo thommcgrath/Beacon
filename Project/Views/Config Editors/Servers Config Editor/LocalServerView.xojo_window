@@ -1,5 +1,5 @@
 #tag Window
-Begin ServerViewContainer ConnectorServerView
+Begin ServerViewContainer LocalServerView
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -25,21 +25,13 @@ Begin ServerViewContainer ConnectorServerView
    Transparent     =   True
    Visible         =   True
    Width           =   600
-   Begin Beacon.ConnectorClientSocket ClientSocket
-      Address         =   ""
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Port            =   0
-      Scope           =   2
-      TabPanelIndex   =   0
-   End
-   Begin BeaconToolbar ControlToolbar
+   Begin BeaconToolbar Header
       AllowAutoDeactivate=   True
       AllowFocus      =   False
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
-      BorderBottom    =   False
+      BorderBottom    =   True
       BorderLeft      =   False
       BorderRight     =   False
       Borders         =   0
@@ -47,7 +39,7 @@ Begin ServerViewContainer ConnectorServerView
       Caption         =   "Untitled"
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   40
+      Height          =   41
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -69,61 +61,107 @@ Begin ServerViewContainer ConnectorServerView
       Visible         =   True
       Width           =   600
    End
-   Begin FadedSeparator ControlsSeparator
+   Begin UITweaks.ResizedLabel MapHelp
       AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      DoubleBuffer    =   False
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
       Enabled         =   True
-      Height          =   1
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   0
+      Italic          =   True
+      Left            =   381
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      Multiline       =   False
       Scope           =   2
-      ScrollSpeed     =   20
+      Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      TextAlignment   =   "0"
+      TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   40
-      Transparent     =   True
+      Top             =   95
+      Transparent     =   False
+      Underline       =   False
+      Value           =   "Does not change the map"
       Visible         =   True
-      Width           =   600
+      Width           =   199
    End
-   Begin FadedSeparator FadedSeparator1
+   Begin UITweaks.ResizedLabel MapLabel
       AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      DoubleBuffer    =   False
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
       Enabled         =   True
-      Height          =   1
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   10
+      Italic          =   False
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   True
+      LockRight       =   False
       LockTop         =   True
+      Multiline       =   False
       Scope           =   2
-      ScrollSpeed     =   20
+      Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
+      TextAlignment   =   "3"
+      TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   103
-      Transparent     =   True
+      Top             =   95
+      Transparent     =   False
+      Underline       =   False
+      Value           =   "Build Config For:"
       Visible         =   True
-      Width           =   580
+      Width           =   172
+   End
+   Begin UITweaks.ResizedPopupMenu MapMenu
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   204
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      SelectedRowIndex=   0
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   95
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   165
    End
    Begin UITweaks.ResizedTextField ServerNameField
       AllowAutoDeactivate=   True
@@ -132,7 +170,6 @@ Begin ServerViewContainer ConnectorServerView
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
@@ -140,11 +177,12 @@ Begin ServerViewContainer ConnectorServerView
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   142
+      Left            =   204
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -154,19 +192,19 @@ Begin ServerViewContainer ConnectorServerView
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   124
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
       Value           =   ""
       Visible         =   True
-      Width           =   438
+      Width           =   376
    End
    Begin UITweaks.ResizedLabel ServerNameLabel
       AllowAutoDeactivate=   True
@@ -190,21 +228,25 @@ Begin ServerViewContainer ConnectorServerView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   4
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   124
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       Value           =   "Server Name:"
       Visible         =   True
-      Width           =   110
+      Width           =   172
    End
-   Begin UITweaks.ResizedLabel ServerStatusField
+   Begin UITweaks.ResizedTextField GameIniPathField
       AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF00
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
@@ -212,33 +254,69 @@ Begin ServerViewContainer ConnectorServerView
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
       Height          =   22
+      Hint            =   ""
       Index           =   -2147483648
-      InitialParent   =   ""
       Italic          =   False
-      Left            =   142
+      Left            =   204
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
-      Multiline       =   False
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   True
       Scope           =   2
-      Selectable      =   False
-      TabIndex        =   5
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   61
+      Top             =   127
       Transparent     =   False
       Underline       =   False
-      Value           =   "Checking…"
+      ValidationMask  =   ""
+      Value           =   ""
       Visible         =   True
-      Width           =   438
+      Width           =   274
    End
-   Begin UITweaks.ResizedLabel ServerStatusLabel
+   Begin UITweaks.ResizedPushButton GameIniChooseButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "Choose…"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   490
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      MacButtonStyle  =   "0"
+      Scope           =   2
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   128
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   90
+   End
+   Begin UITweaks.ResizedLabel GameIniPathLabel
       AllowAutoDeactivate=   True
       Bold            =   False
       DataField       =   ""
@@ -260,27 +338,26 @@ Begin ServerViewContainer ConnectorServerView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   6
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   61
+      Top             =   127
       Transparent     =   False
       Underline       =   False
-      Value           =   "Server Status:"
+      Value           =   "Game.ini File:"
       Visible         =   True
-      Width           =   110
+      Width           =   172
    End
-   Begin UITweaks.ResizedTextField AddressField
+   Begin UITweaks.ResizedTextField GameUserSettingsIniPathField
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowSpellChecking=   False
       AllowTabs       =   False
       BackgroundColor =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
@@ -288,11 +365,12 @@ Begin ServerViewContainer ConnectorServerView
       FontSize        =   0.0
       FontUnit        =   0
       Format          =   ""
+      HasBorder       =   True
       Height          =   22
       Hint            =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   142
+      Left            =   204
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -300,93 +378,7 @@ Begin ServerViewContainer ConnectorServerView
       LockTop         =   True
       MaximumCharactersAllowed=   0
       Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   "0"
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   158
-      Transparent     =   False
-      Underline       =   False
-      ValidationMask  =   ""
-      Value           =   ""
-      Visible         =   True
-      Width           =   438
-   End
-   Begin UITweaks.ResizedTextField PortField
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
-      BackgroundColor =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Format          =   ""
-      Height          =   22
-      Hint            =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   142
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      MaximumCharactersAllowed=   0
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   "0"
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   192
-      Transparent     =   False
-      Underline       =   False
-      ValidationMask  =   ""
-      Value           =   ""
-      Visible         =   True
-      Width           =   100
-   End
-   Begin UITweaks.ResizedTextField KeyField
-      AllowAutoDeactivate=   True
-      AllowFocusRing  =   True
-      AllowSpellChecking=   False
-      AllowTabs       =   False
-      BackgroundColor =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Format          =   ""
-      Height          =   22
-      Hint            =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   142
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      MaximumCharactersAllowed=   0
-      Password        =   False
-      ReadOnly        =   False
+      ReadOnly        =   True
       Scope           =   2
       TabIndex        =   9
       TabPanelIndex   =   0
@@ -394,50 +386,47 @@ Begin ServerViewContainer ConnectorServerView
       TextAlignment   =   "0"
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   226
+      Top             =   161
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
       Value           =   ""
       Visible         =   True
-      Width           =   438
+      Width           =   274
    End
-   Begin UITweaks.ResizedLabel AddressLabel
+   Begin UITweaks.ResizedPushButton GameUserSettingsIniChooseButton
       AllowAutoDeactivate=   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
+      Cancel          =   False
+      Caption         =   "Choose…"
+      Default         =   False
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   22
+      Height          =   20
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   20
+      Left            =   490
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
-      Multiline       =   False
+      MacButtonStyle  =   "0"
       Scope           =   2
-      Selectable      =   False
       TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
-      TextAlignment   =   "3"
-      TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   158
+      Top             =   162
       Transparent     =   False
       Underline       =   False
-      Value           =   "Address:"
       Visible         =   True
-      Width           =   110
+      Width           =   90
    End
-   Begin UITweaks.ResizedLabel PortLabel
+   Begin UITweaks.ResizedLabel GameUserSettingsIniPathLabel
       AllowAutoDeactivate=   True
       Bold            =   False
       DataField       =   ""
@@ -465,250 +454,88 @@ Begin ServerViewContainer ConnectorServerView
       TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   192
+      Top             =   161
       Transparent     =   False
       Underline       =   False
-      Value           =   "Port:"
+      Value           =   "GameUserSettings.ini File:"
       Visible         =   True
-      Width           =   110
-   End
-   Begin UITweaks.ResizedLabel KeyLabel
-      AllowAutoDeactivate=   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      Height          =   22
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   12
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextAlignment   =   "3"
-      TextColor       =   &c00000000
-      Tooltip         =   ""
-      Top             =   226
-      Transparent     =   False
-      Underline       =   False
-      Value           =   "Encryption Key:"
-      Visible         =   True
-      Width           =   110
-   End
-   Begin Timer RefreshTimer
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Period          =   30000
-      RunMode         =   "0"
-      Scope           =   2
-      TabPanelIndex   =   0
+      Width           =   172
    End
 End
 #tag EndWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
-		  Self.ClientSocket.Close
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Open()
-		  Self.ControlToolbar.Caption = Self.mProfile.Name
+		  Self.Header.Caption = Self.mProfile.Name
 		  Self.ServerNameField.Value = Self.mProfile.Name
-		  Self.AddressField.Value = Self.mProfile.Address
-		  Self.PortField.Value = Self.mProfile.Port.ToString
-		  Self.KeyField.Value = Self.mProfile.PreSharedKey
+		  Self.MapMenu.SelectByTag(Self.mProfile.Mask)
+		  If Self.mProfile.GameIniFile <> Nil Then
+		    Self.GameIniPathField.Value = Self.mProfile.GameIniFile.NativePath
+		  End If
+		  If Self.mProfile.GameUserSettingsIniFile <> Nil Then
+		    Self.GameUserSettingsIniPathField.Value = Self.mProfile.GameUserSettingsIniFile.NativePath
+		  End If
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Profile As Beacon.ConnectorServerProfile)
+		Sub Constructor(Profile As Beacon.LocalServerProfile)
 		  Self.mProfile = Profile
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub RefreshServerStatus()
-		  Self.RefreshTimer.RunMode = Timer.RunModes.Off
+		Private Function DetectConfigType(File As FolderItem) As String
+		  Var Content As String = File.Read
+		  Var GameIniPos As Integer = Content.IndexOf(Beacon.ShooterGameHeader)
+		  Var SettingsIniPos As Integer = Content.IndexOf(Beacon.ServerSettingsHeader)
 		  
-		  If IsNumeric(Self.PortField.Value) = False Or Self.AddressField.Value.Trim = "" Or Self.KeyField.Value.Trim = "" Then
-		    Self.Status = ServerStatus.UnableToCheck
-		    Self.ClientSocket.Close
-		    Return
+		  If GameIniPos > -1 And SettingsIniPos = -1 Then
+		    Return "Game.ini"
+		  ElseIf SettingsIniPos > -1 And GameIniPos = -1 Then
+		    Return "GameUserSettings.ini"
+		  ElseIf File <> Nil Then
+		    Select Case File.Name
+		    Case "Game.ini", "GameUserSettings.ini"
+		      Return File.Name
+		    End Select
 		  End If
 		  
-		  Var Port As Integer = CDbl(Self.PortField.Value)
-		  Var Address As String = Self.AddressField.Value.Trim
-		  Var Key As String = Self.KeyField.Value.Trim
-		  
-		  Self.Status = ServerStatus.Checking
-		  
-		  If Self.ClientSocket.IsConnected And Self.mLastTestedAddress = Address And Self.mLastTestedPort = Port And Self.mLastTestedKey.Compare(Key, ComparisonOptions.CaseSensitive) = 0 Then
-		    Var Message As New Dictionary
-		    Message.Value("Command") = "Status"
-		    Self.ClientSocket.Write(Message)
-		    Return
-		  End If
-		  
-		  Self.ClientSocket.Close
-		  
-		  Self.mLastTestedAddress = Address
-		  Self.mLastTestedPort = Port
-		  Self.mLastTestedKey = Key
-		  
-		  Self.ClientSocket.Address = Address
-		  Self.ClientSocket.Port = Port
-		  Self.ClientSocket.Connect(Key)
-		End Sub
+		  Return "Unknown"
+		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mLastTestedAddress As String
+		Private mProfile As Beacon.LocalServerProfile
 	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mLastTestedKey As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mLastTestedPort As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mProfile As Beacon.ConnectorServerProfile
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mStatus As ServerStatus
-	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h21
-		#tag Getter
-			Get
-			  Return Self.mStatus
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Value = Self.mStatus Then
-			    Return
-			  End If
-			  
-			  Self.mStatus = Value
-			  Select Case Value
-			  Case ServerStatus.Checking
-			    Self.ServerStatusField.Value = "Checking…"
-			    Self.ControlToolbar.PowerButton.Enabled = False
-			    Self.ControlToolbar.PowerButton.Toggled = False
-			  Case ServerStatus.Error
-			    Self.ServerStatusField.Value = "Error, check server details"
-			    Self.ControlToolbar.PowerButton.Enabled = False
-			    Self.ControlToolbar.PowerButton.Toggled = False
-			  Case ServerStatus.Started
-			    Self.ServerStatusField.Value = "Started"
-			    Self.ControlToolbar.PowerButton.Enabled = True
-			    Self.ControlToolbar.PowerButton.Toggled = True
-			  Case ServerStatus.Stopped
-			    Self.ServerStatusField.Value = "Stopped"
-			    Self.ControlToolbar.PowerButton.Enabled = True
-			    Self.ControlToolbar.PowerButton.Toggled = False
-			  Case ServerStatus.UnableToCheck
-			    Self.ServerStatusField.Value = "Cannot check until server details are complete"
-			    Self.ControlToolbar.PowerButton.Enabled = False
-			    Self.ControlToolbar.PowerButton.Toggled = False
-			  End Select
-			End Set
-		#tag EndSetter
-		Private Status As ServerStatus
-	#tag EndComputedProperty
-
-
-	#tag Enum, Name = ServerStatus, Type = Integer, Flags = &h21
-		Checking
-		  Error
-		  Started
-		  Stopped
-		UnableToCheck
-	#tag EndEnum
 
 
 #tag EndWindowCode
 
-#tag Events ClientSocket
+#tag Events MapMenu
 	#tag Event
-		Sub Connected()
-		  Self.Status = ServerStatus.Checking
-		  
-		  Var Message As New Dictionary
-		  Message.Value("Command") = "Status"
-		  Me.Write(Message)
+		Sub Change()
+		  Var Mask As UInt64
+		  If Me.SelectedRowIndex = -1 Then
+		    Mask = Beacon.Maps.All.Mask
+		  Else
+		    Mask = Me.RowTagAt(Me.SelectedRowIndex)
+		  End If
+		  Self.mProfile.Mask = Mask
+		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
-	#tag Event
-		Sub MessageReceived(Message As Dictionary)
-		  Var Command As String = Message.Lookup("Command", "")
-		  
-		  Select Case Command
-		  Case "Status"
-		    Var Started As Boolean = Message.Lookup("Status", "stopped") = "started"
-		    Self.Status = If(Started, ServerStatus.Started, ServerStatus.Stopped)
-		    Self.RefreshTimer.Reset
-		    Self.RefreshTimer.RunMode = Timer.RunModes.Single
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Error(Err As RuntimeException)
-		  #Pragma Unused Err
-		  
-		  Self.Status = ServerStatus.Error
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ControlToolbar
 	#tag Event
 		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("PowerButton", IconToolbarPower, False, "Start or stop the server."))
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "PowerButton"
-		    If Self.Status = ServerStatus.Started And Self.ClientSocket.IsConnected Then
-		      Var StopMessage As String = StopMessageDialog.Present(Self)
-		      If StopMessage = "" Then
-		        Return
-		      End If
-		      
-		      Var Message As New Dictionary
-		      Message.Value("Command") = "Stop"
-		      Message.Value("Message") = StopMessage
-		      Self.ClientSocket.Write(Message)
-		      Self.RefreshServerStatus()
-		    ElseIf Self.Status = ServerStatus.Stopped And Self.ClientSocket.IsConnected Then
-		      Var Message As New Dictionary
-		      Message.Value("Command") = "Start"
-		      Self.ClientSocket.Write(Message)
-		      Self.RefreshServerStatus()
-		    End If
-		  End Select
+		  Me.AddRow("All Maps", Beacon.Maps.All.Mask)
+		  
+		  Var Maps() As Beacon.Map = Beacon.Maps.All
+		  For Each Map As Beacon.Map In Maps
+		    Me.AddRow(Map.Name, Map.Mask)
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -716,44 +543,54 @@ End
 	#tag Event
 		Sub TextChange()
 		  Self.mProfile.Name = Me.Value
-		  Self.ControlToolbar.Caption = Me.Value
+		  Self.Header.Caption = Me.Value
 		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events AddressField
-	#tag Event
-		Sub TextChange()
-		  Self.mProfile.Address = Me.Value.Trim
-		  Self.Changed = Self.mProfile.Modified
-		  Self.RefreshServerStatus()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events PortField
-	#tag Event
-		Sub TextChange()
-		  If IsNumeric(Me.Value) Then
-		    Self.mProfile.Port = CDbl(Me.Value)
-		    Self.Changed = Self.mProfile.Modified
-		  End If
-		  Self.RefreshServerStatus()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events KeyField
-	#tag Event
-		Sub TextChange()
-		  Self.mProfile.PreSharedKey = Me.Value.Trim
-		  Self.Changed = Self.mProfile.Modified
-		  Self.RefreshServerStatus()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events RefreshTimer
+#tag Events GameIniChooseButton
 	#tag Event
 		Sub Action()
-		  Self.RefreshServerStatus()
+		  Var Dialog As New OpenFileDialog
+		  Dialog.Filter = BeaconFileTypes.IniFile
+		  Dialog.SuggestedFileName = "Game.ini"
+		  
+		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  If File = Nil Then
+		    Return
+		  End If
+		  
+		  Var DetectedType As String = Self.DetectConfigType(File)
+		  If DetectedType <> "Game.ini" And Self.ShowConfirm("The selected file does not appear to be a Game.ini file.", "You can still choose this file if you really want, but its content does not look like a Game.ini file. Proceed with caution.", "Use Anyway", "Cancel") = False Then
+		    Return
+		  End If
+		  
+		  Self.mProfile.GameIniFile = New BookmarkedFolderItem(File.NativePath, FolderItem.PathModes.Native)
+		  Self.GameIniPathField.Value = File.NativePath
+		  Self.Changed = Self.mProfile.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events GameUserSettingsIniChooseButton
+	#tag Event
+		Sub Action()
+		  Var Dialog As New OpenFileDialog
+		  Dialog.Filter = BeaconFileTypes.IniFile
+		  Dialog.SuggestedFileName = "GameUserSettings.ini"
+		  
+		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  If File = Nil Then
+		    Return
+		  End If
+		  
+		  Var DetectedType As String = Self.DetectConfigType(File)
+		  If DetectedType <> "GameUserSettings.ini" And Self.ShowConfirm("The selected file does not appear to be a GameUserSettings.ini file.", "You can still choose this file if you really want, but its content does not look like a GameUserSettings.ini file. Proceed with caution.", "Use Anyway", "Cancel") = False Then
+		    Return
+		  End If
+		  
+		  Self.mProfile.GameUserSettingsIniFile = New BookmarkedFolderItem(File.NativePath, FolderItem.PathModes.Native)
+		  Self.GameUserSettingsIniPathField.Value = File.NativePath
+		  Self.Changed = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -18,9 +18,10 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(GameIniContent As String, GameUserSettingsIniContent As String)
+		Sub Constructor(GameIniContent As String, GameUserSettingsIniContent As String, Profile As Beacon.LocalServerProfile)
 		  Self.mGameIniContent = GameIniContent
 		  Self.mGameUserSettingsIniContent = GameUserSettingsIniContent
+		  Self.mProfile = Profile
 		End Sub
 	#tag EndMethod
 
@@ -60,7 +61,11 @@ Implements Beacon.DiscoveryEngine
 		Function Map() As UInt64
 		  // Part of the Beacon.DiscoveryEngine interface.
 		  
-		  Return Beacon.Maps.TheIsland
+		  If Self.mProfile <> Nil Then
+		    Return Self.mProfile.Mask
+		  Else
+		    Return Beacon.Maps.TheIsland
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -72,7 +77,7 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h0
 		Function Profile() As Beacon.ServerProfile
-		  Return Nil
+		  Return Self.mProfile
 		End Function
 	#tag EndMethod
 
@@ -95,6 +100,10 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Property, Flags = &h21
 		Private mGameUserSettingsIniContent As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProfile As Beacon.LocalServerProfile
 	#tag EndProperty
 
 

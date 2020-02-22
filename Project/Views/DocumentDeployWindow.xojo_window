@@ -452,9 +452,11 @@ End
 		  For I As Integer = 0 To Self.mDocument.ServerProfileCount - 1
 		    Var Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(I)
 		    
-		    Self.ServerSelectionList.AddRow("", Profile.Name, Profile.SecondaryName)
-		    Self.ServerSelectionList.RowTagAt(Self.ServerSelectionList.LastAddedRowIndex) = Profile
-		    Self.ServerSelectionList.CellCheckBoxValueAt(Self.ServerSelectionList.LastAddedRowIndex, 0) = Profile.Enabled
+		    If Profile <> Nil And Profile.DeployCapable Then
+		      Self.ServerSelectionList.AddRow("", Profile.Name, Profile.SecondaryName)
+		      Self.ServerSelectionList.RowTagAt(Self.ServerSelectionList.LastAddedRowIndex) = Profile
+		      Self.ServerSelectionList.CellCheckBoxValueAt(Self.ServerSelectionList.LastAddedRowIndex, 0) = Profile.Enabled
+		    End If
 		  Next
 		  Self.ServerSelectionList.Sort
 		End Sub
@@ -484,6 +486,8 @@ End
 		        DeploymentEngine = New Beacon.FTPDeploymentEngine(Beacon.FTPServerProfile(Profile))
 		      Case IsA Beacon.ConnectorServerProfile
 		        DeploymentEngine = New Beacon.ConnectorDeploymentEngine(Beacon.ConnectorServerProfile(Profile))
+		      Case IsA Beacon.LocalServerProfile
+		        DeploymentEngine = New Beacon.LocalDeploymentEngine(Beacon.LocalServerProfile(Profile))
 		      Else
 		        Continue
 		      End Select
