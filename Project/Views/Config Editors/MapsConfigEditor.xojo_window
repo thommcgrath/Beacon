@@ -72,6 +72,14 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  #Pragma Unused UserData
+		  
+		  Self.SetupUI
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
