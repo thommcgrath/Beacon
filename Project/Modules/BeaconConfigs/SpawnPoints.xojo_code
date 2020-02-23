@@ -323,6 +323,23 @@ Implements Iterable
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function GetSpawnPoint(Path As String, Mode As Integer) As Beacon.SpawnPoint
+		  Var Key As String = Path
+		  Select Case Mode
+		  Case Beacon.SpawnPoint.ModeOverride
+		    Key = Key + ":Override"
+		  Case Beacon.SpawnPoint.ModeAppend
+		    Key = Key + ":Append"
+		  Case Beacon.SpawnPoint.ModeRemove
+		    Key = Key + ":Remove"
+		  End Select
+		  If Self.mSpawnPoints.HasKey(Key) Then
+		    Return Beacon.SpawnPoint(Self.mSpawnPoints.Value(Key)).ImmutableVersion
+		  End If
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Shared Sub HandleConfig(SpawnPoints As BeaconConfigs.SpawnPoints, ParsedData As Dictionary, ConfigKey As String)
 		  If Not ParsedData.HasKey(ConfigKey) Then

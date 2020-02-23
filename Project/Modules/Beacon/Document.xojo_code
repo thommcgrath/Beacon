@@ -121,6 +121,123 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ConvertDinoReplacementsToSpawnOverrides() As Integer
+		  If Self.HasConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName) = False Then
+		    Return 0
+		  End If
+		  
+		  Var DinoConfig As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments(Self.ConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName))
+		  If DinoConfig = Nil Then
+		    Return 0
+		  End If
+		  
+		  Var SpawnConfig As BeaconConfigs.SpawnPoints // Don't create it yet
+		  
+		  Var CountChanges As Integer
+		  Var Behaviors() As Beacon.CreatureBehavior = DinoConfig.All
+		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
+		    Var ReplacedCreature As Beacon.Creature = Behavior.TargetCreature
+		    Var ReplacementCreature As Beacon.Creature = Behavior.ReplacementCreature
+		    If ReplacementCreature = Nil Then
+		      Continue
+		    End If
+		    
+		    Var ConfigUpdated As Boolean
+		    Var SpawnPoints() As Beacon.SpawnPoint = Beacon.Data.GetSpawnPointsForCreature(ReplacedCreature, Self.Mods, "")
+		    For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
+		      Var Limit As Double = SpawnPoint.Limit(ReplacedCreature)
+		      Var NewSets() As Beacon.SpawnPointSet
+		      For Each Set As Beacon.SpawnPointSet In SpawnPoint
+		        Var NewSet As Beacon.MutableSpawnPointSet
+		        For Each Entry As Beacon.SpawnPointSetEntry In Set
+		          If Entry.Creature = ReplacedCreature Then
+		            If NewSet = Nil Then
+		              NewSet = New Beacon.MutableSpawnPointSet()
+		              NewSet.Weight = Set.Weight
+		              NewSet.Label = ReplacementCreature.Label
+		              If IsNull(Set.SpreadRadius) Then
+		                NewSet.SpreadRadius = 650
+		              Else
+		                NewSet.SpreadRadius = Set.SpreadRadius
+		              End If
+		            End If
+		            
+		            Const SpreadMultiplierHigh = 1.046153846
+		            Const SpreadMultiplierLow = 0.523076923
+		            
+		            Var NewEntry As Beacon.MutableSpawnPointSetEntry
+		            
+		            NewEntry = New Beacon.MutableSpawnPointSetEntry(ReplacementCreature)
+		            NewEntry.SpawnChance = 0.7
+		            NewSet.Append(NewEntry)
+		            
+		            NewEntry = New Beacon.MutableSpawnPointSetEntry(ReplacementCreature)
+		            NewEntry.SpawnChance = 1.0
+		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierHigh), 0.0)
+		            NewSet.Append(NewEntry)
+		            
+		            NewEntry = New Beacon.MutableSpawnPointSetEntry(ReplacementCreature)
+		            NewEntry.SpawnChance = 0.2
+		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierLow), 0.0)
+		            NewSet.Append(NewEntry)
+		            
+		            NewEntry = New Beacon.MutableSpawnPointSetEntry(ReplacementCreature)
+		            NewEntry.SpawnChance = 0.25
+		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierLow) * -1, 0.0)
+		            NewSet.Append(NewEntry)
+		            
+		            NewEntry = New Beacon.MutableSpawnPointSetEntry(ReplacementCreature)
+		            NewEntry.SpawnChance = 0.6
+		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierHigh) * -1, 0.0)
+		            NewSet.Append(NewEntry)
+		          End If
+		        Next
+		        If NewSet <> Nil Then
+		          NewSets.AddRow(NewSet)
+		        End If
+		      Next
+		      
+		      If NewSets.Count > 0 Then
+		        If SpawnConfig = Nil Then
+		          SpawnConfig = BeaconConfigs.SpawnPoints(Self.ConfigGroup(BeaconConfigs.SpawnPoints.ConfigName, True))
+		        End If
+		        
+		        Var Override As Beacon.SpawnPoint = SpawnConfig.GetSpawnPoint(SpawnPoint.Path, Beacon.SpawnPoint.ModeAppend)
+		        If Override = Nil Then
+		          Override = SpawnConfig.GetSpawnPoint(SpawnPoint.Path, Beacon.SpawnPoint.ModeOverride)
+		        End If
+		        If Override = Nil Then
+		          Override = New Beacon.MutableSpawnPoint(SpawnPoint.Path, SpawnPoint.ObjectID)
+		          Beacon.MutableSpawnPoint(Override).Mode = Beacon.SpawnPoint.ModeAppend
+		        End If
+		        
+		        Var Mutable As Beacon.MutableSpawnPoint = Override.MutableVersion
+		        Mutable.Limit(ReplacementCreature) = Limit
+		        For Each Set As Beacon.SpawnPointSet In NewSets
+		          Mutable.AddSet(Set)
+		        Next
+		        
+		        SpawnConfig.Add(Mutable)
+		        ConfigUpdated = True
+		      End If
+		    Next
+		    
+		    If ConfigUpdated Then
+		      CountChanges = CountChanges + 1
+		      
+		      Var NewBehavior As New Beacon.MutableCreatureBehavior(Behavior)
+		      NewBehavior.ProhibitSpawning = True
+		      NewBehavior.ReplacementCreature = Nil
+		      DinoConfig.RemoveBehavior(ReplacedCreature)
+		      DinoConfig.Add(NewBehavior)
+		    End If
+		  Next
+		  
+		  Return CountChanges
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Decrypt(Data As String) As String
 		  Return BeaconEncryption.SymmetricDecrypt(Self.mDocumentPassword, DecodeBase64(Data))
 		End Function
@@ -985,6 +1102,10 @@ Implements ObservationKit.Observable
 
 	#tag Property, Flags = &h21
 		Private mMods As Beacon.StringList
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mObservers As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
