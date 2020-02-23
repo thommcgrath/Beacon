@@ -879,7 +879,7 @@ End
 		  Next
 		  
 		  If Finished Then
-		    Dim BackupsFolder As FolderItem = App.ApplicationSupport.Child("Backups")
+		    Var BackupsFolder As FolderItem = App.BackupsFolder
 		    If Not BackupsFolder.Exists Then
 		      BackupsFolder.CreateFolder
 		    End If
