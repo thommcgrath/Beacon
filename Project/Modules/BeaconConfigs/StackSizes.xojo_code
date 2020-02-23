@@ -4,7 +4,6 @@ Inherits Beacon.ConfigGroup
 	#tag Event
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
 		  #Pragma Unused Profile
-		  #Pragma Unused SourceDocument
 		  
 		  For Each Entry As DictionaryEntry In Self.mOverrides
 		    Var Path As String = Entry.Key
@@ -13,7 +12,7 @@ Inherits Beacon.ConfigGroup
 		      Engram = Beacon.Engram.CreateFromPath(Path)
 		    End If
 		    
-		    If IsNull(Engram) = False And Engram.ValidForMask(Profile.Mask) And Engram.ValidForMods(SourceDocument.Mods) Then
+		    If IsNull(Engram) = False And Engram.ValidForMods(SourceDocument.Mods) Then
 		      Var StackSize As Integer = Entry.Value
 		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemMaxQuantity", "(ItemClassString=""" + Engram.ClassString + """,Quantity=(MaxItemQuantity=" + StackSize.ToString + ",bIgnoreMultiplier=true))"))
 		    End If

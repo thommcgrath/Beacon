@@ -20,8 +20,10 @@ Inherits Beacon.ConfigGroup
 
 	#tag Event
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		  #Pragma Unused Profile
+		  
 		  For Each Cost As Beacon.CraftingCost In Self.mCosts
-		    If IsNull(Cost.Engram) = False And Cost.Engram.ValidForMask(Profile.Mask) And Cost.Engram.ValidForMods(SourceDocument.Mods) Then
+		    If IsNull(Cost.Engram) = False And Cost.Engram.ValidForMods(SourceDocument.Mods) Then
 		      Var StringValue As String = Cost.StringValue
 		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts", StringValue))
 		    End If
