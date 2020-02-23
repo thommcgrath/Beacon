@@ -388,7 +388,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Versions.AddRow(1)
 		        ElseIf Filename.BeginsWith(SearchPrefix) And Filename.EndsWith(SearchSuffix) Then
 		          Candidates.AddRow(SearchFolder.ChildAt(I))
-		          Versions.AddRow(Integer.FromString(Filename.Middle(SearchPrefix.Length + 1, Filename.Length - (SearchPrefix.Length + SearchSuffix.Length))))
+		          Versions.AddRow(Integer.FromString(Filename.Middle(SearchPrefix.Length + 1, Filename.Length - (SearchPrefix.Length + SearchSuffix.Length + 1))))
 		        End If
 		      Next
 		      
