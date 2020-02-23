@@ -13,10 +13,10 @@ Protected Module Maps
 		  Maps(1) = Beacon.Maps.ScorchedEarth
 		  Maps(2) = Beacon.Maps.Aberration
 		  Maps(3) = Beacon.Maps.Extinction
-		  Maps(4) = Beacon.Maps.TheCenter
-		  Maps(5) = Beacon.Maps.Ragnarok
-		  Maps(6) = Beacon.Maps.Valguero
-		  Maps(7) = Beacon.Maps.Genesis
+		  Maps(4) = Beacon.Maps.Genesis
+		  Maps(5) = Beacon.Maps.TheCenter
+		  Maps(6) = Beacon.Maps.Ragnarok
+		  Maps(7) = Beacon.Maps.Valguero
 		  Return Maps
 		  
 		End Function

@@ -384,7 +384,7 @@ End
 		  CopyProfileMenuItem.Enabled = False
 		  Base.AddMenu(CopyProfileMenuItem)
 		  
-		  Var BackupsRoot As FolderItem = App.ApplicationSupport.Child("Backups")
+		  Var BackupsRoot As FolderItem = App.BackupsFolder
 		  
 		  Var RowIndex As Integer = Me.RowFromXY(X, Y)
 		  If RowIndex = -1 Then

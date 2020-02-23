@@ -137,6 +137,7 @@ Implements NotificationKit.Receiver
 		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_CheckBetaExpiration)
 		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_PrivacyCheck)
 		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_SetupDatabase)
+		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_CleanupConfigBackups)
 		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_ShowMainWindow)
 		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_RequestUser)
 		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_CheckUpdates)
@@ -307,6 +308,12 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function BackupsFolder() As FolderItem
+		  Return Self.ApplicationSupport.Child("Backups")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function BuildNumber() As Integer
 		  Return (Self.MajorVersion * 10000000) + (Self.MinorVersion * 100000) + (Self.BugVersion * 1000) + (Self.StageCode * 100) + Self.NonReleaseVersion
 		End Function
@@ -367,6 +374,67 @@ Implements NotificationKit.Receiver
 		      UpdateWindow.Present()
 		    End If
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub CleanupConfigBackups()
+		  Var BackupsRoot As FolderItem = Self.BackupsFolder
+		  If BackupsRoot = Nil Or BackupsRoot.Exists = False Then
+		    Return
+		  End If
+		  
+		  Var Matcher As New Regex
+		  Matcher.SearchPattern = "^(\d{4})-(\d{2})-(\d{2}) (\d{2}).(\d{2}).(\d{2}) GMT$"
+		  
+		  Var Zone As New TimeZone(0)
+		  For Each ServerFolder As FolderItem In BackupsRoot.Children
+		    If ServerFolder.IsFolder = False Then
+		      Continue
+		    End If
+		    
+		    Var Timestamps() As Integer
+		    Var Folders() As FolderItem
+		    For Each BackupFolder As FolderItem In ServerFolder.Children
+		      Try
+		        If BackupFolder.IsFolder = False Then
+		          Continue
+		        End If
+		        
+		        Var Matches As RegexMatch = Matcher.Search(BackupFolder.Name)
+		        If Matches = Nil Then
+		          Continue
+		        End If
+		        
+		        Var Year As Integer = Matches.SubExpressionString(1).ToInteger
+		        Var Month As Integer = Matches.SubExpressionString(2).ToInteger
+		        Var Day As Integer = Matches.SubExpressionString(3).ToInteger
+		        Var Hour As Integer = Matches.SubExpressionString(4).ToInteger
+		        Var Minute As Integer = Matches.SubExpressionString(5).ToInteger
+		        Var Second As Integer = Matches.SubExpressionString(6).ToInteger
+		        
+		        Var BackupTime As New DateTime(Year, Month, Day, Hour, Minute, Second, 0, Zone)
+		        Timestamps.AddRow(BackupTime.SecondsFrom1970)
+		        Folders.AddRow(BackupFolder)
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
+		    
+		    // Keep the very first and the most recent three
+		    If Timestamps.Count < 5 Then
+		      Continue
+		    End If
+		    
+		    Timestamps.SortWith(Folders)
+		    
+		    For I As Integer = 1 To Timestamps.LastRowIndex - 3
+		      If Folders(I).DeepDelete Then
+		        App.Log("Removed backup " + Folders(I).NativePath)
+		      Else
+		        App.Log("Unable to clean up backup " + Folders(I).NativePath)
+		      End If
+		    Next
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -629,6 +697,13 @@ Implements NotificationKit.Receiver
 		  Else
 		    Self.NextLaunchQueueTask()
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_CleanupConfigBackups()
+		  Self.CleanupConfigBackups()
+		  Self.NextLaunchQueueTask
 		End Sub
 	#tag EndMethod
 

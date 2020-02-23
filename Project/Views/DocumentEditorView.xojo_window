@@ -261,6 +261,10 @@ End
 		Sub Close()
 		  NotificationKit.Ignore(Self, IdentityManager.Notification_IdentityChanged)
 		  
+		  If Self.mController.Document <> Nil Then
+		    Self.mController.Document.RemoveObserver(Self, "Title")
+		  End If
+		  
 		  If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
 		    DocumentImportWindow(Self.mImportWindowRef.Value).Cancel
 		    Self.mImportWindowRef = Nil
@@ -299,6 +303,7 @@ End
 		  If Self.mController.Document <> Nil Then
 		    Var DocumentID As String = Self.mController.Document.DocumentID
 		    Self.CurrentConfigName = Preferences.LastUsedConfigName(DocumentID)
+		    Self.mController.Document.AddObserver(Self, "Title")
 		  End If
 		  
 		  NotificationKit.Watch(Self, IdentityManager.Notification_IdentityChanged)
@@ -719,6 +724,9 @@ End
 		  Select Case Key
 		  Case "MinimumWidth", "MinimumHeight"
 		    Self.UpdateMinimumDimensions()
+		  Case "Title"
+		    Self.Title = Self.mController.Document.Title
+		    Self.Changed = True
 		  End Select
 		End Sub
 	#tag EndMethod
