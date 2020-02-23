@@ -4,11 +4,10 @@ Inherits Beacon.ConfigGroup
 	#tag Event
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
 		  #Pragma Unused Profile
-		  #Pragma Unused SourceDocument
 		  
 		  Var Behaviors() As Beacon.CreatureBehavior = Self.All
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
-		    If Behavior.TargetCreature.ValidForMask(Profile.Mask) = False Or Behavior.TargetCreature.ValidForMods(SourceDocument.Mods) = False Then
+		    If Behavior.TargetCreature.ValidForMods(SourceDocument.Mods) = False Then
 		      Continue
 		    End If
 		    
