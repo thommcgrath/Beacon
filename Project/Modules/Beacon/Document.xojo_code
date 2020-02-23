@@ -207,7 +207,9 @@ Implements ObservationKit.Observable
 		          Override = SpawnConfig.GetSpawnPoint(SpawnPoint.Path, Beacon.SpawnPoint.ModeOverride)
 		        End If
 		        If Override = Nil Then
-		          Override = New Beacon.MutableSpawnPoint(SpawnPoint.Path, SpawnPoint.ObjectID)
+		          Override = New Beacon.MutableSpawnPoint(SpawnPoint)
+		          Beacon.MutableSpawnPoint(Override).ResizeTo(-1)
+		          Beacon.MutableSpawnPoint(Override).LimitsString = "{}"
 		          Beacon.MutableSpawnPoint(Override).Mode = Beacon.SpawnPoint.ModeAppend
 		        End If
 		        
