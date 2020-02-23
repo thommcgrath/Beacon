@@ -343,14 +343,6 @@ Implements Beacon.DeploymentEngine
 		    Var Data As Dictionary = Response.Value("data")
 		    Var GameServer As Dictionary = Data.Value("gameserver")
 		    
-		    If Self.mMask = 0 Then
-		      Var Settings As Dictionary = GameServer.Value("settings")
-		      Var Config As Dictionary = Settings.Value("config")
-		      Var MapText As String = Config.Value("map")
-		      Var MapParts() As String = MapText.Split(",")
-		      Self.mMask = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.LastRowIndex))
-		    End If
-		    
 		    Self.mServerStatus = GameServer.Value("status")
 		    If Self.mInitialServerStatus = "" Then
 		      Self.mInitialServerStatus = Self.mServerStatus
@@ -368,12 +360,18 @@ Implements Beacon.DeploymentEngine
 		      Var GeneralSettings As Dictionary = Settings.Value("general")
 		      Self.mExpertMode = GeneralSettings.Value("expertMode") = "true"
 		      
+		      
 		      If Self.mDidRebuildStart = False And Self.mExpertMode = False Then
 		        // Since the server is not in expert mode, issue a start to rebuild the ini, just in case
 		        Self.mDidRebuildStart = True
 		        Self.StartServer(True)
 		        Return
 		      End If
+		      
+		      Var Config As Dictionary = Settings.Value("config")
+		      Var MapText As String = Config.Value("map")
+		      Var MapParts() As String = MapText.Split(",")
+		      Self.mProfile.Mask = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.LastRowIndex))
 		      
 		      Var Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
 		      Var CommandLineOptions() As Beacon.ConfigValue
@@ -404,7 +402,8 @@ Implements Beacon.DeploymentEngine
 		      
 		      Var GameSpecific As Dictionary = GameServer.Value("game_specific")
 		      Self.mLogFilePath = GameSpecific.Value("path") + "ShooterGame/Saved/Logs/ShooterGame.log"
-		      Self.mConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
+		      Self.mProfile.ConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
+		      Self.mProfile.Address = GameServer.Value("ip") + ":" + GameServer.Value("port")
 		      
 		      Self.RunNextTask()
 		    Else
@@ -667,7 +666,7 @@ Implements Beacon.DeploymentEngine
 		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Var FilePath As String = Self.mConfigPath + "/Game.ini"
+		  Var FilePath As String = Self.mProfile.ConfigPath + "/Game.ini"
 		  
 		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString() + "/gameservers/file_server/download?file=" + EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameIni, Nil, Headers)
 		End Sub
@@ -680,7 +679,7 @@ Implements Beacon.DeploymentEngine
 		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Var FilePath As String = Self.mConfigPath + "/GameUserSettings.ini"
+		  Var FilePath As String = Self.mProfile.ConfigPath + "/GameUserSettings.ini"
 		  
 		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString() + "/gameservers/file_server/download?file=" + EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameUserSettingsIni, Nil, Headers)
 		End Sub
@@ -893,7 +892,7 @@ Implements Beacon.DeploymentEngine
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
 		  Var Fields As New Dictionary
-		  Fields.Value("path") = Self.mConfigPath
+		  Fields.Value("path") = Self.mProfile.ConfigPath
 		  Fields.Value("file") = "Game.ini"
 		  
 		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/file_server/upload", Fields, AddressOf Callback_UploadGameIni, Nil, Headers)
@@ -908,7 +907,7 @@ Implements Beacon.DeploymentEngine
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
 		  Var Fields As New Dictionary
-		  Fields.Value("path") = Self.mConfigPath
+		  Fields.Value("path") = Self.mProfile.ConfigPath
 		  Fields.Value("file") = "GameUserSettings.ini"
 		  
 		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/file_server/upload", Fields, AddressOf Callback_UploadGameUserSettingsIni, Nil, Headers)
@@ -962,10 +961,6 @@ Implements Beacon.DeploymentEngine
 
 	#tag Property, Flags = &h21
 		Private mCommandLineChanges() As Beacon.ConfigValue
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mConfigPath As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1030,10 +1025,6 @@ Implements Beacon.DeploymentEngine
 
 	#tag Property, Flags = &h21
 		Private mLogFilePath As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMask As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -141,7 +141,7 @@ Implements Beacon.DiscoveryEngine
 		    Var MapText As String = Config.Value("map")
 		    Var MapParts() As String = MapText.Split(",")
 		    
-		    Self.mMap = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.LastRowIndex))
+		    Self.mProfile.Mask = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.LastRowIndex))
 		    Self.mProfile.GameShortcode = GameServer.Value("game")
 		    
 		    Self.DownloadGameIni()
@@ -240,7 +240,7 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h0
 		Function Map() As UInt64
-		  Return Self.mMap
+		  Return Self.mProfile.Mask
 		End Function
 	#tag EndMethod
 
@@ -309,10 +309,6 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Property, Flags = &h21
 		Private mGameUserSettingsIniContent As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMap As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

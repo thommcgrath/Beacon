@@ -220,23 +220,6 @@ End
 		    Accounts.Import(Document.Accounts)
 		  Next
 		  
-		  Var MapMask As UInt64
-		  For Each Document As Beacon.Document In SourceDocuments
-		    MapMask = MapMask Or Document.MapCompatibility
-		  Next
-		  Var NewMaps() As Beacon.Map = Beacon.Maps.ForMask(MapMask)
-		  For I As Integer = NewMaps.LastRowIndex DownTo 0
-		    If DestinationDocument.SupportsMap(NewMaps(I)) Then
-		      NewMaps.RemoveRowAt(I)
-		    End If
-		  Next
-		  Var OldMaps() As Beacon.Map = DestinationDocument.Maps
-		  For I As Integer = OldMaps.LastRowIndex DownTo 0
-		    If OldMaps(I).Matches(MapMask) Then
-		      OldMaps.RemoveRowAt(I)
-		    End If
-		  Next
-		  
 		  Var UseMergeUI As Boolean
 		  For Each Document As Beacon.Document In SourceDocuments
 		    Var Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
@@ -312,6 +295,23 @@ End
 		      Enabled = Enabled Or Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0)
 		    Next
 		  Next
+		  
+		  Var CurrentMask As UInt64 = DestinationDocument.MapCompatibility
+		  Var DesiredMask As UInt64
+		  For Each Document As Beacon.Document In SourceDocuments
+		    DesiredMask = DesiredMask Or Document.MapCompatibility
+		    For I As Integer = 0 To Document.ServerProfileCount - 1
+		      DesiredMask = DesiredMask Or Document.ServerProfile(I).Mask
+		    Next
+		  Next
+		  For I As Integer = 0 To DestinationDocument.ServerProfileCount - 1
+		    DesiredMask = DesiredMask Or DestinationDocument.ServerProfile(I).Mask
+		  Next
+		  Var MaskDiff As UInt64 = CurrentMask Xor DesiredMask
+		  Var MaskToAdd As UInt64 = DesiredMask And MaskDiff
+		  Var MaskToRemove As UInt64 = CurrentMask And MaskDiff
+		  Var NewMaps() As Beacon.Map = Beacon.Maps.ForMask(MaskToAdd)
+		  Var OldMaps() As Beacon.Map = Beacon.Maps.ForMask(MaskToRemove)
 		  For Each Map As Beacon.Map In NewMaps
 		    Win.List.AddRow("", "Add Map: " + Map.Name)
 		    Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0) = True
