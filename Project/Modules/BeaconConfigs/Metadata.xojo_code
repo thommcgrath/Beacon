@@ -1,6 +1,7 @@
 #tag Class
 Protected Class Metadata
 Inherits Beacon.ConfigGroup
+Implements ObservationKit.Observable
 	#tag Event
 		Sub GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
 		  #Pragma Unused SourceDocument
@@ -75,6 +76,36 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
+		Sub AddObserver(Observer As ObservationKit.Observer, Key As String)
+		  // Part of the ObservationKit.Observable interface.
+		  
+		  If Self.mObservers = Nil Then
+		    Self.mObservers = New Dictionary
+		  End If
+		  
+		  Var Refs() As WeakRef
+		  If Self.mObservers.HasKey(Key) Then
+		    Refs = Self.mObservers.Value(Key)
+		  End If
+		  
+		  For I As Integer = Refs.LastRowIndex DownTo 0
+		    If Refs(I).Value = Nil Then
+		      Refs.RemoveRowAt(I)
+		      Continue
+		    End If
+		    
+		    If Refs(I).Value = Observer Then
+		      // Already being watched
+		      Return
+		    End If
+		  Next
+		  
+		  Refs.AddRow(New WeakRef(Observer))
+		  Self.mObservers.Value(Key) = Refs
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function ConfigName() As String
 		  Return "Metadata"
 		End Function
@@ -101,6 +132,56 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub NotifyObservers(Key As String, Value As Variant)
+		  // Part of the ObservationKit.Observable interface.
+		  
+		  If Self.mObservers = Nil Then
+		    Self.mObservers = New Dictionary
+		  End If
+		  
+		  Var Refs() As WeakRef
+		  If Self.mObservers.HasKey(Key) Then
+		    Refs = Self.mObservers.Value(Key)
+		  End If
+		  
+		  For I As Integer = Refs.LastRowIndex DownTo 0
+		    If Refs(I).Value = Nil Then
+		      Refs.RemoveRowAt(I)
+		      Continue
+		    End If
+		    
+		    Dim Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
+		    Observer.ObservedValueChanged(Self, Key, Value)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveObserver(Observer As ObservationKit.Observer, Key As String)
+		  // Part of the ObservationKit.Observable interface.
+		  
+		  If Self.mObservers = Nil Then
+		    Self.mObservers = New Dictionary
+		  End If
+		  
+		  Var Refs() As WeakRef
+		  If Self.mObservers.HasKey(Key) Then
+		    Refs = Self.mObservers.Value(Key)
+		  End If
+		  
+		  For I As Integer = Refs.LastRowIndex DownTo 0
+		    If Refs(I).Value = Nil Or Refs(I).Value = Observer Then
+		      Refs.RemoveRowAt(I)
+		      Continue
+		    End If
+		  Next
+		  
+		  Self.mObservers.Value(Key) = Refs
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function RequiresOmni() As Boolean
 		  Return False
 		End Function
@@ -118,6 +199,7 @@ Inherits Beacon.ConfigGroup
 			  If Self.mDescription.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mDescription = Value
 			    Self.Modified = True
+			    Self.NotifyObservers("Description", Self.mDescription)
 			  End If
 			End Set
 		#tag EndSetter
@@ -143,6 +225,10 @@ Inherits Beacon.ConfigGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mObservers As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mTitle As String
 	#tag EndProperty
 
@@ -157,6 +243,7 @@ Inherits Beacon.ConfigGroup
 			  If Self.mTitle.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mTitle = Value
 			    Self.Modified = True
+			    Self.NotifyObservers("Title", Self.mTitle)
 			  End If
 			End Set
 		#tag EndSetter

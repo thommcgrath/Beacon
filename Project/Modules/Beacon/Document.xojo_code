@@ -1,5 +1,6 @@
 #tag Class
 Protected Class Document
+Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Sub Add(Profile As Beacon.ServerProfile)
 		  If Profile = Nil Then
@@ -35,6 +36,41 @@ Protected Class Document
 		Sub AddConfigGroup(Group As Beacon.ConfigGroup)
 		  Self.mConfigGroups.Value(Group.ConfigName) = Group
 		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AddObserver(Observer As ObservationKit.Observer, Key As String)
+		  // Part of the ObservationKit.Observable interface.
+		  
+		  If Key = "Title" Or Key = "Description" Then
+		    Self.Metadata(True).AddObserver(Observer, Key)
+		    Return
+		  End If
+		  
+		  If Self.mObservers = Nil Then
+		    Self.mObservers = New Dictionary
+		  End If
+		  
+		  Var Refs() As WeakRef
+		  If Self.mObservers.HasKey(Key) Then
+		    Refs = Self.mObservers.Value(Key)
+		  End If
+		  
+		  For I As Integer = Refs.LastRowIndex DownTo 0
+		    If Refs(I).Value = Nil Then
+		      Refs.RemoveRowAt(I)
+		      Continue
+		    End If
+		    
+		    If Refs(I).Value = Observer Then
+		      // Already being watched
+		      Return
+		    End If
+		  Next
+		  
+		  Refs.AddRow(New WeakRef(Observer))
+		  Self.mObservers.Value(Key) = Refs
 		End Sub
 	#tag EndMethod
 
@@ -535,6 +571,31 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub NotifyObservers(Key As String, Value As Variant)
+		  // Part of the ObservationKit.Observable interface.
+		  
+		  If Self.mObservers = Nil Then
+		    Self.mObservers = New Dictionary
+		  End If
+		  
+		  Var Refs() As WeakRef
+		  If Self.mObservers.HasKey(Key) Then
+		    Refs = Self.mObservers.Value(Key)
+		  End If
+		  
+		  For I As Integer = Refs.LastRowIndex DownTo 0
+		    If Refs(I).Value = Nil Then
+		      Refs.RemoveRowAt(I)
+		      Continue
+		    End If
+		    
+		    Dim Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
+		    Observer.ObservedValueChanged(Self, Key, Value)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function OAuthData(Provider As String) As Dictionary
 		  If Self.mOAuthDicts <> Nil And Self.mOAuthDicts.HasKey(Provider) Then
 		    Return Dictionary(Self.mOAuthDicts.Value(Provider)).Clone
@@ -650,6 +711,36 @@ Protected Class Document
 		    Self.mConfigGroups.Remove(GroupName)
 		    Self.mModified = True
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveObserver(Observer As ObservationKit.Observer, Key As String)
+		  // Part of the ObservationKit.Observable interface.
+		  
+		  If Key = "Title" Or Key = "Description" Then
+		    Self.Metadata(True).RemoveObserver(Observer, Key)
+		    Return
+		  End If
+		  
+		  If Self.mObservers = Nil Then
+		    Self.mObservers = New Dictionary
+		  End If
+		  
+		  Var Refs() As WeakRef
+		  If Self.mObservers.HasKey(Key) Then
+		    Refs = Self.mObservers.Value(Key)
+		  End If
+		  
+		  For I As Integer = Refs.LastRowIndex DownTo 0
+		    If Refs(I).Value = Nil Or Refs(I).Value = Observer Then
+		      Refs.RemoveRowAt(I)
+		      Continue
+		    End If
+		  Next
+		  
+		  Self.mObservers.Value(Key) = Refs
+		  
 		End Sub
 	#tag EndMethod
 
@@ -904,6 +995,10 @@ Protected Class Document
 
 	#tag Property, Flags = &h21
 		Private mOAuthDicts As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mObservers As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
