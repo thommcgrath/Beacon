@@ -553,6 +553,23 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub EnableMenuItems()
+		  If Self.Config(False).HarvestAmountMultiplier <> 1.0 Then
+		    EditorMenu.Child("ConvertGlobalHarvestRate").Enable
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub GetEditorMenuItems(Items() As MenuItem)
+		  Var ConvertGlobalItem As New MenuItem("Convert Global Harvest Rate to Individual Rates")
+		  ConvertGlobalItem.AutoEnabled = False
+		  ConvertGlobalItem.Name = "ConvertGlobalHarvestRate"
+		  Items.AddRow(ConvertGlobalItem)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ParsingFinished(ParsedData As Dictionary)
 		  // Don't import the properties, it would likely be confusing for users
 		  
@@ -595,6 +612,14 @@ End
 	#tag EndEvent
 
 
+	#tag MenuHandler
+		Function ConvertGlobalHarvestRate() As Boolean Handles ConvertGlobalHarvestRate.Action
+			Self.ConvertGlobalHarvestRate()
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.HarvestRates
 		  Static ConfigName As String = BeaconConfigs.HarvestRates.ConfigName
@@ -624,6 +649,33 @@ End
 		Function ConfigLabel() As String
 		  Return Language.LabelForConfig(BeaconConfigs.HarvestRates.ConfigName)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ConvertGlobalHarvestRate()
+		  If Self.Config(False).HarvestAmountMultiplier = 1.0 Then
+		    Return
+		  End If
+		  
+		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
+		  Var GlobalRate As Double = Config.HarvestAmountMultiplier
+		  Var SkipPaths As New Dictionary
+		  Var Engrams() As Beacon.Engram = Config.Engrams
+		  For Each Engram As Beacon.Engram In Engrams
+		    SkipPaths.Value(Engram.Path) = True
+		    Config.Override(Engram) = Round(Config.Override(Engram) * GlobalRate)
+		  Next
+		  
+		  Engrams = Beacon.Data.SearchForEngrams("", Self.Document.Mods, "harvestable")
+		  For Each Engram As Beacon.Engram In Engrams
+		    If SkipPaths.HasKey(Engram.Path) Then
+		      Continue
+		    End If
+		    Config.Override(Engram) = Round(Config.Override(Engram) * GlobalRate)
+		  Next
+		  Config.HarvestAmountMultiplier = 1.0
+		  Self.SetupUI
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
