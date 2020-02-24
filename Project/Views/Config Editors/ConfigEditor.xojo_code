@@ -4,7 +4,7 @@ Inherits BeaconSubview
 	#tag Event
 		Sub EnableMenuItems()
 		  If Self.SupportsRestore() Then
-		    EditorMenu.Child("DocumentRestoreConfigToDefault").Enable
+		    Self.EnableEditorMenuItem("DocumentRestoreConfigToDefault")
 		  End If
 		  
 		  RaiseEvent EnableMenuItems
@@ -13,8 +13,6 @@ Inherits BeaconSubview
 
 	#tag Event
 		Sub GetEditorMenuItems(Items() As MenuItem)
-		  Items.AddRow(New MenuItem(MenuItem.TextSeparator))
-		  
 		  Var PreCount As Integer = Items.Count
 		  RaiseEvent GetEditorMenuItems(Items)
 		  If Items.Count > PreCount Then
@@ -85,6 +83,15 @@ Inherits BeaconSubview
 		Function Document() As Beacon.Document
 		  Return Self.mController.Document
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Shared Sub EnableEditorMenuItem(Named As String)
+		  Var Item As MenuItem = EditorMenu.Child(Named)
+		  If Item <> Nil Then
+		    Item.Enable
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

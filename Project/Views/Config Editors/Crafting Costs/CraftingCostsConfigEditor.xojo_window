@@ -325,7 +325,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub EnableMenuItems()
-		  EditorMenu.Child("CreateFibercraftServer").Enable
+		  Self.EnableEditorMenuItem("CreateFibercraftServer")
 		End Sub
 	#tag EndEvent
 

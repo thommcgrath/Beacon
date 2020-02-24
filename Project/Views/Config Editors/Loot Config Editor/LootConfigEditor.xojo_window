@@ -318,7 +318,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub EnableMenuItems()
-		  EditorMenu.Child("DocumentRebuildPresets").Enable
+		  Self.EnableEditorMenuItem("DocumentRebuildPresets")
 		End Sub
 	#tag EndEvent
 

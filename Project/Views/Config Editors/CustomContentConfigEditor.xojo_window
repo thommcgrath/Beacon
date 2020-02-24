@@ -180,9 +180,7 @@ End
 
 	#tag Event
 		Sub EnableMenuItems()
-		  If EditorMenu.Child("EditorLookforSupportedConfigLines") <> Nil Then
-		    EditorMenu.Child("EditorLookforSupportedConfigLines").Enable
-		  End If
+		  Self.EnableEditorMenuItem("EditorLookforSupportedConfigLines")
 		End Sub
 	#tag EndEvent
 

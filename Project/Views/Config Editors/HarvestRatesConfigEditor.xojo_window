@@ -555,7 +555,7 @@ End
 	#tag Event
 		Sub EnableMenuItems()
 		  If Self.Config(False).HarvestAmountMultiplier <> 1.0 Then
-		    EditorMenu.Child("ConvertGlobalHarvestRate").Enable
+		    Self.EnableEditorMenuItem("ConvertGlobalHarvestRate")
 		  End If
 		End Sub
 	#tag EndEvent

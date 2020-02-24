@@ -290,7 +290,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub EnableMenuItems()
-		  EditorMenu.Child("ConvertCreatureReplacementsToSpawnPointAdditions").Enable
+		  Self.EnableEditorMenuItem("ConvertCreatureReplacementsToSpawnPointAdditions")
 		End Sub
 	#tag EndEvent
 
