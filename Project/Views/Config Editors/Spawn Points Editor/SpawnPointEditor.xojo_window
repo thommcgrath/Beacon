@@ -421,6 +421,7 @@ End
 		Private Sub PresentLimitsDialog(SelectedCreatures() As Beacon.Creature)
 		  Var DefinedCreatures() As Beacon.Creature
 		  Var CommonLimit As NullableDouble
+		  Var CreatureFilter As New Dictionary
 		  
 		  For Each Point As Beacon.SpawnPoint In Self.mSpawnPoints
 		    Var Limits As Dictionary = Point.Limits
@@ -438,13 +439,30 @@ End
 		        End If
 		      End If
 		    Next
+		    
+		    Var Bound As Integer = Point.Count - 1
+		    For I As Integer = 0 To Bound
+		      Var Set As Beacon.SpawnPointSet = Point.Set(I)
+		      Var Entries() As Beacon.SpawnPointSetEntry = Set.Entries
+		      For Each Entry As Beacon.SpawnpointSetEntry In Entries
+		        Var Creature As Beacon.Creature = Entry.Creature
+		        If IsNull(Creature) = False THen
+		          CreatureFilter.Value(Creature.Path) = Creature
+		        End If
+		      Next
+		    Next
+		  Next
+		  
+		  Var CreaturesInSpawnPoint() As Beacon.Creature
+		  For Each Entry As DictionaryEntry In CreatureFilter
+		    CreaturesInSpawnPoint.AddRow(Entry.Value)
 		  Next
 		  
 		  If CommonLimit <> Nil And CommonLimit = -1.0 Then
 		    CommonLimit = Nil
 		  End If
 		  
-		  Var Limit As NullableDouble = SpawnPointLimitDialog.Present(Self, Self.Document.Mods, CommonLimit, SelectedCreatures, DefinedCreatures)
+		  Var Limit As NullableDouble = SpawnPointLimitDialog.Present(Self, Self.Document.Mods, CommonLimit, SelectedCreatures, DefinedCreatures, CreaturesInSpawnPoint)
 		  If Limit <> Nil Then
 		    For Each Point As Beacon.MutableSpawnPoint In Self.mSpawnPoints
 		      For Each Creature As Beacon.Creature In SelectedCreatures
