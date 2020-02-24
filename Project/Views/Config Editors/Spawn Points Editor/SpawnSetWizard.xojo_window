@@ -561,7 +561,7 @@ End
 	#tag Event
 		Sub Action()
 		  Var Exclude() As Beacon.Creature
-		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.mMods, False)
+		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.mMods, EngramSelectorDialog.SelectModes.Single)
 		  If Creatures = Nil Or Creatures.LastRowIndex <> 0 Then
 		    Return
 		  End If

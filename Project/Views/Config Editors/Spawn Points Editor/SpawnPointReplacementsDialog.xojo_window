@@ -513,7 +513,7 @@ End
 #tag Events TargetCreatureButton
 	#tag Event
 		Sub Action()
-		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Self.mDefinedCreatures, False)
+		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Self.mDefinedCreatures, EngramSelectorDialog.SelectModes.Single)
 		  If Creatures <> Nil And Creatures.LastRowIndex = 0 Then
 		    Self.mTargetCreature = Creatures(0)
 		    Self.TargetCreatureField.Value = Self.mTargetCreature.Label
@@ -526,7 +526,7 @@ End
 	#tag Event
 		Sub Action()
 		  Var Exclude() As Beacon.Creature = Self.mSpawnSet.ReplacementCreatures(Self.mTargetCreature)
-		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.mMods, True)
+		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.mMods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
 		  Self.ReplacementsList.SelectionChangeBlocked = True
 		  For Each Creature As Beacon.Creature In Creatures
 		    Self.ReplacementsList.AddRow("50", Creature.Label)

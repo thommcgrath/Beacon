@@ -399,17 +399,25 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Category As String, Subgroup As String, Exclude() As Beacon.Blueprint, Mods As Beacon.StringList, AllowMultipleSelection As Boolean)
+		Private Sub Constructor(Category As String, Subgroup As String, Exclude() As Beacon.Blueprint, Mods As Beacon.StringList, SelectMode As EngramSelectorDialog.SelectModes)
 		  Self.mSettingUp = True
 		  For Each Blueprint As Beacon.Blueprint In Exclude
-		    Self.mExcluded.AddRow(Blueprint.Path)
+		    If Blueprint <> Nil Then
+		      Self.mExcluded.AddRow(Blueprint.Path)
+		    End If
 		  Next
 		  Self.mMods = Mods
-		  Self.mAllowMultipleSelection = AllowMultipleSelection
+		  Self.mSelectMode = SelectMode
 		  Self.mCategory = Category
 		  Self.mSubgroup = Subgroup
 		  Super.Constructor
-		  If AllowMultipleSelection Then
+		  
+		  Select Case SelectMode
+		  Case EngramSelectorDialog.SelectModes.Single
+		    // Good news, it's already setup
+		  Case EngramSelectorDialog.SelectModes.ImpliedMultiple
+		    Self.List.RowSelectionType = Listbox.RowSelectionTypes.Multiple
+		  Case EngramSelectorDialog.SelectModes.ExplicitMultiple
 		    Self.Width = Self.Width + 150
 		    Self.List.ColumnWidths = "*,150"
 		    Self.List.RowSelectionType = Listbox.RowSelectionTypes.Multiple
@@ -418,13 +426,13 @@ End
 		    Self.RemoveFromSelectionsButton.Left = Self.AddToSelectionsButton.Left
 		    Self.SelectedList.Left = Self.AddToSelectionsButton.Left + Self.AddToSelectionsButton.Width + 12
 		    Self.MessageLabel.Value = "Select Objects"
-		  End If
+		  End Select
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub MakeSelection()
-		  If Not Self.mAllowMultipleSelection Then
+		  If Self.mSelectMode <> EngramSelectorDialog.SelectModes.ExplicitMultiple Then
 		    Self.SelectedList.RemoveAllRows()
 		  End If
 		  
@@ -436,7 +444,7 @@ End
 		      
 		      Self.SelectedList.AddRow(Self.List.CellValueAt(I, 0))
 		      Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTagAt(I)
-		      If Self.mAllowMultipleSelection Then
+		      If Self.mSelectMode = EngramSelectorDialog.SelectModes.ExplicitMultiple Then
 		        Self.mExcluded.AddRow(Beacon.Blueprint(Self.List.RowTagAt(I)).Path)
 		        Self.List.RemoveRowAt(I)
 		      End If
@@ -444,7 +452,7 @@ End
 		  ElseIf Self.List.SelectedRowCount = 1 Then
 		    Self.SelectedList.AddRow(Self.List.CellValueAt(Self.List.SelectedRowIndex, 0))
 		    Self.SelectedList.RowTagAt(Self.SelectedList.LastAddedRowIndex) = Self.List.RowTagAt(Self.List.SelectedRowIndex)
-		    If Self.mAllowMultipleSelection Then
+		    If Self.mSelectMode = EngramSelectorDialog.SelectModes.ExplicitMultiple Then
 		      Self.mExcluded.AddRow(Beacon.Blueprint(Self.List.RowTagAt(Self.List.SelectedRowIndex)).Path)
 		      Self.List.RemoveRowAt(Self.List.SelectedRowIndex)
 		    End If
@@ -455,13 +463,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Creature, Mods As Beacon.StringList = Nil, AllowMultipleSelection As Boolean) As Beacon.Creature()
+		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Creature, Mods As Beacon.StringList = Nil, SelectMode As EngramSelectorDialog.SelectModes) As Beacon.Creature()
 		  Var ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Creature As Beacon.Creature In Exclude
 		    ExcludeBlueprints.AddRow(Creature)
 		  Next
 		  
-		  Var Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryCreatures, Subgroup, ExcludeBlueprints, Mods, AllowMultipleSelection)
+		  Var Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryCreatures, Subgroup, ExcludeBlueprints, Mods, SelectMode)
 		  Var Creatures() As Beacon.Creature
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Creature Then
@@ -473,13 +481,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Engram, Mods As Beacon.StringList = Nil, AllowMultipleSelection As Boolean) As Beacon.Engram()
+		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Engram, Mods As Beacon.StringList = Nil, SelectMode As EngramSelectorDialog.SelectModes) As Beacon.Engram()
 		  Var ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Engram As Beacon.Engram In Exclude
 		    ExcludeBlueprints.AddRow(Engram)
 		  Next
 		  
-		  Var Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryEngrams, Subgroup, ExcludeBlueprints, Mods, AllowMultipleSelection)
+		  Var Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryEngrams, Subgroup, ExcludeBlueprints, Mods, SelectMode)
 		  Var Engrams() As Beacon.Engram
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Engram Then
@@ -491,7 +499,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Category As String, Subgroup As String, Exclude() As Beacon.Blueprint, Mods As Beacon.StringList = Nil, AllowMultipleSelection As Boolean) As Beacon.Blueprint()
+		Shared Function Present(Parent As Window, Category As String, Subgroup As String, Exclude() As Beacon.Blueprint, Mods As Beacon.StringList = Nil, SelectMode As EngramSelectorDialog.SelectModes) As Beacon.Blueprint()
 		  Var Blueprints() As Beacon.Blueprint
 		  If Parent = Nil Then
 		    Return Blueprints
@@ -501,7 +509,7 @@ End
 		    Mods = New Beacon.StringList
 		  End If
 		  
-		  Var Win As New EngramSelectorDialog(Category, Subgroup, Exclude, Mods, AllowMultipleSelection)
+		  Var Win As New EngramSelectorDialog(Category, Subgroup, Exclude, Mods, SelectMode)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  If Win.mCancelled Then
 		    Win.Close
@@ -577,10 +585,6 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mAllowMultipleSelection As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
 	#tag EndProperty
 
@@ -597,12 +601,23 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mSelectMode As EngramSelectorDialog.SelectModes
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSettingUp As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mSubgroup As String
 	#tag EndProperty
+
+
+	#tag Enum, Name = SelectModes, Type = Integer, Flags = &h0
+		Single
+		  ImpliedMultiple
+		ExplicitMultiple
+	#tag EndEnum
 
 
 #tag EndWindowCode
@@ -617,7 +632,7 @@ End
 #tag Events List
 	#tag Event
 		Sub Change()
-		  If Not Self.mAllowMultipleSelection Then
+		  If Self.mSelectMode <> EngramSelectorDialog.SelectModes.ExplicitMultiple Then
 		    Self.MakeSelection()
 		  End If
 		  
@@ -628,7 +643,7 @@ End
 		Sub DoubleClick()
 		  Self.MakeSelection()
 		  
-		  If Not Self.mAllowMultipleSelection Then
+		  If Self.mSelectMode <> EngramSelectorDialog.SelectModes.ExplicitMultiple Then
 		    Self.mCancelled = False
 		    Self.Hide
 		  End If
