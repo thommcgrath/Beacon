@@ -1207,7 +1207,7 @@ End
 	#tag Event
 		Sub Action()
 		  Var Exclude() As Beacon.Creature
-		  If IsNull(Self.SelectedCreature) Then
+		  If Not IsNull(Self.SelectedCreature) Then
 		    Exclude.AddRow(Self.SelectedCreature)
 		  End If
 		  For Each Creature As Beacon.Creature In Self.DisabledCreatures
