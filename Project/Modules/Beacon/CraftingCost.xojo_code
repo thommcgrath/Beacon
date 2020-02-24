@@ -75,6 +75,9 @@ Implements Beacon.NamedItem
 		  
 		  If Dict.HasKey("Engram") Then
 		    Var ClassString As String = Dict.Value("Engram")
+		    If ClassString = "" Or ClassString.EndsWith("_C") = False Then
+		      Return Nil
+		    End If
 		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
 		    If Engram = Nil Then
 		      Engram = Beacon.Engram.CreateFromClass(ClassString)
@@ -166,12 +169,6 @@ Implements Beacon.NamedItem
 		  Self.mRequireExacts.AddRowAt(Index,RequireExact)
 		  Self.Modified = True
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsValid() As Boolean
-		  Return Self.mEngram <> Nil And Self.LastRowIndex > -1
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

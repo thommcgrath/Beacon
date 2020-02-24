@@ -351,22 +351,18 @@ End
 		  End If
 		  
 		  Var OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
-		  If OtherConfig = Nil Or OtherConfig.LastRowIndex = -1 Then
+		  If OtherConfig = Nil Or OtherConfig.Count = 0 Then
 		    Return
 		  End If
 		  
 		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(True)
 		  Var NewCosts() As Beacon.CraftingCost
-		  For I As Integer = 0 To OtherConfig.LastRowIndex
-		    Var CraftingCost As Beacon.CraftingCost = OtherConfig(I)
-		    Var Idx As Integer = Config.IndexOf(CraftingCost)
-		    If Idx > -1 Then
-		      Config(Idx) = CraftingCost
-		    Else
-		      Config.Append(CraftingCost)
-		    End If
-		    NewCosts.AddRow(CraftingCost)
+		  Var NewEngrams() As Beacon.Engram = OtherConfig.Engrams
+		  For Each Engram As Beacon.Engram In NewEngrams
+		    Config.Cost(Engram) = OtherConfig.Cost(Engram)
+		    NewCosts.AddRow(Config.Cost(Engram))
 		  Next
+		  
 		  Self.Changed = True
 		  Self.UpdateList(NewCosts)
 		End Sub
@@ -491,15 +487,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddEngram()
-		  Var CurrentEngrams() As Beacon.Engram
 		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
-		  For I As Integer = 0 To Config.LastRowIndex
-		    If Config(I).Engram = Nil Then
-		      Continue
-		    End If
-		    
-		    CurrentEngrams.AddRow(Config(I).Engram)
-		  Next
+		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
 		  
 		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, False)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
@@ -511,7 +500,7 @@ End
 		  Var NewCosts() As Beacon.CraftingCost
 		  For Each Engram As Beacon.Engram In NewEngrams
 		    Var Cost As New Beacon.CraftingCost(Engram)
-		    Config.Append(Cost)
+		    Config.Add(Cost)
 		    NewCosts.AddRow(Cost)
 		  Next
 		  
@@ -526,15 +515,8 @@ End
 		    Return
 		  End If
 		  
-		  Var CurrentEngrams() As Beacon.Engram
 		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
-		  For I As Integer = 0 To Config.LastRowIndex
-		    If Config(I).Engram = Nil Then
-		      Continue
-		    End If
-		    
-		    CurrentEngrams.AddRow(Config(I).Engram)
-		  Next
+		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
 		  
 		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, True)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
@@ -548,7 +530,7 @@ End
 		  For Each Engram As Beacon.Engram In NewEngrams
 		    Var Cost As New Beacon.CraftingCost(SourceCost)
 		    Cost.Engram = Engram
-		    Config.Append(Cost)
+		    Config.Add(Cost)
 		    NewCosts.AddRow(Cost)
 		  Next
 		  
@@ -583,9 +565,10 @@ End
 		  
 		  Self.List.RemoveAllRows
 		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
-		  For I As Integer = 0 To Config.LastRowIndex
-		    Var Cost As Beacon.CraftingCost = Config(I)
-		    Self.List.AddRow(If(Cost.Engram <> Nil, Cost.Engram.Label, "No Engram Selected"))
+		  Var Engrams() As Beacon.Engram = Config.Engrams
+		  For I As Integer = 0 To Engrams.LastRowIndex
+		    Var Cost As Beacon.CraftingCost = Config.Cost(Engrams(I))
+		    Self.List.AddRow(Cost.Engram.Label)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Cost
 		    Self.List.Selected(Self.List.LastAddedRowIndex) = ObjectIDs.IndexOf(Cost.ObjectID) > -1
 		  Next
@@ -784,7 +767,7 @@ End
 		      For Each Dict As Dictionary In Dicts
 		        Var Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(Dict)
 		        If Cost <> Nil Then
-		          Config.Append(Cost)
+		          Config.Add(Cost)
 		          Costs.AddRow(Cost)
 		        End If
 		      Next
@@ -797,11 +780,6 @@ End
 		    Return
 		  End If
 		End Sub
-	#tag EndEvent
-	#tag Event
-		Function RowIsInvalid(Row As Integer) As Boolean
-		  Return Not Beacon.CraftingCost(Me.RowTagAt(Row)).IsValid
-		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events Editor
@@ -828,19 +806,19 @@ End
 		  Var Fiber As Beacon.Engram = Beacon.Data.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Fibers.PrimalItemResource_Fibers")
 		  
 		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
+		  Var Engrams() As Beacon.Engram = Config.Engrams
 		  Var EngramDict As New Dictionary
-		  For I As Integer = 0 To Config.LastRowIndex
+		  For Each Engram As Beacon.Engram In Engrams
 		    If Self.mProgressWindow.CancelPressed Then
 		      Self.mProgressWindow.Close
 		      Self.mProgressWindow = Nil
 		      Return
 		    End If
 		    
-		    Var Engram As Beacon.Engram = Config(I).Engram
 		    EngramDict.Value(Engram.Path) = Engram
 		  Next
 		  
-		  Var Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams("", Self.Document.Mods, "blueprintable")
+		  Engrams = Beacon.Data.SearchForEngrams("", Self.Document.Mods, "blueprintable")
 		  For Each Engram As Beacon.Engram In Engrams
 		    If Self.mProgressWindow.CancelPressed Then
 		      Self.mProgressWindow.Close
@@ -865,7 +843,7 @@ End
 		    Var Engram As Beacon.Engram = Entry.Value
 		    Var Cost As New Beacon.CraftingCost(Engram)
 		    Cost.Append(Fiber, 1.0, False)
-		    Config.Append(Cost)
+		    Config.Add(Cost)
 		    ProcessedItems = ProcessedItems + 1
 		    Self.mProgressWindow.Progress = ProcessedItems / NumItems
 		    Self.mProgressWindow.Detail = "Configured " + ProcessedItems.ToString(Locale.Current, "#,##0") + " of " + NumItems.ToString(Locale.Current, "#,##0") + " engrams"

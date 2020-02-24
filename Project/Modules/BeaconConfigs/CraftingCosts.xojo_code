@@ -2,27 +2,11 @@
  Attributes ( OmniVersion = 1 ) Protected Class CraftingCosts
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub DetectIssues(Document As Beacon.Document, Issues() As Beacon.Issue)
-		  #Pragma Unused Document
-		  
-		  Var ConfigName As String = ConfigKey
-		  For I As Integer = 0 To Self.mCosts.LastRowIndex
-		    If Self.mCosts(I).IsValid Then
-		      Continue
-		    End If
-		    
-		    If Self.mCosts(I).Engram = Nil Then
-		      Issues.AddRow(New Beacon.Issue(ConfigName, "Crafting cost has no engram", Self.mCosts(I)))
-		    End If
-		  Next
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
 		  #Pragma Unused Profile
 		  
-		  For Each Cost As Beacon.CraftingCost In Self.mCosts
+		  For Each Entry As DictionaryEntry In Self.mCosts
+		    Var Cost As Beacon.CraftingCost = Entry.Value
 		    If IsNull(Cost.Engram) = False And Cost.Engram.ValidForMods(SourceDocument.Mods) Then
 		      Var StringValue As String = Cost.StringValue
 		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts", StringValue))
@@ -34,8 +18,12 @@ Inherits Beacon.ConfigGroup
 	#tag Event
 		Sub MergeFrom(Other As Beacon.ConfigGroup)
 		  Var Source As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts(Other)
-		  For Idx As Integer = 0 To Source.LastRowIndex
-		    Self.Append(Source(Idx))
+		  For Each Entry As DictionaryEntry In Source.mCosts
+		    If Self.mCosts.HasKey(Entry.Key) Then
+		      Continue
+		    End If
+		    
+		    Self.mCosts.Value(Entry.Key) = Entry.Value
 		  Next
 		End Sub
 	#tag EndEvent
@@ -50,7 +38,7 @@ Inherits Beacon.ConfigGroup
 		    For Each CostData As Dictionary In Costs
 		      Var Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(CostData)
 		      If Cost <> Nil Then
-		        Self.mCosts.AddRow(Cost)
+		        Self.mCosts.Value(Cost.Engram.Path) = Cost
 		      End If
 		    Next
 		  End If
@@ -62,8 +50,8 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Document
 		  
 		  Var Costs() As Dictionary
-		  For Each Cost As Beacon.CraftingCost In Self.mCosts
-		    Costs.AddRow(Cost.Export)
+		  For Each Entry As DictionaryEntry In Self.mCosts
+		    Costs.AddRow(Beacon.CraftingCost(Entry.Value).Export)
 		  Next
 		  Dict.Value("Costs") = Costs
 		End Sub
@@ -71,22 +59,77 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Sub Append(Cost As Beacon.CraftingCost)
+		Sub Add(Cost As Beacon.CraftingCost)
 		  If Cost = Nil Then
 		    Return
 		  End If
 		  
-		  Var Idx As Integer = Self.IndexOf(Cost)
-		  If Idx = -1 Then
-		    Self.mCosts.AddRow(Cost)
-		    Self.Modified = True
-		  End If
+		  Self.Cost(Cost.Engram) = Cost
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Shared Function ConfigName() As String
 		  Return ConfigKey
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.mCosts = New Dictionary
+		  Super.Constructor()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Cost(Engram As Beacon.Engram) As Beacon.CraftingCost
+		  If Engram = Nil Then
+		    Return Nil
+		  End If
+		  
+		  If Self.mCosts.HasKey(Engram.Path) Then
+		    Return Self.mCosts.Value(Engram.Path)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Cost(Engram As Beacon.Engram, Assigns Cost As Beacon.CraftingCost)
+		  If Engram = Nil Then
+		    Return
+		  End If
+		  
+		  If Cost = Nil Then
+		    If Self.mCosts.HasKey(Engram.Path) Then
+		      Self.mCosts.Remove(Engram.Path)
+		      Self.Modified = True
+		    End If
+		    Return
+		  End If
+		  
+		  Var Key As String = Cost.Engram.Path
+		  If Self.mCosts.HasKey(Key) And Beacon.CraftingCost(Self.mCosts.Value(Key)) = Cost Then
+		    Return
+		  End If
+		  
+		  Self.mCosts.Value(Key) = Cost
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Count() As Integer
+		  Return Self.mCosts.KeyCount
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Engrams() As Beacon.Engram()
+		  Var Results() As Beacon.Engram
+		  For Each Entry As DictionaryEntry In Self.mCosts
+		    Results.AddRow(Beacon.CraftingCost(Entry.Value).Engram)
+		  Next
+		  Return Results
 		End Function
 	#tag EndMethod
 
@@ -115,47 +158,12 @@ Inherits Beacon.ConfigGroup
 		  For Each Dict As Dictionary In Overrides
 		    Var Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromConfig(Dict)
 		    If Cost <> Nil Then
-		      Config.Append(Cost)
+		      Config.Add(Cost)
 		    End If
 		  Next
-		  If Config.LastRowIndex > -1 Then
+		  If Config.Count > 0 Then
 		    Return Config
 		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IndexOf(Cost As Beacon.CraftingCost) As Integer
-		  If Cost = Nil Then
-		    Return -1
-		  End If
-		  
-		  For I As Integer = 0 To Self.mCosts.LastRowIndex
-		    If Self.mCosts(I).Engram = Cost.Engram Or Self.mCosts(I) = Cost Then
-		      Return I
-		    End If
-		  Next
-		  Return -1
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Insert(Index As Integer, Cost As Beacon.CraftingCost)
-		  If Cost = Nil Then
-		    Return
-		  End If
-		  
-		  Var Idx As Integer = Self.IndexOf(Cost)
-		  If Idx = -1 Then
-		    Self.mCosts.AddRowAt(Index, Cost)
-		    Self.Modified = True
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function LastRowIndex() As Integer
-		  Return Self.mCosts.LastRowIndex
 		End Function
 	#tag EndMethod
 
@@ -165,8 +173,8 @@ Inherits Beacon.ConfigGroup
 		    Return True
 		  End If
 		  
-		  For I As Integer = 0 To Self.mCosts.LastRowIndex
-		    If Self.mCosts(I).Modified Then
+		  For Each Entry As DictionaryEntry In Self.mCosts
+		    If Beacon.CraftingCost(Entry.Value).Modified Then
 		      Return True
 		    End If
 		  Next
@@ -178,55 +186,32 @@ Inherits Beacon.ConfigGroup
 		  Super.Modified = Value
 		  
 		  If Not Value Then
-		    For I As Integer = 0 To Self.mCosts.LastRowIndex
-		      Self.mCosts(I).Modified = False
+		    For Each Entry As DictionaryEntry In Self.mCosts
+		      Beacon.CraftingCost(Entry.Value).Modified = False
 		    Next
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Subscript(Index As Integer) As Beacon.CraftingCost
-		  Return Self.mCosts(Index)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Operator_Subscript(Index As Integer, Assigns Cost As Beacon.CraftingCost)
-		  If Cost = Nil Or Cost = Self.mCosts(Index) Then
+		Sub Remove(Cost As Beacon.CraftingCost)
+		  If Cost = Nil Then
 		    Return
 		  End If
 		  
-		  Self.mCosts(Index) = Cost
-		  Self.Modified = True
+		  Self.Cost(Cost.Engram) = Nil
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Remove(Cost As Beacon.CraftingCost)
-		  Var Idx As Integer = Self.IndexOf(Cost)
-		  If Idx > -1 Then
-		    Self.Remove(Idx)
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Remove(Index As Integer)
-		  Self.mCosts.RemoveRowAt(Index)
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ResizeTo(NewBound As Integer)
-		  Self.mCosts.ResizeTo(NewBound)
+		Sub Remove(Engram As Beacon.Engram)
+		  Self.Cost(Engram) = Nil
 		End Sub
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mCosts() As Beacon.CraftingCost
+		Private mCosts As Dictionary
 	#tag EndProperty
 
 
