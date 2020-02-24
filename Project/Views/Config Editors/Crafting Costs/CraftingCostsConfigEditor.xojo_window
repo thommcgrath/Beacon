@@ -311,10 +311,33 @@ Begin ConfigEditor CraftingCostsConfigEditor
          Width           =   399
       End
    End
+   Begin Thread FibercraftBuilderThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub EnableMenuItems()
+		  EditorMenu.Child("CreateFibercraftServer").Enable
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub GetEditorMenuItems(Items() As MenuItem)
+		  Var CreateFibercraftItem As New MenuItem("Setup Fibercraft Server")
+		  CreateFibercraftItem.Name = "CreateFibercraftServer"
+		  CreateFibercraftItem.AutoEnabled = False
+		  Items.AddRow(CreateFibercraftItem)
+		End Sub
+	#tag EndEvent
+
 	#tag Event
 		Sub Open()
 		  Self.MinimumWidth = Self.ListMinWidth + Self.ListSeparator.Width + Self.Editor.MinimumWidth
@@ -391,6 +414,15 @@ End
 	#tag EndEvent
 
 
+	#tag MenuHandler
+		Function CreateFibercraftServer() As Boolean Handles CreateFibercraftServer.Action
+			Self.CreateFibercraftServer()
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
+
+
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.CraftingCosts
 		  Static ConfigName As String = BeaconConfigs.CraftingCosts.ConfigName
@@ -420,6 +452,18 @@ End
 		Function ConfigLabel() As String
 		  Return Language.LabelForConfig(BeaconConfigs.CraftingCosts.ConfigName)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CreateFibercraftServer()
+		  If Self.FibercraftBuilderThread.ThreadState <> Thread.ThreadStates.NotRunning Then
+		    Return
+		  End If
+		  
+		  Self.mProgressWindow = New ProgressWindow("Setting up fibercraft config")
+		  Self.mProgressWindow.ShowWithin(Self.TrueWindow)
+		  Self.FibercraftBuilderThread.Start
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -582,6 +626,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mConfigRef As WeakRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProgressWindow As ProgressWindow
 	#tag EndProperty
 
 
@@ -772,6 +820,76 @@ End
 		    Return Self.Document.Mods
 		  End If
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events FibercraftBuilderThread
+	#tag Event
+		Sub Run()
+		  Var Fiber As Beacon.Engram = Beacon.Data.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Fibers.PrimalItemResource_Fibers")
+		  
+		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
+		  Var EngramDict As New Dictionary
+		  For I As Integer = 0 To Config.LastRowIndex
+		    If Self.mProgressWindow.CancelPressed Then
+		      Self.mProgressWindow.Close
+		      Self.mProgressWindow = Nil
+		      Return
+		    End If
+		    
+		    Var Engram As Beacon.Engram = Config(I).Engram
+		    EngramDict.Value(Engram.Path) = Engram
+		  Next
+		  
+		  Var Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams("", Self.Document.Mods, "blueprintable")
+		  For Each Engram As Beacon.Engram In Engrams
+		    If Self.mProgressWindow.CancelPressed Then
+		      Self.mProgressWindow.Close
+		      Self.mProgressWindow = Nil
+		      Return
+		    End If
+		    
+		    EngramDict.Value(Engram.Path) = Engram
+		  Next
+		  
+		  Config = New BeaconConfigs.CraftingCosts
+		  Var NumItems As Integer = EngramDict.KeyCount
+		  Var ProcessedItems As Integer
+		  Self.mProgressWindow.Progress = ProcessedItems / NumItems
+		  For Each Entry As DictionaryEntry In EngramDict
+		    If Self.mProgressWindow.CancelPressed Then
+		      Self.mProgressWindow.Close
+		      Self.mProgressWindow = Nil
+		      Return
+		    End If
+		    
+		    Var Engram As Beacon.Engram = Entry.Value
+		    Var Cost As New Beacon.CraftingCost(Engram)
+		    Cost.Append(Fiber, 1.0, False)
+		    Config.Append(Cost)
+		    ProcessedItems = ProcessedItems + 1
+		    Self.mProgressWindow.Progress = ProcessedItems / NumItems
+		    Self.mProgressWindow.Detail = "Configured " + ProcessedItems.ToString(Locale.Current, "#,##0") + " of " + NumItems.ToString(Locale.Current, "#,##0") + " engrams"
+		  Next
+		  
+		  Self.Document.AddConfigGroup(Config)
+		  Self.mConfigRef = New WeakRef(Config)
+		  
+		  Self.mProgressWindow.Close
+		  Self.mProgressWindow = Nil
+		  
+		  Var NotifyDict As New Dictionary
+		  NotifyDict.Value("Finished") = True
+		  Me.AddUserInterfaceUpdate(NotifyDict)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Dict As Dictionary In Data
+		    If Dict.HasKey("Finished") And Dict.Value("Finished").BooleanValue = True THen
+		      Self.SetupUI()
+		    End If
+		  Next
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

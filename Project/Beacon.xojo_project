@@ -419,6 +419,7 @@ Class=ExternalAccount;Modules/Beacon/ExternalAccount.xojo_code;&h000000007320EFF
 Class=LocalServerProfile;Modules/Beacon/LocalServerProfile.xojo_code;&h000000005FF607FF;&h0000000055ADDFFF;false
 Class=LocalDeploymentEngine;Modules/Beacon/LocalDeploymentEngine.xojo_code;&h000000001DD2CFFF;&h0000000055ADDFFF;false
 Window=LocalServerView;Views/Config Editors/Servers Config Editor/LocalServerView.xojo_window;&h000000007C5AB7FF;&h000000002E7F7FFF;false
+Window=ProgressWindow;Views/ProgressWindow.xojo_window;&h00000000377627FF;&h0000000008A387FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=3
