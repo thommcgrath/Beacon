@@ -221,7 +221,9 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h21
 		Private Sub RemoveFileFrom(LocalFile As FolderItem, RemotePath As String)
-		  LocalFile.Remove
+		  If LocalFile.Exists Then
+		    LocalFile.Remove
+		  End If
 		  
 		  SendRequest(New BeaconAPI.Request("file" + RemotePath, "DELETE", AddressOf Callback_DeleteFile))
 		  
