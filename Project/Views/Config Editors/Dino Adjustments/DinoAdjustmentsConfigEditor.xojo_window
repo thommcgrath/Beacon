@@ -201,6 +201,7 @@ End
 	#tag MenuHandler
 		Function ConvertCreatureReplacementsToSpawnPointAdditions() As Boolean Handles ConvertCreatureReplacementsToSpawnPointAdditions.Action
 			Var Changes As Integer = Self.Document.ConvertDinoReplacementsToSpawnOverrides()
+			Self.SetupUI
 			If Changes = 0 Then
 			Self.ShowAlert("No changes made", "Beacon was unable to find any replaced creatures that it could convert into spawn point additions.")
 			ElseIf Changes = 1 Then
@@ -208,7 +209,6 @@ End
 			Else
 			Self.ShowAlert("Converted " + Changes.ToString + " creature replacements", "Beacon found " + Changes.ToString + " creatures that it was able to convert into spawn point additions. The replaced creatures have been disabled.")
 			End If
-			Self.SetupUI
 			Return True
 		End Function
 	#tag EndMenuHandler
