@@ -347,7 +347,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Mods As Beacon.StringList, Limit As NullableDouble, SelectedCreatures() As Beacon.Creature, DefinedCreatures() As Beacon.Creature)
+		Private Sub Constructor(Mods As Beacon.StringList, Limit As NullableDouble, SelectedCreatures() As Beacon.Creature, DefinedCreatures() As Beacon.Creature, CreaturesInSpawnPoint() As Beacon.Creature)
 		  If SelectedCreatures.LastRowIndex = -1 Then
 		    Self.mDisableSelection = False
 		    Self.mSelectedCreature = Nil
@@ -359,17 +359,42 @@ End
 		    Self.mSelectedCreature = Nil
 		  End If
 		  
-		  Self.mSelectableCreatures = Beacon.Data.SearchForBlueprints(Beacon.CategoryCreatures, "", Mods, "")
-		  For Each DefinedCreature As Beacon.Creature In DefinedCreatures
-		    For I As Integer = 0 To Self.mSelectableCreatures.LastRowIndex
-		      If Self.mSelectableCreatures(I).Path = DefinedCreature.Path Then
-		        If Self.mSelectedCreature = Nil Or Self.mSelectedCreature.Path <> DefinedCreature.Path Then
-		          Self.mSelectableCreatures.RemoveRowAt(I)
-		        End If
-		        Continue For DefinedCreature
-		      End If
-		    Next
+		  Var Map As New Dictionary
+		  For Each Creature As Beacon.Creature In DefinedCreatures
+		    If IsNull(Creature) Then
+		      Continue
+		    End If
+		    
+		    Map.Value(Creature.Path) = Creature
 		  Next
+		  
+		  Var SelectableCreatures() As Beacon.Creature
+		  Var CreatureLabels() As String
+		  For Each Creature As Beacon.Creature In CreaturesInSpawnPoint
+		    If IsNull(Creature) Or Map.HasKey(Creature.Path) Then
+		      Continue
+		    End If
+		    
+		    SelectableCreatures.AddRow(Creature)
+		    CreatureLabels.AddRow(Creature.Label)
+		    Map.Value(Creature.Path) = Creature
+		  Next
+		  CreatureLabels.SortWith(SelectableCreatures)
+		  
+		  If SelectableCreatures.Count > 0 Then
+		    SelectableCreatures.AddRow(Nil)
+		  End If
+		  
+		  Var AllCreatures() As Beacon.Creature = Beacon.Data.SearchForCreatures("", Mods, "")
+		  For Each Creature As Beacon.Creature In AllCreatures
+		    If IsNull(Creature) Or Map.HasKey(Creature.Path) Then
+		      Continue
+		    End If
+		    
+		    SelectableCreatures.AddRow(Creature)
+		  Next
+		  
+		  Self.mSelectableCreatures = SelectableCreatures
 		  
 		  Self.mLimit = Limit
 		  
@@ -378,12 +403,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Mods As Beacon.StringList, Limit As NullableDouble, SelectedCreatures() As Beacon.Creature, DefinedCreatures() As Beacon.Creature) As NullableDouble
+		Shared Function Present(Parent As Window, Mods As Beacon.StringList, Limit As NullableDouble, SelectedCreatures() As Beacon.Creature, DefinedCreatures() As Beacon.Creature, CreaturesInSpawnPoint() As Beacon.Creature) As NullableDouble
 		  If Parent = Nil Then
 		    Return Nil
 		  End If
 		  
-		  Var Dialog As New SpawnPointLimitDialog(Mods, Limit, SelectedCreatures, DefinedCreatures)
+		  Var Dialog As New SpawnPointLimitDialog(Mods, Limit, SelectedCreatures, DefinedCreatures, CreaturesInSpawnPoint)
 		  Dialog.ShowModalWithin(Parent.TrueWindow)
 		  If Dialog.mLimit <> Nil And Dialog.mSelectedCreature <> Nil Then
 		    SelectedCreatures.ResizeTo(0)
@@ -407,7 +432,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectableCreatures() As Beacon.Blueprint
+		Private mSelectableCreatures() As Beacon.Creature
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -434,10 +459,17 @@ End
 		    Me.SelectedRowIndex = 0
 		    Me.Enabled = False
 		  Else
-		    For Each Blueprint As Beacon.Blueprint In Self.mSelectableCreatures
-		      Me.AddRow(Blueprint.Label, Blueprint)
+		    For Each Creature As Beacon.Creature In Self.mSelectableCreatures
+		      If IsNull(Creature) Then
+		        #if TargetMacOS
+		          Me.AddSeparator
+		        #endif
+		        Continue
+		      End If
 		      
-		      If Self.mSelectedCreature <> Nil And Self.mSelectedCreature.Path = Blueprint.Path Then
+		      Me.AddRow(Creature.Label, Creature)
+		      
+		      If Self.mSelectedCreature <> Nil And Self.mSelectedCreature.Path = Creature.Path Then
 		        Me.SelectedRowIndex = Me.RowCount - 1
 		      End If
 		    Next
