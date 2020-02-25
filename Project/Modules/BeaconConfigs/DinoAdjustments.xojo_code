@@ -28,6 +28,9 @@ Inherits Beacon.ConfigGroup
 		      If Behavior.TamedResistanceMultiplier <> 1.0 Then
 		        Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "TamedDinoClassResistanceMultipliers", "(ClassName=""" + Behavior.TargetClass + """,Multiplier=" + Behavior.TamedResistanceMultiplier.PrettyText + ")"))
 		      End If
+		      If Behavior.PreventTaming Then
+		        Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PreventDinoTameClassNames", """" + Behavior.TargetClass + """"))
+		      End If
 		    End If
 		  Next
 		End Sub
@@ -231,6 +234,17 @@ Inherits Beacon.ConfigGroup
 		      
 		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
 		      Behavior.TamedResistanceMultiplier = Multiplier
+		      Config.Add(Behavior)
+		    Catch Err As TypeMismatchException
+		    End Try
+		  Next
+		  
+		  Var PreventTamedDinos() As Variant = ParsedData.AutoArrayValue("PreventDinoTameClassNames")
+		  For Each Entry As Variant In PreventTamedDinos
+		    Try
+		      Var TargetClass As String = Entry
+		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
+		      Behavior.PreventTaming = True
 		      Config.Add(Behavior)
 		    Catch Err As TypeMismatchException
 		    End Try

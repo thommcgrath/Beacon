@@ -351,6 +351,9 @@ End
 		      Label = Label + EndOfLine + "Replaced with " + Behavior.ReplacementCreature.Label
 		      Self.List.AddRow(Label)
 		    Else
+		      If Behavior.PreventTaming Then
+		        Label = Label + EndOfLine + "Cannot be tamed"
+		      End If
 		      Self.List.AddRow(Label, Format(Behavior.DamageMultiplier, "0.0#####"), Format(Behavior.ResistanceMultiplier, "0.0#####"), Format(Behavior.TamedDamageMultiplier, "0.0#####"), Format(Behavior.TamedResistanceMultiplier, "0.0#####"))
 		    End If
 		    
