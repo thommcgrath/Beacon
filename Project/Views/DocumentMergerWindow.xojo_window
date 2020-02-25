@@ -280,6 +280,10 @@ End
 		      Enabled = Enabled Or Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0)
 		    Next
 		    For I As Integer = 0 To Document.ServerProfileCount - 1
+		      If Document.ServerProfile(I).Name.Length = 0 Then
+		        Continue For I
+		      End If
+		      
 		      For X As Integer = 0 To DestinationDocument.ServerProfileCount - 1
 		        If DestinationDocument.ServerProfile(X) = Document.ServerProfile(I) Then
 		          DestinationDocument.ServerProfile(X).UpdateDetailsFrom(Document.ServerProfile(I))
