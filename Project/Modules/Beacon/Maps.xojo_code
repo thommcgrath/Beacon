@@ -44,7 +44,7 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Function Genesis() As Beacon.Map
-		  Return New Beacon.Map("Genesis", "Genesis_P", 128, 4.0, True, "abbc2e33-f7c9-4b31-b906-bfdc8adc3685")
+		  Return New Beacon.Map("Genesis", "Genesis", 128, 4.0, True, "abbc2e33-f7c9-4b31-b906-bfdc8adc3685")
 		End Function
 	#tag EndMethod
 
