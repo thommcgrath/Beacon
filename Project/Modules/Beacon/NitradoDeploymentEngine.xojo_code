@@ -165,6 +165,10 @@ Implements Beacon.DeploymentEngine
 		  // If the log file cannot be downloaded for any reason, assume a stop time of now
 		  
 		  If Self.CheckError(Status, Content) Then
+		    // This sets mFinished and mError to true, so we need to reverse that
+		    Self.mFinished = False
+		    Self.mErrored = False
+		    Self.mStatus = "No log file found"
 		    Self.mServerStopTime = DateTime.Now
 		    Self.RunNextTask()
 		    Return

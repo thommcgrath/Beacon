@@ -1050,7 +1050,7 @@ End
 		    If Behavior <> Nil Then
 		      If Behavior.ProhibitSpawning Then
 		        Win.ModeDisableRadio.Value = True
-		      ElseIf Behavior.ReplacementClass <> "" Then
+		      ElseIf Behavior.ReplacementCreature <> Nil Then
 		        Win.SelectedReplacement = Behavior.ReplacementCreature
 		        Win.ModeReplaceRadio.Value = True
 		      Else
