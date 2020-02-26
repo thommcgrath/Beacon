@@ -359,7 +359,12 @@ End
 		    Self.mSelectedCreature = Nil
 		  End If
 		  
+		  Var SelectableCreatures() As Beacon.Creature
 		  Var Map As New Dictionary
+		  If IsNull(Self.mSelectedCreature) = False Then
+		    Map.Value(Self.mSelectedCreature.Path) = Self.mSelectedCreature
+		    SelectableCreatures.AddRow(Self.mSelectedCreature)
+		  End If 
 		  For Each Creature As Beacon.Creature In DefinedCreatures
 		    If IsNull(Creature) Then
 		      Continue
@@ -368,7 +373,6 @@ End
 		    Map.Value(Creature.Path) = Creature
 		  Next
 		  
-		  Var SelectableCreatures() As Beacon.Creature
 		  Var CreatureLabels() As String
 		  For Each Creature As Beacon.Creature In CreaturesInSpawnPoint
 		    If IsNull(Creature) Or Map.HasKey(Creature.Path) Then
