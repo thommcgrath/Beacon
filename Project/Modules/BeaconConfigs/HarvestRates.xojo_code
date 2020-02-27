@@ -12,6 +12,8 @@ Inherits Beacon.ConfigGroup
 
 	#tag Event
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		  #Pragma Unused Profile
+		  
 		  For Each Entry As DictionaryEntry In Self.mOverrides
 		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Entry.Key)
 		    If IsNull(Engram) Then

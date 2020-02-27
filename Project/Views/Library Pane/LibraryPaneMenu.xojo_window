@@ -62,6 +62,14 @@ Begin LibrarySubview LibraryPaneMenu Implements NotificationKit.Receiver
       Visible         =   True
       Width           =   260
    End
+   Begin ModifierWatcher Watcher
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Period          =   100
+      RunMode         =   "0"
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -73,9 +81,24 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub Hidden()
+		  Self.Watcher.RunMode = Timer.RunModes.Off
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.RebuildMenu()
 		  NotificationKit.Watch(Self, Preferences.Notification_OnlineTokenChanged, Preferences.Notification_OnlineStateChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  #Pragma Unused UserData
+		  
+		  Self.Watcher.RunMode = Timer.RunModes.Multiple
+		  Self.RebuildMenu()
 		End Sub
 	#tag EndEvent
 
@@ -95,7 +118,11 @@ End
 		Protected Sub RebuildMenu()
 		  Var Links() As Pair
 		  Links.AddRow("Check for Updates" : "beacon://action/checkforupdate")
-		  Links.AddRow("Update Engrams" : "beacon://action/checkforengrams")
+		  If Self.Watcher.OptionHeld Then
+		    Links.AddRow("Refresh Engrams" : "beacon://action/refreshengrams")
+		  Else
+		    Links.AddRow("Update Engrams" : "beacon://action/checkforengrams")
+		  End If
 		  If Preferences.OnlineEnabled Then
 		    If UserCloud.IsBusy Then
 		      Links.AddRow("Syncing Cloud Files…" : "")
@@ -224,6 +251,17 @@ End
 		  End Select
 		  
 		  Self.CloseLibrary()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Watcher
+	#tag Event
+		Sub OptionChanged()
+		  #if DebugBuild
+		    App.Log("Option toggled")
+		  #endif
+		  
+		  Self.RebuildMenu()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

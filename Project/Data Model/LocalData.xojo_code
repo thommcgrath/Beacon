@@ -253,7 +253,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub CheckForEngramUpdates()
+		Sub CheckForEngramUpdates(ForceRefresh As Boolean = False)
 		  If Self.mCheckingForUpdates Then
 		    Return
 		  End If
@@ -267,24 +267,28 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Self.mCheckingForUpdates = True
-		  Var CheckURL As String = Self.ClassesURL()
+		  Var CheckURL As String = Self.ClassesURL(ForceRefresh)
 		  App.Log("Checking for engram updates from " + CheckURL)
 		  Self.mUpdater.Send("GET", CheckURL)
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function ClassesURL() As String
+	#tag Method, Flags = &h21
+		Private Function ClassesURL(ForceRefresh As Boolean) As String
 		  Var Version As Integer = App.BuildNumber
-		  
-		  Var LastSync As String = Self.Variable("sync_time")
 		  Var CheckURL As String = Beacon.WebURL("/download/classes?version=" + Version.ToString)
-		  If LastSync <> "" Then
-		    CheckURL = CheckURL + "&changes_since=" + EncodeURLComponent(LastSync)
+		  
+		  If ForceRefresh = False Then
+		    Var LastSync As String = Self.Variable("sync_time")
+		    If LastSync <> "" Then
+		      CheckURL = CheckURL + "&changes_since=" + EncodeURLComponent(LastSync)
+		    End If
 		  End If
+		  
 		  If App.IdentityManager <> Nil And App.IdentityManager.CurrentIdentity <> Nil Then
 		    CheckURL = CheckURL + "&user_id=" + EncodeURLComponent(App.IdentityManager.CurrentIdentity.Identifier)
 		  End If
+		  
 		  Return CheckURL
 		End Function
 	#tag EndMethod
@@ -1234,13 +1238,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Var FileVersion As Integer = ChangeDict.Value("beacon_version")
 		  If FileVersion <> 4 Then
-		    App.Log("Cannot import classes because file format is not correct for this version. Get correct classes from " + Self.ClassesURL())
+		    App.Log("Cannot import classes because file format is not correct for this version. Get correct classes from " + Self.ClassesURL(True))
 		    Return False
 		  End If
 		  
+		  Var ShouldTruncate As Boolean = ChangeDict.Value("is_full") = 1
 		  Var PayloadTimestamp As DateTime = NewDateFromSQLDateTime(ChangeDict.Value("timestamp"))
 		  Var LastSync As DateTime = Self.LastSync
-		  If IsNull(LastSync) = False And LastSync.SecondsFrom1970 >= PayloadTimestamp.SecondsFrom1970 Then
+		  If ShouldTruncate = False And IsNull(LastSync) = False And LastSync.SecondsFrom1970 >= PayloadTimestamp.SecondsFrom1970 Then
 		    Return False
 		  End If
 		  
@@ -1258,7 +1263,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.SQLExecute("DROP INDEX IF EXISTS loot_sources_sort_order_idx;")
 		    Self.SQLExecute("DROP INDEX IF EXISTS loot_sources_path_idx;")
 		    
-		    Var ShouldTruncate As Boolean = ChangeDict.Value("is_full") = 1
 		    If ShouldTruncate Then
 		      Self.SQLExecute("DELETE FROM loot_sources WHERE mod_id != ?1;", Self.UserModID)
 		      Self.SQLExecute("DELETE FROM blueprints WHERE mod_id != ?1;", Self.UserModID)

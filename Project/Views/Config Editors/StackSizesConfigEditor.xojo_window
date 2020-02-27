@@ -522,12 +522,10 @@ End
 		      Continue
 		    End If
 		    
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(Me.RowTagAt(I))
-		    If Engram = Nil Then
-		      Engram = Beacon.Engram.CreateFromClass(Me.RowTagAt(I))
+		    Var Engram As Beacon.Engram = Me.RowTagAt(I)
+		    If IsNull(Engram) = False Then
+		      Engrams.AddRow(Engram)
 		    End If
-		    
-		    Engrams.AddRow(Engram)
 		  Next
 		  
 		  If Warn And Self.ShowDeleteConfirmation(Engrams, "stack size override", "stack size overrides") = False Then
