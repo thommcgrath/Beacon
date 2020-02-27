@@ -348,7 +348,6 @@ End
 
 	#tag Event
 		Sub Open()
-		  Self.CurrentView.SwitchedTo()
 		  RaiseEvent Open
 		  NotificationKit.Watch(Self, Self.Notification_CloseDrawer, Self.Notification_ShowPane)
 		End Sub
@@ -465,26 +464,38 @@ End
 		  
 		  If Index = -1 Then
 		    If Self.mOpened Then
+		      Var OldPage As LibrarySubview = Self.CurrentView
+		      If OldPage <> Nil Then
+		        OldPage.SwitchedFrom()
+		      End If
 		      RaiseEvent ChangePosition((Self.CollapseDistance * -1) - Self.Left)
 		      Self.mOpened = False
 		    End If
 		    Return
 		  End If
 		  
+		  Var TriggerSwitchedTo As Boolean = True
 		  If Self.Views.SelectedPanelIndex <> Index Then
-		    Dim OldPage As LibrarySubview = Self.CurrentView
+		    Var OldPage As LibrarySubview = Self.CurrentView
 		    If OldPage <> Nil Then
 		      OldPage.SwitchedFrom()
 		    End If
 		    
-		    Dim NewPage As LibrarySubview = Self.ViewAtIndex(Index)
+		    Var NewPage As LibrarySubview = Self.ViewAtIndex(Index)
 		    If NewPage <> Nil Then
 		      Self.Views.SelectedPanelIndex = Index
 		      NewPage.SwitchedTo(UserData)
+		      TriggerSwitchedTo = False
 		    End If
 		  End If
 		  
 		  If Not Self.mOpened Then
+		    If TriggerSwitchedTo Then
+		      Var CurrentPage As LibrarySubview = Self.CurrentView
+		      If CurrentPage <> Nil Then
+		        CurrentPage.SwitchedTo(UserData)
+		      End If
+		    End If
 		    RaiseEvent ChangePosition(0 - Self.Left)
 		    Self.mOpened = True
 		  End If

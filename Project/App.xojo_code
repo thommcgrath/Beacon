@@ -567,6 +567,11 @@ Implements NotificationKit.Receiver
 		        EngramsUpdateWindow.ShowIfNecessary()
 		        LocalData.SharedInstance.CheckForEngramUpdates
 		      End If
+		    Case "refreshengrams"
+		      If Self.GetOnlinePermission() Then
+		        EngramsUpdateWindow.ShowIfNecessary()
+		        LocalData.SharedInstance.CheckForEngramUpdates(True)
+		      End If
 		    Case "refreshuser"
 		      Self.IdentityManager.RefreshUserDetails()
 		      MainWindow.ShowLibraryPane(LibraryPane.PaneMenu)

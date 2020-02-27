@@ -404,6 +404,7 @@ Window=SpawnPointReplacementsDialog;Views/Config Editors/Spawn Points Editor/Spa
 Window=SpawnPointCreatureDialog;Views/Config Editors/Spawn Points Editor/SpawnPointCreatureDialog.xojo_window;&h00000000686287FF;&h000000007ED5DFFF;false
 Window=SpawnSetWizard;Views/Config Editors/Spawn Points Editor/SpawnSetWizard.xojo_window;&h000000003E75B7FF;&h000000007ED5DFFF;false
 Class=ItemSetOrganizer;Views/Config Editors/Loot Config Editor/ItemSetOrganizer.xojo_code;&h00000000320D1FFF;&h0000000051A177FF;false
+Class=ModifierWatcher;Custom Controls/ModifierWatcher.xojo_code;&h00000000082F77FF;&h0000000030DCFFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=3
