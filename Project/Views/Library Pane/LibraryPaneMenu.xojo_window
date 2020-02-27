@@ -257,10 +257,6 @@ End
 #tag Events Watcher
 	#tag Event
 		Sub OptionChanged()
-		  #if DebugBuild
-		    App.Log("Option toggled")
-		  #endif
-		  
 		  Self.RebuildMenu()
 		End Sub
 	#tag EndEvent
