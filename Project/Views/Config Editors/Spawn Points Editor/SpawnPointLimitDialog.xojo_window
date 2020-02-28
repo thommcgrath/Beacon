@@ -363,7 +363,6 @@ End
 		  Var Map As New Dictionary
 		  If IsNull(Self.mSelectedCreature) = False Then
 		    Map.Value(Self.mSelectedCreature.Path) = Self.mSelectedCreature
-		    SelectableCreatures.AddRow(Self.mSelectedCreature)
 		  End If 
 		  For Each Creature As Beacon.Creature In DefinedCreatures
 		    If IsNull(Creature) Then
@@ -384,6 +383,11 @@ End
 		    Map.Value(Creature.Path) = Creature
 		  Next
 		  CreatureLabels.SortWith(SelectableCreatures)
+		  
+		  // Do this after the sort so the indexes match up
+		  If IsNull(Self.mSelectedCreature) = False Then
+		    SelectableCreatures.AddRow(Self.mSelectedCreature)
+		  End If
 		  
 		  If SelectableCreatures.Count > 0 Then
 		    SelectableCreatures.AddRow(Nil)
