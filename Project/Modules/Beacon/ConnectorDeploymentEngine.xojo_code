@@ -41,7 +41,7 @@ Implements Beacon.DeploymentEngine
 		  Self.mStopMessage = StopMessage
 		  Self.mStatus = "Connecting…"
 		  
-		  Self.AppendTask(WeakAddressOf TaskStopServer, WeakAddressOf TaskDownloadLog, WeakAddressOf TaskSetNextCommandLineParam, WeakAddressOf TaskDownloadGameUserSettings, WeakAddressOf TaskDownloadGameIni, WeakAddressOf TaskRewriteIniFiles, WeakAddressOf TaskUploadGameUserSettings, WeakAddressOf TaskUploadGameIni, WeakAddressOf TaskStartServer)
+		  Self.AppendThreadedTask(WeakAddressOf TaskStopServer, WeakAddressOf TaskDownloadLog, WeakAddressOf TaskSetNextCommandLineParam, WeakAddressOf TaskDownloadGameUserSettings, WeakAddressOf TaskDownloadGameIni, WeakAddressOf TaskRewriteIniFiles, WeakAddressOf TaskUploadGameUserSettings, WeakAddressOf TaskUploadGameIni, WeakAddressOf TaskStartServer)
 		  
 		  Self.mSocket = New Beacon.ConnectorClientSocket
 		  AddHandler mSocket.Connected, WeakAddressOf mSocket_Connected

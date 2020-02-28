@@ -17,7 +17,7 @@ Implements Beacon.DiscoveryEngine
 		Sub Begin()
 		  // Part of the Beacon.DiscoveryEngine interface.
 		  
-		  Self.AppendTask(WeakAddressOf TaskDownloadLogFile, WeakAddressOf TaskDownloadGameUserSettingsIni, WeakAddressOf TaskDownloadGameIni)
+		  Self.AppendThreadedTask(WeakAddressOf TaskDownloadLogFile, WeakAddressOf TaskDownloadGameUserSettingsIni, WeakAddressOf TaskDownloadGameIni)
 		  
 		  Self.mSocket = New Beacon.ConnectorClientSocket
 		  AddHandler mSocket.Connected, WeakAddressOf mSocket_Connected

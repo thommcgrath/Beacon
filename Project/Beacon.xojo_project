@@ -421,6 +421,7 @@ Class=LocalServerProfile;Modules/Beacon/LocalServerProfile.xojo_code;&h000000005
 Class=LocalDeploymentEngine;Modules/Beacon/LocalDeploymentEngine.xojo_code;&h000000001DD2CFFF;&h0000000055ADDFFF;false
 Window=LocalServerView;Views/Config Editors/Servers Config Editor/LocalServerView.xojo_window;&h000000007C5AB7FF;&h000000002E7F7FFF;false
 Window=ProgressWindow;Views/ProgressWindow.xojo_window;&h00000000377627FF;&h0000000008A387FF;false
+Class=TaskWaitController;Modules/Beacon/TaskWaitController.xojo_code;&h000000007BE9E7FF;&h0000000055ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=3

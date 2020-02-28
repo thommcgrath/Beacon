@@ -57,7 +57,7 @@ Implements Beacon.DeploymentEngine
 		  Self.mGameUserSettingsIniRewriter = New Beacon.Rewriter
 		  AddHandler mGameUserSettingsIniRewriter.Finished, WeakAddressOf mGameUserSettingsIniRewriter_Finished
 		  
-		  Self.AppendTask(AddressOf ReadGameIni, AddressOf ReadGameUserSettingsIni, AddressOf GenerateGameIni, AddressOf GenerateGameUserSettingsIni, AddressOf WriteGameIni, AddressOf WriteGameUserSettingsIni)
+		  Self.AppendThreadedTask(AddressOf ReadGameIni, AddressOf ReadGameUserSettingsIni, AddressOf GenerateGameIni, AddressOf GenerateGameUserSettingsIni, AddressOf WriteGameIni, AddressOf WriteGameUserSettingsIni)
 		End Sub
 	#tag EndMethod
 
