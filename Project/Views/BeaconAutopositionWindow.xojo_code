@@ -1,178 +1,20 @@
 #tag Class
-Protected Class BeaconWindow
-Inherits Window
-	#tag Event
-		Sub Close()
-		  RaiseEvent Close
-		  
-		  If Self.mWindowMenuItem <> Nil Then
-		    Var WindowMenu As MenuItem = MainMenuBar.Child("WindowMenu")
-		    For I As Integer = WindowMenu.Count - 1 DownTo 0
-		      If WindowMenu.MenuAt(I) = Self.mWindowMenuItem Then
-		        WindowMenu.RemoveMenuAt(I)
-		        If WindowMenu.MenuAt(WindowMenu.Count - 1) = MainMenuBar.Child("WindowMenu").Child("UntitledSeparator4") Then
-		          MainMenuBar.Child("WindowMenu").Child("UntitledSeparator4").Visible = False
-		        End If
-		        Exit For I
-		      End If
-		    Next
-		    
-		    RemoveHandler Self.mWindowMenuItem.Action, WeakAddressOf Self.mWindowMenuItem_Action
-		    Self.mWindowMenuItem = Nil
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub EnableMenuItems()
-		  If Self.HasCloseButton Then
-		    FileClose.Enable
-		  End If
-		  If Self.HasMinimizeButton Then
-		    WindowMinimize.Enable
-		  End If
-		  If Self.Resizeable Then
-		    WindowZoom.Enable
-		  End If
-		  If Self.mWindowMenuItem <> Nil Then
-		    Self.mWindowMenuItem.Enable
-		  End If
-		  
-		  RaiseEvent EnableMenuItems
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Moved()
-		  If Self.mOpened Then
-		    RaiseEvent Moved
-		  End If
-		End Sub
-	#tag EndEvent
-
+Protected Class BeaconAutopositionWindow
+Inherits BeaconWindow
 	#tag Event
 		Sub Open()
-		  Var InitialWidth As Integer = Self.Width
-		  // Dumb workaround because contents are sizing 1 pixels too short.
-		  // A resize causes them to find their correct positions.
-		  Self.Width = InitialWidth + 1
-		  Self.Width = InitialWidth
-		  
-		  Var MenuItem As New MenuItem(Self.Title)
-		  AddHandler MenuItem.Action, WeakAddressOf Self.mWindowMenuItem_Action
-		  
-		  If MenuItem <> Nil Then
-		    Self.mWindowMenuItem = MenuItem
-		    
-		    MainMenuBar.Child("WindowMenu").Child("UntitledSeparator3").Visible = True
-		    MainMenuBar.Child("WindowMenu").AddMenu(MenuItem)
-		  End If
-		  
+		  Self.LoadWindowPosition
 		  RaiseEvent Open
-		  
-		  Self.mOpened = True
-		  RaiseEvent UpdateControlPositions
-		  Self.Invalidate
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Resized()
-		  If Self.mOpened Then
-		    RaiseEvent Resized
-		    RaiseEvent UpdateControlPositions
-		  End If
+		  RaiseEvent Resized
+		  Self.SaveWindowPosition
 		End Sub
 	#tag EndEvent
 
-	#tag Event
-		Sub Resizing()
-		  If Self.mOpened Then
-		    RaiseEvent Resizing
-		    RaiseEvent UpdateControlPositions
-		  End If
-		End Sub
-	#tag EndEvent
-
-
-	#tag MenuHandler
-		Function FileClose() As Boolean Handles FileClose.Action
-			Self.Close
-			Return True
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
-		Function WindowMinimize() As Boolean Handles WindowMinimize.Action
-			Self.Minimize
-			Return True
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
-		Function WindowZoom() As Boolean Handles WindowZoom.Action
-			Self.Maximize
-			Return True
-		End Function
-	#tag EndMenuHandler
-
-
-	#tag Method, Flags = &h0
-		Sub BringToFront()
-		  #if TargetMacOS
-		    Declare Function NSClassFromString Lib "Cocoa" (ClassName As CFStringRef) As Ptr
-		    Declare Function SharedApplication Lib "Cocoa" Selector "sharedApplication" (Target As Ptr) As Ptr
-		    Declare Sub ActivateIgnoringOtherApps Lib "Cocoa" Selector "activateIgnoringOtherApps:" (Target As Ptr, Flag As Boolean)
-		    
-		    Var SharedApp As Ptr = SharedApplication(NSClassFromString("NSApplication"))
-		    ActivateIgnoringOtherApps(SharedApp, True)
-		  #elseif TargetWin32
-		    Declare Function BringWindowToTop Lib "User32" (Target As Int32) As Boolean
-		    Call BringWindowToTop(Self.Handle)
-		  #else
-		    #Pragma Warning "No code to bring a window to foreground on this platform."
-		  #endif
-		  
-		  Self.Show()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function mWindowMenuItem_Action(Sender As MenuItem) As Boolean
-		  #Pragma Unused Sender
-		  
-		  Self.BringToFront()
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Opened() As Boolean
-		  Return Self.mOpened
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub UpdateWindowMenu()
-		  If Self.mWindowMenuItem <> Nil Then
-		    Self.mWindowMenuItem.Value = Self.Title
-		    Self.mWindowMenuItem.Enable
-		  End If
-		End Sub
-	#tag EndMethod
-
-
-	#tag Hook, Flags = &h0
-		Event Close()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event EnableMenuItems()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event Moved()
-	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event Open()
@@ -181,23 +23,6 @@ Inherits Window
 	#tag Hook, Flags = &h0
 		Event Resized()
 	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event Resizing()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event UpdateControlPositions()
-	#tag EndHook
-
-
-	#tag Property, Flags = &h21
-		Private mOpened As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mWindowMenuItem As MenuItem
-	#tag EndProperty
 
 
 	#tag ViewBehavior

@@ -49,6 +49,46 @@ Protected Module Preferences
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub LoadWindowPosition(Extends Win As Window)
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Win)
+		  
+		  Init
+		  
+		  Var Bounds As Rect = mManager.RectValue(Info.Name + " Position")
+		  If Bounds <> Nil Then
+		    // Find the best screen
+		    Var IdealScreen As Screen = Screen(0)
+		    If ScreenCount > 1 Then
+		      Var MaxArea As Integer
+		      For I As Integer = 0 To ScreenCount - 1
+		        Var ScreenBounds As New Rect(Screen(I).AvailableLeft, Screen(I).AvailableTop, Screen(I).AvailableWidth, Screen(I).AvailableHeight)
+		        Var Intersection As Rect = ScreenBounds.Intersection(Bounds)
+		        If Intersection = Nil Then
+		          Continue
+		        End If
+		        Var Area As Integer = Intersection.Width * Intersection.Height
+		        If Area <= 0 Then
+		          Continue
+		        End If
+		        If Area > MaxArea Then
+		          MaxArea = Area
+		          IdealScreen = Screen(I)
+		        End If
+		      Next
+		    End If
+		    
+		    Var AvailableBounds As New Rect(IdealScreen.AvailableLeft, IdealScreen.AvailableTop, IdealScreen.AvailableWidth, IdealScreen.AvailableHeight)
+		    
+		    Var Width As Integer = Min(Max(Bounds.Width, Win.MinimumWidth), Win.MaximumWidth, AvailableBounds.Width)
+		    Var Height As Integer = Min(Max(Bounds.Height, Win.MinimumHeight), Win.MaximumHeight, AvailableBounds.Height)
+		    Var Left As Integer = Min(Max(Bounds.Left, AvailableBounds.Left), AvailableBounds.Right - Width)
+		    Var Top As Integer = Min(Max(Bounds.Top, AvailableBounds.Top), AvailableBounds.Bottom - Height)
+		    Win.Bounds = New Rect(Left, Top, Width, Height)
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function RecentDocuments() As Beacon.DocumentURL()
 		  Init
@@ -104,6 +144,15 @@ Protected Module Preferences
 		  Init
 		  mManager.VariantValue("Documents") = URLs
 		  NotificationKit.Post(Notification_RecentsChanged, Values)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SaveWindowPosition(Extends Win As Window)
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Win)
+		  
+		  Init
+		  mManager.RectValue(Info.Name + " Position") = Win.Bounds
 		End Sub
 	#tag EndMethod
 
@@ -184,6 +233,54 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected CraftingSplitterPosition As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.BooleanValue("Deploy: Create Backup", True)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.BooleanValue("Deploy: Create Backup") = Value
+			End Set
+		#tag EndSetter
+		Protected DeployCreateBackup As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.BooleanValue("Deploy: Review Changes", False)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.BooleanValue("Deploy: Review Changes") = Value
+			End Set
+		#tag EndSetter
+		Protected DeployReviewChanges As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.BooleanValue("Deploy: Run Advisor", False)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.BooleanValue("Deploy: Run Advisor") = Value
+			End Set
+		#tag EndSetter
+		Protected DeployRunAdvisor As Boolean
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1

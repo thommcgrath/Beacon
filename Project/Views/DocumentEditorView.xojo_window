@@ -387,8 +387,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BeginDeploy()
+		  Const UseNewDeploy = True
+		  
 		  If Self.mDeployWindow <> Nil And Self.mDeployWindow.Value <> Nil And Self.mDeployWindow.Value IsA DocumentDeployWindow Then
 		    DocumentDeployWindow(Self.mDeployWindow.Value).Show()
+		  ElseIf Self.mDeployWindow <> Nil And Self.mDeployWindow.Value <> Nil And Self.mDeployWindow.Value IsA DeployManager Then
+		    DeployManager(Self.mDeployWindow.Value).BringToFront()
 		  Else
 		    Self.Autosave()
 		    
@@ -408,11 +412,17 @@ End
 		      Return
 		    End If
 		    
-		    Var Win As DocumentDeployWindow = DocumentDeployWindow.Create(Self.Document)
-		    If Win <> Nil Then
+		    #if UseNewDeploy
+		      Var Win As DeployManager = New DeployManager(Self.Document)
 		      Self.mDeployWindow = New WeakRef(Win)
-		      Win.Show()
-		    End If
+		      Win.BringToFront()
+		    #else
+		      Var Win As DocumentDeployWindow = DocumentDeployWindow.Create(Self.Document)
+		      If Win <> Nil Then
+		        Self.mDeployWindow = New WeakRef(Win)
+		        Win.Show()
+		      End If
+		    #endif
 		  End If
 		End Sub
 	#tag EndMethod
