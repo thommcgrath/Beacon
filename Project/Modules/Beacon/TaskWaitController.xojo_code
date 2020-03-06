@@ -1,7 +1,25 @@
 #tag Class
 Protected Class TaskWaitController
+	#tag Method, Flags = &h0
+		Function Action() As String
+		  Return Self.mAction
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Action As String, UserData As Variant = Nil)
+		  Self.mAction = Action
+		  Self.UserData = UserData
+		End Sub
+	#tag EndMethod
+
+
 	#tag Property, Flags = &h0
 		Cancelled As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mAction As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -52,6 +70,22 @@ Protected Class TaskWaitController
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Cancelled"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ShouldResume"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

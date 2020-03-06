@@ -74,8 +74,17 @@ Protected Class ServerProfile
 
 	#tag Method, Flags = &h0
 		Function Mask() As UInt64
-		  Return Beacon.Maps.All.Mask
+		  Return Self.mMask
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Mask(Assigns Value As UInt64)
+		  If Self.mMask <> Value Then
+		    Self.mMask = Value
+		    Self.Modified = True
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -221,6 +230,10 @@ Protected Class ServerProfile
 
 	#tag Property, Flags = &h21
 		Private mExternalAccountUUID As v4UUID
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMask As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

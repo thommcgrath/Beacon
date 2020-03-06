@@ -397,12 +397,24 @@ Protected Module BeaconUI
 
 	#tag Method, Flags = &h0
 		Function ShowConfirm(Extends Win As Window, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String) As Boolean
-		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption)
+		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption, "") = ConfirmResponses.Action
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ShowConfirm(Extends Win As Window, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String, AlternateCaption As String) As BeaconUI.ConfirmResponses
+		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption, AlternateCaption)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function ShowConfirm(Win As Window = Nil, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String) As Boolean
+		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption, "") = ConfirmResponses.Action
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ShowConfirm(Win As Window = Nil, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String, AlternateAction As String) As BeaconUI.ConfirmResponses
 		  Try
 		    Win = Win.TrueWindow
 		  Catch Err As RuntimeException
@@ -416,20 +428,33 @@ Protected Module BeaconUI
 		  Dialog.ActionButton.Caption = ActionCaption
 		  Dialog.CancelButton.Caption = CancelCaption
 		  Dialog.CancelButton.Visible = True
+		  If AlternateAction.Length > 0 Then
+		    Dialog.AlternateActionButton.Caption = AlternateAction
+		    Dialog.AlternateActionButton.Visible = True
+		  End If
 		  
+		  Var Result As MessageDialogButton
 		  Try
 		    If Win = Nil Or Win.Type = Window.Types.Sheet Then
-		      Return Dialog.ShowModal() = Dialog.ActionButton
+		      Result = Dialog.ShowModal()
 		    Else
 		      Var FocusControl As RectControl = Win.Focus
 		      Win.Focus = Nil
-		      Var Result As Boolean = Dialog.ShowModalWithin(Win) = Dialog.ActionButton
+		      Result = Dialog.ShowModalWithin(Win)
 		      Win.Focus = FocusControl
-		      Return Result
 		    End If
 		  Catch Err As RuntimeException
-		    Return Dialog.ShowModal() = Dialog.ActionButton
+		    Result = Dialog.ShowModal()
 		  End Try
+		  
+		  Select Case Result
+		  Case Dialog.ActionButton
+		    Return ConfirmResponses.Action
+		  Case Dialog.CancelButton
+		    Return ConfirmResponses.Cancel
+		  Case Dialog.AlternateActionButton
+		    Return ConfirmResponses.Alternate
+		  End Select
 		End Function
 	#tag EndMethod
 
@@ -522,6 +547,13 @@ Protected Module BeaconUI
 	#tag Constant, Name = ToolbarHasBackground, Type = Boolean, Dynamic = False, Default = \"True", Scope = Protected
 		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"False"
 	#tag EndConstant
+
+
+	#tag Enum, Name = ConfirmResponses, Type = Integer, Flags = &h0
+		Action
+		  Cancel
+		Alternate
+	#tag EndEnum
 
 
 	#tag ViewBehavior

@@ -153,6 +153,23 @@ Protected Class TaskQueue
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub Wait(Milliseconds As Double)
+		  If App.CurrentThread = Nil Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Wait cannot be called on the main thread."
+		    Raise Err
+		    Return
+		  End If
+		  
+		  Var Limit As Double = Milliseconds * 1000
+		  Var StartTime As Double = System.Microseconds
+		  While System.Microseconds - StartTime < Limit
+		    App.SleepCurrentThread(20)
+		  Wend
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event Finished()

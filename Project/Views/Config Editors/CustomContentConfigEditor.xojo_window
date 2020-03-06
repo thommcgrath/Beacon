@@ -86,7 +86,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       Multiline       =   True
       ReadOnly        =   False
       Scope           =   2
-      ScrollbarHorizontal=   False
+      ScrollbarHorizontal=   True
       ScrollbarVertical=   True
       Styled          =   False
       TabIndex        =   1

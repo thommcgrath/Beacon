@@ -65,6 +65,17 @@ Protected Class ExternalAccount
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsExpired() As Boolean
+		  If Self.mExpiration = Nil Then
+		    Return True
+		  End If
+		  
+		  Var Now As DateTime = DateTime.Now
+		  Return Self.mExpiration.SecondsFrom1970 <= Now.SecondsFrom1970
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.ExternalAccount) As Integer
 		  If IsNull(Other) Then
 		    Return 1

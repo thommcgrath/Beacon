@@ -91,7 +91,7 @@ Begin DiscoveryView LocalDiscoveryView
       Multiline       =   True
       ReadOnly        =   False
       Scope           =   2
-      ScrollbarHorizontal=   False
+      ScrollbarHorizontal=   True
       ScrollbarVertical=   True
       Styled          =   False
       TabIndex        =   2

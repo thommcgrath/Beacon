@@ -866,6 +866,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          Top             =   300
          Transparent     =   False
          Underline       =   False
+         Value           =   False
          Visible         =   True
          VisualState     =   "0"
          Width           =   454

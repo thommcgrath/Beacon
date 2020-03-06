@@ -89,7 +89,7 @@ Begin BeaconDialog DocumentExportWindow
       Multiline       =   True
       ReadOnly        =   True
       Scope           =   2
-      ScrollbarHorizontal=   False
+      ScrollbarHorizontal=   True
       ScrollbarVertical=   True
       Styled          =   False
       TabIndex        =   6
