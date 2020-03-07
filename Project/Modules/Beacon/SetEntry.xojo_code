@@ -339,13 +339,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      
 		      Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
 		      If Engram = Nil Then
-		        // Path was not found
-		        Dim TempEngram As Beacon.Engram = Beacon.Engram.CreateFromPath(Path)
-		        Engram = Beacon.Data.GetEngramByClass(TempEngram.ClassString)
-		        If Engram = Nil Then
-		          // Didn't find it by class either
-		          Engram = TempEngram
-		        End If
+		        Engram = Beacon.Engram.CreateFromPath(Path)
 		      End If
 		      Engrams.AddRow(Engram)
 		    Next
@@ -365,7 +359,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Try
 		      Dim Engram As Beacon.Engram = Engrams(I)
 		      Dim ClassWeight As Double = ClassWeights(I)
-		      Entry.Append(New Beacon.SetEntryOption(Engram, ClassWeight))
+		      Entry.Append(New Beacon.SetEntryOption(Engram, If(ClassWeight > 1.0, ClassWeight / 100, ClassWeight)))
 		    Catch Err As TypeMismatchException
 		      Continue
 		    End Try
@@ -596,15 +590,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Redim Paths(Self.mOptions.LastRowIndex)
 		  Redim Weights(Self.mOptions.LastRowIndex)
 		  Redim Classes(Self.mOptions.LastRowIndex)
-		  Dim SumOptionWeights As Double
 		  For I As Integer = 0 To Self.mOptions.LastRowIndex
-		    SumOptionWeights = SumOptionWeights + Self.mOptions(I).Weight
-		  Next
-		  For I As Integer = 0 To Self.mOptions.LastRowIndex
-		    Dim RelativeWeight As Integer = Round((Self.mOptions(I).Weight / SumOptionWeights) * 1000)
 		    Paths(I) = Self.mOptions(I).Engram.GeneratedClassBlueprintPath()
 		    Classes(I) = """" + Self.mOptions(I).Engram.ClassString + """"
-		    Weights(I) = RelativeWeight.ToString
+		    Weights(I) = Beacon.PrettyText(Self.mOptions(I).Weight * 100)
 		  Next
 		  
 		  Dim MinQuality As Double = Self.mMinQuality.Value(Multipliers.Min, Difficulty)
