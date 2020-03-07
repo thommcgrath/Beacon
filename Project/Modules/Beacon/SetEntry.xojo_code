@@ -155,7 +155,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Next
 		    Var AverageWeight As Double = WeightSum / Count
 		    
-		    Va Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
+		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
 		    If Engram = Nil Then
 		      Engram = Beacon.Engram.CreateFromPath(Path)
 		    End If
