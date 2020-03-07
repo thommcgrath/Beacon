@@ -366,16 +366,10 @@ Inherits Listbox
 		    Return
 		  End If
 		  
-		  Dim ViewportHeight As Integer = Self.Height
-		  If Self.HasHeader Then
-		    ViewportHeight = ViewportHeight - Self.HeaderHeight
-		  End If
-		  If Self.HasBorder Then
-		    ViewportHeight = ViewportHeight - 2
-		  End If
-		  Dim VisibleStart As Integer = Self.ScrollPosition
-		  Dim VisibleEnd As Integer = VisibleStart + Floor(ViewportHeight / Self.DefaultRowHeight)
-		  Dim AtLeastOneVisible As Boolean
+		  
+		  Var VisibleStart As Integer = Self.ScrollPosition
+		  Var VisibleEnd As Integer = VisibleStart + Self.VisibleRowCount
+		  Var AtLeastOneVisible As Boolean
 		  
 		  For I As Integer = 0 To Self.RowCount - 1
 		    If Self.Selected(I) Then
@@ -384,7 +378,7 @@ Inherits Listbox
 		  Next
 		  If Not AtLeastOneVisible Then
 		    If Animated Then
-		      Dim Task As New AnimationKit.ScrollTask(Self)
+		      Var Task As New AnimationKit.ScrollTask(Self)
 		      Task.DurationInSeconds = 0.4
 		      Task.Position = Self.SelectedRowIndex
 		      Task.Curve = AnimationKit.Curve.CreateEaseOut
@@ -433,13 +427,15 @@ Inherits Listbox
 		  Self.SelectionChangeBlocked = True
 		  
 		  #if TargetWindows
-		    Dim ScrollerVisible As Boolean = Self.HasVerticalScrollbar
+		    Var ScrollPosition As Integer = Self.ScrollPosition
+		    Self.ScrollPosition = 0
+		    Var ScrollerVisible As Boolean = Self.HasVerticalScrollbar
 		    If ScrollerVisible Then
 		      Self.HasVerticalScrollbar = False
 		    End If
 		  #endif
 		  
-		  Dim Count As Integer = Self.RowCount
+		  Var Count As Integer = Self.RowCount
 		  While Count < Value
 		    Self.AddRow("")
 		    Count = Count + 1
@@ -452,6 +448,7 @@ Inherits Listbox
 		  #if TargetWindows
 		    If ScrollerVisible Then
 		      Self.HasVerticalScrollbar = True
+		      Self.ScrollPosition = ScrollPosition
 		    End If
 		  #endif
 		  
@@ -570,6 +567,22 @@ Inherits Listbox
 			End Set
 		#tag EndSetter
 		SelectionChangeBlocked As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Var ViewportHeight As Integer = Self.Height
+			  If Self.HasHeader Then
+			    ViewportHeight = ViewportHeight - Self.HeaderHeight
+			  End If
+			  If Self.HasBorder Then
+			    ViewportHeight = ViewportHeight - 2
+			  End If
+			  Return Floor(ViewportHeight / Self.DefaultRowHeight)
+			End Get
+		#tag EndGetter
+		VisibleRowCount As Integer
 	#tag EndComputedProperty
 
 
@@ -1058,6 +1071,14 @@ Inherits Listbox
 			Group="Behavior"
 			InitialValue=""
 			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="VisibleRowCount"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
