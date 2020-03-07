@@ -74,6 +74,7 @@ Begin BeaconContainer ItemSetEditor
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   560
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -154,7 +155,6 @@ Begin BeaconContainer ItemSetEditor
       HasBackColor    =   False
       Height          =   23
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -552,11 +552,6 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub DoubleClick()
-		  Self.EditSelectedEntries()
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
 		  #Pragma Unused X
 		  #Pragma Unused Y
@@ -600,7 +595,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Self.Header.EditEntry.Enabled = Me.SelectedRowCount > 0
+		  Self.Header.EditEntry.Enabled = Me.CanEdit
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndEvent
@@ -649,6 +644,16 @@ End
 		  End If
 		  Return True
 		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformEdit()
+		  Self.EditSelectedEntries()
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Header

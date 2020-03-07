@@ -151,33 +151,40 @@ Inherits Listbox
 
 	#tag Event
 		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
-		  Dim Board As New Clipboard
-		  Dim CanCopy As Boolean = RaiseEvent CanCopy()
-		  Dim CanDelete As Boolean = RaiseEvent CanDelete()
-		  Dim CanPaste As Boolean = RaiseEvent CanPaste(Board)
+		  Var Board As New Clipboard
+		  Var CanEdit As Boolean = RaiseEvent CanEdit()
+		  Var CanCopy As Boolean = RaiseEvent CanCopy()
+		  Var CanDelete As Boolean = RaiseEvent CanDelete()
+		  Var CanPaste As Boolean = RaiseEvent CanPaste(Board)
 		  
-		  Dim CutItem As New MenuItem("Cut", "cut")
+		  Var EditItem As New MenuItem("Edit", "edit")
+		  EditItem.Enabled = CanEdit
+		  Base.AddMenu(EditItem)
+		  
+		  Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		  
+		  Var CutItem As New MenuItem("Cut", "cut")
 		  CutItem.Shortcut = "X"
 		  CutItem.Enabled = CanCopy And CanDelete
 		  Base.AddMenu(CutItem)
 		  
-		  Dim CopyItem As New MenuItem("Copy", "copy")
+		  Var CopyItem As New MenuItem("Copy", "copy")
 		  CopyItem.Shortcut = "C"
 		  CopyItem.Enabled = CanCopy
 		  Base.AddMenu(CopyItem)
 		  
-		  Dim PasteItem As New MenuItem("Paste", "paste")
+		  Var PasteItem As New MenuItem("Paste", "paste")
 		  PasteItem.Shortcut = "V"
 		  PasteItem.Enabled = CanPaste
 		  Base.AddMenu(PasteItem)
 		  
-		  Dim DeleteItem As New MenuItem("Delete", "clear")
+		  Var DeleteItem As New MenuItem("Delete", "clear")
 		  DeleteItem.Enabled = CanDelete
 		  Base.AddMenu(DeleteItem)
 		  
 		  Call ConstructContextualMenu(Base, X, Y)
 		  
-		  Dim Bound As Integer = Base.Count - 1
+		  Var Bound As Integer = Base.Count - 1
 		  For I As Integer = 0 To Bound
 		    If Base.MenuAt(I) = DeleteItem And I < Bound Then
 		      Base.AddMenuAt(I + 1, New MenuItem(MenuItem.TextSeparator))
@@ -192,6 +199,9 @@ Inherits Listbox
 		Function ContextualMenuAction(hitItem as MenuItem) As Boolean
 		  If HitItem.Tag <> Nil And HitItem.Tag.Type = Variant.TypeString Then
 		    Select Case HitItem.Tag
+		    Case "edit"
+		      Self.DoEdit()
+		      Return True
 		    Case "cut"
 		      Self.DoCut()
 		      Return True

@@ -138,6 +138,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   730
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -503,9 +504,14 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub DoubleClick()
+		Sub PerformEdit()
 		  Self.EditSelected()
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount = 1
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
