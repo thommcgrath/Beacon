@@ -106,23 +106,32 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Return Nil
 		  End If
 		  
-		  Dim MinQualitySum, MaxQualitySum As Double
-		  Dim Options As New Dictionary
+		  Var SetEntryCount As Integer
+		  Var SetEntryWeightSum As Double
+		  Var MinQualitySum, MaxQualitySum As Double
+		  Var Options As New Dictionary
 		  For Each Entry As Beacon.SetEntry In Entries
+		    Var WeightAdded As Boolean
 		    For Each Option As Beacon.SetEntryOption In Entry
 		      If Option.Engram = Nil Or Option.Engram.IsValid = False Or Option.Engram.IsTagged("blueprintable") = False Then
 		        Continue
 		      End If
 		      
-		      Dim Key As String = Option.Engram.Path
+		      Var Key As String = Option.Engram.Path
 		      If Key = "" Then
 		        Continue
+		      End If
+		      
+		      If WeightAdded = False Then
+		        SetEntryWeightSum = SetEntryWeightSum + Entry.RawWeight
+		        SetEntryCount = SetEntryCount + 1
+		        WeightAdded = True
 		      End If
 		      
 		      MinQualitySum = MinQualitySum + Entry.MinQuality.BaseValue
 		      MaxQualitySum = MaxQualitySum + Entry.MaxQuality.BaseValue
 		      
-		      Dim Arr() As Beacon.SetEntryOption
+		      Var Arr() As Beacon.SetEntryOption
 		      If Options.HasKey(Key) Then
 		        Arr = Options.Value(Key)
 		      End If
@@ -135,18 +144,18 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Return Nil
 		  End If
 		  
-		  Dim BlueprintEntry As New Beacon.SetEntry
+		  Var BlueprintEntry As New Beacon.SetEntry
 		  For Each Entry As DictionaryEntry In Options
-		    Dim Path As String = Entry.Key
-		    Dim Arr() As Beacon.SetEntryOption = Entry.Value
-		    Dim Count As Integer = Arr.LastRowIndex + 1
-		    Dim WeightSum As Double
+		    Var Path As String = Entry.Key
+		    Var Arr() As Beacon.SetEntryOption = Entry.Value
+		    Var Count As Integer = Arr.LastRowIndex + 1
+		    Var WeightSum As Double
 		    For Each Option As Beacon.SetEntryOption In Arr
 		      WeightSum = WeightSum + Option.Weight
 		    Next
-		    Dim AverageWeight As Double = WeightSum / Count
+		    Var AverageWeight As Double = WeightSum / Count
 		    
-		    Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
+		    Va Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
 		    If Engram = Nil Then
 		      Engram = Beacon.Engram.CreateFromPath(Path)
 		    End If
@@ -159,6 +168,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  BlueprintEntry.MinQuantity = 1
 		  BlueprintEntry.MinQuality = Beacon.Qualities.ForBaseValue(MinQualitySum / Options.KeyCount)
 		  BlueprintEntry.MaxQuality = Beacon.Qualities.ForBaseValue(MaxQualitySum / Options.KeyCount)
+		  BlueprintEntry.RawWeight = SetEntryWeightSum / SetEntryCount
 		  
 		  Return BlueprintEntry
 		End Function
