@@ -71,13 +71,13 @@ Inherits ContainerControl
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ShouldFinish(Engines() As Beacon.DiscoveryEngine)
+		Protected Sub ShouldFinish(Engines() As Beacon.IntegrationEngine)
 		  Self.ShouldFinish(Engines, Nil)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ShouldFinish(Engines() As Beacon.DiscoveryEngine, Accounts As Beacon.ExternalAccountManager)
+		Protected Sub ShouldFinish(Engines() As Beacon.IntegrationEngine, Accounts As Beacon.ExternalAccountManager)
 		  If Self.mClosed Then
 		    Return
 		  End If
@@ -96,7 +96,7 @@ Inherits ContainerControl
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Finished(Engines() As Beacon.DiscoveryEngine, Accounts As Beacon.ExternalAccountManager)
+		Event Finished(Engines() As Beacon.IntegrationEngine, Accounts As Beacon.ExternalAccountManager)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

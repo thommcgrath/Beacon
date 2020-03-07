@@ -292,7 +292,7 @@ Protected Class IntegrationEngine
 		  End If
 		  
 		  // Allow the user to review the new files if requested
-		  If Self.ReviewEnabled Then
+		  If Self.ReviewEnabled And App.IdentityManager.CurrentIdentity.IsBanned = False Then
 		    If Self.AnalyzeEnabled Then
 		      // Analyzer would go here
 		    End If
@@ -352,6 +352,45 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h21
 		Private Sub RunDiscover(Sender As Thread)
 		  #Pragma Unused Sender
+		  
+		  // Give the implementor time to setup
+		  RaiseEvent Begin
+		  
+		  // Start by querying the server
+		  If Self.SupportsStatus Then
+		    Self.Log("Getting server status…")
+		    Self.RefreshServerStatus()
+		    If Self.Finished Then
+		      Return
+		    End If
+		  Else
+		    Self.State = Self.StateUnsupported
+		  End If
+		  
+		  // Perform discovery of the needed files
+		  Var DiscoveredData() As Beacon.DiscoveredData = RaiseEvent Discover
+		  If DiscoveredData = Nil Then
+		    Self.SetError("Discovery implementation incomplete.")
+		    Return
+		  End If
+		  
+		  // Download the ini files
+		  Self.Log("Downloading Game.ini…")
+		  Var GameIniOriginal As String = RaiseEvent DownloadFile("Game.ini")
+		  If Self.Finished Then
+		    Return
+		  End If
+		  Self.Log("Downloading GameUserSettings.ini")
+		  Var GameUserSettingsIniOriginal As String = RaiseEvent DownloadFile("GameUserSettings.ini")
+		  If Self.Finished Then
+		    Return
+		  End If
+		  
+		  // And done
+		  Self.Log("Finished")
+		  Self.Finished = True
+		  
+		  RaiseEvent Finished
 		End Sub
 	#tag EndMethod
 
@@ -548,6 +587,10 @@ Protected Class IntegrationEngine
 
 	#tag Hook, Flags = &h0
 		Event CreateCheckpoint()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Discover() As Beacon.DiscoveredData()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

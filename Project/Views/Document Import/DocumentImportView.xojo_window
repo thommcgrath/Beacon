@@ -751,7 +751,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub BeginDiscovery(Engines() As Beacon.DiscoveryEngine, Accounts As Beacon.ExternalAccountManager)
+		Private Sub BeginDiscovery(Engines() As Beacon.IntegrationEngine, Accounts As Beacon.ExternalAccountManager)
 		  Self.mEngines = Engines
 		  If Accounts <> Nil Then
 		    If Self.mAccounts = Nil Then
@@ -771,11 +771,11 @@ End
 		  Self.DiscoveryWatcher.RunMode = Timer.RunModes.Multiple
 		  
 		  Self.StatusList.RemoveAllRows
-		  For Each Engine As Beacon.DiscoveryEngine In Engines
-		    Self.StatusList.AddRow(Engine.Name + EndOfLine + Engine.Status)
+		  For Each Engine As Beacon.IntegrationEngine In Engines
+		    Self.StatusList.AddRow(Engine.Name + EndOfLine + Engine.Logs(True))
 		    Self.StatusList.RowTagAt(Self.StatusList.LastAddedRowIndex) = Engine
 		    
-		    Engine.Begin()
+		    Engine.BeginDiscovery()
 		  Next
 		  
 		  Self.Views.SelectedPanelIndex = Self.PageStatus
@@ -820,16 +820,23 @@ End
 		    Return
 		  End If
 		  
-		  Var Engine As Beacon.DiscoveryEngine = Self.mEngines(Idx)
-		  Var CommandLineOptions As Dictionary = Engine.CommandLineOptions
+		  Var Engine As Beacon.IntegrationEngine = Self.mEngines(Idx)
+		  Var CommandLineOptions As Dictionary
+		  #if DebugBuild
+		    #if false
+		      CommandLineOptions = Engine.CommandLineOptions
+		    #endif
+		  #else
+		    #Pragma Error "Importer has no command line options"
+		  #endif
 		  If CommandLineOptions = Nil Then
 		    CommandLineOptions = New Dictionary
 		  End If
 		  Var Document As New Beacon.Document
-		  Document.MapCompatibility = Engine.Map
+		  Document.MapCompatibility = Engine.Profile.Mask
 		  
 		  Try
-		    Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Engine.Map)
+		    Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Engine.Profile.Mask)
 		    If Maps.LastRowIndex = -1 Then
 		      Maps.AddRow(Beacon.Maps.TheIsland)
 		    End If
@@ -1033,7 +1040,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEngines() As Beacon.DiscoveryEngine
+		Private mEngines() As Beacon.IntegrationEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1158,7 +1165,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Engines() As Beacon.DiscoveryEngine, Accounts As Beacon.ExternalAccountManager)
+		Sub Finished(Engines() As Beacon.IntegrationEngine, Accounts As Beacon.ExternalAccountManager)
 		  Self.BeginDiscovery(Engines, Accounts)
 		End Sub
 	#tag EndEvent
@@ -1179,7 +1186,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Engines() As Beacon.DiscoveryEngine, Accounts As Beacon.ExternalAccountManager)
+		Sub Finished(Engines() As Beacon.IntegrationEngine, Accounts As Beacon.ExternalAccountManager)
 		  Self.BeginDiscovery(Engines, Accounts)
 		End Sub
 	#tag EndEvent
@@ -1200,7 +1207,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Engines() As Beacon.DiscoveryEngine, Accounts As Beacon.ExternalAccountManager)
+		Sub Finished(Engines() As Beacon.IntegrationEngine, Accounts As Beacon.ExternalAccountManager)
 		  Self.BeginDiscovery(Engines, Accounts)
 		End Sub
 	#tag EndEvent
@@ -1281,7 +1288,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Engines() As Beacon.DiscoveryEngine, Accounts As Beacon.ExternalAccountManager)
+		Sub Finished(Engines() As Beacon.IntegrationEngine, Accounts As Beacon.ExternalAccountManager)
 		  Self.BeginDiscovery(Engines, Accounts)
 		End Sub
 	#tag EndEvent
@@ -1293,15 +1300,21 @@ End
 		  Var SuccessCount As Integer
 		  Var Errors As Boolean
 		  For I As Integer = 0 To Self.mEngines.LastRowIndex
-		    Var Engine As Beacon.DiscoveryEngine = Self.mEngines(I)
+		    Var Engine As Beacon.IntegrationEngine = Self.mEngines(I)
 		    Var Finished As Boolean
 		    Var Status As String
 		    If Engine.Finished And Not Engine.Errored Then
 		      If Self.mImporters(I) = Nil Then
 		        Var Importer As New Beacon.ImportThread
-		        Importer.GameIniContent = Engine.GameIniContent
-		        Importer.GameUserSettingsIniContent = Engine.GameUserSettingsIniContent
-		        AddHandler Importer.ThreadedParseFinished, WeakAddressOf Importer_ThreadedParseFinished      
+		        #if DebugBuild
+		          #if false
+		            Importer.GameIniContent = Engine.GameIniContent
+		            Importer.GameUserSettingsIniContent = Engine.GameUserSettingsIniContent
+		          #endif
+		        #else
+		          #Pragma Error "Importer has no content to import"
+		        #endif
+		        AddHandler Importer.ThreadedParseFinished, WeakAddressOf Importer_ThreadedParseFinished 
 		        Self.mImporters(I) = Importer
 		        Status = "Parsing Config Files…"
 		        Importer.Start
@@ -1326,7 +1339,7 @@ End
 		      End If
 		    Else
 		      // Show engine status
-		      Status = Engine.Status
+		      Status = Engine.Logs(True)
 		      If Engine.Errored Then
 		        Finished = True
 		        Errors = True

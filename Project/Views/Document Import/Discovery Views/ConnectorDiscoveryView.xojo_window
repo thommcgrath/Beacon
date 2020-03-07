@@ -602,8 +602,8 @@ End
 		Sub Connected()
 		  Me.Close
 		  
-		  Var Engines(0) As Beacon.DiscoveryEngine
-		  Engines(0) = New Beacon.ConnectorDiscoveryEngine(Self.Profile)
+		  Var Engines(0) As Beacon.IntegrationEngine
+		  Engines(0) = New Beacon.ConnectorIntegrationEngine(Self.Profile)
 		  Self.ShouldFinish(Engines)
 		End Sub
 	#tag EndEvent

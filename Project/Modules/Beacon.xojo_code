@@ -670,6 +670,14 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Merge(Extends FirstArray() As String, SecondArray() As String)
+		  For Idx As Integer = SecondArray.FirstRowIndex To SecondArray.LastRowIndex
+		    FirstArray.AddRow(SecondArray(Idx))
+		  Next
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function NameOfValue(Value As Variant) As String
 		  Var ValueName As String
@@ -965,6 +973,19 @@ Protected Module Beacon
 		    Parts.AddRow(Str(Seconds, "-0") + "s")
 		  End If
 		  Return Parts.Join(" ")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Shift(Extends Arr() As String) As String
+		  // Removes the first element of the array and returns it
+		  If Arr.Count = 0 Then
+		    Return ""
+		  End If
+		  
+		  Var Value As String = Arr(Arr.FirstRowIndex)
+		  Arr.RemoveRowAt(Arr.FirstRowIndex)
+		  Return Value
 		End Function
 	#tag EndMethod
 

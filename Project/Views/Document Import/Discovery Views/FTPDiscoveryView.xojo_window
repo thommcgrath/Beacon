@@ -933,8 +933,8 @@ End
 		    // Discovery was able to find the path and the user doesn't need to do any further work.
 		    Var Path As String = Dict.Value("path")
 		    
-		    Var Engines(0) As Beacon.DiscoveryEngine
-		    Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, Path, App.IdentityManager.CurrentIdentity)
+		    Var Engines(0) As Beacon.IntegrationEngine
+		    Engines(0) = New Beacon.FTPIntegrationEngine(Self.mProfile)
 		    Self.ShouldFinish(Engines)
 		    
 		    Return
@@ -1055,8 +1055,8 @@ End
 		  
 		  // Should now equal the "Saved" directory
 		  Var InitialPath As String = Components.Join("/")
-		  Var Engines(0) As Beacon.DiscoveryEngine
-		  Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, InitialPath, App.IdentityManager.CurrentIdentity)
+		  Var Engines(0) As Beacon.IntegrationEngine
+		  Engines(0) = New Beacon.FTPIntegrationEngine(Self.mProfile)
 		  Self.ShouldFinish(Engines)
 		End Sub
 	#tag EndEvent
@@ -1121,10 +1121,14 @@ End
 		  
 		  Self.ViewPanel.SelectedPanelIndex = Self.PageDiscovering
 		  
-		  Var Fields As Dictionary = Self.FormDataFromProfile()
-		  Var Request As New BeaconAPI.Request("ftp/path", "GET", Fields, WeakAddressOf APICallback_DetectPath)
-		  Request.Authenticate(Preferences.OnlineToken)
-		  BeaconAPI.Send(Request)
+		  Var Engines(0) As Beacon.IntegrationEngine
+		  Engines(0) = New Beacon.FTPIntegrationEngine(Self.mProfile)
+		  Self.ShouldFinish(Engines)
+		  
+		  // Var Fields As Dictionary = Self.FormDataFromProfile()
+		  // Var Request As New BeaconAPI.Request("ftp/path", "GET", Fields, WeakAddressOf APICallback_DetectPath)
+		  // Request.Authenticate(Preferences.OnlineToken)
+		  // BeaconAPI.Send(Request)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -606,15 +606,14 @@ End
 #tag Events ListActionButton
 	#tag Event
 		Sub Action()
-		  Var Engines() As Beacon.NitradoDiscoveryEngine
+		  Var Engines() As Beacon.NitradoIntegrationEngine
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.CellCheckBoxValueAt(I, 0) Then
 		      Continue
 		    End If
 		    
 		    Var Profile As Beacon.NitradoServerProfile = Self.List.RowTagAt(I)
-		    Var Account As Beacon.ExternalAccount = Self.mAccounts.GetByUUID(Profile.ExternalAccountUUID)
-		    Engines.AddRow(New Beacon.NitradoDiscoveryEngine(Profile, Account.AccessToken))
+		    Engines.AddRow(New Beacon.NitradoIntegrationEngine(Profile))
 		  Next
 		  Self.ShouldFinish(Engines, Self.mAccounts)
 		End Sub
