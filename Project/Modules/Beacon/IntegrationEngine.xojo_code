@@ -374,18 +374,6 @@ Protected Class IntegrationEngine
 		    Return
 		  End If
 		  
-		  // Download the ini files
-		  Self.Log("Downloading Game.ini…")
-		  Var GameIniOriginal As String = RaiseEvent DownloadFile("Game.ini")
-		  If Self.Finished Then
-		    Return
-		  End If
-		  Self.Log("Downloading GameUserSettings.ini")
-		  Var GameUserSettingsIniOriginal As String = RaiseEvent DownloadFile("GameUserSettings.ini")
-		  If Self.Finished Then
-		    Return
-		  End If
-		  
 		  // And done
 		  Self.Log("Finished")
 		  Self.Finished = True

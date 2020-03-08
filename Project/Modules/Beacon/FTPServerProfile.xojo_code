@@ -55,6 +55,18 @@ Inherits Beacon.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(Profile As Beacon.FTPServerProfile)
+		  Self.GameIniPath = Profile.GameIniPath
+		  Self.GameUserSettingsIniPath = Profile.GameUserSettingsIniPath
+		  Self.Host = Profile.Host
+		  Self.Mode = Profile.Mode
+		  Self.Password = Profile.Password
+		  Self.Port = Profile.Port
+		  Self.Username = Profile.Username
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function DeployCapable() As Boolean
 		  Return True
 		End Function

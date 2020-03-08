@@ -26,7 +26,6 @@ Inherits Beacon.IntegrationEngine
 		  Var IPMatch As New Regex
 		  IPMatch.SearchPattern = "^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}_\d{1,5}$"
 		  
-		  Var BaseURL As String
 		  Var Files() As CURLSFileInfoMBS
 		  Var PotentialPaths() As String
 		  For Each Protocol As String In Protocols
@@ -50,131 +49,75 @@ Inherits Beacon.IntegrationEngine
 		      FTPProfile.Mode = Beacon.FTPServerProfile.ModeSFTP
 		    End Select
 		    
+		    Var BaseURL As String = Self.BaseURL
 		    For Each Info As CURLSFileInfoMBS In Files
 		      If Not Info.IsDirectory Then
 		        Continue
 		      End If
 		      
 		      If Info.Filename = "arkse" Or Info.Filename = "arkserer" Then
-		        PotentialPaths.AddRow("/" + Info.FileName + "/ShooterGame/Saved")
-		        PotentialPaths.AddRow("/" + Info.Filename + "/ShooterGame/SavedArks")
+		        PotentialPaths.AddRow(BaseURL + "/" + Info.FileName + "/ShooterGame/Saved")
+		        PotentialPaths.AddRow(BaseURL + "/" + Info.Filename + "/ShooterGame/SavedArks")
 		      ElseIf Info.Filename = "ShooterGame" Then
-		        PotentialPaths.AddRow("/ShooterGame/Saved")
-		        PotentialPaths.AddRow("/ShooterGame/SavedArks")
-		      ElseIf Info.Filename = "Saved" Then
-		        PotentialPaths.AddRow("/Saved")
-		      ElseIf Info.Filename = "SavedArks" Then
-		        PotentialPaths.AddRow("/SavedArks")
+		        PotentialPaths.AddRow(BaseURL + "/" + Info.FileName + "/Saved")
+		        PotentialPaths.AddRow(BaseURL + "/" + Info.FileName + "/SavedArks")
+		      ElseIf Info.Filename = "Saved" Or Info.Filename = "SavedArks" Then
+		        PotentialPaths.AddRow(BaseURL + "/" + Info.Filename)
 		      ElseIf IPMatch.Search(Info.Filename) <> Nil Then
-		        PotentialPaths.AddRow("/" + Info.Filename + "/ShooterGame/Saved")
-		        PotentialPaths.AddRow("/" + Info.Filename + "/ShooterGame/SavedArks")
+		        PotentialPaths.AddRow(BaseURL + "/" + Info.Filename + "/ShooterGame/Saved")
+		        PotentialPaths.AddRow(BaseURL + "/" + Info.Filename + "/ShooterGame/SavedArks")
 		      End If
 		    Next
 		    
-		    BaseURL = Self.BaseURL
 		    Exit
 		  Next
 		  
 		  // None of them worked
 		  If Files = Nil Then
 		    Self.SetError("Unable to connect and list files.")
-		    Return
+		    Return Nil
 		  End If
 		  
 		  Self.Log("Discovering paths…")
-		  Var DiscoveredProfiles() As Beacon.FTPServerProfile
+		  Var DiscoveredData() As Beacon.DiscoveredData
 		  For Each Path As String In PotentialPaths
-		    Var SavedFiles() As CURLSFileInfoMBS = Self.ListFiles(BaseURL + Path + "/*")
-		    If SavedFiles = Nil Then
-		      Continue
+		    Var Data As Beacon.DiscoveredData = Self.DiscoverFromPath(Path)
+		    If Data <> Nil Then
+		      DiscoveredData.AddRow(Data)
 		    End If
-		    
-		    Var LogsPath, ConfigPath As String
-		    For Each Info As CURLSFileInfoMBS In SavedFiles
-		      If Not Info.IsDirectory Then
-		        Continue
-		      End If
-		      
-		      Select Case Info.FileName
-		      Case "Config"
-		        ConfigPath = Path + "/Config"
-		      Case "Logs"
-		        LogsPath = Path + "/Logs"
-		      End Select
-		    Next
-		    
-		    If ConfigPath.Length = 0 Then
-		      Continue
-		    End If
-		    
-		    Var Profile As New Beacon.FTPServerProfile
-		    Profile.Host = FTPProfile.Host
-		    Profile.Port = FTPProfile.Port
-		    Profile.Mode = FTPProfile.Mode
-		    Profile.Username = FTPProfile.Username
-		    Profile.Password = FTPProfile.Password
-		    
-		    Var ConfigFolders() As CURLSFileInfoMBS = Self.ListFiles(BaseURL + ConfigPath + "/*")
-		    If ConfigFolders = Nil Then
-		      Continue
-		    End If
-		    
-		    For Each Info As CURLSFileInfoMBS In ConfigFolders
-		      If Not Info.IsDirectory Then
-		        Continue
-		      End If
-		      
-		      Select Case Info.FileName
-		      Case "WindowsServer", "LinuxServer", "WindowsNoEditor"
-		        Profile.GameIniPath = ConfigPath + "/" + Info.Filename + "/Game.ini"
-		        Profile.GameUserSettingsIniPath = ConfigPath + "/" + Info.Filename + "/GameUserSettings.ini"
-		        Exit
-		      End Select
-		    Next
-		    
-		    If Profile.GameIniPath.Length = 0 Or Profile.GameUserSettingsIniPath.Length = 0 Then
-		      Continue
-		    End If
-		    
-		    If LogsPath.Length > 0 Then
-		      Self.Log("Analyzing log files…")
-		      Var Logs() As CURLSFileInfoMBS = Self.ListFiles(BaseURL + LogsPath)
-		      If Logs <> Nil Then
-		        Var Filenames() As String
-		        For Each Info As CURLSFileInfoMBS In Logs
-		          If Info.IsDirectory Or Info.Filename.BeginsWith("ShooterGame") = False Or Info.Filename.EndsWith(".log") = False Then
-		            Continue
-		          End If
-		          
-		          Filenames.AddRow(Info.Filename)
-		        Next
-		        Filenames.Sort
-		        For Idx As Integer = Filenames.LastRowIndex DownTo 0
-		          Var Contents As String = Self.DownloadFile(BaseURL + LogsPath + "/" + Filenames(Idx))
-		          If Self.ParseLogFile(Profile, Contents) Then
-		            Exit
-		          End If
-		        Next
-		      End If
-		    End If
-		    
-		    DiscoveredProfiles.AddRow(Profile)
 		  Next
+		  
+		  If DiscoveredData.Count = 0 Then
+		    // Ok, nothing was found in the normal paths. The user will need to find the Game.ini file
+		    Var UserData As New Dictionary
+		    Var Controller As New Beacon.TaskWaitController("Locate Game.ini", UserData)
+		    Self.Log("Waiting for user action…")
+		    Self.Wait(Controller)
+		    If Controller.Cancelled Then
+		      Self.Cancel
+		      Return Nil
+		    End If
+		    If UserData.HasKey("Path") Then
+		      Var GameIniPath As String = UserData.Value("Path")
+		      Var PathComponents() As String = GameIniPath.Split("/")
+		      While PathComponents.Count > 0
+		        Var Last As String = PathComponents(PathComponents.LastRowIndex)
+		        PathComponents.RemoveRowAt(PathComponents.LastRowIndex)
+		        If Last = "Config" Then
+		          Exit
+		        End If
+		      Wend
+		      
+		      Var Data As Beacon.DiscoveredData = Self.DiscoverFromPath(PathComponents.Join("/"))
+		      If Data <> Nil Then
+		        DiscoveredData.AddRow(Data)
+		      End If
+		    End If
+		  End If
 		  
 		  Break
 		  
-		  #if false
-		    // If the files were not discovered, ask the user to find them
-		    If FTPProfile.GameIniPath.Length = 0 Then
-		      Var Controller As New Beacon.TaskWaitController("Locate Game.ini")
-		      Self.Wait(Controller)
-		      If Controller.Cancelled Then
-		        Self.Cancel
-		        Return
-		      End If
-		    End If
-		  #endif
-		  
+		  Return DiscoveredData
 		End Function
 	#tag EndEvent
 
@@ -219,6 +162,87 @@ Inherits Beacon.IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function DiscoverFromPath(Path As String) As Beacon.DiscoveredData
+		  Var SavedFiles() As CURLSFileInfoMBS = Self.ListFiles(Path)
+		  If SavedFiles = Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var LogsPath, ConfigPath As String
+		  For Each Info As CURLSFileInfoMBS In SavedFiles
+		    If Not Info.IsDirectory Then
+		      Continue
+		    End If
+		    
+		    Select Case Info.FileName
+		    Case "Config"
+		      ConfigPath = Path + "/Config"
+		    Case "Logs"
+		      LogsPath = Path + "/Logs"
+		    End Select
+		  Next
+		  
+		  If ConfigPath.Length = 0 Then
+		    Return Nil
+		  End If
+		  
+		  Var ConfigFolders() As CURLSFileInfoMBS = Self.ListFiles(ConfigPath)
+		  If ConfigFolders = Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var BaseURL As String = Self.BaseURL
+		  Var Profile As New Beacon.FTPServerProfile(Beacon.FTPServerProfile(Self.Profile))
+		  Var Data As New Beacon.DiscoveredData
+		  Data.Profile = Profile
+		  
+		  For Each Info As CURLSFileInfoMBS In ConfigFolders
+		    If Not Info.IsDirectory Then
+		      Continue
+		    End If
+		    
+		    If Info.Filename.EndsWith("Server") Or Info.Filename.EndsWith("NoEditor") Then
+		      Profile.GameIniPath = ConfigPath.Middle(BaseURL.Length) + "/" + Info.Filename + "/Game.ini"
+		      Profile.GameUserSettingsIniPath = ConfigPath.Middle(BaseURL.Length) + "/" + Info.Filename + "/GameUserSettings.ini"
+		      Exit
+		    End If
+		  Next
+		  
+		  If Profile.GameIniPath.Length = 0 Or Profile.GameUserSettingsIniPath.Length = 0 Then
+		    Return Nil
+		  End If
+		  
+		  If LogsPath.Length > 0 Then
+		    Self.Log("Analyzing log files…")
+		    Var Logs() As CURLSFileInfoMBS = Self.ListFiles(LogsPath)
+		    If Logs <> Nil Then
+		      Var Filenames() As String
+		      For Each Info As CURLSFileInfoMBS In Logs
+		        If Info.IsDirectory Or Info.Filename.BeginsWith("ShooterGame") = False Or Info.Filename.EndsWith(".log") = False Then
+		          Continue
+		        End If
+		        
+		        Filenames.AddRow(Info.Filename)
+		      Next
+		      Filenames.Sort
+		      For Idx As Integer = Filenames.LastRowIndex DownTo 0
+		        Var Contents As String = Self.DownloadFile(LogsPath + "/" + Filenames(Idx))
+		        If Self.ParseLogFile(Data, Contents) Then
+		          Exit
+		        End If
+		      Next
+		    End If
+		  End If
+		  
+		  Self.Log("Downloading ini files…")
+		  Data.GameIniContent = Self.DownloadFile(BaseURL + Profile.GameIniPath).GuessEncoding
+		  Data.GameUserSettingsIniContent = Self.DownloadFile(BaseURL + Profile.GameUserSettingsIniPath).GuessEncoding
+		  
+		  Return Data
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function DownloadFile(Path As String) As String
 		  Self.mSocket.OptionURL = Path
 		  Call Self.mSocket.Perform
@@ -248,7 +272,7 @@ Inherits Beacon.IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function ParseLogFile(Profile As Beacon.FTPServerProfile, Contents As String) As Boolean
+		Private Function ParseLogFile(Data As Beacon.DiscoveredData, Contents As String) As Boolean
 		  If Contents.Length = 0 Then
 		    Return False
 		  End If
@@ -263,7 +287,7 @@ Inherits Beacon.IntegrationEngine
 		    If Line.BeginsWith("Server: """) And Line.EndsWith(""" has successfully started!") Then
 		      // Found the server name
 		      Var ServerName As String = Line.Middle(9, Line.Length - 36)
-		      Profile.Name = ServerName
+		      Data.Profile.Name = ServerName
 		      FoundName = True
 		    ElseIf Line.BeginsWith("Commandline: ") Then
 		      // Here's the command line
@@ -302,8 +326,8 @@ Inherits Beacon.IntegrationEngine
 		      StartupParams.Merge(Params)
 		      Params = StartupParams
 		      
-		      Profile.Mask = Beacon.Maps.MaskForIdentifier(Map)
-		      // Something needs to happen with the parameters
+		      Data.Profile.Mask = Beacon.Maps.MaskForIdentifier(Map)
+		      Data.CommandLineOptions = Params
 		      
 		      FoundCommandLine = True
 		    End If
