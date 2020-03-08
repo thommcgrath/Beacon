@@ -421,6 +421,9 @@ End
 		      Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Profile
 		    Next
 		    
+		    #endif
+		    
+		    Self.List.SortingColumn = 1
 		    Self.List.Sort
 		    Self.DesiredHeight = 400
 		    Self.PagePanel1.SelectedPanelIndex = 1
