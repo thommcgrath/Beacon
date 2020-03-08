@@ -43,7 +43,6 @@ Begin DiscoveryView NitradoDiscoveryView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -134,7 +133,6 @@ Begin DiscoveryView NitradoDiscoveryView
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   "True"
          Top             =   222
          Transparent     =   False
          Value           =   0.0
@@ -190,6 +188,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   560
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
@@ -295,7 +294,6 @@ Begin DiscoveryView NitradoDiscoveryView
       End
    End
    Begin Beacon.OAuth2Client AuthClient
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Provider        =   ""
@@ -303,7 +301,6 @@ Begin DiscoveryView NitradoDiscoveryView
       TabPanelIndex   =   0
    End
    Begin Timer LookupStartTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -421,6 +418,10 @@ End
 		      Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Profile
 		    Next
 		    
+		    #if TargetWindows
+		      If Self.ScaleFactor Mod 100 <> 0 Then
+		        Self.List.HasHeader = False
+		      End If
 		    #endif
 		    
 		    Self.List.SortingColumn = 1
