@@ -188,6 +188,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   560
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
@@ -482,6 +483,12 @@ End
 		    Next
 		    
 		    If Self.PagePanel1.SelectedPanelIndex <> 1 And Self.Busy = False Then
+			  #if TargetWindows
+			    If Self.ScaleFactor Mod 100 <> 0 Then
+			      Self.List.HasHeader = False
+			    End If
+		      #endif
+			  
 			  Self.List.SortingColumn = 1
 		      Self.List.Sort
 		      Self.DesiredHeight = 400
