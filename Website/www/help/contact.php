@@ -80,9 +80,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				)
 			)
 		);
-		if (!is_null($requester_uuid)) {
-			$ticket['ticket']['requester']['external_id'] = $requester_uuid;
-		}
 		
 		$curl = curl_init('https://thezaz.zendesk.com/api/v2/tickets.json');
 		curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($ticket));
@@ -90,13 +87,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 		curl_setopt($curl, CURLOPT_USERPWD, BeaconCommon::GetGlobal('ZenDesk_Username') . ":" . BeaconCommon::GetGlobal('ZenDesk_Password'));
-		curl_exec($curl);
+		$zendesk_body = curl_exec($curl);
 		
 		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 		if ($status == 201) {
 			$html = 'Thanks, your request has been received! You will receive a confirmation email shortly.';
 		} else {
-			$html = 'Uh oh, there was a ' . $status . ' from ZenDesk. Your ticket has not been created.';
+			$html = 'Uh oh, there was a ' . $status . ' from ZenDesk. Your ticket has not been created.' . "\n\n$zendesk_body";
 		}
 	}
 }

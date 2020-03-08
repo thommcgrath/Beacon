@@ -845,7 +845,7 @@ End
 		  #Pragma Unused Areas
 		  
 		  If Self.mOverlayPic <> Nil Then
-		    G.DrawPicture(Self.mOverlayPic, 0, 0)
+		    G.DrawPicture(Self.mOverlayPic, 0, 0, G.Width, G.Height, 0, 0, Self.mOverlayPic.Width, Self.mOverlayPic.Height)
 		  End If
 		  
 		  G.DrawingColor = SystemColors.ShadowColor.AtOpacity(Self.mOverlayFillOpacity)

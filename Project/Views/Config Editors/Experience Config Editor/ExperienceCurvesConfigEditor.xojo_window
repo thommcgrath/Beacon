@@ -169,6 +169,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   710
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -600,7 +601,12 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub DoubleClick()
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount = 1
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformEdit()
 		  If Me.SelectedRowCount = 1 Then
 		    Self.ShowEditExperience()
 		  End If

@@ -43,6 +43,8 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
+		  Const CompactMode = False
+		  
 		  If Self.mPlayerLevels.LastRowIndex > -1 Then
 		    Var MaxXP As UInt64 = Self.PlayerMaxExperience
 		    
@@ -54,7 +56,7 @@ Inherits Beacon.ConfigGroup
 		    Var LastXP As UInt64
 		    For Index As Integer = 0 To Self.mPlayerLevels.LastRowIndex
 		      Var XP As UInt64 = Self.mPlayerLevels(Index)
-		      If XP = LastXP And Chunks.LastRowIndex > -1 Then
+		      If CompactMode And XP = LastXP And Chunks.LastRowIndex > -1 Then
 		        Chunks.RemoveRowAt(Chunks.LastRowIndex)
 		      End If
 		      Chunks.AddRow("ExperiencePointsForLevel[" + Index.ToString + "]=" + XP.ToString)
@@ -76,7 +78,7 @@ Inherits Beacon.ConfigGroup
 		    Var LastXP As UInt64
 		    For Index As Integer = 0 To Self.mDinoLevels.LastRowIndex
 		      Var XP As UInt64 = Self.mDinoLevels(Index)
-		      If XP = LastXP And Chunks.LastRowIndex > -1 Then
+		      If CompactMode And XP = LastXP And Chunks.LastRowIndex > -1 Then
 		        Chunks.RemoveRowAt(Chunks.LastRowIndex)
 		      End If
 		      Chunks.AddRow("ExperiencePointsForLevel[" + Index.ToString + "]=" + XP.ToString)

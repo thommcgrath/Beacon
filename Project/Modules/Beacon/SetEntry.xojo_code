@@ -106,9 +106,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Return Nil
 		  End If
 		  
+		  Var SetEntryCount As Integer
+		  Var SetEntryWeightSum As Double
 		  Var MinQualitySum, MaxQualitySum As Double
 		  Var Options As New Dictionary
 		  For Each Entry As Beacon.SetEntry In Entries
+		    Var WeightAdded As Boolean
 		    For Each Option As Beacon.SetEntryOption In Entry
 		      If Option.Engram = Nil Or Option.Engram.IsValid = False Or Option.Engram.IsTagged("blueprintable") = False Then
 		        Continue
@@ -119,8 +122,15 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		        Continue
 		      End If
 		      
+		      If WeightAdded = False Then
+		        SetEntryWeightSum = SetEntryWeightSum + Entry.RawWeight
+		        SetEntryCount = SetEntryCount + 1
+		        WeightAdded = True
+		      End If
+		      
 		      MinQualitySum = MinQualitySum + Entry.MinQuality.BaseValue
 		      MaxQualitySum = MaxQualitySum + Entry.MaxQuality.BaseValue
+		      Entry.ChanceToBeBlueprint = 0.0
 		      
 		      Var Arr() As Beacon.SetEntryOption
 		      If Options.HasKey(Key) Then
@@ -159,6 +169,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  BlueprintEntry.MinQuantity = 1
 		  BlueprintEntry.MinQuality = Beacon.Qualities.ForBaseValue(MinQualitySum / Options.KeyCount)
 		  BlueprintEntry.MaxQuality = Beacon.Qualities.ForBaseValue(MaxQualitySum / Options.KeyCount)
+		  BlueprintEntry.RawWeight = SetEntryWeightSum / SetEntryCount
 		  
 		  Return BlueprintEntry
 		End Function
@@ -329,13 +340,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      
 		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
 		      If Engram = Nil Then
-		        // Path was not found
-		        Var TempEngram As Beacon.Engram = Beacon.Engram.CreateFromPath(Path)
-		        Engram = Beacon.Data.GetEngramByClass(TempEngram.ClassString)
-		        If Engram = Nil Then
-		          // Didn't find it by class either
-		          Engram = TempEngram
-		        End If
+		        Engram = Beacon.Engram.CreateFromPath(Path)
 		      End If
 		      Engrams.AddRow(Engram)
 		    Next
@@ -355,7 +360,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Try
 		      Var Engram As Beacon.Engram = Engrams(I)
 		      Var ClassWeight As Double = ClassWeights(I)
-		      Entry.Append(New Beacon.SetEntryOption(Engram, ClassWeight))
+		      Entry.Append(New Beacon.SetEntryOption(Engram, If(ClassWeight > 1.0, ClassWeight / 100, ClassWeight)))
 		    Catch Err As TypeMismatchException
 		      Continue
 		    End Try
@@ -433,6 +438,80 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    
 		    Return Labels.Join(", ")
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Merge(Entries() As Beacon.SetEntry) As Beacon.SetEntry
+		  If Entries.Count = 0 Then
+		    Return Nil
+		  ElseIf Entries.Count = 1 Then
+		    Return New Beacon.SetEntry(Entries(0))
+		  End If
+		  
+		  Var EntryCount As Integer
+		  Var EntryWeightSum, EntryChanceSum As Double
+		  Var MinQualitySum, MaxQualitySum As Double
+		  Var MinQuantity, MaxQuantity As Integer = -1
+		  Var Options As New Dictionary
+		  For Each Entry As Beacon.SetEntry In Entries
+		    Var EntryAdded As Boolean
+		    For Each Option As Beacon.SetEntryOption In Entry
+		      If Option.Engram = Nil Or Option.Engram.IsValid = False Then
+		        Continue
+		      End If
+		      
+		      Var Key As String = Option.Engram.Path
+		      If Key = "" Then
+		        Continue
+		      End If
+		      
+		      If EntryAdded = False Then
+		        EntryWeightSum = EntryWeightSum + Entry.RawWeight
+		        EntryChanceSum = EntryChanceSum + Entry.ChanceToBeBlueprint
+		        EntryCount = EntryCount + 1
+		        MinQualitySum = MinQualitySum + Entry.MinQuality.BaseValue
+		        MaxQualitySum = MaxQualitySum + Entry.MaxQuality.BaseValue
+		        EntryAdded = True
+		      End If
+		      
+		      If MinQuantity = -1 Then
+		        MinQuantity = Entry.MinQuantity
+		      Else
+		        MinQuantity = Min(MinQuantity, Entry.MinQuantity)
+		      End If
+		      MaxQuantity = Max(MaxQuantity, Entry.MaxQuantity)
+		      
+		      Var Arr() As Beacon.SetEntryOption
+		      If Options.HasKey(Key) Then
+		        Arr = Options.Value(Key)
+		      End If
+		      Arr.AddRow(Option)
+		      Options.Value(Key) = Arr
+		    Next
+		  Next
+		  
+		  If Options.KeyCount = 0 Then
+		    Return Nil
+		  End If
+		  
+		  Var Replacement As New Beacon.SetEntry
+		  Replacement.RawWeight = EntryWeightSum / EntryCount
+		  Replacement.ChanceToBeBlueprint = EntryChanceSum / EntryCount
+		  Replacement.MinQuantity = MinQuantity
+		  Replacement.MaxQuantity = MaxQuantity
+		  Replacement.MinQuality = Beacon.Qualities.ForBaseValue(MinQualitySum / EntryCount)
+		  Replacement.MaxQuality = Beacon.Qualities.ForBaseValue(MaxQualitySum / EntryCount)
+		  
+		  For Each Entry As DictionaryEntry In Options
+		    Var Arr() As Beacon.SetEntryOption = Entry.Value
+		    For Each Option As Beacon.SetEntryOption In Arr
+		      Replacement.Append(New Beacon.SetEntryOption(Option))
+		    Next
+		  Next
+		  
+		  Return Replacement
+		  
 		End Function
 	#tag EndMethod
 
@@ -581,20 +660,35 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function Split(Entries() As Beacon.SetEntry) As Beacon.SetEntry()
+		  Var Replacements() As Beacon.SetEntry
+		  For Each Entry As Beacon.SetEntry In Entries
+		    If Entry.Count = 1 Then
+		      Replacements.AddRow(New Beacon.SetEntry(Entry))
+		      Continue
+		    End If
+		    
+		    For Each Option As Beacon.SetEntryOption In Entry
+		      Var Replacement As New Beacon.SetEntry(Entry)
+		      Replacement.ResizeTo(0)
+		      Replacement(0) = New Beacon.SetEntryOption(Option)
+		      Replacements.AddRow(Replacement)
+		    Next
+		  Next
+		  Return Replacements
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function StringValue(Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As String
 		  Var Paths(), Weights(), Classes() As String
 		  Paths.ResizeTo(Self.mOptions.LastRowIndex)
 		  Weights.ResizeTo(Self.mOptions.LastRowIndex)
 		  Classes.ResizeTo(Self.mOptions.LastRowIndex)
-		  Var SumOptionWeights As Double
 		  For I As Integer = 0 To Self.mOptions.LastRowIndex
-		    SumOptionWeights = SumOptionWeights + Self.mOptions(I).Weight
-		  Next
-		  For I As Integer = 0 To Self.mOptions.LastRowIndex
-		    Var RelativeWeight As Integer = Round((Self.mOptions(I).Weight / SumOptionWeights) * 1000)
 		    Paths(I) = Self.mOptions(I).Engram.GeneratedClassBlueprintPath()
 		    Classes(I) = """" + Self.mOptions(I).Engram.ClassString + """"
-		    Weights(I) = RelativeWeight.ToString
+		    Weights(I) = Beacon.PrettyText(Self.mOptions(I).Weight * 100)
 		  Next
 		  
 		  Var MinQuality As Double = Self.mMinQuality.Value(Multipliers.Min, Difficulty)

@@ -482,6 +482,7 @@ End
 		    Next
 		    
 		    If Self.PagePanel1.SelectedPanelIndex <> 1 And Self.Busy = False Then
+			  Self.List.SortingColumn = 1
 		      Self.List.Sort
 		      Self.DesiredHeight = 400
 		      Self.PagePanel1.SelectedPanelIndex = 1

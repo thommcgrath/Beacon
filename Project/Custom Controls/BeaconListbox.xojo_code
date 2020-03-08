@@ -152,9 +152,16 @@ Inherits Listbox
 	#tag Event
 		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
 		  Var Board As New Clipboard
+		  Var CanEdit As Boolean = RaiseEvent CanEdit()
 		  Var CanCopy As Boolean = RaiseEvent CanCopy()
 		  Var CanDelete As Boolean = RaiseEvent CanDelete()
 		  Var CanPaste As Boolean = RaiseEvent CanPaste(Board)
+		  
+		  Var EditItem As New MenuItem("Edit", "edit")
+		  EditItem.Enabled = CanEdit
+		  Base.AddMenu(EditItem)
+		  
+		  Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
 		  
 		  Var CutItem As New MenuItem("Cut", "cut")
 		  CutItem.Shortcut = "X"
@@ -192,6 +199,9 @@ Inherits Listbox
 		Function ContextualMenuAction(hitItem as MenuItem) As Boolean
 		  If HitItem.Tag <> Nil And HitItem.Tag.Type = Variant.TypeString Then
 		    Select Case HitItem.Tag
+		    Case "edit"
+		      Self.DoEdit()
+		      Return True
 		    Case "cut"
 		      Self.DoCut()
 		      Return True
@@ -366,15 +376,8 @@ Inherits Listbox
 		    Return
 		  End If
 		  
-		  Var ViewportHeight As Integer = Self.Height
-		  If Self.HasHeader Then
-		    ViewportHeight = ViewportHeight - Self.HeaderHeight
-		  End If
-		  If Self.HasBorder Then
-		    ViewportHeight = ViewportHeight - 2
-		  End If
 		  Var VisibleStart As Integer = Self.ScrollPosition
-		  Var VisibleEnd As Integer = VisibleStart + Floor(ViewportHeight / Self.DefaultRowHeight)
+		  Var VisibleEnd As Integer = VisibleStart + Self.VisibleRowCount
 		  Var AtLeastOneVisible As Boolean
 		  
 		  For I As Integer = 0 To Self.RowCount - 1
@@ -433,6 +436,8 @@ Inherits Listbox
 		  Self.SelectionChangeBlocked = True
 		  
 		  #if TargetWindows
+		    Var ScrollPosition As Integer = Self.ScrollPosition
+		    Self.ScrollPosition = 0
 		    Var ScrollerVisible As Boolean = Self.HasVerticalScrollbar
 		    If ScrollerVisible Then
 		      Self.HasVerticalScrollbar = False
@@ -452,6 +457,7 @@ Inherits Listbox
 		  #if TargetWindows
 		    If ScrollerVisible Then
 		      Self.HasVerticalScrollbar = True
+		      Self.ScrollPosition = ScrollPosition
 		    End If
 		  #endif
 		  
@@ -570,6 +576,22 @@ Inherits Listbox
 			End Set
 		#tag EndSetter
 		SelectionChangeBlocked As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Var ViewportHeight As Integer = Self.Height
+			  If Self.HasHeader Then
+			    ViewportHeight = ViewportHeight - Self.HeaderHeight
+			  End If
+			  If Self.HasBorder Then
+			    ViewportHeight = ViewportHeight - 2
+			  End If
+			  Return Floor(ViewportHeight / Self.DefaultRowHeight)
+			End Get
+		#tag EndGetter
+		VisibleRowCount As Integer
 	#tag EndComputedProperty
 
 
@@ -1058,6 +1080,14 @@ Inherits Listbox
 			Group="Behavior"
 			InitialValue=""
 			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="VisibleRowCount"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
