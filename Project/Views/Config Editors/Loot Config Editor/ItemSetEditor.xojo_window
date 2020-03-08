@@ -556,14 +556,28 @@ End
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
-		  Dim Item As MenuItem
+		  Var CreateBlueprintItem As New MenuItem("Create Blueprint Entry", "createblueprintentry")
+		  CreateBlueprintItem.Enabled = Me.SelectedRowCount > 0
+		  Base.AddMenu(CreateBlueprintItem)
 		  
-		  Item = New MenuItem
-		  Item.Value = "Create Blueprint Entry"
-		  Item.Enabled = Me.SelectedRowCount > 0
-		  Item.Tag = "createblueprintentry"
+		  Var SplitEngramsItem As New MenuItem("Split Engrams", "splitengrams")
+		  SplitEngramsItem.Enabled = False
+		  For I As Integer = 0 To Me.LastRowIndex
+		    If Not Me.Selected(I) Then
+		      Continue
+		    End If
+		    Var Entry As Beacon.SetEntry = Me.RowTagAt(I)
+		    If Entry.Count > 1 Then
+		      SplitEngramsItem.Enabled = True
+		      Exit
+		    End If
+		  Next
+		  Base.AddMenu(SplitEngramsItem)
 		  
-		  Base.AddMenu(Item)
+		  Var MergeEngramsItem As New MenuItem("Merge Engrams", "mergeengrams")
+		  MergeEngramsItem.Enabled = Me.SelectedRowCount > 1
+		  Base.AddMenu(MergeEngramsItem)
+		  
 		  Return True
 		End Function
 	#tag EndEvent
@@ -590,6 +604,59 @@ End
 		    Self.mSet.Append(BlueprintEntry)
 		    Self.UpdateEntryList(BlueprintEntry)
 		    RaiseEvent Updated
+		    Return True
+		  Case "splitengrams"
+		    Var Entries() As Beacon.SetEntry
+		    For I As Integer = 0 To Me.LastRowIndex
+		      If Me.Selected(I) And Beacon.SetEntry(Me.RowTagAt(I)).Count > 1 Then
+		        Entries.AddRow(Me.RowTagAt(I))
+		      End If
+		    Next
+		    
+		    Var Replacements() As Beacon.SetEntry = Beacon.SetEntry.Split(Entries)
+		    If Replacements = Nil Or Replacements.LastRowIndex = -1 Then
+		      Return True
+		    End If
+		    
+		    // This is probably not very fast, but it's accurate.
+		    For Each Entry As Beacon.SetEntry In Entries
+		      Var Idx As Integer = Self.mSet.IndexOf(Entry)
+		      If Idx > -1 Then
+		        Self.mSet.Remove(Idx)
+		      End If
+		    Next
+		    
+		    For Each Replacement As Beacon.SetEntry In Replacements
+		      Self.mSet.Append(Replacement)
+		    Next
+		    Self.UpdateEntryList(Replacements)
+		    RaiseEvent Updated
+		    Return True
+		  Case "mergeengrams"
+		    Var Entries() As Beacon.SetEntry
+		    For I As Integer = 0 To Me.LastRowIndex
+		      If Me.Selected(I) Then
+		        Entries.AddRow(Me.RowTagAt(I))
+		      End If
+		    Next
+		    
+		    Var Replacement As Beacon.SetEntry = Beacon.SetEntry.Merge(Entries)
+		    If Replacement = Nil Then
+		      Return True
+		    End If
+		    
+		    // This is probably not very fast, but it's accurate.
+		    For Each Entry As Beacon.SetEntry In Entries
+		      Var Idx As Integer = Self.mSet.IndexOf(Entry)
+		      If Idx > -1 Then
+		        Self.mSet.Remove(Idx)
+		      End If
+		    Next
+		    
+		    Self.mSet.Append(Replacement)
+		    Self.UpdateEntryList(Replacement)
+		    RaiseEvent Updated
+		    Return True
 		  End Select
 		End Function
 	#tag EndEvent

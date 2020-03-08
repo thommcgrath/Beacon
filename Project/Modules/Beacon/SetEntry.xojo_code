@@ -130,6 +130,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      
 		      MinQualitySum = MinQualitySum + Entry.MinQuality.BaseValue
 		      MaxQualitySum = MaxQualitySum + Entry.MaxQuality.BaseValue
+		      Entry.ChanceToBeBlueprint = 0.0
 		      
 		      Var Arr() As Beacon.SetEntryOption
 		      If Options.HasKey(Key) Then
@@ -441,6 +442,80 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function Merge(Entries() As Beacon.SetEntry) As Beacon.SetEntry
+		  If Entries.Count = 0 Then
+		    Return Nil
+		  ElseIf Entries.Count = 1 Then
+		    Return New Beacon.SetEntry(Entries(0))
+		  End If
+		  
+		  Var EntryCount As Integer
+		  Var EntryWeightSum, EntryChanceSum As Double
+		  Var MinQualitySum, MaxQualitySum As Double
+		  Var MinQuantity, MaxQuantity As Integer = -1
+		  Var Options As New Dictionary
+		  For Each Entry As Beacon.SetEntry In Entries
+		    Var EntryAdded As Boolean
+		    For Each Option As Beacon.SetEntryOption In Entry
+		      If Option.Engram = Nil Or Option.Engram.IsValid = False Then
+		        Continue
+		      End If
+		      
+		      Var Key As String = Option.Engram.Path
+		      If Key = "" Then
+		        Continue
+		      End If
+		      
+		      If EntryAdded = False Then
+		        EntryWeightSum = EntryWeightSum + Entry.RawWeight
+		        EntryChanceSum = EntryChanceSum + Entry.ChanceToBeBlueprint
+		        EntryCount = EntryCount + 1
+		        MinQualitySum = MinQualitySum + Entry.MinQuality.BaseValue
+		        MaxQualitySum = MaxQualitySum + Entry.MaxQuality.BaseValue
+		        EntryAdded = True
+		      End If
+		      
+		      If MinQuantity = -1 Then
+		        MinQuantity = Entry.MinQuantity
+		      Else
+		        MinQuantity = Min(MinQuantity, Entry.MinQuantity)
+		      End If
+		      MaxQuantity = Max(MaxQuantity, Entry.MaxQuantity)
+		      
+		      Var Arr() As Beacon.SetEntryOption
+		      If Options.HasKey(Key) Then
+		        Arr = Options.Value(Key)
+		      End If
+		      Arr.AddRow(Option)
+		      Options.Value(Key) = Arr
+		    Next
+		  Next
+		  
+		  If Options.KeyCount = 0 Then
+		    Return Nil
+		  End If
+		  
+		  Var Replacement As New Beacon.SetEntry
+		  Replacement.RawWeight = EntryWeightSum / EntryCount
+		  Replacement.ChanceToBeBlueprint = EntryChanceSum / EntryCount
+		  Replacement.MinQuantity = MinQuantity
+		  Replacement.MaxQuantity = MaxQuantity
+		  Replacement.MinQuality = Beacon.Qualities.ForBaseValue(MinQualitySum / EntryCount)
+		  Replacement.MaxQuality = Beacon.Qualities.ForBaseValue(MaxQualitySum / EntryCount)
+		  
+		  For Each Entry As DictionaryEntry In Options
+		    Var Arr() As Beacon.SetEntryOption = Entry.Value
+		    For Each Option As Beacon.SetEntryOption In Arr
+		      Replacement.Append(New Beacon.SetEntryOption(Option))
+		    Next
+		  Next
+		  
+		  Return Replacement
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  If Self.mLastModifiedTime > Self.mLastSaveTime Then
 		    Return True
@@ -506,6 +581,13 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
 		  Self.mOptions.RemoveRowAt(Index)
+		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ResizeTo(Bound As Integer)
+		  Redim Self.mOptions(Bound)
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -581,6 +663,26 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Next
 		  
 		  Return Selections
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Split(Entries() As Beacon.SetEntry) As Beacon.SetEntry()
+		  Var Replacements() As Beacon.SetEntry
+		  For Each Entry As Beacon.SetEntry In Entries
+		    If Entry.Count = 1 Then
+		      Replacements.AddRow(New Beacon.SetEntry(Entry))
+		      Continue
+		    End If
+		    
+		    For Each Option As Beacon.SetEntryOption In Entry
+		      Var Replacement As New Beacon.SetEntry(Entry)
+		      Replacement.ResizeTo(0)
+		      Replacement(0) = New Beacon.SetEntryOption(Option)
+		      Replacements.AddRow(Replacement)
+		    Next
+		  Next
+		  Return Replacements
 		End Function
 	#tag EndMethod
 
