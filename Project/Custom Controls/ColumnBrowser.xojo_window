@@ -86,7 +86,6 @@ Begin BeaconContainer ColumnBrowser
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   "0"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -104,6 +103,7 @@ Begin BeaconContainer ColumnBrowser
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   200
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -115,7 +115,6 @@ Begin BeaconContainer ColumnBrowser
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   285
       HelpTag         =   ""
       Index           =   0
@@ -162,6 +161,9 @@ End
 		  #Pragma Unused Areas
 		  
 		  G.DrawingColor = SystemColors.UnderPageBackgroundColor
+		  G.FillRectangle(0, 0, G.Width, G.Height)
+		  
+		  G.DrawingColor = SystemColors.ListEvenRowColor
 		  G.FillRectangle(0, 0, G.Width, G.Height)
 		End Sub
 	#tag EndEvent

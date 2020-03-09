@@ -378,6 +378,9 @@ Protected Class IntegrationEngine
 		  Self.Log("Finished")
 		  Self.Finished = True
 		  
+		  // Need this to fire on the main thread
+		  Call CallLater.Schedule(1, WeakAddressOf TriggerDiscovered, DiscoveredData)
+		  
 		  RaiseEvent Finished
 		End Sub
 	#tag EndMethod
@@ -532,6 +535,17 @@ Protected Class IntegrationEngine
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub TriggerDiscovered(Value As Variant)
+		  Var Data() As Beacon.DiscoveredData
+		  Try
+		    Data = Value
+		  Catch Err As RuntimeException
+		  End Try
+		  RaiseEvent Discovered(Data)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub Wait(Controller As Beacon.TaskWaitController)
 		  If App.CurrentThread = Nil Then
@@ -579,6 +593,10 @@ Protected Class IntegrationEngine
 
 	#tag Hook, Flags = &h0
 		Event Discover() As Beacon.DiscoveredData()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Discovered(Data() As Beacon.DiscoveredData)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

@@ -33,7 +33,7 @@ Inherits Beacon.IntegrationEngine
 		      Self.Log("Attempting " + Protocol + " mode…")
 		    End If
 		    
-		    Files = Self.ListFiles(Protocol + "://" + FTPProfile.Host + ":" + FTPProfile.Port.ToString)
+		    Files = Self.PrivateListFiles(Protocol + "://" + FTPProfile.Host + ":" + FTPProfile.Port.ToString)
 		    If Files = Nil Then
 		      // That didn't work
 		      Continue
@@ -90,6 +90,7 @@ Inherits Beacon.IntegrationEngine
 		  If DiscoveredData.Count = 0 Then
 		    // Ok, nothing was found in the normal paths. The user will need to find the Game.ini file
 		    Var UserData As New Dictionary
+		    UserData.Value("Root") = Self.BaseURL
 		    Var Controller As New Beacon.TaskWaitController("Locate Game.ini", UserData)
 		    Self.Log("Waiting for user action…")
 		    Self.Wait(Controller)
@@ -98,17 +99,8 @@ Inherits Beacon.IntegrationEngine
 		      Return Nil
 		    End If
 		    If UserData.HasKey("Path") Then
-		      Var GameIniPath As String = UserData.Value("Path")
-		      Var PathComponents() As String = GameIniPath.Split("/")
-		      While PathComponents.Count > 0
-		        Var Last As String = PathComponents(PathComponents.LastRowIndex)
-		        PathComponents.RemoveRowAt(PathComponents.LastRowIndex)
-		        If Last = "Config" Then
-		          Exit
-		        End If
-		      Wend
-		      
-		      Var Data As Beacon.DiscoveredData = Self.DiscoverFromPath(PathComponents.Join("/"))
+		      Var SavedPath As String = UserData.Value("Path")
+		      Var Data As Beacon.DiscoveredData = Self.DiscoverFromPath(Self.BaseURL + SavedPath)
 		      If Data <> Nil Then
 		        DiscoveredData.AddRow(Data)
 		      End If
@@ -153,17 +145,25 @@ Inherits Beacon.IntegrationEngine
 	#tag Method, Flags = &h0
 		Sub Constructor(Profile As Beacon.ServerProfile)
 		  Super.Constructor(Profile)
+		  
+		  Var FTPProfile As Beacon.FTPServerProfile = Beacon.FTPServerProfile(Self.Profile)
+		  
 		  Self.mSocket = New CURLSMBS
 		  Call Self.mSocket.UseSystemCertificates
-		  Self.mSocket.OptionUsername = Beacon.FTPServerProfile(Self.Profile).Username
-		  Self.mSocket.OptionPassword = Beacon.FTPServerProfile(Self.Profile).Password
+		  Self.mSocket.OptionUseSSL = CURLSMBS.kUseSSLtry
+		  Self.mSocket.OptionUsername = FTPProfile.Username
+		  Self.mSocket.OptionPassword = FTPProfile.Password
+		  Self.mSocket.OptionSSHAuthTypes = CURLSMBS.kSSHAuthPassword
 		  Self.mSocket.OptionTimeOut = 10
+		  Self.mSocket.YieldTime = True
+		  
+		  Self.mSocketLock = New CriticalSection
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function DiscoverFromPath(Path As String) As Beacon.DiscoveredData
-		  Var SavedFiles() As CURLSFileInfoMBS = Self.ListFiles(Path)
+		  Var SavedFiles() As CURLSFileInfoMBS = Self.PrivateListFiles(Path)
 		  If SavedFiles = Nil Then
 		    Return Nil
 		  End If
@@ -186,7 +186,7 @@ Inherits Beacon.IntegrationEngine
 		    Return Nil
 		  End If
 		  
-		  Var ConfigFolders() As CURLSFileInfoMBS = Self.ListFiles(ConfigPath)
+		  Var ConfigFolders() As CURLSFileInfoMBS = Self.PrivateListFiles(ConfigPath)
 		  If ConfigFolders = Nil Then
 		    Return Nil
 		  End If
@@ -214,7 +214,7 @@ Inherits Beacon.IntegrationEngine
 		  
 		  If LogsPath.Length > 0 Then
 		    Self.Log("Analyzing log files…")
-		    Var Logs() As CURLSFileInfoMBS = Self.ListFiles(LogsPath)
+		    Var Logs() As CURLSFileInfoMBS = Self.PrivateListFiles(LogsPath)
 		    If Logs <> Nil Then
 		      Var Filenames() As String
 		      For Each Info As CURLSFileInfoMBS In Logs
@@ -236,7 +236,7 @@ Inherits Beacon.IntegrationEngine
 		  
 		  Self.Log("Downloading ini files…")
 		  Data.GameIniContent = Self.DownloadFile(BaseURL + Profile.GameIniPath).GuessEncoding
-		  Data.GameUserSettingsIniContent = Self.DownloadFile(BaseURL + Profile.GameUserSettingsIniPath).GuessEncoding
+		  Data.GameUserSettingsIniContent = Self.DownloadFile(BaseURL + Profile.GameUserSettingsIniPath).GuessEncoding 
 		  
 		  Return Data
 		End Function
@@ -244,31 +244,41 @@ Inherits Beacon.IntegrationEngine
 
 	#tag Method, Flags = &h21
 		Private Function DownloadFile(Path As String) As String
+		  Self.mSocketLock.Enter
 		  Self.mSocket.OptionURL = Path
 		  Call Self.mSocket.Perform
+		  Var Response As String
 		  If Self.mSocket.Lasterror = CURLSMBS.kError_OK Then
-		    Return Self.mSocket.OutputData
+		    Response = Self.mSocket.OutputData
 		  End If
+		  Self.mSocketLock.Leave
+		  Return Response
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function ListFiles(Path As String) As CURLSFileInfoMBS()
-		  If Path.Right(2) = "/*" Then
-		    // Good
-		  ElseIf Path.Right(1) = "/" Then
-		    Path = Path + "*"
-		  Else
-		    Path = Path + "/*"
+	#tag Method, Flags = &h0
+		Sub ListFiles(Path As String)
+		  If App.CurrentThread <> Nil Then
+		    Var Files() As CURLSFileInfoMBS = Self.PrivateListFiles(Self.BaseURL + Path)
+		    Var Params(1) As Variant
+		    Params(0) = Path
+		    Params(1) = Files
+		    Call CallLater.Schedule(1, WeakAddressOf TriggerFilesListed, Params)
+		    Return
 		  End If
 		  
-		  Var Wildcard As Boolean = Self.mSocket.OptionWildcardMatch
-		  Self.mSocket.OptionWildcardMatch = True
-		  Self.mSocket.OptionURL = Path
-		  Call Self.mSocket.Perform
-		  Self.mSocket.OptionWildcardMatch = Wildcard
-		  Return Self.mSocket.FileInfos
-		End Function
+		  Var Th As New Beacon.Thread
+		  Th.UserData = Path
+		  AddHandler Th.Run, WeakAddressOf ListThread_Run
+		  Th.Start
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ListThread_Run(Sender As Beacon.Thread)
+		  Var Path As String = Sender.UserData
+		  Self.ListFiles(Path)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -336,9 +346,50 @@ Inherits Beacon.IntegrationEngine
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function PrivateListFiles(Path As String) As CURLSFileInfoMBS()
+		  If Path.Right(2) = "/*" Then
+		    // Good
+		  ElseIf Path.Right(1) = "/" Then
+		    Path = Path + "*"
+		  Else
+		    Path = Path + "/*"
+		  End If
+		  
+		  Self.mSocketLock.Enter
+		  Var Wildcard As Boolean = Self.mSocket.OptionWildcardMatch
+		  Self.mSocket.OptionWildcardMatch = True
+		  Self.mSocket.OptionURL = Path
+		  Var Err As Integer = Self.mSocket.Perform
+		  If Err <> CURLSMBS.kError_OK Then
+		    Break
+		  End If
+		  Self.mSocket.OptionWildcardMatch = Wildcard
+		  Var Files() As CURLSFileInfoMBS = Self.mSocket.FileInfos
+		  Self.mSocketLock.Leave
+		  Return Files
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TriggerFilesListed(Value As Variant)
+		  Var Params() As Variant = Value
+		  RaiseEvent FilesListed(Params(0).StringValue, Params(1))
+		End Sub
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event FilesListed(Path As String, Files() As CURLSFileInfoMBS)
+	#tag EndHook
+
 
 	#tag Property, Flags = &h21
 		Private mSocket As CURLSMBS
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSocketLock As CriticalSection
 	#tag EndProperty
 
 

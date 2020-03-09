@@ -133,6 +133,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
+         TabStop         =   True
          Top             =   222
          Transparent     =   False
          Value           =   0.0
@@ -483,13 +484,13 @@ End
 		    Next
 		    
 		    If Self.PagePanel1.SelectedPanelIndex <> 1 And Self.Busy = False Then
-			  #if TargetWindows
-			    If Self.ScaleFactor Mod 100 <> 0 Then
-			      Self.List.HasHeader = False
-			    End If
+		      #if TargetWindows
+		        If Self.ScaleFactor Mod 100 <> 0 Then
+		          Self.List.HasHeader = False
+		        End If
 		      #endif
-			  
-			  Self.List.SortingColumn = 1
+		      
+		      Self.List.SortingColumn = 1
 		      Self.List.Sort
 		      Self.DesiredHeight = 400
 		      Self.PagePanel1.SelectedPanelIndex = 1
