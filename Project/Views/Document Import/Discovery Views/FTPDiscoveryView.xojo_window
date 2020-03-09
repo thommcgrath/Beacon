@@ -45,7 +45,7 @@ Begin DiscoveryView FTPDiscoveryView
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedLabel ServerModeLabel
@@ -915,67 +915,6 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DetectPath(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
-		  #Pragma Unused Request
-		  
-		  Var Info As Introspection.TypeInfo
-		  Var Dict As Dictionary
-		  If Response.JSON <> Nil Then
-		    Info = Introspection.GetType(Response.JSON)
-		    If Info.FullName = "Dictionary" Then
-		      Dict = Response.JSON
-		    End If
-		  End If
-		  
-		  If Dict <> Nil And Dict.HasKey("ftp_mode") Then
-		    Self.mProfile.Mode = Dict.Value("ftp_mode")
-		  End If
-		  
-		  If Response.Success Then
-		    // Discovery was able to find the path and the user doesn't need to do any further work.
-		    Var Path As String = Dict.Value("path")
-		    
-		    Var Engines(0) As Beacon.IntegrationEngine
-		    Engines(0) = New Beacon.FTPIntegrationEngine(Self.mProfile)
-		    Self.ShouldFinish(Engines)
-		    
-		    Return
-		  End If
-		  
-		  If Response.HTTPStatus = 404 Then
-		    // Server was connected, but the path could not be determined, so time to show the browser.
-		    Self.ViewPanel.SelectedPanelIndex = Self.PageBrowse
-		    Self.Browser.Reset()
-		    Return
-		  End If
-		  
-		  // The connection was not succesful
-		  Self.ViewPanel.SelectedPanelIndex = Self.PageGeneral
-		  
-		  Self.ShowAlert("Beacon was unable to discover the server.", "Reason: " + Response.Message)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub APICallback_ListPath(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
-		  #Pragma Unused Request
-		  
-		  If Not Response.Success Then
-		    Self.ShowAlert("Unable to list contents of " + Self.Browser.CurrentPath, Response.Message)
-		    Return
-		  End If
-		  
-		  Var Dict As Dictionary = Response.JSON
-		  Var Files() As Variant = Dict.Value("files")
-		  Var Children() As String
-		  For Each Child As String In Files
-		    Children.AddRow(Child)
-		  Next
-		  Self.Browser.AppendChildren(Children)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub CheckServerActionButton()
 		  Var Enabled As Boolean = Self.ServerHostField.Value.Length > 0 And Val(Self.ServerPortField.Value) > 0 And Self.ServerUserField.Value.Length > 0 And Self.ServerPassField.Value.Length > 0
 		  If Self.ServerActionButton.Enabled <> Enabled Then
@@ -985,18 +924,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function FormDataFromProfile() As Dictionary
-		  If Self.mProfile = Nil Then
-		    Return Nil
-		  End If
-		  
-		  Return Self.mProfile.AsFormData()
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub mEngine_Discovered(Sender As Beacon.FTPIntegrationEngine, Data() As Beacon.DiscoveredData)
-		  Break
+		  #Pragma Unused Sender
+		  #Pragma Unused Data
+		  
+		  #if Not DebugBuild
+		    #Pragma Error "This isn't implemented yet"
+		  #endif
 		End Sub
 	#tag EndMethod
 
