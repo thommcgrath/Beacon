@@ -138,6 +138,7 @@ Begin ConfigEditor LootConfigEditor
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   250
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -370,20 +371,20 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub ParsingFinished(ParsedData As Dictionary)
-		  If ParsedData = Nil Then
-		    Return
+		Function ParsingFinished(Document As Beacon.Document) As Boolean
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.LootDrops.ConfigName) = False Then
+		    Return False
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
-		  If OtherConfig = Nil Then
-		    Return
+		  Var OtherConfig As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.LootDrops.ConfigName))
+		  If OtherConfig Is Nil Then
+		    Return False
 		  End If
 		  
 		  Var Sources() As Beacon.LootSource = OtherConfig.DefinedSources
-		  Var TotalNewSources As Integer = Sources.LastRowIndex + 1
+		  Var TotalNewSources As Integer = Sources.Count
 		  If TotalNewSources = 0 Then
-		    Return
+		    Return False
 		  End If
 		  
 		  Var DuplicateSourceCount As Integer
@@ -417,7 +418,9 @@ End
 		    Self.Changed = True
 		    Self.UpdateSourceList(AddedSources)
 		  End If
-		End Sub
+		  
+		  Return True
+		End Function
 	#tag EndEvent
 
 	#tag Event

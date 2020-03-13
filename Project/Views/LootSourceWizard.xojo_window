@@ -198,6 +198,7 @@ Begin BeaconDialog LootSourceWizard
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   510
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
@@ -988,6 +989,7 @@ Begin BeaconDialog LootSourceWizard
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   394
          _ScrollOffset   =   0
          _ScrollWidth    =   -1

@@ -134,6 +134,7 @@ Begin BeaconDialog SharingDialog
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   520
          _ScrollOffset   =   0
          _ScrollWidth    =   -1

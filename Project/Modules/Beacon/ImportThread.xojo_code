@@ -4,12 +4,16 @@ Inherits Beacon.Thread
 	#tag Event
 		Sub Run()
 		  Self.mFinished = False
+		  Self.Status = "Parsing config files…"
 		  Self.Invalidate
 		  
 		  Var LineEnding As String = Self.LineEndingChar()
 		  
 		  // Normalize line endings
-		  Var Content As String = Self.mGameUserSettingsIniContent.ReplaceLineEndings(LineEnding) + LineEnding + Self.mGameIniContent.ReplaceLineEndings(LineEnding)
+		  Var Content As String
+		  If (Self.mData Is Nil) = False Then
+		    Content = Self.mData.GameUserSettingsIniContent.ReplaceLineEndings(LineEnding) + LineEnding + Self.mData.GameIniContent.ReplaceLineEndings(LineEnding)
+		  End If
 		  
 		  // Fix smart quotes
 		  Content = Content.SanitizeIni
@@ -17,8 +21,7 @@ Inherits Beacon.Thread
 		  Self.mCharactersProcessed = 0
 		  Self.mCharactersTotal = Content.Length
 		  
-		  Self.mParsedData = New Dictionary
-		  
+		  Var ParsedData As New Dictionary
 		  Var Lines() As String = Content.Split(LineEnding)
 		  Self.mCharactersTotal = Self.mCharactersTotal + ((Lines.LastRowIndex + 1) * LineEnding.Length) // To account for the trailing line ending characters we're adding
 		  For Each Line As String In Lines
@@ -28,6 +31,8 @@ Inherits Beacon.Thread
 		    
 		    If Line.Length = 0 Or Line.Left(1) = ";" Then
 		      Self.mCharactersProcessed = Self.mCharactersProcessed + Line.Length + LineEnding.Length
+		      Var Progress As Integer = Round(Self.Progress * 100)
+		      Self.Status = "Parsing config files… (" + Progress.ToString + "%)"
 		      Self.Invalidate
 		      Continue
 		    End If
@@ -44,8 +49,8 @@ Inherits Beacon.Thread
 		      Var Key As String = Beacon.Pair(Value).Key
 		      Value = Beacon.Pair(Value).Value
 		      
-		      If Self.mParsedData.HasKey(Key) Then
-		        Var ExistingValue As Variant = Self.mParsedData.Value(Key)
+		      If ParsedData.HasKey(Key) Then
+		        Var ExistingValue As Variant = ParsedData.Value(Key)
 		        
 		        Var ValueArray() As Variant
 		        If ExistingValue.IsArray Then
@@ -54,9 +59,9 @@ Inherits Beacon.Thread
 		          ValueArray.AddRow(ExistingValue)
 		        End If
 		        ValueArray.AddRow(Value)
-		        Self.mParsedData.Value(Key) = ValueArray
+		        ParsedData.Value(Key) = ValueArray
 		      Else
-		        Self.mParsedData.Value(Key) = Value
+		        ParsedData.Value(Key) = Value
 		      End If
 		    Catch Stop As Beacon.ThreadStopException
 		      Self.mUpdateTimer.RunMode = Timer.RunModes.Off
@@ -64,18 +69,154 @@ Inherits Beacon.Thread
 		    Catch Err As RuntimeException
 		      // Don't let an error halt processing, skip and move on
 		    End Try
-		    Self.Invalidate
+		    
+		    Var Progress As Integer = Round(Self.Progress * 100)
+		    Self.Status = "Parsing config files… (" + Progress.ToString + "%)"
 		  Next
 		  
-		  Self.Invalidate
 		  Self.mCharactersProcessed = Self.mCharactersTotal
 		  
-		  RaiseEvent ThreadedParseFinished(Self.mParsedData)
+		  Self.Status = "Building Beacon document…"
+		  Try
+		    Var CommandLineOptions As Dictionary
+		    If (Self.mData Is Nil) = False Then
+		      CommandLineOptions = Self.mData.CommandLineOptions
+		    End If
+		    Self.mDocument = Self.BuildDocument(ParsedData, CommandLineOptions)
+		  Catch Err As RuntimeException
+		  End Try
+		  Self.Status = "Finished"
 		  
 		  Self.mFinished = True
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Function BuildDocument(ParsedData As Dictionary, CommandLineOptions As Dictionary) As Beacon.Document
+		  Var Profile As Beacon.ServerProfile
+		  If (Self.mData Is Nil) = False And (Self.mData.Profile Is Nil) = False Then
+		    Profile = Self.mData.Profile
+		  End If
+		  
+		  Var Document As New Beacon.Document
+		  If (Profile Is Nil) = False Then
+		    Document.MapCompatibility = Profile.Mask
+		  End If
+		  If Document.MapCompatibility = 0 Then
+		    Document.MapCompatibility = Beacon.Maps.TheIsland.Mask
+		  End If
+		  
+		  If CommandLineOptions Is Nil Then
+		    CommandLineOptions = New Dictionary
+		  End If
+		  
+		  Try
+		    Var Maps() As Beacon.Map = Document.Maps
+		    Var DifficultyTotal, DifficultyScale As Double
+		    For Each Map As Beacon.Map In Maps
+		      DifficultyTotal = DifficultyTotal + Map.DifficultyScale
+		    Next
+		    DifficultyScale = DifficultyTotal / Maps.Count
+		    
+		    Var DifficultyValue As Double
+		    If CommandLineOptions.HasKey("OverrideOfficialDifficulty") And CommandLineOptions.DoubleValue("OverrideOfficialDifficulty") > 0 Then
+		      DifficultyValue = CommandLineOptions.DoubleValue("OverrideOfficialDifficulty")
+		    ElseIf ParsedData.HasKey("OverrideOfficialDifficulty") And ParsedData.DoubleValue("OverrideOfficialDifficulty") > 0 Then
+		      DifficultyValue = ParsedData.DoubleValue("OverrideOfficialDifficulty")
+		    Else
+		      If ParsedData.HasKey("DifficultyOffset") Then
+		        DifficultyValue = ParsedData.DoubleValue("DifficultyOffset") * (DifficultyScale - 0.5) + 0.5
+		      Else
+		        DifficultyValue = DifficultyScale
+		      End If
+		    End If
+		    
+		    Document.AddConfigGroup(New BeaconConfigs.Difficulty(DifficultyValue))
+		  Catch Err As RuntimeException
+		    Document.AddConfigGroup(New BeaconConfigs.Difficulty(5.0))
+		  End Try
+		  
+		  If (Profile Is Nil) = False Then
+		    If ParsedData.HasKey("SessionName") Then
+		      Var SessionNames() As Variant = ParsedData.AutoArrayValue("SessionName")
+		      For Each SessionName As Variant In SessionNames
+		        Try
+		          Profile.Name = SessionName
+		          Exit
+		        Catch Err As TypeMismatchException
+		        End Try
+		      Next
+		    End If
+		    
+		    Document.Add(Profile)
+		  End If
+		  
+		  Var ConfigNames() As String = BeaconConfigs.AllConfigNames()
+		  Var PurchasedOmniVersion As Integer = App.IdentityManager.CurrentIdentity.OmniVersion
+		  For Each ConfigName As String In ConfigNames
+		    If ConfigName = BeaconConfigs.Difficulty.ConfigName Or ConfigName = BeaconConfigs.CustomContent.ConfigName Then
+		      // Difficulty and custom content area special
+		      Continue For ConfigName
+		    End If
+		    
+		    If BeaconConfigs.ConfigPurchased(ConfigName, PurchasedOmniVersion) = False Then
+		      // Do not import code for groups that the user has not purchased
+		      Continue For ConfigName
+		    End If
+		    
+		    Self.Status = "Building Beacon document… (" + Language.LabelForConfig(ConfigName) + ")"
+		    Var Group As Beacon.ConfigGroup
+		    Try
+		      Group = BeaconConfigs.CreateInstance(ConfigName, ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty)
+		    Catch Err As RuntimeException
+		    End Try
+		    If Group <> Nil Then
+		      Document.AddConfigGroup(Group)
+		    End If
+		  Next
+		  
+		  // Now figure out what configs we'll generate so CustomContent can figure out what NOT to capture.
+		  // Do not do this in the loop above to ensure all configs are loaded first, in case they rely on each other.
+		  Self.Status = "Building Beacon document… (" + Language.LabelForConfig(BeaconConfigs.CustomContent.ConfigName) + ")"
+		  Var GameIniValues As New Dictionary
+		  Var GameUserSettingsIniValues As New Dictionary
+		  Var Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
+		  Var GenericProfile As New Beacon.GenericServerProfile(Document.Title, Beacon.Maps.All.Mask)
+		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		  For Each Config As Beacon.ConfigGroup In Configs
+		    Var GameIniArray() As Beacon.ConfigValue = Config.GameIniValues(Document, Identity, GenericProfile)
+		    Var GameUserSettingsIniArray() As Beacon.ConfigValue = Config.GameUserSettingsIniValues(Document, Identity, GenericProfile)
+		    Var NonGeneratedKeys() As Beacon.ConfigKey = Config.NonGeneratedKeys(Identity)
+		    For Each Key As Beacon.ConfigKey In NonGeneratedKeys
+		      Select Case Key.File
+		      Case "Game.ini"
+		        GameIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
+		      Case "GameUserSettings.ini"
+		        GameUserSettingsIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
+		      End Select
+		    Next
+		    
+		    Beacon.ConfigValue.FillConfigDict(GameIniValues, GameIniArray)
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, GameUserSettingsIniArray)
+		  Next
+		  
+		  Var CustomContent As New BeaconConfigs.CustomContent
+		  Try
+		    CustomContent.GameIniContent(GameIniValues) = Self.mData.GameIniContent
+		  Catch Err As RuntimeException
+		  End Try
+		  Try
+		    CustomContent.GameUserSettingsIniContent(GameUserSettingsIniValues) = Self.mData.GameUserSettingsIniContent
+		  Catch Err As RuntimeException
+		  End Try
+		  If CustomContent.Modified Then
+		    Document.AddConfigGroup(CustomContent)
+		  End If
+		  
+		  Return Document
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Cancel()
@@ -83,21 +224,27 @@ Inherits Beacon.Thread
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Clear()
-		  Self.mGameIniContent = ""
-		  Self.mGameUserSettingsIniContent = ""
-		  Self.mFinished = False
+	#tag Method, Flags = &h21
+		Private Sub Constructor()
+		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor()
+		Sub Constructor(Data As Beacon.DiscoveredData)
 		  Self.mUpdateTimer = New Timer
 		  Self.mUpdateTimer.RunMode = Timer.RunModes.Off
 		  Self.mUpdateTimer.Period = 0
 		  AddHandler Self.mUpdateTimer.Action, WeakAddressOf Self.mUpdateTimer_Action
+		  
+		  Self.mData = Data
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Document() As Beacon.Document
+		  Return Self.mDocument
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -153,16 +300,40 @@ Inherits Beacon.Thread
 		  RaiseEvent UpdateUI
 		  
 		  If Self.mFinished Then
-		    RaiseEvent Finished(Self.mParsedData)
-		    Self.mParsedData = Nil
+		    RaiseEvent Finished(Self.mDocument)
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Name() As String
+		  If (Self.mData Is Nil) = False And (Self.mData.Profile Is Nil) = False Then
+		    Return Self.mData.Profile.Name
+		  Else
+		    Return "Untitled Importer"
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Progress() As Double
 		  Return Self.mCharactersProcessed / Self.mCharactersTotal
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Status() As String
+		  Return Self.mStatusMessage
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub Status(Assigns Value As String)
+		  If Self.mStatusMessage.Compare(Value, ComparisonOptions.CaseSensitive, Locale.Raw) <> 0 Then
+		    Self.mStatusMessage = Value
+		    Self.Invalidate
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -243,57 +414,13 @@ Inherits Beacon.Thread
 
 
 	#tag Hook, Flags = &h0
-		Event Finished(ParsedData As Dictionary)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event ThreadedParseFinished(ParsedData As Dictionary)
+		Event Finished(Document As Beacon.Document)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event UpdateUI()
 	#tag EndHook
 
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mGameIniContent
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.ThreadState <> Thread.ThreadStates.NotRunning Then
-			    Var Err As New RuntimeException
-			    Err.Reason = "Importer is already running"
-			    Raise Err
-			  End If
-			  
-			  Self.mGameIniContent = Value.GuessEncoding
-			End Set
-		#tag EndSetter
-		GameIniContent As String
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mGameUserSettingsIniContent
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.ThreadState <> Thread.ThreadStates.NotRunning Then
-			    Var Err As New RuntimeException
-			    Err.Reason = "Importer is already running"
-			    Raise Err
-			  End If
-			  
-			  Self.mGameUserSettingsIniContent = Value.GuessEncoding
-			End Set
-		#tag EndSetter
-		GameUserSettingsIniContent As String
-	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
@@ -308,19 +435,19 @@ Inherits Beacon.Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mData As Beacon.DiscoveredData
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDocument As Beacon.Document
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mFinished As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameIniContent As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mGameUserSettingsIniContent As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mParsedData As Dictionary
+		Private mStatusMessage As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -368,22 +495,6 @@ Inherits Beacon.Thread
 			InitialValue=""
 			Type="String"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="GameIniContent"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="GameUserSettingsIniContent"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

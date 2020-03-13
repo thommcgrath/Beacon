@@ -601,9 +601,12 @@ End
 		    Profile.GameUserSettingsIniFile = New BookmarkedFolderItem(Self.mGameUserSettingsIniFile.NativePath, FolderItem.PathModes.Native)
 		  End If
 		  
-		  Var Engines(0) As Beacon.IntegrationEngine
-		  Engines(0) = New Beacon.LocalIntegrationEngine(Profile)
-		  Self.ShouldFinish(Engines)
+		  Var Data As New Beacon.DiscoveredData
+		  Data.Profile = Profile
+		  Data.GameIniContent = Self.mGameIniContent
+		  Data.GameUserSettingsIniContent = Self.mGameUserSettingsIniContent
+		  
+		  Self.ShouldFinish(Data)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

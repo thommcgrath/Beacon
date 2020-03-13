@@ -73,6 +73,7 @@ Begin BeaconAutopositionWindow DeployManager
       Transparent     =   False
       Underline       =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   300
       _ScrollOffset   =   0
       _ScrollWidth    =   -1

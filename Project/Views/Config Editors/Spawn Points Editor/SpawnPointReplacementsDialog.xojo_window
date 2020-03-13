@@ -305,6 +305,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
          Transparent     =   False
          Underline       =   False
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   580
          _ScrollOffset   =   0
          _ScrollWidth    =   -1

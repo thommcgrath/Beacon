@@ -133,7 +133,6 @@ Begin DiscoveryView NitradoDiscoveryView
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   True
          Top             =   222
          Transparent     =   False
          Value           =   0.0
@@ -536,12 +535,38 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ListServers(Account As Beacon.ExternalAccount)
-		  Var Headers As New Dictionary
-		  Headers.Value("Authorization") = "Bearer " + Account.AccessToken
+		Private Sub Engine_Discovered(Sender As Beacon.NitradoIntegrationEngine, Data() As Beacon.DiscoveredData)
+		  Self.mPendingListActions = Self.mPendingListActions - 1
 		  
-		  Var URL As String = "https://api.nitrado.net/services"
-		  SimpleHTTP.Get(URL, AddressOf Callback_ListServers, Account.UUID.StringValue, Headers)
+		  For Each Server As Beacon.DiscoveredData In Data
+		    Self.List.AddRow("", Server.Profile.Name, Beacon.NitradoServerProfile(Server.Profile).Address)
+		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Server
+		  Next
+		  
+		  If Self.PagePanel1.SelectedPanelIndex <> 1 And Self.Busy = False Then
+		    #if TargetWindows
+		      If Self.ScaleFactor Mod 100 <> 0 Then
+		        Self.List.HasHeader = False
+		      End If
+		    #endif
+		    
+		    Self.List.SortingColumn = 1
+		    Self.List.Sort
+		    Self.DesiredHeight = 400
+		    Self.PagePanel1.SelectedPanelIndex = 1
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ListServers(Account As Beacon.ExternalAccount)
+		  Var Profile As New Beacon.NitradoServerProfile
+		  Profile.ExternalAccountUUID = Account.UUID
+		  
+		  Var Engine As New Beacon.NitradoIntegrationEngine(Profile)
+		  Self.mEngines.Value(Profile.ExternalAccountUUID.StringValue) = Engine
+		  AddHandler Engine.Discovered, WeakAddressOf Engine_Discovered
+		  Engine.BeginDiscovery()
 		  
 		  Self.mPendingListActions = Self.mPendingListActions + 1
 		End Sub
@@ -559,6 +584,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mAuthQueue() As Beacon.ExternalAccount
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEngines As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -615,16 +644,15 @@ End
 #tag Events ListActionButton
 	#tag Event
 		Sub Action()
-		  Var Engines() As Beacon.NitradoIntegrationEngine
+		  Var Data() As Beacon.DiscoveredData
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.CellCheckBoxValueAt(I, 0) Then
 		      Continue
 		    End If
 		    
-		    Var Profile As Beacon.NitradoServerProfile = Self.List.RowTagAt(I)
-		    Engines.AddRow(New Beacon.NitradoIntegrationEngine(Profile))
+		    Data.AddRow(Self.List.RowTagAt(I))
 		  Next
-		  Self.ShouldFinish(Engines, Self.mAccounts)
+		  Self.ShouldFinish(Data, Self.mAccounts)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

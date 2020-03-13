@@ -395,10 +395,11 @@ Inherits Beacon.IntegrationEngine
 	#tag EndEvent
 
 	#tag Event
-		Sub UploadFile(Contents As String, Filename As String)
+		Function UploadFile(Contents As String, Filename As String) As Boolean
 		  Var Path As String = Beacon.NitradoServerProfile(Self.Profile).ConfigPath + "/" + Filename
 		  Self.UploadFile(Path, Contents)
-		End Sub
+		  Return True
+		End Function
 	#tag EndEvent
 
 

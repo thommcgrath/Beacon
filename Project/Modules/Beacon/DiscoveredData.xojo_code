@@ -1,7 +1,7 @@
 #tag Class
 Protected Class DiscoveredData
 	#tag Property, Flags = &h0
-		CommandLineOptions() As String
+		CommandLineOptions As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -59,11 +59,19 @@ Protected Class DiscoveredData
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="CommandLineOptions()"
+			Name="GameIniContent"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
-			Type="Integer"
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="GameUserSettingsIniContent"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

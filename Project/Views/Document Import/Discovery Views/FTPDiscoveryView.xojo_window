@@ -926,11 +926,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub mEngine_Discovered(Sender As Beacon.FTPIntegrationEngine, Data() As Beacon.DiscoveredData)
 		  #Pragma Unused Sender
-		  #Pragma Unused Data
 		  
-		  #if Not DebugBuild
-		    #Pragma Error "This isn't implemented yet"
-		  #endif
+		  Self.ShouldFinish(Data)
 		End Sub
 	#tag EndMethod
 

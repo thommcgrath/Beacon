@@ -172,6 +172,7 @@ Begin BeaconDialog AddSpawnPointDialog
       Transparent     =   False
       Underline       =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   496
       _ScrollOffset   =   0
       _ScrollWidth    =   -1

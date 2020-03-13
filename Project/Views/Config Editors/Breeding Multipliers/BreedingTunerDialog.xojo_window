@@ -210,6 +210,7 @@ Begin BeaconDialog BreedingTunerDialog
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   560
       _ScrollOffset   =   0
       _ScrollWidth    =   -1

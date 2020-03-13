@@ -682,6 +682,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   959
       _ScrollOffset   =   0
       _ScrollWidth    =   -1

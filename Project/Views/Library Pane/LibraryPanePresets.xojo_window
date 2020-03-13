@@ -38,7 +38,6 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       Caption         =   "Presets"
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -94,7 +93,6 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   "0"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -112,6 +110,7 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   300
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -123,7 +122,6 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648

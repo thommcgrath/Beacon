@@ -138,6 +138,7 @@ Begin BeaconContainer CraftingCostEditor
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   350
       _ScrollOffset   =   0
       _ScrollWidth    =   -1

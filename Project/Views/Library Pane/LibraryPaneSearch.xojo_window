@@ -38,7 +38,6 @@ Begin LibrarySubview LibraryPaneSearch
       Caption         =   "Search"
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -106,7 +105,6 @@ Begin LibrarySubview LibraryPaneSearch
       Width           =   280
    End
    Begin Timer SearchTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -116,13 +114,11 @@ Begin LibrarySubview LibraryPaneSearch
    End
    Begin URLConnection SearchSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
-      ValidateCertificates=   "False"
    End
    Begin ControlCanvas Area
       AcceptFocus     =   False
@@ -131,7 +127,6 @@ Begin LibrarySubview LibraryPaneSearch
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   218
       HelpTag         =   ""
       Index           =   -2147483648

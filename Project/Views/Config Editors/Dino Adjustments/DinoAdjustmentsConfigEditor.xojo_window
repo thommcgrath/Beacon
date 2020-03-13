@@ -164,14 +164,14 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub ParsingFinished(ParsedData As Dictionary)
-		  If ParsedData = Nil Then
-		    Return
+		Function ParsingFinished(Document As Beacon.Document) As Boolean
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName) = False Then
+		    Return True
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
+		  Var OtherConfig As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments(Document.ConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName))
 		  If OtherConfig = Nil Then
-		    Return
+		    Return True
 		  End If
 		  
 		  Var Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
@@ -183,7 +183,8 @@ End
 		  Next
 		  Self.Changed = True
 		  Self.UpdateList(Paths)
-		End Sub
+		  Return True
+		End Function
 	#tag EndEvent
 
 	#tag Event

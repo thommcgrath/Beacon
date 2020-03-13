@@ -148,6 +148,7 @@ Begin BeaconDialog EntryEditor
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   340
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
@@ -373,6 +374,7 @@ Begin BeaconDialog EntryEditor
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   428
          _ScrollOffset   =   0
          _ScrollWidth    =   -1

@@ -214,6 +214,7 @@ Begin BeaconSubview PresetEditorView
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   700
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
@@ -664,6 +665,7 @@ Begin BeaconSubview PresetEditorView
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   700
          _ScrollOffset   =   0
          _ScrollWidth    =   -1

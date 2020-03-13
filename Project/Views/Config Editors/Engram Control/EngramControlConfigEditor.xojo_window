@@ -234,6 +234,7 @@ Begin ConfigEditor EngramControlConfigEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   681
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -287,6 +288,7 @@ Begin ConfigEditor EngramControlConfigEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   300
       _ScrollOffset   =   0
       _ScrollWidth    =   -1

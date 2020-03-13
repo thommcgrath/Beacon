@@ -216,6 +216,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   764
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -570,16 +571,16 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub ParsingFinished(ParsedData As Dictionary)
+		Function ParsingFinished(Document As Beacon.Document) As Boolean
 		  // Don't import the properties, it would likely be confusing for users
 		  
-		  If ParsedData = Nil Then
-		    Return
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.HarvestRates.ConfigName) = False Then
+		    Return True
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.HarvestRates = BeaconConfigs.HarvestRates.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
+		  Var OtherConfig As BeaconConfigs.HarvestRates = BeaconConfigs.HarvestRates(Document.ConfigGroup(BeaconConfigs.HarvestRates.ConfigName))
 		  If OtherConfig = Nil Or OtherConfig.Count = 0 Then
-		    Return
+		    Return True
 		  End If
 		  
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
@@ -589,7 +590,8 @@ End
 		  Next
 		  Self.Changed = True
 		  Self.UpdateList(Engrams)
-		End Sub
+		  Return True
+		End Function
 	#tag EndEvent
 
 	#tag Event

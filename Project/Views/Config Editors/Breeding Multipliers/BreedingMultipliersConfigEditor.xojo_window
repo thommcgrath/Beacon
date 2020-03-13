@@ -698,6 +698,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   704
       _ScrollOffset   =   0
       _ScrollWidth    =   -1

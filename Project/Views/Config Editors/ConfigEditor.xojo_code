@@ -108,7 +108,10 @@ Inherits BeaconSubview
 
 	#tag Method, Flags = &h1
 		Protected Sub Parse(Content As String, Source As String)
-		  Var Parser As New Beacon.ImportThread
+		  Var Data As New Beacon.DiscoveredData
+		  Data.GameIniContent = Content
+		  
+		  Var Parser As New Beacon.ImportThread(Data)
 		  AddHandler Parser.Finished, AddressOf Parser_Finished
 		  AddHandler Parser.UpdateUI, AddressOf Parser_UpdateUI
 		  
@@ -121,13 +124,12 @@ Inherits BeaconSubview
 		  End If
 		  Self.mParserWindows.Value(Parser) = Win
 		  
-		  Parser.GameIniContent = Content
 		  Parser.Start
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Parser_Finished(Sender As Beacon.ImportThread, ParsedData As Dictionary)
+		Private Sub Parser_Finished(Sender As Beacon.ImportThread, Document As Beacon.Document)
 		  RemoveHandler Sender.Finished, AddressOf Parser_Finished
 		  RemoveHandler Sender.UpdateUI, AddressOf Parser_UpdateUI
 		  
@@ -135,7 +137,48 @@ Inherits BeaconSubview
 		  Win.Close
 		  Self.mParserWindows.Remove(Sender)
 		  
-		  RaiseEvent ParsingFinished(ParsedData)
+		  If Document Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Imported As Boolean
+		  Try
+		    Imported = RaiseEvent ParsingFinished(Document)
+		  Catch Err As RuntimeException
+		    ExceptionWindow.Report(Err)
+		  End Try
+		  If Imported Then
+		    Self.SetupUI()
+		    Return
+		  End If
+		  
+		  Var Label As String = Self.ConfigLabel
+		  If Document.HasConfigGroup(Label) = False Then
+		    Return
+		  End If
+		  
+		  Var NewGroup As Beacon.ConfigGroup = Document.ConfigGroup(Label)
+		  
+		  If Self.Document.HasConfigGroup(Label) Then
+		    Var OriginalGroup As Beacon.ConfigGroup = Self.Document.ConfigGroup(Label)
+		    Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("How would you like to merge " + Language.LabelForConfig(Label) + " into your existing editor?", "In the case of overlapping content, which should take priority?", "New Content", "Cancel", "Existing Content")
+		    Select Case Choice
+		    Case BeaconUI.ConfirmResponses.Action
+		      If NewGroup.Merge(OriginalGroup) Then
+		        Self.Document.AddConfigGroup(NewGroup)
+		      End If
+		    Case BeaconUI.ConfirmResponses.Cancel
+		      Return
+		    Case BeaconUI.ConfirmResponses.Alternate
+		      If Not OriginalGroup.Merge(NewGroup) Then
+		        Return
+		      End If
+		    End Select
+		  Else
+		    Self.Document.AddConfigGroup(NewGroup)
+		  End If
+		  
+		  Self.SetupUI()
 		End Sub
 	#tag EndMethod
 
@@ -201,7 +244,7 @@ Inherits BeaconSubview
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ParsingFinished(ParsedData As Dictionary)
+		Event ParsingFinished(Document As Beacon.Document) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

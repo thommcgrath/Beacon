@@ -154,6 +154,7 @@ Begin BeaconDialog EngramSelectorDialog
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   560
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -271,6 +272,7 @@ Begin BeaconDialog EngramSelectorDialog
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   200
       _ScrollOffset   =   0
       _ScrollWidth    =   -1

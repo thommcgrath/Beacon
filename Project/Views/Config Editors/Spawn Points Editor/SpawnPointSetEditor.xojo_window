@@ -102,6 +102,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Transparent     =   False
          Underline       =   False
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   388
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
@@ -280,6 +281,7 @@ Begin BeaconContainer SpawnPointSetEditor
          Transparent     =   False
          Underline       =   False
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   264
          _ScrollOffset   =   0
          _ScrollWidth    =   -1

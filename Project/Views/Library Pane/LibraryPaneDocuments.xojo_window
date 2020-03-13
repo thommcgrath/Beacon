@@ -74,6 +74,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   300
       _ScrollOffset   =   0
       _ScrollWidth    =   -1

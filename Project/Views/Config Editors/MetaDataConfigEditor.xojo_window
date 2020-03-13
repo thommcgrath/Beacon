@@ -235,6 +235,7 @@ Begin ConfigEditor MetaDataConfigEditor
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   476
       _ScrollOffset   =   0
       _ScrollWidth    =   -1

@@ -299,6 +299,7 @@ Begin BeaconContainer ModDetailView
          Underline       =   False
          UseFocusRing    =   False
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   864
          _ScrollOffset   =   0
          _ScrollWidth    =   -1

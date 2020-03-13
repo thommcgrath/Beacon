@@ -201,7 +201,6 @@ Begin LibrarySubview LibraryPaneEngrams
       Caption         =   "Blueprints"
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -226,7 +225,6 @@ Begin LibrarySubview LibraryPaneEngrams
       Width           =   300
    End
    Begin Timer ClipboardWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0

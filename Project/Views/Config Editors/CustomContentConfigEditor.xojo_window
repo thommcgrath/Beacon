@@ -200,18 +200,17 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub ParsingFinished(ParsedData As Dictionary)
+		Function ParsingFinished(Document As Beacon.Document) As Boolean
 		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
-		  Var Document As Beacon.Document = Self.Document
-		  Var ConfigNames() As String = BeaconConfigs.AllConfigNames
-		  Var CommandLineOptions As New Dictionary
+		  Var SelfDocument As Beacon.Document = Self.Document
 		  Var CreatedEditorNames() As String
-		  Var GenericProfile As New Beacon.GenericServerProfile(Document.Title, Beacon.Maps.All.Mask)
+		  Var GenericProfile As New Beacon.GenericServerProfile(SelfDocument.Title, Beacon.Maps.All.Mask)
 		  Var GameIniValues As New Dictionary
 		  Var GameUserSettingsIniValues As New Dictionary
 		  
 		  Var ImportedConfigs() As Beacon.ConfigGroup
-		  For Each ConfigName As String In ConfigNames
+		  For Each CreatedConfig As Beacon.ConfigGroup In Document.ImplementedConfigs
+		    Var ConfigName As String = CreatedConfig.ConfigName
 		    If ConfigName = BeaconConfigs.CustomContent.ConfigName Then
 		      Continue
 		    End If
@@ -221,28 +220,23 @@ End
 		      Continue
 		    End If
 		    
-		    Var CreatedConfig As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(ConfigName, ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty)
-		    If CreatedConfig = Nil Then
-		      Continue
-		    End If
-		    
 		    ImportedConfigs.AddRow(CreatedConfig)
 		    
-		    If Document.HasConfigGroup(ConfigName) Then
-		      Var CurrentConfig As Beacon.ConfigGroup = Document.ConfigGroup(ConfigName, False)
+		    If SelfDocument.HasConfigGroup(ConfigName) Then
+		      Var CurrentConfig As Beacon.ConfigGroup = SelfDocument.ConfigGroup(ConfigName, False)
 		      If CurrentConfig <> Nil Then
 		        If Not CurrentConfig.Merge(CreatedConfig) Then
 		          Continue
 		        End If
 		      Else
-		        Document.AddConfigGroup(CreatedConfig)
+		        SelfDocument.AddConfigGroup(CreatedConfig)
 		      End If
 		    Else
-		      Document.AddConfigGroup(CreatedConfig)
+		      SelfDocument.AddConfigGroup(CreatedConfig)
 		    End If
 		    
-		    Var GameIniArray() As Beacon.ConfigValue = CreatedConfig.GameIniValues(Document, Identity, GenericProfile)
-		    Var GameUserSettingsIniArray() As Beacon.ConfigValue = CreatedConfig.GameUserSettingsIniValues(Document, Identity, GenericProfile)
+		    Var GameIniArray() As Beacon.ConfigValue = CreatedConfig.GameIniValues(SelfDocument, Identity, GenericProfile)
+		    Var GameUserSettingsIniArray() As Beacon.ConfigValue = CreatedConfig.GameUserSettingsIniValues(SelfDocument, Identity, GenericProfile)
 		    Var NonGeneratedKeys() As Beacon.ConfigKey = CreatedConfig.NonGeneratedKeys(Identity)
 		    For Each Key As Beacon.ConfigKey In NonGeneratedKeys
 		      Select Case Key.File
@@ -274,7 +268,7 @@ End
 		  Else
 		    Self.ShowAlert("Finished converting Custom Config Content", "Beacon found and setup the following guided editors: " + Language.EnglishOxfordList(CreatedEditorNames) + ".")
 		  End If
-		End Sub
+		End Function
 	#tag EndEvent
 
 	#tag Event

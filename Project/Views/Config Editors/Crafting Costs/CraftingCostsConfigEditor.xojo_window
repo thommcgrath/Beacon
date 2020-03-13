@@ -168,6 +168,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   250
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -345,14 +346,14 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub ParsingFinished(ParsedData As Dictionary)
-		  If ParsedData = Nil Then
-		    Return
+		Function ParsingFinished(Document As Beacon.Document) As Boolean
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.CraftingCosts.ConfigName) = False Then
+		    Return True
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
+		  Var OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts(Document.ConfigGroup(BeaconConfigs.CraftingCosts.ConfigName))
 		  If OtherConfig = Nil Or OtherConfig.Count = 0 Then
-		    Return
+		    Return True
 		  End If
 		  
 		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(True)
@@ -365,7 +366,9 @@ End
 		  
 		  Self.Changed = True
 		  Self.UpdateList(NewCosts)
-		End Sub
+		  
+		  Return True
+		End Function
 	#tag EndEvent
 
 	#tag Event

@@ -440,6 +440,7 @@ Begin ContainerControl DocumentImportView
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   560
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
@@ -654,6 +655,7 @@ Begin ContainerControl DocumentImportView
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   560
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
@@ -751,45 +753,19 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub BeginDiscovery(Engines() As Beacon.IntegrationEngine, Accounts As Beacon.ExternalAccountManager)
-		  Self.mEngines = Engines
-		  If Accounts <> Nil Then
-		    If Self.mAccounts = Nil Then
-		      Self.mAccounts = New Beacon.ExternalAccountManager
+		Private Sub Finish()
+		  Var Documents() As Beacon.Document
+		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastRowIndex
+		    If Self.mImporters(I).Document <> Nil Then
+		      Documents.AddRow(Self.mImporters(I).Document)
 		    End If
-		    Self.mAccounts.Import(Accounts)
-		  End If
-		  
-		  // Make sure the importers and engines stay in order because they need to be matched up later
-		  Self.mImporters.ResizeTo(-1) // To empty the array
-		  Self.mImporters.ResizeTo(Engines.LastRowIndex)
-		  Self.mParsedData.ResizeTo(-1)
-		  Self.mParsedData.ResizeTo(Engines.LastRowIndex)
-		  Self.mDocuments.ResizeTo(-1)
-		  Self.mDocuments.ResizeTo(Engines.LastRowIndex)
-		  
-		  Self.DiscoveryWatcher.RunMode = Timer.RunModes.Multiple
-		  
-		  Self.StatusList.RemoveAllRows
-		  For Each Engine As Beacon.IntegrationEngine In Engines
-		    Self.StatusList.AddRow(Engine.Name + EndOfLine + Engine.Logs(True))
-		    Self.StatusList.RowTagAt(Self.StatusList.LastAddedRowIndex) = Engine
-		    
-		    Engine.BeginDiscovery()
 		  Next
-		  
-		  Self.Views.SelectedPanelIndex = Self.PageStatus
+		  Self.Finish(Documents)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Finish()
-		  Var Documents() As Beacon.Document
-		  For I As Integer = 0 To Self.mDocuments.LastRowIndex
-		    If Self.mDocuments(I) <> Nil Then
-		      Documents.AddRow(Self.mDocuments(I))
-		    End If
-		  Next
+		Private Sub Finish(Documents() As Beacon.Document)
 		  If Documents.LastRowIndex > -1 Then
 		    RaiseEvent DocumentsImported(Documents)
 		  End If
@@ -806,148 +782,21 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Importer_ThreadedParseFinished(Sender As Beacon.ImportThread, ParsedData As Dictionary)
-		  Var Idx As Integer = -1
-		  For I As Integer = 0 To Self.mImporters.LastRowIndex
-		    If Self.mImporters(I) = Sender Then
-		      Self.mParsedData(I) = ParsedData
-		      Idx = I
-		      Exit For I
-		    End If
+		Private Sub ImportFrom(Data() As Beacon.DiscoveredData)
+		  Self.mImporters.ResizeTo(Data.LastRowIndex)
+		  Self.StatusList.RowCount = Data.Count
+		  
+		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastRowIndex
+		    Var Importer As New Beacon.ImportThread(Data(I))
+		    Importer.Start
+		    Self.mImporters(I) = Importer
+		    
+		    Self.StatusList.CellValueAt(I, 0) = Data(I).Profile.Name + EndOfLine + "Starting parser…"
+		    Self.StatusList.RowTagAt(I) = Importer
 		  Next
 		  
-		  If Idx = -1 Then
-		    Return
-		  End If
-		  
-		  Var Engine As Beacon.IntegrationEngine = Self.mEngines(Idx)
-		  Var CommandLineOptions As Dictionary
-		  #if DebugBuild
-		    #if false
-		      CommandLineOptions = Engine.CommandLineOptions
-		    #endif
-		  #else
-		    #Pragma Error "Importer has no command line options"
-		  #endif
-		  If CommandLineOptions = Nil Then
-		    CommandLineOptions = New Dictionary
-		  End If
-		  Var Document As New Beacon.Document
-		  Document.MapCompatibility = Engine.Profile.Mask
-		  
-		  Try
-		    Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Engine.Profile.Mask)
-		    If Maps.LastRowIndex = -1 Then
-		      Maps.AddRow(Beacon.Maps.TheIsland)
-		    End If
-		    Var DifficultyTotal, DifficultyScale As Double
-		    For Each Map As Beacon.Map In Maps
-		      DifficultyTotal = DifficultyTotal + Map.DifficultyScale
-		    Next
-		    DifficultyScale = DifficultyTotal / (Maps.LastRowIndex + 1)
-		    
-		    Var DifficultyValue As Double
-		    If CommandLineOptions.HasKey("OverrideOfficialDifficulty") And CommandLineOptions.DoubleValue("OverrideOfficialDifficulty") > 0 Then
-		      DifficultyValue = CommandLineOptions.DoubleValue("OverrideOfficialDifficulty")
-		    ElseIf ParsedData.HasKey("OverrideOfficialDifficulty") And ParsedData.DoubleValue("OverrideOfficialDifficulty") > 0 Then
-		      DifficultyValue = ParsedData.DoubleValue("OverrideOfficialDifficulty")
-		    Else
-		      If ParsedData.HasKey("DifficultyOffset") Then
-		        DifficultyValue = ParsedData.DoubleValue("DifficultyOffset") * (DifficultyScale - 0.5) + 0.5
-		      Else
-		        DifficultyValue = DifficultyScale
-		      End If
-		    End If
-		    
-		    Document.AddConfigGroup(New BeaconConfigs.Difficulty(DifficultyValue))
-		  Catch Err As RuntimeException
-		    Document.AddConfigGroup(New BeaconConfigs.Difficulty(5.0))
-		  End Try
-		  
-		  Try
-		    Document.Accounts.Import(Self.mAccounts)
-		  Catch Err As RuntimeException
-		    
-		  End Try
-		  
-		  Var Profile As Beacon.ServerProfile = Engine.Profile
-		  If Profile <> Nil Then
-		    If ParsedData.HasKey("SessionName") Then
-		      Var SessionNames() As Variant = ParsedData.AutoArrayValue("SessionName")
-		      For Each SessionName As Variant In SessionNames
-		        Try
-		          Profile.Name = SessionName
-		          Exit
-		        Catch Err As TypeMismatchException
-		        End Try
-		      Next
-		    End If
-		    
-		    Document.Add(Profile)
-		  End If
-		  
-		  Var ConfigNames() As String = BeaconConfigs.AllConfigNames()
-		  Var PurchasedOmniVersion As Integer = App.IdentityManager.CurrentIdentity.OmniVersion
-		  For Each ConfigName As String In ConfigNames
-		    If ConfigName = BeaconConfigs.Difficulty.ConfigName Or ConfigName = BeaconConfigs.CustomContent.ConfigName Then
-		      // Difficulty and custom content area special
-		      Continue For ConfigName
-		    End If
-		    
-		    If BeaconConfigs.ConfigPurchased(ConfigName, PurchasedOmniVersion) = False Then
-		      // Do not import code for groups that the user has not purchased
-		      Continue For ConfigName
-		    End If
-		    
-		    Var Group As Beacon.ConfigGroup
-		    Try
-		      Group = BeaconConfigs.CreateInstance(ConfigName, ParsedData, CommandLineOptions, Document.MapCompatibility, Document.Difficulty)
-		    Catch Err As RuntimeException
-		    End Try
-		    If Group <> Nil Then
-		      Document.AddConfigGroup(Group)
-		    End If
-		  Next
-		  
-		  // Now figure out what configs we'll generate so CustomContent can figure out what NOT to capture.
-		  // Do not do this in the loop above to ensure all configs are loaded first, in case they rely on each other.
-		  Var GameIniValues As New Dictionary
-		  Var GameUserSettingsIniValues As New Dictionary
-		  Var Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
-		  Var GenericProfile As New Beacon.GenericServerProfile(Document.Title, Beacon.Maps.All.Mask)
-		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
-		  For Each Config As Beacon.ConfigGroup In Configs
-		    Var GameIniArray() As Beacon.ConfigValue = Config.GameIniValues(Document, Identity, GenericProfile)
-		    Var GameUserSettingsIniArray() As Beacon.ConfigValue = Config.GameUserSettingsIniValues(Document, Identity, GenericProfile)
-		    Var NonGeneratedKeys() As Beacon.ConfigKey = Config.NonGeneratedKeys(Identity)
-		    For Each Key As Beacon.ConfigKey In NonGeneratedKeys
-		      Select Case Key.File
-		      Case "Game.ini"
-		        GameIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
-		      Case "GameUserSettings.ini"
-		        GameUserSettingsIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
-		      End Select
-		    Next
-		    
-		    Beacon.ConfigValue.FillConfigDict(GameIniValues, GameIniArray)
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, GameUserSettingsIniArray)
-		  Next
-		  
-		  Var CustomContent As New BeaconConfigs.CustomContent
-		  Try
-		    CustomContent.GameIniContent(GameIniValues) = Sender.GameIniContent
-		  Catch Err As RuntimeException
-		  End Try
-		  Try
-		    CustomContent.GameUserSettingsIniContent(GameUserSettingsIniValues) = Sender.GameUserSettingsIniContent
-		  Catch Err As RuntimeException
-		  End Try
-		  If CustomContent.Modified Then
-		    Document.AddConfigGroup(CustomContent)
-		  End If
-		  
-		  Self.mDocuments(Idx) = Document
-		  Exception Unhandled As RuntimeException
+		  Self.DiscoveryWatcher.RunMode = Timer.RunModes.Multiple
+		  Self.Views.SelectedPanelIndex = Self.PageStatus
 		End Sub
 	#tag EndMethod
 
@@ -968,10 +817,7 @@ End
 		    End If
 		  Next
 		  
-		  Self.mEngines.ResizeTo(-1)
 		  Self.mImporters.ResizeTo(-1)
-		  Self.mParsedData.ResizeTo(-1)
-		  Self.mDocuments.ResizeTo(-1)
 		  
 		  If Self.Views.SelectedPanelIndex <> 0 Then
 		    Self.Views.SelectedPanelIndex = 0
@@ -1036,14 +882,6 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDocuments() As Beacon.Document
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mEngines() As Beacon.IntegrationEngine
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mImporters() As Beacon.ImportThread
 	#tag EndProperty
 
@@ -1051,16 +889,12 @@ End
 		Private mOtherDocuments() As Beacon.Document
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mParsedData() As Dictionary
-	#tag EndProperty
-
 	#tag Property, Flags = &h0
 		QuickCancel As Boolean
 	#tag EndProperty
 
 
-	#tag Constant, Name = ConnectorEnabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
+	#tag Constant, Name = ConnectorEnabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = PageConnector, Type = Double, Dynamic = False, Default = \"6", Scope = Private
@@ -1165,8 +999,12 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Engines() As Beacon.IntegrationEngine, Accounts As Beacon.ExternalAccountManager)
-		  Self.BeginDiscovery(Engines, Accounts)
+		Sub Finished(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
+		  If Self.mAccounts = Nil Then
+		    Self.mAccounts = New Beacon.ExternalAccountManager
+		  End If
+		  Self.mAccounts.Import(Accounts)
+		  Self.ImportFrom(Data)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1186,8 +1024,12 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Engines() As Beacon.IntegrationEngine, Accounts As Beacon.ExternalAccountManager)
-		  Self.BeginDiscovery(Engines, Accounts)
+		Sub Finished(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
+		  If Self.mAccounts = Nil Then
+		    Self.mAccounts = New Beacon.ExternalAccountManager
+		  End If
+		  Self.mAccounts.Import(Accounts)
+		  Self.ImportFrom(Data)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1207,8 +1049,12 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Engines() As Beacon.IntegrationEngine, Accounts As Beacon.ExternalAccountManager)
-		  Self.BeginDiscovery(Engines, Accounts)
+		Sub Finished(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
+		  If Self.mAccounts = Nil Then
+		    Self.mAccounts = New Beacon.ExternalAccountManager
+		  End If
+		  Self.mAccounts.Import(Accounts)
+		  Self.ImportFrom(Data)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1231,16 +1077,16 @@ End
 #tag Events OtherDocsActionButton
 	#tag Event
 		Sub Action()
-		  Self.mDocuments.ResizeTo(-1)
+		  Var Documents() As Beacon.Document
 		  For I As Integer = 0 To OtherDocsList.RowCount - 1
 		    If Not OtherDocsList.CellCheckBoxValueAt(I, 0) Then
 		      Continue
 		    End If
 		    
 		    Var Doc As Beacon.Document = OtherDocsList.RowTagAt(I)
-		    Self.mDocuments.AddRow(Doc)
+		    Documents.AddRow(Doc)
 		  Next
-		  Self.Finish()
+		  Self.Finish(Documents)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1288,8 +1134,12 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Engines() As Beacon.IntegrationEngine, Accounts As Beacon.ExternalAccountManager)
-		  Self.BeginDiscovery(Engines, Accounts)
+		Sub Finished(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
+		  If Self.mAccounts = Nil Then
+		    Self.mAccounts = New Beacon.ExternalAccountManager
+		  End If
+		  Self.mAccounts.Import(Accounts)
+		  Self.ImportFrom(Data)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1297,66 +1147,83 @@ End
 	#tag Event
 		Sub Action()
 		  Var AllFinished As Boolean = True
-		  Var SuccessCount As Integer
-		  Var Errors As Boolean
-		  For I As Integer = 0 To Self.mEngines.LastRowIndex
-		    Var Engine As Beacon.IntegrationEngine = Self.mEngines(I)
-		    Var Finished As Boolean
-		    Var Status As String
-		    If Engine.Finished And Not Engine.Errored Then
-		      If Self.mImporters(I) = Nil Then
-		        Var Importer As New Beacon.ImportThread
-		        #if DebugBuild
-		          #if false
-		            Importer.GameIniContent = Engine.GameIniContent
-		            Importer.GameUserSettingsIniContent = Engine.GameUserSettingsIniContent
+		  Var ErrorCount, SuccessCount As Integer
+		  For I As Integer = 0 To Self.StatusList.LastRowIndex
+		    Var Importer As Beacon.ImportThread = Self.StatusList.RowTagAt(I)
+		    AllFinished = AllFinished And Importer.Finished
+		    Self.StatusList.CellValueAt(I, 0) = Importer.Name + EndOfLine + Importer.Status
+		    
+		    If Importer.Finished Then
+		      If Importer.Document Is Nil Then
+		        ErrorCount = ErrorCount + 1
+		      Else
+		        SuccessCount = SuccessCount + 1
+		      End If
+		    End If
+		  Next
+		  
+		  #if false
+		    Var SuccessCount As Integer
+		    Var Errors As Boolean
+		    For I As Integer = 0 To Self.mEngines.LastRowIndex
+		      Var Engine As Beacon.IntegrationEngine = Self.mEngines(I)
+		      Var Finished As Boolean
+		      Var Status As String
+		      If Engine.Finished And Not Engine.Errored Then
+		        If Self.mImporters(I) = Nil Then
+		          Var Importer As New Beacon.ImportThread
+		          #if DebugBuild
+		            #if false
+		              Importer.GameIniContent = Engine.GameIniContent
+		              Importer.GameUserSettingsIniContent = Engine.GameUserSettingsIniContent
+		            #endif
+		          #else
+		            #Pragma Error "Importer has no content to import"
 		          #endif
-		        #else
-		          #Pragma Error "Importer has no content to import"
-		        #endif
-		        AddHandler Importer.ThreadedParseFinished, WeakAddressOf Importer_ThreadedParseFinished 
-		        Self.mImporters(I) = Importer
-		        Status = "Parsing Config Files…"
-		        Importer.Start
-		      ElseIf Self.mImporters(I).Finished Then
-		        // Show import finished
-		        Finished = True
-		        If Self.mDocuments(I) <> Nil Then
-		          Status = "Finished"
-		          SuccessCount = SuccessCount + 1
+		          AddHandler Importer.ThreadedParseFinished, WeakAddressOf Importer_ThreadedParseFinished 
+		          Self.mImporters(I) = Importer
+		          Status = "Parsing Config Files…"
+		          Importer.Start
+		        ElseIf Self.mImporters(I).Finished Then
+		          // Show import finished
+		          Finished = True
+		          If Self.mDocuments(I) <> Nil Then
+		            Status = "Finished"
+		            SuccessCount = SuccessCount + 1
+		          Else
+		            Errors = True
+		            Status = "Parse error"
+		          End If
 		        Else
-		          Errors = True
-		          Status = "Parse error"
+		          // Show importer progress
+		          Var Progress As Integer = Round(Self.mImporters(I).Progress * 100)
+		          If Self.mImporters(I).Progress >= 1 Then
+		            Status = "Finishing…"
+		          Else
+		            Status = "Parsing Config Files… (" + Progress.ToString() + "%)"
+		          End If
 		        End If
 		      Else
-		        // Show importer progress
-		        Var Progress As Integer = Round(Self.mImporters(I).Progress * 100)
-		        If Self.mImporters(I).Progress >= 1 Then
-		          Status = "Finishing…"
-		        Else
-		          Status = "Parsing Config Files… (" + Progress.ToString() + "%)"
+		        // Show engine status
+		        Status = Engine.Logs(True)
+		        If Engine.Errored Then
+		          Finished = True
+		          Errors = True
 		        End If
 		      End If
-		    Else
-		      // Show engine status
-		      Status = Engine.Logs(True)
-		      If Engine.Errored Then
-		        Finished = True
-		        Errors = True
+		      
+		      Status = Engine.Name + EndOfLine + Status
+		      If Self.StatusList.CellValueAt(I, 0) <> Status Then
+		        Self.StatusList.CellValueAt(I, 0) = Status
 		      End If
-		    End If
-		    
-		    Status = Engine.Name + EndOfLine + Status
-		    If Self.StatusList.CellValueAt(I, 0) <> Status Then
-		      Self.StatusList.CellValueAt(I, 0) = Status
-		    End If
-		    
-		    AllFinished = AllFinished And Finished
-		  Next
+		      
+		      AllFinished = AllFinished And Finished
+		    Next
+		  #endif
 		  
 		  If AllFinished Then
 		    Me.RunMode = Timer.RunModes.Off
-		    If Errors = False Then
+		    If ErrorCount = 0 Then
 		      Self.Finish()
 		    ElseIf SuccessCount > 0 Then
 		      If Self.ShowConfirm("There were import errors.", "Not all files imported successfully. Do you want to continue importing with the files that did import?", "Continue Import", "Review Errors") Then

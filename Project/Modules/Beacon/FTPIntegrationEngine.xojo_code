@@ -107,8 +107,6 @@ Inherits Beacon.IntegrationEngine
 		    End If
 		  End If
 		  
-		  Break
-		  
 		  Return DiscoveredData
 		End Function
 	#tag EndEvent
@@ -120,6 +118,17 @@ Inherits Beacon.IntegrationEngine
 		    Return Self.DownloadFile(Self.BaseURL + Beacon.FTPServerProfile(Self.Profile).GameIniPath)
 		  Case "GameUserSettings.ini"
 		    Return Self.DownloadFile(Self.BaseURL + Beacon.FTPServerProfile(Self.Profile).GameUserSettingsIniPath)
+		  End Select
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function UploadFile(Contents As String, Filename As String) As Boolean
+		  Select Case Filename
+		  Case "Game.ini"
+		    Return Self.UploadFile(Self.BaseURL + Beacon.FTPServerProfile(Self.Profile).GameIniPath, Contents)
+		  Case "GameUserSettings.ini"
+		    Return Self.UploadFile(Self.BaseURL + Beacon.FTPServerProfile(Self.Profile).GameUserSettingsIniPath, Contents)
 		  End Select
 		End Function
 	#tag EndEvent
@@ -246,7 +255,7 @@ Inherits Beacon.IntegrationEngine
 		Private Function DownloadFile(Path As String) As String
 		  Self.mSocketLock.Enter
 		  Self.mSocket.OptionURL = Path
-		  Call Self.mSocket.Perform
+		  Call Self.mSocket.PerformMT
 		  Var Response As String
 		  If Self.mSocket.Lasterror = CURLSMBS.kError_OK Then
 		    Response = Self.mSocket.OutputData
@@ -334,10 +343,24 @@ Inherits Beacon.IntegrationEngine
 		      Var Map As String = StartupParams.Shift
 		      Call StartupParams.Shift // The listen statement
 		      StartupParams.Merge(Params)
-		      Params = StartupParams
+		      
+		      Var CommandLineOptions As New Dictionary
+		      For Each Parameter As String In StartupParams
+		        Var KeyPos As Integer = Parameter.IndexOf("=")
+		        Var Key As String
+		        Var Value As Variant
+		        If KeyPos = -1 Then
+		          Key = Parameter
+		          Value = True
+		        Else
+		          Key = Parameter.Left(KeyPos)
+		          Value = Parameter.Middle(KeyPos + 1)
+		        End If
+		        CommandLineOptions.Value(Key) = Value
+		      Next
 		      
 		      Data.Profile.Mask = Beacon.Maps.MaskForIdentifier(Map)
-		      Data.CommandLineOptions = Params
+		      Data.CommandLineOptions = CommandLineOptions
 		      
 		      FoundCommandLine = True
 		    End If
@@ -376,6 +399,17 @@ Inherits Beacon.IntegrationEngine
 		  Var Params() As Variant = Value
 		  RaiseEvent FilesListed(Params(0).StringValue, Params(1))
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function UploadFile(Path As String, Contents As String) As Boolean
+		  Self.mSocketLock.Enter
+		  Self.mSocket.OptionURL = Path
+		  Self.mSocket.SetInputData(Contents)
+		  Var Response As Integer = Self.mSocket.PerformMT
+		  Self.mSocketLock.Leave
+		  Return Response = CURLSMBS.kError_OK
+		End Function
 	#tag EndMethod
 
 

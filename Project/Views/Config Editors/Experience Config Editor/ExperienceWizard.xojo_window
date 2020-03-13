@@ -470,6 +470,7 @@ Begin BeaconDialog ExperienceWizard
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   327
       _ScrollOffset   =   0
       _ScrollWidth    =   -1

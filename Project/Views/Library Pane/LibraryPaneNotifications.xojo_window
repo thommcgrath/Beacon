@@ -38,7 +38,6 @@ Begin LibrarySubview LibraryPaneNotifications Implements NotificationKit.Receive
       Caption         =   "Notifications"
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -69,7 +68,6 @@ Begin LibrarySubview LibraryPaneNotifications Implements NotificationKit.Receive
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   260
       HelpTag         =   ""
       Index           =   -2147483648

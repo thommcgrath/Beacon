@@ -74,19 +74,10 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   250
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
-   End
-   Begin Beacon.ImportThread Importer
-      GameIniContent  =   ""
-      GameUserSettingsIniContent=   ""
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Priority        =   0
-      Scope           =   0
-      StackSize       =   0
-      TabPanelIndex   =   0
    End
    Begin BeaconToolbar Header
       AcceptFocus     =   False
@@ -400,7 +391,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       LockRight       =   False
       LockTop         =   True
       Notes           =   ""
-      Scope           =   0
+      Scope           =   2
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
@@ -562,12 +553,20 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CancelImport()
-		  Importer.Stop
-		  
-		  If Self.ImportProgress <> Nil Then
-		    Self.ImportProgress.Close
-		    Self.ImportProgress = Nil
+		  If Self.mImporter <> Nil Then
+		    Self.mImporter.Stop
 		  End If
+		  
+		  If Self.mImportProgress <> Nil Then
+		    Self.mImportProgress.Close
+		    Self.mImportProgress = Nil
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  
 		End Sub
 	#tag EndMethod
 
@@ -627,13 +626,79 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Import(Content As String, Source As String)
-		  Self.ImportProgress = New ImporterWindow
-		  Self.ImportProgress.Source = Source
-		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
-		  Self.ImportProgress.ShowWithin(Self.TrueWindow)
-		  Self.Importer.Clear
-		  Self.Importer.GameIniContent = Content
-		  Self.Importer.Start
+		  Self.mImportProgress = New ImporterWindow
+		  Self.mImportProgress.Source = Source
+		  Self.mImportProgress.CancelAction = WeakAddressOf Self.CancelImport
+		  Self.mImportProgress.ShowWithin(Self.TrueWindow)
+		  
+		  Var Data As New Beacon.DiscoveredData
+		  Data.GameIniContent = Content
+		  
+		  Self.mImporter = New Beacon.ImportThread(Data)
+		  AddHandler mImporter.Finished, WeakAddressOf mImporter_Finished
+		  AddHandler mImporter.UpdateUI, WeakAddressOf mImporter_UpdateUI
+		  Self.mImporter.Start
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mImporter_Finished(Sender As Beacon.ImportThread, Document As Beacon.Document)
+		  #Pragma Unused Sender
+		  
+		  If Self.mImportProgress <> Nil Then
+		    Self.mImportProgress.Close
+		    Self.mImportProgress = Nil
+		  End If
+		  
+		  If Not Document.HasConfigGroup(BeaconConfigs.LootDrops.ConfigName) Then
+		    Return
+		  End If
+		  
+		  Var Drops As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.LootDrops.ConfigName))
+		  Var NewItemSets() As Beacon.ItemSet
+		  For Each SourceDrop As Beacon.LootSource In Drops
+		    For Each ItemSet As Beacon.ItemSet In SourceDrop
+		      NewItemSets.AddRow(ItemSet)
+		    Next
+		  Next
+		  Self.AddSets(NewItemSets)
+		  
+		  #if false
+		    Var Dicts() As Variant
+		    #Pragma BreakOnExceptions Off
+		    Try
+		      Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
+		    Catch Err As TypeMismatchException
+		      Dicts.AddRow(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
+		    End Try
+		    #Pragma BreakOnExceptions Default
+		    
+		    Var Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
+		    
+		    Var SourceLootSources() As Beacon.LootSource
+		    For Each ConfigDict As Dictionary In Dicts
+		      Var Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Difficulty)
+		      If Source <> Nil Then
+		        SourceLootSources.AddRow(Source)
+		      End If
+		    Next
+		    
+		    Var NewItemSets() As Beacon.ItemSet
+		    For Each Source As Beacon.LootSource In SourceLootSources
+		      For Each Set As Beacon.ItemSet In Source
+		        NewItemSets.AddRow(Set)
+		      Next
+		    Next
+		    Self.AddSets(NewItemSets)
+		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mImporter_UpdateUI(Sender As Beacon.ImportThread)
+		  If Self.mImportProgress <> Nil Then
+		    Self.mImportProgress.Progress = Sender.Progress
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -886,7 +951,11 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private ImportProgress As ImporterWindow
+		Private mImporter As Beacon.ImportThread
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mImportProgress As ImporterWindow
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1274,50 +1343,6 @@ End
 		Function RowIsInvalid(Row As Integer) As Boolean
 		  Return ItemSetOrganizer(Me.RowTagAt(Row)).Template.IsValid(Self.Document) = False
 		End Function
-	#tag EndEvent
-#tag EndEvents
-#tag Events Importer
-	#tag Event
-		Sub UpdateUI()
-		  If Self.ImportProgress <> Nil Then
-		    Self.ImportProgress.Progress = Me.Progress
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Finished(ParsedData As Dictionary)
-		  If Self.ImportProgress <> Nil Then
-		    Self.ImportProgress.Close
-		    Self.ImportProgress = Nil
-		  End If
-		  
-		  Var Dicts() As Variant
-		  #Pragma BreakOnExceptions Off
-		  Try
-		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
-		  Catch Err As TypeMismatchException
-		    Dicts.AddRow(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
-		  End Try
-		  #Pragma BreakOnExceptions Default
-		  
-		  Var Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
-		  
-		  Var SourceLootSources() As Beacon.LootSource
-		  For Each ConfigDict As Dictionary In Dicts
-		    Var Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Difficulty)
-		    If Source <> Nil Then
-		      SourceLootSources.AddRow(Source)
-		    End If
-		  Next
-		  
-		  Var NewItemSets() As Beacon.ItemSet
-		  For Each Source As Beacon.LootSource In SourceLootSources
-		    For Each Set As Beacon.ItemSet In Source
-		      NewItemSets.AddRow(Set)
-		    Next
-		  Next
-		  Self.AddSets(NewItemSets)
-		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Header

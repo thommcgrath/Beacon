@@ -321,13 +321,11 @@ Protected Class IntegrationEngine
 		  
 		  // Put the new files on the server
 		  Self.Log("Uploading Game.ini…")
-		  RaiseEvent UploadFile(GameIniRewritten, "Game.ini")
-		  If Self.Finished Then
+		  If UploadFile(GameIniRewritten, "Game.ini") = False Or Self.Finished Then
 		    Return
-		  End If
+		  End If 
 		  Self.Log("Uploading GameUserSettings.ini…")
-		  RaiseEvent UploadFile(GameUserSettingsIniRewritten, "GameUserSettings.ini")
-		  If Self.Finished Then
+		  If UploadFile(GameUserSettingsIniRewritten, "GameUserSettings.ini") = False Or Self.Finished Then
 		    Return
 		  End If
 		  
@@ -628,7 +626,7 @@ Protected Class IntegrationEngine
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event UploadFile(Contents As String, Filename As String)
+		Event UploadFile(Contents As String, Filename As String) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

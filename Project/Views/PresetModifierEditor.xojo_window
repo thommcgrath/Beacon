@@ -456,6 +456,7 @@ Begin BeaconDialog PresetModifierEditor
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   368
       _ScrollOffset   =   0
       _ScrollWidth    =   -1

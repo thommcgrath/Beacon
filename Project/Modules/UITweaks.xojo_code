@@ -78,6 +78,25 @@ Protected Module UITweaks
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub SwapButtons(ActionButton As PushButton, CancelButton As PushButton)
+		  Var ActionRect As New Rect(ActionButton.Left, ActionButton.Top, ActionButton.Width, ActionButton.Height)
+		  Var CancelRect As New Rect(CancelButton.Left, CancelButton.Top, CancelButton.Width, CancelButton.Height)
+		  Var ActionIsLeft As Boolean = ActionRect.Left < CancelButton.Left
+		  
+		  If (ActionIsLeft And TargetMacOS) Or (ActionIsLeft = False And TargetWindows) Then
+		    ActionButton.Left = CancelRect.Left
+		    ActionButton.Top = CancelRect.Top
+		    ActionButton.Width = CancelRect.Width
+		    ActionButton.Height = CancelRect.Height
+		    CancelButton.Left = ActionRect.Left
+		    CancelButton.Top = ActionRect.Top
+		    CancelButton.Width = ActionRect.Width
+		    CancelButton.Height = ActionRect.Height
+		  End If
+		End Sub
+	#tag EndMethod
+
 
 	#tag ViewBehavior
 		#tag ViewProperty

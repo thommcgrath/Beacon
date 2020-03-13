@@ -20,7 +20,7 @@ Inherits Beacon.IntegrationEngine
 	#tag EndEvent
 
 	#tag Event
-		Sub UploadFile(Contents As String, Filename As String)
+		Function UploadFile(Contents As String, Filename As String) As Boolean
 		  Var File As FolderItem
 		  Select Case Filename
 		  Case "Game.ini"
@@ -28,16 +28,18 @@ Inherits Beacon.IntegrationEngine
 		  Case "GameUserSettings.ini"
 		    File = Beacon.LocalServerProfile(Self.Profile).GameUserSettingsIniFile
 		  Else
-		    Return
+		    Return False
 		  End Select
 		  
 		  If File <> Nil Then
 		    If Not File.Write(Contents) Then
 		      Self.SetError("Unable to write to " + File.NativePath)
-		      Return
+		      Return False
 		    End If
 		  End If
-		End Sub
+		  
+		  Return True
+		End Function
 	#tag EndEvent
 
 
