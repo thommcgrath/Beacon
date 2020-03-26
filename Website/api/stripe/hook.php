@@ -158,6 +158,26 @@ case 'checkout.session.completed':
 	exit;
 	
 	break;
+case 'charge.refunded':
+	$charge_data = $data['object'];
+	$merchant_reference = $charge_data['payment_intent'];
+	
+	$database->BeginTransaction();
+	$results = $database->Query('SELECT purchase_id FROM purchases WHERE merchant_reference = $1;', $merchant_reference);
+	if ($results->RecordCount() != 1) {
+		$database->Rollback();
+		http_response_code(404);
+		echo 'PaymentIntent not found';
+		exit;
+	}
+	$database->Query('UPDATE purchases SET refunded = TRUE WHERE merchant_reference = $1 AND refunded = FALSE;', $merchant_reference);
+	$database->Commit();
+	
+	http_response_code(200);
+	echo 'Refund processed';
+	exit;
+	
+	break;
 default:
 	http_response_code(200);
 	echo 'Unknown hook type. Just assumed this worked, ok?';
