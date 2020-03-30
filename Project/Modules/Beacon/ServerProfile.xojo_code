@@ -26,6 +26,7 @@ Protected Class ServerProfile
 		  Self.Enabled = Dict.Value("Enabled")
 		  Self.mProfileID = Dict.Value("Profile ID")
 		  Self.mPlatform = Dict.Lookup("Platform", Self.PlatformUnknown)
+		  Self.mMask = Dict.Lookup("Map", 0)
 		  
 		  If Dict.HasKey("External Account") Then
 		    Self.mExternalAccountUUID = Dict.Value("External Account").StringValue
@@ -156,6 +157,7 @@ Protected Class ServerProfile
 		  Dict.Value("Profile ID") = Self.ProfileID // Do not call mProfileID here in order to force generation
 		  Dict.Value("Enabled") = Self.Enabled
 		  Dict.Value("Platform") = Self.mPlatform
+		  Dict.Value("Map") = Self.mMask
 		  If Self.mExternalAccountUUID <> Nil Then
 		    Dict.Value("External Account") = Self.mExternalAccountUUID.StringValue
 		  End If

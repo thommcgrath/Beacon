@@ -6,8 +6,6 @@ Inherits Beacon.ServerProfile
 		  Self.Address = Dict.Value("Address")
 		  Self.ServiceID = Dict.Value("Service ID")
 		  Self.ConfigPath = Dict.Value("Path")
-		  Self.GameShortcode = Dict.Lookup("NitradoGameCode", "")
-		  Self.Mask = Dict.Lookup("Map", 0)
 		End Sub
 	#tag EndEvent
 
@@ -17,8 +15,6 @@ Inherits Beacon.ServerProfile
 		  Dict.Value("Service ID") = Self.ServiceID
 		  Dict.Value("Path") = Self.ConfigPath
 		  Dict.Value("Provider") = "Nitrado"
-		  Dict.Value("NitradoGameCode") = Self.GameShortcode
-		  Dict.Value("Map") = Self.Mask
 		End Sub
 	#tag EndEvent
 
@@ -33,21 +29,6 @@ Inherits Beacon.ServerProfile
 		Function DeployCapable() As Boolean
 		  Return True
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Mask() As UInt64
-		  Return Self.mMask
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Mask(Assigns Value As UInt64)
-		  If Self.mMask <> Value Then
-		    Self.mMask = Value
-		    Self.Modified = True
-		  End If
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -100,7 +81,6 @@ Inherits Beacon.ServerProfile
 		  Var NitradoProfile As Beacon.NitradoServerProfile = Beacon.NitradoServerProfile(Profile)
 		  Self.Address = NitradoProfile.Address
 		  Self.ConfigPath = NitradoProfile.ConfigPath
-		  Self.GameShortcode = NitradoProfile.GameShortcode
 		  Self.Mask = NitradoProfile.Mask
 		End Sub
 	#tag EndMethod
@@ -140,38 +120,6 @@ Inherits Beacon.ServerProfile
 		ConfigPath As String
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mShortcode
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mShortcode = Value Then
-			    Return
-			  End If
-			  
-			  Self.mShortcode = Value
-			  Self.Modified = True
-			  
-			  Select Case Value
-			  Case "arkse"
-			    Self.Platform = Beacon.ServerProfile.PlatformPC
-			  Case "arkxb"
-			    Self.Platform = Beacon.ServerProfile.PlatformXbox
-			  Case "arkps"
-			    Self.Platform = Beacon.ServerProfile.PlatformPlayStation
-			  Case "arksw" // Complete guess
-			    Self.Platform = Beacon.ServerProfile.PlatformSwitch
-			  Else
-			    Self.Platform = Beacon.ServerProfile.PlatformUnknown
-			  End Select
-			End Set
-		#tag EndSetter
-		GameShortcode As String
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h21
 		Private mAddress As String
 	#tag EndProperty
@@ -181,15 +129,7 @@ Inherits Beacon.ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMask As UInt64
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mServiceID As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mShortcode As String
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -298,14 +238,6 @@ Inherits Beacon.ServerProfile
 			InitialValue=""
 			Type="Integer"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="GameShortcode"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

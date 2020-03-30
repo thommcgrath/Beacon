@@ -339,20 +339,31 @@ Begin DiscoveryView NitradoDiscoveryView
       Scope           =   2
       TabPanelIndex   =   0
    End
+   Begin Timer StatusWatchTimer
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Period          =   100
+      RunMode         =   "2"
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
 	#tag Event
 		Sub Begin()
-		  Self.mAuthQueue = Self.mAccounts.ForProvider(Beacon.ExternalAccount.ProviderNitrado)
-		  If Self.mAuthQueue.Count = 0 Then
-		    Self.mAuthQueue.AddRow(New Beacon.ExternalAccount(New v4UUID, Beacon.ExternalAccount.ProviderNitrado, "", "", Nil))
+		  If Self.mAccounts.Count = 0 Then
+		    Self.StartNewAccount()
+		    Return
 		  End If
 		  
-		  Self.DesiredHeight = 124
-		  Self.LookupStartTimer.RunMode = Timer.RunModes.Single
-		  Self.PagePanel1.SelectedPanelIndex = 0
+		  Var Accounts() As Beacon.ExternalAccount = Self.mAccounts.ForProvider(Beacon.ExternalAccount.ProviderNitrado)
+		  For Each Account As Beacon.ExternalAccount In Accounts
+		    Var Profile As New Beacon.NitradoServerProfile
+		    Profile.ExternalAccountUUID = Account.UUID
+		    Self.Authenticate(Profile)
+		  Next
 		End Sub
 	#tag EndEvent
 
@@ -394,6 +405,22 @@ End
 		  
 		  Call Self.AuthClient.SetAccount(Self.mAuthQueue(0))
 		  Self.mAuthQueue.RemoveRowAt(0)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Authenticate(Profile As Beacon.NitradoServerProfile)
+		  Var Engine As New Beacon.NitradoIntegrationEngine(Profile)
+		  Self.mEngines.Value(Profile.ExternalAccountUUID.StringValue) = Engine
+		  AddHandler Engine.Discovered, WeakAddressOf Engine_Discovered
+		  AddHandler Engine.Wait, WeakAddressOf Engine_Wait
+		  Engine.BeginDiscovery()
+		  
+		  Self.mPendingListActions = Self.mPendingListActions + 1
+		  
+		  If Self.PagePanel1.SelectedPanelIndex <> 0 Then
+		    Self.PagePanel1.SelectedPanelIndex = 0
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -522,6 +549,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mAccounts = New Beacon.ExternalAccountManager
+		  Self.mEngines = New Dictionary
 		End Sub
 	#tag EndMethod
 
@@ -559,6 +587,24 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub Engine_Wait(Sender As Beacon.NitradoIntegrationEngine, Controller As Beacon.TaskWaitController)
+		  Select Case Controller.Action
+		  Case "Auth External"
+		    Var Profile As Beacon.ServerProfile = Sender.Profile
+		    Var Account As Beacon.ExternalAccount = Self.mAccounts.GetByUUID(Profile.ExternalAccountUUID)
+		    
+		    If Self.AuthClient.SetAccount(Account) Then
+		      Self.mAuthController = Controller
+		      Self.AuthClient.Authenticate(App.IdentityManager.CurrentIdentity)
+		    Else
+		      Controller.Cancelled = True
+		      Controller.ShouldResume = True
+		    End If
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ListServers(Account As Beacon.ExternalAccount)
 		  Var Profile As New Beacon.NitradoServerProfile
 		  Profile.ExternalAccountUUID = Account.UUID
@@ -566,9 +612,34 @@ End
 		  Var Engine As New Beacon.NitradoIntegrationEngine(Profile)
 		  Self.mEngines.Value(Profile.ExternalAccountUUID.StringValue) = Engine
 		  AddHandler Engine.Discovered, WeakAddressOf Engine_Discovered
+		  AddHandler Engine.Wait, WeakAddressOf Engine_Wait
 		  Engine.BeginDiscovery()
 		  
 		  Self.mPendingListActions = Self.mPendingListActions + 1
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ShouldCancel()
+		  If (Self.mAuthController Is Nil) = False Then
+		    Self.mAuthController.Cancelled = True
+		    Self.mAuthController.ShouldResume = True
+		    Self.mAuthController = Nil
+		  End If
+		  
+		  Super.ShouldCancel()
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub StartNewAccount()
+		  Var Account As New Beacon.ExternalAccount(New v4UUID, Beacon.ExternalAccount.ProviderNitrado, "", "", Nil)
+		  Self.mAccounts.Add(Account)
+		  
+		  Var Profile As New Beacon.NitradoServerProfile
+		  Profile.ExternalAccountUUID = Account.UUID
+		  Self.Authenticate(Profile)
 		End Sub
 	#tag EndMethod
 
@@ -580,6 +651,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mAccounts As Beacon.ExternalAccountManager
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mAuthController As Beacon.TaskWaitController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -612,6 +687,13 @@ End
 
 #tag EndWindowCode
 
+#tag Events PagePanel1
+	#tag Event
+		Sub Change()
+		  Self.StatusWatchTimer.RunMode = If(Me.SelectedPanelIndex = 0, Timer.RunModes.Multiple, Timer.RunModes.Off)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events FindingCancelButton
 	#tag Event
 		Sub Action()
@@ -659,28 +741,43 @@ End
 #tag Events NewAuthButton
 	#tag Event
 		Sub Action()
-		  Var Account As New Beacon.ExternalAccount(New v4UUID, Beacon.ExternalAccount.ProviderNitrado, "", "", Nil)
-		  
-		  If Self.AuthClient.Busy Then
-		    Self.mAuthQueue.AddRow(Account)
-		  Else
-		    Call Self.AuthClient.SetAccount(Account)
-		    Self.AuthClient.Authenticate(App.IdentityManager.CurrentIdentity, True)
+		  If Self.AuthClient.Busy THen
+		    Self.ShowAlert("Wait for the current Nitrado authentication to finish first.", "Beacon can only support one Nitrado authentication at a time.")
+		    Return
 		  End If
+		  
+		  Self.StartNewAccount()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events AuthClient
 	#tag Event
 		Sub Authenticated()
-		  Self.mAccounts.Add(Me.Account)
-		  Self.ListServers(Me.Account)
-		  Self.AdvanceAuthQueue()
+		  Var Account As Beacon.ExternalAccount = Me.Account
+		  Self.mAccounts.Add(Account)
+		  
+		  If (Self.mAuthController Is Nil) = False Then
+		    Dictionary(Self.mAuthController.UserData).Value("Account") = Account
+		    Self.mAuthController.ShouldResume = True
+		    Self.mAuthController = Nil
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub AuthenticationError()
-		  Self.ShowAlert("Unable to communicate with Nitrado", "Sorry, the Nitrado API is not available at this time.")
+		  Var Provider As String = "OAuth"
+		  If (Me.Account Is Nil) = False Then
+		    Provider = Me.Account.Provider
+		  End If
+		  
+		  Self.ShowAlert("Unable to communicate with " + Provider, "Sorry, the " + Provider + " API is not available at this time.")
+		  
+		  If (Self.mAuthController Is Nil) = False Then
+		    Self.mAuthController.Cancelled = True
+		    Self.mAuthController.ShouldResume = True
+		    Self.mAuthController = Nil
+		  End If
+		  
 		  Self.ShouldCancel()
 		End Sub
 	#tag EndEvent
@@ -723,6 +820,16 @@ End
 		  Self.CheckActionEnabled()
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub UserCancelled()
+		  If Self.List.RowCount = 0 Then
+		    Self.ShouldCancel()
+		    Return
+		  End If
+		  
+		  Self.PagePanel1.SelectedPanelIndex = 1
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events LookupStartTimer
 	#tag Event
@@ -730,6 +837,23 @@ End
 		  Self.AdvanceAuthQueue()
 		  
 		  Self.AuthClient.Authenticate(App.IdentityManager.CurrentIdentity)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events StatusWatchTimer
+	#tag Event
+		Sub Action()
+		  If Self.mEngines Is Nil Then
+		    Return
+		  End If
+		  
+		  #Pragma Warning "This is not robust enough"
+		  For Each Entry As DictionaryEntry In Self.mEngines
+		    Var AccountUUID As String = Entry.Key
+		    Var Engine As Beacon.NitradoIntegrationEngine = Entry.Value
+		    
+		    Self.FindingLabel.Value = Engine.Logs(True)
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents

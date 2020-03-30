@@ -19,7 +19,7 @@ Inherits Beacon.IntegrationEngine
 		    Self.Authenticate()
 		  End If
 		  
-		  If IsNull(Self.mAccount) = False Then
+		  If (Self.mAccount Is Nil) = False Then
 		    // Test that authentication works
 		    Var Sock As New URLConnection
 		    Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
@@ -49,7 +49,7 @@ Inherits Beacon.IntegrationEngine
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  Sock.SetFormData(FormData)
 		  
-		  Var Content As String = Sock.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID + "/gameservers/settings/sets", Self.ConnectionTimeout)
+		  Var Content As String = Sock.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw) + "/gameservers/settings/sets", Self.ConnectionTimeout)
 		  Var Status As Integer = Sock.HTTPStatusCode
 		  
 		  If Self.Finished Or Self.CheckError(Status, Content) Then
@@ -66,6 +66,113 @@ Inherits Beacon.IntegrationEngine
 		    Self.SetError(Err)
 		  End Try
 		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function Discover() As Beacon.DiscoveredData()
+		  Var Servers() As Beacon.DiscoveredData
+		  
+		  // Get a list of all servers
+		  Var Socket As New URLConnection
+		  Socket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  
+		  Self.Log("Finding servers…")
+		  Var Content As String = Socket.SendSync("GET", "https://api.nitrado.net/services", Self.ConnectionTimeout)
+		  Var Status As Integer = Socket.HTTPStatusCode
+		  
+		  If Self.Finished Or Self.CheckError(Status, Content) Then
+		    Return Servers
+		  End If
+		  
+		  Var Parsed As Variant
+		  Try
+		    Parsed = Beacon.ParseJSON(Content)
+		  Catch Err As RuntimeException
+		    App.LogAPIException(Parsed, CurrentMethodName, Status, Content)
+		    Self.SetError("There was an exception while retrieving your server list.")
+		    Return Servers
+		  End Try
+		  
+		  // If it's not a dictionary, what else can we do
+		  If (Parsed IsA Dictionary) = False Then
+		    Return Servers
+		  End If
+		  
+		  Var Response As Dictionary = Parsed
+		  If Response.Lookup("status", "") <> "success" Or Response.HasKey("data") = False Or IsNull(Response.Value("data")) Or Response.Value("data").Type <> Variant.TypeObject Or (Response.Value("data").ObjectValue IsA Dictionary) = False Then
+		    Self.SetError("Nitrado API returned unexpected data.")
+		    Return Servers
+		  End If
+		  
+		  Var Data As Dictionary = Dictionary(Response.Value("data").ObjectValue)
+		  If Data.HasKey("services") = False Or IsNull(Data.Value("services")) Or Data.Value("services").IsArray = False Then
+		    Return Servers
+		  End If
+		  
+		  Var Services() As Variant = Data.Value("services")
+		  For Each Service As Variant In Services
+		    If IsNull(Service) Or Service.Type <> Variant.TypeObject Or (Service.ObjectValue IsA Dictionary) = False Then
+		      Continue
+		    End If
+		    
+		    Try
+		      Var Dict As Dictionary = Service
+		      
+		      If Dict.Lookup("type", "").StringValue <> "gameserver" Or Dict.Lookup("status", "").StringValue <> "active" Then
+		        Continue
+		      End If
+		      
+		      Var Details As Dictionary = Dict.Value("details")
+		      Var GameName As String = Details.Value("game")
+		      If GameName.BeginsWith("ARK: Survival Evolved") = False Then
+		        Continue
+		      End If
+		      
+		      Var Profile As New Beacon.NitradoServerProfile
+		      Profile.ExternalAccountUUID = Self.mAccount.UUID
+		      Profile.Name = Details.Value("name")
+		      Profile.ServiceID = Dict.Value("id")
+		      Profile.Address = Details.Value("address")
+		      
+		      Var Server As New Beacon.DiscoveredData
+		      Server.Profile = Profile
+		      
+		      Self.Log("Retrieving " + Server.Profile.Name + "…")
+		      // Lookup server information
+		      Var DetailsSocket As New URLConnection
+		      DetailsSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		      Var DetailsContent As String = DetailsSocket.SendSync("GET", "https://api.nitrado.net/services/" + Profile.ServiceID.ToString(Locale.Raw) + "/gameservers", Self.ConnectionTimeout)
+		      Var DetailsStatus As Integer = DetailsSocket.HTTPStatusCode
+		      If Self.Finished Or Self.CheckError(DetailsStatus, DetailsContent) Then
+		        Return Servers
+		      End If
+		      
+		      Var DetailsResponse As Dictionary = Beacon.ParseJSON(DetailsContent)
+		      Var DetailsData As Dictionary = DetailsResponse.Value("data")
+		      Var GameServer As Dictionary = DetailsData.Value("gameserver")
+		      Var Settings As Dictionary = GameServer.Value("settings")
+		      Var Config As Dictionary = Settings.Value("config")
+		      Var MapText As String = Config.Value("map")
+		      Var MapParts() As String = MapText.Split(",")
+		      Profile.Mask = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.LastRowIndex))
+		      Var GameSpecific As Dictionary = GameServer.Value("game_specific")
+		      Profile.ConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
+		      
+		      Server.CommandLineOptions = Settings.Value("start-param")
+		      
+		      // Download ini files
+		      Server.GameIniContent = Self.DownloadFile(Profile.ConfigPath + "/Game.ini", Beacon.NitradoIntegrationEngine.DownloadFailureMode.MissingAllowed, Profile.ServiceID)
+		      Server.GameUserSettingsIniContent = Self.DownloadFile(Profile.ConfigPath + "/GameUserSettings.ini", Beacon.NitradoIntegrationEngine.DownloadFailureMode.MissingAllowed, Profile.ServiceID)
+		      
+		      Servers.AddRow(Server)
+		    Catch Err As RuntimeException
+		      App.LogAPIException(Err, CurrentMethodName, Status, Content)
+		      Continue
+		    End Try
+		  Next
+		  
+		  Return Servers
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -138,7 +245,7 @@ Inherits Beacon.IntegrationEngine
 		  Var Sock As New URLConnection
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  
-		  Var Content As String = Sock.SendSync("GET", "https://api.nitrado.net/services/" + Self.mServiceID + "/gameservers", Self.ConnectionTimeout)
+		  Var Content As String = Sock.SendSync("GET", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw) + "/gameservers", Self.ConnectionTimeout)
 		  Var Status As Integer = Sock.HTTPStatusCode
 		  
 		  If Self.Finished Or Self.CheckError(Status, Content) Then
@@ -235,7 +342,7 @@ Inherits Beacon.IntegrationEngine
 		        ExpertToggleSocket.SetFormData(FormData)
 		        
 		        Self.Log("Enabling expert mode…", True)
-		        Var ExpertContent As String = ExpertToggleSocket.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID + "/gameservers/settings", Self.ConnectionTimeout)
+		        Var ExpertContent As String = ExpertToggleSocket.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw) + "/gameservers/settings", Self.ConnectionTimeout)
 		        Var ExpertStatus As Integer = ExpertToggleSocket.HTTPStatusCode
 		        If Self.Finished Or Self.CheckError(ExpertStatus, ExpertContent) Then
 		          Return
@@ -307,7 +414,7 @@ Inherits Beacon.IntegrationEngine
 		    Sock.SetFormData(FormData)
 		    
 		    Self.Log("Setting '" + ConfigValue.Key + "' to '" + ConfigValue.Value + "'…")
-		    Var Content As String = Sock.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID + "/gameservers/settings", Self.ConnectionTimeout)
+		    Var Content As String = Sock.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw) + "/gameservers/settings", Self.ConnectionTimeout)
 		    Var Status As Integer = Sock.HTTPStatusCode
 		    
 		    If Self.Finished Or Self.CheckError(Status, Content) Then
@@ -338,7 +445,7 @@ Inherits Beacon.IntegrationEngine
 		  FormData.Value("message") = "Server started by Beacon (https://beaconapp.cc)"
 		  Sock.SetFormData(FormData)
 		  
-		  Var Content As String = Sock.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID + "/gameservers/restart", Self.ConnectionTimeout)
+		  Var Content As String = Sock.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw) + "/gameservers/restart", Self.ConnectionTimeout)
 		  Var Status As Integer = Sock.HTTPStatusCode
 		  
 		  If Self.Finished Or Self.CheckError(Status, Content) Then
@@ -371,7 +478,7 @@ Inherits Beacon.IntegrationEngine
 		  FormData.Value("stop_message") = Self.StopMessage
 		  Sock.SetFormData(FormData)
 		  
-		  Var Content As String = Sock.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID + "/gameservers/stop", Self.ConnectionTimeout)
+		  Var Content As String = Sock.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw) + "/gameservers/stop", Self.ConnectionTimeout)
 		  Var Status As Integer = Sock.HTTPStatusCode
 		  
 		  If Self.Finished Or Self.CheckError(Status, Content) Then
@@ -406,14 +513,11 @@ Inherits Beacon.IntegrationEngine
 	#tag Method, Flags = &h21
 		Private Sub Authenticate()
 		  Var Dict As New Dictionary
-		  Dict.Value("Action") = "Auth External"
 		  Dict.Value("Provider") = "Nitrado"
-		  Dict.Value("Account") = Self.mAccount
 		  
 		  Var Controller As New Beacon.TaskWaitController("Auth External", Dict)
 		  
 		  Self.Log("Waiting for authentication…")
-		  Self.mAccount = Nil
 		  Self.Wait(Controller)
 		  If Controller.Cancelled Or IsNull(Dict.Value("Account")) Then
 		    Self.Cancel
@@ -482,7 +586,7 @@ Inherits Beacon.IntegrationEngine
 		  Self.mInitialStatusQuery = True
 		  
 		  If Profile IsA Beacon.NitradoServerProfile Then
-		    Self.mServiceID = Beacon.NitradoServerProfile(Profile).ServiceID.ToString(Locale.Raw)
+		    Self.mServiceID = Beacon.NitradoServerProfile(Profile).ServiceID
 		  End If
 		  
 		  If Self.mAuthLock = Nil Then
@@ -493,10 +597,16 @@ Inherits Beacon.IntegrationEngine
 
 	#tag Method, Flags = &h21
 		Private Function DownloadFile(Path As String, Mode As Beacon.NitradoIntegrationEngine.DownloadFailureMode) As String
+		  Return Self.DownloadFile(Path, Mode, Self.mServiceID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function DownloadFile(Path As String, Mode As Beacon.NitradoIntegrationEngine.DownloadFailureMode, ServiceID As Integer) As String
 		  Var Sock As New URLConnection
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  
-		  Var Content As String = Sock.SendSync("GET", "https://api.nitrado.net/services/" + Self.mServiceID + "/gameservers/file_server/download?file=" + EncodeURLComponent(Path), Self.ConnectionTimeout)
+		  Var Content As String = Sock.SendSync("GET", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw) + "/gameservers/file_server/download?file=" + EncodeURLComponent(Path), Self.ConnectionTimeout)
 		  Var Status As Integer = Sock.HTTPStatusCode
 		  
 		  If Self.Finished Or (Status <> 200 And Mode = DownloadFailureMode.ErrorsAllowed) Or (Status = 404 And Mode = DownloadFailureMode.MissingAllowed) Or Self.CheckError(Status, Content) Then
@@ -548,7 +658,7 @@ Inherits Beacon.IntegrationEngine
 		  FormData.Value("file") = Filename
 		  Sock.SetFormData(FormData)
 		  
-		  Var Content As String = Sock.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID + "/gameservers/file_server/upload", Self.ConnectionTimeout)
+		  Var Content As String = Sock.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw) + "/gameservers/file_server/upload", Self.ConnectionTimeout)
 		  Var Status As Integer = Sock.HTTPStatusCode
 		  
 		  If Self.Finished Or Self.CheckError(Status, Content) Then
@@ -608,7 +718,7 @@ Inherits Beacon.IntegrationEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mServiceID As String
+		Private mServiceID As Integer
 	#tag EndProperty
 
 

@@ -123,7 +123,7 @@ Implements ObservationKit.Observable
 		    For Each SessionName As Variant In SessionNames
 		      Try
 		        Var Config As New BeaconConfigs.Metadata
-		        Config.Title = SessionName
+		        Config.Title = SessionName.StringValue.GuessEncoding
 		        Return Config
 		      Catch Err As TypeMismatchException
 		      End Try

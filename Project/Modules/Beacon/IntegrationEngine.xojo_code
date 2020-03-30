@@ -30,6 +30,7 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h0
 		Sub BeginDiscovery()
 		  Self.mMode = Self.ModeDiscover
+		  Self.mDocument = New Beacon.Document
 		  Self.mRunThread = New Thread
 		  AddHandler Self.mRunThread.Run, WeakAddressOf RunDiscover
 		  Self.mRunThread.Start
@@ -353,16 +354,8 @@ Protected Class IntegrationEngine
 		  
 		  // Give the implementor time to setup
 		  RaiseEvent Begin
-		  
-		  // Start by querying the server
-		  If Self.SupportsStatus Then
-		    Self.Log("Getting server status…")
-		    Self.RefreshServerStatus()
-		    If Self.Finished Then
-		      Return
-		    End If
-		  Else
-		    Self.State = Self.StateUnsupported
+		  If Self.Finished Then
+		    Return
 		  End If
 		  
 		  // Perform discovery of the needed files

@@ -142,7 +142,7 @@ Inherits Beacon.Thread
 		      Var SessionNames() As Variant = ParsedData.AutoArrayValue("SessionName")
 		      For Each SessionName As Variant In SessionNames
 		        Try
-		          Profile.Name = SessionName
+		          Profile.Name = SessionName.StringValue.GuessEncoding
 		          Exit
 		        Catch Err As TypeMismatchException
 		        End Try

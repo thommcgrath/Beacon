@@ -46,9 +46,11 @@ Protected Class OAuth2Client
 
 	#tag Method, Flags = &h0
 		Sub Cancel()
+		  Self.EndTask()
 		  Self.Cleanup()
 		  
 		  RaiseEvent DismissWaitingWindow()
+		  RaiseEvent UserCancelled()
 		End Sub
 	#tag EndMethod
 
@@ -189,6 +191,7 @@ Protected Class OAuth2Client
 		  Var URL As String = Self.AuthURL + "?provider=" + EncodeURLComponent(Self.mAccount.Provider) + "&requestid=" + EncodeURLComponent(RequestID) + "&pubkey=" + EncodeURLComponent(PublicKey)
 		  
 		  If StartAuthentication(URL, Self.mAccount.Provider) = False Then
+		    Self.Cancel()
 		    Return
 		  End If
 		  
@@ -300,6 +303,10 @@ Protected Class OAuth2Client
 
 	#tag Hook, Flags = &h0
 		Event StartAuthentication(URL As String, Provider As String) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event UserCancelled()
 	#tag EndHook
 
 

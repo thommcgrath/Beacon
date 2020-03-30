@@ -142,7 +142,6 @@ Implements Beacon.DiscoveryEngine
 		    Var MapParts() As String = MapText.Split(",")
 		    
 		    Self.mProfile.Mask = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.LastRowIndex))
-		    Self.mProfile.GameShortcode = GameServer.Value("game")
 		    
 		    Self.DownloadGameIni()
 		  Catch Err As RuntimeException
