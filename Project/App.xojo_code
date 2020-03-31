@@ -68,6 +68,19 @@ Implements NotificationKit.Receiver
 		    Self.Log("Beacon " + Str(Self.BuildNumber, "-0") + " for Windows.")
 		  #EndIf
 		  
+		  #if Not DebugBuild
+		    Try
+		      Var JSON As String = BeaconEncryption.SymmetricDecrypt(Self.MBSKey, DecodeBase64(Self.MBSSerial))
+		      Var MBSData As Dictionary = Xojo.ParseJSON(JSON)
+		      If Not RegisterMBSPlugin(MBSData.Value("username").StringValue, MBSData.Value("package").StringValue, MBSData.Value("expires").IntegerValue, MBSData.Value("serial").StringValue) Then
+		        Self.Log("Unable to register MBS plugins")
+		      End If
+		    Catch Err As RuntimeException
+		      BeaconUI.ShowAlert("This version of Beacon is not suitable for use.", "This build encountered problems during the build process and cannot be used. Please contact the developer.")
+		      Quit
+		    End Try
+		  #endif
+		  
 		  Var Lock As New Mutex("com.thezaz.beacon" + If(DebugBuild, ".debug", ""))
 		  If Not Lock.TryEnter Then
 		    #If TargetWin32
@@ -1181,6 +1194,12 @@ Implements NotificationKit.Receiver
 	#tag Constant, Name = kFileQuitShortcut, Type = String, Dynamic = False, Default = \"", Scope = Public
 		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"Cmd+Q"
 		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"Ctrl+Q"
+	#tag EndConstant
+
+	#tag Constant, Name = MBSKey, Type = String, Dynamic = False, Default = \"Nice try", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = MBSSerial, Type = String, Dynamic = False, Default = \"igLJJ+PbTdRUkSqOahTrAC/GAAAAasD1x/lYvhcO6hK3r8SbWjOPu2LNr51L80rz7+GSmcHqmqLzP+yXKPWM+IJAWl6yDDzftVf5s5dPhNmBzH9b8tuIJAHDLyE/bmY5I66xIkZtEt4cR+8FaKtmMOUT26MolDq+XCsRRN35UWQexAsL65K6PJDu", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_AppearanceChanged, Type = Text, Dynamic = False, Default = \"Appearance Changed", Scope = Public
