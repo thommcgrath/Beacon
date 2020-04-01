@@ -109,8 +109,8 @@ Begin DiscoveryView NitradoDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   190
-         Transparent     =   True
+         Top             =   162
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   560
@@ -133,7 +133,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         Top             =   222
+         Top             =   194
          Transparent     =   False
          Value           =   0.0
          Visible         =   True
@@ -324,18 +324,45 @@ Begin DiscoveryView NitradoDiscoveryView
          Visible         =   True
          Width           =   214
       End
+      Begin Label FindingStatus
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   3
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextAlignment   =   "0"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   218
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Connecting…"
+         Visible         =   True
+         Width           =   560
+      End
    End
    Begin Beacon.OAuth2Client AuthClient
       Index           =   -2147483648
       LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
-   End
-   Begin Timer LookupStartTimer
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Mode            =   0
-      Period          =   1000
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -383,30 +410,16 @@ End
 
 	#tag Event
 		Sub Resize()
-		  Var ContentHeight As Integer = FindingLabel.Height + 12 + FindingProgress.Height
+		  Var ContentHeight As Integer = FindingLabel.Height + 12 + FindingProgress.Height + 6 + FindingStatus.Height
 		  Var AvailableHeight As Integer = Self.Height - (52 + FindingCancelButton.Height)
 		  
 		  Var ContentTop As Integer = 20 + ((AvailableHeight - ContentHeight) / 2)
 		  FindingLabel.Top = ContentTop
 		  FindingProgress.Top = ContentTop + FindingLabel.Height + 12
-		  
-		  AvailableHeight = Self.Height - 40
-		  ContentTop = 20 + ((AvailableHeight - ContentHeight) / 2)
+		  FindingStatus.Top = FindingProgress.Top + FindingProgress.Height + 6
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h21
-		Private Sub AdvanceAuthQueue()
-		  If Self.mAuthQueue.Count = 0 Then
-		    // Finished
-		    Return
-		  End If
-		  
-		  Call Self.AuthClient.SetAccount(Self.mAuthQueue(0))
-		  Self.mAuthQueue.RemoveRowAt(0)
-		End Sub
-	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub Authenticate(Profile As Beacon.NitradoServerProfile)
@@ -426,109 +439,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function Busy() As Boolean
-		  Return Self.mAuthQueue.Count > 0 Or Self.AuthClient.Busy Or Self.mPendingListActions > 0
+		  Return Self.AuthClient.Busy Or Self.mPendingListActions > 0
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Callback_ListServers(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
-		  #Pragma Unused URL
-		  #Pragma Unused Tag
-		  
-		  Self.mPendingListActions = Self.mPendingListActions - 1
-		  
-		  Select Case Status
-		  Case 401
-		    Self.ShowAlert("Nitrado API Error", "Authorization failed.")
-		    Self.ShouldCancel()
-		    Return
-		  Case 429
-		    Self.ShowAlert("Nitrado API Error", "The rate limit has been exceeded.")
-		    Self.ShouldCancel()
-		    Return
-		  Case 503
-		    Self.ShowAlert("Nitrado API Error", "Nitrado is currently offline for maintenance. Please try again later.")
-		    Self.ShouldCancel()
-		    Return
-		  Case 200
-		    // Good
-		  Else
-		    Self.ShowAlert("Nitrado API Error", "An unexpected error with the Nitrado API occurred. HTTP status " + Status.ToString + " was returned.")
-		    Self.ShouldCancel()
-		    Return
-		  End Select
-		  
-		  Var Account As Beacon.ExternalAccount = Self.mAccounts.GetByUUID(Tag.StringValue)
-		  
-		  Try
-		    Var Reply As Dictionary = Beacon.ParseJSON(Content)
-		    If Reply.HasKey("status") = False Or Reply.Value("status") <> "success" Then
-		      Self.ShowAlert("Nitrado API Error", "The request to list services was not successful.")
-		      Self.ShouldCancel()
-		      Return
-		    End If
-		    
-		    Var Data As Dictionary = Reply.Value("data")
-		    Var Services() As Variant = Data.Value("services")
-		    For Each Service As Dictionary In Services
-		      Var Type As String = Service.Value("type")
-		      If Type <> "gameserver" Then
-		        Continue
-		      End If
-		      
-		      Var Details As Dictionary = Service.Value("details")
-		      If IsNull(Details) Or Details.HasKey("game") = False Then
-		        Continue
-		      End If
-		      
-		      Var Game As String = Details.Value("game")
-		      If Not Game.BeginsWith("Ark: Survival Evolved") Then
-		        Continue
-		      End If
-		      
-		      Var ServerName As String = Details.Value("name")
-		      If Service.Lookup("comment", Nil) <> Nil Then
-		        ServerName = Service.Value("comment")
-		      End If
-		      
-		      Var ServiceID As Integer = Service.Value("id")
-		      For I As Integer = 0 To Self.List.LastRowIndex
-		        If Self.List.RowTagAt(I) IsA Beacon.NitradoServerProfile And Beacon.NitradoServerProfile(Self.List.RowTagAt(I)).ServiceID = ServiceID Then
-		          // This service is already listed
-		          Continue For Service
-		        End If
-		      Next
-		      
-		      Var Profile As New Beacon.NitradoServerProfile
-		      Profile.Name = ServerName
-		      Profile.Address = Details.Value("address")
-		      Profile.ServiceID = ServiceID
-		      Profile.ExternalAccountUUID = Account.UUID
-		      
-		      Self.List.AddRow("", Profile.Name, Profile.Address)
-		      Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Profile
-		    Next
-		    
-		    If Self.PagePanel1.SelectedPanelIndex <> 1 And Self.Busy = False Then
-		      #if TargetWindows
-		        If Self.ScaleFactor Mod 100 <> 0 Then
-		          Self.List.HasHeader = False
-		        End If
-		      #endif
-		      
-		      Self.List.SortingColumn = 1
-		      Self.List.Sort
-		      Self.DesiredHeight = 400
-		      Self.PagePanel1.SelectedPanelIndex = 1
-		    End If
-		  Catch Err As RuntimeException
-		    
-		    App.LogAPIException(Err, CurrentMethodName, Status, Content)
-		    Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
-		    Self.ShowAlert("Nitrado API Error", "The Nitrado API responded in an unexpected manner. An unhandled " + Info.FullName + " was encountered.")
-		    Self.ShouldCancel()
-		  End Try
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -564,6 +476,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Engine_Discovered(Sender As Beacon.NitradoIntegrationEngine, Data() As Beacon.DiscoveredData)
+		  #Pragma Unused Sender
+		  
 		  Self.mPendingListActions = Self.mPendingListActions - 1
 		  
 		  For Each Server As Beacon.DiscoveredData In Data
@@ -655,10 +569,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mAuthController As Beacon.TaskWaitController
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mAuthQueue() As Beacon.ExternalAccount
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -831,15 +741,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events LookupStartTimer
-	#tag Event
-		Sub Action()
-		  Self.AdvanceAuthQueue()
-		  
-		  Self.AuthClient.Authenticate(App.IdentityManager.CurrentIdentity)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events StatusWatchTimer
 	#tag Event
 		Sub Action()
@@ -847,13 +748,18 @@ End
 		    Return
 		  End If
 		  
-		  #Pragma Warning "This is not robust enough"
-		  For Each Entry As DictionaryEntry In Self.mEngines
-		    Var AccountUUID As String = Entry.Key
-		    Var Engine As Beacon.NitradoIntegrationEngine = Entry.Value
-		    
-		    Self.FindingLabel.Value = Engine.Logs(True)
-		  Next
+		  Var Label As String
+		  If Self.mEngines.KeyCount = 1 Then
+		    Var Key As Variant = Self.mEngines.Key(0)
+		    Var Engine As Beacon.NitradoIntegrationEngine = Self.mEngines.Value(Key)
+		    Label = Engine.Logs(True)
+		  Else
+		    Label = "Discovering servers on multiple accounts…"
+		  End If
+		  
+		  If Self.FindingStatus.Value.Compare(Label, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
+		    Self.FindingStatus.Value = Label
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
