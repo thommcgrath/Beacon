@@ -38,7 +38,6 @@ Begin BeaconSubview APIBuilderView
       Caption         =   "API Builder"
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -590,7 +589,6 @@ Begin BeaconSubview APIBuilderView
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
