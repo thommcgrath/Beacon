@@ -223,6 +223,7 @@ End
 		  #Pragma Unused Request
 		  
 		  Self.mCloudDocuments.ResizeTo(-1)
+		  Self.Switcher.ItemAtIndex(3).Loading = False
 		  
 		  If Response.Success Then
 		    Var Dicts() As Variant = Response.JSON
@@ -231,6 +232,16 @@ End
 		      Var URL As String = Beacon.DocumentURL.TypeCloud + "://" + Document.ResourceURL.Middle(Document.ResourceURL.IndexOf("://") + 3)
 		      Self.mCloudDocuments.AddRow(URL)
 		    Next
+		  ElseIf Response.HTTPStatus = 401 Or Response.HTTPStatus = 403 Then
+		    // The user is not authenticated
+		    If Self.ShowConfirm("Cloud documents could not be loaded due to an authentication error.", "To resolve this issue, please sign in again.", "Sign In", "Cancel") Then
+		      Var OldToken As String = Preferences.OnlineToken
+		      Var WelcomeWindow As New UserWelcomeWindow(True)
+		      WelcomeWindow.ShowModal()
+		      If Preferences.OnlineEnabled And Preferences.OnlineToken <> OldToken Then
+		        Self.UpdateCloudDocuments()
+		      End If
+		    End If
 		  End If
 		  
 		  If Self.View = Self.ViewCloudDocuments Then
@@ -560,6 +571,8 @@ End
 		    Var Request As New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_CloudDocumentsList)
 		    Request.Authenticate(Preferences.OnlineToken)
 		    Self.APISocket.Start(Request)
+		    
+		    Self.Switcher.ItemAtIndex(3).Loading = True
 		  Else
 		    Self.mCloudDocuments.ResizeTo(-1)
 		  End If

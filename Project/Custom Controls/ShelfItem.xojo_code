@@ -138,6 +138,50 @@ Implements ObservationKit.Observable
 		Icon As Picture
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mLoading
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mLoading = Value Then
+			    Return
+			  End If
+			  
+			  Self.mLoading = Value
+			  Self.mLoadingState = 0
+			  Self.mLastLoadingLoopTime = System.Microseconds
+			  Self.NotifyObservers("Loading", Value)
+			End Set
+		#tag EndSetter
+		Loading As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Self.mLoading = False Then
+			    Return 0
+			  End If
+			  
+			  Const Duration = 1500000
+			  Var Now As Double = System.Microseconds
+			  Var Elapsed As Double = Now - Self.mLastLoadingLoopTime
+			  If Elapsed > Duration Then
+			    Elapsed = Elapsed - (Floor(Elapsed / Duration) * Duration)
+			    Self.mLastLoadingLoopTime = Now - Elapsed
+			  End If
+			  If Elapsed > Duration / 2 Then
+			    Elapsed = Duration - Elapsed
+			  End If
+			  Return Elapsed / Duration
+			End Get
+		#tag EndGetter
+		LoadingState As Double
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mCaption As String
 	#tag EndProperty
@@ -147,11 +191,23 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mLastLoadingLoopTime As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mLastPulseAmount As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mLastPulseTime As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLoading As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLoadingState As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

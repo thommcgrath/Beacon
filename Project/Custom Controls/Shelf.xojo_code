@@ -195,6 +195,8 @@ Implements ObservationKit.Observer
 		      IconColor = SystemColors.AlternateSelectedControlTextColor
 		    End If
 		    
+		    IconColor = IconColor.AtOpacity(1.0 - (0.75 * Self.mItems(I).LoadingState))
+		    
 		    Var IconRect As New BeaconUI.Rect(NearestMultiple(CellRect.Left + ((CellRect.Width - Self.IconSize) / 2), PrecisionX), NearestMultiple(CellRect.Top + CellSpacing, PrecisionY), Self.IconSize, Self.IconSize)
 		    Var Icon As Picture = BeaconUI.IconWithColor(Self.mItems(I).Icon, IconColor)
 		    G.DrawPicture(Icon, NearestMultiple(IconRect.Left, PrecisionX), NearestMultiple(IconRect.Top, PrecisionY), NearestMultiple(IconRect.Width, PrecisionX), NearestMultiple(IconRect.Height, PrecisionY), 0, 0, Icon.Width, Icon.Height)
@@ -271,6 +273,7 @@ Implements ObservationKit.Observer
 		Sub Add(Item As ShelfItem)
 		  Self.mItems.AddRow(Item)
 		  Item.AddObserver(Self, "PulseAmount")
+		  Item.AddObserver(Self, "Loading")
 		  Self.Invalidate
 		End Sub
 	#tag EndMethod
@@ -288,6 +291,20 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ItemAtIndex(Index As Integer) As ShelfItem
+		  Return Self.mItems(Index)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mLoadingAnimator_Action(Sender As Timer)
+		  #Pragma Unused Sender
+		  
+		  Self.Invalidate
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, Value As Variant)
 		  // Part of the ObservationKit.Observer interface.
 		  
@@ -297,6 +314,28 @@ Implements ObservationKit.Observer
 		  Select Case Key
 		  Case "PulseAmount"
 		    Self.Invalidate
+		  Case "Loading"
+		    Var RunLoadingAnimator As Boolean
+		    For Each Item As ShelfItem In Self.mItems
+		      If Item.Loading Then
+		        RunLoadingAnimator = True
+		        Exit
+		      End If
+		    Next
+		    
+		    If RunLoadingAnimator Then
+		      If Self.mLoadingAnimator Is Nil Then
+		        Self.mLoadingAnimator = New Timer
+		        Self.mLoadingAnimator.Period = 20
+		        AddHandler mLoadingAnimator.Action, WeakAddressOf mLoadingAnimator_Action
+		      End If
+		      Self.mLoadingAnimator.RunMode = Timer.RunModes.Multiple
+		    Else
+		      If (Self.mLoadingAnimator Is Nil) = False Then
+		        Self.mLoadingAnimator.Reset
+		        Self.mLoadingAnimator.RunMode = Timer.RunModes.Off
+		      End If
+		    End If
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -304,6 +343,7 @@ Implements ObservationKit.Observer
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
 		  Self.mItems(Index).RemoveObserver(Self, "PulseAmount")
+		  Self.mItems(Index).RemoveObserver(Self, "Loading")
 		  Self.mItems.RemoveRowAt(Index)
 		  Self.Invalidate
 		End Sub
@@ -425,6 +465,10 @@ Implements ObservationKit.Observer
 
 	#tag Property, Flags = &h21
 		Private mItems() As ShelfItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLoadingAnimator As Timer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
