@@ -389,9 +389,7 @@ End
 		Private Sub BeginDeploy()
 		  Const UseNewDeploy = True
 		  
-		  If Self.mDeployWindow <> Nil And Self.mDeployWindow.Value <> Nil And Self.mDeployWindow.Value IsA DocumentDeployWindow Then
-		    DocumentDeployWindow(Self.mDeployWindow.Value).Show()
-		  ElseIf Self.mDeployWindow <> Nil And Self.mDeployWindow.Value <> Nil And Self.mDeployWindow.Value IsA DeployManager Then
+		  If Self.mDeployWindow <> Nil And Self.mDeployWindow.Value <> Nil And Self.mDeployWindow.Value IsA DeployManager Then
 		    DeployManager(Self.mDeployWindow.Value).BringToFront()
 		  Else
 		    Self.Autosave()
