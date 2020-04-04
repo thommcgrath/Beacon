@@ -242,6 +242,8 @@ End
 		        Self.UpdateCloudDocuments()
 		      End If
 		    End If
+		  Else
+		    Self.ShowAlert("Unable to load your cloud documents.", "Your internet connection may be offline or the Beacon server may not be responding. Try again later.")
 		  End If
 		  
 		  If Self.View = Self.ViewCloudDocuments Then
