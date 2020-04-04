@@ -312,6 +312,10 @@ Implements ObservationKit.Observable
 		Private mToolbarCaption As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mToolbarIcon As Picture
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -356,6 +360,25 @@ Implements ObservationKit.Observable
 			End Set
 		#tag EndSetter
 		ToolbarCaption As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mToolbarIcon
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mToolbarIcon = Value Then
+			    Return
+			  End If
+			  
+			  Self.mToolbarIcon = Value
+			  Self.NotifyObservers("ToolbarIcon", Value)
+			End Set
+		#tag EndSetter
+		ToolbarIcon As Picture
 	#tag EndComputedProperty
 
 
@@ -616,6 +639,14 @@ Implements ObservationKit.Observable
 			Group="Windows Behavior"
 			InitialValue="False"
 			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ToolbarIcon"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Picture"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

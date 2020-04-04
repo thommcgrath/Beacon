@@ -498,7 +498,7 @@ End
 		      Callback.Invoke(Self)
 		    End If
 		    
-		    Self.ShowAlert(Self.Title + " cannot be closed right now because it is busy.", "Wait for the progress indicator at the top of the tab to go away before trying to close it.")
+		    Self.ShowAlert(Self.ToolbarCaption + " cannot be closed right now because it is busy.", "Wait for the progress indicator at the top of the tab to go away before trying to close it.")
 		    Return False
 		  End If
 		  
@@ -516,7 +516,8 @@ End
 		  Self.mController = Controller
 		  AddHandler Controller.WriteSuccess, WeakAddressOf mController_WriteSuccess
 		  AddHandler Controller.WriteError, WeakAddressOf mController_WriteError
-		  Self.Title = Controller.Name
+		  Self.ToolbarCaption = Controller.Name
+		  Self.UpdateToolbarIcon
 		  
 		  Self.Panels = New Dictionary
 		End Sub
@@ -661,8 +662,9 @@ End
 		Private Sub mController_WriteSuccess(Sender As Beacon.DocumentController)
 		  If Not Self.Closed Then
 		    Self.Changed = Sender.Document <> Nil And Sender.Document.Modified
-		    Self.Title = Sender.Name
+		    Self.ToolbarCaption = Sender.Name
 		    Self.Progress = BeaconSubview.ProgressNone
+		    Self.UpdateToolbarIcon()
 		  End If
 		  
 		  Preferences.AddToRecentDocuments(Sender.URL)
@@ -733,7 +735,7 @@ End
 		  Case "MinimumWidth", "MinimumHeight"
 		    Self.UpdateMinimumDimensions()
 		  Case "Title"
-		    Self.Title = Self.mController.Document.Title
+		    Self.ToolbarCaption = Self.mController.Document.Title
 		    Self.Changed = True
 		  End Select
 		End Sub
@@ -781,7 +783,6 @@ End
 		Private Sub SaveAs()
 		  Select Case DocumentSaveToCloudWindow.Present(Self.TrueWindow, Self.mController)
 		  Case DocumentSaveToCloudWindow.StateSaved
-		    Self.Title = Self.mController.Name
 		    Self.ToolbarCaption = Self.mController.Name
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		  Case DocumentSaveToCloudWindow.StateSaveLocal
@@ -804,7 +805,6 @@ End
 		    End If
 		    
 		    Self.mController.SaveAs(Beacon.DocumentURL.URLForFile(New BookmarkedFolderItem(File)))
-		    Self.Title = Self.mController.Name
 		    Self.ToolbarCaption = Self.mController.Name
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		  End Select
@@ -871,9 +871,21 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub UpdateToolbarIcon()
+		  Select Case Self.mController.URL.Scheme
+		  Case Beacon.DocumentURL.TypeCloud
+		    Self.ToolbarIcon = IconCloudTab
+		  Case Beacon.DocumentURL.TypeWeb
+		    Self.ToolbarIcon = IconCommunityTab
+		  Else
+		    Self.ToolbarIcon = Nil
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
 		  Self.ToolbarCaption = Self.mController.Name
-		  Self.Title = Self.mController.Name
 		  Self.BeaconToolbar1.ExportButton.Enabled = Self.ReadyToExport
 		  #if DeployEnabled
 		    Self.BeaconToolbar1.DeployButton.Enabled = Self.ReadyToExport
@@ -1256,6 +1268,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

@@ -167,6 +167,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          TabPanelIndex   =   2
          TabStop         =   True
          ToolbarCaption  =   ""
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -200,6 +201,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          TabPanelIndex   =   3
          TabStop         =   True
          ToolbarCaption  =   ""
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -790,6 +792,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

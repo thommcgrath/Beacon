@@ -107,6 +107,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          TabPanelIndex   =   1
          TabStop         =   True
          ToolbarCaption  =   ""
+         ToolbarIcon     =   0
          Top             =   25
          Transparent     =   True
          UseFocusRing    =   False
@@ -429,6 +430,9 @@ End
 		    Return True
 		  End If
 		  
+		  View.AddObserver(Self, "ToolbarCaption")
+		  View.AddObserver(Self, "ToolbarIcon")
+		  
 		  Self.mSubviews.RemoveRowAt(ViewIndex)
 		  View.Close
 		  Self.TabBar1.Count = Self.mSubviews.LastRowIndex + 2
@@ -483,6 +487,8 @@ End
 		    Else
 		      Self.UpdateSizeForView(Self.DashboardPane1)
 		    End If
+		  Case "ToolbarCaption", "ToolbarIcon"
+		    Self.TabBar1.Invalidate
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -550,6 +556,9 @@ End
 		    Self.TabBar1.Count = Self.mSubviews.LastRowIndex + 2
 		    View.EmbedWithinPanel(Self.Views, 1, 0, 0, Self.Views.Width, Self.Views.Height)
 		    
+		    View.AddObserver(Self, "ToolbarCaption")
+		    View.AddObserver(Self, "ToolbarIcon")
+		    
 		    AddHandler View.OwnerModifiedHook, WeakAddressOf Subview_ContentsChanged
 		  End If
 		  Self.TabBar1.SelectedIndex = ViewIndex + 1
@@ -557,10 +566,8 @@ End
 		  Self.Changed = View.Changed
 		  Self.UpdateSizeForView(View)
 		  
-		  If View.Title <> "" Then
-		    Self.Title = "Beacon: " + View.Title
-		  ElseIf View.ToolbarCaption <> "" Then
-		    Self.Title = "Beacon: " + View.ToolbarCaption
+		  If Self.mCurrentView.ToolbarCaption.Length > 0 Then
+		    Self.Title = "Beacon: " + Self.mCurrentView.ToolbarCaption
 		  Else
 		    Self.Title = "Beacon"
 		  End If
@@ -578,8 +585,8 @@ End
 		Private Sub Subview_ContentsChanged(Sender As ContainerControl)
 		  If Self.mCurrentView = Sender Then
 		    Self.Changed = Sender.Changed
-		    If Sender.Title <> "" Then
-		      Self.Title = "Beacon: " + Sender.Title
+		    If Self.mCurrentView.ToolbarCaption.Length > 0 Then
+		      Self.Title = "Beacon: " + Self.mCurrentView.ToolbarCaption
 		    Else
 		      Self.Title = "Beacon"
 		    End If

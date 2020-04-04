@@ -275,6 +275,14 @@ Inherits BeaconSubview
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="ToolbarIcon"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Picture"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="EraseBackground"
 			Visible=false
 			Group="Behavior"

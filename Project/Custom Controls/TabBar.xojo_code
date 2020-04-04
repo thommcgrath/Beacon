@@ -185,17 +185,36 @@ Implements ObservationKit.Observer
 		  Const CellPadding = 4
 		  Const ButtonSize = 16
 		  
+		  G.DrawingColor = SystemColors.ControlTextColor
+		  
+		  Var PrecisionX As Double = 1 / G.ScaleX
+		  Var PrecisionY As Double = 1 / G.ScaleY
+		  
 		  Var MaxCaptionWidth As Integer = G.Width - ((ButtonSize * 2) + (CellPadding * 4))
 		  
-		  Var Caption As String = View.ToolbarCaption
-		  Var CaptionWidth As Double = Min(G.TextWidth(Caption), MaxCaptionWidth)
-		  Var CaptionLeft As Double = (G.Width - CaptionWidth) / 2
-		  Var CaptionBottom As Double = (G.Height / 2) + (G.CapHeight / 2)
+		  Var Icon As Picture = View.ToolbarIcon
+		  If (Icon Is Nil) = False Then
+		    MaxCaptionWidth = MaxCaptionWidth - (CellPadding + ButtonSize)
+		  End If
 		  
-		  G.DrawingColor = SystemColors.ControlTextColor
+		  Var Caption As String = View.ToolbarCaption
+		  Var CaptionWidth As Double = Min(G.TextWidth(Caption), MaxCaptionWidth).NearestMultiple(PrecisionX)
+		  Var CaptionLeft As Double = NearestMultiple((G.Width - CaptionWidth) / 2, PrecisionX)
+		  Var CaptionBottom As Double = NearestMultiple((G.Height / 2) + (G.CapHeight / 2), PrecisionY)
+		  
+		  If (Icon Is Nil) = False Then
+		    Var IconColored As Picture = BeaconUI.IconWithColor(Icon, G.DrawingColor)
+		    Var IconLeft As Double = CaptionLeft - (ButtonSize + CellPadding)
+		    If IconLeft < CellPadding + ButtonSize + CellPadding Then
+		      IconLeft = CellPadding + ButtonSize + CellPadding
+		      CaptionLeft = IconLeft + ButtonSize + CellPadding
+		    End If
+		    G.DrawPicture(IconColored, IconLeft, NearestMultiple((G.Height - ButtonSize) / 2, PrecisionY), ButtonSize, ButtonSize, 0, 0, IconColored.Width, IconColored.Height)
+		  End If
+		  
 		  G.DrawText(Caption, CaptionLeft, CaptionBottom, MaxCaptionWidth, True)
 		  
-		  Var ButtonTop As Double = (G.Height - ButtonSize) / 2
+		  Var ButtonTop As Double = NearestMultiple((G.Height - ButtonSize) / 2, PrecisionY)
 		  
 		  If View.Changed Then
 		    Var ModifiedIcon As Picture = BeaconUI.IconWithColor(IconModified, G.DrawingColor.AtOpacity(0.5))
@@ -208,7 +227,7 @@ Implements ObservationKit.Observer
 		      IconColor = G.DrawingColor
 		    End If
 		    
-		    CloseRect = New Xojo.Rect(G.Width - (ButtonSize + CellPadding), ButtonTop, ButtonSize, ButtonSize)
+		    CloseRect = New Xojo.Rect(NearestMultiple(G.Width - (ButtonSize + CellPadding), PrecisionX), ButtonTop, ButtonSize, ButtonSize)
 		    
 		    Var CloseIcon As Picture = BeaconUI.IconWithColor(IconClose, IconColor)
 		    G.DrawPicture(CloseIcon, CloseRect.Left, CloseRect.Top, CloseRect.Width, CloseRect.Height, 0, 0, CloseIcon.Width, CloseIcon.Height)
