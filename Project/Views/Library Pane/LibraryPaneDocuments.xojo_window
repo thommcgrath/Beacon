@@ -197,23 +197,7 @@ End
 		  NotificationKit.Watch(Self, Preferences.Notification_OnlineStateChanged, IdentityManager.Notification_IdentityChanged, Preferences.Notification_RecentsChanged)
 		  Self.SwitcherVisible = Preferences.OnlineEnabled
 		  
-		  Var AutosaveFolder As FolderItem = App.AutosaveFolder()
-		  If AutosaveFolder <> Nil Then
-		    For I As Integer = 0 To AutosaveFolder.Count - 1
-		      Var File As BookmarkedFolderItem = New BookmarkedFolderItem(AutosaveFolder.ChildAt(I))
-		      If Not File.Name.EndsWith(BeaconFileTypes.BeaconDocument.PrimaryExtension) Then
-		        Continue
-		      End If
-		      
-		      Var FileURL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(File)
-		      App.Log("Attempting to restore autosave " + FileURL.URL)
-		      
-		      Var Controller As New Beacon.DocumentController(FileURL, App.IdentityManager.CurrentIdentity)
-		      AddHandler Controller.Loaded, AddressOf AutosaveController_Loaded
-		      AddHandler Controller.LoadError, AddressOf AutosaveController_LoadError
-		      Controller.Load()
-		    Next
-		  End If
+		  Call CallLater.Schedule(100, WeakAddressOf RestoreAutosave)
 		End Sub
 	#tag EndEvent
 
@@ -510,6 +494,49 @@ End
 	#tag Method, Flags = &h0
 		Sub OpenURL(URL As Beacon.DocumentURL)
 		  Self.OpenController(New Beacon.DocumentController(URL, App.IdentityManager.CurrentIdentity))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RestoreAutosave()
+		  Var AutosaveFolder As FolderItem = App.AutosaveFolder()
+		  If AutosaveFolder Is Nil Then
+		    Return
+		  End If
+		  
+		  Var AutosaveCount As Integer = AutosaveFolder.Count
+		  If AutosaveCount = 0 Then
+		    Return
+		  End If
+		  
+		  If Self.ShowConfirm("Beacon found " + Language.NounWithQuantity(AutosaveCount, "unsaved document", "unsaved documents") + ". Would you like to recover the " + If(AutosaveCount = 1, "file", "files") + "?", "This can happen if Beacon finishes unexpectedly, such as during a crash. If the " + If(AutosaveCount = 1, "file is", "files are") + " not restored, " + If(AutosaveCount = 1, "it", "they") + " will be permanently deleted.", "Recover", "Discard") Then
+		    For I As Integer = 0 To AutosaveCount - 1
+		      Var File As BookmarkedFolderItem = New BookmarkedFolderItem(AutosaveFolder.ChildAt(I))
+		      If Not File.Name.EndsWith(BeaconFileTypes.BeaconDocument.PrimaryExtension) Then
+		        Continue
+		      End If
+		      
+		      Var FileURL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(File)
+		      App.Log("Attempting to restore autosave " + FileURL.URL)
+		      
+		      Var Controller As New Beacon.DocumentController(FileURL, App.IdentityManager.CurrentIdentity)
+		      AddHandler Controller.Loaded, AddressOf AutosaveController_Loaded
+		      AddHandler Controller.LoadError, AddressOf AutosaveController_LoadError
+		      Controller.Load()
+		    Next
+		  Else
+		    For I As Integer = AutosaveCount - 1 DownTo 0
+		      Var File As BookmarkedFolderItem = New BookmarkedFolderItem(AutosaveFolder.ChildAt(I))
+		      If Not File.Name.EndsWith(BeaconFileTypes.BeaconDocument.PrimaryExtension) Then
+		        Continue
+		      End If
+		      
+		      Try
+		        File.Remove
+		      Catch Err As IOException
+		      End Try
+		    Next
+		  End If
 		End Sub
 	#tag EndMethod
 
