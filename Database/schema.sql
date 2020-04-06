@@ -803,7 +803,8 @@ CREATE TABLE public.objects (
     min_version integer DEFAULT 0 NOT NULL,
     last_update timestamp with time zone DEFAULT ('now'::text)::timestamp(0) with time zone NOT NULL,
     mod_id uuid DEFAULT '30bbab29-44b2-4f4b-a373-6d4740d9d3b5'::uuid NOT NULL,
-    tags public.citext[] DEFAULT '{}'::public.citext[]
+    tags public.citext[] DEFAULT '{}'::public.citext[],
+    alternate_label public.citext
 );
 
 
@@ -909,6 +910,7 @@ ALTER TABLE public.spawn_points OWNER TO thommcgrath;
 CREATE VIEW public.blueprints AS
  SELECT creatures.object_id,
     creatures.label,
+    creatures.alternate_label,
     creatures.tableoid,
     creatures.min_version,
     creatures.last_update,
@@ -921,6 +923,7 @@ CREATE VIEW public.blueprints AS
 UNION
  SELECT engrams.object_id,
     engrams.label,
+    engrams.alternate_label,
     engrams.tableoid,
     engrams.min_version,
     engrams.last_update,
@@ -933,6 +936,7 @@ UNION
 UNION
  SELECT loot_sources.object_id,
     loot_sources.label,
+    loot_sources.alternate_label,
     loot_sources.tableoid,
     loot_sources.min_version,
     loot_sources.last_update,
@@ -945,6 +949,7 @@ UNION
 UNION
  SELECT spawn_points.object_id,
     spawn_points.label,
+    spawn_points.alternate_label,
     spawn_points.tableoid,
     spawn_points.min_version,
     spawn_points.last_update,
@@ -1457,7 +1462,7 @@ UNION
  SELECT blueprints.object_id AS id,
     blueprints.label AS title,
     ''::text AS body,
-    setweight(to_tsvector((blueprints.label)::text), 'C'::"char") AS lexemes,
+    setweight(to_tsvector((((blueprints.label)::text || ' '::text) || (COALESCE(blueprints.alternate_label, ''::public.citext))::text)), 'B'::"char") AS lexemes,
     'Object'::text AS type,
     ('/object/'::text || (blueprints.class_string)::text) AS uri,
     blueprints.min_version

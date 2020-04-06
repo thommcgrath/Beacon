@@ -75,7 +75,7 @@ if ($obj instanceof BeaconCreature) {
 
 $parser = new Parsedown();
 
-echo '<h1><span class="object_type">' . htmlentities($type) . '</span> ' . htmlentities($obj->Label()) . '</h1>';
+echo '<h1><span class="object_type">' . htmlentities($type) . '</span> ' . htmlentities($obj->Label()) . (is_null($obj->AlternateLabel()) ? '' : '<br><span class="subtitle">AKA ' . htmlentities($obj->AlternateLabel()) . '</span>') . '</h1>';
 if ($obj instanceof BeaconLootSource && $obj->Experimental()) {
 	echo '<p class="notice-block notice-warning">This loot source is considered experimental. Some data on this page, such as the spawn code, may not be accurate.</p>';
 }

@@ -4,6 +4,7 @@ class BeaconObject implements JsonSerializable {
 	private $object_id;
 	private $object_group;
 	private $label;
+	private $alternate_label;
 	private $min_version = 0;
 	private $mod_id;
 	private $mod_name;
@@ -24,6 +25,7 @@ class BeaconObject implements JsonSerializable {
 		return array(
 			'object_id',
 			'label',
+			'alternate_label',
 			'min_version',
 			'tags',
 			'mods.mod_id',
@@ -60,6 +62,8 @@ class BeaconObject implements JsonSerializable {
 			return $this->object_id;
 		case 'label':
 			return $this->label;
+		case 'alternate_label':
+			return $this->alternate_label;
 		case 'min_version':
 			return $this->min_version;
 		case 'mod_id':
@@ -74,6 +78,9 @@ class BeaconObject implements JsonSerializable {
 	public function ConsumeJSON(array $json) {
 		if (array_key_exists('label', $json)) {
 			$this->label = $json['label'];
+		}
+		if (array_key_exists('alternate_label', $json)) {
+			$this->alternate_label = $json['alternate_label'];
 		}
 		if (array_key_exists('min_version', $json)) {
 			$this->min_version = $json['min_versoin'];
@@ -298,6 +305,7 @@ class BeaconObject implements JsonSerializable {
 		$obj = new static($row->Field('object_id'));
 		$obj->object_group = $row->Field('table_name');
 		$obj->label = $row->Field('label');
+		$obj->alternate_label = $row->Field('alternate_label');
 		$obj->min_version = intval($row->Field('min_version'));
 		$obj->mod_id = $row->Field('mod_id');
 		$obj->mod_name = $row->Field('mod_name');
@@ -368,6 +376,7 @@ class BeaconObject implements JsonSerializable {
 		return array(
 			'id' => $this->object_id,
 			'label' => $this->label,
+			'alternate_label' => $this->alternate_label,
 			'mod' => array(
 				'id' => $this->mod_id,
 				'name' => $this->mod_name
@@ -391,6 +400,14 @@ class BeaconObject implements JsonSerializable {
 	
 	public function SetLabel(string $label) {
 		$this->label = $label;
+	}
+	
+	public function AlternateLabel() {
+		return $this->alternate_label;
+	}
+	
+	public function SetAlternateLabel(string $alternate_label) {
+		$this->alternate_label = $alternate_label;
 	}
 	
 	public function MinVersion() {
