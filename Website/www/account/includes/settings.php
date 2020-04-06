@@ -135,6 +135,7 @@ $suggested_username = $results->Field('username');
 </div>
 <div class="small_section">
 	<h3>Change Password</h3>
+	<p class="notice-block notice-warning"><strong>Important</strong>: Do not give any user access to your Beacon account for any reason. It is technologically impossible to revoke access to your account from other devices due to Beacon's use of public key cryptography. To safely share access to one or more of your Beacon documents, please follow <a href="/help/sharing_beacon_documents">these instructions</a>.</p>
 	<form id="change_password_form" action="" method="post">
 		<p><input type="password" id="password_current_field" placeholder="Current Password"></p>
 		<p><input type="password" id="password_initial_field" placeholder="New Password" minlength="8"></p>

@@ -99,6 +99,14 @@ case 'checkout.session.completed':
 		$purchase_total += $line_total;
 		$purchase_discount += ($discount_per_unit * $quantity);
 		
+		if ($product_id == '972f9fc5-ad64-4f9c-940d-47062e705cc5') {
+			// Check to see if there is already a purchase for this user and convert to giftable
+			$results = $database->Query('SELECT SUM(purchase_items.quantity) AS licenses FROM purchase_items INNER JOIN purchases ON (purchase_items.purchase_id = purchases.purchase_id) WHERE purchases.purchaser_email = uuid_for_email($1) AND purchase_items.product_id = $2 AND purchases.refunded = FALSE;', $email, '972f9fc5-ad64-4f9c-940d-47062e705cc5');
+			if ($results->Field('licenses') > 0) {
+				$product_id = '2207d5c1-4411-4854-b26f-bc4b48aa33bf';
+			}
+		}
+		
 		if ($product_id == 'f2a99a9e-e27f-42cf-91a8-75a7ef9cf015') {
 			$stw_copies += $quantity;
 		}
@@ -147,6 +155,26 @@ case 'checkout.session.completed':
 	
 	http_response_code(200);
 	echo 'Purchase redeemed successfully';
+	exit;
+	
+	break;
+case 'charge.refunded':
+	$charge_data = $data['object'];
+	$merchant_reference = $charge_data['payment_intent'];
+	
+	$database->BeginTransaction();
+	$results = $database->Query('SELECT purchase_id FROM purchases WHERE merchant_reference = $1;', $merchant_reference);
+	if ($results->RecordCount() != 1) {
+		$database->Rollback();
+		http_response_code(404);
+		echo 'PaymentIntent not found';
+		exit;
+	}
+	$database->Query('UPDATE purchases SET refunded = TRUE WHERE merchant_reference = $1 AND refunded = FALSE;', $merchant_reference);
+	$database->Commit();
+	
+	http_response_code(200);
+	echo 'Refund processed';
 	exit;
 	
 	break;
