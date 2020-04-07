@@ -2,6 +2,12 @@
 Protected Interface Blueprint
 Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
+		Function AlternateLabel() As NullableString
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Availability() As UInt64
 		  
 		End Function

@@ -2,6 +2,12 @@
 Protected Class Creature
 Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
+		Function AlternateLabel() As NullableString
+		  Return Self.mAlternateLabel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Availability() As UInt64
 		  Return mAvailability
 		End Function
@@ -247,6 +253,10 @@ Implements Beacon.Blueprint
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h1
+		Protected mAlternateLabel As NullableString
+	#tag EndProperty
 
 	#tag Property, Flags = &h1
 		Protected mAvailability As UInt64

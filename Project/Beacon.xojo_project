@@ -421,6 +421,7 @@ Class=ConnectorIntegrationEngine;Modules/Beacon/ConnectorIntegrationEngine.xojo_
 Class=DiscoveredData;Modules/Beacon/DiscoveredData.xojo_code;&h00000000420FAFFF;&h0000000055ADDFFF;false
 MultiImage=IconCloudTab;Icons/IconCloudTab.xojo_image;&h00000000627C47FF;&h0000000007F977FF;false
 MultiImage=IconCommunityTab;Icons/IconCommunityTab.xojo_image;&h000000000883A7FF;&h0000000007F977FF;false
+Class=NullableString;Modules/FrameworkExtensions/NullableString.xojo_code;&h000000000DC77FFF;&h0000000053D607FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=3

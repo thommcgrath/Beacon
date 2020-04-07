@@ -16,6 +16,13 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub AlternateLabel(Assigns Value As NullableString)
+		  Self.mAlternateLabel = Value
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Availability(Assigns Value As UInt64)
 		  // Part of the Beacon.MutableBlueprint interface.
 		  

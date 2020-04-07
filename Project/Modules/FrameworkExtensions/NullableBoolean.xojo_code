@@ -24,7 +24,7 @@ Class NullableBoolean
 
 	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As NullableBoolean) As Integer
-		  If Other = Nil Then
+		  If Other Is Nil Then
 		    Return 1
 		  ElseIf Self.mValue <> Other.mValue Then
 		    Return -1
@@ -44,12 +44,6 @@ Class NullableBoolean
 		Sub Operator_Convert(Value As Boolean)
 		  Self.mValue = Value
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "BooleanValue" )  Function Value() As Boolean
-		  Return Self.mValue
-		End Function
 	#tag EndMethod
 
 
