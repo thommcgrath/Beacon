@@ -2006,7 +2006,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  While Not Results.AfterLastRow
 		    Var Creature As New Beacon.MutableCreature(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
 		    Creature.Label = Results.Column("label").StringValue
-		    Creature.AlternateLabel = Results.Column("alternate_label").Value
+		    If IsNull(Results.Column("alternate_label").Value) = False Then
+		      Creature.AlternateLabel = Results.Column("alternate_label").StringValue
+		    End If
 		    Creature.Availability = Results.Column("availability").IntegerValue
 		    Creature.TagString = Results.Column("tags").StringValue
 		    Creature.ModID = Results.Column("mod_id").StringValue
@@ -2035,7 +2037,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  While Not Results.AfterLastRow
 		    Var Engram As New Beacon.MutableEngram(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
 		    Engram.Label = Results.Column("label").StringValue
-		    Engram.AlternateLabel = Results.Column("alternate_label").Value
+		    If IsNull(Results.Column("alternate_label").Value) = False Then
+		      Engram.AlternateLabel = Results.Column("alternate_label").StringValue
+		    End If
 		    Engram.Availability = Results.Column("availability").IntegerValue
 		    Engram.TagString = Results.Column("tags").StringValue
 		    Engram.ModID = Results.Column("mod_id").StringValue
@@ -2130,7 +2134,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  While Not Results.AfterLastRow
 		    Var Point As New Beacon.MutableSpawnPoint(Results.Column("path").StringValue, Results.Column("object_id").StringValue)
 		    Point.Label = Results.Column("label").StringValue
-		    Point.AlternateLabel = Results.Column("alternate_label").Value
+		    If IsNull(Results.Column("alternate_label").Value) = False Then
+		      Point.AlternateLabel = Results.Column("alternate_label").StringValue
+		    End If
 		    Point.Availability = Results.Column("availability").IntegerValue
 		    Point.TagString = Results.Column("tags").StringValue
 		    Point.ModID = Results.Column("mod_id").StringValue
