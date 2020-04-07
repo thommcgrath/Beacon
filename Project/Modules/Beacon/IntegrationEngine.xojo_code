@@ -165,6 +165,40 @@ Protected Class IntegrationEngine
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function PutFile(Contents As String, Filename As String) As Boolean
+		  Var Counter As Integer = 0
+		  Var DesiredHash As String = EncodeHex(Crypto.MD5(Contents))
+		  Self.Log("Uploading " + Filename + "…")
+		  While Counter < 3
+		    If Self.Finished Then
+		      Return False
+		    End If
+		    
+		    If RaiseEvent UploadFile(Contents, Filename) Then
+		      If Self.Finished Then
+		        Return False
+		      End If
+		      
+		      Var CheckedContents As String = RaiseEvent DownloadFile(Filename)
+		      If Self.Finished Then
+		        Return False
+		      End If
+		      
+		      Var CheckedHash As String = EncodeHex(Crypto.MD5(Contents))
+		      If DesiredHash = CheckedHash Then
+		        Return True
+		      Else
+		        Self.Log("Retrying " + Filename + "…")
+		      End If
+		    End If
+		    Counter = Counter + 1
+		  Wend
+		  
+		  Self.SetError("Could not verify " + Filename + " is correct on the server.")
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub RefreshServerStatus()
 		  Var SecondsSinceLastRefresh As Double = (System.Microseconds - Self.mLastRefresh) / 1000000
@@ -321,12 +355,10 @@ Protected Class IntegrationEngine
 		  RaiseEvent ReadyToUpload()
 		  
 		  // Put the new files on the server
-		  Self.Log("Uploading Game.ini…")
-		  If UploadFile(GameIniRewritten, "Game.ini") = False Or Self.Finished Then
+		  If Self.PutFile(GameIniRewritten, "Game.ini") = False Or Self.Finished Then
 		    Return
 		  End If 
-		  Self.Log("Uploading GameUserSettings.ini…")
-		  If UploadFile(GameUserSettingsIniRewritten, "GameUserSettings.ini") = False Or Self.Finished Then
+		  If Self.PutFile(GameUserSettingsIniRewritten, "GameUserSettings.ini") = False Or Self.Finished Then
 		    Return
 		  End If
 		  
