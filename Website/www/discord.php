@@ -1,5 +1,5 @@
 <?php
 
-header('Location: https://discord.gg/XvuZprN');
+header('Location: https://discord.gg/NmMVv4b');
 
 ?>
