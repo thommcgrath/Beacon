@@ -16,7 +16,10 @@ Implements NotificationKit.Receiver
 		    // Whatever
 		  End Try
 		  
-		  LocalData.SharedInstance.Close
+		  Var LocalData As LocalData = LocalData.SharedInstance(False)
+		  If (LocalData Is Nil) = False Then
+		    LocalData.Close
+		  End If
 		  
 		  If Self.mMutex <> Nil Then
 		    Self.mMutex.Leave
@@ -777,7 +780,31 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_SetupDatabase()
-		  LocalData.Start
+		  Try
+		    LocalData.Start
+		  Catch Err As RuntimeException
+		    // There was a problem setting up the database, so let's delete the files (probably corrupt) and try again
+		    Var AppSupport As FolderItem = Self.ApplicationSupport
+		    Try
+		      Var Bound As Integer = AppSupport.Count - 1
+		      For Idx As Integer = Bound DownTo 0
+		        Var Child As FolderItem = AppSupport.ChildAt(Idx)
+		        If Child.Name.BeginsWith("Library.sqlite") Then
+		          Child.Remove
+		        End If
+		      Next
+		      LocalData.Start
+		    Catch BiggerError As RuntimeException
+		      // Something is still wrong
+		      BeaconUI.ShowAlert("Beacon cannot start due to a problem with the local database.", "Beacon is unable to create or repair its local database. The original database error was: `" + Err.Message + "` and the error while attempting to repair was `" + BiggerError.Message + "`.")
+		      If (AppSupport Is Nil) = False ANd AppSupport.Exists Then
+		        AppSupport.Open
+		      End If
+		      Quit
+		      Return
+		    End Try
+		  End Try
+		  
 		  Self.NextLaunchQueueTask()
 		End Sub
 	#tag EndMethod
