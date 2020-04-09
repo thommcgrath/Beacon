@@ -1,6 +1,6 @@
 #tag Class
 Protected Class ScrollTask
-Inherits AnimationKit.Task
+Inherits AnimationKit.DeltaTask
 	#tag Event
 		Sub Perform(Final As Boolean, Time As Double)
 		  Var Item As Object = Self.Item
@@ -59,12 +59,6 @@ Inherits AnimationKit.Task
 		    Target.ScrollPosition = Position
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Completed(Time As Double) As Boolean
-		  Return Self.ElapsedTime(Time) >= (Self.DurationInSeconds * 1000000)
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -177,14 +171,6 @@ Inherits AnimationKit.Task
 		Private AnimationKeys As UInt64
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
-		Curve As AnimationKit.Curve
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		DurationInSeconds As Double
-	#tag EndProperty
-
 	#tag Property, Flags = &h21
 		Private EndMaximum As Double
 	#tag EndProperty
@@ -270,6 +256,22 @@ Inherits AnimationKit.Task
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Threaded"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DelayInSeconds"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Cancelled"
 			Visible=false

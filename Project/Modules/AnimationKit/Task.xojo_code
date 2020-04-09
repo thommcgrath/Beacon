@@ -162,6 +162,10 @@ Protected Class Task
 		Private StartTime As Double
 	#tag EndProperty
 
+	#tag Property, Flags = &h0
+		Threaded As Boolean
+	#tag EndProperty
+
 
 	#tag ViewBehavior
 		#tag ViewProperty
@@ -226,6 +230,14 @@ Protected Class Task
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Threaded"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

@@ -147,6 +147,13 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Operator_Redim(Bound As Integer)
+		  Self.Frames.ResizeTo(Bound)
+		  Self.CheckCurrentFrames()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Subscript(Index As Integer) As AnimationKit.Frame
 		  Return Self.Frame(Index)
 		End Function

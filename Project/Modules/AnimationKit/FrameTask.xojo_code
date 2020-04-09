@@ -78,6 +78,14 @@ Inherits AnimationKit.Task
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Threaded"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Cancelled"
 			Visible=false
 			Group="Behavior"
