@@ -78,7 +78,7 @@ End
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub ImportFinishedDelegate(Documents() As Beacon . Document)
+		Delegate Sub ImportFinishedDelegate(Documents() As Beacon.Document)
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0

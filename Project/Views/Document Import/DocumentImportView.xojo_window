@@ -767,6 +767,9 @@ End
 	#tag Method, Flags = &h21
 		Private Sub Finish(Documents() As Beacon.Document)
 		  If Documents.LastRowIndex > -1 Then
+		    For Idx As Integer = 0 To Documents.LastRowIndex
+		      Documents(Idx).Accounts.Import(Self.mAccounts)
+		    Next
 		    RaiseEvent DocumentsImported(Documents)
 		  End If
 		  RaiseEvent ShouldDismiss
@@ -1161,65 +1164,6 @@ End
 		      End If
 		    End If
 		  Next
-		  
-		  #if false
-		    Var SuccessCount As Integer
-		    Var Errors As Boolean
-		    For I As Integer = 0 To Self.mEngines.LastRowIndex
-		      Var Engine As Beacon.IntegrationEngine = Self.mEngines(I)
-		      Var Finished As Boolean
-		      Var Status As String
-		      If Engine.Finished And Not Engine.Errored Then
-		        If Self.mImporters(I) = Nil Then
-		          Var Importer As New Beacon.ImportThread
-		          #if DebugBuild
-		            #if false
-		              Importer.GameIniContent = Engine.GameIniContent
-		              Importer.GameUserSettingsIniContent = Engine.GameUserSettingsIniContent
-		            #endif
-		          #else
-		            #Pragma Error "Importer has no content to import"
-		          #endif
-		          AddHandler Importer.ThreadedParseFinished, WeakAddressOf Importer_ThreadedParseFinished 
-		          Self.mImporters(I) = Importer
-		          Status = "Parsing Config Files…"
-		          Importer.Start
-		        ElseIf Self.mImporters(I).Finished Then
-		          // Show import finished
-		          Finished = True
-		          If Self.mDocuments(I) <> Nil Then
-		            Status = "Finished"
-		            SuccessCount = SuccessCount + 1
-		          Else
-		            Errors = True
-		            Status = "Parse error"
-		          End If
-		        Else
-		          // Show importer progress
-		          Var Progress As Integer = Round(Self.mImporters(I).Progress * 100)
-		          If Self.mImporters(I).Progress >= 1 Then
-		            Status = "Finishing…"
-		          Else
-		            Status = "Parsing Config Files… (" + Progress.ToString() + "%)"
-		          End If
-		        End If
-		      Else
-		        // Show engine status
-		        Status = Engine.Logs(True)
-		        If Engine.Errored Then
-		          Finished = True
-		          Errors = True
-		        End If
-		      End If
-		      
-		      Status = Engine.Name + EndOfLine + Status
-		      If Self.StatusList.CellValueAt(I, 0) <> Status Then
-		        Self.StatusList.CellValueAt(I, 0) = Status
-		      End If
-		      
-		      AllFinished = AllFinished And Finished
-		    Next
-		  #endif
 		  
 		  If AllFinished Then
 		    Me.RunMode = Timer.RunModes.Off

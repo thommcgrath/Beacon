@@ -672,6 +672,10 @@ End
 
 	#tag Event
 		Sub Close()
+		  If (Engines Is Nil) Then
+		    Return
+		  End If
+		  
 		  For Each Entry As DictionaryEntry In Engines
 		    Var Engine As Beacon.IntegrationEngine = Entry.Key
 		    Engine.Terminate
