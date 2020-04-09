@@ -185,7 +185,7 @@ Protected Class IntegrationEngine
 		        Return False
 		      End If
 		      
-		      Var CheckedHash As String = EncodeHex(Crypto.MD5(Contents))
+		      Var CheckedHash As String = EncodeHex(Crypto.MD5(CheckedContents))
 		      If DesiredHash = CheckedHash Then
 		        Return True
 		      Else
