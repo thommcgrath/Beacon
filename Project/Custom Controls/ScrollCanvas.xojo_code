@@ -90,30 +90,36 @@ Implements AnimationKit.ValueAnimator
 		  // Phase: PhaseEnded, Momentum: PhaseNone, DeltaX: 0, DeltaY: 0
 		  // Phase: PhaseNone, Momentum: PhaseBegan, DeltaX: 0, DeltaY: -48
 		  
-		  If WheelData.Phase = BeaconUI.ScrollEvent.PhaseMayBegin  Or WheelData.Phase = BeaconUI.ScrollEvent.PhaseBegan Or WheelData.MomentumPhase = BeaconUI.ScrollEvent.PhaseBegan Then
-		    // The user has rested fingers on the trackpad or started a scroll, so light up the scrollers
-		    Self.RunAnimation(Self.HorizontalOpacityKey, 1.0)
-		    Self.RunAnimation(Self.VerticalOpacityKey, 1.0)
-		  ElseIf WheelData.Phase = BeaconUI.ScrollEvent.PhaseCancelled Or WheelData.Phase = BeaconUI.ScrollEvent.PhaseEnded Or WheelData.MomentumPhase = BeaconUI.ScrollEvent.PhaseEnded Then
-		    // The user has lifted their fingers from the trackpad or the scroll simply ended
-		    Self.RunAnimation(Self.HorizontalOpacityKey, 0.0, Self.CommonAnimationDuration, 1.0)
-		    Self.RunAnimation(Self.VerticalOpacityKey, 0.0, Self.CommonAnimationDuration, 1.0)
-		  End If
-		  
-		  Self.ScrollX = Self.mScrollX + WheelData.ScrollX
-		  Self.ScrollY = Self.mScrollY + WheelData.ScrollY
-		  If (WheelData.MomentumPhase = BeaconUI.ScrollEvent.PhaseEnded And WheelData.Phase = BeaconUI.ScrollEvent.PhaseNone) Or (WheelData.MomentumPhase = BeaconUI.ScrollEvent.PhaseNone And WheelData.Phase = BeaconUI.ScrollEvent.PhaseEnded) Then
-		    If Self.mScrollX < 0 Then
-		      Self.RunAnimation(Self.HorizontalPositionKey, 0)
-		    ElseIf Self.mScrollX > Self.OverflowWidth Then
-		      Self.RunAnimation(Self.HorizontalPositionKey, Self.OverflowWidth)
+		  #if UseElasticScrolling
+		    Self.ScrollX = Self.mScrollX + WheelData.ScrollX
+		    Self.ScrollY = Self.mScrollY + WheelData.ScrollY
+		    
+		    If WheelData.Phase = BeaconUI.ScrollEvent.PhaseMayBegin  Or WheelData.Phase = BeaconUI.ScrollEvent.PhaseBegan Or WheelData.MomentumPhase = BeaconUI.ScrollEvent.PhaseBegan Then
+		      // The user has rested fingers on the trackpad or started a scroll, so light up the scrollers
+		      Self.RunAnimation(Self.HorizontalOpacityKey, 1.0)
+		      Self.RunAnimation(Self.VerticalOpacityKey, 1.0)
+		    ElseIf WheelData.Phase = BeaconUI.ScrollEvent.PhaseCancelled Or WheelData.Phase = BeaconUI.ScrollEvent.PhaseEnded Or WheelData.MomentumPhase = BeaconUI.ScrollEvent.PhaseEnded Then
+		      // The user has lifted their fingers from the trackpad or the scroll simply ended
+		      Self.RunAnimation(Self.HorizontalOpacityKey, 0.0, Self.CommonAnimationDuration, 1.0)
+		      Self.RunAnimation(Self.VerticalOpacityKey, 0.0, Self.CommonAnimationDuration, 1.0)
 		    End If
-		    If Self.mScrollY < 0 Then
-		      Self.RunAnimation(Self.VerticalPositionKey, 0)
-		    ElseIf Self.mScrollY > Self.OverflowHeight  Then
-		      Self.RunAnimation(Self.VerticalPositionKey, Self.OverflowHeight)
+		    
+		    If (WheelData.MomentumPhase = BeaconUI.ScrollEvent.PhaseEnded And WheelData.Phase = BeaconUI.ScrollEvent.PhaseNone) Or (WheelData.MomentumPhase = BeaconUI.ScrollEvent.PhaseNone And WheelData.Phase = BeaconUI.ScrollEvent.PhaseEnded) Then
+		      If Self.mScrollX < 0 Then
+		        Self.RunAnimation(Self.HorizontalPositionKey, 0)
+		      ElseIf Self.mScrollX > Self.OverflowWidth Then
+		        Self.RunAnimation(Self.HorizontalPositionKey, Self.OverflowWidth)
+		      End If
+		      If Self.mScrollY < 0 Then
+		        Self.RunAnimation(Self.VerticalPositionKey, 0)
+		      ElseIf Self.mScrollY > Self.OverflowHeight  Then
+		        Self.RunAnimation(Self.VerticalPositionKey, Self.OverflowHeight)
+		      End If
 		    End If
-		  End If
+		  #else
+		    Self.ScrollX = Min(Max(Self.mScrollX + WheelData.ScrollX, 0), Self.OverflowWidth)
+		    Self.ScrollY = Min(Max(Self.mScrollY + WheelData.ScrollY, 0), Self.OverflowHeight)
+		  #endif
 		  Return True
 		End Function
 	#tag EndEvent
@@ -654,6 +660,9 @@ Implements AnimationKit.ValueAnimator
 	#tag EndConstant
 
 	#tag Constant, Name = HorizontalScaleKey, Type = String, Dynamic = False, Default = \"HorizontalScale", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = UseElasticScrolling, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = VerticalOpacityKey, Type = String, Dynamic = False, Default = \"VerticalOpacity", Scope = Private

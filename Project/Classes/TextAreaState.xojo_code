@@ -1,6 +1,15 @@
 #tag Class
 Protected Class TextAreaState
 	#tag Method, Flags = &h0
+		Sub ApplyTo(Area As BeaconCodeEditor)
+		  Area.SelStart = Self.SelectionStart
+		  Area.SelLength = Self.SelectionLength
+		  Area.ScrollY = Self.VerticalScrollPosition
+		  Area.ScrollX = Self.HorizontalScrollPosition
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ApplyTo(Area As TextArea)
 		  Area.SelectionStart = Self.SelectionStart
 		  Area.SelectionLength = Self.SelectionLength
@@ -12,6 +21,15 @@ Protected Class TextAreaState
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  // No need to do anything
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Area As BeaconCodeEditor)
+		  Self.VerticalScrollPosition = Area.ScrollY
+		  Self.SelectionStart = Area.SelStart
+		  Self.SelectionLength = Area.SelLength
+		  Self.HorizontalScrollPosition = Area.ScrollX
 		End Sub
 	#tag EndMethod
 
@@ -101,6 +119,14 @@ Protected Class TextAreaState
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="SelectionLength"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HorizontalScrollPosition"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
