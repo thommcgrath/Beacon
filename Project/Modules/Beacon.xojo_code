@@ -202,6 +202,47 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub ComputeSimulationFigures(ItemSetPool() As Beacon.ItemSet, WeightScale As Integer, ByRef WeightSum As Double, ByRef Weights() As Double, ByRef WeightLookup As Dictionary)
+		  Weights.ResizeTo(-1)
+		  WeightLookup = New Dictionary
+		  WeightSum = 0
+		  
+		  For Each Set As Beacon.ItemSet In ItemSetPool
+		    If Set.RawWeight = 0 Then
+		      Continue
+		    End If
+		    WeightSum = WeightSum + Set.RawWeight
+		    Weights.AddRow(WeightSum * WeightScale)
+		    WeightLookup.Value(WeightSum * WeightScale) = Set
+		  Next
+		  Weights.Sort
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ComputeWeightStatistics(Extends Source As Beacon.LootSource, ByRef TotalWeight As Double, ByRef AverageWeight As Double, ByRef MinWeight As Double, ByRef MaxWeight As Double)
+		  Var Sets As Beacon.ItemSetCollection = Source.ItemSets
+		  
+		  Var NumSets As Integer = Sets.Count
+		  If NumSets = 0 Then
+		    Return
+		  End If
+		  
+		  TotalWeight = Sets.AtIndex(0).RawWeight
+		  MinWeight = Sets.AtIndex(0).RawWeight
+		  MaxWeight = Sets.AtIndex(0).RawWeight
+		  
+		  For I As Integer = 1 To Sets.LastRowIndex
+		    TotalWeight = TotalWeight + Sets.AtIndex(I).RawWeight
+		    MinWeight = Min(MinWeight, Sets.AtIndex(I).RawWeight)
+		    MaxWeight = Max(MaxWeight, Sets.AtIndex(I).RawWeight)
+		  Next
+		  
+		  AverageWeight = TotalWeight / NumSets
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function CreateCSV(Blueprints() As Beacon.Blueprint) As String
 		  Var Columns(4) As String
@@ -491,6 +532,19 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ImplementedPresetCount(Extends Source As Beacon.LootSource) As UInteger
+		  Var Sets As Beacon.ItemSetCollection = Source.ItemSets
+		  Var Total As UInteger
+		  For Each Set As Beacon.ItemSet In Sets
+		    If Set.SourcePresetID <> "" Then
+		      Total = Total + 1
+		    End If
+		  Next
+		  Return Total
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsBeaconURL(ByRef Value As String) As Boolean
 		  Var PossiblePrefixes() As String
 		  PossiblePrefixes.AddRow(Beacon.URLScheme + "://")
@@ -609,6 +663,63 @@ Protected Module Beacon
 	#tag Method, Flags = &h0
 		Function LastRowIndex(Extends Target As Beacon.Countable) As Integer
 		  Return Target.Count - 1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function LoadLootSourceSaveData(SaveData As Dictionary) As Beacon.LootSource
+		  If SaveData Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var ClassString As String = SaveData.Lookup("SupplyCrateClassString", "")
+		  If ClassString.IsEmpty Then
+		    Return Nil
+		  End If
+		  
+		  Var Type As String = SaveData.Lookup("Type", "LootContainer")
+		  Var Source As Beacon.LootSource
+		  Select Case Type
+		  Case "CustomLootContainer"
+		    Var CustomSource As New CustomLootContainer(ClassString)
+		    Source = CustomSource
+		  Case "LootContainer"
+		    Var OfficialSource As Beacon.LootSource = Beacon.Data.GetLootSource(ClassString)
+		    Source = OfficialSource
+		  Else
+		    Return Nil
+		  End Select
+		  
+		  Try
+		    Source.MinItemSets = SaveData.Lookup("MinItemSets", 1).IntegerValue
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Try
+		    Source.MaxItemSets = SaveData.Lookup("MaxItemSets", 1).IntegerValue
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Try
+		    Source.PreventDuplicates = SaveData.Lookup("bSetsRandomWithoutReplacement", True).BooleanValue
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Try
+		    Source.AppendMode = SaveData.Lookup("bAppendMode", False).BooleanValue
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  If SaveData.HasKey("ItemSets") Then
+		    Source.ItemSets = Beacon.ItemSetCollection.FromSaveData(SaveData.Value("ItemSets"))
+		  End If
+		  
+		  If Not Source.LoadSaveData(SaveData) Then
+		    Return Nil
+		  End If
+		  
+		  Source.Modified = True
+		  Return Source
 		End Function
 	#tag EndMethod
 
@@ -830,6 +941,23 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ReconfigurePresets(Extends Source As Beacon.LootSource, Mask As UInt64, Mods As Beacon.StringList) As UInteger
+		  Var Sets As Beacon.ItemSetCollection = Source.ItemSets
+		  Var NumChanged As UInteger
+		  For Each Set As Beacon.ItemSet In Sets
+		    If Set.SourcePresetID = "" Then
+		      Continue
+		    End If
+		    
+		    If Set.ReconfigureWithPreset(Source, Mask, Mods) Then
+		      NumChanged = NumChanged + 1
+		    End If
+		  Next
+		  Return NumChanged
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub RemoveTag(Extends Blueprint As Beacon.MutableBlueprint, ParamArray TagsToRemove() As String)
 		  Blueprint.RemoveTags(TagsToRemove)
 		End Sub
@@ -892,6 +1020,25 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function SanitizeIni(Content As String) As String
 		  Return Content.SanitizeIni
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SaveData(Extends Source As Beacon.LootSource) As Dictionary
+		  // Mandatory item sets should not be part of this.
+		  
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Source)
+		  
+		  Var Keys As New Dictionary
+		  Keys.Value("Type") = Info.Name
+		  Keys.Value("ItemSets") = Source.ItemSets.SaveData
+		  Keys.Value("MaxItemSets") = Source.MaxItemSets
+		  Keys.Value("MinItemSets") = Source.MinItemSets
+		  Keys.Value("bSetsRandomWithoutReplacement") = Source.PreventDuplicates
+		  Keys.Value("SupplyCrateClassString") = Source.ClassString
+		  Keys.Value("bAppendMode") = Source.AppendMode
+		  Source.EditSaveData(Keys)
+		  Return Keys
 		End Function
 	#tag EndMethod
 
@@ -989,6 +1136,94 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Simulate(Extends Source As Beacon.LootSource) As Beacon.SimulatedSelection()
+		  Var Sets As Beacon.ItemSetCollection = Source.ItemSets
+		  Var MandatorySets() As Beacon.ItemSet = Source.MandatoryItemSets
+		  Var Selections() As Beacon.SimulatedSelection
+		  Var NumSets As Integer = Sets.Count + MandatorySets.Count
+		  If NumSets = 0 Then
+		    Return Selections
+		  End If
+		  
+		  Var MinSets As Integer = Min(Source.MinItemSets, Source.MaxItemSets)
+		  Var MaxSets As Integer = Max(Source.MaxItemSets, Source.MinItemSets)
+		  
+		  Var SelectedSets() As Beacon.ItemSet
+		  If NumSets = MinSets And MinSets = MaxSets And Source.PreventDuplicates Then
+		    // All
+		    For Each Set As Beacon.ItemSet In Sets
+		      SelectedSets.AddRow(Set)
+		    Next
+		    For Each Set As Beacon.ItemSet In MandatorySets
+		      SelectedSets.AddRow(Set)
+		    Next
+		  Else
+		    Const WeightScale = 100000
+		    Var ItemSetPool() As Beacon.ItemSet
+		    For I As Integer = 0 To Sets.LastRowIndex
+		      ItemSetPool.AddRow(Sets.AtIndex(I))
+		    Next
+		    For I As Integer = 0 To MandatorySets.LastRowIndex
+		      ItemSetPool.AddRow(MandatorySets(I))
+		    Next
+		    
+		    Var RecomputeFigures As Boolean = True
+		    Var ChooseSets As Integer = System.Random.InRange(MinSets, MaxSets)
+		    Var WeightSum, Weights() As Double
+		    Var WeightLookup As Dictionary
+		    For I As Integer = 1 To ChooseSets
+		      If ItemSetPool.LastRowIndex = -1 Then
+		        Exit For I
+		      End If
+		      
+		      If RecomputeFigures Then
+		        Beacon.ComputeSimulationFigures(ItemSetPool, WeightScale, WeightSum, Weights, WeightLookup)
+		        RecomputeFigures = False
+		      End If
+		      
+		      Do
+		        Var Decision As Double = System.Random.InRange(WeightScale, WeightScale + (WeightSum * WeightScale)) - WeightScale
+		        Var SelectedSet As Beacon.ItemSet
+		        
+		        For X As Integer = 0 To Weights.LastRowIndex
+		          If Weights(X) >= Decision Then
+		            Var SelectedWeight As Double = Weights(X)
+		            SelectedSet = WeightLookup.Value(SelectedWeight)
+		            Exit For X
+		          End If
+		        Next
+		        
+		        If SelectedSet = Nil Then
+		          Continue
+		        End If
+		        
+		        SelectedSets.AddRow(SelectedSet)
+		        If Source.PreventDuplicates Then
+		          For X As Integer = 0 To ItemSetPool.LastRowIndex
+		            If ItemSetPool(X) = SelectedSet Then
+		              ItemSetPool.RemoveRowAt(X)
+		              Exit For X
+		            End If
+		          Next
+		          RecomputeFigures = True
+		        End If
+		        
+		        Exit
+		      Loop
+		    Next
+		  End If
+		  
+		  For Each Set As Beacon.ItemSet In SelectedSets
+		    Var SetSelections() As Beacon.SimulatedSelection = Set.Simulate
+		    For Each Selection As Beacon.SimulatedSelection In SetSelections
+		      Selections.AddRow(Selection)
+		    Next
+		  Next
+		  Return Selections
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub Sort(Sources() As Beacon.LootSource)
 		  Var Bound As Integer = Sources.LastRowIndex
@@ -1076,6 +1311,12 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ValidForMap(Extends Source As Beacon.LootSource, Map As Beacon.Map) As Boolean
+		  Return Source.ValidForMask(Map.Mask)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ValidForMap(Extends Blueprint As Beacon.MutableBlueprint, Map As Beacon.Map, Assigns Value As Boolean)
 		  If Map <> Nil Then
 		    Blueprint.ValidForMask(Map.Mask) = Value
@@ -1086,6 +1327,12 @@ Protected Module Beacon
 	#tag Method, Flags = &h0
 		Function ValidForMask(Extends Blueprint As Beacon.Blueprint, Mask As UInt64) As Boolean
 		  Return Mask = 0 Or (Blueprint.Availability And Mask) > 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ValidForMask(Extends Source As Beacon.LootSource, Mask As UInt64) As Boolean
+		  Return (Source.Availability And Mask) > 0
 		End Function
 	#tag EndMethod
 

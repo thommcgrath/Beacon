@@ -963,16 +963,21 @@ End
 		    Return
 		  End If
 		  
-		  Var Lines() As String
 		  Var Dicts() As Dictionary
+		  Var Configs() As Beacon.ConfigValue
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
 		      Var Source As Beacon.LootSource = Me.RowTagAt(I)
-		      Dicts.AddRow(Source.Export)
+		      Dicts.AddRow(Source.SaveData)
 		      If Source.IsValid(Self.Document) Then
-		        Lines.AddRow("ConfigOverrideSupplyCrateItems=" + Source.StringValue(Self.Document.Difficulty))
+		        BeaconConfigs.LootDrops.BuildOverrides(Source, Configs, Self.Document.Difficulty)
 		      End If
 		    End If
+		  Next
+		  
+		  Var Lines() As String
+		  For Each Config As Beacon.ConfigValue In Configs
+		    Lines.AddRow(Config.Key + "=" + Config.Value)
 		  Next
 		  
 		  Var RawData As String
@@ -1014,7 +1019,10 @@ End
 		    
 		    Var Sources() As Beacon.LootSource
 		    For Each Dict As Dictionary In Dicts
-		      Sources.AddRow(Beacon.LootSource.ImportFromBeacon(Dict))
+		      Var Source As Beacon.LootSource = Beacon.LoadLootSourceSaveData(Dict)
+		      If (Source Is Nil) = False Then
+		        Sources.AddRow(Source)
+		      End If
 		    Next
 		    Self.AddLootSources(Sources)
 		  ElseIf Board.TextAvailable And Board.Text.IndexOf("ConfigOverrideSupplyCrateItems") > -1 Then

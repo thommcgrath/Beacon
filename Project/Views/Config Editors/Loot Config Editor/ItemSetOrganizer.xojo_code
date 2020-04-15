@@ -30,7 +30,7 @@ Implements Beacon.NamedItem
 		  Var Siblings() As String
 		  For Each Entry As DictionaryEntry In Self.mSets
 		    Var LootSource As Beacon.LootSource = Entry.Key
-		    For Each Set As Beacon.ItemSet In LootSource
+		    For Each Set As Beacon.ItemSet In LootSource.ItemSets
 		      Siblings.AddRow(Set.Label)
 		    Next
 		  Next
@@ -115,7 +115,7 @@ Implements Beacon.NamedItem
 		    Var Set As Beacon.ItemSet = Self.mSets.Value(Source)
 		    
 		    If Set = Nil Then
-		      Set = Source.AddSet(New Beacon.ItemSet(Self.mTemplate), True)
+		      Set = Source.ItemSets.Append(New Beacon.ItemSet(Self.mTemplate), True)
 		      Self.mSets.Value(Source) = Set
 		    End If
 		    

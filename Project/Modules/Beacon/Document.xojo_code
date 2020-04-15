@@ -368,11 +368,11 @@ Implements ObservationKit.Observable
 		  If LootSources.LastRowIndex > -1 Then
 		    Var Drops As New BeaconConfigs.LootDrops
 		    For Each LootSource As Dictionary In LootSources
-		      Var Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(LootSource)
+		      Var Source As Beacon.LootSource = Beacon.LoadLootSourceSaveData(LootSource)
 		      If Source <> Nil Then
 		        If Version < 2 Then
 		          // Match item set names to presets
-		          For Each Set As Beacon.ItemSet In Source
+		          For Each Set As Beacon.ItemSet In Source.ItemSets
 		            For Each Preset As Beacon.Preset In Presets
 		              If Set.Label = Preset.Label Then
 		                // Here's a hack to make assigning a preset possible: save current entries

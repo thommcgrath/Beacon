@@ -421,7 +421,7 @@ End
 		  Else
 		    Var CommonMinItemSets As Integer = Sources(0).MinItemSets
 		    Var CommonMaxItemSets As Integer = Sources(0).MaxItemSets
-		    Var CommonNoDuplicates As CheckBox.VisualStates = If(Sources(0).SetsRandomWithoutReplacement, CheckBox.VisualStates.Checked, Checkbox.VisualStates.Unchecked)
+		    Var CommonNoDuplicates As CheckBox.VisualStates = If(Sources(0).PreventDuplicates, CheckBox.VisualStates.Checked, Checkbox.VisualStates.Unchecked)
 		    Var CommonAppendMode As CheckBox.VisualStates = If(Sources(0).AppendMode, CheckBox.VisualStates.Checked, CheckBox.VisualStates.Unchecked)
 		    
 		    For I As Integer = 0 To Sources.LastRowIndex
@@ -433,7 +433,7 @@ End
 		      If Sources(I).MaxItemSets <> CommonMaxItemSets Then
 		        CommonMaxItemSets = -1
 		      End If
-		      If If(Sources(I).SetsRandomWithoutReplacement, CheckBox.VisualStates.Checked, Checkbox.VisualStates.Unchecked) <> CommonNoDuplicates Then
+		      If If(Sources(I).PreventDuplicates, CheckBox.VisualStates.Checked, Checkbox.VisualStates.Unchecked) <> CommonNoDuplicates Then
 		        CommonNoDuplicates = CheckBox.VisualStates.Indeterminate
 		      End If
 		      If If(Sources(I).AppendMode, CheckBox.VisualStates.Checked, Checkbox.VisualStates.Unchecked) <> CommonAppendMode Then
@@ -598,7 +598,7 @@ End
 		  
 		  Var Sources() As Beacon.LootSource = Self.LootSources
 		  For I As Integer = 0 To Sources.LastRowIndex
-		    Sources(I).SetsRandomWithoutReplacement = Me.Value
+		    Sources(I).PreventDuplicates = Me.Value
 		  Next
 		  
 		  RaiseEvent SettingsChanged

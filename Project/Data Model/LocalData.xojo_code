@@ -2095,13 +2095,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End Try
 		    #Pragma BreakOnExceptions Default
 		    
-		    Var Source As New Beacon.MutableLootSource(Results.Column("class_string").StringValue, True)
+		    Var Source As New Beacon.CustomLootContainer(Results.Column("class_string").StringValue)
 		    Source.Label = Results.Column("label").StringValue
+		    Source.Path = Results.Column("path").StringValue
 		    Source.Availability = Results.Column("availability").IntegerValue
 		    Source.Multipliers = New Beacon.Range(Results.Column("multiplier_min").DoubleValue, Results.Column("multiplier_max").DoubleValue)
 		    Source.UIColor = RGB(Integer.FromHex(RedHex), Integer.FromHex(GreenHex), Integer.FromHex(BlueHex), Integer.FromHex(AlphaHex))
 		    Source.SortValue = Results.Column("sort_order").IntegerValue
-		    Source.UseBlueprints = False
 		    Source.Experimental = Results.Column("experimental").BooleanValue
 		    Source.Notes = Results.Column("notes").StringValue
 		    
@@ -2117,11 +2117,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Source.MandatoryItemSets = Sets
 		    End If
 		    
-		    If Requirements.HasKey("min_item_sets") Then
-		      Source.RequiredItemSets = Requirements.Value("min_item_sets")
+		    If Requirements.HasKey("min_item_sets") And IsNull(Requirements.Value("min_item_sets")) = False Then
+		      Source.RequiredItemSetCount = Requirements.Value("min_item_sets")
 		    End If
 		    
-		    Sources.AddRow(New Beacon.LootSource(Source))
+		    Sources.AddRow(New Beacon.LootContainer(Source))
 		    Results.MoveToNextRow
 		  Wend
 		  Return Sources
@@ -2809,7 +2809,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT engrams.object_id\x2C engrams.path\x2C engrams.label\x2C engrams.alternate_label\x2C engrams.availability\x2C engrams.tags\x2C engrams.entry_string\x2C engrams.required_level\x2C engrams.required_points\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = LootSourcesSelectColumns, Type = String, Dynamic = False, Default = \"class_string\x2C label\x2C alternate_label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements", Scope = Private
+	#tag Constant, Name = LootSourcesSelectColumns, Type = String, Dynamic = False, Default = \"path\x2C class_string\x2C label\x2C alternate_label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_DatabaseUpdated, Type = String, Dynamic = False, Default = \"Database Updated", Scope = Public

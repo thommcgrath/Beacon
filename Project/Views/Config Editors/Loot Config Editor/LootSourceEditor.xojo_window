@@ -467,7 +467,7 @@ End
 		Private Sub AddSets(Sets() As Beacon.ItemSet)
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    For Each NewSet As Beacon.ItemSet In Sets
-		      Call Source.AddSet(New Beacon.ItemSet(NewSet), False)
+		      Call Source.ItemSets.Append(New Beacon.ItemSet(NewSet))
 		    Next
 		  Next
 		  
@@ -611,7 +611,7 @@ End
 		      Set = New Beacon.ItemSet()
 		    End If
 		    
-		    NewItemSets.AddRow(Source.AddSet(Set, False))
+		    NewItemSets.AddRow(Source.ItemSets.Append(Set))
 		  Next
 		  
 		  Self.UpdateUI(NewItemSets)
@@ -657,7 +657,7 @@ End
 		  Var Drops As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.LootDrops.ConfigName))
 		  Var NewItemSets() As Beacon.ItemSet
 		  For Each SourceDrop As Beacon.LootSource In Drops
-		    For Each ItemSet As Beacon.ItemSet In SourceDrop
+		    For Each ItemSet As Beacon.ItemSet In SourceDrop.ItemSets
 		      NewItemSets.AddRow(ItemSet)
 		    Next
 		  Next
@@ -885,7 +885,7 @@ End
 		  
 		  Var CombinedSets As New Dictionary
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    For Each Set As Beacon.ItemSet In Source
+		    For Each Set As Beacon.ItemSet In Source.ItemSets
 		      Var Hash As String = Set.Hash
 		      Var Organizer As ItemSetOrganizer
 		      If CombinedSets.HasKey(Hash) Then
@@ -1052,7 +1052,7 @@ End
 		    Var Sources() As Beacon.LootSource = Organizer.Sources
 		    For Each Source As Beacon.LootSource In Sources
 		      Var Set As Beacon.ItemSet = Organizer.SetForSource(Source)
-		      Source.Remove(Set)
+		      Source.ItemSets.Remove(Set)
 		    Next
 		  Next
 		  
@@ -1313,14 +1313,12 @@ End
 		    End If
 		  Case "copyconfig"
 		    Var Multipliers As Beacon.Range
-		    Var UseBlueprints As Boolean
+		    Var UseBlueprints As Boolean = False
 		    Var Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
 		    If Self.mSources.LastRowIndex = 0 Then
 		      Multipliers = Self.mSources(0).Multipliers
-		      UseBlueprints = Self.mSources(0).UseBlueprints
 		    Else
 		      Multipliers = New Beacon.Range(1, 1)
-		      UseBlueprints = False
 		    End If
 		    
 		    Var Parts() As String

@@ -46,9 +46,9 @@ Implements Iterable
 		      
 		      Source.MinItemSets = 1
 		      Source.MaxItemSets = 1
-		      Call Source.AddSet(Set, False)
+		      Call Source.ItemSets.Append(Set, False)
 		      
-		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, ConfigOverrideSupplyCrateItems, Source.StringValue(DifficultyConfig)))
+		      Self.BuildOverrides(Source, Values, DifficultyConfig)
 		    Next
 		    Return
 		  End If
@@ -58,8 +58,9 @@ Implements Iterable
 		      Continue
 		    End If
 		    
-		    Var StringValue As String = Source.StringValue(DifficultyConfig)
-		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, ConfigOverrideSupplyCrateItems, StringValue))
+		    Self.BuildOverrides(Source, Values, DifficultyConfig)
+		    //Var StringValue As String = BuildOverride(Source, DifficultyConfig)
+		    //Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, ConfigOverrideSupplyCrateItems, StringValue))
 		  Next
 		End Sub
 	#tag EndEvent
@@ -88,15 +89,17 @@ Implements Iterable
 		    Var Contents() As Variant = Dict.Value("Contents")
 		    Var UniqueClasses As New Dictionary
 		    For Each DropDict As Dictionary In Contents
-		      Var Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(DropDict)
-		      If Source <> Nil Then
-		        Var Idx As Integer = UniqueClasses.Lookup(Source.ClassString, -1)
-		        If Idx = -1 Then
-		          Self.mSources.AddRow(Source)
-		          UniqueClasses.Value(Source.ClassString) = Self.mSources.LastRowIndex
-		        Else
-		          Self.mSources(Idx) = Source
-		        End If
+		      Var Source As Beacon.LootSource = Beacon.LoadLootSourceSaveData(DropDict)
+		      If Source Is Nil Then
+		        Continue
+		      End If
+		      
+		      Var Idx As Integer = UniqueClasses.Lookup(Source.ClassString, -1)
+		      If Idx = -1 Then
+		        Self.mSources.AddRow(Source)
+		        UniqueClasses.Value(Source.ClassString) = Self.mSources.LastRowIndex
+		      Else
+		        Self.mSources(Idx) = Source
 		      End If
 		    Next
 		  End If
@@ -109,7 +112,7 @@ Implements Iterable
 		  
 		  Var Contents() As Dictionary
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Contents.AddRow(Source.Export)
+		    Contents.AddRow(Source.SaveData)
 		  Next
 		  Dict.Value("Contents") = Contents
 		End Sub
@@ -138,6 +141,49 @@ Implements Iterable
 		  End If
 		  Return Dict
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Sub BuildOverrides(Source As Beacon.LootSource, Values() As Beacon.ConfigValue, Difficulty As BeaconConfigs.Difficulty)
+		  #if false
+		    If Source IsA MetaLootSource Then
+		      Var MetaSource As MetaLootSource = MetaLootSource(Source)
+		      For Each SubSource As Beacon.LootContainer In MetaSource
+		        BuildOverrides(SubSource, Values, Difficulty)
+		      Next
+		      Return
+		    End If
+		  #endif
+		  
+		  Var Keys() As String
+		  Keys.AddRow("SupplyCrateClassString=""" + Source.ClassString + """")
+		  
+		  If Source.AppendMode Then
+		    Keys.AddRow("bAppendItemSets=true")
+		  Else
+		    Var MinSets As Integer = Min(Source.MinItemSets, Source.MaxItemSets)
+		    Var MaxSets As Integer = Max(Source.MaxItemSets, Source.MinItemSets)
+		    
+		    Keys.AddRow("MinItemSets=" + MinSets.ToString)
+		    Keys.AddRow("MaxItemSets=" + MaxSets.ToString)
+		    Keys.AddRow("NumItemSetsPower=1.0")
+		    Keys.AddRow("bSetsRandomWithoutReplacement=" + if(Source.PreventDuplicates, "true", "false"))
+		  End If
+		  
+		  Var GeneratedSets() As String
+		  For Each Set As Beacon.ItemSet In Source.ItemSets
+		    GeneratedSets.AddRow(Set.StringValue(Source.Multipliers, False, Difficulty))
+		  Next
+		  If Source.MandatoryItemSets.Count > 0 And Source.AppendMode = False Then
+		    For Each Set As Beacon.ItemSet In Source.MandatoryItemSets
+		      GeneratedSets.AddRow(Set.StringValue(Source.Multipliers, False, Difficulty))
+		    Next
+		  End If
+		  
+		  Keys.AddRow("ItemSets=(" + GeneratedSets.Join(",") + ")")
+		  
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, ConfigOverrideSupplyCrateItems, "(" + Keys.Join(",") + ")"))
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -182,10 +228,10 @@ Implements Iterable
 		      Return
 		    End If
 		    
-		    If Source.Count < Source.RequiredItemSets Then
-		      Issues.AddRow(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " needs at least " + Source.RequiredItemSets.ToString + " " + if(Source.RequiredItemSets = 1, "item set", "item sets") + " to work correctly.", Source))
+		    If Source.ItemSets.Count < Source.RequiredItemSetCount Then
+		      Issues.AddRow(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " needs at least " + Source.RequiredItemSetCount.ToString + " " + if(Source.RequiredItemSetCount = 1, "item set", "item sets") + " to work correctly.", Source))
 		    Else
-		      For Each Set As Beacon.ItemSet In Source
+		      For Each Set As Beacon.ItemSet In Source.ItemSets
 		        Self.DetectItemSetIssues(Source, Set, ConfigName, Document, Issues)
 		      Next
 		    End If
@@ -265,7 +311,7 @@ Implements Iterable
 		    
 		    Var Source As Beacon.LootSource
 		    Try
-		      Source = Beacon.LootSource.ImportFromConfig(Dictionary(Member.ObjectValue), Difficulty)
+		      Source = Beacon.LootContainer.ImportFromConfig(Dictionary(Member.ObjectValue), Difficulty)
 		    Catch Err As RuntimeException
 		      Continue
 		    End Try

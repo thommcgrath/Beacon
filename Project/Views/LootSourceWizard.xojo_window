@@ -1184,7 +1184,7 @@ End
 		      If Self.mSource.IsOfficial Then
 		        Self.CustomizeCancelButton.Caption = "Cancel"
 		        Self.mDestinations.ResizeTo(0)
-		        Self.mDestinations(0) = New Beacon.MutableLootSource(Self.mSource)   
+		        Self.mDestinations(0) = Self.mSource.Clone
 		        Self.ShowCustomize()
 		      Else
 		        Self.DefineCancelButton.Caption = "Cancel"
@@ -1284,7 +1284,7 @@ End
 		      End If
 		    End If
 		    
-		    Self.mDestinations.AddRow(New Beacon.MutableLootSource(Source))
+		    Self.mDestinations.AddRow(Source.Clone)
 		  Next
 		  
 		  Self.ShowCustomize()
@@ -1332,12 +1332,12 @@ End
 		  If Self.mSource <> Nil Then
 		    BasedOn = Self.mSource
 		  Else
-		    BasedOn = New Beacon.MutableLootSource("Template", False)
+		    BasedOn = New Beacon.CustomLootContainer("Template")
 		  End If
 		  
 		  Self.CustomizeMinSetsField.Value = Format(BasedOn.MinItemSets, "-0")
 		  Self.CustomizeMaxSetsField.Value = Format(BasedOn.MaxItemSets, "-0")
-		  Self.CustomizePreventDuplicatesCheck.Value = BasedOn.SetsRandomWithoutReplacement
+		  Self.CustomizePreventDuplicatesCheck.Value = BasedOn.PreventDuplicates
 		  
 		  Var Presets() As Beacon.Preset = Beacon.Data.Presets()
 		  
@@ -1353,7 +1353,7 @@ End
 		  Var Scrolled, HasUsedPresets As Boolean
 		  For I As Integer = 0 To Self.CustomizePresetsList.RowCount - 1
 		    Var Preset As Beacon.Preset = Self.CustomizePresetsList.RowTagAt(I)
-		    For Each Set As Beacon.ItemSet In BasedOn
+		    For Each Set As Beacon.ItemSet In BasedOn.ItemSets
 		      If Set.SourcePresetID = Preset.PresetID Then
 		        HasUsedPresets = True
 		        Self.CustomizePresetsList.CellCheckBoxValueAt(I, 0) = True
@@ -1417,7 +1417,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDestinations() As Beacon.MutableLootSource
+		Private mDestinations() As Beacon.LootSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1531,10 +1531,10 @@ End
 		    Return
 		  End If
 		  
-		  Var Destination As Beacon.MutableLootSource
+		  Var Destination As Beacon.LootSource
 		  Var Source As Beacon.LootSource = Beacon.Data.GetLootSource(ClassString)
 		  If Source <> Nil Then
-		    Destination = New Beacon.MutableLootSource(Source)
+		    Destination = Source.Clone
 		  Else
 		    Var Label As String = Self.DefineNameField.Value.Trim
 		    If Label = "" Then
@@ -1555,12 +1555,10 @@ End
 		      Return
 		    End If
 		    
-		    Destination = New Beacon.MutableLootSource(ClassString, False)
-		    Destination.Label = Label
-		    Destination.Availability = Mask
-		    Destination.Multipliers = New Beacon.Range(MinMultiplier, MaxMultiplier)
-		    Destination.IsOfficial = False
-		    Destination.UseBlueprints = False
+		    Destination = New Beacon.CustomLootContainer(ClassString)
+		    Beacon.CustomLootContainer(Destination).Label = Label
+		    Beacon.CustomLootContainer(Destination).Availability = Mask
+		    Beacon.CustomLootContainer(Destination).Multipliers = New Beacon.Range(MinMultiplier, MaxMultiplier)
 		  End If
 		  
 		  Self.mDestinations.ResizeTo(0)
@@ -1605,7 +1603,7 @@ End
 		  
 		  Var SourceSets() As Beacon.ItemSet
 		  If Self.mSource <> Nil Then
-		    For Each Set As Beacon.ItemSet In Self.mSource
+		    For Each Set As Beacon.ItemSet In Self.mSource.ItemSets
 		      If Set.SourcePresetID = "" Or AllowedPresets.IndexOf(Set.SourcePresetID) > -1 Or LocalData.SharedInstance.GetPreset(Set.SourcePresetID) = Nil Then
 		        SourceSets.AddRow(Set)
 		      End If
@@ -1617,13 +1615,13 @@ End
 		    Next
 		  End If
 		  
-		  For Each Destination As Beacon.MutableLootSource In Self.mDestinations
+		  For Each Destination As Beacon.LootSource In Self.mDestinations
 		    // Clear the current contents
-		    Destination.ResizeTo(-1)
+		    Destination.ItemSets.Clear
 		    
 		    // Add the clones
 		    For Each Set As Beacon.ItemSet In SourceSets
-		      Call Destination.AddSet(New Beacon.ItemSet(Set), False)
+		      Call Destination.ItemSets.Append(New Beacon.ItemSet(Set))
 		    Next
 		    
 		    // Add newly selected presets
@@ -1633,7 +1631,7 @@ End
 		        Continue
 		      End If
 		      
-		      Call Destination.AddSet(Beacon.ItemSet.FromPreset(Preset, Destination, Self.mMask, Self.mMods), False)
+		      Call Destination.ItemSets.Append(Beacon.ItemSet.FromPreset(Preset, Destination, Self.mMask, Self.mMods))
 		    Next
 		    
 		    // Rebuild if necessary
@@ -1644,7 +1642,7 @@ End
 		    // Apply basic settings
 		    Destination.MinItemSets = MinItemSets
 		    Destination.MaxItemSets = MaxItemSets
-		    Destination.SetsRandomWithoutReplacement = PreventDuplicates
+		    Destination.PreventDuplicates = PreventDuplicates
 		    Destination.AppendMode = AppendMode
 		    
 		    Var Idx As Integer = Self.mConfig.IndexOf(Destination)
