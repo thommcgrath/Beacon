@@ -739,16 +739,40 @@ End
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
 		  Var Dicts() As Dictionary
+		  Var SelectedCosts() As Beacon.CraftingCost
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
 		    
 		    Var Cost As Beacon.CraftingCost = Me.RowTagAt(I)
+		    SelectedCosts.AddRow(Cost)
 		    Dicts.AddRow(Cost.Export)
 		  Next
 		  
 		  Board.AddRawData(Beacon.GenerateJSON(Dicts, False), Self.kClipboardType)
+		  
+		  If Not BeaconConfigs.ConfigPurchased(BeaconConfigs.CraftingCosts.ConfigName, App.IdentityManager.CurrentIdentity.OmniVersion) Then
+		    Return
+		  End If
+		  
+		  Var Lines() As String
+		  For Each Cost As Beacon.CraftingCost In SelectedCosts
+		    If Cost.Engram Is Nil Or Cost.Engram.ValidForMods(Self.Document.Mods) = False Then
+		      Continue
+		    End If
+		    
+		    Var Config As Beacon.ConfigValue = BeaconConfigs.CraftingCosts.ConfigValueForCraftingCost(Cost)
+		    If (Config Is Nil) = False Then
+		      Lines.AddRow(Config.Key + "=" + Config.Value)
+		    End If
+		  Next
+		  
+		  If Lines.Count = 0 Then
+		    Return
+		  End If
+		  
+		  Board.Text = Lines.Join(EndOfLine)
 		End Sub
 	#tag EndEvent
 	#tag Event

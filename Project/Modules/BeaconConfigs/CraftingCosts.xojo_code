@@ -7,10 +7,16 @@ Inherits Beacon.ConfigGroup
 		  
 		  For Each Entry As DictionaryEntry In Self.mCosts
 		    Var Cost As Beacon.CraftingCost = Entry.Value
-		    If IsNull(Cost.Engram) = False And Cost.Engram.ValidForMods(SourceDocument.Mods) Then
-		      Var StringValue As String = Cost.StringValue
-		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts", StringValue))
+		    If Cost.Engram Is Nil Or Cost.Engram.ValidForMods(SourceDocument.Mods) = False Then
+		      Continue
 		    End If
+		    
+		    Var ConfigValue As Beacon.ConfigValue = Self.ConfigValueForCraftingCost(Cost)
+		    If ConfigValue Is Nil Then
+		      Continue
+		    End If
+		    
+		    Values.AddRow(ConfigValue)
 		  Next
 		End Sub
 	#tag EndEvent
@@ -71,6 +77,16 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Shared Function ConfigName() As String
 		  Return ConfigKey
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function ConfigValueForCraftingCost(Cost As Beacon.CraftingCost) As Beacon.ConfigValue
+		  If Cost.Engram Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Return New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts", Cost.StringValue)
 		End Function
 	#tag EndMethod
 
