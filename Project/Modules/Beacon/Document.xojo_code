@@ -475,12 +475,15 @@ Implements ObservationKit.Observable
 		  If Dict.HasKey("Configs") Then
 		    Var Groups As Dictionary = Dict.Value("Configs")
 		    For Each Entry As DictionaryEntry In Groups
-		      Var GroupName As String = Entry.Key
-		      Var GroupData As Dictionary = Entry.Value
-		      Var Instance As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName, GroupData, Identity, Doc)
-		      If Instance <> Nil Then
-		        Doc.mConfigGroups.Value(GroupName) = Instance
-		      End If
+		      Try
+		        Var GroupName As String = Entry.Key
+		        Var GroupData As Dictionary = Entry.Value
+		        Var Instance As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName, GroupData, Identity, Doc)
+		        If Instance <> Nil Then
+		          Doc.mConfigGroups.Value(GroupName) = Instance
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
 		    Next
 		  End If
 		  
