@@ -1236,7 +1236,7 @@ End
 		    Return
 		  End If
 		  
-		  If Set = Nil Then
+		  If Set Is Nil Then
 		    Self.mRef = Nil
 		    Self.UpdateUI(New Beacon.MutableSpawnPointSet)
 		    Return

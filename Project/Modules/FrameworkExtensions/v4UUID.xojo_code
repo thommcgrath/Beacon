@@ -133,7 +133,7 @@ Class v4UUID
 
 	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As v4UUID) As Integer
-		  If Other = Nil Then
+		  If Other Is Nil Then
 		    If Self.IsNull Then
 		      Return 0
 		    Else
