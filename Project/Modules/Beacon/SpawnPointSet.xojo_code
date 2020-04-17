@@ -347,7 +347,7 @@ Implements Beacon.DocumentItem,Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.SpawnPointSet) As Integer
-		  If Other = Nil Then
+		  If Other Is Nil Then
 		    Return 1
 		  End If
 		  
@@ -355,7 +355,9 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		    Return 0
 		  End If
 		  
-		  Return Self.mLabel.Compare(Other.mLabel, ComparisonOptions.CaseInsensitive, Locale.Current)
+		  Var CompareLeft As String = Self.mLabel + Self.mID
+		  Var CompareRight As String = Other.mLabel + Other.mID
+		  Return CompareLeft.Compare(CompareRight, ComparisonOptions.CaseInsensitive, Locale.Current)
 		End Function
 	#tag EndMethod
 

@@ -124,11 +124,12 @@ Implements Beacon.NamedItem
 		    Var Point As Beacon.MutableSpawnPoint = Self.mSets.Key(I)
 		    Var Set As Beacon.MutableSpawnPointSet = Self.mSets.Value(Point)
 		    
-		    If Set <> Nil Then
+		    If (Set Is Nil) = False Then
 		      Point.RemoveSet(Set)
 		      Set.CopyFrom(Self.mTemplate)
 		    Else
-		      Set = New Beacon.MutableSpawnPointSet(Self.mTemplate)
+		      Set = New Beacon.MutableSpawnPointSet
+		      Set.CopyFrom(Self.mTemplate)
 		      Self.mSets.Value(Point) = Set
 		    End If
 		    Point.AddSet(Set, True)
