@@ -2348,7 +2348,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Var Clauses() As String
 		    Var Values As New Dictionary
 		    If SearchText <> "" Then
-		      Clauses.AddRow("LOWER(label) LIKE LOWER(?" + Str(NextPlaceholder) + ") OR LOWER(class_string) LIKE LOWER(?" + Str(NextPlaceholder) + ")")
+		      Clauses.AddRow("LOWER(label) LIKE LOWER(?" + Str(NextPlaceholder) + ") OR (alternate_label IS NOT NULL AND LOWER(alternate_label) LIKE LOWER(?" + Str(NextPlaceholder) + ")) OR LOWER(class_string) LIKE LOWER(?" + Str(NextPlaceholder) + ")")
 		      Values.Value(NextPlaceholder) = "%" + SearchText + "%"
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
