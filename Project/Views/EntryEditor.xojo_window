@@ -801,14 +801,10 @@ End
 		        Return
 		      End If
 		    End If
-		    Self.UpdateSelectionUI()
-		    Self.UpdateSimulation()
 		  Case Self.ColumnWeight
 		    If Self.mSelectedEngrams.HasKey(Engram.Path) Then
 		      Var Weight As Double = Abs(CDbl(Me.CellValueAt(Row, Column))) / 100
 		      Self.mSelectedEngrams.Value(Engram.Path) = New Beacon.SetEntryOption(Engram, Weight)
-		      Self.UpdateSelectionUI()
-		      Self.UpdateSimulation()
 		    End If
 		  Else
 		    Return
@@ -852,6 +848,14 @@ End
 		  
 		  Return True
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub BulkColumnChangeFinished(Column As Integer)
+		  #Pragma Unused Column
+		  
+		  Self.UpdateSelectionUI()
+		  Self.UpdateSimulation()
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SingleEntryCheck

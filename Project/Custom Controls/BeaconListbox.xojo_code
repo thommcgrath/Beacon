@@ -2,6 +2,32 @@
 Protected Class BeaconListbox
 Inherits Listbox
 	#tag Event
+		Sub CellAction(row As Integer, column As Integer)
+		  If Self.mCellActionCascading Then
+		    // Looks like CellCheckBoxValueAt does not trigger CellAction, but just in case
+		    Return
+		  End If
+		  
+		  Self.mCellActionCascading = True
+		  RaiseEvent BulkColumnChangeStarted(Column)
+		  RaiseEvent CellAction(Row, Column)
+		  
+		  If Self.CellTypeAt(Row, Column) = Listbox.CellTypes.CheckBox And (TargetMacOS And Keyboard.AsyncCommandKey) Or (Not TargetMacOS And Keyboard.AsyncControlKey) Then
+		    Var DesiredValue As Boolean = Self.CellCheckBoxValueAt(Row, Column)
+		    For Idx As Integer = Self.LastRowIndex DownTo 0
+		      If Idx <> Row And Self.CellCheckBoxValueAt(Idx, Column) <> DesiredValue Then
+		        Self.CellCheckBoxValueAt(Idx, Column) = DesiredValue
+		        RaiseEvent CellAction(Idx, Column)
+		      End If
+		    Next
+		  End If
+		  
+		  Self.mCellActionCascading = False
+		  RaiseEvent BulkColumnChangeFinished(Column)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Function CellBackgroundPaint(g As Graphics, row As Integer, column As Integer) As Boolean
 		  #Pragma Unused Column
 		  
@@ -467,6 +493,14 @@ Inherits Listbox
 
 
 	#tag Hook, Flags = &h0
+		Event BulkColumnChangeFinished(Column As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event BulkColumnChangeStarted(Column As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event CanCopy() As Boolean
 	#tag EndHook
 
@@ -480,6 +514,10 @@ Inherits Listbox
 
 	#tag Hook, Flags = &h0
 		Event CanPaste(Board As Clipboard) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event CellAction(row As Integer, column As Integer)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -541,6 +579,10 @@ Inherits Listbox
 
 	#tag Property, Flags = &h21
 		Private mBlockSelectionChangeCount As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCellActionCascading As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

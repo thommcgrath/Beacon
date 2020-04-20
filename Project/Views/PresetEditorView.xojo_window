@@ -1305,8 +1305,6 @@ End
 		    Return
 		  End If
 		  
-		  Var ChangeAll As Boolean = (Keyboard.CommandKey And TargetMacOS) Or (Keyboard.ControlKey And TargetWindows)
-		  
 		  Select Case Column
 		  Case Self.ColumnIncluded
 		    Var State As Checkbox.VisualStates = Me.CellCheckBoxStateAt(Row, Column)
@@ -1314,84 +1312,35 @@ End
 		      Return
 		    End If
 		    
+		    Var Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
 		    Var Maps() As Beacon.Map = Self.FilteredMaps
-		    If ChangeAll Then
-		      For I As Integer = Me.RowCount - 1 DownTo 0
-		        Var Entry As Beacon.PresetEntry = Me.RowTagAt(I)
-		        For Each Map As Beacon.Map In Maps
-		          If Entry.ValidForMap(Map) <> (State = Checkbox.VisualStates.Checked) Then
-		            Entry.ValidForMap(Map) = (State = Checkbox.VisualStates.Checked)
-		            Me.CellCheckBoxStateAt(I, Column) = State
-		            Self.Changed = True
-		          End If
-		        Next
-		      Next
-		    Else
-		      Var Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
-		      For Each Map As Beacon.Map In Maps
-		        If Entry.ValidForMap(Map) <> (State = Checkbox.VisualStates.Checked) Then
-		          Entry.ValidForMap(Map) = (State = Checkbox.VisualStates.Checked)
-		          Self.Changed = True
-		        End If
-		      Next
-		    End If
+		    For Each Map As Beacon.Map In Maps
+		      If Entry.ValidForMap(Map) <> (State = Checkbox.VisualStates.Checked) Then
+		        Entry.ValidForMap(Map) = (State = Checkbox.VisualStates.Checked)
+		        Self.Changed = True
+		      End If
+		    Next
 		    Return
 		  Case Self.ColumnQuantity
 		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
-		    
-		    If ChangeAll Then
-		      For I As Integer = Me.RowCount - 1 DownTo 0
-		        Var Entry As Beacon.PresetEntry = Me.RowTagAt(I)
-		        If Entry.RespectQuantityMultiplier <> Checked Then
-		          Entry.RespectQuantityMultiplier = Checked
-		          Me.CellCheckBoxValueAt(I, Column) = Checked
-		          Self.Changed = True
-		        End If
-		      Next
-		    Else
-		      Var Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
-		      If Entry.RespectQuantityMultiplier <> Checked Then
-		        Entry.RespectQuantityMultiplier = Checked
-		        Self.Changed = True
-		      End If
+		    Var Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
+		    If Entry.RespectQuantityMultiplier <> Checked Then
+		      Entry.RespectQuantityMultiplier = Checked
+		      Self.Changed = True
 		    End If
 		  Case Self.ColumnQuality
 		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
-		    
-		    If ChangeAll Then
-		      For I As Integer = Me.RowCount - 1 DownTo 0
-		        Var Entry As Beacon.PresetEntry = Me.RowTagAt(I)
-		        If Entry.RespectQualityModifier <> Checked Then
-		          Entry.RespectQualityModifier = Checked
-		          Me.CellCheckBoxValueAt(I, Column) = Checked
-		          Self.Changed = True
-		        End If
-		      Next
-		    Else
-		      Var Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
-		      If Entry.RespectQualityModifier <> Checked Then
-		        Entry.RespectQualityModifier = Checked
-		        Self.Changed = True
-		      End If
+		    Var Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
+		    If Entry.RespectQualityModifier <> Checked Then
+		      Entry.RespectQualityModifier = Checked
+		      Self.Changed = True
 		    End If
 		  Case Self.ColumnBlueprint
 		    Var Checked As Boolean = Me.CellCheckBoxValueAt(Row, Column)
-		    
-		    If ChangeAll Then
-		      For I As Integer = Me.RowCount - 1 DownTo 0
-		        Var Entry As Beacon.PresetEntry = Me.RowTagAt(I)
-		        If Entry.RespectBlueprintMultiplier <> Checked Then
-		          Entry.RespectBlueprintMultiplier = Checked
-		          Me.CellCheckBoxValueAt(I, Column) = Checked
-		          Self.Changed = True
-		        End If
-		      Next
-		    Else
-		      Var Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
-		      If Entry.RespectBlueprintMultiplier <> Checked Then
-		        Entry.RespectBlueprintMultiplier = Checked
-		        Self.Changed = True
-		      End If
+		    Var Entry As Beacon.PresetEntry = Me.RowTagAt(Row)
+		    If Entry.RespectBlueprintMultiplier <> Checked Then
+		      Entry.RespectBlueprintMultiplier = Checked
+		      Self.Changed = True
 		    End If
 		  End Select
 		End Sub
