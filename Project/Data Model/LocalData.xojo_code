@@ -558,16 +558,21 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetConfigHelp(ConfigName As String, ByRef Title As String, ByRef Body As String, ByRef DetailURL As String) As Boolean
-		  Var Results As RowSet = Self.SQLSelect("SELECT title, body, detail_url FROM config_help WHERE config_name = ?1;", ConfigName.Lowercase)
-		  If Results.RowCount <> 1 Then
+		  Try
+		    Var Results As RowSet
+		    Results = Self.SQLSelect("SELECT title, body, detail_url FROM config_help WHERE config_name = ?1;", ConfigName.Lowercase)
+		    If Results.RowCount <> 1 Then
+		      Return False
+		    End If
+		    
+		    Title = Results.Column("title").StringValue
+		    Body = Results.Column("body").StringValue
+		    DetailURL = If(Results.Column("detail_url").Value <> Nil, Results.Column("detail_url").StringValue, "")
+		    
+		    Return True
+		  Catch Err As RuntimeException
 		    Return False
-		  End If
-		  
-		  Title = Results.Column("title").StringValue
-		  Body = Results.Column("body").StringValue
-		  DetailURL = If(Results.Column("detail_url").Value <> Nil, Results.Column("detail_url").StringValue, "")
-		  
-		  Return True
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -2299,13 +2304,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Var Notify As Boolean = Results.RowCount = 0 Or Deleted Or Read
-		  Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification_id, message, secondary_message, moment, read, action_url, user_data, deleted) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.SQLDateTimeWithOffset, If(Notification.Read Or Notification.Severity = Beacon.UserNotification.Severities.Elevated, 1, 0), Notification.ActionURL, If(Notification.UserData <> Nil, Beacon.GenerateJSON(Notification.UserData, False), "{}"))
-		  Self.Commit
-		  
-		  If Notify Then
-		    NotificationKit.Post(Self.Notification_NewAppNotification, Notification)
-		  End If
+		  Try
+		    Var Notify As Boolean = Results.RowCount = 0 Or Deleted Or Read
+		    Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification_id, message, secondary_message, moment, read, action_url, user_data, deleted) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.SQLDateTimeWithOffset, If(Notification.Read Or Notification.Severity = Beacon.UserNotification.Severities.Elevated, 1, 0), Notification.ActionURL, If(Notification.UserData <> Nil, Beacon.GenerateJSON(Notification.UserData, False), "{}"))
+		    Self.Commit
+		    
+		    If Notify Then
+		      NotificationKit.Post(Self.Notification_NewAppNotification, Notification)
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -2488,7 +2496,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    
 		    Sources = Self.RowSetToLootSource(Results)
-		  Catch Err As UnsupportedOperationException
+		  Catch Err As RuntimeException
 		    
 		  End Try
 		  
