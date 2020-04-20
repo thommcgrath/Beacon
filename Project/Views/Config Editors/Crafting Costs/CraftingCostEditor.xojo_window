@@ -190,7 +190,9 @@ End
 		  End If
 		  
 		  For Each Engram As Beacon.Engram In NewEngrams
-		    Self.mTarget.Append(Engram, 1, False)
+		    If (Engram Is Nil) = False Then
+		      Self.mTarget.Append(Engram, 1, False)
+		    End If
 		  Next
 		  
 		  Self.UpdateList()
