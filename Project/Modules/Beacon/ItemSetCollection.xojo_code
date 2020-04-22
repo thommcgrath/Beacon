@@ -96,21 +96,25 @@ Implements Beacon.Countable
 		Shared Function FromSaveData(SaveData As Variant) As Beacon.ItemSetCollection
 		  Var Sets As New Beacon.ItemSetCollection
 		  
-		  If IsNull(SaveData) Or SaveData.IsArray = False Or SaveData.Type <> Variant.TypeObject Then
+		  If IsNull(SaveData) Or SaveData.IsArray = False Or SaveData.ArrayElementType <> Variant.TypeObject Then
 		    Return Sets
 		  End If
 		  
-		  Var Dicts() As Dictionary
+		  Var Dicts() As Variant
 		  Try
 		    Dicts = SaveData
 		  Catch Err As RuntimeException
 		    Return Sets
 		  End Try
 		  
-		  For Each Dict As Dictionary In Dicts
+		  For Each Dict As Variant In Dicts
+		    If IsNull(Dict) Or Dict.IsArray = True Or Dict.Type <> Variant.TypeObject Or (Dict.ObjectValue IsA Dictionary) = False Then
+		      Continue
+		    End If
+		    
 		    Var Set As Beacon.ItemSet
 		    Try
-		      Set = Beacon.ItemSet.ImportFromBeacon(Dict)
+		      Set = Beacon.ItemSet.ImportFromBeacon(Dictionary(Dict))
 		      Call Sets.Append(Set)
 		    Catch Err As RuntimeException
 		      Continue
