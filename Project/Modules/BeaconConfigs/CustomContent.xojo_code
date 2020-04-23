@@ -135,32 +135,6 @@ Inherits Beacon.ConfigGroup
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function FilterIniText(Input As String) As String
-		  Var EOL As String = Encodings.ASCII.Chr(10)
-		  Input = Input.ReplaceLineEndings(EOL)
-		  
-		  Var InsideBeaconSection As Boolean
-		  Var Lines() As String = Input.Split(EOL)
-		  Var FilteredLines() As String
-		  For I As Integer = 0 To Lines.LastRowIndex
-		    Var Line As String = Lines(I).Trim
-		    If Line = "[Beacon]" Then
-		      InsideBeaconSection = True
-		    ElseIf Line.BeginsWith("[") And Line.EndsWith("]") Then
-		      InsideBeaconSection = False
-		    End If
-		    
-		    If Not InsideBeaconSection Then
-		      FilteredLines.AddRow(Line)
-		    End If
-		  Next
-		  
-		  Input = FilteredLines.Join(EOL)
-		  Return Input.Trim
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function GameIniContent() As String
 		  Return Self.mGameIniContent

@@ -357,6 +357,35 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function FilterExcessSections(Input As String) As String
+		  Var EOL As String = Encodings.ASCII.Chr(10)
+		  Input = Input.ReplaceLineEndings(EOL)
+		  
+		  Var IgnoreLines As Boolean
+		  Var Lines() As String = Input.Split(EOL)
+		  Var FilteredLines() As String
+		  For I As Integer = 0 To Lines.LastRowIndex
+		    Var Line As String = Lines(I).Trim
+		    If Line.BeginsWith("[") And Line.EndsWith("]") Then
+		      Select Case Line
+		      Case "[Beacon]", "[/Game/PrimalEarth/CoreBlueprints/TestGameMode.TestGameMode_C]", "[/Script/Engine.GameSession]", "[/Script/ShooterGame.ShooterGameUserSettings]", "[ScalabilityGroups]"
+		        IgnoreLines = True
+		      Else
+		        IgnoreLines = False
+		      End Select
+		    End If
+		    
+		    If Not IgnoreLines Then
+		      FilteredLines.AddRow(Line)
+		    End If
+		  Next
+		  
+		  Input = FilteredLines.Join(EOL)
+		  Return Input.Trim
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function FindUniqueLabel(DesiredLabel As String, Siblings() As String) As String
 		  Var Counter As Integer = 1

@@ -790,6 +790,9 @@ End
 		  Self.StatusList.RowCount = Data.Count
 		  
 		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastRowIndex
+		    Data(I).GameIniContent = Beacon.FilterExcessSections(Data(I).GameIniContent)
+		    Data(I).GameUserSettingsIniContent = Beacon.FilterExcessSections(Data(I).GameUserSettingsIniContent)
+		    
 		    Var Importer As New Beacon.ImportThread(Data(I))
 		    Importer.Start
 		    Self.mImporters(I) = Importer
