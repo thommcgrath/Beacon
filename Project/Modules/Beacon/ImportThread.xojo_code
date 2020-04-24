@@ -29,7 +29,7 @@ Inherits Beacon.Thread
 		      Return
 		    End If
 		    
-		    If Line.Length = 0 Or Line.Left(1) = ";" Then
+		    If Line.IsEmpty Or Line.Left(1) = ";" Then
 		      Self.mCharactersProcessed = Self.mCharactersProcessed + Line.Length + LineEnding.Length
 		      Var Progress As Integer = Round(Self.Progress * 100)
 		      Self.Status = "Parsing config files… (" + Progress.ToString + "%)"
@@ -147,6 +147,17 @@ Inherits Beacon.Thread
 		        Catch Err As TypeMismatchException
 		        End Try
 		      Next
+		    End If
+		    
+		    If ParsedData.HasKey("Message") Then
+		      Var Duration As Integer = 30
+		      If ParsedData.HasKey("Duration") Then
+		        Duration = Round(ParsedData.DoubleValue("Duration", 30, True))
+		      End If
+		      
+		      Var Message As String = BeaconConfigs.Metadata.ArkMLToRTF(ParsedData.StringValue("Message", "", True))
+		      Profile.MessageOfTheDay = Message
+		      Profile.MessageDuration = Duration
 		    End If
 		    
 		    Document.Add(Profile)

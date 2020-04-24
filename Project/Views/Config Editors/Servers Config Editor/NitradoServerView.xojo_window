@@ -218,7 +218,7 @@ Begin ServerViewContainer NitradoServerView
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   142
+      Left            =   168
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -242,7 +242,7 @@ Begin ServerViewContainer NitradoServerView
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   438
+      Width           =   412
    End
    Begin UITweaks.ResizedLabel ServerNameLabel
       AutoDeactivate  =   True
@@ -277,7 +277,184 @@ Begin ServerViewContainer NitradoServerView
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   110
+      Width           =   136
+   End
+   Begin ArkMLEditor MessageOfTheDayArea
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackgroundColor=   False
+      Height          =   145
+      InitialParent   =   ""
+      Left            =   168
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   158
+      Transparent     =   True
+      Visible         =   True
+      Width           =   412
+   End
+   Begin UITweaks.ResizedLabel MessageOfTheDayLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextAlignment   =   "3"
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   158
+      Transparent     =   False
+      Underline       =   False
+      Value           =   "Message of the Day:"
+      Visible         =   True
+      Width           =   136
+   End
+   Begin UITweaks.ResizedLabel MessageDurationLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextAlignment   =   "3"
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   315
+      Transparent     =   False
+      Underline       =   False
+      Value           =   "Message Duration:"
+      Visible         =   True
+      Width           =   136
+   End
+   Begin RangeField MessageDurationField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF00
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   168
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextAlignment   =   "2"
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   315
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Value           =   ""
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedLabel MessageDurationSuffixLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   260
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextAlignment   =   "0"
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   315
+      Transparent     =   False
+      Underline       =   False
+      Value           =   "Seconds"
+      Visible         =   True
+      Width           =   320
    End
 End
 #tag EndWindow
@@ -305,6 +482,8 @@ End
 		  Self.Controls.Caption = Self.mProfile.Name
 		  
 		  Self.ServerNameField.Value = Self.mProfile.Name
+		  Self.MessageOfTheDayArea.RTFData = Self.mProfile.MessageOfTheDay
+		  Self.MessageDurationField.DoubleValue = Self.mProfile.MessageDuration
 		End Sub
 	#tag EndEvent
 
@@ -540,6 +719,30 @@ End
 		  Self.mProfile.Name = Me.Value
 		  Self.Controls.Caption = Me.Value
 		  Self.Changed = Self.mProfile.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MessageOfTheDayArea
+	#tag Event
+		Sub TextChange()
+		  Self.mProfile.MessageOfTheDay = Me.RTFData
+		  Self.Changed = Self.mProfile.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MessageDurationField
+	#tag Event
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 0
+		  MaxValue = 86400
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub TextChange()
+		  If IsNumeric(Me.Value) Then
+		    Self.mProfile.MessageDuration = Me.DoubleValue
+		    Self.Changed = Self.mProfile.Modified
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

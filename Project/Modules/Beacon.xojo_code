@@ -177,6 +177,22 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function CoerceToString(ByRef Value As Variant, DesiredTypeName As String) As Boolean
+		  #Pragma Unused DesiredTypeName
+		  
+		  #Pragma BreakOnExceptions False
+		  Try
+		    Var StringValue As String = Value
+		    Value = StringValue
+		    Return True
+		  Catch Err As TypeMismatchException
+		    Return False
+		  End Try
+		  #Pragma BreakOnExceptions Default
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub ComputeDifficultySettings(BaseDifficulty As Double, DesiredDinoLevel As Integer, ByRef DifficultyValue As Double, ByRef DifficultyOffset As Double, ByRef OverrideOfficialDifficulty As Double)
 		  OverrideOfficialDifficulty = Max(Ceil(DesiredDinoLevel / 30), BaseDifficulty)
@@ -1285,6 +1301,12 @@ Protected Module Beacon
 		  
 		  Order.SortWith(Qualities)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function StringValue(Extends Dict As Dictionary, Key As Variant, Default As String, AllowArray As Boolean = False) As String
+		  Return GetValueAsType(Dict, Key, "String", Default, AllowArray, AddressOf CoerceToString)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

@@ -32,6 +32,11 @@ Protected Class ServerProfile
 		    Self.mExternalAccountUUID = Dict.Value("External Account").StringValue
 		  End If
 		  
+		  If Dict.HasKey("Message of the Day") Then
+		    Self.mMessageOfTheDay = Dict.Value("Message of the Day").StringValue
+		    Self.mMessageDuration = Dict.Lookup("Message Duration", 30).IntegerValue
+		  End If
+		  
 		  RaiseEvent ReadFromDictionary(Dict)
 		  
 		  Self.Modified = False
@@ -161,6 +166,10 @@ Protected Class ServerProfile
 		  If Self.mExternalAccountUUID <> Nil Then
 		    Dict.Value("External Account") = Self.mExternalAccountUUID.StringValue
 		  End If
+		  If Self.mMessageOfTheDay.IsEmpty = False Then
+		    Dict.Value("Message of the Day") = Self.mMessageOfTheDay
+		    Dict.Value("Message Duration") = Self.mMessageDuration
+		  End If
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -230,12 +239,54 @@ Protected Class ServerProfile
 		Private mEnabled As Boolean
 	#tag EndProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mMessageDuration
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mMessageDuration <> Value Then
+			    Self.mMessageDuration = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		MessageDuration As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mMessageOfTheDay
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mMessageOfTheDay.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			    Self.mMessageOfTheDay = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		MessageOfTheDay As String
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mExternalAccountUUID As v4UUID
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mMask As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMessageDuration As Integer = 30
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMessageOfTheDay As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

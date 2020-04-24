@@ -33,8 +33,19 @@ Private Class ConfigParser
 		  End If
 		  
 		  If InQuotes Then
+		    Var LastChar As String
+		    If Self.Buffer.LastRowIndex > -1 Then
+		      LastChar = Self.Buffer(Self.Buffer.LastRowIndex)
+		    End If
+		    
 		    If Char = """" Then
-		      InQuotes = False
+		      If LastChar = "\" Then
+		        Self.Buffer(Self.Buffer.LastRowIndex) = Char
+		      Else
+		        InQuotes = False
+		      End If
+		    ElseIf Char = "n" And LastChar = "\" Then
+		      Self.Buffer(Self.Buffer.LastRowIndex) = EndOfLine
 		    Else
 		      Self.Buffer.AddRow(Char)
 		    End If

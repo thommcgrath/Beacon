@@ -15,9 +15,6 @@ Inherits Beacon.ServerProfile
 		      Self.mGameUserSettingsIniFile = File
 		    End If
 		  End If
-		  If Dict.HasKey("Map") Then
-		    Self.mMask = Dict.Value("Map").UInt64Value
-		  End If
 		End Sub
 	#tag EndEvent
 
@@ -29,7 +26,6 @@ Inherits Beacon.ServerProfile
 		  If Self.mGameUserSettingsIniFile <> Nil Then
 		    Dict.Value("GameUserSettings.ini") = Self.mGameUserSettingsIniFile.SaveInfo
 		  End If
-		  Dict.Value("Map") = Self.mMask
 		  Dict.Value("Provider") = "Local"
 		End Sub
 	#tag EndEvent
@@ -51,21 +47,6 @@ Inherits Beacon.ServerProfile
 		Function LinkPrefix() As String
 		  Return "File"
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Mask() As UInt64
-		  Return Self.mMask
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Mask(Assigns Value As UInt64)
-		  If Self.mMask <> Value Then
-		    Self.mMask = Value
-		    Self.Modified = True
-		  End If
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -137,12 +118,24 @@ Inherits Beacon.ServerProfile
 		Private mGameUserSettingsIniFile As BookmarkedFolderItem
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mMask As UInt64
-	#tag EndProperty
-
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="MessageOfTheDay"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MessageDuration"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
