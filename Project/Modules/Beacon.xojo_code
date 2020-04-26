@@ -929,6 +929,12 @@ Protected Module Beacon
 		Protected Function ParseJSON(Source As String) As Variant
 		  Const UseMBS = False
 		  
+		  If Source.Encoding Is Nil Then
+		    Source = Source.GuessEncoding
+		  Else If Source.Encoding <> Encodings.UTF8 Then
+		    Source = Source.ConvertEncoding(Encodings.UTF8)
+		  End If
+		  
 		  #if UseMBS
 		    Var Temp As New JSONMBS(Source)
 		    Return Temp.Convert
