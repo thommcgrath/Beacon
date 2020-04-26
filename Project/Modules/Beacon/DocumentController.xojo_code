@@ -480,6 +480,10 @@ Protected Class DocumentController
 	#tag EndHook
 
 
+	#tag Property, Flags = &h0
+		AutosaveURL As Beacon.DocumentURL
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mActiveThread As Thread
 	#tag EndProperty
