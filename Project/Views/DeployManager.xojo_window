@@ -230,7 +230,7 @@ Begin BeaconAutopositionWindow DeployManager
          VisualState     =   "0"
          Width           =   459
       End
-      Begin PushButton OptionsActionButton
+      Begin UITweaks.ResizedPushButton OptionsActionButton
          AllowAutoDeactivate=   True
          Bold            =   False
          Cancel          =   False
