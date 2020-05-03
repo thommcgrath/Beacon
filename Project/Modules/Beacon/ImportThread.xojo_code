@@ -21,6 +21,7 @@ Inherits Beacon.Thread
 		  Self.mCharactersProcessed = 0
 		  Self.mCharactersTotal = Content.Length
 		  
+		  Var MessageOfTheDayMode As Boolean = False
 		  Var ParsedData As New Dictionary
 		  Var Lines() As String = Content.Split(LineEnding)
 		  Self.mCharactersTotal = Self.mCharactersTotal + ((Lines.LastRowIndex + 1) * LineEnding.Length) // To account for the trailing line ending characters we're adding
@@ -29,11 +30,44 @@ Inherits Beacon.Thread
 		      Return
 		    End If
 		    
+		    Var CharacterCount As Integer = Line.Length + LineEnding.Length
+		    
+		    If MessageOfTheDayMode Then
+		      If Line.BeginsWith("[") And Line.EndsWith("]") Then
+		        MessageOfTheDayMode = False
+		      Else
+		        Try
+		          If Line.BeginsWith("Duration=") Then
+		            Var Duration As Integer = Integer.FromString(Line.Middle(9))
+		            ParsedData.Value("Duration") = Duration
+		          Else
+		            Var Message As String
+		            If Line.BeginsWith("Message=") Then
+		              Line = Line.Middle(8)
+		            Else
+		              Message = ParsedData.Lookup("Message", "")
+		            End If
+		            If Message.IsEmpty Then
+		              Message = Line
+		            Else
+		              Message = Message + EndOfLine + Line
+		            End If
+		            ParsedData.Value("Message") = Message
+		          End If
+		        Catch Err As RuntimeException
+		        End Try
+		        
+		        Self.AddCharactersParsed(CharacterCount)
+		        Continue
+		      End If
+		    End If
+		    
 		    If Line.IsEmpty Or Line.Left(1) = ";" Then
-		      Self.mCharactersProcessed = Self.mCharactersProcessed + Line.Length + LineEnding.Length
-		      Var Progress As Integer = Round(Self.Progress * 100)
-		      Self.Status = "Parsing config files… (" + Progress.ToString + "%)"
-		      Self.Invalidate
+		      Self.AddCharactersParsed(CharacterCount)
+		      Continue
+		    ElseIf Line = "[MessageOfTheDay]" Then
+		      MessageOfTheDayMode = True
+		      Self.AddCharactersParsed(CharacterCount)
 		      Continue
 		    End If
 		    
@@ -91,6 +125,15 @@ Inherits Beacon.Thread
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Sub AddCharactersParsed(CharacterCount As Integer)
+		  Self.mCharactersProcessed = Self.mCharactersProcessed + CharacterCount
+		  Var Progress As Integer = Round(Self.Progress * 100)
+		  Self.Status = "Parsing config files… (" + Progress.ToString + "%)"
+		  Self.Invalidate
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function BuildDocument(ParsedData As Dictionary, CommandLineOptions As Dictionary) As Beacon.Document
@@ -155,7 +198,7 @@ Inherits Beacon.Thread
 		        Duration = Round(ParsedData.DoubleValue("Duration", 30, True))
 		      End If
 		      
-		      Var Message As String = BeaconConfigs.Metadata.ArkMLToRTF(ParsedData.StringValue("Message", "", True))
+		      Var Message As String = BeaconConfigs.Metadata.ArkMLToRTF(ParsedData.StringValue("Message", "", True).Trim())
 		      Profile.MessageOfTheDay = Message
 		      Profile.MessageDuration = Duration
 		    End If
