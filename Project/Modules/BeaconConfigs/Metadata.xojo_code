@@ -120,7 +120,7 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  ArkData = ArkData.ReplaceAll("\""", """")
-		  ArkData = ArkData.ReplaceAll("\n", EndOfLine)
+		  ArkData = ArkData.ReplaceAll("\n", EndOfLine.UNIX)
 		  
 		  Var Offset As Integer = 0
 		  Var Styles As New StyledText
@@ -157,6 +157,10 @@ Implements ObservationKit.Observable
 		      Var GreenAmount As Integer = Round(255 * ColorParts(1).Trim.ToDouble)
 		      Var BlueAmount As Integer = Round(255 * ColorParts(2).Trim.ToDouble)
 		      Var AlphaAmount As Integer = 255 - Round(255 * ColorParts(3).Trim.ToDouble)
+		      
+		      Var Space As New StyleRun(" ")
+		      Space.TextColor = &CFFFFFF
+		      Styles.AddStyleRun(Space)
 		      
 		      Var Run As New StyleRun(Chunk)
 		      Run.TextColor = Color.RGB(RedAmount, GreenAmount, BlueAmount, AlphaAmount)
@@ -274,7 +278,7 @@ Implements ObservationKit.Observable
 		      Var BlueAmount As Double = Run.TextColor.Blue / 255
 		      Var AlphaAmount As Double = 1.0 - (Run.TextColor.Alpha / 255)
 		      
-		      Body = "<RichColor Color='" + RedAmount.PrettyText(2) + "," + BlueAmount.PrettyText(2) + "," + GreenAmount.PrettyText(2) + "," + AlphaAmount.PrettyText(2) + "'>" + Body + "</>"
+		      Body = "<RichColor Color=""" + RedAmount.PrettyText(2) + "," + GreenAmount.PrettyText(2) + "," + BlueAmount.PrettyText(2) + "," + AlphaAmount.PrettyText(2) + """>" + Body + "</>"
 		    End If
 		    
 		    Parts.AddRow(Body)
@@ -283,6 +287,7 @@ Implements ObservationKit.Observable
 		  Var Message As String = Parts.Join("")
 		  Message = Message.ReplaceLineEndings("\n")
 		  Message = Message.ReplaceAll("""", "\""")
+		  Message = Message.ReplaceAll(" <RichColor", "<RichColor") // Because the <RichColor> tag ends up being treated as a space.
 		  Return """" + Message + """"
 		End Function
 	#tag EndMethod
