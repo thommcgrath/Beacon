@@ -296,6 +296,22 @@ Inherits Beacon.ServerProfile
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="MessageDuration"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MessageOfTheDay"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="IsConsole"
 			Visible=false
 			Group="Behavior"

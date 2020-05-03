@@ -480,6 +480,7 @@ Begin ServerViewContainer LocalServerView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      RTFData         =   ""
       Scope           =   2
       TabIndex        =   12
       TabPanelIndex   =   0
@@ -569,6 +570,7 @@ Begin ServerViewContainer LocalServerView
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0

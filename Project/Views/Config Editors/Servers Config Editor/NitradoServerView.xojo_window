@@ -298,6 +298,7 @@ Begin ServerViewContainer NitradoServerView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      RTFData         =   ""
       Scope           =   2
       TabIndex        =   7
       TabPanelIndex   =   0
@@ -387,6 +388,7 @@ Begin ServerViewContainer NitradoServerView
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0

@@ -120,6 +120,8 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h1
 		Protected Sub Log(Message As String, ReplaceLast As Boolean = False)
+		  App.Log(Message)
+		  
 		  If Self.mLogMessages.Count > 0 And Self.mLogMessages(Self.mLogMessages.LastRowIndex) = Message Then
 		    // Don't duplicate the logs
 		    Return

@@ -823,6 +823,7 @@ Begin ServerViewContainer FTPServerView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      RTFData         =   ""
       Scope           =   2
       TabIndex        =   21
       TabPanelIndex   =   0
@@ -912,6 +913,7 @@ Begin ServerViewContainer FTPServerView
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
+      DoubleValue     =   0.0
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0

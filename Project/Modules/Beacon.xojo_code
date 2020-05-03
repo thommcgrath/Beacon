@@ -274,7 +274,7 @@ Protected Module Beacon
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    Columns(0) = """" + Blueprint.Path + """"
 		    Columns(1) = """" + Blueprint.Label + """"
-		    Columns(2) = Blueprint.Availability.ToString(Locale.Raw)
+		    Columns(2) = Blueprint.Availability.ToString(Locale.Raw, "#")
 		    Columns(3) = """" + Blueprint.Tags.Join(",") + """"
 		    Columns(4) = """" + Blueprint.Category + """"
 		    Lines.AddRow(Columns.Join(","))
@@ -931,7 +931,7 @@ Protected Module Beacon
 		  
 		  If Source.Encoding Is Nil Then
 		    Source = Source.GuessEncoding
-		  Else If Source.Encoding <> Encodings.UTF8 Then
+		  ElseIf Source.Encoding <> Encodings.UTF8 Then
 		    Source = Source.ConvertEncoding(Encodings.UTF8)
 		  End If
 		  

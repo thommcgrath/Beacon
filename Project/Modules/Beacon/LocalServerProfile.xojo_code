@@ -126,7 +126,7 @@ Inherits Beacon.ServerProfile
 			Group="Behavior"
 			InitialValue=""
 			Type="String"
-			EditorType=""
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MessageDuration"
