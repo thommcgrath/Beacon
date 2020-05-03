@@ -85,6 +85,7 @@ Begin ContainerControl ArkMLEditor
       Borders         =   0
       BorderTop       =   False
       Caption         =   ""
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   40
       Index           =   -2147483648
@@ -104,6 +105,7 @@ Begin ContainerControl ArkMLEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   1
+      Transparent     =   False
       Visible         =   True
       Width           =   564
    End
@@ -113,6 +115,7 @@ Begin ContainerControl ArkMLEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -140,6 +143,7 @@ Begin ContainerControl ArkMLEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -167,6 +171,7 @@ Begin ContainerControl ArkMLEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   298
       Index           =   -2147483648
@@ -194,6 +199,7 @@ Begin ContainerControl ArkMLEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   298
       Index           =   -2147483648
@@ -221,6 +227,7 @@ Begin ContainerControl ArkMLEditor
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   1
       Index           =   -2147483648
@@ -323,7 +330,12 @@ End
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.Field.StyledText.RTFData = Value
+			  If Not Value.IsEmpty Then
+			    Try
+			      Self.Field.StyledText.RTFData = Value
+			    Catch Err As RuntimeException
+			    End Try
+			  End If
 			End Set
 		#tag EndSetter
 		RTFData As String
