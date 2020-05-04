@@ -1603,51 +1603,75 @@ Begin Window UserWelcomeWindow
    End
    Begin HTTPClientSocket ConfirmCodeCreationSocket
       AllowCertificateValidation=   False
+      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
+      MinTLSVersion   =   ""
+      RequireOCSPStapling=   False
       Scope           =   2
       TabPanelIndex   =   0
+      UserAgent       =   ""
    End
    Begin HTTPClientSocket CheckForConfirmationSocket
       AllowCertificateValidation=   False
+      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
+      MinTLSVersion   =   ""
+      RequireOCSPStapling=   False
       Scope           =   2
       TabPanelIndex   =   0
+      UserAgent       =   ""
    End
    Begin HTTPClientSocket VerifyConfirmationCodeSocket
       AllowCertificateValidation=   False
+      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
+      MinTLSVersion   =   ""
+      RequireOCSPStapling=   False
       Scope           =   2
       TabPanelIndex   =   0
+      UserAgent       =   ""
    End
    Begin HTTPClientSocket IdentitySuggestionSocket
       AllowCertificateValidation=   False
+      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
+      MinTLSVersion   =   ""
+      RequireOCSPStapling=   False
       Scope           =   2
       TabPanelIndex   =   0
+      UserAgent       =   ""
    End
    Begin HTTPClientSocket SubmitIdentitySocket
       AllowCertificateValidation=   False
+      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
+      MinTLSVersion   =   ""
+      RequireOCSPStapling=   False
       Scope           =   2
       TabPanelIndex   =   0
+      UserAgent       =   ""
    End
    Begin HTTPClientSocket LoginSocket
       AllowCertificateValidation=   False
+      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
+      MinTLSVersion   =   ""
+      RequireOCSPStapling=   False
       Scope           =   2
       TabPanelIndex   =   0
+      UserAgent       =   ""
    End
 End
 #tag EndWindow

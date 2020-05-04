@@ -435,11 +435,15 @@ Begin BeaconWindow UpdateWindow
    End
    Begin HTTPClientSocket Downloader
       AllowCertificateValidation=   False
+      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
+      MinTLSVersion   =   ""
+      RequireOCSPStapling=   False
       Scope           =   2
       TabPanelIndex   =   0
+      UserAgent       =   ""
    End
 End
 #tag EndWindow

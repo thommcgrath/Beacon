@@ -114,11 +114,15 @@ Begin LibrarySubview LibraryPaneSearch
    End
    Begin HTTPClientSocket SearchSocket
       AllowCertificateValidation=   False
+      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
+      MinTLSVersion   =   ""
+      RequireOCSPStapling=   False
       Scope           =   2
       TabPanelIndex   =   0
+      UserAgent       =   ""
    End
    Begin ControlCanvas Area
       AcceptFocus     =   False

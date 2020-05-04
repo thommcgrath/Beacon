@@ -85,6 +85,44 @@ Inherits HTTPClientSocket
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="MinTLSVersion"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="TLSVersions"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - v1_0"
+				"1 - v1_1"
+				"2 - v1_2"
+				"3 - v1_3"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RequireOCSPStapling"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FollowRedirects"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="UserAgent"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="AllowCertificateValidation"
 			Visible=false
 			Group="Behavior"
