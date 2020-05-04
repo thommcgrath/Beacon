@@ -198,6 +198,11 @@ Inherits Beacon.ConfigGroup
 		Sub GameUserSettingsIniContent(SupportedConfigs As Dictionary = Nil, Assigns Value As String)
 		  If SupportedConfigs <> Nil Then
 		    Var ConfigValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ServerSettingsHeader, Value, SupportedConfigs, Nil)
+		    For Idx As Integer = ConfigValues.LastRowIndex DownTo 0
+		      If ConfigValues(Idx).Header = "MessageOfTheDay" Then
+		        ConfigValues.Remove(Idx)
+		      End If
+		    Next
 		    
 		    Var ProtectedKeys As New Dictionary
 		    ProtectedKeys.Value("ServerSettings.ServerAdminPassword") = True
