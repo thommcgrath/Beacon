@@ -1199,7 +1199,7 @@ Implements NotificationKit.Receiver
 	#tag Constant, Name = MBSKey, Type = String, Dynamic = False, Default = \"Nice try", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = MBSSerial, Type = String, Dynamic = False, Default = \"igLo2v6Andxzy5UOBxfUuF3JAAAAkXP59QBmsVJrdqhRby3PQeurS8kiFaT7TBKDAuo+U8lt6IEYTA1ZM7pUwZRwCuxjd84z6V14ZLEuqhMkQ9UaMAmnFW8g1Ut9VGDB+fHsKI95KjqRWxtU4trq23mU5au20C33V0Njc/1rensdAKhIWrhwQXCecTkhyreqbfD1e99nnuxe8y39zigCoaN3GnpP0sOUeVNm1fy/ntDubC3c9A3PyBJs", Scope = Private
+	#tag Constant, Name = MBSSerial, Type = String, Dynamic = False, Default = \"igL6VgUANZR2PbRfpilbjMggAAAAkeHTGKoujFp8BzbQHvS9z3P1tvugc7XoSFNQuy2UtkMEx+QQtuAmbGt3pA7ZjkpciNSh7F24+WyKXX8l473vKLp/FBuvj2BPxzev2RAs3D83WWMnZ1TAtTt2+jFuuMhHJiglcsjZq/0u8qupohz44Z0NsihDuN6Zgd2Zv+BBc13hMy10+tpGZP/5wXNuMewOGzvf13VrJVC7Qrw/AV95eRRFWA3q", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_AppearanceChanged, Type = Text, Dynamic = False, Default = \"Appearance Changed", Scope = Public
