@@ -57,7 +57,7 @@ Protected Class OAuth2Client
 	#tag Method, Flags = &h21
 		Private Sub CheckStatus()
 		  If Self.mCheckSocket = Nil Then
-		    Self.mCheckSocket = New URLConnection
+		    Self.mCheckSocket = New HTTPClientSocket
 		    AddHandler mCheckSocket.Error, WeakAddressOf mCheckSocket_Error
 		    AddHandler mCheckSocket.ContentReceived, WeakAddressOf mCheckSocket_ContentReceived
 		  End If
@@ -131,7 +131,7 @@ Protected Class OAuth2Client
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mCheckSocket_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
+		Private Sub mCheckSocket_ContentReceived(Sender As HTTPClientSocket, URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  
@@ -172,7 +172,7 @@ Protected Class OAuth2Client
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mCheckSocket_Error(Sender As URLConnection, Err As RuntimeException)
+		Private Sub mCheckSocket_Error(Sender As HTTPClientSocket, Err As RuntimeException)
 		  #Pragma Unused Sender
 		  #Pragma Unused Err
 		  
@@ -323,7 +323,7 @@ Protected Class OAuth2Client
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCheckSocket As URLConnection
+		Private mCheckSocket As HTTPClientSocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

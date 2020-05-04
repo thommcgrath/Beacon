@@ -1,8 +1,8 @@
 #tag Class
 Protected Class SynchronousHTTPSocket
-Inherits URLConnection
+Inherits HTTPClientSocket
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
 		  Self.mLastContent = Content
 		  Self.mLastHTTPStatus = HTTPStatus
 		  Self.mLastException = Nil
@@ -15,7 +15,7 @@ Inherits URLConnection
 	#tag EndEvent
 
 	#tag Event
-		Sub Error(e As RuntimeException)
+		Sub Error(E As RuntimeException)
 		  Self.mLastContent = Nil
 		  Self.mLastHTTPStatus = 0
 		  Self.mLastException = e

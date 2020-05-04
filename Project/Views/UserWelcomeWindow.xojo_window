@@ -1601,7 +1601,7 @@ Begin Window UserWelcomeWindow
       Visible         =   True
       Width           =   216
    End
-   Begin URLConnection ConfirmCodeCreationSocket
+   Begin HTTPClientSocket ConfirmCodeCreationSocket
       AllowCertificateValidation=   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
@@ -1609,7 +1609,7 @@ Begin Window UserWelcomeWindow
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin URLConnection CheckForConfirmationSocket
+   Begin HTTPClientSocket CheckForConfirmationSocket
       AllowCertificateValidation=   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
@@ -1617,7 +1617,7 @@ Begin Window UserWelcomeWindow
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin URLConnection VerifyConfirmationCodeSocket
+   Begin HTTPClientSocket VerifyConfirmationCodeSocket
       AllowCertificateValidation=   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
@@ -1625,7 +1625,7 @@ Begin Window UserWelcomeWindow
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin URLConnection IdentitySuggestionSocket
+   Begin HTTPClientSocket IdentitySuggestionSocket
       AllowCertificateValidation=   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
@@ -1633,7 +1633,7 @@ Begin Window UserWelcomeWindow
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin URLConnection SubmitIdentitySocket
+   Begin HTTPClientSocket SubmitIdentitySocket
       AllowCertificateValidation=   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
@@ -1641,7 +1641,7 @@ Begin Window UserWelcomeWindow
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin URLConnection LoginSocket
+   Begin HTTPClientSocket LoginSocket
       AllowCertificateValidation=   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
@@ -2201,7 +2201,7 @@ End
 #tag EndEvents
 #tag Events ConfirmCodeCreationSocket
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused URL
 		  #Pragma Unused Content
 		  
@@ -2217,7 +2217,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Error(e As RuntimeException)
+		Sub Error(E As RuntimeException)
 		  Self.ShowError("Could not send your confirmation code.", e)
 		  Self.ResetConfirmUI()
 		End Sub
@@ -2225,7 +2225,7 @@ End
 #tag EndEvents
 #tag Events CheckForConfirmationSocket
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused URL
 		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
@@ -2263,14 +2263,14 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Error(e As RuntimeException)
+		Sub Error(E As RuntimeException)
 		  Self.ShowError("You will need to enter your confirmation code manually because there was an error checking for it automatically.", e)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events VerifyConfirmationCodeSocket
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused URL
 		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
@@ -2314,7 +2314,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Error(e As RuntimeException)
+		Sub Error(E As RuntimeException)
 		  Self.ShowError("Unable to verify your confirmation code.", e)
 		  Self.ConfirmCodeField.ReadOnly = False
 		  Self.CheckConfirmButton()
@@ -2323,7 +2323,7 @@ End
 #tag EndEvents
 #tag Events IdentitySuggestionSocket
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused URL
 		  
 		  Self.IdentityRandomNameButton.Enabled = True
@@ -2345,7 +2345,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Error(e As RuntimeException)
+		Sub Error(E As RuntimeException)
 		  Self.IdentityRandomNameButton.Enabled = True
 		  Self.ShowError("Cannot get a username suggestion.", e)
 		End Sub
@@ -2353,7 +2353,7 @@ End
 #tag EndEvents
 #tag Events SubmitIdentitySocket
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused URL
 		  
 		  Self.SetSubmitIdentityStatus("")
@@ -2394,7 +2394,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Error(e As RuntimeException)
+		Sub Error(E As RuntimeException)
 		  Self.SetSubmitIdentityStatus("")
 		  Self.ShowError("Cannot create your account.", e)
 		End Sub
@@ -2402,7 +2402,7 @@ End
 #tag EndEvents
 #tag Events LoginSocket
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused URL
 		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
@@ -2432,7 +2432,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Error(e As RuntimeException)
+		Sub Error(E As RuntimeException)
 		  Self.SetLoginStatus("")
 		  Self.ShowError("Unable to login", e)
 		End Sub

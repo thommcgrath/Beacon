@@ -191,7 +191,7 @@ Begin BeaconDialog LibraryEngramsURLDialog
       Visible         =   False
       Width           =   16
    End
-   Begin URLConnection Downloader
+   Begin HTTPClientSocket Downloader
       AllowCertificateValidation=   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
@@ -265,7 +265,7 @@ End
 #tag EndEvents
 #tag Events Downloader
 	#tag Event
-		Sub Error(e As RuntimeException)
+		Sub Error(E As RuntimeException)
 		  Spinner.Visible = False
 		  ActionButton.Enabled = True
 		  URLField.Enabled = True
@@ -274,7 +274,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
 		  URLField.Value = URL
 		  
 		  Spinner.Visible = False

@@ -436,6 +436,7 @@ Class=ItemSetCollection;Modules/Beacon/ItemSetCollection.xojo_code;&h00000000568
 Window=ArkMLEditor;Custom Controls/ArkMLEditor.xojo_window;&h0000000006CA9FFF;&h0000000030DCFFFF;false
 MultiImage=IconToolbarView;Icons/IconToolbarView.xojo_image;&h0000000005A29FFF;&h0000000007F977FF;false
 MultiImage=IconToolbarPaint;Icons/IconToolbarPaint.xojo_image;&h000000006F244FFF;&h0000000007F977FF;false
+Class=HTTPClientSocket;Classes/HTTPClientSocket.xojo_code;&h00000000647FD7FF;&h00000000056D5FFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=3

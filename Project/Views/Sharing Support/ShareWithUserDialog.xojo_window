@@ -261,7 +261,7 @@ Begin BeaconDialog ShareWithUserDialog
       Visible         =   True
       Width           =   337
    End
-   Begin URLConnection UserLookupSocket
+   Begin HTTPClientSocket UserLookupSocket
       AllowCertificateValidation=   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
@@ -346,7 +346,7 @@ End
 #tag EndEvents
 #tag Events UserLookupSocket
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused URL
 		  
 		  If HTTPStatus = 200 Then
@@ -377,7 +377,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Error(e As RuntimeException)
+		Sub Error(E As RuntimeException)
 		  Self.Spinner.Visible = False
 		  Self.ActionButton.Enabled = True
 		  Self.ShowAlert("Unable to connect to server", "Beacon was unable to connect to the server to download the user's private key. Reason: " + e.Message)
