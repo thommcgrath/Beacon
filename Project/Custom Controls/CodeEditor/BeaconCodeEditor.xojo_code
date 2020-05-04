@@ -34,7 +34,7 @@ Inherits ScrollCanvas
 		    Return
 		  End If
 		  
-		  Var Char As String = Self.mContent.Middle(Floor(Index), 1)
+		  //Var Char As String = Self.mContent.Middle(Floor(Index), 1)
 		  //System.DebugLog(Str(Index, "-0.00") + ": " + Char)
 		End Sub
 	#tag EndEvent

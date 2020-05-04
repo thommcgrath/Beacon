@@ -200,7 +200,7 @@ Inherits Beacon.ConfigGroup
 		    Var ConfigValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ServerSettingsHeader, Value, SupportedConfigs, Nil)
 		    For Idx As Integer = ConfigValues.LastRowIndex DownTo 0
 		      If ConfigValues(Idx).Header = "MessageOfTheDay" Then
-		        ConfigValues.Remove(Idx)
+		        ConfigValues.RemoveRowAt(Idx)
 		      End If
 		    Next
 		    
