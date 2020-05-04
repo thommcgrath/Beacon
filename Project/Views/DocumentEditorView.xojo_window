@@ -259,7 +259,7 @@ End
 
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, IdentityManager.Notification_IdentityChanged)
+		  NotificationKit.Ignore(Self, IdentityManager.Notification_IdentityChanged, Self.Notification_SwitchEditors)
 		  
 		  If Self.mController.Document <> Nil Then
 		    Self.mController.Document.RemoveObserver(Self, "Title")
@@ -306,7 +306,7 @@ End
 		    Self.mController.Document.AddObserver(Self, "Title")
 		  End If
 		  
-		  NotificationKit.Watch(Self, IdentityManager.Notification_IdentityChanged)
+		  NotificationKit.Watch(Self, IdentityManager.Notification_IdentityChanged, Self.Notification_SwitchEditors)
 		End Sub
 	#tag EndEvent
 
@@ -720,6 +720,11 @@ End
 		    Var CurrentConfig As String = Self.CurrentConfigName
 		    Self.CurrentConfigName = ""
 		    Self.CurrentConfigName = CurrentConfig
+		  Case Self.Notification_SwitchEditors
+		    Var UserData As Dictionary = Notification.UserData
+		    If Self.Document.DocumentID = UserData.Value("DocumentID").StringValue Then
+		      Self.CurrentConfigName = UserData.Value("ConfigName").StringValue
+		    End If
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -849,6 +854,16 @@ End
 		Private Sub ShowIssues()
 		  ResolveIssuesDialog.Present(Self, Self.Document, AddressOf GoToIssue)
 		  Self.Changed = Self.Document.Modified
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Sub SwitchToEditor(Document As Beacon.Document, ConfigName As String)
+		  Var UserData As New Dictionary
+		  UserData.Value("DocumentID") = Document.DocumentID
+		  UserData.Value("ConfigName") = ConfigName
+		  
+		  NotificationKit.Post(Notification_SwitchEditors, UserData)
 		End Sub
 	#tag EndMethod
 
@@ -1109,6 +1124,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = LocalMinWidth, Type = Double, Dynamic = False, Default = \"500", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_SwitchEditors, Type = String, Dynamic = False, Default = \"Switch Editors", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = OmniWarningText, Type = String, Dynamic = False, Default = \"This config type requires Beacon Omni. Click this banner to learn more.", Scope = Private

@@ -747,6 +747,14 @@ End
 		Sub Action()
 		  Var DesiredStatus As String
 		  If Me.Caption = "Share" Then
+		    Var Description As String = Self.mDocument.Description.Trim
+		    If Description.IsEmpty Then
+		      Self.ShowAlert("Your document has no description and will be rejected if shared.", "This might be the best document ever, but nobody will download it if they don't know anything about it. Before sharing it to the world, go give it a nice description.")
+		      DocumentEditorView.SwitchToEditor(Self.mDocument, BeaconConfigs.Metadata.ConfigName)
+		      Self.Hide()
+		      Return
+		    End If
+		    
 		    DesiredStatus = "Requested"
 		  Else
 		    DesiredStatus = "Private"
