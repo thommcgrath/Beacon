@@ -523,37 +523,10 @@ Implements NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Var Info As Introspection.TypeInfo = Introspection.GetType(Error)
-		  Var Stack() As StackFrame = Error.StackFrames
-		  While Stack.LastRowIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
-		    Stack.RemoveRowAt(0)
-		  Wend
-		  
-		  Var Location As String = "Unknown"
-		  If Stack.LastRowIndex >= 0 Then
-		    Location = Stack(0).Name
-		  End If
-		  Var Reason As String = Error.Reason
-		  If Reason = "" Then
-		    Reason = Error.Message
-		  End If
-		  
-		  Self.Log("Unhandled " + Info.FullName + " in " + Location + ": " + Reason)
-		  
-		  Var Dict As New Dictionary
-		  Dict.Value("Object") = Error
-		  Dict.Value("Reason") = Error.Explanation
-		  Dict.Value("Location") = Location
-		  Dict.Value("Type") = Info.FullName
-		  Dict.Value("Trace") = Stack
-		  If Self.IdentityManager <> Nil And Self.IdentityManager.CurrentIdentity <> Nil Then
-		    Dict.Value("UserID") = Self.IdentityManager.CurrentIdentity.Identifier
-		  End If
-		  
 		  If Self.CurrentThread = Nil Then
-		    Self.PresentException(Dict)
+		    Self.PresentException(Error)
 		  Else
-		    Call CallLater.Schedule(0, AddressOf PresentException, Dict)
+		    Call CallLater.Schedule(0, AddressOf PresentException, Error)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1025,8 +998,8 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub PresentException(Details As Variant)
-		  ExceptionWindow.Present(Details)
+		Private Sub PresentException(Err As Variant)
+		  ExceptionWindow.Present(Err)
 		End Sub
 	#tag EndMethod
 
