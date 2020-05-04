@@ -176,6 +176,23 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub EnableMenuItems()
+		  If Self.ServerList.SelectedRowCount > 0 Then
+		    Self.EnableEditorMenuItem("CopyMOTDToAllServers")
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub GetEditorMenuItems(Items() As MenuItem)
+		  Var ReplicateItem As New MenuItem("Copy Message of the Day to All Servers")
+		  ReplicateItem.Name = "CopyMOTDToAllServers"
+		  ReplicateItem.Enabled = (Self.ServerList.SelectedRowCount = 1)
+		  Items.AddRow(ReplicateItem)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  For I As Integer = 0 To Self.Document.ServerProfileCount - 1
 		    Var Profile As Beacon.ServerProfile = Self.Document.ServerProfile(I)
@@ -224,6 +241,45 @@ End
 		  Next
 		End Sub
 	#tag EndEvent
+
+
+	#tag MenuHandler
+		Function CopyMOTDToAllServers() As Boolean Handles CopyMOTDToAllServers.Action
+			Var CurrentProfileID As String = Self.CurrentProfileID
+			If CurrentProfileID.IsEmpty Then
+			Return True
+			End If
+			Self.CurrentProfileID = ""
+			
+			Var SourceProfile As Beacon.ServerProfile
+			Var Bound As Integer = Self.Document.ServerProfileCount - 1
+			For Idx As Integer = 0 To Bound
+			If Self.Document.ServerProfile(Idx).ProfileID = CurrentProfileID Then
+			SourceProfile = Self.Document.ServerProfile(Idx)
+			Exit
+			End If
+			Next
+			
+			If SourceProfile Is Nil Then
+			Self.CurrentProfileID = CurrentProfileID
+			Return True
+			End If
+			
+			Var Message As String = SourceProfile.MessageOfTheDay
+			Var Duration As Integer = SourceProfile.MessageDuration
+			
+			For Idx As Integer = 0 To Bound
+			If Self.Document.ServerProfile(Idx).ProfileID <> CurrentProfileID Then
+			Self.Document.ServerProfile(Idx).MessageOfTheDay = Message
+			Self.Document.ServerProfile(Idx).MessageDuration = Duration
+			Self.Changed = Self.Changed Or Self.Document.Modified
+			End If
+			Next
+			
+			Self.CurrentProfileID = CurrentProfileID
+			Return True
+		End Function
+	#tag EndMenuHandler
 
 
 	#tag Method, Flags = &h0
