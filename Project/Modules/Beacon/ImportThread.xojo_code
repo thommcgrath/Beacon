@@ -50,7 +50,7 @@ Inherits Beacon.Thread
 		            If Message.IsEmpty Then
 		              Message = Line
 		            Else
-		              Message = Message + EndOfLine + Line
+		              Message = Message + LineEnding + Line
 		            End If
 		            ParsedData.Value("Message") = Message
 		          End If
