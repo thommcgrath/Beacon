@@ -725,15 +725,16 @@ Protected Module Beacon
 		  Var Type As String = SaveData.Lookup("Type", "LootContainer")
 		  Var Source As Beacon.LootSource
 		  Select Case Type
-		  Case "CustomLootContainer"
-		    Var CustomSource As New CustomLootContainer(ClassString)
-		    Source = CustomSource
 		  Case "LootContainer"
 		    Var OfficialSource As Beacon.LootSource = Beacon.Data.GetLootSource(ClassString)
 		    Source = OfficialSource
 		  Else
 		    Return Nil
 		  End Select
+		  
+		  If Source Is Nil Then
+		    Source = New CustomLootContainer(ClassString)
+		  End If
 		  
 		  Try
 		    Source.MinItemSets = SaveData.Lookup("MinItemSets", 1).IntegerValue
