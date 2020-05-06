@@ -322,7 +322,7 @@ if (is_null($session)) {
 			<td class="price_column" id="total_field"><?php echo htmlentities($omni_price_formatted); ?></td>
 		</tr>
 		<tr>
-			<td colspan="3" class="text-center"><button class="default" id="stripe_checkout_button">Purchase via Stripe</button></td>
+			<td colspan="3" class="text-center"><button class="default" id="stripe_checkout_button">Checkout</button></td>
 		</tr>
 	</table>
 </div>

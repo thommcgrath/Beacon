@@ -373,12 +373,21 @@ End
 		    Return Nil
 		  End If
 		  
-		  If Self.mAutosaveFile = Nil Or Not Self.mAutosaveFile.Exists Then
-		    Var Folder As FolderItem = App.AutosaveFolder(CreateFolder)
-		    If Folder = Nil Then
-		      Return Nil
+		  If Self.mAutosaveFile Is Nil Or Not Self.mAutosaveFile.Exists Then
+		    If (Self.mController.AutosaveURL Is Nil) = False Then
+		      Try
+		        Self.mAutosaveFile = Self.mController.AutosaveURL.File
+		      Catch Err As RuntimeException
+		      End Try
 		    End If
-		    Self.mAutosaveFile = New BookmarkedFolderItem(Folder.Child(Self.Document.DocumentID + BeaconFileTypes.BeaconDocument.PrimaryExtension))
+		    
+		    If Self.mAutosaveFile Is Nil Or Not Self.mAutosaveFile.Exists Then
+		      Var Folder As FolderItem = App.AutosaveFolder(CreateFolder)
+		      If Folder = Nil Then
+		        Return Nil
+		      End If
+		      Self.mAutosaveFile = New BookmarkedFolderItem(Folder.Child(Self.Document.DocumentID + BeaconFileTypes.BeaconDocument.PrimaryExtension))
+		    End If
 		  End If
 		  
 		  Return Self.mAutosaveFile

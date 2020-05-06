@@ -272,7 +272,8 @@ End
 		  // Create a modified transient document
 		  Document.Modified = True
 		  Var Controller As New Beacon.DocumentController(Document, App.IdentityManager.CurrentIdentity)
-		  Self.OpenController(Controller)
+		  Controller.AutosaveURL = Sender.URL
+		  Self.OpenController(Controller, False)
 		End Sub
 	#tag EndMethod
 
@@ -469,7 +470,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub OpenController(Controller As Beacon.DocumentController)
+		Private Sub OpenController(Controller As Beacon.DocumentController, AddToRecents As Boolean = True)
 		  Var URL As Beacon.DocumentURL = Controller.URL
 		  Var View As BeaconSubview = Self.View(URL.Hash)
 		  If View <> Nil Then
@@ -480,7 +481,9 @@ End
 		  Self.AttachControllerEvents(Controller)
 		  Controller.Load()
 		  
-		  Preferences.AddToRecentDocuments(URL)
+		  If AddToRecents Then
+		    Preferences.AddToRecentDocuments(URL)
+		  End If
 		End Sub
 	#tag EndMethod
 
