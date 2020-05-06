@@ -216,23 +216,14 @@ End
 		Sub Simulate()
 		  Self.List.RemoveAllRows()
 		  
-		  If Self.mTarget = Nil Then
+		  If IsNull(Self.mTarget)Then
 		    Return
 		  End If
 		  
-		  Static LootSourceInfo, ItemSetInfo As Introspection.TypeInfo
-		  If LootSourceInfo = Nil Then
-		    LootSourceInfo = GetTypeInfo(Beacon.LootSource)
-		  End If
-		  If ItemSetInfo = Nil Then
-		    ItemSetInfo = GetTypeInfo(Beacon.ItemSet)
-		  End If
-		  
 		  Var Selections() As Beacon.SimulatedSelection
-		  Var Info As Introspection.TypeInfo = Introspection.GetType(Self.mTarget)
-		  If Info.IsSubclassOf(LootSourceInfo) Then
+		  If Self.mTarget IsA Beacon.LootSource Then
 		    Selections = Beacon.LootSource(Self.mTarget).Simulate()
-		  ElseIf Info.IsSubclassOf(ItemSetInfo) Then
+		  ElseIf Self.mTarget IsA Beacon.ItemSet Then
 		    Selections = Beacon.ItemSet(Self.mTarget).Simulate()
 		  Else
 		    Return

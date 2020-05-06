@@ -820,14 +820,6 @@ End
 		    Next
 		  End If
 		  
-		  If Self.mSources.LastRowIndex = 0 Then
-		    Self.Header.Simulate.Enabled = True
-		    Self.Simulator.Simulate(Self.mSources(0))
-		  Else
-		    Self.Header.Simulate.Enabled = False
-		    Self.Simulator.Clear()
-		  End If
-		  
 		  Var CommonNotes As String
 		  If Self.mSources.LastRowIndex > -1 Then
 		    CommonNotes = Self.mSources(0).Notes
@@ -933,6 +925,14 @@ End
 		  Self.SetList.SortingColumn = 0
 		  Self.SetList.Sort
 		  Self.SetList.SelectionChangeBlocked = False
+		  
+		  If Self.mSources.LastRowIndex = 0 Then
+		    Self.Header.Simulate.Enabled = True
+		    Self.Simulator.Simulate(Self.mSources(0))
+		  Else
+		    Self.Header.Simulate.Enabled = False
+		    Self.Simulator.Clear()
+		  End If
 		End Sub
 	#tag EndMethod
 
