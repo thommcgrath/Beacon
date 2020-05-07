@@ -715,6 +715,15 @@ End
 		      End If
 		    End If
 		    
+		    If Beacon.AreElementsEqual(RemovePrereqs) Then
+		      Var RemovePrereq As NullableBoolean = RemovePrereqs(0)
+		      If IsNull(RemovePrereq) = False Then
+		        Self.RemovePrereqCheck.Value = RemovePrereq.BooleanValue
+		      Else
+		        Self.RemovePrereqCheck.Value = False
+		      End If
+		    End If
+		    
 		    // Var Engram As Beacon.Engram = Self.mEngrams(0)
 		    // 
 		    // Var Hidden As Boolean = Self.mConfig.EffectivelyHidden(Engram)
@@ -963,7 +972,7 @@ End
 		      Self.mConfig.RequiredPoints(Engram) = RequiredPoints
 		    End If
 		    If EditPrereq Then
-		      Self.mConfig.RemovePrerequisites(Engram) = EditPrereq
+		      Self.mConfig.RemovePrerequisites(Engram) = RemovePrereq
 		    End If
 		  Next
 		  
