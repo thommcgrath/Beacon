@@ -793,7 +793,7 @@ End
 		    Data(I).GameIniContent = Beacon.FilterExcessSections(Data(I).GameIniContent)
 		    Data(I).GameUserSettingsIniContent = Beacon.FilterExcessSections(Data(I).GameUserSettingsIniContent)
 		    
-		    Var Importer As New Beacon.ImportThread(Data(I))
+		    Var Importer As New Beacon.ImportThread(Data(I), Self.mDestinationDocument)
 		    Importer.Start
 		    Self.mImporters(I) = Importer
 		    
@@ -808,6 +808,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub PullValuesFromDocument(Document As Beacon.Document)
+		  Self.mDestinationDocument = Document
 		  Self.FTPDiscoveryView1.PullValuesFromDocument(Document)
 		  Self.LocalDiscoveryView1.PullValuesFromDocument(Document)
 		  Self.NitradoDiscoveryView1.PullValuesFromDocument(Document)
@@ -885,6 +886,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mDeployRequired As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDestinationDocument As Beacon.Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

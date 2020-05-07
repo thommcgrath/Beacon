@@ -634,7 +634,7 @@ End
 		  Var Data As New Beacon.DiscoveredData
 		  Data.GameIniContent = Content
 		  
-		  Self.mImporter = New Beacon.ImportThread(Data)
+		  Self.mImporter = New Beacon.ImportThread(Data, Self.Document)
 		  AddHandler mImporter.Finished, WeakAddressOf mImporter_Finished
 		  AddHandler mImporter.UpdateUI, WeakAddressOf mImporter_UpdateUI
 		  Self.mImporter.Start

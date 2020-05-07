@@ -111,7 +111,7 @@ Inherits BeaconSubview
 		  Var Data As New Beacon.DiscoveredData
 		  Data.GameIniContent = Content
 		  
-		  Var Parser As New Beacon.ImportThread(Data)
+		  Var Parser As New Beacon.ImportThread(Data, Self.Document)
 		  AddHandler Parser.Finished, AddressOf Parser_Finished
 		  AddHandler Parser.UpdateUI, AddressOf Parser_UpdateUI
 		  

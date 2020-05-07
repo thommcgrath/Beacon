@@ -59,8 +59,6 @@ Implements Iterable
 		    End If
 		    
 		    Self.BuildOverrides(Source, Values, DifficultyConfig)
-		    //Var StringValue As String = BuildOverride(Source, DifficultyConfig)
-		    //Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, ConfigOverrideSupplyCrateItems, StringValue))
 		  Next
 		End Sub
 	#tag EndEvent

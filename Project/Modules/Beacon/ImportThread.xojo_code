@@ -167,12 +167,12 @@ Inherits Beacon.Thread
 		      DifficultyValue = CommandLineOptions.DoubleValue("OverrideOfficialDifficulty")
 		    ElseIf ParsedData.HasKey("OverrideOfficialDifficulty") And ParsedData.DoubleValue("OverrideOfficialDifficulty") > 0 Then
 		      DifficultyValue = ParsedData.DoubleValue("OverrideOfficialDifficulty")
+		    ElseIf ParsedData.HasKey("DifficultyOffset") Then
+		      DifficultyValue = ParsedData.DoubleValue("DifficultyOffset") * (DifficultyScale - 0.5) + 0.5
+		    ElseIf (Self.mDestinationDocument Is Nil) = False Then
+		      DifficultyValue = Self.mDestinationDocument.DifficultyValue
 		    Else
-		      If ParsedData.HasKey("DifficultyOffset") Then
-		        DifficultyValue = ParsedData.DoubleValue("DifficultyOffset") * (DifficultyScale - 0.5) + 0.5
-		      Else
-		        DifficultyValue = DifficultyScale
-		      End If
+		      DifficultyValue = DifficultyScale
 		    End If
 		    
 		    Document.AddConfigGroup(New BeaconConfigs.Difficulty(DifficultyValue))
@@ -285,13 +285,14 @@ Inherits Beacon.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Data As Beacon.DiscoveredData)
+		Sub Constructor(Data As Beacon.DiscoveredData, DestinationDocument As Beacon.Document)
 		  Self.mUpdateTimer = New Timer
 		  Self.mUpdateTimer.RunMode = Timer.RunModes.Off
 		  Self.mUpdateTimer.Period = 0
 		  AddHandler Self.mUpdateTimer.Action, WeakAddressOf Self.mUpdateTimer_Action
 		  
 		  Self.mData = Data
+		  Self.mDestinationDocument = DestinationDocument
 		End Sub
 	#tag EndMethod
 
@@ -490,6 +491,10 @@ Inherits Beacon.Thread
 
 	#tag Property, Flags = &h21
 		Private mData As Beacon.DiscoveredData
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDestinationDocument As Beacon.Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
