@@ -254,7 +254,7 @@ Inherits Beacon.ConfigGroup
 		  If Rate <= 0 And Self.mOverrides.HasKey(Engram.Path) Then
 		    Self.mOverrides.Remove(Engram.Path)
 		    Self.Modified = True
-		  ElseIf Rate > 0 And Self.mOverrides.Lookup(Engram.Path, 1.0) <> Rate Then
+		  ElseIf Rate > 0 And Self.mOverrides.Lookup(Engram.Path, 0) <> Rate Then
 		    Self.mOverrides.Value(Engram.Path) = Rate
 		    Self.Modified = True
 		  End If
