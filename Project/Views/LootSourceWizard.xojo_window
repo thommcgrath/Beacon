@@ -1526,7 +1526,10 @@ End
 	#tag Event
 		Sub Action()
 		  Var ClassString As String = Self.DefineClassField.Value.Trim
-		  If Not ClassString.EndsWith("_C") Then
+		  Var ClassTester As New RegEx
+		  ClassTester.Options.TreatTargetAsOneLine = True
+		  ClassTester.SearchPattern = "^[A-Za-z0-9_]+_C$"
+		  If ClassTester.Search(ClassString) Is Nil Then
 		    Self.ShowAlert("Invalid class string", "Ark class strings always end in _C. Check your class string and try again.")
 		    Return
 		  End If
@@ -1689,7 +1692,7 @@ End
 		Sub TextChange()
 		  If Not Self.mDefineLabelWasEditedByUser Then
 		    Self.mDefineLabelEditingAutomatically = True
-		    Self.DefineNameField.Value = Beacon.LabelFromClassString(Me.Value)
+		    Self.DefineNameField.Value = Beacon.LabelFromClassString(Me.Value.Trim)
 		    Self.mDefineLabelEditingAutomatically = False
 		  End If
 		End Sub
