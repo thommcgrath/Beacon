@@ -42,7 +42,7 @@ if (isset($_POST['key'])) {
 		}
 	}
 } else {
-	$code = $_POST['code'];
+	$code = preg_replace('/\s+/', '', $_POST['code']);
 	$results = $database->Query('SELECT email_id FROM email_verification WHERE email_id = uuid_for_email($1) AND code = encode(digest($2, \'sha512\'), \'hex\');', $email, $code);
 	$verified = $results->RecordCount() == 1;
 }
