@@ -395,7 +395,9 @@ Protected Class IntegrationEngine
 		  // Perform discovery of the needed files
 		  Var DiscoveredData() As Beacon.DiscoveredData = RaiseEvent Discover
 		  If DiscoveredData = Nil Then
-		    Self.SetError("Discovery implementation incomplete.")
+		    If Self.Errored = False Then
+		      Self.SetError("Discovery implementation incomplete.")
+		    End If
 		    Return
 		  End If
 		  

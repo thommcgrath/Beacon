@@ -932,7 +932,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mEngine_FilesListed(Sender As Beacon.FTPIntegrationEngine, Path As String, Files() As CURLSFileInfoMBS)
+		Private Sub mEngine_FilesListed(Sender As Beacon.FTPIntegrationEngine, Path As String, Files() As Beacon.FTPFileListing)
 		  #Pragma Unused Sender
 		  #Pragma Unused Path
 		  
@@ -940,7 +940,11 @@ End
 		  Self.BrowseSpinner.Visible = False
 		  
 		  Var Children() As String
-		  For Each File As CURLSFileInfoMBS In Files
+		  For Each File As Beacon.FTPFileListing In Files
+		    If File.Filename = "." Or File.Filename = ".." Then
+		      Continue
+		    End If
+		    
 		    Var Child As String = File.Filename
 		    If File.IsDirectory Then
 		      Child = Child + "/"

@@ -26,7 +26,7 @@ Inherits Beacon.IntegrationEngine
 		  Var IPMatch As New Regex
 		  IPMatch.SearchPattern = "^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}_\d{1,5}$"
 		  
-		  Var Files() As CURLSFileInfoMBS
+		  Var Files() As Beacon.FTPFileListing
 		  Var PotentialPaths() As String
 		  For Each Protocol As String In Protocols
 		    If FTPProfile.Mode = Beacon.FTPServerProfile.ModeAuto Then
@@ -50,7 +50,7 @@ Inherits Beacon.IntegrationEngine
 		    End Select
 		    
 		    Var BaseURL As String = Self.BaseURL
-		    For Each Info As CURLSFileInfoMBS In Files
+		    For Each Info As Beacon.FTPFileListing In Files
 		      If Not Info.IsDirectory Then
 		        Continue
 		      End If
@@ -172,13 +172,13 @@ Inherits Beacon.IntegrationEngine
 
 	#tag Method, Flags = &h21
 		Private Function DiscoverFromPath(Path As String) As Beacon.DiscoveredData
-		  Var SavedFiles() As CURLSFileInfoMBS = Self.PrivateListFiles(Path)
+		  Var SavedFiles() As Beacon.FTPFileListing = Self.PrivateListFiles(Path)
 		  If SavedFiles = Nil Then
 		    Return Nil
 		  End If
 		  
 		  Var LogsPath, ConfigPath As String
-		  For Each Info As CURLSFileInfoMBS In SavedFiles
+		  For Each Info As Beacon.FTPFileListing In SavedFiles
 		    If Not Info.IsDirectory Then
 		      Continue
 		    End If
@@ -195,7 +195,7 @@ Inherits Beacon.IntegrationEngine
 		    Return Nil
 		  End If
 		  
-		  Var ConfigFolders() As CURLSFileInfoMBS = Self.PrivateListFiles(ConfigPath)
+		  Var ConfigFolders() As Beacon.FTPFileListing = Self.PrivateListFiles(ConfigPath)
 		  If ConfigFolders = Nil Then
 		    Return Nil
 		  End If
@@ -205,7 +205,7 @@ Inherits Beacon.IntegrationEngine
 		  Var Data As New Beacon.DiscoveredData
 		  Data.Profile = Profile
 		  
-		  For Each Info As CURLSFileInfoMBS In ConfigFolders
+		  For Each Info As Beacon.FTPFileListing In ConfigFolders
 		    If Not Info.IsDirectory Then
 		      Continue
 		    End If
@@ -223,10 +223,10 @@ Inherits Beacon.IntegrationEngine
 		  
 		  If LogsPath.Length > 0 Then
 		    Self.Log("Analyzing log files…")
-		    Var Logs() As CURLSFileInfoMBS = Self.PrivateListFiles(LogsPath)
+		    Var Logs() As Beacon.FTPFileListing = Self.PrivateListFiles(LogsPath)
 		    If Logs <> Nil Then
 		      Var Filenames() As String
-		      For Each Info As CURLSFileInfoMBS In Logs
+		      For Each Info As Beacon.FTPFileListing In Logs
 		        If Info.IsDirectory Or Info.Filename.BeginsWith("ShooterGame") = False Or Info.Filename.EndsWith(".log") = False Then
 		          Continue
 		        End If
@@ -268,7 +268,7 @@ Inherits Beacon.IntegrationEngine
 	#tag Method, Flags = &h0
 		Sub ListFiles(Path As String)
 		  If App.CurrentThread <> Nil Then
-		    Var Files() As CURLSFileInfoMBS = Self.PrivateListFiles(Self.BaseURL + Path)
+		    Var Files() As Beacon.FTPFileListing = Self.PrivateListFiles(Self.BaseURL + Path)
 		    Var Params(1) As Variant
 		    Params(0) = Path
 		    Params(1) = Files
@@ -370,7 +370,46 @@ Inherits Beacon.IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function PrivateListFiles(Path As String) As CURLSFileInfoMBS()
+		Private Function PrivateListFiles(Path As String) As Beacon.FTPFileListing()
+		  If Path.BeginsWith("sftp://") Then
+		    If Path.EndsWith("/") = False Then
+		      Path = Path + "/"
+		    End If
+		    
+		    Self.mSocketLock.Enter
+		    Self.mSocket.OptionURL = Path
+		    Var Err As Integer = Self.mSocket.Perform
+		    Var Content As String = Self.mSocket.OutputData
+		    Self.mSocketLock.Leave
+		    If Err <> CURLSMBS.kError_OK Then
+		      Self.Log("Curl Error " + Err.ToString)
+		      Return Nil
+		    End If
+		    
+		    Var Lines() As String = Content.Trim.ReplaceLineEndings(EndOfLine.UNIX).Split(EndOfLine.UNIX)
+		    
+		    Var Parser As New RegEx
+		    Parser.SearchPattern = "^(.{10})\s+(\d+)\s+(\S+)\s+(\S+)\s+(\d+)\s+(.{12})\s(.+)$"
+		    
+		    Var Files() As Beacon.FTPFileListing
+		    Var Names() As String
+		    For Each Line As String In Lines
+		      Var Matches As RegExMatch = Parser.Search(Line)
+		      If Matches Is Nil Then 
+		        Continue
+		      End If
+		      
+		      Var Permissions As String = Matches.SubExpressionString(1)
+		      Var Filename As String = Matches.SubExpressionString(7)
+		      
+		      Files.AddRow(New Beacon.FTPFileListing(Permissions.BeginsWith("d"), Filename))
+		      Names.AddRow(Filename)
+		    Next
+		    Names.SortWith(Files)
+		    
+		    Return Files
+		  End If
+		  
 		  If Path.Right(2) = "/*" Then
 		    // Good
 		  ElseIf Path.Right(1) = "/" Then
@@ -384,13 +423,25 @@ Inherits Beacon.IntegrationEngine
 		  Self.mSocket.OptionWildcardMatch = True
 		  Self.mSocket.OptionURL = Path
 		  Var Err As Integer = Self.mSocket.Perform
-		  If Err <> CURLSMBS.kError_OK Then
-		    Break
-		  End If
 		  Self.mSocket.OptionWildcardMatch = Wildcard
-		  Var Files() As CURLSFileInfoMBS = Self.mSocket.FileInfos
+		  Var Infos() As CURLSFileInfoMBS = Self.mSocket.FileInfos
 		  Self.mSocketLock.Leave
-		  Return Files
+		  If Err <> CURLSMBS.kError_OK Then
+		    Self.Log("Curl Error " + Err.ToString)
+		    Return Nil
+		  End If
+		  
+		  If (Infos Is Nil) = FAlse Then
+		    Var Files() As Beacon.FTPFileListing
+		    Var Names() As String
+		    For Each Info As CURLSFileInfoMBS In Infos
+		      Files.AddRow(New Beacon.FTPFileListing(Info.IsDirectory, Info.FileName))
+		      Names.AddRow(Info.FileName)
+		    Next
+		    Names.SortWith(Files)
+		    
+		    Return Files
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -414,7 +465,7 @@ Inherits Beacon.IntegrationEngine
 
 
 	#tag Hook, Flags = &h0
-		Event FilesListed(Path As String, Files() As CURLSFileInfoMBS)
+		Event FilesListed(Path As String, Files() As Beacon.FTPFileListing)
 	#tag EndHook
 
 
