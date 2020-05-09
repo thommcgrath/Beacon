@@ -85,7 +85,7 @@ Begin BeaconDialog ExperienceWizard
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "This wizard will help you define many level requirements in bulk. First, set the number of levels to add and the total experience to add for those levels. Then use adjust the blue handles on the curve to define how rapidly the values should increase. The list will show the total experience required for each of the new levels."
+      Text            =   "This wizard will help you define many level requirements in bulk. First, set the number of levels to add and the total experience to add for those levels. Then use the blue handles on the curve to define how rapidly the values should increase. The list will show the total experience required for each of the new levels."
       TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
