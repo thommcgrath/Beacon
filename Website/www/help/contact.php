@@ -101,7 +101,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if (empty($html)) {
 	ob_start();
 	?><h2>Submit a new support request</h2>
-	<blockquote>Wondering where your email verification message is? Google and Microsoft spam filters are particularly aggressive against verification emails such as these, so remember to check your bulk or junk folders. When this happens, marking the message as &quot;not junk&quot; goes a long way towards training the filter correctly.</blockquote>
 	<?php if (!$valid) { ?><blockquote>Hey, it looks like the form wasn't filled out completely. Please give it another look.</blockquote><?php } ?>
 	<form method="post" action="/help/contact">
 		<table width="100%" cellpadding="0" cellspacing="10">
