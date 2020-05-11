@@ -34,6 +34,7 @@ class BeaconLogin {
 </div>
 <div id="page_verify">
 	<p class="explanation">Check your email. Enter the code you were sent to continue.</p>
+	<p class="explanation">Google and Microsoft spam filters are particularly aggressive against verification emails such as these, so remember to check your bulk or junk folders.</p>
 	<form id="login_verify_form">
 		<p><input type="hidden" id="verify_email_field" value=""><input type="text" id="verify_code_field" placeholder="Code" required></p>
 		<ul class="buttons"><li><input type="submit" id="verify_action_button" value="Continue"></li><li><a id="verify_cancel_button" class="button" href="#<?php echo BeaconCommon::GenerateRandomKey(6); ?>">Cancel</a></li></ul>
