@@ -439,6 +439,15 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function GetConfigKey(Extends Source As Beacon.DataSource, File As String, Header As String, Key As String) As Beacon.ConfigKey
+		  Var Results() As Beacon.ConfigKey = Source.SearchForConfigKey(File, Header, Key)
+		  If Results.Count = 1 Then
+		    Return Results(0)
+		  End If
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function GetLastValueAsType(Values() As Object, FullName As String, Default As Variant) As Variant
 		  For I As Integer = Values.LastRowIndex DownTo 0

@@ -206,6 +206,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', incubation_time INTEGER, mature_time INTEGER, stats TEXT);")
 		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', groups TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
+		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, tags TEXT NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT NOT NULL, header TEXT NOT NULL, key TEXT NOT NULL, value_type TEXT NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT, nitrado_format TEXT);")
 		  
 		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts5(tags, object_id, source_table);")
 		  
@@ -225,6 +226,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX custom_presets_user_id_object_id_idx ON custom_presets(user_id, object_id);")
 		  Self.SQLExecute("CREATE INDEX engrams_entry_string_idx ON engrams(entry_string);")
+		  Self.SQLExecute("CREATE UNIQUE INDEX ini_options_file_header_key_idx ON ini_options(file, header, key);")
 		  
 		  Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe) VALUES (?1, ?2, ?3);", Self.UserModID, Self.UserModName, True)
 		  Self.Commit()
@@ -1425,6 +1427,67 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Next
 		    End If
 		    
+		    If ChangeDict.HasKey("ini_options") Then
+		      Var Options() As Variant = ChangeDict.Value("ini_options")
+		      For Each Dict As Dictionary In Options
+		        Var ObjectID As v4UUID = Dict.Value("id").StringValue
+		        Var ModID As v4UUID = Dictionary(Dict.Value("mod")).Value("id").StringValue
+		        Var File As String = Dict.Value("file").StringValue
+		        Var Header As String = Dict.Value("header").StringValue
+		        Var Key As String = Dict.Value("key").StringValue
+		        Var TagString, TagStringForSearching As String
+		        Try
+		          Var Tags() As String
+		          Var Temp() As Variant = Dict.Value("tags")
+		          For Each Tag As String In Temp
+		            Tags.AddRow(Tag)
+		          Next
+		          TagString = Tags.Join(",")
+		          Tags.AddRowAt(0, "object")
+		          TagStringForSearching = Tags.Join(",")
+		        Catch Err As TypeMismatchException
+		          
+		        End Try
+		        
+		        Var Values(14) As Variant
+		        Values(0) = ObjectID.StringValue
+		        Values(1) = Dict.Value("label")
+		        Values(2) = ModID.StringValue
+		        Values(3) = Dict.Value("native_editor_version")
+		        Values(4) = File
+		        Values(5) = Header
+		        Values(6) = Key
+		        Values(7) = Dict.Value("value_type")
+		        Values(8) = Dict.Value("max_allowed")
+		        Values(9) = Dict.Value("description")
+		        Values(10) = Dict.Value("default_value")
+		        Values(11) = Dict.Value("alternate_label")
+		        If Dict.HasKey("nitrado_guided_equivalent") And IsNull(Dict.Value("nitrado_guided_equivalent")) = False Then
+		          Var NitradoEq As Dictionary = Dict.Value("nitrado_guided_equivalent")
+		          Values(12) = NitradoEq.Value("path")
+		          Values(13) = NitradoEq.Value("format")
+		        Else
+		          Values(12) = Nil
+		          Values(13) = Nil
+		        End If
+		        Values(14) = TagString
+		        
+		        Var Results As RowSet = Self.SQLSelect("SELECT object_id FROM ini_options WHERE object_id = $1 OR (file = $2 AND header = $3 AND key = $4);", ObjectID.StringValue, File, Header, Key)
+		        If Results.RowCount > 1 Then
+		          Self.SQLExecute("DELETE FROM ini_options WHERE object_id = $1 OR (file = $2 AND header = $3 AND key = $4);", ObjectID.StringValue, File, Header, Key)
+		        End If
+		        If Results.RowCount = 1 Then
+		          // Update
+		          Var OriginalObjectID As v4UUID = Results.Column("object_id").StringValue
+		          Values.AddRow(OriginalObjectID.StringValue)
+		          Self.SQLExecute("UPDATE ini_options SET object_id = $1, label = $2, mod_id = $3, native_editor_version = $4, file = $5, header = $6, key = $7, value_type = $8, max_allowed = $9, description = $10, default_value = $11, alternate_label = $12, nitrado_path = $13, nitrado_format = $14, tags = $15 WHERE object_id = $16;", Values)
+		        Else
+		          // Insert
+		          Self.SQLExecute("INSERT INTO ini_options (object_id, label, mod_id, native_editor_version, file, header, key, value_type, max_allowed, description, default_value, alternate_label, nitrado_path, nitrado_format, tags) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15);", Values)
+		        End If
+		      Next
+		    End If
+		    
 		    Var ReloadPresets As Boolean
 		    Var Presets() As Variant = ChangeDict.Value("presets")
 		    For Each Dict As Dictionary In Presets
@@ -2440,6 +2503,90 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SearchForConfigKey(File As String, Header As String, Key As String) As Beacon.ConfigKey()
+		  Var Clauses() As String
+		  Var Values As New Dictionary
+		  Var Idx As Integer = 1
+		  
+		  If File.IsEmpty = False Then
+		    Values.Value(Idx) = File.Lowercase
+		    Clauses.AddRow("LOWER(file) = $" + Idx.ToString)
+		    Idx = Idx + 1
+		  End If
+		  If Header.IsEmpty = False Then
+		    Values.Value(Idx) = Header.Lowercase
+		    Clauses.AddRow("LOWER(header) = $" + Idx.ToString)
+		    Idx = Idx + 1
+		  End If
+		  If Key.IsEmpty = False Then
+		    If Key.IndexOf("*") > -1 Then
+		      Values.Value(Idx) = Key.Lowercase.ReplaceAll("*", "%")
+		      Clauses.AddRow("LOWER(key) LIKE $" + Idx.ToString)
+		    Else
+		      Values.Value(Idx) = Key.Lowercase
+		      Clauses.AddRow("LOWER(key) = $" + Idx.ToString)
+		    End If
+		    Idx = Idx + 1
+		  End If
+		  
+		  Var SQL As String = "SELECT object_id, label, file, header, key, value_type, max_allowed, description, default_value, nitrado_path, nitrado_format FROM ini_options"
+		  If Clauses.Count > 0 Then
+		    SQL = SQL + " WHERE " + Clauses.Join(" AND ")
+		  End If
+		  SQL = SQL + " ORDER BY label"
+		  
+		  Var Results() As Beacon.ConfigKey
+		  Try
+		    Var Rows As RowSet = Self.SQLSelect(SQL, Values)
+		    While Not Rows.AfterLastRow
+		      Var ObjectID As v4UUID = Rows.Column("object_id").StringValue
+		      Var Label As String = Rows.Column("label").StringValue
+		      Var ConfigFile As String = Rows.Column("file").StringValue
+		      Var ConfigHeader As String = Rows.Column("header").StringValue
+		      Var ConfigKey As String = Rows.Column("key").StringValue
+		      Var ValueType As Beacon.ConfigKey.ValueTypes
+		      Select Case Rows.Column("value_type").StringValue
+		      Case "Numeric"
+		        ValueType = Beacon.ConfigKey.ValueTypes.TypeNumeric
+		      Case "Array"
+		        ValueType = Beacon.ConfigKey.ValueTypes.TypeArray
+		      Case "Structure"
+		        ValueType = Beacon.ConfigKey.ValueTypes.TypeStructure
+		      Case "Boolean"
+		        ValueType = Beacon.ConfigKey.ValueTypes.TypeBoolean
+		      Case "Text"
+		        ValueType = Beacon.ConfigKey.ValueTypes.TypeText
+		      End Select
+		      Var MaxAllowed As NullableDouble
+		      If IsNull(Rows.Column("max_allowed").Value) = False Then
+		        MaxAllowed = Rows.Column("max_allowed").IntegerValue
+		      End If
+		      Var Description As String = Rows.Column("description").StringValue
+		      Var DefaultValue As Variant = Rows.Column("default_value").Value
+		      Var NitradoPath As NullableString
+		      Var NitradoFormat As Beacon.ConfigKey.NitradoFormats = Beacon.ConfigKey.NitradoFormats.Unsupported
+		      If IsNull(Rows.Column("nitrado_format").Value) = False Then
+		        NitradoPath = Rows.Column("nitrado_path").StringValue
+		        Select Case Rows.Column("nitrado_format").StringValue
+		        Case "Line"
+		          NitradoFormat = Beacon.ConfigKey.NitradoFormats.Line
+		        Case "Value"
+		          NitradoFormat = Beacon.ConfigKey.NitradoFormats.Value
+		        End Select
+		      End If
+		      
+		      Results.AddRow(New Beacon.ConfigKey(ObjectID, Label, ConfigFile, ConfigHeader, ConfigKey, ValueType, MaxAllowed, Description, DefaultValue, NitradoPath, NitradoFormat))
+		      
+		      Rows.MoveToNextRow
+		    Wend
+		  Catch Err As RuntimeException
+		    ExceptionWindow.Report(Err)
+		  End Try
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SearchForEngramEntries(SearchText As String, Mods As Beacon.StringList, Tags As String) As Beacon.Engram()
 		  Var ExtraClauses() As String = Array("entry_string IS NOT NULL")
 		  Var ExtraValues(0) As Variant
@@ -2838,7 +2985,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = Notification_PresetsChanged, Type = String, Dynamic = False, Default = \"Presets Changed", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"14", Scope = Private
+	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"15", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.tags\x2C spawn_points.groups\x2C spawn_points.limits\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private

@@ -13,6 +13,14 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
+		Sub NonGeneratedKeys(Keys() As Beacon.ConfigKey)
+		  Keys.AddRow(New Beacon.ConfigKey("GameUserSettings.ini", Beacon.ServerSettingsHeader, "DayCycleSpeedScale"))
+		  Keys.AddRow(New Beacon.ConfigKey("GameUserSettings.ini", Beacon.ServerSettingsHeader, "DayTimeSpeedScale"))
+		  Keys.AddRow(New Beacon.ConfigKey("GameUserSettings.ini", Beacon.ServerSettingsHeader, "NightTimeSpeedScale"))
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
 		  #Pragma Unused Document
 		  #Pragma Unused Identity

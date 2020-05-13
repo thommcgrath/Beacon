@@ -152,6 +152,7 @@ Inherits Beacon.IntegrationEngine
 		      Var DetailsData As Dictionary = DetailsResponse.Value("data")
 		      Var GameServer As Dictionary = DetailsData.Value("gameserver")
 		      Var Settings As Dictionary = GameServer.Value("settings")
+		      Var General As Dictionary = Settings.Value("general")
 		      Var Config As Dictionary = Settings.Value("config")
 		      Var MapText As String = Config.Value("map")
 		      Var MapParts() As String = MapText.Split(",")
@@ -161,9 +162,60 @@ Inherits Beacon.IntegrationEngine
 		      
 		      Server.CommandLineOptions = Settings.Value("start-param")
 		      
-		      // Download ini files
-		      Server.GameIniContent = Self.DownloadFile(Profile.ConfigPath + "/Game.ini", Beacon.NitradoIntegrationEngine.DownloadFailureMode.MissingAllowed, Profile.ServiceID)
-		      Server.GameUserSettingsIniContent = Self.DownloadFile(Profile.ConfigPath + "/GameUserSettings.ini", Beacon.NitradoIntegrationEngine.DownloadFailureMode.MissingAllowed, Profile.ServiceID)
+		      If DebugBuild And General.Lookup("expertMode", False).BooleanValue = False Then
+		        // Build our own ini files from known keys
+		        Var AllConfigs() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey("", "", "") // To retrieve all
+		        Var GameUserSettingsIniValues(), GameIniValues() As Beacon.ConfigValue
+		        For Each ConfigKey As Beacon.ConfigKey In AllConfigs
+		          If ConfigKey.HasNitradoEquivalent = False Then
+		            Continue
+		          End If
+		          
+		          Var TargetArray() As Beacon.ConfigValue
+		          Select Case ConfigKey.File
+		          Case "Game.ini"
+		            TargetArray = GameIniValues
+		          Case "GameUserSettings.ini"
+		            TargetArray = GameUserSettingsIniValues
+		          Else
+		            Continue
+		          End Select
+		          
+		          Var Path As String = ConfigKey.NitradoPath
+		          Var Value As String = Self.GetViaDotNotation(Settings, Path).StringValue.ReplaceLineEndings(EndOfLine.UNIX)
+		          Select Case ConfigKey.NitradoFormat
+		          Case Beacon.ConfigKey.NitradoFormats.Value
+		            TargetArray.AddRow(New Beacon.ConfigValue(ConfigKey.Header, ConfigKey.Key, Value))
+		          Case Beacon.ConfigKey.NitradoFormats.Line
+		            Var Lines() As String = Value.Split(EndOfLine.UNIX)
+		            For Each Line As String In Lines
+		              Var Pos As Integer = Line.IndexOf("=")
+		              If Pos = -1 Then
+		                TargetArray.AddRow(New Beacon.ConfigValue(ConfigKey.Header, ConfigKey.Key, Line))
+		                Continue
+		              End If
+		              
+		              TargetArray.AddRow(New Beacon.ConfigValue(ConfigKey.Header, ConfigKey.Key, Line.Middle(Pos + 1)))
+		            Next
+		          End Select
+		        Next
+		        
+		        Var GameIniDict As New Dictionary
+		        Beacon.ConfigValue.FillConfigDict(GameIniDict, GameIniValues)
+		        
+		        Var GameUserSettingsIniDict As New Dictionary
+		        Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniDict, GameUserSettingsIniValues)
+		        
+		        Var Errored As Boolean
+		        Var ExtraGameIni As String = Self.GetViaDotNotation(Settings, "append.gameini")
+		        Server.GameIniContent = Beacon.Rewriter.Rewrite(ExtraGameIni, GameIniDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
+		        Server.GameUserSettingsIniContent = Beacon.Rewriter.Rewrite("", GameUserSettingsIniDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
+		        Break
+		      Else
+		        // Download ini files
+		        Server.GameIniContent = Self.DownloadFile(Profile.ConfigPath + "/Game.ini", Beacon.NitradoIntegrationEngine.DownloadFailureMode.MissingAllowed, Profile.ServiceID)
+		        Server.GameUserSettingsIniContent = Self.DownloadFile(Profile.ConfigPath + "/GameUserSettings.ini", Beacon.NitradoIntegrationEngine.DownloadFailureMode.MissingAllowed, Profile.ServiceID)
+		      End If
 		      
 		      Servers.AddRow(Server)
 		    Catch Err As RuntimeException
@@ -641,6 +693,31 @@ Inherits Beacon.IntegrationEngine
 		  End If
 		  
 		  Return Content
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function GetViaDotNotation(Dict As Dictionary, Path As String) As Variant
+		  Var Pos As Integer = Path.IndexOf(".")
+		  Var Key As String
+		  If Pos = -1 Then
+		    Key = Path
+		    Path = ""
+		  Else
+		    Key = Path.Left(Pos)
+		    Path = Path.Middle(Pos + 1)
+		  End If
+		  
+		  If Dict.HasKey(Key) = False Then
+		    Return Nil
+		  End If
+		  
+		  Var Value As Variant = Dict.Value(Key)
+		  If Path.IsEmpty Or (Value IsA Dictionary) = False Then
+		    Return Value
+		  End If
+		  
+		  Return GetViaDotNotation(Dictionary(Value), Path)
 		End Function
 	#tag EndMethod
 
