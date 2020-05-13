@@ -3,11 +3,19 @@ Protected Class Metadata
 Inherits Beacon.ConfigGroup
 Implements ObservationKit.Observable
 	#tag Event
+		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+		  #Pragma Unused SourceDocument
+		  #Pragma Unused Profile
+		  
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "bUseSingleplayerSettings", "False"))
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
 		  #Pragma Unused SourceDocument
 		  
 		  Values.AddRow(New Beacon.ConfigValue("SessionSettings", "SessionName", Profile.Name))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "bUseSingleplayerSettings", "False"))
 		  
 		  If App.IdentityManager.CurrentIdentity.IsBanned Then
 		    Var Messages() As String
