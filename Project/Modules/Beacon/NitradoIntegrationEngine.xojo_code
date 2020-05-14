@@ -195,7 +195,7 @@ Inherits Beacon.IntegrationEngine
 		                Continue
 		              End If
 		              
-		              TargetArray.AddRow(New Beacon.ConfigValue(ConfigKey.Header, ConfigKey.Key, Line.Middle(Pos + 1)))
+		              TargetArray.AddRow(New Beacon.ConfigValue(ConfigKey.Header, Line.Left(Pos), Line.Middle(Pos + 1)))
 		            Next
 		          End Select
 		        Next
