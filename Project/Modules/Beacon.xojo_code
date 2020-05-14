@@ -752,8 +752,6 @@ Protected Module Beacon
 		  Case "LootContainer"
 		    Var OfficialSource As Beacon.LootSource = Beacon.Data.GetLootSource(ClassString)
 		    Source = OfficialSource
-		  Else
-		    Return Nil
 		  End Select
 		  
 		  If Source Is Nil Then
