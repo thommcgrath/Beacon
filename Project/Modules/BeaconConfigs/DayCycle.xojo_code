@@ -13,14 +13,6 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub NonGeneratedKeys(Keys() As Beacon.ConfigKey)
-		  Keys.AddRow(New Beacon.ConfigKey("GameUserSettings.ini", Beacon.ServerSettingsHeader, "DayCycleSpeedScale"))
-		  Keys.AddRow(New Beacon.ConfigKey("GameUserSettings.ini", Beacon.ServerSettingsHeader, "DayTimeSpeedScale"))
-		  Keys.AddRow(New Beacon.ConfigKey("GameUserSettings.ini", Beacon.ServerSettingsHeader, "NightTimeSpeedScale"))
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
 		  #Pragma Unused Document
 		  #Pragma Unused Identity
@@ -64,6 +56,10 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
+		  If ParsedData.HasAnyKey("DayCycleSpeedScale", "DayTimeSpeedScale", "NightTimeSpeedScale") = False Then
+		    Return Nil
+		  End If
+		  
 		  Var OverallCycleMultiplier As Double = 1.0
 		  Var DaySpeedMultiplier As Double = 1.0
 		  Var NightSpeedMultiplier As Double = 1.0
@@ -75,9 +71,7 @@ Inherits Beacon.ConfigGroup
 		  Var Config As New BeaconConfigs.DayCycle()
 		  Config.DaySpeedMultiplier = DaySpeedMultiplier / (1 / OverallCycleMultiplier)
 		  Config.NightSpeedMultiplier = NightSpeedMultiplier / (1 / OverallCycleMultiplier)
-		  If Config.Modified Then
-		    Return Config
-		  End If
+		  Return Config
 		End Function
 	#tag EndMethod
 

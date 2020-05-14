@@ -233,6 +233,17 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasAnyKey(Extends Dict As Dictionary, ParamArray Keys() As Variant) As Boolean
+		  For Each Key As Variant In Keys
+		    If Dict.HasKey(Key) = True Then
+		      Return True
+		    End If
+		  Next
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IntegerValue(Extends Value As Variant) As Integer
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Value)
 		  Select Case Info.Name
