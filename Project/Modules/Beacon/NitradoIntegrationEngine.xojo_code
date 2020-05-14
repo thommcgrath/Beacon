@@ -77,7 +77,11 @@ Inherits Beacon.IntegrationEngine
 		      End If
 		    Next
 		    
-		    Var ExtraGameIni As String = Self.GetViaDotNotation(Self.mCurrentSettings, "append.gameini")
+		    Self.Log("Updating 'Custom Game.ini Settings' field…")
+		    Var ExtraGameIni As String = Self.DownloadFile(Self.mGamePath + "user-settings.ini", Beacon.NitradoIntegrationEngine.DownloadFailureMode.MissingAllowed)
+		    If Self.Finished Then
+		      Return
+		    End If
 		    If ExtraGameIni.BeginsWith("[" + Beacon.ShooterGameHeader + "]") = False Then
 		      ExtraGameIni = "[" + Beacon.ShooterGameHeader + "]" + EndOfLine.UNIX + ExtraGameIni
 		    End If
@@ -92,11 +96,10 @@ Inherits Beacon.IntegrationEngine
 		    // Need to remove the header that the rewriter adds
 		    ExtraGameIni = ExtraGameIni.Replace("[" + Beacon.ShooterGameHeader + "]", "").Trim
 		    
-		    Var FormData As New Dictionary
-		    FormData.Value("category") = "append"
-		    FormData.Value("key") = "gameini"
-		    FormData.Value("value") = ExtraGameIni
-		    GuidedChanges.AddRow(FormData)
+		    Self.UploadFile(Self.mGamePath + "user-settings.ini", ExtraGameIni)
+		    If Self.Finished Then
+		      Return
+		    End If
 		  End If
 		  
 		  For Each Option As Beacon.ConfigValue In CommandLineOptions
@@ -123,6 +126,8 @@ Inherits Beacon.IntegrationEngine
 		  Next
 		  
 		  For Each FormData As Dictionary In GuidedChanges
+		    Self.Log("Updating " + FormData.Value("key").StringValue + "…")
+		    
 		    Var Sock As New HTTPClientSocket
 		    Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		    Sock.SetFormData(FormData)
@@ -358,7 +363,10 @@ Inherits Beacon.IntegrationEngine
 		        Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniDict, GameUserSettingsIniValues)
 		        
 		        Var Errored As Boolean
-		        Var ExtraGameIni As String = Self.GetViaDotNotation(Settings, "append.gameini")
+		        Var ExtraGameIni As String = Self.DownloadFile(GameSpecific.Value("path") + "user-settings.ini", Beacon.NitradoIntegrationEngine.DownloadFailureMode.MissingAllowed)
+		        If Self.Finished Then
+		          Return Nil
+		        End If
 		        Server.GameIniContent = Beacon.Rewriter.Rewrite(ExtraGameIni, GameIniDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
 		        Server.GameUserSettingsIniContent = Beacon.Rewriter.Rewrite("", GameUserSettingsIniDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
 		      Else
@@ -496,6 +504,7 @@ Inherits Beacon.IntegrationEngine
 		      Var GeneralSettings As Dictionary = Settings.Value("general")
 		      #if GuidedModeSupportEnabled
 		        Self.mDoGuidedDeploy = GeneralSettings.Value("expertMode") = "false"
+		        Self.mGamePath = Self.GetViaDotNotation(GameServer, "game_specific.path")
 		      #else
 		        Var ExpertMode As Boolean = GeneralSettings.Value("expertMode") = "true"
 		        
@@ -886,6 +895,10 @@ Inherits Beacon.IntegrationEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mGamePath As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mInitialStatusQuery As Boolean
 	#tag EndProperty
 
@@ -901,7 +914,7 @@ Inherits Beacon.IntegrationEngine
 	#tag Constant, Name = ConnectionTimeout, Type = Double, Dynamic = False, Default = \"30", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = GuidedModeSupportEnabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
+	#tag Constant, Name = GuidedModeSupportEnabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Private
 	#tag EndConstant
 
 
