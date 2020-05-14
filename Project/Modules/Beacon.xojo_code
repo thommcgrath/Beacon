@@ -1,6 +1,21 @@
 #tag Module
 Protected Module Beacon
 	#tag Method, Flags = &h0
+		Sub AddArray(Extends Destination() As Beacon.ConfigValue, Source() As Beacon.ConfigValue)
+		  If Source Is Nil Or Source.Count = 0 Then
+		    Return
+		  End If
+		  
+		  Var StartingIndex As Integer = Destination.LastRowIndex + 1
+		  Destination.ResizeTo((Destination.Count + Source.Count) - 1)
+		  
+		  For Idx As Integer = StartingIndex To Destination.LastRowIndex
+		    Destination(Idx) = Source(Idx - StartingIndex)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub AddTag(Extends Blueprint As Beacon.MutableBlueprint, ParamArray TagsToAdd() As String)
 		  Blueprint.AddTags(TagsToAdd)
 		End Sub

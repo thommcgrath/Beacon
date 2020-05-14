@@ -254,31 +254,36 @@ Protected Class IntegrationEngine
 		  End If
 		  Var InitialServerState As Integer = Self.State
 		  
-		  // Download the ini files
-		  Self.Log("Downloading Game.ini…")
-		  Var GameIniOriginal As String = RaiseEvent DownloadFile("Game.ini")
-		  If Self.Finished Then
-		    Return
-		  End If
-		  Self.Log("Downloading GameUserSettings.ini")
-		  Var GameUserSettingsIniOriginal As String = RaiseEvent DownloadFile("GameUserSettings.ini")
-		  If Self.Finished Then
-		    Return
+		  Var GameIniOriginal, GameUserSettingsIniOriginal As String
+		  If Self.mDoGuidedDeploy = False Then
+		    // Download the ini files
+		    Self.Log("Downloading Game.ini…")
+		    GameIniOriginal = RaiseEvent DownloadFile("Game.ini")
+		    If Self.Finished Then
+		      Return
+		    End If
+		    Self.Log("Downloading GameUserSettings.ini")
+		    GameUserSettingsIniOriginal = RaiseEvent DownloadFile("GameUserSettings.ini")
+		    If Self.Finished Then
+		      Return
+		    End If
 		  End If
 		  
 		  // Run the backup if requested
 		  If Self.BackupEnabled Then
-		    Var Dict As New Dictionary
-		    Dict.Value("Game.ini") = GameIniOriginal
-		    Dict.Value("GameUserSettings.ini") = GameUserSettingsIniOriginal
-		    
-		    Var Controller As New Beacon.TaskWaitController("Backup", Dict)
-		    
-		    Self.Log("Backing up config files…")
-		    Self.Wait(Controller)
-		    If Controller.Cancelled Then
-		      Self.Cancel
-		      Return
+		    If Self.mDoGuidedDeploy = False Then
+		      Var Dict As New Dictionary
+		      Dict.Value("Game.ini") = GameIniOriginal
+		      Dict.Value("GameUserSettings.ini") = GameUserSettingsIniOriginal
+		      
+		      Var Controller As New Beacon.TaskWaitController("Backup", Dict)
+		      
+		      Self.Log("Backing up config files…")
+		      Self.Wait(Controller)
+		      If Controller.Cancelled Then
+		        Self.Cancel
+		        Return
+		      End If
 		    End If
 		    
 		    If Self.SupportsCheckpoints Then
@@ -287,6 +292,35 @@ Protected Class IntegrationEngine
 		        Return
 		      End If
 		    End If
+		  End If
+		  
+		  If Self.mDoGuidedDeploy Then
+		    If Self.SupportsWideSettings Then
+		      Var GameIniValues(), GameUserSettingsIniValues(), CommandLineValues() As Beacon.ConfigValue
+		      Var Groups() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
+		      For Each Group As Beacon.ConfigGroup In Groups
+		        GameIniValues.AddArray(Group.GameIniValues(Self.Document, Self.Identity, Self.Profile))
+		        GameUserSettingsIniValues.AddArray(Group.GameUserSettingsIniValues(Self.Document, Self.Identity, Self.Profile))
+		        CommandLineValues.AddArray(Group.CommandLineOptions(Self.Document, Self.Identity, Self.Profile))
+		      Next
+		      
+		      RaiseEvent ApplySettings(GameIniValues, GameUserSettingsIniValues, CommandLineValues)
+		      If Self.Finished Then
+		        Return
+		      End If
+		    End If
+		    
+		    // Restart the server if it is running
+		    If Self.SupportsRestarting And (InitialServerState = Self.StateRunning Or InitialServerState = Self.StateStarting) Then
+		      Self.StopServer()
+		      Self.StartServer()
+		    End If
+		    
+		    Self.Log("Finished")
+		    Self.Finished = True
+		    
+		    RaiseEvent Finished
+		    Return
 		  End If
 		  
 		  // Build the new ini files
@@ -314,7 +348,7 @@ Protected Class IntegrationEngine
 		  End If
 		  
 		  Var CommandLine() As Beacon.ConfigValue
-		  If Self.SupportsCommandLine Then
+		  If Self.SupportsWideSettings Then
 		    Var Groups() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
 		    For Each Group As Beacon.ConfigGroup In Groups
 		      If Group.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
@@ -365,9 +399,13 @@ Protected Class IntegrationEngine
 		  End If
 		  
 		  // Make command line changes
-		  If Self.SupportsCommandLine And CommandLine.Count > 0 Then
+		  If Self.SupportsWideSettings And CommandLine.Count > 0 Then
 		    Self.Log("Updating other settings…")
-		    RaiseEvent SetCommandLine(CommandLine)
+		    Var Placeholder() As Beacon.ConfigValue
+		    RaiseEvent ApplySettings(Placeholder, Placeholder, CommandLine)
+		    If Self.Finished Then
+		      Return
+		    End If
 		  End If
 		  
 		  // And start the server if it was already running
@@ -537,12 +575,6 @@ Protected Class IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SupportsCommandLine() As Boolean
-		  Return IsEventImplemented("SetCommandLine")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function SupportsRestarting() As Boolean
 		  Return IsEventImplemented("StartServer") And IsEventImplemented("StopServer")
 		End Function
@@ -551,6 +583,12 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h0
 		Function SupportsStatus() As Boolean
 		  Return IsEventImplemented("RefreshServerStatus")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportsWideSettings() As Boolean
+		  Return IsEventImplemented("ApplySettings")
 		End Function
 	#tag EndMethod
 
@@ -611,6 +649,10 @@ Protected Class IntegrationEngine
 
 
 	#tag Hook, Flags = &h0
+		Event ApplySettings(GameIniValues() As Beacon.ConfigValue, GameUserSettingsIniValues() As Beacon.ConfigValue, CommandLineOptions() As Beacon.ConfigValue)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Begin()
 	#tag EndHook
 
@@ -640,10 +682,6 @@ Protected Class IntegrationEngine
 
 	#tag Hook, Flags = &h0
 		Event RefreshServerStatus()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event SetCommandLine(Options() As Beacon.ConfigValue)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -684,6 +722,10 @@ Protected Class IntegrationEngine
 
 	#tag Property, Flags = &h21
 		Private mDocument As Beacon.Document
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mDoGuidedDeploy As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -2,6 +2,136 @@
 Protected Class NitradoIntegrationEngine
 Inherits Beacon.IntegrationEngine
 	#tag Event
+		Sub ApplySettings(GameIniValues() As Beacon.ConfigValue, GameUserSettingsIniValues() As Beacon.ConfigValue, CommandLineOptions() As Beacon.ConfigValue)
+		  Var GuidedChanges() As Dictionary
+		  
+		  #if GuidedModeSupportEnabled
+		    #Pragma Error "No way to control 'Custom Game.ini Content' field."
+		  #endif
+		  
+		  If Self.mDoGuidedDeploy Then
+		    Var GameIniDict As New Dictionary
+		    Beacon.ConfigValue.FillConfigDict(GameIniDict, GameIniValues)
+		    Var GameUserSettingsIniDict As New Dictionary
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniDict, GameUserSettingsIniValues)
+		    
+		    Var AllConfigs() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey("", "", "")
+		    For Each ConfigKey As Beacon.ConfigKey In AllConfigs
+		      If ConfigKey.HasNitradoEquivalent = False Then
+		        Continue
+		      End If
+		      
+		      Var TargetDict As Dictionary
+		      Select Case ConfigKey.File
+		      Case "Game.ini"
+		        TargetDict = GameIniDict
+		      Case "GameUserSettings.ini"
+		        TargetDict = GameUserSettingsIniDict
+		      Else
+		        Continue
+		      End Select
+		      
+		      If TargetDict.HasKey(ConfigKey.Header) = False Then
+		        Continue
+		      End If
+		      
+		      Var SimplifiedKey As String = ConfigKey.SimplifiedKey
+		      Var Section As Dictionary = TargetDict.Value(ConfigKey.Header)
+		      If Section.HasKey(SimplifiedKey) = False Then
+		        Continue
+		      End If
+		      
+		      Var NewLines() As String = Section.Value(SimplifiedKey)
+		      Var NewValue As String
+		      Select Case ConfigKey.NitradoFormat
+		      Case Beacon.ConfigKey.NitradoFormats.Line
+		        NewValue = NewLines.Join(EndOfLine.UNIX)
+		      Case Beacon.ConfigKey.NitradoFormats.Value
+		        If NewLines.Count <> 1 Then
+		          Break
+		        Else
+		          NewValue = NewLines(0).Middle(NewLines(0).IndexOf("=") + 1)
+		        End If
+		      Else
+		        Continue
+		      End Select
+		      
+		      Var CurrentValue As String = Self.GetViaDotNotation(Self.mCurrentSettings, ConfigKey.NitradoPath)
+		      If CurrentValue.Compare(NewValue, ComparisonOptions.CaseSensitive, Locale.Raw) <> 0 Then
+		        Var CategoryLength As Integer = ConfigKey.NitradoPath.IndexOf(".")
+		        Var Category As String = ConfigKey.NitradoPath.Left(CategoryLength)
+		        Var Key As String = ConfigKey.NitradoPath.Middle(CategoryLength + 1)
+		        
+		        Var FormData As New Dictionary
+		        FormData.Value("category") = Category
+		        FormData.Value("key") = Key
+		        FormData.Value("value") = NewValue
+		        GuidedChanges.AddRow(FormData)
+		        
+		        App.Log("Need to change " + ConfigKey.NitradoPath.StringValue + " from `" + CurrentValue + "` to `" + NewValue + "`")
+		      End If
+		      
+		      Section.Remove(SimplifiedKey)
+		      If Section.KeyCount = 0 Then
+		        TargetDict.Remove(ConfigKey.Header)
+		      End If
+		    Next
+		    
+		    Var ExtraGameIni As String = Self.GetViaDotNotation(Self.mCurrentSettings, "append.gameini")
+		    Var GameIniErrored As Boolean
+		    ExtraGameIni = Beacon.Rewriter.Rewrite(ExtraGameIni, GameIniDict, Self.Document.TrustKey, If(Self.Document.AllowUCS, Beacon.Rewriter.EncodingFormat.UCS2AndASCII, Beacon.Rewriter.EncodingFormat.ASCII), GameIniErrored)
+		    If GameIniErrored Then
+		      Self.SetError("Unable to generate new value for Custom Game.ini Content field.")
+		      Return
+		    End If
+		    
+		    // Need to remove the header that the rewriter adds
+		    ExtraGameIni = ExtraGameIni.Replace("[" + Beacon.ShooterGameHeader + "]", "").Trim
+		    
+		    Var FormData As New Dictionary
+		    FormData.Value("category") = "append"
+		    FormData.Value("key") = "gameini"
+		    FormData.Value("value") = ExtraGameIni
+		    GuidedChanges.AddRow(FormData)
+		  End If
+		  
+		  #if DebugBuild
+		    #Pragma Warning "Handle command line options"
+		  #else
+		    #Pragma Error "Handle command line options"
+		  #endif
+		  
+		  For Each FormData As Dictionary In GuidedChanges
+		    Var Sock As New HTTPClientSocket
+		    Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		    Sock.SetFormData(FormData)
+		    
+		    Var Content As String = Sock.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings", Self.ConnectionTimeout)
+		    Var Status As Integer = Sock.HTTPStatusCode
+		    
+		    If Self.Finished Or Self.CheckError(Status, Content) Then
+		      Return
+		    End If
+		    
+		    Try
+		      Var Response As Dictionary = Beacon.ParseJSON(Content)
+		      If Response.Value("status") <> "success" Then
+		        Self.SetError("Error: Unable to change setting: " + FormData.Value("category").StringValue + "." + FormData.Value("value").StringValue)
+		        Return
+		      End If
+		    Catch Err As RuntimeException
+		      App.LogAPIException(Err, CurrentMethodName, Status, Content)
+		      Self.SetError(Err)
+		      Return
+		    End Try
+		    
+		    // So we don't go nuts
+		    App.SleepCurrentThread(50)
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Begin()
 		  // To make sure we don't spam the user with more authentication requests than necessary, 
 		  // we obtain a lock here. This event is threaded, so it is safe
@@ -162,7 +292,7 @@ Inherits Beacon.IntegrationEngine
 		      
 		      Server.CommandLineOptions = Settings.Value("start-param")
 		      
-		      If DebugBuild And General.Lookup("expertMode", False).BooleanValue = False Then
+		      If GuidedModeSupportEnabled And General.Lookup("expertMode", False).BooleanValue = False Then
 		        // Build our own ini files from known keys
 		        Var AllConfigs() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey("", "", "") // To retrieve all
 		        Var GameUserSettingsIniValues(), GameIniValues() As Beacon.ConfigValue
@@ -210,7 +340,6 @@ Inherits Beacon.IntegrationEngine
 		        Var ExtraGameIni As String = Self.GetViaDotNotation(Settings, "append.gameini")
 		        Server.GameIniContent = Beacon.Rewriter.Rewrite(ExtraGameIni, GameIniDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
 		        Server.GameUserSettingsIniContent = Beacon.Rewriter.Rewrite("", GameUserSettingsIniDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
-		        Break
 		      Else
 		        // Download ini files
 		        Server.GameIniContent = Self.DownloadFile(Profile.ConfigPath + "/Game.ini", Beacon.NitradoIntegrationEngine.DownloadFailureMode.MissingAllowed, Profile.ServiceID)
@@ -344,71 +473,75 @@ Inherits Beacon.IntegrationEngine
 		      
 		      Var Settings As Dictionary = GameServer.Value("settings")
 		      Var GeneralSettings As Dictionary = Settings.Value("general")
-		      Var ExpertMode As Boolean = GeneralSettings.Value("expertMode") = "true"
-		      
-		      If ExpertMode = False And Self.Mode = Self.ModeDeploy Then
-		        Var Controller As New Beacon.TaskWaitController("Needs Expert Mode")
+		      #if GuidedModeSupportEnabled
+		        Self.mDoGuidedDeploy = GeneralSettings.Value("expertMode") = "false"
+		      #else
+		        Var ExpertMode As Boolean = GeneralSettings.Value("expertMode") = "true"
 		        
-		        Self.Log("Waiting for user action…")
-		        Self.Wait(Controller)
-		        Self.RemoveLastLog()
-		        If Controller.Cancelled Then
-		          Self.Cancel
-		          Return
+		        If ExpertMode = False And Self.Mode = Self.ModeDeploy Then
+		          Var Controller As New Beacon.TaskWaitController("Needs Expert Mode")
+		          
+		          Self.Log("Waiting for user action…")
+		          Self.Wait(Controller)
+		          Self.RemoveLastLog()
+		          If Controller.Cancelled Then
+		            Self.Cancel
+		            Return
+		          End If
+		          
+		          // Start the server, returning it to its previous state
+		          Self.Log("Enabling expert mode…")
+		          Select Case Self.State
+		          Case Self.StateStopped, Self.StateStopping
+		            Self.Log("Enabling expert mode - starting server…", True)
+		            Self.StartServer(False)
+		            If Self.Finished Then
+		              Return
+		            End If
+		            Self.Log("Enabling expert mode - stopping server…", True)
+		            Self.StopServer(False)
+		            If Self.Finished Then
+		              Return
+		            End If
+		          Case Self.StateRunning, Self.StateStarting
+		            Self.Log("Enabling expert mode - stopping server…", True)
+		            Self.StopServer(False)
+		            If Self.Finished Then
+		              Return
+		            End If
+		            Self.Log("Enabling expert mode - starting server…", True)
+		            Self.StartServer(False)
+		            If Self.Finished Then
+		              Return
+		            End If
+		          End Select
+		          
+		          // Now actually change the server
+		          Var FormData As New Dictionary
+		          FormData.Value("category") = "general"
+		          FormData.Value("key") = "expertMode"
+		          FormData.Value("value") = "true"
+		          
+		          Var ExpertToggleSocket As New HTTPClientSocket
+		          ExpertToggleSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		          ExpertToggleSocket.SetFormData(FormData)
+		          
+		          Self.Log("Enabling expert mode…", True)
+		          Var ExpertContent As String = ExpertToggleSocket.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings", Self.ConnectionTimeout)
+		          Var ExpertStatus As Integer = ExpertToggleSocket.HTTPStatusCode
+		          If Self.Finished Or Self.CheckError(ExpertStatus, ExpertContent) Then
+		            Return
+		          End If
+		          
+		          Var ExpertResponse As Dictionary = Beacon.ParseJSON(ExpertContent)
+		          If ExpertResponse.Value("status") <> "success" Then
+		            Self.SetError("Error: Could not enable expert mode.")
+		            Return
+		          End If
+		          
+		          Self.Log("Expert mode enabled.")
 		        End If
-		        
-		        // Start the server, returning it to its previous state
-		        Self.Log("Enabling expert mode…")
-		        Select Case Self.State
-		        Case Self.StateStopped, Self.StateStopping
-		          Self.Log("Enabling expert mode - starting server…", True)
-		          Self.StartServer(False)
-		          If Self.Finished Then
-		            Return
-		          End If
-		          Self.Log("Enabling expert mode - stopping server…", True)
-		          Self.StopServer(False)
-		          If Self.Finished Then
-		            Return
-		          End If
-		        Case Self.StateRunning, Self.StateStarting
-		          Self.Log("Enabling expert mode - stopping server…", True)
-		          Self.StopServer(False)
-		          If Self.Finished Then
-		            Return
-		          End If
-		          Self.Log("Enabling expert mode - starting server…", True)
-		          Self.StartServer(False)
-		          If Self.Finished Then
-		            Return
-		          End If
-		        End Select
-		        
-		        // Now actually change the server
-		        Var FormData As New Dictionary
-		        FormData.Value("category") = "general"
-		        FormData.Value("key") = "expertMode"
-		        FormData.Value("value") = "true"
-		        
-		        Var ExpertToggleSocket As New HTTPClientSocket
-		        ExpertToggleSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
-		        ExpertToggleSocket.SetFormData(FormData)
-		        
-		        Self.Log("Enabling expert mode…", True)
-		        Var ExpertContent As String = ExpertToggleSocket.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings", Self.ConnectionTimeout)
-		        Var ExpertStatus As Integer = ExpertToggleSocket.HTTPStatusCode
-		        If Self.Finished Or Self.CheckError(ExpertStatus, ExpertContent) Then
-		          Return
-		        End If
-		        
-		        Var ExpertResponse As Dictionary = Beacon.ParseJSON(ExpertContent)
-		        If ExpertResponse.Value("status") <> "success" Then
-		          Self.SetError("Error: Could not enable expert mode.")
-		          Return
-		        End If
-		        
-		        Self.Log("Expert mode enabled.")
-		      End If
+		      #endif
 		      
 		      // Determine which map the server is running and update the profile if necessary
 		      Var Config As Dictionary = Settings.Value("config")
@@ -416,8 +549,8 @@ Inherits Beacon.IntegrationEngine
 		      Var MapParts() As String = MapText.Split(",")
 		      Self.Profile.Mask = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.LastRowIndex))
 		      
-		      // Keep track of the current command line parameters for later
-		      Self.mCurrentStartParams = Settings.Value("start-param")
+		      // Keep track of the current settings for later
+		      Self.mCurrentSettings = Settings
 		      
 		      // Update the profile with less common changes
 		      Var GameSpecific As Dictionary = GameServer.Value("game_specific")
@@ -430,62 +563,6 @@ Inherits Beacon.IntegrationEngine
 		    Self.SetError(Err)
 		    Return
 		  End Try
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub SetCommandLine(Options() As Beacon.ConfigValue)
-		  Var PendingChanges() As Beacon.ConfigValue
-		  For Each ConfigValue As Beacon.ConfigValue In Options
-		    Var Key As String = ConfigValue.Key
-		    Var Value As String = ConfigValue.Value
-		    
-		    If Not self.mCurrentStartParams.HasKey(Key) Then
-		      Continue
-		    End If
-		    
-		    If Self.mCurrentStartParams.Value(Key) <> Value Then
-		      PendingChanges.AddRow(ConfigValue)
-		    End If
-		  Next
-		  
-		  // To remove the automatic "updating other settings" message
-		  Self.RemoveLastLog()
-		  
-		  If PendingChanges.Count = 0 Then
-		    Return
-		  End If
-		  
-		  For Each ConfigValue As Beacon.ConfigValue In PendingChanges
-		    Var Sock As New HTTPClientSocket
-		    Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
-		    
-		    Var FormData As New Dictionary
-		    FormData.Value("category") = "start-param"
-		    FormData.Value("key") = ConfigValue.Key
-		    FormData.Value("value") = ConfigValue.Value
-		    Sock.SetFormData(FormData)
-		    
-		    Self.Log("Setting '" + ConfigValue.Key + "' to '" + ConfigValue.Value + "'…")
-		    Var Content As String = Sock.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings", Self.ConnectionTimeout)
-		    Var Status As Integer = Sock.HTTPStatusCode
-		    
-		    If Self.Finished Or Self.CheckError(Status, Content) Then
-		      Return
-		    End If
-		    
-		    Try
-		      Var Response As Dictionary = Beacon.ParseJSON(Content)
-		      If Response.Value("status") <> "success" Then
-		        Self.SetError("Error: Unable to change command line parameter.")
-		        Return
-		      End If
-		    Catch Err As RuntimeException
-		      App.LogAPIException(Err, CurrentMethodName, Status, Content)
-		      Self.SetError(Err)
-		      Return
-		    End Try
-		  Next
 		End Sub
 	#tag EndEvent
 
@@ -784,7 +861,7 @@ Inherits Beacon.IntegrationEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCurrentStartParams As Dictionary
+		Private mCurrentSettings As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -801,6 +878,9 @@ Inherits Beacon.IntegrationEngine
 
 
 	#tag Constant, Name = ConnectionTimeout, Type = Double, Dynamic = False, Default = \"30", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = GuidedModeSupportEnabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
 	#tag EndConstant
 
 

@@ -117,6 +117,19 @@ Protected Class ConfigKey
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SimplifiedKey() As String
+		  // Returns the key without its attribute
+		  
+		  Var Idx As Integer = Self.mKey.IndexOf("[")
+		  If Idx = -1 Then
+		    Return Self.mKey
+		  Else
+		    Return Self.mKey.Left(Idx)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function UUID() As v4UUID
 		  Return Self.mUUID
 		End Function
