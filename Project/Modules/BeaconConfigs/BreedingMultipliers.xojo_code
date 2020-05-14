@@ -83,6 +83,10 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
+		  If ParsedData.HasAnyKey("BabyMatureSpeedMultiplier", "EggHatchSpeedMultiplier", "BabyFoodConsumptionSpeedMultiplier", "LayEggIntervalMultiplier", "BabyCuddleGracePeriodMultiplier", "BabyCuddleIntervalMultiplier", "BabyCuddleLoseImprintQualitySpeedMultiplier", "BabyImprintingStatScaleMultiplier", "MatingIntervalMultiplier", "MatingSpeedMultiplier") = False Then
+		    Return Nil
+		  End If
+		  
 		  Var BabyMatureSpeedMultiplier As Double = ParsedData.DoubleValue("BabyMatureSpeedMultiplier", 1.0, True)
 		  Var EggHatchSpeedMultiplier As Double = ParsedData.DoubleValue("EggHatchSpeedMultiplier", 1.0, True)
 		  Var BabyFoodConsumptionSpeedMultiplier As Double = ParsedData.DoubleValue("BabyFoodConsumptionSpeedMultiplier", 1.0, True)
@@ -93,10 +97,6 @@ Inherits Beacon.ConfigGroup
 		  Var BabyImprintingStatScaleMultiplier As Double = ParsedData.DoubleValue("BabyImprintingStatScaleMultiplier", 1.0, True)
 		  Var MatingIntervalMultiplier As Double = ParsedData.DoubleValue("MatingIntervalMultiplier", 1.0, True)
 		  Var MatingSpeedMultiplier As Double = ParsedData.DoubleValue("MatingSpeedMultiplier", 1.0, True)
-		  
-		  If BabyMatureSpeedMultiplier = 1.0 And EggHatchSpeedMultiplier = 1.0 And BabyFoodConsumptionSpeedMultiplier = 1.0 And LayEggIntervalMultiplier = 1.0 And BabyCuddleGracePeriodMultiplier = 1.0 And BabyCuddleIntervalMultiplier = 1.0 And BabyCuddleLoseImprintQualitySpeedMultiplier = 1.0 And BabyImprintingStatScaleMultiplier = 1.0 And MatingIntervalMultiplier = 1.0 And MatingSpeedMultiplier = 1.0 Then
-		    Return Nil
-		  End If
 		  
 		  Var Multipliers As New BeaconConfigs.BreedingMultipliers
 		  Multipliers.mBabyCuddleGracePeriodMultiplier = BabyCuddleGracePeriodMultiplier

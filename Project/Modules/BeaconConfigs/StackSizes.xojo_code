@@ -130,6 +130,10 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
+		  If ParsedData.HasAnyKey("ItemStackSizeMultiplier", "ConfigOverrideItemMaxQuantity") = False Then
+		    Return Nil
+		  End If
+		  
 		  Var GlobalMultiplier As Double = ParsedData.DoubleValue("ItemStackSizeMultiplier", 1.0, True)
 		  Var Overrides As New Dictionary
 		  
@@ -164,10 +168,6 @@ Inherits Beacon.ConfigGroup
 		        Overrides.Value(Engram.Path) = StackSize
 		      End If
 		    Next
-		  End If
-		  
-		  If GlobalMultiplier = 1.0 And Overrides.KeyCount = 0 Then
-		    Return Nil
 		  End If
 		  
 		  Var Config As New BeaconConfigs.StackSizes

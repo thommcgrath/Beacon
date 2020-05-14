@@ -116,6 +116,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  Var Config As New BeaconConfigs.StatMultipliers()
 		  Var Stats() As Beacon.Stat = Beacon.Stats.All
+		  Var FoundConfig As Boolean
 		  
 		  For Each Stat As Beacon.Stat In Stats
 		    Var PlayerBaseKey As String = "PlayerBaseStatMultipliers[" + Str(Stat.Index, "0") + "]"
@@ -124,6 +125,12 @@ Inherits Beacon.ConfigGroup
 		    Var TamedAddKey As String = "PerLevelStatsMultiplier_DinoTamed_Add[" + Str(Stat.Index, "0") + "]"
 		    Var TamedAffinityKey As String = "PerLevelStatsMultiplier_DinoTamed_Affinity[" + Str(Stat.Index, "0") + "]"
 		    Var WildPerLevelKey As String = "PerLevelStatsMultiplier_DinoWild[" + Str(Stat.Index, "0") + "]"
+		    
+		    If ParsedData.HasAnyKey(PlayerBaseKey, PlayerPerLevelKey, TamedPerLevelKey, TamedAddKey, TamedAffinityKey, WildPerLevelKey) = False Then
+		      Continue
+		    ElseIf FoundConfig = False Then
+		      FoundConfig = True
+		    End If
 		    
 		    If Stat.PlayerBaseCapped = False Then
 		      Config.PlayerBaseMultiplier(Stat) = ParsedData.DoubleValue(PlayerBaseKey, 1.0, True)
@@ -137,7 +144,7 @@ Inherits Beacon.ConfigGroup
 		    Config.WildPerLevelMultiplier(Stat) = ParsedData.DoubleValue(WildPerLevelKey, Stat.WildDefault, True)
 		  Next
 		  
-		  If Config.Modified Then
+		  If FoundConfig Then
 		    Return Config
 		  End If
 		End Function

@@ -166,6 +166,10 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
+		  If ParsedData.HasAnyKey("HarvestAmountMultiplier", "HarvestHealthMultiplier", "PlayerHarvestingDamageMultiplier", "DinoHarvestingDamageMultiplier", "ClampResourceHarvestDamage", "HarvestResourceItemAmountClassMultipliers") = False And (CommandLineOptions Is Nil Or CommandLineOptions.HasKey("UseOptimizedHarvestingHealth") = False) Then
+		    Return Nil
+		  End If
+		  
 		  Var HarvestAmountMultiplier As Double = ParsedData.DoubleValue("HarvestAmountMultiplier", 1.0, True)
 		  Var HarvestHealthMultiplier As Double = ParsedData.DoubleValue("HarvestHealthMultiplier", 1.0, True)
 		  Var PlayerHarvestingDamageMultiplier As Double = ParsedData.DoubleValue("PlayerHarvestingDamageMultiplier", 1.0, True)
@@ -174,7 +178,7 @@ Inherits Beacon.ConfigGroup
 		  Var UseOptimizedRates As Boolean = False
 		  Var Overrides As New Dictionary
 		  
-		  If CommandLineOptions <> Nil And CommandLineOptions.HasKey("UseOptimizedHarvestingHealth") Then
+		  If (CommandLineOptions Is Nil) = False And CommandLineOptions.HasKey("UseOptimizedHarvestingHealth") Then
 		    Try
 		      UseOptimizedRates = CommandLineOptions.BooleanValue("UseOptimizedHarvestingHealth", False, False)
 		    Catch Err As RuntimeException
@@ -213,7 +217,6 @@ Inherits Beacon.ConfigGroup
 		    Next
 		  End If
 		  
-		  // Use the public properties here to toggle modified ...
 		  Var Config As New BeaconConfigs.HarvestRates
 		  Config.HarvestAmountMultiplier = HarvestAmountMultiplier
 		  Config.HarvestHealthMultiplier = HarvestHealthMultiplier
@@ -222,12 +225,7 @@ Inherits Beacon.ConfigGroup
 		  Config.ClampResourceHarvestDamage = ClampResourceHarvestDamage
 		  Config.UseOptimizedRates = UseOptimizedRates
 		  Config.mOverrides = Overrides
-		  
-		  // ... so it can be checked here to determine if any of the values are non-default
-		  If Config.Modified Or Config.mOverrides.KeyCount > 0 Then
-		    Config.Modified = False
-		    Return Config
-		  End If
+		  Return Config
 		End Function
 	#tag EndMethod
 
