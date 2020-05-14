@@ -5,7 +5,7 @@ Inherits Beacon.IntegrationEngine
 		Sub ApplySettings(GameIniValues() As Beacon.ConfigValue, GameUserSettingsIniValues() As Beacon.ConfigValue, CommandLineOptions() As Beacon.ConfigValue)
 		  Var GuidedChanges() As Dictionary
 		  
-		  #if GuidedModeSupportEnabled
+		  #if GuidedModeSupportEnabled And Not DebugBuild
 		    #Pragma Error "No way to control 'Custom Game.ini Content' field."
 		  #endif
 		  
@@ -95,11 +95,28 @@ Inherits Beacon.IntegrationEngine
 		    GuidedChanges.AddRow(FormData)
 		  End If
 		  
-		  #if DebugBuild
-		    #Pragma Warning "Handle command line options"
-		  #else
-		    #Pragma Error "Handle command line options"
-		  #endif
+		  For Each Option As Beacon.ConfigValue In CommandLineOptions
+		    Var ConfigKey As Beacon.ConfigKey = Beacon.Data.GetConfigKey("", Option.Header, Option.Key)
+		    If ConfigKey Is Nil Or ConfigKey.HasNitradoEquivalent = False Then
+		      Continue
+		    End If
+		    
+		    Var NewValue As String = Option.Value
+		    Var CurrentValue As String = Self.GetViaDotNotation(Self.mCurrentSettings, ConfigKey.NitradoPath)
+		    If CurrentValue.Compare(NewValue, ComparisonOptions.CaseSensitive, Locale.Raw) <> 0 Then
+		      Var CategoryLength As Integer = ConfigKey.NitradoPath.IndexOf(".")
+		      Var Category As String = ConfigKey.NitradoPath.Left(CategoryLength)
+		      Var Key As String = ConfigKey.NitradoPath.Middle(CategoryLength + 1)
+		      
+		      Var FormData As New Dictionary
+		      FormData.Value("category") = Category
+		      FormData.Value("key") = Key
+		      FormData.Value("value") = NewValue
+		      GuidedChanges.AddRow(FormData)
+		      
+		      App.Log("Need to change " + ConfigKey.NitradoPath.StringValue + " from `" + CurrentValue + "` to `" + NewValue + "`")
+		    End If
+		  Next
 		  
 		  For Each FormData As Dictionary In GuidedChanges
 		    Var Sock As New HTTPClientSocket

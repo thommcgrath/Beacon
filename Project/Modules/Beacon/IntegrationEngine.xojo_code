@@ -298,11 +298,29 @@ Protected Class IntegrationEngine
 		    If Self.SupportsWideSettings Then
 		      Var GameIniValues(), GameUserSettingsIniValues(), CommandLineValues() As Beacon.ConfigValue
 		      Var Groups() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
+		      Var CustomContent As BeaconConfigs.CustomContent
 		      For Each Group As Beacon.ConfigGroup In Groups
+		        If Group IsA BeaconConfigs.CustomContent Then
+		          CustomContent = BeaconConfigs.CustomContent(Group)
+		          Continue
+		        End If
+		        
 		        GameIniValues.AddArray(Group.GameIniValues(Self.Document, Self.Identity, Self.Profile))
 		        GameUserSettingsIniValues.AddArray(Group.GameUserSettingsIniValues(Self.Document, Self.Identity, Self.Profile))
 		        CommandLineValues.AddArray(Group.CommandLineOptions(Self.Document, Self.Identity, Self.Profile))
 		      Next
+		      
+		      If (CustomContent Is Nil) = False Then
+		        Var GameIniDict As New Dictionary
+		        Beacon.ConfigValue.FillConfigDict(GameIniDict, GameIniValues)
+		        GameIniValues.AddArray(CustomContent.GameIniValues(Self.Document, GameIniDict, Self.Profile))
+		        
+		        Var GameUserSettingsIniDict As New Dictionary
+		        Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniDict, GameUserSettingsIniValues)
+		        GameUserSettingsIniValues.AddArray(CustomContent.GameUserSettingsIniValues(Self.Document, GameUserSettingsIniDict, Self.Profile))
+		        
+		        CommandLineValues.AddArray(CustomContent.CommandLineOptions(Self.Document, Self.Identity, Self.Profile))
+		      End If
 		      
 		      RaiseEvent ApplySettings(GameIniValues, GameUserSettingsIniValues, CommandLineValues)
 		      If Self.Finished Then

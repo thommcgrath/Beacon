@@ -163,10 +163,10 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64) As Beacon.ConfigValue()
+		Function GameIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
 		  #Pragma Unused Identity
-		  #Pragma Unused Mask
+		  #Pragma Unused Profile
 		  
 		  Var Err As UnsupportedOperationException
 		  Err.Message = "Do not call this one!"
@@ -239,10 +239,10 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Mask As UInt64) As Beacon.ConfigValue()
+		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
 		  #Pragma Unused Identity
-		  #Pragma Unused Mask
+		  #Pragma Unused Profile
 		  
 		  Var Err As UnsupportedOperationException
 		  Err.Message = "Do not call this one!"
