@@ -296,6 +296,10 @@ Inherits Global.Thread
 		    Var NewLines() As String
 		    AllSectionHeaders.Sort
 		    For Each Header As String In AllSectionHeaders
+		      If Header.IsEmpty Then
+		        Continue
+		      End If
+		      
 		      If NewLines.LastRowIndex > -1 Then
 		        NewLines.AddRow("")
 		      End If

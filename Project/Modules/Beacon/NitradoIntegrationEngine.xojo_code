@@ -78,6 +78,10 @@ Inherits Beacon.IntegrationEngine
 		    Next
 		    
 		    Var ExtraGameIni As String = Self.GetViaDotNotation(Self.mCurrentSettings, "append.gameini")
+		    If ExtraGameIni.BeginsWith("[" + Beacon.ShooterGameHeader + "]") = False Then
+		      ExtraGameIni = "[" + Beacon.ShooterGameHeader + "]" + EndOfLine.UNIX + ExtraGameIni
+		    End If
+		    
 		    Var GameIniErrored As Boolean
 		    ExtraGameIni = Beacon.Rewriter.Rewrite(ExtraGameIni, GameIniDict, Self.Document.TrustKey, If(Self.Document.AllowUCS, Beacon.Rewriter.EncodingFormat.UCS2AndASCII, Beacon.Rewriter.EncodingFormat.ASCII), GameIniErrored)
 		    If GameIniErrored Then
