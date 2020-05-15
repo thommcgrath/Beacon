@@ -262,6 +262,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return
 		  End If
 		  
+		  If Self.Importing And ForceRefresh = False Then
+		    Self.mCheckForUpdatesAfterImport = True
+		    Return
+		  End If
+		  
 		  If Self.mUpdater = Nil Then
 		    Self.mUpdater = New HTTPClientSocket
 		    Self.mUpdater.AllowCertificateValidation = True
@@ -461,6 +466,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  If ShouldImportCloud And Migrated = False Then
 		    // Per https://github.com/thommcgrath/Beacon/issues/191 cloud data should be imported
 		    Self.mNextSyncImportAll = True
+		  End If
+		  
+		  If CurrentSchemaVersion < Self.SchemaVersion Then
+		    // Since the database version changed, import the local classes file. This helps
+		    // to mitigate issues where new columns have been added to records already synced.
+		    Self.ImportLocalClasses()
 		  End If
 		  
 		  NotificationKit.Watch(Self, UserCloud.Notification_SyncFinished, IdentityManager.Notification_IdentityChanged)
@@ -1227,6 +1238,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Importing() As Boolean
+		  Return (Self.mImportThread Is Nil) = False And Self.mImportThread.ThreadState <> Thread.ThreadStates.NotRunning
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function ImportInner(Content As String) As Boolean
 		  Var ChangeDict As Dictionary
@@ -1277,6 +1294,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Self.SQLExecute("DELETE FROM blueprints WHERE mod_id != ?1;", Self.UserModID)
 		      Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id != ?1;", Self.UserModID)
 		      Self.SQLExecute("DELETE FROM official_presets;")
+		      Self.SQLExecute("DELETE FROM ini_options WHERE mod_id != ?1;", Self.UserModID)
 		      Self.SQLExecute("DELETE FROM mods WHERE mod_id != ?1;", Self.UserModID) // Mods must be deleted last
 		    End If
 		    
@@ -1939,14 +1957,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return
 		  End If
 		  
+		  NotificationKit.Post(Self.Notification_ImportStarted, Nil)
+		  
 		  Var SyncOriginal As DateTime = Self.LastSync
 		  Var Success As Boolean
-		  For I As Integer = 0 To Self.mPendingImports.LastRowIndex
-		    Var Content As String = Self.mPendingImports(I)
-		    Self.mPendingImports.RemoveRowAt(I)
+		  While Self.mPendingImports.Count > 0
+		    Var Content As String = Self.mPendingImports(0)
+		    Self.mPendingImports.RemoveRowAt(0)
 		    
 		    Success = Self.ImportInner(Content) Or Success
-		  Next
+		  Wend
 		  Var SyncNew As DateTime = Self.LastSync
 		  
 		  If SyncOriginal <> SyncNew Then
@@ -1957,6 +1977,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    NotificationKit.Post(Self.Notification_ImportSuccess, SyncNew)
 		  Else
 		    NotificationKit.Post(Self.Notification_ImportFailed, SyncNew)
+		  End If
+		  
+		  If Self.mCheckForUpdatesAfterImport Then
+		    Self.mCheckForUpdatesAfterImport = False
+		    Self.CheckForEngramUpdates()
 		  End If
 		End Sub
 	#tag EndMethod
@@ -2882,6 +2907,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mCheckForUpdatesAfterImport As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mCheckingForUpdates As Boolean
 	#tag EndProperty
 
@@ -2974,6 +3003,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_ImportFailed, Type = String, Dynamic = False, Default = \"Import Failed", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_ImportStarted, Type = String, Dynamic = False, Default = \"Import Started", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_ImportSuccess, Type = String, Dynamic = False, Default = \"Import Success", Scope = Public

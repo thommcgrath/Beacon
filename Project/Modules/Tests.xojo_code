@@ -262,6 +262,9 @@ Protected Module Tests
 		    Var HighDifficulty As New BeaconConfigs.Difficulty(15)
 		    Var ExtremeDifficulty As New BeaconConfigs.Difficulty(100)
 		    Var Source As Beacon.LootSource = LocalData.SharedInstance.GetLootSource("SupplyCrate_Cave_QualityTier3_ScorchedEarth_C")
+		    If Source Is Nil Then
+		      Return
+		    End If
 		    
 		    Var QualityStandardMin As Double = Quality.Value(Source.Multipliers.Min, StandardDifficulty)
 		    Var QualityStandardMax As Double = Quality.Value(Source.Multipliers.Max, StandardDifficulty)

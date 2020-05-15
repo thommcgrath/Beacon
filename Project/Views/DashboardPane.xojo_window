@@ -146,7 +146,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   275
+      Top             =   307
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -216,7 +216,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   297
+      Top             =   329
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -280,11 +280,35 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   329
+      Top             =   275
       Transparent     =   True
       Underline       =   True
       URL             =   ""
       Visible         =   True
+      Width           =   350
+   End
+   Begin ProgressBar EngramImportIndicator
+      AllowAutoDeactivate=   True
+      Enabled         =   True
+      Height          =   20
+      Indeterminate   =   True
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   229
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumValue    =   100
+      Scope           =   2
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      Tooltip         =   ""
+      Top             =   351
+      Transparent     =   False
+      Value           =   0.0
+      Visible         =   False
       Width           =   350
    End
 End
@@ -293,7 +317,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, LocalData.Notification_DatabaseUpdated, IdentityManager.Notification_IdentityChanged)
+		  NotificationKit.Ignore(Self, LocalData.Notification_DatabaseUpdated, LocalData.Notification_ImportStarted, LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed, IdentityManager.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
 
@@ -301,13 +325,15 @@ End
 		Sub Open()
 		  Self.ToolbarCaption = "Home"
 		  
-		  Self.mMainGroup = New ControlGroup(LogoCanvas, TitleCanvas, VersionLabel, NewFileButton, OpenFileButton, SyncLabel, WebsiteLink)
+		  Self.mMainGroup = New ControlGroup(LogoCanvas, TitleCanvas, VersionLabel, NewFileButton, OpenFileButton, SyncLabel, WebsiteLink, EngramImportIndicator)
 		  Self.mCopyrightGroup = New ControlGroup(CopyrightLabel)
 		  
 		  Self.MinimumHeight = Self.mMainGroup.Height + Self.mCopyrightGroup.Height + 100
 		  Self.MinimumWidth = Max(Self.mMainGroup.Width, Self.mCopyrightGroup.Width) + 40
 		  
-		  NotificationKit.Watch(Self, LocalData.Notification_DatabaseUpdated, IdentityManager.Notification_IdentityChanged)
+		  NotificationKit.Watch(Self, LocalData.Notification_DatabaseUpdated, LocalData.Notification_ImportStarted, LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed, IdentityManager.Notification_IdentityChanged)
+		  
+		  Self.UpdateEngramStatus
 		End Sub
 	#tag EndEvent
 
@@ -354,8 +380,21 @@ End
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
-		  Case LocalData.Notification_DatabaseUpdated
+		  Case LocalData.Notification_DatabaseUpdated, LocalData.Notification_ImportFailed, LocalData.Notification_ImportStarted, LocalData.Notification_ImportSuccess
 		    Var LastSync As DateTime = Notification.UserData
+		    Self.UpdateEngramStatus(LastSync)
+		  Case IdentityManager.Notification_IdentityChanged
+		    Self.TitleCanvas.Invalidate
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateEngramStatus(LastSync As DateTime = Nil)
+		  If LocalData.SharedInstance.Importing Then
+		    Self.SyncLabel.Value = "Importing engrams…"
+		    Self.EngramImportIndicator.Visible = True
+		  Else
 		    If IsNull(LastSync) Then
 		      LastSync = LocalData.SharedInstance.LastSync
 		    End If
@@ -364,9 +403,8 @@ End
 		    Else
 		      Self.SyncLabel.Value = "Engrams updated " + LastSync.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC"
 		    End If
-		  Case IdentityManager.Notification_IdentityChanged
-		    Self.TitleCanvas.Invalidate
-		  End Select
+		    Self.EngramImportIndicator.Visible = False
+		  End If
 		End Sub
 	#tag EndMethod
 
