@@ -1010,6 +1010,11 @@ End
 	#tag Event
 		Sub Open()
 		  Self.SwapButtons()
+		  
+		  Self.WildDamageField.Value = Format(1.0, "0.0#####")
+		  Self.WildResistanceField.Value = Format(1.0, "0.0#####")
+		  Self.TameDamageField.Value = Format(1.0, "0.0#####")
+		  Self.TameResistanceField.Value = Format(1.0, "0.0#####")
 		End Sub
 	#tag EndEvent
 
