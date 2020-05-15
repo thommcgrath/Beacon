@@ -110,7 +110,9 @@ ALTER DOMAIN public.hex OWNER TO thommcgrath;
 
 CREATE TYPE public.ini_file AS ENUM (
     'Game.ini',
-    'GameUserSettings.ini'
+    'GameUserSettings.ini',
+    'CommandLineFlag',
+    'CommandLineOption'
 );
 
 
@@ -143,6 +145,18 @@ CREATE TYPE public.loot_source_kind AS ENUM (
 
 
 ALTER TYPE public.loot_source_kind OWNER TO thommcgrath;
+
+--
+-- Name: nitrado_format; Type: TYPE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TYPE public.nitrado_format AS ENUM (
+    'Line',
+    'Value'
+);
+
+
+ALTER TYPE public.nitrado_format OWNER TO thommcgrath;
 
 --
 -- Name: os_version; Type: DOMAIN; Schema: public; Owner: thommcgrath
@@ -845,6 +859,8 @@ CREATE TABLE public.engrams (
     entry_string public.citext,
     required_points integer,
     required_level integer,
+    stack_size integer,
+    item_id integer,
     CONSTRAINT engrams_check CHECK ((((entry_string IS NULL) AND (required_points IS NULL) AND (required_level IS NULL)) OR (entry_string IS NOT NULL))),
     CONSTRAINT engrams_entry_string_check CHECK ((entry_string OPERATOR(public.~) '_C$'::public.citext)),
     CONSTRAINT engrams_path_check CHECK ((path OPERATOR(public.~~) '/%'::public.citext))
@@ -1208,7 +1224,9 @@ CREATE TABLE public.ini_options (
     value_type public.ini_value_type NOT NULL,
     max_allowed integer,
     description text NOT NULL,
-    default_value text NOT NULL
+    default_value text NOT NULL,
+    nitrado_path public.citext,
+    nitrado_format public.nitrado_format
 )
 INHERITS (public.objects);
 
