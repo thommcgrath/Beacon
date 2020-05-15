@@ -2,14 +2,12 @@
 Protected Class NitradoIntegrationEngine
 Inherits Beacon.IntegrationEngine
 	#tag Event
-		Sub ApplySettings(GameIniValues() As Beacon.ConfigValue, GameUserSettingsIniValues() As Beacon.ConfigValue, CommandLineOptions() As Beacon.ConfigValue)
+		Function ApplySettings(GameIniValues() As Beacon.ConfigValue, GameUserSettingsIniValues() As Beacon.ConfigValue, CommandLineOptions() As Beacon.ConfigValue) As Boolean
 		  Var GuidedChanges() As Dictionary
 		  
-		  #if GuidedModeSupportEnabled And Not DebugBuild
-		    #Pragma Error "No way to control 'Custom Game.ini Content' field."
-		  #endif
-		  
 		  If Self.mDoGuidedDeploy Then
+		    #Pragma Warning "This does not handle unknown configs"
+		    
 		    Var GameIniDict As New Dictionary
 		    Beacon.ConfigValue.FillConfigDict(GameIniDict, GameIniValues)
 		    Var GameUserSettingsIniDict As New Dictionary
@@ -17,7 +15,8 @@ Inherits Beacon.IntegrationEngine
 		    
 		    Var AllConfigs() As Beacon.ConfigKey = Beacon.Data.SearchForConfigKey("", "", "")
 		    For Each ConfigKey As Beacon.ConfigKey In AllConfigs
-		      If ConfigKey.HasNitradoEquivalent = False Then
+		      If ConfigKey.HasNitradoEquivalent = False And ConfigKey.File <> "GameUserSettings.ini" Then
+		        // See comments below for why GUS needs to be checked later
 		        Continue
 		      End If
 		      
@@ -39,6 +38,13 @@ Inherits Beacon.IntegrationEngine
 		      Var Section As Dictionary = TargetDict.Value(ConfigKey.Header)
 		      If Section.HasKey(SimplifiedKey) = False Then
 		        Continue
+		      End If
+		      
+		      If ConfigKey.File = "GameUserSettings.ini" And ConfigKey.HasNitradoEquivalent = False Then
+		        // We need to put a setting in GUS but Nitrado doesn't have a key for it. That means expert mode is needed.
+		        App.Log("Cannot use guided deploy because the key " + ConfigKey.Key + " needs to be in GameUserSettings.ini but Nitrado does not have a config for it.")
+		        Self.SwitchToExpertMode()
+		        Return False
 		      End If
 		      
 		      Var NewLines() As String = Section.Value(SimplifiedKey)
@@ -77,10 +83,18 @@ Inherits Beacon.IntegrationEngine
 		      End If
 		    Next
 		    
+		    // Create a checkpoint before making changes
+		    If Self.BackupEnabled Then
+		      Self.CreateCheckpoint()
+		      If Self.Finished Then
+		        Return False
+		      End If
+		    End If
+		    
 		    Self.Log("Updating 'Custom Game.ini Settings' field…")
 		    Var ExtraGameIni As String = Self.DownloadFile(Self.mGamePath + "user-settings.ini", Beacon.NitradoIntegrationEngine.DownloadFailureMode.MissingAllowed)
 		    If Self.Finished Then
-		      Return
+		      Return False
 		    End If
 		    If ExtraGameIni.BeginsWith("[" + Beacon.ShooterGameHeader + "]") = False Then
 		      ExtraGameIni = "[" + Beacon.ShooterGameHeader + "]" + EndOfLine.UNIX + ExtraGameIni
@@ -90,7 +104,7 @@ Inherits Beacon.IntegrationEngine
 		    ExtraGameIni = Beacon.Rewriter.Rewrite(ExtraGameIni, GameIniDict, Self.Document.TrustKey, If(Self.Document.AllowUCS, Beacon.Rewriter.EncodingFormat.UCS2AndASCII, Beacon.Rewriter.EncodingFormat.ASCII), GameIniErrored)
 		    If GameIniErrored Then
 		      Self.SetError("Unable to generate new value for Custom Game.ini Content field.")
-		      Return
+		      Return False
 		    End If
 		    
 		    // Need to remove the header that the rewriter adds
@@ -98,7 +112,7 @@ Inherits Beacon.IntegrationEngine
 		    
 		    Self.UploadFile(Self.mGamePath + "user-settings.ini", ExtraGameIni)
 		    If Self.Finished Then
-		      Return
+		      Return False
 		    End If
 		  End If
 		  
@@ -136,25 +150,27 @@ Inherits Beacon.IntegrationEngine
 		    Var Status As Integer = Sock.HTTPStatusCode
 		    
 		    If Self.Finished Or Self.CheckError(Status, Content) Then
-		      Return
+		      Return False
 		    End If
 		    
 		    Try
 		      Var Response As Dictionary = Beacon.ParseJSON(Content)
 		      If Response.Value("status") <> "success" Then
 		        Self.SetError("Error: Unable to change setting: " + FormData.Value("category").StringValue + "." + FormData.Value("value").StringValue)
-		        Return
+		        Return False
 		      End If
 		    Catch Err As RuntimeException
 		      App.LogAPIException(Err, CurrentMethodName, Status, Content)
 		      Self.SetError(Err)
-		      Return
+		      Return False
 		    End Try
 		    
 		    // So we don't go nuts
 		    App.SleepCurrentThread(50)
 		  Next
-		End Sub
+		  
+		  Return True
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -198,29 +214,7 @@ Inherits Beacon.IntegrationEngine
 
 	#tag Event
 		Sub CreateCheckpoint()
-		  Var FormData As New Dictionary
-		  FormData.Value("name") = "Beacon " + Self.Label
-		  
-		  Var Sock As New HTTPClientSocket
-		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
-		  Sock.SetFormData(FormData)
-		  
-		  Var Content As String = Sock.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings/sets", Self.ConnectionTimeout)
-		  Var Status As Integer = Sock.HTTPStatusCode
-		  
-		  If Self.Finished Or Self.CheckError(Status, Content) Then
-		    Return
-		  End If
-		  
-		  Try
-		    Var Response As Dictionary = Beacon.ParseJSON(Content)
-		    If Response.Value("status") <> "success" Then
-		      Self.SetError("Error: Could not backup current settings.")
-		    End If
-		  Catch Err As RuntimeException
-		    App.LogAPIException(Err, CurrentMethodName, Status, Content)
-		    Self.SetError(Err)
-		  End Try
+		  Self.CreateCheckpoint()
 		End Sub
 	#tag EndEvent
 
@@ -506,70 +500,9 @@ Inherits Beacon.IntegrationEngine
 		        Self.mDoGuidedDeploy = GeneralSettings.Value("expertMode") = "false"
 		        Self.mGamePath = Self.GetViaDotNotation(GameServer, "game_specific.path")
 		      #else
-		        Var ExpertMode As Boolean = GeneralSettings.Value("expertMode") = "true"
-		        
+		        Var ExpertMode As Boolean = Self.GetViaDotNotation(Settings, "general.expertMode") = "true"
 		        If ExpertMode = False And Self.Mode = Self.ModeDeploy Then
-		          Var Controller As New Beacon.TaskWaitController("Needs Expert Mode")
-		          
-		          Self.Log("Waiting for user action…")
-		          Self.Wait(Controller)
-		          Self.RemoveLastLog()
-		          If Controller.Cancelled Then
-		            Self.Cancel
-		            Return
-		          End If
-		          
-		          // Start the server, returning it to its previous state
-		          Self.Log("Enabling expert mode…")
-		          Select Case Self.State
-		          Case Self.StateStopped, Self.StateStopping
-		            Self.Log("Enabling expert mode - starting server…", True)
-		            Self.StartServer(False)
-		            If Self.Finished Then
-		              Return
-		            End If
-		            Self.Log("Enabling expert mode - stopping server…", True)
-		            Self.StopServer(False)
-		            If Self.Finished Then
-		              Return
-		            End If
-		          Case Self.StateRunning, Self.StateStarting
-		            Self.Log("Enabling expert mode - stopping server…", True)
-		            Self.StopServer(False)
-		            If Self.Finished Then
-		              Return
-		            End If
-		            Self.Log("Enabling expert mode - starting server…", True)
-		            Self.StartServer(False)
-		            If Self.Finished Then
-		              Return
-		            End If
-		          End Select
-		          
-		          // Now actually change the server
-		          Var FormData As New Dictionary
-		          FormData.Value("category") = "general"
-		          FormData.Value("key") = "expertMode"
-		          FormData.Value("value") = "true"
-		          
-		          Var ExpertToggleSocket As New HTTPClientSocket
-		          ExpertToggleSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
-		          ExpertToggleSocket.SetFormData(FormData)
-		          
-		          Self.Log("Enabling expert mode…", True)
-		          Var ExpertContent As String = ExpertToggleSocket.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings", Self.ConnectionTimeout)
-		          Var ExpertStatus As Integer = ExpertToggleSocket.HTTPStatusCode
-		          If Self.Finished Or Self.CheckError(ExpertStatus, ExpertContent) Then
-		            Return
-		          End If
-		          
-		          Var ExpertResponse As Dictionary = Beacon.ParseJSON(ExpertContent)
-		          If ExpertResponse.Value("status") <> "success" Then
-		            Self.SetError("Error: Could not enable expert mode.")
-		            Return
-		          End If
-		          
-		          Self.Log("Expert mode enabled.")
+		          Self.SwitchToExpertMode()
 		        End If
 		      #endif
 		      
@@ -756,6 +689,40 @@ Inherits Beacon.IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub CreateCheckpoint()
+		  If Self.mCheckpointCreated Then
+		    Return
+		  End If
+		  
+		  Var FormData As New Dictionary
+		  FormData.Value("name") = "Beacon " + Self.Label
+		  
+		  Var Sock As New HTTPClientSocket
+		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  Sock.SetFormData(FormData)
+		  
+		  Var Content As String = Sock.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings/sets", Self.ConnectionTimeout)
+		  Var Status As Integer = Sock.HTTPStatusCode
+		  
+		  If Self.Finished Or Self.CheckError(Status, Content) Then
+		    Return
+		  End If
+		  
+		  Try
+		    Var Response As Dictionary = Beacon.ParseJSON(Content)
+		    If Response.Value("status") = "success" Then
+		      Self.mCheckpointCreated = True
+		    Else
+		      Self.SetError("Error: Could not backup current settings.")
+		    End If
+		  Catch Err As RuntimeException
+		    App.LogAPIException(Err, CurrentMethodName, Status, Content)
+		    Self.SetError(Err)
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function DownloadFile(Path As String, Mode As Beacon.NitradoIntegrationEngine.DownloadFailureMode) As String
 		  Return Self.DownloadFile(Path, Mode, Self.mServiceID)
 		End Function
@@ -826,6 +793,80 @@ Inherits Beacon.IntegrationEngine
 		  
 		  Return GetViaDotNotation(Dictionary(Value), Path)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SwitchToExpertMode()
+		  Var Controller As New Beacon.TaskWaitController("Needs Expert Mode")
+		  
+		  Self.Log("Waiting for user action…")
+		  Self.Wait(Controller)
+		  Self.RemoveLastLog()
+		  If Controller.Cancelled Then
+		    Self.Cancel
+		    Return
+		  End If
+		  
+		  // Create a checkpoint now
+		  If Self.BackupEnabled Then
+		    Self.CreateCheckpoint()
+		    If Self.Finished Then
+		      Return
+		    End If
+		  End If
+		  
+		  // Start the server, returning it to its previous state
+		  Self.Log("Enabling expert mode…")
+		  Select Case Self.State
+		  Case Self.StateStopped, Self.StateStopping
+		    Self.Log("Enabling expert mode - starting server…", True)
+		    Self.StartServer(False)
+		    If Self.Finished Then
+		      Return
+		    End If
+		    Self.Log("Enabling expert mode - stopping server…", True)
+		    Self.StopServer(False)
+		    If Self.Finished Then
+		      Return
+		    End If
+		  Case Self.StateRunning, Self.StateStarting
+		    Self.Log("Enabling expert mode - stopping server…", True)
+		    Self.StopServer(False)
+		    If Self.Finished Then
+		      Return
+		    End If
+		    Self.Log("Enabling expert mode - starting server…", True)
+		    Self.StartServer(False)
+		    If Self.Finished Then
+		      Return
+		    End If
+		  End Select
+		  
+		  // Now actually change the server
+		  Var FormData As New Dictionary
+		  FormData.Value("category") = "general"
+		  FormData.Value("key") = "expertMode"
+		  FormData.Value("value") = "true"
+		  
+		  Var ExpertToggleSocket As New HTTPClientSocket
+		  ExpertToggleSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
+		  ExpertToggleSocket.SetFormData(FormData)
+		  
+		  Self.Log("Enabling expert mode…", True)
+		  Var ExpertContent As String = ExpertToggleSocket.SendSync("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings", Self.ConnectionTimeout)
+		  Var ExpertStatus As Integer = ExpertToggleSocket.HTTPStatusCode
+		  If Self.Finished Or Self.CheckError(ExpertStatus, ExpertContent) Then
+		    Return
+		  End If
+		  
+		  Var ExpertResponse As Dictionary = Beacon.ParseJSON(ExpertContent)
+		  If ExpertResponse.Value("status") <> "success" Then
+		    Self.SetError("Error: Could not enable expert mode.")
+		    Return
+		  End If
+		  
+		  Self.Log("Expert mode enabled.")
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

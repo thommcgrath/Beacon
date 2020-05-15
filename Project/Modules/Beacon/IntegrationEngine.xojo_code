@@ -254,91 +254,89 @@ Protected Class IntegrationEngine
 		  End If
 		  Var InitialServerState As Integer = Self.State
 		  
+		  If Self.mDoGuidedDeploy And Self.SupportsWideSettings Then
+		    Var GameIniValues(), GameUserSettingsIniValues(), CommandLineValues() As Beacon.ConfigValue
+		    Var Groups() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
+		    Var CustomContent As BeaconConfigs.CustomContent
+		    For Each Group As Beacon.ConfigGroup In Groups
+		      If Group IsA BeaconConfigs.CustomContent Then
+		        CustomContent = BeaconConfigs.CustomContent(Group)
+		        Continue
+		      End If
+		      
+		      GameIniValues.AddArray(Group.GameIniValues(Self.Document, Self.Identity, Self.Profile))
+		      GameUserSettingsIniValues.AddArray(Group.GameUserSettingsIniValues(Self.Document, Self.Identity, Self.Profile))
+		      CommandLineValues.AddArray(Group.CommandLineOptions(Self.Document, Self.Identity, Self.Profile))
+		    Next
+		    
+		    If (CustomContent Is Nil) = False Then
+		      Var GameIniDict As New Dictionary
+		      Beacon.ConfigValue.FillConfigDict(GameIniDict, GameIniValues)
+		      GameIniValues.AddArray(CustomContent.GameIniValues(Self.Document, GameIniDict, Self.Profile))
+		      
+		      Var GameUserSettingsIniDict As New Dictionary
+		      Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniDict, GameUserSettingsIniValues)
+		      GameUserSettingsIniValues.AddArray(CustomContent.GameUserSettingsIniValues(Self.Document, GameUserSettingsIniDict, Self.Profile))
+		      
+		      CommandLineValues.AddArray(CustomContent.CommandLineOptions(Self.Document, Self.Identity, Self.Profile))
+		    End If
+		    
+		    Var GuidedSuccess As Boolean = RaiseEvent ApplySettings(GameIniValues, GameUserSettingsIniValues, CommandLineValues)
+		    If Self.Finished Then
+		      Return
+		    End If
+		    
+		    If GuidedSuccess Then
+		      // Restart the server if it is running
+		      If Self.SupportsRestarting And (InitialServerState = Self.StateRunning Or InitialServerState = Self.StateStarting) Then
+		        Self.StopServer()
+		        Self.StartServer()
+		      End If
+		      
+		      Self.Log("Finished")
+		      Self.Finished = True
+		      
+		      RaiseEvent Finished
+		      Return
+		    Else
+		      Self.mDoGuidedDeploy = False
+		    End If
+		  End If
+		  
 		  Var GameIniOriginal, GameUserSettingsIniOriginal As String
-		  If Self.mDoGuidedDeploy = False Then
-		    // Download the ini files
-		    Self.Log("Downloading Game.ini…")
-		    GameIniOriginal = RaiseEvent DownloadFile("Game.ini")
-		    If Self.Finished Then
-		      Return
-		    End If
-		    Self.Log("Downloading GameUserSettings.ini")
-		    GameUserSettingsIniOriginal = RaiseEvent DownloadFile("GameUserSettings.ini")
-		    If Self.Finished Then
-		      Return
-		    End If
+		  // Download the ini files
+		  Self.Log("Downloading Game.ini…")
+		  GameIniOriginal = RaiseEvent DownloadFile("Game.ini")
+		  If Self.Finished Then
+		    Return
+		  End If
+		  Self.Log("Downloading GameUserSettings.ini")
+		  GameUserSettingsIniOriginal = RaiseEvent DownloadFile("GameUserSettings.ini")
+		  If Self.Finished Then
+		    Return
 		  End If
 		  
 		  // Run the backup if requested
 		  If Self.BackupEnabled Then
-		    If Self.mDoGuidedDeploy = False Then
-		      Var Dict As New Dictionary
-		      Dict.Value("Game.ini") = GameIniOriginal
-		      Dict.Value("GameUserSettings.ini") = GameUserSettingsIniOriginal
-		      
-		      Var Controller As New Beacon.TaskWaitController("Backup", Dict)
-		      
-		      Self.Log("Backing up config files…")
-		      Self.Wait(Controller)
-		      If Controller.Cancelled Then
-		        Self.Cancel
-		        Return
-		      End If
+		    Var Dict As New Dictionary
+		    Dict.Value("Game.ini") = GameIniOriginal
+		    Dict.Value("GameUserSettings.ini") = GameUserSettingsIniOriginal
+		    
+		    Var Controller As New Beacon.TaskWaitController("Backup", Dict)
+		    
+		    Self.Log("Backing up config files…")
+		    Self.Wait(Controller)
+		    If Controller.Cancelled Then
+		      Self.Cancel
+		      Return
 		    End If
 		    
-		    If Self.SupportsCheckpoints Then
+		    If Self.SupportsCheckpoints And Self.mCheckpointCreated = False Then
 		      RaiseEvent CreateCheckpoint
 		      If Self.Finished Then
 		        Return
 		      End If
 		    End If
-		  End If
-		  
-		  If Self.mDoGuidedDeploy Then
-		    If Self.SupportsWideSettings Then
-		      Var GameIniValues(), GameUserSettingsIniValues(), CommandLineValues() As Beacon.ConfigValue
-		      Var Groups() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
-		      Var CustomContent As BeaconConfigs.CustomContent
-		      For Each Group As Beacon.ConfigGroup In Groups
-		        If Group IsA BeaconConfigs.CustomContent Then
-		          CustomContent = BeaconConfigs.CustomContent(Group)
-		          Continue
-		        End If
-		        
-		        GameIniValues.AddArray(Group.GameIniValues(Self.Document, Self.Identity, Self.Profile))
-		        GameUserSettingsIniValues.AddArray(Group.GameUserSettingsIniValues(Self.Document, Self.Identity, Self.Profile))
-		        CommandLineValues.AddArray(Group.CommandLineOptions(Self.Document, Self.Identity, Self.Profile))
-		      Next
-		      
-		      If (CustomContent Is Nil) = False Then
-		        Var GameIniDict As New Dictionary
-		        Beacon.ConfigValue.FillConfigDict(GameIniDict, GameIniValues)
-		        GameIniValues.AddArray(CustomContent.GameIniValues(Self.Document, GameIniDict, Self.Profile))
-		        
-		        Var GameUserSettingsIniDict As New Dictionary
-		        Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniDict, GameUserSettingsIniValues)
-		        GameUserSettingsIniValues.AddArray(CustomContent.GameUserSettingsIniValues(Self.Document, GameUserSettingsIniDict, Self.Profile))
-		        
-		        CommandLineValues.AddArray(CustomContent.CommandLineOptions(Self.Document, Self.Identity, Self.Profile))
-		      End If
-		      
-		      RaiseEvent ApplySettings(GameIniValues, GameUserSettingsIniValues, CommandLineValues)
-		      If Self.Finished Then
-		        Return
-		      End If
-		    End If
-		    
-		    // Restart the server if it is running
-		    If Self.SupportsRestarting And (InitialServerState = Self.StateRunning Or InitialServerState = Self.StateStarting) Then
-		      Self.StopServer()
-		      Self.StartServer()
-		    End If
-		    
-		    Self.Log("Finished")
-		    Self.Finished = True
-		    
-		    RaiseEvent Finished
-		    Return
 		  End If
 		  
 		  // Build the new ini files
@@ -420,7 +418,7 @@ Protected Class IntegrationEngine
 		  If Self.SupportsWideSettings And CommandLine.Count > 0 Then
 		    Self.Log("Updating other settings…")
 		    Var Placeholder() As Beacon.ConfigValue
-		    RaiseEvent ApplySettings(Placeholder, Placeholder, CommandLine)
+		    Call RaiseEvent ApplySettings(Placeholder, Placeholder, CommandLine)
 		    If Self.Finished Then
 		      Return
 		    End If
@@ -667,7 +665,7 @@ Protected Class IntegrationEngine
 
 
 	#tag Hook, Flags = &h0
-		Event ApplySettings(GameIniValues() As Beacon.ConfigValue, GameUserSettingsIniValues() As Beacon.ConfigValue, CommandLineOptions() As Beacon.ConfigValue)
+		Event ApplySettings(GameIniValues() As Beacon.ConfigValue, GameUserSettingsIniValues() As Beacon.ConfigValue, CommandLineOptions() As Beacon.ConfigValue) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -736,6 +734,10 @@ Protected Class IntegrationEngine
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mCheckpointCreated As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

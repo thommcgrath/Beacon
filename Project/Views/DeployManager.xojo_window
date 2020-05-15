@@ -926,10 +926,10 @@ End
 		      Self.RunNextAuth()
 		    End If
 		  Case "Needs Expert Mode"
-		    Var Message As String = Sender.Name + " must be converted into Expert Mode"
-		    Var Explanation As String = "Beacon cannot manage Nitrado's Beginner Mode settings. If you choose to continue, Beacon will restart the server to ensure the latest settings are converted into Expert Mode before enabling Expert Mode."
+		    Var Message As String = Sender.Name + " must be converted into expert mode"
+		    Var Explanation As String = "There are settings that need to be placed in your GameUserSettings.ini file which Nitrado does not have a built-in config for. In order to add them to the GameUserSettings.ini, the server must be switched to expert mode."
 		    
-		    Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm(Message, Explanation, "Turn on Expert Mode", "Cancel", "Learn More")
+		    Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm(Message, Explanation, "Turn on expert mode", "Cancel", "Learn More")
 		    Select Case Choice
 		    Case BeaconUI.ConfirmResponses.Cancel
 		      Controller.Cancelled = True
