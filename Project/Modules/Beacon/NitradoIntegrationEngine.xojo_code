@@ -43,7 +43,7 @@ Inherits Beacon.IntegrationEngine
 		      If ConfigKey.File = "GameUserSettings.ini" And ConfigKey.HasNitradoEquivalent = False Then
 		        // We need to put a setting in GUS but Nitrado doesn't have a key for it. That means expert mode is needed.
 		        App.Log("Cannot use guided deploy because the key " + ConfigKey.Key + " needs to be in GameUserSettings.ini but Nitrado does not have a config for it.")
-		        Self.SwitchToExpertMode()
+		        Self.SwitchToExpertMode(ConfigKey.Key)
 		        Return False
 		      End If
 		      
@@ -81,6 +81,20 @@ Inherits Beacon.IntegrationEngine
 		      If Section.KeyCount = 0 Then
 		        TargetDict.Remove(ConfigKey.Header)
 		      End If
+		    Next
+		    
+		    For Each Entry As DictionaryEntry In GameUserSettingsIniDict
+		      Var Header As String = Entry.Key
+		      Var SectionDict As Dictionary = Entry.Value
+		      For Each SectionEntry As DictionaryEntry In SectionDict
+		        Var Key As String = SectionEntry.Key
+		        Var ConfigKey As Beacon.ConfigKey = Beacon.Data.GetConfigKey("", Header, Key) // Allow any file so that command line options don't trigger this
+		        If ConfigKey Is Nil Or ConfigKey.HasNitradoEquivalent = False Then
+		          App.Log("Cannot use guided deploy because the key " + Key + " needs to be in GameUserSettings.ini but Nitrado does not have a config for it.")
+		          Self.SwitchToExpertMode(Key)
+		          Return False
+		        End If
+		      Next
 		    Next
 		    
 		    // Create a checkpoint before making changes
@@ -502,7 +516,7 @@ Inherits Beacon.IntegrationEngine
 		      #else
 		        Var ExpertMode As Boolean = Self.GetViaDotNotation(Settings, "general.expertMode") = "true"
 		        If ExpertMode = False And Self.Mode = Self.ModeDeploy Then
-		          Self.SwitchToExpertMode()
+		          Self.SwitchToExpertMode("")
 		        End If
 		      #endif
 		      
@@ -796,8 +810,10 @@ Inherits Beacon.IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SwitchToExpertMode()
-		  Var Controller As New Beacon.TaskWaitController("Needs Expert Mode")
+		Private Sub SwitchToExpertMode(OffendingKey As String)
+		  Var UserData As New Dictionary
+		  UserData.Value("OffendingKey") = OffendingKey
+		  Var Controller As New Beacon.TaskWaitController("Needs Expert Mode", UserData)
 		  
 		  Self.Log("Waiting for user action…")
 		  Self.Wait(Controller)
@@ -955,7 +971,7 @@ Inherits Beacon.IntegrationEngine
 	#tag Constant, Name = ConnectionTimeout, Type = Double, Dynamic = False, Default = \"30", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = GuidedModeSupportEnabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Private
+	#tag Constant, Name = GuidedModeSupportEnabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Public
 	#tag EndConstant
 
 

@@ -927,7 +927,19 @@ End
 		    End If
 		  Case "Needs Expert Mode"
 		    Var Message As String = Sender.Name + " must be converted into expert mode"
-		    Var Explanation As String = "There are settings that need to be placed in your GameUserSettings.ini file which Nitrado does not have a built-in config for. In order to add them to the GameUserSettings.ini, the server must be switched to expert mode."
+		    Var Explanation As String
+		    #if Beacon.NitradoIntegrationEngine.GuidedModeSupportEnabled
+		      Var UserData As Dictionary = Controller.UserData
+		      Var OffendingKey As String = UserData.Lookup("OffendingKey", "")
+		      If OffendingKey.IsEmpty = False Then
+		        Explanation = "The config key '" + OffendingKey + "' needs to be placed in your GameUserSettings.ini file but Nitrado does not have a built-in config for it."
+		      Else
+		        Explanation = "There are one or more settings that need to be placed in your GameUserSettings.ini file, but Nitrado does not have a built-in config for them."
+		      End If
+		      Explanation = Explanation + " In order to build your GameUserSettings.ini correctly, the server must be switched to expert mode. Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
+		    #else
+		      Explanation = "Beacon cannot manage Nitrado's beginner mode settings. If you choose to continue, Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
+		    #endif
 		    
 		    Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm(Message, Explanation, "Turn on expert mode", "Cancel", "Learn More")
 		    Select Case Choice
