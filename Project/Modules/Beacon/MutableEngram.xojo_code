@@ -44,6 +44,12 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ItemID(Assigns Value As NullableDouble)
+		  Self.mItemID = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Label(Assigns Value As String)
 		  Self.mLabel = Value
 		End Sub
@@ -77,6 +83,12 @@ Implements Beacon.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub RequiredUnlockPoints(Assigns Points As NullableDouble)
 		  Self.mRequiredUnlockPoints = Points
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub StackSize(Assigns Value As NullableDouble)
+		  Self.mStackSize = Value
 		End Sub
 	#tag EndMethod
 

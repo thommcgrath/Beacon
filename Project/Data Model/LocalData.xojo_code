@@ -197,7 +197,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE mods (mod_id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, console_safe INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_source_icons (icon_id TEXT NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT NOT NULL, sort_order INTEGER NOT NULL, icon TEXT NOT NULL REFERENCES loot_source_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}');")
-		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', entry_string TEXT, required_level INTEGER, required_points INTEGER);")
+		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', entry_string TEXT, required_level INTEGER, required_points INTEGER, stack_size INTEGER, item_id INTEGER);")
 		  Self.SQLExecute("CREATE TABLE official_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_presets (user_id TEXT NOT NULL, object_id TEXT NOT NULL, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, pattern TEXT NOT NULL);")
@@ -762,6 +762,26 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End Try
 		  End If
 		  Return Self.mEngramCache.Value(EngramID.StringValue)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramByItemID(ItemID As Integer) As Beacon.Engram
+		  // Part of the Beacon.DataSource interface.
+		  
+		  Try
+		    Var Results As RowSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE item_id = ?1;", ItemID)
+		    If Results.RowCount = 0 Then
+		      Return Nil
+		    End If
+		    
+		    Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
+		    If Engrams.Count = 1 Then
+		      Return Engrams(0)
+		    End If
+		  Catch Err As UnsupportedOperationException
+		    Return Nil
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -1409,6 +1429,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          ExtraColumns.Value("required_level") = Dict.Lookup("required_level", Nil)
 		        End If
 		        
+		        If Dict.HasKey("stack_size") Then
+		          ExtraColumns.Value("stack_size") = Dict.Value("stack_size")
+		        End If
+		        
+		        If Dict.HasKey("item_id") Then
+		          ExtraColumns.Value("item_id") = Dict.Value("item_id")
+		        End If
+		        
 		        Var Imported As Boolean = Self.AddBlueprintToDatabase(Beacon.CategoryEngrams, Dict, ExtraColumns)
 		        EngramsChanged = EngramsChanged Or Imported
 		      Next
@@ -1788,8 +1816,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  // Engrams
-		  If FromSchemaVersion >= 14 Then
+		  If FromSchemaVersion >= 15 Then
 		    Commands.AddRow("INSERT INTO engrams SELECT * FROM legacy.engrams;")
+		  ElseIf FromSchemaVersion >= 14 Then
+		    Commands.AddRow("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags, entry_string, required_level, required_points) SELECT object_id, mod_id, label, availability, path, class_string, tags, entry_string, required_level, required_points FROM legacy.engrams;")
 		  ElseIf FromSchemaVersion >= 9 Then
 		    Commands.AddRow("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) SELECT object_id, mod_id, label, availability, path, class_string, tags FROM legacy.engrams;")
 		  ElseIf FromSchemaVersion >= 6 Then
@@ -2144,6 +2174,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Engram.RequiredPlayerLevel = Results.Column("required_level").IntegerValue
 		        Engram.RequiredUnlockPoints = Results.Column("required_points").IntegerValue
 		      End If
+		    End If
+		    If IsNull(Results.Column("stack_size").Value) = False Then
+		      Engram.StackSize = Results.Column("stack_size").IntegerValue
+		    End If
+		    If IsNull(Results.Column("item_id").Value) = False Then
+		      Engram.ItemID = Results.Column("item_id").IntegerValue
 		    End If
 		    
 		    Engrams.AddRow(Engram)
@@ -2990,7 +3026,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = CreatureSelectSQL, Type = String, Dynamic = False, Default = \"SELECT creatures.object_id\x2C creatures.path\x2C creatures.label\x2C creatures.alternate_label\x2C creatures.availability\x2C creatures.tags\x2C creatures.incubation_time\x2C creatures.mature_time\x2C creatures.stats\x2C mods.mod_id\x2C mods.name AS mod_name FROM creatures INNER JOIN mods ON (creatures.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT engrams.object_id\x2C engrams.path\x2C engrams.label\x2C engrams.alternate_label\x2C engrams.availability\x2C engrams.tags\x2C engrams.entry_string\x2C engrams.required_level\x2C engrams.required_points\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT engrams.object_id\x2C engrams.path\x2C engrams.label\x2C engrams.alternate_label\x2C engrams.availability\x2C engrams.tags\x2C engrams.entry_string\x2C engrams.required_level\x2C engrams.required_points\x2C engrams.stack_size\x2C engrams.item_id\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = LootSourcesSelectColumns, Type = String, Dynamic = False, Default = \"path\x2C class_string\x2C label\x2C alternate_label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements", Scope = Private

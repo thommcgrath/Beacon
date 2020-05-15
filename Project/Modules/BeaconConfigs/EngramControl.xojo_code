@@ -194,6 +194,39 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h21
+		Private Shared Sub AddOverrideToConfig(Config As BeaconConfigs.EngramControl, Details As Dictionary)
+		  If Not Details.HasKey("EngramClassName") Then
+		    Return
+		  End If
+		  
+		  Try
+		    Var EntryString As String = Details.Value("EngramClassName")
+		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByEntryString(EntryString)
+		    If Engram = Nil Then
+		      Engram = Beacon.Engram.CreateFromEntryString(EntryString)
+		    End If
+		    
+		    If Details.HasKey("EngramHidden") Then
+		      Config.Hidden(Engram) = Details.BooleanValue("EngramHidden", False)
+		    End If
+		    
+		    If Details.HasKey("RemoveEngramPreReq") Then
+		      Config.RemovePrerequisites(Engram) = Details.BooleanValue("RemoveEngramPreReq", False)
+		    End If
+		    
+		    If Details.HasKey("EngramLevelRequirement") And Details.Value("EngramLevelRequirement").Type = Variant.TypeDouble Then
+		      Config.RequiredPlayerLevel(Engram) = Details.Value("EngramLevelRequirement").DoubleValue
+		    End If
+		    
+		    If Details.HasKey("EngramPointsCost") And Details.Value("EngramPointsCost").Type = Variant.TypeDouble Then
+		      Config.RequiredPoints(Engram) = Details.Value("EngramPointsCost").DoubleValue
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function AutoUnlockEngram(Engram As Beacon.Engram) As NullableBoolean
 		  Var Value As Variant = Self.BehaviorForEngram(Engram, Self.KeyAutoUnlockLevel)
@@ -387,6 +420,30 @@ Inherits Beacon.ConfigGroup
 		    Next
 		  End If
 		  
+		  If ParsedData.HasKey("OverrideEngramEntries") Then
+		    // We're going to convert these to OverrideNamedEngramEntries
+		    Var ParsedValue As Variant = ParsedData.Value("OverrideEngramEntries")
+		    Var Overrides() As Variant
+		    If ParsedValue.IsArray Then
+		      Overrides = ParsedValue
+		    Else
+		      Overrides.AddRow(ParsedValue)
+		    End If
+		    
+		    For Idx As Integer = Overrides.FirstRowIndex To Overrides.LastRowIndex
+		      Try
+		        Var Details As Dictionary = Overrides(Idx)
+		        Var ItemID As Integer = Details.Value("EngramIndex")
+		        Var Engram As Beacon.Engram = Beacon.Data.GetEngramByItemID(ItemID)
+		        If (Engram Is Nil) = False Then
+		          Details.Value("EngramClassName") = Engram.EntryString
+		          AddOverrideToConfig(Config, Details)
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
+		  End If
+		  
 		  If ParsedData.HasKey("OverrideNamedEngramEntries") Then
 		    Var ParsedValue As Variant = ParsedData.Value("OverrideNamedEngramEntries")
 		    Var Overrides() As Variant
@@ -404,34 +461,7 @@ Inherits Beacon.ConfigGroup
 		        Continue
 		      End Try
 		      
-		      If Not Details.HasKey("EngramClassName") Then
-		        Continue
-		      End If
-		      
-		      Try
-		        Var EntryString As String = Details.Value("EngramClassName")
-		        Var Engram As Beacon.Engram = Beacon.Data.GetEngramByEntryString(EntryString)
-		        If Engram = Nil Then
-		          Engram = Beacon.Engram.CreateFromEntryString(EntryString)
-		        End If
-		        
-		        If Details.HasKey("EngramHidden") Then
-		          Config.Hidden(Engram) = Details.BooleanValue("EngramHidden", False)
-		        End If
-		        
-		        If Details.HasKey("RemoveEngramPreReq") Then
-		          Config.RemovePrerequisites(Engram) = Details.BooleanValue("RemoveEngramPreReq", False)
-		        End If
-		        
-		        If Details.HasKey("EngramLevelRequirement") And Details.Value("EngramLevelRequirement").Type = Variant.TypeDouble Then
-		          Config.RequiredPlayerLevel(Engram) = Details.Value("EngramLevelRequirement").DoubleValue
-		        End If
-		        
-		        If Details.HasKey("EngramPointsCost") And Details.Value("EngramPointsCost").Type = Variant.TypeDouble Then
-		          Config.RequiredPoints(Engram) = Details.Value("EngramPointsCost").DoubleValue
-		        End If
-		      Catch Err As RuntimeException
-		      End Try
+		      AddOverrideToConfig(Config, Details)
 		    Next
 		  End If
 		  

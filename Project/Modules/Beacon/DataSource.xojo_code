@@ -79,6 +79,12 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetEngramByItemID(ItemID As Integer) As Beacon.Engram
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetEngramByPath(Path As String) As Beacon.Engram
 		  
 		End Function

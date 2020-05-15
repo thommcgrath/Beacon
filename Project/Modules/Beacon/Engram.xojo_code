@@ -168,6 +168,12 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ItemID() As NullableDouble
+		  Return Self.mItemID
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Label() As String
 		  If Self.mLabel = "" Then
 		    Self.mLabel = Beacon.LabelFromClassString(Self.ClassString)
@@ -263,6 +269,12 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function StackSize() As NullableDouble
+		  Return Self.mStackSize
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Tags() As String()
 		  Var Clone() As String
 		  Clone.ResizeTo(Self.mTags.LastRowIndex)
@@ -306,6 +318,10 @@ Implements Beacon.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
+		Protected mItemID As NullableDouble
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mLabel As String
 	#tag EndProperty
 
@@ -331,6 +347,10 @@ Implements Beacon.Blueprint
 
 	#tag Property, Flags = &h1
 		Protected mRequiredUnlockPoints As NullableDouble
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mStackSize As NullableDouble
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
