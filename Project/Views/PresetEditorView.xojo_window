@@ -156,7 +156,7 @@ Begin BeaconSubview PresetEditorView
          LockTop         =   True
          MacButtonStyle  =   "0"
          Scope           =   2
-         Segments        =   "The Island\n\nFalse\rScorched Earth\n\nFalse\rAberration\n\nFalse\rExtinction\n\nFalse\rGenesis\n\nFalse\rThe Center\n\nFalse\rRagnarok\n\nFalse\rValguero\n\nFalse"
+         Segments        =   "The Island\n\nFalse\rScorched Earth\n\nFalse\rAberration\n\nFalse\rExtinction\n\nFalse\rGenesis\n\nFalse\rThe Center\n\nFalse\rRagnarok\n\nFalse\rValguero\n\nFalse\rCrystal Isles\n\nFalse"
          SelectionStyle  =   "1"
          TabIndex        =   0
          TabPanelIndex   =   2
@@ -974,6 +974,8 @@ End
 		      Maps.AddRow(Beacon.Maps.Ragnarok)
 		    Case 7
 		      Maps.AddRow(Beacon.Maps.Valguero)
+		    Case 8
+		      Maps.AddRow(Beacon.Maps.CrystalIsles)
 		    End Select
 		  Next
 		  Return Maps
@@ -1122,6 +1124,7 @@ End
 		  Self.MapSelector.SegmentAt(5).Selected = (Mask And Beacon.Maps.TheCenter.Mask) = Beacon.Maps.TheCenter.Mask
 		  Self.MapSelector.SegmentAt(6).Selected = (Mask And Beacon.Maps.Ragnarok.Mask) = Beacon.Maps.Ragnarok.Mask
 		  Self.MapSelector.SegmentAt(7).Selected = (Mask And Beacon.Maps.Valguero.Mask) = Beacon.Maps.Valguero.Mask
+		  Self.MapSelector.SegmentAt(8).Selected = (Mask And Beacon.Maps.CrystalIsles.Mask) = Beacon.Maps.CrystalIsles.Mask
 		  
 		  Dim Maps() As Beacon.Map = Self.FilteredMaps()
 		  Dim SelectedEntries() As String
