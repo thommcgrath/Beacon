@@ -8,7 +8,7 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Function All() As Beacon.Map()
-		  Var Maps(7) As Beacon.Map
+		  Var Maps(8) As Beacon.Map
 		  Maps(0) = Beacon.Maps.TheIsland
 		  Maps(1) = Beacon.Maps.ScorchedEarth
 		  Maps(2) = Beacon.Maps.Aberration
@@ -17,8 +17,15 @@ Protected Module Maps
 		  Maps(5) = Beacon.Maps.TheCenter
 		  Maps(6) = Beacon.Maps.Ragnarok
 		  Maps(7) = Beacon.Maps.Valguero
+		  Maps(8) = Beacon.Maps.CrystalIsles
 		  Return Maps
 		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function CrystalIsles() As Beacon.Map
+		  Return New Beacon.Map("Crystal Isles", "CrystalIsles", 256, 5.0, False, "444cd667-c5c4-4003-a4bf-f0b0153c885e")
 		End Function
 	#tag EndMethod
 

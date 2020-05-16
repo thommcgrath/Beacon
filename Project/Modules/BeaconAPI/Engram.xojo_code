@@ -106,6 +106,8 @@ Protected Class Engram
 		        Map = Beacon.Maps.Valguero
 		      Case "genesis"
 		        Map = Beacon.Maps.Genesis
+		      Case "crystalisles"
+		        Map = Beacon.Maps.CrystalIsles
 		      End Select
 		      If Map <> Nil Then
 		        Self.ValidForMap(Map) = True

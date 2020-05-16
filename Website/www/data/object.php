@@ -137,6 +137,15 @@ function PrepareCreatureTable(BeaconCreature $creature, array &$properties) {
 }
 
 function PrepareEngramTable(BeaconEngram $engram, array &$properties) {
+	if (is_null($engram->ItemID()) == false) {
+		$properties['Item ID'] = $engram->ItemID();
+		$properties['Short Spawn Code'] = '`cheat giveitemnum ' . $engram->ItemID() . ' 1 1 0`';
+	}
+	
+	if (is_null($engram->StackSize()) == false) {
+		$properties['Stack Size'] = $engram->StackSize();
+	}
+	
 	$properties['Blueprintable'] = $engram->CanBlueprint() ? 'Yes' : 'No';
 	$properties['Harvestable'] = $engram->Harvestable() ? 'Yes' : 'No';
 	

@@ -255,9 +255,9 @@ Begin BeaconContainer ModDetailView
          AutoHideScrollbars=   True
          Bold            =   False
          Border          =   False
-         ColumnCount     =   11
+         ColumnCount     =   12
          ColumnsResizable=   False
-         ColumnWidths    =   "*,*,100,75,75,75,75,75,75,75,75"
+         ColumnWidths    =   "*,*,100,75,75,75,75,75,75,75,75,75"
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
@@ -273,7 +273,7 @@ Begin BeaconContainer ModDetailView
          Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "Panel"
-         InitialValue    =   "Path	Label	Blueprintable	Island	Scorched	Aberration	Extinction	Genesis	Center	Ragnarok	Valguero"
+         InitialValue    =   "Path	Label	Blueprintable	Island	Scorched	Aberration	Extinction	Genesis	Center	Ragnarok	Valguero	Crystal Isles"
          Italic          =   False
          Left            =   0
          LockBottom      =   True
@@ -769,6 +769,7 @@ End
 		  EngramList.CellCheckBoxValueAt(Index, Self.ColumnExtinction) = Engram.ValidForMap(Beacon.Maps.Extinction)
 		  EngramList.CellCheckBoxValueAt(Index, Self.ColumnValguero) = Engram.ValidForMap(Beacon.Maps.Valguero)
 		  EngramList.CellCheckBoxValueAt(Index, Self.ColumnGenesis) = Engram.ValidForMap(Beacon.Maps.Genesis)
+		  EngramList.CellCheckBoxValueAt(Index, Self.ColumnCrystalIsles) = Engram.ValidForMap(Beacon.Maps.CrystalIsles)
 		  
 		  EngramList.RowTagAt(Index) = Engram
 		End Sub
@@ -876,6 +877,9 @@ End
 	#tag Constant, Name = ColumnCenter, Type = Double, Dynamic = False, Default = \"8", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = ColumnCrystalIsles, Type = Double, Dynamic = False, Default = \"11", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = ColumnExtinction, Type = Double, Dynamic = False, Default = \"6", Scope = Private
 	#tag EndConstant
 
@@ -959,6 +963,8 @@ End
 		    Engram.ValidForMap(Beacon.Maps.Valguero) = Me.CellCheckBoxValueAt(Row, Column)
 		  Case Self.ColumnGenesis
 		    Engram.ValidForMap(Beacon.Maps.Genesis) = Me.CellCheckBoxValueAt(Row, Column)
+		  Case Self.ColumnCrystalIsles
+		    Engram.ValidForMap(Beacon.Maps.CrystalIsles) = Me.CellCheckBoxValueAt(Row, Column)
 		  End Select
 		  
 		  Self.EngramSet.Add(Engram)
