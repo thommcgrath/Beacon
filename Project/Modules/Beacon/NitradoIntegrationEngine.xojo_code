@@ -6,8 +6,6 @@ Inherits Beacon.IntegrationEngine
 		  Var GuidedChanges() As Dictionary
 		  
 		  If Self.mDoGuidedDeploy Then
-		    #Pragma Warning "This does not handle unknown configs"
-		    
 		    Var GameIniDict As New Dictionary
 		    Beacon.ConfigValue.FillConfigDict(GameIniDict, GameIniValues)
 		    Var GameUserSettingsIniDict As New Dictionary
