@@ -603,6 +603,12 @@ Protected Class IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SupportsStopMessage() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SupportsWideSettings() As Boolean
 		  Return IsEventImplemented("ApplySettings")
 		End Function

@@ -807,6 +807,12 @@ Inherits Beacon.IntegrationEngine
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SupportsStopMessage() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub SwitchToExpertMode(OffendingKey As String)
 		  Var UserData As New Dictionary
