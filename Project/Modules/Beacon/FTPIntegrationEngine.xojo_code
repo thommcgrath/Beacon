@@ -14,9 +14,18 @@ Inherits Beacon.IntegrationEngine
 		  Case Beacon.FTPServerProfile.ModeSFTP
 		    Protocols.AddRow("sftp")
 		  Else
-		    Protocols.AddRow("sftp")
-		    Protocols.AddRow("ftps")
-		    Protocols.AddRow("ftp")
+		    // If the port number ends in 21, try sftp mode last.
+		    Var BasePort As Integer = Abs(FTPProfile.Port) Mod 100
+		    Break
+		    If BasePort = 21 Then
+		      Protocols.AddRow("ftps")
+		      Protocols.AddRow("ftp")
+		      Protocols.AddRow("sftp")
+		    Else
+		      Protocols.AddRow("sftp")
+		      Protocols.AddRow("ftps")
+		      Protocols.AddRow("ftp")
+		    End If
 		  End Select
 		  
 		  If FTPProfile.Mode <> Beacon.FTPServerProfile.ModeAuto Then
@@ -163,7 +172,6 @@ Inherits Beacon.IntegrationEngine
 		  
 		  Self.mSocket = New CURLSMBS
 		  Call Self.mSocket.UseSystemCertificates
-		  Self.mSocket.OptionUseSSL = CURLSMBS.kUseSSLtry
 		  Self.mSocket.OptionUsername = FTPProfile.Username
 		  Self.mSocket.OptionPassword = FTPProfile.Password
 		  Self.mSocket.OptionSSHAuthTypes = CURLSMBS.kSSHAuthPassword
@@ -259,6 +267,7 @@ Inherits Beacon.IntegrationEngine
 		Private Function DownloadFile(Path As String) As String
 		  Self.mSocketLock.Enter
 		  Self.mSocket.OptionURL = Path
+		  Self.SetTLSValues()
 		  Call Self.mSocket.PerformMT
 		  Var Response As String
 		  If Self.mSocket.Lasterror = CURLSMBS.kError_OK Then
@@ -382,6 +391,7 @@ Inherits Beacon.IntegrationEngine
 		    
 		    Self.mSocketLock.Enter
 		    Self.mSocket.OptionURL = Path
+		    Self.SetTLSValues()
 		    Var Err As Integer = Self.mSocket.Perform
 		    Var Content As String = Self.mSocket.OutputData
 		    Self.mSocketLock.Leave
@@ -426,6 +436,7 @@ Inherits Beacon.IntegrationEngine
 		  Var Wildcard As Boolean = Self.mSocket.OptionWildcardMatch
 		  Self.mSocket.OptionWildcardMatch = True
 		  Self.mSocket.OptionURL = Path
+		  Self.SetTLSValues()
 		  Var Err As Integer = Self.mSocket.Perform
 		  Self.mSocket.OptionWildcardMatch = Wildcard
 		  Var Infos() As CURLSFileInfoMBS = Self.mSocket.FileInfos
@@ -450,6 +461,18 @@ Inherits Beacon.IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub SetTLSValues()
+		  If Self.mSocket.OptionURL.BeginsWith("ftps://") Then
+		    Self.mSocket.OptionSSLVerifyHost = 2
+		    Self.mSocket.OptionSSLVerifyPeer = 1
+		  Else
+		    Self.mSocket.OptionSSLVerifyHost = 0
+		    Self.mSocket.OptionSSLVerifyPeer = 0
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub TriggerFilesListed(Value As Variant)
 		  Var Params() As Variant = Value
 		  RaiseEvent FilesListed(Params(0).StringValue, Params(1))
@@ -460,6 +483,7 @@ Inherits Beacon.IntegrationEngine
 		Private Function UploadFile(Path As String, Contents As String) As Boolean
 		  Self.mSocketLock.Enter
 		  Self.mSocket.OptionURL = Path
+		  Self.SetTLSValues()
 		  Self.mSocket.SetInputData(Contents)
 		  Var Response As Integer = Self.mSocket.PerformMT
 		  Self.mSocketLock.Leave
