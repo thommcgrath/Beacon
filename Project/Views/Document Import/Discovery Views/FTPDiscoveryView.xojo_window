@@ -915,6 +915,27 @@ End
 
 
 	#tag Method, Flags = &h21
+		Private Sub CheckHostForPort()
+		  Var Checker As New Regex
+		  Checker.SearchPattern = ":(\d{1,5})$"
+		  Checker.ReplacementPattern = ""
+		  
+		  Var CheckedValue As String = Self.ServerHostField.Value.Trim
+		  
+		  Var Matches As RegexMatch = Checker.Search(CheckedValue)
+		  If Matches Is Nil Then
+		    If Self.ServerHostField.Value <> CheckedValue Then
+		      Self.ServerHostField.Value = CheckedValue
+		    End If
+		    Return
+		  End If
+		  
+		  Self.ServerHostField.Value = CheckedValue.Left(CheckedValue.Length - Matches.SubExpressionString(0).Length)
+		  Self.ServerPortField.Value = Matches.SubExpressionString(1)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub CheckServerActionButton()
 		  Var Enabled As Boolean = Self.ServerHostField.Value.Length > 0 And Val(Self.ServerPortField.Value) > 0 And Self.ServerUserField.Value.Length > 0 And Self.ServerPassField.Value.Length > 0
 		  If Self.ServerActionButton.Enabled <> Enabled Then
@@ -1018,6 +1039,11 @@ End
 		  Self.CheckServerActionButton()
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub LostFocus()
+		  Self.CheckHostForPort()
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events ServerPortField
 	#tag Event
@@ -1101,9 +1127,11 @@ End
 #tag Events ServerActionButton
 	#tag Event
 		Sub Action()
+		  Self.CheckHostForPort()
+		  
 		  Self.mProfile = New Beacon.FTPServerProfile()
 		  Self.mProfile.Host = Self.ServerHostField.Value
-		  Self.mProfile.Port = Val(Self.ServerPortField.Value)
+		  Self.mProfile.Port = CDbl(Self.ServerPortField.Value)
 		  Self.mProfile.Username = Self.ServerUserField.Value
 		  Self.mProfile.Password = Self.ServerPassField.Value
 		  
@@ -1132,7 +1160,13 @@ End
 	#tag Event
 		Sub Action()
 		  If Self.ViewPanel.SelectedPanelIndex = Self.PageDiscovering And Self.mEngine <> Nil Then
-		    Self.DiscoveringMessage.Value = Self.mEngine.Logs(True)
+		    If Self.mEngine.Errored And Self.mEngine.Finished Then
+		      Var ErrorMessage As String = Self.mEngine.Logs(True)
+		      Self.ShowAlert("There was a problem connecting to the FTP server", ErrorMessage)
+		      Self.ViewPanel.SelectedPanelIndex = Self.PageGeneral
+		    Else
+		      Self.DiscoveringMessage.Value = Self.mEngine.Logs(True)
+		    End If
 		  End If
 		End Sub
 	#tag EndEvent
