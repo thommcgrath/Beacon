@@ -74,7 +74,11 @@ Inherits Beacon.IntegrationEngine
 		  
 		  // None of them worked
 		  If Files = Nil Then
-		    Self.SetError("Unable to connect and list files.")
+		    If Protocols.Count > 1 Then
+		      Self.SetError("The server either refused all connection attempts or could not list files. Check the connection information and try again. If the problem persists, contact the hosting provider.")
+		    Else
+		      Self.SetError("The server either refused the connection or could not list files. Check the connection information and try again. If the problem persists, contact the hosting provider.")
+		    ENd If
 		    Return Nil
 		  End If
 		  
