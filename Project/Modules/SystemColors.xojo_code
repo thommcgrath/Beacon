@@ -312,7 +312,7 @@ Protected Module SystemColors
 		  If Colors.LastRowIndex = -1 Then
 		    Colors.ResizeTo(1)
 		    Colors(0) = If(SystemColors.IsDarkMode, &c1E1E1E00, &cFFFFFF00)
-		    Colors(1) = If(SystemColors.IsDarkMode, &cFFFFFFF3, &cF4F5F500)
+		    Colors(1) = If(SystemColors.IsDarkMode, &cFFFFFF00, &cF4F5F500)
 		  End If
 		  
 		  // This is to work around an issue where the even dark color isn't getting the proper alpha channel
