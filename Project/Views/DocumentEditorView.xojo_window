@@ -1135,7 +1135,7 @@ End
 	#tag Constant, Name = LocalMinWidth, Type = Double, Dynamic = False, Default = \"500", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = Notification_SwitchEditors, Type = String, Dynamic = False, Default = \"Switch Editors", Scope = Private
+	#tag Constant, Name = Notification_SwitchEditors, Type = String, Dynamic = False, Default = \"Switch Editors", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = OmniWarningText, Type = String, Dynamic = False, Default = \"This config type requires Beacon Omni. Click this banner to learn more.", Scope = Private

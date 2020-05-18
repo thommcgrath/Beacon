@@ -448,6 +448,20 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function FrontmostDocumentView() As DocumentEditorView
+		  If (Self.mCurrentView Is Nil) = False And Self.mCurrentView IsA DocumentEditorView Then
+		    Return DocumentEditorView(Self.mCurrentView)
+		  End If
+		  
+		  For Each View As BeaconSubview In Self.mSubviews
+		    If (View Is Nil) = False And View IsA DocumentEditorView Then
+		      Return DocumentEditorView(View)
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub mOverlayFillAnimation_Completed(Sender As AnimationKit.ValueTask)
 		  #Pragma Unused Sender

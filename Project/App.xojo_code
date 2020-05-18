@@ -579,6 +579,48 @@ Implements NotificationKit.Receiver
 		    Else
 		      Break
 		    End Select
+		  ElseIf URL.Left(7) = "config/" Then
+		    Var ConfigName As String = URL.Middle(7)
+		    
+		    Var QueryPos As Integer = ConfigName.IndexOf("?")
+		    Var Query As String
+		    If QueryPos > -1 Then
+		      Query = ConfigName.Middle(QueryPos + 1)
+		      ConfigName = ConfigName.Left(QueryPos)
+		    End If
+		    Var QueryMembers() As String = Query.Split("&")
+		    Var Parameters As New Dictionary
+		    For Each Member As String In QueryMembers
+		      Var Pos As Integer = Member.IndexOf("=")
+		      If Pos > -1 Then
+		        Parameters.Value(Member.Left(Pos)) = Member.Middle(Pos + 1)
+		      Else
+		        Parameters.Value(Member) = True
+		      End If
+		    Next
+		    
+		    Var PathPos As Integer = ConfigName.IndexOf("/")
+		    Var Path As String
+		    If PathPos > -1 Then
+		      Path = ConfigName.Middle(PathPos + 1)
+		      ConfigName = ConfigName.Left(PathPos)
+		    End If
+		    
+		    Var UserData As New Dictionary
+		    UserData.Value("ConfigName") = ConfigName
+		    UserData.Value("Path") = Path
+		    UserData.Value("Parameters") = Parameters
+		    
+		    Var FrontmostView As DocumentEditorView = MainWindow.FrontmostDocumentView
+		    If FrontmostView Is Nil Then
+		      MainWindow.Documents.NewDocument
+		      FrontmostView = MainWindow.FrontmostDocumentView
+		    End If
+		    If (FrontmostView Is Nil) = False Then
+		      UserData.Value("DocumentID") = FrontmostView.Document.DocumentID
+		      
+		      NotificationKit.Post(DocumentEditorView.Notification_SwitchEditors, UserData)
+		    End If
 		  Else
 		    Var LegacyURL As String = "thezaz.com/beacon/documents.php/"
 		    Var Idx As Integer = URL.IndexOf(LegacyURL)
