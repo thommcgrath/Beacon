@@ -86,7 +86,7 @@ Inherits Beacon.IntegrationEngine
 		      Var SectionDict As Dictionary = Entry.Value
 		      For Each SectionEntry As DictionaryEntry In SectionDict
 		        Var Key As String = SectionEntry.Key
-		        Var ConfigKey As Beacon.ConfigKey = Beacon.Data.GetConfigKey("", Header, Key) // Allow any file so that command line options don't trigger this
+		        Var ConfigKey As Beacon.ConfigKey = Beacon.Data.GetConfigKey("", "", Key) // Allow any file so that command line options don't trigger this
 		        If ConfigKey Is Nil Or ConfigKey.HasNitradoEquivalent = False Then
 		          App.Log("Cannot use guided deploy because the key " + Key + " needs to be in GameUserSettings.ini but Nitrado does not have a config for it.")
 		          Self.SwitchToExpertMode(Key)
