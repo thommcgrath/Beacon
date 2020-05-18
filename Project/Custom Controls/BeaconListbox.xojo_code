@@ -345,7 +345,11 @@ Inherits Listbox
 
 	#tag Method, Flags = &h0
 		Function CanEdit() As Boolean
-		  Return RaiseEvent CanEdit()
+		  If IsEventImplemented("CanEdit") Then
+		    Return RaiseEvent CanEdit()
+		  End If
+		  
+		  Return (Self.EditableCell Is Nil) = False
 		End Function
 	#tag EndMethod
 
@@ -385,7 +389,16 @@ Inherits Listbox
 
 	#tag Method, Flags = &h0
 		Sub DoEdit()
-		  RaiseEvent PerformEdit
+		  If IsEventImplemented("PerformEdit") Then
+		    RaiseEvent PerformEdit
+		    Return
+		  End If
+		  
+		  // Look through the columns for exactly one editable cell
+		  Var Cell As Point = Self.EditableCell
+		  If (Cell Is Nil) = False Then
+		    Self.EditCellAt(Cell.Y, Cell.X)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -394,6 +407,30 @@ Inherits Listbox
 		  Var Board As New Clipboard
 		  RaiseEvent PerformPaste(Board)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function EditableCell() As Point
+		  If Self.SelectedRowCount <> 1 Then
+		    Return Nil
+		  End If
+		  
+		  Var Row As Integer = Self.SelectedRowIndex
+		  Var Editable As Integer = -1
+		  For Column As Integer = 0 To Self.LastColumnIndex
+		    If Self.CellTypeAt(Row, Column) = Listbox.CellTypes.TextField Then
+		      If Editable = -1 Then
+		        Editable = Column
+		      Else
+		        Editable = -2
+		      End If
+		    End If
+		  Next
+		  
+		  If Editable >= 0 Then
+		    Return New Point(Editable, Row)
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
