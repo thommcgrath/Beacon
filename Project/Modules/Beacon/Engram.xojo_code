@@ -68,6 +68,8 @@ Implements Beacon.Blueprint
 		  Self.mEngramEntryString = Source.mEngramEntryString
 		  Self.mRequiredPlayerLevel = Source.mRequiredPlayerLevel
 		  Self.mRequiredUnlockPoints = Source.mRequiredUnlockPoints
+		  Self.mStackSize = Source.mStackSize
+		  Self.mItemID = Source.mItemID
 		  
 		  Self.mTags.ResizeTo(-1)
 		  For Each Tag As String In Source.mTags
