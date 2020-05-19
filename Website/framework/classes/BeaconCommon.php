@@ -431,9 +431,9 @@ abstract class BeaconCommon {
 		return ($boolval === null ? false : $boolval);
 	}
 	
-	public static function SecondsToEnglish(int $seconds, bool $short = false) {
+	public static function SecondsToEnglish(int $seconds, bool $short = false, int $largest_unit = 86400) {
 		$parts = array();
-		if ($seconds > 86400) {
+		if ($seconds > 86400 && $largest_unit >= 86400) {
 			$days = floor($seconds / 86400);
 			$seconds = $seconds - ($days * 86400);
 			if ($short) {
@@ -446,7 +446,7 @@ abstract class BeaconCommon {
 				}
 			}
 		}
-		if ($seconds > 3600) {
+		if ($seconds > 3600 && $largest_unit >= 3600) {
 			$hours = floor($seconds / 3600);
 			$seconds = $seconds - ($hours * 3600);
 			if ($short) {
@@ -459,7 +459,7 @@ abstract class BeaconCommon {
 				}
 			}
 		}
-		if ($seconds > 60) {
+		if ($seconds > 60 && $largest_unit >= 60) {
 			$minutes = floor($seconds / 60);
 			$seconds = $seconds - ($minutes * 60);
 			if ($short) {

@@ -134,6 +134,11 @@ function PrepareCreatureTable(BeaconCreature $creature, array &$properties) {
 	if (!is_null($mature_time)) {
 		$properties['Mature Time'] = BeaconCommon::SecondsToEnglish($mature_time);
 	}
+	$min_mating_interval = $creature->MinMatingIntervalSeconds();
+	$max_mating_interval = $creature->MaxMatingIntervalSeconds();
+	if (is_null($min_mating_interval) == false && is_null($max_mating_interval) == false) {
+		$properties['Mating Cooldown'] = BeaconCommon::SecondsToEnglish($min_mating_interval, false, 3600) . ' to ' . BeaconCommon::SecondsToEnglish($max_mating_interval, false, 3600);
+	}
 }
 
 function PrepareEngramTable(BeaconEngram $engram, array &$properties) {

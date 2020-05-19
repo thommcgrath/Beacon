@@ -126,7 +126,8 @@ CREATE TYPE public.ini_value_type AS ENUM (
     'Numeric',
     'Array',
     'Structure',
-    'Boolean'
+    'Boolean',
+    'Text'
 );
 
 
@@ -841,6 +842,9 @@ CREATE TABLE public.creatures (
     breedable boolean NOT NULL,
     incubation_time interval,
     mature_time interval,
+    mating_interval_min interval,
+    mating_interval_max interval,
+    CONSTRAINT creatures_check CHECK ((((mating_interval_min IS NULL) AND (mating_interval_max IS NULL)) OR ((mating_interval_min IS NOT NULL) AND (mating_interval_max IS NOT NULL)))),
     CONSTRAINT creatures_path_check CHECK ((path OPERATOR(public.~~) '/%'::public.citext))
 )
 INHERITS (public.objects);
@@ -3380,7 +3384,7 @@ ALTER TABLE ONLY public.stw_applicants
 --
 
 ALTER TABLE ONLY public.stw_purchases
-    ADD CONSTRAINT stw_purchases_generated_purchase_id_fkey FOREIGN KEY (generated_purchase_id) REFERENCES public.purchases(purchase_id) ON UPDATE CASCADE ON DELETE SET DEFAULT;
+    ADD CONSTRAINT stw_purchases_generated_purchase_id_fkey FOREIGN KEY (generated_purchase_id) REFERENCES public.purchases(purchase_id) ON UPDATE SET NULL ON DELETE SET DEFAULT;
 
 
 --
