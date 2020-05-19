@@ -16,6 +16,8 @@ class BeaconCreature extends BeaconBlueprint {
 	private $incubation_time;
 	private $mature_time;
 	private $stats;
+	private $mating_interval_min;
+	private $mating_interval_max;
 	
 	protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
@@ -29,6 +31,8 @@ class BeaconCreature extends BeaconBlueprint {
 		$columns[] = 'EXTRACT(epoch FROM incubation_time) AS incubation_time';
 		$columns[] = 'EXTRACT(epoch FROM mature_time) AS mature_time';
 		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(template))) FROM (SELECT stat_index, base_value, per_level_wild_multiplier, per_level_tamed_multiplier, add_multiplier, affinity_multiplier FROM creature_stats WHERE creature_stats.creature_id = creatures.object_id ORDER BY stat_index) AS template) AS stats';
+		$columns[] = 'EXTRACT(epoch FROM mating_interval_min) AS mating_interval_min';
+		$columns[] = 'EXTRACT(epoch FROM mating_interval_max) AS mating_interval_max';
 		return $columns;
 	}
 	
@@ -58,6 +62,10 @@ class BeaconCreature extends BeaconBlueprint {
 			return $this->mature_time;
 		case 'stats':
 			return $this->stats;
+		case 'mating_interval_min':
+			return $this->mating_interval_min;
+		case 'mating_interval_max':
+			return $this->mating_interval_max;
 		default:
 			return parent::GetColumnValue($column);
 		}
@@ -137,6 +145,20 @@ class BeaconCreature extends BeaconBlueprint {
 				throw new Exception('Stats must be a structure.');
 			}
 		}
+		if (array_key_exists('mating_interval_min', $json)) {
+			if (is_int($json['mating_interval_min'])) {
+				$this->mature_time = $json['mating_interval_min'];
+			} else {
+				throw new Exception('Min mating interval time must be a number of seconds.');
+			}
+		}
+		if (array_key_exists('mating_interval_max', $json)) {
+			if (is_int($json['mating_interval_max'])) {
+				$this->mature_time = $json['mating_interval_max'];
+			} else {
+				throw new Exception('Max mating interval time must be a number of seconds.');
+			}
+		}
 	}
 	
 	protected static function FromRow(BeaconRecordSet $row) {
@@ -154,6 +176,8 @@ class BeaconCreature extends BeaconBlueprint {
 		$obj->incubation_time = is_null($row->Field('incubation_time')) ? null : intval($row->Field('incubation_time'));
 		$obj->mature_time = is_null($row->Field('mature_time')) ? null : intval($row->Field('mature_time'));
 		$obj->stats = is_null($row->Field('stats')) ? null : json_decode($row->Field('stats'), true);
+		$obj->mating_interval_min = is_null($row->Field('mating_interval_min')) ? null : intval($row->Field('mating_interval_min'));
+		$obj->mating_interval_max = is_null($row->Field('mating_interval_max')) ? null : intval($row->Field('mating_interval_max'));
 		return $obj;
 	}
 	
@@ -171,6 +195,8 @@ class BeaconCreature extends BeaconBlueprint {
 		$json['mature_time'] = $this->mature_time;
 		$json['resource_url'] = BeaconAPI::URL('/creature/' . urlencode($this->ObjectID()));
 		$json['stats'] = $this->stats;
+		$json['mating_interval_min'] = $this->mating_interval_min;
+		$json['mating_interval_max'] = $this->mating_interval_max;
 		return $json;
 	}
 	
@@ -273,6 +299,14 @@ class BeaconCreature extends BeaconBlueprint {
 	
 	public function MatureTimeSeconds() {
 		return $this->mature_time;
+	}
+	
+	public function MinMatingIntervalSeconds() {
+		return $this->mating_interval_min;
+	}
+	
+	public function MaxMatingIntervalSeconds() {
+		return $this->mating_interval_max;
 	}
 }
 
