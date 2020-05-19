@@ -92,6 +92,18 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub MaxMatingInterval(Assigns Value As UInt64)
+		  Self.mMaxMatingInterval = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub MinMatingInterval(Assigns Value As UInt64)
+		  Self.mMinMatingInterval = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ModID(Assigns Value As v4UUID)
 		  Self.mModID = Value
 		End Sub

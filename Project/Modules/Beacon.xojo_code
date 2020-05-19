@@ -1165,20 +1165,47 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function SecondsToString(Seconds As UInt64) As String
-		  // Too obvious?
-		  Const SecondsPerDay = 86400
-		  Const SecondsPerHour = 3600
-		  Const SecondsPerMinute = 60
+		Protected Function SecondsToString(ParamArray Intervals() As UInt64) As String
+		  Var WithDays, WithHours, WithMinutes As Boolean = True
+		  For Each Interval As UInt64 In Intervals
+		    WithDays = WithDays And Interval >= SecondsPerDay
+		    WithHours = WithHours And Interval >= SecondsPerHour
+		    WithMinutes = WithMinutes And Interval >= SecondsPerMinute
+		  Next
 		  
-		  Var Days As Integer = Floor(Seconds / SecondsPerDay)
-		  Seconds = Seconds - (Days * SecondsPerDay)
+		  Var Values() As String
+		  For Each Interval As UInt64 In Intervals
+		    Values.AddRow(SecondsToString(Interval, WithDays, WithHours, WithMinutes))
+		  Next
 		  
-		  Var Hours As Integer = Floor(Seconds / SecondsPerHour)
-		  Seconds = Seconds - (Hours * SecondsPerHour)
+		  If Intervals.Count = 1 Then
+		    Return Values(0)
+		  ElseIf Intervals.Count = 2 Then
+		    Return Values(0) + " to " + Values(1)
+		  Else
+		    Return Values.Join(", ")
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SecondsToString(Seconds As UInt64, WithDays As Boolean, WithHours As Boolean, WithMinutes As Boolean) As String
+		  Var Days, Hours, Minutes As Integer
 		  
-		  Var Minutes As Integer = Floor(Seconds / SecondsPerMinute)
-		  Seconds = Seconds - (Minutes * SecondsPerMinute)
+		  If WithDays Then
+		    Days = Floor(Seconds / SecondsPerDay)
+		    Seconds = Seconds - (Days * SecondsPerDay)
+		  End If
+		  
+		  If WithHours Then
+		    Hours = Floor(Seconds / SecondsPerHour)
+		    Seconds = Seconds - (Hours * SecondsPerHour)
+		  End If
+		  
+		  If WithMinutes Then
+		    Minutes = Floor(Seconds / SecondsPerMinute)
+		    Seconds = Seconds - (Minutes * SecondsPerMinute)
+		  End If
 		  
 		  Var Parts() As String
 		  If Days > 0 Then
@@ -1486,6 +1513,15 @@ Protected Module Beacon
 	#tag EndConstant
 
 	#tag Constant, Name = RewriteModeGameUserSettingsIni, Type = String, Dynamic = False, Default = \"GameUserSettings.ini", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = SecondsPerDay, Type = Double, Dynamic = False, Default = \"86400", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = SecondsPerHour, Type = Double, Dynamic = False, Default = \"3600", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = SecondsPerMinute, Type = Double, Dynamic = False, Default = \"60", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ServerSettingsHeader, Type = String, Dynamic = False, Default = \"ServerSettings", Scope = Protected

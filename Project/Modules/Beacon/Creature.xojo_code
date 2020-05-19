@@ -51,6 +51,8 @@ Implements Beacon.Blueprint
 		  Self.mIncubationTime = Source.mIncubationTime
 		  Self.mMatureTime = Source.mMatureTime
 		  Self.mStats = Source.mStats.Clone
+		  Self.mMinMatingInterval = Source.mMinMatingInterval
+		  Self.mMaxMatingInterval = Source.mMaxMatingInterval
 		  
 		  Self.mTags.ResizeTo(-1)
 		  For Each Tag As String In Source.mTags
@@ -130,6 +132,18 @@ Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
 		Function MatureTime() As UInt64
 		  Return Self.mMatureTime
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MaxMatingInterval() As UInt64
+		  Return Self.mMaxMatingInterval
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MinMatingInterval() As UInt64
+		  Return Self.mMinMatingInterval
 		End Function
 	#tag EndMethod
 
@@ -276,6 +290,14 @@ Implements Beacon.Blueprint
 
 	#tag Property, Flags = &h1
 		Protected mMatureTime As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mMaxMatingInterval As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mMinMatingInterval As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

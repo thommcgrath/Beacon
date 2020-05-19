@@ -204,7 +204,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT NOT NULL PRIMARY KEY, title TEXT NOT NULL, body TEXT NOT NULL, detail_url TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE notifications (notification_id TEXT NOT NULL PRIMARY KEY, message TEXT NOT NULL, secondary_message TEXT, user_data TEXT NOT NULL, moment TEXT NOT NULL, read INTEGER NOT NULL, action_url TEXT, deleted INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', incubation_time INTEGER, mature_time INTEGER, stats TEXT);")
+		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', incubation_time INTEGER, mature_time INTEGER, stats TEXT, mating_interval_min INTEGER, mating_interval_max INTEGER);")
 		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', groups TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
 		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, tags TEXT NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT NOT NULL, header TEXT NOT NULL, key TEXT NOT NULL, value_type TEXT NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT, nitrado_format TEXT);")
 		  
@@ -1448,6 +1448,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Var ExtraColumns As New Dictionary
 		        ExtraColumns.Value("incubation_time") = Dict.Value("incubation_time")
 		        ExtraColumns.Value("mature_time") = Dict.Value("mature_time")
+		        ExtraColumns.Value("mating_interval_min") = Dict.Value("mating_interval_min")
+		        ExtraColumns.Value("mating_interval_max") = Dict.Value("mating_interval_max")
 		        If IsNull(Dict.Value("stats")) = False Then
 		          ExtraColumns.Value("stats") = Beacon.GenerateJSON(Dict.Value("stats"), False)
 		        End If
@@ -1866,9 +1868,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  // Creatures
-		  If FromSchemaVersion >= 14 Then
+		  If FromSchemaVersion >= 16 Then
+		    // Adds mating_interval_min and mating_interval_max
 		    Commands.AddRow("INSERT INTO creatures SELECT * FROM legacy.creatures;")
+		  ElseIf FromSchemaVersion >= 14 Then
+		    // Adds alternate_label column
+		    Commands.AddRow("INSERT INTO creatures (object_id, mod_id, label, alternate_label, availability, path, class_string, tags, incubation_time, mature_time, stats) SELECT object_id, mod_id, label, alternate_label, availability, path, class_string, tags, incubation_time, mature_time, stats FROM legacy.creatures;")
 		  ElseIf FromSchemaVersion >= 10 Then
+		    // Adds stats column
 		    Commands.AddRow("INSERT INTO creatures (object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time, stats) SELECT object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time, stats FROM legacy.creatures;")
 		  ElseIf FromSchemaVersion >= 9 Then
 		    Commands.AddRow("INSERT INTO creatures (object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time) SELECT object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time FROM legacy.creatures;")
@@ -1879,6 +1886,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Commands.AddRow("INSERT INTO spawn_points SELECT * FROM legacy.spawn_points;")
 		  ElseIf FromSchemaVersion >= 12 Then
 		    Commands.AddRow("INSERT INTO spawn_points (object_id, mod_id, label, availability, path, class_string, tags, groups, limits) SELECT object_id, mod_id, label, availability, path, class_string, tags, groups, limits FROM legacy.spawn_points;")
+		  End If
+		  
+		  // Spawn Points
+		  If FromSchemaVersion >= 15 Then
+		    Commands.AddRow("INSERT INTO ini_options SELECT * FROM legacy.ini_options")
 		  End If
 		  
 		  // Searchable Tags
@@ -2145,6 +2157,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    If Results.Column("mature_time").Value <> Nil Then
 		      Creature.MatureTime = Results.Column("mature_time").Value.UInt64Value
+		    End If
+		    If Results.Column("mating_interval_min").Value <> Nil And Results.Column("mating_interval_max").Value <> Nil Then
+		      Creature.MinMatingInterval = Results.Column("mating_interval_min").Value.UInt64Value
+		      Creature.MaxMatingInterval = Results.Column("mating_interval_max").Value.UInt64Value
 		    End If
 		    
 		    Creatures.AddRow(Creature)
@@ -3023,7 +3039,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndProperty
 
 
-	#tag Constant, Name = CreatureSelectSQL, Type = String, Dynamic = False, Default = \"SELECT creatures.object_id\x2C creatures.path\x2C creatures.label\x2C creatures.alternate_label\x2C creatures.availability\x2C creatures.tags\x2C creatures.incubation_time\x2C creatures.mature_time\x2C creatures.stats\x2C mods.mod_id\x2C mods.name AS mod_name FROM creatures INNER JOIN mods ON (creatures.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag Constant, Name = CreatureSelectSQL, Type = String, Dynamic = False, Default = \"SELECT creatures.object_id\x2C creatures.path\x2C creatures.label\x2C creatures.alternate_label\x2C creatures.availability\x2C creatures.tags\x2C creatures.incubation_time\x2C creatures.mature_time\x2C creatures.stats\x2C creatures.mating_interval_min\x2C creatures.mating_interval_max\x2C mods.mod_id\x2C mods.name AS mod_name FROM creatures INNER JOIN mods ON (creatures.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT engrams.object_id\x2C engrams.path\x2C engrams.label\x2C engrams.alternate_label\x2C engrams.availability\x2C engrams.tags\x2C engrams.entry_string\x2C engrams.required_level\x2C engrams.required_points\x2C engrams.stack_size\x2C engrams.item_id\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
@@ -3053,7 +3069,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = Notification_PresetsChanged, Type = String, Dynamic = False, Default = \"Presets Changed", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"15", Scope = Private
+	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"16", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.tags\x2C spawn_points.groups\x2C spawn_points.limits\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private

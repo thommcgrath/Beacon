@@ -24,7 +24,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   744
+   Width           =   800
    Begin UITweaks.ResizedTextField MatureSpeedField
       AcceptTabs      =   False
       Alignment       =   2
@@ -654,9 +654,9 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       AutoHideScrollbars=   True
       Bold            =   False
       Border          =   True
-      ColumnCount     =   6
+      ColumnCount     =   7
       ColumnsResizable=   False
-      ColumnWidths    =   "6*,5*,5*,3*,3*,3*"
+      ColumnWidths    =   "6*,5*,5*,5*,3*,3*,3*"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
@@ -672,7 +672,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Creature	Incubation Time	Mature Time	Imprints	% Per Imprint	Max Imprint %"
+      InitialValue    =   "Creature	Incubation Time	Mature Time	Mating Cooldown	Imprints	% Per Imprint	Max Imprint %"
       Italic          =   False
       Left            =   20
       LockBottom      =   True
@@ -699,7 +699,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       UseFocusRing    =   True
       Visible         =   True
       VisibleRowCount =   0
-      Width           =   704
+      Width           =   760
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -723,7 +723,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Top             =   381
       Transparent     =   False
       Visible         =   True
-      Width           =   704
+      Width           =   760
    End
    Begin UITweaks.ResizedTextField ImprintPeriodPreviewField
       AcceptTabs      =   False
@@ -1118,7 +1118,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   744
+      Width           =   800
    End
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
@@ -1146,7 +1146,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   744
+      Width           =   800
    End
    Begin UITweaks.ResizedTextField MatingSpeedField
       AcceptTabs      =   False
@@ -1380,7 +1380,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.MinimumWidth = 744
+		  Self.MinimumWidth = 800
 		  Self.MinimumHeight = 544
 		End Sub
 	#tag EndEvent
@@ -1464,6 +1464,7 @@ End
 		  
 		  Var IncubationMultiplier As Double = Self.Config(False).EggHatchSpeedMultiplier
 		  Var MatureMultiplier As Double = Self.Config(False).BabyMatureSpeedMultiplier
+		  Var CooldownMultiplier As Double = Self.Config(False).MatingIntervalMultiplier
 		  
 		  For Each Creature As Beacon.Creature In Creatures
 		    If Creature.IncubationTime = 0 Or Creature.MatureTime = 0 Then
@@ -1472,6 +1473,8 @@ End
 		    
 		    Var IncubationSeconds As UInt64 = Creature.IncubationTime / IncubationMultiplier
 		    Var MatureSeconds As UInt64 = Creature.MatureTime / MatureMultiplier
+		    Var CooldownMin As UInt64 = Creature.MinMatingInterval * CooldownMultiplier
+		    Var CooldownMax As UInt64 = Creature.MaxMatingInterval * CooldownMultiplier
 		    
 		    Var MaxCuddles As Integer = Floor(MatureSeconds / CuddlePeriod)
 		    Var PerCuddle As Double = 0
@@ -1480,7 +1483,7 @@ End
 		    End If
 		    Var MaxImprint As Double = MaxCuddles * PerCuddle
 		    
-		    CreaturesList.AddRow(Creature.Label, Beacon.SecondsToString(IncubationSeconds), Beacon.SecondsToString(MatureSeconds), MaxCuddles.ToString, If(MaxCuddles = 0, "Can't Imprint", Format(PerCuddle, "0%")), If(PerCuddle = 0, "", Format(MaxImprint, "0%")))
+		    CreaturesList.AddRow(Creature.Label, Beacon.SecondsToString(IncubationSeconds), Beacon.SecondsToString(MatureSeconds), Beacon.SecondsToString(CooldownMin, CooldownMax), MaxCuddles.ToString, If(MaxCuddles = 0, "Can't Imprint", Format(PerCuddle, "0%")), If(PerCuddle = 0, "", Format(MaxImprint, "0%")))
 		    CreaturesList.CellTagAt(CreaturesList.LastAddedRowIndex, Self.ColumnIncubationTime) = IncubationSeconds
 		    CreaturesList.CellTagAt(CreaturesList.LastAddedRowIndex, Self.ColumnMatureTime) = MatureSeconds
 		    CreaturesList.RowTagAt(CreaturesList.LastAddedRowIndex) = Creature.ClassString
@@ -1502,7 +1505,10 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = ColumnBestImprint, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag Constant, Name = ColumnBestImprint, Type = Double, Dynamic = False, Default = \"6", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnCooldown, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnCreatureName, Type = Double, Dynamic = False, Default = \"0", Scope = Private
@@ -1514,10 +1520,10 @@ End
 	#tag Constant, Name = ColumnMatureTime, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnNumImprints, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = ColumnNumImprints, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnPerImprint, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = ColumnPerImprint, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
 
@@ -1760,6 +1766,7 @@ End
 		  Self.Config(True).MatingIntervalMultiplier = Value
 		  Self.Changed = True
 		  Self.SettingUp = False
+		  Self.UpdateStats
 		End Sub
 	#tag EndEvent
 #tag EndEvents
