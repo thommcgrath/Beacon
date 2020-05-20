@@ -585,6 +585,41 @@ $$;
 ALTER FUNCTION public.update_creature_modified() OWNER TO thommcgrath;
 
 --
+-- Name: update_engram_timestamp(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.update_engram_timestamp() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	v_oldid UUID;
+	v_newid UUID;
+BEGIN
+	IF TG_OP = 'DELETE' THEN
+	v_oldid = OLD.engram_id;
+	ELSIF TG_OP = 'UPDATE' THEN
+		v_oldid = OLD.engram_id;
+		v_newid = NEW.engram_id;
+	ELSE
+		v_newid = NEW.engram_id;
+	END IF;
+	IF v_oldid IS NOT NULL THEN
+		UPDATE engrams SET last_update = CURRENT_TIMESTAMP WHERE object_id = v_oldid;
+	END IF;
+	IF v_newid IS NOT NULL AND v_newid IS DISTINCT FROM v_oldid THEN
+		UPDATE engrams SET last_update = CURRENT_TIMESTAMP WHERE object_id = v_newid;
+	END IF;
+	IF TG_OP = 'DELETE' THEN
+		RETURN OLD;
+	ELSE
+		RETURN NEW;
+	END IF;
+END; $$;
+
+
+ALTER FUNCTION public.update_engram_timestamp() OWNER TO thommcgrath;
+
+--
 -- Name: update_spawn_point_timestamp(); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
@@ -1040,6 +1075,22 @@ CREATE TABLE public.corrupt_files (
 
 
 ALTER TABLE public.corrupt_files OWNER TO thommcgrath;
+
+--
+-- Name: crafting_costs; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.crafting_costs (
+    engram_id uuid NOT NULL,
+    ingredient_id uuid NOT NULL,
+    quantity integer NOT NULL,
+    exact boolean NOT NULL,
+    CONSTRAINT crafting_costs_check CHECK ((engram_id IS DISTINCT FROM ingredient_id)),
+    CONSTRAINT crafting_costs_quantity_check CHECK ((quantity >= 1))
+);
+
+
+ALTER TABLE public.crafting_costs OWNER TO thommcgrath;
 
 --
 -- Name: creature_stats; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -2106,6 +2157,14 @@ ALTER TABLE ONLY public.corrupt_files
 
 
 --
+-- Name: crafting_costs crafting_costs_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.crafting_costs
+    ADD CONSTRAINT crafting_costs_pkey PRIMARY KEY (engram_id, ingredient_id);
+
+
+--
 -- Name: creature_engrams creature_engrams_creature_id_engram_id_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -2728,6 +2787,13 @@ CREATE TRIGGER client_notices_before_update_trigger BEFORE INSERT OR UPDATE ON p
 
 
 --
+-- Name: crafting_costs crafting_costs_update_timestamp_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER crafting_costs_update_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON public.crafting_costs FOR EACH ROW EXECUTE PROCEDURE public.update_engram_timestamp();
+
+
+--
 -- Name: blog_articles create_slug_from_article_subject_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
@@ -3033,6 +3099,22 @@ CREATE TRIGGER update_blog_article_timestamp_trigger BEFORE INSERT OR UPDATE ON 
 --
 
 CREATE TRIGGER update_support_article_hash_trigger BEFORE INSERT OR UPDATE ON public.support_articles FOR EACH ROW EXECUTE PROCEDURE public.update_support_article_hash();
+
+
+--
+-- Name: crafting_costs crafting_costs_engram_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.crafting_costs
+    ADD CONSTRAINT crafting_costs_engram_id_fkey FOREIGN KEY (engram_id) REFERENCES public.engrams(object_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: crafting_costs crafting_costs_ingredient_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.crafting_costs
+    ADD CONSTRAINT crafting_costs_ingredient_id_fkey FOREIGN KEY (ingredient_id) REFERENCES public.engrams(object_id) ON UPDATE CASCADE ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -3515,6 +3597,13 @@ GRANT SELECT ON TABLE public.computed_engram_availabilities TO thezaz_website;
 --
 
 GRANT SELECT,INSERT ON TABLE public.corrupt_files TO thezaz_website;
+
+
+--
+-- Name: TABLE crafting_costs; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.crafting_costs TO thezaz_website;
 
 
 --
