@@ -6,6 +6,7 @@ class BeaconEngram extends BeaconBlueprint {
 	protected $required_level = null;
 	protected $stack_size = null;
 	protected $item_id = null;
+	protected $recipe = null;
 	
 	protected static function TableName() {
 		return 'engrams';
@@ -18,6 +19,7 @@ class BeaconEngram extends BeaconBlueprint {
 		$columns[] = 'required_level';
 		$columns[] = 'stack_size';
 		$columns[] = 'item_id';
+		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(recipe_template))) FROM (SELECT ingredients.path, quantity, exact FROM crafting_costs INNER JOIN engrams AS ingredients ON (crafting_costs.ingredient_id = ingredients.object_id) WHERE engram_id = engrams.object_id) AS recipe_template) AS recipe';
 		return $columns;
 	}
 	
@@ -33,6 +35,8 @@ class BeaconEngram extends BeaconBlueprint {
 			return $this->stack_size;
 		case 'item_id':
 			return $this->item_id;
+		case 'recipe':
+			return $this->recipe;
 		default:
 			return parent::GetColumnValue($column);
 		}
@@ -48,6 +52,7 @@ class BeaconEngram extends BeaconBlueprint {
 		$obj->required_level = $row->Field('required_level');
 		$obj->stack_size = $row->Field('stack_size');
 		$obj->item_id = $row->Field('item_id');
+		$obj->recipe = is_null($row->Field('recipe')) ? null : json_decode($row->Field('recipe'), true);
 		return $obj;
 	}
 	
@@ -83,6 +88,10 @@ class BeaconEngram extends BeaconBlueprint {
 		return is_null($this->item_id) ? null : intval($this->item_id);
 	}
 	
+	public function Recipe() {
+		return $this->recipe;
+	}
+	
 	public function jsonSerialize() {
 		$json = parent::jsonSerialize();
 		$json['can_blueprint'] = $this->CanBlueprint();
@@ -92,6 +101,11 @@ class BeaconEngram extends BeaconBlueprint {
 		$json['required_level'] = $this->RequiredLevel();
 		$json['stack_size'] = $this->StackSize();
 		$json['item_id'] = $this->ItemID();
+		if (is_null($this->recipe) || count($this->recipe) == 0) {
+			$json['recipe'] = null;
+		} else {
+			$json['recipe'] = $this->recipe;
+		}
 		
 		// legacy support
 		$json['mod_id'] = $this->ModID();
