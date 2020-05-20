@@ -320,6 +320,14 @@ Begin ConfigEditor CraftingCostsConfigEditor
       StackSize       =   0
       TabPanelIndex   =   0
    End
+   Begin Thread AdjusterThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -327,6 +335,7 @@ End
 	#tag Event
 		Sub EnableMenuItems()
 		  Self.EnableEditorMenuItem("CreateFibercraftServer")
+		  Self.EnableEditorMenuItem("AdjustCosts")
 		End Sub
 	#tag EndEvent
 
@@ -336,6 +345,11 @@ End
 		  CreateFibercraftItem.Name = "CreateFibercraftServer"
 		  CreateFibercraftItem.AutoEnabled = False
 		  Items.AddRow(CreateFibercraftItem)
+		  
+		  Var AdjustCostsItem As New MenuItem("Adjust All Crafting Costs")
+		  AdjustCostsItem.Name = "AdjustCosts"
+		  AdjustCostsItem.AutoEnabled = False
+		  Items.AddRow(AdjustCostsItem)
 		End Sub
 	#tag EndEvent
 
@@ -414,6 +428,13 @@ End
 
 
 	#tag MenuHandler
+		Function AdjustCosts() As Boolean Handles AdjustCosts.Action
+			Self.AdjustCosts()
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function CreateFibercraftServer() As Boolean Handles CreateFibercraftServer.Action
 			Self.CreateFibercraftServer()
 			Return True
@@ -421,6 +442,25 @@ End
 		End Function
 	#tag EndMenuHandler
 
+
+	#tag Method, Flags = &h21
+		Private Sub AdjustCosts()
+		  // We need to adjust the currently defined costs, as well as inject new costs at the adjusted rate
+		  Var Multiplier As Double = AdjustCostDialog.Present(Self)
+		  If Multiplier = 1.0 Then
+		    Return
+		  End If
+		  
+		  If Self.AdjusterThread.ThreadState <> Thread.ThreadStates.NotRunning Then
+		    Return
+		  End If
+		  
+		  Self.mCostMultiplier = Multiplier
+		  Self.mProgressWindow = New ProgressWindow("Calculating new costs")
+		  Self.mProgressWindow.ShowWithin(Self.TrueWindow)
+		  Self.AdjusterThread.Start
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.CraftingCosts
@@ -493,7 +533,8 @@ End
 		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
 		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
 		  
-		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, EngramSelectorDialog.SelectModes.ImpliedMultiple)
+		  Var WithDefaults As Boolean = True
+		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, EngramSelectorDialog.SelectModes.ImpliedMultiple, WithDefaults)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
@@ -502,7 +543,13 @@ End
 		  
 		  Var NewCosts() As Beacon.CraftingCost
 		  For Each Engram As Beacon.Engram In NewEngrams
-		    Var Cost As New Beacon.CraftingCost(Engram)
+		    Var Cost As Beacon.CraftingCost
+		    If WithDefaults Then
+		      Cost = LocalData.SharedInstance.GetRecipeForEngram(Engram)
+		    End If
+		    If Cost Is Nil Then
+		      Cost = New Beacon.CraftingCost(Engram)
+		    End If
 		    Config.Add(Cost)
 		    NewCosts.AddRow(Cost)
 		  Next
@@ -612,6 +659,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mConfigRef As WeakRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCostMultiplier As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -894,6 +945,78 @@ End
 		      Self.SetupUI()
 		    End If
 		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AdjusterThread
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Dict As Dictionary In Data
+		    If Dict.HasKey("Finished") And Dict.Value("Finished").BooleanValue = True THen
+		      Self.SetupUI()
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Run()
+		  Var OriginalConfig As BeaconConfigs.CraftingCosts = Self.Config(False)
+		  Var Engrams() As Beacon.Engram = OriginalConfig.Engrams
+		  Var Filter As New Dictionary
+		  For Each Engram As Beacon.Engram In Engrams
+		    Filter.Value(Engram.Path) = True
+		  Next
+		  
+		  Var Paths() As String = LocalData.SharedInstance.GetPathsWithCraftingCosts(Self.Document.Mods, Self.Document.MapCompatibility)
+		  For Each Path As String In Paths
+		    If Filter.HasKey(Path) Then
+		      Continue
+		    End If
+		    
+		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByPath(Path)
+		    If (Engram Is Nil) = False Then
+		      Engrams.AddRow(Engram)
+		    End If
+		  Next
+		  
+		  Var NumProcessed As Integer
+		  Var ReplacementConfig As New BeaconConfigs.CraftingCosts
+		  For Each Engram As Beacon.Engram In Engrams
+		    If Self.mProgressWindow.CancelPressed Then
+		      Self.mProgressWindow.Close
+		      Self.mProgressWindow = Nil
+		      Return
+		    End If
+		    
+		    NumProcessed = NumProcessed + 1
+		    Var Cost As Beacon.CraftingCost = OriginalConfig.Cost(Engram)
+		    If Cost Is Nil Then
+		      Cost = LocalData.SharedInstance.GetRecipeForEngram(Engram)
+		    End If
+		    
+		    If Cost Is Nil Then
+		      Continue
+		    End If
+		    
+		    For IngredientIdx As Integer = 0 To Cost.LastRowIndex
+		      Cost.Quantity(IngredientIdx) = Ceil(Cost.Quantity(IngredientIdx) * Self.mCostMultiplier)
+		    Next
+		    
+		    ReplacementConfig.Add(Cost)
+		    
+		    Self.mProgressWindow.Progress = NumProcessed / Engrams.Count
+		    Self.mProgressWindow.Detail = "Updated " + Format(NumProcessed, "0,") + " of " + Format(Engrams.Count, "0,")
+		  Next
+		  
+		  Self.Document.AddConfigGroup(ReplacementConfig)
+		  Self.mConfigRef = New WeakRef(ReplacementConfig)
+		  
+		  Self.mProgressWindow.Close
+		  Self.mProgressWindow = Nil
+		  
+		  Var NotifyDict As New Dictionary
+		  NotifyDict.Value("Finished") = True
+		  Me.AddUserInterfaceUpdate(NotifyDict)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

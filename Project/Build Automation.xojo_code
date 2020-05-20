@@ -49,7 +49,7 @@
 					Subdirectory = 
 					FolderItem = Li4vLi4vSW5zdGFsbGVycy9NYWMvY29udGFpbmVyLW1pZ3JhdGlvbi5wbGlzdA==
 				End
-				Begin IDEScriptBuildStep DownloadClassesDebugMac , AppliesTo = 1
+				Begin IDEScriptBuildStep DownloadClassesDebugMac , AppliesTo = 3
 					If TargetMacOS Then
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
 					Call DoShellCommand("/usr/bin/curl https://lab.beaconapp.cc/download/classes?version=" + PropertyValue("App.ShortVersion") + " > " + App + "/Contents/Resources/Classes.json")
@@ -78,7 +78,7 @@
 					Subdirectory = 
 					FolderItem = Li4vLi4vRm9udHMv
 				End
-				Begin IDEScriptBuildStep DownloadClassesDebugWin , AppliesTo = 1
+				Begin IDEScriptBuildStep DownloadClassesDebugWin , AppliesTo = 3
 					Var AppName As String = Left(CurrentBuildAppName, Len(CurrentBuildAppName) - 4)
 					If TargetWindows Then
 					Var ResourcesPath As String = CurrentBuildLocationNative + "\" + AppName + " Resources"

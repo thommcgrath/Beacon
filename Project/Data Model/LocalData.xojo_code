@@ -197,7 +197,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE mods (mod_id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, console_safe INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_source_icons (icon_id TEXT NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT NOT NULL, sort_order INTEGER NOT NULL, icon TEXT NOT NULL REFERENCES loot_source_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}');")
-		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', entry_string TEXT, required_level INTEGER, required_points INTEGER, stack_size INTEGER, item_id INTEGER);")
+		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', entry_string TEXT, required_level INTEGER, required_points INTEGER, stack_size INTEGER, item_id INTEGER, recipe TEXT NOT NULL DEFAULT '[]');")
 		  Self.SQLExecute("CREATE TABLE official_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_presets (user_id TEXT NOT NULL, object_id TEXT NOT NULL, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, pattern TEXT NOT NULL);")
@@ -859,6 +859,27 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetPathsWithCraftingCosts(Mods As Beacon.StringList, Mask As UInt64) As String()
+		  Var SQL As String = "SELECT path FROM engrams WHERE recipe != '[]' AND (availability & " + Mask.ToString + ") > 0"
+		  If (Mods Is Nil) = False And Mods.Count > 0 Then
+		    Var List() As String
+		    For Each ModID As String In Mods
+		      List.AddRow("'" + ModID + "'")
+		    Next
+		    SQL = SQL + " AND mod_id IN (" + List.Join(",") + ")"
+		  End If
+		  
+		  Var Rows As RowSet = Self.SQLSelect(SQL)
+		  Var Results() As String
+		  While Not Rows.AfterLastRow
+		    Results.AddRow(Rows.Column("path").StringValue)
+		    Rows.MoveToNextRow
+		  Wend
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetPreset(PresetID As String) As Beacon.Preset
 		  For Each Preset As Beacon.Preset In Self.mPresets
 		    If Preset.PresetID = PresetID Then
@@ -880,6 +901,51 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dict.Value("Pattern") = Results.Column("pattern").StringValue
 		  Dict.Value("Label") = Results.Column("label").StringValue
 		  Return Beacon.PresetModifier.FromDictionary(Dict)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetRecipeForEngram(Engram As Beacon.Engram) As Beacon.CraftingCost
+		  Return Self.GetRecipeForEngram(Engram.Path)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetRecipeForEngram(Path As String) As Beacon.CraftingCost
+		  Var Results As RowSet = Self.SQLSelect("SELECT recipe FROM engrams WHERE LOWER(path) = ?1;", Path.Lowercase)
+		  Var Cost As Beacon.CraftingCost
+		  If Results.RowCount = 0 Then
+		    Return Cost
+		  End If
+		  
+		  Var Raw As String = Results.Column("recipe").StringValue
+		  Var Dicts() As Variant
+		  Try
+		    Dicts = Beacon.ParseJSON(Raw)
+		  Catch Err As RuntimeException
+		    Return Cost
+		  End Try
+		  
+		  For Each Dict As Dictionary In Dicts
+		    Var IngredientPath As String = Dict.Lookup("path", "").StringValue
+		    Var Quantity As Integer = Dict.Lookup("quantity", 0).IntegerValue
+		    Var Exact As Boolean = Dict.Lookup("exact", False).BooleanValue
+		    
+		    If IngredientPath.IsEmpty Or Quantity = 0 Then
+		      Continue
+		    End If
+		    
+		    If Cost Is Nil Then
+		      Cost = New Beacon.CraftingCost(Self.GetEngramByPath(Path))
+		    End If
+		    
+		    Cost.Append(Self.GetEngramByPath(IngredientPath), Quantity, Exact)
+		  Next
+		  
+		  If (Cost Is Nil) = False Then
+		    Cost.Modified = False
+		  End If
+		  Return Cost
 		End Function
 	#tag EndMethod
 
@@ -1437,6 +1503,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          ExtraColumns.Value("item_id") = Dict.Value("item_id")
 		        End If
 		        
+		        If Dict.HasKey("recipe") And IsNull(Dict.Value("recipe")) = False Then
+		          ExtraColumns.Value("recipe") = Beacon.GenerateJSON(Dict.Value("recipe"), False)
+		        End If
+		        
 		        Var Imported As Boolean = Self.AddBlueprintToDatabase(Beacon.CategoryEngrams, Dict, ExtraColumns)
 		        EngramsChanged = EngramsChanged Or Imported
 		      Next
@@ -1818,8 +1888,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  // Engrams
-		  If FromSchemaVersion >= 15 Then
+		  If FromSchemaVersion >= 17 Then
 		    Commands.AddRow("INSERT INTO engrams SELECT * FROM legacy.engrams;")
+		  ElseIf FromSchemaVersion >= 15 Then
+		    Commands.AddRow("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags, entry_string, required_level, required_points, stack_size, item_id) SELECT object_id, mod_id, label, availability, path, class_string, tags, entry_string, required_level, required_points, stack_size, item_id FROM legacy.engrams;")
 		  ElseIf FromSchemaVersion >= 14 Then
 		    Commands.AddRow("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags, entry_string, required_level, required_points) SELECT object_id, mod_id, label, availability, path, class_string, tags, entry_string, required_level, required_points FROM legacy.engrams;")
 		  ElseIf FromSchemaVersion >= 9 Then
@@ -3069,7 +3141,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = Notification_PresetsChanged, Type = String, Dynamic = False, Default = \"Presets Changed", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"16", Scope = Private
+	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"17", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.tags\x2C spawn_points.groups\x2C spawn_points.limits\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private

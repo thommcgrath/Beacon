@@ -82,7 +82,6 @@ Inherits Beacon.IntegrationEngine
 		    Next
 		    
 		    For Each Entry As DictionaryEntry In GameUserSettingsIniDict
-		      Var Header As String = Entry.Key
 		      Var SectionDict As Dictionary = Entry.Value
 		      For Each SectionEntry As DictionaryEntry In SectionDict
 		        Var Key As String = SectionEntry.Key

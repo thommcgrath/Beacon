@@ -371,6 +371,38 @@ Begin BeaconDialog EngramSelectorDialog
       Visible         =   True
       Width           =   560
    End
+   Begin CheckBox WithDefaultsCheck
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Load Official Values When Available"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   431
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   False
+      VisualState     =   "0"
+      Width           =   376
+   End
 End
 #tag EndWindow
 
@@ -401,7 +433,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Category As String, Subgroup As String, Exclude() As Beacon.Blueprint, Mods As Beacon.StringList, SelectMode As EngramSelectorDialog.SelectModes)
+		Private Sub Constructor(Category As String, Subgroup As String, Exclude() As Beacon.Blueprint, Mods As Beacon.StringList, SelectMode As EngramSelectorDialog.SelectModes, ShowLoadDefaults As Boolean)
 		  Self.mSettingUp = True
 		  For Each Blueprint As Beacon.Blueprint In Exclude
 		    If Blueprint <> Nil Then
@@ -413,6 +445,9 @@ End
 		  Self.mCategory = Category
 		  Self.mSubgroup = Subgroup
 		  Super.Constructor
+		  
+		  Self.WithDefaultsCheck.Visible = ShowLoadDefaults
+		  Self.WithDefaultsCheck.Value = ShowLoadDefaults
 		  
 		  Select Case SelectMode
 		  Case EngramSelectorDialog.SelectModes.Single
@@ -466,12 +501,19 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Creature, Mods As Beacon.StringList = Nil, SelectMode As EngramSelectorDialog.SelectModes) As Beacon.Creature()
+		  Var WithDefaults As Boolean
+		  Return Present(Parent, Subgroup, Exclude, Mods, SelectMode, WithDefaults)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Creature, Mods As Beacon.StringList = Nil, SelectMode As EngramSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Beacon.Creature()
 		  Var ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Creature As Beacon.Creature In Exclude
 		    ExcludeBlueprints.AddRow(Creature)
 		  Next
 		  
-		  Var Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryCreatures, Subgroup, ExcludeBlueprints, Mods, SelectMode)
+		  Var Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryCreatures, Subgroup, ExcludeBlueprints, Mods, SelectMode, WithDefaults)
 		  Var Creatures() As Beacon.Creature
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Creature Then
@@ -484,12 +526,19 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Engram, Mods As Beacon.StringList = Nil, SelectMode As EngramSelectorDialog.SelectModes) As Beacon.Engram()
+		  Var WithDefaults As Boolean
+		  Return Present(Parent, Subgroup, Exclude, Mods, SelectMode, WithDefaults)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Engram, Mods As Beacon.StringList = Nil, SelectMode As EngramSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Beacon.Engram()
 		  Var ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Engram As Beacon.Engram In Exclude
 		    ExcludeBlueprints.AddRow(Engram)
 		  Next
 		  
-		  Var Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryEngrams, Subgroup, ExcludeBlueprints, Mods, SelectMode)
+		  Var Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryEngrams, Subgroup, ExcludeBlueprints, Mods, SelectMode, WithDefaults)
 		  Var Engrams() As Beacon.Engram
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Engram Then
@@ -502,6 +551,13 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, Category As String, Subgroup As String, Exclude() As Beacon.Blueprint, Mods As Beacon.StringList = Nil, SelectMode As EngramSelectorDialog.SelectModes) As Beacon.Blueprint()
+		  Var WithDefaults As Boolean
+		  Return Present(Parent, Category, Subgroup, Exclude, Mods, SelectMode, WithDefaults)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As Window, Category As String, Subgroup As String, Exclude() As Beacon.Blueprint, Mods As Beacon.StringList = Nil, SelectMode As EngramSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Beacon.Blueprint()
 		  Var Blueprints() As Beacon.Blueprint
 		  If Parent = Nil Then
 		    Return Blueprints
@@ -511,7 +567,7 @@ End
 		    Mods = New Beacon.StringList
 		  End If
 		  
-		  Var Win As New EngramSelectorDialog(Category, Subgroup, Exclude, Mods, SelectMode)
+		  Var Win As New EngramSelectorDialog(Category, Subgroup, Exclude, Mods, SelectMode, WithDefaults)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  If Win.mCancelled Then
 		    Win.Close
@@ -522,6 +578,7 @@ End
 		    Blueprints.AddRow(Win.SelectedList.RowTagAt(I))
 		  Next
 		  
+		  WithDefaults = Win.WithDefaultsCheck.Value
 		  Win.Close
 		  Return Blueprints
 		End Function
