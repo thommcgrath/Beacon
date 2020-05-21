@@ -30,13 +30,15 @@ if (isset($_POST['key'])) {
 			} catch (Exception $err) {
 			}
 		} elseif (isset($_POST['code'])) {
-			$code = $_POST['code'];
+			$code = preg_replace('/\s+/', '', $_POST['code']);
 			try {
 				$decrypted_code = BeaconEncryption::SymmetricDecrypt($key, hex2bin($encrypted_code));
-				$verified = $decrypted_code === $code;
-				$database->BeginTransaction();
-				$database->Query('UPDATE email_verification SET verified = TRUE WHERE verified = FALSE AND email_id = uuid_for_email($1);', $email);
-				$database->Commit();
+				if ($decrypted_code === $code) {
+					$verified = true;
+					$database->BeginTransaction();
+					$database->Query('UPDATE email_verification SET verified = TRUE WHERE verified = FALSE AND email_id = uuid_for_email($1);', $email);
+					$database->Commit();
+				}
 			} catch (Exception $err) {
 			}
 		}
