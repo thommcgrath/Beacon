@@ -62,7 +62,8 @@ BeaconErrors::StartWatching();
 		'sandbox' => array(
 			'allow-forms',
 			'allow-same-origin',
-			'allow-scripts'
+			'allow-scripts',
+			'allow-downloads'
 		),
 		'upgrade-insecure-requests' => array(
 		)
