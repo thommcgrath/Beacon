@@ -2992,7 +2992,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h1
 		Protected Function UserID() As String
-		  Return App.IdentityManager.CurrentIdentity.Identifier.Lowercase
+		  Try
+		    Return App.IdentityManager.CurrentIdentity.Identifier.Lowercase
+		  Catch Err As RuntimeException
+		    Return v4UUID.CreateNull
+		  End Try
 		End Function
 	#tag EndMethod
 

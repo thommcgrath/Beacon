@@ -423,14 +423,14 @@ End
 #tag Events NewFileButton
 	#tag Event
 		Sub Action()
-		  MainWindow.Documents.NewDocument()
+		  App.MainWindow.Documents.NewDocument()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events OpenFileButton
 	#tag Event
 		Sub Action()
-		  MainWindow.Documents.ShowOpenDocument()
+		  App.MainWindow.Documents.ShowOpenDocument()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

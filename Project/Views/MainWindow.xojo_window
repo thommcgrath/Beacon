@@ -9,7 +9,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    FullScreenButton=   True
    HasBackColor    =   False
    Height          =   400
-   ImplicitInstance=   True
+   ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
    MaxHeight       =   32000

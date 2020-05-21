@@ -1231,7 +1231,7 @@ End
 		    If Targets.LastRowIndex = 0 Then
 		      Var Organizer As ItemSetOrganizer = Targets(0)
 		      
-		      Var NewPreset As Beacon.Preset = MainWindow.Presets.CreatePreset(Organizer.Template)
+		      Var NewPreset As Beacon.Preset = App.MainWindow.Presets.CreatePreset(Organizer.Template)
 		      If NewPreset = Nil Then
 		        Return True
 		      End If

@@ -202,28 +202,36 @@ Implements NotificationKit.Receiver
 
 	#tag MenuHandler
 		Function FileNew() As Boolean Handles FileNew.Action
-			MainWindow.Documents.NewDocument
+			If (Self.mMainWindow Is Nil) = False Then
+			Self.mMainWindow.Documents.NewDocument
+			End If
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function FileNewPreset() As Boolean Handles FileNewPreset.Action
-			MainWindow.Presets.NewPreset
+			If (Self.mMainWindow Is Nil) = False Then
+			Self.mMainWindow.Presets.NewPreset
+			End If
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function FileOpen() As Boolean Handles FileOpen.Action
-			MainWindow.Documents.ShowOpenDocument()
+			If (Self.mMainWindow Is Nil) = False Then
+			Self.mMainWindow.Documents.ShowOpenDocument()
+			End If
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function HelpAboutBeacon() As Boolean Handles HelpAboutBeacon.Action
-			MainWindow.ShowView(Nil)
+			If (Self.mMainWindow Is Nil) = False Then
+			Self.mMainWindow.ShowView(Nil)
+			End If
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -533,6 +541,11 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function HandleURL(URL As String, AlreadyConfirmed As Boolean = False) As Boolean
+		  If Self.mMainWindow Is Nil Then
+		    Self.mPendingURLs.AddRow(URL)
+		    Return True
+		  End If
+		  
 		  If AlreadyConfirmed = False And Beacon.IsBeaconURL(URL) = False Then
 		    Return False
 		  End If
@@ -552,13 +565,13 @@ Implements NotificationKit.Receiver
 		    Case "showengrams"
 		      NotificationKit.Post(LibraryPane.Notification_ShowPane, LibraryPane.PaneEngrams)
 		    Case "showmods"
-		      MainWindow.Tools.ShowMods()
+		      Self.mMainWindow.Tools.ShowMods()
 		    Case "showidentity"
-		      MainWindow.Tools.ShowIdentity()
+		      Self.mMainWindow.Tools.ShowIdentity()
 		    Case "showguide"
-		      MainWindow.Tools.ShowAPIGuide()
+		      Self.mMainWindow.Tools.ShowAPIGuide()
 		    Case "showapibuilder"
-		      MainWindow.Tools.ShowAPIBuilder()
+		      Self.mMainWindow.Tools.ShowAPIBuilder()
 		    Case "shownewsletterprompt"
 		      SubscribeDialog.Present()
 		    Case "checkforupdate"
@@ -575,7 +588,7 @@ Implements NotificationKit.Receiver
 		      End If
 		    Case "refreshuser"
 		      Self.IdentityManager.RefreshUserDetails()
-		      MainWindow.ShowLibraryPane(LibraryPane.PaneMenu)
+		      Self.mMainWindow.ShowLibraryPane(LibraryPane.PaneMenu)
 		    Else
 		      Break
 		    End Select
@@ -611,10 +624,10 @@ Implements NotificationKit.Receiver
 		    UserData.Value("Path") = Path
 		    UserData.Value("Parameters") = Parameters
 		    
-		    Var FrontmostView As DocumentEditorView = MainWindow.FrontmostDocumentView
+		    Var FrontmostView As DocumentEditorView = Self.mMainWindow.FrontmostDocumentView
 		    If FrontmostView Is Nil Then
-		      MainWindow.Documents.NewDocument
-		      FrontmostView = MainWindow.FrontmostDocumentView
+		      Self.mMainWindow.Documents.NewDocument
+		      FrontmostView = Self.mMainWindow.FrontmostDocumentView
 		    End If
 		    If (FrontmostView Is Nil) = False Then
 		      UserData.Value("DocumentID") = FrontmostView.Document.DocumentID
@@ -630,7 +643,7 @@ Implements NotificationKit.Receiver
 		    End If
 		    
 		    Var FileURL As String = "https://" + URL
-		    MainWindow.Documents.OpenURL(FileURL)
+		    Self.mMainWindow.Documents.OpenURL(FileURL)
 		  End If
 		  
 		  Return True
@@ -826,7 +839,13 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_ShowMainWindow()
-		  MainWindow.Show()
+		  Self.mMainWindow = New MainWindow
+		  Self.mMainWindow.Show()
+		  
+		  While Self.mPendingURLs.Count > 0
+		    Call Self.HandleURL(Self.mPendingURLs(0), False)
+		    Self.mPendingURLs.RemoveRowAt(0)
+		  Wend
 		  
 		  Self.NextLaunchQueueTask()
 		End Sub
@@ -876,6 +895,12 @@ Implements NotificationKit.Receiver
 		  End If
 		  Self.Log("Unhandled " + Info.FullName + " in " + Location + ": HTTP " + Str(HTTPStatus, "-0") + " " + Base64)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MainWindow() As MainWindow
+		  Return Self.mMainWindow
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -929,9 +954,11 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Function mOpenRecent_OpenFile(Sender As MenuItem) As Boolean
-		  Var Document As Beacon.DocumentURL = Sender.Tag
-		  MainWindow.Documents.OpenURL(Document)
-		  Return True
+		  If (Self.mMainWindow Is Nil) = False Then
+		    Var Document As Beacon.DocumentURL = Sender.Tag
+		    Self.mMainWindow.Documents.OpenURL(Document)
+		    Return True
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -990,7 +1017,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub OpenFile(File As FolderItem, Import As Boolean)
-		  If Self.mIdentityManager = Nil Or Self.mIdentityManager.CurrentIdentity = Nil Then
+		  If Self.mIdentityManager Is Nil Or Self.mIdentityManager.CurrentIdentity Is Nil Or Self.mMainWindow Is Nil Then
 		    Return
 		  End If
 		  
@@ -1009,20 +1036,20 @@ Implements NotificationKit.Receiver
 		  End If
 		  
 		  If File.IsType(BeaconFileTypes.BeaconPreset) Then
-		    MainWindow.BringToFront()
-		    MainWindow.Presets.OpenPreset(File, Import)
+		    Self.mMainWindow.BringToFront()
+		    Self.mMainWindow.Presets.OpenPreset(File, Import)
 		    Return
 		  End If
 		  
 		  If File.IsType(BeaconFileTypes.IniFile) Then
-		    MainWindow.BringToFront()
-		    MainWindow.Documents.ImportFile(File)
+		    Self.mMainWindow.BringToFront()
+		    Self.mMainWindow.Documents.ImportFile(File)
 		    Return
 		  End If
 		  
 		  If File.IsType(BeaconFileTypes.BeaconDocument) Then
-		    MainWindow.BringToFront()
-		    MainWindow.Documents.OpenFile(File)
+		    Self.mMainWindow.BringToFront()
+		    Self.mMainWindow.Documents.OpenFile(File)
 		    Return
 		  End If
 		  
@@ -1208,7 +1235,15 @@ Implements NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mMainWindow As MainWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mMutex As Mutex
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPendingURLs() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

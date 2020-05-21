@@ -7,7 +7,7 @@ Inherits MenuItem
 		    Return True
 		  End If
 		  
-		  Var View As BeaconSubview = MainWindow.CurrentView
+		  Var View As BeaconSubview = App.MainWindow.CurrentView
 		  If View = Nil Then
 		    Return False
 		  End If
@@ -29,7 +29,12 @@ Inherits MenuItem
 		    Return
 		  End If
 		  
-		  Var View As BeaconSubview = MainWindow.CurrentView
+		  Var Win As MainWindow = App.MainWindow
+		  If Win Is Nil Then
+		    Return
+		  End If
+		  
+		  Var View As BeaconSubview = Win.CurrentView
 		  If View = Nil Or (View IsA DocumentEditorView) = False Then
 		    Return
 		  End If

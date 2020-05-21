@@ -741,7 +741,7 @@ End
 		  
 		  Self.mSources = LocalData.SharedInstance.SearchForLootSources("", New Beacon.StringList, Preferences.ShowExperimentalLootSources)
 		  
-		  Var Win As MainWindow = MainWindow
+		  Var Win As MainWindow = App.MainWindow
 		  If Win <> Nil Then
 		    Var Classes() As String
 		    For Each Source As Beacon.LootSource In Self.mSources
