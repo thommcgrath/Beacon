@@ -22,6 +22,7 @@ Protected Module Tests
 		    TestLimitCalculations()
 		    TestNamingThings()
 		    TestConfigKeys()
+		    TestNumberFormatting()
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -220,6 +221,20 @@ Protected Module Tests
 		  If Not Assert(Label = "New Item Set 4", "Name not unique, expected ""New Item Set 4"" but got """ + Label + """") Then
 		    Return
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestNumberFormatting()
+		  Var FormatWhole As String = Beacon.PrettyText(1.0, 4)
+		  Var FormatFraction As String = Beacon.PrettyText(1.1, 4)
+		  Var FormatPrecise As String = Beacon.PrettyText(1.234567, 4)
+		  Var FormatMicro As String = Beacon.PrettyText(0.00000001, 9)
+		  
+		  Call Assert(FormatWhole = "1", "Format of whole number is incorrect. Expected '1' but got '" + FormatWhole + "'.")
+		  Call Assert(FormatFraction = "1.1", "Format of fractional number is incorrect. Expected '1.1' but got '" + FormatFraction + "'.")
+		  Call Assert(FormatPrecise = "1.2346", "Format of high precision number is incorrect. Expected '1.2346' but got '" + FormatPrecise + "'.")
+		  Call Assert(FormatMicro = "0.00000001", "Format of micro scale number is incorrect. Expected '0.00000001' but got '" + FormatMicro + "'.")
 		End Sub
 	#tag EndMethod
 

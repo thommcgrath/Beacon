@@ -968,14 +968,14 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function PrettyText(Value As Double, DecimalPlaces As Integer = 6) As String
+		Protected Function PrettyText(Value As Double, DecimalPlaces As Integer = 9) As String
 		  Var Multiplier As UInteger = 1
 		  Var Places As Integer = 0
 		  Var Format As String = "0"
 		  
 		  While Places < DecimalPlaces
 		    Var TestValue As Double = Value * Multiplier
-		    If Abs(TestValue - Floor(TestValue)) < 0.0000001 Then
+		    If Abs(TestValue - Floor(TestValue)) < 0.0000000001 Then
 		      Exit
 		    End If
 		    Multiplier = Multiplier * 10
@@ -993,7 +993,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function PrettyText(Extends Value As Double, DecimalPlaces As Integer = 6) As String
+		Function PrettyText(Extends Value As Double, DecimalPlaces As Integer = 9) As String
 		  Return PrettyText(Value, DecimalPlaces)
 		End Function
 	#tag EndMethod
