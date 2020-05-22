@@ -543,6 +543,10 @@ abstract class BeaconCommon {
 		
 		return (preg_match('/^[a-fA-F0-9]+$/', $content) === 1);
 	}
+	
+	public static function CompressedResponseAllowed() {
+		return (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && stripos(strtolower($_SERVER['HTTP_ACCEPT_ENCODING']), 'gzip') !== false);
+	}
 }
 
 ?>

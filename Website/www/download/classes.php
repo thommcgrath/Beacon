@@ -70,9 +70,11 @@ $database = BeaconCommon::Database();
 $results = $database->Query("SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE objects.min_version <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM game_variables)) AS merged;", $min_version);
 $last_database_update = new DateTime($results->Field("stamp"), new DateTimeZone('UTC'));
 
+$from_cache = true;
 $cache_key = md5('classes' . serialize($_GET) . serialize($last_database_update));
 $cached = BeaconCache::Get($cache_key);
 if (is_null($cached)) {
+	$from_cache = false;
 	if ($min_version >= 10100000) {
 		$beacon_version = 4;
 		$values = array(
@@ -199,16 +201,24 @@ if (is_null($cached)) {
 	$cached = array(
 		'md5' => $hash,
 		'filename' => 'BeaconData' . $last_database_update->format('YmdHis') . '.json',
-		'body' => $body
+		'body' => gzencode($body, 9)
 	);
-	BeaconCache::Set($cache_key, $cached, 3600);
+	try {
+		BeaconCache::Set($cache_key, $cached, 3600);
+	} catch (Exception $e) {
+	}
 }
 
 header('Content-Type: application/json');
 header('Content-Disposition: attachment; filename="' . $cached['filename'] . '"');
 header('Content-MD5: ' . $cached['md5']);
 header('Cache-Control: no-cache');
-echo $cached['body'];
+if (BeaconCommon::CompressedResponseAllowed()) {
+	header('Content-Encoding: gzip');
+	echo $cached['body'];
+} else {
+	echo gzdecode($cached['body']);
+}
 exit;
 
 ?>
