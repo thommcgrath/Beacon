@@ -1523,6 +1523,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        If Dict.HasAllKeys("stats", "used_stats") And IsNull(Dict.Value("stats")) = False And IsNull(Dict.Value("used_stats")) = False Then
 		          ExtraColumns.Value("stats") = Beacon.GenerateJSON(Dict.Value("stats"), False)
 		          ExtraColumns.Value("used_stats") = Dict.Value("used_stats")
+		        Else
+		          ExtraColumns.Value("stats") = Nil
+		          ExtraColumns.Value("used_stats") = Nil
 		        End If
 		        
 		        Var Imported As Boolean = Self.AddBlueprintToDatabase(Beacon.CategoryCreatures, Dict, ExtraColumns)
