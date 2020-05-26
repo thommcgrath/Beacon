@@ -123,6 +123,12 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub StatsMask(Assigns Value As UInt16)
+		  Self.mStatsMask = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Tags(Assigns Tags() As String)
 		  Self.mTags.ResizeTo(-1)
 		  

@@ -51,6 +51,7 @@ Implements Beacon.Blueprint
 		  Self.mIncubationTime = Source.mIncubationTime
 		  Self.mMatureTime = Source.mMatureTime
 		  Self.mStats = Source.mStats.Clone
+		  Self.mStatsMask = Source.mStatsMask
 		  Self.mMinMatingInterval = Source.mMinMatingInterval
 		  Self.mMaxMatingInterval = Source.mMaxMatingInterval
 		  
@@ -208,6 +209,12 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function StatsMask() As UInt16
+		  Return Self.mStatsMask
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function StatTamedValue(Stat As Beacon.Stat) As Double
 		  Return Self.StatValue(Stat, Self.KeyTamed)
 		End Function
@@ -267,6 +274,12 @@ Implements Beacon.Blueprint
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function UsesStats() As Beacon.Stat()
+		  Return Beacon.Stats.ForMask(Self.mStatsMask)
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h1
 		Protected mAlternateLabel As NullableString
@@ -318,6 +331,10 @@ Implements Beacon.Blueprint
 
 	#tag Property, Flags = &h1
 		Protected mStats As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mStatsMask As UInt16
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
