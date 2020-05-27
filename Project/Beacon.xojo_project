@@ -439,6 +439,7 @@ MultiImage=IconToolbarPaint;Icons/IconToolbarPaint.xojo_image;&h000000006F244FFF
 Class=HTTPClientSocket;Classes/HTTPClientSocket.xojo_code;&h00000000647FD7FF;&h00000000056D5FFF;false
 Class=FTPFileListing;Modules/Beacon/FTPFileListing.xojo_code;&h00000000594347FF;&h0000000055ADDFFF;false
 Window=AdjustCostDialog;Views/Config Editors/Crafting Costs/AdjustCostDialog.xojo_window;&h0000000031884FFF;&h00000000068D0FFF;false
+Class=NitradoDiscoveredData;Modules/Beacon/NitradoDiscoveredData.xojo_code;&h000000001EAA27FF;&h0000000055ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=4

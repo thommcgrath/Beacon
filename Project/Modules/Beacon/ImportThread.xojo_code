@@ -4,7 +4,7 @@ Inherits Beacon.Thread
 	#tag Event
 		Sub Run()
 		  Self.mFinished = False
-		  Self.Status = "Parsing config files…"
+		  Self.Status = "Loading config files…"
 		  Self.Invalidate
 		  
 		  Var LineEnding As String = Self.LineEndingChar()
@@ -20,6 +20,9 @@ Inherits Beacon.Thread
 		  
 		  Self.mCharactersProcessed = 0
 		  Self.mCharactersTotal = Content.Length
+		  
+		  Self.Status = "Parsing config files…"
+		  Self.Invalidate
 		  
 		  Var MessageOfTheDayMode As Boolean = False
 		  Var ParsedData As New Dictionary

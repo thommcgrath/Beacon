@@ -295,10 +295,7 @@ Inherits Beacon.IntegrationEngine
 		      Profile.ServiceID = Dict.Value("id")
 		      Profile.Address = Details.Value("address")
 		      
-		      Var Server As New Beacon.DiscoveredData
-		      Server.Profile = Profile
-		      
-		      Self.Log("Retrieving " + Server.Profile.Name + "…")
+		      Self.Log("Retrieving " + Profile.Name + "…")
 		      // Lookup server information
 		      Var DetailsSocket As New HTTPClientSocket
 		      DetailsSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
@@ -321,6 +318,8 @@ Inherits Beacon.IntegrationEngine
 		      Var GameSpecific As Dictionary = GameServer.Value("game_specific")
 		      Profile.ConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
 		      
+		      Var Server As New Beacon.NitradoDiscoveredData(Profile.ServiceID, Self.mAccount.AccessToken, Profile.ConfigPath)
+		      Server.Profile = Profile
 		      Server.CommandLineOptions = Settings.Value("start-param")
 		      
 		      If GuidedModeSupportEnabled And General.Lookup("expertMode", False).BooleanValue = False Then
@@ -375,9 +374,7 @@ Inherits Beacon.IntegrationEngine
 		        Server.GameIniContent = Beacon.Rewriter.Rewrite(ExtraGameIni, GameIniDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
 		        Server.GameUserSettingsIniContent = Beacon.Rewriter.Rewrite("", GameUserSettingsIniDict, "", Beacon.Rewriter.EncodingFormat.Unicode, Errored)
 		      Else
-		        // Download ini files
-		        Server.GameIniContent = Self.DownloadFile(Profile.ConfigPath + "/Game.ini", Beacon.NitradoIntegrationEngine.DownloadFailureMode.MissingAllowed, Profile.ServiceID)
-		        Server.GameUserSettingsIniContent = Self.DownloadFile(Profile.ConfigPath + "/GameUserSettings.ini", Beacon.NitradoIntegrationEngine.DownloadFailureMode.MissingAllowed, Profile.ServiceID)
+		        // This is normally where the ini files would be downloaded, but the NitradoDiscoveredData class will handle that on demand.
 		      End If
 		      
 		      Servers.AddRow(Server)
@@ -971,7 +968,7 @@ Inherits Beacon.IntegrationEngine
 	#tag EndProperty
 
 
-	#tag Constant, Name = ConnectionTimeout, Type = Double, Dynamic = False, Default = \"30", Scope = Private
+	#tag Constant, Name = ConnectionTimeout, Type = Double, Dynamic = False, Default = \"30", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = GuidedModeSupportEnabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Public
