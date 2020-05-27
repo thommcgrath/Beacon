@@ -307,7 +307,7 @@ Inherits Global.Thread
 		      
 		      Var SectionConfigs() As String
 		      
-		      If UntouchedConfigs.HasKey(Header) Then
+		      If UntouchedConfigs.HasKey(Header) And (Header <> "MessageOfTheDay" Or ConfigDict.HasKey(Header) = False) Then
 		        Var Section As Dictionary = UntouchedConfigs.Value(Header)
 		        Var SectionKeys() As Variant = Section.Keys
 		        For Each Key As Variant In SectionKeys
