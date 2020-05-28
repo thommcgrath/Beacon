@@ -14,9 +14,11 @@ Inherits Beacon.ConfigGroup
 		    Self.mGameIniContent = MergedGameIni
 		    Self.mGameUserSettingsIniContent = MergedGameUserSettingsIni
 		    
-		    For Each Entry As DictionaryEntry In Source.mEncryptedValues
-		      Self.mEncryptedValues.Value(Entry.Key) = Entry.Value
-		    Next
+		    If (Source.mEncryptedValues Is Nil) = False Then
+		      For Each Entry As DictionaryEntry In Source.mEncryptedValues
+		        Self.mEncryptedValues.Value(Entry.Key) = Entry.Value
+		      Next
+		    End If
 		  End If
 		End Sub
 	#tag EndEvent
