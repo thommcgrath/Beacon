@@ -299,7 +299,6 @@ Inherits Beacon.IntegrationEngine
 		      // Lookup server information
 		      Var DetailsSocket As New HTTPClientSocket
 		      DetailsSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
-		      App.Log(Profile.ServiceID.ToString(Locale.Raw, "#"))
 		      Var DetailsContent As String = DetailsSocket.SendSync("GET", "https://api.nitrado.net/services/" + Profile.ServiceID.ToString(Locale.Raw, "#") + "/gameservers", Self.ConnectionTimeout)
 		      Var DetailsStatus As Integer = DetailsSocket.HTTPStatusCode
 		      If Self.Finished Or Self.CheckError(DetailsStatus, DetailsContent) Then
