@@ -58,6 +58,15 @@ Protected Class IntegrationEngine
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  While Self.mPendingCalls.Count > 0
+		    CallLater.Cancel(Self.mPendingCalls(0))
+		    Self.mPendingCalls.RemoveRowAt(0)
+		  Wend
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function Document() As Beacon.Document
 		  Return Self.mDocument
@@ -460,7 +469,7 @@ Protected Class IntegrationEngine
 		  Self.Finished = True
 		  
 		  // Need this to fire on the main thread
-		  Call CallLater.Schedule(1, WeakAddressOf TriggerDiscovered, DiscoveredData)
+		  Self.mPendingCalls.AddRow(CallLater.Schedule(1, WeakAddressOf TriggerDiscovered, DiscoveredData))
 		  
 		  RaiseEvent Finished
 		End Sub
@@ -643,7 +652,7 @@ Protected Class IntegrationEngine
 		  End If
 		  
 		  Self.mActiveWaitController = Controller
-		  Call CallLater.Schedule(1, AddressOf FireWaitEvent, Controller)
+		  Self.mPendingCalls.AddRow(CallLater.Schedule(1, WeakAddressOf FireWaitEvent, Controller))
 		  
 		  While Not Controller.ShouldResume
 		    App.CurrentThread.Sleep(20, False)
@@ -784,6 +793,10 @@ Protected Class IntegrationEngine
 
 	#tag Property, Flags = &h21
 		Private mOptions As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPendingCalls() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
