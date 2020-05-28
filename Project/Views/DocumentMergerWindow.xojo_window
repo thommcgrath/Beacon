@@ -342,6 +342,31 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function ShouldAddCustomConfig() As Boolean
+		  If Self.mHasWarnedAboutCustomConfig Then
+		    Return True
+		  End If
+		  
+		  If Self.mDestination.HasConfigGroup(BeaconConfigs.CustomContent.ConfigName) Then
+		    // Since the destination already has custom content, don't warn them again.
+		    Self.mHasWarnedAboutCustomConfig = True
+		    Return True
+		  End If
+		  
+		  Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("Are you sure you want to import Custom Config Content?", "If you intend to continue to configure the server outside of Beacon, it is recommended that you do not import the Custom Config Content.", "Import", "Cancel", "Learn More")
+		  If Choice = BeaconUI.ConfirmResponses.Alternate Then
+		    ShowURL(Beacon.WebURL("/help/using_custom_ini_content_with"))
+		  End If
+		  If Choice = BeaconUI.ConfirmResponses.Action Then
+		    Self.mHasWarnedAboutCustomConfig = True
+		    Return True
+		  Else
+		    Return False
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub TriggerCallback()
 		  Self.mCallback.Invoke()
 		  Self.Close
@@ -367,6 +392,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mExternalAccounts As Beacon.ExternalAccountManager
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHasWarnedAboutCustomConfig As Boolean
 	#tag EndProperty
 
 
@@ -409,6 +438,13 @@ End
 		    If Tag IsA Beacon.ConfigGroup Then
 		      Var Group As Beacon.ConfigGroup = Tag
 		      If Me.CellCheckBoxValueAt(Row, 0) Then
+		        If Group IsA BeaconConfigs.CustomContent And Self.ShouldAddCustomConfig() = False Then
+		          Me.CellCheckBoxValueAt(Row, 0) = False
+		          Me.CellValueAt(Row, 2) = Self.StrDoNotImport
+		          Me.CellTagAt(Row, 2) = -1
+		          Return
+		        End If
+		        
 		        Select Case Me.CellTagAt(Row, 2).IntegerValue
 		        Case 0
 		          If Self.mDestination.HasConfigGroup(Group.ConfigName) Then
@@ -490,6 +526,10 @@ End
 		  
 		  Var Choice As MenuItem = Menu.PopUp(OffsetX + X, OffsetY + Y)
 		  If Choice = Nil Then
+		    Return True
+		  End If
+		  
+		  If Tag IsA BeaconConfigs.CustomContent And Choice.Tag.IntegerValue > -1 And Self.ShouldAddCustomConfig() = False Then
 		    Return True
 		  End If
 		  
