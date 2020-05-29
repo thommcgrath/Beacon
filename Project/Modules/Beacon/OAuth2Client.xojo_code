@@ -161,7 +161,27 @@ Protected Class OAuth2Client
 		    Var AccessToken As String = Dict.Value("access_token").StringValue
 		    Var RefreshToken As String = Dict.Value("refresh_token").StringValue
 		    Var Expiration As New DateTime(DateTime.Now.SecondsFrom1970 + Expires, New TimeZone(0))
-		    Self.mAccount = New Beacon.ExternalAccount(Self.mAccount.UUID, Self.mAccount.Provider, AccessToken, RefreshToken, Expiration)
+		    
+		    Var AccountUUID As v4UUID
+		    Var UserID, Username As String
+		    If Dict.HasKey("user_id") Then
+		      UserID = Dict.Value("user_id").StringValue
+		      AccountUUID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Self.mAccount.Provider + "." + UserID)
+		    ElseIf (Self.mAccount.UUID Is Nil) = False Then
+		      AccountUUID = Self.mAccount.UUID
+		    Else
+		      AccountUUID = New v4UUID
+		    End If
+		    If Dict.HasKey("username") Then
+		      Username = Dict.Value("username").StringValue
+		    End If
+		    
+		    Var OriginalUUID As v4UUID = Self.mAccount.UUID
+		    Self.mAccount = New Beacon.ExternalAccount(AccountUUID, Username, Self.mAccount.Provider, AccessToken, RefreshToken, Expiration)
+		    
+		    If Self.mAccount.UUID <> OriginalUUID Then
+		      RaiseEvent AccountUUIDChanged(OriginalUUID)
+		    End If
 		    
 		    RaiseEvent Authenticated
 		  Catch Err As RuntimeException
@@ -190,7 +210,7 @@ Protected Class OAuth2Client
 		  Var PublicKey As String = Self.mIdentity.PublicKey
 		  Var URL As String = Self.AuthURL + "?provider=" + EncodeURLComponent(Self.mAccount.Provider) + "&requestid=" + EncodeURLComponent(RequestID) + "&pubkey=" + EncodeURLComponent(PublicKey)
 		  
-		  If StartAuthentication(URL, Self.mAccount.Provider) = False Then
+		  If StartAuthentication(Self.mAccount, URL) = False Then
 		    Self.Cancel()
 		    Return
 		  End If
@@ -224,7 +244,7 @@ Protected Class OAuth2Client
 		      Var AccessToken As String = Dict.Value("access_token").StringValue
 		      Var RefreshToken As String = Dict.Value("refresh_token").StringValue
 		      Var Expiration As DateTime = New DateTime(DateTime.Now.SecondsFrom1970 + Dict.Value("expires_in"), New TimeZone(0))
-		      Self.mAccount = New Beacon.ExternalAccount(Self.mAccount.UUID, Self.mAccount.Provider, AccessToken, RefreshToken, Expiration)
+		      Self.mAccount = New Beacon.ExternalAccount(Self.mAccount.UUID, Self.mAccount.Label, Self.mAccount.Provider, AccessToken, RefreshToken, Expiration)
 		      
 		      RaiseEvent Authenticated
 		    Catch Err As RuntimeException
@@ -238,13 +258,13 @@ Protected Class OAuth2Client
 
 	#tag Method, Flags = &h0
 		Function SetAccount(Account As Beacon.ExternalAccount) As Boolean
+		  If Account Is Nil Then
+		    Return False
+		  End If
+		  
 		  If Self.mAccount = Account Then
 		    // Do nothing
 		    Return True
-		  End If
-		  
-		  If Account = Nil Then
-		    Return False
 		  End If
 		  
 		  Select Case Account.Provider
@@ -262,7 +282,7 @@ Protected Class OAuth2Client
 
 	#tag Method, Flags = &h0
 		Function SetAccount(Provider As String) As Boolean
-		  Var Account As New Beacon.ExternalAccount(New v4UUID, Provider, "", "", Nil)
+		  Var Account As New Beacon.ExternalAccount(Provider)
 		  Return Self.SetAccount(Account)
 		End Function
 	#tag EndMethod
@@ -276,6 +296,10 @@ Protected Class OAuth2Client
 		End Sub
 	#tag EndMethod
 
+
+	#tag Hook, Flags = &h0
+		Event AccountUUIDChanged(OldUUID As v4UUID)
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event Authenticated()
@@ -302,7 +326,7 @@ Protected Class OAuth2Client
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event StartAuthentication(URL As String, Provider As String) As Boolean
+		Event StartAuthentication(Account As Beacon.ExternalAccount, URL As String) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

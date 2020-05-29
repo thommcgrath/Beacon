@@ -548,7 +548,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub StartNewAccount()
-		  Var Account As New Beacon.ExternalAccount(New v4UUID, Beacon.ExternalAccount.ProviderNitrado, "", "", Nil)
+		  Var Account As New Beacon.ExternalAccount(Beacon.ExternalAccount.ProviderNitrado)
 		  Self.mAccounts.Add(Account)
 		  
 		  Var Profile As New Beacon.NitradoServerProfile
@@ -692,8 +692,8 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function StartAuthentication(URL As String, Provider As String) As Boolean
-		  If Not Self.ShowConfirm("Open your browser to authorize with " + Provider + "?", "To continue discovering servers, you must authorize " + Provider + " to allow Beacon to access your servers.", "Continue", "Cancel") Then
+		Function StartAuthentication(Account As Beacon.ExternalAccount, URL As String) As Boolean
+		  If Not Self.ShowConfirm("Open your browser to authorize with " + Account.Provider + "?", "To continue discovering servers, you must authorize " + Account.Provider + " to allow Beacon to access your servers.", "Continue", "Cancel") Then
 		    Return False
 		  End If
 		  
@@ -738,6 +738,18 @@ End
 		  End If
 		  
 		  Self.PagePanel1.SelectedPanelIndex = 1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub AccountUUIDChanged(OldUUID As v4UUID)
+		  Break
+		  
+		  If Self.mEngines.HasKey(OldUUID.StringValue) Then
+		    Var Engine As Beacon.IntegrationEngine = Self.mEngines.Value(OldUUID.StringValue)
+		    Engine.Profile.ExternalAccountUUID = Me.Account.UUID
+		    Self.mEngines.Remove(OldUUID.StringValue)
+		    Self.mEngines.Value(Me.Account.UUID.StringValue) = Engine
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

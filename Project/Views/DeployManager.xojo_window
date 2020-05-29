@@ -912,12 +912,15 @@ End
 		    
 		    Var UserData As Dictionary = Controller.UserData
 		    Var Account As Beacon.ExternalAccount
-		    If UserData.HasKey("Account") Then
+		    If UserData.HasKey("Account") And IsNull(UserData.Value("Account")) = False Then
 		      Account = UserData.Value("Account")
 		    End If
-		    If Account = Nil Then
+		    If Account Is Nil And UserData.HasKey("Account UUID") And UserData.Value("Account UUID").StringValue.IsEmpty = False Then
+		      Account = New Beacon.ExternalAccount(UserData.Value("Account UUID").StringValue, "", UserData.Value("Provider").StringValue, "", "", Nil)
+		    End If
+		    If Account Is Nil Then
 		      If UserData.HasKey("Provider") Then
-		        Account = New Beacon.ExternalAccount(New v4UUID, UserData.Value("Provider").StringValue, "", "", Nil)
+		        Account = New Beacon.ExternalAccount(UserData.Value("Provider").StringValue)
 		      Else
 		        Controller.Cancelled = True
 		        Controller.ShouldResume = True
@@ -926,9 +929,19 @@ End
 		    End If
 		    
 		    UserData.Value("Account UUID") = Account.UUID.StringValue
-		    Self.AuthQueue.AddRow(Account)
-		    If Self.Authorizer.Busy = False And Self.AuthQueue.Count = 1 Then
-		      Self.RunNextAuth()
+		    
+		    Var FoundInQueue As Boolean = False
+		    For Each QueueItem As Beacon.ExternalAccount In Self.AuthQueue
+		      If QueueItem.UUID = Account.UUID Then
+		        FoundInQueue = True
+		        Exit
+		      End If
+		    Next
+		    If FoundInQueue = False Then
+		      Self.AuthQueue.AddRow(Account)
+		      If Self.Authorizer.Busy = False And Self.AuthQueue.Count = 1 Then
+		        Self.RunNextAuth()
+		      End If
 		    End If
 		  Case "Needs Expert Mode"
 		    Var Message As String = Sender.Name + " must be converted into expert mode"
@@ -961,8 +974,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function FindEngineForAccount(Account As Beacon.ExternalAccount) As Beacon.IntegrationEngine
+		Private Function FindEnginesForAccount(Account As Beacon.ExternalAccount) As Beacon.IntegrationEngine()
 		  Var AccountUUID As String = Account.UUID
+		  Var Engines() As Beacon.IntegrationEngine
 		  For Each Entry As DictionaryEntry In Self.Engines
 		    Var Engine As Beacon.IntegrationEngine = Entry.Key
 		    Var Controller As Beacon.TaskWaitController = Engine.ActiveWaitController
@@ -972,9 +986,10 @@ End
 		    
 		    Var UserData As Dictionary = Controller.UserData
 		    If UserData.Lookup("Account UUID", "").StringValue = AccountUUID Then
-		      Return Engine
+		      Engines.AddRow(Engine)
 		    End If
 		  Next
+		  Return Engines
 		End Function
 	#tag EndMethod
 
@@ -1288,13 +1303,15 @@ End
 #tag Events Authorizer
 	#tag Event
 		Sub Authenticated()
-		  Var Engine As Beacon.IntegrationEngine = Self.FindEngineForAccount(Me.Account)
-		  Var Controller As Beacon.TaskWaitController = Engine.ActiveWaitController
-		  If Controller <> Nil Then
-		    Dictionary(Controller.UserData).Value("Account") = Me.Account
-		    Controller.Cancelled = False
-		    Controller.ShouldResume = True
-		  End If
+		  Var Engines() As Beacon.IntegrationEngine = Self.FindEnginesForAccount(Me.Account)
+		  For Each Engine As Beacon.IntegrationEngine In Engines
+		    Var Controller As Beacon.TaskWaitController = Engine.ActiveWaitController
+		    If (Controller Is Nil) = False Then
+		      Dictionary(Controller.UserData).Value("Account") = Me.Account
+		      Controller.Cancelled = False
+		      Controller.ShouldResume = True
+		    End If
+		  Next
 		  
 		  Self.UpdateMainView()
 		  Self.RunNextAuth()
@@ -1302,26 +1319,30 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub AuthenticationError()
-		  Var Engine As Beacon.IntegrationEngine = Self.FindEngineForAccount(Me.Account)
-		  Var Controller As Beacon.TaskWaitController = Engine.ActiveWaitController
-		  If Controller <> Nil Then
-		    Dictionary(Controller.UserData).Value("Account") = Nil
-		    Controller.Cancelled = True
-		    Controller.ShouldResume = True
-		  End If
+		  Var Engines() As Beacon.IntegrationEngine = Self.FindEnginesForAccount(Me.Account)
+		  For Each Engine As Beacon.IntegrationEngine In Engines
+		    Var Controller As Beacon.TaskWaitController = Engine.ActiveWaitController
+		    If (Controller Is Nil) = False Then
+		      Dictionary(Controller.UserData).Value("Account") = Nil
+		      Controller.Cancelled = True
+		      Controller.ShouldResume = True
+		    End If
+		  Next
 		  
 		  Self.UpdateMainView()
 		  Self.RunNextAuth()
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function StartAuthentication(URL As String, Provider As String) As Boolean
-		  If Not Self.ShowConfirm("You must reauthorize " + Provider + " to allow Beacon to access your servers.", "The authorization tokens expires. If it has been a while since you've deployed, this can happen.", "Continue", "Cancel") Then
-		    Var Engine As Beacon.IntegrationEngine = Self.FindEngineForAccount(Me.Account)
-		    If Engine <> Nil And Engine.ActiveWaitController <> Nil Then
-		      Engine.ActiveWaitController.Cancelled = True
-		      Engine.ActiveWaitController.ShouldResume = True
-		    End If
+		Function StartAuthentication(Account As Beacon.ExternalAccount, URL As String) As Boolean
+		  If Not Self.ShowConfirm(Account) Then
+		    Var Engines() As Beacon.IntegrationEngine = Self.FindEnginesForAccount(Account)
+		    For Each Engine As Beacon.IntegrationEngine In Engines
+		      If Engine <> Nil And Engine.ActiveWaitController <> Nil Then
+		        Engine.ActiveWaitController.Cancelled = True
+		        Engine.ActiveWaitController.ShouldResume = True
+		      End If
+		    Next
 		    
 		    Return False
 		  End If
@@ -1329,6 +1350,27 @@ End
 		  ShowURL(URL)
 		  Return True
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub AccountUUIDChanged(OldUUID As v4UUID)
+		  Var AccountUUID As String = Me.Account.UUID
+		  For Each Entry As DictionaryEntry In Self.Engines
+		    Var Engine As Beacon.IntegrationEngine = Entry.Key
+		    Var Controller As Beacon.TaskWaitController = Engine.ActiveWaitController
+		    If Controller = Nil Or Controller.Action <> "Auth External" Then
+		      Continue
+		    End If
+		    
+		    Var UserData As Dictionary = Controller.UserData
+		    If UserData.HasKey("Account UUID") And UserData.Value("Account UUID").StringValue = OldUUID Then
+		      UserData.Value("Account UUID") = AccountUUID
+		    End If
+		    
+		    If Engine.Profile.ExternalAccountUUID = OldUUID Then
+		      Engine.Profile.ExternalAccountUUID = AccountUUID
+		    End If
+		  Next
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

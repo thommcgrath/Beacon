@@ -613,7 +613,13 @@ Inherits Beacon.IntegrationEngine
 	#tag Method, Flags = &h21
 		Private Sub Authenticate()
 		  Var Dict As New Dictionary
-		  Dict.Value("Provider") = "Nitrado"
+		  Dict.Value("Provider") = Beacon.ExternalAccount.ProviderNitrado
+		  If (Self.mAccount Is Nil) = False Then
+		    Dict.Value("Account") = Self.mAccount
+		  End If
+		  If (Self.Profile.ExternalAccountUUID Is Nil) = False Then
+		    Dict.Value("Account UUID") = Self.Profile.ExternalAccountUUID.StringValue
+		  End If
 		  
 		  Var Controller As New Beacon.TaskWaitController("Auth External", Dict)
 		  

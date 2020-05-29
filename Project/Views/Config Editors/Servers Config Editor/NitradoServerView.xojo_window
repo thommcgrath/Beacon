@@ -471,14 +471,10 @@ End
 	#tag Event
 		Sub Open()
 		  Var Account As Beacon.ExternalAccount = Self.mDocument.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID)
-		  If Self.Auth.SetAccount(Account) Then
+		  If ((Account Is Nil) = False And Self.Auth.SetAccount(Account)) Or (Account Is Nil And Self.Auth.SetAccount(Beacon.ExternalAccount.ProviderNitrado)) Then
 		    Self.Auth.Authenticate(App.IdentityManager.CurrentIdentity)
 		  Else
-		    If Account <> Nil Then
-		      Self.ShowAlert("Unsupported external account", "This version of Beacon does not support accounts from " + Account.Provider + ". This means there is probably an update available.")
-		    Else
-		      Self.ShowAlert("Missing Nitrado account", "The Nitrado account for " + Self.mProfile.Name + " appears to be missing.")
-		    End If
+		    Self.ShowAlert("Unsupported external account", "This version of Beacon does not support accounts from " + Beacon.ExternalAccount.ProviderNitrado + ". This means there is probably an update available.")
 		  End If
 		  
 		  Self.Controls.Caption = Self.mProfile.Name
@@ -648,8 +644,8 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function StartAuthentication(URL As String, Provider As String) As Boolean
-		  If Not Self.ShowConfirm("You must reauthorize " + Provider + " to allow Beacon to access your servers.", "The authorization tokens expires. If it has been a while since you've deployed, this can happen.", "Continue", "Cancel") Then
+		Function StartAuthentication(Account As Beacon.ExternalAccount, URL As String) As Boolean
+		  If Not Self.ShowConfirm(Account) Then
 		    Return False
 		  End If
 		  
@@ -669,6 +665,15 @@ End
 		Sub ShowWaitingWindow()
 		  Self.mOAuthWindow = New OAuthAuthorizationWindow(Me)
 		  Self.mOAuthWindow.Show()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub AccountUUIDChanged(OldUUID As v4UUID)
+		  Break
+		  
+		  If Self.mProfile.ExternalAccountUUID = OldUUID Then
+		    Self.mProfile.ExternalAccountUUID = Me.Account.UUID
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -37,6 +37,7 @@ Begin ConfigEditor AccountsConfigEditor
       Borders         =   0
       BorderTop       =   False
       Caption         =   "Accounts"
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -56,6 +57,7 @@ Begin ConfigEditor AccountsConfigEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
+      Transparent     =   False
       Visible         =   True
       Width           =   784
    End
@@ -88,7 +90,7 @@ Begin ConfigEditor AccountsConfigEditor
       Height          =   467
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Provider	Account Name	Expiration"
+      InitialValue    =   "Provider	Account Name	Used By"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -99,6 +101,7 @@ Begin ConfigEditor AccountsConfigEditor
       RequiresSelection=   False
       RowSelectionType=   "1"
       Scope           =   2
+      SelectionChangeBlocked=   False
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
@@ -134,12 +137,25 @@ End
 		  Var Accounts() As Beacon.ExternalAccount = Self.Document.Accounts.All
 		  Self.List.RowCount = Accounts.Count
 		  
+		  Var ProfileCount As Integer = Self.Document.ServerProfileCount
+		  Var Profiles() As Beacon.ServerProfile
+		  For Idx As Integer = 0 To ProfileCount - 1
+		    Profiles.AddRow(Self.Document.ServerProfile(Idx))
+		  Next
+		  
 		  For Idx As Integer = Accounts.FirstRowIndex To Accounts.LastRowIndex
 		    Var Account As Beacon.ExternalAccount = Accounts(Idx)
+		    Var ServerCount As Integer
+		    For Each Profile As Beacon.ServerProfile In Profiles
+		      If Profile.ExternalAccountUUID = Account.UUID Then
+		        ServerCount = ServerCount + 1
+		      End If
+		    Next
+		    
 		    Self.List.RowTagAt(Idx) = Account
 		    Self.List.CellValueAt(Idx, Self.ColumnProvider) = Account.Provider
 		    Self.List.CellValueAt(Idx, Self.ColumnLabel) = Account.Label
-		    Self.List.CellValueAt(Idx, Self.ColumnExpires) = Account.Expiration.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
+		    Self.List.CellValueAt(Idx, Self.ColumnServerCount) = Language.NounWithQuantity(ServerCount, "Server", "Servers")
 		  Next
 		  
 		  Self.List.Sort
@@ -162,13 +178,13 @@ End
 	#tag EndMethod
 
 
-	#tag Constant, Name = ColumnExpires, Type = Double, Dynamic = False, Default = \"2", Scope = Private
-	#tag EndConstant
-
 	#tag Constant, Name = ColumnLabel, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnProvider, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnServerCount, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.account", Scope = Private

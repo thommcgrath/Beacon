@@ -396,6 +396,12 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ShowConfirm(Extends Win As Window, Account As Beacon.ExternalAccount) As Boolean
+		  Return ShowConfirm(Win, Account)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ShowConfirm(Extends Win As Window, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String) As Boolean
 		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption, "") = ConfirmResponses.Action
 		End Function
@@ -404,6 +410,28 @@ Protected Module BeaconUI
 	#tag Method, Flags = &h0
 		Function ShowConfirm(Extends Win As Window, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String, AlternateCaption As String) As BeaconUI.ConfirmResponses
 		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption, AlternateCaption)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ShowConfirm(Win As Window = Nil, Account As Beacon.ExternalAccount) As Boolean
+		  If Account Is Nil Then
+		    Return False
+		  End If
+		  
+		  Var Provider As String = Account.Provider
+		  Var Message As String
+		  Var Explanation As String = "This can happen if unused for a while or permission was revoked."
+		  If Account.Label.IsEmpty Then
+		    // Unnamed account
+		    Message = "Beacon needs permission to access an account on " + Provider + ". Open your browser to authorize " + Provider + "?"
+		  Else
+		    // Named account
+		    Message = "Beacon needs permission to access the " + Provider + " account " + Account.Label + ". Open your browser to authorize " + Provider + "?"
+		    Explanation = " Make sure you authenticate with the account + " + Account.Label + " to prevent errors."
+		  End If
+		  
+		  Return ShowConfirm(Win, Message, Explanation, "Continue", "Cancel")
 		End Function
 	#tag EndMethod
 
