@@ -39,8 +39,11 @@ Inherits Beacon.ConfigGroup
 		    Var EntryString As String
 		    If Engram <> Nil And Engram.HasUnlockDetails Then
 		      EntryString = Engram.EntryString
-		    Else
+		    ElseIf Behaviors.HasKey(Self.KeyEntryString) Then
 		      EntryString = Behaviors.Value(Self.KeyEntryString)
+		    End If
+		    If EntryString.IsEmpty Then
+		      Continue
 		    End If
 		    
 		    If Self.mAutoUnlockAllEngrams = False And Behaviors.HasKey(Self.KeyAutoUnlockLevel) And Behaviors.Value(Self.KeyAutoUnlockLevel).BooleanValue = True Then
@@ -435,7 +438,7 @@ Inherits Beacon.ConfigGroup
 		        Var Details As Dictionary = Overrides(Idx)
 		        Var ItemID As Integer = Details.Value("EngramIndex")
 		        Var Engram As Beacon.Engram = Beacon.Data.GetEngramByItemID(ItemID)
-		        If (Engram Is Nil) = False Then
+		        If (Engram Is Nil) = False And Engram.EntryString.IsEmpty = False Then
 		          Details.Value("EngramClassName") = Engram.EntryString
 		          AddOverrideToConfig(Config, Details)
 		        End If
