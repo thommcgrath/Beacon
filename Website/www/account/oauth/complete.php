@@ -71,9 +71,34 @@ if ($status == 200) {
 	$access_token = $response['access_token'];
 	$refresh_token = $response['refresh_token'];
 	$expires_in = $response['expires_in'];
-	$payload = json_encode(array('access_token' => $access_token, 'refresh_token' => $refresh_token, 'expires_in' => $expires_in));
-	$symmetric_key = BeaconCommon::GenerateUUID();
 	
+	try {
+		// need to lookup information about the token, such as the user it belongs to
+		$curl = curl_init('https://api.nitrado.net/token');
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $access_token));
+		$token_info = json_decode(curl_exec($curl), true);
+		$token_info_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+		if ($token_info_status != 200 || $token_info === false) {
+			http_response_code(500);
+			echo '<h1>Error</h1>';
+			echo '<p>Nitrado did not authorize the request. The response was:</p>';
+			echo '<pre>' . nl2br(htmlentities(var_export($token_info, true))) . '</pre>';
+			exit;
+		}
+		$token_user = $token_info['data']['token']['user'];
+		$nitrado_user_id = $token_user['id'];
+		$nitrado_user_name = $token_user['username'];
+	
+		$payload = json_encode(array('access_token' => $access_token, 'refresh_token' => $refresh_token, 'expires_in' => $expires_in, 'user_id' => $nitrado_user_id, 'username' => $nitrado_user_name));
+		$symmetric_key = BeaconCommon::GenerateUUID();
+	} catch (Exception $err) {
+		http_response_code(500);
+		echo '<h1>Error</h1>';
+		echo '<p>There was an error while loading Nitrado account information.</p>';
+		exit;
+	}
 	
 	try {
 		$payload_encrypted = BeaconEncryption::SymmetricEncrypt($symmetric_key, $payload);
