@@ -979,6 +979,8 @@ End
 			        NewPanel = New MapsConfigEditor(Self.mController)
 			      Case "deployments"
 			        NewPanel = New ServersConfigEditor(Self.mController)
+			      Case "accounts"
+			        NewPanel = New AccountsConfigEditor(Self.mController)
 			      Case BeaconConfigs.LootDrops.ConfigName
 			        NewPanel = New LootConfigEditor(Self.mController)
 			      Case BeaconConfigs.Difficulty.ConfigName
@@ -1279,6 +1281,8 @@ End
 		    Labels.AddRow("Servers")
 		    Tags.AddRow("deployments")
 		  #endif
+		  Labels.AddRow("Accounts")
+		  Tags.AddRow("accounts")
 		  
 		  Var Names() As String = BeaconConfigs.AllConfigNames
 		  For Each Name As String In Names

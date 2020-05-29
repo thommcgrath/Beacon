@@ -104,7 +104,7 @@ Protected Class ExternalAccountManager
 		    Var RefreshToken As String = ProviderDict.Value("Refresh Token")
 		    Var Expiration As Double = ProviderDict.Value("Expiration")
 		    
-		    Manager.Add(New Beacon.ExternalAccount(New v4UUID, Provider, AccessToken, RefreshToken, Expiration))
+		    Manager.Add(New Beacon.ExternalAccount(New v4UUID, "", Provider, AccessToken, RefreshToken, Expiration))
 		  Next
 		  Return Manager
 		End Function
@@ -153,6 +153,15 @@ Protected Class ExternalAccountManager
 		Sub Remove(UUID As v4UUID)
 		  If Self.mAccounts.HasKey(UUID.StringValue) Then
 		    Self.mAccounts.Remove(UUID.StringValue)
+		    Self.mModified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveAll()
+		  If Self.mAccounts.KeyCount > 0 Then
+		    Self.mAccounts = New Dictionary
 		    Self.mModified = True
 		  End If
 		End Sub

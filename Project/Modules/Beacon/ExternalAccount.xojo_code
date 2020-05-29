@@ -1,5 +1,6 @@
 #tag Class
 Protected Class ExternalAccount
+Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function AccessToken() As String
 		  Return Self.mAccessToken
@@ -14,17 +15,19 @@ Protected Class ExternalAccount
 		  Dict.Value("AccessToken") = Self.mAccessToken
 		  Dict.Value("RefreshToken") = Self.mRefreshToken
 		  Dict.Value("Expires") = If(IsNull(Self.mExpiration), 0, Self.mExpiration.SecondsFrom1970)
+		  Dict.Value("Label") = Self.mLabel
 		  Return Dict
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(AccountUUID As v4UUID, Provider As String, AccessToken As String, RefreshToken As String, Expiration As DateTime)
+		Sub Constructor(AccountUUID As v4UUID, Label As String, Provider As String, AccessToken As String, RefreshToken As String, Expiration As DateTime)
 		  If AccountUUID = Nil Then
 		    AccountUUID = New v4UUID
 		  End If
 		  
 		  Self.mUUID = AccountUUID
+		  Self.mLabel = Label
 		  Self.mProvider = Provider
 		  Self.mAccessToken = AccessToken
 		  Self.mRefreshToken = RefreshToken
@@ -33,9 +36,9 @@ Protected Class ExternalAccount
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(AccountUUID As v4UUID, Provider As String, AccessToken As String, RefreshToken As String, Expiration As Double)
+		Sub Constructor(AccountUUID As v4UUID, Label As String, Provider As String, AccessToken As String, RefreshToken As String, Expiration As Double)
 		  Var Expires As New DateTime(Expiration, New TimeZone(0))
-		  Self.Constructor(AccountUUID, Provider, AccessToken, RefreshToken, Expires)
+		  Self.Constructor(AccountUUID, Label, Provider, AccessToken, RefreshToken, Expires)
 		End Sub
 	#tag EndMethod
 
@@ -57,7 +60,11 @@ Protected Class ExternalAccount
 		    Var AccessToken As String = Dict.Value("AccessToken").StringValue
 		    Var RefreshToken As String = Dict.Value("RefreshToken").StringValue
 		    Var Expiration As Double = Dict.Value("Expires").DoubleValue
-		    Return New Beacon.ExternalAccount(UUID, Provider, AccessToken, RefreshToken, Expiration)
+		    Var Label As String
+		    If Dict.HasKey("Label") Then
+		      Label = Dict.Value("Label").StringValue
+		    End If
+		    Return New Beacon.ExternalAccount(UUID, Label, Provider, AccessToken, RefreshToken, Expiration)
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
@@ -72,6 +79,12 @@ Protected Class ExternalAccount
 		  
 		  Var Now As DateTime = DateTime.Now
 		  Return Self.mExpiration.SecondsFrom1970 <= Now.SecondsFrom1970
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Label() As String
+		  Return Self.mLabel
 		End Function
 	#tag EndMethod
 
@@ -113,6 +126,10 @@ Protected Class ExternalAccount
 
 	#tag Property, Flags = &h21
 		Private mExpiration As DateTime
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLabel As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
