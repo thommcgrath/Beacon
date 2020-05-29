@@ -9,12 +9,18 @@ Inherits Beacon.ConfigGroup
 		  Var OfficialLevels As Beacon.PlayerLevelData = Beacon.Data.OfficialPlayerLevelData
 		  For Level As Integer = 1 To Levels
 		    Var PointsForLevel As NullableDouble = Self.PointsForLevel(Level)
+		    
 		    Var Points As Integer
-		    If IsNull(PointsForLevel) Then
-		      Points = OfficialLevels.PointsForLevel(Level)
+		    If Self.AutoUnlockAllEngrams Then
+		      Points = 0
 		    Else
-		      Points = PointsForLevel.IntegerValue
+		      If IsNull(PointsForLevel) Then
+		        Points = OfficialLevels.PointsForLevel(Level)
+		      Else
+		        Points = PointsForLevel.IntegerValue
+		      End If
 		    End If
+		    
 		    Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverridePlayerLevelEngramPoints", Points.ToString))
 		  Next
 		  
@@ -46,20 +52,20 @@ Inherits Beacon.ConfigGroup
 		      Continue
 		    End If
 		    
+		    Var AutoUnlocked As Boolean = Self.AutoUnlockAllEngrams
 		    If Self.mAutoUnlockAllEngrams = False And Behaviors.HasKey(Self.KeyAutoUnlockLevel) And Behaviors.Value(Self.KeyAutoUnlockLevel).BooleanValue = True Then
 		      Var Level As Integer
-		      Var FoundLevel As Boolean
 		      If Behaviors.HasKey(Self.KeyPlayerLevel) And IsNull(Behaviors.Value(Self.KeyPlayerLevel)) = False Then
 		        Level = Behaviors.Value(Self.KeyPlayerLevel).IntegerValue
-		        FoundLevel = True
 		      ElseIf IsNull(Engram.RequiredPlayerLevel) = False Then
 		        Level = Engram.RequiredPlayerLevel.IntegerValue
-		        FoundLevel = True
+		      Else
+		        Level = 0
 		      End If
-		      If FoundLevel Then
-		        UnlockEntries.AddRow(EntryString)
-		        UnlockConfigs.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks", "(EngramClassName=""" + EntryString + """,LevelToAutoUnlock=" + Level.ToString + ")"))
-		      End If
+		      
+		      AutoUnlocked = True
+		      UnlockEntries.AddRow(EntryString)
+		      UnlockConfigs.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "EngramEntryAutoUnlocks", "(EngramClassName=""" + EntryString + """,LevelToAutoUnlock=" + Level.ToString + ")"))
 		    End If
 		    
 		    Var Arguments() As String
@@ -70,22 +76,24 @@ Inherits Beacon.ConfigGroup
 		      End If
 		    End If
 		    
-		    If Not Self.EffectivelyHidden(Engram) Then
-		      If Behaviors.HasKey(Self.KeyRemovePrerequisites) Then
-		        Var RemovePrereq As Boolean = Behaviors.Value(Self.KeyRemovePrerequisites).BooleanValue
-		        If RemovePrereq = True Then
-		          Arguments.AddRow("RemoveEngramPreReq=True")
+		    If Not AutoUnlocked Then
+		      If Not Self.EffectivelyHidden(Engram) Then
+		        If Behaviors.HasKey(Self.KeyRemovePrerequisites) Then
+		          Var RemovePrereq As Boolean = Behaviors.Value(Self.KeyRemovePrerequisites).BooleanValue
+		          If RemovePrereq = True Then
+		            Arguments.AddRow("RemoveEngramPreReq=True")
+		          End If
 		        End If
-		      End If
-		      
-		      If Behaviors.HasKey(Self.KeyPlayerLevel) Then
-		        Var Level As Integer = Round(Behaviors.Value(Self.KeyPlayerLevel).DoubleValue)
-		        Arguments.AddRow("EngramLevelRequirement=" + Level.ToString)
-		      End If
-		      
-		      If Behaviors.HasKey(Self.KeyUnlockPoints) Then
-		        Var Points As Integer = Round(Behaviors.Value(Self.KeyUnlockPoints).DoubleValue)
-		        Arguments.AddRow("EngramPointsCost=" + Points.ToString)
+		        
+		        If Behaviors.HasKey(Self.KeyPlayerLevel) Then
+		          Var Level As Integer = Round(Behaviors.Value(Self.KeyPlayerLevel).DoubleValue)
+		          Arguments.AddRow("EngramLevelRequirement=" + Level.ToString)
+		        End If
+		        
+		        If Behaviors.HasKey(Self.KeyUnlockPoints) Then
+		          Var Points As Integer = Round(Behaviors.Value(Self.KeyUnlockPoints).DoubleValue)
+		          Arguments.AddRow("EngramPointsCost=" + Points.ToString)
+		        End If
 		      End If
 		    End If
 		    
