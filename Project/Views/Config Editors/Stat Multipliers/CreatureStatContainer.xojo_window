@@ -1540,6 +1540,11 @@ End
 		    Else
 		      PerLevel = Creature.StatBaseValue(Stat) * Creature.StatValue(Stat, Key)
 		    End If
+		    
+		    If Stat.Index = 2 Then
+		      PerLevel = 0
+		    End If
+		    
 		    Var Multiplier As Double
 		    Select Case Key
 		    Case Beacon.Creature.KeyWild
