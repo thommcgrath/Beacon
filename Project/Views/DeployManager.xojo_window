@@ -1264,7 +1264,9 @@ End
 		    Return
 		  End If
 		  
+		  Var AnyCancelled As Boolean = False
 		  Var AllFinished As Boolean = True
+		  Var NumSuccess, NumErrored As Integer
 		  For I As Integer = 0 To Self.ServerList.LastRowIndex
 		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(I)
 		    Var Label As String = Profile.Name
@@ -1274,12 +1276,21 @@ End
 		      Var Status As String
 		      If Engine.Cancelled Then
 		        Status = "Cancelled"
+		        AnyCancelled = True
 		      ElseIf Engine.Finished And Engine.Errored = False Then
 		        Status = "Finished"
 		      Else
 		        Status = Engine.Logs(True)
 		      End If
 		      Label = Label + EndOfLine + Status
+		      
+		      If Engine.Finished then
+		        If Engine.Errored Then
+		          NumErrored = NumErrored + 1
+		        Else
+		          NumSuccess = NumSuccess + 1
+		        End If
+		      End If
 		      
 		      AllFinished = AllFinished And Engine.Finished
 		      
@@ -1296,6 +1307,26 @@ End
 		    Self.Working = False
 		    Self.Changed = False
 		    Me.RunMode = Timer.RunModes.Off
+		    
+		    If AnyCancelled Then
+		      Return
+		    End If
+		    
+		    Var Explanation As String
+		    If NumSuccess > 0 And NumErrored = 0 Then
+		      // Full success
+		      Explanation = "Your server" + If(NumSuccess > 1, "s have", " has") + " been updated. " + If(NumSuccess > 1, "Any servers that were running when the deploy started will now be starting up.", "If the server was running when the deploy started, it will now be starting up.")
+		    ElseIf NumSuccess > 0 And NumErrored > 0 Then
+		      // Partial success
+		      Explanation = Language.NounWithQuantity(NumSuccess, "server", "servers") + " deployed successfully, but " + Language.NounWithQuantity(NumErrored, "server", "servers") + " did not. To view the logs for a server, select it on the left."
+		    ElseIf NumSuccess = 0 And NumErrored > 0 Then
+		      // Full failure
+		      Explanation = "Your server" + If(NumErrored > 1, "s", "") + " did not update successfully. To view the logs for a server, select it on the left. Use your host's control panel to check on the status of your server" + If(NumErrored > 1, "s", "") + " because " + If(NumErrored > 1, "they", "it") + " may or may not be running."
+		    Else
+		      // What?
+		    End If
+		    
+		    Self.ShowAlert("The deploy process has finished.", Explanation)
 		  End If
 		End Sub
 	#tag EndEvent
