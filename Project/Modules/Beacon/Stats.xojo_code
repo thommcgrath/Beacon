@@ -3,18 +3,18 @@ Protected Module Stats
 	#tag Method, Flags = &h1
 		Protected Function All() As Beacon.Stat()
 		  Var Arr(11) As Beacon.Stat
-		  Arr(0) = CraftingSpeed
-		  Arr(1) = Food
-		  Arr(2) = Fortitude
-		  Arr(3) = Health
-		  Arr(4) = Melee
-		  Arr(5) = Oxygen
-		  Arr(6) = Speed
-		  Arr(7) = Stamina
-		  Arr(8) = Torpor
-		  Arr(9) = Water
-		  Arr(10) = Weight
-		  Arr(11) = Temperature
+		  Arr(CraftingSpeed.Index) = CraftingSpeed
+		  Arr(Food.Index) = Food
+		  Arr(Fortitude.Index) = Fortitude
+		  Arr(Health.Index) = Health
+		  Arr(Melee.Index) = Melee
+		  Arr(Oxygen.Index) = Oxygen
+		  Arr(Speed.Index) = Speed
+		  Arr(Stamina.Index) = Stamina
+		  Arr(Torpor.Index) = Torpor
+		  Arr(Water.Index) = Water
+		  Arr(Weight.Index) = Weight
+		  Arr(Temperature.Index) = Temperature
 		  Return Arr
 		End Function
 	#tag EndMethod
