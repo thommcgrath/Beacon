@@ -1045,7 +1045,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateMainView()
-		  If Not Self.Working Then
+		  If Self.DeployFinished = False And Self.Working = False Then
 		    Self.Pages.SelectedPanelIndex = Self.PageOptions
 		    Return
 		  End If
@@ -1095,6 +1095,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private AuthQueue() As Beacon.ExternalAccount
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private DeployFinished As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1306,6 +1310,7 @@ End
 		  If AllFinished Then
 		    Self.Working = False
 		    Self.Changed = False
+		    Self.DeployFinished = True
 		    Me.RunMode = Timer.RunModes.Off
 		    
 		    If AnyCancelled Then
