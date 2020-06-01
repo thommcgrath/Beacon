@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				if (obj.verified) {
 					if (passwordEmailField && passwordCodeField) {
 						passwordEmailField.value = obj.email;
-						passwordCodeField.value = verificationCode;
+						passwordCodeField.value = obj.code;
 					}
 					if (obj.username && passwordUsernameField) {
 						passwordUsernameField.value = obj.username;

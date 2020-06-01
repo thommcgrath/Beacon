@@ -63,7 +63,7 @@ class BeaconLogin {
 		}
 		
 		$database = BeaconCommon::Database();
-		$code = BeaconCommon::GenerateRandomKey(8);
+		$code = BeaconCommon::GenerateRandomKey(6, '0123456789');
 		$database->BeginTransaction();
 		$database->Query('DELETE FROM email_verification WHERE email_id = uuid_for_email($1);', $email);
 		if (is_null($key)) {
