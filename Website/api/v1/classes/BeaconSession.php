@@ -35,7 +35,7 @@ class BeaconSession implements JsonSerializable {
 		
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query("INSERT INTO sessions (session_id, user_id, valid_until) VALUES (encode(digest($1, 'sha512'), 'hex'), $2, CURRENT_TIMESTAMP(0) + '30d');", $session_id, $user_id);
+		$database->Query("INSERT INTO sessions (session_id, user_id, valid_until) VALUES (encode(digest($1, 'sha512'), 'hex'), $2, CURRENT_TIMESTAMP + '30d');", $session_id, $user_id);
 		$database->Commit();
 		
 		return static::GetBySessionID($session_id);
@@ -43,7 +43,7 @@ class BeaconSession implements JsonSerializable {
 	
 	public static function GetBySessionID(string $session_id) {
 		$database = BeaconCommon::Database();
-		$results = $database->Query("SELECT $1::text AS session_id, user_id, valid_until FROM sessions WHERE session_id = encode(digest($1, 'sha512'), 'hex') AND valid_until >= CURRENT_TIMESTAMP(0);", $session_id);
+		$results = $database->Query("SELECT $1::text AS session_id, user_id, date_trunc('second', valid_until) AS valid_until FROM sessions WHERE session_id = encode(digest($1, 'sha512'), 'hex') AND valid_until >= CURRENT_TIMESTAMP;", $session_id);
 		if ($results->RecordCount() === 1) {
 			return self::GetFromResult($results);
 		} else {

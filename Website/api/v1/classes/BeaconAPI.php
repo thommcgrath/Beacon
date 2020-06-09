@@ -90,6 +90,53 @@ abstract class BeaconAPI {
 		}
 	}
 	
+	private static function AuthorizeWithSessionID(string $session_id) {
+		$session = BeaconSession::GetBySessionID($session_id);
+		if (is_null($session) == false) {
+			self::$user_id = $session->UserID();
+			self::$auth_style = self::AUTH_STYLE_SESSION;
+			
+			$database = BeaconCommon::Database();
+			$database->BeginTransaction();
+			$database->Query('UPDATE sessions SET valid_until = CURRENT_TIMESTAMP + \'30 days\'::INTERVAL WHERE session_id = encode(digest($1, \'sha512\'), \'hex\');', $session_id);
+			$database->Query('DELETE FROM sessions WHERE valid_until < CURRENT_TIMESTAMP;');
+			$database->Commit();
+			
+			return true;
+		}
+		return false;
+	}
+	
+	private static function AuthorizeWithPassword(string $username, string $password) {
+		$user = BeaconUser::GetByEmail($username);
+		$upgrade = isset($_SERVER['HTTP_X_BEACON_UPGRADE_ENCRYPTION']) && boolval($_SERVER['HTTP_X_BEACON_UPGRADE_ENCRYPTION']);
+		if (is_null($user) == false && $user->TestPassword($password, $upgrade)) {
+			self::$user_id = $user->UserID();
+			self::$auth_style = self::AUTH_STYLE_EMAIL_WITH_PASSWORD;
+			return true;
+		}
+		return false;
+	}
+	
+	private static function AuthorizeWithSignature(BeaconUser $user, string $challenge, string $signature) {
+		if (is_null($user)) {
+			return false;
+		}
+		
+		if (BeaconCommon::IsHex($signature)) {
+			$signature = hex2bin($signature);
+		} else {
+			$signature = base64_decode($signature);
+		}
+		
+		if ($user->CheckSignature($challenge, $signature)) {
+			self::$user_id = $user->UserID();
+			self::$auth_style = self::AUTH_STYLE_PUBLIC_KEY;
+			return true;
+		}
+		return false;
+	}
+	
 	public static function Authorize(bool $optional = false) {
 		$authorized = false;
 		$content = '';
@@ -106,12 +153,7 @@ abstract class BeaconAPI {
 			
 			switch ($auth_type) {
 			case 'session':
-				$session = BeaconSession::GetBySessionID($auth_value);
-				if (!is_null($session)) {
-					self::$user_id = $session->UserID();
-					self::$auth_style = self::AUTH_STYLE_SESSION;
-					$authorized = true;
-				}
+				$authorized = self::AuthorizeWithSessionID($auth_value);
 				break;
 			case 'basic':
 				$decoded = base64_decode($auth_value);
@@ -120,37 +162,41 @@ abstract class BeaconAPI {
 				if (BeaconCommon::IsUUID($username)) {
 					// public key authorization
 					$user = BeaconUser::GetByUserID($username);
-					if (!is_null($user)) {
-						$url = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-						
-						$content = self::Method() . chr(10) . $url;
-						if (self::Method() !== 'GET') {
-							$content .= chr(10) . self::Body();
-						}
-						
-						if (BeaconCommon::IsHex($password)) {
-							$password = hex2bin($password);
-						}
-						
-						if ($user->CheckSignature($content, $password)) {
-							self::$user_id = $username;
-							self::$auth_style = self::AUTH_STYLE_PUBLIC_KEY;
-							$authorized = true;
-						}
+					$url = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+					$content = self::Method() . chr(10) . $url;
+					if (self::Method() !== 'GET') {
+						$content .= chr(10) . self::Body();
 					}
+					
+					$authorized = self::AuthorizeWithSignature($user, $content, $password);
 				} elseif (BeaconUser::ValidateEmail($username)) {
 					// password authorization
-					$user = BeaconUser::GetByEmail($username);
-					$upgrade = isset($_SERVER['HTTP_X_BEACON_UPGRADE_ENCRYPTION']) && boolval($_SERVER['HTTP_X_BEACON_UPGRADE_ENCRYPTION']);
-					if (is_null($user) == false && $user->TestPassword($password, $upgrade)) {
-						self::$user_id = $user->UserID();
-						self::$auth_style = self::AUTH_STYLE_EMAIL_WITH_PASSWORD;
-						$authorized = true;
-					}
+					$authorized = self::AuthorizeWithPassword($username, $password);
 				}
 				
 				break;
 			}
+		} elseif (self::Method() === 'POST' && self::ContentType() === 'application/json') {
+			$payload = self::JSONPayload();
+			if ($payload !== false && (empty($payload['username']) === false && empty($payload['password']) === false)) {
+				$authorized = self::AuthorizeWithPassword($payload['username'], $payload['password']);
+			} elseif ($payload !== false && (empty($payload['user_id']) === false && empty($payload['signature']) === false)) {
+				$database = BeaconCommon::Database();
+				$results = $database->Query('SELECT challenge FROM user_challenges WHERE user_id = $1;', $payload['user_id']);
+				if ($results->RecordCount() == 1) {
+					$challenge = $results->Field('challenge');
+					$authorized = self::AuthorizeWithSignature(BeaconUser::GetByUserID($payload['user_id']), $challenge, $payload['signature']);
+				}
+			}
+		} elseif (empty($_SERVER['HTTP_X_BEACON_TOKEN']) === false) {
+			$authorized = self::AuthorizeWithSessionID($_SERVER['HTTP_X_BEACON_TOKEN']);
+		}
+		
+		if ($authorized) {
+			$database = BeaconCommon::Database();
+			$database->BeginTransaction();
+			$database->Query('DELETE FROM user_challenges WHERE user_id = $1;', self::$user_id);
+			$database->Commit();	
 		}
 		
 		if ((!$authorized) && (!$optional)) {

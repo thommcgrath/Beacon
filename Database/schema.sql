@@ -620,6 +620,22 @@ END; $$;
 ALTER FUNCTION public.update_engram_timestamp() OWNER TO thommcgrath;
 
 --
+-- Name: update_last_update_column(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.update_last_update_column() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	NEW.last_update = CURRENT_TIMESTAMP;
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.update_last_update_column() OWNER TO thommcgrath;
+
+--
 -- Name: update_spawn_point_timestamp(); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
@@ -879,6 +895,7 @@ CREATE TABLE public.creatures (
     mature_time interval,
     mating_interval_min interval,
     mating_interval_max interval,
+    used_stats integer,
     CONSTRAINT creatures_check CHECK ((((mating_interval_min IS NULL) AND (mating_interval_max IS NULL)) OR ((mating_interval_min IS NOT NULL) AND (mating_interval_max IS NOT NULL)))),
     CONSTRAINT creatures_path_check CHECK ((path OPERATOR(public.~~) '/%'::public.citext))
 )
@@ -1099,12 +1116,12 @@ ALTER TABLE public.crafting_costs OWNER TO thommcgrath;
 CREATE TABLE public.creature_stats (
     creature_id uuid NOT NULL,
     stat_index integer NOT NULL,
-    base_value numeric(10,4) NOT NULL,
-    per_level_wild_multiplier numeric(10,4) NOT NULL,
-    per_level_tamed_multiplier numeric(10,4) NOT NULL,
-    add_multiplier numeric(10,4) NOT NULL,
-    affinity_multiplier numeric(10,4) NOT NULL,
-    CONSTRAINT creature_stats_stat_index_check CHECK (((stat_index >= 0) AND (stat_index <= 9) AND (stat_index <> 5) AND (stat_index <> 6)))
+    base_value numeric(12,6) NOT NULL,
+    per_level_wild_multiplier numeric(12,6) NOT NULL,
+    per_level_tamed_multiplier numeric(12,6) NOT NULL,
+    add_multiplier numeric(12,6) NOT NULL,
+    affinity_multiplier numeric(12,6) NOT NULL,
+    CONSTRAINT creature_stats_stat_index_check CHECK (((stat_index >= 0) AND (stat_index <= 11)))
 );
 
 
@@ -1299,6 +1316,26 @@ INHERITS (public.objects);
 
 
 ALTER TABLE public.loot_source_icons OWNER TO thommcgrath;
+
+--
+-- Name: maps; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.maps (
+    map_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    mod_id uuid NOT NULL,
+    label public.citext NOT NULL,
+    ark_identifier text NOT NULL,
+    difficulty_scale numeric(8,4) NOT NULL,
+    official boolean NOT NULL,
+    mask bigint NOT NULL,
+    sort integer NOT NULL,
+    last_update timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    CONSTRAINT maps_mask_check CHECK ((ceiling(log((2)::numeric, (mask)::numeric)) = floor(log((2)::numeric, (mask)::numeric))))
+);
+
+
+ALTER TABLE public.maps OWNER TO thommcgrath;
 
 --
 -- Name: mods; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -1714,6 +1751,18 @@ CREATE TABLE public.updates (
 
 
 ALTER TABLE public.updates OWNER TO thommcgrath;
+
+--
+-- Name: user_challenges; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.user_challenges (
+    user_id uuid NOT NULL,
+    challenge text NOT NULL
+);
+
+
+ALTER TABLE public.user_challenges OWNER TO thommcgrath;
 
 --
 -- Name: usercloud; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -2373,6 +2422,46 @@ ALTER TABLE ONLY public.loot_sources
 
 
 --
+-- Name: maps maps_ark_identifier_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.maps
+    ADD CONSTRAINT maps_ark_identifier_key UNIQUE (ark_identifier);
+
+
+--
+-- Name: maps maps_mask_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.maps
+    ADD CONSTRAINT maps_mask_key UNIQUE (mask);
+
+
+--
+-- Name: maps maps_mod_id_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.maps
+    ADD CONSTRAINT maps_mod_id_key UNIQUE (mod_id);
+
+
+--
+-- Name: maps maps_official_sort_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.maps
+    ADD CONSTRAINT maps_official_sort_key UNIQUE (official, sort);
+
+
+--
+-- Name: maps maps_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.maps
+    ADD CONSTRAINT maps_pkey PRIMARY KEY (map_id);
+
+
+--
 -- Name: mods mods_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -2666,6 +2755,14 @@ ALTER TABLE ONLY public.updates
 
 ALTER TABLE ONLY public.updates
     ADD CONSTRAINT updates_pkey PRIMARY KEY (update_id);
+
+
+--
+-- Name: user_challenges user_challenges_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.user_challenges
+    ADD CONSTRAINT user_challenges_pkey PRIMARY KEY (user_id);
 
 
 --
@@ -2990,6 +3087,13 @@ CREATE TRIGGER loot_sources_before_update_trigger BEFORE UPDATE ON public.loot_s
 
 
 --
+-- Name: maps maps_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER maps_before_update_trigger BEFORE INSERT OR UPDATE ON public.maps FOR EACH ROW EXECUTE PROCEDURE public.update_last_update_column();
+
+
+--
 -- Name: preset_modifiers preset_modifiers_after_delete_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
@@ -3302,6 +3406,14 @@ ALTER TABLE ONLY public.loot_sources
 
 
 --
+-- Name: maps maps_mod_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.maps
+    ADD CONSTRAINT maps_mod_id_fkey FOREIGN KEY (mod_id) REFERENCES public.mods(mod_id) ON UPDATE CASCADE ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED;
+
+
+--
 -- Name: mods mods_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -3491,6 +3603,14 @@ ALTER TABLE ONLY public.support_table_of_contents
 
 ALTER TABLE ONLY public.support_table_of_contents
     ADD CONSTRAINT support_table_of_contents_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.support_article_groups(group_id) ON UPDATE CASCADE ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: user_challenges user_challenges_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.user_challenges
+    ADD CONSTRAINT user_challenges_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -3705,6 +3825,13 @@ GRANT SELECT ON TABLE public.loot_source_icons TO thezaz_website;
 
 
 --
+-- Name: TABLE maps; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT ON TABLE public.maps TO thezaz_website;
+
+
+--
 -- Name: TABLE mods; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
@@ -3870,6 +3997,13 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.support_table_of_contents TO t
 --
 
 GRANT SELECT ON TABLE public.updates TO thezaz_website;
+
+
+--
+-- Name: TABLE user_challenges; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.user_challenges TO thezaz_website;
 
 
 --
