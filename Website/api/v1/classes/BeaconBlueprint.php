@@ -84,6 +84,9 @@ class BeaconBlueprint extends BeaconObject {
 					if ($environment === 'genesis') {
 						$availability = $availability | BeaconMaps::Genesis;
 					}
+					if ($environment === 'crystalisles') {
+						$availability = $availability | BeaconMaps::CrystalIsles;
+					}
 				}
 				$this->availability = $availability;
 			}
@@ -144,6 +147,9 @@ class BeaconBlueprint extends BeaconObject {
 		}
 		if ($this->AvailableToGenesis()) {
 			$environments[] = 'Genesis';
+		}
+		if ($this->AvailableToCrystalIsles()) {
+			$environments[] = 'CrystalIsles';
 		}
 		
 		$json = parent::jsonSerialize();
@@ -259,6 +265,14 @@ class BeaconBlueprint extends BeaconObject {
 	
 	public function SetAvailableToGenesis(bool $available) {
 		return $this->SetAvailableTo(BeaconMaps::Genesis, $available);
+	}
+	
+	public function AvailableToCrystalIsles() {
+		return $this->AvailableTo(BeaconMaps::CrystalIsles);
+	}
+	
+	public function SetAvailableToCrystlIsles(bool $available) {
+		return $this->SetAvailableTo(BeaconMaps::CrystalIsles, $available);
 	}
 	
 	public function SpawnCode() {

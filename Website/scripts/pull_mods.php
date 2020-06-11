@@ -143,6 +143,9 @@ function PullMod(BeaconMod $mod) {
 				if ($key === 'genesis') {
 					$availability = $availability | BeaconMaps::Genesis;
 				}
+				if ($key === 'crystalisles') {
+					$availability = $availability | BeaconMaps::CrystalIsles;
+				}
 			}
 		}
 		if ($availability === 0) {
