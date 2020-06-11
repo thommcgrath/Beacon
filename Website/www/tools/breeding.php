@@ -2,9 +2,9 @@
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Ark Breeding Chart');
 
-$msm = isset($_GET['msm']) ? floatval($_GET['msm']) : 1.0;
-$ipm = isset($_GET['ipm']) ? floatval($_GET['ipm']) : 1.0;
-$ism = isset($_GET['ism']) ? floatval($_GET['ism']) : 1.0;
+$msm = (empty($_GET['msm']) === false && is_numeric($_GET['msm'])) ? floatval($_GET['msm']) : 1.0;
+$ipm = (empty($_GET['ipm']) === false && is_numeric($_GET['ipm'])) ? floatval($_GET['ipm']) : 1.0;
+$ism = (empty($_GET['ism']) === false && is_numeric($_GET['ism'])) ? floatval($_GET['ism']) : 1.0;
 
 $database = BeaconCommon::Database();
 $results = $database->Query('SELECT value::INTEGER FROM game_variables WHERE key = $1;', 'Cuddle Period');
