@@ -226,17 +226,13 @@ Begin BeaconDialog DeveloperImportURLDialog
       Visible         =   False
       Width           =   16
    End
-   Begin HTTPClientSocket Socket
+   Begin URLConnection Socket
       AllowCertificateValidation=   False
-      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
-      MinTLSVersion   =   ""
-      RequireOCSPStapling=   False
       Scope           =   2
       TabPanelIndex   =   0
-      UserAgent       =   ""
    End
 End
 #tag EndWindow
@@ -298,7 +294,7 @@ End
 #tag EndEvents
 #tag Events Socket
 	#tag Event
-		Sub Error(E As RuntimeException)
+		Sub Error(e As RuntimeException)
 		  Spinner.Visible = False
 		  ActionButton.Enabled = True
 		  URLField.Enabled = True
@@ -307,7 +303,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
 		  URLField.Value = URL
 		  
 		  Spinner.Visible = False

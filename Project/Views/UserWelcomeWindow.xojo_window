@@ -1601,77 +1601,53 @@ Begin Window UserWelcomeWindow
       Visible         =   True
       Width           =   216
    End
-   Begin HTTPClientSocket ConfirmCodeCreationSocket
+   Begin URLConnection ConfirmCodeCreationSocket
       AllowCertificateValidation=   False
-      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
-      MinTLSVersion   =   ""
-      RequireOCSPStapling=   False
       Scope           =   2
       TabPanelIndex   =   0
-      UserAgent       =   ""
    End
-   Begin HTTPClientSocket CheckForConfirmationSocket
+   Begin URLConnection CheckForConfirmationSocket
       AllowCertificateValidation=   False
-      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
-      MinTLSVersion   =   ""
-      RequireOCSPStapling=   False
       Scope           =   2
       TabPanelIndex   =   0
-      UserAgent       =   ""
    End
-   Begin HTTPClientSocket VerifyConfirmationCodeSocket
+   Begin URLConnection VerifyConfirmationCodeSocket
       AllowCertificateValidation=   False
-      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
-      MinTLSVersion   =   ""
-      RequireOCSPStapling=   False
       Scope           =   2
       TabPanelIndex   =   0
-      UserAgent       =   ""
    End
-   Begin HTTPClientSocket IdentitySuggestionSocket
+   Begin URLConnection IdentitySuggestionSocket
       AllowCertificateValidation=   False
-      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
-      MinTLSVersion   =   ""
-      RequireOCSPStapling=   False
       Scope           =   2
       TabPanelIndex   =   0
-      UserAgent       =   ""
    End
-   Begin HTTPClientSocket SubmitIdentitySocket
+   Begin URLConnection SubmitIdentitySocket
       AllowCertificateValidation=   False
-      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
-      MinTLSVersion   =   ""
-      RequireOCSPStapling=   False
       Scope           =   2
       TabPanelIndex   =   0
-      UserAgent       =   ""
    End
-   Begin HTTPClientSocket LoginSocket
+   Begin URLConnection LoginSocket
       AllowCertificateValidation=   False
-      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
-      MinTLSVersion   =   ""
-      RequireOCSPStapling=   False
       Scope           =   2
       TabPanelIndex   =   0
-      UserAgent       =   ""
    End
 End
 #tag EndWindow
@@ -2225,7 +2201,7 @@ End
 #tag EndEvents
 #tag Events ConfirmCodeCreationSocket
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
 		  #Pragma Unused URL
 		  #Pragma Unused Content
 		  
@@ -2241,7 +2217,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Error(E As RuntimeException)
+		Sub Error(e As RuntimeException)
 		  Self.ShowError("Could not send your confirmation code.", e)
 		  Self.ResetConfirmUI()
 		End Sub
@@ -2249,7 +2225,7 @@ End
 #tag EndEvents
 #tag Events CheckForConfirmationSocket
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
 		  #Pragma Unused URL
 		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
@@ -2287,14 +2263,14 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Error(E As RuntimeException)
+		Sub Error(e As RuntimeException)
 		  Self.ShowError("You will need to enter your confirmation code manually because there was an error checking for it automatically.", e)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events VerifyConfirmationCodeSocket
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
 		  #Pragma Unused URL
 		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
@@ -2338,7 +2314,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Error(E As RuntimeException)
+		Sub Error(e As RuntimeException)
 		  Self.ShowError("Unable to verify your confirmation code.", e)
 		  Self.ConfirmCodeField.ReadOnly = False
 		  Self.CheckConfirmButton()
@@ -2347,7 +2323,7 @@ End
 #tag EndEvents
 #tag Events IdentitySuggestionSocket
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
 		  #Pragma Unused URL
 		  
 		  Self.IdentityRandomNameButton.Enabled = True
@@ -2369,7 +2345,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Error(E As RuntimeException)
+		Sub Error(e As RuntimeException)
 		  Self.IdentityRandomNameButton.Enabled = True
 		  Self.ShowError("Cannot get a username suggestion.", e)
 		End Sub
@@ -2377,7 +2353,7 @@ End
 #tag EndEvents
 #tag Events SubmitIdentitySocket
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
 		  #Pragma Unused URL
 		  
 		  Self.SetSubmitIdentityStatus("")
@@ -2418,7 +2394,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Error(E As RuntimeException)
+		Sub Error(e As RuntimeException)
 		  Self.SetSubmitIdentityStatus("")
 		  Self.ShowError("Cannot create your account.", e)
 		End Sub
@@ -2426,7 +2402,7 @@ End
 #tag EndEvents
 #tag Events LoginSocket
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
 		  #Pragma Unused URL
 		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
@@ -2456,7 +2432,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Error(E As RuntimeException)
+		Sub Error(e As RuntimeException)
 		  Self.SetLoginStatus("")
 		  Self.ShowError("Unable to login", e)
 		End Sub

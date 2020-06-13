@@ -86,7 +86,7 @@ Protected Module SimpleHTTP
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
-		Sub SetFormData(Extends Socket As HTTPClientSocket, Fields As Dictionary)
+		Sub SetFormData(Extends Socket As URLConnection, Fields As Dictionary)
 		  Socket.SetRequestContent(BuildFormData(Fields), "application/x-www-form-urlencoded")
 		End Sub
 	#tag EndMethod

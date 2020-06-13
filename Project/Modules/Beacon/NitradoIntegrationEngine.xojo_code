@@ -153,7 +153,7 @@ Inherits Beacon.IntegrationEngine
 		  For Each FormData As Dictionary In GuidedChanges
 		    Self.Log("Updating " + FormData.Value("key").StringValue + "…")
 		    
-		    Var Sock As New HTTPClientSocket
+		    Var Sock As New URLConnection
 		    Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		    Sock.SetFormData(FormData)
 		    
@@ -204,7 +204,7 @@ Inherits Beacon.IntegrationEngine
 		  
 		  If (Self.mAccount Is Nil) = False Then
 		    // Test that authentication works
-		    Var Sock As New HTTPClientSocket
+		    Var Sock As New URLConnection
 		    Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		    
 		    // Odd request, but we're just trying to test validity
@@ -234,7 +234,7 @@ Inherits Beacon.IntegrationEngine
 		  Var Servers() As Beacon.DiscoveredData
 		  
 		  // Get a list of all servers
-		  Var Socket As New HTTPClientSocket
+		  Var Socket As New URLConnection
 		  Socket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  
 		  Self.Log("Finding servers…")
@@ -297,7 +297,7 @@ Inherits Beacon.IntegrationEngine
 		      
 		      Self.Log("Retrieving " + Profile.Name + "…")
 		      // Lookup server information
-		      Var DetailsSocket As New HTTPClientSocket
+		      Var DetailsSocket As New URLConnection
 		      DetailsSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		      Var DetailsContent As String = DetailsSocket.SendSync("GET", "https://api.nitrado.net/services/" + Profile.ServiceID.ToString(Locale.Raw, "#") + "/gameservers", Self.ConnectionTimeout)
 		      Var DetailsStatus As Integer = DetailsSocket.HTTPStatusCode
@@ -398,7 +398,7 @@ Inherits Beacon.IntegrationEngine
 		Sub ReadyToUpload()
 		  // Since the process is about to upload, we need to find the log file and determine how long to wait
 		  // First we need to look up the current time, since we cannot trust the user's clock
-		  Var TimeLookupSocket As New HTTPClientSocket
+		  Var TimeLookupSocket As New URLConnection
 		  Var TimeString As String = TimeLookupSocket.SendSync("GET", BeaconAPI.URL("/now"), Self.ConnectionTimeout)
 		  Var Now As DateTime
 		  Try
@@ -454,7 +454,7 @@ Inherits Beacon.IntegrationEngine
 
 	#tag Event
 		Sub RefreshServerStatus()
-		  Var Sock As New HTTPClientSocket
+		  Var Sock As New URLConnection
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  
 		  Var Content As String = Sock.SendSync("GET", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers", Self.ConnectionTimeout)
@@ -538,7 +538,7 @@ Inherits Beacon.IntegrationEngine
 
 	#tag Event
 		Sub StartServer()
-		  Var Sock As New HTTPClientSocket
+		  Var Sock As New URLConnection
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  
 		  Var FormData As New Dictionary
@@ -570,7 +570,7 @@ Inherits Beacon.IntegrationEngine
 
 	#tag Event
 		Sub StopServer()
-		  Var Sock As New HTTPClientSocket
+		  Var Sock As New URLConnection
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  
 		  Var FormData As New Dictionary
@@ -710,7 +710,7 @@ Inherits Beacon.IntegrationEngine
 		  Var FormData As New Dictionary
 		  FormData.Value("name") = "Beacon " + Self.Label
 		  
-		  Var Sock As New HTTPClientSocket
+		  Var Sock As New URLConnection
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  Sock.SetFormData(FormData)
 		  
@@ -743,7 +743,7 @@ Inherits Beacon.IntegrationEngine
 
 	#tag Method, Flags = &h21
 		Private Function DownloadFile(Path As String, Mode As Beacon.NitradoIntegrationEngine.DownloadFailureMode, ServiceID As Integer) As String
-		  Var Sock As New HTTPClientSocket
+		  Var Sock As New URLConnection
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  
 		  Var Content As String = Sock.SendSync("GET", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/download?file=" + EncodeURLComponent(Path), Self.ConnectionTimeout)
@@ -770,7 +770,7 @@ Inherits Beacon.IntegrationEngine
 		    Return ""
 		  End Try
 		  
-		  Var FetchSocket As New HTTPClientSocket
+		  Var FetchSocket As New URLConnection
 		  FetchSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  Content = FetchSocket.SendSync("GET", FetchURL, Self.ConnectionTimeout)
 		  Status = FetchSocket.HTTPStatusCode
@@ -869,7 +869,7 @@ Inherits Beacon.IntegrationEngine
 		  FormData.Value("key") = "expertMode"
 		  FormData.Value("value") = "true"
 		  
-		  Var ExpertToggleSocket As New HTTPClientSocket
+		  Var ExpertToggleSocket As New URLConnection
 		  ExpertToggleSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  ExpertToggleSocket.SetFormData(FormData)
 		  
@@ -892,7 +892,7 @@ Inherits Beacon.IntegrationEngine
 
 	#tag Method, Flags = &h21
 		Private Sub UploadFile(Path As String, FileContent As String)
-		  Var Sock As New HTTPClientSocket
+		  Var Sock As New URLConnection
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  
 		  Var PathParts() As String = Path.Split("/")
@@ -930,7 +930,7 @@ Inherits Beacon.IntegrationEngine
 		    Return
 		  End Try
 		  
-		  Var PutSocket As New HTTPClientSocket
+		  Var PutSocket As New URLConnection
 		  PutSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  PutSocket.RequestHeader("token") = PutToken
 		  PutSocket.SetRequestContent(FileContent, "text/plain")

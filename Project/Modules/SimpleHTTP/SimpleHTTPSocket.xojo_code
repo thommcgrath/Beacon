@@ -13,7 +13,7 @@ Private Class SimpleHTTPSocket
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  #if UseNewSocket
-		    Self.mSocket = New HTTPClientSocket
+		    Self.mSocket = New URLConnection
 		    AddHandler Self.mSocket.Error, WeakAddressOf mSocket_Error
 		    AddHandler Self.mSocket.ContentReceived, WeakAddressOf mSocket_ContentReceived
 		  #else
@@ -81,7 +81,7 @@ Private Class SimpleHTTPSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mSocket_ContentReceived(Sender As HTTPClientSocket, URL As String, HTTPStatus As Integer, Content As String)
+		Private Sub mSocket_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused Sender
 		  
 		  If Self.Handler <> Nil Then
@@ -94,7 +94,7 @@ Private Class SimpleHTTPSocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mSocket_Error(Sender As HTTPClientSocket, Err As RuntimeException)
+		Private Sub mSocket_Error(Sender As URLConnection, Err As RuntimeException)
 		  #Pragma Unused Sender
 		  
 		  If Self.Handler <> Nil Then
@@ -150,7 +150,7 @@ Private Class SimpleHTTPSocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSocket As HTTPClientSocket
+		Private mSocket As URLConnection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

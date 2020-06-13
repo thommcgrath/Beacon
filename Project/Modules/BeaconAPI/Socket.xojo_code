@@ -41,7 +41,7 @@ Protected Class Socket
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.Socket = New HTTPClientSocket
+		  Self.Socket = New URLConnection
 		  Self.Socket.AllowCertificateValidation = True
 		  AddHandler Self.Socket.Error, WeakAddressOf Socket_Error
 		  AddHandler Self.Socket.ContentReceived, WeakAddressOf Socket_ContentReceived
@@ -59,7 +59,7 @@ Protected Class Socket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Socket_ContentReceived(Sender As HTTPClientSocket, URL As String, HTTPStatus As Integer, Content As String)
+		Private Sub Socket_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused URL
 		  
 		  Var Headers As New Dictionary
@@ -76,7 +76,7 @@ Protected Class Socket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Socket_Error(Sender As HTTPClientSocket, Err As RuntimeException)
+		Private Sub Socket_Error(Sender As URLConnection, Err As RuntimeException)
 		  #Pragma Unused Sender
 		  
 		  Self.ActiveRequest.InvokeCallback(New BeaconAPI.Response(Err))
@@ -86,7 +86,7 @@ Protected Class Socket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Socket_ReceivingProgressed(Sender As HTTPClientSocket, BytesReceived As Int64, BytesTotal As Int64, NewData As String)
+		Private Sub Socket_ReceivingProgressed(Sender As URLConnection, BytesReceived As Int64, BytesTotal As Int64, NewData As String)
 		  #Pragma Unused Sender
 		  #Pragma Unused NewData
 		  
@@ -156,7 +156,7 @@ Protected Class Socket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private Socket As HTTPClientSocket
+		Private Socket As URLConnection
 	#tag EndProperty
 
 

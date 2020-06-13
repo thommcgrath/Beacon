@@ -268,7 +268,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  If Self.mUpdater = Nil Then
-		    Self.mUpdater = New HTTPClientSocket
+		    Self.mUpdater = New URLConnection
 		    Self.mUpdater.AllowCertificateValidation = True
 		    Self.mUpdater.RequestHeader("Cache-Control") = "no-cache"
 		    AddHandler Self.mUpdater.ContentReceived, WeakAddressOf Self.mUpdater_ContentReceived
@@ -2108,7 +2108,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mUpdater_ContentReceived(Sender As HTTPClientSocket, URL As String, HTTPStatus As Integer, Content As String)
+		Private Sub mUpdater_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  
@@ -2134,7 +2134,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mUpdater_Error(Sender As HTTPClientSocket, Error As RuntimeException)
+		Private Sub mUpdater_Error(Sender As URLConnection, Error As RuntimeException)
 		  #Pragma Unused Sender
 		  
 		  App.Log("Engram check error: " + Error.Reason)
@@ -3119,7 +3119,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUpdater As HTTPClientSocket
+		Private mUpdater As URLConnection
 	#tag EndProperty
 
 

@@ -433,17 +433,13 @@ Begin BeaconWindow UpdateWindow
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin HTTPClientSocket Downloader
+   Begin URLConnection Downloader
       AllowCertificateValidation=   False
-      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
-      MinTLSVersion   =   ""
-      RequireOCSPStapling=   False
       Scope           =   2
       TabPanelIndex   =   0
-      UserAgent       =   ""
    End
 End
 #tag EndWindow
@@ -686,7 +682,7 @@ End
 #tag EndEvents
 #tag Events Downloader
 	#tag Event
-		Sub Error(E As RuntimeException)
+		Sub Error(e As RuntimeException)
 		  Me.Disconnect
 		  
 		  Var Dialog As New MessageDialog
@@ -714,7 +710,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ReceivingProgressed(BytesReceived As Int64, TotalBytes As Int64, NewData As String)
+		Sub ReceivingProgressed(bytesReceived As Int64, totalBytes As Int64, newData As String)
 		  #Pragma Unused NewData
 		  
 		  If Self.DownloadProgressBar.MaximumValue <> 1000 Then
@@ -724,7 +720,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
 		  #Pragma Unused URL
 		  #Pragma Unused HTTPStatus
 		  

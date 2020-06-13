@@ -497,17 +497,13 @@ Begin Window SubscribeDialog
       Visible         =   True
       Width           =   110
    End
-   Begin HTTPClientSocket SubscribeSocket
+   Begin URLConnection SubscribeSocket
       AllowCertificateValidation=   False
-      FollowRedirects =   False
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
-      MinTLSVersion   =   ""
-      RequireOCSPStapling=   False
       Scope           =   2
       TabPanelIndex   =   0
-      UserAgent       =   ""
    End
 End
 #tag EndWindow
@@ -577,14 +573,14 @@ End
 #tag EndEvents
 #tag Events SubscribeSocket
 	#tag Event
-		Sub Error(E As RuntimeException)
+		Sub Error(e As RuntimeException)
 		  #Pragma Unused e
 		  
 		  Self.Close
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, Content As String)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
 		  #Pragma Unused URL
 		  #Pragma Unused Content
 		  #Pragma Unused HTTPStatus
