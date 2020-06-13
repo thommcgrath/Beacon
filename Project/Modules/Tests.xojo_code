@@ -23,7 +23,19 @@ Protected Module Tests
 		    TestNamingThings()
 		    TestConfigKeys()
 		    TestNumberFormatting()
+		    TestArkML()
 		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestArkML()
+		  Var InputString As String = """This is a &quot;string&quot; with characters &amp; &lt;stuff&gt; like &#8730; that\nneeds to be encoded."""
+		  
+		  Var RTFString As String = BeaconConfigs.Metadata.ArkMLToRTF(InputString)
+		  Var ArkMLString As String = BeaconConfigs.Metadata.RTFToArkML(RTFString)
+		  
+		  Call Assert(ArkMLString = InputString, "ArkML did not parse the same as was generated.")
 		End Sub
 	#tag EndMethod
 

@@ -120,6 +120,7 @@ Implements ObservationKit.Observable
 		  
 		  ArkData = ArkData.ReplaceAll("\""", """")
 		  ArkData = ArkData.ReplaceAll("\n", EndOfLine.UNIX)
+		  ArkData = HTMLDecode(ArkData)
 		  
 		  Var Offset As Integer = 0
 		  Var Styles As New StyledText
@@ -169,7 +170,7 @@ Implements ObservationKit.Observable
 		    Offset = EndPos
 		  Wend
 		  
-		  If Styles.StyleRunCount > 1 Then
+		  If Styles.StyleRunCount > 0 Then
 		    Return Styles.RTFData
 		  Else
 		    Return ""
@@ -200,6 +201,272 @@ Implements ObservationKit.Observable
 		      End Try
 		    Next
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function HTMLDecode(Input As String) As String
+		  Var Searcher As New RegEx
+		  Searcher.SearchPattern = "&(([A-Za-z0-9]+)|(#x[A-Fa-f0-9]+)|(#\d+));"
+		  
+		  Do
+		    Var Match As RegExMatch = Searcher.Search(Input)
+		    If Match Is Nil Then
+		      Return Input
+		    End If
+		    
+		    Var Matched As String = Match.SubExpressionString(1)
+		    Var Replacement As String
+		    If Matched.BeginsWith("#x") Then
+		      // Hex encoding
+		      Replacement = Encodings.UTF8.Chr(Integer.FromHex(Matched.Middle(2)))
+		    ElseIf Matched.BeginsWith("#") Then
+		      // Decimal encoding
+		      Replacement = Encodings.UTF8.Chr(Integer.FromString(Matched.Middle(1)))
+		    Else
+		      // Named encoding
+		      Select Case Matched
+		      Case "quot"
+		        Replacement = """"
+		      Case "apos"
+		        Replacement = "'"
+		      Case "amp"
+		        Replacement = "&"
+		      Case "lt"
+		        Replacement = "<"
+		      Case "gt"
+		        Replacement = ">"
+		      Case "nbsp"
+		        Replacement = " "
+		      Case "iexcl"
+		        Replacement = "¡"
+		      Case "cent"
+		        Replacement = "¢"
+		      Case "pound"
+		        Replacement = "£"
+		      Case "curren"
+		        Replacement = "¤"
+		      Case "yen"
+		        Replacement = "¥"
+		      Case "brvbar"
+		        Replacement = "¦"
+		      Case "sect"
+		        Replacement = "§"
+		      Case "uml"
+		        Replacement = "¨"
+		      Case "copy"
+		        Replacement = "©"
+		      Case "ordf"
+		        Replacement = "ª"
+		      Case "laquo"
+		        Replacement = "«"
+		      Case "not"
+		        Replacement = "¬"
+		      Case "shy"
+		        Replacement = ""
+		      Case "reg"
+		        Replacement = "®"
+		      Case "macr"
+		        Replacement = "¯"
+		      Case "deg"
+		        Replacement = "°"
+		      Case "plusmn"
+		        Replacement = "±"
+		      Case "sup2"
+		        Replacement = "²"
+		      Case "sup3"
+		        Replacement = "³"
+		      Case "acute"
+		        Replacement = "´"
+		      Case "micro"
+		        Replacement = "µ"
+		      Case "para"
+		        Replacement = "¶"
+		      Case "middot"
+		        Replacement = "·"
+		      Case "cedil"
+		        Replacement = "¸"
+		      Case "sup1"
+		        Replacement = "¹"
+		      Case "ordm"
+		        Replacement = "º"
+		      Case "raquo"
+		        Replacement = "»"
+		      Case "frac14"
+		        Replacement = "¼"
+		      Case "frac12"
+		        Replacement = "½"
+		      Case "frac34"
+		        Replacement = "¾"
+		      Case "iquest"
+		        Replacement = "¿"
+		      Case "times"
+		        Replacement = "×"
+		      Case "divide"
+		        Replacement = "÷"
+		      Case "Agrave"
+		        Replacement = "À"
+		      Case "Aacute"
+		        Replacement = "Á"
+		      Case "Acirc"
+		        Replacement = "Â"
+		      Case "Atilde"
+		        Replacement = "Ã"
+		      Case "Auml"
+		        Replacement = "Ä"
+		      Case "Aring"
+		        Replacement = "Å"
+		      Case "AElig"
+		        Replacement = "Æ"
+		      Case "Ccedil"
+		        Replacement = "Ç"
+		      Case "Egrave"
+		        Replacement = "È"
+		      Case "Eacute"
+		        Replacement = "É"
+		      Case "Ecirc"
+		        Replacement = "Ê"
+		      Case "Euml"
+		        Replacement = "Ë"
+		      Case "Igrave"
+		        Replacement = "Ì"
+		      Case "Iacute"
+		        Replacement = "Í"
+		      Case "Icirc"
+		        Replacement = "Î"
+		      Case "Iuml"
+		        Replacement = "Ï"
+		      Case "ETH"
+		        Replacement = "Ð"
+		      Case "Ntilde"
+		        Replacement = "Ñ"
+		      Case "Ograve"
+		        Replacement = "Ò"
+		      Case "Oacute"
+		        Replacement = "Ó"
+		      Case "Ocirc"
+		        Replacement = "Ô"
+		      Case "Otilde"
+		        Replacement = "Õ"
+		      Case "Ouml"
+		        Replacement = "Ö"
+		      Case "Oslash"
+		        Replacement = "Ø"
+		      Case "Ugrave"
+		        Replacement = "Ù"
+		      Case "Uacute"
+		        Replacement = "Ú"
+		      Case "Ucirc"
+		        Replacement = "Û"
+		      Case "Uuml"
+		        Replacement = "Ü"
+		      Case "Yacute"
+		        Replacement = "Ý"
+		      Case "THORN"
+		        Replacement = "Þ"
+		      Case "szlig"
+		        Replacement = "ß"
+		      Case "agrave"
+		        Replacement = "à"
+		      Case "aacute"
+		        Replacement = "á"
+		      Case "acirc"
+		        Replacement = "â"
+		      Case "atilde"
+		        Replacement = "ã"
+		      Case "auml"
+		        Replacement = "ä"
+		      Case "aring"
+		        Replacement = "å"
+		      Case "aelig"
+		        Replacement = "æ"
+		      Case "ccedil"
+		        Replacement = "ç"
+		      Case "egrave"
+		        Replacement = "è"
+		      Case "eacute"
+		        Replacement = "é"
+		      Case "ecirc"
+		        Replacement = "ê"
+		      Case "euml"
+		        Replacement = "ë"
+		      Case "igrave"
+		        Replacement = "ì"
+		      Case "iacute"
+		        Replacement = "í"
+		      Case "icirc"
+		        Replacement = "î"
+		      Case "iuml"
+		        Replacement = "ï"
+		      Case "eth"
+		        Replacement = "ð"
+		      Case "ntilde"
+		        Replacement = "ñ"
+		      Case "ograve"
+		        Replacement = "ò"
+		      Case "oacute"
+		        Replacement = "ó"
+		      Case "ocirc"
+		        Replacement = "ô"
+		      Case "otilde"
+		        Replacement = "õ"
+		      Case "ouml"
+		        Replacement = "ö"
+		      Case "oslash"
+		        Replacement = "ø"
+		      Case "ugrave"
+		        Replacement = "ù"
+		      Case "uacute"
+		        Replacement = "ú"
+		      Case "ucirc"
+		        Replacement = "û"
+		      Case "uuml"
+		        Replacement = "ü"
+		      Case "yacute"
+		        Replacement = "ý"
+		      Case "thorn"
+		        Replacement = "þ"
+		      Case "yuml"
+		        Replacement = "ÿ"
+		      End Select
+		    End If
+		    
+		    Input = Input.ReplaceAll(Match.SubExpressionString(0), Replacement)
+		  Loop
+		  
+		  Return Input
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function HTMLEncode(Input As String) As String
+		  Input = Input.ReplaceAll("&", "&amp;")
+		  Input = Input.ReplaceAll("<", "&lt;")
+		  Input = Input.ReplaceAll(">", "&gt;")
+		  Input = Input.ReplaceAll("""", "&quot;")
+		  Input = Input.ReplaceAll("'", "&apos;")
+		  
+		  // Clear control characters
+		  Var Searcher As New Regex
+		  Searcher.SearchPattern = "[\x{00}-\x{08}\x{0B}\x{0C}\x{0E}-\x{1F}\x{7F}]"
+		  Searcher.ReplacementPattern = ""
+		  Input = Searcher.Replace(Input)
+		  
+		  // Clear non-ascii characters
+		  Searcher = New Regex
+		  Searcher.SearchPattern = "[^\x{00}-\x{7F}]"
+		  Do
+		    Var Match As RegExMatch = Searcher.Search(Input)
+		    If Match Is Nil Then
+		      Return Input
+		    End If
+		    
+		    Var Codepoint As Integer = Asc(Match.SubExpressionString(0))
+		    Var Replacement As String = "&#" + Codepoint.ToString + ";"
+		    Input = Input.ReplaceAll(Match.SubExpressionString(0), Replacement)
+		  Loop
+		  
+		  Return Input
 		End Function
 	#tag EndMethod
 
@@ -269,7 +536,7 @@ Implements ObservationKit.Observable
 		  Var Bound As Integer = Styles.StyleRunCount - 1
 		  For Idx As Integer = 0 To Bound
 		    Var Run As StyleRun = Styles.StyleRun(Idx)
-		    Var Body As String = Run.Text
+		    Var Body As String = HTMLEncode(Run.Text)
 		    
 		    If Run.TextColor <> &cFFFFFF00 Then
 		      Var RedAmount As Double = Run.TextColor.Red / 255
@@ -285,7 +552,7 @@ Implements ObservationKit.Observable
 		  
 		  Var Message As String = Parts.Join("")
 		  Message = Message.ReplaceLineEndings("\n")
-		  Message = Message.ReplaceAll("""", "\""")
+		  
 		  Message = Message.ReplaceAll(" <RichColor", "<RichColor") // Because the <RichColor> tag ends up being treated as a space.
 		  Return """" + Message + """"
 		End Function
