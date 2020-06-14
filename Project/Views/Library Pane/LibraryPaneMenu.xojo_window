@@ -219,11 +219,9 @@ End
 		  Case "beacon://releasenotes"
 		    App.ShowReleaseNotes()
 		  Case "beacon://enableonline"
-		    Var WelcomeWindow As New UserWelcomeWindow(False)
-		    WelcomeWindow.ShowModal()
+		    UserWelcomeWindow.Present(False)
 		  Case "beacon://signin"
-		    Var WelcomeWindow As New UserWelcomeWindow(True)
-		    WelcomeWindow.ShowModal()
+		    UserWelcomeWindow.Present(True)
 		  Case "beacon://showaccount"
 		    ShowURL(Beacon.WebURL("/account/auth?session_id=" + Preferences.OnlineToken + "&return=" + EncodeURLComponent(Beacon.WebURL("/account/"))))
 		  Case "beacon://spawncodes"
@@ -237,8 +235,8 @@ End
 		    Preferences.OnlineToken = ""
 		    App.IdentityManager.CurrentIdentity = Nil
 		    Self.RebuildMenu()
-		    Var WelcomeWindow As New UserWelcomeWindow(False)
-		    WelcomeWindow.ShowModal()
+		    
+		    UserWelcomeWindow.Present(False)
 		  Case "beacon://syncusercloud"
 		    UserCloud.Sync(True)
 		    Return // So the pane doesn't close

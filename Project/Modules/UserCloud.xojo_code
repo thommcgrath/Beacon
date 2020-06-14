@@ -122,7 +122,7 @@ Protected Module UserCloud
 		  End If
 		  
 		  Var LocalFile As FolderItem = LocalFile(RemotePath, False)
-		  If LocalFile <> Nil And LocalFile.DeepDelete Then
+		  If (LocalFile Is Nil) = False And LocalFile.DeepDelete Then
 		    SetActionForPath(RemotePath, "DELETE")
 		    Sync()
 		    Return True
@@ -152,7 +152,7 @@ Protected Module UserCloud
 		        End If
 		        Files.MoveToNextRow
 		      Wend
-		    Catch Err As DatabaseException
+		    Catch Err As RuntimeException
 		      App.Log("Unable to list cloud files: " + Err.Message)
 		    End Try
 		  End If
@@ -211,7 +211,7 @@ Protected Module UserCloud
 	#tag Method, Flags = &h1
 		Protected Function Read(RemotePath As String) As MemoryBlock
 		  Var LocalFile As FolderItem = LocalFile(RemotePath)
-		  If LocalFile = Nil Or Not LocalFile.Exists Then
+		  If LocalFile Is Nil Or Not LocalFile.Exists Then
 		    Return Nil
 		  End If
 		  
@@ -518,14 +518,20 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h21
 		Private Function UserID() As String
-		  Return App.IdentityManager.CurrentIdentity.Identifier.Lowercase
+		  Try
+		    If (App.IdentityManager.CurrentIdentity Is Nil) = False Then
+		      Return App.IdentityManager.CurrentIdentity.Identifier.Lowercase
+		    End If
+		  Catch Err As RuntimeException
+		  End Try
+		  Return v4UUID.CreateNull
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function Write(RemotePath As String, Content As MemoryBlock) As Boolean
 		  Var LocalFile As FolderItem = LocalFile(RemotePath)
-		  If LocalFile.Write(Content) Then
+		  If (LocalFile Is Nil) = False And LocalFile.Write(Content) Then
 		    SetActionForPath(RemotePath, "PUT")
 		    
 		    Sync()

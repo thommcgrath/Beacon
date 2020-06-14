@@ -1710,8 +1710,17 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Constructor(LoginOnly As Boolean = False)
+	#tag Method, Flags = &h21
+		Private Sub Constructor()
+		  // Just here to block calling with New
+		  
+		  Super.Constructor
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Constructor(LoginOnly As Boolean = False)
 		  Self.mLoginOnly = LoginOnly
 		  Super.Constructor
 		End Sub
@@ -1755,6 +1764,24 @@ End
 		  Else
 		    Self.Close()
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function IsPresent() As Boolean
+		  Return (mInstance Is Nil) = False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Sub Present(LoginOnly As Boolean)
+		  If (mInstance Is Nil) = False Or (App.CurrentThread Is Nil) = False Then
+		    Return
+		  End If
+		  
+		  mInstance = New UserWelcomeWindow(LoginOnly)
+		  mInstance.ShowModal()
+		  mInstance = Nil
 		End Sub
 	#tag EndMethod
 
@@ -1911,6 +1938,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mConfirmEncryptionKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mInstance As UserWelcomeWindow
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

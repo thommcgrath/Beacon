@@ -468,8 +468,7 @@ Implements NotificationKit.Receiver
 		    Return True
 		  End If
 		  
-		  Var WelcomeWindow As New UserWelcomeWindow
-		  WelcomeWindow.ShowModal()
+		  UserWelcomeWindow.Present(False)
 		  
 		  Return Preferences.OnlineEnabled
 		End Function
@@ -791,8 +790,7 @@ Implements NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_PrivacyCheck()
 		  If Self.mIdentityManager.CurrentIdentity = Nil Then
-		    Var WelcomeWindow As New UserWelcomeWindow
-		    WelcomeWindow.ShowModal()
+		    UserWelcomeWindow.Present(False)
 		  Else
 		    Self.NextLaunchQueueTask()
 		  End If
@@ -935,10 +933,7 @@ Implements NotificationKit.Receiver
 		Private Sub mIdentityManager_NeedsLogin(Sender As IdentityManager)
 		  #Pragma Unused Sender
 		  
-		  If Self.CurrentThread = Nil Then
-		    Var WelcomeWindow As New UserWelcomeWindow
-		    WelcomeWindow.ShowModal()
-		  End If
+		  UserWelcomeWindow.Present(False)
 		End Sub
 	#tag EndMethod
 

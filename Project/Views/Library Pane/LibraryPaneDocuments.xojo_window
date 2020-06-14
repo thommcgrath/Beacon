@@ -220,8 +220,7 @@ End
 		    // The user is not authenticated
 		    If Self.ShowConfirm("Cloud documents could not be loaded due to an authentication error.", "To resolve this issue, please sign in again.", "Sign In", "Cancel") Then
 		      Var OldToken As String = Preferences.OnlineToken
-		      Var WelcomeWindow As New UserWelcomeWindow(True)
-		      WelcomeWindow.ShowModal()
+		      UserWelcomeWindow.Present(True)
 		      If Preferences.OnlineEnabled And Preferences.OnlineToken <> OldToken Then
 		        Self.UpdateCloudDocuments()
 		      End If
