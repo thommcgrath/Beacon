@@ -163,7 +163,7 @@ Inherits Beacon.ConfigGroup
 		        Behavior.ReplacementCreature = Replacement
 		      End If
 		      Config.Add(Behavior)
-		    Catch Err As TypeMismatchException
+		    Catch Err As RuntimeException
 		    End Try
 		  Next
 		  
@@ -181,7 +181,7 @@ Inherits Beacon.ConfigGroup
 		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
 		      Behavior.DamageMultiplier = Multiplier
 		      Config.Add(Behavior)
-		    Catch Err As TypeMismatchException
+		    Catch Err As RuntimeException
 		    End Try
 		  Next
 		  
@@ -199,7 +199,7 @@ Inherits Beacon.ConfigGroup
 		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
 		      Behavior.ResistanceMultiplier = Multiplier
 		      Config.Add(Behavior)
-		    Catch Err As TypeMismatchException
+		    Catch Err As RuntimeException
 		    End Try
 		  Next
 		  
@@ -217,7 +217,7 @@ Inherits Beacon.ConfigGroup
 		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
 		      Behavior.TamedDamageMultiplier = Multiplier
 		      Config.Add(Behavior)
-		    Catch Err As TypeMismatchException
+		    Catch Err As RuntimeException
 		    End Try
 		  Next
 		  
@@ -235,7 +235,7 @@ Inherits Beacon.ConfigGroup
 		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
 		      Behavior.TamedResistanceMultiplier = Multiplier
 		      Config.Add(Behavior)
-		    Catch Err As TypeMismatchException
+		    Catch Err As RuntimeException
 		    End Try
 		  Next
 		  
@@ -246,7 +246,7 @@ Inherits Beacon.ConfigGroup
 		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
 		      Behavior.PreventTaming = True
 		      Config.Add(Behavior)
-		    Catch Err As TypeMismatchException
+		    Catch Err As RuntimeException
 		    End Try
 		  Next
 		  

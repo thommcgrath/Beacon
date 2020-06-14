@@ -308,7 +308,7 @@ Implements ObservationKit.Observer
 		        If Self.mLeftItems(I) <> Nil And Self.mLeftItems(I).Rect.Contains(Point) Then
 		          Return Self.mLeftItems(I)
 		        End If
-		      Catch Err As NilObjectException
+		      Catch Err As RuntimeException
 		        Continue
 		      End Try
 		    Next
@@ -320,7 +320,7 @@ Implements ObservationKit.Observer
 		        If Self.mRightItems(I) <> Nil And Self.mRightItems(I).Rect.Contains(Point) Then
 		          Return Self.mRightItems(I)
 		        End If
-		      Catch Err As NilObjectException
+		      Catch Err As RuntimeException
 		        Continue
 		      End Try
 		    Next

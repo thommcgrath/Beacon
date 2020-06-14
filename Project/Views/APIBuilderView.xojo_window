@@ -780,7 +780,7 @@ End
 		    If AuthenticatedCheck.Value Then
 		      Request.Authenticate(Preferences.OnlineToken)
 		    End If
-		  Catch Err As UnsupportedOperationException
+		  Catch Err As RuntimeException
 		    Self.ShowAlert("Cannot build the request", Err.Reason)
 		    Return
 		  End Try

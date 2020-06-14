@@ -190,7 +190,7 @@ Inherits Beacon.Thread
 		        Try
 		          Profile.Name = SessionName.StringValue.GuessEncoding
 		          Exit
-		        Catch Err As TypeMismatchException
+		        Catch Err As RuntimeException
 		        End Try
 		      Next
 		    End If

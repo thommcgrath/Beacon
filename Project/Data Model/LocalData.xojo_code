@@ -21,7 +21,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      TagString = Tags.Join(",")
 		      Tags.AddRowAt(0, "object")
 		      TagStringForSearching = Tags.Join(",")
-		    Catch Err As TypeMismatchException
+		    Catch Err As RuntimeException
 		      
 		    End Try
 		    
@@ -610,7 +610,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.mCreatureCache.Value(Creature.Path) = Creature
 		        Self.mCreatureCache.Value(Creature.ObjectID.StringValue) = Creature
 		      Next
-		    Catch Err As UnsupportedOperationException
+		    Catch Err As RuntimeException
 		      Return Nil
 		    End Try
 		  End If
@@ -634,7 +634,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.mCreatureCache.Value(Creature.Path) = Creature
 		        Self.mCreatureCache.Value(Creature.ObjectID.StringValue) = Creature
 		      Next
-		    Catch Err As UnsupportedOperationException
+		    Catch Err As RuntimeException
 		      Return Nil
 		    End Try
 		  End If
@@ -658,7 +658,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.mCreatureCache.Value(Creature.Path) = Creature
 		        Self.mCreatureCache.Value(Creature.ObjectID.StringValue) = Creature
 		      Next
-		    Catch Err As UnsupportedOperationException
+		    Catch Err As RuntimeException
 		      Return Nil
 		    End Try
 		  End If
@@ -677,7 +677,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Var Engrams() As Beacon.Engram = Self.RowSetToEngram(RS)
 		    Self.CacheEngrams(Engrams)
 		    Return Engrams
-		  Catch Err As UnsupportedOperationException
+		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
 		End Function
@@ -711,7 +711,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      
 		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
 		      Self.CacheEngrams(Engrams)
-		    Catch Err As UnsupportedOperationException
+		    Catch Err As RuntimeException
 		      Return Nil
 		    End Try
 		  End If
@@ -736,7 +736,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      
 		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
 		      Self.CacheEngrams(Engrams)
-		    Catch Err As UnsupportedOperationException
+		    Catch Err As RuntimeException
 		      Return Nil
 		    End Try
 		  End If
@@ -757,7 +757,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      
 		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
 		      Self.CacheEngrams(Engrams)
-		    Catch Err As UnsupportedOperationException
+		    Catch Err As RuntimeException
 		      Return Nil
 		    End Try
 		  End If
@@ -779,7 +779,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    If Engrams.Count = 1 Then
 		      Return Engrams(0)
 		    End If
-		  Catch Err As UnsupportedOperationException
+		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
 		End Function
@@ -798,7 +798,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      
 		      Var Engrams() As Beacon.Engram = Self.RowSetToEngram(Results)
 		      Self.CacheEngrams(Engrams)
-		    Catch Err As UnsupportedOperationException
+		    Catch Err As RuntimeException
 		      Return Nil
 		    End Try
 		  End If
@@ -829,7 +829,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    Var Sources() As Beacon.LootSource = Self.RowSetToLootSource(Results)
 		    Return Sources(0)
-		  Catch Err As UnsupportedOperationException
+		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
 		End Function
@@ -970,7 +970,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.mSpawnPointCache.Value(SpawnPoint.Path) = SpawnPoint
 		        Self.mSpawnPointCache.Value(SpawnPoint.ObjectID.StringValue) = SpawnPoint
 		      Next
-		    Catch Err As UnsupportedOperationException
+		    Catch Err As RuntimeException
 		      Return Nil
 		    End Try
 		  End If
@@ -994,7 +994,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.mSpawnPointCache.Value(SpawnPoint.Path) = SpawnPoint
 		        Self.mSpawnPointCache.Value(SpawnPoint.ObjectID.StringValue) = SpawnPoint
 		      Next
-		    Catch Err As UnsupportedOperationException
+		    Catch Err As RuntimeException
 		      Return Nil
 		    End Try
 		  End If
@@ -1018,7 +1018,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.mSpawnPointCache.Value(SpawnPoint.Path) = SpawnPoint
 		        Self.mSpawnPointCache.Value(SpawnPoint.ObjectID.StringValue) = SpawnPoint
 		      Next
-		    Catch Err As UnsupportedOperationException
+		    Catch Err As RuntimeException
 		      Return Nil
 		    End Try
 		  End If
@@ -1567,7 +1567,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          TagString = Tags.Join(",")
 		          Tags.AddRowAt(0, "object")
 		          TagStringForSearching = Tags.Join(",")
-		        Catch Err As TypeMismatchException
+		        Catch Err As RuntimeException
 		          
 		        End Try
 		        
@@ -1988,7 +1988,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      For Each Command As String In Commands
 		        Self.SQLExecute(Command)
 		      Next
-		    Catch Err As UnsupportedOperationException
+		    Catch Err As RuntimeException
 		      Self.Rollback()
 		      Self.mBase.RemoveDatabase("legacy")
 		      App.Log("Unable to migrate data: " + Err.Message)
@@ -2003,7 +2003,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Var Tags As String = If(Results.Column("can_blueprint").BooleanValue, "object,blueprintable", "object")
 		          Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, path, class_string, label, availability, tags) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID.StringValue, Self.UserModID, Results.Column("path").StringValue, Results.Column("class_string").StringValue, Results.Column("label").StringValue, Results.Column("availability").IntegerValue, Tags)
 		          Self.SQLExecute("INSERT INTO searchable_tags (object_id, source_table, tags) VALUES (?1, ?2, ?3);", ObjectID.StringValue, "engrams", Tags)
-		        Catch Err As UnsupportedOperationException
+		        Catch Err As RuntimeException
 		          Self.Rollback()
 		          Self.mBase.RemoveDatabase("legacy")
 		          App.Log("Unable to migrate data: " + Err.Message)
@@ -3027,7 +3027,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.BeginTransaction()
 		    Self.SQLExecute("INSERT OR REPLACE INTO variables (key, value) VALUES (?1, ?2);", Key, Value)
 		    Self.Commit()
-		  Catch Err As UnsupportedOperationException
+		  Catch Err As RuntimeException
 		    Self.Rollback()
 		  End Try
 		End Sub

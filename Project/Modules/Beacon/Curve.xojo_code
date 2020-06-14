@@ -93,7 +93,7 @@ Protected Class Curve
 		  
 		  Try
 		    Return New Beacon.Curve(Dict.Value("C1X"), Dict.Value("C1Y"), Dict.Value("C2X"), Dict.Value("C2Y"))
-		  Catch Err As TypeMismatchException
+		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
 		End Function

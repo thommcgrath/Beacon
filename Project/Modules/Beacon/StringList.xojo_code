@@ -37,7 +37,7 @@ Implements Iterable
 		  Var SourceArray() As Variant
 		  Try
 		    SourceArray = Source
-		  Catch Err As TypeMismatchException
+		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
 		  
@@ -45,7 +45,7 @@ Implements Iterable
 		  For Each Item As Variant In SourceArray
 		    Try
 		      List.Append(Item)
-		    Catch Err As TypeMismatchException
+		    Catch Err As RuntimeException
 		      Continue
 		    End Try
 		  Next

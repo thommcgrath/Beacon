@@ -197,7 +197,7 @@ Implements ObservationKit.Observable
 		        Var Config As New BeaconConfigs.Metadata
 		        Config.Title = SessionName.StringValue.GuessEncoding
 		        Return Config
-		      Catch Err As TypeMismatchException
+		      Catch Err As RuntimeException
 		      End Try
 		    Next
 		  End If

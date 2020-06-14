@@ -361,7 +361,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      Var Engram As Beacon.Engram = Engrams(I)
 		      Var ClassWeight As Double = ClassWeights(I)
 		      Entry.Append(New Beacon.SetEntryOption(Engram, If(ClassWeight > 1.0, ClassWeight / 100, ClassWeight)))
-		    Catch Err As TypeMismatchException
+		    Catch Err As RuntimeException
 		      Continue
 		    End Try
 		  Next
