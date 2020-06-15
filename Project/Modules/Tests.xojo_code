@@ -30,12 +30,12 @@ Protected Module Tests
 
 	#tag Method, Flags = &h21
 		Private Sub TestArkML()
-		  Var InputString As String = """This is a &quot;string&quot; with characters &amp; &lt;stuff&gt; like &#8730; that\nneeds to be encoded."""
+		  Var InputString As String = """This is a &quot;string&quot; with characters &amp; &lt;stuff&gt; like &#127817; that\nneeds to be encoded."""
 		  
 		  Var RTFString As String = BeaconConfigs.Metadata.ArkMLToRTF(InputString)
 		  Var ArkMLString As String = BeaconConfigs.Metadata.RTFToArkML(RTFString)
 		  
-		  Call Assert(ArkMLString = InputString, "ArkML did not parse the same as was generated.")
+		  Call Assert(ArkMLString = InputString, "ArkML did not parse the same as was generated. Input: `" + InputString + "` Output: `" + ArkMLString + "`")
 		End Sub
 	#tag EndMethod
 

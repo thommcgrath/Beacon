@@ -528,6 +528,10 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Shared Function RTFToArkML(RTFData As String) As String
+		  Const UTF16HighSurrogateStart = &hD800
+		  Const UTF16LowSurrogateStart = &hDC00
+		  Const UTF16SurrogateEnd = &hDFFF
+		  
 		  Var Styles As New StyledText
 		  Styles.RTFData = RTFData
 		  
@@ -536,7 +540,27 @@ Implements ObservationKit.Observable
 		  Var Bound As Integer = Styles.StyleRunCount - 1
 		  For Idx As Integer = 0 To Bound
 		    Var Run As StyleRun = Styles.StyleRun(Idx)
-		    Var Body As String = HTMLEncode(Run.Text)
+		    Var Body As String = Run.Text
+		    
+		    Var RunLen As Integer = Body.Length - 2
+		    For Offset As Integer = 0 To RunLen
+		      Var Char As Int32 = Asc(Body.Middle(Offset, 1))
+		      If Char < UTF16HighSurrogateStart Or Char > UTF16SurrogateEnd Then
+		        Continue
+		      End If
+		      
+		      Var HighSurrogate As Int32 = Char - UTF16HighSurrogateStart
+		      Var LowSurrogate As Int32 = (Asc(Body.Middle(Offset + 1, 1)) And &hFFFF) - UTF16LowSurrogateStart
+		      
+		      If HighSurrogate >= 0 And LowSurrogate >= 0 Then
+		        Char = (HighSurrogate * &h400) + LowSurrogate + &h10000
+		        Body = Body.Left(Offset) + Encodings.UTF8.Chr(Char) + Body.Middle(Offset + 2)
+		      Else
+		        Body = Body.Left(Offset) + Body.Middle(Offset + 1)
+		      End If
+		    Next
+		    
+		    Body = HTMLEncode(Body)
 		    
 		    If Run.TextColor <> &cFFFFFF00 Then
 		      Var RedAmount As Double = Run.TextColor.Red / 255
