@@ -839,6 +839,7 @@ End
 		    Var Engine As Beacon.IntegrationEngine = Entry.Key
 		    If Engine.SupportsStopMessage And HasPromptedForStopMessage = False Then
 		      StopMessage = StopMessageDialog.Present(Self)
+		      HasPromptedForStopMessage = True
 		    End If
 		    Engine.BeginDeploy(Self.DeployLabel, Self.Document, App.IdentityManager.CurrentIdentity, StopMessage, Options)
 		  Next
