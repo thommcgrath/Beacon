@@ -455,6 +455,24 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
+      Begin MenuItem HelpArkConfigFileReference
+         SpecialMenu = 0
+         Value = "Ark Config File Reference"
+         Index = -2147483648
+         Text = "Ark Config File Reference"
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem UntitledSeparator1
+         SpecialMenu = 0
+         Value = "-"
+         Index = -2147483648
+         Text = "-"
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
       Begin MenuItem HelpReportAProblem
          SpecialMenu = 0
          Value = "Report a Problem…"

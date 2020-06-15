@@ -244,6 +244,13 @@ Implements NotificationKit.Receiver
 	#tag EndMenuHandler
 
 	#tag MenuHandler
+		Function HelpArkConfigFileReference() As Boolean Handles HelpArkConfigFileReference.Action
+			ShowURL(Beacon.WebURL("/help/ark_config_file_reference"))
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function HelpCheckforUpdates() As Boolean Handles HelpCheckforUpdates.Action
 			Self.CheckForUpdates(False)
 			Return True
