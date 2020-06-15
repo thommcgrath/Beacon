@@ -440,6 +440,7 @@ Class=FTPFileListing;Modules/Beacon/FTPFileListing.xojo_code;&h00000000594347FF;
 Window=AdjustCostDialog;Views/Config Editors/Crafting Costs/AdjustCostDialog.xojo_window;&h0000000031884FFF;&h00000000068D0FFF;false
 Class=NitradoDiscoveredData;Modules/Beacon/NitradoDiscoveredData.xojo_code;&h000000001EAA27FF;&h0000000055ADDFFF;false
 Window=AccountsConfigEditor;Views/Config Editors/AccountsConfigEditor.xojo_window;&h000000001E2BE7FF;&h00000000434D97FF;false
+Class=BeaconTextArea;Custom Controls/BeaconTextArea.xojo_code;&h0000000074CFAFFF;&h0000000030DCFFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=4

@@ -25,7 +25,7 @@ Begin ContainerControl ArkMLEditor
    Transparent     =   True
    Visible         =   True
    Width           =   566
-   Begin TextArea Field
+   Begin BeaconTextArea Field
       AllowAutoDeactivate=   True
       AllowFocusRing  =   True
       AllowSpellChecking=   True
@@ -274,6 +274,18 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub CopyRTF()
+		  Var RTFData As String = Self.RTFData
+		  
+		  Var Board As New Clipboard
+		  Board.Text = RTFData
+		  Board.AddRawData(RTFData, "public.rtf")
+		  
+		  Self.ShowAlert("Shareable version copied", "You can now paste it where you need it.")
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event TextChange()
@@ -317,6 +329,7 @@ End
 			  End If
 			  
 			  Self.ControlToolbar.PreviewButton.Toggled = Not Self.mRawMode
+			  Self.ControlToolbar.ShareButton.Enabled = Not Self.mRawMode
 			End Set
 		#tag EndSetter
 		Protected RawMode As Boolean
@@ -398,6 +411,20 @@ End
 		  Self.ControlToolbar.ColorButton.Enabled = Me.SelectionLength > 0
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function DoPaste() As Boolean
+		  Var Board As New Clipboard
+		  If (Board.TextAvailable And Board.Text.BeginsWith("{\rtf1\")) Then
+		    Self.RawMode = False
+		    Self.RTFData = Board.Text
+		    Return True
+		  ElseIf Board.RawDataAvailable("public.rtf") Then
+		    Self.RawMode = False
+		    Self.RTFData = Board.RawData("public.rtf")
+		    Return True
+		  End If
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events ControlToolbar
 	#tag Event
@@ -407,6 +434,8 @@ End
 		    Self.RawMode = Not Self.RawMode
 		  Case "ColorButton"
 		    Self.ChangeSelectionColor
+		  Case "ShareButton"
+		    Self.CopyRTF()
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -415,6 +444,10 @@ End
 		  Var PreviewButton As New BeaconToolbarItem("PreviewButton", IconToolbarView, "Toggle preview mode")
 		  PreviewButton.Toggled = (Self.mRawMode = False)
 		  Me.RightItems.Append(PreviewButton)
+		  
+		  Var ShareButton As New BeaconToolbarItem("ShareButton", IconToolbarShare, "Copy the raw RTF data for this message")
+		  ShareButton.Enabled = (Self.mRawMode = False)
+		  Me.RightItems.Append(ShareButton)
 		  
 		  Var ColorButton As New BeaconToolbarItem("ColorButton", IconToolbarPaint, False, "Change text color")
 		  Me.LeftItems.Append(ColorButton)
