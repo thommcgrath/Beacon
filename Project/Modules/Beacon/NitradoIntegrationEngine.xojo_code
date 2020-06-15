@@ -198,7 +198,7 @@ Inherits Beacon.IntegrationEngine
 		  End If
 		  
 		  Self.mAccount = Self.Document.Accounts.GetByUUID(Self.Profile.ExternalAccountUUID)
-		  If Self.mAccount = Nil Or Self.mAccount.IsExpired Then
+		  If Self.mAccount Is Nil Or Self.mAccount.IsExpired Then
 		    Self.Authenticate()
 		  End If
 		  
@@ -366,7 +366,7 @@ Inherits Beacon.IntegrationEngine
 		        Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniDict, GameUserSettingsIniValues)
 		        
 		        Var Errored As Boolean
-		        Var ExtraGameIni As String = Self.DownloadFile(GameSpecific.Value("path") + "user-settings.ini", Beacon.NitradoIntegrationEngine.DownloadFailureMode.MissingAllowed)
+		        Var ExtraGameIni As String = Self.DownloadFile(GameSpecific.Value("path") + "user-settings.ini", Beacon.NitradoIntegrationEngine.DownloadFailureMode.MissingAllowed, Profile.ServiceID)
 		        If Self.Finished Then
 		          Return Nil
 		        End If

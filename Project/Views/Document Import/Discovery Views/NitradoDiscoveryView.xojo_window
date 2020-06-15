@@ -506,6 +506,9 @@ End
 		  Case "Auth External"
 		    Var Profile As Beacon.ServerProfile = Sender.Profile
 		    Var Account As Beacon.ExternalAccount = Self.mAccounts.GetByUUID(Profile.ExternalAccountUUID)
+		    If Account Is Nil Then
+		      Account = New Beacon.ExternalAccount(Profile.ExternalAccountUUID, Beacon.ExternalAccount.ProviderNitrado)
+		    End If
 		    
 		    If Self.AuthClient.SetAccount(Account) Then
 		      Self.mAuthController = Controller

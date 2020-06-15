@@ -471,7 +471,11 @@ End
 	#tag Event
 		Sub Open()
 		  Var Account As Beacon.ExternalAccount = Self.mDocument.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID)
-		  If ((Account Is Nil) = False And Self.Auth.SetAccount(Account)) Or (Account Is Nil And Self.Auth.SetAccount(Beacon.ExternalAccount.ProviderNitrado)) Then
+		  If Account Is Nil Then
+		    Account = New Beacon.ExternalAccount(Self.mProfile.ExternalAccountUUID, Beacon.ExternalAccount.ProviderNitrado)
+		  End If
+		  
+		  If Self.Auth.SetAccount(Account) Then
 		    Self.Auth.Authenticate(App.IdentityManager.CurrentIdentity)
 		  Else
 		    Self.ShowAlert("Unsupported external account", "This version of Beacon does not support accounts from " + Beacon.ExternalAccount.ProviderNitrado + ". This means there is probably an update available.")
@@ -613,8 +617,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RefreshServerStatus()
+		  Var Account As Beacon.ExternalAccount = Self.mDocument.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID)
+		  If Account Is Nil Then
+		    Return
+		  End If
+		  
 		  Var Headers As New Dictionary
-		  Headers.Value("Authorization") = "Bearer " + Self.mDocument.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID).AccessToken
+		  Headers.Value("Authorization") = "Bearer " + Account.AccessToken
 		  
 		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers", AddressOf Callback_ServerStatus, Nil, Headers)
 		End Sub
@@ -669,11 +678,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub AccountUUIDChanged(OldUUID As v4UUID)
-		  Break
-		  
-		  If Self.mProfile.ExternalAccountUUID = OldUUID Then
-		    Self.mProfile.ExternalAccountUUID = Me.Account.UUID
-		  End If
+		  Self.mDocument.ReplaceAccount(OldUUID, Me.Account)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -682,8 +687,13 @@ End
 		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "PowerButton"
+		    Var Account As Beacon.ExternalAccount = Self.mDocument.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID)
+		    If Account Is Nil Then
+		      Return
+		    End If
+		    
 		    Var Headers As New Dictionary
-		    Headers.Value("Authorization") = "Bearer " + Self.mDocument.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID).AccessToken
+		    Headers.Value("Authorization") = "Bearer " + Account.AccessToken
 		    
 		    If Item.Toggled Then
 		      Var StopMessage As String = StopMessageDialog.Present(Self)

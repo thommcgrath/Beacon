@@ -1390,6 +1390,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub AccountUUIDChanged(OldUUID As v4UUID)
+		  Self.Document.ReplaceAccount(OldUUID, Me.Account)
+		  
 		  Var AccountUUID As String = Me.Account.UUID
 		  For Each Entry As DictionaryEntry In Self.Engines
 		    Var Engine As Beacon.IntegrationEngine = Entry.Key

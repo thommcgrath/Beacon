@@ -608,7 +608,9 @@ End
 		        
 		        If Profile.ExternalAccountUUID <> Nil Then
 		          Var Account As Beacon.ExternalAccount = Self.mExternalAccounts.GetByUUID(Profile.ExternalAccountUUID)
-		          Self.mDestination.Accounts.Add(Account)
+		          If (Account Is Nil) = False Then
+		            Self.mDestination.Accounts.Add(Account)
+		          End If
 		        End If
 		      End Select
 		    Case Variant.TypeString

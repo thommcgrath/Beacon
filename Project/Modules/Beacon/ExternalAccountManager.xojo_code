@@ -112,6 +112,10 @@ Protected Class ExternalAccountManager
 
 	#tag Method, Flags = &h0
 		Function GetByUUID(UUID As v4UUID) As Beacon.ExternalAccount
+		  If UUID Is Nil Then
+		    Return Nil
+		  End If
+		  
 		  If Self.mAccounts.HasKey(UUID.StringValue) Then
 		    Return Self.mAccounts.Value(UUID.StringValue)
 		  End If

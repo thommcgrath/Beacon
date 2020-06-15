@@ -28,6 +28,13 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(AccountUUID As v4UUID, Provider As String)
+		  // Used as a placeholder for authorization tracking
+		  Self.Constructor(AccountUUID, "", Provider, "", "", Nil)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(AccountUUID As v4UUID, Label As String, Provider As String, AccessToken As String, RefreshToken As String, Expiration As DateTime)
 		  If AccountUUID = Nil Then
 		    AccountUUID = New v4UUID
