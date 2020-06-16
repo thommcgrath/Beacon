@@ -315,7 +315,21 @@ Inherits Beacon.IntegrationEngine
 		      Var MapParts() As String = MapText.Split(",")
 		      Profile.Mask = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.LastRowIndex))
 		      Var GameSpecific As Dictionary = GameServer.Value("game_specific")
+		      Var GameShortcode As String = GameServer.Value("game")
 		      Profile.ConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
+		      
+		      Select Case GameShortcode
+		      Case "arkse"
+		        Profile.Platform = Beacon.ServerProfile.PlatformPC
+		      Case "arkxb"
+		        Profile.Platform = Beacon.ServerProfile.PlatformXbox
+		      Case "arkps"
+		        Profile.Platform = Beacon.ServerProfile.PlatformPlayStation
+		      Case "arksw" // Complete guess
+		        Profile.Platform = Beacon.ServerProfile.PlatformSwitch
+		      Else
+		        Profile.Platform = Beacon.ServerProfile.PlatformUnknown
+		      End Select
 		      
 		      Var Server As New Beacon.NitradoDiscoveredData(Profile.ServiceID, Self.mAccount.AccessToken, Profile.ConfigPath)
 		      Server.Profile = Profile

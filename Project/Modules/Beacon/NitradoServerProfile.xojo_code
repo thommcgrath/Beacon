@@ -53,6 +53,12 @@ Inherits Beacon.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Platform(Assigns Value As UInteger)
+		  Super.Platform = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SecondaryName() As String
 		  Return Self.Address
 		End Function
