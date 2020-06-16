@@ -24,17 +24,17 @@ if ($results->RecordCount() != 1) {
 }
 $omni_sku = $results->Field('stripe_sku');
 $omni_price = $results->Field('retail_price');
-$omni_price_formatted = '$' . number_format($omni_price, 2, '.', ',');
+$omni_price_formatted = '$' . number_format($omni_price, 2, '.', ',') . ' USD';
 
 $results = $database->Query('SELECT stripe_sku, retail_price FROM products WHERE product_id = $1;', STW_UUID);
 $stw_sku = $results->Field('stripe_sku');
 $stw_price = $results->Field('retail_price');
-$stw_price_formatted = '$' . number_format($stw_price, 2, '.', ',');
+$stw_price_formatted = '$' . number_format($stw_price, 2, '.', ',') . ' USD';
 
 $results = $database->Query('SELECT stripe_sku, retail_price FROM products WHERE product_id = $1;', GIFT_UUID);
 $gift_sku = $results->Field('stripe_sku');
 $gift_price = $results->Field('retail_price');
-$gift_price_formatted = '$' . number_format($gift_price, 2, '.', ',');
+$gift_price_formatted = '$' . number_format($gift_price, 2, '.', ',') . ' USD';
 
 BeaconTemplate::StartStyles(); ?>
 <style type="text/css">
@@ -48,7 +48,7 @@ table.generic .bullet-column {
 }
 
 .price_column {
-	width: 75px;
+	width: 115px;
 	text-align: right;
 }
 
@@ -113,7 +113,7 @@ var update_total = function() {
 		total += omni_price;
 	}
 	
-	document.getElementById('total_field').innerHTML = '$' + (total / 100).toFixed(2);
+	document.getElementById('total_field').innerHTML = '$' + (total / 100).toFixed(2) + ' USD';
 	document.getElementById('stripe_checkout_button').disabled = (total == 0);
 };
 

@@ -66,6 +66,7 @@ $end_time = microtime(true);
 						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::TheCenter; ?>" id="map_checkbox_center"<?php if (($selected_maps & BeaconMaps::TheCenter) == BeaconMaps::TheCenter) { echo ' checked'; } ?>><span></span>The Center</label></div>
 						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::Ragnarok; ?>" id="map_checkbox_ragnarok"<?php if (($selected_maps & BeaconMaps::Ragnarok) == BeaconMaps::Ragnarok) { echo ' checked'; } ?>><span></span>Ragnarok</label></div>
 						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::Valguero; ?>" id="map_checkbox_valguero"<?php if (($selected_maps & BeaconMaps::Valguero) == BeaconMaps::Valguero) { echo ' checked'; } ?>><span></span>Valguero</label></div>
+						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::CrystalIsles; ?>" id="map_checkbox_crystalisles"<?php if (($selected_maps & BeaconMaps::CrystalIsles) == BeaconMaps::CrystalIsles) { echo ' checked'; } ?>><span></span>Crystal Isles</label></div>
 					</div>
 				</td>
 			</tr>
