@@ -319,8 +319,7 @@ End
 		Sub Open()
 		  Self.CreaturesList.ColumnTypeAt(Self.ColumnChecked) = Listbox.CellTypes.CheckBox
 		  
-		  Var Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.StringList)
-		  For Each Creature As Beacon.Creature In Creatures
+		  For Each Creature As Beacon.Creature In Self.mCreatures
 		    If Creature.IncubationTime = 0 Or Creature.MatureTime = 0 Then
 		      Continue
 		    End If
@@ -369,20 +368,21 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(MatureSpeedMultiplier As Double)
+		Private Sub Constructor(MatureSpeedMultiplier As Double, Creatures() As Beacon.Creature)
 		  // Calling the overridden superclass constructor.
 		  Self.mMatureSpeedMultiplier = MatureSpeedMultiplier
+		  Self.mCreatures = Creatures
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, MatureSpeedMultiplier As Double) As Double
+		Shared Function Present(Parent As Window, MatureSpeedMultiplier As Double, Creatures() As Beacon.Creature) As Double
 		  If Parent = Nil Then
 		    Return 0
 		  End If
 		  
-		  Var Win As New BreedingTunerDialog(MatureSpeedMultiplier)
+		  Var Win As New BreedingTunerDialog(MatureSpeedMultiplier, Creatures)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  Var Multiplier As Double = Win.mChosenMultiplier
 		  Win.Close
@@ -398,6 +398,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mChosenMultiplier As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCreatures() As Beacon.Creature
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

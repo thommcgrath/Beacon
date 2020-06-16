@@ -299,7 +299,7 @@ End
 		    End If
 		  Next
 		  
-		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", CurrentCreatures, EngramSelectorDialog.SelectModes.ExplicitMultiple)
+		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", CurrentCreatures, Self.Document.Mods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
 		  If Creatures.LastRowIndex = -1 Then
 		    Return
 		  End If

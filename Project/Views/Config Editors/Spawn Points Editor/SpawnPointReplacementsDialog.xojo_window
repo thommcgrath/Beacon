@@ -514,7 +514,7 @@ End
 #tag Events TargetCreatureButton
 	#tag Event
 		Sub Action()
-		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Self.mDefinedCreatures, EngramSelectorDialog.SelectModes.Single)
+		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Self.mDefinedCreatures, Self.mMods, EngramSelectorDialog.SelectModes.Single)
 		  If Creatures <> Nil And Creatures.LastRowIndex = 0 Then
 		    Self.mTargetCreature = Creatures(0)
 		    Self.TargetCreatureField.Value = Self.mTargetCreature.Label

@@ -1408,6 +1408,14 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  #Pragma Unused UserData
+		  
+		  Self.SetupUI
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.BreedingMultipliers
@@ -1454,7 +1462,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateStats()
 		  Var CuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period") * Self.Config(False).BabyCuddleIntervalMultiplier
-		  Var Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.StringList)
+		  Var Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", Self.Document.Mods)
 		  Var SelectedClass As String
 		  If CreaturesList.SelectedRowIndex > -1 Then
 		    SelectedClass = CreaturesList.RowTagAt(CreaturesList.SelectedRowIndex)
@@ -1709,7 +1717,8 @@ End
 		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AutoTuneButton"
-		    Var Interval As Double = BreedingTunerDialog.Present(Self, Self.Config(False).BabyMatureSpeedMultiplier)
+		    Var Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", Self.Document.Mods)
+		    Var Interval As Double = BreedingTunerDialog.Present(Self, Self.Config(False).BabyMatureSpeedMultiplier, Creatures)
 		    If Interval > 0 Then
 		      Self.ImprintPeriodField.Value = Interval.PrettyText
 		      Self.UpdateStats

@@ -399,6 +399,7 @@ Begin BeaconDialog EngramSelectorDialog
       Top             =   431
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   False
       VisualState     =   "0"
       Width           =   376
@@ -500,14 +501,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Creature, Mods As Beacon.StringList = Nil, SelectMode As EngramSelectorDialog.SelectModes) As Beacon.Creature()
+		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Creature, Mods As Beacon.StringList, SelectMode As EngramSelectorDialog.SelectModes) As Beacon.Creature()
 		  Var WithDefaults As Boolean
 		  Return Present(Parent, Subgroup, Exclude, Mods, SelectMode, WithDefaults)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Creature, Mods As Beacon.StringList = Nil, SelectMode As EngramSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Beacon.Creature()
+		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Creature, Mods As Beacon.StringList, SelectMode As EngramSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Beacon.Creature()
 		  Var ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Creature As Beacon.Creature In Exclude
 		    ExcludeBlueprints.AddRow(Creature)
@@ -525,14 +526,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Engram, Mods As Beacon.StringList = Nil, SelectMode As EngramSelectorDialog.SelectModes) As Beacon.Engram()
+		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Engram, Mods As Beacon.StringList, SelectMode As EngramSelectorDialog.SelectModes) As Beacon.Engram()
 		  Var WithDefaults As Boolean
 		  Return Present(Parent, Subgroup, Exclude, Mods, SelectMode, WithDefaults)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Engram, Mods As Beacon.StringList = Nil, SelectMode As EngramSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Beacon.Engram()
+		Shared Function Present(Parent As Window, Subgroup As String, Exclude() As Beacon.Engram, Mods As Beacon.StringList, SelectMode As EngramSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Beacon.Engram()
 		  Var ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Engram As Beacon.Engram In Exclude
 		    ExcludeBlueprints.AddRow(Engram)
@@ -550,14 +551,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Category As String, Subgroup As String, Exclude() As Beacon.Blueprint, Mods As Beacon.StringList = Nil, SelectMode As EngramSelectorDialog.SelectModes) As Beacon.Blueprint()
+		Shared Function Present(Parent As Window, Category As String, Subgroup As String, Exclude() As Beacon.Blueprint, Mods As Beacon.StringList, SelectMode As EngramSelectorDialog.SelectModes) As Beacon.Blueprint()
 		  Var WithDefaults As Boolean
 		  Return Present(Parent, Category, Subgroup, Exclude, Mods, SelectMode, WithDefaults)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Category As String, Subgroup As String, Exclude() As Beacon.Blueprint, Mods As Beacon.StringList = Nil, SelectMode As EngramSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Beacon.Blueprint()
+		Shared Function Present(Parent As Window, Category As String, Subgroup As String, Exclude() As Beacon.Blueprint, Mods As Beacon.StringList, SelectMode As EngramSelectorDialog.SelectModes, ByRef WithDefaults As Boolean) As Beacon.Blueprint()
 		  Var Blueprints() As Beacon.Blueprint
 		  If Parent = Nil Then
 		    Return Blueprints

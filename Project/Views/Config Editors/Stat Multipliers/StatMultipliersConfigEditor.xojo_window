@@ -2906,7 +2906,16 @@ End
 	#tag Event
 		Sub SetupUI()
 		  Self.UpdatePlayerUI
+		  Self.UpdateCreatureMenu
 		  Self.UpdateCreatureStats
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  #Pragma Unused UserData
+		  
+		  Self.SetupUI
 		End Sub
 	#tag EndEvent
 
@@ -2940,6 +2949,42 @@ End
 		Function ConfigLabel() As String
 		  Return Language.LabelForConfig(BeaconConfigs.StatMultipliers.ConfigName)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateCreatureMenu()
+		  Var Menu As PopupMenu = Self.CreatureMenu
+		  Var SelectedIndex As Integer = Menu.SelectedRowIndex
+		  Var SelectedCreature As Beacon.Creature
+		  If SelectedIndex > -1 Then
+		    SelectedCreature = Menu.RowTagAt(SelectedIndex)
+		    SelectedIndex = -1
+		  End If
+		  
+		  Menu.RemoveAllRows
+		  
+		  Var Health As Beacon.Stat = Beacon.Stats.Health
+		  Var Creatures() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategoryCreatures, "", Self.Document.Mods, "")
+		  For Each Blueprint As Beacon.Blueprint In Creatures
+		    If Not Blueprint IsA Beacon.Creature Then
+		      Continue
+		    End If
+		    
+		    Var Creature As Beacon.Creature = Beacon.Creature(Blueprint)
+		    If Creature.StatBaseValue(Health) = Beacon.Creature.MissingStatValue Then
+		      Continue
+		    End If
+		    
+		    Menu.AddRow(Creature.Label, Creature)
+		    If (SelectedCreature Is Nil) = False And Creature.Path = SelectedCreature.Path Then
+		      SelectedIndex = Menu.LastRowIndex
+		    End If
+		  Next
+		  
+		  If Menu.RowCount > 0 Then
+		    Menu.SelectedRowIndex = Max(SelectedIndex, 0)
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -3089,28 +3134,6 @@ End
 		  Self.SettingUp = True
 		  Self.UpdateCreatureStats()
 		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Var Health As Beacon.Stat = Beacon.Stats.Health
-		  Var Creatures() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategoryCreatures, "", Self.Document.Mods, "")
-		  For Each Blueprint As Beacon.Blueprint In Creatures
-		    If Not Blueprint IsA Beacon.Creature Then
-		      Continue
-		    End If
-		    
-		    Var Creature As Beacon.Creature = Beacon.Creature(Blueprint)
-		    If Creature.StatBaseValue(Health) = Beacon.Creature.MissingStatValue Then
-		      Continue
-		    End If
-		    
-		    Me.AddRow(Creature.Label, Creature)
-		  Next
-		  
-		  If Me.RowCount > 0 Then
-		    Me.SelectedRowIndex = 0
-		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

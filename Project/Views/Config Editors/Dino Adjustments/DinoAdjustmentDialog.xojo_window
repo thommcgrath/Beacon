@@ -1254,7 +1254,6 @@ End
 		    Exclude.AddRow(Creature)
 		  Next
 		  
-		  // Do include mods here, because only dinos actually present in game files should be selectable
 		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.Mods, EngramSelectorDialog.SelectModes.Single)
 		  If Creatures <> Nil And Creatures.LastRowIndex = 0 Then
 		    Self.SelectedReplacement = Creatures(0)
@@ -1313,8 +1312,7 @@ End
 		    Exclude.AddRow(Creature)
 		  Next
 		  
-		  // Do not include the mods list here, we intentionally want all creatures available
-		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, EngramSelectorDialog.SelectModes.Single)
+		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.Mods, EngramSelectorDialog.SelectModes.Single)
 		  If Creatures <> Nil And Creatures.LastRowIndex = 0 Then
 		    Self.SelectedCreature = Creatures(0)
 		  End If

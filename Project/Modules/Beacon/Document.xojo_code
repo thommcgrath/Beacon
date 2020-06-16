@@ -23,16 +23,15 @@ Implements ObservationKit.Observable
 		  
 		  Self.mServerProfiles.AddRow(Profile.Clone)
 		  If Profile.IsConsole Then
-		    Var SafeMods() As String = Beacon.Data.ConsoleSafeMods
-		    If Self.mMods = Nil Or Self.mMods.LastRowIndex = -1 Then
-		      Self.mMods = SafeMods
-		    Else
-		      For I As Integer = Self.mMods.LastRowIndex DownTo 0
-		        If SafeMods.IndexOf(Self.mMods(I)) = -1 Then
-		          Self.mMods.Remove(I)
-		        End If
-		      Next
-		    End If
+		    Self.ConsoleMode = True
+		    
+		    For Each Entry As DictionaryEntry In Self.mMods
+		      Var ModInfo As Beacon.ModDetails = Beacon.Data.ModWithID(Entry.Key.StringValue)
+		      If (ModInfo Is Nil Or ModInfo.ConsoleSafe = False) And Self.mMods.Value(Entry.Key).BooleanValue = True Then
+		        Self.mMods.Value(Entry.Key) = False
+		        Self.mModified = True
+		      End If
+		    Next
 		  End If
 		  Self.mModified = True
 		End Sub
@@ -112,11 +111,16 @@ Implements ObservationKit.Observable
 		  Self.AddConfigGroup(New BeaconConfigs.Difficulty)
 		  Self.Difficulty.IsImplicit = True
 		  Self.mModified = False
-		  Self.mMods = New Beacon.StringList
 		  Self.UseCompression = True
 		  Self.mDocumentPassword = Crypto.GenerateRandomBytes(32)
 		  Self.mEncryptedPasswords = New Dictionary
 		  Self.mAccounts = New Beacon.ExternalAccountManager
+		  
+		  Self.mMods = New Dictionary
+		  Var AllMods() As Beacon.ModDetails = Beacon.Data.AllMods
+		  For Each ModInfo As Beacon.ModDetails In AllMods
+		    Self.mMods.Value(ModInfo.ModID) = ModInfo.DefaultEnabled
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -304,7 +308,14 @@ Implements ObservationKit.Observable
 		      If Dict.HasKey("ConsoleModsOnly") Then
 		        Var ConsoleModsOnly As Boolean = Dict.Value("ConsoleModsOnly")
 		        If ConsoleModsOnly Then
-		          Doc.mMods = Beacon.Data.ConsoleSafeMods()
+		          Var Selections As New Dictionary
+		          Var AllMods() As Beacon.ModDetails = Beacon.Data.AllMods
+		          For Each ModInfo As Beacon.ModDetails In AllMods
+		            Selections.Value(ModInfo.ModID) = ModInfo.DefaultEnabled And ModInfo.ConsoleSafe
+		          Next
+		          
+		          Doc.mConsoleMode = True
+		          Doc.mMods = Selections
 		        End If
 		      End If
 		      
@@ -487,17 +498,6 @@ Implements ObservationKit.Observable
 		    Next
 		  End If
 		  
-		  If Dict.HasKey("Mods") Then
-		    Var Mods As Beacon.StringList = Beacon.StringList.FromVariant(Dict.Value("Mods"))
-		    If Mods <> Nil Then
-		      Doc.mMods = Mods
-		    End If
-		  ElseIf Dict.HasKey("ConsoleModsOnly") Then
-		    Var ConsoleModsOnly As Boolean = Dict.Value("ConsoleModsOnly")
-		    If ConsoleModsOnly Then
-		      Doc.mMods = Beacon.Data.ConsoleSafeMods()
-		    End If
-		  End If
 		  If Dict.HasKey("Map") Then
 		    Doc.MapCompatibility = Dict.Value("Map")
 		  ElseIf Dict.HasKey("MapPreference") Then
@@ -540,6 +540,52 @@ Implements ObservationKit.Observable
 		    
 		    Var ServerDicts() As Variant = SecureDict.Value("Servers")
 		    LoadServerProfiles(Doc, ServerDicts)
+		  End If
+		  
+		  If Dict.HasKey("IsConsole") Then
+		    Doc.mConsoleMode = Dict.Value("IsConsole").BooleanValue
+		  Else
+		    For Each Profile As Beacon.ServerProfile In Doc.mServerProfiles
+		      If Profile.IsConsole Then
+		        Doc.mConsoleMode = True
+		        Exit
+		      End If
+		    Next
+		  End If
+		  
+		  If Dict.HasKey("ModSelections") Then
+		    Var AllMods() As Beacon.ModDetails = Beacon.Data.AllMods
+		    Var Selections As Dictionary = Dict.Value("ModSelections")
+		    For Each Details As Beacon.ModDetails In AllMods
+		      If Selections.HasKey(Details.ModID) = False Then
+		        Selections.Value(Details.ModID) = Details.DefaultEnabled And (Details.ConsoleSafe Or Doc.mConsoleMode = False)
+		      End If
+		    Next
+		    
+		    Doc.mMods = Selections
+		  ElseIf Dict.HasKey("Mods") Then
+		    // In this mode, an empty list meant "all on" and populated list mean "only enable these."
+		    
+		    Var AllMods() As Beacon.ModDetails = Beacon.Data.AllMods
+		    Var SelectedMods As Beacon.StringList = Beacon.StringList.FromVariant(Dict.Value("Mods"))
+		    Var Selections As New Dictionary
+		    For Each Details As Beacon.ModDetails In AllMods
+		      Selections.Value(Details.ModID) = (Details.ConsoleSafe Or Doc.mConsoleMode = False) And (SelectedMods.Count = 0 Or SelectedMods.IndexOf(Details.ModID) > -1)
+		    Next
+		    
+		    Doc.mMods = Selections
+		  ElseIf Dict.HasKey("ConsoleModsOnly") Then
+		    Var ConsoleModsOnly As Boolean = Dict.Value("ConsoleModsOnly")
+		    If ConsoleModsOnly Then
+		      Var Selections As New Dictionary
+		      Var AllMods() As Beacon.ModDetails = Beacon.Data.AllMods
+		      For Each ModInfo As Beacon.ModDetails In AllMods
+		        Selections.Value(ModInfo.ModID) = ModInfo.DefaultEnabled And ModInfo.ConsoleSafe
+		      Next
+		      
+		      Doc.mConsoleMode = True
+		      Doc.mMods = Selections
+		    End If
 		  End If
 		  
 		  If Dict.HasKey("Trust") Then
@@ -669,12 +715,25 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ModEnabled(ModID As v4UUID) As Boolean
+		  Return Self.mMods.Lookup(ModID.StringValue, False)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ModEnabled(ModID As v4UUID, Assigns Value As Boolean)
+		  Var UUID As String = ModID
+		  
+		  If Self.mMods.HasKey(UUID) = False Or Self.mMods.Value(UUID).BooleanValue <> Value Then
+		    Self.mMods.Value(UUID) = Value
+		    Self.mModified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  If Self.mModified Then
-		    Return True
-		  End If
-		  
-		  If Self.mMods.Modified Then
 		    Return True
 		  End If
 		  
@@ -711,7 +770,6 @@ Implements ObservationKit.Observable
 		      Profile.Modified = False
 		    Next
 		    
-		    Self.mMods.Modified = False
 		    Self.mAccounts.Modified = False
 		  End If
 		End Sub
@@ -719,7 +777,13 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function Mods() As Beacon.StringList
-		  Return Self.mMods
+		  Var List As New Beacon.StringList
+		  For Each Entry As DictionaryEntry In Self.mMods
+		    If Entry.Value.BooleanValue = True Then
+		      List.Append(Entry.Key.StringValue)
+		    End If
+		  Next
+		  Return List
 		End Function
 	#tag EndMethod
 
@@ -961,10 +1025,12 @@ Implements ObservationKit.Observable
 		  Document.Value("EncryptionKeys") = Self.mEncryptedPasswords
 		  
 		  Var ModsList() As String = Self.Mods
+		  Document.Value("ModSelections") = Self.mMods
 		  Document.Value("Mods") = ModsList
 		  Document.Value("UseCompression") = Self.UseCompression
 		  Document.Value("Timestamp") = DateTime.Now.SQLDateTimeWithOffset
 		  Document.Value("AllowUCS") = Self.AllowUCS
+		  Document.Value("IsConsole") = Self.ConsoleMode
 		  
 		  Var Groups As New Dictionary
 		  For Each Entry As DictionaryEntry In Self.mConfigGroups
@@ -1040,6 +1106,23 @@ Implements ObservationKit.Observable
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mConsoleMode
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mConsoleMode <> Value Then
+			    Self.mConsoleMode = Value
+			    Self.mModified = True
+			  End If
+			End Set
+		#tag EndSetter
+		ConsoleMode As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Var Metadata As BeaconConfigs.Metadata = Self.Metadata
 			  If Metadata <> Nil Then
 			    Return Metadata.Description
@@ -1087,12 +1170,10 @@ Implements ObservationKit.Observable
 			  Var Limit As UInt64 = Beacon.Maps.All.Mask
 			  Value = Value And Limit
 			  If Self.mMapCompatibility <> Value Then
-			    If Self.mMods <> Nil And Self.mMods.Count > 0 Then
-			      Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Value)
-			      For Each Map As Beacon.Map In Maps
-			        Self.mMods.Append(Map.ProvidedByModID)
-			      Next
-			    End If
+			    Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Value)
+			    For Each Map As Beacon.Map In Maps
+			      Self.mMods.Value(Map.ProvidedByModID) = True
+			    Next
 			    
 			    Self.mMapCompatibility = Value
 			    Self.mModified = True
@@ -1104,6 +1185,10 @@ Implements ObservationKit.Observable
 
 	#tag Property, Flags = &h21
 		Private mConfigGroups As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mConsoleMode As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1139,7 +1224,7 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMods As Beacon.StringList
+		Private mMods As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

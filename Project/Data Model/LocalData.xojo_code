@@ -105,9 +105,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function AllMods() As Beacon.ModDetails()
 		  Var Mods() As Beacon.ModDetails
-		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe FROM mods ORDER BY name;")
+		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe, default_enabled FROM mods ORDER BY name;")
 		  While Not Results.AfterLastRow
-		    Mods.AddRow(New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue))
+		    Mods.AddRow(New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue))
 		    Results.MoveToNextRow
 		  Wend
 		  Return Mods
@@ -194,7 +194,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Self.BeginTransaction()
 		  Self.SQLExecute("CREATE TABLE variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE mods (mod_id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, console_safe INTEGER NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE mods (mod_id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, console_safe INTEGER NOT NULL, default_enabled INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_source_icons (icon_id TEXT NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT NOT NULL, sort_order INTEGER NOT NULL, icon TEXT NOT NULL REFERENCES loot_source_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}');")
 		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', entry_string TEXT, required_level INTEGER, required_points INTEGER, stack_size INTEGER, item_id INTEGER, recipe TEXT NOT NULL DEFAULT '[]');")
@@ -228,7 +228,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE INDEX engrams_entry_string_idx ON engrams(entry_string);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX ini_options_file_header_key_idx ON ini_options(file, header, key);")
 		  
-		  Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe) VALUES (?1, ?2, ?3);", Self.UserModID, Self.UserModName, True)
+		  Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe, default_enabled) VALUES (?1, ?2, ?3, ?4);", Self.UserModID, Self.UserModName, True, True)
 		  Self.Commit()
 		  
 		  Self.mBase.UserVersion = Self.SchemaVersion
@@ -342,11 +342,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConsoleSafeMods() As String()
-		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id FROM mods WHERE console_safe = 1;")
-		  Var Mods() As String
+		Function ConsoleSafeMods() As Beacon.ModDetails()
+		  Var Mods() As Beacon.ModDetails
+		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe, default_enabled FROM mods WHERE console_safe = 1 ORDER BY name;")
 		  While Not Results.AfterLastRow
-		    Mods.AddRow(Results.Column("mod_id").StringValue)
+		    Mods.AddRow(New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue))
 		    Results.MoveToNextRow
 		  Wend
 		  Return Mods
@@ -1392,16 +1392,17 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var ModID As String = ModData.Value("mod_id")
 		      Var ModName As String = ModData.Value("name")
 		      Var ConsoleSafe As Boolean = ModData.Value("console_safe")
+		      Var DefaultEnabled As Boolean = ModData.Lookup("default_enabled", ConsoleSafe)
 		      
 		      ModID = ModID.Lowercase
 		      
-		      Var Results As RowSet = Self.SQLSelect("SELECT name, console_safe FROM mods WHERE mod_id = ?1;", ModID)
+		      Var Results As RowSet = Self.SQLSelect("SELECT name, console_safe, default_enabled FROM mods WHERE mod_id = ?1;", ModID)
 		      If Results.RowCount = 1 Then
 		        If ModName.Compare(Results.Column("name").StringValue, ComparisonOptions.CaseSensitive) <> 0 Or ConsoleSafe <> Results.Column("console_safe").BooleanValue Then
-		          Self.SQLExecute("UPDATE mods SET name = ?2, console_safe = ?3 WHERE mod_id = ?1;", ModID, ModName, ConsoleSafe)
+		          Self.SQLExecute("UPDATE mods SET name = ?2, console_safe = ?3, default_enabled WHERE mod_id = ?1;", ModID, ModName, ConsoleSafe, DefaultEnabled)
 		        End If
 		      Else
-		        Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe) VALUES (?1, ?2, ?3);", ModID, ModName, ConsoleSafe)
+		        Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe, default_enabled) VALUES (?1, ?2, ?3, ?4);", ModID, ModName, ConsoleSafe, DefaultEnabled)
 		      End If
 		      
 		      RetainMods.AddRow(ModID)
@@ -1877,8 +1878,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var Commands() As String
 		  
 		  // Mods
-		  If FromSchemaVersion >= 6 Then
+		  If FromSchemaVersion >= 18 Then
 		    Commands.AddRow("INSERT INTO mods SELECT * FROM legacy.mods WHERE mod_id != '" + Self.UserModID + "';")
+		  ElseIf FromSchemaVersion >= 6 Then
+		    Commands.AddRow("INSERT INTO mods (mod_id, name, console_safe, default_enabled) SELECT mod_id, name, console_safe, console_safe AS default_enabled FROM legacy.mods WHERE mod_id != '" + Self.UserModID + "';")
 		  End If
 		  
 		  // Loot Sources
@@ -2105,6 +2108,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.CheckForEngramUpdates()
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ModWithID(ModID As v4UUID) As Beacon.ModDetails
+		  If ModID = Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe, default_enabled FROM mods WHERE mod_id = ?1;", ModID.StringValue)
+		  If Results.RowCount = 1 Then
+		    Return New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue)
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -3153,7 +3169,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = Notification_PresetsChanged, Type = String, Dynamic = False, Default = \"Presets Changed", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"17", Scope = Private
+	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"18", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.tags\x2C spawn_points.groups\x2C spawn_points.limits\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private

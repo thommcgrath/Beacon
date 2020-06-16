@@ -7,13 +7,19 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function AllMods() As Beacon.ModDetails()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function AllPresetModifiers() As Beacon.PresetModifier()
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConsoleSafeMods() As String()
+		Function ConsoleSafeMods() As Beacon.ModDetails()
 		  
 		End Function
 	#tag EndMethod
@@ -160,6 +166,12 @@ Protected Interface DataSource
 		Sub LoadPresets()
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ModWithID(ModID As v4UUID) As Beacon.ModDetails
+		  
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
