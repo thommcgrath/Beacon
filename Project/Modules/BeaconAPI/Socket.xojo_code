@@ -39,6 +39,28 @@ Protected Class Socket
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub APICallback_RequestToken(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
+		  If Response.HTTPStatus = 200 And (Response.JSON Is Nil) = False And Response.JSON IsA Dictionary Then
+		    Var Dict As Dictionary = Response.JSON
+		    Var SessionToken As String = Dict.Lookup("session_id", "")
+		    If SessionToken.IsEmpty Then
+		      Return
+		    End If
+		    
+		    Preferences.OnlineToken = SessionToken
+		    
+		    For Idx As Integer = 0 To Self.Queue.LastRowIndex
+		      If Self.Queue(Idx).AuthType = BeaconAPI.Request.AuthTypes.Token Then
+		        Self.Queue(Idx).Authenticate(SessionToken)
+		      End If
+		    Next
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.Socket = New URLConnection
@@ -61,6 +83,22 @@ Protected Class Socket
 	#tag Method, Flags = &h21
 		Private Sub Socket_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused URL
+		  
+		  If HTTPStatus = 403 And Self.ActiveRequest.HasBeenRetried = False And Self.ActiveRequest.AuthType = BeaconAPI.Request.AuthTypes.Token And (App.IdentityManager.CurrentIdentity Is Nil) = False Then
+		    // Going to try to get a valid session token
+		    Var NextRequest As New BeaconAPI.Request(BeaconAPI.URL("session"), "POST", AddressOf APICallback_RequestToken)
+		    NextRequest.Sign(App.IdentityManager.CurrentIdentity)
+		    
+		    Var FollowingRequest As BeaconAPI.Request = Self.ActiveRequest
+		    FollowingRequest.HasBeenRetried = True
+		    
+		    Self.Queue.AddRowAt(0, NextRequest)
+		    Self.Queue.AddRowAt(1, FollowingRequest)
+		    
+		    Self.ActiveRequest = Nil
+		    Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)
+		    Return
+		  End If
 		  
 		  Var Headers As New Dictionary
 		  For Each Header As Pair In Sender.ResponseHeaders

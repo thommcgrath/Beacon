@@ -3,18 +3,28 @@ Protected Class Request
 	#tag Method, Flags = &h0
 		Sub Authenticate(Token As String)
 		  Self.RequestHeader("Authorization") = "Session " + Token
+		  Self.RequestHeader("X-Beacon-Token") = Token
+		  Self.mAuthType = BeaconAPI.Request.AuthTypes.Token
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Authenticate(Username As String, Password As String)
 		  Self.RequestHeader("Authorization") = "Basic " + EncodeBase64(Username + ":" + Password, 0)
+		  Self.RequestHeader("X-Beacon-Token") = ""
+		  Self.mAuthType = BeaconAPI.Request.AuthTypes.Password
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Authenticated() As Boolean
 		  Return Self.mRequestHeaders <> Nil And Self.mRequestHeaders.HasKey("Authorization")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function AuthType() As BeaconAPI.Request.AuthTypes
+		  Return Self.mAuthType
 		End Function
 	#tag EndMethod
 
@@ -162,6 +172,7 @@ Protected Class Request
 		  End If
 		  
 		  Self.Authenticate(Identity.Identifier, Identity.Sign(Payload))
+		  Self.mAuthType = BeaconAPI.Request.AuthTypes.Signature
 		End Sub
 	#tag EndMethod
 
@@ -171,6 +182,14 @@ Protected Class Request
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h0
+		HasBeenRetried As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mAuthType As BeaconAPI.Request.AuthTypes
+	#tag EndProperty
 
 	#tag Property, Flags = &h1
 		Protected mCallback As ReplyCallback
@@ -199,6 +218,14 @@ Protected Class Request
 	#tag Property, Flags = &h1
 		Protected mURL As String
 	#tag EndProperty
+
+
+	#tag Enum, Name = AuthTypes, Type = Integer, Flags = &h0
+		Unauthenticated
+		  Password
+		  Token
+		Signature
+	#tag EndEnum
 
 
 	#tag ViewBehavior
