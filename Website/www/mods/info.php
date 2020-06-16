@@ -26,7 +26,7 @@ $config_options = BeaconConfigLine::Get($mod->ModID());
 $has_engrams = count($engrams) > 0;
 $has_loot_sources = count($loot_sources) > 0;
 $has_creatures = count($creatures) > 0;
-$has_config_options = count($config_options) > 0;
+$has_config_options = false;//count($config_options) > 0;
 $has_something = $has_engrams || $has_loot_sources || $has_creatures || $has_config_options;
 
 ?><h1><?php echo htmlentities($mod->Name()); ?></h1>
