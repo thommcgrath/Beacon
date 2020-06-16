@@ -1350,7 +1350,8 @@ CREATE TABLE public.mods (
     confirmation_code uuid DEFAULT public.gen_random_uuid() NOT NULL,
     pull_url text,
     last_pull_hash text,
-    console_safe boolean DEFAULT false NOT NULL
+    console_safe boolean DEFAULT false NOT NULL,
+    default_enabled boolean DEFAULT false NOT NULL
 );
 
 
