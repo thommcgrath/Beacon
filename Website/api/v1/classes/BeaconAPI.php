@@ -125,8 +125,6 @@ abstract class BeaconAPI {
 		
 		if (BeaconCommon::IsHex($signature)) {
 			$signature = hex2bin($signature);
-		} else {
-			$signature = base64_decode($signature);
 		}
 		
 		if ($user->CheckSignature($challenge, $signature)) {
