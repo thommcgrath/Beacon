@@ -296,6 +296,10 @@ End
 		Private mRawMode As Boolean
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mSwitchingModes As Boolean
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
@@ -308,6 +312,7 @@ End
 			    Return
 			  End If
 			  
+			  Self.mSwitchingModes = True
 			  If Value Then
 			    // Convert RTF data to ArkML
 			    Var ArkML As String = BeaconConfigs.Metadata.RTFToArkML(Self.Field.StyledText.RTFData)
@@ -327,9 +332,12 @@ End
 			    Self.Field.StyledText.RTFData = RTF
 			    Self.mRawMode = False
 			  End If
+			  Self.mSwitchingModes = False
 			  
 			  Self.ControlToolbar.PreviewButton.Toggled = Not Self.mRawMode
 			  Self.ControlToolbar.ShareButton.Enabled = Not Self.mRawMode
+			  
+			  RaiseEvent TextChange
 			End Set
 		#tag EndSetter
 		Protected RawMode As Boolean
@@ -338,14 +346,30 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.Field.StyledText.RTFData
+			  If Self.Field.Value.IsEmpty Then
+			    Return ""
+			  End If
+			  
+			  Try
+			    If Self.RawMode Then
+			      Return BeaconConfigs.Metadata.ArkMLToRTF(Self.Field.Value)
+			    Else
+			      Return Self.Field.StyledText.RTFData
+			    End If
+			  Catch Err As RuntimeException
+			    Return ""
+			  End Try
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
 			  If Not Value.IsEmpty Then
 			    Try
-			      Self.Field.StyledText.RTFData = Value
+			      If Self.RawMode Then
+			        Self.Field.Text = BeaconConfigs.Metadata.RTFToArkML(Value)
+			      Else
+			        Self.Field.StyledText.RTFData = Value
+			      End If
 			    Catch Err As RuntimeException
 			    End Try
 			  End If
@@ -360,6 +384,10 @@ End
 #tag Events Field
 	#tag Event
 		Sub TextChange()
+		  If Self.mSwitchingModes Then
+		    Return
+		  End If
+		  
 		  RaiseEvent TextChange
 		End Sub
 	#tag EndEvent

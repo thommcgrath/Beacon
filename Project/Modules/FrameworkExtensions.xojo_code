@@ -268,6 +268,12 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsWhite(Extends Source As Color) As Boolean
+		  Return Source.Red >= 253 And Source.Green >= 253 And Source.Blue >= 253 And Source.Alpha = 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Join(Extends Source() As String, Delimiter As String) As String
 		  Return String.FromArray(Source, Delimiter)
 		End Function

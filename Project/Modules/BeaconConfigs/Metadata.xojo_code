@@ -536,11 +536,16 @@ Implements ObservationKit.Observable
 		  Styles.RTFData = RTFData
 		  
 		  Var Parts() As String
+		  Var WhitespaceMatcher As New Regex
+		  WhitespaceMatcher.SearchPattern = "^\s+$"
+		  Var ColoredTextTrimmer As New Regex
+		  ColoredTextTrimmer.SearchPattern = "^(\s*)(.+)(\s*)$"
+		  ColoredTextTrimmer.Options.Greedy = True
 		  
 		  Var Bound As Integer = Styles.StyleRunCount - 1
 		  For Idx As Integer = 0 To Bound
 		    Var Run As StyleRun = Styles.StyleRun(Idx)
-		    Var Body As String = Run.Text
+		    Var Body As String = Run.Text.ReplaceLineEndings(EndOfLine)
 		    
 		    Var RunLen As Integer = Body.Length - 2
 		    For Offset As Integer = 0 To RunLen
@@ -560,15 +565,32 @@ Implements ObservationKit.Observable
 		      End If
 		    Next
 		    
+		    If Body.IsEmpty Then
+		      Continue
+		    End If
 		    Body = HTMLEncode(Body)
+		    Body = Body.ReplaceAll("/", "&#47;") // For some reason Ark gets confused with slashes
 		    
-		    If Run.TextColor <> &cFFFFFF00 Then
+		    If Run.TextColor.IsWhite = False And WhitespaceMatcher.Search(Body) Is Nil Then
 		      Var RedAmount As Double = Run.TextColor.Red / 255
 		      Var GreenAmount As Double = Run.TextColor.Green / 255
 		      Var BlueAmount As Double = Run.TextColor.Blue / 255
 		      Var AlphaAmount As Double = 1.0 - (Run.TextColor.Alpha / 255)
 		      
-		      Body = "<RichColor Color=""" + RedAmount.PrettyText(2) + "," + GreenAmount.PrettyText(2) + "," + BlueAmount.PrettyText(2) + "," + AlphaAmount.PrettyText(2) + """>" + Body + "</>"
+		      Var OpenTag As String = "<RichColor Color=""" + RedAmount.PrettyText(2) + "," + GreenAmount.PrettyText(2) + "," + BlueAmount.PrettyText(2) + "," + AlphaAmount.PrettyText(2) + """>"
+		      Var CloseTag As String = "</>"
+		      
+		      Var Pieces() As String = Body.Split(EndOfLine)
+		      For Piece As Integer = 0 To Pieces.LastRowIndex
+		        Var Match As RegexMatch = ColoredTextTrimmer.Search(Pieces(Piece))
+		        If (Match Is Nil) = False Then
+		          Pieces(Piece) = Match.SubExpressionString(1) + OpenTag + Match.SubExpressionString(2) + CloseTag + Match.SubExpressionString(3)
+		        Else
+		          Pieces(Piece) = ""
+		        End If
+		      Next
+		      
+		      Body = Pieces.Join("\n")
 		    End If
 		    
 		    Parts.AddRow(Body)
@@ -576,8 +598,25 @@ Implements ObservationKit.Observable
 		  
 		  Var Message As String = Parts.Join("")
 		  Message = Message.ReplaceLineEndings("\n")
-		  
+		  Message = Message.ReplaceAll("""", "\""")
 		  Message = Message.ReplaceAll(" <RichColor", "<RichColor") // Because the <RichColor> tag ends up being treated as a space.
+		  
+		  // Move whitespace from the end of a color tag to outside it
+		  Var Cleaner As New Regex
+		  Cleaner.SearchPattern = "(\s+)</>"
+		  Cleaner.ReplacementPattern = "</>\1"
+		  Message = Cleaner.Replace(Message)
+		  
+		  // Remove whitespace at the end of lines
+		  Cleaner.SearchPattern = "(\s+)\\n"
+		  Cleaner.ReplacementPattern = "\\n"
+		  Message = Cleaner.Replace(Message)
+		  
+		  // And remove newlines at the end of the message
+		  Cleaner.SearchPattern = "(\\n+)$"
+		  Cleaner.ReplacementPattern = ""
+		  Message = Cleaner.Replace(Message)
+		  
 		  Return """" + Message + """"
 		End Function
 	#tag EndMethod
