@@ -71,7 +71,7 @@ Begin BeaconDialog EngramControlWizard
       Height          =   20
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Unlock all at spawn\nUnlock all except Tek at spawn\nUnlock all while leveling\nUnlock unobtainable while leveling\nUnlock Tek at level:\nGrant exact points needed per level\nMake everything unlockable at level:"
+      InitialValue    =   "Unlock all at spawn\nUnlock all except Tek at spawn\nUnlock all while leveling\nUnlock all except Tek while leveling\nUnlock unobtainable while leveling\nUnlock Tek at level:\nGrant exact points needed per level\nMake everything unlockable at level:"
       Italic          =   False
       Left            =   86
       LockBottom      =   False
@@ -278,10 +278,10 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = IndexGrantExactPoints, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag Constant, Name = IndexGrantExactPoints, Type = Double, Dynamic = False, Default = \"6", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = IndexMakeEverythingAvailableAtLevel, Type = Double, Dynamic = False, Default = \"6", Scope = Private
+	#tag Constant, Name = IndexMakeEverythingAvailableAtLevel, Type = Double, Dynamic = False, Default = \"7", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = IndexUnlockAll, Type = Double, Dynamic = False, Default = \"0", Scope = Private
@@ -293,10 +293,13 @@ End
 	#tag Constant, Name = IndexUnlockNaturally, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = IndexUnlockTek, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = IndexUnlockNaturallyNoTek, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = IndexUnlockUnobtainable, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = IndexUnlockTek, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = IndexUnlockUnobtainable, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
 
@@ -344,6 +347,15 @@ End
 		    Config.AutoUnlockAllEngrams = False
 		  Case Self.IndexUnlockNaturally
 		    For Each Engram As Beacon.Engram In Engrams
+		      Config.AutoUnlockEngram(Engram) = True
+		      Config.Hidden(Engram) = False
+		    Next
+		    Config.AutoUnlockAllEngrams = False
+		  Case Self.IndexUnlockNaturallyNoTek
+		    For Each Engram As Beacon.Engram In Engrams
+		      If Engram.IsTagged("tek") Then
+		        Continue
+		      End If
 		      Config.AutoUnlockEngram(Engram) = True
 		      Config.Hidden(Engram) = False
 		    Next
