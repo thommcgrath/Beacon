@@ -444,9 +444,14 @@ Implements ObservationKit.Observer
 		  
 		  Var NextLeft As Integer = ContentRect.Left
 		  Var NextRight As Integer = ContentRect.Right
-		  Var ItemsPerSide As Integer = Max(Self.LeftItems.Count, Self.RightItems.Count)
-		  ContentRect.Left = ContentRect.Left + (ItemsPerSide * (ButtonSize + CellPadding))
-		  ContentRect.Width = ContentRect.Width - ((ItemsPerSide * 2) * (ButtonSize + CellPadding))
+		  
+		  Var LeftButtonsWidth As Integer = Self.LeftItems.Count * (ButtonSize + CellPadding)
+		  Var RightButtonsWidth As Integer = Self.RightItems.Count * (ButtonSize + CellPadding)
+		  Var LargestButtonsWidth As Integer = Max(LeftButtonsWidth, RightButtonsWidth)
+		  
+		  Var OffsetContentRect As New Xojo.Rect(ContentRect.Left + LeftButtonsWidth, ContentRect.Top, ContentRect.Width - (LeftButtonsWidth + RightButtonsWidth), ContentRect.Height)
+		  ContentRect.Left = ContentRect.Left + LargestButtonsWidth
+		  ContentRect.Width = ContentRect.Width - (LargestButtonsWidth * 2)
 		  
 		  For I As Integer = 0 To Self.mLeftItems.LastRowIndex
 		    Var Item As BeaconToolbarItem = Self.mLeftItems(I)
@@ -486,6 +491,9 @@ Implements ObservationKit.Observer
 		    G.FontSize = CaptionSize
 		    Var CaptionWidth As Integer = Ceil(G.TextWidth(Caption))
 		    
+		    If CaptionWidth > ContentRect.Width Then
+		      ContentRect = OffsetContentRect
+		    End If
 		    CaptionWidth = Min(CaptionWidth, ContentRect.Width)
 		    Var CaptionLeft As Integer = ContentRect.Left + ((ContentRect.Width - CaptionWidth) / 2)
 		    Var CaptionBottom As Integer = ContentRect.Top + (ContentRect.Height / 2) + ((G.FontAscent * 0.8) / 2)

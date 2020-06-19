@@ -298,6 +298,37 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Open()
+		  Self.MinimumWidth = 601
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
+		  Const MaxPointsWidth = 300
+		  Const PointsPercent = 0.3
+		  
+		  Var PointsWidth As Integer = Min(Self.Width * PointsPercent, MaxPointsWidth)
+		  Var EngramsWidth As Integer = Self.Width - (PointsWidth + 1)
+		  Var PointsLeft As Integer = EngramsWidth + 1
+		  
+		  Self.EngramList.Width = EngramsWidth
+		  Self.EngramListHeader.Width = EngramsWidth
+		  Self.EngramListStatus.Width = EngramsWidth
+		  
+		  Self.PointsListSeparator.Left = EngramsWidth
+		  Self.PointsList.Left = PointsLeft
+		  Self.PointsList.Width = PointsWidth
+		  Self.PointsListHeader.Left = PointsLeft
+		  Self.PointsListHeader.Width = PointsWidth
+		  Self.PointsListStatus.Left = PointsLeft
+		  Self.PointsListStatus.Width = PointsWidth
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub RestoreToDefault()
 		  Self.Document.RemoveConfigGroup(BeaconConfigs.EngramControl.ConfigName)
 		End Sub
