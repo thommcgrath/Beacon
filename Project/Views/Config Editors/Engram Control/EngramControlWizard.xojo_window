@@ -23,7 +23,7 @@ Begin BeaconDialog EngramControlWizard
    Title           =   "Engram Control Wizard"
    Type            =   "8"
    Visible         =   True
-   Width           =   600
+   Width           =   508
    Begin Label MessageLabel
       AllowAutoDeactivate=   True
       Bold            =   True
@@ -57,7 +57,7 @@ Begin BeaconDialog EngramControlWizard
       Underline       =   False
       Value           =   "Engram Control Quick Setup Wizard"
       Visible         =   True
-      Width           =   560
+      Width           =   468
    End
    Begin UITweaks.ResizedPopupMenu TemplateMenu
       AllowAutoDeactivate=   True
@@ -140,7 +140,7 @@ Begin BeaconDialog EngramControlWizard
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   500
+      Left            =   408
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -172,7 +172,7 @@ Begin BeaconDialog EngramControlWizard
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   408
+      Left            =   316
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False

@@ -414,7 +414,7 @@ End
 		        If IsNull(RequiredLevel) = False And IsNull(RequiredPoints) = False Then
 		          Behaviors.AddRow("Unlockable at " + If(RequiredLevel.IntegerValue > 0, "level " + RequiredLevel.IntegerValue.ToString, "spawn") + " for " + If(RequiredPoints.IntegerValue > 0, RequiredPoints.IntegerValue.ToString + " points", "free"))
 		        Else
-		          Behaviors.AddRow("Unlockable by special event")
+		          Behaviors.AddRow("Auto unlocks by special event")
 		        End If
 		      End If
 		      
