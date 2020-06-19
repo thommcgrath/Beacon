@@ -366,7 +366,7 @@ End
 			  If Not Value.IsEmpty Then
 			    Try
 			      If Self.RawMode Then
-			        Self.Field.Text = BeaconConfigs.Metadata.RTFToArkML(Value)
+			        Self.Field.Value = BeaconConfigs.Metadata.RTFToArkML(Value)
 			      Else
 			        Self.Field.StyledText.RTFData = Value
 			      End If
