@@ -19,7 +19,7 @@ Inherits Beacon.ConfigGroup
 		    If IsNull(Engram) Then
 		      Engram = Beacon.Engram.CreateFromPath(Entry.Key)
 		    End If
-		    If IsNull(Engram) = False And Engram.ValidForMods(SourceDocument.Mods) Then
+		    If IsNull(Engram) = False And Engram.ValidForDocument(SourceDocument) Then
 		      Var ClassString As String = Engram.ClassString
 		      Var Rate As Double = Entry.Value
 		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "HarvestResourceItemAmountClassMultipliers", "(ClassName=""" + ClassString + """,Multiplier=" + Rate.PrettyText + ")"))

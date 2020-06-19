@@ -30,6 +30,7 @@ Implements ObservationKit.Observable
 		      If (ModInfo Is Nil Or ModInfo.ConsoleSafe = False) And Self.mMods.Value(Entry.Key).BooleanValue = True Then
 		        Self.mMods.Value(Entry.Key) = False
 		        Self.mModified = True
+		        Self.mModChangeTimestamp = System.Microseconds
 		      End If
 		    Next
 		  End If
@@ -121,6 +122,7 @@ Implements ObservationKit.Observable
 		  For Each ModInfo As Beacon.ModDetails In AllMods
 		    Self.mMods.Value(ModInfo.ModID) = ModInfo.DefaultEnabled
 		  Next
+		  Self.mModChangeTimestamp = System.Microseconds
 		End Sub
 	#tag EndMethod
 
@@ -316,6 +318,7 @@ Implements ObservationKit.Observable
 		          
 		          Doc.mConsoleMode = True
 		          Doc.mMods = Selections
+		          Doc.mModChangeTimestamp = System.Microseconds
 		        End If
 		      End If
 		      
@@ -563,6 +566,7 @@ Implements ObservationKit.Observable
 		    Next
 		    
 		    Doc.mMods = Selections
+		    Doc.mModChangeTimestamp = System.Microseconds
 		  ElseIf Dict.HasKey("Mods") Then
 		    // In this mode, an empty list meant "all on" and populated list mean "only enable these."
 		    
@@ -574,6 +578,7 @@ Implements ObservationKit.Observable
 		    Next
 		    
 		    Doc.mMods = Selections
+		    Doc.mModChangeTimestamp = System.Microseconds
 		  ElseIf Dict.HasKey("ConsoleModsOnly") Then
 		    Var ConsoleModsOnly As Boolean = Dict.Value("ConsoleModsOnly")
 		    If ConsoleModsOnly Then
@@ -585,6 +590,7 @@ Implements ObservationKit.Observable
 		      
 		      Doc.mConsoleMode = True
 		      Doc.mMods = Selections
+		      Doc.mModChangeTimestamp = System.Microseconds
 		    End If
 		  End If
 		  
@@ -716,17 +722,26 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function ModEnabled(ModID As v4UUID) As Boolean
+		  If ModID = Nil Then
+		    Return False
+		  End If
+		  
 		  Return Self.mMods.Lookup(ModID.StringValue, False)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub ModEnabled(ModID As v4UUID, Assigns Value As Boolean)
+		  If ModID = Nil Then
+		    Return
+		  End If
+		  
 		  Var UUID As String = ModID
 		  
 		  If Self.mMods.HasKey(UUID) = False Or Self.mMods.Value(UUID).BooleanValue <> Value Then
 		    Self.mMods.Value(UUID) = Value
 		    Self.mModified = True
+		    Self.mModChangeTimestamp = System.Microseconds
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1172,7 +1187,10 @@ Implements ObservationKit.Observable
 			  If Self.mMapCompatibility <> Value Then
 			    Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Value)
 			    For Each Map As Beacon.Map In Maps
-			      Self.mMods.Value(Map.ProvidedByModID) = True
+			      If Self.mMods.Lookup(Map.ProvidedByModID, False).BooleanValue = False Then
+			        Self.mMods.Value(Map.ProvidedByModID) = True
+			        Self.mModChangeTimestamp = System.Microseconds
+			      End If
 			    Next
 			    
 			    Self.mMapCompatibility = Value
@@ -1220,6 +1238,10 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mModChangeTimestamp As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mModified As Boolean
 	#tag EndProperty
 
@@ -1230,6 +1252,15 @@ Implements ObservationKit.Observable
 	#tag Property, Flags = &h21
 		Private mObservers As Dictionary
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mModChangeTimestamp
+			End Get
+		#tag EndGetter
+		ModChangeTimestamp As Double
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mServerProfiles() As Beacon.ServerProfile
@@ -1386,6 +1417,14 @@ Implements ObservationKit.Observable
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AllowUCS"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ConsoleMode"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

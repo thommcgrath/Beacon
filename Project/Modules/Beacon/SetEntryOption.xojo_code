@@ -3,7 +3,7 @@ Protected Class SetEntryOption
 Implements Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Constructor(Engram As Beacon.Engram, Weight As Double)
-		  Self.mEngram = New Beacon.Engram(Engram)
+		  Self.SetEngram(Engram)
 		  Self.mWeight = Weight
 		  Self.mLastModifiedTime = System.Microseconds
 		End Sub
@@ -11,7 +11,7 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.SetEntryOption)
-		  Self.mEngram = New Beacon.Engram(Source.mEngram)
+		  Self.SetEngram(Source.mEngram)
 		  Self.mHash = Source.mHash
 		  Self.mLastHashTime = Source.mLastHashTime
 		  Self.mLastModifiedTime = Source.mLastModifiedTime
@@ -115,19 +115,14 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function IsValid(Document As Beacon.Document) As Boolean
-		  If Self.mEngram = Nil Or Self.mEngram.IsValid = False Or IsNull(Self.mEngram.ModID) Then
-		    Return False
-		  End If
-		  
-		  If Document.Mods.LastRowIndex > -1 And Document.Mods.IndexOf(Self.mEngram.ModID) = -1 Then
-		    Return False
-		  End If
-		  
-		  If Self.mEngram.IsTagged("Generic") Or Self.mEngram.IsTagged("Blueprint") Then
-		    Return False
-		  End If
-		  
 		  Return True
+		  
+		  If Document.ModChangeTimestamp > Self.mValidityCacheTime Then
+		    Self.mValidityCache = Self.mEngramIsValid And Document.ModEnabled(Self.mEngram.ModID)
+		    Self.mValidityCacheTime = System.Microseconds
+		  End If
+		  
+		  Return Self.mValidityCache
 		End Function
 	#tag EndMethod
 
@@ -160,6 +155,18 @@ Implements Beacon.DocumentItem
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub SetEngram(Engram As Beacon.Engram)
+		  If (Engram Is Nil) = False Then
+		    Self.mEngram = New Beacon.Engram(Engram)
+		    Self.mEngramIsValid = Self.mEngram.IsValid And Self.mEngram.ModID <> Nil And Self.mEngram.IsTagged("Generic") = False And Self.mEngram.IsTagged("Blueprint") = False
+		  Else
+		    Self.mEngram = Beacon.Engram.CreateFromClass("Beacon_Invalid_Engram_C")
+		    Self.mEngramIsValid = False
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Weight() As Double
 		  Return Self.mWeight
@@ -169,6 +176,10 @@ Implements Beacon.DocumentItem
 
 	#tag Property, Flags = &h21
 		Private mEngram As Beacon.Engram
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEngramIsValid As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -185,6 +196,14 @@ Implements Beacon.DocumentItem
 
 	#tag Property, Flags = &h21
 		Private mLastSaveTime As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mValidityCache As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mValidityCacheTime As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

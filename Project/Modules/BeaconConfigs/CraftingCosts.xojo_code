@@ -7,7 +7,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  For Each Entry As DictionaryEntry In Self.mCosts
 		    Var Cost As Beacon.CraftingCost = Entry.Value
-		    If Cost.Engram Is Nil Or Cost.Engram.ValidForMods(SourceDocument.Mods) = False Then
+		    If Cost.Engram Is Nil Or Cost.Engram.ValidForDocument(SourceDocument) = False Then
 		      Continue
 		    End If
 		    

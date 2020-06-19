@@ -587,7 +587,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function SafeForMods(Mods As Beacon.StringList) As Boolean
-		  If Mods.LastRowIndex = -1 Then
+		  // This method kind of sucks, but yes it is needed for preset generation.
+		  
+		  If Mods.Count = 0 Then
 		    Return True
 		  End If
 		  

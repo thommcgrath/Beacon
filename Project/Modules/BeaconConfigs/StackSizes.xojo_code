@@ -12,7 +12,7 @@ Inherits Beacon.ConfigGroup
 		      Engram = Beacon.Engram.CreateFromPath(Path)
 		    End If
 		    
-		    If IsNull(Engram) = False And Engram.ValidForMods(SourceDocument.Mods) Then
+		    If IsNull(Engram) = False And Engram.ValidForDocument(SourceDocument) Then
 		      Var StackSize As Integer = Entry.Value
 		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemMaxQuantity", "(ItemClassString=""" + Engram.ClassString + """,Quantity=(MaxItemQuantity=" + StackSize.ToString + ",bIgnoreMultiplier=true))"))
 		    End If

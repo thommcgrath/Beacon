@@ -1412,6 +1412,12 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ValidForDocument(Extends Blueprint As Beacon.Blueprint, Document As Beacon.Document) As Boolean
+		  Return (Document Is Nil) = False And Document.ModEnabled(Blueprint.ModID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ValidForMap(Extends Blueprint As Beacon.Blueprint, Map As Beacon.Map) As Boolean
 		  Return Map = Nil Or Blueprint.ValidForMask(Map.Mask)
 		End Function
@@ -1455,12 +1461,6 @@ Protected Module Beacon
 		    Blueprint.Availability = Availability
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ValidForMods(Extends Blueprint As Beacon.Blueprint, Mods As Beacon.StringList) As Boolean
-		  Return IsNull(Mods) Or Mods.Count = 0 Or IsNull(Blueprint.ModID) Or Mods.IndexOf(Blueprint.ModID) > -1
-		End Function
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h21

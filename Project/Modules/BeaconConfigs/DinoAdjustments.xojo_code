@@ -7,7 +7,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  Var Behaviors() As Beacon.CreatureBehavior = Self.All
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
-		    If Behavior.TargetCreature.ValidForMods(SourceDocument.Mods) = False Then
+		    If Behavior.TargetCreature.ValidForDocument(SourceDocument) = False Then
 		      Continue
 		    End If
 		    

@@ -810,7 +810,7 @@ End
 		  
 		  Var Lines() As String
 		  For Each Cost As Beacon.CraftingCost In SelectedCosts
-		    If Cost.Engram Is Nil Or Cost.Engram.ValidForMods(Self.Document.Mods) = False Then
+		    If Cost.Engram Is Nil Or Cost.Engram.ValidForDocument(Self.Document) = False Then
 		      Continue
 		    End If
 		    
