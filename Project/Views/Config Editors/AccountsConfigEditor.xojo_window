@@ -108,6 +108,7 @@ Begin ConfigEditor AccountsConfigEditor
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
       VisibleRowCount =   0

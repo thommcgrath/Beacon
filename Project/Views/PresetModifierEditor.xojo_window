@@ -453,6 +453,7 @@ Begin BeaconDialog PresetModifierEditor
       TextUnit        =   0
       Top             =   256
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True

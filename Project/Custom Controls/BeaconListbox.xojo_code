@@ -282,12 +282,53 @@ Inherits Listbox
 	#tag Event
 		Function KeyDown(Key As String) As Boolean
 		  If (Key = Encodings.UTF8.Chr(8) Or Key = Encodings.UTF8.Chr(127)) And Self.CanDelete() Then
-		    RaiseEvent PerformClear(True)
+		    Self.mHandleKeyEvent = True
 		    Return True
+		  ElseIf (Key = Encodings.UTF8.Chr(10) Or Key = Encodings.UTF8.Chr(13)) And Self.CanEdit() Then
+		    Self.mHandleKeyEvent = True
+		    Return True
+		  ElseIf RaiseEvent KeyDown(Key) Then
+		    Self.mHandleKeyEvent = False
 		  Else
-		    Return RaiseEvent KeyDown(Key)
+		    Self.mHandleKeyEvent = True
 		  End If
+		  
+		  Return True
 		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub KeyUp(Key As String)
+		  If Not Self.mHandleKeyEvent Then
+		    RaiseEvent KeyUp(Key)
+		    Return
+		  End If
+		  
+		  If (Key = Encodings.UTF8.Chr(8) Or Key = Encodings.UTF8.Chr(127)) And Self.CanDelete() Then
+		    Self.DoClear()
+		    Return
+		  ElseIf (Key = Encodings.UTF8.Chr(10) Or Key = Encodings.UTF8.Chr(13)) And Self.CanEdit() Then
+		    Self.DoEdit()
+		    Return
+		  End If
+		  
+		  Self.mTypeaheadBuffer = Self.mTypeaheadBuffer + Key
+		  If Self.mTypeaheadTimer.RunMode = Timer.RunModes.Off Then
+		    Self.mTypeaheadTimer.RunMode = Timer.RunModes.Single
+		  End If
+		  Self.mTypeaheadTimer.Reset
+		  Self.mTypeaheadTimer.Period = 1000
+		  
+		  If Not RaiseEvent Typeahead(Self.mTypeaheadBuffer) Then
+		    For Idx As Integer = 0 To Self.LastRowIndex
+		      If Self.CellValueAt(Idx, Self.TypeaheadColumn).BeginsWith(Self.mTypeaheadBuffer) Then
+		        Self.SelectedRowIndex = Idx
+		        Self.EnsureSelectionIsVisible()
+		        Exit
+		      End If
+		    Next
+		  End If
+		End Sub
 	#tag EndEvent
 
 	#tag Event
@@ -358,6 +399,17 @@ Inherits Listbox
 		  Var Board As New Clipboard
 		  Return RaiseEvent CanPaste(Board)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.mTypeaheadTimer = New Timer
+		  Self.mTypeaheadTimer.RunMode = Timer.RunModes.Off
+		  AddHandler mTypeaheadTimer.Action, WeakAddressOf mTypeaheadTimer_Action
+		  
+		  Super.Constructor
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -484,6 +536,14 @@ Inherits Listbox
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub mTypeaheadTimer_Action(Sender As Timer)
+		  #Pragma Unused Sender
+		  
+		  Self.mTypeaheadBuffer = ""
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub PostOpenInvalidate()
 		  Self.ScrollPosition = Self.ScrollPosition
 		  Self.Invalidate()
@@ -590,6 +650,10 @@ Inherits Listbox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event KeyUp(Key As String)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Open()
 	#tag EndHook
 
@@ -613,6 +677,10 @@ Inherits Listbox
 		Event RowIsInvalid(Row As Integer) As Boolean
 	#tag EndHook
 
+	#tag Hook, Flags = &h0
+		Event Typeahead(Buffer As String) As Boolean
+	#tag EndHook
+
 
 	#tag Property, Flags = &h21
 		Private mBlockSelectionChangeCount As Integer
@@ -627,11 +695,23 @@ Inherits Listbox
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mHandleKeyEvent As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mPostOpenInvalidateCallbackKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mScrollTask As AnimationKit.ScrollTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTypeaheadBuffer As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTypeaheadTimer As Timer
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -656,6 +736,10 @@ Inherits Listbox
 		#tag EndSetter
 		SelectionChangeBlocked As Boolean
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h0
+		TypeaheadColumn As Integer = 0
+	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -727,11 +811,107 @@ Inherits Listbox
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="RequiresSelection"
-			Visible=false
-			Group="Behavior"
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Height"
+			Visible=true
+			Group="Position"
+			InitialValue="100"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LockBottom"
+			Visible=true
+			Group="Position"
 			InitialValue=""
 			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LockLeft"
+			Visible=true
+			Group="Position"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LockRight"
+			Visible=true
+			Group="Position"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LockTop"
+			Visible=true
+			Group="Position"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabIndex"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabStop"
+			Visible=true
+			Group="Position"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Width"
+			Visible=true
+			Group="Position"
+			InitialValue="100"
+			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -831,209 +1011,6 @@ Inherits Listbox
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="FontName"
-			Visible=true
-			Group="Font"
-			InitialValue="System"
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="FontSize"
-			Visible=true
-			Group="Font"
-			InitialValue="0"
-			Type="Single"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="FontUnit"
-			Visible=true
-			Group="Font"
-			InitialValue="0"
-			Type="FontUnits"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Default"
-				"1 - Pixel"
-				"2 - Point"
-				"3 - Inch"
-				"4 - Millimeter"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowAutoHideScrollbars"
-			Visible=true
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowResizableColumns"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowRowDragging"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowRowReordering"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowExpandableRows"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="RowSelectionType"
-			Visible=true
-			Group="Behavior"
-			InitialValue="0"
-			Type="RowSelectionTypes"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Single"
-				"1 - Multiple"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Index"
-			Visible=true
-			Group="ID"
-			InitialValue="-2147483648"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Name"
-			Visible=true
-			Group="ID"
-			InitialValue=""
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Super"
-			Visible=true
-			Group="ID"
-			InitialValue=""
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Height"
-			Visible=true
-			Group="Position"
-			InitialValue="100"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group="Position"
-			InitialValue=""
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Left"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LockBottom"
-			Visible=true
-			Group="Position"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LockLeft"
-			Visible=true
-			Group="Position"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LockRight"
-			Visible=true
-			Group="Position"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LockTop"
-			Visible=true
-			Group="Position"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TabIndex"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TabPanelIndex"
-			Visible=false
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TabStop"
-			Visible=true
-			Group="Position"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Top"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Width"
-			Visible=true
-			Group="Position"
-			InitialValue="100"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Transparent"
 			Visible=true
 			Group="Appearance"
@@ -1098,20 +1075,35 @@ Inherits Listbox
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="_ScrollOffset"
-			Visible=false
-			Group="Appearance"
-			InitialValue="0"
-			Type="Integer"
+			Name="FontName"
+			Visible=true
+			Group="Font"
+			InitialValue="System"
+			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="_ScrollWidth"
-			Visible=false
-			Group="Appearance"
-			InitialValue="-1"
-			Type="Integer"
+			Name="FontSize"
+			Visible=true
+			Group="Font"
+			InitialValue="0"
+			Type="Single"
 			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FontUnit"
+			Visible=true
+			Group="Font"
+			InitialValue="0"
+			Type="FontUnits"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Default"
+				"1 - Pixel"
+				"2 - Point"
+				"3 - Inch"
+				"4 - Millimeter"
+			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Bold"
@@ -1154,6 +1146,58 @@ Inherits Listbox
 			EditorType="DataSource"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="AllowAutoHideScrollbars"
+			Visible=true
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowResizableColumns"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowRowDragging"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowRowReordering"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowExpandableRows"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RowSelectionType"
+			Visible=true
+			Group="Behavior"
+			InitialValue="0"
+			Type="RowSelectionTypes"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Single"
+				"1 - Multiple"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="SelectionChangeBlocked"
 			Visible=false
 			Group="Behavior"
@@ -1166,6 +1210,54 @@ Inherits Listbox
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TypeaheadColumn"
+			Visible=true
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RequiresSelection"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="InitialParent"
+			Visible=false
+			Group="Position"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabPanelIndex"
+			Visible=false
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="_ScrollOffset"
+			Visible=false
+			Group="Appearance"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="_ScrollWidth"
+			Visible=false
+			Group="Appearance"
+			InitialValue="-1"
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

@@ -213,6 +213,7 @@ Begin ConfigEditor StackSizesConfigEditor
       TextUnit        =   0
       Top             =   88
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True

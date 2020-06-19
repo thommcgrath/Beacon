@@ -135,6 +135,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       TextUnit        =   0
       Top             =   40
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True

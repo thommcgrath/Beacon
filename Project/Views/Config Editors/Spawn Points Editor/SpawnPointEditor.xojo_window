@@ -314,6 +314,7 @@ Begin BeaconContainer SpawnPointEditor
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
       VisibleRowCount =   0
@@ -368,6 +369,7 @@ Begin BeaconContainer SpawnPointEditor
       Tooltip         =   ""
       Top             =   412
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
       VisibleRowCount =   0

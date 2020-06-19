@@ -99,60 +99,6 @@ Begin BeaconDialog EntryEditor
          Visible         =   True
          Width           =   312
       End
-      Begin BeaconListbox EngramList
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
-         Bold            =   False
-         Border          =   True
-         ColumnCount     =   4
-         ColumnsResizable=   False
-         ColumnWidths    =   "22,*,100,70"
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   22
-         Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   True
-         HeadingIndex    =   1
-         Height          =   261
-         HelpTag         =   ""
-         Hierarchical    =   False
-         Index           =   -2147483648
-         InitialParent   =   "EngramsGroup"
-         InitialValue    =   " 	Name	Mod	Weight"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   False
-         Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
-         SelectionType   =   0
-         ShowDropIndicator=   False
-         TabIndex        =   1
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   169
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         VisibleRowCount =   0
-         Width           =   340
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
       Begin CheckBox SingleEntryCheck
          AutoDeactivate  =   True
          Bold            =   False
@@ -237,6 +183,61 @@ Begin BeaconDialog EntryEditor
          UseFocusRing    =   True
          Visible         =   True
          Width           =   340
+      End
+      Begin BeaconListbox EngramList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   True
+         ColumnCount     =   4
+         ColumnsResizable=   False
+         ColumnWidths    =   "22,*,100,70"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   22
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   True
+         HeadingIndex    =   1
+         Height          =   261
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "EngramsGroup"
+         InitialValue    =   " 	Name	Mod	Weight"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
+         SelectionType   =   0
+         ShowDropIndicator=   False
+         TabIndex        =   1
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   169
+         Transparent     =   False
+         TypeaheadColumn =   1
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   340
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
       End
    End
    Begin GroupBox SettingsGroup
@@ -325,6 +326,38 @@ Begin BeaconDialog EntryEditor
       Underline       =   False
       Visible         =   True
       Width           =   468
+      Begin UITweaks.ResizedPushButton SimulateButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   0
+         Cancel          =   False
+         Caption         =   "Refresh"
+         Default         =   False
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "SimulationGroup"
+         Italic          =   False
+         Left            =   780
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   442
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
       Begin BeaconListbox SimulatedResultsList
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
@@ -371,6 +404,7 @@ Begin BeaconDialog EntryEditor
          TextUnit        =   0
          Top             =   313
          Transparent     =   False
+         TypeaheadColumn =   0
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -378,38 +412,6 @@ Begin BeaconDialog EntryEditor
          Width           =   428
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
-      End
-      Begin UITweaks.ResizedPushButton SimulateButton
-         AutoDeactivate  =   True
-         Bold            =   False
-         ButtonStyle     =   0
-         Cancel          =   False
-         Caption         =   "Refresh"
-         Default         =   False
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "SimulationGroup"
-         Italic          =   False
-         Left            =   780
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   False
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   442
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
       End
    End
    Begin UITweaks.ResizedPushButton ActionButton
@@ -772,6 +774,36 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events SingleEntryCheck
+	#tag Event
+		Sub Action()
+		  Self.UpdateSimulation()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Picker
+	#tag Event
+		Sub TagsChanged()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Preferences.SelectedTag(Beacon.CategoryEngrams, "Looting") = Me.Spec
+		  Self.UpdateFilter
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldAdjustHeight(Delta As Integer)
+		  If Me = Nil Then
+		    Return
+		  End If
+		  
+		  Me.Height = Me.Height + Delta
+		  Self.EngramList.Height = Self.EngramList.Height - Delta
+		  Self.EngramList.Top = Self.EngramList.Top + Delta
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events EngramList
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
@@ -816,6 +848,7 @@ End
 		  Me.ColumnTypeAt(Self.ColumnIncluded) = Listbox.CellTypes.CheckBox
 		  Me.ColumnTypeAt(Self.ColumnWeight) = Listbox.CellTypes.TextField
 		  Me.ColumnAlignmentAt(Self.ColumnWeight) = Listbox.Alignments.Center
+		  Me.TypeaheadColumn = Self.ColumnLabel
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -855,36 +888,6 @@ End
 		  
 		  Self.UpdateSelectionUI()
 		  Self.UpdateSimulation()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events SingleEntryCheck
-	#tag Event
-		Sub Action()
-		  Self.UpdateSimulation()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Picker
-	#tag Event
-		Sub TagsChanged()
-		  If Self.mSettingUp Then
-		    Return
-		  End If
-		  
-		  Preferences.SelectedTag(Beacon.CategoryEngrams, "Looting") = Me.Spec
-		  Self.UpdateFilter
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldAdjustHeight(Delta As Integer)
-		  If Me = Nil Then
-		    Return
-		  End If
-		  
-		  Me.Height = Me.Height + Delta
-		  Self.EngramList.Height = Self.EngramList.Height - Delta
-		  Self.EngramList.Top = Self.EngramList.Top + Delta
 		End Sub
 	#tag EndEvent
 #tag EndEvents

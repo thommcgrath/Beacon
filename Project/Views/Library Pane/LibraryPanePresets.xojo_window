@@ -107,6 +107,7 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       TextUnit        =   0
       Top             =   41
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True

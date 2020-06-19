@@ -149,60 +149,6 @@ Begin BeaconDialog LootSourceWizard
          Visible         =   True
          Width           =   510
       End
-      Begin BeaconListbox SourceList
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
-         Bold            =   False
-         Border          =   True
-         ColumnCount     =   2
-         ColumnsResizable=   False
-         ColumnWidths    =   "30,*"
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   34
-         Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   True
-         HeadingIndex    =   0
-         Height          =   262
-         HelpTag         =   ""
-         Hierarchical    =   False
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         InitialValue    =   " 	Label	Kind	Package"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   False
-         Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
-         SelectionType   =   1
-         ShowDropIndicator=   False
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   54
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         VisibleRowCount =   0
-         Width           =   510
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
       Begin UITweaks.ResizedPushButton SelectionCustomButton
          AutoDeactivate  =   True
          Bold            =   False
@@ -940,60 +886,6 @@ Begin BeaconDialog LootSourceWizard
          Visible         =   True
          Width           =   394
       End
-      Begin BeaconListbox CustomizePresetsList
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
-         Bold            =   False
-         Border          =   True
-         ColumnCount     =   2
-         ColumnsResizable=   False
-         ColumnWidths    =   "22,*"
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   22
-         Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   False
-         HeadingIndex    =   1
-         Height          =   162
-         HelpTag         =   ""
-         Hierarchical    =   False
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         InitialValue    =   ""
-         Italic          =   False
-         Left            =   136
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   False
-         Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
-         SelectionType   =   0
-         ShowDropIndicator=   False
-         TabIndex        =   7
-         TabPanelIndex   =   3
-         TabStop         =   True
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   154
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         VisibleRowCount =   0
-         Width           =   394
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
       Begin Label CustomizePresetsLabel
          AutoDeactivate  =   True
          Bold            =   False
@@ -1159,6 +1051,116 @@ Begin BeaconDialog LootSourceWizard
          UseFocusRing    =   False
          Visible         =   True
          Width           =   400
+      End
+      Begin BeaconListbox SourceList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   True
+         ColumnCount     =   2
+         ColumnsResizable=   False
+         ColumnWidths    =   "30,*"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   34
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   True
+         HeadingIndex    =   0
+         Height          =   262
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         InitialValue    =   " 	Label	Kind	Package"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
+         SelectionType   =   1
+         ShowDropIndicator=   False
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   54
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   510
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
+      Begin BeaconListbox CustomizePresetsList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   True
+         ColumnCount     =   2
+         ColumnsResizable=   False
+         ColumnWidths    =   "22,*"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   22
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   False
+         HeadingIndex    =   1
+         Height          =   162
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   136
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
+         SelectionType   =   0
+         ShowDropIndicator=   False
+         TabIndex        =   7
+         TabPanelIndex   =   3
+         TabStop         =   True
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   154
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   394
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
       End
    End
 End
@@ -1464,57 +1466,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events SourceList
-	#tag Event
-		Sub Change()
-		  SelectionActionButton.Enabled = Me.SelectedRowIndex > -1
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
-		  #Pragma Unused BackgroundColor
-		  #Pragma Unused IsHighlighted
-		  #Pragma Unused TextColor
-		  
-		  If Column <> 0 Or Row >= Me.RowCount Then
-		    Return
-		  End If
-		  
-		  Var PrecisionX As Double = 1 / G.ScaleX
-		  Var PrecisionY As Double = 1 / G.ScaleY
-		  
-		  Var Source As Beacon.LootSource = Me.RowTagAt(Row)
-		  Var Icon As Picture = LocalData.SharedInstance.IconForLootSource(Source, BackgroundColor)
-		  Var SpaceWidth As Integer = Me.ColumnAt(Column).WidthActual
-		  Var SpaceHeight As Integer = Me.DefaultRowHeight
-		  
-		  G.DrawPicture(Icon, NearestMultiple((SpaceWidth - Icon.Width) / 2, PrecisionX), NearestMultiple((SpaceHeight - Icon.Height) / 2, PrecisionY))
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
-		  If Column <> 0 Then
-		    Return False
-		  End If
-		  
-		  Var Source1 As Beacon.LootSource = Me.RowTagAt(Row1)
-		  Var Source2 As Beacon.LootSource = Me.RowTagAt(Row2)
-		  
-		  If Source1.SortValue > Source2.SortValue Then
-		    Result = 1
-		  ElseIf Source1.SortValue < Source2.SortValue Then
-		    Result = -1
-		  End If
-		  
-		  Return True
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub DoubleClick()
-		  Self.ChooseSelectedLootSources()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events SelectionCustomButton
 	#tag Event
 		Sub Action()
@@ -1698,13 +1649,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events CustomizePresetsList
-	#tag Event
-		Sub Open()
-		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events SelectionExperimentalCheck
 	#tag Event
 		Sub Action()
@@ -1714,6 +1658,70 @@ End
 		  
 		  Preferences.ShowExperimentalLootSources = Me.Value
 		  Self.BuildSourceList()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SourceList
+	#tag Event
+		Sub Change()
+		  SelectionActionButton.Enabled = Me.SelectedRowIndex > -1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
+		  #Pragma Unused BackgroundColor
+		  #Pragma Unused IsHighlighted
+		  #Pragma Unused TextColor
+		  
+		  If Column <> 0 Or Row >= Me.RowCount Then
+		    Return
+		  End If
+		  
+		  Var PrecisionX As Double = 1 / G.ScaleX
+		  Var PrecisionY As Double = 1 / G.ScaleY
+		  
+		  Var Source As Beacon.LootSource = Me.RowTagAt(Row)
+		  Var Icon As Picture = LocalData.SharedInstance.IconForLootSource(Source, BackgroundColor)
+		  Var SpaceWidth As Integer = Me.ColumnAt(Column).WidthActual
+		  Var SpaceHeight As Integer = Me.DefaultRowHeight
+		  
+		  G.DrawPicture(Icon, NearestMultiple((SpaceWidth - Icon.Width) / 2, PrecisionX), NearestMultiple((SpaceHeight - Icon.Height) / 2, PrecisionY))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  If Column <> 0 Then
+		    Return False
+		  End If
+		  
+		  Var Source1 As Beacon.LootSource = Me.RowTagAt(Row1)
+		  Var Source2 As Beacon.LootSource = Me.RowTagAt(Row2)
+		  
+		  If Source1.SortValue > Source2.SortValue Then
+		    Result = 1
+		  ElseIf Source1.SortValue < Source2.SortValue Then
+		    Result = -1
+		  End If
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub DoubleClick()
+		  Self.ChooseSelectedLootSources()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.TypeaheadColumn = 1
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CustomizePresetsList
+	#tag Event
+		Sub Open()
+		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
+		  Me.TypeaheadColumn = 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents

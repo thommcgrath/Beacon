@@ -680,6 +680,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       Tooltip         =   ""
       Top             =   200
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
       VisibleRowCount =   0

@@ -166,6 +166,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       TextUnit        =   0
       Top             =   61
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True

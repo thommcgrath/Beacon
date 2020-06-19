@@ -108,6 +108,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
       VisibleRowCount =   0
@@ -727,6 +728,20 @@ End
 		  ElseIf Point1.Mode > Point2.Mode Then
 		    Result = 1
 		  End If
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function Typeahead(Buffer As String) As Boolean
+		  For Row As Integer = 0 To Me.LastRowIndex
+		    Var Point As Beacon.SpawnPoint = Me.RowTagAt(Row)
+		    If (Point Is Nil) = False And Point.Label.BeginsWith(Buffer) Then
+		      Me.SelectedRowIndex = Row
+		      Me.EnsureSelectionIsVisible
+		      Exit
+		    End If
+		  Next
 		  
 		  Return True
 		End Function

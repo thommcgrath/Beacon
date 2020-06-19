@@ -250,60 +250,6 @@ Begin BeaconContainer ModDetailView
          Visible         =   True
          Width           =   340
       End
-      Begin BeaconListbox EngramList
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
-         Bold            =   False
-         Border          =   False
-         ColumnCount     =   12
-         ColumnsResizable=   False
-         ColumnWidths    =   "*,*,100,75,75,75,75,75,75,75,75,75"
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   22
-         Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   True
-         HeadingIndex    =   1
-         Height          =   378
-         HelpTag         =   ""
-         Hierarchical    =   False
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         InitialValue    =   "Path	Label	Blueprintable	Island	Scorched	Aberration	Extinction	Genesis	Center	Ragnarok	Valguero	Crystal Isles"
-         Italic          =   False
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   False
-         Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
-         SelectionType   =   1
-         ShowDropIndicator=   False
-         TabIndex        =   1
-         TabPanelIndex   =   4
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   41
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   False
-         Visible         =   True
-         VisibleRowCount =   0
-         Width           =   864
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
       Begin BeaconToolbar Header
          AcceptFocus     =   False
          AcceptTabs      =   False
@@ -447,6 +393,61 @@ Begin BeaconContainer ModDetailView
          UseFocusRing    =   True
          Visible         =   True
          Width           =   864
+      End
+      Begin BeaconListbox EngramList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   False
+         ColumnCount     =   12
+         ColumnsResizable=   False
+         ColumnWidths    =   "*,*,100,75,75,75,75,75,75,75,75,75"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   22
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   True
+         HeadingIndex    =   1
+         Height          =   378
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         InitialValue    =   "Path	Label	Blueprintable	Island	Scorched	Aberration	Extinction	Genesis	Center	Ragnarok	Valguero	Crystal Isles"
+         Italic          =   False
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
+         SelectionType   =   1
+         ShowDropIndicator=   False
+         TabIndex        =   1
+         TabPanelIndex   =   4
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   41
+         Transparent     =   False
+         TypeaheadColumn =   1
+         Underline       =   False
+         UseFocusRing    =   False
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   864
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
       End
    End
    Begin BeaconAPI.Socket Socket
@@ -935,6 +936,47 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events Header
+	#tag Event
+		Sub Action(Item As BeaconToolbarItem)
+		  Select Case Item.Name
+		  Case "AddButton"
+		    Var Engram As New BeaconAPI.Engram
+		    Engram.ModID = Self.CurrentMod.ModID
+		    EngramList.AddRow("")
+		    Self.ShowEngramInRow(EngramList.LastAddedRowIndex, Engram)
+		    EngramList.EditCellAt(EngramList.LastAddedRowIndex, 0)
+		    Self.EngramSet.Add(Engram)
+		  Case "RemoveButton"
+		    For I As Integer = EngramList.RowCount -1 DownTo 0
+		      If EngramList.Selected(I) Then
+		        Var Engram As BeaconAPI.Engram = EngramList.RowTagAt(I)
+		        Self.EngramSet.Remove(Engram)
+		        EngramList.RemoveRowAt(I)
+		      End If
+		    Next
+		    Me.PublishButton.Enabled = Self.EngramSet.Modified
+		  Case "PublishButton"
+		    Self.Publish()
+		  Case "ImportFileButton"
+		    Self.ShowFileImport()
+		  Case "ImportURLButton"
+		    Self.ShowURLImport()
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.LeftItems.Append(New BeaconToolbarItem("AddButton", IconToolbarAdd, "Add new engram."))
+		  Me.LeftItems.Append(New BeaconToolbarItem("RemoveButton", IconRemove, False, "Delete selected engrams."))
+		  
+		  Me.LeftItems.Append(New BeaconToolbarItem("PublishButton", IconToolbarPublish, False, "Publish changes to make them live."))
+		  
+		  Me.RightItems.Append(New BeaconToolbarItem("ImportFileButton", IconToolbarFile, "Import engrams from file."))
+		  Me.RightItems.Append(New BeaconToolbarItem("ImportURLButton", IconToolbarLink, "Import engrams from url."))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events EngramList
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
@@ -986,47 +1028,7 @@ End
 		    Me.ColumnTypeAt(I) = Listbox.CellTypes.CheckBox
 		    Me.ColumnAlignmentAt(I) = Listbox.Alignments.Center
 		  Next
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Header
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddButton"
-		    Var Engram As New BeaconAPI.Engram
-		    Engram.ModID = Self.CurrentMod.ModID
-		    EngramList.AddRow("")
-		    Self.ShowEngramInRow(EngramList.LastAddedRowIndex, Engram)
-		    EngramList.EditCellAt(EngramList.LastAddedRowIndex, 0)
-		    Self.EngramSet.Add(Engram)
-		  Case "RemoveButton"
-		    For I As Integer = EngramList.RowCount -1 DownTo 0
-		      If EngramList.Selected(I) Then
-		        Var Engram As BeaconAPI.Engram = EngramList.RowTagAt(I)
-		        Self.EngramSet.Remove(Engram)
-		        EngramList.RemoveRowAt(I)
-		      End If
-		    Next
-		    Me.PublishButton.Enabled = Self.EngramSet.Modified
-		  Case "PublishButton"
-		    Self.Publish()
-		  Case "ImportFileButton"
-		    Self.ShowFileImport()
-		  Case "ImportURLButton"
-		    Self.ShowURLImport()
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("AddButton", IconToolbarAdd, "Add new engram."))
-		  Me.LeftItems.Append(New BeaconToolbarItem("RemoveButton", IconRemove, False, "Delete selected engrams."))
-		  
-		  Me.LeftItems.Append(New BeaconToolbarItem("PublishButton", IconToolbarPublish, False, "Publish changes to make them live."))
-		  
-		  Me.RightItems.Append(New BeaconToolbarItem("ImportFileButton", IconToolbarFile, "Import engrams from file."))
-		  Me.RightItems.Append(New BeaconToolbarItem("ImportURLButton", IconToolbarLink, "Import engrams from url."))
+		  Me.TypeaheadColumn = 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents

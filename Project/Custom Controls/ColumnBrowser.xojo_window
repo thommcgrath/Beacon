@@ -100,6 +100,7 @@ Begin BeaconContainer ColumnBrowser
       TextUnit        =   0
       Top             =   0
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True

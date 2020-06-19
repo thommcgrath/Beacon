@@ -53,60 +53,6 @@ Begin BeaconContainer SpawnPointSetEditor
       Underline       =   False
       Visible         =   True
       Width           =   428
-      Begin BeaconListbox EntriesList
-         AllowAutoDeactivate=   True
-         AllowAutoHideScrollbars=   True
-         AllowExpandableRows=   False
-         AllowFocusRing  =   True
-         AllowResizableColumns=   False
-         AllowRowDragging=   False
-         AllowRowReordering=   False
-         Bold            =   False
-         ColumnCount     =   1
-         ColumnWidths    =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   34
-         DropIndicatorVisible=   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         GridLinesHorizontalStyle=   "0"
-         GridLinesVerticalStyle=   "0"
-         HasBorder       =   True
-         HasHeader       =   False
-         HasHorizontalScrollbar=   False
-         HasVerticalScrollbar=   True
-         HeadingIndex    =   -1
-         Height          =   216
-         Index           =   -2147483648
-         InitialParent   =   "EntriesGroup"
-         InitialValue    =   ""
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   False
-         RowSelectionType=   "1"
-         Scope           =   2
-         SelectionChangeBlocked=   False
-         TabIndex        =   0
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   98
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         VisibleRowCount =   0
-         Width           =   388
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
       Begin UITweaks.ResizedPushButton EntryAddButton
          AllowAutoDeactivate=   True
          Bold            =   False
@@ -203,6 +149,61 @@ Begin BeaconContainer SpawnPointSetEditor
          Visible         =   True
          Width           =   80
       End
+      Begin BeaconListbox EntriesList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
+         Bold            =   False
+         ColumnCount     =   1
+         ColumnWidths    =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   34
+         DropIndicatorVisible=   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLinesHorizontalStyle=   "0"
+         GridLinesVerticalStyle=   "0"
+         HasBorder       =   True
+         HasHeader       =   False
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
+         HeadingIndex    =   -1
+         Height          =   216
+         Index           =   -2147483648
+         InitialParent   =   "EntriesGroup"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         RowSelectionType=   "1"
+         Scope           =   2
+         SelectionChangeBlocked=   False
+         TabIndex        =   0
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   98
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   388
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
    End
    Begin GroupBox ReplaceGroup
       AllowAutoDeactivate=   True
@@ -232,60 +233,6 @@ Begin BeaconContainer SpawnPointSetEditor
       Underline       =   False
       Visible         =   True
       Width           =   304
-      Begin BeaconListbox ReplaceList
-         AllowAutoDeactivate=   True
-         AllowAutoHideScrollbars=   True
-         AllowExpandableRows=   False
-         AllowFocusRing  =   True
-         AllowResizableColumns=   False
-         AllowRowDragging=   False
-         AllowRowReordering=   False
-         Bold            =   False
-         ColumnCount     =   1
-         ColumnWidths    =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   34
-         DropIndicatorVisible=   False
-         Enabled         =   True
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         GridLinesHorizontalStyle=   "0"
-         GridLinesVerticalStyle=   "0"
-         HasBorder       =   True
-         HasHeader       =   False
-         HasHorizontalScrollbar=   False
-         HasVerticalScrollbar=   True
-         HeadingIndex    =   -1
-         Height          =   216
-         Index           =   -2147483648
-         InitialParent   =   "ReplaceGroup"
-         InitialValue    =   ""
-         Italic          =   False
-         Left            =   480
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   False
-         RowSelectionType=   "1"
-         Scope           =   2
-         SelectionChangeBlocked=   False
-         TabIndex        =   0
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   98
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         VisibleRowCount =   0
-         Width           =   264
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
       Begin UITweaks.ResizedPushButton ReplaceAddButton
          AllowAutoDeactivate=   True
          Bold            =   False
@@ -381,6 +328,61 @@ Begin BeaconContainer SpawnPointSetEditor
          Underline       =   False
          Visible         =   True
          Width           =   80
+      End
+      Begin BeaconListbox ReplaceList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
+         Bold            =   False
+         ColumnCount     =   1
+         ColumnWidths    =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   34
+         DropIndicatorVisible=   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLinesHorizontalStyle=   "0"
+         GridLinesVerticalStyle=   "0"
+         HasBorder       =   True
+         HasHeader       =   False
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
+         HeadingIndex    =   -1
+         Height          =   216
+         Index           =   -2147483648
+         InitialParent   =   "ReplaceGroup"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   480
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         RowSelectionType=   "1"
+         Scope           =   2
+         SelectionChangeBlocked=   False
+         TabIndex        =   0
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   98
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   264
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
       End
    End
    Begin UITweaks.ResizedTextField NameField
@@ -1446,6 +1448,39 @@ End
 
 #tag EndWindowCode
 
+#tag Events EntryAddButton
+	#tag Event
+		Sub Action()
+		  Var Set As Beacon.MutableSpawnPointSet = Self.SpawnSet
+		  Var Entry As Beacon.MutableSpawnPointSetEntry = SpawnPointCreatureDialog.Present(Self, Self.Document, Set)
+		  If Entry = Nil Then
+		    Return
+		  End If
+		  
+		  Set.Append(Entry)
+		  
+		  Var Entries(0) As Beacon.MutableSpawnPointSetEntry
+		  Entries(0) = Entry
+		  Self.UpdateEntriesList(Set, Entries)
+		  Self.EntriesList.EnsureSelectionIsVisible()
+		  RaiseEvent Changed
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EntryEditButton
+	#tag Event
+		Sub Action()
+		  Self.EntriesList.DoEdit
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EntryDeleteButton
+	#tag Event
+		Sub Action()
+		  Self.EntriesList.DoClear
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events EntriesList
 	#tag Event
 		Function CanCopy() As Boolean
@@ -1582,36 +1617,33 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events EntryAddButton
+#tag Events ReplaceAddButton
 	#tag Event
 		Sub Action()
-		  Var Set As Beacon.MutableSpawnPointSet = Self.SpawnSet
-		  Var Entry As Beacon.MutableSpawnPointSetEntry = SpawnPointCreatureDialog.Present(Self, Self.Document, Set)
-		  If Entry = Nil Then
+		  Var Creature As Beacon.Creature = SpawnPointReplacementsDialog.Present(Self, Self.Document.Mods, Self.SpawnSet)
+		  If Creature = Nil Then
 		    Return
 		  End If
 		  
-		  Set.Append(Entry)
-		  
-		  Var Entries(0) As Beacon.MutableSpawnPointSetEntry
-		  Entries(0) = Entry
-		  Self.UpdateEntriesList(Set, Entries)
-		  Self.EntriesList.EnsureSelectionIsVisible()
+		  Var Creatures(0) As Beacon.Creature
+		  Creatures(0) = Creature
+		  Self.UpdateReplacementsList(Self.SpawnSet, Creatures)
+		  Self.ReplaceList.EnsureSelectionIsVisible
 		  RaiseEvent Changed
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events EntryEditButton
+#tag Events ReplaceEditButton
 	#tag Event
 		Sub Action()
-		  Self.EntriesList.DoEdit
+		  Self.ReplaceList.DoEdit
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events EntryDeleteButton
+#tag Events ReplaceDeleteButton
 	#tag Event
 		Sub Action()
-		  Self.EntriesList.DoClear
+		  Self.ReplaceList.DoClear
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1779,36 +1811,6 @@ End
 		    Self.UpdateReplacementsList(Self.SpawnSet, Creatures)
 		    RaiseEvent Changed
 		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ReplaceAddButton
-	#tag Event
-		Sub Action()
-		  Var Creature As Beacon.Creature = SpawnPointReplacementsDialog.Present(Self, Self.Document.Mods, Self.SpawnSet)
-		  If Creature = Nil Then
-		    Return
-		  End If
-		  
-		  Var Creatures(0) As Beacon.Creature
-		  Creatures(0) = Creature
-		  Self.UpdateReplacementsList(Self.SpawnSet, Creatures)
-		  Self.ReplaceList.EnsureSelectionIsVisible
-		  RaiseEvent Changed
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ReplaceEditButton
-	#tag Event
-		Sub Action()
-		  Self.ReplaceList.DoEdit
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ReplaceDeleteButton
-	#tag Event
-		Sub Action()
-		  Self.ReplaceList.DoClear
 		End Sub
 	#tag EndEvent
 #tag EndEvents

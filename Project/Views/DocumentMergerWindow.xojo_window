@@ -108,6 +108,7 @@ Begin BeaconDialog DocumentMergerWindow
       TextUnit        =   0
       Top             =   52
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True

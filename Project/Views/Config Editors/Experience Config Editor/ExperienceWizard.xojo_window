@@ -467,6 +467,7 @@ Begin BeaconDialog ExperienceWizard
       TextUnit        =   0
       Top             =   276
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True

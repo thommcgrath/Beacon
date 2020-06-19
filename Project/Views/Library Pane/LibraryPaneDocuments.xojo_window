@@ -71,6 +71,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       TextUnit        =   0
       Top             =   102
       Transparent     =   False
+      TypeaheadColumn =   1
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -916,6 +917,11 @@ End
 		    Return True
 		  End Select
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.TypeaheadColumn = Self.ColumnName
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Header

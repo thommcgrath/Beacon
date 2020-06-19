@@ -165,6 +165,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       TextUnit        =   0
       Top             =   41
       Transparent     =   True
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True

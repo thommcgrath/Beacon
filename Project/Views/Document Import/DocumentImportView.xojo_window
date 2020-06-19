@@ -391,60 +391,6 @@ Begin ContainerControl DocumentImportView
          Visible         =   True
          Width           =   80
       End
-      Begin BeaconListbox StatusList
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
-         Bold            =   False
-         Border          =   True
-         ColumnCount     =   1
-         ColumnsResizable=   False
-         ColumnWidths    =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   40
-         Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   False
-         HeadingIndex    =   -1
-         Height          =   336
-         HelpTag         =   ""
-         Hierarchical    =   False
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         InitialValue    =   ""
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   False
-         Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
-         SelectionType   =   0
-         ShowDropIndicator=   False
-         TabIndex        =   1
-         TabPanelIndex   =   5
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   60
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         VisibleRowCount =   0
-         Width           =   560
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
       Begin UITweaks.ResizedPushButton StatusActionButton
          AutoDeactivate  =   True
          Bold            =   False
@@ -606,60 +552,6 @@ Begin ContainerControl DocumentImportView
          Visible         =   True
          Width           =   80
       End
-      Begin BeaconListbox OtherDocsList
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
-         Bold            =   False
-         Border          =   True
-         ColumnCount     =   2
-         ColumnsResizable=   False
-         ColumnWidths    =   "26,*"
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   26
-         Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   False
-         HeadingIndex    =   1
-         Height          =   336
-         HelpTag         =   ""
-         Hierarchical    =   False
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         InitialValue    =   ""
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   False
-         Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
-         SelectionType   =   0
-         ShowDropIndicator=   False
-         TabIndex        =   1
-         TabPanelIndex   =   6
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   60
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         VisibleRowCount =   0
-         Width           =   560
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
       Begin ConnectorDiscoveryView ConnectorDiscoveryView1
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -718,6 +610,116 @@ Begin ContainerControl DocumentImportView
          Value           =   False
          Visible         =   True
          Width           =   560
+      End
+      Begin BeaconListbox StatusList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   True
+         ColumnCount     =   1
+         ColumnsResizable=   False
+         ColumnWidths    =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   40
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   False
+         HeadingIndex    =   -1
+         Height          =   336
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
+         SelectionType   =   0
+         ShowDropIndicator=   False
+         TabIndex        =   1
+         TabPanelIndex   =   5
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   60
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   560
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
+      Begin BeaconListbox OtherDocsList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   True
+         ColumnCount     =   2
+         ColumnsResizable=   False
+         ColumnWidths    =   "26,*"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   26
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   False
+         HeadingIndex    =   1
+         Height          =   336
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
+         SelectionType   =   0
+         ShowDropIndicator=   False
+         TabIndex        =   1
+         TabPanelIndex   =   6
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   60
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   560
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
       End
    End
    Begin Timer DiscoveryWatcher
@@ -1105,27 +1107,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events OtherDocsList
-	#tag Event
-		Sub CellAction(row As Integer, column As Integer)
-		  #Pragma Unused Row
-		  
-		  If Column <> 0 Then
-		    Return
-		  End If
-		  
-		  Var Enabled As Boolean
-		  For I As Integer = 0 To Me.RowCount - 1
-		    If Me.CellCheckBoxValueAt(I, Column) Then
-		      Enabled = True
-		      Exit For I
-		    End If
-		  Next
-		  
-		  OtherDocsActionButton.Enabled = Enabled
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ConnectorDiscoveryView1
 	#tag Event
 		Sub ShouldCancel()
@@ -1148,6 +1129,27 @@ End
 		  End If
 		  Self.mAccounts.Import(Accounts)
 		  Self.ImportFrom(Data)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events OtherDocsList
+	#tag Event
+		Sub CellAction(row As Integer, column As Integer)
+		  #Pragma Unused Row
+		  
+		  If Column <> 0 Then
+		    Return
+		  End If
+		  
+		  Var Enabled As Boolean
+		  For I As Integer = 0 To Me.RowCount - 1
+		    If Me.CellCheckBoxValueAt(I, Column) Then
+		      Enabled = True
+		      Exit For I
+		    End If
+		  Next
+		  
+		  OtherDocsActionButton.Enabled = Enabled
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -165,60 +165,6 @@ Begin BeaconSubview PresetEditorView
          Visible         =   True
          Width           =   660
       End
-      Begin BeaconListbox ContentsList
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
-         Bold            =   False
-         Border          =   True
-         ColumnCount     =   5
-         ColumnsResizable=   False
-         ColumnWidths    =   "30,*,100,120,100"
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   22
-         Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   True
-         HeadingIndex    =   "#ColumnDescription"
-         Height          =   379
-         HelpTag         =   ""
-         Hierarchical    =   False
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         InitialValue    =   " 	Engram	Quantity	Quality	Blueprint %"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   False
-         Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
-         SelectionType   =   1
-         ShowDropIndicator=   False
-         TabIndex        =   1
-         TabPanelIndex   =   2
-         TabStop         =   True
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   125
-         Transparent     =   True
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         VisibleRowCount =   0
-         Width           =   700
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
       Begin Label LockExplanationLabel
          AutoDeactivate  =   True
          Bold            =   False
@@ -616,60 +562,6 @@ Begin BeaconSubview PresetEditorView
          Visible         =   True
          Width           =   588
       End
-      Begin BeaconListbox ModifiersList
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
-         Bold            =   False
-         Border          =   True
-         ColumnCount     =   5
-         ColumnsResizable=   False
-         ColumnWidths    =   "40%,15%,15%,15%,15%"
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   -1
-         Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   True
-         HeadingIndex    =   -1
-         Height          =   415
-         HelpTag         =   ""
-         Hierarchical    =   False
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         InitialValue    =   "Group	Min Quality Change	Max Quality Change	Quantity Multiplier	Blueprint % Multiplier"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   False
-         Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
-         SelectionType   =   1
-         ShowDropIndicator=   False
-         TabIndex        =   3
-         TabPanelIndex   =   3
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   121
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         VisibleRowCount =   0
-         Width           =   700
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
       Begin UITweaks.ResizedPushButton AddModifierButton
          AutoDeactivate  =   True
          Bold            =   False
@@ -765,6 +657,116 @@ Begin BeaconSubview PresetEditorView
          Underline       =   False
          Visible         =   True
          Width           =   80
+      End
+      Begin BeaconListbox ContentsList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   True
+         ColumnCount     =   5
+         ColumnsResizable=   False
+         ColumnWidths    =   "30,*,100,120,100"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   22
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   True
+         HeadingIndex    =   "#ColumnDescription"
+         Height          =   379
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   " 	Engram	Quantity	Quality	Blueprint %"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
+         SelectionType   =   1
+         ShowDropIndicator=   False
+         TabIndex        =   1
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   125
+         Transparent     =   True
+         TypeaheadColumn =   1
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   700
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
+      Begin BeaconListbox ModifiersList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   True
+         ColumnCount     =   5
+         ColumnsResizable=   False
+         ColumnWidths    =   "40%,15%,15%,15%,15%"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   -1
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   True
+         HeadingIndex    =   -1
+         Height          =   415
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   "Group	Min Quality Change	Max Quality Change	Quantity Multiplier	Blueprint % Multiplier"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
+         SelectionType   =   1
+         ShowDropIndicator=   False
+         TabIndex        =   3
+         TabPanelIndex   =   3
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   121
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   700
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
       End
    End
 End
@@ -1293,6 +1295,129 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events MaxItemsStepper
+	#tag Event
+		Sub Down()
+		  Self.MaxItemsField.Value = Str(CDbl(Self.MaxItemsField.Value) - 1, "-0")
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Up()
+		  Self.MaxItemsField.Value = Str(CDbl(Self.MaxItemsField.Value) + 1, "-0")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MinItemsStepper
+	#tag Event
+		Sub Down()
+		  Self.MinItemsField.Value = Str(CDbl(Self.MinItemsField.Value) - 1, "-0")
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Up()
+		  Self.MinItemsField.Value = Str(CDbl(Self.MinItemsField.Value) + 1, "-0")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MaxItemsField
+	#tag Event
+		Sub TextChange()
+		  If Self.mUpdating Then
+		    Return
+		  End If
+		  
+		  Var Value As Integer = Max(CDbl(Me.Value), 1)
+		  If Self.mPreset.MaxItems <> Value Then
+		    Self.mPreset.MaxItems = Value
+		    Self.Changed = True
+		  End If
+		  
+		  If Self.Window.Focus <> Me Then
+		    Me.Value = Str(Self.mPreset.MaxItems, "-0")
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub LostFocus()
+		  Me.Value = Str(Self.mPreset.MaxItems, "-0")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MinItemsField
+	#tag Event
+		Sub TextChange()
+		  If Self.mUpdating Then
+		    Return
+		  End If
+		  
+		  Var Value As Integer = Max(CDbl(Me.Value), 1)
+		  If Self.mPreset.MinItems <> Value Then
+		    Self.mPreset.MinItems = Value
+		    Self.Changed = True
+		  End If
+		  
+		  If Self.Window.Focus <> Me Then
+		    Me.Value = Str(Self.mPreset.MinItems, "-0")
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub LostFocus()
+		  Me.Value = Str(Self.mPreset.MinItems, "-0")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events GroupingField
+	#tag Event
+		Sub TextChange()
+		  If Self.mUpdating Then
+		    Return
+		  End If
+		  
+		  Var Value As String = Me.Value.Trim
+		  If Value <> "" And StrComp(Self.mPreset.Grouping, Value, 0) <> 0 Then
+		    Self.mPreset.Grouping = Value
+		    Self.Changed = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events NameField
+	#tag Event
+		Sub TextChange()
+		  If Self.mUpdating Then
+		    Return
+		  End If
+		  
+		  Var Value As String = Me.Value.Trim
+		  If Value <> "" And StrComp(Self.mPreset.Label, Value, 0) <> 0 Then
+		    Self.mPreset.Label = Value
+		    Self.Changed = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AddModifierButton
+	#tag Event
+		Sub Action()
+		  Self.ShowModifierEditor(False)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EditModifierButton
+	#tag Event
+		Sub Action()
+		  Self.ShowModifierEditor(True)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DeleteModifierButton
+	#tag Event
+		Sub Action()
+		  Self.ModifiersList.DoClear()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ContentsList
 	#tag Event
 		Sub Open()
@@ -1300,6 +1425,7 @@ End
 		  Me.ColumnTypeAt(Self.ColumnQuantity) = Listbox.CellTypes.CheckBox
 		  Me.ColumnTypeAt(Self.ColumnQuality) = Listbox.CellTypes.CheckBox
 		  Me.ColumnTypeAt(Self.ColumnBlueprint) = Listbox.CellTypes.CheckBox
+		  Me.TypeaheadColumn = Self.ColumnDescription
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1453,108 +1579,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events MaxItemsStepper
-	#tag Event
-		Sub Down()
-		  Self.MaxItemsField.Value = Str(CDbl(Self.MaxItemsField.Value) - 1, "-0")
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Up()
-		  Self.MaxItemsField.Value = Str(CDbl(Self.MaxItemsField.Value) + 1, "-0")
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MinItemsStepper
-	#tag Event
-		Sub Down()
-		  Self.MinItemsField.Value = Str(CDbl(Self.MinItemsField.Value) - 1, "-0")
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Up()
-		  Self.MinItemsField.Value = Str(CDbl(Self.MinItemsField.Value) + 1, "-0")
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MaxItemsField
-	#tag Event
-		Sub TextChange()
-		  If Self.mUpdating Then
-		    Return
-		  End If
-		  
-		  Var Value As Integer = Max(CDbl(Me.Value), 1)
-		  If Self.mPreset.MaxItems <> Value Then
-		    Self.mPreset.MaxItems = Value
-		    Self.Changed = True
-		  End If
-		  
-		  If Self.Window.Focus <> Me Then
-		    Me.Value = Str(Self.mPreset.MaxItems, "-0")
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub LostFocus()
-		  Me.Value = Str(Self.mPreset.MaxItems, "-0")
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MinItemsField
-	#tag Event
-		Sub TextChange()
-		  If Self.mUpdating Then
-		    Return
-		  End If
-		  
-		  Var Value As Integer = Max(CDbl(Me.Value), 1)
-		  If Self.mPreset.MinItems <> Value Then
-		    Self.mPreset.MinItems = Value
-		    Self.Changed = True
-		  End If
-		  
-		  If Self.Window.Focus <> Me Then
-		    Me.Value = Str(Self.mPreset.MinItems, "-0")
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub LostFocus()
-		  Me.Value = Str(Self.mPreset.MinItems, "-0")
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events GroupingField
-	#tag Event
-		Sub TextChange()
-		  If Self.mUpdating Then
-		    Return
-		  End If
-		  
-		  Var Value As String = Me.Value.Trim
-		  If Value <> "" And StrComp(Self.mPreset.Grouping, Value, 0) <> 0 Then
-		    Self.mPreset.Grouping = Value
-		    Self.Changed = True
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events NameField
-	#tag Event
-		Sub TextChange()
-		  If Self.mUpdating Then
-		    Return
-		  End If
-		  
-		  Var Value As String = Me.Value.Trim
-		  If Value <> "" And StrComp(Self.mPreset.Label, Value, 0) <> 0 Then
-		    Self.mPreset.Label = Value
-		    Self.Changed = True
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ModifiersList
 	#tag Event
 		Sub Change()
@@ -1654,27 +1678,6 @@ End
 	#tag Event
 		Sub DoubleClick()
 		  Self.ShowModifierEditor(True)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events AddModifierButton
-	#tag Event
-		Sub Action()
-		  Self.ShowModifierEditor(False)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events EditModifierButton
-	#tag Event
-		Sub Action()
-		  Self.ShowModifierEditor(True)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DeleteModifierButton
-	#tag Event
-		Sub Action()
-		  Self.ModifiersList.DoClear()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -71,6 +71,7 @@ Begin BeaconAutopositionWindow DeployManager
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
+      TypeaheadColumn =   1
       Underline       =   False
       Visible         =   True
       VisibleRowCount =   0
@@ -1157,6 +1158,11 @@ End
 	#tag Event
 		Sub Change()
 		  Self.UpdateMainView()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.TypeaheadColumn = 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents

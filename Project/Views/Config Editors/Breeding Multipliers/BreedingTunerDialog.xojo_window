@@ -207,6 +207,7 @@ Begin BeaconDialog BreedingTunerDialog
       TextUnit        =   0
       Top             =   132
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True

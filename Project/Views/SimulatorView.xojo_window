@@ -71,6 +71,7 @@ Begin BeaconContainer SimulatorView
       TextUnit        =   0
       Top             =   42
       Transparent     =   True
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True

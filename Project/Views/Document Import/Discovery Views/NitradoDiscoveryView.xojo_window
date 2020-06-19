@@ -139,60 +139,6 @@ Begin DiscoveryView NitradoDiscoveryView
          Visible         =   True
          Width           =   560
       End
-      Begin BeaconListbox List
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
-         Bold            =   False
-         Border          =   True
-         ColumnCount     =   3
-         ColumnsResizable=   False
-         ColumnWidths    =   "22,*,200"
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   22
-         Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   True
-         HeadingIndex    =   -1
-         Height          =   296
-         HelpTag         =   ""
-         Hierarchical    =   False
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         InitialValue    =   " 	Name	Address"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   False
-         Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
-         SelectionType   =   0
-         ShowDropIndicator=   False
-         TabIndex        =   1
-         TabPanelIndex   =   2
-         TabStop         =   True
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   52
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         VisibleRowCount =   0
-         Width           =   560
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
       Begin Label ListMessageLabel
          AutoDeactivate  =   True
          Bold            =   True
@@ -358,6 +304,61 @@ Begin DiscoveryView NitradoDiscoveryView
          Value           =   "Connecting…"
          Visible         =   True
          Width           =   560
+      End
+      Begin BeaconListbox List
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   True
+         ColumnCount     =   3
+         ColumnsResizable=   False
+         ColumnWidths    =   "22,*,200"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   22
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   True
+         HeadingIndex    =   -1
+         Height          =   296
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         InitialValue    =   " 	Name	Address"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
+         SelectionType   =   0
+         ShowDropIndicator=   False
+         TabIndex        =   1
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   52
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   560
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
       End
    End
    Begin Beacon.OAuth2Client AuthClient
@@ -614,21 +615,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events List
-	#tag Event
-		Sub Open()
-		  Self.List.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub CellAction(row As Integer, column As Integer)
-		  #Pragma Unused Row
-		  #Pragma Unused Column
-		  
-		  Self.CheckActionEnabled()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ListCancelButton
 	#tag Event
 		Sub Action()
@@ -660,6 +646,22 @@ End
 		  End If
 		  
 		  Self.StartNewAccount()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events List
+	#tag Event
+		Sub Open()
+		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
+		  Me.TypeaheadColumn = 1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub CellAction(row As Integer, column As Integer)
+		  #Pragma Unused Row
+		  #Pragma Unused Column
+		  
+		  Self.CheckActionEnabled()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

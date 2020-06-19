@@ -151,6 +151,7 @@ Begin BeaconDialog EngramSelectorDialog
       TextUnit        =   0
       Top             =   165
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -269,6 +270,7 @@ Begin BeaconDialog EngramSelectorDialog
       TextUnit        =   0
       Top             =   165
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True

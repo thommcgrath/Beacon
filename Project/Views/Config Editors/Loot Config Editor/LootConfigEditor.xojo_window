@@ -135,6 +135,7 @@ Begin ConfigEditor LootConfigEditor
       TextUnit        =   0
       Top             =   41
       Transparent     =   True
+      TypeaheadColumn =   1
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -1082,6 +1083,11 @@ End
 		    
 		    Return
 		  Next
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.TypeaheadColumn = 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents

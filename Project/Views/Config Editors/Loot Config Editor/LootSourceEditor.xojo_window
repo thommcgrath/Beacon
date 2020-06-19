@@ -71,6 +71,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       TextUnit        =   0
       Top             =   140
       Transparent     =   True
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True

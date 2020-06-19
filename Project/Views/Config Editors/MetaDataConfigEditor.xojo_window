@@ -232,6 +232,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextUnit        =   0
       Top             =   248
       Transparent     =   False
+      TypeaheadColumn =   2
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -507,6 +508,7 @@ End
 		Sub Open()
 		  Me.ColumnTypeAt(Self.ModColumnEnabled) = Listbox.CellTypes.CheckBox
 		  Me.ColumnAlignmentAt(Self.ModColumnConsoleSafe) = Listbox.Alignments.Center
+		  Me.TypeaheadColumn = Self.ModColumnName
 		End Sub
 	#tag EndEvent
 	#tag Event

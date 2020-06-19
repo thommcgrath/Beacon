@@ -213,6 +213,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextUnit        =   0
       Top             =   190
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
