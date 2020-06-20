@@ -234,6 +234,14 @@ Begin BeaconDialog EngramControlWizard
       Visible         =   False
       Width           =   80
    End
+   Begin Thread WorkThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   3
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -245,10 +253,44 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h21
+		Private Sub Cancel()
+		  If App.CurrentThread = Nil Then
+		    Self.mCancelled = True
+		    Self.Hide
+		  Else
+		    Var Dict As New Dictionary
+		    Dict.Value("Action") = "Cancel"
+		    App.CurrentThread.AddUserInterfaceUpdate(Dict)
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor(Document As Beacon.Document)
 		  Self.mDocument = Document
 		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Increment()
+		  Self.mEngramsProcessed = Self.mEngramsProcessed + 1
+		  
+		  If Self.mProgressShown = False And System.Microseconds - Self.mStartTime >= 500000 Then
+		    Self.mProgressShown = True
+		    
+		    If App.CurrentThread = Nil Then
+		      Self.mProgress.ShowWithin(Self)
+		    Else
+		      Var Dict As New Dictionary
+		      Dict.Value("Action") = "ShowProgress"
+		      App.CurrentThread.AddUserInterfaceUpdate(Dict)
+		    End If
+		  End If
+		  
+		  Self.mProgress.Progress = Self.mEngramsProcessed / Self.mEngramCount
+		  Self.mProgress.Detail = "Updated " + Format(Self.mEngramsProcessed, "0,") + " of " + Format(Self.mEngramCount, "0,") + " engrams"
 		End Sub
 	#tag EndMethod
 
@@ -274,7 +316,35 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDesign As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDocument As Beacon.Document
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEngramCount As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEngramsProcessed As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLevel As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProgress As ProgressWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProgressShown As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mStartTime As Double
 	#tag EndProperty
 
 
@@ -315,130 +385,15 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Var Config As BeaconConfigs.EngramControl
-		  Var AddWhenFinished As Boolean
-		  If Self.mDocument.HasConfigGroup(BeaconConfigs.EngramControl.ConfigName) Then
-		    Config = BeaconConfigs.EngramControl(Self.mDocument.ConfigGroup(BeaconConfigs.EngramControl.ConfigName, False))
-		  Else
-		    Config = New BeaconConfigs.EngramControl
-		    AddWhenFinished = True
-		  End If
+		  Self.mDesign = Self.TemplateMenu.SelectedRowIndex
+		  Self.mLevel = Round(Self.TekLevelField.DoubleValue)
+		  Self.mStartTime = System.Microseconds
+		  Me.Enabled = False
+		  Self.CancelButton.Enabled = False
+		  Self.mProgress = New ProgressWindow("Updating engrams", "Getting started…")
+		  Self.mProgress.Visible = False
 		  
-		  Var Engrams() As Beacon.Engram = Beacon.Merge(Config.SpecifiedEngrams, LocalData.SharedInstance.SearchForEngramEntries("", Self.mDocument.Mods, ""))
-		  
-		  // Do the work
-		  Select Case Self.TemplateMenu.SelectedRowIndex
-		  Case Self.IndexUnlockAll
-		    For Each Engram As Beacon.Engram In Engrams
-		      Config.AutoUnlockEngram(Engram) = True
-		      Config.RequiredPlayerLevel(Engram) = 0
-		      Config.Hidden(Engram) = False
-		    Next
-		    Config.AutoUnlockAllEngrams = False
-		  Case Self.IndexUnlockAllNoTek
-		    For Each Engram As Beacon.Engram In Engrams
-		      If Engram.IsTagged("tek") Then
-		        Continue
-		      End If
-		      Config.AutoUnlockEngram(Engram) = True
-		      Config.RequiredPlayerLevel(Engram) = 0
-		      Config.Hidden(Engram) = False
-		    Next
-		    Config.AutoUnlockAllEngrams = False
-		  Case Self.IndexUnlockNaturally
-		    For Each Engram As Beacon.Engram In Engrams
-		      Config.AutoUnlockEngram(Engram) = True
-		      Config.Hidden(Engram) = False
-		    Next
-		    Config.AutoUnlockAllEngrams = False
-		  Case Self.IndexUnlockNaturallyNoTek
-		    For Each Engram As Beacon.Engram In Engrams
-		      If Engram.IsTagged("tek") Then
-		        Continue
-		      End If
-		      Config.AutoUnlockEngram(Engram) = True
-		      Config.Hidden(Engram) = False
-		    Next
-		    Config.AutoUnlockAllEngrams = False
-		  Case Self.IndexUnlockUnobtainable
-		    Var Mask As UInt64 = Self.mDocument.MapCompatibility
-		    For Each Engram As Beacon.Engram In Engrams
-		      If Engram.ValidForMask(Mask) Then
-		        Continue
-		      End If
-		      
-		      Config.AutoUnlockEngram(Engram) = True
-		      Config.Hidden(Engram) = False
-		    Next
-		    Config.AutoUnlockAllEngrams = False
-		  Case Self.IndexGrantExactPoints
-		    Var PlayerLevelCap As Integer = LocalData.SharedInstance.OfficialPlayerLevelData.MaxLevel
-		    If Self.mDocument.HasConfigGroup(BeaconConfigs.ExperienceCurves.ConfigName) Then
-		      Var ExperienceConfig As BeaconConfigs.ExperienceCurves = BeaconConfigs.ExperienceCurves(Self.mDocument.ConfigGroup(BeaconConfigs.ExperienceCurves.ConfigName, False))
-		      If ExperienceConfig <> Nil Then
-		        PlayerLevelCap = Max(PlayerLevelCap, ExperienceConfig.PlayerLevelCap)
-		      End If
-		    End If
-		    Config.LevelsDefined = PlayerLevelCap
-		    
-		    For Level As Integer = 1 To PlayerLevelCap
-		      Config.PointsForLevel(Level) = 0
-		    Next
-		    
-		    For Each Engram As Beacon.Engram In Engrams
-		      Var Level As NullableDouble = Config.RequiredPlayerLevel(Engram)
-		      If IsNull(Level) Then
-		        Level = Engram.RequiredPlayerLevel
-		        If IsNull(Level) Then
-		          Continue
-		        End If
-		      End If
-		      
-		      Var Points As NullableDouble
-		      If IsNull(Config.AutoUnlockEngram(Engram)) Or Config.AutoUnlockEngram(Engram).BooleanValue = False Then
-		        Points = Config.RequiredPoints(Engram)
-		        If IsNull(Points) Then
-		          Points = Engram.RequiredUnlockPoints
-		          If IsNull(Points) Then
-		            Continue
-		          End If
-		        End If
-		      End If
-		      
-		      Var ActualLevel As Integer = Level.IntegerValue
-		      Var ActualPoints As Integer = If(IsNull(Points), 0, Points.IntegerValue)
-		      Var CurrentPoints As NullableDouble = Config.PointsForLevel(ActualLevel)
-		      Config.PointsForLevel(ActualLevel) = If(IsNull(CurrentPoints), 0, CurrentPoints.IntegerValue) + ActualPoints
-		    Next
-		  Case Self.IndexUnlockTek
-		    Var Level As Integer = Round(Self.TekLevelField.DoubleValue)
-		    For Each Engram As Beacon.Engram In Engrams
-		      If Not Engram.IsTagged("tek") Then
-		        Continue
-		      End If
-		      Config.AutoUnlockEngram(Engram) = True
-		      Config.RequiredPlayerLevel(Engram) = Level
-		      Config.Hidden(Engram) = False
-		    Next
-		    Config.AutoUnlockAllEngrams = False
-		  Case Self.IndexMakeEverythingAvailableAtLevel
-		    Var Level As Integer = Round(Self.TekLevelField.DoubleValue)
-		    For Each Engram As Beacon.Engram In Engrams
-		      If IsNull(Config.Hidden(Engram)) Then
-		        Config.Hidden(Engram) = False
-		      End If
-		      If IsNull(Engram.RequiredUnlockPoints) = False Then
-		        Config.RequiredPlayerLevel(Engram) = Level
-		      End If
-		    Next
-		  End Select
-		  
-		  If AddWhenFinished Then
-		    Self.mDocument.AddConfigGroup(Config)
-		  End If
-		  
-		  Self.mCancelled = False
-		  Self.Hide
+		  Self.WorkThread.Start
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -463,6 +418,220 @@ End
 		  #Pragma Unused NewValue
 		  
 		  System.Beep
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events WorkThread
+	#tag Event
+		Sub Run()
+		  Var Config As BeaconConfigs.EngramControl
+		  Var AddWhenFinished As Boolean
+		  If Self.mDocument.HasConfigGroup(BeaconConfigs.EngramControl.ConfigName) Then
+		    Config = BeaconConfigs.EngramControl(Self.mDocument.ConfigGroup(BeaconConfigs.EngramControl.ConfigName, False))
+		  Else
+		    Config = New BeaconConfigs.EngramControl
+		    AddWhenFinished = True
+		  End If
+		  
+		  Var Engrams() As Beacon.Engram = Beacon.Merge(Config.SpecifiedEngrams, LocalData.SharedInstance.SearchForEngramEntries("", Self.mDocument.Mods, ""))
+		  Self.mEngramCount = Engrams.Count
+		  
+		  // Do the work
+		  Select Case Self.mDesign
+		  Case Self.IndexUnlockAll
+		    For Each Engram As Beacon.Engram In Engrams
+		      If Self.mProgress.CancelPressed Then
+		        Self.Cancel
+		        Return
+		      End If
+		      
+		      Config.AutoUnlockEngram(Engram) = True
+		      Config.RequiredPlayerLevel(Engram) = 0
+		      Config.Hidden(Engram) = False
+		      Self.Increment()
+		    Next
+		    Config.AutoUnlockAllEngrams = False
+		  Case Self.IndexUnlockAllNoTek
+		    For Each Engram As Beacon.Engram In Engrams
+		      If Self.mProgress.CancelPressed Then
+		        Self.Cancel
+		        Return
+		      End If
+		      
+		      If Engram.IsTagged("tek") Then
+		        Self.Increment()
+		        Continue
+		      End If
+		      Config.AutoUnlockEngram(Engram) = True
+		      Config.RequiredPlayerLevel(Engram) = 0
+		      Config.Hidden(Engram) = False
+		      Self.Increment()
+		    Next
+		    Config.AutoUnlockAllEngrams = False
+		  Case Self.IndexUnlockNaturally
+		    For Each Engram As Beacon.Engram In Engrams
+		      If Self.mProgress.CancelPressed Then
+		        Self.Cancel
+		        Return
+		      End If
+		      
+		      Config.AutoUnlockEngram(Engram) = True
+		      Config.Hidden(Engram) = False
+		      Self.Increment()
+		    Next
+		    Config.AutoUnlockAllEngrams = False
+		  Case Self.IndexUnlockNaturallyNoTek
+		    For Each Engram As Beacon.Engram In Engrams
+		      If Self.mProgress.CancelPressed Then
+		        Self.Cancel
+		        Return
+		      End If
+		      
+		      If Engram.IsTagged("tek") Then
+		        Self.Increment()
+		        Continue
+		      End If
+		      Config.AutoUnlockEngram(Engram) = True
+		      Config.Hidden(Engram) = False
+		      Self.Increment()
+		    Next
+		    Config.AutoUnlockAllEngrams = False
+		  Case Self.IndexUnlockUnobtainable
+		    Var Mask As UInt64 = Self.mDocument.MapCompatibility
+		    For Each Engram As Beacon.Engram In Engrams
+		      If Self.mProgress.CancelPressed Then
+		        Self.Cancel
+		        Return
+		      End If
+		      
+		      If Engram.ValidForMask(Mask) Then
+		        Self.Increment()
+		        Continue
+		      End If
+		      
+		      Config.AutoUnlockEngram(Engram) = True
+		      Config.Hidden(Engram) = False
+		      Self.Increment()
+		    Next
+		    Config.AutoUnlockAllEngrams = False
+		  Case Self.IndexGrantExactPoints
+		    Var PlayerLevelCap As Integer = LocalData.SharedInstance.OfficialPlayerLevelData.MaxLevel
+		    If Self.mDocument.HasConfigGroup(BeaconConfigs.ExperienceCurves.ConfigName) Then
+		      Var ExperienceConfig As BeaconConfigs.ExperienceCurves = BeaconConfigs.ExperienceCurves(Self.mDocument.ConfigGroup(BeaconConfigs.ExperienceCurves.ConfigName, False))
+		      If ExperienceConfig <> Nil Then
+		        PlayerLevelCap = Max(PlayerLevelCap, ExperienceConfig.PlayerLevelCap)
+		      End If
+		    End If
+		    Config.LevelsDefined = PlayerLevelCap
+		    
+		    For Level As Integer = 1 To PlayerLevelCap
+		      Config.PointsForLevel(Level) = 0
+		    Next
+		    
+		    For Each Engram As Beacon.Engram In Engrams
+		      If Self.mProgress.CancelPressed Then
+		        Self.Cancel
+		        Return
+		      End If
+		      
+		      Var Level As NullableDouble = Config.RequiredPlayerLevel(Engram)
+		      If IsNull(Level) Then
+		        Level = Engram.RequiredPlayerLevel
+		        If IsNull(Level) Then
+		          Self.Increment()
+		          Continue
+		        End If
+		      End If
+		      
+		      Var Points As NullableDouble
+		      If IsNull(Config.AutoUnlockEngram(Engram)) Or Config.AutoUnlockEngram(Engram).BooleanValue = False Then
+		        Points = Config.RequiredPoints(Engram)
+		        If IsNull(Points) Then
+		          Points = Engram.RequiredUnlockPoints
+		          If IsNull(Points) Then
+		            Self.Increment()
+		            Continue
+		          End If
+		        End If
+		      End If
+		      
+		      Var ActualLevel As Integer = Level.IntegerValue
+		      Var ActualPoints As Integer = If(IsNull(Points), 0, Points.IntegerValue)
+		      Var CurrentPoints As NullableDouble = Config.PointsForLevel(ActualLevel)
+		      Config.PointsForLevel(ActualLevel) = If(IsNull(CurrentPoints), 0, CurrentPoints.IntegerValue) + ActualPoints
+		      Self.Increment()
+		    Next
+		  Case Self.IndexUnlockTek
+		    Var Level As Integer = Self.mLevel
+		    For Each Engram As Beacon.Engram In Engrams
+		      If Self.mProgress.CancelPressed Then
+		        Self.Cancel
+		        Return
+		      End If
+		      
+		      If Not Engram.IsTagged("tek") Then
+		        Self.Increment()
+		        Continue
+		      End If
+		      Config.AutoUnlockEngram(Engram) = True
+		      Config.RequiredPlayerLevel(Engram) = Level
+		      Config.Hidden(Engram) = False
+		      Self.Increment()
+		    Next
+		    Config.AutoUnlockAllEngrams = False
+		  Case Self.IndexMakeEverythingAvailableAtLevel
+		    Var Level As Integer = Self.mLevel
+		    For Each Engram As Beacon.Engram In Engrams
+		      If Self.mProgress.CancelPressed Then
+		        Self.Cancel
+		        Return
+		      End If
+		      
+		      If IsNull(Config.Hidden(Engram)) Then
+		        Config.Hidden(Engram) = False
+		      End If
+		      If IsNull(Engram.RequiredUnlockPoints) = False Then
+		        Config.RequiredPlayerLevel(Engram) = Level
+		      End If
+		      Self.Increment()
+		    Next
+		  End Select
+		  
+		  If AddWhenFinished Then
+		    Self.mDocument.AddConfigGroup(Config)
+		  End If
+		  
+		  Var Dict As New Dictionary
+		  Dict.Value("Action") = "Finished"
+		  
+		  Me.AddUserInterfaceUpdate(Dict)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Dict As Dictionary In Data
+		    Select Case Dict.Lookup("Action", "").StringValue
+		    Case "Finished"
+		      If Self.mProgressShown Then
+		        Self.mProgress.Close
+		      End If
+		      Self.mProgress = Nil
+		      
+		      Self.mCancelled = False
+		      Self.Hide
+		      Return
+		    Case "ShowProgress"
+		      Self.mProgress.ShowWithin(Self)
+		    Case "Cancel"
+		      If Self.mProgressShown Then
+		        Self.mProgress.Close
+		      End If
+		      Self.mProgress = Nil
+		      
+		      Self.mCancelled = True
+		      Self.Hide
+		    End Select
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
