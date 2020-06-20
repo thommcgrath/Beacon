@@ -1067,6 +1067,53 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function ResolveEngram(Dict As Dictionary, ObjectIDKey As String, ClassKey As String, PathKey As String) As Beacon.Engram
+		  Var Path, ClassString As String
+		  
+		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
+		    Var ObjectID As String = Dict.Value(ObjectIDKey)
+		    Try
+		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(ObjectID)
+		      If Engram <> Nil Then
+		        Return Engram
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  If PathKey.IsEmpty = False And Dict.HasKey(PathKey) Then
+		    Path = Dict.Value(PathKey)
+		    Try
+		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
+		      If Engram <> Nil Then
+		        Return Engram
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  If ClassKey.IsEmpty = False And Dict.HasKey(ClassKey) Then
+		    ClassString = Dict.Value(ClassKey)
+		    Try
+		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
+		      If Engram <> Nil Then
+		        Return Engram
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  If Path.IsEmpty = False Then
+		    Return Beacon.Engram.CreateFromPath(Path)
+		  ElseIf ClassString.IsEmpty = False Then
+		    Return Beacon.Engram.CreateFromClass(ClassString)
+		  End If
+		  
+		  Return Nil
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function SanitizeFilename(Filename As String) As String
 		  Filename = Filename.ReplaceAll("/", "-")
 		  Filename = Filename.ReplaceAll("\", "-")

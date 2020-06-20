@@ -48,6 +48,7 @@ Implements Beacon.NamedItem
 		  
 		  If Self.mEngram <> Nil Then
 		    Dict.Value("Engram") = Self.mEngram.ClassString
+		    Dict.Value("EngramID") = Self.mEngram.ObjectID.StringValue
 		  End If
 		  
 		  Var Resources() As Dictionary
@@ -58,6 +59,7 @@ Implements Beacon.NamedItem
 		    
 		    Var Resource As New Dictionary
 		    Resource.Value("Class") = Engram.ClassString
+		    Resource.Value("EngramID") = Engram.ObjectID.StringValue
 		    Resource.Value("Quantity") = Quantity
 		    Resource.Value("Exact") = RequireExact
 		    
@@ -71,29 +73,21 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.CraftingCost
-		  Var Cost As New Beacon.CraftingCost
-		  
-		  If Dict.HasKey("Engram") Then
-		    Var ClassString As String = Dict.Value("Engram")
-		    If ClassString = "" Or ClassString.EndsWith("_C") = False Then
-		      Return Nil
-		    End If
-		    Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
-		    If Engram = Nil Then
-		      Engram = Beacon.Engram.CreateFromClass(ClassString)
-		    End If
-		    Cost.mEngram = Engram
+		  Var TargetEngram As Beacon.Engram = Beacon.ResolveEngram(Dict, "EngramID", "Engram", "")
+		  If TargetEngram Is Nil Then
+		    Return Nil
 		  End If
+		  
+		  Var Cost As New Beacon.CraftingCost(TargetEngram)
 		  
 		  If Dict.HasKey("Resources") Then
 		    Var Resources() As Variant = Dict.Value("Resources")
 		    For Each Resource As Dictionary In Resources
-		      Var ClassString As String = Resource.Lookup("Class", "")
 		      Var Quantity As Integer = Resource.Lookup("Quantity", 1)
 		      Var RequireExact As Boolean = Resource.Lookup("Exact", False)
-		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
-		      If Engram = Nil Then
-		        Engram = Beacon.Engram.CreateFromClass(ClassString)
+		      Var Engram As Beacon.Engram = Beacon.ResolveEngram(Resource, "EngramID", "Class", "")
+		      If Engram Is Nil Then
+		        Continue
 		      End If
 		      Cost.mQuantities.AddRow(Quantity)
 		      Cost.mRequireExacts.AddRow(RequireExact)

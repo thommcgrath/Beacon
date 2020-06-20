@@ -906,14 +906,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Function GetRecipeForEngram(Engram As Beacon.Engram) As Beacon.CraftingCost
-		  Return Self.GetRecipeForEngram(Engram.Path)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GetRecipeForEngram(Path As String) As Beacon.CraftingCost
-		  Var Results As RowSet = Self.SQLSelect("SELECT recipe FROM engrams WHERE LOWER(path) = ?1;", Path.Lowercase)
-		  Var Cost As Beacon.CraftingCost
+		  Var Cost As New Beacon.CraftingCost(Engram)
+		  
+		  Var Results As RowSet = Self.SQLSelect("SELECT recipe FROM engrams WHERE object_id = ?1;", Engram.ObjectID.StringValue)
 		  If Results.RowCount = 0 Then
 		    Return Cost
 		  End If
@@ -927,25 +922,64 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End Try
 		  
 		  For Each Dict As Dictionary In Dicts
-		    Var IngredientPath As String = Dict.Lookup("path", "").StringValue
 		    Var Quantity As Integer = Dict.Lookup("quantity", 0).IntegerValue
-		    Var Exact As Boolean = Dict.Lookup("exact", False).BooleanValue
-		    
-		    If IngredientPath.IsEmpty Or Quantity = 0 Then
+		    If Quantity <= 0 Then
 		      Continue
 		    End If
 		    
-		    If Cost Is Nil Then
-		      Cost = New Beacon.CraftingCost(Self.GetEngramByPath(Path))
+		    Var Ingredient As Beacon.Engram
+		    Try
+		      If Dict.HasKey("object_id") Then
+		        Ingredient = Self.GetEngramByID(Dict.Value("object_id").StringValue)
+		      ElseIf Dict.HasKey("path") Then
+		        Ingredient = Self.GetEngramByPath(Dict.Value("path").StringValue)
+		      End If
+		    Catch Err As RuntimeException
+		      Continue
+		    End Try
+		    If Ingredient = Nil Then
+		      Continue
 		    End If
 		    
-		    Cost.Append(Self.GetEngramByPath(IngredientPath), Quantity, Exact)
+		    Var Exact As Boolean = Dict.Lookup("exact", False).BooleanValue
+		    
+		    Cost.Append(Ingredient, Quantity, Exact)
 		  Next
 		  
 		  If (Cost Is Nil) = False Then
 		    Cost.Modified = False
 		  End If
 		  Return Cost
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetRecipeForEngram(Path As String) As Beacon.CraftingCost
+		  If Path.IsEmpty Then
+		    Return Nil
+		  End If
+		  
+		  Var Engram As Beacon.Engram = Self.GetEngramByPath(Path)
+		  If Engram Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Return Self.GetRecipeForEngram(Engram)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetRecipeForEngram(EngramID As v4UUID) As Beacon.CraftingCost
+		  If EngramID = Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var Engram As Beacon.Engram = Self.GetEngramByID(EngramID)
+		  If Engram Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Return Self.GetRecipeForEngram(Engram)
 		End Function
 	#tag EndMethod
 
