@@ -3,6 +3,9 @@ Protected Module Tests
 	#tag Method, Flags = &h1
 		Protected Function Assert(Value As Boolean, Message As String) As Boolean
 		  If Value = False Then
+		    #if DebugBuild
+		      System.Beep
+		    #endif
 		    System.DebugLog(Message)
 		  End If
 		  Return Value
@@ -275,9 +278,38 @@ Protected Module Tests
 		  NormalizedPath = Beacon.NormalizeBlueprintPath(ExpectedUnofficialPath, "Creatures")
 		  Call Assert(NormalizedPath = ExpectedUnofficialPath, "Failed to resolve path correctly. Expected " + ExpectedUnofficialPath + ", got " + NormalizedPath)
 		  
-		  
 		  NormalizedPath = Beacon.NormalizeBlueprintPath("Wyvern_Character_Blue_BP_PetCraftToo_C", "Creatures")
 		  Call Assert(NormalizedPath = ExpectedUnknownPath, "Failed to resolve path correctly. Expected " + ExpectedUnknownPath + ", got " + NormalizedPath)
+		  
+		  
+		  // Now we need to test Beacon's ability to resolve saved data into various objects
+		  Const DrakeSaddleID = "d45d0691-a430-4443-98e3-bcc501067317"
+		  Var ObjectData As New Dictionary
+		  ObjectData.Value("ObjectID") = DrakeSaddleID
+		  ObjectData.Value("Path") = "/Game/Aberration/Dinos/RockDrake/PrimalItemArmor_RockDrakeSaddle.PrimalItemArmor_RockDrakeSaddle"
+		  ObjectData.Value("Class") = "PrimalItemArmor_RockDrakeSaddle_C"
+		  
+		  Var Engram As Beacon.Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "Class", "Path")
+		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  
+		  Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "", "")
+		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data by id, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  
+		  Engram = Beacon.ResolveEngram(ObjectData, "", "Class", "")
+		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data by class, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  
+		  Engram = Beacon.ResolveEngram(ObjectData, "", "", "Path")
+		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data by path, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  
+		  // Now use faulty data and see how it resolves
+		  Const BadEngramID = "fd8b3b03-781b-4211-bc42-38a8639df878"
+		  ObjectData.Value("ObjectID") = BadEngramID
+		  
+		  Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "Class", "Path")
+		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  
+		  Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "", "")
+		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = BadEngramID, "Failed to resolve engram data, expected " + BadEngramID + ", got " + Engram.ObjectID.StringValue)
 		End Sub
 	#tag EndMethod
 

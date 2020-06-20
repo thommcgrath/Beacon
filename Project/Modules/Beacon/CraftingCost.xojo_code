@@ -73,25 +73,16 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.CraftingCost
-		  Var TargetEngram As Beacon.Engram = Beacon.ResolveEngram(Dict, "EngramID", "Engram", "")
-		  If TargetEngram Is Nil Then
-		    Return Nil
-		  End If
-		  
-		  Var Cost As New Beacon.CraftingCost(TargetEngram)
+		  Var Cost As New Beacon.CraftingCost(Beacon.ResolveEngram(Dict, "EngramID", "Engram", ""))
 		  
 		  If Dict.HasKey("Resources") Then
 		    Var Resources() As Variant = Dict.Value("Resources")
 		    For Each Resource As Dictionary In Resources
 		      Var Quantity As Integer = Resource.Lookup("Quantity", 1)
 		      Var RequireExact As Boolean = Resource.Lookup("Exact", False)
-		      Var Engram As Beacon.Engram = Beacon.ResolveEngram(Resource, "EngramID", "Class", "")
-		      If Engram Is Nil Then
-		        Continue
-		      End If
 		      Cost.mQuantities.AddRow(Quantity)
 		      Cost.mRequireExacts.AddRow(RequireExact)
-		      Cost.mResources.AddRow(Engram)
+		      Cost.mResources.AddRow(Beacon.ResolveEngram(Resource, "EngramID", "Class", ""))
 		    Next
 		  End If
 		  

@@ -1068,10 +1068,10 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function ResolveEngram(Dict As Dictionary, ObjectIDKey As String, ClassKey As String, PathKey As String) As Beacon.Engram
-		  Var Path, ClassString As String
+		  Var ObjectID, Path, ClassString As String
 		  
 		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
-		    Var ObjectID As String = Dict.Value(ObjectIDKey)
+		    ObjectID = Dict.Value(ObjectIDKey)
 		    Try
 		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(ObjectID)
 		      If Engram <> Nil Then
@@ -1107,9 +1107,11 @@ Protected Module Beacon
 		    Return Beacon.Engram.CreateFromPath(Path)
 		  ElseIf ClassString.IsEmpty = False Then
 		    Return Beacon.Engram.CreateFromClass(ClassString)
+		  ElseIf ObjectID.IsEmpty = False Then
+		    Return Beacon.Engram.CreateFromObjectID(ObjectID)
 		  End If
 		  
-		  Return Nil
+		  Return Beacon.Engram.CreateFromClass("PrimalItemMystery_NoData_C")
 		End Function
 	#tag EndMethod
 

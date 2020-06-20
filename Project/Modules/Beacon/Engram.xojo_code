@@ -92,10 +92,17 @@ Implements Beacon.Blueprint
 		  End If
 		  
 		  Var Engram As Beacon.Engram = CreateFromPath(Beacon.UnknownBlueprintPath("Engrams", "PrimalItemMystery_" + Base + "_C"))
-		  If Engram <> Nil Then
-		    Engram.mEngramEntryString = EntryString
-		  End If
-		  
+		  Engram.mEngramEntryString = EntryString
+		  Return Engram
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function CreateFromObjectID(ObjectID As v4UUID) As Beacon.Engram
+		  Var ObjectIDString As String = ObjectID.StringValue
+		  Var Engram As Beacon.Engram = CreateFromPath(Beacon.UnknownBlueprintPath("Engrams", "PrimalItemMystery_" + ObjectIDString + "_C"))
+		  Engram.mLabel = ObjectIDString
+		  Engram.mObjectID = ObjectID
 		  Return Engram
 		End Function
 	#tag EndMethod
