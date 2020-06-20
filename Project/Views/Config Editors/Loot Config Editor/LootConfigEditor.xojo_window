@@ -1057,12 +1057,6 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function RowIsInvalid(Row As Integer) As Boolean
-		  Var Source As Beacon.LootSource = Me.RowTagAt(Row)
-		  Return Not Source.IsValid(Self.Document)
-		End Function
-	#tag EndEvent
-	#tag Event
 		Function CanEdit() As Boolean
 		  Return Me.SelectedRowCount = 1
 		End Function

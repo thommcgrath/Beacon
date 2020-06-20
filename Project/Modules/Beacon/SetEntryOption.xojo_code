@@ -115,8 +115,6 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function IsValid(Document As Beacon.Document) As Boolean
-		  Return True
-		  
 		  If Document.ModChangeTimestamp > Self.mValidityCacheTime Then
 		    Self.mValidityCache = Self.mEngramIsValid And Document.ModEnabled(Self.mEngram.ModID)
 		    Self.mValidityCacheTime = System.Microseconds

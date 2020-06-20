@@ -662,12 +662,6 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function RowIsInvalid(Row As Integer) As Boolean
-		  Var Entry As Beacon.SetEntry = Me.RowTagAt(Row)
-		  Return Not Entry.IsValid(Self.Document)
-		End Function
-	#tag EndEvent
-	#tag Event
 		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Var Entry1 As Beacon.SetEntry = Me.RowTagAt(Row1)
 		  Var Entry2 As Beacon.SetEntry = Me.RowTagAt(Row2)

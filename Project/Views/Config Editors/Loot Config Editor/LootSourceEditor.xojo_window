@@ -1338,11 +1338,6 @@ End
 		  Return True
 		End Function
 	#tag EndEvent
-	#tag Event
-		Function RowIsInvalid(Row As Integer) As Boolean
-		  Return ItemSetOrganizer(Me.RowTagAt(Row)).Template.IsValid(Self.Document) = False
-		End Function
-	#tag EndEvent
 #tag EndEvents
 #tag Events Header
 	#tag Event
