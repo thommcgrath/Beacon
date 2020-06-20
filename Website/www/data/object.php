@@ -267,7 +267,7 @@ function ExpandRecipe($parent, bool $as_array = false, int $level = 1, int $mult
 		$exact = $ingredient['exact'];
 		
 		$object = BeaconEngram::GetByObjectID($object_id);
-		$lines[] = '- ' . number_format($quantity) . 'x ' . MarkdownLinkToObject($object);
+		$lines[] = '- <span class="crafting_quantity">' . number_format($quantity) . 'x</span> ' . MarkdownLinkToObject($object);
 		
 		/*if ($object->IsTagged('harvestable') === false) {
 			$subcosts = ExpandRecipe($object, true, $level + 1, $quantity);
