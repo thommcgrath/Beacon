@@ -780,7 +780,8 @@ CREATE TABLE public.documents (
     download_count integer DEFAULT 0 NOT NULL,
     published public.publish_status DEFAULT 'Private'::public.publish_status NOT NULL,
     mods uuid[] NOT NULL,
-    included_editors text[] NOT NULL
+    included_editors text[] NOT NULL,
+    deleted boolean DEFAULT false NOT NULL
 );
 
 
@@ -819,6 +820,7 @@ CREATE VIEW public.allowed_documents AS
     documents.included_editors,
     'Owner'::text AS role
    FROM public.documents
+  WHERE (documents.deleted = false)
 UNION
  SELECT documents.document_id,
     guest_documents.user_id,
@@ -836,7 +838,8 @@ UNION
     documents.included_editors,
     'Guest'::text AS role
    FROM (public.guest_documents
-     JOIN public.documents ON ((guest_documents.document_id = documents.document_id)));
+     JOIN public.documents ON ((guest_documents.document_id = documents.document_id)))
+  WHERE (documents.deleted = false);
 
 
 ALTER TABLE public.allowed_documents OWNER TO thommcgrath;
@@ -896,7 +899,10 @@ CREATE TABLE public.creatures (
     mating_interval_min interval,
     mating_interval_max interval,
     used_stats integer,
+    group_key public.citext,
+    group_master boolean DEFAULT false NOT NULL,
     CONSTRAINT creatures_check CHECK ((((mating_interval_min IS NULL) AND (mating_interval_max IS NULL)) OR ((mating_interval_min IS NOT NULL) AND (mating_interval_max IS NOT NULL)))),
+    CONSTRAINT creatures_group_key_check CHECK ((group_key OPERATOR(public.<>) ''::public.citext)),
     CONSTRAINT creatures_path_check CHECK ((path OPERATOR(public.~~) '/%'::public.citext))
 )
 INHERITS (public.objects);
@@ -1116,11 +1122,11 @@ ALTER TABLE public.crafting_costs OWNER TO thommcgrath;
 CREATE TABLE public.creature_stats (
     creature_id uuid NOT NULL,
     stat_index integer NOT NULL,
-    base_value numeric(12,6) NOT NULL,
-    per_level_wild_multiplier numeric(12,6) NOT NULL,
-    per_level_tamed_multiplier numeric(12,6) NOT NULL,
-    add_multiplier numeric(12,6) NOT NULL,
-    affinity_multiplier numeric(12,6) NOT NULL,
+    base_value numeric(16,6) NOT NULL,
+    per_level_wild_multiplier numeric(16,6) NOT NULL,
+    per_level_tamed_multiplier numeric(16,6) NOT NULL,
+    add_multiplier numeric(16,6) NOT NULL,
+    affinity_multiplier numeric(16,6) NOT NULL,
     CONSTRAINT creature_stats_stat_index_check CHECK (((stat_index >= 0) AND (stat_index <= 11)))
 );
 
@@ -2822,6 +2828,13 @@ CREATE UNIQUE INDEX creatures_classstring_mod_id_uidx ON public.creatures USING 
 
 
 --
+-- Name: creatures_group_key_group_master_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX creatures_group_key_group_master_idx ON public.creatures USING btree (group_key, group_master) WHERE (group_master = true);
+
+
+--
 -- Name: email_addresses_group_key_idx; Type: INDEX; Schema: public; Owner: thommcgrath
 --
 
@@ -3626,7 +3639,7 @@ ALTER TABLE ONLY public.users
 -- Name: TABLE documents; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.documents TO thezaz_website;
+GRANT SELECT,INSERT,UPDATE ON TABLE public.documents TO thezaz_website;
 
 
 --

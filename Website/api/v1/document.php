@@ -59,7 +59,7 @@ case 'HEAD':
 	header('Content-Type: application/json');
 	
 	if ($document_id !== null) {
-		$results = $database->Query('SELECT document_id, user_id FROM documents WHERE document_id = $1;', $document_id);
+		$results = $database->Query('SELECT document_id, user_id FROM documents WHERE document_id = $1 AND deleted = FALSE;', $document_id);
 		if ($results->RecordCount() == 1) {
 			http_response_code(200);
 		} else {
@@ -262,8 +262,7 @@ case 'DELETE':
 			if ($role === 'Owner') {
 				$guest_results = $database->Query('SELECT user_id FROM guest_documents WHERE document_id = $1;', $document_id);
 				if ($guest_results->RecordCount() == 0) {
-					$database->Query('DELETE FROM documents WHERE document_id = $1;', $document_id);
-					$paths[] = BeaconDocument::GenerateCloudStoragePath($user_id, $document_id);
+					$database->Query('UPDATE documents SET deleted = TRUE WHERE document_id = $1;', $document_id);
 				} else {
 					$guest_user_id = $guest_results->Field('user_id');
 					$database->Query('UPDATE documents SET user_id = $1 WHERE document_id = $2;', $guest_user_id, $document_id);
@@ -278,10 +277,6 @@ case 'DELETE':
 		}
 		
 		$results->MoveNext();
-	}
-	
-	foreach ($paths as $path) {
-		BeaconCloudStorage::DeleteFile($path);
 	}
 	
 	if ($success) {
