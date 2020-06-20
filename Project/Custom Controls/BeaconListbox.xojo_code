@@ -281,16 +281,33 @@ Inherits Listbox
 
 	#tag Event
 		Function KeyDown(Key As String) As Boolean
+		  Self.mForwardKeyUp = False
+		  
 		  If (Key = Encodings.UTF8.Chr(8) Or Key = Encodings.UTF8.Chr(127)) And Self.CanDelete() Then
-		    Self.mHandleKeyEvent = True
+		    Self.DoClear()
 		    Return True
 		  ElseIf (Key = Encodings.UTF8.Chr(10) Or Key = Encodings.UTF8.Chr(13)) And Self.CanEdit() Then
-		    Self.mHandleKeyEvent = True
+		    Self.DoEdit()
 		    Return True
 		  ElseIf RaiseEvent KeyDown(Key) Then
-		    Self.mHandleKeyEvent = False
+		    Self.mForwardKeyUp = True
 		  Else
-		    Self.mHandleKeyEvent = True
+		    Self.mTypeaheadBuffer = Self.mTypeaheadBuffer + Key
+		    If Self.mTypeaheadTimer.RunMode = Timer.RunModes.Off Then
+		      Self.mTypeaheadTimer.RunMode = Timer.RunModes.Single
+		    End If
+		    Self.mTypeaheadTimer.Reset
+		    Self.mTypeaheadTimer.Period = 1000
+		    
+		    If Not RaiseEvent Typeahead(Self.mTypeaheadBuffer) Then
+		      For Idx As Integer = 0 To Self.LastRowIndex
+		        If Self.CellValueAt(Idx, Self.TypeaheadColumn).BeginsWith(Self.mTypeaheadBuffer) Then
+		          Self.SelectedRowIndex = Idx
+		          Self.EnsureSelectionIsVisible()
+		          Exit
+		        End If
+		      Next
+		    End If
 		  End If
 		  
 		  Return True
@@ -299,34 +316,8 @@ Inherits Listbox
 
 	#tag Event
 		Sub KeyUp(Key As String)
-		  If Not Self.mHandleKeyEvent Then
+		  If Self.mForwardKeyUp Then
 		    RaiseEvent KeyUp(Key)
-		    Return
-		  End If
-		  
-		  If (Key = Encodings.UTF8.Chr(8) Or Key = Encodings.UTF8.Chr(127)) And Self.CanDelete() Then
-		    Self.DoClear()
-		    Return
-		  ElseIf (Key = Encodings.UTF8.Chr(10) Or Key = Encodings.UTF8.Chr(13)) And Self.CanEdit() Then
-		    Self.DoEdit()
-		    Return
-		  End If
-		  
-		  Self.mTypeaheadBuffer = Self.mTypeaheadBuffer + Key
-		  If Self.mTypeaheadTimer.RunMode = Timer.RunModes.Off Then
-		    Self.mTypeaheadTimer.RunMode = Timer.RunModes.Single
-		  End If
-		  Self.mTypeaheadTimer.Reset
-		  Self.mTypeaheadTimer.Period = 1000
-		  
-		  If Not RaiseEvent Typeahead(Self.mTypeaheadBuffer) Then
-		    For Idx As Integer = 0 To Self.LastRowIndex
-		      If Self.CellValueAt(Idx, Self.TypeaheadColumn).BeginsWith(Self.mTypeaheadBuffer) Then
-		        Self.SelectedRowIndex = Idx
-		        Self.EnsureSelectionIsVisible()
-		        Exit
-		      End If
-		    Next
 		  End If
 		End Sub
 	#tag EndEvent
@@ -695,7 +686,7 @@ Inherits Listbox
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHandleKeyEvent As Boolean
+		Private mForwardKeyUp As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
