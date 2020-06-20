@@ -125,7 +125,7 @@ Protected Module Language
 
 	#tag Method, Flags = &h1
 		Protected Function NounWithQuantity(Quantity As Integer, Singular As String, Plural As String) As String
-		  Return Str(Quantity, "-0,") + " " + If(Quantity = 1, Singular, Plural)
+		  Return Format(Quantity, "-0,") + " " + If(Quantity = 1, Singular, Plural)
 		End Function
 	#tag EndMethod
 
