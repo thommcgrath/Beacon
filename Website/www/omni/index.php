@@ -198,6 +198,8 @@ if (is_null($session)) {
 	}
 }
 
+$min_version = BeaconCommon::MinVersion();
+
 ?>
 <div id="page_landing">
 	<h1>Do more with Beacon Omni</h1>
@@ -291,6 +293,11 @@ if (is_null($session)) {
 				<td class="text-center bullet-column">&nbsp;</td>
 				<td class="text-center bullet-column">&#10687;</td>
 			</tr>
+			<?php if ($min_version >= 10400300) { ?><tr>
+				<td>Engram Control<br><span class="smaller text-lighter">Change when engrams are unlockable, if they auto-unlock, and the number of engram points awarded each level. Beacon's powerful wizard allows users to instantly build full engram designs, such as auto-unlocking everything except tek items at spawn.</span></td>
+				<td class="text-center bullet-column">&nbsp;</td>
+				<td class="text-center bullet-column">&#10687;</td>
+			</tr><?php } ?>
 			<tr>
 				<td>More config types on the way<br><span class="smaller text-lighter">With each major release, Beacon adds new editor types to both the free edition and Beacon Omni.</span></td>
 				<td class="text-center bullet-column">&#10687;</td>

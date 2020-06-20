@@ -261,6 +261,21 @@ table.generic {
 			font-weight: 400;
 		}
 	}
+	
+	ul {
+		list-style: none;
+		padding-left: 0px;
+		
+		span.crafting_quantity {
+			display: inline-block;
+			min-width: 40px;
+			text-align: right;
+		}
+		
+		ul {
+			padding-left: 40px;
+		}
+	}
 }
 
 /* ! Header */
