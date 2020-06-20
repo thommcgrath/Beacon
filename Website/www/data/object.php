@@ -99,9 +99,9 @@ function PrepareBlueprintTable(BeaconBlueprint $blueprint, array &$properties) {
 			if (is_null($obj)) {
 				continue;
 			}
-			$related_items[] = '[' . $obj->Label() . '](/object/' . urlencode($obj->ObjectID()) . ')';
+			$related_items[] = MarkdownLinkToObject($obj);
 		} else {
-			$related_items[] = '[' . $blueprint->Label() . '](/object/' . urlencode($blueprint->ClassString()) . ')';
+			$related_items[] = MarkdownLinkToObject($blueprint);
 		}
 	}
 	if (count($related_items) > 0) {
@@ -170,6 +170,11 @@ function PrepareEngramTable(BeaconEngram $engram, array &$properties) {
 			$properties['Required Level'] = $engram->RequiredLevel();
 		}
 	}
+	
+	$recipe = ExpandRecipe($engram);
+	if (is_null($recipe) == false) {
+		$properties['Crafting'] = $recipe;
+	}
 }
 
 function PrepareLootSourceTable(BeaconLootSource $loot_source, array &$properties) {
@@ -181,7 +186,7 @@ function PrepareDietTable(BeaconDiet $diet, array &$properties) {
 	$engrams = array();
 	foreach ($engram_ids as $id) {
 		$engram = BeaconEngram::GetByObjectID($id);
-		$engrams[] = '[' . $engram->Label() . '](/object/' . $engram->ClassString() . ')';
+		$engrams[] = MarkdownLinkToObject($engram);
 	}
 	$properties['Preferred Foods'] = implode(', ', $engrams);
 	
@@ -189,7 +194,7 @@ function PrepareDietTable(BeaconDiet $diet, array &$properties) {
 	$creatures = array();
 	foreach ($creature_ids as $id) {
 		$creature = BeaconCreature::GetByObjectID($id);
-		$creatures[] = '[' . $creature->Label() . '](/object/' . $creature->ClassString() . ')';
+		$creatures[] = MarkdownLinkToObject($creature);
 	}
 	$properties['Eaten By'] = implode(', ', $creatures);
 }
@@ -221,7 +226,7 @@ function PrepareSpawnPointTable(BeaconSpawnPoint $spawn_point, array &$propertie
 				continue;
 			}
 			
-			$label = '[' . $creature->Label() . '](/object/' . $creature->ClassString() . ')';
+			$label = MarkdownLinkToObject($creature);
 			if (array_key_exists($creature_path, $limits)) {
 				$label .= ' (Max ' . BeaconCommon::FormatFloat($limits[$creature_path] * 100, 0) . '%)';
 			}
@@ -240,13 +245,54 @@ function PrepareSpawnPointTable(BeaconSpawnPoint $spawn_point, array &$propertie
 			continue;
 		}
 		
-		$creatures[] = '[' . $creature->Label() . '](/object/' . $creature->ClassString() . ') (Max ' . BeaconCommon::FormatFloat($percentage * 100, 0) . '%)';
+		$creatures[] = MarkdownLinkToObject($creature) . ' (Max ' . BeaconCommon::FormatFloat($percentage * 100, 0) . '%)';
 	}
 	
 	sort($creatures);
 	$properties['Spawns'] = implode(', ', $creatures);
 	
 	unset($properties['Spawn Code']);
+}
+
+function ExpandRecipe($parent, bool $as_array = false, int $level = 1, int $multiplier = 1) {
+	$recipe = $parent->Recipe();
+	if (is_null($recipe) || is_array($recipe) == false || $level > 6) {
+		return null;
+	}
+	
+	$lines = [];
+	foreach ($recipe as $ingredient) {
+		$object_id = $ingredient['object_id'];
+		$quantity = $ingredient['quantity'] * $multiplier;
+		$exact = $ingredient['exact'];
+		
+		$object = BeaconEngram::GetByObjectID($object_id);
+		$lines[] = '- ' . number_format($quantity) . 'x ' . MarkdownLinkToObject($object);
+		
+		/*if ($object->IsTagged('harvestable') === false) {
+			$subcosts = ExpandRecipe($object, true, $level + 1, $quantity);
+			if (is_null($subcosts) === false) {
+				foreach ($subcosts as $subline) {
+					$lines[] = '  ' . $subline;
+				}
+			}
+		}*/
+	}
+	
+	if ($as_array) {
+		return $lines;
+	}
+	return implode("\n", $lines);
+}
+
+function MarkdownLinkToObject(BeaconBlueprint $obj) {
+	$path = $obj->ClassString();
+	
+	if ($obj->IsAmbiguous()) {
+		$path = $obj->ModWorkshopID() . '/' . $path;
+	}
+	
+	return '[' . $obj->Label() . '](/object/' . $path . ')';
 }
 
 ?>

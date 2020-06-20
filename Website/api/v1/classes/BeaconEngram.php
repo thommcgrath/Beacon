@@ -19,7 +19,7 @@ class BeaconEngram extends BeaconBlueprint {
 		$columns[] = 'required_level';
 		$columns[] = 'stack_size';
 		$columns[] = 'item_id';
-		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(recipe_template))) FROM (SELECT ingredients.path, quantity, exact FROM crafting_costs INNER JOIN engrams AS ingredients ON (crafting_costs.ingredient_id = ingredients.object_id) WHERE engram_id = engrams.object_id) AS recipe_template) AS recipe';
+		$columns[] = '(SELECT array_to_json(array_agg(row_to_json(recipe_template))) FROM (SELECT ingredients.object_id, ingredients.path, quantity, exact FROM crafting_costs INNER JOIN engrams AS ingredients ON (crafting_costs.ingredient_id = ingredients.object_id) WHERE engram_id = engrams.object_id) AS recipe_template) AS recipe';
 		return $columns;
 	}
 	
