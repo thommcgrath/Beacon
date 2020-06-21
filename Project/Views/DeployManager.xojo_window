@@ -908,7 +908,9 @@ End
 		    
 		    Controller.ShouldResume = True
 		  Case "Review Files"
-		    Self.UpdateMainView()
+		    If Sender = Self.SelectedEngine Then
+		      Self.UpdateMainView()
+		    End If
 		  Case "Auth External"
 		    Self.UpdateMainView()
 		    
