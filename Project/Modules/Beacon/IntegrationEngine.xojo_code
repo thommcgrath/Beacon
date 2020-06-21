@@ -22,6 +22,7 @@ Protected Class IntegrationEngine
 		  Self.mMode = Self.ModeDeploy
 		  
 		  Self.mRunThread = New Thread
+		  Self.mRunThread.Priority = Thread.LowestPriority
 		  AddHandler Self.mRunThread.Run, WeakAddressOf RunDeploy
 		  Self.mRunThread.Start
 		End Sub
@@ -32,6 +33,7 @@ Protected Class IntegrationEngine
 		  Self.mMode = Self.ModeDiscover
 		  Self.mDocument = New Beacon.Document
 		  Self.mRunThread = New Thread
+		  Self.mRunThread.Priority = Thread.LowestPriority
 		  AddHandler Self.mRunThread.Run, WeakAddressOf RunDiscover
 		  Self.mRunThread.Start
 		End Sub
@@ -655,7 +657,7 @@ Protected Class IntegrationEngine
 		  Self.mPendingCalls.AddRow(CallLater.Schedule(1, WeakAddressOf FireWaitEvent, Controller))
 		  
 		  While Not Controller.ShouldResume
-		    App.CurrentThread.Sleep(20, False)
+		    App.CurrentThread.Sleep(100, False)
 		  Wend
 		  Self.mActiveWaitController = Nil
 		  

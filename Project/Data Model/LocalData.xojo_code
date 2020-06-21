@@ -1245,6 +1245,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  If Self.mImportThread = Nil Then
 		    Self.mImportThread = New Thread
+		    Self.mImportThread.Priority = Thread.LowestPriority
 		    AddHandler Self.mImportThread.Run, WeakAddressOf Self.mImportThread_Run
 		  End If
 		  

@@ -11,6 +11,7 @@ Protected Module UserCloud
 	#tag Method, Flags = &h21
 		Private Sub Callback_GetFile(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  Var Th As New GetThread(Request, Response)
+		  Th.Priority = Thread.LowestPriority
 		  Th.Start
 		End Sub
 	#tag EndMethod
@@ -18,6 +19,7 @@ Protected Module UserCloud
 	#tag Method, Flags = &h21
 		Private Sub Callback_ListFiles(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  Var Th As New ListThread(Request, Response)
+		  Th.Priority = Thread.LowestPriority
 		  Th.Start
 		End Sub
 	#tag EndMethod
