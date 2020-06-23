@@ -1667,9 +1667,11 @@ End
 
 	#tag Event
 		Sub Open()
-		  Self.NSWindowMBS.styleMask = Self.NSWindowMBS.styleMask Or NSWindowMBS.NSFullSizeContentViewWindowMask
-		  Self.NSWindowMBS.titlebarAppearsTransparent = True
-		  Self.NSWindowMBS.titleVisibility = NSWindowMBS.NSWindowTitleHidden
+		  #if TargetMacOS
+		    Self.NSWindowMBS.styleMask = Self.NSWindowMBS.styleMask Or NSWindowMBS.NSFullSizeContentViewWindowMask
+		    Self.NSWindowMBS.titlebarAppearsTransparent = True
+		    Self.NSWindowMBS.titleVisibility = NSWindowMBS.NSWindowTitleHidden
+		  #endif
 		  
 		  AddHandler App.IdentityManager.Finished, AddressOf IdentityManager_Finished
 		  
