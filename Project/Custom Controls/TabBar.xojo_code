@@ -88,6 +88,7 @@ Implements ObservationKit.Observer
 		  End If
 		  
 		  Var IndeterminatePattern As Picture
+		  Var TopOffset As Integer = If(WithTopBorder, 1, 0)
 		  
 		  Var LeftPos As Integer = 0
 		  For I As Integer = 0 To Count - 1
@@ -96,12 +97,15 @@ Implements ObservationKit.Observer
 		      TabWidth = TabWidth + 1
 		    End If
 		    
-		    Var Clip As Graphics = G.Clip(LeftPos, 0, TabWidth, G.Height)
+		    Var Clip As Graphics = G.Clip(LeftPos, TopOffset, TabWidth, G.Height - TopOffset)
 		    If Self.mSelectedIndex <> I Then
-		      Clip.DrawingColor = SystemColors.ControlBackgroundColor
-		      Clip.FillRectangle(0, 0, Clip.Width, Clip.Height - 1)
-		      Clip.DrawingColor = SystemColors.SeparatorColor
-		      Clip.FillRectangle(0, Clip.Height - 1, Clip.Width, 1)
+		      G.DrawingColor = SystemColors.ControlBackgroundColor
+		      G.FillRectangle(LeftPos, 0, Clip.Width, G.Height - 1)
+		      G.DrawingColor = SystemColors.SeparatorColor
+		      G.FillRectangle(LeftPos, G.Height - 1, Clip.Width, 1)
+		    ElseIf TopOffset > 0 Then
+		      G.DrawingColor = SystemColors.SeparatorColor
+		      G.FillRectangle(LeftPos, 0, Clip.Width, TopOffset)
 		    End If
 		    
 		    Var View As BeaconSubview = RaiseEvent ViewAtIndex(I)
@@ -358,6 +362,10 @@ Implements ObservationKit.Observer
 		Private mUpdateIndeterminateKey As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mWithTopBorder As Boolean
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -374,6 +382,23 @@ Implements ObservationKit.Observer
 			End Set
 		#tag EndSetter
 		SelectedIndex As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mWithTopBorder
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mWithTopBorder <> Value Then
+			    Self.mWithTopBorder = Value
+			    Self.Invalidate
+			  End If
+			End Set
+		#tag EndSetter
+		WithTopBorder As Boolean
 	#tag EndComputedProperty
 
 
@@ -617,6 +642,14 @@ Implements ObservationKit.Observer
 			Group="Behavior"
 			InitialValue=""
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="WithTopBorder"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
