@@ -56,6 +56,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       UseFocusRing    =   True
       Visible         =   True
       Width           =   759
+      WithTopBorder   =   False
    End
    Begin PagePanel Views
       AutoDeactivate  =   True

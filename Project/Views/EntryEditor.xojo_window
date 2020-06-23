@@ -63,7 +63,7 @@ Begin BeaconDialog EntryEditor
          BackColor       =   &cFFFFFF00
          Bold            =   False
          Border          =   True
-         CueText         =   "Search or Enter Spawn Command"
+         CueText         =   "Search"
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
@@ -97,7 +97,7 @@ Begin BeaconDialog EntryEditor
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   312
+         Width           =   340
       End
       Begin CheckBox SingleEntryCheck
          AutoDeactivate  =   True
@@ -131,28 +131,6 @@ Begin BeaconDialog EntryEditor
          Value           =   False
          Visible         =   True
          Width           =   340
-      End
-      Begin ProgressWheel SearchSpinner
-         AutoDeactivate  =   True
-         Enabled         =   True
-         Height          =   16
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "EngramsGroup"
-         Left            =   364
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   3
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Top             =   59
-         Transparent     =   False
-         Visible         =   True
-         Width           =   16
       End
       Begin TagPicker Picker
          AcceptFocus     =   False
@@ -478,24 +456,10 @@ Begin BeaconDialog EntryEditor
       Visible         =   True
       Width           =   80
    End
-   Begin Beacon.EngramSearcherThread EngramSearcher
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Priority        =   5
-      Scope           =   2
-      StackSize       =   0
-      TabPanelIndex   =   0
-   End
 End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
-		Sub Close()
-		  Self.EngramSearcher.Cancel
-		End Sub
-	#tag EndEvent
-
 	#tag Event
 		Sub Open()
 		  Var PreferredSize As Size = Preferences.EntryEditorSize
@@ -504,7 +468,6 @@ End
 		  Self.Picker.Spec = Preferences.SelectedTag(Beacon.CategoryEngrams, "Looting")
 		  Self.Width = Max(PreferredSize.Width, Self.MinimumWidth)
 		  Self.Height = Max(PreferredSize.Height, Self.MinimumHeight)
-		  Self.SearchSpinnerVisible = False
 		  
 		  Self.SwapButtons()
 		  Self.mSettingUp = False
@@ -535,9 +498,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub EnableButtons()
-		  Var Enabled As Boolean = Self.EngramSearcher.ThreadState = Thread.ThreadStates.NotRunning
-		  Self.ActionButton.Enabled = Enabled And Self.mSelectedEngrams.KeyCount >= 1
-		  Self.CancelButton.Enabled = Enabled
+		  Self.ActionButton.Enabled = Self.mSelectedEngrams.KeyCount >= 1
 		End Sub
 	#tag EndMethod
 
@@ -621,7 +582,6 @@ End
 		  Var Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText, Self.mMods, Tags)
 		  EngramList.RemoveAllRows
 		  
-		  Var PerfectMatch As Boolean
 		  Self.mEngramRowIndexes = New Dictionary
 		  For Each Engram As Beacon.Engram In Engrams
 		    Var Weight As String = ""
@@ -634,16 +594,8 @@ End
 		    EngramList.RowTagAt(EngramList.LastAddedRowIndex) = Engram
 		    Self.mEngramRowIndexes.Value(Engram.Path) = EngramList.LastAddedRowIndex
 		    EngramList.CellCheckBoxValueAt(EngramList.LastAddedRowIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.Path)
-		    If Engram.Path = SearchText Or Engram.Label = SearchText Then
-		      PerfectMatch = True
-		    End If
 		  Next
 		  
-		  If Not PerfectMatch Then
-		    Self.EngramSearcher.Search(SearchText, False)
-		  Else
-		    Self.EngramSearcher.Cancel()
-		  End If  
 		  Self.ListUnknownEngrams()
 		End Sub
 	#tag EndMethod
@@ -726,30 +678,6 @@ End
 	#tag Property, Flags = &h21
 		Private mSettingUp As Boolean
 	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h21
-		#tag Getter
-			Get
-			  Return Self.SearchSpinner.Visible
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.SearchSpinner.Visible = Value Then
-			    Return
-			  End If
-			  
-			  Self.SearchSpinner.Visible = Value
-			  
-			  If Value Then
-			    Self.FilterField.Width = (Self.SearchSpinner.Left - 12) - Self.FilterField.Left
-			  Else
-			    Self.FilterField.Width = (Self.EngramList.Left + Self.EngramList.Width) - Self.FilterField.Left
-			  End If
-			End Set
-		#tag EndSetter
-		Private SearchSpinnerVisible As Boolean
-	#tag EndComputedProperty
 
 
 	#tag Constant, Name = ColumnIncluded, Type = Double, Dynamic = False, Default = \"0", Scope = Private
@@ -960,43 +888,6 @@ End
 	#tag Event
 		Sub Action()
 		  Self.Hide
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events EngramSearcher
-	#tag Event
-		Sub Finished()
-		  Self.SearchSpinnerVisible = False
-		  Self.EnableButtons()
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Started()
-		  Self.SearchSpinnerVisible = True
-		  Self.EnableButtons()
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub EngramsFound()
-		  Var ParsedBlueprints() As Beacon.Blueprint = Me.Blueprints(True)
-		  For Each Blueprint As Beacon.Blueprint In ParsedBlueprints
-		    If Not (Blueprint IsA Beacon.Engram) Then
-		      Continue
-		    End If
-		    
-		    Var Engram As Beacon.Engram = Beacon.Engram(Blueprint)
-		    Var Weight As String = ""
-		    If Self.mSelectedEngrams.HasKey(Engram.Path) Then
-		      Var WeightValue As Double = Beacon.SetEntryOption(Self.mSelectedEngrams.Value(Engram.Path)).Weight * 100
-		      Weight = WeightValue.PrettyText
-		    End If
-		    
-		    EngramList.AddRow("", Engram.Label, Engram.ModName, Weight)
-		    EngramList.RowTagAt(EngramList.LastAddedRowIndex) = Engram
-		    Self.mEngramRowIndexes.Value(Engram.Path) = EngramList.LastAddedRowIndex
-		    EngramList.CellCheckBoxValueAt(EngramList.LastAddedRowIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.Path)
-		  Next
-		  Self.ListUnknownEngrams()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
