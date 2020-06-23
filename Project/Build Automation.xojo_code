@@ -31,6 +31,7 @@
 					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""CFBundleURLTypes"" ""( { CFBundleURLName = Beacon; CFBundleTypeRole = Editor; CFBundleURLSchemes = (" + ConstantValue("Beacon.URLScheme") + "); } )""")
 					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""ATSApplicationFontsPath"" ""Fonts/""")
 					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""LSMinimumSystemVersion"" ""10.11.0""")
+					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""NSAppAccentColorName"" ""AccentColor""")
 				End
 				Begin CopyFilesBuildStep CopyResourcesMac
 					AppliesTo = 0
@@ -42,6 +43,7 @@
 					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25QcmVzZXQuaWNucw==
 					FolderItem = Li4vLi4vRm9udHMv
 					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25BdXRoLmljbnM=
+					FolderItem = Li4vQXNzZXRzLmNhcg==
 				End
 				Begin CopyFilesBuildStep CopyMigration
 					AppliesTo = 2
