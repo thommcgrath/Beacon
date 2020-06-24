@@ -6,7 +6,7 @@ Protected Module Preferences
 		    Return
 		  End If
 		  
-		  Dim Recents() As Beacon.DocumentURL = RecentDocuments
+		  Var Recents() As Beacon.DocumentURL = RecentDocuments
 		  For I As Integer = Recents.LastRowIndex DownTo 0
 		    If Recents(I) = URL Then
 		      Recents.RemoveRowAt(I)
@@ -32,7 +32,7 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Function LastUsedConfigName(DocumentID As String) As String
-		  Dim Dict As Dictionary = mManager.DictionaryValue("Last Used Config", New Dictionary)
+		  Var Dict As Dictionary = mManager.DictionaryValue("Last Used Config", New Dictionary)
 		  If Dict.HasKey(DocumentID) Then
 		    Return Dict.Value(DocumentID)
 		  Else
@@ -43,9 +43,49 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Sub LastUsedConfigName(DocumentID As String, Assigns ConfigName As String)
-		  Dim Dict As Dictionary = mManager.DictionaryValue("Last Used Config", New Dictionary)
+		  Var Dict As Dictionary = mManager.DictionaryValue("Last Used Config", New Dictionary)
 		  Dict.Value(DocumentID) = ConfigName
 		  mManager.DictionaryValue("Last Used Config") = Dict
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LoadWindowPosition(Extends Win As Window)
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Win)
+		  
+		  Init
+		  
+		  Var Bounds As Rect = mManager.RectValue(Info.Name + " Position")
+		  If Bounds <> Nil Then
+		    // Find the best screen
+		    Var IdealScreen As Screen = Screen(0)
+		    If ScreenCount > 1 Then
+		      Var MaxArea As Integer
+		      For I As Integer = 0 To ScreenCount - 1
+		        Var ScreenBounds As New Rect(Screen(I).AvailableLeft, Screen(I).AvailableTop, Screen(I).AvailableWidth, Screen(I).AvailableHeight)
+		        Var Intersection As Rect = ScreenBounds.Intersection(Bounds)
+		        If Intersection = Nil Then
+		          Continue
+		        End If
+		        Var Area As Integer = Intersection.Width * Intersection.Height
+		        If Area <= 0 Then
+		          Continue
+		        End If
+		        If Area > MaxArea Then
+		          MaxArea = Area
+		          IdealScreen = Screen(I)
+		        End If
+		      Next
+		    End If
+		    
+		    Var AvailableBounds As New Rect(IdealScreen.AvailableLeft, IdealScreen.AvailableTop, IdealScreen.AvailableWidth, IdealScreen.AvailableHeight)
+		    
+		    Var Width As Integer = Min(Max(Bounds.Width, Win.MinimumWidth), Win.MaximumWidth, AvailableBounds.Width)
+		    Var Height As Integer = Min(Max(Bounds.Height, Win.MinimumHeight), Win.MaximumHeight, AvailableBounds.Height)
+		    Var Left As Integer = Min(Max(Bounds.Left, AvailableBounds.Left), AvailableBounds.Right - Width)
+		    Var Top As Integer = Min(Max(Bounds.Top, AvailableBounds.Top), AvailableBounds.Bottom - Height)
+		    Win.Bounds = New Rect(Left, Top, Width, Height)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -56,15 +96,15 @@ Protected Module Preferences
 		  // When used with a freshly parsed file, the return type will be Auto()
 		  // Once the array is updated, the local copy will return Text()
 		  
-		  Dim Temp As Variant = mManager.VariantValue("Documents")
-		  Dim StoredData() As String
+		  Var Temp As Variant = mManager.VariantValue("Documents")
+		  Var StoredData() As String
 		  If Temp <> Nil Then
 		    If Temp.IsArray Then
 		      Select Case Temp.ArrayElementType
 		      Case Variant.TypeString
 		        StoredData = Temp
 		      Case Variant.TypeObject
-		        Dim Objects() As Variant = Temp
+		        Var Objects() As Variant = Temp
 		        For Each Element As Variant In Objects
 		          Try
 		            StoredData.AddRow(Element.StringValue)
@@ -81,7 +121,7 @@ Protected Module Preferences
 		    End If
 		  End If
 		  
-		  Dim Values() As Beacon.DocumentURL
+		  Var Values() As Beacon.DocumentURL
 		  For Each Value As String In StoredData
 		    Try
 		      Values.AddRow(New Beacon.DocumentURL(Value))
@@ -95,8 +135,8 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Sub RecentDocuments(Assigns Values() As Beacon.DocumentURL)
-		  Dim URLs() As String
-		  Redim URLs(Values.LastRowIndex)
+		  Var URLs() As String
+		  URLs.ResizeTo(Values.LastRowIndex)
 		  For I As Integer = 0 To Values.LastRowIndex
 		    URLs(I) = Values(I).URL
 		  Next
@@ -107,15 +147,24 @@ Protected Module Preferences
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub SaveWindowPosition(Extends Win As Window)
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Win)
+		  
+		  Init
+		  mManager.RectValue(Info.Name + " Position") = Win.Bounds
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function SelectedTag(Category As String, Subgroup As String) As String
-		  Dim Key As String = "Selected " + Category.TitleCase
+		  Var Key As String = "Selected " + Category.TitleCase
 		  If Subgroup <> "" Then
 		    Key = Key + "." + Subgroup.TitleCase
 		  End If
 		  Key = Key + " Tag"
 		  
-		  Dim Default As String
+		  Var Default As String
 		  
 		  Select Case Category
 		  Case Beacon.CategoryEngrams
@@ -140,7 +189,7 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Sub SelectedTag(Category As String, Subgroup As String, Assigns Value As String)
-		  Dim Key As String = "Selected " + Category.TitleCase
+		  Var Key As String = "Selected " + Category.TitleCase
 		  If Subgroup <> "" Then
 		    Key = Key + "." + Subgroup.TitleCase
 		  End If
@@ -184,6 +233,54 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected CraftingSplitterPosition As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.BooleanValue("Deploy: Create Backup", True)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.BooleanValue("Deploy: Create Backup") = Value
+			End Set
+		#tag EndSetter
+		Protected DeployCreateBackup As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.BooleanValue("Deploy: Review Changes", False)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.BooleanValue("Deploy: Review Changes") = Value
+			End Set
+		#tag EndSetter
+		Protected DeployReviewChanges As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.BooleanValue("Deploy: Run Advisor", False)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.BooleanValue("Deploy: Run Advisor") = Value
+			End Set
+		#tag EndSetter
+		Protected DeployRunAdvisor As Boolean
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1

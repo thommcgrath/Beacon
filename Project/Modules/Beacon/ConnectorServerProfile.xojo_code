@@ -4,7 +4,7 @@ Inherits Beacon.ServerProfile
 	#tag Event
 		Sub ReadFromDictionary(Dict As Dictionary)
 		  If Not Dict.HasAllKeys("Address", "Port", "Encryption Key") Then
-		    Dim Err As KeyNotFoundException
+		    Var Err As KeyNotFoundException
 		    Err.Message = "Missing ConnectorServerProfile keys"
 		    Raise Err
 		  End If
@@ -29,6 +29,12 @@ Inherits Beacon.ServerProfile
 		Sub Constructor()
 		  // Do not call Super.Constructor()
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DeployCapable() As Boolean
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -140,6 +146,22 @@ Inherits Beacon.ServerProfile
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="MessageDuration"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MessageOfTheDay"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true

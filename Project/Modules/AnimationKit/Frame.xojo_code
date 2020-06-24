@@ -10,14 +10,14 @@ Protected Class Frame
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS)
 		Sub Constructor(Image As iOSImage, RetinaImage As iOSImage)
 		  If Image = Nil Then
-		    Dim Err As New UnsupportedOperationException
+		    Var Err As New UnsupportedOperationException
 		    Err.Reason = "Cannot create a frame without an image."
 		    Raise Err
 		  End If
 		  
 		  If RetinaImage <> Nil Then
 		    If RetinaImage.Width <> Image.Width * 2 Or RetinaImage.Height <> Image.Height * 2 Then
-		      Dim Err As New UnsupportedOperationException
+		      Var Err As New UnsupportedOperationException
 		      Err.Reason = "Retina image must be exactly twice the dimensions of the standard image."
 		      Raise Err
 		    End If
@@ -32,14 +32,14 @@ Protected Class Frame
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI)
 		Sub Constructor(Image As Picture, RetinaImage As Picture)
 		  If Image = Nil Then
-		    Dim Err As New UnsupportedOperationException
+		    Var Err As New UnsupportedOperationException
 		    Err.Reason = "Cannot create a frame without an image."
 		    Raise Err
 		  End If
 		  
 		  If RetinaImage <> Nil Then
 		    If RetinaImage.Width <> Image.Width * 2 Or RetinaImage.Height <> Image.Height * 2 Then
-		      Dim Err As New UnsupportedOperationException
+		      Var Err As New UnsupportedOperationException
 		      Err.Reason = "Retina image must be exactly twice the dimensions of the standard image."
 		      Raise Err
 		    End If

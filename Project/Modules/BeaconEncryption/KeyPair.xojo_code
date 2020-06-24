@@ -2,9 +2,9 @@
 Protected Class KeyPair
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Dim PublicKey, PrivateKey As String
+		  Var PublicKey, PrivateKey As String
 		  If Not Crypto.RSAGenerateKeyPair(2048, PrivateKey, PublicKey) Then
-		    Dim Err As New CryptoException
+		    Var Err As New CryptoException
 		    Err.Message = "Unable to generate new key pair"
 		    Raise Err
 		  End If
@@ -15,7 +15,7 @@ Protected Class KeyPair
 	#tag Method, Flags = &h0
 		Sub Constructor(PublicKey As MemoryBlock, PrivateKey As MemoryBlock)
 		  If Not (Crypto.RSAVerifyKey(PublicKey) And Crypto.RSAVerifyKey(PrivateKey)) Then
-		    Dim Err As New CryptoException
+		    Var Err As New CryptoException
 		    Err.Reason = "Key pair not valid"
 		    Raise Err
 		  End If
@@ -27,7 +27,7 @@ Protected Class KeyPair
 
 	#tag Method, Flags = &h0
 		Function PrivateKey(Password As MemoryBlock, PEMFormat As Boolean) As String
-		  Dim Key As MemoryBlock
+		  Var Key As MemoryBlock
 		  If PEMFormat Then
 		    Key = BeaconEncryption.PEMEncodePrivateKey(Self.mPrivateKey)
 		  Else

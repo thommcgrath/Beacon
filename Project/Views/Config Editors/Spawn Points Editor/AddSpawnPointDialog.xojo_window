@@ -170,8 +170,10 @@ Begin BeaconDialog AddSpawnPointDialog
       Tooltip         =   ""
       Top             =   88
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   496
       _ScrollOffset   =   0
       _ScrollWidth    =   -1

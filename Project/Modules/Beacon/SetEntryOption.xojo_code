@@ -3,7 +3,7 @@ Protected Class SetEntryOption
 Implements Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Constructor(Engram As Beacon.Engram, Weight As Double)
-		  Self.mEngram = New Beacon.Engram(Engram)
+		  Self.SetEngram(Engram)
 		  Self.mWeight = Weight
 		  Self.mLastModifiedTime = System.Microseconds
 		End Sub
@@ -11,7 +11,7 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.SetEntryOption)
-		  Self.mEngram = New Beacon.Engram(Source.mEngram)
+		  Self.SetEngram(Source.mEngram)
 		  Self.mHash = Source.mHash
 		  Self.mLastHashTime = Source.mLastHashTime
 		  Self.mLastModifiedTime = Source.mLastModifiedTime
@@ -26,7 +26,7 @@ Implements Beacon.DocumentItem
 		    Return
 		  End If
 		  
-		  Dim ClassString As String = Self.mEngram.ClassString
+		  Var ClassString As String = Self.mEngram.ClassString
 		  For Each Engram As Beacon.Engram In Engrams
 		    If Engram.ClassString = ClassString Then
 		      Self.mEngram = New Beacon.Engram(Engram)
@@ -45,9 +45,9 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Export() As Dictionary
-		  Dim Path As String = Self.Engram.Path
+		  Var Path As String = Self.Engram.Path
 		  
-		  Dim Keys As New Dictionary
+		  Var Keys As New Dictionary
 		  If Path <> "" Then
 		    Keys.Value("Path") = Path
 		  End If
@@ -60,7 +60,7 @@ Implements Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function Hash() As String
 		  If Self.HashIsStale Then
-		    Dim Path As String
+		    Var Path As String
 		    If Self.mEngram = Nil Then
 		      Path = ""
 		    Else
@@ -83,8 +83,8 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.SetEntryOption
-		  Dim Weight As Double = Dict.Value("Weight")
-		  Dim Engram, BackupEngram As Beacon.Engram
+		  Var Weight As Double = Dict.Value("Weight")
+		  Var Engram, BackupEngram As Beacon.Engram
 		  
 		  If Dict.HasKey("Path") Then
 		    Engram = Beacon.Data.GetEngramByPath(Dict.Value("Path"))
@@ -107,7 +107,7 @@ Implements Beacon.DocumentItem
 		    Engram = BackupEngram
 		  End If
 		  
-		  Dim Option As New Beacon.SetEntryOption(Engram, Weight)
+		  Var Option As New Beacon.SetEntryOption(Engram, Weight)
 		  Option.Modified = False
 		  Return Option
 		End Function
@@ -115,7 +115,12 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function IsValid(Document As Beacon.Document) As Boolean
-		  Return Self.mEngram <> Nil And Self.mEngram.IsValid And IsNull(Self.mEngram.ModID) = False And (Document.Mods.LastRowIndex = -1 Or Document.Mods.IndexOf(Self.mEngram.ModID) > -1) And Self.mEngram.IsTagged("Generic") = False And Self.mEngram.IsTagged("Blueprint") = False
+		  If Document.ModChangeTimestamp > Self.mValidityCacheTime Then
+		    Self.mValidityCache = Self.mEngramIsValid And Document.ModEnabled(Self.mEngram.ModID)
+		    Self.mValidityCacheTime = System.Microseconds
+		  End If
+		  
+		  Return Self.mValidityCache
 		End Function
 	#tag EndMethod
 
@@ -141,11 +146,23 @@ Implements Beacon.DocumentItem
 		    Return 1
 		  End If
 		  
-		  Dim SelfHash As String = Self.Hash
-		  Dim OtherHash As String = Other.Hash
+		  Var SelfHash As String = Self.Hash
+		  Var OtherHash As String = Other.Hash
 		  
 		  Return SelfHash.Compare(OtherHash, ComparisonOptions.CaseInsensitive)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SetEngram(Engram As Beacon.Engram)
+		  If (Engram Is Nil) = False Then
+		    Self.mEngram = New Beacon.Engram(Engram)
+		    Self.mEngramIsValid = Self.mEngram.IsValid And Self.mEngram.ModID <> Nil And Self.mEngram.IsTagged("Generic") = False And Self.mEngram.IsTagged("Blueprint") = False
+		  Else
+		    Self.mEngram = Beacon.Engram.CreateFromClass("Beacon_Invalid_Engram_C")
+		    Self.mEngramIsValid = False
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -157,6 +174,10 @@ Implements Beacon.DocumentItem
 
 	#tag Property, Flags = &h21
 		Private mEngram As Beacon.Engram
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEngramIsValid As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -173,6 +194,14 @@ Implements Beacon.DocumentItem
 
 	#tag Property, Flags = &h21
 		Private mLastSaveTime As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mValidityCache As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mValidityCacheTime As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

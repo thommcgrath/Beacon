@@ -38,7 +38,6 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       Caption         =   "Presets"
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -94,7 +93,6 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   "0"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -109,9 +107,11 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       TextUnit        =   0
       Top             =   41
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   300
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -123,7 +123,6 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -153,19 +152,19 @@ End
 		Sub DropObject(obj As DragItem, action As Integer)
 		  #Pragma Unused action
 		  
-		  Dim AddedPresets() As Beacon.Preset
+		  Var AddedPresets() As Beacon.Preset
 		  
 		  Do
 		    If Not Obj.FolderItemAvailable Then
 		      Continue
 		    End If
 		    
-		    Dim File As FolderItem = Obj.FolderItem
+		    Var File As FolderItem = Obj.FolderItem
 		    If Not File.IsType(BeaconFileTypes.BeaconPreset) Then
 		      Continue
 		    End If
 		    
-		    Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(File)
+		    Var Preset As Beacon.Preset = Beacon.Preset.FromFile(File)
 		    If Preset <> Nil Then
 		      Beacon.Data.SavePreset(Preset)
 		      AddedPresets.AddRow(Preset)
@@ -207,12 +206,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function ClonePreset(Source As Beacon.Preset) As Beacon.Preset
-		  Dim Clone As New Beacon.MutablePreset
+		  Var Clone As New Beacon.MutablePreset
 		  Clone.Label = Source.Label + " Copy"
 		  Clone.Grouping = Source.Grouping
 		  Clone.MaxItems = Source.MaxItems
 		  Clone.MinItems = Source.MinItems
-		  Dim Modifiers() As String = Clone.ActiveModifierIDs
+		  Var Modifiers() As String = Clone.ActiveModifierIDs
 		  For Each ModifierID As String In Modifiers
 		    Clone.MinQualityModifier(ModifierID) = Source.MinQualityModifier(ModifierID)
 		    Clone.MaxQualityModifier(ModifierID) = Source.MaxQualityModifier(ModifierID)
@@ -231,7 +230,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Clones() As Beacon.Preset
+		  Var Clones() As Beacon.Preset
 		  For I As Integer = 0 To List.RowCount - 1
 		    If List.Selected(I) Then
 		      Clones.AddRow(Self.ClonePreset(List.RowTagAt(I)))
@@ -260,16 +259,16 @@ End
 		    Return True
 		  End If
 		  
-		  Dim View As BeaconSubview = Self.View(Preset.PresetID)
+		  Var View As BeaconSubview = Self.View(Preset.PresetID)
 		  Return Self.DiscardView(View)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function CreatePreset(ItemSet As Beacon.ItemSet) As Beacon.Preset
-		  Dim Preset As Beacon.MutablePreset
+		  Var Preset As Beacon.MutablePreset
 		  If ItemSet.SourcePresetID <> "" Then
-		    Dim SourcePreset As Beacon.Preset = LocalData.SharedInstance.GetPreset(ItemSet.SourcePresetID)
+		    Var SourcePreset As Beacon.Preset = LocalData.SharedInstance.GetPreset(ItemSet.SourcePresetID)
 		    If SourcePreset <> Nil Then
 		      Preset = New Beacon.MutablePreset(SourcePreset)
 		    End If
@@ -282,7 +281,7 @@ End
 		  Preset.MinItems = ItemSet.MinNumItems
 		  Preset.MaxItems = ItemSet.MaxNumItems
 		  
-		  Redim Preset(-1)
+		  Preset.ResizeTo(-1)
 		  For Each Entry As Beacon.SetEntry In ItemSet
 		    Preset.Append(New Beacon.PresetEntry(Entry))
 		  Next
@@ -300,7 +299,7 @@ End
 		  
 		  For I As Integer = 0 To List.RowCount - 1
 		    If List.Selected(I) Then
-		      Dim Preset As Beacon.Preset = List.RowTagAt(I)
+		      Var Preset As Beacon.Preset = List.RowTagAt(I)
 		      If Self.ClosePreset(Preset) Then
 		        Beacon.Data.DeletePreset(Preset)
 		      End If
@@ -317,12 +316,12 @@ End
 		  End If
 		  
 		  If List.SelectedRowCount = 1 Then
-		    Dim Preset As Beacon.Preset = List.RowTagAt(List.SelectedRowIndex)
-		    Dim Dialog As New SaveFileDialog
+		    Var Preset As Beacon.Preset = List.RowTagAt(List.SelectedRowIndex)
+		    Var Dialog As New SaveFileDialog
 		    Dialog.Filter = BeaconFileTypes.BeaconPreset
 		    Dialog.SuggestedFileName = Preset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension
 		    
-		    Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		    Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		    If File <> Nil Then
 		      Preset.ToFile(File)
 		    End If
@@ -330,10 +329,10 @@ End
 		    Return
 		  End If
 		  
-		  Dim Dialog As New SelectFolderDialog
+		  Var Dialog As New SelectFolderDialog
 		  Dialog.PromptText = "Select Folder For Bulk Export"
 		  
-		  Dim Folder As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Var Folder As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If Folder = Nil Then
 		    Return
 		  End If
@@ -343,7 +342,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Preset As Beacon.Preset = List.RowTagAt(I)
+		    Var Preset As Beacon.Preset = List.RowTagAt(I)
 		    Preset.ToFile(Folder.Child(Preset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension))
 		  Next
 		  
@@ -362,7 +361,7 @@ End
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  If Notification.Name = "Preset Saved" Then
-		    Dim Preset As Beacon.Preset = Notification.UserData
+		    Var Preset As Beacon.Preset = Notification.UserData
 		    Self.UpdatePresets(Preset)
 		  End If
 		End Sub
@@ -374,7 +373,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim View As BeaconSubview = Self.View(Preset.PresetID)
+		  Var View As BeaconSubview = Self.View(Preset.PresetID)
 		  If View = Nil Then
 		    View = New PresetEditorView(Preset)
 		  End If
@@ -387,7 +386,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub OpenPreset(File As FolderItem, Import As Boolean, DefaultModified As Boolean = False)
-		  Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(File)
+		  Var Preset As Beacon.Preset = Beacon.Preset.FromFile(File)
 		  If Preset = Nil Then
 		    Self.ShowAlert("Unable to open preset file", "The file may be damaged or a newer format.")
 		    Return
@@ -399,8 +398,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim ViewID As String = EncodeHex(Crypto.MD5(File.NativePath))
-		  Dim View As BeaconSubview = Self.View(ViewID)
+		  Var ViewID As String = EncodeHex(Crypto.MD5(File.NativePath))
+		  Var View As BeaconSubview = Self.View(ViewID)
 		  If View = Nil Then
 		    View = New PresetEditorView(Preset, File)
 		  End If
@@ -413,8 +412,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdatePresets(SelectPresets() As Beacon.Preset)
-		  Dim Presets() As Beacon.Preset = Beacon.Data.Presets
-		  Dim PresetCount As Integer = Presets.LastRowIndex + 1
+		  Var Presets() As Beacon.Preset = Beacon.Data.Presets
+		  Var PresetCount As Integer = Presets.LastRowIndex + 1
 		  
 		  If SelectPresets.LastRowIndex = -1 Then
 		    For I As Integer = 0 To List.RowCount - 1
@@ -424,7 +423,7 @@ End
 		    Next
 		  End If
 		  
-		  Dim SelectIDs() As String
+		  Var SelectIDs() As String
 		  For Each Preset As Beacon.Preset In SelectPresets
 		    SelectIDs.AddRow(Preset.PresetID)
 		  Next
@@ -525,7 +524,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Preset As Beacon.Preset = Me.RowTagAt(I)
+		    Var Preset As Beacon.Preset = Me.RowTagAt(I)
 		    If Preset.Type = Beacon.Preset.Types.BuiltIn Then
 		      Continue
 		    End If
@@ -538,13 +537,13 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  Dim DeleteCount, RevertCount, DisallowCount As Integer
+		  Var DeleteCount, RevertCount, DisallowCount As Integer
 		  For I As Integer = Me.RowCount - 1 DownTo 0
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Dim Preset As Beacon.Preset = Me.RowTagAt(I)
+		    Var Preset As Beacon.Preset = Me.RowTagAt(I)
 		    Select Case Preset.Type
 		    Case Beacon.Preset.Types.BuiltIn
 		      DisallowCount = DisallowCount + 1
@@ -555,7 +554,7 @@ End
 		    End Select
 		  Next
 		  
-		  Dim Message, Action As String
+		  Var Message, Action As String
 		  If DeleteCount > 0 And RevertCount > 0 Then
 		    Message = "Are you sure you want to delete or revert these " + Str(DeleteCount + RevertCount, "-0") + " presets?"
 		    Action = "Delete"
@@ -575,7 +574,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Explanation As String = "This action cannot be undone."
+		  Var Explanation As String = "This action cannot be undone."
 		  If DisallowCount > 0 Then
 		    Explanation = "Built-in presets will not be deleted. " + Explanation
 		  End If
@@ -590,13 +589,21 @@ End
 	#tag Event
 		Sub DoubleClick()
 		  If Me.SelectedRowIndex > -1 Then
-		    Dim Preset As Beacon.Preset = Me.RowTagAt(Me.SelectedRowIndex)
+		    Var Preset As Beacon.Preset = Me.RowTagAt(Me.SelectedRowIndex)
 		    Self.OpenPreset(Preset)
 		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

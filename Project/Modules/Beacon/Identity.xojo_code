@@ -381,7 +381,7 @@ Protected Class Identity
 		    Var Fields(3) As String
 		    Fields(0) = Beacon.HardwareID
 		    Fields(1) = Self.mIdentifier.Lowercase
-		    Fields(2) = Self.mPurchasedOmniVersion.ToString(Locale.Raw)
+		    Fields(2) = Self.mPurchasedOmniVersion.ToString(Locale.Raw, "#")
 		    Fields(3) = If(Self.mBanned, "Banned", "Clean")
 		    
 		    If Self.mExpirationString <> "" Then

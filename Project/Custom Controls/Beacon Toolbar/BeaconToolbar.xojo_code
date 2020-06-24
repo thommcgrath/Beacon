@@ -18,7 +18,7 @@ Implements ObservationKit.Observer
 
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  Dim Point As New Xojo.Point(X, Y)
+		  Var Point As New Xojo.Point(X, Y)
 		  Self.mMouseDownName = ""
 		  Self.mMouseHeld = False
 		  Self.mMouseDownX = X
@@ -42,7 +42,7 @@ Implements ObservationKit.Observer
 		    Return True
 		  End If
 		  
-		  Dim HitItem As BeaconToolbarItem = Self.ItemAtPoint(Point)
+		  Var HitItem As BeaconToolbarItem = Self.ItemAtPoint(Point)
 		  If HitItem <> Nil And HitItem.Enabled Then
 		    Self.mMouseDownName = HitItem.Name
 		    Self.mPressedName = Self.mMouseDownName
@@ -65,20 +65,20 @@ Implements ObservationKit.Observer
 		  Self.mMouseY = Y
 		  
 		  If Self.mResizing Then
-		    Dim DeltaX As Integer = 0
-		    Dim DeltaY As Integer = 0
+		    Var DeltaX As Integer = 0
+		    Var DeltaY As Integer = 0
 		    
 		    If Self.mResizerStyle = ResizerTypes.Horizontal Then
 		      DeltaX = X - Self.mResizeOffset
 		      
-		      Dim NewWidth As Integer = Self.Width + DeltaX
+		      Var NewWidth As Integer = Self.Width + DeltaX
 		      RaiseEvent ShouldResize(NewWidth)
 		      Self.mResizeOffset = Self.mResizeOffset + (Self.Width - Self.mStartingSize)
 		      Self.mStartingSize = Self.Width
 		    ElseIf Self.mResizerStyle = ResizerTypes.Vertical Then
 		      DeltaY = Y - Self.mResizeOffset
 		      
-		      Dim NewTop As Integer = Self.Top + DeltaY
+		      Var NewTop As Integer = Self.Top + DeltaY
 		      RaiseEvent ShouldResize(NewTop)
 		    End If
 		    
@@ -88,9 +88,9 @@ Implements ObservationKit.Observer
 		  End If
 		  
 		  If Self.mMouseDownName <> "" Then
-		    Dim Item As BeaconToolbarItem = Self.ItemWithName(Self.mMouseDownName)
+		    Var Item As BeaconToolbarItem = Self.ItemWithName(Self.mMouseDownName)
 		    If Item <> Nil Then
-		      Dim Rect As Xojo.Rect = Item.Rect
+		      Var Rect As Xojo.Rect = Item.Rect
 		      If Rect.Contains(New Xojo.Point(X, Y)) Then
 		        If Self.mPressedName <> Item.Name Then
 		          Self.mPressedName = Item.Name
@@ -125,7 +125,7 @@ Implements ObservationKit.Observer
 
 	#tag Event
 		Sub MouseMove(X As Integer, Y As Integer)
-		  Dim Point As New Xojo.Point(X, Y)
+		  Var Point As New Xojo.Point(X, Y)
 		  Self.HoverItem = Self.ItemAtPoint(Point)
 		  
 		  If Self.mResizerRect <> Nil Then
@@ -159,7 +159,7 @@ Implements ObservationKit.Observer
 		  End If
 		  
 		  If Self.mMouseDownName <> "" Then
-		    Dim Item As BeaconToolbarItem = Self.ItemWithName(Self.mMouseDownName)
+		    Var Item As BeaconToolbarItem = Self.ItemWithName(Self.mMouseDownName)
 		    If Item <> Nil And Item.Rect.Contains(New Xojo.Point(X, Y)) And Not Self.mMouseHeld Then
 		      // Action
 		      RaiseEvent Action(Item)
@@ -212,12 +212,12 @@ Implements ObservationKit.Observer
 		Private Sub DrawButton(G As Graphics, Button As BeaconToolbarItem, Rect As Xojo.Rect, Mode As ButtonModes, Highlighted As Boolean)
 		  #Pragma Unused Highlighted
 		  
-		  Dim PrecisionX As Double = 1 / G.ScaleX
-		  Dim PrecisionY As Double = 1 / G.ScaleY
+		  Var PrecisionX As Double = 1 / G.ScaleX
+		  Var PrecisionY As Double = 1 / G.ScaleY
 		  
 		  If Button.Icon <> Nil Then
-		    Dim UseAccent As Boolean = True
-		    Dim AccentColor As Color
+		    Var UseAccent As Boolean = True
+		    Var AccentColor As Color
 		    Select Case Button.IconColor
 		    Case BeaconToolbarItem.IconColors.Blue
 		      AccentColor = SystemColors.SystemBlueColor
@@ -241,7 +241,7 @@ Implements ObservationKit.Observer
 		      UseAccent = False
 		    End Select
 		    
-		    Dim IconColor As Color
+		    Var IconColor As Color
 		    If Button.Toggled Then
 		      IconColor = SystemColors.AlternateSelectedControlTextColor
 		    Else
@@ -256,11 +256,11 @@ Implements ObservationKit.Observer
 		      G.FillRoundRectangle(NearestMultiple(Rect.Left, PrecisionX), NearestMultiple(Rect.Top, PrecisionY), NearestMultiple(Rect.Width, PrecisionX), NearestMultiple(Rect.Height, PrecisionY), 4, 4)
 		    End If
 		    
-		    Dim Overlay As Picture
+		    Var Overlay As Picture
 		    If Button.HasMenu Then
 		      Overlay = IconToolbarDropdown
 		    End If
-		    Dim Icon As Picture = BeaconUI.IconWithColor(Button.Icon, IconColor, Overlay)
+		    Var Icon As Picture = BeaconUI.IconWithColor(Button.Icon, IconColor, Overlay)
 		    G.DrawPicture(Icon, NearestMultiple(Rect.Left + ((Rect.Width - Icon.Width) / 2), PrecisionX), NearestMultiple(Rect.Top + ((Rect.Height - Icon.Height) / 2), PrecisionY))
 		  End If
 		  
@@ -308,7 +308,7 @@ Implements ObservationKit.Observer
 		        If Self.mLeftItems(I) <> Nil And Self.mLeftItems(I).Rect.Contains(Point) Then
 		          Return Self.mLeftItems(I)
 		        End If
-		      Catch Err As NilObjectException
+		      Catch Err As RuntimeException
 		        Continue
 		      End Try
 		    Next
@@ -320,7 +320,7 @@ Implements ObservationKit.Observer
 		        If Self.mRightItems(I) <> Nil And Self.mRightItems(I).Rect.Contains(Point) Then
 		          Return Self.mRightItems(I)
 		        End If
-		      Catch Err As NilObjectException
+		      Catch Err As RuntimeException
 		        Continue
 		      End Try
 		    Next
@@ -354,20 +354,9 @@ Implements ObservationKit.Observer
 		    Return
 		  End If
 		  
-		  Dim Item As BeaconToolbarItem = Self.ItemWithName(Self.mPressedName)
-		  Dim Menu As New MenuItem
-		  RaiseEvent BuildMenu(Item, Menu)
+		  Var Item As BeaconToolbarItem = Self.ItemWithName(Self.mPressedName)
 		  Self.mMouseHeld = True
-		  
-		  If Menu.Count = 0 Then
-		    Return
-		  End If
-		  
-		  Dim Position As Point = Self.Window.GlobalPosition
-		  Dim Choice As MenuItem = Menu.PopUp(Position.X + Self.Left + Item.Rect.Left, Position.Y + Self.Top + Item.Rect.Bottom)
-		  If Choice <> Nil Then
-		    RaiseEvent HandleMenuAction(Item, Choice)
-		  End If
+		  Self.ShowMenu(Item)
 		End Sub
 	#tag EndMethod
 
@@ -394,7 +383,7 @@ Implements ObservationKit.Observer
 		  Const CellPadding = 8
 		  Const ButtonSize = 24
 		  
-		  Dim Highlighted As Boolean = True
+		  Var Highlighted As Boolean = True
 		  #if TargetCocoa And BeaconUI.ToolbarHasBackground = False
 		    Declare Function IsMainWindow Lib "Cocoa.framework" Selector "isMainWindow" (Target As Integer) As Boolean
 		    Declare Function IsKeyWindow Lib "Cocoa.framework" Selector "isKeyWindow" (Target As Integer) As Boolean
@@ -424,10 +413,10 @@ Implements ObservationKit.Observer
 		    End If
 		  End If
 		  
-		  Dim ContentRect As New Xojo.Rect(MainRect.Left + CellPadding, MainRect.Top + CellPadding, MainRect.Width - (CellPadding * 2), MainRect.Height - (CellPadding * 2))
+		  Var ContentRect As New Xojo.Rect(MainRect.Left + CellPadding, MainRect.Top + CellPadding, MainRect.Width - (CellPadding * 2), MainRect.Height - (CellPadding * 2))
 		  
 		  If Self.mResizerStyle <> ResizerTypes.None Then
-		    Dim ResizeIcon As Picture
+		    Var ResizeIcon As Picture
 		    Select Case Self.mResizerStyle
 		    Case ResizerTypes.Horizontal
 		      ResizeIcon = IconToolbarHResize
@@ -437,12 +426,12 @@ Implements ObservationKit.Observer
 		    
 		    ContentRect.Right = ContentRect.Right - (CellPadding + ResizeIcon.Width)
 		    
-		    Dim ResizerLeft As Integer = ContentRect.Right + CellPadding
-		    Dim ResizerTop As Integer = (G.Height - ResizeIcon.Height) / 2
+		    Var ResizerLeft As Integer = ContentRect.Right + CellPadding
+		    Var ResizerTop As Integer = (G.Height - ResizeIcon.Height) / 2
 		    
 		    Self.mResizerRect = New Xojo.Rect(ResizerLeft, 0, G.Width - ResizerLeft, G.Height)
 		    
-		    Dim ResizeColor As Color = SystemColors.LabelColor
+		    Var ResizeColor As Color = SystemColors.LabelColor
 		    If Not Self.ResizerEnabled Then
 		      ResizeColor = ResizeColor.AtOpacity(0.25)
 		    End If
@@ -453,15 +442,20 @@ Implements ObservationKit.Observer
 		    Self.mResizerRect = Nil
 		  End If
 		  
-		  Dim NextLeft As Integer = ContentRect.Left
-		  Dim NextRight As Integer = ContentRect.Right
-		  Dim ItemsPerSide As Integer = Max(Self.LeftItems.Count, Self.RightItems.Count)
-		  ContentRect.Left = ContentRect.Left + (ItemsPerSide * (ButtonSize + CellPadding))
-		  ContentRect.Width = ContentRect.Width - ((ItemsPerSide * 2) * (ButtonSize + CellPadding))
+		  Var NextLeft As Integer = ContentRect.Left
+		  Var NextRight As Integer = ContentRect.Right
+		  
+		  Var LeftButtonsWidth As Integer = Self.LeftItems.Count * (ButtonSize + CellPadding)
+		  Var RightButtonsWidth As Integer = Self.RightItems.Count * (ButtonSize + CellPadding)
+		  Var LargestButtonsWidth As Integer = Max(LeftButtonsWidth, RightButtonsWidth)
+		  
+		  Var OffsetContentRect As New Xojo.Rect(ContentRect.Left + LeftButtonsWidth, ContentRect.Top, ContentRect.Width - (LeftButtonsWidth + RightButtonsWidth), ContentRect.Height)
+		  ContentRect.Left = ContentRect.Left + LargestButtonsWidth
+		  ContentRect.Width = ContentRect.Width - (LargestButtonsWidth * 2)
 		  
 		  For I As Integer = 0 To Self.mLeftItems.LastRowIndex
-		    Dim Item As BeaconToolbarItem = Self.mLeftItems(I)
-		    Dim Mode As ButtonModes = ButtonModes.Normal
+		    Var Item As BeaconToolbarItem = Self.mLeftItems(I)
+		    Var Mode As ButtonModes = ButtonModes.Normal
 		    If Self.mPressedName = Item.Name Then
 		      Mode = ButtonModes.Pressed
 		    End If
@@ -475,8 +469,8 @@ Implements ObservationKit.Observer
 		  Next
 		  
 		  For I As Integer = 0 To Self.mRightItems.LastRowIndex
-		    Dim Item As BeaconToolbarItem = Self.mRightItems(I)
-		    Dim Mode As ButtonModes = ButtonModes.Normal
+		    Var Item As BeaconToolbarItem = Self.mRightItems(I)
+		    Var Mode As ButtonModes = ButtonModes.Normal
 		    If Self.mPressedName = Item.Name Then
 		      Mode = ButtonModes.Pressed
 		    End If
@@ -490,16 +484,19 @@ Implements ObservationKit.Observer
 		  Next
 		  
 		  If Self.Caption <> "" Then
-		    Dim Caption As String = Self.Caption.FieldAtPosition(EndOfLine, 1)
+		    Var Caption As String = Self.Caption.FieldAtPosition(EndOfLine, 1)
 		    
-		    Dim CaptionSize As Double = 0
+		    Var CaptionSize As Double = 0
 		    
 		    G.FontSize = CaptionSize
-		    Dim CaptionWidth As Integer = Ceil(G.TextWidth(Caption))
+		    Var CaptionWidth As Integer = Ceil(G.TextWidth(Caption))
 		    
+		    If CaptionWidth > ContentRect.Width Then
+		      ContentRect = OffsetContentRect
+		    End If
 		    CaptionWidth = Min(CaptionWidth, ContentRect.Width)
-		    Dim CaptionLeft As Integer = ContentRect.Left + ((ContentRect.Width - CaptionWidth) / 2)
-		    Dim CaptionBottom As Integer = ContentRect.Top + (ContentRect.Height / 2) + ((G.FontAscent * 0.8) / 2)
+		    Var CaptionLeft As Integer = ContentRect.Left + ((ContentRect.Width - CaptionWidth) / 2)
+		    Var CaptionBottom As Integer = ContentRect.Top + (ContentRect.Height / 2) + ((G.FontAscent * 0.8) / 2)
 		    
 		    G.DrawingColor = SystemColors.LabelColor
 		    G.DrawText(Self.Caption, CaptionLeft, CaptionBottom, CaptionWidth, True)
@@ -514,6 +511,23 @@ Implements ObservationKit.Observer
 		  End If
 		  
 		  App.ShowTooltip(Self.mHoverItem.HelpTag, System.MouseX, System.MouseY + 16)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowMenu(Item As BeaconToolbarItem)
+		  Var Menu As New MenuItem
+		  RaiseEvent BuildMenu(Item, Menu)
+		  
+		  If Menu.Count = 0 Then
+		    Return
+		  End If
+		  
+		  Var Position As Point = Self.Window.GlobalPosition
+		  Var Choice As MenuItem = Menu.PopUp(Position.X + Self.Left + Item.Rect.Left, Position.Y + Self.Top + Item.Rect.Bottom)
+		  If Choice <> Nil Then
+		    RaiseEvent HandleMenuAction(Item, Choice)
+		  End If
 		End Sub
 	#tag EndMethod
 

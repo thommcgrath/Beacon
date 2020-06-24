@@ -6,15 +6,58 @@ Protected Class Coordinator
 		  Self.Tasks.AddRow(Task)
 		  RaiseEvent TaskAdded(Task)
 		  
-		  If Self.Animator.RunMode = Timer.RunModes.Off Then
-		    Self.Animator.RunMode = Timer.RunModes.Multiple
+		  If Task.Threaded Then
+		    If Self.ThreadedAnimator.ThreadState = Thread.ThreadStates.Paused Then
+		      Self.ThreadedAnimator.Resume
+		    End If
+		  Else
+		    If Self.Animator.RunMode = Timer.RunModes.Off Then
+		      Self.Animator.RunMode = Timer.RunModes.Multiple
+		    End If
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Animator_Run(Sender As Timer)
-		  Dim AddedTasks(), RemovedTasks() As AnimationKit.Task
+		Private Sub Animator_Action(Sender As Timer)
+		  Self.RunTasks(False)
+		  
+		  If Self.Tasks.LastRowIndex = -1 Then
+		    Sender.RunMode = Timer.RunModes.Off
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.Animator = New Timer
+		  Self.Animator.RunMode = Timer.RunModes.Off
+		  Self.Animator.Period = 10
+		  AddHandler Self.Animator.Action, WeakAddressOf Self.Animator_Action
+		  
+		  Self.ThreadedAnimator = New Thread
+		  AddHandler Self.ThreadedAnimator.Run, WeakAddressOf Self.ThreadedAnimator_Run
+		  Self.ThreadedAnimator.Start
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Destructor()
+		  If Self.ThreadedAnimator <> Nil Then
+		    Self.ThreadedAnimator.Stop
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function FramePeriod() As Double
+		  return 1000000 / Self.FramesPerSecond
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RunTasks(Threaded As Boolean)
+		  Var AddedTasks(), RemovedTasks() As AnimationKit.Task
 		  For I As Integer = Self.Tasks.LastRowIndex DownTo 0
 		    If Self.Tasks(I).Cancelled Then
 		      RemovedTasks.AddRow(Self.Tasks(I))
@@ -22,16 +65,19 @@ Protected Class Coordinator
 		    End If
 		  Next
 		  
-		  Dim Now As Double = System.Microseconds
+		  Var Now As Double = System.Microseconds
 		  
 		  For Each Task As AnimationKit.Task In Self.Tasks
+		    If Task.Threaded <> Threaded Then
+		      Continue
+		    End If
 		    If Task.Completed(Now) Or Now - Task.LastFrameTime >= Self.FramePeriod Then
 		      Task.Perform(Now)
 		    End If
 		  Next
 		  
 		  For I As Integer = Self.Tasks.LastRowIndex DownTo 0
-		    Dim Task As AnimationKit.Task = Self.Tasks(I)
+		    Var Task As AnimationKit.Task = Self.Tasks(I)
 		    If Task.Completed(Now) Then
 		      RemovedTasks.AddRow(Task)
 		      Self.Tasks.RemoveRowAt(I)
@@ -43,10 +89,6 @@ Protected Class Coordinator
 		    End If
 		  Next
 		  
-		  If Self.Tasks.LastRowIndex = -1 Then
-		    Sender.RunMode = Timer.RunModes.Off
-		  End If
-		  
 		  For Each Task As AnimationKit.Task In RemovedTasks
 		    RaiseEvent TaskRemoved(Task)
 		  Next
@@ -56,19 +98,19 @@ Protected Class Coordinator
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Constructor()
-		  Self.Animator = New Timer
-		  Self.Animator.RunMode = Timer.RunModes.Off
-		  Self.Animator.Period = 10
-		  AddHandler Self.Animator.Action, WeakAddressOf Self.Animator_Run
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
-		Private Function FramePeriod() As Double
-		  return 1000000 / Self.FramesPerSecond
-		End Function
+		Private Sub ThreadedAnimator_Run(Sender As Thread)
+		  Do
+		    If Self.Tasks.LastRowIndex = -1 Then
+		      Sender.Pause()
+		      Continue
+		    End If
+		    
+		    Self.RunTasks(True)
+		    
+		    Sender.Sleep(10)
+		  Loop
+		End Sub
 	#tag EndMethod
 
 
@@ -91,6 +133,10 @@ Protected Class Coordinator
 
 	#tag Property, Flags = &h21
 		Private Tasks() As AnimationKit.Task
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private ThreadedAnimator As Thread
 	#tag EndProperty
 
 

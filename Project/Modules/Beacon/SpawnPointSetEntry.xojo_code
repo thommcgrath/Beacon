@@ -117,6 +117,12 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasCustomLevelRange() As Boolean
+		  Return Self.mLevels.Count > 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ID() As v4UUID
 		  Return Self.mID
 		End Function
@@ -198,7 +204,57 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function LevelRangeForDifficulty(Difficulty As Double, OffsetBeforeMultiplier As Boolean) As Beacon.Range
-		  Var Levels As Beacon.SpawnPointLevel = Self.LevelForDifficulty(Difficulty)
+		  If Self.HasCustomLevelRange Then
+		    // First, sort them.
+		    Var Difficulties() As Double
+		    Var Levels() As Beacon.SpawnPointLevel
+		    Difficulties.ResizeTo(Self.mLevels.LastRowIndex)
+		    Levels.ResizeTo(Self.mLevels.LastRowIndex)
+		    For Idx As Integer = 0 To Self.mLevels.LastRowIndex
+		      Difficulties(Idx) = Self.mLevels(Idx).Difficulty
+		      Levels(Idx) = Self.mLevels(Idx)
+		    Next
+		    Difficulties.SortWith(Levels)
+		    
+		    // Next we need to find the two difficulties closest to the target difficulty.
+		    // For example, for definitions 0.0, 1.0, and 2.0, if asked for 1.5 we need
+		    // 1.0 and 2.0. However, if asked for greater than the highest, then we return the lowest
+		    // value. Exact matches should use the same definition for the high and low.
+		    Var LowDefinition, HighDefinition As Beacon.SpawnPointLevel
+		    If Levels.Count = 1 Or Levels(Levels.LastRowIndex).Difficulty < Difficulty Or Levels(0).Difficulty > Difficulty Then
+		      LowDefinition = Levels(0)
+		      HighDefinition = Levels(0)
+		    Else
+		      For Idx As Integer = 0 To Levels.LastRowIndex
+		        If Levels(Idx).Difficulty = Difficulty Then
+		          LowDefinition = Levels(Idx)
+		          HighDefinition = Levels(Idx)
+		          Exit For Idx
+		        ElseIf Idx < Levels.LastRowIndex And Levels(Idx).Difficulty < Difficulty And Levels(Idx + 1).Difficulty > Difficulty Then
+		          LowDefinition = Levels(Idx)
+		          HighDefinition = Levels(Idx + 1)
+		          Exit For Idx
+		        End If
+		      Next
+		    End If
+		    
+		    If (LowDefinition Is Nil) = False And (HighDefinition Is Nil) = False Then
+		      Var DiffDelta As Double = HighDefinition.Difficulty - Difficulty
+		      Var MinLevel As Double = Difficulty * (Floor(LowDefinition.MinLevel) + ((Floor(HighDefinition.MinLevel) - Floor(LowDefinition.MinLevel)) * DiffDelta))
+		      Var MaxLevel As Double = Difficulty * (Floor(LowDefinition.MaxLevel) + ((Floor(HighDefinition.MaxLevel) - Floor(LowDefinition.MaxLevel)) * DiffDelta))
+		      Return New Beacon.Range(Round(MinLevel), Round(MaxLevel))
+		    End If
+		  End If
+		  
+		  // If OffsetBeforeMultiplier is true the formula is:
+		  // ((Step + Offset) * Multiplier) * Difficulty
+		  
+		  // If OffsetBeforeMultiplier is false, the formula is:
+		  // ((Step * Multiplier) + Offset) * Difficulty
+		  
+		  Const MinStep = 1
+		  Const MaxStep = 30
+		  
 		  Var MinLevelOffset, MaxLevelOffset As Double = 0.0
 		  Var MinLevelMultiplier, MaxLevelMultiplier As Double = 1.0
 		  
@@ -215,14 +271,25 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		    MaxLevelMultiplier = Self.MaxLevelMultiplier
 		  End If
 		  
-		  Var UserLevels As Beacon.Range = Levels.UserLevels(Difficulty)
+		  If MinLevelOffset > MaxLevelOffset Then
+		    Var Temp As Double = MinLevelOffset
+		    MinLevelOffset = MaxLevelOffset
+		    MaxLevelOffset = Temp
+		  End If
+		  
+		  If MinLevelMultiplier > MaxLevelMultiplier Then
+		    Var Temp As Double = MinLevelMultiplier
+		    MinLevelMultiplier = MaxLevelMultiplier
+		    MaxLevelMultiplier = Temp
+		  End If
+		  
 		  Var MinLevel, MaxLevel As Integer
 		  If OffsetBeforeMultiplier Then
-		    MinLevel = Round((UserLevels.Min * MinLevelMultiplier) + MinLevelOffset)
-		    MaxLevel = Round((UserLevels.Max * MaxLevelMultiplier) + MaxLevelOffset)
+		    MinLevel = Round(((MinStep + MinLevelOffset) * MinLevelMultiplier) * Difficulty)
+		    MaxLevel = Round(((MaxStep + MaxLevelOffset) * MaxLevelMultiplier) * Difficulty)
 		  Else
-		    MinLevel = Round((UserLevels.Min + MinLevelOffset) * MinLevelMultiplier)
-		    MaxLevel = Round((UserLevels.Max + MaxLevelOffset) * MaxLevelMultiplier)
+		    MinLevel = Round(((MinStep * MinLevelMultiplier) + MinLevelOffset) * Difficulty)
+		    MaxLevel = Round(((MaxStep * MaxLevelMultiplier) + MaxLevelOffset) * Difficulty)
 		  End If
 		  
 		  Return New Beacon.Range(MinLevel, MaxLevel)
@@ -318,7 +385,7 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		  Dict.Value("Creature") = Self.mCreature.Path
 		  Dict.Value("Type") = "SpawnPointSetEntry"
 		  If Self.mChance <> Nil Then
-		    Dict.Value("SpawnChance") = Self.mChance.Value
+		    Dict.Value("SpawnChance") = Self.mChance.DoubleValue
 		  End If
 		  If Self.mOffset <> Nil Then
 		    Dict.Value("Offset") = Self.mOffset.SaveData
@@ -332,19 +399,19 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		    Dict.Value("Levels") = Levels
 		  End If
 		  If Self.mMaxLevelMultiplier <> Nil Then
-		    Dict.Value("MaxLevelMultiplier") = Self.mMaxLevelMultiplier.Value
+		    Dict.Value("MaxLevelMultiplier") = Self.mMaxLevelMultiplier.DoubleValue
 		  End If
 		  If Self.mMaxLevelOffset <> Nil Then
-		    Dict.Value("MaxLevelOffset") = Self.mMaxLevelOffset.Value
+		    Dict.Value("MaxLevelOffset") = Self.mMaxLevelOffset.DoubleValue
 		  End If
 		  If Self.mMinLevelMultiplier <> Nil Then
-		    Dict.Value("MinLevelMultiplier") = Self.mMinLevelMultiplier.Value
+		    Dict.Value("MinLevelMultiplier") = Self.mMinLevelMultiplier.DoubleValue
 		  End If
 		  If Self.mMinLevelOffset <> Nil Then
-		    Dict.Value("MinLevelOffset") = Self.mMinLevelOffset.Value
+		    Dict.Value("MinLevelOffset") = Self.mMinLevelOffset.DoubleValue
 		  End If
 		  If Self.mLevelOverride <> Nil Then
-		    Dict.Value("LevelOverride") = Self.mLevelOverride.Value
+		    Dict.Value("LevelOverride") = Self.mLevelOverride.DoubleValue
 		  End If
 		  Return Dict
 		End Function

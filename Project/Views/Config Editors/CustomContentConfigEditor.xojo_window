@@ -86,7 +86,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       Multiline       =   True
       ReadOnly        =   False
       Scope           =   2
-      ScrollbarHorizontal=   False
+      ScrollbarHorizontal=   True
       ScrollbarVertical=   True
       Styled          =   False
       TabIndex        =   1
@@ -179,9 +179,96 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub EnableMenuItems()
+		  Self.EnableEditorMenuItem("EditorLookforSupportedConfigLines")
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub GetEditorMenuItems(Items() As MenuItem)
+		  Var ScanItem As New MenuItem("Setup Guided Editors")
+		  ScanItem.Name = "EditorLookforSupportedConfigLines"
+		  ScanItem.Enabled = True
+		  Items.AddRow(ScanItem)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  NotificationKit.Watch(Self, App.Notification_AppearanceChanged)
 		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function ParsingFinished(Document As Beacon.Document) As Boolean
+		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
+		  Var SelfDocument As Beacon.Document = Self.Document
+		  Var CreatedEditorNames() As String
+		  Var GenericProfile As New Beacon.GenericServerProfile(SelfDocument.Title, Beacon.Maps.All.Mask)
+		  Var GameIniValues As New Dictionary
+		  Var GameUserSettingsIniValues As New Dictionary
+		  
+		  Var ImportedConfigs() As Beacon.ConfigGroup
+		  For Each CreatedConfig As Beacon.ConfigGroup In Document.ImplementedConfigs
+		    Var ConfigName As String = CreatedConfig.ConfigName
+		    If ConfigName = BeaconConfigs.CustomContent.ConfigName Then
+		      Continue
+		    End If
+		    
+		    If BeaconConfigs.ConfigPurchased(ConfigName, Identity.OmniVersion) = False Then
+		      // Do not import code for groups that the user has not purchased
+		      Continue
+		    End If
+		    
+		    ImportedConfigs.AddRow(CreatedConfig)
+		    
+		    If SelfDocument.HasConfigGroup(ConfigName) Then
+		      Var CurrentConfig As Beacon.ConfigGroup = SelfDocument.ConfigGroup(ConfigName, False)
+		      If CurrentConfig <> Nil Then
+		        If Not CurrentConfig.Merge(CreatedConfig) Then
+		          Continue
+		        End If
+		      Else
+		        SelfDocument.AddConfigGroup(CreatedConfig)
+		      End If
+		    Else
+		      SelfDocument.AddConfigGroup(CreatedConfig)
+		    End If
+		    
+		    Var GameIniArray() As Beacon.ConfigValue = CreatedConfig.GameIniValues(SelfDocument, Identity, GenericProfile)
+		    Var GameUserSettingsIniArray() As Beacon.ConfigValue = CreatedConfig.GameUserSettingsIniValues(SelfDocument, Identity, GenericProfile)
+		    Var NonGeneratedKeys() As Beacon.ConfigKey = CreatedConfig.NonGeneratedKeys(Identity)
+		    For Each Key As Beacon.ConfigKey In NonGeneratedKeys
+		      Select Case Key.File
+		      Case "Game.ini"
+		        GameIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
+		      Case "GameUserSettings.ini"
+		        GameUserSettingsIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
+		      End Select
+		    Next
+		    
+		    Beacon.ConfigValue.FillConfigDict(GameIniValues, GameIniArray)
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, GameUserSettingsIniArray)
+		    
+		    CreatedEditorNames.AddRow(Language.LabelForConfig(ConfigName))
+		  Next
+		  
+		  If CreatedEditorNames.Count > 0 Then
+		    Var Config As BeaconConfigs.CustomContent = Self.Config(True)
+		    Config.GameIniContent(GameIniValues) = Config.GameIniContent
+		    Config.GameUserSettingsIniContent(GameUserSettingsIniValues) = Config.GameUserSettingsIniContent
+		  End If
+		  
+		  Self.SetupUI()
+		  
+		  If CreatedEditorNames.Count = 0 Then
+		    Self.ShowAlert("No supported editor content found", "Beacon was unable to find any lines in either Game.ini or GameUserSettings.ini that it has a guided editor for.")
+		  ElseIf CreatedEditorNames.Count = 1 Then
+		    Self.ShowAlert("Finished converting Custom Config Content", "Beacon found and setup the a guided editor for " + CreatedEditorNames(0) + ".")
+		  Else
+		    Self.ShowAlert("Finished converting Custom Config Content", "Beacon found and setup the following guided editors: " + Language.EnglishOxfordList(CreatedEditorNames) + ".")
+		  End If
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -204,12 +291,20 @@ End
 	#tag EndEvent
 
 
+	#tag MenuHandler
+		Function EditorLookforSupportedConfigLines() As Boolean Handles EditorLookforSupportedConfigLines.Action
+			Self.LookForSupportedContent()
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.CustomContent
 		  Static ConfigName As String = BeaconConfigs.CustomContent.ConfigName
 		  
-		  Dim Document As Beacon.Document = Self.Document
-		  Dim Config As BeaconConfigs.CustomContent
+		  Var Document As Beacon.Document = Self.Document
+		  Var Config As BeaconConfigs.CustomContent
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.CustomContent(Self.mConfigRef.Value)
@@ -244,6 +339,20 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub LookForSupportedContent(Confirm As Boolean = True)
+		  If Confirm Then
+		    If Not Self.ShowConfirm("Do you want Beacon to search your Custom Config Content for lines that are supported by guided editors?", "Beacon will import your Custom Config Content and automatically setup guided editors for the lines it can support. Config lines will be merged according to Beacon's standard config merging guidelines.", "Continue", "Cancel") Then
+		      Return
+		    End If
+		  End If
+		  
+		  Var Config As BeaconConfigs.CustomContent = Self.Config(False)
+		  Var Combined As String = Config.GameUserSettingsIniContent + Encodings.ASCII.Chr(10) + Encodings.ASCII.Chr(10) + Config.GameIniContent
+		  Self.Parse(Combined, "Custom Config Content")
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.
@@ -261,8 +370,8 @@ End
 		    Return False
 		  End If
 		  
-		  Dim StartPos As Integer = Self.ConfigArea.SelectionStart
-		  Dim EndPos As Integer = StartPos + Max(Self.ConfigArea.SelectionLength, 1)
+		  Var StartPos As Integer = Self.ConfigArea.SelectionStart
+		  Var EndPos As Integer = StartPos + Max(Self.ConfigArea.SelectionLength, 1)
 		  For Each Range As Beacon.Range In Self.mEncryptedRanges
 		    If StartPos >= Range.Min And EndPos <= Range.Max Then
 		      Return True
@@ -273,38 +382,38 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ToggleEncryption()
-		  Dim Tag As String = BeaconConfigs.CustomContent.EncryptedTag
-		  Dim TagLen As Integer = Tag.Length
-		  Dim Source As String = Self.ConfigArea.Value
+		  Var Tag As String = BeaconConfigs.CustomContent.EncryptedTag
+		  Var TagLen As Integer = Tag.Length
+		  Var Source As String = Self.ConfigArea.Value
 		  
 		  If Self.SelectionIsEncrypted Then
-		    Dim StartPos As Integer = Self.ConfigArea.SelectionStart
+		    Var StartPos As Integer = Self.ConfigArea.SelectionStart
 		    For I As Integer = StartPos DownTo TagLen
 		      If Source.Middle((I - TagLen), TagLen) = Tag Then
 		        StartPos = I
 		        Exit For I
 		      End If
 		    Next
-		    Dim EndPos As Integer = Source.IndexOf(StartPos, Tag)
+		    Var EndPos As Integer = Source.IndexOf(StartPos, Tag)
 		    If EndPos = -1 Then
 		      Source = Source + Tag
 		      EndPos = Source.Length
 		    End If
 		    
-		    Dim ContentLen As Integer = EndPos - StartPos
-		    Dim Prefix As String = Source.Left(StartPos - TagLen)
-		    Dim Content As String = Source.Middle(StartPos, ContentLen)
-		    Dim Suffix As String = Source.Middle(EndPos + TagLen)
+		    Var ContentLen As Integer = EndPos - StartPos
+		    Var Prefix As String = Source.Left(StartPos - TagLen)
+		    Var Content As String = Source.Middle(StartPos, ContentLen)
+		    Var Suffix As String = Source.Middle(EndPos + TagLen)
 		    
 		    Self.ConfigArea.Value = Prefix + Content + Suffix
 		    Self.ConfigArea.SelectionStart = Prefix.Length
 		    Self.ConfigArea.SelectionLength = Content.Length
 		  Else
-		    Dim Start As Integer = Self.ConfigArea.SelectionStart
-		    Dim Length As Integer = Self.ConfigArea.SelectionLength
-		    Dim Prefix As String = Source.Left(Start)
-		    Dim Content As String = Source.Middle(Start, Length)
-		    Dim Suffix As String = Source.Right(Source.Length - (Start + Length))
+		    Var Start As Integer = Self.ConfigArea.SelectionStart
+		    Var Length As Integer = Self.ConfigArea.SelectionLength
+		    Var Prefix As String = Source.Left(Start)
+		    Var Content As String = Source.Middle(Start, Length)
+		    Var Suffix As String = Source.Right(Source.Length - (Start + Length))
 		    
 		    Self.ConfigArea.Value = Prefix + Tag + Content + Tag + Suffix
 		    Self.ConfigArea.SelectionStart = Prefix.Length + TagLen
@@ -319,7 +428,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Button As BeaconToolbarItem = Self.LeftButtons.EncryptButton
+		  Var Button As BeaconToolbarItem = Self.LeftButtons.EncryptButton
 		  If Self.SelectionIsEncrypted Then
 		    Button.HelpTag = "Convert the encrypted value to plain text."
 		    Button.Enabled = True
@@ -334,13 +443,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateTextColors()
-		  Redim Self.mEncryptedRanges(-1)
+		  Self.mEncryptedRanges.ResizeTo(-1)
 		  
-		  Dim Pos As Integer
-		  Dim Source As String = Self.ConfigArea.Value
-		  Dim Tag As String = BeaconConfigs.CustomContent.EncryptedTag
-		  Dim TagLen As Integer = Tag.Length
-		  Dim Styles As StyledText = Self.ConfigArea.StyledText
+		  Var Pos As Integer
+		  Var Source As String = Self.ConfigArea.Value
+		  Var Tag As String = BeaconConfigs.CustomContent.EncryptedTag
+		  Var TagLen As Integer = Tag.Length
+		  Var Styles As StyledText = Self.ConfigArea.StyledText
 		  If Styles <> Nil Then
 		    Styles.TextColor(0, Source.Length) = SystemColors.LabelColor
 		    Styles.Bold(0, Source.Length) = False
@@ -353,8 +462,8 @@ End
 		      Return
 		    End If
 		    
-		    Dim StartPos As Integer = Pos + TagLen
-		    Dim EndPos As Integer = Source.IndexOf(StartPos, Tag)
+		    Var StartPos As Integer = Pos + TagLen
+		    Var EndPos As Integer = Source.IndexOf(StartPos, Tag)
 		    If EndPos = -1 Then
 		      EndPos = Source.Length
 		    End If
@@ -409,7 +518,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action()
-		  Dim SettingUp As Boolean = Self.SettingUp
+		  Var SettingUp As Boolean = Self.SettingUp
 		  Self.SettingUp = True
 		  Select Case Me.SelectedIndex
 		  Case 1
@@ -434,10 +543,10 @@ End
 		    Return
 		  End If
 		  
-		  Dim SanitizedText As String = Self.SanitizeText(Me.Value)
+		  Var SanitizedText As String = Self.SanitizeText(Me.Value)
 		  If SanitizedText <> Me.Value Then
-		    Dim SelectionStart As Integer = Me.SelectionStart
-		    Dim SelectionLength As Integer = Me.SelectionLength
+		    Var SelectionStart As Integer = Me.SelectionStart
+		    Var SelectionLength As Integer = Me.SelectionLength
 		    Me.Value = SanitizedText
 		    Me.SelectionStart = SelectionStart
 		    Me.SelectionLength = SelectionLength
@@ -475,6 +584,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

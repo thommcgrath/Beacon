@@ -2,6 +2,12 @@
 Protected Class SpawnPoint
 Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
+		Function AlternateLabel() As NullableString
+		  Return Self.mAlternateLabel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Availability() As UInt64
 		  // Part of the Beacon.Blueprint interface.
 		  
@@ -454,6 +460,10 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h1
+		Protected mAlternateLabel As NullableString
+	#tag EndProperty
 
 	#tag Property, Flags = &h1
 		Protected mAvailability As UInt64

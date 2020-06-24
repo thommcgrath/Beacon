@@ -229,9 +229,9 @@ End
 		    Return Nil
 		  End If
 		  
-		  Dim Win As New IdentityDecryptDialog(Dict)
+		  Var Win As New IdentityDecryptDialog(Dict)
 		  Win.ShowModalWithin(Parent.TrueWindow)
-		  Dim Identity As Beacon.Identity = Win.mOutputIdentity
+		  Var Identity As Beacon.Identity = Win.mOutputIdentity
 		  Win.Close
 		  Return Identity
 		End Function
@@ -253,9 +253,9 @@ End
 	#tag Event
 		Sub Action()
 		  // No trim. Trailing or leading whitespace is perfectly valid for the password.
-		  Dim Password As String = Self.PasswordField.Value
+		  Var Password As String = Self.PasswordField.Value
 		  
-		  Dim Identity As Beacon.Identity = Beacon.Identity.FromUserDictionary(Self.mInputDictionary, Password)
+		  Var Identity As Beacon.Identity = Beacon.Identity.FromUserDictionary(Self.mInputDictionary, Password)
 		  If Identity <> Nil Then
 		    Self.mOutputIdentity = Identity
 		    Self.Hide

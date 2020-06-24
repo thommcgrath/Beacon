@@ -45,10 +45,9 @@ Begin BeaconWindow UpdateWindow
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin Label CheckMessageLabel
@@ -104,7 +103,6 @@ Begin BeaconWindow UpdateWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   "True"
          Top             =   52
          Transparent     =   False
          Value           =   0.0
@@ -323,7 +321,6 @@ Begin BeaconWindow UpdateWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
-         TabStop         =   "True"
          Top             =   52
          Transparent     =   False
          Value           =   0.0
@@ -431,7 +428,6 @@ Begin BeaconWindow UpdateWindow
       End
    End
    Begin UpdateChecker Checker
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -439,7 +435,6 @@ Begin BeaconWindow UpdateWindow
    End
    Begin URLConnection Downloader
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -492,15 +487,15 @@ End
 		  Self.mNotesURL = NotesURL
 		  Self.ResultsNotesButton.Enabled = NotesURL.BeginsWith("https://")
 		  
-		  Dim PathComponents() As String = FrameworkExtensions.FieldAtPosition(URL, "?", 1).Split("/")
-		  Dim Filename As String = FrameworkExtensions.FieldAtPosition(PathComponents(PathComponents.LastRowIndex), "#", 1)
-		  Dim FilenameParts() As String = Filename.Split(".")
-		  Dim Extension As String = FilenameParts(FilenameParts.LastRowIndex)
+		  Var PathComponents() As String = FrameworkExtensions.FieldAtPosition(URL, "?", 1).Split("/")
+		  Var Filename As String = FrameworkExtensions.FieldAtPosition(PathComponents(PathComponents.LastRowIndex), "#", 1)
+		  Var FilenameParts() As String = Filename.Split(".")
+		  Var Extension As String = FilenameParts(FilenameParts.LastRowIndex)
 		  
 		  Self.mFilename = "Beacon " + Version + "." + Extension
 		  
 		  #if Not TargetMacOS
-		    Dim Folder As FolderItem = App.ApplicationSupport.Child("Updates")
+		    Var Folder As FolderItem = App.ApplicationSupport.Child("Updates")
 		    If Not Folder.Exists Then
 		      Folder.CreateFolder
 		    End If
@@ -596,11 +591,11 @@ End
 	#tag Event
 		Sub Action()
 		  If Self.mFile = Nil Then
-		    Dim Dialog As New SaveFileDialog
+		    Var Dialog As New SaveFileDialog
 		    Dialog.SuggestedFileName = Self.mFilename
 		    Dialog.PromptText = "Choose a location for the update file"
 		    
-		    Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		    Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		    If File = Nil Then
 		      Return
 		    End If
@@ -650,14 +645,14 @@ End
 		Sub CheckError(Message As String)
 		  #Pragma Unused Message
 		  
-		  Dim Dialog As New MessageDialog
+		  Var Dialog As New MessageDialog
 		  Dialog.Title = ""
 		  Dialog.Message = "Unable to check for updates."
 		  Dialog.Explanation = "Uh oh, something seems to be wrong. Please report this problem so it can be fixed as soon as possible."
 		  Dialog.ActionButton.Caption = "Report Now"
 		  Dialog.CancelButton.Visible = True
 		  
-		  Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
+		  Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
 		  If Choice = Dialog.ActionButton Then
 		    App.ShowBugReporter()
 		  End If
@@ -667,7 +662,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub NoUpdate()
-		  Dim Dialog As New MessageDialog
+		  Var Dialog As New MessageDialog
 		  Dialog.Title = ""
 		  Dialog.Message = "You are using the latest version."
 		  Dialog.Explanation = "Beacon automatically checks for updates on each launch so you won't miss a release."
@@ -690,7 +685,7 @@ End
 		Sub Error(e As RuntimeException)
 		  Me.Disconnect
 		  
-		  Dim Dialog As New MessageDialog
+		  Var Dialog As New MessageDialog
 		  Dialog.Title = ""
 		  Dialog.Message = "Unable to Download Update"
 		  Dialog.Explanation = e.Reason
@@ -704,7 +699,7 @@ End
 		  If HTTPStatus <> 200 Then
 		    Me.Disconnect
 		    
-		    Dim Dialog As New MessageDialog
+		    Var Dialog As New MessageDialog
 		    Dialog.Title = ""
 		    Dialog.Message = "Unable to Download Update"
 		    Dialog.Explanation = "The address " + URL + " could not be found."
@@ -738,7 +733,7 @@ End
 		  If UpdateChecker.VerifyFile(Self.mFile, Self.mSignature) Then
 		    Self.Hide
 		    
-		    Dim Confirm As New MessageDialog
+		    Var Confirm As New MessageDialog
 		    Confirm.Title = ""
 		    Confirm.Message = "Beacon is ready to update."
 		    Confirm.Explanation = "Choose ""Install Now"" to quit Beacon and start the update. If you aren't ready to update now, choose ""Install On Quit"" to start the update when you're done, or ""Show Archive"" to install the update yourself."
@@ -750,7 +745,7 @@ End
 		      Confirm.AlternateActionButton.Visible = True
 		    #endif
 		    
-		    Dim Selection As MessageDialogButton = Confirm.ShowModal
+		    Var Selection As MessageDialogButton = Confirm.ShowModal
 		    Select Case Selection
 		    Case Confirm.ActionButton
 		      Self.LaunchUpdate()
@@ -767,14 +762,14 @@ End
 		  Self.mFile.Remove
 		  Self.mFile = Nil
 		  
-		  Dim Dialog As New MessageDialog
+		  Var Dialog As New MessageDialog
 		  Dialog.Title = ""
 		  Dialog.Message = "Unable to Download Update"
 		  Dialog.Explanation = "The file was downloaded, but the integrity check did not match. Please report this problem."
 		  Dialog.ActionButton.Caption = "Report Now"
 		  Dialog.CancelButton.Visible = True
 		  
-		  Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
+		  Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
 		  If Choice = Dialog.ActionButton Then
 		    App.ShowBugReporter()
 		  End If

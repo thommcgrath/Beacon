@@ -135,9 +135,11 @@ Begin BeaconContainer CraftingCostEditor
       TextUnit        =   0
       Top             =   41
       Transparent     =   True
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   350
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -178,18 +180,20 @@ End
 #tag WindowCode
 	#tag Method, Flags = &h21
 		Private Sub ShowAddResources()
-		  Dim Engrams() As Beacon.Engram
+		  Var Engrams() As Beacon.Engram
 		  For I As Integer = 0 To Self.mTarget.LastRowIndex
 		    Engrams.AddRow(Self.mTarget.Resource(I))
 		  Next
 		  
-		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Resources", Engrams, RaiseEvent GetActiveMods, True)
+		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Resources", Engrams, RaiseEvent GetActiveMods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
 		  For Each Engram As Beacon.Engram In NewEngrams
-		    Self.mTarget.Append(Engram, 1, False)
+		    If (Engram Is Nil) = False Then
+		      Self.mTarget.Append(Engram, 1, False)
+		    End If
 		  Next
 		  
 		  Self.UpdateList()
@@ -199,11 +203,11 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
-		  Dim Paths() As String
+		  Var ScrollPosition As Integer = Self.List.ScrollPosition
+		  Var Paths() As String
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
-		      Dim Resource As Beacon.Engram = Self.List.RowTagAt(I)
+		      Var Resource As Beacon.Engram = Self.List.RowTagAt(I)
 		      Paths.AddRow(Resource.Path)
 		    End If
 		  Next
@@ -223,10 +227,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  Dim TotalItems As Integer = Self.List.RowCount
-		  Dim SelectedItems As Integer = Self.List.SelectedRowCount
+		  Var TotalItems As Integer = Self.List.RowCount
+		  Var SelectedItems As Integer = Self.List.SelectedRowCount
 		  
-		  Dim Noun As String = If(TotalItems = 1, "Resource", "Resources")
+		  Var Noun As String = If(TotalItems = 1, "Resource", "Resources")
 		  
 		  If SelectedItems > 0 Then
 		    Self.Status.Caption = Str(SelectedItems, "-0") + " of " + Str(TotalItems, "-0") + " " + Noun + " Selected"
@@ -303,7 +307,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Dim AddButton As New BeaconToolbarItem("AddResource", IconToolbarAdd)
+		  Var AddButton As New BeaconToolbarItem("AddResource", IconToolbarAdd)
 		  AddButton.HelpTag = "Add resources to this crafting cost."
 		  Me.LeftItems.Append(AddButton)
 		End Sub
@@ -357,16 +361,16 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Dicts() As Dictionary
+		  Var Dicts() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Dim Engram As Beacon.Engram = Me.RowTagAt(I)
-		    Dim Idx As Integer = Self.mTarget.IndexOf(Engram)
+		    Var Engram As Beacon.Engram = Me.RowTagAt(I)
+		    Var Idx As Integer = Self.mTarget.IndexOf(Engram)
 		    
-		    Dim Dict As New Dictionary
+		    Var Dict As New Dictionary
 		    Dict.Value("Class") = Engram.ClassString
 		    Dict.Value("Quantity") = Self.mTarget.Quantity(Idx)
 		    Dict.Value("Exact") = Self.mTarget.RequireExactResource(Idx)
@@ -382,20 +386,20 @@ End
 		    Return
 		  End If
 		  
-		  Dim Dicts() As Variant
+		  Var Dicts() As Variant
 		  Try
-		    Dim Contents As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
+		    Var Contents As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
 		    Dicts = Beacon.ParseJSON(Contents)
 		    
 		    For Each Dict As Dictionary In Dicts
-		      Dim ClassString As String = Dict.Value("Class")
-		      Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
+		      Var ClassString As String = Dict.Value("Class")
+		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
 		      If Engram = Nil Then
 		        Engram = Beacon.Engram.CreateFromClass(ClassString)
 		      End If
 		      
-		      Dim Quantity As Integer = Dict.Value("Quantity")
-		      Dim Exact As Boolean = Dict.Value("Exact")
+		      Var Quantity As Integer = Dict.Value("Quantity")
+		      Var Exact As Boolean = Dict.Value("Exact")
 		      Self.mTarget.Append(Engram, Quantity, Exact)
 		    Next
 		    
@@ -413,8 +417,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
-		  Dim Engram As Beacon.Engram = Me.RowTagAt(Row)
-		  Dim Idx As Integer = Self.mTarget.IndexOf(Engram)
+		  Var Engram As Beacon.Engram = Me.RowTagAt(Row)
+		  Var Idx As Integer = Self.mTarget.IndexOf(Engram)
 		  Select Case Column
 		  Case Self.ColumnQuantity
 		    Self.mTarget.Quantity(Idx) = Val(Me.CellValueAt(Row, Column))

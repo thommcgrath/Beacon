@@ -10,7 +10,7 @@ Begin ContainerControl CreatureStatContainer
    Enabled         =   True
    EraseBackground =   True
    HasBackgroundColor=   False
-   Height          =   328
+   Height          =   464
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   False
@@ -33,7 +33,7 @@ Begin ContainerControl CreatureStatContainer
       FontName        =   "System"
       FontSize        =   0.0
       FontUnit        =   0
-      Height          =   316
+      Height          =   452
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -659,7 +659,7 @@ Begin ContainerControl CreatureStatContainer
          TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   212
+         Top             =   280
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -695,7 +695,7 @@ Begin ContainerControl CreatureStatContainer
          TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   212
+         Top             =   280
          Transparent     =   False
          Underline       =   False
          Value           =   "40 x"
@@ -730,7 +730,7 @@ Begin ContainerControl CreatureStatContainer
          TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   212
+         Top             =   280
          Transparent     =   False
          Underline       =   False
          Value           =   "= 40"
@@ -773,7 +773,7 @@ Begin ContainerControl CreatureStatContainer
          TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   246
+         Top             =   314
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -809,7 +809,7 @@ Begin ContainerControl CreatureStatContainer
          TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   246
+         Top             =   314
          Transparent     =   False
          Underline       =   False
          Value           =   "40 x"
@@ -844,7 +844,7 @@ Begin ContainerControl CreatureStatContainer
          TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   246
+         Top             =   314
          Transparent     =   False
          Underline       =   False
          Value           =   "= 40"
@@ -887,7 +887,7 @@ Begin ContainerControl CreatureStatContainer
          TextAlignment   =   "2"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   280
+         Top             =   348
          Transparent     =   False
          Underline       =   False
          ValidationMask  =   ""
@@ -923,7 +923,7 @@ Begin ContainerControl CreatureStatContainer
          TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   280
+         Top             =   348
          Transparent     =   False
          Underline       =   False
          Value           =   "40 x"
@@ -958,7 +958,463 @@ Begin ContainerControl CreatureStatContainer
          TextAlignment   =   "0"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   280
+         Top             =   348
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "= 40"
+         Visible         =   True
+         Width           =   58
+      End
+      Begin UITweaks.ResizedLabel BaseLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   5
+         InitialParent   =   "Group"
+         Italic          =   False
+         Left            =   26
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   24
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   212
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "40 x"
+         Visible         =   True
+         Width           =   57
+      End
+      Begin UITweaks.ResizedTextField MultiplierField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   5
+         InitialParent   =   "Group"
+         Italic          =   False
+         Left            =   95
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   25
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "2"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   212
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   60
+      End
+      Begin UITweaks.ResizedLabel ComputedLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   5
+         InitialParent   =   "Group"
+         Italic          =   False
+         Left            =   167
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   26
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "0"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   212
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "= 40"
+         Visible         =   True
+         Width           =   58
+      End
+      Begin UITweaks.ResizedLabel BaseLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   6
+         InitialParent   =   "Group"
+         Italic          =   False
+         Left            =   26
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   27
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   246
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "40 x"
+         Visible         =   True
+         Width           =   57
+      End
+      Begin UITweaks.ResizedTextField MultiplierField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   6
+         InitialParent   =   "Group"
+         Italic          =   False
+         Left            =   95
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   28
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "2"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   246
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   60
+      End
+      Begin UITweaks.ResizedLabel ComputedLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   6
+         InitialParent   =   "Group"
+         Italic          =   False
+         Left            =   167
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   29
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "0"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   246
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "= 40"
+         Visible         =   True
+         Width           =   58
+      End
+      Begin UITweaks.ResizedLabel BaseLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   10
+         InitialParent   =   "Group"
+         Italic          =   False
+         Left            =   26
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   30
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   382
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "40 x"
+         Visible         =   True
+         Width           =   57
+      End
+      Begin UITweaks.ResizedTextField MultiplierField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   10
+         InitialParent   =   "Group"
+         Italic          =   False
+         Left            =   95
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   31
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "2"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   382
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   60
+      End
+      Begin UITweaks.ResizedLabel ComputedLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   10
+         InitialParent   =   "Group"
+         Italic          =   False
+         Left            =   167
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   32
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "0"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   382
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "= 40"
+         Visible         =   True
+         Width           =   58
+      End
+      Begin UITweaks.ResizedLabel BaseLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   11
+         InitialParent   =   "Group"
+         Italic          =   False
+         Left            =   26
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   33
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   416
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "40 x"
+         Visible         =   True
+         Width           =   57
+      End
+      Begin UITweaks.ResizedTextField MultiplierField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   11
+         InitialParent   =   "Group"
+         Italic          =   False
+         Left            =   95
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   34
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "2"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   416
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   60
+      End
+      Begin UITweaks.ResizedLabel ComputedLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   11
+         InitialParent   =   "Group"
+         Italic          =   False
+         Left            =   167
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   35
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "0"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   416
          Transparent     =   False
          Underline       =   False
          Value           =   "= 40"
@@ -987,7 +1443,7 @@ End
 		Shared Function FormatStat(Value As Double) As String
 		  Value = Round(Value * 100) / 100
 		  
-		  Dim Formatter As String = "-0,"
+		  Var Formatter As String = "-0,"
 		  If Value - Floor(Value) <> 0 Then
 		    Formatter = Formatter + ".0#"
 		  End If
@@ -998,23 +1454,29 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Resize()
-		  Dim AvailableWidth As Integer = Self.Group.Width - 64
-		  Dim FieldWidth As Integer = Self.MultiplierField(0).Width
-		  Dim LabelWidths As Integer = Floor((AvailableWidth - FieldWidth) / 2)
-		  Dim Remainder As Integer = AvailableWidth - (FieldWidth + (LabelWidths * 2))
-		  Dim LeftLabelWidth As Integer = LabelWidths + Remainder
-		  Dim RightLabelWidth As Integer = LabelWidths
-		  Dim StartingLeft As Integer = Self.Group.Left + 20
+		  Var AvailableWidth As Integer = Self.Group.Width - 64
+		  Var FieldWidth As Integer = Self.MultiplierField(0).Width
+		  Var LabelWidths As Integer = Floor((AvailableWidth - FieldWidth) / 2)
+		  Var Remainder As Integer = AvailableWidth - (FieldWidth + (LabelWidths * 2))
+		  Var LeftLabelWidth As Integer = LabelWidths + Remainder
+		  Var RightLabelWidth As Integer = LabelWidths
+		  Var StartingLeft As Integer = Self.Group.Left + 20
 		  
-		  For I As Integer = 0 To 9
-		    If BaseLabel(I) <> Nil Then
+		  Var Bound As Integer
+		  Var Stats() As Beacon.Stat = Beacon.Stats.All
+		  For Each Stat As Beacon.Stat In Stats
+		    Bound = Max(Bound, Stat.Index)
+		  Next
+		  
+		  For I As Integer = 0 To Bound
+		    If (BaseLabel(I) Is Nil) = False Then
 		      BaseLabel(I).Width = LeftLabelWidth
 		    End If
-		    If MultiplierField(I) <> Nil Then
+		    If (MultiplierField(I) Is Nil) = False Then
 		      MultiplierField(I).Left = StartingLeft + LeftLabelWidth + 12
 		      MultiplierField(I).Width = FieldWidth
 		    End If
-		    If ComputedLabel(I) <> Nil Then
+		    If (ComputedLabel(I) Is Nil) = False Then
 		      ComputedLabel(I).Left = StartingLeft + LeftLabelWidth + 12 + FieldWidth + 12
 		      ComputedLabel(I).Width = RightLabelWidth
 		    End If
@@ -1023,24 +1485,67 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub UpdateFigures(Key As String, Config As BeaconConfigs.StatMultipliers, Creature As Beacon.Creature, OnlyStatIndex As Integer, IncludeFocusControl As Boolean)
+		Sub UpdateFigures(Key As String, Config As BeaconConfigs.StatMultipliers, Creature As Beacon.Creature, OnlyStatIndex As Integer, IncludeFocusControl As Boolean, ForceAsPercentage As Boolean, MultiplyByBase As Boolean)
 		  If Self.mSettingUp Then
 		    Return
 		  End If
 		  
 		  Self.mSettingUp = True
-		  Dim Stats() As Beacon.Stat = Beacon.Stats.All
-		  Dim Focus As RectControl = Self.Focus
+		  Var Stats() As Beacon.Stat = Beacon.Stats.All
+		  Var Focus As RectControl = Self.Focus
 		  If IncludeFocusControl Then
 		    Focus = Nil
 		  End If
+		  
+		  Var StatPos As Integer = 42
+		  For Each Stat As Beacon.Stat In Stats
+		    Var Visible As Boolean = (Creature.StatsMask And Stat.Mask) = Stat.Mask
+		    
+		    If (Self.BaseLabel(Stat.Index) Is Nil) = False Then
+		      Self.BaseLabel(Stat.Index).Visible = Visible
+		      If Visible Then
+		        Self.BaseLabel(Stat.Index).Top = StatPos
+		      End If
+		    End If
+		    
+		    If (Self.MultiplierField(Stat.Index) Is Nil) = False Then
+		      Self.MultiplierField(Stat.Index).Visible = Visible
+		      If Visible Then
+		        Self.MultiplierField(Stat.Index).Top = StatPos
+		      End If
+		    End If
+		    
+		    If (Self.ComputedLabel(Stat.Index) Is Nil) = False Then
+		      Self.ComputedLabel(Stat.Index).Visible = Visible
+		      If Visible Then
+		        Self.ComputedLabel(Stat.Index).Top = StatPos
+		      End If
+		    End If
+		    
+		    If Visible Then
+		      StatPos = StatPos + 34
+		    End If
+		  Next
+		  
+		  Self.Group.Height = (StatPos + 8) - Self.Group.Top
+		  
 		  For Each Stat As Beacon.Stat In Stats
 		    If OnlyStatIndex > -1 And Stat.Index <> OnlyStatIndex Then
 		      Continue
 		    End If
 		    
-		    Dim PerLevel As Double = Creature.StatBaseValue(Stat) * Creature.StatValue(Stat, Key)
-		    Dim Multiplier As Double
+		    Var PerLevel As Double
+		    If MultiplyByBase = False Or (ForceAsPercentage And Stat.IsPercentage = False) Then
+		      PerLevel = Creature.StatValue(Stat, Key)
+		    Else
+		      PerLevel = Creature.StatBaseValue(Stat) * Creature.StatValue(Stat, Key)
+		    End If
+		    
+		    If Stat.Index = 2 Then
+		      PerLevel = 0
+		    End If
+		    
+		    Var Multiplier As Double
 		    Select Case Key
 		    Case Beacon.Creature.KeyWild
 		      Multiplier = Config.WildPerLevelMultiplier(Stat)
@@ -1060,12 +1565,18 @@ End
 		      End If
 		    End If
 		    
-		    Dim StatBaseLabel As Label = BaseLabel(Stat.Index)
-		    Dim StatMultiplierField As TextField = MultiplierField(Stat.Index)
-		    Dim StatComputedLabel As Label = ComputedLabel(Stat.Index)
+		    Var StatBaseLabel As Label = BaseLabel(Stat.Index)
+		    Var StatMultiplierField As TextField = MultiplierField(Stat.Index)
+		    Var StatComputedLabel As Label = ComputedLabel(Stat.Index)
 		    
 		    If StatBaseLabel <> Nil Then
-		      StatBaseLabel.Value = Self.FormatStat(PerLevel) + If(Stat.IsPercentage, "%", "") + " x"
+		      If Stat.IsPercentage Then
+		        StatBaseLabel.Value = Self.FormatStat(PerLevel) + "% x"
+		      ElseIf ForceAsPercentage Then
+		        StatBaseLabel.Value = Beacon.PrettyText(PerLevel * 100, 2) + "% x"
+		      Else
+		        StatBaseLabel.Value = Self.FormatStat(PerLevel) + " x"
+		      End If
 		    End If
 		    
 		    If StatMultiplierField <> Nil And Focus <> StatMultiplierField Then
@@ -1073,8 +1584,14 @@ End
 		    End If
 		    
 		    If StatComputedLabel <> Nil Then
-		      Dim Amount As Double = PerLevel * Multiplier
-		      StatComputedLabel.Value = "= " + Self.FormatStat(Amount) + If(Stat.IsPercentage, "%", "")
+		      Var Amount As Double = PerLevel * Multiplier
+		      If Stat.IsPercentage Then
+		        StatComputedLabel.Value = "= " + Self.FormatStat(Amount) + "%"
+		      ElseIf ForceAsPercentage Then
+		        StatComputedLabel.Value = "= " + Beacon.PrettyText(Amount * 100, 2) + "%"
+		      Else
+		        StatComputedLabel.Value = "= " + Self.FormatStat(Amount)
+		      End If
 		    End If
 		  Next
 		  Self.mSettingUp = False
@@ -1115,7 +1632,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Multiplier As Double = CDbl(Me.Value)
+		  Var Multiplier As Double = CDbl(Me.Value)
 		  RaiseEvent MultiplierUpdated(Index, Multiplier)
 		End Sub
 	#tag EndEvent

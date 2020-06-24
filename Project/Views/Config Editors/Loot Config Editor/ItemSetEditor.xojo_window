@@ -71,6 +71,7 @@ Begin BeaconContainer ItemSetEditor
       TextUnit        =   0
       Top             =   64
       Transparent     =   True
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -214,7 +215,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub EditSelectedEntries(Prefilter As String = "")
-		  Dim Sources() As Beacon.SetEntry
+		  Var Sources() As Beacon.SetEntry
 		  For I As Integer = 0 To EntryList.RowCount - 1
 		    If Not EntryList.Selected(I) Then
 		      Continue
@@ -223,14 +224,14 @@ End
 		    Sources.AddRow(EntryList.RowTagAt(I))
 		  Next
 		  
-		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.Mods, Sources, Prefilter)
+		  Var Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.Mods, Sources, Prefilter)
 		  If Entries = Nil Or Entries.LastRowIndex <> Sources.LastRowIndex Then
 		    Return
 		  End If
 		  
 		  For I As Integer = 0 To Entries.LastRowIndex
-		    Dim Source As Beacon.SetEntry = Sources(I)
-		    Dim Idx As Integer = Self.mSet.IndexOf(Source)
+		    Var Source As Beacon.SetEntry = Sources(I)
+		    Var Idx As Integer = Self.mSet.IndexOf(Source)
 		    If Idx > -1 Then
 		      Self.mSet(Idx) = Entries(I)
 		    End If
@@ -238,12 +239,6 @@ End
 		  
 		  Self.UpdateEntryList()
 		  RaiseEvent Updated
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub EnableMenuItems()
-		  
 		End Sub
 	#tag EndMethod
 
@@ -266,15 +261,15 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RemoveSelectedEntries()
-		  Dim Changed As Boolean
+		  Var Changed As Boolean
 		  
 		  For I As Integer = EntryList.RowCount - 1 DownTo 0
 		    If Not EntryList.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Dim Entry As Beacon.SetEntry = EntryList.RowTagAt(I)
-		    Dim Idx As Integer = Self.mSet.IndexOf(Entry)
+		    Var Entry As Beacon.SetEntry = EntryList.RowTagAt(I)
+		    Var Idx As Integer = Self.mSet.IndexOf(Entry)
 		    Self.mSet.Remove(Idx)
 		    Changed = True
 		  Next
@@ -297,8 +292,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateEntryList(SelectEntries() As Beacon.SetEntry)
-		  Dim Selected() As String
-		  Dim ScrollToSelection As Boolean
+		  Var Selected() As String
+		  Var ScrollToSelection As Boolean
 		  If SelectEntries <> Nil Then
 		    For Each Entry As Beacon.SetEntry In SelectEntries
 		      If Entry <> Nil Then
@@ -309,7 +304,7 @@ End
 		  Else
 		    For I As Integer = 0 To EntryList.RowCount - 1
 		      If EntryList.Selected(I) Then
-		        Dim Entry As Beacon.SetEntry = EntryList.RowTagAt(I)
+		        Var Entry As Beacon.SetEntry = EntryList.RowTagAt(I)
 		        Selected.AddRow(Entry.UniqueID)
 		      End If
 		    Next
@@ -329,35 +324,35 @@ End
 		  End If
 		  
 		  For I As Integer = 0 To Self.mSet.LastRowIndex
-		    Dim Entry As Beacon.SetEntry = Self.mSet(I)
+		    Var Entry As Beacon.SetEntry = Self.mSet(I)
 		    If Entry = Nil Then
 		      Continue
 		    End If
-		    Dim BlueprintChance As Double = if(Entry.CanBeBlueprint, Entry.ChanceToBeBlueprint, 0)
-		    Dim RelativeWeight As Double = Self.mSet.RelativeWeight(I)
-		    Dim ChanceText As String
+		    Var BlueprintChance As Double = if(Entry.CanBeBlueprint, Entry.ChanceToBeBlueprint, 0)
+		    Var RelativeWeight As Double = Self.mSet.RelativeWeight(I)
+		    Var ChanceText As String
 		    If RelativeWeight < 0.01 Then
 		      ChanceText = "< 1%"
 		    Else
 		      ChanceText = Str(RelativeWeight * 100, "0") + "%"
 		    End If
 		    
-		    Dim QualityText As String
+		    Var QualityText As String
 		    If Entry.MinQuality = Entry.MaxQuality Then
 		      QualityText = Language.LabelForQuality(Entry.MinQuality)
 		    Else
 		      QualityText = Language.LabelForQuality(Entry.MinQuality, True) + " - " + Language.LabelForQuality(Entry.MaxQuality, True)
 		    End If
 		    
-		    Dim QuantityText As String
+		    Var QuantityText As String
 		    If Entry.MinQuantity = Entry.MaxQuantity Then
 		      QuantityText = Entry.MinQuantity.ToString
 		    Else
 		      QuantityText = Entry.MinQuantity.ToString + " - " + Entry.MaxQuantity.ToString
 		    End If
 		    
-		    Dim FiguresText As String
-		    Dim Weight As Double = Entry.RawWeight
+		    Var FiguresText As String
+		    Var Weight As Double = Entry.RawWeight
 		    If Floor(Weight) = Weight Then
 		      FiguresText = Format(Weight, "-0,")
 		    Else
@@ -370,7 +365,7 @@ End
 		    End If
 		    
 		    EntryList.AddRow("")
-		    Dim Idx As Integer = EntryList.LastAddedRowIndex
+		    Var Idx As Integer = EntryList.LastAddedRowIndex
 		    EntryList.CellValueAt(Idx, Self.ColumnLabel) = Entry.Label
 		    EntryList.CellValueAt(Idx, Self.ColumnQuality) = QualityText
 		    EntryList.CellValueAt(Idx, Self.ColumnQuantity) = QuantityText
@@ -398,10 +393,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  Dim TotalCount As UInteger = Self.EntryList.RowCount
-		  Dim SelectedCount As UInteger = Self.EntryList.SelectedRowCount
+		  Var TotalCount As UInteger = Self.EntryList.RowCount
+		  Var SelectedCount As UInteger = Self.EntryList.SelectedRowCount
 		  
-		  Dim Caption As String = Format(TotalCount, "0,") + " " + If(TotalCount = 1, "Item Set Entry", "Item Set Entries")
+		  Var Caption As String = Format(TotalCount, "0,") + " " + If(TotalCount = 1, "Item Set Entry", "Item Set Entries")
 		  If SelectedCount > 0 Then
 		    Caption = Format(SelectedCount, "0,") + " of " + Caption + " Selected"
 		  End If
@@ -478,7 +473,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Entries() As Dictionary
+		  Var Entries() As Dictionary
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
 		      Entries.AddRow(Beacon.SetEntry(Me.RowTagAt(I)).Export)
@@ -489,7 +484,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Contents As String
+		  Var Contents As String
 		  If Entries.LastRowIndex = 0 Then
 		    Contents = Beacon.GenerateJSON(Entries(0), False)
 		  Else
@@ -505,8 +500,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		  Dim Parsed As Variant
+		  Var Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
+		  Var Parsed As Variant
 		  Try
 		    Parsed = Beacon.ParseJSON(Contents)
 		  Catch Err As RuntimeException
@@ -514,20 +509,20 @@ End
 		    Return
 		  End Try
 		  
-		  Dim Modified As Boolean
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
+		  Var Modified As Boolean
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
 		  If Info.FullName = "Dictionary" Then
 		    // Single item
-		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Parsed)
+		    Var Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Parsed)
 		    If Entry <> Nil Then
 		      Self.mSet.Append(Entry)
 		      Modified = True
 		    End If
 		  ElseIf Info.FullName = "Object()" Then
 		    // Multiple items
-		    Dim Dicts() As Variant = Parsed
+		    Var Dicts() As Variant = Parsed
 		    For Each Dict As Dictionary In Dicts
-		      Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Dict)
+		      Var Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Dict)
 		      If Entry <> Nil Then
 		        Self.mSet.Append(Entry)
 		        Modified = True
@@ -585,14 +580,14 @@ End
 		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
 		  Select Case hitItem.Tag
 		  Case "createblueprintentry"
-		    Dim Entries() As Beacon.SetEntry
+		    Var Entries() As Beacon.SetEntry
 		    For I As Integer = 0 To Me.RowCount - 1
 		      If Me.Selected(I) Then
 		        Entries.AddRow(Me.RowTagAt(I))
 		      End If
 		    Next
 		    
-		    Dim BlueprintEntry As Beacon.SetEntry = Beacon.SetEntry.CreateBlueprintEntry(Entries)
+		    Var BlueprintEntry As Beacon.SetEntry = Beacon.SetEntry.CreateBlueprintEntry(Entries)
 		    If BlueprintEntry = Nil Then
 		      Return True
 		    End If
@@ -667,17 +662,11 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function RowIsInvalid(Row As Integer) As Boolean
-		  Dim Entry As Beacon.SetEntry = Me.RowTagAt(Row)
-		  Return Not Entry.IsValid(Self.Document)
-		End Function
-	#tag EndEvent
-	#tag Event
 		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
-		  Dim Entry1 As Beacon.SetEntry = Me.RowTagAt(Row1)
-		  Dim Entry2 As Beacon.SetEntry = Me.RowTagAt(Row2)
+		  Var Entry1 As Beacon.SetEntry = Me.RowTagAt(Row1)
+		  Var Entry2 As Beacon.SetEntry = Me.RowTagAt(Row2)
 		  
-		  Dim Value1, Value2 As Double
+		  Var Value1, Value2 As Double
 		  Select Case Column
 		  Case Self.ColumnLabel
 		    Return False
@@ -728,7 +717,7 @@ End
 		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddEntry"
-		    Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.Mods)
+		    Var Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.Mods)
 		    If Entries = Nil Then
 		      Return
 		    End If
@@ -746,10 +735,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Dim AddButton As New BeaconToolbarItem("AddEntry", IconToolbarAdd)
+		  Var AddButton As New BeaconToolbarItem("AddEntry", IconToolbarAdd)
 		  AddButton.HelpTag = "Add engrams to this item set."
 		  
-		  Dim EditButton As New BeaconToolbarItem("EditEntry", IconToolbarEdit, False)
+		  Var EditButton As New BeaconToolbarItem("EditEntry", IconToolbarEdit, False)
 		  EditButton.HelpTag = "Edit the selected entries."
 		  
 		  Me.LeftItems.Append(AddButton)
@@ -760,12 +749,12 @@ End
 #tag Events Settings
 	#tag Event
 		Sub Resized()
-		  Dim ListTop As Integer = Me.Top + Me.Height
+		  Var ListTop As Integer = Me.Top + Me.Height
 		  If Self.EntryList.Top = ListTop Then
 		    Return
 		  End If
 		  
-		  Dim Diff As Integer = ListTop - Self.EntryList.Top
+		  Var Diff As Integer = ListTop - Self.EntryList.Top
 		  Self.EntryList.Top = Self.EntryList.Top + Diff
 		  Self.EntryList.Height = Self.EntryList.Height - Diff
 		End Sub

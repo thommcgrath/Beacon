@@ -6,10 +6,10 @@ Protected Module SimpleHTTP
 		    Fields = New Dictionary
 		  End If
 		  
-		  Dim Parts() As String
-		  Dim Keys() As Variant = Fields.Keys
+		  Var Parts() As String
+		  Var Keys() As Variant = Fields.Keys
 		  For Each Key As Variant In Keys
-		    Dim Value As Variant = Fields.Value(Key)
+		    Var Value As Variant = Fields.Value(Key)
 		    
 		    Parts.AddRow(EncodeURLComponent(Key) + "=" + EncodeURLComponent(Value))
 		  Next
@@ -20,7 +20,7 @@ Protected Module SimpleHTTP
 
 	#tag Method, Flags = &h1
 		Protected Sub Delete(URL As String, Handler As SimpleHTTP.ResponseCallback, Tag As Variant, Headers As Dictionary = Nil)
-		  Dim Socket As SimpleHTTP.SimpleHTTPSocket = GetSocket()
+		  Var Socket As SimpleHTTP.SimpleHTTPSocket = GetSocket()
 		  If Headers <> Nil Then
 		    For Each Entry As DictionaryEntry In Headers
 		      Socket.RequestHeader(Entry.Key) = Entry.Value
@@ -34,7 +34,7 @@ Protected Module SimpleHTTP
 
 	#tag Method, Flags = &h1
 		Protected Sub Get(URL As String, Handler As SimpleHTTP.ResponseCallback, Tag As Variant, Headers As Dictionary = Nil)
-		  Dim Socket As SimpleHTTP.SimpleHTTPSocket = GetSocket()
+		  Var Socket As SimpleHTTP.SimpleHTTPSocket = GetSocket()
 		  If Headers <> Nil Then
 		    For Each Entry As DictionaryEntry In Headers
 		      Socket.RequestHeader(Entry.Key) = Entry.Value
@@ -54,7 +54,7 @@ Protected Module SimpleHTTP
 		    End If
 		  Next
 		  
-		  Dim Socket As New SimpleHTTP.SimpleHTTPSocket
+		  Var Socket As New SimpleHTTP.SimpleHTTPSocket
 		  Sockets.AddRow(Socket)
 		  Return Socket
 		End Function
@@ -68,7 +68,7 @@ Protected Module SimpleHTTP
 
 	#tag Method, Flags = &h1
 		Protected Sub Post(URL As String, ContentType As String, Content As MemoryBlock, Handler As SimpleHTTP.ResponseCallback, Tag As Variant, Headers As Dictionary = Nil)
-		  Dim Socket As SimpleHTTP.SimpleHTTPSocket = GetSocket()
+		  Var Socket As SimpleHTTP.SimpleHTTPSocket = GetSocket()
 		  Socket.SetRequestContent(Content, ContentType)
 		  If Headers <> Nil Then
 		    For Each Entry As DictionaryEntry In Headers

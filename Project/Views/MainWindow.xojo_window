@@ -9,7 +9,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    FullScreenButton=   True
    HasBackColor    =   False
    Height          =   400
-   ImplicitInstance=   True
+   ImplicitInstance=   False
    LiveResize      =   "True"
    MacProcID       =   0
    MaxHeight       =   32000
@@ -35,7 +35,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Count           =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   25
       HelpTag         =   ""
       Index           =   -2147483648
@@ -57,6 +56,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       UseFocusRing    =   True
       Visible         =   True
       Width           =   759
+      WithTopBorder   =   False
    End
    Begin PagePanel Views
       AutoDeactivate  =   True
@@ -76,7 +76,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Top             =   25
       Transparent     =   False
       Value           =   0
@@ -94,7 +93,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          HasBackColor    =   False
          Height          =   375
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   41
          LockBottom      =   True
@@ -110,6 +108,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          TabPanelIndex   =   1
          TabStop         =   True
          ToolbarCaption  =   ""
+         ToolbarIcon     =   0
          Top             =   25
          Transparent     =   True
          UseFocusRing    =   False
@@ -124,7 +123,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   25
       HelpTag         =   ""
       Index           =   -2147483648
@@ -153,7 +151,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   100
       HelpTag         =   ""
       Index           =   -2147483648
@@ -187,7 +184,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       HasBackColor    =   False
       Height          =   400
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   -259
       LockBottom      =   True
@@ -213,7 +209,7 @@ End
 		Function CancelClose(appQuitting as Boolean) As Boolean
 		  #Pragma Unused AppQuitting
 		  
-		  Dim ModifiedViews() As BeaconSubview
+		  Var ModifiedViews() As BeaconSubview
 		  
 		  For Each View As BeaconSubview In Self.mSubviews
 		    If View.Changed Then
@@ -227,9 +223,9 @@ End
 		  Case 0
 		    Return Not Self.DiscardView(ModifiedViews(0))
 		  Else
-		    Dim NumChanges As Integer = ModifiedViews.LastRowIndex + 1
+		    Var NumChanges As Integer = ModifiedViews.LastRowIndex + 1
 		    
-		    Dim Dialog As New MessageDialog
+		    Var Dialog As New MessageDialog
 		    Dialog.Title = ""
 		    Dialog.Message = "You have " + NumChanges.ToString + " documents with unsaved changes. Do you want to review these changes before quitting?"
 		    Dialog.Explanation = "If you don't review your documents, all your changes will be lost."
@@ -238,7 +234,7 @@ End
 		    Dialog.AlternateActionButton.Caption = "Discard Changes"
 		    Dialog.AlternateActionButton.Visible = True
 		    
-		    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
+		    Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
 		    If Choice = Dialog.ActionButton Then
 		      For Each View As BeaconSubview In ModifiedViews
 		        If Not Self.DiscardView(View) Then
@@ -260,7 +256,7 @@ End
 
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, App.Notification_UpdateFound)
+		  NotificationKit.Ignore(Self, App.Notification_UpdateFound, BeaconSubview.Notification_ViewShown)
 		End Sub
 	#tag EndEvent
 
@@ -275,7 +271,7 @@ End
 	#tag Event
 		Sub Moved()
 		  If Self.mOpened Then
-		    Dim Bounds As Xojo.Rect = Self.Bounds
+		    Var Bounds As Xojo.Rect = Self.Bounds
 		    Preferences.MainWindowPosition = New Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
 		  End If
 		End Sub
@@ -283,19 +279,19 @@ End
 
 	#tag Event
 		Sub Open()
-		  Dim Bounds As Rect = Preferences.MainWindowPosition
+		  Var Bounds As Rect = Preferences.MainWindowPosition
 		  If Bounds <> Nil Then
 		    // Find the best screen
-		    Dim IdealScreen As Screen = Screen(0)
+		    Var IdealScreen As Screen = Screen(0)
 		    If ScreenCount > 1 Then
-		      Dim MaxArea As Integer
+		      Var MaxArea As Integer
 		      For I As Integer = 0 To ScreenCount - 1
-		        Dim ScreenBounds As New Rect(Screen(I).AvailableLeft, Screen(I).AvailableTop, Screen(I).AvailableWidth, Screen(I).AvailableHeight)
-		        Dim Intersection As Rect = ScreenBounds.Intersection(Bounds)
+		        Var ScreenBounds As New Rect(Screen(I).AvailableLeft, Screen(I).AvailableTop, Screen(I).AvailableWidth, Screen(I).AvailableHeight)
+		        Var Intersection As Rect = ScreenBounds.Intersection(Bounds)
 		        If Intersection = Nil Then
 		          Continue
 		        End If
-		        Dim Area As Integer = Intersection.Width * Intersection.Height
+		        Var Area As Integer = Intersection.Width * Intersection.Height
 		        If Area <= 0 Then
 		          Continue
 		        End If
@@ -306,17 +302,17 @@ End
 		      Next
 		    End If
 		    
-		    Dim AvailableBounds As New Rect(IdealScreen.AvailableLeft, IdealScreen.AvailableTop, IdealScreen.AvailableWidth, IdealScreen.AvailableHeight)
+		    Var AvailableBounds As New Rect(IdealScreen.AvailableLeft, IdealScreen.AvailableTop, IdealScreen.AvailableWidth, IdealScreen.AvailableHeight)
 		    
-		    Dim Width As Integer = Min(Max(Bounds.Width, Self.MinimumWidth), Self.MaximumWidth, AvailableBounds.Width)
-		    Dim Height As Integer = Min(Max(Bounds.Height, Self.MinimumHeight), Self.MaximumHeight, AvailableBounds.Height)
-		    Dim Left As Integer = Min(Max(Bounds.Left, AvailableBounds.Left), AvailableBounds.Right - Width)
-		    Dim Top As Integer = Min(Max(Bounds.Top, AvailableBounds.Top), AvailableBounds.Bottom - Height)
+		    Var Width As Integer = Min(Max(Bounds.Width, Self.MinimumWidth), Self.MaximumWidth, AvailableBounds.Width)
+		    Var Height As Integer = Min(Max(Bounds.Height, Self.MinimumHeight), Self.MaximumHeight, AvailableBounds.Height)
+		    Var Left As Integer = Min(Max(Bounds.Left, AvailableBounds.Left), AvailableBounds.Right - Width)
+		    Var Top As Integer = Min(Max(Bounds.Top, AvailableBounds.Top), AvailableBounds.Bottom - Height)
 		    Self.Bounds = New Xojo.Rect(Left, Top, Width, Height)
 		  End If
 		  
 		  Self.UpdateSizeForView(Self.DashboardPane1)
-		  NotificationKit.Watch(Self, App.Notification_UpdateFound)
+		  NotificationKit.Watch(Self, App.Notification_UpdateFound, BeaconSubview.Notification_ViewShown)
 		  Self.SetupUpdateUI()
 		  
 		  Self.mOpened = True
@@ -326,7 +322,7 @@ End
 	#tag Event
 		Sub Resized()
 		  If Self.mOpened Then
-		    Dim Bounds As Xojo.Rect = Self.Bounds
+		    Var Bounds As Xojo.Rect = Self.Bounds
 		    Preferences.MainWindowPosition = New Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
 		  End If
 		End Sub
@@ -411,6 +407,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CurrentView() As BeaconSubview
+		  Return Self.mCurrentView
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function DiscardView(View As BeaconSubview) As Boolean
 		  If View = DashboardPane1 Then
 		    Return False
@@ -424,10 +426,13 @@ End
 		    Self.ShowView(Nil)
 		  End If
 		  
-		  Dim ViewIndex As Integer = Self.mSubviews.IndexOf(View)
+		  Var ViewIndex As Integer = Self.mSubviews.IndexOf(View)
 		  If ViewIndex = -1 Then
 		    Return True
 		  End If
+		  
+		  View.AddObserver(Self, "ToolbarCaption")
+		  View.AddObserver(Self, "ToolbarIcon")
 		  
 		  Self.mSubviews.RemoveRowAt(ViewIndex)
 		  View.Close
@@ -441,6 +446,20 @@ End
 	#tag Method, Flags = &h0
 		Function Documents() As LibraryPaneDocuments
 		  Return Self.LibraryPane1.DocumentsPane
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FrontmostDocumentView() As DocumentEditorView
+		  If (Self.mCurrentView Is Nil) = False And Self.mCurrentView IsA DocumentEditorView Then
+		    Return DocumentEditorView(Self.mCurrentView)
+		  End If
+		  
+		  For Each View As BeaconSubview In Self.mSubviews
+		    If (View Is Nil) = False And View IsA DocumentEditorView Then
+		      Return DocumentEditorView(View)
+		    End If
+		  Next
 		End Function
 	#tag EndMethod
 
@@ -463,6 +482,8 @@ End
 		  Select Case Notification.Name
 		  Case App.Notification_UpdateFound
 		    Self.SetupUpdateUI()
+		  Case BeaconSubview.Notification_ViewShown
+		    Self.UpdateEditorMenu()
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -481,6 +502,8 @@ End
 		    Else
 		      Self.UpdateSizeForView(Self.DashboardPane1)
 		    End If
+		  Case "ToolbarCaption", "ToolbarIcon"
+		    Self.TabBar1.Invalidate
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -494,8 +517,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub SetupUpdateUI()
 		  If App.UpdateAvailable Then
-		    Dim Data As Dictionary = App.UpdateDetails
-		    Dim Preview As String = Data.Value("Preview")
+		    Var Data As Dictionary = App.UpdateDetails
+		    Var Preview As String = Data.Value("Preview")
 		    If Preview <> "" Then
 		      Self.mUpdateText = Preview + " Click here to update."
 		    Else
@@ -534,18 +557,22 @@ End
 		    Self.DashboardPane1.SwitchedTo()
 		    Self.UpdateSizeForView(Self.DashboardPane1)
 		    Self.Title = "Beacon"
+		    Self.UpdateEditorMenu()
 		    Return
 		  End If
 		  
 		  View.Visible = True
 		  Self.mCurrentView = View
 		  
-		  Dim ViewIndex As Integer = Self.mSubviews.IndexOf(View)
+		  Var ViewIndex As Integer = Self.mSubviews.IndexOf(View)
 		  If ViewIndex = -1 Then
 		    Self.mSubviews.AddRow(View)
 		    ViewIndex = Self.mSubviews.LastRowIndex
 		    Self.TabBar1.Count = Self.mSubviews.LastRowIndex + 2
 		    View.EmbedWithinPanel(Self.Views, 1, 0, 0, Self.Views.Width, Self.Views.Height)
+		    
+		    View.AddObserver(Self, "ToolbarCaption")
+		    View.AddObserver(Self, "ToolbarIcon")
 		    
 		    AddHandler View.OwnerModifiedHook, WeakAddressOf Subview_ContentsChanged
 		  End If
@@ -554,10 +581,8 @@ End
 		  Self.Changed = View.Changed
 		  Self.UpdateSizeForView(View)
 		  
-		  If View.Title <> "" Then
-		    Self.Title = "Beacon: " + View.Title
-		  ElseIf View.ToolbarCaption <> "" Then
-		    Self.Title = "Beacon: " + View.ToolbarCaption
+		  If Self.mCurrentView.ToolbarCaption.Length > 0 Then
+		    Self.Title = "Beacon: " + Self.mCurrentView.ToolbarCaption
 		  Else
 		    Self.Title = "Beacon"
 		  End If
@@ -567,6 +592,7 @@ End
 		  Self.mCurrentView.AddObserver(Self, "MinimumHeight")
 		  Self.mCurrentView.AddObserver(Self, "MinimumWidth")
 		  Self.Views.SelectedPanelIndex = 1
+		  Self.UpdateEditorMenu()
 		End Sub
 	#tag EndMethod
 
@@ -574,8 +600,8 @@ End
 		Private Sub Subview_ContentsChanged(Sender As ContainerControl)
 		  If Self.mCurrentView = Sender Then
 		    Self.Changed = Sender.Changed
-		    If Sender.Title <> "" Then
-		      Self.Title = "Beacon: " + Sender.Title
+		    If Self.mCurrentView.ToolbarCaption.Length > 0 Then
+		      Self.Title = "Beacon: " + Self.mCurrentView.ToolbarCaption
 		    Else
 		      Self.Title = "Beacon"
 		    End If
@@ -588,6 +614,34 @@ End
 		Function Tools() As LibraryPaneTools
 		  Return Self.LibraryPane1.ToolsPane
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateEditorMenu()
+		  Var Menu As MenuItem = EditorMenu
+		  
+		  For I As Integer = Menu.LastRowIndex DownTo 0
+		    If Menu.MenuAt(I) IsA ConfigGroupMenuItem Then
+		      Exit For I
+		    End If
+		    Menu.RemoveMenuAt(I)
+		  Next
+		  
+		  Var Items() As MenuItem
+		  If Self.CurrentView <> Nil Then
+		    Self.CurrentView.GetEditorMenuItems(Items)
+		  End If
+		  
+		  If Items.LastRowIndex = -1 Then
+		    Return
+		  End If
+		  
+		  Menu.AddMenu(New MenuItem(MenuItem.TextSeparator))
+		  
+		  For Each Item As MenuItem In Items
+		    Menu.AddMenu(Item)
+		  Next
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -668,7 +722,7 @@ End
 			    Return
 			  End If
 			  
-			  Dim UpdateBarHeight As Integer = If(Value, Self.UpdateBar.Height, 0)
+			  Var UpdateBarHeight As Integer = If(Value, Self.UpdateBar.Height, 0)
 			  
 			  Self.Views.Height = Self.Height - (Self.TabBar1.Height + UpdateBarHeight)
 			  Self.Views.Top = Self.Height - Self.Views.Height
@@ -747,11 +801,11 @@ End
 		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.FillRectangle(0, G.Height - 1, G.Width, 1)
 		  
-		  Dim Caption As String = Self.mUpdateText
-		  Dim MaxCaptionWidth As Integer = G.Width - 40
-		  Dim CaptionWidth As Integer = Min(Ceil(G.TextWidth(Caption)), MaxCaptionWidth)
-		  Dim CaptionLeft As Integer = Round((G.Width - CaptionWidth) / 2)
-		  Dim CaptionBaseline As Double = ((G.Height - 1) / 2) + (G.CapHeight / 2)
+		  Var Caption As String = Self.mUpdateText
+		  Var MaxCaptionWidth As Integer = G.Width - 40
+		  Var CaptionWidth As Integer = Min(Ceil(G.TextWidth(Caption)), MaxCaptionWidth)
+		  Var CaptionLeft As Integer = Round((G.Width - CaptionWidth) / 2)
+		  Var CaptionBaseline As Double = ((G.Height - 1) / 2) + (G.CapHeight / 2)
 		  
 		  G.DrawingColor = SystemColors.AlternateSelectedControlTextColor
 		  G.DrawText(Caption, CaptionLeft, CaptionBaseline, MaxCaptionWidth, True)
@@ -774,7 +828,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub MouseDrag(X As Integer, Y As Integer)
-		  Dim Inside As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height - 1)
+		  Var Inside As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height - 1)
 		  If Inside <> Self.mUpdateBarPressed Then
 		    Self.mUpdateBarPressed = Inside
 		    Self.UpdateBar.Invalidate
@@ -784,7 +838,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub MouseUp(X As Integer, Y As Integer)
-		  Dim Inside As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height - 1)
+		  Var Inside As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height - 1)
 		  If Inside Then
 		    Call App.HandleURL("beacon://action/checkforupdate")
 		  End If

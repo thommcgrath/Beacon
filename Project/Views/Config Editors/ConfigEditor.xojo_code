@@ -3,10 +3,28 @@ Protected Class ConfigEditor
 Inherits BeaconSubview
 	#tag Event
 		Sub EnableMenuItems()
-		  DocumentRestoreConfigToDefault.Enable
-		  DocumentRestoreConfigToDefault.Value = "Restore """ + Self.ConfigLabel + """ to Default"
+		  If Self.SupportsRestore() Then
+		    Self.EnableEditorMenuItem("DocumentRestoreConfigToDefault")
+		  End If
 		  
 		  RaiseEvent EnableMenuItems
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub GetEditorMenuItems(Items() As MenuItem)
+		  Var PreCount As Integer = Items.Count
+		  RaiseEvent GetEditorMenuItems(Items)
+		  If Items.Count > PreCount Then
+		    // Something was added, so we need another separator
+		    Items.AddRow(New MenuItem(MenuItem.TextSeparator))
+		  End If
+		  
+		  Var RestoreItem As New MenuItem("Restore """ + Self.ConfigLabel + """ to Default", "restore")
+		  RestoreItem.Name = "DocumentRestoreConfigToDefault"
+		  RestoreItem.AutoEnabled = False
+		  RestoreItem.Enabled = Self.SupportsRestore()
+		  Items.AddRow(RestoreItem)
 		End Sub
 	#tag EndEvent
 
@@ -21,6 +39,10 @@ Inherits BeaconSubview
 
 	#tag MenuHandler
 		Function DocumentRestoreConfigToDefault() As Boolean Handles DocumentRestoreConfigToDefault.Action
+			If Not Self.SupportsRestore Then
+			Return True
+			End If
+			
 			If Self.ShowConfirm("Are you sure you want to restore """ + Self.ConfigLabel + """ to default settings?", "Wherever possible, this will remove the config options from your file completely, restoring settings to Ark's default values. You cannot undo this action.", "Restore", "Cancel") Then
 			RaiseEvent RestoreToDefault
 			Self.SetupUI()
@@ -63,6 +85,15 @@ Inherits BeaconSubview
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Shared Sub EnableEditorMenuItem(Named As String)
+		  Var Item As MenuItem = EditorMenu.Child(Named)
+		  If Item <> Nil Then
+		    Item.Enable
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub GoToIssue(Issue As Beacon.Issue)
 		  RaiseEvent ShowIssue(Issue)
@@ -77,11 +108,14 @@ Inherits BeaconSubview
 
 	#tag Method, Flags = &h1
 		Protected Sub Parse(Content As String, Source As String)
-		  Dim Parser As New Beacon.ImportThread
+		  Var Data As New Beacon.DiscoveredData
+		  Data.GameIniContent = Content
+		  
+		  Var Parser As New Beacon.ImportThread(Data, Self.Document)
 		  AddHandler Parser.Finished, AddressOf Parser_Finished
 		  AddHandler Parser.UpdateUI, AddressOf Parser_UpdateUI
 		  
-		  Dim Win As New ImporterWindow
+		  Var Win As New ImporterWindow
 		  Win.Source = Source
 		  Win.ShowWithin(Self.TrueWindow)
 		  
@@ -90,34 +124,74 @@ Inherits BeaconSubview
 		  End If
 		  Self.mParserWindows.Value(Parser) = Win
 		  
-		  Parser.GameIniContent = Content
 		  Parser.Start
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Parser_Finished(Sender As Beacon.ImportThread, ParsedData As Dictionary)
+		Private Sub Parser_Finished(Sender As Beacon.ImportThread, Document As Beacon.Document)
 		  RemoveHandler Sender.Finished, AddressOf Parser_Finished
 		  RemoveHandler Sender.UpdateUI, AddressOf Parser_UpdateUI
 		  
-		  Dim Win As ImporterWindow = Self.mParserWindows.Value(Sender)
+		  Var Win As ImporterWindow = Self.mParserWindows.Value(Sender)
 		  Win.Close
 		  Self.mParserWindows.Remove(Sender)
 		  
-		  RaiseEvent ParsingFinished(ParsedData)
+		  If Document Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Imported As Boolean
+		  Try
+		    Imported = RaiseEvent ParsingFinished(Document)
+		  Catch Err As RuntimeException
+		    ExceptionWindow.Report(Err)
+		  End Try
+		  If Imported Then
+		    Self.SetupUI()
+		    Return
+		  End If
+		  
+		  Var Label As String = Self.ConfigLabel
+		  If Document.HasConfigGroup(Label) = False Then
+		    Return
+		  End If
+		  
+		  Var NewGroup As Beacon.ConfigGroup = Document.ConfigGroup(Label)
+		  
+		  If Self.Document.HasConfigGroup(Label) Then
+		    Var OriginalGroup As Beacon.ConfigGroup = Self.Document.ConfigGroup(Label)
+		    Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("How would you like to merge " + Language.LabelForConfig(Label) + " into your existing editor?", "In the case of overlapping content, which should take priority?", "New Content", "Cancel", "Existing Content")
+		    Select Case Choice
+		    Case BeaconUI.ConfirmResponses.Action
+		      If NewGroup.Merge(OriginalGroup) Then
+		        Self.Document.AddConfigGroup(NewGroup)
+		      End If
+		    Case BeaconUI.ConfirmResponses.Cancel
+		      Return
+		    Case BeaconUI.ConfirmResponses.Alternate
+		      If Not OriginalGroup.Merge(NewGroup) Then
+		        Return
+		      End If
+		    End Select
+		  Else
+		    Self.Document.AddConfigGroup(NewGroup)
+		  End If
+		  
+		  Self.SetupUI()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub Parser_UpdateUI(Sender As Beacon.ImportThread)
-		  Dim Win As ImporterWindow = Self.mParserWindows.Value(Sender)
+		  Var Win As ImporterWindow = Self.mParserWindows.Value(Sender)
 		  Win.Progress = Sender.Progress
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Shared Function SanitizeText(Source As String, ASCIIOnly As Boolean = True) As String
-		  Dim Sanitizer As New RegEx
+		  Var Sanitizer As New RegEx
 		  If ASCIIOnly Then
 		    Sanitizer.SearchPattern = "[^\x0A\x0D\x20-\x7E]+"
 		  Else
@@ -150,9 +224,19 @@ Inherits BeaconSubview
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SupportsRestore() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event EnableMenuItems()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event GetEditorMenuItems(Items() As MenuItem)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -160,7 +244,7 @@ Inherits BeaconSubview
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ParsingFinished(ParsedData As Dictionary)
+		Event ParsingFinished(Document As Beacon.Document) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -190,6 +274,14 @@ Inherits BeaconSubview
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="ToolbarIcon"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Picture"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="EraseBackground"
 			Visible=false

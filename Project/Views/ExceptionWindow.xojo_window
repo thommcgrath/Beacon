@@ -287,10 +287,9 @@ Begin Window ExceptionWindow
       Scope           =   2
       TabIndex        =   8
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Top             =   103
       Transparent     =   False
-      Value           =   3
+      Value           =   0
       Visible         =   True
       Width           =   474
       Begin Label CheckingLabel
@@ -346,7 +345,6 @@ Begin Window ExceptionWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   "True"
          Top             =   155
          Transparent     =   False
          Value           =   0.0
@@ -634,45 +632,79 @@ End
 	#tag Method, Flags = &h21
 		Private Sub BeginChecking()
 		  Self.Pages.SelectedPanelIndex = Self.PageStart
+		  Self.Report(Self.mExceptionFields, AddressOf Reporter_Callback)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function BuildPostFields(Err As RuntimeException) As Dictionary
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		  Var Stack() As StackFrame = Err.StackFrames
+		  While Stack.LastRowIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
+		    Stack.RemoveRowAt(0)
+		  Wend
 		  
-		  Dim Trace() As StackFrame = Self.mExceptionDetails.Value("Trace")
-		  Dim Lines() As String
-		  For Each Frame As StackFrame In Trace
+		  Var Location As String = "Unknown"
+		  If Stack.LastRowIndex >= 0 Then
+		    Location = Stack(0).Name
+		  End If
+		  Var Reason As String = Err.Reason
+		  If Reason.IsEmpty Then
+		    Reason = Err.Message
+		  End If
+		  
+		  App.Log("Unhandled " + Info.FullName + " in " + Location + ": " + Reason)
+		  
+		  Var Lines() As String
+		  For Each Frame As StackFrame In Stack
 		    Lines.AddRow(Frame.Name)
 		  Next
 		  
-		  Dim Fields As New Dictionary
+		  Var Fields As New Dictionary
 		  Fields.Value("build") = App.BuildNumber.ToString
-		  Fields.Value("hash") = Self.mExceptionHash
-		  Fields.Value("type") = Self.mExceptionDetails.Value("Type")
-		  Fields.Value("reason") = Self.mExceptionDetails.Value("Reason")
-		  Fields.Value("location") = Self.mExceptionDetails.Value("Location")
 		  Fields.Value("trace") = Lines.Join(Encodings.UTF8.Chr(10))
-		  If Self.mExceptionDetails.HasKey("UserID") Then
-		    Fields.Value("user_id") = Self.mExceptionDetails.Value("UserID")
+		  Fields.Value("hash") = EncodeHex(Crypto.SHA1(Fields.Value("trace").StringValue)).Lowercase
+		  Fields.Value("type") = Info.FullName
+		  Fields.Value("reason") = Reason
+		  Fields.Value("location") = Location
+		  If App.IdentityManager <> Nil And App.IdentityManager.CurrentIdentity <> Nil Then
+		    Fields.Value("user_id") = App.IdentityManager.CurrentIdentity.Identifier
 		  End If
 		  
-		  SimpleHTTP.Post(Beacon.WebURL("/reportaproblem"), Fields, AddressOf Reporter_Callback, Nil)
+		  Return Fields
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Constructor(Err As RuntimeException)
+		  Self.mExceptionFields = Self.BuildPostFields(Err)
+		  Self.mExceptionHash = Self.mExceptionFields.Value("hash")
+		  
+		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub Present(Dict As Dictionary)
-		  Dim Trace() As StackFrame = Dict.Value("Trace")
-		  Dim Lines() As String
-		  Lines.AddRow(Dict.Value("Type"))
-		  Lines.AddRow(Dict.Value("Reason"))
-		  For Each Frame As StackFrame In Trace
-		    Lines.AddRow(Frame.Name)
-		  Next
-		  
-		  Dim HashContent As String = Lines.Join(Encodings.UTF8.Chr(10))
-		  Dim Hash As String = EncodeHex(Crypto.SHA1(HashContent))
-		  
-		  Dim Win As New ExceptionWindow
-		  Win.mExceptionHash = Hash.Lowercase
-		  Win.mExceptionDetails = Dict
+		Shared Sub Present(Err As RuntimeException)
+		  Var Win As New ExceptionWindow(Err)
 		  Win.ShowModal()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Sub Report(Fields As Dictionary, Handler As SimpleHTTP.ResponseCallback)
+		  SimpleHTTP.Post(Beacon.WebURL("/reportaproblem"), Fields, Handler, Nil)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Sub Report(Err As RuntimeException)
+		  If Preferences.OnlineEnabled = False Then
+		    Return
+		  End If
+		  
+		  Var Fields As Dictionary = BuildPostFields(Err)
+		  Report(Fields, Nil)
 		End Sub
 	#tag EndMethod
 
@@ -687,7 +719,7 @@ End
 		  End If
 		  
 		  Try
-		    Dim Dict As Dictionary = Beacon.ParseJSON(Content)
+		    Var Dict As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Dict.HasKey("solution") And Dict.Value("solution") <> Nil Then
 		      Self.Pages.SelectedPanelIndex = Self.PageSolutionFound
@@ -717,7 +749,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mExceptionDetails As Dictionary
+		Private mExceptionFields As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

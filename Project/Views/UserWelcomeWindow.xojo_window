@@ -45,7 +45,6 @@ Begin Window UserWelcomeWindow
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -1604,7 +1603,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection ConfirmCodeCreationSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1613,7 +1611,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection CheckForConfirmationSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1622,7 +1619,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection VerifyConfirmationCodeSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1631,7 +1627,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection IdentitySuggestionSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1640,7 +1635,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection SubmitIdentitySocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1649,7 +1643,6 @@ Begin Window UserWelcomeWindow
    End
    Begin URLConnection LoginSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -1674,6 +1667,12 @@ End
 
 	#tag Event
 		Sub Open()
+		  #if TargetMacOS
+		    Self.NSWindowMBS.styleMask = Self.NSWindowMBS.styleMask Or NSWindowMBS.NSFullSizeContentViewWindowMask
+		    Self.NSWindowMBS.titlebarAppearsTransparent = True
+		    Self.NSWindowMBS.titleVisibility = NSWindowMBS.NSWindowTitleHidden
+		  #endif
+		  
 		  AddHandler App.IdentityManager.Finished, AddressOf IdentityManager_Finished
 		  
 		  If Self.mLoginOnly Then
@@ -1697,7 +1696,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckForConfirmedEmail()
-		  Dim Fields As New Dictionary
+		  Var Fields As New Dictionary
 		  Fields.Value("email") = Self.ConfirmAddressField.Value.Trim
 		  Fields.Value("key") = Self.mConfirmEncryptionKey
 		  Self.CheckForConfirmationSocket.SetFormData(Fields)
@@ -1717,8 +1716,17 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Constructor(LoginOnly As Boolean = False)
+	#tag Method, Flags = &h21
+		Private Sub Constructor()
+		  // Just here to block calling with New
+		  
+		  Super.Constructor
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Constructor(LoginOnly As Boolean = False)
 		  Self.mLoginOnly = LoginOnly
 		  Super.Constructor
 		End Sub
@@ -1749,7 +1757,7 @@ End
 		Private Sub IdentityManager_Finished(Sender As IdentityManager)
 		  If Sender.CurrentIdentity = Nil Then
 		    // Error
-		    Dim Message As String = Sender.LastError
+		    Var Message As String = Sender.LastError
 		    If Message = "" Then
 		      Message = "Please try again. If the problem persists help, see " + Beacon.WebURL("/help") + " for more help options."
 		    End If
@@ -1762,6 +1770,24 @@ End
 		  Else
 		    Self.Close()
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function IsPresent() As Boolean
+		  Return (mInstance Is Nil) = False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Sub Present(LoginOnly As Boolean)
+		  If (mInstance Is Nil) = False Or (App.CurrentThread Is Nil) = False Then
+		    Return
+		  End If
+		  
+		  mInstance = New UserWelcomeWindow(LoginOnly)
+		  mInstance.ShowModal()
+		  mInstance = Nil
 		End Sub
 	#tag EndMethod
 
@@ -1883,7 +1909,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SubmitIdentity(AllowInsecurePassword As Boolean)
-		  Dim Fields As New Dictionary
+		  Var Fields As New Dictionary
 		  Fields.Value("email") = Self.mConfirmedAddress
 		  Fields.Value("code") = Self.mConfirmedCode
 		  Fields.Value("key") = Self.mConfirmEncryptionKey
@@ -1918,6 +1944,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mConfirmEncryptionKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mInstance As UserWelcomeWindow
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -2055,7 +2085,7 @@ End
 		  If Self.mConfirmEncryptionKey = "" Then
 		    Self.mConfirmEncryptionKey = New v4UUID
 		    
-		    Dim Fields As New Dictionary
+		    Var Fields As New Dictionary
 		    Fields.Value("email") = Self.ConfirmAddressField.Value.Trim
 		    Fields.Value("key") = Self.mConfirmEncryptionKey
 		    Self.ConfirmCodeCreationSocket.SetFormData(Fields)
@@ -2083,7 +2113,7 @@ End
 		  Self.ConfirmCodeField.Visible = False
 		  Self.ConfirmCodeLabel.Visible = False
 		  
-		  Dim Fields As New Dictionary
+		  Var Fields As New Dictionary
 		  Fields.Value("code") = Self.ConfirmCodeField.Value.Trim
 		  Fields.Value("key") = Self.mConfirmEncryptionKey
 		  Fields.Value("email") = Self.ConfirmAddressField.Value.Trim
@@ -2239,10 +2269,10 @@ End
 		    // Success
 		    
 		    Try
-		      Dim Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
-		      Dim Verified As Boolean = Dict.Value("verified")
+		      Var Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
+		      Var Verified As Boolean = Dict.Value("verified")
 		      If Verified Then
-		        Dim Code As String = Dict.Value("code")
+		        Var Code As String = Dict.Value("code")
 		        Self.ConfirmCodeField.Value = Code
 		        Self.mConfirmedAddress = Dict.Value("email")
 		        Self.mConfirmedCode = Dict.Value("code")
@@ -2284,8 +2314,8 @@ End
 		    // Success
 		    
 		    Try
-		      Dim Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
-		      Dim Verified As Boolean = Dict.Value("verified")
+		      Var Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
+		      Var Verified As Boolean = Dict.Value("verified")
 		      If Verified Then
 		        If Self.mConfirmedEmailScheduleKey <> "" Then
 		          CallLater.Cancel(Self.mConfirmedEmailScheduleKey)
@@ -2337,8 +2367,8 @@ End
 		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
 		    Try
-		      Dim Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
-		      Dim Username As String = Dict.Value("username")
+		      Var Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
+		      Var Username As String = Dict.Value("username")
 		      Self.IdentityUsernameField.Value = Username
 		    Catch Err As RuntimeException
 		      Self.ShowError("Cannot get a username suggestion.", Err)
@@ -2367,8 +2397,8 @@ End
 		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
 		    Try
-		      Dim Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
-		      Dim SessionID As String = Dict.Value("session_id")
+		      Var Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
+		      Var SessionID As String = Dict.Value("session_id")
 		      
 		      Preferences.OnlineToken = SessionID
 		      Preferences.OnlineEnabled = True
@@ -2414,8 +2444,8 @@ End
 		  
 		  If HTTPStatus >= 200 And HTTPStatus < 300 Then
 		    Try
-		      Dim Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
-		      Dim SessionID As String = Dict.Value("session_id")
+		      Var Dict As Dictionary = Beacon.ParseJSON(Content.DefineEncoding(Encodings.UTF8))
+		      Var SessionID As String = Dict.Value("session_id")
 		      
 		      Preferences.OnlineToken = SessionID
 		      Preferences.OnlineEnabled = True

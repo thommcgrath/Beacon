@@ -250,59 +250,6 @@ Begin BeaconContainer ModDetailView
          Visible         =   True
          Width           =   340
       End
-      Begin BeaconListbox EngramList
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
-         Bold            =   False
-         Border          =   False
-         ColumnCount     =   12
-         ColumnsResizable=   False
-         ColumnWidths    =   "*,*,100,75,75,75,75,75,75,75,75,75"
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   22
-         Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   True
-         HeadingIndex    =   1
-         Height          =   378
-         HelpTag         =   ""
-         Hierarchical    =   False
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         InitialValue    =   "Path	Label	Blueprintable	Island	Scorched	Aberration	Extinction	Genesis	Center	Ragnarok	Valguero	Crystal Isles"
-         Italic          =   False
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   False
-         Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
-         SelectionType   =   1
-         ShowDropIndicator=   False
-         TabIndex        =   1
-         TabPanelIndex   =   4
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   41
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   False
-         Visible         =   True
-         Width           =   864
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
       Begin BeaconToolbar Header
          AcceptFocus     =   False
          AcceptTabs      =   False
@@ -446,6 +393,61 @@ Begin BeaconContainer ModDetailView
          UseFocusRing    =   True
          Visible         =   True
          Width           =   864
+      End
+      Begin BeaconListbox EngramList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   False
+         ColumnCount     =   12
+         ColumnsResizable=   False
+         ColumnWidths    =   "*,*,100,75,75,75,75,75,75,75,75,75"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   22
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   True
+         HeadingIndex    =   1
+         Height          =   378
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         InitialValue    =   "Path	Label	Blueprintable	Island	Scorched	Aberration	Extinction	Genesis	Center	Ragnarok	Valguero	Crystal Isles"
+         Italic          =   False
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
+         SelectionType   =   1
+         ShowDropIndicator=   False
+         TabIndex        =   1
+         TabPanelIndex   =   4
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   41
+         Transparent     =   False
+         TypeaheadColumn =   1
+         Underline       =   False
+         UseFocusRing    =   False
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   864
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
       End
    End
    Begin BeaconAPI.Socket Socket
@@ -606,19 +608,19 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function DeletePendingEngrams() As Boolean
-		  Dim DeletedEngrams() As BeaconAPI.Engram = Self.EngramSet.EngramsToDelete
+		  Var DeletedEngrams() As BeaconAPI.Engram = Self.EngramSet.EngramsToDelete
 		  If DeletedEngrams.LastRowIndex = -1 Then
 		    Return False
 		  End If
 		  
 		  Panel.SelectedPanelIndex = PageLoading
 		  
-		  Dim EngramIDs() As String
+		  Var EngramIDs() As String
 		  For Each Engram As BeaconAPI.Engram In DeletedEngrams
 		    EngramIDs.AddRow(Engram.ID)
 		  Next
 		  
-		  Dim Request As New BeaconAPI.Request("engram", "DELETE", EngramIDs.Join(","), "text/plain", AddressOf APICallback_EngramsDelete)
+		  Var Request As New BeaconAPI.Request("engram", "DELETE", EngramIDs.Join(","), "text/plain", AddressOf APICallback_EngramsDelete)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.Socket.Start(Request)
 		  
@@ -637,7 +639,7 @@ End
 		  End If
 		  
 		  If Not Self.mEngramSets.HasKey(Self.mCurrentMod.ModID) Then
-		    Dim Placeholder() As Variant
+		    Var Placeholder() As Variant
 		    Self.mEngramSets.Value(Self.mCurrentMod.ModID) = New BeaconAPI.EngramSet(Placeholder)
 		  End If
 		  
@@ -671,16 +673,16 @@ End
 		    Return
 		  End If
 		  
-		  Dim ModID As String = Self.mCurrentMod.ModID
+		  Var ModID As String = Self.mCurrentMod.ModID
 		  If Not Self.mStates.HasKey(ModID) Then
 		    Return
 		  End If
 		  
-		  Dim Dict As Dictionary = Self.mStates.Value(ModID)
+		  Var Dict As Dictionary = Self.mStates.Value(ModID)
 		  
-		  Dim Selected() As String = Dict.Value("Selected")
+		  Var Selected() As String = Dict.Value("Selected")
 		  For I As Integer = 0 To Self.EngramList.RowCount - 1
-		    Dim Engram As BeaconAPI.Engram = Self.EngramList.RowTagAt(I)
+		    Var Engram As BeaconAPI.Engram = Self.EngramList.RowTagAt(I)
 		    Self.EngramList.Selected(I) = Selected.IndexOf(Engram.ID) > -1
 		  Next
 		  
@@ -694,17 +696,17 @@ End
 		    Return
 		  End If
 		  
-		  Dim Selected() As String
+		  Var Selected() As String
 		  For I As Integer = 0 To Self.EngramList.RowCount - 1
-		    Dim Engram As BeaconAPI.Engram = Self.EngramList.RowTagAt(I)
+		    Var Engram As BeaconAPI.Engram = Self.EngramList.RowTagAt(I)
 		    If Self.EngramList.Selected(I) Then
 		      Selected.AddRow(Engram.ID)
 		    End If
 		  Next
 		  
-		  Dim ModID As String = Self.mCurrentMod.ModID
+		  Var ModID As String = Self.mCurrentMod.ModID
 		  
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("Position") = Self.EngramList.ScrollPosition
 		  Dict.Value("Selected") = Selected
 		  Self.mStates.Value(ModID) = Dict
@@ -713,20 +715,20 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function SavePendingEngrams() As Boolean
-		  Dim NewEngrams() As BeaconAPI.Engram = Self.EngramSet.EngramsToSave
+		  Var NewEngrams() As BeaconAPI.Engram = Self.EngramSet.EngramsToSave
 		  If NewEngrams.LastRowIndex = -1 Then
 		    Return False
 		  End If
 		  
 		  Panel.SelectedPanelIndex = PageLoading
 		  
-		  Dim Dicts() As Dictionary
+		  Var Dicts() As Dictionary
 		  For Each Engram As BeaconAPI.Engram In NewEngrams
 		    Dicts.AddRow(Engram.AsDictionary)
 		  Next
 		  
-		  Dim Content As String = Beacon.GenerateJSON(Dicts, False)
-		  Dim Request As New BeaconAPI.Request("engram", "POST", Content, "application/json", AddressOf APICallback_EngramsPost)
+		  Var Content As String = Beacon.GenerateJSON(Dicts, False)
+		  Var Request As New BeaconAPI.Request("engram", "POST", Content, "application/json", AddressOf APICallback_EngramsPost)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.Socket.Start(Request)
 		  
@@ -742,8 +744,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim EngramSet As BeaconAPI.EngramSet = Self.mEngramSets.Value(Self.mCurrentMod.ModID)
-		  Dim Engrams() As BeaconAPI.Engram = EngramSet.ActiveEngrams
+		  Var EngramSet As BeaconAPI.EngramSet = Self.mEngramSets.Value(Self.mCurrentMod.ModID)
+		  Var Engrams() As BeaconAPI.Engram = EngramSet.ActiveEngrams
 		  For Each Engram As BeaconAPI.Engram In Engrams
 		    Self.EngramList.AddRow("")
 		    Self.ShowEngramInRow(Self.EngramList.LastAddedRowIndex, Engram)
@@ -776,16 +778,16 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowFileImport()
-		  Dim Dialog As New OpenFileDialog
+		  Var Dialog As New OpenFileDialog
 		  Dialog.Filter = BeaconFileTypes.Text
 		  
-		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File = Nil Then
 		    Return
 		  End If
 		  
-		  Dim Stream As TextInputStream = TextInputStream.Open(File)
-		  Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
+		  Var Stream As TextInputStream = TextInputStream.Open(File)
+		  Var Contents As String = Stream.ReadAll(Encodings.UTF8)
 		  Stream.Close
 		  
 		  Self.ImportText(Contents)
@@ -794,7 +796,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowURLImport()
-		  Dim Contents As String = DeveloperImportURLDialog.Present(Self)
+		  Var Contents As String = DeveloperImportURLDialog.Present(Self)
 		  If Contents <> "" Then
 		    Self.ImportText(Contents)
 		  End If
@@ -849,7 +851,7 @@ End
 			  Else
 			    // Load engrams
 			    Panel.SelectedPanelIndex = PageLoading
-			    Dim Request As New BeaconAPI.Request(Self.mCurrentMod.EngramsURL, "GET", AddressOf APICallback_EngramsLoad)
+			    Var Request As New BeaconAPI.Request(Self.mCurrentMod.EngramsURL, "GET", AddressOf APICallback_EngramsLoad)
 			    Self.Socket.Start(Request)
 			  End If
 			End Set
@@ -915,7 +917,7 @@ End
 #tag Events CopyButton
 	#tag Event
 		Sub Action()
-		  Dim C As New Clipboard
+		  Var C As New Clipboard
 		  C.Text = ConfirmField.Value
 		  
 		  Me.Caption = "Copied!"
@@ -928,16 +930,57 @@ End
 		Sub Action()
 		  Panel.SelectedPanelIndex = PageLoading
 		  
-		  Dim Request As New BeaconAPI.Request(Self.CurrentMod.ConfirmURL, "GET", AddressOf APICallback_ConfirmMod)
+		  Var Request As New BeaconAPI.Request(Self.CurrentMod.ConfirmURL, "GET", AddressOf APICallback_ConfirmMod)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  Self.Socket.Start(Request)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Header
+	#tag Event
+		Sub Action(Item As BeaconToolbarItem)
+		  Select Case Item.Name
+		  Case "AddButton"
+		    Var Engram As New BeaconAPI.Engram
+		    Engram.ModID = Self.CurrentMod.ModID
+		    EngramList.AddRow("")
+		    Self.ShowEngramInRow(EngramList.LastAddedRowIndex, Engram)
+		    EngramList.EditCellAt(EngramList.LastAddedRowIndex, 0)
+		    Self.EngramSet.Add(Engram)
+		  Case "RemoveButton"
+		    For I As Integer = EngramList.RowCount -1 DownTo 0
+		      If EngramList.Selected(I) Then
+		        Var Engram As BeaconAPI.Engram = EngramList.RowTagAt(I)
+		        Self.EngramSet.Remove(Engram)
+		        EngramList.RemoveRowAt(I)
+		      End If
+		    Next
+		    Me.PublishButton.Enabled = Self.EngramSet.Modified
+		  Case "PublishButton"
+		    Self.Publish()
+		  Case "ImportFileButton"
+		    Self.ShowFileImport()
+		  Case "ImportURLButton"
+		    Self.ShowURLImport()
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.LeftItems.Append(New BeaconToolbarItem("AddButton", IconToolbarAdd, "Add new engram."))
+		  Me.LeftItems.Append(New BeaconToolbarItem("RemoveButton", IconRemove, False, "Delete selected engrams."))
+		  
+		  Me.LeftItems.Append(New BeaconToolbarItem("PublishButton", IconToolbarPublish, False, "Publish changes to make them live."))
+		  
+		  Me.RightItems.Append(New BeaconToolbarItem("ImportFileButton", IconToolbarFile, "Import engrams from file."))
+		  Me.RightItems.Append(New BeaconToolbarItem("ImportURLButton", IconToolbarLink, "Import engrams from url."))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events EngramList
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
-		  Dim Engram As BeaconAPI.Engram = Me.RowTagAt(Row)
+		  Var Engram As BeaconAPI.Engram = Me.RowTagAt(Row)
 		  
 		  Select Case Column
 		  Case 0
@@ -985,47 +1028,7 @@ End
 		    Me.ColumnTypeAt(I) = Listbox.CellTypes.CheckBox
 		    Me.ColumnAlignmentAt(I) = Listbox.Alignments.Center
 		  Next
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Header
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "AddButton"
-		    Dim Engram As New BeaconAPI.Engram
-		    Engram.ModID = Self.CurrentMod.ModID
-		    EngramList.AddRow("")
-		    Self.ShowEngramInRow(EngramList.LastAddedRowIndex, Engram)
-		    EngramList.EditCellAt(EngramList.LastAddedRowIndex, 0)
-		    Self.EngramSet.Add(Engram)
-		  Case "RemoveButton"
-		    For I As Integer = EngramList.RowCount -1 DownTo 0
-		      If EngramList.Selected(I) Then
-		        Dim Engram As BeaconAPI.Engram = EngramList.RowTagAt(I)
-		        Self.EngramSet.Remove(Engram)
-		        EngramList.RemoveRowAt(I)
-		      End If
-		    Next
-		    Me.PublishButton.Enabled = Self.EngramSet.Modified
-		  Case "PublishButton"
-		    Self.Publish()
-		  Case "ImportFileButton"
-		    Self.ShowFileImport()
-		  Case "ImportURLButton"
-		    Self.ShowURLImport()
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("AddButton", IconToolbarAdd, "Add new engram."))
-		  Me.LeftItems.Append(New BeaconToolbarItem("RemoveButton", IconRemove, False, "Delete selected engrams."))
-		  
-		  Me.LeftItems.Append(New BeaconToolbarItem("PublishButton", IconToolbarPublish, False, "Publish changes to make them live."))
-		  
-		  Me.RightItems.Append(New BeaconToolbarItem("ImportFileButton", IconToolbarFile, "Import engrams from file."))
-		  Me.RightItems.Append(New BeaconToolbarItem("ImportURLButton", IconToolbarLink, "Import engrams from url."))
+		  Me.TypeaheadColumn = 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1042,16 +1045,16 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub EngramsFound()
-		  Dim Blueprints() As Beacon.Blueprint = Me.Blueprints(True)
-		  Dim Engrams() As Beacon.Engram = Blueprints.Engrams
+		  Var Blueprints() As Beacon.Blueprint = Me.Blueprints(True)
+		  Var Engrams() As Beacon.Engram = Blueprints.Engrams
 		  
 		  If Engrams.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
-		  Dim Set As BeaconAPI.EngramSet = Self.EngramSet
-		  Dim CurrentEngrams() As BeaconAPI.Engram = Set.ActiveEngrams
-		  Dim EngramDict As New Dictionary
+		  Var Set As BeaconAPI.EngramSet = Self.EngramSet
+		  Var CurrentEngrams() As BeaconAPI.Engram = Set.ActiveEngrams
+		  Var EngramDict As New Dictionary
 		  For Each Engram As BeaconAPI.Engram In CurrentEngrams
 		    EngramDict.Value(Engram.Path) = True
 		  Next
@@ -1061,7 +1064,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim APIEngram As New BeaconAPI.Engram(Engram)
+		    Var APIEngram As New BeaconAPI.Engram(Engram)
 		    APIEngram.ModID = Self.mCurrentMod.ModID
 		    Set.Add(APIEngram)
 		    EngramList.AddRow("")

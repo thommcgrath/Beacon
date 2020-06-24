@@ -6,7 +6,6 @@ Inherits Beacon.ServerProfile
 		  Self.Address = Dict.Value("Address")
 		  Self.ServiceID = Dict.Value("Service ID")
 		  Self.ConfigPath = Dict.Value("Path")
-		  Self.GameShortcode = Dict.Lookup("NitradoGameCode", "")
 		End Sub
 	#tag EndEvent
 
@@ -16,7 +15,6 @@ Inherits Beacon.ServerProfile
 		  Dict.Value("Service ID") = Self.ServiceID
 		  Dict.Value("Path") = Self.ConfigPath
 		  Dict.Value("Provider") = "Nitrado"
-		  Dict.Value("NitradoGameCode") = Self.GameShortcode
 		End Sub
 	#tag EndEvent
 
@@ -28,8 +26,8 @@ Inherits Beacon.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function OAuthProvider() As String
-		  Return "Nitrado"
+		Function DeployCapable() As Boolean
+		  Return True
 		End Function
 	#tag EndMethod
 
@@ -43,7 +41,7 @@ Inherits Beacon.ServerProfile
 		    Return Super.Operator_Compare(Other)
 		  End If
 		  
-		  Dim OtherServiceID As Integer = Beacon.NitradoServerProfile(Other).ServiceID
+		  Var OtherServiceID As Integer = Beacon.NitradoServerProfile(Other).ServiceID
 		  If Self.ServiceID > OtherServiceID Then
 		    Return 1
 		  ElseIf Self.ServiceID < OtherServiceID Then
@@ -52,6 +50,12 @@ Inherits Beacon.ServerProfile
 		    Return 0
 		  End If
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Platform(Assigns Value As UInteger)
+		  Super.Platform = Value
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -70,6 +74,21 @@ Inherits Beacon.ServerProfile
 		Function SupportsRestart() As Boolean
 		  Return True
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UpdateDetailsFrom(Profile As Beacon.ServerProfile)
+		  Super.UpdateDetailsFrom(Profile)
+		  
+		  If Not (Profile IsA Beacon.NitradoServerProfile) Then
+		    Return
+		  End If
+		  
+		  Var NitradoProfile As Beacon.NitradoServerProfile = Beacon.NitradoServerProfile(Profile)
+		  Self.Address = NitradoProfile.Address
+		  Self.ConfigPath = NitradoProfile.ConfigPath
+		  Self.Mask = NitradoProfile.Mask
+		End Sub
 	#tag EndMethod
 
 
@@ -107,38 +126,6 @@ Inherits Beacon.ServerProfile
 		ConfigPath As String
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mShortcode
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mShortcode = Value Then
-			    Return
-			  End If
-			  
-			  Self.mShortcode = Value
-			  Self.Modified = True
-			  
-			  Select Case Value
-			  Case "arkse"
-			    Self.Platform = Beacon.ServerProfile.PlatformPC
-			  Case "arkxb"
-			    Self.Platform = Beacon.ServerProfile.PlatformXbox
-			  Case "arkps"
-			    Self.Platform = Beacon.ServerProfile.PlatformPlayStation
-			  Case "arksw" // Complete guess
-			    Self.Platform = Beacon.ServerProfile.PlatformSwitch
-			  Else
-			    Self.Platform = Beacon.ServerProfile.PlatformUnknown
-			  End Select
-			End Set
-		#tag EndSetter
-		GameShortcode As String
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h21
 		Private mAddress As String
 	#tag EndProperty
@@ -149,10 +136,6 @@ Inherits Beacon.ServerProfile
 
 	#tag Property, Flags = &h21
 		Private mServiceID As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mShortcode As String
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -174,6 +157,22 @@ Inherits Beacon.ServerProfile
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="MessageDuration"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MessageOfTheDay"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="IsConsole"
 			Visible=false
@@ -261,14 +260,6 @@ Inherits Beacon.ServerProfile
 			InitialValue=""
 			Type="Integer"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="GameShortcode"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

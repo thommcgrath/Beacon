@@ -7,13 +7,19 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function AllMods() As Beacon.ModDetails()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function AllPresetModifiers() As Beacon.PresetModifier()
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConsoleSafeMods() As String()
+		Function ConsoleSafeMods() As Beacon.ModDetails()
 		  
 		End Function
 	#tag EndMethod
@@ -67,7 +73,19 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetEngramByEntryString(EntryString As String) As Beacon.Engram
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetEngramByID(EngramID As v4UUID) As Beacon.Engram
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramByItemID(ItemID As Integer) As Beacon.Engram
 		  
 		End Function
 	#tag EndMethod
@@ -121,6 +139,12 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetSpawnPointsForCreature(Creature As Beacon.Creature, Mods As Beacon.StringList, Tags As String) As Beacon.SpawnPoint()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetStringVariable(Key As String, Default As String = "") As String
 		  
 		End Function
@@ -142,6 +166,18 @@ Protected Interface DataSource
 		Sub LoadPresets()
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ModWithID(ModID As v4UUID) As Beacon.ModDetails
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function OfficialPlayerLevelData() As Beacon.PlayerLevelData
+		  
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -170,6 +206,18 @@ Protected Interface DataSource
 
 	#tag Method, Flags = &h0
 		Function SearchForBlueprints(Category As String, SearchText As String, Mods As Beacon.StringList, Tags As String) As Beacon.Blueprint()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SearchForConfigKey(File As String, Header As String, Key As String) As Beacon.ConfigKey()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SearchForEngramEntries(SearchText As String, Mods As Beacon.StringList, Tags As String) As Beacon.Engram()
 		  
 		End Function
 	#tag EndMethod

@@ -17,7 +17,7 @@ Protected Class UserNotification
 
 	#tag Method, Flags = &h0
 		Function Identifier() As String
-		  Dim Raw As String = Self.Message + Self.SecondaryMessage + Self.ActionURL
+		  Var Raw As String = Self.Message + Self.SecondaryMessage + Self.ActionURL
 		  Return EncodeHex(Crypto.SHA1(Raw.Lowercase)).Lowercase
 		End Function
 	#tag EndMethod

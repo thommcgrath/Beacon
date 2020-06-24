@@ -3,7 +3,7 @@ Class AES_MTC
 Inherits M_Crypto.Encrypter
 	#tag Event
 		Sub CloneFrom(e As M_Crypto.Encrypter)
-		  dim other as M_Crypto.AES_MTC = M_Crypto.AES_MTC( e )
+		  Var other as M_Crypto.AES_MTC = M_Crypto.AES_MTC( e )
 		  
 		  KeyExpSize = other.KeyExpSize
 		  KeyLen = other.KeyLen
@@ -62,11 +62,11 @@ Inherits M_Crypto.Encrypter
 		  // This was manually unrolled into Cipher and InvCipher
 		  //
 		  
-		  dim ptrRoundKey as ptr = RoundKey
+		  Var ptrRoundKey as ptr = RoundKey
 		  
 		  for i As integer = 0 to 3
 		    for j As integer = 0 to 3
-		      dim dataIndex As integer = ( i * 4 + j ) + startAt
+		      Var dataIndex As integer = ( i * 4 + j ) + startAt
 		      dataPtr.Byte( dataIndex ) = dataPtr.Byte( dataIndex ) xor ptrRoundKey.Byte( round * kNb * 4 + i * kNb + j )
 		    next
 		  next
@@ -86,38 +86,38 @@ Inherits M_Crypto.Encrypter
 		  //
 		  // Used for ShiftRows
 		  //
-		  dim row0col0 As integer = startAt + 0
-		  dim row0col1 As integer = startAt + 4
-		  dim row0col2 As integer = startAt + 8
-		  dim row0col3 As integer = startAt + 12
+		  Var row0col0 As integer = startAt + 0
+		  Var row0col1 As integer = startAt + 4
+		  Var row0col2 As integer = startAt + 8
+		  Var row0col3 As integer = startAt + 12
 		  
-		  dim row1col0 as integer = row0col0 + 1
-		  dim row1col1 as integer = row0col1 + 1
-		  dim row1col2 as integer = row0col2 + 1
-		  dim row1col3 as integer = row0col3 + 1
+		  Var row1col0 as integer = row0col0 + 1
+		  Var row1col1 as integer = row0col1 + 1
+		  Var row1col2 as integer = row0col2 + 1
+		  Var row1col3 as integer = row0col3 + 1
 		  
-		  dim row2col0 as integer = row0col0 + 2
-		  dim row2col1 as integer = row0col1 + 2
-		  dim row2col2 as integer = row0col2 + 2
-		  dim row2col3 as integer = row0col3 + 2
+		  Var row2col0 as integer = row0col0 + 2
+		  Var row2col1 as integer = row0col1 + 2
+		  Var row2col2 as integer = row0col2 + 2
+		  Var row2col3 as integer = row0col3 + 2
 		  
-		  dim row3col0 as integer = row0col0 + 3
-		  dim row3col1 as integer = row0col1 + 3
-		  dim row3col2 as integer = row0col2 + 3
-		  dim row3col3 as integer = row0col3 + 3
+		  Var row3col0 as integer = row0col0 + 3
+		  Var row3col1 as integer = row0col1 + 3
+		  Var row3col2 as integer = row0col2 + 3
+		  Var row3col3 as integer = row0col3 + 3
 		  
-		  dim ptrSbox as ptr = Sbox
-		  dim round As integer = 0
+		  Var ptrSbox as ptr = Sbox
+		  Var round As integer = 0
 		  
 		  //
 		  // AddRoundKey
 		  // Add the First round key to the dataPtr, startAt before starting the rounds.
 		  //
-		  dim ptrRoundKey as ptr = RoundKey.Data
+		  Var ptrRoundKey as ptr = RoundKey.Data
 		  
 		  for i As integer = 0 to 3
 		    for j As integer = 0 to 3
-		      dim dataIndex As integer = ( i * 4 + j ) + startAt
+		      Var dataIndex As integer = ( i * 4 + j ) + startAt
 		      dataPtr.Byte( dataIndex ) = dataPtr.Byte( dataIndex ) xor ptrRoundKey.Byte( round * kNb * 4 + i * kNb + j )
 		    next
 		  next
@@ -134,7 +134,7 @@ Inherits M_Crypto.Encrypter
 		    //
 		    for i As integer = 0 to 3
 		      for j As integer = 0 to 3
-		        dim dataIndex As integer = ( j * 4 + i ) + startAt
+		        Var dataIndex As integer = ( j * 4 + i ) + startAt
 		        dataPtr.Byte( dataIndex ) = ptrSbox.Byte( dataPtr.Byte( dataIndex ) )
 		      next
 		    next
@@ -142,7 +142,7 @@ Inherits M_Crypto.Encrypter
 		    //
 		    // ShiftRows
 		    //
-		    dim temp As integer 
+		    Var temp As integer 
 		    
 		    //
 		    // Rotate first row 1 column to left  
@@ -183,16 +183,16 @@ Inherits M_Crypto.Encrypter
 		      const kXtimeMult As integer = &h1B
 		      
 		      for i As integer = 0 to 3
-		        dim dataIndex As integer = ( i * 4 ) + startAt
+		        Var dataIndex As integer = ( i * 4 ) + startAt
 		        
-		        dim byte0 As integer = dataPtr.Byte( dataIndex + 0 )
-		        dim byte1 As integer = dataPtr.Byte( dataIndex + 1 )
-		        dim byte2 As integer = dataPtr.Byte( dataIndex + 2 )
-		        dim byte3 As integer = dataPtr.Byte( dataIndex + 3 )
+		        Var byte0 As integer = dataPtr.Byte( dataIndex + 0 )
+		        Var byte1 As integer = dataPtr.Byte( dataIndex + 1 )
+		        Var byte2 As integer = dataPtr.Byte( dataIndex + 2 )
+		        Var byte3 As integer = dataPtr.Byte( dataIndex + 3 )
 		        
-		        dim tmp As integer = byte0 xor byte1 xor byte2 xor byte3
+		        Var tmp As integer = byte0 xor byte1 xor byte2 xor byte3
 		        
-		        dim tm As integer
+		        Var tm As integer
 		        
 		        tm = byte0 xor byte1
 		        tm = XtimePtr.Byte( tm )
@@ -218,7 +218,7 @@ Inherits M_Crypto.Encrypter
 		    //
 		    for i As integer = 0 to 3
 		      for j As integer = 0 to 3
-		        dim dataIndex As integer = ( i * 4 + j ) + startAt
+		        Var dataIndex As integer = ( i * 4 + j ) + startAt
 		        dataPtr.Byte( dataIndex ) = dataPtr.Byte( dataIndex ) xor ptrRoundKey.Byte( round * kNb * 4 + i * kNb + j )
 		      next
 		    next
@@ -298,25 +298,25 @@ Inherits M_Crypto.Encrypter
 		    #pragma StackOverflowChecking False
 		  #endif
 		  
-		  dim dataPtr as ptr = data.Data
+		  Var dataPtr as ptr = data.Data
 		  
 		  //
 		  // Copy the original data so we have source
 		  // for the vector
 		  //
-		  dim originalData as new Xojo.Core.MemoryBlock( data.Left( data.Size ) )
-		  dim originalDataPtr as ptr = originalData.Data
+		  Var originalData as new Xojo.Core.MemoryBlock( data.Left( data.Size ) )
+		  Var originalDataPtr as ptr = originalData.Data
 		  
-		  dim vectorMB as new Xojo.Core.MutableMemoryBlock( kBlockLen )
+		  Var vectorMB as new Xojo.Core.MutableMemoryBlock( kBlockLen )
 		  if zCurrentVector isa object then
 		    vectorMB.Left( vectorMB.Size ) = zCurrentVector
 		  elseif InitialVector isa object then
 		    vectorMB.Left( kBlockLen ) = InitialVector
 		  end if
 		  
-		  dim vectorPtr as ptr = vectorMB.Data
+		  Var vectorPtr as ptr = vectorMB.Data
 		  
-		  dim lastByte As integer = data.Size - 1
+		  Var lastByte As integer = data.Size - 1
 		  for startAt As integer = 0 to lastByte step kBlockLen
 		    InvCipher dataPtr, startAt
 		    XorWithVector dataPtr, startAt, vectorPtr
@@ -334,9 +334,9 @@ Inherits M_Crypto.Encrypter
 
 	#tag Method, Flags = &h21
 		Private Sub DecryptMbECB(data As Xojo.Core.MutableMemoryBlock)
-		  dim dataPtr as ptr = data.Data
+		  Var dataPtr as ptr = data.Data
 		  
-		  dim lastIndex As integer = data.Size - 1
+		  Var lastIndex As integer = data.Size - 1
 		  for startAt As integer = 0 to lastIndex step kBlockLen
 		    InvCipher( dataPtr, startAt )
 		  next
@@ -353,9 +353,9 @@ Inherits M_Crypto.Encrypter
 		    #pragma StackOverflowChecking False
 		  #endif
 		  
-		  dim dataPtr as ptr = data.Data
+		  Var dataPtr as ptr = data.Data
 		  
-		  dim vectorMB as Xojo.Core.MutableMemoryBlock = zCurrentVector
+		  Var vectorMB as Xojo.Core.MutableMemoryBlock = zCurrentVector
 		  
 		  if vectorMB is nil and InitialVector isa object then
 		    vectorMB = new Xojo.Core.MutableMemoryBlock( InitialVector )
@@ -364,9 +364,9 @@ Inherits M_Crypto.Encrypter
 		    vectorMB = new Xojo.Core.MutableMemoryBlock( kBlockLen )
 		  end if
 		  
-		  dim vectorPtr as ptr = vectorMB.Data
+		  Var vectorPtr as ptr = vectorMB.Data
 		  
-		  dim lastByte As integer = data.Size - 1
+		  Var lastByte As integer = data.Size - 1
 		  for startAt As integer = 0 to lastByte step kBlockLen
 		    XorWithVector dataPtr, startAt, vectorPtr
 		    Cipher dataPtr, startAt
@@ -383,9 +383,9 @@ Inherits M_Crypto.Encrypter
 
 	#tag Method, Flags = &h21
 		Private Sub EncryptMbECB(data As Xojo.Core.MutableMemoryBlock)
-		  dim dataPtr as ptr = data.Data
+		  Var dataPtr as ptr = data.Data
 		  
-		  dim lastByte As integer = data.Size - 1
+		  Var lastByte As integer = data.Size - 1
 		  for startAt As integer = 0 to lastByte step kBlockLen
 		    Cipher( dataPtr, startAt )
 		  next
@@ -406,20 +406,20 @@ Inherits M_Crypto.Encrypter
 		  // The first round key is the key itself.
 		  //
 		  RoundKey = new Xojo.Core.MutableMemoryBlock( KeyExpSize )
-		  dim keyMem as MemoryBlock = key
+		  Var keyMem as MemoryBlock = key
 		  M_Crypto.CopyStringToMutableMemoryBlock( keyMem.StringValue( 0, min( KeyLen, keyMem.size ) ), RoundKey )
 		  
-		  dim ptrRoundKey as Ptr = RoundKey.Data
+		  Var ptrRoundKey as Ptr = RoundKey.Data
 		  
 		  //
 		  // All other round keys are found from the previous round keys.
 		  //
-		  dim tempa as new Xojo.Core.MutableMemoryBlock( 4 )
-		  dim ptrTempa as ptr = tempa.Data
-		  dim ptrSbox as ptr = Sbox
-		  dim ptrRcon as ptr = Rcon
+		  Var tempa as new Xojo.Core.MutableMemoryBlock( 4 )
+		  Var ptrTempa as ptr = tempa.Data
+		  Var ptrSbox as ptr = Sbox
+		  Var ptrRcon as ptr = Rcon
 		  
-		  dim iLast As integer = kNb * ( NumberOfRounds + 1 ) - 1
+		  Var iLast As integer = kNb * ( NumberOfRounds + 1 ) - 1
 		  for i As integer = Nk to iLast
 		    ptrTempa.UInt32( 0 ) = ptrRoundKey.UInt32( ( i - 1 ) * 4 )
 		    
@@ -428,7 +428,7 @@ Inherits M_Crypto.Encrypter
 		      // [a0,a1,a2,a3] becomes [a1,a2,a3,a0]
 		      
 		      // Function RotWord()
-		      dim firstByte As integer = ptrTempa.Byte( 0 )
+		      Var firstByte As integer = ptrTempa.Byte( 0 )
 		      tempa.Left( 3 ) = tempa.Mid( 1, 3 )
 		      ptrTempa.Byte( 3 ) = firstByte
 		      
@@ -454,8 +454,8 @@ Inherits M_Crypto.Encrypter
 		      end if
 		    end if
 		    
-		    dim iTimes4 As integer = i * 4
-		    dim iMinusNk As integer = ( i - Nk ) * 4
+		    Var iTimes4 As integer = i * 4
+		    Var iMinusNk As integer = ( i - Nk ) * 4
 		    ptrRoundKey.UInt32( iTimes4 ) = ptrRoundKey.UInt32( iMinusNk ) xor ptrTempa.UInt32( 0 )
 		  next
 		  
@@ -602,38 +602,38 @@ Inherits M_Crypto.Encrypter
 		  //
 		  // Used for InvShiftRows
 		  //
-		  dim row0col0 As integer = startAt + 0
-		  dim row0col1 As integer = startAt + 4
-		  dim row0col2 As integer = startAt + 8
-		  dim row0col3 As integer = startAt + 12
+		  Var row0col0 As integer = startAt + 0
+		  Var row0col1 As integer = startAt + 4
+		  Var row0col2 As integer = startAt + 8
+		  Var row0col3 As integer = startAt + 12
 		  
-		  dim row1col0 as integer = row0col0 + 1
-		  dim row1col1 as integer = row0col1 + 1
-		  dim row1col2 as integer = row0col2 + 1
-		  dim row1col3 as integer = row0col3 + 1
+		  Var row1col0 as integer = row0col0 + 1
+		  Var row1col1 as integer = row0col1 + 1
+		  Var row1col2 as integer = row0col2 + 1
+		  Var row1col3 as integer = row0col3 + 1
 		  
-		  dim row2col0 as integer = row0col0 + 2
-		  dim row2col1 as integer = row0col1 + 2
-		  dim row2col2 as integer = row0col2 + 2
-		  dim row2col3 as integer = row0col3 + 2
+		  Var row2col0 as integer = row0col0 + 2
+		  Var row2col1 as integer = row0col1 + 2
+		  Var row2col2 as integer = row0col2 + 2
+		  Var row2col3 as integer = row0col3 + 2
 		  
-		  dim row3col0 as integer = row0col0 + 3
-		  dim row3col1 as integer = row0col1 + 3
-		  dim row3col2 as integer = row0col2 + 3
-		  dim row3col3 as integer = row0col3 + 3
+		  Var row3col0 as integer = row0col0 + 3
+		  Var row3col1 as integer = row0col1 + 3
+		  Var row3col2 as integer = row0col2 + 3
+		  Var row3col3 as integer = row0col3 + 3
 		  
-		  dim ptrInvSbox as ptr = InvSbox
-		  dim round As integer = NumberOfRounds
+		  Var ptrInvSbox as ptr = InvSbox
+		  Var round As integer = NumberOfRounds
 		  
 		  //
 		  // AddRoundKey
 		  // Add the First round key to the state before starting the rounds.
 		  //
-		  dim ptrRoundKey as ptr = RoundKey.Data
+		  Var ptrRoundKey as ptr = RoundKey.Data
 		  
 		  for i As integer = 0 to 3
 		    for j As integer = 0 to 3
-		      dim dataIndex as integer = ( i * 4 + j ) + startAt
+		      Var dataIndex as integer = ( i * 4 + j ) + startAt
 		      dataPtr.Byte( dataIndex ) = dataPtr.Byte( dataIndex ) xor ptrRoundKey.Byte( round * kNb * 4 + i * kNb + j )
 		    next
 		  next
@@ -643,12 +643,12 @@ Inherits M_Crypto.Encrypter
 		  // The first NumberOfRounds-1 rounds are identical.
 		  // These NumberOfRounds-1 rounds are executed in the loop below.
 		  //
-		  dim lastRound as integer = NumberOfRounds - 1
+		  Var lastRound as integer = NumberOfRounds - 1
 		  for round = lastRound to 0 step -1
 		    //
 		    // InvShiftRows
 		    //
-		    dim temp As integer 
+		    Var temp As integer 
 		    
 		    //
 		    // Rotate first row 1 columns to right
@@ -684,7 +684,7 @@ Inherits M_Crypto.Encrypter
 		    //
 		    for i As integer = 0 to 3
 		      for j As integer = 0 to 3
-		        dim dataIndex As integer = ( j * 4 + i ) + startAt
+		        Var dataIndex As integer = ( j * 4 + i ) + startAt
 		        dataPtr.Byte( dataIndex ) = ptrInvSbox.Byte( dataPtr.Byte( dataIndex ) )
 		      next
 		    next
@@ -694,7 +694,7 @@ Inherits M_Crypto.Encrypter
 		    //
 		    for i As integer = 0 to 3
 		      for j As integer = 0 to 3
-		        dim dataIndex As integer = ( i * 4 + j ) + startAt
+		        Var dataIndex As integer = ( i * 4 + j ) + startAt
 		        dataPtr.Byte( dataIndex ) = dataPtr.Byte( dataIndex ) xor ptrRoundKey.Byte( round * kNb * 4 + i * kNb + j )
 		      next
 		    next
@@ -704,12 +704,12 @@ Inherits M_Crypto.Encrypter
 		      // InvMixColumns (not for last round)
 		      //
 		      for i As integer = 0 to 3
-		        dim dataIndex As integer = ( i * 4 ) + startAt
+		        Var dataIndex As integer = ( i * 4 ) + startAt
 		        
-		        dim byte0 As integer = dataPtr.Byte( dataIndex + 0 )
-		        dim byte1 As integer = dataPtr.Byte( dataIndex + 1 )
-		        dim byte2 As integer = dataPtr.Byte( dataIndex + 2 )
-		        dim byte3 As integer = dataPtr.Byte( dataIndex + 3 )
+		        Var byte0 As integer = dataPtr.Byte( dataIndex + 0 )
+		        Var byte1 As integer = dataPtr.Byte( dataIndex + 1 )
+		        Var byte2 As integer = dataPtr.Byte( dataIndex + 2 )
+		        Var byte3 As integer = dataPtr.Byte( dataIndex + 3 )
 		        
 		        dataPtr.Byte( dataIndex + 0 ) = MultiplyHEPtr.Byte( byte0 ) xor MultiplyHBPtr.Byte( byte1 ) xor MultiplyHDPtr.Byte( byte2 ) xor MultiplyH9Ptr.Byte( byte3 )
 		        dataPtr.Byte( dataIndex + 1 ) = MultiplyH9Ptr.Byte( byte0 ) xor MultiplyHEPtr.Byte( byte1 ) xor MultiplyHBPtr.Byte( byte2 ) xor MultiplyHDPtr.Byte( byte3 )
@@ -730,12 +730,12 @@ Inherits M_Crypto.Encrypter
 		  //
 		  
 		  for i As integer = 0 to 3
-		    dim dataIndex As integer = ( i * 4 ) + startAt
+		    Var dataIndex As integer = ( i * 4 ) + startAt
 		    
-		    dim byte0 As integer = dataPtr.Byte( dataIndex + 0 )
-		    dim byte1 As integer = dataPtr.Byte( dataIndex + 1 )
-		    dim byte2 As integer = dataPtr.Byte( dataIndex + 2 )
-		    dim byte3 As integer = dataPtr.Byte( dataIndex + 3 )
+		    Var byte0 As integer = dataPtr.Byte( dataIndex + 0 )
+		    Var byte1 As integer = dataPtr.Byte( dataIndex + 1 )
+		    Var byte2 As integer = dataPtr.Byte( dataIndex + 2 )
+		    Var byte3 As integer = dataPtr.Byte( dataIndex + 3 )
 		    
 		    'dataPtr.Byte( dataIndex + 0 ) = Multiply( byte0, kHE ) xor Multiply( byte1, kHB ) xor Multiply( byte2, kHD ) xor Multiply( byte3, kH9 )
 		    'dataPtr.Byte( dataIndex + 1 ) = Multiply( byte0, kH9 ) xor Multiply( byte1, kHE ) xor Multiply( byte2, kHB ) xor Multiply( byte3, kHD )
@@ -758,27 +758,27 @@ Inherits M_Crypto.Encrypter
 		  // This was manually unrolled into InvCipher
 		  //
 		  
-		  dim row0col0 As integer = startAt + 0
-		  dim row0col1 As integer = startAt + 4
-		  dim row0col2 As integer = startAt + 8
-		  dim row0col3 As integer = startAt + 12
+		  Var row0col0 As integer = startAt + 0
+		  Var row0col1 As integer = startAt + 4
+		  Var row0col2 As integer = startAt + 8
+		  Var row0col3 As integer = startAt + 12
 		  
-		  dim row1col0 as integer = row0col0 + 1
-		  dim row1col1 as integer = row0col1 + 1
-		  dim row1col2 as integer = row0col2 + 1
-		  dim row1col3 as integer = row0col3 + 1
+		  Var row1col0 as integer = row0col0 + 1
+		  Var row1col1 as integer = row0col1 + 1
+		  Var row1col2 as integer = row0col2 + 1
+		  Var row1col3 as integer = row0col3 + 1
 		  
-		  dim row2col0 as integer = row0col0 + 2
-		  dim row2col1 as integer = row0col1 + 2
-		  dim row2col2 as integer = row0col2 + 2
-		  dim row2col3 as integer = row0col3 + 2
+		  Var row2col0 as integer = row0col0 + 2
+		  Var row2col1 as integer = row0col1 + 2
+		  Var row2col2 as integer = row0col2 + 2
+		  Var row2col3 as integer = row0col3 + 2
 		  
-		  dim row3col0 as integer = row0col0 + 3
-		  dim row3col1 as integer = row0col1 + 3
-		  dim row3col2 as integer = row0col2 + 3
-		  dim row3col3 as integer = row0col3 + 3
+		  Var row3col0 as integer = row0col0 + 3
+		  Var row3col1 as integer = row0col1 + 3
+		  Var row3col2 as integer = row0col2 + 3
+		  Var row3col3 as integer = row0col3 + 3
 		  
-		  dim temp As integer 
+		  Var temp As integer 
 		  
 		  //
 		  // Rotate first row 1 columns to right
@@ -819,10 +819,10 @@ Inherits M_Crypto.Encrypter
 		  // This was manually unrolled into InvCipher
 		  //
 		  
-		  dim ptrInvSbox as ptr = InvSbox
+		  Var ptrInvSbox as ptr = InvSbox
 		  for i As integer = 0 to 3
 		    for j As integer = 0 to 3
-		      dim dataIndex As integer = ( j * 4 + i ) + startAt
+		      Var dataIndex As integer = ( j * 4 + i ) + startAt
 		      dataPtr.Byte( dataIndex ) = ptrInvSbox.Byte( dataPtr.Byte( dataIndex ) )
 		    next
 		  next
@@ -843,16 +843,16 @@ Inherits M_Crypto.Encrypter
 		  const kXtimeMult As integer = &h1B
 		  
 		  for i As integer = 0 to 3
-		    dim dataIndex As integer = ( i * 4 ) + startAt
+		    Var dataIndex As integer = ( i * 4 ) + startAt
 		    
-		    dim byte0 As integer = dataPtr.Byte( dataIndex + 0 )
-		    dim byte1 As integer = dataPtr.Byte( dataIndex + 1 )
-		    dim byte2 As integer = dataPtr.Byte( dataIndex + 2 )
-		    dim byte3 As integer = dataPtr.Byte( dataIndex + 3 )
+		    Var byte0 As integer = dataPtr.Byte( dataIndex + 0 )
+		    Var byte1 As integer = dataPtr.Byte( dataIndex + 1 )
+		    Var byte2 As integer = dataPtr.Byte( dataIndex + 2 )
+		    Var byte3 As integer = dataPtr.Byte( dataIndex + 3 )
 		    
-		    dim tmp As integer = byte0 xor byte1 xor byte2 xor byte3
+		    Var tmp As integer = byte0 xor byte1 xor byte2 xor byte3
 		    
-		    dim tm As integer
+		    Var tm As integer
 		    
 		    tm = byte0 xor byte1
 		    'tm = Xtime( tm )
@@ -897,10 +897,10 @@ Inherits M_Crypto.Encrypter
 		  const kShift7 As integer = 128
 		  const kXtimeMult As integer = &h1B
 		  
-		  dim xtimex1 As integer = XtimePtr.Byte( x )
-		  dim xtimex2 As integer = XtimePtr.Byte( xtimex1 )
-		  dim xtimex3 As integer = XtimePtr.Byte( xtimex2 )
-		  dim xtimex4 As integer = XtimePtr.Byte( xtimex3 )
+		  Var xtimex1 As integer = XtimePtr.Byte( x )
+		  Var xtimex2 As integer = XtimePtr.Byte( xtimex1 )
+		  Var xtimex3 As integer = XtimePtr.Byte( xtimex2 )
+		  Var xtimex4 As integer = XtimePtr.Byte( xtimex3 )
 		  
 		  return ( ( y and kOne ) * x ) xor _
 		  ( ( ( y \ kShift1 ) and kOne ) * xtimex1 ) xor _
@@ -929,27 +929,27 @@ Inherits M_Crypto.Encrypter
 		  // This was manually unrolled into Cipher
 		  //
 		  
-		  dim row0col0 As integer = startAt + 0
-		  dim row0col1 As integer = startAt + 4
-		  dim row0col2 As integer = startAt + 8
-		  dim row0col3 As integer = startAt + 12
+		  Var row0col0 As integer = startAt + 0
+		  Var row0col1 As integer = startAt + 4
+		  Var row0col2 As integer = startAt + 8
+		  Var row0col3 As integer = startAt + 12
 		  
-		  dim row1col0 as integer = row0col0 + 1
-		  dim row1col1 as integer = row0col1 + 1
-		  dim row1col2 as integer = row0col2 + 1
-		  dim row1col3 as integer = row0col3 + 1
+		  Var row1col0 as integer = row0col0 + 1
+		  Var row1col1 as integer = row0col1 + 1
+		  Var row1col2 as integer = row0col2 + 1
+		  Var row1col3 as integer = row0col3 + 1
 		  
-		  dim row2col0 as integer = row0col0 + 2
-		  dim row2col1 as integer = row0col1 + 2
-		  dim row2col2 as integer = row0col2 + 2
-		  dim row2col3 as integer = row0col3 + 2
+		  Var row2col0 as integer = row0col0 + 2
+		  Var row2col1 as integer = row0col1 + 2
+		  Var row2col2 as integer = row0col2 + 2
+		  Var row2col3 as integer = row0col3 + 2
 		  
-		  dim row3col0 as integer = row0col0 + 3
-		  dim row3col1 as integer = row0col1 + 3
-		  dim row3col2 as integer = row0col2 + 3
-		  dim row3col3 as integer = row0col3 + 3
+		  Var row3col0 as integer = row0col0 + 3
+		  Var row3col1 as integer = row0col1 + 3
+		  Var row3col2 as integer = row0col2 + 3
+		  Var row3col3 as integer = row0col3 + 3
 		  
-		  dim temp As integer 
+		  Var temp As integer 
 		  
 		  //
 		  // Rotate first row 1 columns to left  
@@ -991,11 +991,11 @@ Inherits M_Crypto.Encrypter
 		  // This was manually unrolled into Cipher
 		  //
 		  
-		  dim ptrSbox as ptr = Sbox
+		  Var ptrSbox as ptr = Sbox
 		  
 		  for i As integer = 0 to 3
 		    for j As integer = 0 to 3
-		      dim dataIndex As integer = ( j * 4 + i ) + startAt
+		      Var dataIndex As integer = ( j * 4 + i ) + startAt
 		      dataPtr.Byte( dataIndex ) = ptrSbox.Byte( dataPtr.Byte( dataIndex ) )
 		    next
 		  next
@@ -1006,7 +1006,7 @@ Inherits M_Crypto.Encrypter
 	#tag Method, Flags = &h21
 		Private Sub XorWithVector(dataPtr As Ptr, startAt As Integer, vectorPtr As Ptr)
 		  dataPtr.UInt64( startAt ) = dataPtr.UInt64( startAt ) xor vectorPtr.UInt64( 0 )
-		  dim dataIndex As integer = startAt + 8
+		  Var dataIndex As integer = startAt + 8
 		  dataPtr.UInt64( dataIndex ) = dataPtr.UInt64( dataIndex ) xor vectorPtr.UInt64( 8 )
 		  
 		End Sub

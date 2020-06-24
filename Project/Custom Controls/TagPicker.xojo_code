@@ -39,9 +39,9 @@ Inherits ControlCanvas
 	#tag Event
 		Sub MouseUp(X As Integer, Y As Integer)
 		  If Self.mMouseDownCellIndex > -1 And Self.mCells(Self.mMouseDownCellIndex).Contains(X, Y) Then
-		    Dim Tag As String = Self.mTags(Self.mMouseDownCellIndex)
-		    Dim RequireIndex As Integer = Self.mRequireTags.IndexOf(Tag)
-		    Dim ExcludeIndex As Integer = Self.mExcludeTags.IndexOf(Tag)
+		    Var Tag As String = Self.mTags(Self.mMouseDownCellIndex)
+		    Var RequireIndex As Integer = Self.mRequireTags.IndexOf(Tag)
+		    Var ExcludeIndex As Integer = Self.mExcludeTags.IndexOf(Tag)
 		    
 		    If RequireIndex > -1 Then
 		      Self.mRequireTags.RemoveRowAt(RequireIndex)
@@ -68,7 +68,7 @@ Inherits ControlCanvas
 		  #Pragma Unused MouseY
 		  #Pragma Unused MouseX
 		  
-		  Dim ScrollPosition As Integer = Min(Max(Self.mScrollPosition + PixelsY, 0), Self.mOverflowHeight)
+		  Var ScrollPosition As Integer = Min(Max(Self.mScrollPosition + PixelsY, 0), Self.mOverflowHeight)
 		  If Self.mScrollPosition <> ScrollPosition Then
 		    Self.mScrollPosition = ScrollPosition
 		    Self.Invalidate
@@ -80,7 +80,7 @@ Inherits ControlCanvas
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  Dim ContentArea As Xojo.Rect = Self.ContentArea
+		  Var ContentArea As Xojo.Rect = Self.ContentArea
 		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.DrawRectangle(ContentArea.Left - 1, ContentArea.Top - 1, ContentArea.Width + 2, ContentArea.Height + 2)
 		  G.DrawingColor = SystemColors.ControlBackgroundColor
@@ -91,45 +91,45 @@ Inherits ControlCanvas
 		  Const VerticalPadding = 5
 		  Const HorizontalPadding = 10
 		  
-		  Dim XPos As Integer = HorizontalSpacing + ContentArea.Left
-		  Dim YPos As Integer = VerticalSpacing + ContentArea.Top
-		  Dim MaxCellWidth As Integer = ContentArea.Width - ((HorizontalSpacing * 2) + 10)
-		  Dim CapHeight As Integer = Ceil(G.CapHeight)
-		  Dim CellHeight As Integer = CapHeight + (VerticalPadding * 2)
-		  Dim Clip As Graphics = G.Clip(ContentArea.Left, ContentArea.Top, ContentArea.Width, ContentArea.Height)
+		  Var XPos As Integer = HorizontalSpacing + ContentArea.Left
+		  Var YPos As Integer = VerticalSpacing + ContentArea.Top
+		  Var MaxCellWidth As Integer = ContentArea.Width - ((HorizontalSpacing * 2) + 10)
+		  Var CapHeight As Integer = Ceil(G.CapHeight)
+		  Var CellHeight As Integer = CapHeight + (VerticalPadding * 2)
+		  Var Clip As Graphics = G.Clip(ContentArea.Left, ContentArea.Top, ContentArea.Width, ContentArea.Height)
 		  
-		  Dim RequiredBackgroundColor As Color = SystemColors.SelectedContentBackgroundColor
-		  Dim RequiredTextColor As Color = SystemColors.AlternateSelectedControlTextColor
-		  Dim NeutralBackgroundColor As Color = SystemColors.UnemphasizedSelectedTextBackgroundColor
-		  Dim NeutralTextColor As Color = SystemColors.UnemphasizedSelectedTextColor
-		  Dim ExcludedBackgroundColor As Color = SystemColors.SystemRedColor
-		  Dim ExcludedTextColor As Color = SystemColors.AlternateSelectedControlTextColor
+		  Var RequiredBackgroundColor As Color = SystemColors.SelectedContentBackgroundColor
+		  Var RequiredTextColor As Color = SystemColors.AlternateSelectedControlTextColor
+		  Var NeutralBackgroundColor As Color = SystemColors.UnemphasizedSelectedTextBackgroundColor
+		  Var NeutralTextColor As Color = SystemColors.UnemphasizedSelectedTextColor
+		  Var ExcludedBackgroundColor As Color = SystemColors.SystemRedColor
+		  Var ExcludedTextColor As Color = SystemColors.AlternateSelectedControlTextColor
 		  
 		  If Self.ColorsAreSimilar(RequiredBackgroundColor, ExcludedBackgroundColor, 100) Then
 		    ExcludedBackgroundColor = SystemColors.SystemBrownColor
 		  End If
 		  
 		  For I As Integer = 0 To Self.mTags.LastRowIndex
-		    Dim Tag As String = Self.mTags(I)
-		    Dim Required As Boolean = Self.mRequireTags.IndexOf(Tag) > -1
-		    Dim Excluded As Boolean = Self.mExcludeTags.IndexOf(Tag) > -1
-		    Dim Pressed As Boolean = Self.mMousePressedIndex = I
+		    Var Tag As String = Self.mTags(I)
+		    Var Required As Boolean = Self.mRequireTags.IndexOf(Tag) > -1
+		    Var Excluded As Boolean = Self.mExcludeTags.IndexOf(Tag) > -1
+		    Var Pressed As Boolean = Self.mMousePressedIndex = I
 		    Tag = Tag.ReplaceAll("_", " ").Titlecase
 		    
-		    Dim CaptionWidth As Integer = Ceil(Clip.TextWidth(Tag))
-		    Dim CellWidth As Integer = Min(MaxCellWidth, CaptionWidth + (HorizontalPadding * 2))
+		    Var CaptionWidth As Integer = Ceil(Clip.TextWidth(Tag))
+		    Var CellWidth As Integer = Min(MaxCellWidth, CaptionWidth + (HorizontalPadding * 2))
 		    If XPos + CellWidth > ContentArea.Right - HorizontalSpacing Then
 		      XPos = ContentArea.Left + HorizontalSpacing
 		      YPos = YPos + VerticalSpacing + CellHeight
 		    End If
 		    
-		    Dim CellRect As New Xojo.Rect(XPos, YPos - Self.mScrollPosition, CellWidth, CellHeight)
+		    Var CellRect As New Xojo.Rect(XPos, YPos - Self.mScrollPosition, CellWidth, CellHeight)
 		    Self.mCells(I) = CellRect
 		    
-		    Dim CaptionLeft As Integer = CellRect.Left + HorizontalPadding
-		    Dim CaptionBottom As Integer = CellRect.Top + VerticalPadding + CapHeight
+		    Var CaptionLeft As Integer = CellRect.Left + HorizontalPadding
+		    Var CaptionBottom As Integer = CellRect.Top + VerticalPadding + CapHeight
 		    
-		    Dim CellColor, CellTextColor As Color
+		    Var CellColor, CellTextColor As Color
 		    If Required Then
 		      CellColor = RequiredBackgroundColor
 		      CellTextColor = RequiredTextColor
@@ -157,7 +157,7 @@ Inherits ControlCanvas
 		  Next
 		  
 		  Self.mContentHeight = YPos + CellHeight + VerticalSpacing
-		  Dim HeightDelta As Integer = Self.mContentHeight - ContentArea.Height
+		  Var HeightDelta As Integer = Self.mContentHeight - ContentArea.Height
 		  Self.mOverflowHeight = Max(HeightDelta, 0)
 		  If HeightDelta <> 0 Then
 		    If Self.mRepaintKey <> "" Then
@@ -167,9 +167,9 @@ Inherits ControlCanvas
 		  End If
 		  
 		  If Self.mOverflowHeight > 0 Then
-		    Dim TrackHeight As Integer = ContentArea.Height - 10  
-		    Dim ThumbHeight As Integer = Round(TrackHeight * (ContentArea.Height / Self.mContentHeight))
-		    Dim ThumbTop As Integer = 5 + ((TrackHeight - ThumbHeight) * (Self.mScrollPosition / Self.mOverflowHeight))
+		    Var TrackHeight As Integer = ContentArea.Height - 10  
+		    Var ThumbHeight As Integer = Round(TrackHeight * (ContentArea.Height / Self.mContentHeight))
+		    Var ThumbTop As Integer = 5 + ((TrackHeight - ThumbHeight) * (Self.mScrollPosition / Self.mOverflowHeight))
 		    
 		    G.DrawingColor = SystemColors.LabelColor.AtOpacity(0.1)
 		    G.FillRoundRectangle(ContentArea.Right - 10, ThumbTop, 5, ThumbHeight, 5, 5)
@@ -180,7 +180,7 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h21
 		Private Shared Function ArrayToString(Source() As String) As String
-		  Dim Clone() As String
+		  Var Clone() As String
 		  For Each Value As String In Source
 		    Clone.AddRow(Value)
 		  Next
@@ -191,16 +191,16 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h0
 		Sub ClearSelections()
-		  Dim Arr() As String
+		  Var Arr() As String
 		  Self.SetSelections(Arr, Arr)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Shared Function ColorsAreSimilar(Color1 As Color, Color2 As Color, Threshold As Double) As Boolean
-		  Dim Red As Double = (Color1.Red - Color2.Red)
-		  Dim Green As Double = (Color1.Green - Color2.Green)
-		  Dim Blue As Double = (Color1.Blue - Color2.Blue)
+		  Var Red As Double = (Color1.Red - Color2.Red)
+		  Var Green As Double = (Color1.Green - Color2.Green)
+		  Var Blue As Double = (Color1.Blue - Color2.Blue)
 		  Return ((Red * Red) + (Green * Green) + (Blue * Blue)) <= Threshold * Threshold
 		End Function
 	#tag EndMethod
@@ -214,11 +214,11 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h21
 		Private Function ContentArea() As Xojo.Rect
-		  Dim X, Y, W, H As Integer
+		  Var X, Y, W, H As Integer
 		  W = Self.Width
 		  H = Self.Height
 		  
-		  Dim Borders As Integer = Self.Border
+		  Var Borders As Integer = Self.Border
 		  If (Borders And Self.BorderTop) = Self.BorderTop Then
 		    Y = Y + 1
 		    H = H - 1
@@ -240,7 +240,7 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h0
 		Function ExcludedTags() As String()
-		  Dim Tags() As String
+		  Var Tags() As String
 		  For Each Tag As String In Self.mExcludeTags
 		    Tags.AddRow(Tag)
 		  Next
@@ -261,7 +261,7 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h0
 		Function RequiredTags() As String()
-		  Dim Tags() As String
+		  Var Tags() As String
 		  For Each Tag As String In Self.mRequireTags
 		    Tags.AddRow(Tag)
 		  Next
@@ -272,7 +272,7 @@ Inherits ControlCanvas
 	#tag Method, Flags = &h21
 		Private Sub ResizeBy(Delta As Variant)
 		  Try
-		    Dim OriginalHeight As Integer = Self.Height
+		    Var OriginalHeight As Integer = Self.Height
 		    RaiseEvent ShouldAdjustHeight(Delta)
 		    If Self.Height <> OriginalHeight Then
 		      Self.Invalidate()
@@ -286,11 +286,11 @@ Inherits ControlCanvas
 	#tag Method, Flags = &h0
 		Sub SetSelections(RequiredTags() As String, ExcludedTags() As String)
 		  If RequiredTags = Nil Then
-		    Dim Temp() As String
+		    Var Temp() As String
 		    RequiredTags = Temp
 		  End If
 		  If ExcludedTags = Nil Then
-		    Dim Temp() As String
+		    Var Temp() As String
 		    ExcludedTags = Temp
 		  End If
 		  
@@ -305,13 +305,13 @@ Inherits ControlCanvas
 		    End If
 		  Next
 		  
-		  Dim RequireCurrentString As String = Self.ArrayToString(Self.mRequireTags)
-		  Dim RequireNewString As String = Self.ArrayToString(RequiredTags)
-		  Dim Changed As Boolean = RequireCurrentString <> RequireNewString
+		  Var RequireCurrentString As String = Self.ArrayToString(Self.mRequireTags)
+		  Var RequireNewString As String = Self.ArrayToString(RequiredTags)
+		  Var Changed As Boolean = RequireCurrentString <> RequireNewString
 		  
 		  If Not Changed Then
-		    Dim ExcludeCurrentString As String = Self.ArrayToString(Self.mExcludeTags)
-		    Dim ExcludeNewString As String = Self.ArrayToString(ExcludedTags)
+		    Var ExcludeCurrentString As String = Self.ArrayToString(Self.mExcludeTags)
+		    Var ExcludeNewString As String = Self.ArrayToString(ExcludedTags)
 		    Changed = ExcludeCurrentString <> ExcludeNewString
 		  End If
 		  
@@ -333,8 +333,8 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h0
 		Function Tags() As String()
-		  Dim Clone() As String
-		  Redim Clone(Self.mTags.LastRowIndex)
+		  Var Clone() As String
+		  Clone.ResizeTo(Self.mTags.LastRowIndex)
 		  For I As Integer = 0 To Self.mTags.LastRowIndex
 		    Clone(I) = Self.mTags(I)
 		  Next
@@ -347,9 +347,9 @@ Inherits ControlCanvas
 		    Return
 		  End If
 		  
-		  Dim Changed As Boolean
+		  Var Changed As Boolean
 		  If Self.mTags.LastRowIndex <> Values.LastRowIndex Then
-		    Redim Self.mTags(Values.LastRowIndex)
+		    Self.mTags.ResizeTo(Values.LastRowIndex)
 		    Changed = True
 		  End If
 		  For I As Integer = 0 To Values.LastRowIndex
@@ -360,10 +360,10 @@ Inherits ControlCanvas
 		  Next
 		  
 		  If Changed Then
-		    Redim Self.mCells(-1)
-		    Redim Self.mCells(Self.mTags.LastRowIndex)
+		    Self.mCells.ResizeTo(-1)
+		    Self.mCells.ResizeTo(Self.mTags.LastRowIndex)
 		    
-		    Dim FireChangeEvent As Boolean
+		    Var FireChangeEvent As Boolean
 		    For I As Integer = Self.mRequireTags.LastRowIndex DownTo 0
 		      If Self.mTags.IndexOf(Self.mRequireTags(I)) = -1 Then
 		        Self.mRequireTags.RemoveRowAt(I)
@@ -472,7 +472,7 @@ Inherits ControlCanvas
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Dim Value As String
+			  Var Value As String
 			  If Self.mRequireTags.LastRowIndex > -1 Then
 			    Value = "(""" + Self.mRequireTags.Join(""" AND """) + """)"
 			  End If
@@ -487,17 +487,17 @@ Inherits ControlCanvas
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Dim RequirePhrase, ExcludePhrase, RequiredTags(), ExcludedTags() As String
+			  Var RequirePhrase, ExcludePhrase, RequiredTags(), ExcludedTags() As String
 			  
 			  Try
-			    Dim RequireStartPos As Integer = Value.IndexOf("(")
-			    Dim RequireEndPos As Integer = Value.IndexOf(RequireStartPos, ")")
+			    Var RequireStartPos As Integer = Value.IndexOf("(")
+			    Var RequireEndPos As Integer = Value.IndexOf(RequireStartPos, ")")
 			    RequirePhrase = Value.Middle(RequireStartPos + 2, RequireEndPos - (RequireStartPos + 3))
 			    
 			    If RequireStartPos > -1 And RequireEndPos > -1 Then
-			      Dim ExcludeStartPos As Integer = Value.IndexOf(RequireEndPos, "(")
+			      Var ExcludeStartPos As Integer = Value.IndexOf(RequireEndPos, "(")
 			      If ExcludeStartPos > -1 Then
-			        Dim ExcludeEndPos As Integer = Value.IndexOf(ExcludeStartPos, ")")
+			        Var ExcludeEndPos As Integer = Value.IndexOf(ExcludeStartPos, ")")
 			        ExcludePhrase = Value.Middle(ExcludeStartPos + 2, ExcludeEndPos - (ExcludeStartPos + 3))
 			      End If
 			      

@@ -37,7 +37,6 @@ Begin ConfigEditor MapsConfigEditor
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   444
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   14
       LockBottom      =   True
@@ -72,6 +71,14 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  #Pragma Unused UserData
+		  
+		  Self.SetupUI
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As String
@@ -97,6 +104,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

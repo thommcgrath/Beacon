@@ -3,19 +3,19 @@ Protected Class ProfileTask
 Inherits AnimationKit.Task
 	#tag Event
 		Sub Perform(Final As Boolean, Time As Double)
-		  Dim Animator As BeaconUI.ProfileAnimator = BeaconUI.ProfileAnimator(Self.Item)
+		  Var Animator As BeaconUI.ProfileAnimator = BeaconUI.ProfileAnimator(Self.Item)
 		  
 		  If Final Then
 		    Animator.AnimationStep(Self.Identifier, Self.EndProfile)
 		    Return
 		  End If
 		  
-		  Dim Elapsed As Double = Self.ElapsedTime(Time)
-		  Dim Duration As Double = Self.DurationInSeconds * 1000000
-		  Dim Percent As Double = Elapsed / Duration
+		  Var Elapsed As Double = Self.ElapsedTime(Time)
+		  Var Duration As Double = Self.DurationInSeconds * 1000000
+		  Var Percent As Double = Elapsed / Duration
 		  
-		  Dim BlendPercent As Double = Self.Curve.Evaluate(Percent, 0.0, 1.0)
-		  Dim Profile As BeaconUI.ColorProfile = Self.StartProfile.BlendWithProfile(Self.EndProfile, BlendPercent)
+		  Var BlendPercent As Double = Self.Curve.Evaluate(Percent, 0.0, 1.0)
+		  Var Profile As BeaconUI.ColorProfile = Self.StartProfile.BlendWithProfile(Self.EndProfile, BlendPercent)
 		  
 		  Animator.AnimationStep(Self.Identifier, Profile)
 		End Sub
@@ -68,6 +68,14 @@ Inherits AnimationKit.Task
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Threaded"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Cancelled"
 			Visible=false

@@ -1,6 +1,6 @@
 #tag Class
 Protected Class ValueTask
-Inherits AnimationKit.Task
+Inherits AnimationKit.DeltaTask
 	#tag Event
 		Sub Perform(Final As Boolean, Time As Double)
 		  If Final Then
@@ -8,9 +8,9 @@ Inherits AnimationKit.Task
 		    Return
 		  End If
 		  
-		  Dim Elapsed As Double = Self.ElapsedTime(Time)
-		  Dim Duration As Double = Self.DurationInSeconds * 1000000
-		  Dim Value As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartValue, Self.EndValue)
+		  Var Elapsed As Double = Self.ElapsedTime(Time)
+		  Var Duration As Double = Self.DurationInSeconds * 1000000
+		  Var Value As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartValue, Self.EndValue)
 		  AnimationKit.ValueAnimator(Self.Item).AnimationStep(Self.Identifier, Value)
 		End Sub
 	#tag EndEvent
@@ -21,12 +21,6 @@ Inherits AnimationKit.Task
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h0
-		Function Completed(Time As Double) As Boolean
-		  Return Self.ElapsedTime(Time) >= (Self.DurationInSeconds * 1000000)
-		End Function
-	#tag EndMethod
 
 	#tag Method, Flags = &h1021
 		Private Sub Constructor()
@@ -47,14 +41,6 @@ Inherits AnimationKit.Task
 
 
 	#tag Property, Flags = &h0
-		Curve As AnimationKit.Curve
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		DurationInSeconds As Double = 1
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
 		EndValue As Double
 	#tag EndProperty
 
@@ -68,6 +54,22 @@ Inherits AnimationKit.Task
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Threaded"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DelayInSeconds"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Cancelled"
 			Visible=false

@@ -108,8 +108,10 @@ Begin ConfigEditor SpawnPointsConfigEditor
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   250
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -289,6 +291,22 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub EnableMenuItems()
+		  Self.EnableEditorMenuItem("ConvertCreatureReplacementsToSpawnPointAdditions")
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub GetEditorMenuItems(Items() As MenuItem)
+		  Var ConvertReplacements As New MenuItem("Convert Creature Replacements to Spawn Point Additions")
+		  ConvertReplacements.Enabled = True
+		  ConvertReplacements.AutoEnabled = False
+		  ConvertReplacements.Name = "ConvertCreatureReplacementsToSpawnPointAdditions"
+		  Items.AddRow(ConvertReplacements)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.MinimumWidth = Self.ListMinWidth + Self.MainSeparator.Width + SpawnPointEditor.MinimumWidth
 		  Self.MinimumHeight = 350
@@ -296,15 +314,20 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub ParsingFinished(ParsedData As Dictionary)
-		  Var ParsedConfig As BeaconConfigs.SpawnPoints = BeaconConfigs.SpawnPoints.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
+		Function ParsingFinished(Document As Beacon.Document) As Boolean
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.SpawnPoints.ConfigName) = False Then
+		    Return True
+		  End If
+		  
+		  Var ParsedConfig As BeaconConfigs.SpawnPoints = BeaconConfigs.SpawnPoints(Document.ConfigGroup(BeaconConfigs.SpawnPoints.ConfigName))
 		  If ParsedConfig = Nil Or ParsedConfig.Count = 0 Then
 		    Self.ShowAlert("No spawn points to import", "The parsed ini content did not contain any spawn point data.")
-		    Return
+		    Return True
 		  End If
 		  
 		  Self.HandlePastedSpawnPoints(ParsedConfig.All)
-		End Sub
+		  Return True
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -338,6 +361,22 @@ End
 		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
+
+
+	#tag MenuHandler
+		Function ConvertCreatureReplacementsToSpawnPointAdditions() As Boolean Handles ConvertCreatureReplacementsToSpawnPointAdditions.Action
+			Var Changes As Integer = Self.Document.ConvertDinoReplacementsToSpawnOverrides()
+			Self.SetupUI()
+			If Changes = 0 Then
+			Self.ShowAlert("No changes made", "Beacon was unable to find any replaced creatures in Creature Adjustments that it could convert into spawn point additions.")
+			ElseIf Changes = 1 Then
+			Self.ShowAlert("Converted 1 creature replacement", "Beacon found 1 creature in Creature Adjustments that it was able to convert into spawn point additions. The replaced creature has been disabled in Creature Adjustments.")
+			Else
+			Self.ShowAlert("Converted " + Changes.ToString + " creature replacements", "Beacon found " + Changes.ToString + " creatures in Creature Adjustments that it was able to convert into spawn point additions. The replaced creatures have been disabled in Creature Adjustments.")
+			End If
+			Return True
+		End Function
+	#tag EndMenuHandler
 
 
 	#tag Method, Flags = &h1
@@ -693,6 +732,20 @@ End
 		  Return True
 		End Function
 	#tag EndEvent
+	#tag Event
+		Function Typeahead(Buffer As String) As Boolean
+		  For Row As Integer = 0 To Me.LastRowIndex
+		    Var Point As Beacon.SpawnPoint = Me.RowTagAt(Row)
+		    If (Point Is Nil) = False And Point.Label.BeginsWith(Buffer) Then
+		      Me.SelectedRowIndex = Row
+		      Me.EnsureSelectionIsVisible
+		      Exit
+		    End If
+		  Next
+		  
+		  Return True
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events Editor
 	#tag Event
@@ -724,6 +777,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Progress"
 		Visible=false

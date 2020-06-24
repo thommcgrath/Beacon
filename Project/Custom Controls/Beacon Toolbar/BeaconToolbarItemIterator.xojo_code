@@ -3,7 +3,7 @@ Protected Class BeaconToolbarItemIterator
 Implements Iterator
 	#tag Method, Flags = &h0
 		Sub Constructor(Source() As BeaconToolbarItem)
-		  Redim Self.mItems(Source.LastRowIndex)
+		  Self.mItems.ResizeTo(Source.LastRowIndex)
 		  For I As Integer = 0 To Self.mItems.LastRowIndex
 		    Self.mItems(I) = Source(I)
 		  Next

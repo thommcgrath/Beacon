@@ -1,58 +1,55 @@
-#tag Interface
-Protected Interface DeploymentEngine
+#tag Class
+Class NullableBoolean
 	#tag Method, Flags = &h0
-		Function BackupGameIni() As String
-		  
+		Function BooleanValue() As Boolean
+		  Return Self.mValue
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function BackupGameUserSettingsIni() As String
-		  
+		Shared Function FromBoolean(Value As Boolean) As NullableBoolean
+		  Return Value
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Begin(Label As String, Document As Beacon.Document, Identity As Beacon.Identity, StopMessage As String)
-		  
+		Function Operator_Compare(Other As Boolean) As Integer
+		  If Self.mValue <> Other Then
+		    Return -1
+		  Else
+		    Return 0
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Operator_Compare(Other As NullableBoolean) As Integer
+		  If Other Is Nil Then
+		    Return 1
+		  ElseIf Self.mValue <> Other.mValue Then
+		    Return -1
+		  Else
+		    Return 0
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Operator_Convert() As Boolean
+		  Return Self.mValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Operator_Convert(Value As Boolean)
+		  Self.mValue = Value
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Cancel()
-		  
-		End Sub
-	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function Errored() As Boolean
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Finished() As Boolean
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Name() As String
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ServerIsStarting() As Boolean
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Status() As String
-		  
-		End Function
-	#tag EndMethod
+	#tag Property, Flags = &h21
+		Private mValue As Boolean
+	#tag EndProperty
 
 
 	#tag ViewBehavior
@@ -97,5 +94,5 @@ Protected Interface DeploymentEngine
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
-End Interface
-#tag EndInterface
+End Class
+#tag EndClass

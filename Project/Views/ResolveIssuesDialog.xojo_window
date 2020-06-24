@@ -140,9 +140,11 @@ Begin BeaconDialog ResolveIssuesDialog
       TextUnit        =   0
       Top             =   52
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   560
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -339,18 +341,18 @@ End
 
 	#tag Method, Flags = &h21
 		Private Shared Function DescribeIssues(Document As Beacon.Document) As Beacon.Issue()
-		  Dim DocumentIssues() As Beacon.Issue
+		  Var DocumentIssues() As Beacon.Issue
 		  
-		  Dim UniqueIssues As New Dictionary
+		  Var UniqueIssues As New Dictionary
 		  If Document.MapCompatibility = 0 Then
-		    Dim Issue As New Beacon.Issue("Maps", "No maps have been selected. Use the ""Maps"" config editor to choose maps.")
+		    Var Issue As New Beacon.Issue("Maps", "No maps have been selected. Use the ""Maps"" config editor to choose maps.")
 		    UniqueIssues.Value(Issue.Description) = Issue
 		    DocumentIssues.AddRow(Issue)
 		  End If
 		  
-		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
+		  Var Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
 		  For Each Config As Beacon.ConfigGroup In Configs
-		    Dim Issues() As Beacon.Issue = Config.Issues(Document, App.IdentityManager.CurrentIdentity)
+		    Var Issues() As Beacon.Issue = Config.Issues(Document, App.IdentityManager.CurrentIdentity)
 		    For Each Issue As Beacon.Issue In Issues
 		      If Not UniqueIssues.HasKey(Issue.Description) Then
 		        DocumentIssues.AddRow(Issue)
@@ -369,12 +371,12 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As Window, Document As Beacon.Document, Handler As ResolveIssuesDialog.GoToIssueCallback = Nil)
-		  Dim Issues() As Beacon.Issue = DescribeIssues(Document)
+		  Var Issues() As Beacon.Issue = DescribeIssues(Document)
 		  If Issues.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
-		  Dim Win As New ResolveIssuesDialog(Document, Issues, Handler)
+		  Var Win As New ResolveIssuesDialog(Document, Issues, Handler)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		End Sub
 	#tag EndMethod
@@ -387,14 +389,14 @@ End
 		    Return
 		  End If
 		  
-		  Dim Issues() As Beacon.Issue = Self.DescribeIssues(Self.Document)
+		  Var Issues() As Beacon.Issue = Self.DescribeIssues(Self.Document)
 		  If Issues.LastRowIndex = -1 Then
 		    BeaconUI.ShowAlert("All issues resolved.", "Great! All issues have been resolved.")
 		    Self.Close
 		    Return
 		  End If
 		  
-		  Dim SomeResolved As Boolean = Issues.LastRowIndex < Self.Issues.LastRowIndex
+		  Var SomeResolved As Boolean = Issues.LastRowIndex < Self.Issues.LastRowIndex
 		  
 		  Self.Issues = Issues
 		  Self.UpdateUI
@@ -473,9 +475,9 @@ End
 		  Me.Enabled = False
 		  BlueprintsField.ReadOnly = True
 		  
-		  Dim Content As String = BlueprintsField.Value
-		  Dim Configs() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
-		  Dim Callback As Beacon.ConfigGroup.ResolveIssuesCallback = AddressOf ResolvingFinished
+		  Var Content As String = BlueprintsField.Value
+		  Var Configs() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
+		  Var Callback As Beacon.ConfigGroup.ResolveIssuesCallback = AddressOf ResolvingFinished
 		  Self.ConfigsWaitingToResolve = Configs.LastRowIndex + 1
 		  For Each Config As Beacon.ConfigGroup In Configs
 		    Config.TryToResolveIssues(Content, Callback)
@@ -490,7 +492,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Issue As Beacon.Issue = Self.IssuesList.RowTagAt(Self.IssuesList.SelectedRowIndex)
+		  Var Issue As Beacon.Issue = Self.IssuesList.RowTagAt(Self.IssuesList.SelectedRowIndex)
 		  Self.Hide()
 		  Self.GoToIssueHandler.Invoke(Issue)
 		  Self.Close()

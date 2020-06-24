@@ -1,10 +1,20 @@
 #tag Class
 Protected Class TextAreaState
 	#tag Method, Flags = &h0
+		Sub ApplyTo(Area As BeaconCodeEditor)
+		  Area.SelStart = Self.SelectionStart
+		  Area.SelLength = Self.SelectionLength
+		  Area.ScrollY = Self.VerticalScrollPosition
+		  Area.ScrollX = Self.HorizontalScrollPosition
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ApplyTo(Area As TextArea)
-		  Area.SelectionStart = Self.SelStart
-		  Area.SelectionLength = Self.SelLength
-		  Area.VerticalScrollPosition = Self.ScrollPosition
+		  Area.SelectionStart = Self.SelectionStart
+		  Area.SelectionLength = Self.SelectionLength
+		  Area.VerticalScrollPosition = Self.VerticalScrollPosition
+		  Area.HorizontalScrollPosition = Self.HorizontalScrollPosition
 		End Sub
 	#tag EndMethod
 
@@ -15,24 +25,38 @@ Protected Class TextAreaState
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(Area As BeaconCodeEditor)
+		  Self.VerticalScrollPosition = Area.ScrollY
+		  Self.SelectionStart = Area.SelStart
+		  Self.SelectionLength = Area.SelLength
+		  Self.HorizontalScrollPosition = Area.ScrollX
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Area As TextArea)
-		  Self.ScrollPosition = Area.VerticalScrollPosition
-		  Self.SelStart = Area.SelectionStart
-		  Self.SelLength = Area.SelectionLength
+		  Self.VerticalScrollPosition = Area.VerticalScrollPosition
+		  Self.SelectionStart = Area.SelectionStart
+		  Self.SelectionLength = Area.SelectionLength
+		  Self.HorizontalScrollPosition = Area.HorizontalScrollPosition
 		End Sub
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h0
-		ScrollPosition As Integer
+		HorizontalScrollPosition As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		SelLength As Integer
+		SelectionLength As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		SelStart As Integer
+		SelectionStart As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		VerticalScrollPosition As Integer
 	#tag EndProperty
 
 
@@ -78,7 +102,7 @@ Protected Class TextAreaState
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="SelStart"
+			Name="SelectionStart"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
@@ -86,7 +110,7 @@ Protected Class TextAreaState
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="ScrollPosition"
+			Name="VerticalScrollPosition"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
@@ -94,7 +118,15 @@ Protected Class TextAreaState
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="SelLength"
+			Name="SelectionLength"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HorizontalScrollPosition"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

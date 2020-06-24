@@ -55,7 +55,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function Levels() As Integer()
-		  Dim Results() As Integer
+		  Var Results() As Integer
 		  For I As Integer = 1 To 30
 		    Results.AddRow(Floor(Self.DifficultyValue * I))
 		  Next
@@ -102,7 +102,7 @@ Inherits Beacon.ConfigGroup
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Dim MaxLevel As Integer = Floor(Value * 30)
+			  Var MaxLevel As Integer = Floor(Value * 30)
 			  If Self.mMaxDinoLevel <> MaxLevel Then
 			    Self.mMaxDinoLevel = MaxLevel
 			    Self.Modified = True

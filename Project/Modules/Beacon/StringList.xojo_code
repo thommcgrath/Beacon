@@ -12,7 +12,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.StringList)
-		  Redim Self.mItems(Source.mItems.LastRowIndex)
+		  Self.mItems.ResizeTo(Source.mItems.LastRowIndex)
 		  For I As Integer = 0 To Source.mItems.LastRowIndex
 		    Self.mItems(I) = Source.mItems(I)
 		  Next
@@ -22,7 +22,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Bound As Integer = -1)
-		  Redim Self.mItems(Bound)
+		  Self.mItems.ResizeTo(Bound)
 		End Sub
 	#tag EndMethod
 
@@ -34,18 +34,18 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Shared Function FromVariant(Source As Variant) As Beacon.StringList
-		  Dim SourceArray() As Variant
+		  Var SourceArray() As Variant
 		  Try
 		    SourceArray = Source
-		  Catch Err As TypeMismatchException
+		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
 		  
-		  Dim List As New Beacon.StringList
+		  Var List As New Beacon.StringList
 		  For Each Item As Variant In SourceArray
 		    Try
 		      List.Append(Item)
-		    Catch Err As TypeMismatchException
+		    Catch Err As RuntimeException
 		      Continue
 		    End Try
 		  Next
@@ -115,16 +115,16 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Function Operator_Compare(Others() As String) As Integer
-		  Dim CompareLeft As String = Self.mItems.Join("|")
-		  Dim CompareRight As String = Others.Join("|")
+		  Var CompareLeft As String = Self.mItems.Join("|")
+		  Var CompareRight As String = Others.Join("|")
 		  Return CompareLeft.Compare(CompareRight, ComparisonOptions.CaseSensitive)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_Convert() As String()
-		  Dim Items() As String
-		  Redim Items(Self.mItems.LastRowIndex)
+		  Var Items() As String
+		  Items.ResizeTo(Self.mItems.LastRowIndex)
 		  For I As Integer = 0 To Self.mItems.LastRowIndex
 		    Items(I) = Self.mItems(I)
 		  Next
@@ -134,17 +134,10 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Operator_Convert(Source() As String)
-		  Redim Self.mItems(Source.LastRowIndex)
+		  Self.mItems.ResizeTo(Source.LastRowIndex)
 		  For I As Integer = 0 To Source.LastRowIndex
 		    Self.mItems(I) = Source(I)
 		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Operator_Redim(NewBound As Integer)
-		  Redim Self.mItems(NewBound)
-		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -169,11 +162,18 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Item As String)
-		  Dim Idx As Integer = Self.mItems.IndexOf(Item)
+		  Var Idx As Integer = Self.mItems.IndexOf(Item)
 		  If Idx > -1 Then
 		    Self.mItems.RemoveRowAt(Idx)
 		    Self.Modified = True
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ResizeTo(NewBound As Integer)
+		  Self.mItems.ResizeTo(NewBound)
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 

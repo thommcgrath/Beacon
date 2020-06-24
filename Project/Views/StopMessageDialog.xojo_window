@@ -219,10 +219,10 @@ End
 		    Return Preferences.LastStopMessage
 		  End If
 		  
-		  Dim Win As New StopMessageDialog(Preferences.LastStopMessage)
+		  Var Win As New StopMessageDialog(Preferences.LastStopMessage)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
-		  Dim Message As String = Win.mReturnMessage
+		  Var Message As String = Win.mReturnMessage
 		  If Message <> "" And Message <> Preferences.LastStopMessage Then
 		    Preferences.LastStopMessage = Message
 		  End If

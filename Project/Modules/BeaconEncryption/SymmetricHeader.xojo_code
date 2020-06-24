@@ -23,8 +23,8 @@ Private Class SymmetricHeader
 
 	#tag Method, Flags = &h0
 		Function Encoded() As MemoryBlock
-		  Dim VectorSize As UInt8 = Self.mVector.Size
-		  Dim Header As New MemoryBlock(Self.Size)
+		  Var VectorSize As UInt8 = Self.mVector.Size
+		  Var Header As New MemoryBlock(Self.Size)
 		  Header.LittleEndian = False
 		  Header.UInt8Value(0) = MagicByte
 		  Header.UInt8Value(1) = Self.mVersion
@@ -39,7 +39,7 @@ Private Class SymmetricHeader
 		Function EncryptedLength() As UInt64
 		  // This is UInt64 because Header.Length is UInt32, and we're adding to it, so we need more space
 		  
-		  Dim Factor As Integer
+		  Var Factor As Integer
 		  Select Case Self.mVersion
 		  Case 1
 		    Factor = 8
@@ -47,7 +47,7 @@ Private Class SymmetricHeader
 		    Factor = 16
 		  End Select
 		  
-		  Dim Blocks As Integer = Ceil(Self.mLength / Factor)
+		  Var Blocks As Integer = Ceil(Self.mLength / Factor)
 		  If Self.mLength Mod Factor = 0 Then
 		    Blocks = Blocks + 1
 		  End If
@@ -62,11 +62,11 @@ Private Class SymmetricHeader
 		    Return Nil
 		  End If
 		  
-		  Dim Clone As MemoryBlock = Source.Clone
+		  Var Clone As MemoryBlock = Source.Clone
 		  Clone.LittleEndian = False
 		  
-		  Dim MagicByte As UInt8 = Clone.UInt8Value(0)
-		  Dim Version As UInt8 = Clone.UInt8Value(1)
+		  Var MagicByte As UInt8 = Clone.UInt8Value(0)
+		  Var Version As UInt8 = Clone.UInt8Value(1)
 		  If MagicByte <> MagicByte Then
 		    // Not one of our payloads
 		    Return Nil
@@ -76,7 +76,7 @@ Private Class SymmetricHeader
 		    Return Nil
 		  End If
 		  
-		  Dim VectorSize As UInt8
+		  Var VectorSize As UInt8
 		  Select Case Version
 		  Case 1
 		    VectorSize = 8
@@ -84,11 +84,11 @@ Private Class SymmetricHeader
 		    VectorSize = 16
 		  End Select
 		  
-		  Dim Vector As MemoryBlock = Clone.Middle(2, VectorSize)
-		  Dim Length As UInt32 = Clone.UInt32Value(2 + VectorSize)
-		  Dim Checksum As UInt32 = Clone.UInt32Value(6 + VectorSize)
+		  Var Vector As MemoryBlock = Clone.Middle(2, VectorSize)
+		  Var Length As UInt32 = Clone.UInt32Value(2 + VectorSize)
+		  Var Checksum As UInt32 = Clone.UInt32Value(6 + VectorSize)
 		  
-		  Dim Header As New SymmetricHeader
+		  Var Header As New SymmetricHeader
 		  Header.mChecksum = Checksum
 		  Header.mLength = Length
 		  Header.mVector = Vector

@@ -1,6 +1,6 @@
 #tag Class
 Protected Class MoveTask
-Inherits AnimationKit.Task
+Inherits AnimationKit.DeltaTask
 	#tag CompatibilityFlags = ( TargetHasGUI )
 	#tag Event
 		Sub Perform(Final As Boolean, Time As Double)
@@ -9,12 +9,12 @@ Inherits AnimationKit.Task
 		    Return
 		  End If
 		  
-		  Dim Elapsed As Double = Self.ElapsedTime(Time)
-		  Dim Duration As Double = Self.DurationInSeconds * 1000000
-		  Dim RectTop As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartBounds.Top, Self.EndBounds.Top)
-		  Dim RectLeft As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartBounds.Left, Self.EndBounds.Left)
-		  Dim RectWidth As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartBounds.Width, Self.EndBounds.Width)
-		  Dim RectHeight As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartBounds.Height, Self.EndBounds.Height)
+		  Var Elapsed As Double = Self.ElapsedTime(Time)
+		  Var Duration As Double = Self.DurationInSeconds * 1000000
+		  Var RectTop As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartBounds.Top, Self.EndBounds.Top)
+		  Var RectLeft As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartBounds.Left, Self.EndBounds.Left)
+		  Var RectWidth As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartBounds.Width, Self.EndBounds.Width)
+		  Var RectHeight As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartBounds.Height, Self.EndBounds.Height)
 		  
 		  Self.ApplyRect(New Rect(Floor(RectLeft), Floor(RectTop), Ceil(RectWidth), Ceil(RectHeight)))
 		End Sub
@@ -49,7 +49,7 @@ Inherits AnimationKit.Task
 
 	#tag Method, Flags = &h21, CompatibilityFlags = (not TargetHasGUI and not TargetWeb and not TargetIOS) or  (TargetWeb) or  (TargetHasGUI) or  (TargetIOS)
 		Private Sub ApplyRect(Rect As Rect)
-		  Dim Item As Object = Self.Item
+		  Var Item As Object = Self.Item
 		  
 		  If Item = Nil Then
 		    Return
@@ -70,7 +70,7 @@ Inherits AnimationKit.Task
 		    End If
 		  #endif
 		  
-		  Dim Err As New UnsupportedOperationException
+		  Var Err As New UnsupportedOperationException
 		  #if TargetDesktop
 		    Err.Reason = "Item for AnimationKit.MoveTask must be a Window or RectControl."
 		  #elseif TargetiOS
@@ -114,12 +114,6 @@ Inherits AnimationKit.Task
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function Completed(Time As Double) As Boolean
-		  Return Self.ElapsedTime(Time) >= (Self.DurationInSeconds * 1000000)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1021
 		Private Sub Constructor()
 		  Self.Curve = AnimationKit.Curve.CreateFromPreset(AnimationKit.Curve.Presets.Linear)
@@ -156,7 +150,7 @@ Inherits AnimationKit.Task
 
 	#tag Method, Flags = &h21, CompatibilityFlags = (not TargetHasGUI and not TargetWeb and not TargetIOS) or  (TargetWeb) or  (TargetHasGUI) or  (TargetIOS)
 		Private Function CurrentRect() As Xojo.Rect
-		  Dim Item As Object = Self.Item
+		  Var Item As Object = Self.Item
 		  
 		  If Item = Nil Then
 		    Return Nil
@@ -174,7 +168,7 @@ Inherits AnimationKit.Task
 		    End If
 		  #endif
 		  
-		  Dim Err As New UnsupportedOperationException
+		  Var Err As New UnsupportedOperationException
 		  #if TargetDesktop
 		    Err.Reason = "Item for AnimationKit.MoveTask must be a Window or RectControl."
 		  #elseif TargetiOS
@@ -228,7 +222,7 @@ Inherits AnimationKit.Task
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI) or  (TargetIOS)
 		Sub SetDestination(Source As Xojo.Rect)
-		  Dim CurrentBounds As Xojo.Rect = Self.CurrentRect()
+		  Var CurrentBounds As Xojo.Rect = Self.CurrentRect()
 		  Self.EndBounds = New Xojo.Rect(Source.Left, Source.Top, Source.Width, Source.Height)
 		  Self.AnimationKeys = 0
 		  If Self.EndBounds.Left <> CurrentBounds.Left Then
@@ -323,14 +317,6 @@ Inherits AnimationKit.Task
 		Private AnimationKeys As UInt64
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
-		Curve As AnimationKit.Curve
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		DurationInSeconds As Double = 1
-	#tag EndProperty
-
 	#tag Property, Flags = &h21
 		Private EndBounds As Rect
 	#tag EndProperty
@@ -414,6 +400,22 @@ Inherits AnimationKit.Task
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Threaded"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DelayInSeconds"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Cancelled"
 			Visible=false

@@ -7,19 +7,19 @@ Inherits ControlCanvas
 		  
 		  G.FontSize = 24
 		  
-		  Dim ForeColor As Color = SystemColors.TertiaryLabelColor
+		  Var ForeColor As Color = SystemColors.TertiaryLabelColor
 		  
-		  Dim LogoForeground As Picture = BeaconUI.IconWithColor(LogoMask, ForeColor)
+		  Var LogoForeground As Picture = BeaconUI.IconWithColor(LogoMask, ForeColor)
 		  
-		  Dim LogoLeft As Integer = (G.Width - LogoMask.Width) / 2
-		  Dim LogoTop As Integer = (G.Height - LogoMask.Height) / 2
+		  Var LogoLeft As Integer = (G.Width - LogoMask.Width) / 2
+		  Var LogoTop As Integer = (G.Height - LogoMask.Height) / 2
 		  
 		  G.DrawPicture(LogoForeground, LogoLeft, LogoTop)
 		  
-		  Dim CaptionTop As Integer = LogoTop + LogoMask.Height + 8
-		  Dim CaptionBase As Integer = CaptionTop + G.CapHeight
-		  Dim CaptionWidth As Integer = Min(Ceil(G.TextWidth(Self.mCaption)), G.Width - 40)
-		  Dim CaptionLeft As Integer = (G.Width - CaptionWidth) / 2
+		  Var CaptionTop As Integer = LogoTop + LogoMask.Height + 8
+		  Var CaptionBase As Integer = CaptionTop + G.CapHeight
+		  Var CaptionWidth As Integer = Min(Ceil(G.TextWidth(Self.mCaption)), G.Width - 40)
+		  Var CaptionLeft As Integer = (G.Width - CaptionWidth) / 2
 		  
 		  G.DrawingColor = ForeColor
 		  G.DrawText(Self.mCaption, CaptionLeft, CaptionBase, CaptionWidth, False)

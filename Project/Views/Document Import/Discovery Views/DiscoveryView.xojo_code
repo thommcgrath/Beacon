@@ -71,18 +71,32 @@ Inherits ContainerControl
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ShouldFinish(Engines() As Beacon.DiscoveryEngine)
-		  Self.ShouldFinish(Engines, "", Nil)
+		Protected Sub ShouldFinish(Data() As Beacon.DiscoveredData)
+		  Self.ShouldFinish(Data, Nil)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ShouldFinish(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
+		Protected Sub ShouldFinish(ParamArray Data() As Beacon.DiscoveredData)
+		  Self.ShouldFinish(Data, Nil)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ShouldFinish(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
 		  If Self.mClosed Then
 		    Return
 		  End If
 		  
-		  RaiseEvent Finished(Engines, OAuthProvider, OAuthData)
+		  RaiseEvent Finished(Data, Accounts)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ShouldFinish(Data As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
+		  Var Arr(0) As Beacon.DiscoveredData
+		  Arr(0) = Data
+		  Self.ShouldFinish(Arr, Accounts)
 		End Sub
 	#tag EndMethod
 
@@ -96,7 +110,7 @@ Inherits ContainerControl
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
+		Event Finished(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

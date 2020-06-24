@@ -50,7 +50,7 @@ Begin BeaconDialog DocumentMergerWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Select Parts to Import"
+      Text            =   "Select Groups to Import"
       TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -108,9 +108,11 @@ Begin BeaconDialog DocumentMergerWindow
       TextUnit        =   0
       Top             =   52
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   560
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -190,6 +192,19 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h21
+		Private Sub CheckEnabled()
+		  For I As Integer = 0 To Self.List.RowCount - 1
+		    If Self.List.CellCheckBoxValueAt(I, 0) Then
+		      Self.ActionButton.Enabled = True
+		      Return
+		    End If
+		  Next
+		  
+		  Self.ActionButton.Enabled = False
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Destructor()
 		  CallLater.Cancel(Self.mCallbackKey)
@@ -202,84 +217,154 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As Window, SourceDocuments() As Beacon.Document, DestinationDocument As Beacon.Document, Callback As MergeFinishedCallback = Nil)
-		  Dim OAuthData As New Dictionary
+		  Var Accounts As New Beacon.ExternalAccountManager
 		  For Each Document As Beacon.Document In SourceDocuments
-		    For I As Integer = 0 To Document.ServerProfileCount - 1
-		      Dim Profile As Beacon.ServerProfile = Document.ServerProfile(I)
-		      If Profile.OAuthProvider <> "" Then
-		        OAuthData.Value(Profile.OAuthProvider) = Document.OAuthData(Profile.OAuthProvider)
+		    Accounts.Import(Document.Accounts)
+		  Next
+		  
+		  Var UseMergeUI As Boolean
+		  For Each Document As Beacon.Document In SourceDocuments
+		    Var Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
+		    For Each Config As Beacon.ConfigGroup In Configs
+		      If Config.SupportsMerging And Document.HasConfigGroup(Config.ConfigName) Then
+		        UseMergeUI = True
+		        Exit For Document
 		      End If
 		    Next
 		  Next
 		  
-		  Dim MapMask As UInt64
-		  For Each Document As Beacon.Document In SourceDocuments
-		    MapMask = MapMask Or Document.MapCompatibility
-		  Next
-		  Dim NewMaps() As Beacon.Map = Beacon.Maps.ForMask(MapMask)
-		  For I As Integer = NewMaps.LastRowIndex DownTo 0
-		    If DestinationDocument.SupportsMap(NewMaps(I)) Then
-		      NewMaps.RemoveRowAt(I)
-		    End If
-		  Next
-		  Dim OldMaps() As Beacon.Map = DestinationDocument.Maps
-		  For I As Integer = OldMaps.LastRowIndex DownTo 0
-		    If OldMaps(I).Matches(MapMask) Then
-		      OldMaps.RemoveRowAt(I)
-		    End If
+		  Var Win As New DocumentMergerWindow
+		  Win.mDestination = DestinationDocument
+		  Win.mExternalAccounts = Accounts
+		  Win.mCallback = Callback
+		  Win.mConfigCounts = New Dictionary
+		  
+		  If UseMergeUI Then
+		    Win.List.ColumnCount = 3
+		    Win.List.HasHeader = True
+		    Win.List.HeaderAt(0) = " "
+		    Win.List.HeaderAt(1) = "Group"
+		    Win.List.HeaderAt(2) = "Merge Mode"
+		  End If
+		  
+		  Var ExistingConfigs() As Beacon.ConfigGroup = DestinationDocument.ImplementedConfigs
+		  For Each Config As Beacon.ConfigGroup In ExistingConfigs
+		    Win.mConfigCounts.Value(Config.ConfigName) = Win.mConfigCounts.Lookup(Config.ConfigName, 0) + 1
 		  Next
 		  
-		  Dim Win As New DocumentMergerWindow
-		  Win.mDestination = DestinationDocument
-		  Win.mOAuthData = OAuthData
-		  Win.mCallback = Callback
-		  Dim Enabled As Boolean
-		  Dim UsePrefixes As Boolean = SourceDocuments.LastRowIndex > 0
+		  Var Enabled As Boolean
+		  Var UsePrefixes As Boolean = SourceDocuments.LastRowIndex > 0
 		  For Each Document As Beacon.Document In SourceDocuments
-		    Dim Prefix As String = If(UsePrefixes, Document.Title + ": ", "")
-		    Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
+		    Var Prefix As String = If(UsePrefixes, Document.Title + ": ", "")
+		    Var Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
 		    For Each Config As Beacon.ConfigGroup In Configs
-		      Dim CurrentConfig As Beacon.ConfigGroup = DestinationDocument.ConfigGroup(Config.ConfigName)
-		      Dim CellContent As String = Prefix + Language.LabelForConfig(Config)
+		      Win.mConfigCounts.Value(Config.ConfigName) = Win.mConfigCounts.Lookup(Config.ConfigName, 0) + 1
+		      
+		      Var CurrentConfig As Beacon.ConfigGroup = DestinationDocument.ConfigGroup(Config.ConfigName)
+		      Var CellContent As String = Prefix + Language.LabelForConfig(Config)
 		      If Not Config.WasPerfectImport Then
 		        If Win.List.DefaultRowHeight <> 40 Then
 		          Win.List.DefaultRowHeight = 40
 		        End If
-		        CellContent = CellContent + EndOfLine + "This imported config is not perfect. Beacon will make a close approximation."
+		        CellContent = CellContent + EndOfLine + "This imported config group is not perfect. Beacon will make a close approximation."
 		      End If
 		      Win.List.AddRow("", CellContent)
 		      Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0) = UsePrefixes = False And Config.DefaultImported And (CurrentConfig = Nil Or CurrentConfig.IsImplicit)
 		      Win.List.RowTagAt(Win.List.LastAddedRowIndex) = Config
+		      If UseMergeUI Then
+		        Win.List.CellTagAt(Win.List.LastAddedRowIndex, 2) = 0
+		        If Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0) Then
+		          Win.List.CellValueAt(Win.List.LastAddedRowIndex, 2) = If(CurrentConfig = Nil, StrAdd, StrReplace)
+		        Else
+		          Win.List.CellValueAt(Win.List.LastAddedRowIndex, 2) = StrDoNotImport
+		        End If
+		      End If
 		      Enabled = Enabled Or Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0)
 		    Next
 		    For I As Integer = 0 To Document.ServerProfileCount - 1
+		      If Document.ServerProfile(I).Name.Length = 0 Then
+		        Continue For I
+		      End If
+		      
 		      For X As Integer = 0 To DestinationDocument.ServerProfileCount - 1
 		        If DestinationDocument.ServerProfile(X) = Document.ServerProfile(I) Then
+		          DestinationDocument.ServerProfile(X).UpdateDetailsFrom(Document.ServerProfile(I))
 		          Continue For I
 		        End If
 		      Next
-		      Win.List.AddRow("", "Server Link: " + Document.ServerProfile(I).Name)
+		      Win.List.AddRow("", Document.ServerProfile(I).LinkPrefix + " Link: " + Document.ServerProfile(I).Name)
 		      Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0) = True
 		      Win.List.RowTagAt(Win.List.LastAddedRowIndex) = Document.ServerProfile(I)
+		      If UseMergeUI Then
+		        Win.List.CellValueAt(Win.List.LastAddedRowIndex, 2) = If(Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0), StrAdd, StrDoNotImport)
+		      End If
 		      Enabled = Enabled Or Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0)
 		    Next
 		  Next
+		  
+		  Var CurrentMask As UInt64 = DestinationDocument.MapCompatibility
+		  Var DesiredMask As UInt64
+		  For Each Document As Beacon.Document In SourceDocuments
+		    DesiredMask = DesiredMask Or Document.MapCompatibility
+		    For I As Integer = 0 To Document.ServerProfileCount - 1
+		      DesiredMask = DesiredMask Or Document.ServerProfile(I).Mask
+		    Next
+		  Next
+		  For I As Integer = 0 To DestinationDocument.ServerProfileCount - 1
+		    DesiredMask = DesiredMask Or DestinationDocument.ServerProfile(I).Mask
+		  Next
+		  Var MaskDiff As UInt64 = CurrentMask Xor DesiredMask
+		  Var MaskToAdd As UInt64 = DesiredMask And MaskDiff
+		  Var MaskToRemove As UInt64 = CurrentMask And MaskDiff
+		  Var NewMaps() As Beacon.Map = Beacon.Maps.ForMask(MaskToAdd)
+		  Var OldMaps() As Beacon.Map = Beacon.Maps.ForMask(MaskToRemove)
 		  For Each Map As Beacon.Map In NewMaps
 		    Win.List.AddRow("", "Add Map: " + Map.Name)
 		    Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0) = True
 		    Win.List.RowTagAt(Win.List.LastAddedRowIndex) = "Map+" + Str(Map.Mask)
+		    If UseMergeUI Then
+		      Win.List.CellValueAt(Win.List.LastAddedRowIndex, 2) = If(Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0), StrAdd, StrDoNotImport)
+		    End If
 		    Enabled = Enabled Or Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0)
 		  Next
 		  For Each Map As Beacon.Map In OldMaps
 		    Win.List.AddRow("", "Remove Map: " + Map.Name)
 		    Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0) = True
 		    Win.List.RowTagAt(Win.List.LastAddedRowIndex) = "Map-" + Str(Map.Mask)
+		    If UseMergeUI Then
+		      Win.List.CellValueAt(Win.List.LastAddedRowIndex, 2) = If(Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0), StrAdd, StrDoNotImport)
+		    End If
 		    Enabled = Enabled Or Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0)
 		  Next
 		  Win.ActionButton.Enabled = Enabled
 		  
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ShouldAddCustomConfig() As Boolean
+		  If Self.mHasWarnedAboutCustomConfig Then
+		    Return True
+		  End If
+		  
+		  If Self.mDestination.HasConfigGroup(BeaconConfigs.CustomContent.ConfigName) Then
+		    // Since the destination already has custom content, don't warn them again.
+		    Self.mHasWarnedAboutCustomConfig = True
+		    Return True
+		  End If
+		  
+		  Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("Are you sure you want to import Custom Config Content?", "If you intend to continue to configure the server outside of Beacon, it is recommended that you do not import the Custom Config Content.", "Import", "Cancel", "Learn More")
+		  If Choice = BeaconUI.ConfirmResponses.Alternate Then
+		    ShowURL(Beacon.WebURL("/help/using_custom_ini_content_with"))
+		  End If
+		  If Choice = BeaconUI.ConfirmResponses.Action Then
+		    Self.mHasWarnedAboutCustomConfig = True
+		    Return True
+		  Else
+		    Return False
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -299,12 +384,42 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mConfigCounts As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDestination As Beacon.Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOAuthData As Dictionary
+		Private mExternalAccounts As Beacon.ExternalAccountManager
 	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHasWarnedAboutCustomConfig As Boolean
+	#tag EndProperty
+
+
+	#tag Constant, Name = MergeModeOtherPriority, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = MergeModeSelfPriority, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StrAdd, Type = String, Dynamic = False, Default = \"Add", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StrDoNotImport, Type = String, Dynamic = False, Default = \"Do not import", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StrMergeOther, Type = String, Dynamic = False, Default = \"Merge\x2C new config takes priority", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StrMergeSelf, Type = String, Dynamic = False, Default = \"Merge\x2C current config takes priority", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StrReplace, Type = String, Dynamic = False, Default = \"Replace", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -317,53 +432,193 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
-		  #Pragma Unused Row
 		  #Pragma Unused Column
 		  
-		  For I As Integer = 0 To Me.RowCount - 1
-		    If Me.CellCheckBoxValueAt(I, 0) Then
-		      Self.ActionButton.Enabled = True
-		      Return
+		  Var Tag As Variant = Me.RowTagAt(Row)
+		  If Me.ColumnCount >= 3 Then
+		    If Tag IsA Beacon.ConfigGroup Then
+		      Var Group As Beacon.ConfigGroup = Tag
+		      If Me.CellCheckBoxValueAt(Row, 0) Then
+		        If Group IsA BeaconConfigs.CustomContent And Self.ShouldAddCustomConfig() = False Then
+		          Me.CellCheckBoxValueAt(Row, 0) = False
+		          Me.CellValueAt(Row, 2) = Self.StrDoNotImport
+		          Me.CellTagAt(Row, 2) = -1
+		          Return
+		        End If
+		        
+		        Select Case Me.CellTagAt(Row, 2).IntegerValue
+		        Case 0
+		          If Self.mDestination.HasConfigGroup(Group.ConfigName) Then
+		            Me.CellValueAt(Row, 2) = Self.StrReplace
+		          Else
+		            Me.CellValueAt(Row, 2) = Self.StrAdd
+		          End If
+		        Case Self.MergeModeSelfPriority
+		          Me.CellValueAt(Row, 2) = Self.StrMergeSelf
+		        Case Self.MergeModeOtherPriority
+		          Me.CellValueAt(Row, 2) = Self.StrMergeOther
+		        End Select
+		      Else
+		        Me.CellValueAt(Row, 2) = Self.StrDoNotImport
+		      End If
+		    Else
+		      If Me.CellCheckBoxValueAt(Row, 0) Then
+		        Me.CellValueAt(Row, 2) = Self.StrAdd
+		      Else
+		        Me.CellValueAt(Row, 2) = Self.StrDoNotImport
+		      End If
 		    End If
-		  Next
+		  End If
 		  
-		  Self.ActionButton.Enabled = False
+		  Self.CheckEnabled()
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CellClick(row as Integer, column as Integer, x as Integer, y as Integer) As Boolean
+		  If Column <> 2 Then
+		    Return False
+		  End If
+		  
+		  Var Tag As Variant = Me.RowTagAt(Row)
+		  If Not (Tag IsA Beacon.ConfigGroup) Then
+		    Return False
+		  End If
+		  
+		  Var Menu As New MenuItem
+		  Var Mode As Integer = Me.CellTagAt(Row, Column)
+		  Var IsImported As Boolean = Me.CellCheckBoxValueAt(Row, 0)
+		  
+		  Var DoNothingItem As New MenuItem(Self.StrDoNotImport, -1)
+		  DoNothingItem.HasCheckMark = (IsImported = False)
+		  Menu.AddMenu(DoNothingItem)
+		  
+		  If Self.mConfigCounts.Lookup(Beacon.ConfigGroup(Tag).ConfigName, 0) > 1 Then
+		    Var ReplaceItem As New MenuItem(Self.StrReplace, 0)
+		    ReplaceItem.HasCheckMark = (IsImported And Mode = 0)
+		    Menu.AddMenu(ReplaceItem)
+		    
+		    If Beacon.ConfigGroup(Tag).SupportsMerging Then
+		      Var MergeSelfItem As New MenuItem(Self.StrMergeSelf, Self.MergeModeSelfPriority)
+		      MergeSelfItem.HasCheckMark = (IsImported And Mode = Self.MergeModeSelfPriority)
+		      Menu.AddMenu(MergeSelfItem)
+		      
+		      Var MergeOtherItem As New MenuItem(Self.StrMergeOther, Self.MergeModeOtherPriority)
+		      MergeOtherItem.HasCheckMark = (IsImported And Mode = Self.MergeModeOtherPriority)
+		      Menu.AddMenu(MergeOtherItem)
+		    End If
+		  Else
+		    Var AddItem As New MenuItem(Self.StrAdd, 0)
+		    AddItem.HasCheckMark = (IsImported And Mode = 0)
+		    Menu.AddMenu(AddItem)
+		  End If
+		  
+		  Var WindowPos As Point = Self.GlobalPosition
+		  Var OffsetX, OffsetY As Integer
+		  OffsetX = WindowPos.X + Me.Left
+		  OffsetY = WindowPos.Y + Me.Top
+		  For I As Integer = 0 To Column - 1
+		    OffsetX = OffsetX + Me.ColumnAt(I).WidthActual
+		  Next
+		  OffsetX = OffsetX - Me.ScrollPositionX
+		  If Me.HasHeader Then
+		    OffsetY = OffsetY + Me.HeaderHeight
+		  End If
+		  OffsetY = OffsetY + ((Row - Me.ScrollPosition) * Me.DefaultRowHeight)
+		  
+		  Var Choice As MenuItem = Menu.PopUp(OffsetX + X, OffsetY + Y)
+		  If Choice = Nil Then
+		    Return True
+		  End If
+		  
+		  If Tag IsA BeaconConfigs.CustomContent And Choice.Tag.IntegerValue > -1 And Self.ShouldAddCustomConfig() = False Then
+		    Return True
+		  End If
+		  
+		  If Choice.Tag.IntegerValue > -1 Then
+		    Me.CellTagAt(Row, Column) = Choice.Tag
+		  End If
+		  Me.CellValueAt(Row, Column) = Choice.Value
+		  Me.CellCheckBoxValueAt(Row, 0) = Choice.Tag <> -1
+		  
+		  Self.CheckEnabled()
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CellTextPaint(G As Graphics, Row As Integer, Column As Integer, Line As String, ByRef TextColor As Color, HorizontalPosition As Integer, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
+		  #Pragma Unused Row
+		  #Pragma Unused VerticalPosition
+		  #Pragma Unused IsHighlighted
+		  
+		  If Column <> 2 Then
+		    Return False
+		  End If
+		  
+		  Const IndicatorWidth = 8
+		  Const IndicatorHeight = 4
+		  
+		  Var LineEnd As Integer = Ceil(HorizontalPosition + G.TextWidth(Line))
+		  Var IndicatorLeft As Integer = LineEnd + 4
+		  Var IndicatorTop As Integer = Round((Me.DefaultRowHeight - IndicatorHeight) / 2)
+		  
+		  Var Path As New GraphicsPath
+		  Path.MoveToPoint(IndicatorLeft, IndicatorTop)
+		  Path.AddLineToPoint(IndicatorLeft + IndicatorWidth, IndicatorTop)
+		  Path.AddLineToPoint(IndicatorLeft + (IndicatorWidth / 2), IndicatorTop + IndicatorHeight)
+		  Path.AddLineToPoint(IndicatorLeft, IndicatorTop)
+		  
+		  G.DrawingColor = TextColor
+		  G.FillPath(Path)
+		  
+		  Return False // Yes, this is correct, we are adding to the text instead of replacing it
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim PreviousMods As New Beacon.StringList(Self.mDestination.Mods)
+		  Var PreviousMods As New Beacon.StringList(Self.mDestination.Mods)
 		  
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.CellCheckBoxValueAt(I, 0) Or Self.List.RowTagAt(I) = Nil Then
 		      Continue
 		    End If
 		    
-		    Dim Tag As Variant = Self.List.RowTagAt(I)
+		    Var Tag As Variant = Self.List.RowTagAt(I)
 		    Select Case Tag.Type
 		    Case Variant.TypeObject
 		      Select Case Tag
 		      Case IsA Beacon.ConfigGroup
-		        Dim Config As Beacon.ConfigGroup = Tag
-		        Self.mDestination.AddConfigGroup(Config)
+		        Var Config As Beacon.ConfigGroup = Tag
+		        If Self.List.ColumnCount >= 3 And Self.List.CellTagAt(I, 2).IntegerValue > 0 And Config.SupportsMerging And Self.mDestination.HasConfigGroup(Config.ConfigName) Then
+		          Var MergeMode As Integer = Self.List.CellTagAt(I, 2).IntegerValue
+		          Var ExistingConfig As Beacon.ConfigGroup = Self.mDestination.ConfigGroup(Config.ConfigName, False)
+		          Select Case MergeMode
+		          Case Self.MergeModeSelfPriority
+		            Call ExistingConfig.Merge(Config)
+		          Case Self.MergeModeOtherPriority
+		            If Config.Merge(ExistingConfig) Then
+		              Self.mDestination.AddConfigGroup(Config)
+		            End If
+		          End Select
+		        Else
+		          Self.mDestination.AddConfigGroup(Config)
+		        End If
 		      Case IsA Beacon.ServerProfile
-		        Dim Profile As Beacon.ServerProfile = Tag
+		        Var Profile As Beacon.ServerProfile = Tag
 		        Self.mDestination.Add(Profile)
 		        
-		        If Profile.OAuthProvider <> "" And Self.mOAuthData.HasKey(Profile.OAuthProvider) Then
-		          Dim OAuthData As Dictionary = Self.mOAuthData.Value(Profile.OAuthProvider)
-		          If OAuthData <> Nil Then
-		            Self.mDestination.OAuthData(Profile.OAuthProvider) = OAuthData
+		        If Profile.ExternalAccountUUID <> Nil Then
+		          Var Account As Beacon.ExternalAccount = Self.mExternalAccounts.GetByUUID(Profile.ExternalAccountUUID)
+		          If (Account Is Nil) = False Then
+		            Self.mDestination.Accounts.Add(Account)
 		          End If
 		        End If
 		      End Select
 		    Case Variant.TypeString
-		      Dim StringValue As String = Tag.StringValue
+		      Var StringValue As String = Tag.StringValue
 		      If StringValue.BeginsWith("Map") Then
-		        Dim Operator As String = StringValue.Middle(3, 1)
-		        Dim Mask As UInt64 = Val(StringValue.Middle(4))
+		        Var Operator As String = StringValue.Middle(3, 1)
+		        Var Mask As UInt64 = Val(StringValue.Middle(4))
 		        If Operator = "+" Then
 		          Self.mDestination.MapCompatibility = Self.mDestination.MapCompatibility Or Mask
 		        Else
@@ -374,7 +629,7 @@ End
 		  Next
 		  
 		  If Self.mDestination.Mods <> PreviousMods Then
-		    Dim Notification As New Beacon.UserNotification("The list of mods enabled for document """ + Self.mDestination.Title + """ has changed.")
+		    Var Notification As New Beacon.UserNotification("The list of mods enabled for document """ + Self.mDestination.Title + """ has changed.")
 		    Notification.SecondaryMessage = "You can change the enabled mods in the """ + Language.LabelForConfig(BeaconConfigs.Metadata.ConfigName) + """ config group."
 		    LocalData.SharedInstance.SaveNotification(Notification)
 		  End If

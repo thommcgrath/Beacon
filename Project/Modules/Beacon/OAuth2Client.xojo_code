@@ -1,39 +1,9 @@
 #tag Class
 Protected Class OAuth2Client
 	#tag Method, Flags = &h0
-		Function AccessToken() As String
-		  If Not Self.IsAuthenticated Then
-		    Return ""
-		  End If
-		  
-		  Return Self.mAccessToken
+		Function Account() As Beacon.ExternalAccount
+		  Return Self.mAccount
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function AuthData() As Dictionary
-		  Dim Dict As New Dictionary
-		  Dict.Value("Access Token") = Self.mAccessToken
-		  Dict.Value("Refresh Token") = Self.mRefreshToken
-		  If Self.mExpiration = Nil Then
-		    Dict.Value("Expiration") = 0
-		  Else
-		    Dict.Value("Expiration") = Self.mExpiration.SecondsFrom1970
-		  End If
-		  Return Dict
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub AuthData(Assigns Dict As Dictionary)
-		  If Dict = Nil Or Not Dict.HasAllKeys("Access Token", "Refresh Token", "Expiration") Then
-		    Return
-		  End If
-		  
-		  Self.mAccessToken = Dict.Value("Access Token")
-		  Self.mRefreshToken = Dict.Value("Refresh Token")
-		  Self.mExpiration = New DateTime(Dict.Value("Expiration"), New TimeZone(0))
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -45,18 +15,19 @@ Protected Class OAuth2Client
 		    Return
 		  End If
 		  
-		  If Force = True Or Self.mRefreshToken = "" Then
+		  If Force = True Or Self.mAccount = Nil Then
 		    // Start a brand new authorization
 		    Self.NewAuthorization()
 		    Return
 		  End If
 		  
-		  Dim QueryParams As New Dictionary
+		  Var QueryParams As New Dictionary
 		  QueryParams.Value("grant_type") = "refresh_token"
 		  QueryParams.Value("client_id") = Self.mClientID
-		  QueryParams.Value("refresh_token") = Self.mRefreshToken
+		  QueryParams.Value("refresh_token") = Self.mAccount.RefreshToken
 		  QueryParams.Value("redirect_uri") = Self.RedirectURI
 		  
+		  Self.StartTask()
 		  SimpleHTTP.Post(Self.mEndpoint, QueryParams, AddressOf Refresh_Callback, Nil)
 		End Sub
 	#tag EndMethod
@@ -68,10 +39,18 @@ Protected Class OAuth2Client
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Busy() As Boolean
+		  Return Self.mBusyCount > 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Cancel()
+		  Self.EndTask()
 		  Self.Cleanup()
 		  
 		  RaiseEvent DismissWaitingWindow()
+		  RaiseEvent UserCancelled()
 		End Sub
 	#tag EndMethod
 
@@ -107,24 +86,40 @@ Protected Class OAuth2Client
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub EndTask()
+		  Self.mBusyCount = Self.mBusyCount - 1
+		  If Self.mBusyCount = 0 Then
+		    RaiseEvent Idle
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function IsAuthenticated() As Boolean
-		  If Self.mAccessToken = "" Then
+		  If Self.mAccount = Nil Then
 		    #If DebugBuild
-		      System.DebugLog("Not authenticated because token is empty")
+		      System.DebugLog("Not authenticated because account is nil")
 		    #EndIf
 		    Return False
 		  End If
 		  
-		  If Self.mExpiration = Nil Then
+		  If Self.mAccount.AccessToken.Length = 0 Then
 		    #If DebugBuild
-		      System.DebugLog("Not authenticated because expiration is missing")
+		      System.DebugLog("Not authenticated because access token is empty")
 		    #EndIf
 		    Return False
 		  End If
 		  
-		  Dim Now As DateTime = DateTime.Now
-		  If Self.mExpiration.SecondsFrom1970 <= Now.SecondsFrom1970 Then
+		  If Self.mAccount.Expiration = Nil Then
+		    #If DebugBuild
+		      System.DebugLog("Not authenticated because expiration empty")
+		    #EndIf
+		    Return False
+		  End If
+		  
+		  Var Now As DateTime = DateTime.Now
+		  If Self.mAccount.Expiration.SecondsFrom1970 <= Now.SecondsFrom1970 Then
 		    #If DebugBuild
 		      System.DebugLog("Not authenticated because expiration has passed")
 		    #EndIf
@@ -148,29 +143,51 @@ Protected Class OAuth2Client
 		  RaiseEvent DismissWaitingWindow()
 		  
 		  Try
-		    Dim Dict As Dictionary = Beacon.ParseJSON(Content.GuessEncoding)
+		    Var Dict As Dictionary = Beacon.ParseJSON(Content.GuessEncoding)
 		    
-		    Dim EncryptedSymmetricKeyBase64 As String = Dict.Value("encrypted_symmetric_key")
-		    Dim EncryptedPayloadBase64 As String = Dict.Value("encrypted_payload")
+		    Var EncryptedSymmetricKeyBase64 As String = Dict.Value("encrypted_symmetric_key")
+		    Var EncryptedPayloadBase64 As String = Dict.Value("encrypted_payload")
 		    
-		    Dim EncryptedSymmetricKey As MemoryBlock = DecodeBase64(EncryptedSymmetricKeyBase64)
-		    Dim EncryptedPayload As MemoryBlock = DecodeBase64(EncryptedPayloadBase64)
+		    Var EncryptedSymmetricKey As MemoryBlock = DecodeBase64(EncryptedSymmetricKeyBase64)
+		    Var EncryptedPayload As MemoryBlock = DecodeBase64(EncryptedPayloadBase64)
 		    
-		    Dim SymmetricKey As MemoryBlock = Self.mIdentity.Decrypt(EncryptedSymmetricKey)
-		    Dim Payload As String = BeaconEncryption.SymmetricDecrypt(SymmetricKey, EncryptedPayload)
+		    Var SymmetricKey As MemoryBlock = Self.mIdentity.Decrypt(EncryptedSymmetricKey)
+		    Var Payload As String = BeaconEncryption.SymmetricDecrypt(SymmetricKey, EncryptedPayload)
 		    
 		    Dict = Beacon.ParseJSON(Payload.GuessEncoding)
 		    
-		    Dim Expires As Integer = Dict.Value("expires_in")
+		    Var Expires As Integer = Dict.Value("expires_in")
 		    
-		    Self.mRefreshToken = Dict.Value("refresh_token")
-		    Self.mAccessToken = Dict.Value("access_token")
-		    Self.mExpiration = New DateTime(DateTime.Now.SecondsFrom1970 + Expires, New TimeZone(0))
+		    Var AccessToken As String = Dict.Value("access_token").StringValue
+		    Var RefreshToken As String = Dict.Value("refresh_token").StringValue
+		    Var Expiration As New DateTime(DateTime.Now.SecondsFrom1970 + Expires, New TimeZone(0))
+		    
+		    Var AccountUUID As v4UUID
+		    Var UserID, Username As String
+		    If Dict.HasKey("user_id") Then
+		      UserID = Dict.Value("user_id").StringValue
+		      AccountUUID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Self.mAccount.Provider + "." + UserID)
+		    ElseIf (Self.mAccount.UUID Is Nil) = False Then
+		      AccountUUID = Self.mAccount.UUID
+		    Else
+		      AccountUUID = New v4UUID
+		    End If
+		    If Dict.HasKey("username") Then
+		      Username = Dict.Value("username").StringValue
+		    End If
+		    
+		    Var OriginalUUID As v4UUID = Self.mAccount.UUID
+		    Self.mAccount = New Beacon.ExternalAccount(AccountUUID, Username, Self.mAccount.Provider, AccessToken, RefreshToken, Expiration)
+		    
+		    If Self.mAccount.UUID <> OriginalUUID Then
+		      RaiseEvent AccountUUIDChanged(OriginalUUID)
+		    End If
 		    
 		    RaiseEvent Authenticated
 		  Catch Err As RuntimeException
 		    RaiseEvent AuthenticationError
 		  End Try
+		  Self.EndTask()
 		End Sub
 	#tag EndMethod
 
@@ -181,6 +198,7 @@ Protected Class OAuth2Client
 		  
 		  RaiseEvent DismissWaitingWindow()
 		  RaiseEvent AuthenticationError()
+		  Self.EndTask()
 		End Sub
 	#tag EndMethod
 
@@ -188,14 +206,16 @@ Protected Class OAuth2Client
 		Private Sub NewAuthorization()
 		  Self.mRequestID = New v4UUID
 		  
-		  Dim RequestID As String = New v4UUID
-		  Dim PublicKey As String = Self.mIdentity.PublicKey
-		  Dim URL As String = Self.AuthURL + "?provider=" + EncodeURLComponent(Self.mProvider) + "&requestid=" + EncodeURLComponent(RequestID) + "&pubkey=" + EncodeURLComponent(PublicKey)
+		  Var RequestID As String = New v4UUID
+		  Var PublicKey As String = Self.mIdentity.PublicKey
+		  Var URL As String = Self.AuthURL + "?provider=" + EncodeURLComponent(Self.mAccount.Provider) + "&requestid=" + EncodeURLComponent(RequestID) + "&pubkey=" + EncodeURLComponent(PublicKey)
 		  
-		  If StartAuthentication(URL, Self.mProvider) = False Then
+		  If StartAuthentication(Self.mAccount, URL) = False Then
+		    Self.Cancel()
 		    Return
 		  End If
 		  
+		  Self.StartTask()
 		  Self.mRequestID = RequestID
 		  Self.mCheckStatusKey = CallLater.Schedule(5000, AddressOf CheckStatus)
 		  
@@ -216,24 +236,70 @@ Protected Class OAuth2Client
 		  
 		  If Status <> 200 Then
 		    Self.NewAuthorization()
-		    Return
+		  Else
+		    Var Dict As Dictionary
+		    Try
+		      Dict = Beacon.ParseJSON(Content)
+		      
+		      Var AccessToken As String = Dict.Value("access_token").StringValue
+		      Var RefreshToken As String = Dict.Value("refresh_token").StringValue
+		      Var Expiration As DateTime = New DateTime(DateTime.Now.SecondsFrom1970 + Dict.Value("expires_in"), New TimeZone(0))
+		      Self.mAccount = New Beacon.ExternalAccount(Self.mAccount.UUID, Self.mAccount.Label, Self.mAccount.Provider, AccessToken, RefreshToken, Expiration)
+		      
+		      RaiseEvent Authenticated
+		    Catch Err As RuntimeException
+		      RaiseEvent AuthenticationError
+		    End Try
 		  End If
 		  
-		  Dim Dict As Dictionary
-		  Try
-		    Dict = Beacon.ParseJSON(Content)
-		    
-		    Self.mAccessToken = Dict.Value("access_token")
-		    Self.mRefreshToken = Dict.Value("refresh_token")
-		    Self.mExpiration = New DateTime(DateTime.Now.SecondsFrom1970 + Dict.Value("expires_in"), New TimeZone(0))
-		    
-		    RaiseEvent Authenticated
-		  Catch Err As RuntimeException
-		    RaiseEvent AuthenticationError
-		  End Try
+		  Self.EndTask()
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SetAccount(Account As Beacon.ExternalAccount) As Boolean
+		  If Account Is Nil Then
+		    Return False
+		  End If
+		  
+		  If Self.mAccount = Account Then
+		    // Do nothing
+		    Return True
+		  End If
+		  
+		  Select Case Account.Provider
+		  Case Beacon.ExternalAccount.ProviderNitrado
+		    Self.mEndpoint = "https://oauth.nitrado.net/oauth/v2/token"
+		    Self.mClientID = "222_mh7VoS9vLQn_jgE6UPZ8MXVlPNMdDhwblQP2kFHffnL7gy2h2rbdj5XWnmUm"
+		  Else
+		    Return False
+		  End Select
+		  
+		  Self.mAccount = Account
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SetAccount(Provider As String) As Boolean
+		  Var Account As New Beacon.ExternalAccount(Provider)
+		  Return Self.SetAccount(Account)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub StartTask()
+		  Self.mBusyCount = Self.mBusyCount + 1
+		  If Self.mBusyCount = 1 Then
+		    RaiseEvent Busy
+		  End If
+		End Sub
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event AccountUUIDChanged(OldUUID As v4UUID)
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event Authenticated()
@@ -244,7 +310,15 @@ Protected Class OAuth2Client
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event Busy()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event DismissWaitingWindow()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Idle()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -252,16 +326,24 @@ Protected Class OAuth2Client
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event StartAuthentication(URL As String, Provider As String) As Boolean
+		Event StartAuthentication(Account As Beacon.ExternalAccount, URL As String) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event UserCancelled()
 	#tag EndHook
 
 
 	#tag Property, Flags = &h21
-		Private mAccessToken As String
+		Private mAccount As Beacon.ExternalAccount
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mAuthState As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBusyCount As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -281,54 +363,12 @@ Protected Class OAuth2Client
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mExpiration As DateTime
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mIdentity As Beacon.Identity
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mProvider As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mRefreshToken As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mRequestID As String
 	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mProvider
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mProvider = Value Then
-			    Return
-			  End If
-			  
-			  Select Case Value
-			  Case Self.ProviderNitrado
-			    Self.mEndpoint = "https://oauth.nitrado.net/oauth/v2/token"
-			    Self.mClientID = "222_mh7VoS9vLQn_jgE6UPZ8MXVlPNMdDhwblQP2kFHffnL7gy2h2rbdj5XWnmUm"
-			  Else
-			    Return
-			  End Select
-			  
-			  Self.mProvider = Value
-			End Set
-		#tag EndSetter
-		Provider As String
-	#tag EndComputedProperty
-
-
-	#tag Constant, Name = ProviderNitrado, Type = Text, Dynamic = False, Default = \"Nitrado", Scope = Public
-	#tag EndConstant
 
 
 	#tag ViewBehavior
@@ -371,14 +411,6 @@ Protected Class OAuth2Client
 			InitialValue="0"
 			Type="Integer"
 			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Provider"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

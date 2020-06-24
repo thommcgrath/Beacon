@@ -43,10 +43,9 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   258
       Begin LibraryPaneDocuments DocumentsView
@@ -61,7 +60,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          HasBackColor    =   False
          Height          =   468
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -77,6 +75,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   4
          TabStop         =   True
          ToolbarCaption  =   ""
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -96,7 +95,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          HasBackColor    =   False
          Height          =   468
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -112,6 +110,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   5
          TabStop         =   True
          ToolbarCaption  =   ""
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -130,7 +129,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          HasBackColor    =   False
          Height          =   468
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -146,6 +144,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   6
          TabStop         =   True
          ToolbarCaption  =   ""
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -164,7 +163,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          HasBackColor    =   False
          Height          =   468
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -180,6 +178,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   7
          TabStop         =   True
          ToolbarCaption  =   ""
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -198,7 +197,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          HasBackColor    =   False
          Height          =   468
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -214,6 +212,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   8
          TabStop         =   True
          ToolbarCaption  =   ""
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -232,7 +231,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          HasBackColor    =   False
          Height          =   468
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -248,6 +246,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   1
          TabStop         =   True
          ToolbarCaption  =   ""
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -266,7 +265,6 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          HasBackColor    =   False
          Height          =   468
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -282,6 +280,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabPanelIndex   =   2
          TabStop         =   True
          ToolbarCaption  =   ""
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -438,7 +437,7 @@ End
 		  Case Self.Notification_CloseDrawer
 		    Self.Dismiss
 		  Case Self.Notification_ShowPane
-		    Dim Pane As Integer = Notification.UserData
+		    Var Pane As Integer = Notification.UserData
 		    Self.ShowPage(Pane)
 		  End Select
 		End Sub

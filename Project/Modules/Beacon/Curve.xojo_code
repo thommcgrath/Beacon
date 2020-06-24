@@ -18,7 +18,7 @@ Protected Class Curve
 		  Const NumFigures = 1000
 		  
 		  #if DebugBuild
-		    Dim Start As Double = System.Microseconds
+		    Var Start As Double = System.Microseconds
 		  #endif
 		  #if TargetiOS
 		  #else
@@ -26,20 +26,20 @@ Protected Class Curve
 		    Call Self.Database.Connect
 		    Self.Database.ExecuteSQL("BEGIN TRANSACTION")
 		    Self.Database.ExecuteSQL("CREATE TABLE precomputed (time REAL, x REAL, y REAL)")
-		    Dim Statement As SQLitePreparedStatement = Self.Database.Prepare("INSERT INTO precomputed (time, x, y) VALUES (?1, ?2, ?3)")
+		    Var Statement As SQLitePreparedStatement = Self.Database.Prepare("INSERT INTO precomputed (time, x, y) VALUES (?1, ?2, ?3)")
 		    Statement.BindType(0, SQLitePreparedStatement.SQLITE_DOUBLE)
 		    Statement.BindType(1, SQLitePreparedStatement.SQLITE_DOUBLE)
 		    Statement.BindType(2, SQLitePreparedStatement.SQLITE_DOUBLE)
 		    For I As Integer = 0 To NumFigures
-		      Dim Time As Double = I / NumFigures
-		      Dim X As Double = Self.XForT(Time)
-		      Dim Y As Double = Self.YForT(Time)
+		      Var Time As Double = I / NumFigures
+		      Var X As Double = Self.XForT(Time)
+		      Var Y As Double = Self.YForT(Time)
 		      Statement.SQLExecute(Time, X, Y)
 		    Next
 		    Self.Database.ExecuteSQL("COMMIT")
 		  #endif
 		  #if DebugBuild
-		    Dim Elapsed As Double = System.Microseconds - Start
+		    Var Elapsed As Double = System.Microseconds - Start
 		    System.DebugLog("Precomputed curve values in " + Str(Elapsed * 0.001, "-0") + "ms")
 		  #endif
 		End Sub
@@ -57,15 +57,15 @@ Protected Class Curve
 		    Return RangeBeginValue
 		  End If
 		  
-		  Dim YValue As Double = Self.YForX(XValue)
+		  Var YValue As Double = Self.YForX(XValue)
 		  Return RangeBeginValue + ((RangeEndValue - RangeBeginValue) * YValue)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Evaluate(Time As Double, Rect As Rect) As Point
-		  Dim X As Double = Self.XForT(Time)
-		  Dim Y As Double = Self.YForT(Time)
+		  Var X As Double = Self.XForT(Time)
+		  Var Y As Double = Self.YForT(Time)
 		  
 		  X = Rect.Left + (Rect.Width * X)
 		  Y = Rect.Top + (Rect.Height * Y)
@@ -76,7 +76,7 @@ Protected Class Curve
 
 	#tag Method, Flags = &h0
 		Function Export() As Dictionary
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("C1X") = Self.C1.X
 		  Dict.Value("C1Y") = Self.C1.Y
 		  Dict.Value("C2X") = Self.C2.X
@@ -93,7 +93,7 @@ Protected Class Curve
 		  
 		  Try
 		    Return New Beacon.Curve(Dict.Value("C1X"), Dict.Value("C1Y"), Dict.Value("C2X"), Dict.Value("C2Y"))
-		  Catch Err As TypeMismatchException
+		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
 		End Function
@@ -152,7 +152,7 @@ Protected Class Curve
 		  #if TargetiOS
 		    
 		  #else
-		    Dim Results As RowSet = Self.Database.SelectSQL("SELECT y FROM precomputed ORDER BY ABS(x - ?1) LIMIT 1;", X)
+		    Var Results As RowSet = Self.Database.SelectSQL("SELECT y FROM precomputed ORDER BY ABS(x - ?1) LIMIT 1;", X)
 		    If Results <> Nil Then
 		      Return Results.Column("y").DoubleValue
 		    Else

@@ -23,7 +23,7 @@ Inherits Thread
 		            // Since there is an action pending, we do nothing
 		            Continue
 		          End If
-		        Catch Err As DatabaseException
+		        Catch Err As RuntimeException
 		          App.Log("Unable to determine action for path " + RemotePath + ": " + Err.Message)
 		        End Try
 		      End If
@@ -54,7 +54,7 @@ Inherits Thread
 		              LocalHash = Results.Column("hash").StringValue
 		              LocalSize = Results.Column("size_in_bytes").IntegerValue
 		            End If
-		          Catch Err As DatabaseException
+		          Catch Err As RuntimeException
 		            App.Log("Unable to local file in cloud index: " + Err.Message)
 		          End Try
 		        End If
@@ -94,7 +94,7 @@ Inherits Thread
 		          
 		          Files.MoveToNextRow
 		        Wend
-		      Catch Err As DatabaseException
+		      Catch Err As RuntimeException
 		      End Try
 		    End If
 		  Catch Err As RuntimeException

@@ -57,7 +57,6 @@ Begin LibrarySubview LibraryPaneTools Implements NotificationKit.Receiver
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   "0"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -72,9 +71,11 @@ Begin LibrarySubview LibraryPaneTools Implements NotificationKit.Receiver
       TextUnit        =   0
       Top             =   41
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   300
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -92,7 +93,6 @@ Begin LibrarySubview LibraryPaneTools Implements NotificationKit.Receiver
       Caption         =   "Tools"
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -123,7 +123,6 @@ Begin LibrarySubview LibraryPaneTools Implements NotificationKit.Receiver
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
@@ -193,7 +192,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ShowAPIBuilder()
-		  Dim View As BeaconSubview = Self.View("APIBuilderView")
+		  Var View As BeaconSubview = Self.View("APIBuilderView")
 		  If View = Nil Then
 		    View = New APIBuilderView
 		  End If
@@ -209,7 +208,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ShowIdentity()
-		  Dim View As BeaconSubview = Self.View("IdentityView")
+		  Var View As BeaconSubview = Self.View("IdentityView")
 		  If View = Nil Then
 		    View = New IdentityView
 		  End If
@@ -219,7 +218,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ShowMods()
-		  Dim View As BeaconSubview = Self.View("ModsView")
+		  Var View As BeaconSubview = Self.View("ModsView")
 		  If View = Nil Then
 		    View = New ModsView
 		  End If
@@ -242,7 +241,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Item As String = Me.CellValueAt(Me.SelectedRowIndex, 0)
+		  Var Item As String = Me.CellValueAt(Me.SelectedRowIndex, 0)
 		  Select Case Item
 		  Case "API Guide"
 		    Self.ShowAPIGuide()
@@ -264,6 +263,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

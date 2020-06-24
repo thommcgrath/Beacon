@@ -71,15 +71,16 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       TextUnit        =   0
       Top             =   102
       Transparent     =   False
+      TypeaheadColumn =   1
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   300
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -197,23 +198,7 @@ End
 		  NotificationKit.Watch(Self, Preferences.Notification_OnlineStateChanged, IdentityManager.Notification_IdentityChanged, Preferences.Notification_RecentsChanged)
 		  Self.SwitcherVisible = Preferences.OnlineEnabled
 		  
-		  Dim AutosaveFolder As FolderItem = App.AutosaveFolder()
-		  If AutosaveFolder <> Nil Then
-		    For I As Integer = 0 To AutosaveFolder.Count - 1
-		      Dim File As BookmarkedFolderItem = New BookmarkedFolderItem(AutosaveFolder.ChildAt(I))
-		      If Not File.Name.EndsWith(BeaconFileTypes.BeaconDocument.PrimaryExtension) Then
-		        Continue
-		      End If
-		      
-		      Dim FileURL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(File)
-		      App.Log("Attempting to restore autosave " + FileURL.URL)
-		      
-		      Dim Controller As New Beacon.DocumentController(FileURL, App.IdentityManager.CurrentIdentity)
-		      AddHandler Controller.Loaded, AddressOf AutosaveController_Loaded
-		      AddHandler Controller.LoadError, AddressOf AutosaveController_LoadError
-		      Controller.Load()
-		    Next
-		  End If
+		  Call CallLater.Schedule(100, WeakAddressOf RestoreAutosave)
 		End Sub
 	#tag EndEvent
 
@@ -222,15 +207,27 @@ End
 		Private Sub APICallback_CloudDocumentsList(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
 		  
-		  Redim Self.mCloudDocuments(-1)
+		  Self.mCloudDocuments.ResizeTo(-1)
+		  Self.Switcher.ItemAtIndex(3).Loading = False
 		  
 		  If Response.Success Then
-		    Dim Dicts() As Variant = Response.JSON
+		    Var Dicts() As Variant = Response.JSON
 		    For Each Dict As Dictionary In Dicts
-		      Dim Document As New BeaconAPI.Document(Dict)
-		      Dim URL As String = Beacon.DocumentURL.TypeCloud + "://" + Document.ResourceURL.Middle(Document.ResourceURL.IndexOf("://") + 3)
+		      Var Document As New BeaconAPI.Document(Dict)
+		      Var URL As String = Beacon.DocumentURL.TypeCloud + "://" + Document.ResourceURL.Middle(Document.ResourceURL.IndexOf("://") + 3)
 		      Self.mCloudDocuments.AddRow(URL)
 		    Next
+		  ElseIf Response.HTTPStatus = 401 Or Response.HTTPStatus = 403 Then
+		    // The user is not authenticated
+		    If Self.ShowConfirm("Cloud documents could not be loaded due to an authentication error.", "To resolve this issue, please sign in again.", "Sign In", "Cancel") Then
+		      Var OldToken As String = Preferences.OnlineToken
+		      UserWelcomeWindow.Present(True)
+		      If Preferences.OnlineEnabled And Preferences.OnlineToken <> OldToken Then
+		        Self.UpdateCloudDocuments()
+		      End If
+		    End If
+		  Else
+		    Self.ShowAlert("Unable to load your cloud documents.", "Your internet connection may be offline or the Beacon server may not be responding. Try again later.")
 		  End If
 		  
 		  If Self.View = Self.ViewCloudDocuments Then
@@ -243,12 +240,12 @@ End
 		Private Sub APICallback_CommunityDocumentsList(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Request
 		  
-		  Redim Self.mCommunityDocuments(-1)
+		  Self.mCommunityDocuments.ResizeTo(-1)
 		  
 		  If Response.Success Then
-		    Dim Dicts() As Variant = Response.JSON
+		    Var Dicts() As Variant = Response.JSON
 		    For Each Dict As Dictionary In Dicts
-		      Dim Document As New BeaconAPI.Document(Dict)
+		      Var Document As New BeaconAPI.Document(Dict)
 		      Self.mCommunityDocuments.AddRow(Document.ResourceURL)
 		    Next
 		  End If
@@ -274,7 +271,7 @@ End
 		  
 		  // Create a modified transient document
 		  Document.Modified = True
-		  Dim Controller As New Beacon.DocumentController(Document, App.IdentityManager.CurrentIdentity)
+		  Var Controller As New Beacon.DocumentController(Document, App.IdentityManager.CurrentIdentity)
 		  Controller.AutosaveURL = Sender.URL
 		  Self.OpenController(Controller, False)
 		End Sub
@@ -289,7 +286,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Controller_DeleteError(Sender As Beacon.DocumentController, Reason As String)
-		  Dim Notification As New Beacon.UserNotification("The document " + Sender.Name + " could not be deleted.")
+		  Var Notification As New Beacon.UserNotification("The document " + Sender.Name + " could not be deleted.")
 		  Notification.SecondaryMessage = Reason
 		  Notification.UserData = New Dictionary
 		  Notification.UserData.Value("DocumentID") = If(Sender.Document <> Nil, Sender.Document.DocumentID, "")
@@ -301,7 +298,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Controller_DeleteSuccess(Sender As Beacon.DocumentController)
-		  Dim URL As Beacon.DocumentURL = Sender.URL
+		  Var URL As Beacon.DocumentURL = Sender.URL
 		  
 		  For I As Integer = Self.List.RowCount - 1 DownTo 0
 		    If Self.List.RowTagAt(I) = URL Then
@@ -326,7 +323,7 @@ End
 		    Next
 		  End Select
 		  
-		  Dim Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
+		  Var Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
 		  For I As Integer = Recents.LastRowIndex DownTo 0
 		    If Recents(I) = URL Then
 		      Recents.RemoveRowAt(I)
@@ -348,7 +345,7 @@ End
 		  
 		  Self.DetachControllerEvents(Sender)
 		  
-		  Dim URL As Beacon.DocumentURL = Sender.URL
+		  Var URL As Beacon.DocumentURL = Sender.URL
 		  Select Case URL.Scheme
 		  Case Beacon.DocumentURL.TypeLocal, Beacon.DocumentURL.TypeTransient
 		    Self.View = Self.ViewRecentDocuments
@@ -359,7 +356,7 @@ End
 		  End Select
 		  Self.SelectDocument(URL)
 		  
-		  Dim View As New DocumentEditorView(Sender)
+		  Var View As New DocumentEditorView(Sender)
 		  View.Changed = Sender.Document.Modified
 		  Self.ShowView(View)
 		End Sub
@@ -376,8 +373,8 @@ End
 		  
 		  Self.DetachControllerEvents(Sender)
 		  
-		  Dim RecentIdx As Integer = -1
-		  Dim Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
+		  Var RecentIdx As Integer = -1
+		  Var Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
 		  For I As Integer = 0 To Recents.LastRowIndex
 		    If Recents(I) = Sender.URL Then
 		      RecentIdx = I
@@ -474,8 +471,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub OpenController(Controller As Beacon.DocumentController, AddToRecents As Boolean = True)
-		  Dim URL As Beacon.DocumentURL = Controller.URL
-		  Dim View As BeaconSubview = Self.View(URL.Hash)
+		  Var URL As Beacon.DocumentURL = Controller.URL
+		  Var View As BeaconSubview = Self.View(URL.Hash)
 		  If View <> Nil Then
 		    Self.ShowView(View)
 		    Return
@@ -492,7 +489,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub OpenFile(File As FolderItem)
-		  Dim URL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(New BookmarkedFolderItem(File))
+		  Var URL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(New BookmarkedFolderItem(File))
 		  Self.OpenController(New Beacon.DocumentController(URL, App.IdentityManager.CurrentIdentity))
 		End Sub
 	#tag EndMethod
@@ -500,6 +497,49 @@ End
 	#tag Method, Flags = &h0
 		Sub OpenURL(URL As Beacon.DocumentURL)
 		  Self.OpenController(New Beacon.DocumentController(URL, App.IdentityManager.CurrentIdentity))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RestoreAutosave()
+		  Var AutosaveFolder As FolderItem = App.AutosaveFolder()
+		  If AutosaveFolder Is Nil Then
+		    Return
+		  End If
+		  
+		  Var AutosaveCount As Integer = AutosaveFolder.Count
+		  If AutosaveCount = 0 Then
+		    Return
+		  End If
+		  
+		  If Self.ShowConfirm("Beacon found " + Language.NounWithQuantity(AutosaveCount, "unsaved document", "unsaved documents") + ". Would you like to recover the " + If(AutosaveCount = 1, "file", "files") + "?", "This can happen if Beacon finishes unexpectedly, such as during a crash. If the " + If(AutosaveCount = 1, "file is", "files are") + " not restored, " + If(AutosaveCount = 1, "it", "they") + " will be permanently deleted.", "Recover", "Discard") Then
+		    For I As Integer = 0 To AutosaveCount - 1
+		      Var File As BookmarkedFolderItem = New BookmarkedFolderItem(AutosaveFolder.ChildAt(I))
+		      If Not File.Name.EndsWith(BeaconFileTypes.BeaconDocument.PrimaryExtension) Then
+		        Continue
+		      End If
+		      
+		      Var FileURL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(File)
+		      App.Log("Attempting to restore autosave " + FileURL.URL)
+		      
+		      Var Controller As New Beacon.DocumentController(FileURL, App.IdentityManager.CurrentIdentity)
+		      AddHandler Controller.Loaded, AddressOf AutosaveController_Loaded
+		      AddHandler Controller.LoadError, AddressOf AutosaveController_LoadError
+		      Controller.Load()
+		    Next
+		  Else
+		    For I As Integer = AutosaveCount - 1 DownTo 0
+		      Var File As BookmarkedFolderItem = New BookmarkedFolderItem(AutosaveFolder.ChildAt(I))
+		      If Not File.Name.EndsWith(BeaconFileTypes.BeaconDocument.PrimaryExtension) Then
+		        Continue
+		      End If
+		      
+		      Try
+		        File.Remove
+		      Catch Err As IOException
+		      End Try
+		    Next
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -518,7 +558,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function SelectedDocuments() As Beacon.DocumentURL()
-		  Dim Documents() As Beacon.DocumentURL
+		  Var Documents() As Beacon.DocumentURL
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
 		      Documents.AddRow(Self.List.RowTagAt(I))
@@ -530,13 +570,13 @@ End
 
 	#tag Method, Flags = &h0
 		Sub SelectedDocuments(Assigns Documents() As Beacon.DocumentURL)
-		  Dim Selected() As String
+		  Var Selected() As String
 		  For Each URL As Beacon.DocumentURL In Documents
 		    Selected.AddRow(URL)
 		  Next
 		  
 		  For I As Integer = 0 To Self.List.RowCount - 1
-		    Dim URL As String = Beacon.DocumentURL(Self.List.RowTagAt(I))
+		    Var URL As String = Beacon.DocumentURL(Self.List.RowTagAt(I))
 		    Self.List.Selected(I) = Selected.IndexOf(URL) > -1
 		  Next
 		End Sub
@@ -544,10 +584,10 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ShowOpenDocument()
-		  Dim Dialog As New OpenFileDialog
+		  Var Dialog As New OpenFileDialog
 		  Dialog.Filter = BeaconFileTypes.BeaconDocument + BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconIdentity
 		  
-		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File <> Nil Then
 		    App.OpenDocument(File)
 		  End If
@@ -557,14 +597,16 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateCloudDocuments()
 		  If App.IdentityManager.CurrentIdentity <> Nil Then
-		    Dim Params As New Dictionary
+		    Var Params As New Dictionary
 		    Params.Value("user_id") = App.IdentityManager.CurrentIdentity.Identifier
 		    
-		    Dim Request As New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_CloudDocumentsList)
+		    Var Request As New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_CloudDocumentsList)
 		    Request.Authenticate(Preferences.OnlineToken)
 		    Self.APISocket.Start(Request)
+		    
+		    Self.Switcher.ItemAtIndex(3).Loading = True
 		  Else
-		    Redim Self.mCloudDocuments(-1)
+		    Self.mCloudDocuments.ResizeTo(-1)
 		  End If
 		  
 		  If Self.View = Self.ViewCloudDocuments Then
@@ -575,10 +617,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateCommunityDocuments()
-		  Dim Params As New Dictionary
+		  Var Params As New Dictionary
 		  
 		  // Do not sign this request so we get only truly public documents
-		  Dim Request As New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_CommunityDocumentsList)
+		  Var Request As New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_CommunityDocumentsList)
 		  Self.APISocket.Start(Request)
 		  
 		  If Self.View = Self.ViewCommunityDocuments Then
@@ -589,8 +631,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateDocumentsList()
-		  Dim View As Integer = Self.Switcher.SelectedIndex
-		  Dim Documents() As Beacon.DocumentURL
+		  Var View As Integer = Self.Switcher.SelectedIndex
+		  Var Documents() As Beacon.DocumentURL
 		  Select Case View
 		  Case Self.ViewRecentDocuments
 		    Documents = Preferences.RecentDocuments
@@ -600,11 +642,11 @@ End
 		    Documents = Self.mCommunityDocuments
 		  End Select
 		  
-		  Dim RowBound As Integer = Self.List.RowCount - 1
-		  Dim SelectedURLs() As String
+		  Var RowBound As Integer = Self.List.RowCount - 1
+		  Var SelectedURLs() As String
 		  For I As Integer = 0 To RowBound
 		    If Self.List.Selected(I) Then
-		      Dim URL As Beacon.DocumentURL = Self.List.RowTagAt(I)
+		      Var URL As Beacon.DocumentURL = Self.List.RowTagAt(I)
 		      SelectedURLs.AddRow(URL)
 		    End If
 		  Next
@@ -612,7 +654,7 @@ End
 		  Self.List.RowCount = Documents.LastRowIndex + 1
 		  
 		  For I As Integer = 0 To Documents.LastRowIndex
-		    Dim URL As Beacon.DocumentURL = Documents(I)
+		    Var URL As Beacon.DocumentURL = Documents(I)
 		    Self.List.CellValueAt(I, Self.ColumnName) = URL.Name
 		    Self.List.RowTagAt(I) = URL
 		    Self.List.Selected(I) = SelectedURLs.IndexOf(URL) > -1
@@ -651,7 +693,7 @@ End
 			  End If
 			  
 			  Self.Switcher.Visible = Value
-			  Dim Top As Integer = Self.Switcher.Top
+			  Var Top As Integer = Self.Switcher.Top
 			  If Value Then
 			    Top = Top + Self.Switcher.Height
 			  End If
@@ -727,7 +769,7 @@ End
 		        Continue For I
 		      End If
 		      
-		      Dim Controller As New Beacon.DocumentController(Beacon.DocumentURL(Me.RowTagAt(I)), App.IdentityManager.CurrentIdentity)
+		      Var Controller As New Beacon.DocumentController(Beacon.DocumentURL(Me.RowTagAt(I)), App.IdentityManager.CurrentIdentity)
 		      If Not Controller.CanWrite Then
 		        Return False
 		      End If
@@ -745,14 +787,14 @@ End
 		  
 		  If Self.View = Self.ViewRecentDocuments Then
 		    // Not deleting something, just removing from the list
-		    Dim Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
-		    Dim Changed As Boolean
+		    Var Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
+		    Var Changed As Boolean
 		    For I As Integer = Me.RowCount - 1 DownTo 0
 		      If Not Me.Selected(I) Then
 		        Continue For I
 		      End If
 		      
-		      Dim SelectedURL As Beacon.DocumentURL = Me.RowTagAt(I)
+		      Var SelectedURL As Beacon.DocumentURL = Me.RowTagAt(I)
 		      For X As Integer = Recents.LastRowIndex DownTo 0
 		        If Recents(X) = SelectedURL Then
 		          Changed = True
@@ -767,21 +809,21 @@ End
 		    Return
 		  End If
 		  
-		  Dim Controllers() As Beacon.DocumentController
+		  Var Controllers() As Beacon.DocumentController
 		  For I As Integer = Me.RowCount - 1 DownTo 0
 		    If Not Me.Selected(I) Then
 		      Continue For I
 		    End If
 		    
-		    Dim URL As Beacon.DocumentURL = Me.RowTagAt(I)
-		    Dim Controller As New Beacon.DocumentController(URL, App.IdentityManager.CurrentIdentity)
+		    Var URL As Beacon.DocumentURL = Me.RowTagAt(I)
+		    Var Controller As New Beacon.DocumentController(URL, App.IdentityManager.CurrentIdentity)
 		    If Controller.CanWrite() Then
 		      Controllers.AddRow(Controller)
 		    End If
 		  Next
 		  
 		  If Warn Then
-		    Dim Message, Explanation As String
+		    Var Message, Explanation As String
 		    If Controllers.LastRowIndex = 0 Then
 		      Message = "Are you sure you want to delete the document """ + Controllers(0).Name + """?"
 		    Else
@@ -795,7 +837,7 @@ End
 		  End If
 		  
 		  For Each Controller As Beacon.DocumentController In Controllers
-		    Dim View As BeaconSubview = Self.View(Controller.URL.Hash)
+		    Var View As BeaconSubview = Self.View(Controller.URL.Hash)
 		    If View <> Nil Then
 		      If Not Self.DiscardView(View) Then
 		        Continue
@@ -831,13 +873,13 @@ End
 		    Return
 		  End If
 		  
-		  Dim URL As Beacon.DocumentURL = Me.RowTagAt(Row)
+		  Var URL As Beacon.DocumentURL = Me.RowTagAt(Row)
 		  If URL = Nil Then
 		    Return
 		  End If
 		  
-		  Dim IconColor As Color = TextColor.AtOpacity(0.5)
-		  Dim Icon As Picture
+		  Var IconColor As Color = TextColor.AtOpacity(0.5)
+		  Var Icon As Picture
 		  Select Case URL.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
 		    Icon = BeaconUI.IconWithColor(IconCloudDocument, IconColor)
@@ -867,14 +909,19 @@ End
 		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Select Case Column
 		  Case 0
-		    Dim Row1URL As Beacon.DocumentURL = Me.RowTagAt(Row1)
-		    Dim Row2URL As Beacon.DocumentURL = Me.RowTagAt(Row2)
+		    Var Row1URL As Beacon.DocumentURL = Me.RowTagAt(Row1)
+		    Var Row2URL As Beacon.DocumentURL = Me.RowTagAt(Row2)
 		    
 		    Result = Row1URL.Name.Compare(Row2URL.Name, ComparisonOptions.CaseSensitive)
 		    
 		    Return True
 		  End Select
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.TypeaheadColumn = Self.ColumnName
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Header
@@ -917,6 +964,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

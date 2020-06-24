@@ -149,59 +149,6 @@ Begin BeaconDialog LootSourceWizard
          Visible         =   True
          Width           =   510
       End
-      Begin BeaconListbox SourceList
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
-         Bold            =   False
-         Border          =   True
-         ColumnCount     =   2
-         ColumnsResizable=   False
-         ColumnWidths    =   "30,*"
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   34
-         Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   True
-         HeadingIndex    =   0
-         Height          =   262
-         HelpTag         =   ""
-         Hierarchical    =   False
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         InitialValue    =   " 	Label	Kind	Package"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   False
-         Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
-         SelectionType   =   1
-         ShowDropIndicator=   False
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   54
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   510
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
       Begin UITweaks.ResizedPushButton SelectionCustomButton
          AutoDeactivate  =   True
          Bold            =   False
@@ -939,59 +886,6 @@ Begin BeaconDialog LootSourceWizard
          Visible         =   True
          Width           =   394
       End
-      Begin BeaconListbox CustomizePresetsList
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
-         Bold            =   False
-         Border          =   True
-         ColumnCount     =   2
-         ColumnsResizable=   False
-         ColumnWidths    =   "22,*"
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   22
-         Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   False
-         HeadingIndex    =   1
-         Height          =   162
-         HelpTag         =   ""
-         Hierarchical    =   False
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         InitialValue    =   ""
-         Italic          =   False
-         Left            =   136
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   False
-         Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
-         SelectionType   =   0
-         ShowDropIndicator=   False
-         TabIndex        =   7
-         TabPanelIndex   =   3
-         TabStop         =   True
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   154
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   394
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
       Begin Label CustomizePresetsLabel
          AutoDeactivate  =   True
          Bold            =   False
@@ -1158,6 +1052,116 @@ Begin BeaconDialog LootSourceWizard
          Visible         =   True
          Width           =   400
       End
+      Begin BeaconListbox SourceList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   True
+         ColumnCount     =   2
+         ColumnsResizable=   False
+         ColumnWidths    =   "30,*"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   34
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   True
+         HeadingIndex    =   0
+         Height          =   262
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         InitialValue    =   " 	Label	Kind	Package"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
+         SelectionType   =   1
+         ShowDropIndicator=   False
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   54
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   510
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
+      Begin BeaconListbox CustomizePresetsList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   True
+         ColumnCount     =   2
+         ColumnsResizable=   False
+         ColumnWidths    =   "22,*"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   22
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   False
+         HeadingIndex    =   1
+         Height          =   162
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   136
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
+         SelectionType   =   0
+         ShowDropIndicator=   False
+         TabIndex        =   7
+         TabPanelIndex   =   3
+         TabStop         =   True
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   154
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   394
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
    End
 End
 #tag EndWindow
@@ -1182,7 +1186,7 @@ End
 		      If Self.mSource.IsOfficial Then
 		        Self.CustomizeCancelButton.Caption = "Cancel"
 		        Self.mDestinations.ResizeTo(0)
-		        Self.mDestinations(0) = New Beacon.MutableLootSource(Self.mSource)   
+		        Self.mDestinations(0) = Self.mSource.Clone
 		        Self.ShowCustomize()
 		      Else
 		        Self.DefineCancelButton.Caption = "Cancel"
@@ -1282,7 +1286,7 @@ End
 		      End If
 		    End If
 		    
-		    Self.mDestinations.AddRow(New Beacon.MutableLootSource(Source))
+		    Self.mDestinations.AddRow(Source.Clone)
 		  Next
 		  
 		  Self.ShowCustomize()
@@ -1330,12 +1334,12 @@ End
 		  If Self.mSource <> Nil Then
 		    BasedOn = Self.mSource
 		  Else
-		    BasedOn = New Beacon.MutableLootSource("Template", False)
+		    BasedOn = New Beacon.CustomLootContainer("Template")
 		  End If
 		  
 		  Self.CustomizeMinSetsField.Value = Format(BasedOn.MinItemSets, "-0")
 		  Self.CustomizeMaxSetsField.Value = Format(BasedOn.MaxItemSets, "-0")
-		  Self.CustomizePreventDuplicatesCheck.Value = BasedOn.SetsRandomWithoutReplacement
+		  Self.CustomizePreventDuplicatesCheck.Value = BasedOn.PreventDuplicates
 		  
 		  Var Presets() As Beacon.Preset = Beacon.Data.Presets()
 		  
@@ -1351,7 +1355,7 @@ End
 		  Var Scrolled, HasUsedPresets As Boolean
 		  For I As Integer = 0 To Self.CustomizePresetsList.RowCount - 1
 		    Var Preset As Beacon.Preset = Self.CustomizePresetsList.RowTagAt(I)
-		    For Each Set As Beacon.ItemSet In BasedOn
+		    For Each Set As Beacon.ItemSet In BasedOn.ItemSets
 		      If Set.SourcePresetID = Preset.PresetID Then
 		        HasUsedPresets = True
 		        Self.CustomizePresetsList.CellCheckBoxValueAt(I, 0) = True
@@ -1415,7 +1419,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDestinations() As Beacon.MutableLootSource
+		Private mDestinations() As Beacon.LootSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1459,6 +1463,201 @@ End
 		Sub Action()
 		  Self.mCancelled = True
 		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SelectionCustomButton
+	#tag Event
+		Sub Action()
+		  Self.ShowDefine(Nil)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DefineActionButton
+	#tag Event
+		Sub Action()
+		  Var ClassString As String = Self.DefineClassField.Value.Trim
+		  Var ClassTester As New RegEx
+		  ClassTester.Options.TreatTargetAsOneLine = True
+		  ClassTester.SearchPattern = "^[A-Za-z0-9_]+_C$"
+		  If ClassTester.Search(ClassString) Is Nil Then
+		    Self.ShowAlert("Invalid class string", "Ark class strings always end in _C. Check your class string and try again.")
+		    Return
+		  End If
+		  
+		  Var Destination As Beacon.LootSource
+		  Var Source As Beacon.LootSource = Beacon.Data.GetLootSource(ClassString)
+		  If Source <> Nil Then
+		    Destination = Source.Clone
+		  Else
+		    Var Label As String = Self.DefineNameField.Value.Trim
+		    If Label = "" Then
+		      Self.ShowAlert("No label provided", "A loot source without a name isn't very useful is it? Enter a name and try again.")
+		      Return
+		    End If
+		    
+		    Var MinMultiplier As Double = CDbl(Self.DefineMinMultiplierField.Value)
+		    Var MaxMultiplier As Double = CDbl(Self.DefineMaxMultiplierField.Value)
+		    If MinMultiplier <= 0 Or MaxMultiplier <= 0 Then
+		      Self.ShowAlert("Invalid multipliers", "The loot source multipliers must be greater than 0. If you do not know these values - which is common - set them to 1.0 to be safe.")
+		      Return
+		    End If
+		    
+		    Var Mask As UInt64 = Self.DefineMapsSelector.Mask
+		    If Mask = 0 Then
+		      Self.ShowAlert("Please select a map", "Your loot source should be available to at least one map.")
+		      Return
+		    End If
+		    
+		    Destination = New Beacon.CustomLootContainer(ClassString)
+		    Beacon.CustomLootContainer(Destination).Label = Label
+		    Beacon.CustomLootContainer(Destination).Availability = Mask
+		    Beacon.CustomLootContainer(Destination).Multipliers = New Beacon.Range(MinMultiplier, MaxMultiplier)
+		  End If
+		  
+		  Self.mDestinations.ResizeTo(0)
+		  Self.mDestinations(0) = Destination
+		  
+		  Self.ShowCustomize()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DefineCancelButton
+	#tag Event
+		Sub Action()
+		  If Me.Caption = "Cancel" Then
+		    Self.mCancelled = True
+		    Self.Hide
+		    Return
+		  End If
+		  
+		  Self.ShowSelect()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CustomizeActionButton
+	#tag Event
+		Sub Action()
+		  Var MinItemSets As Integer = Floor(CDbl(Self.CustomizeMinSetsField.Value))
+		  Var MaxItemSets As Integer = Floor(CDbl(Self.CustomizeMaxSetsField.Value))
+		  Var PreventDuplicates As Boolean = Self.CustomizePreventDuplicatesCheck.Value
+		  Var AppendMode As Boolean = If(Self.mSource <> Nil, Self.mSource.AppendMode, False)
+		  Var ReconfigurePresets As Boolean = Self.CustomizeReconfigureCheckbox.Value
+		  
+		  Var AllowedPresets(), AdditionalPresets() As String
+		  For I As Integer = 0 To Self.CustomizePresetsList.RowCount - 1
+		    If Not Self.CustomizePresetsList.CellCheckBoxValueAt(I, 0) Then
+		      Continue
+		    End If
+		    
+		    Var Preset As Beacon.Preset = Self.CustomizePresetsList.RowTagAt(I)
+		    AllowedPresets.AddRow(Preset.PresetID)
+		    AdditionalPresets.AddRow(Preset.PresetID)
+		  Next
+		  
+		  Var SourceSets() As Beacon.ItemSet
+		  If Self.mSource <> Nil Then
+		    For Each Set As Beacon.ItemSet In Self.mSource.ItemSets
+		      If Set.SourcePresetID = "" Or AllowedPresets.IndexOf(Set.SourcePresetID) > -1 Or LocalData.SharedInstance.GetPreset(Set.SourcePresetID) = Nil Then
+		        SourceSets.AddRow(Set)
+		      End If
+		      
+		      Var Idx As Integer = AdditionalPresets.IndexOf(Set.SourcePresetID)
+		      If Idx > -1 Then
+		        AdditionalPresets.RemoveRowAt(Idx)
+		      End If
+		    Next
+		  End If
+		  
+		  For Each Destination As Beacon.LootSource In Self.mDestinations
+		    // Clear the current contents
+		    Destination.ItemSets.Clear
+		    
+		    // Add the clones
+		    For Each Set As Beacon.ItemSet In SourceSets
+		      Call Destination.ItemSets.Append(New Beacon.ItemSet(Set))
+		    Next
+		    
+		    // Add newly selected presets
+		    For Each PresetID As String In AdditionalPresets
+		      Var Preset As Beacon.Preset = LocalData.SharedInstance.GetPreset(PresetID)
+		      If Preset = Nil Then
+		        Continue
+		      End If
+		      
+		      Call Destination.ItemSets.Append(Beacon.ItemSet.FromPreset(Preset, Destination, Self.mMask, Self.mMods))
+		    Next
+		    
+		    // Rebuild if necessary
+		    If ReconfigurePresets Then
+		      Call Destination.ReconfigurePresets(Self.mMask, Self.mMods)
+		    End If
+		    
+		    // Apply basic settings
+		    Destination.MinItemSets = MinItemSets
+		    Destination.MaxItemSets = MaxItemSets
+		    Destination.PreventDuplicates = PreventDuplicates
+		    Destination.AppendMode = AppendMode
+		    
+		    Var Idx As Integer = Self.mConfig.IndexOf(Destination)
+		    If Idx = -1 Then
+		      Self.mConfig.Append(Destination)
+		    Else
+		      Self.mConfig(Idx) = Destination
+		    End If
+		  Next
+		  
+		  Self.mCancelled = False
+		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CustomizeCancelButton
+	#tag Event
+		Sub Action()
+		  If Me.Caption = "Cancel" Then
+		    Self.mCancelled = True
+		    Self.Hide
+		    Return
+		  End If
+		  
+		  If Self.mDestinations.LastRowIndex > -1 And Self.mDestinations(0).IsOfficial = False Then
+		    Self.ShowDefine(Self.mDestinations(0))
+		  Else
+		    Self.ShowSelect()
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DefineNameField
+	#tag Event
+		Sub TextChange()
+		  If Not Self.mDefineLabelEditingAutomatically Then
+		    Self.mDefineLabelWasEditedByUser = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DefineClassField
+	#tag Event
+		Sub TextChange()
+		  If Not Self.mDefineLabelWasEditedByUser Then
+		    Self.mDefineLabelEditingAutomatically = True
+		    Self.DefineNameField.Value = Beacon.LabelFromClassString(Me.Value.Trim)
+		    Self.mDefineLabelEditingAutomatically = False
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SelectionExperimentalCheck
+	#tag Event
+		Sub Action()
+		  If Preferences.ShowExperimentalLootSources = Me.Value Then
+		    Return
+		  End If
+		  
+		  Preferences.ShowExperimentalLootSources = Me.Value
+		  Self.BuildSourceList()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1512,186 +1711,9 @@ End
 		  Self.ChooseSelectedLootSources()
 		End Sub
 	#tag EndEvent
-#tag EndEvents
-#tag Events SelectionCustomButton
 	#tag Event
-		Sub Action()
-		  Self.ShowDefine(Nil)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DefineActionButton
-	#tag Event
-		Sub Action()
-		  Var ClassString As String = Self.DefineClassField.Value.Trim
-		  If Not ClassString.EndsWith("_C") Then
-		    Self.ShowAlert("Invalid class string", "Ark class strings always end in _C. Check your class string and try again.")
-		    Return
-		  End If
-		  
-		  Var Destination As Beacon.MutableLootSource
-		  Var Source As Beacon.LootSource = Beacon.Data.GetLootSource(ClassString)
-		  If Source <> Nil Then
-		    Destination = New Beacon.MutableLootSource(Source)
-		  Else
-		    Var Label As String = Self.DefineNameField.Value.Trim
-		    If Label = "" Then
-		      Self.ShowAlert("No label provided", "A loot source without a name isn't very useful is it? Enter a name and try again.")
-		      Return
-		    End If
-		    
-		    Var MinMultiplier As Double = CDbl(Self.DefineMinMultiplierField.Value)
-		    Var MaxMultiplier As Double = CDbl(Self.DefineMaxMultiplierField.Value)
-		    If MinMultiplier <= 0 Or MaxMultiplier <= 0 Then
-		      Self.ShowAlert("Invalid multipliers", "The loot source multipliers must be greater than 0. If you do not know these values - which is common - set them to 1.0 to be safe.")
-		      Return
-		    End If
-		    
-		    Var Mask As UInt64 = Self.DefineMapsSelector.Mask
-		    If Mask = 0 Then
-		      Self.ShowAlert("Please select a map", "Your loot source should be available to at least one map.")
-		      Return
-		    End If
-		    
-		    Destination = New Beacon.MutableLootSource(ClassString, False)
-		    Destination.Label = Label
-		    Destination.Availability = Mask
-		    Destination.Multipliers = New Beacon.Range(MinMultiplier, MaxMultiplier)
-		    Destination.IsOfficial = False
-		    Destination.UseBlueprints = False
-		  End If
-		  
-		  Self.mDestinations.ResizeTo(0)
-		  Self.mDestinations(0) = Destination
-		  
-		  Self.ShowCustomize()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DefineCancelButton
-	#tag Event
-		Sub Action()
-		  If Me.Caption = "Cancel" Then
-		    Self.mCancelled = True
-		    Self.Hide
-		    Return
-		  End If
-		  
-		  Self.ShowSelect()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events CustomizeActionButton
-	#tag Event
-		Sub Action()
-		  Var MinItemSets As Integer = Floor(CDbl(Self.CustomizeMinSetsField.Value))
-		  Var MaxItemSets As Integer = Floor(CDbl(Self.CustomizeMaxSetsField.Value))
-		  Var PreventDuplicates As Boolean = Self.CustomizePreventDuplicatesCheck.Value
-		  Var AppendMode As Boolean = If(Self.mSource <> Nil, Self.mSource.AppendMode, False)
-		  Var ReconfigurePresets As Boolean = Self.CustomizeReconfigureCheckbox.Value
-		  
-		  Var AllowedPresets(), AdditionalPresets() As String
-		  For I As Integer = 0 To Self.CustomizePresetsList.RowCount - 1
-		    If Not Self.CustomizePresetsList.CellCheckBoxValueAt(I, 0) Then
-		      Continue
-		    End If
-		    
-		    Var Preset As Beacon.Preset = Self.CustomizePresetsList.RowTagAt(I)
-		    AllowedPresets.AddRow(Preset.PresetID)
-		    AdditionalPresets.AddRow(Preset.PresetID)
-		  Next
-		  
-		  Var SourceSets() As Beacon.ItemSet
-		  If Self.mSource <> Nil Then
-		    For Each Set As Beacon.ItemSet In Self.mSource
-		      If Set.SourcePresetID = "" Or AllowedPresets.IndexOf(Set.SourcePresetID) > -1 Or LocalData.SharedInstance.GetPreset(Set.SourcePresetID) = Nil Then
-		        SourceSets.AddRow(Set)
-		      End If
-		      
-		      Var Idx As Integer = AdditionalPresets.IndexOf(Set.SourcePresetID)
-		      If Idx > -1 Then
-		        AdditionalPresets.RemoveRowAt(Idx)
-		      End If
-		    Next
-		  End If
-		  
-		  For Each Destination As Beacon.MutableLootSource In Self.mDestinations
-		    // Clear the current contents
-		    Destination.ResizeTo(-1)
-		    
-		    // Add the clones
-		    For Each Set As Beacon.ItemSet In SourceSets
-		      Call Destination.AddSet(New Beacon.ItemSet(Set), False)
-		    Next
-		    
-		    // Add newly selected presets
-		    For Each PresetID As String In AdditionalPresets
-		      Var Preset As Beacon.Preset = LocalData.SharedInstance.GetPreset(PresetID)
-		      If Preset = Nil Then
-		        Continue
-		      End If
-		      
-		      Call Destination.AddSet(Beacon.ItemSet.FromPreset(Preset, Destination, Self.mMask, Self.mMods), False)
-		    Next
-		    
-		    // Rebuild if necessary
-		    If ReconfigurePresets Then
-		      Call Destination.ReconfigurePresets(Self.mMask, Self.mMods)
-		    End If
-		    
-		    // Apply basic settings
-		    Destination.MinItemSets = MinItemSets
-		    Destination.MaxItemSets = MaxItemSets
-		    Destination.SetsRandomWithoutReplacement = PreventDuplicates
-		    Destination.AppendMode = AppendMode
-		    
-		    Var Idx As Integer = Self.mConfig.IndexOf(Destination)
-		    If Idx = -1 Then
-		      Self.mConfig.Append(Destination)
-		    Else
-		      Self.mConfig(Idx) = Destination
-		    End If
-		  Next
-		  
-		  Self.mCancelled = False
-		  Self.Hide
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events CustomizeCancelButton
-	#tag Event
-		Sub Action()
-		  If Me.Caption = "Cancel" Then
-		    Self.mCancelled = True
-		    Self.Hide
-		    Return
-		  End If
-		  
-		  If Self.mDestinations.LastRowIndex > -1 And Self.mDestinations(0).IsOfficial = False Then
-		    Self.ShowDefine(Self.mDestinations(0))
-		  Else
-		    Self.ShowSelect()
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DefineNameField
-	#tag Event
-		Sub TextChange()
-		  If Not Self.mDefineLabelEditingAutomatically Then
-		    Self.mDefineLabelWasEditedByUser = True
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DefineClassField
-	#tag Event
-		Sub TextChange()
-		  If Not Self.mDefineLabelWasEditedByUser Then
-		    Self.mDefineLabelEditingAutomatically = True
-		    Self.DefineNameField.Value = Beacon.LabelFromClassString(Me.Value)
-		    Self.mDefineLabelEditingAutomatically = False
-		  End If
+		Sub Open()
+		  Me.TypeaheadColumn = 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1699,18 +1721,7 @@ End
 	#tag Event
 		Sub Open()
 		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events SelectionExperimentalCheck
-	#tag Event
-		Sub Action()
-		  If Preferences.ShowExperimentalLootSources = Me.Value Then
-		    Return
-		  End If
-		  
-		  Preferences.ShowExperimentalLootSources = Me.Value
-		  Self.BuildSourceList()
+		  Me.TypeaheadColumn = 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents

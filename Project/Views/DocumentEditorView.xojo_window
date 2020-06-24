@@ -259,7 +259,7 @@ End
 
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, IdentityManager.Notification_IdentityChanged)
+		  NotificationKit.Ignore(Self, IdentityManager.Notification_IdentityChanged, Self.Notification_SwitchEditors)
 		  
 		  If Self.mController.Document <> Nil Then
 		    Self.mController.Document.RemoveObserver(Self, "Title")
@@ -286,8 +286,14 @@ End
 		  
 		  If Self.CurrentPanel <> Nil Then
 		    Self.CurrentPanel.EnableMenuItems()
-		  Else
-		    DocumentRestoreConfigToDefault.Value = "Restore Config to Default"
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub GetEditorMenuItems(Items() As MenuItem)
+		  If Self.CurrentPanel <> Nil Then
+		    Self.CurrentPanel.GetEditorMenuItems(Items)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -295,19 +301,12 @@ End
 	#tag Event
 		Sub Open()
 		  If Self.mController.Document <> Nil Then
-		    Dim DocumentID As String = Self.mController.Document.DocumentID
-		    Dim ConfigName As String = Preferences.LastUsedConfigName(DocumentID)
-		    For I As Integer = 0 To Self.ConfigMenu.RowCount - 1
-		      Dim Tag As Variant = Self.ConfigMenu.RowTagAt(I)
-		      If (Tag.Type = Variant.TypeText And Tag.StringValue = ConfigName) Or (Tag.Type = Variant.TypeString And Tag.StringValue = ConfigName) Then
-		        Self.ConfigMenu.SelectedRowIndex = I
-		        Exit For I
-		      End If
-		    Next
+		    Var DocumentID As String = Self.mController.Document.DocumentID
+		    Self.CurrentConfigName = Preferences.LastUsedConfigName(DocumentID)
 		    Self.mController.Document.AddObserver(Self, "Title")
 		  End If
 		  
-		  NotificationKit.Watch(Self, IdentityManager.Notification_IdentityChanged)
+		  NotificationKit.Watch(Self, IdentityManager.Notification_IdentityChanged, Self.Notification_SwitchEditors)
 		End Sub
 	#tag EndEvent
 
@@ -361,7 +360,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim File As BookmarkedFolderItem = Self.AutosaveFile(True)
+		  Var File As BookmarkedFolderItem = Self.AutosaveFile(True)
 		  If File <> Nil And Self.mController.SaveACopy(Beacon.DocumentURL.URLForFile(File)) <> Nil Then
 		    Self.AutosaveTimer.Reset
 		  End If
@@ -383,7 +382,7 @@ End
 		    End If
 		    
 		    If Self.mAutosaveFile Is Nil Or Not Self.mAutosaveFile.Exists Then
-		      Dim Folder As FolderItem = App.AutosaveFolder(CreateFolder)
+		      Var Folder As FolderItem = App.AutosaveFolder(CreateFolder)
 		      If Folder = Nil Then
 		        Return Nil
 		      End If
@@ -397,8 +396,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BeginDeploy()
-		  If Self.mDeployWindow <> Nil And Self.mDeployWindow.Value <> Nil And Self.mDeployWindow.Value IsA DocumentDeployWindow Then
-		    DocumentDeployWindow(Self.mDeployWindow.Value).Show()
+		  Const UseNewDeploy = True
+		  
+		  If Self.mDeployWindow <> Nil And Self.mDeployWindow.Value <> Nil And Self.mDeployWindow.Value IsA DeployManager Then
+		    DeployManager(Self.mDeployWindow.Value).BringToFront()
 		  Else
 		    Self.Autosave()
 		    
@@ -418,11 +419,17 @@ End
 		      Return
 		    End If
 		    
-		    Dim Win As DocumentDeployWindow = DocumentDeployWindow.Create(Self.Document)
-		    If Win <> Nil Then
+		    #if UseNewDeploy
+		      Var Win As DeployManager = New DeployManager(Self.Document)
 		      Self.mDeployWindow = New WeakRef(Win)
-		      Win.Show()
-		    End If
+		      Win.BringToFront()
+		    #else
+		      Var Win As DocumentDeployWindow = DocumentDeployWindow.Create(Self.Document)
+		      If Win <> Nil Then
+		        Self.mDeployWindow = New WeakRef(Win)
+		        Win.Show()
+		      End If
+		    #endif
 		  End If
 		End Sub
 	#tag EndMethod
@@ -449,16 +456,16 @@ End
 		  If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
 		    DocumentImportWindow(Self.mImportWindowRef.Value).Show()
 		  Else
-		    Dim OtherDocuments() As Beacon.Document
+		    Var OtherDocuments() As Beacon.Document
 		    For I As Integer = 0 To Self.mEditorRefs.KeyCount - 1
-		      Dim Key As Variant = Self.mEditorRefs.Key(I)
-		      Dim Ref As WeakRef = Self.mEditorRefs.Value(Key)
+		      Var Key As Variant = Self.mEditorRefs.Key(I)
+		      Var Ref As WeakRef = Self.mEditorRefs.Value(Key)
 		      If Ref <> Nil And Ref.Value <> Nil And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Document.DocumentID <> Self.Document.DocumentID Then
 		        OtherDocuments.AddRow(DocumentEditorView(Ref.Value).Document)
 		      End If
 		    Next
 		    
-		    Dim Ref As DocumentImportWindow
+		    Var Ref As DocumentImportWindow
 		    If ForDeployment Then
 		      Ref = DocumentImportWindow.Present(AddressOf ImportAndDeployCallback, Self.Document, OtherDocuments, True)
 		    Else
@@ -471,14 +478,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CleanupAutosave()
-		  Dim AutosaveFile As FolderItem = Self.AutosaveFile()
+		  Var AutosaveFile As FolderItem = Self.AutosaveFile()
 		  If AutosaveFile <> Nil And AutosaveFile.Exists Then
 		    Try
 		      AutosaveFile.Remove
 		    Catch Err As IOException
 		      App.Log("Autosave " + AutosaveFile.NativePath + " did not delete: " + Err.Message + " (code: " + Err.ErrorNumber.ToString + ")")
 		      Try
-		        Dim Destination As FolderItem = SpecialFolder.Temporary.Child("Beacon Autosave")
+		        Var Destination As FolderItem = SpecialFolder.Temporary.Child("Beacon Autosave")
 		        If Not Destination.Exists Then
 		          Destination.CreateFolder
 		        End If
@@ -500,7 +507,7 @@ End
 		      Callback.Invoke(Self)
 		    End If
 		    
-		    Self.ShowAlert(Self.Title + " cannot be closed right now because it is busy.", "Wait for the progress indicator at the top of the tab to go away before trying to close it.")
+		    Self.ShowAlert(Self.ToolbarCaption + " cannot be closed right now because it is busy.", "Wait for the progress indicator at the top of the tab to go away before trying to close it.")
 		    Return False
 		  End If
 		  
@@ -518,7 +525,8 @@ End
 		  Self.mController = Controller
 		  AddHandler Controller.WriteSuccess, WeakAddressOf mController_WriteSuccess
 		  AddHandler Controller.WriteError, WeakAddressOf mController_WriteError
-		  Self.Title = Controller.Name
+		  Self.ToolbarCaption = Controller.Name
+		  Self.UpdateToolbarIcon
 		  
 		  Self.Panels = New Dictionary
 		End Sub
@@ -526,23 +534,23 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function ContinueWithoutExcludedConfigs() As Boolean
-		  Dim ExcludedConfigs() As Beacon.ConfigGroup = Self.Document.UsesOmniFeaturesWithoutOmni(App.IdentityManager.CurrentIdentity)
+		  Var ExcludedConfigs() As Beacon.ConfigGroup = Self.Document.UsesOmniFeaturesWithoutOmni(App.IdentityManager.CurrentIdentity)
 		  If ExcludedConfigs.LastRowIndex = -1 Then
 		    Return True
 		  End If
 		  
-		  Dim HumanNames() As String
+		  Var HumanNames() As String
 		  For Each Config As Beacon.ConfigGroup In ExcludedConfigs
 		    HumanNames.AddRow("""" + Language.LabelForConfig(Config) + """")
 		  Next
 		  HumanNames.Sort
 		  
-		  Dim Message, Explanation As String
+		  Var Message, Explanation As String
 		  If HumanNames.LastRowIndex = 0 Then
 		    Message = "You are using an editor that will not be included in your config files."
 		    Explanation = "The " + HumanNames(0) + " editor requires Beacon Omni, which you have not purchased. Beacon will not generate its content for your config files. Do you still want to continue?"
 		  Else
-		    Dim GroupList As String = HumanNames.EnglishOxfordList()
+		    Var GroupList As String = HumanNames.EnglishOxfordList()
 		    Message = "You are using editors that will not be included in your config files."
 		    Explanation = "The " + GroupList + " editors require Beacon Omni, which you have not purchased. Beacon will not generate their content for your config files. Do you still want to continue?"
 		  End If
@@ -553,14 +561,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CopyFromDocuments(SourceDocuments As Variant)
-		  Dim Documents() As Beacon.Document = SourceDocuments
+		  Var Documents() As Beacon.Document = SourceDocuments
 		  DocumentMergerWindow.Present(Self, Documents, Self.Document, WeakAddressOf MergeCallback)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub CopyFromDocumentsAndDeploy(SourceDocuments As Variant)
-		  Dim Documents() As Beacon.Document = SourceDocuments
+		  Var Documents() As Beacon.Document = SourceDocuments
 		  DocumentMergerWindow.Present(Self, Documents, Self.Document, WeakAddressOf MergeAndDeployCallback)
 		End Sub
 	#tag EndMethod
@@ -590,15 +598,9 @@ End
 		    Return
 		  End If
 		  
-		  Dim ConfigName As String = Issue.ConfigName
-		  For I As Integer = 0 To Self.ConfigMenu.RowCount - 1
-		    If Self.ConfigMenu.RowTagAt(I) = ConfigName Then
-		      Self.ConfigMenu.SelectedRowIndex = I
-		      Exit For I
-		    End If
-		  Next
+		  Self.CurrentConfigName = Issue.ConfigName
 		  
-		  Dim View As ConfigEditor = Self.CurrentPanel
+		  Var View As ConfigEditor = Self.CurrentPanel
 		  If View <> Nil Then
 		    View.GoToIssue(Issue)
 		  End If
@@ -655,7 +657,7 @@ End
 		    Self.Progress = BeaconSubview.ProgressNone
 		  End If
 		  
-		  Dim Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save!", Beacon.UserNotification.Severities.Elevated)
+		  Var Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save!", Beacon.UserNotification.Severities.Elevated)
 		  Notification.SecondaryMessage = Reason
 		  Notification.UserData = New Dictionary
 		  Notification.UserData.Value("DocumentID") = If(Sender.Document <> Nil, Sender.Document.DocumentID, "")
@@ -669,8 +671,9 @@ End
 		Private Sub mController_WriteSuccess(Sender As Beacon.DocumentController)
 		  If Not Self.Closed Then
 		    Self.Changed = Sender.Document <> Nil And Sender.Document.Modified
-		    Self.Title = Sender.Name
+		    Self.ToolbarCaption = Sender.Name
 		    Self.Progress = BeaconSubview.ProgressNone
+		    Self.UpdateToolbarIcon()
 		  End If
 		  
 		  Preferences.AddToRecentDocuments(Sender.URL)
@@ -691,9 +694,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub MergeCallback()
-		  Dim Keys() As Variant = Self.Panels.Keys
+		  Var Keys() As Variant = Self.Panels.Keys
 		  For Each Key As Variant In Keys
-		    Dim Panel As ConfigEditor = Self.Panels.Value(Key)
+		    Var Panel As ConfigEditor = Self.Panels.Value(Key)
 		    If Panel <> Nil Then
 		      Panel.ImportFinished()
 		    End If
@@ -723,9 +726,14 @@ End
 		  Select Case Notification.Name
 		  Case IdentityManager.Notification_IdentityChanged
 		    // Simply toggle the menu to force a redraw
-		    Dim ListIndex As Integer = Self.ConfigMenu.SelectedRowIndex
-		    Self.ConfigMenu.SelectedRowIndex = -1
-		    Self.ConfigMenu.SelectedRowIndex = ListIndex
+		    Var CurrentConfig As String = Self.CurrentConfigName
+		    Self.CurrentConfigName = ""
+		    Self.CurrentConfigName = CurrentConfig
+		  Case Self.Notification_SwitchEditors
+		    Var UserData As Dictionary = Notification.UserData
+		    If Self.Document.DocumentID = UserData.Value("DocumentID").StringValue Then
+		      Self.CurrentConfigName = UserData.Value("ConfigName").StringValue
+		    End If
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -741,7 +749,7 @@ End
 		  Case "MinimumWidth", "MinimumHeight"
 		    Self.UpdateMinimumDimensions()
 		  Case "Title"
-		    Self.Title = Self.mController.Document.Title
+		    Self.ToolbarCaption = Self.mController.Document.Title
 		    Self.Changed = True
 		  End Select
 		End Sub
@@ -766,7 +774,16 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function ReadyToDeploy() As Boolean
-		  Return Self.Document <> Nil And Self.Document.ServerProfileCount > 0
+		  If Self.Document = Nil Or Self.Document.ServerProfileCount = 0 Then
+		    Return False
+		  End If
+		  
+		  Var Bound As Integer = Self.Document.ServerProfileCount - 1
+		  For I As Integer = 0 To Bound
+		    If Self.Document.ServerProfile(I) <> Nil And Self.Document.ServerProfile(I).DeployCapable Then
+		      Return True
+		    End If
+		  Next
 		End Function
 	#tag EndMethod
 
@@ -780,22 +797,21 @@ End
 		Private Sub SaveAs()
 		  Select Case DocumentSaveToCloudWindow.Present(Self.TrueWindow, Self.mController)
 		  Case DocumentSaveToCloudWindow.StateSaved
-		    Self.Title = Self.mController.Name
 		    Self.ToolbarCaption = Self.mController.Name
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		  Case DocumentSaveToCloudWindow.StateSaveLocal
-		    Dim Dialog As New SaveFileDialog
+		    Var Dialog As New SaveFileDialog
 		    Dialog.SuggestedFileName = Self.mController.Name + BeaconFileTypes.BeaconDocument.PrimaryExtension
 		    Dialog.Filter = BeaconFileTypes.BeaconDocument
 		    
-		    Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		    Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		    If File = Nil Then
 		      Return
 		    End If
 		    
 		    If Self.Document.Title.BeginsWith("Untitled Document") Then
-		      Dim Filename As String = File.Name
-		      Dim Extension As String = BeaconFileTypes.BeaconDocument.PrimaryExtension
+		      Var Filename As String = File.Name
+		      Var Extension As String = BeaconFileTypes.BeaconDocument.PrimaryExtension
 		      If Filename.EndsWith(Extension) Then
 		        Filename = Filename.Left(Filename.Length - Extension.Length).Trim
 		      End If
@@ -803,7 +819,6 @@ End
 		    End If
 		    
 		    Self.mController.SaveAs(Beacon.DocumentURL.URLForFile(New BookmarkedFolderItem(File)))
-		    Self.Title = Self.mController.Name
 		    Self.ToolbarCaption = Self.mController.Name
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		  End Select
@@ -851,9 +866,19 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Shared Sub SwitchToEditor(Document As Beacon.Document, ConfigName As String)
+		  Var UserData As New Dictionary
+		  UserData.Value("DocumentID") = Document.DocumentID
+		  UserData.Value("ConfigName") = ConfigName
+		  
+		  NotificationKit.Post(Notification_SwitchEditors, UserData)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub UpdateHelpForConfig(ConfigName As String)
-		  Dim Title, Body, DetailURL As String
+		  Var Title, Body, DetailURL As String
 		  Call LocalData.SharedInstance.GetConfigHelp(ConfigName, Title, Body, DetailURL)
 		  Self.HelpDrawer.Title = Title
 		  Self.HelpDrawer.Body = Body
@@ -870,9 +895,21 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub UpdateToolbarIcon()
+		  Select Case Self.mController.URL.Scheme
+		  Case Beacon.DocumentURL.TypeCloud
+		    Self.ToolbarIcon = IconCloudTab
+		  Case Beacon.DocumentURL.TypeWeb
+		    Self.ToolbarIcon = IconCommunityTab
+		  Else
+		    Self.ToolbarIcon = Nil
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
 		  Self.ToolbarCaption = Self.mController.Name
-		  Self.Title = Self.mController.Name
 		  Self.BeaconToolbar1.ExportButton.Enabled = Self.ReadyToExport
 		  #if DeployEnabled
 		    Self.BeaconToolbar1.DeployButton.Enabled = Self.ReadyToExport
@@ -893,6 +930,147 @@ End
 	#tag EndMethod
 
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mCurrentConfigName
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mCurrentConfigName = Value Then
+			    Return
+			  End If
+			  Self.mCurrentConfigName = Value
+			  
+			  Var NewPanel As ConfigEditor
+			  Var Embed As Boolean
+			  If Value.Length > 0 Then
+			    Self.UpdateHelpForConfig(Value)
+			    
+			    If Self.mController.Document <> Nil Then
+			      Preferences.LastUsedConfigName(Self.mController.Document.DocumentID) = Value
+			    End If
+			    
+			    Var HistoryIndex As Integer = Self.mPanelHistory.IndexOf(Value)
+			    If HistoryIndex > 0 Then
+			      Self.mPanelHistory.RemoveRowAt(HistoryIndex)
+			    End If
+			    Self.mPanelHistory.AddRowAt(0, Value)
+			    
+			    // Close older panels
+			    If Self.mPanelHistory.LastRowIndex > 2 Then
+			      For I As Integer = Self.mPanelHistory.LastRowIndex DownTo 3
+			        Var PanelTag As String = Self.mPanelHistory(I)
+			        If Self.Panels.HasKey(PanelTag) Then
+			          Var Panel As ConfigEditor = Self.Panels.Value(PanelTag)
+			          RemoveHandler Panel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
+			          Panel.Close
+			          Self.Panels.Remove(PanelTag)
+			        End If
+			      Next
+			    End If
+			    
+			    If Self.Panels.HasKey(Value) Then
+			      NewPanel = Self.Panels.Value(Value)
+			    Else
+			      Select Case Value
+			      Case "maps"
+			        NewPanel = New MapsConfigEditor(Self.mController)
+			      Case "deployments"
+			        NewPanel = New ServersConfigEditor(Self.mController)
+			      Case "accounts"
+			        NewPanel = New AccountsConfigEditor(Self.mController)
+			      Case BeaconConfigs.LootDrops.ConfigName
+			        NewPanel = New LootConfigEditor(Self.mController)
+			      Case BeaconConfigs.Difficulty.ConfigName
+			        NewPanel = New DifficultyConfigEditor(Self.mController)
+			      Case BeaconConfigs.LootScale.ConfigName
+			        NewPanel = New LootScaleConfigEditor(Self.mController)
+			      Case BeaconConfigs.Metadata.ConfigName
+			        NewPanel = New MetaDataConfigEditor(Self.mController)
+			      Case BeaconConfigs.ExperienceCurves.ConfigName
+			        NewPanel = New ExperienceCurvesConfigEditor(Self.mController)
+			      Case BeaconConfigs.CustomContent.ConfigName
+			        NewPanel = New CustomContentConfigEditor(Self.mController)
+			      Case BeaconConfigs.CraftingCosts.ConfigName
+			        NewPanel = New CraftingCostsConfigEditor(Self.mController)
+			      Case BeaconConfigs.StackSizes.ConfigName
+			        NewPanel = New StackSizesConfigEditor(Self.mController)
+			      Case BeaconConfigs.BreedingMultipliers.ConfigName
+			        NewPanel = New BreedingMultipliersConfigEditor(Self.mController)
+			      Case BeaconConfigs.HarvestRates.ConfigName
+			        NewPanel = New HarvestRatesConfigEditor(Self.mController)
+			      Case BeaconConfigs.DinoAdjustments.ConfigName
+			        NewPanel = New DinoAdjustmentsConfigEditor(Self.mController)
+			      Case BeaconConfigs.StatMultipliers.ConfigName
+			        NewPanel = New StatMultipliersConfigEditor(Self.mController)
+			      Case BeaconConfigs.DayCycle.ConfigName
+			        NewPanel = New DayCycleConfigEditor(Self.mController)
+			      Case BeaconConfigs.SpawnPoints.ConfigName
+			        NewPanel = New SpawnPointsConfigEditor(Self.mController)
+			      Case BeaconConfigs.StatLimits.ConfigName
+			        NewPanel = New StatLimitsConfigEditor(Self.mController)
+			      Case BeaconConfigs.EngramControl.ConfigName
+			        NewPanel = New EngramControlConfigEditor(Self.mController)
+			      End Select
+			      If NewPanel <> Nil Then
+			        Self.Panels.Value(Value) = NewPanel
+			        Embed = True
+			      End If
+			    End If
+			  Else
+			    Self.UpdateHelpForConfig("")
+			  End If
+			  
+			  If Self.CurrentPanel = NewPanel Then
+			    Return
+			  End If
+			  
+			  If Self.CurrentPanel <> Nil Then
+			    Self.CurrentPanel.RemoveObserver(Self, "MinimumWidth")
+			    Self.CurrentPanel.RemoveObserver(Self, "MinimumHeight")
+			    Self.CurrentPanel.SwitchedFrom()
+			    Self.CurrentPanel.Visible = False
+			    Self.CurrentPanel = Nil
+			  End If
+			  
+			  Self.CurrentPanel = NewPanel
+			  
+			  If Self.CurrentPanel <> Nil Then
+			    Var RequiresPurchase As Boolean
+			    If Value.Length > 0 Then
+			      RequiresPurchase = Not BeaconConfigs.ConfigPurchased(Value, If(App.IdentityManager.CurrentIdentity <> Nil, App.IdentityManager.CurrentIdentity.OmniVersion, 0))
+			    End If
+			    Var TopOffset As Integer
+			    If RequiresPurchase Then
+			      TopOffset = (Self.OmniNoticeBanner.Top + Self.OmniNoticeBanner.Height) - Self.PagePanel1.Top
+			    End If
+			    If Embed Then
+			      AddHandler Self.CurrentPanel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
+			      Self.CurrentPanel.EmbedWithinPanel(Self.PagePanel1, 1, 0, TopOffset, Self.PagePanel1.Width, Self.PagePanel1.Height - TopOffset)
+			    Else
+			      Self.CurrentPanel.Top = Self.PagePanel1.Top + TopOffset
+			      Self.CurrentPanel.Height = Self.PagePanel1.Height - TopOffset
+			    End If
+			    Self.OmniNoticeBanner.Visible = RequiresPurchase
+			    Self.CurrentPanel.Visible = True
+			    Self.CurrentPanel.SwitchedTo()
+			    Self.CurrentPanel.AddObserver(Self, "MinimumWidth")
+			    Self.CurrentPanel.AddObserver(Self, "MinimumHeight")
+			    Self.PagePanel1.SelectedPanelIndex = 1
+			  Else
+			    Self.PagePanel1.SelectedPanelIndex = 0
+			  End If
+			  
+			  Self.ConfigMenu.SelectByTag(Value)
+			  
+			  Self.UpdateMinimumDimensions()
+			End Set
+		#tag EndSetter
+		CurrentConfigName As String
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private CurrentPanel As ConfigEditor
 	#tag EndProperty
@@ -903,6 +1081,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mController As Beacon.DocumentController
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCurrentConfigName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -955,6 +1137,9 @@ End
 	#tag Constant, Name = LocalMinWidth, Type = Double, Dynamic = False, Default = \"500", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = Notification_SwitchEditors, Type = String, Dynamic = False, Default = \"Switch Editors", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = OmniWarningText, Type = String, Dynamic = False, Default = \"This config type requires Beacon Omni. Click this banner to learn more.", Scope = Private
 	#tag EndConstant
 
@@ -966,19 +1151,19 @@ End
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  Dim BaseColor As Color = SystemColors.SystemYellowColor
-		  Dim BackgroundColor As Color = BaseColor.AtOpacity(0.2)
-		  Dim TextColor As Color = SystemColors.LabelColor
-		  Dim BorderColor As Color = SystemColors.SeparatorColor
+		  Var BaseColor As Color = SystemColors.SystemYellowColor
+		  Var BackgroundColor As Color = BaseColor.AtOpacity(0.2)
+		  Var TextColor As Color = SystemColors.LabelColor
+		  Var BorderColor As Color = SystemColors.SeparatorColor
 		  
 		  G.DrawingColor = BackgroundColor
 		  G.FillRectangle(0, 0, G.Width, G.Height - 1)
 		  G.DrawingColor = BorderColor
 		  G.DrawLine(0, G.Height - 1, G.Width, G.Height - 1)
 		  
-		  Dim TextWidth As Double = G.TextWidth(Self.OmniWarningText)
-		  Dim TextLeft As Double = (G.Width - TextWidth) / 2
-		  Dim TextBaseline As Double = (G.Height / 2) + (G.CapHeight / 2)
+		  Var TextWidth As Double = G.TextWidth(Self.OmniWarningText)
+		  Var TextLeft As Double = (G.Width - TextWidth) / 2
+		  Var TextBaseline As Double = (G.Height / 2) + (G.CapHeight / 2)
 		  G.DrawingColor = TextColor
 		  G.DrawText(Self.OmniWarningText, TextLeft, TextBaseline, G.Width - 40, True)
 		  
@@ -1000,7 +1185,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub MouseDrag(X As Integer, Y As Integer)
-		  Dim ShouldBePressed As Boolean = X >= 0 And X < Me.Width And Y >= 0 And Y < Me.Height
+		  Var ShouldBePressed As Boolean = X >= 0 And X < Me.Width And Y >= 0 And Y < Me.Height
 		  If Self.mDrawOmniBannerPressed <> ShouldBePressed Then
 		    Self.mDrawOmniBannerPressed = ShouldBePressed
 		    Self.OmniNoticeBanner.Invalidate
@@ -1020,14 +1205,14 @@ End
 #tag Events BeaconToolbar1
 	#tag Event
 		Sub Open()
-		  Dim ImportButton As New BeaconToolbarItem("ImportButton", IconToolbarImport, "Import config files…")
-		  Dim ExportButton As New BeaconToolbarItem("ExportButton", IconToolbarExport, Self.ReadyToExport, "Save new config files…")
+		  Var ImportButton As New BeaconToolbarItem("ImportButton", IconToolbarImport, "Import config files…")
+		  Var ExportButton As New BeaconToolbarItem("ExportButton", IconToolbarExport, Self.ReadyToExport, "Save new config files…")
 		  #if DeployEnabled
-		    Dim DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToExport, "Make config changes live")
+		    Var DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToExport, "Make config changes live")
 		  #endif
-		  Dim ShareButton As New BeaconToolbarItem("ShareButton", IconToolbarShare, "Copy link to this document")
+		  Var ShareButton As New BeaconToolbarItem("ShareButton", IconToolbarShare, "Copy link to this document")
 		  
-		  Dim HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarHelp, False, "Toggle help panel")
+		  Var HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarHelp, False, "Toggle help panel")
 		  
 		  Me.LeftItems.Append(ImportButton)
 		  Me.LeftItems.Append(ExportButton)
@@ -1076,141 +1261,30 @@ End
 #tag Events ConfigMenu
 	#tag Event
 		Sub Change()
-		  Dim TagVar As Variant
+		  Var TagVar As Variant
 		  If Me.SelectedRowIndex > -1 Then
 		    TagVar = Me.RowTagAt(Me.SelectedRowIndex)
 		  End If
-		  Dim NewPanel As ConfigEditor
-		  Dim Embed As Boolean
 		  If IsNull(TagVar) = False And (TagVar.Type = Variant.TypeString Or TagVar.Type = Variant.TypeText) Then
-		    Dim Tag As String = TagVar.StringValue
-		    Self.UpdateHelpForConfig(Tag)
-		    
-		    If Self.mController.Document <> Nil Then
-		      Preferences.LastUsedConfigName(Self.mController.Document.DocumentID) = Tag
-		    End If
-		    
-		    Dim HistoryIndex As Integer = Self.mPanelHistory.IndexOf(Tag)
-		    If HistoryIndex > 0 Then
-		      Self.mPanelHistory.RemoveRowAt(HistoryIndex)
-		    End If
-		    Self.mPanelHistory.AddRowAt(0, Tag)
-		    
-		    // Close older panels
-		    If Self.mPanelHistory.LastRowIndex > 2 Then
-		      For I As Integer = Self.mPanelHistory.LastRowIndex DownTo 3
-		        Dim PanelTag As String = Self.mPanelHistory(I)
-		        If Self.Panels.HasKey(PanelTag) Then
-		          Dim Panel As ConfigEditor = Self.Panels.Value(PanelTag)
-		          RemoveHandler Panel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
-		          Panel.Close
-		          Self.Panels.Remove(PanelTag)
-		        End If
-		      Next
-		    End If
-		    
-		    If Self.Panels.HasKey(Tag) Then
-		      NewPanel = Self.Panels.Value(Tag)
-		    Else
-		      Select Case Tag
-		      Case "maps"
-		        NewPanel = New MapsConfigEditor(Self.mController)
-		      Case "deployments"
-		        NewPanel = New ServersConfigEditor(Self.mController)
-		      Case BeaconConfigs.LootDrops.ConfigName
-		        NewPanel = New LootConfigEditor(Self.mController)
-		      Case BeaconConfigs.Difficulty.ConfigName
-		        NewPanel = New DifficultyConfigEditor(Self.mController)
-		      Case BeaconConfigs.LootScale.ConfigName
-		        NewPanel = New LootScaleConfigEditor(Self.mController)
-		      Case BeaconConfigs.Metadata.ConfigName
-		        NewPanel = New MetaDataConfigEditor(Self.mController)
-		      Case BeaconConfigs.ExperienceCurves.ConfigName
-		        NewPanel = New ExperienceCurvesConfigEditor(Self.mController)
-		      Case BeaconConfigs.CustomContent.ConfigName
-		        NewPanel = New CustomContentConfigEditor(Self.mController)
-		      Case BeaconConfigs.CraftingCosts.ConfigName
-		        NewPanel = New CraftingCostsConfigEditor(Self.mController)
-		      Case BeaconConfigs.StackSizes.ConfigName
-		        NewPanel = New StackSizesConfigEditor(Self.mController)
-		      Case BeaconConfigs.BreedingMultipliers.ConfigName
-		        NewPanel = New BreedingMultipliersConfigEditor(Self.mController)
-		      Case BeaconConfigs.HarvestRates.ConfigName
-		        NewPanel = New HarvestRatesConfigEditor(Self.mController)
-		      Case BeaconConfigs.DinoAdjustments.ConfigName
-		        NewPanel = New DinoAdjustmentsConfigEditor(Self.mController)
-		      Case BeaconConfigs.StatMultipliers.ConfigName
-		        NewPanel = New StatMultipliersConfigEditor(Self.mController)
-		      Case BeaconConfigs.DayCycle.ConfigName
-		        NewPanel = New DayCycleConfigEditor(Self.mController)
-		      Case BeaconConfigs.SpawnPoints.ConfigName
-		        NewPanel = New SpawnPointsConfigEditor(Self.mController)
-		      Case BeaconConfigs.StatLimits.ConfigName
-		        NewPanel = New StatLimitsConfigEditor(Self.mController)
-		      End Select
-		      If NewPanel <> Nil Then
-		        Self.Panels.Value(Tag) = NewPanel
-		        Embed = True
-		      End If
-		    End If
+		    Self.CurrentConfigName = TagVar.StringValue
 		  Else
-		    Self.UpdateHelpForConfig("")
+		    Self.CurrentConfigName = ""
 		  End If
-		  
-		  If Self.CurrentPanel = NewPanel Then
-		    Return
-		  End If
-		  
-		  If Self.CurrentPanel <> Nil Then
-		    Self.CurrentPanel.RemoveObserver(Self, "MinimumWidth")
-		    Self.CurrentPanel.RemoveObserver(Self, "MinimumHeight")
-		    Self.CurrentPanel.SwitchedFrom()
-		    Self.CurrentPanel.Visible = False
-		    Self.CurrentPanel = Nil
-		  End If
-		  
-		  Self.CurrentPanel = NewPanel
-		  
-		  If Self.CurrentPanel <> Nil Then
-		    Dim RequiresPurchase As Boolean
-		    If IsNull(TagVar) = False And (TagVar.Type = Variant.TypeString Or TagVar.Type = Variant.TypeText) Then
-		      RequiresPurchase = Not BeaconConfigs.ConfigPurchased(TagVar.StringValue, If(App.IdentityManager.CurrentIdentity <> Nil, App.IdentityManager.CurrentIdentity.OmniVersion, 0))
-		    End If
-		    Dim TopOffset As Integer
-		    If RequiresPurchase Then
-		      TopOffset = (Self.OmniNoticeBanner.Top + Self.OmniNoticeBanner.Height) - Self.PagePanel1.Top
-		    End If
-		    If Embed Then
-		      AddHandler Self.CurrentPanel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
-		      Self.CurrentPanel.EmbedWithinPanel(Self.PagePanel1, 1, 0, TopOffset, Self.PagePanel1.Width, Self.PagePanel1.Height - TopOffset)
-		    Else
-		      Self.CurrentPanel.Top = Self.PagePanel1.Top + TopOffset
-		      Self.CurrentPanel.Height = Self.PagePanel1.Height - TopOffset
-		    End If
-		    Self.OmniNoticeBanner.Visible = RequiresPurchase
-		    Self.CurrentPanel.Visible = True  
-		    Self.CurrentPanel.SwitchedTo()
-		    Self.CurrentPanel.AddObserver(Self, "MinimumWidth")
-		    Self.CurrentPanel.AddObserver(Self, "MinimumHeight")
-		    Self.PagePanel1.SelectedPanelIndex = 1
-		  Else
-		    Self.PagePanel1.SelectedPanelIndex = 0
-		  End If
-		  
-		  Self.UpdateMinimumDimensions()
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Dim Labels(), Tags() As String
+		  Var Labels(), Tags() As String
 		  Labels.AddRow("Maps")
 		  Tags.AddRow("maps")
 		  #if DeployEnabled
 		    Labels.AddRow("Servers")
 		    Tags.AddRow("deployments")
 		  #endif
+		  Labels.AddRow("Accounts")
+		  Tags.AddRow("accounts")
 		  
-		  Dim Names() As String = BeaconConfigs.AllConfigNames
+		  Var Names() As String = BeaconConfigs.AllConfigNames
 		  For Each Name As String In Names
 		    Labels.AddRow(Language.LabelForConfig(Name))
 		    Tags.AddRow(Name)
@@ -1225,6 +1299,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
@@ -1472,5 +1554,13 @@ End
 		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="CurrentConfigName"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 #tag EndViewBehavior

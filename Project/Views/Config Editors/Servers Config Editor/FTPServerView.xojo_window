@@ -804,6 +804,185 @@ Begin ServerViewContainer FTPServerView
       Visible         =   True
       Width           =   199
    End
+   Begin ArkMLEditor MessageOfTheDayArea
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackgroundColor=   False
+      Height          =   145
+      InitialParent   =   ""
+      Left            =   204
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RTFData         =   ""
+      Scope           =   2
+      TabIndex        =   21
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   363
+      Transparent     =   True
+      Visible         =   True
+      Width           =   376
+   End
+   Begin UITweaks.ResizedLabel MessageOfTheDayLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   22
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextAlignment   =   "3"
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   363
+      Transparent     =   False
+      Underline       =   False
+      Value           =   "Message of the Day:"
+      Visible         =   True
+      Width           =   172
+   End
+   Begin UITweaks.ResizedLabel MessageDurationLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   23
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextAlignment   =   "3"
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   520
+      Transparent     =   False
+      Underline       =   False
+      Value           =   "Message Duration:"
+      Visible         =   True
+      Width           =   172
+   End
+   Begin RangeField MessageDurationField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF00
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      DoubleValue     =   0.0
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   204
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   24
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextAlignment   =   "2"
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   520
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Value           =   ""
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedLabel MessageDurationSuffixLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   296
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   25
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextAlignment   =   "0"
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   520
+      Transparent     =   False
+      Underline       =   False
+      Value           =   "Seconds"
+      Visible         =   True
+      Width           =   284
+   End
 End
 #tag EndWindow
 
@@ -820,6 +999,8 @@ End
 		  Self.GameUserSettingsIniPathField.Value = Self.mProfile.GameUserSettingsIniPath
 		  Self.ModeMenu.SelectByTag(Self.mProfile.Mode)
 		  Self.MapMenu.SelectByTag(Self.mProfile.Mask)
+		  Self.MessageOfTheDayArea.RTFData = Self.mProfile.MessageOfTheDay
+		  Self.MessageDurationField.DoubleValue = Self.mProfile.MessageDuration
 		End Sub
 	#tag EndEvent
 
@@ -915,7 +1096,7 @@ End
 #tag Events MapMenu
 	#tag Event
 		Sub Change()
-		  Dim Mask As UInt64
+		  Var Mask As UInt64
 		  If Me.SelectedRowIndex = -1 Then
 		    Mask = Beacon.Maps.All.Mask
 		  Else
@@ -929,14 +1110,46 @@ End
 		Sub Open()
 		  Me.AddRow("All Maps", Beacon.Maps.All.Mask)
 		  
-		  Dim Maps() As Beacon.Map = Beacon.Maps.All
+		  Var Maps() As Beacon.Map = Beacon.Maps.All
 		  For Each Map As Beacon.Map In Maps
 		    Me.AddRow(Map.Name, Map.Mask)
 		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events MessageOfTheDayArea
+	#tag Event
+		Sub TextChange()
+		  Self.mProfile.MessageOfTheDay = Me.RTFData
+		  Self.Changed = Self.mProfile.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MessageDurationField
+	#tag Event
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 0
+		  MaxValue = 86400
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub TextChange()
+		  If IsNumeric(Me.Value) Then
+		    Self.mProfile.MessageDuration = Me.DoubleValue
+		    Self.Changed = Self.mProfile.Modified
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

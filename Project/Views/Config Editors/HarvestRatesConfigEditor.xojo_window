@@ -213,9 +213,11 @@ Begin ConfigEditor HarvestRatesConfigEditor
       TextUnit        =   0
       Top             =   190
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   764
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -553,16 +555,33 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub ParsingFinished(ParsedData As Dictionary)
+		Sub EnableMenuItems()
+		  If Self.Config(False).HarvestAmountMultiplier <> 1.0 Then
+		    Self.EnableEditorMenuItem("ConvertGlobalHarvestRate")
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub GetEditorMenuItems(Items() As MenuItem)
+		  Var ConvertGlobalItem As New MenuItem("Convert Global Harvest Rate to Individual Rates")
+		  ConvertGlobalItem.AutoEnabled = False
+		  ConvertGlobalItem.Name = "ConvertGlobalHarvestRate"
+		  Items.AddRow(ConvertGlobalItem)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function ParsingFinished(Document As Beacon.Document) As Boolean
 		  // Don't import the properties, it would likely be confusing for users
 		  
-		  If ParsedData = Nil Then
-		    Return
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.HarvestRates.ConfigName) = False Then
+		    Return True
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.HarvestRates = BeaconConfigs.HarvestRates.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
+		  Var OtherConfig As BeaconConfigs.HarvestRates = BeaconConfigs.HarvestRates(Document.ConfigGroup(BeaconConfigs.HarvestRates.ConfigName))
 		  If OtherConfig = Nil Or OtherConfig.Count = 0 Then
-		    Return
+		    Return True
 		  End If
 		  
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
@@ -572,7 +591,8 @@ End
 		  Next
 		  Self.Changed = True
 		  Self.UpdateList(Engrams)
-		End Sub
+		  Return True
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -593,6 +613,14 @@ End
 		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
+
+
+	#tag MenuHandler
+		Function ConvertGlobalHarvestRate() As Boolean Handles ConvertGlobalHarvestRate.Action
+			Self.ConvertGlobalHarvestRate()
+			Return True
+		End Function
+	#tag EndMenuHandler
 
 
 	#tag Method, Flags = &h1
@@ -627,11 +655,38 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ConvertGlobalHarvestRate()
+		  If Self.Config(False).HarvestAmountMultiplier = 1.0 Then
+		    Return
+		  End If
+		  
+		  Var Config As BeaconConfigs.HarvestRates = Self.Config(True)
+		  Var GlobalRate As Double = Config.HarvestAmountMultiplier
+		  Var SkipPaths As New Dictionary
+		  Var Engrams() As Beacon.Engram = Config.Engrams
+		  For Each Engram As Beacon.Engram In Engrams
+		    SkipPaths.Value(Engram.Path) = True
+		    Config.Override(Engram) = Round(Config.Override(Engram) * GlobalRate)
+		  Next
+		  
+		  Engrams = Beacon.Data.SearchForEngrams("", Self.Document.Mods, "harvestable")
+		  For Each Engram As Beacon.Engram In Engrams
+		    If SkipPaths.HasKey(Engram.Path) Then
+		      Continue
+		    End If
+		    Config.Override(Engram) = Round(Config.Override(Engram) * GlobalRate)
+		  Next
+		  Config.HarvestAmountMultiplier = 1.0
+		  Self.SetupUI
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ShowAddOverride()
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(False)
 		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
 		  
-		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Harvesting", CurrentEngrams, Self.Document.Mods, False)
+		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Harvesting", CurrentEngrams, Self.Document.Mods, EngramSelectorDialog.SelectModes.ImpliedMultiple)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
@@ -656,7 +711,7 @@ End
 		  Var Config As BeaconConfigs.HarvestRates = Self.Config(False)
 		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
 		  
-		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Harvesting", CurrentEngrams, Self.Document.Mods, True)
+		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Harvesting", CurrentEngrams, Self.Document.Mods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
@@ -1002,6 +1057,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

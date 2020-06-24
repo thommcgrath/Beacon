@@ -13,6 +13,17 @@ Inherits Beacon.CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub PreventTaming(Assigns Value As Boolean)
+		  If Self.mPreventTaming = Value Then
+		    Return
+		  End If
+		  
+		  Self.mPreventTaming = Value
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ProhibitSpawning(Assigns Value As Boolean)
 		  If Self.mProhibitSpawning = Value Then
 		    Return

@@ -135,6 +135,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       TextUnit        =   0
       Top             =   40
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -148,14 +149,30 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub ParsingFinished(ParsedData As Dictionary)
-		  If ParsedData = Nil Then
-		    Return
+		Sub EnableMenuItems()
+		  Self.EnableEditorMenuItem("ConvertCreatureReplacementsToSpawnPointAdditions")
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub GetEditorMenuItems(Items() As MenuItem)
+		  Var ConvertReplacements As New MenuItem("Convert Creature Replacements to Spawn Point Additions")
+		  ConvertReplacements.Enabled = True
+		  ConvertReplacements.AutoEnabled = False
+		  ConvertReplacements.Name = "ConvertCreatureReplacementsToSpawnPointAdditions"
+		  Items.AddRow(ConvertReplacements)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function ParsingFinished(Document As Beacon.Document) As Boolean
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName) = False Then
+		    Return True
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
+		  Var OtherConfig As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments(Document.ConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName))
 		  If OtherConfig = Nil Then
-		    Return
+		    Return True
 		  End If
 		  
 		  Var Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
@@ -167,7 +184,8 @@ End
 		  Next
 		  Self.Changed = True
 		  Self.UpdateList(Paths)
-		End Sub
+		  Return True
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -181,6 +199,22 @@ End
 		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
+
+
+	#tag MenuHandler
+		Function ConvertCreatureReplacementsToSpawnPointAdditions() As Boolean Handles ConvertCreatureReplacementsToSpawnPointAdditions.Action
+			Var Changes As Integer = Self.Document.ConvertDinoReplacementsToSpawnOverrides()
+			Self.SetupUI
+			If Changes = 0 Then
+			Self.ShowAlert("No changes made", "Beacon was unable to find any replaced creatures that it could convert into spawn point additions.")
+			ElseIf Changes = 1 Then
+			Self.ShowAlert("Converted 1 creature replacement", "Beacon found 1 creature that it was able to convert into spawn point additions. The replaced creature has been disabled.")
+			Else
+			Self.ShowAlert("Converted " + Changes.ToString + " creature replacements", "Beacon found " + Changes.ToString + " creatures that it was able to convert into spawn point additions. The replaced creatures have been disabled.")
+			End If
+			Return True
+		End Function
+	#tag EndMenuHandler
 
 
 	#tag Method, Flags = &h1
@@ -266,7 +300,7 @@ End
 		    End If
 		  Next
 		  
-		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", CurrentCreatures, True)
+		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", CurrentCreatures, Self.Document.Mods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
 		  If Creatures.LastRowIndex = -1 Then
 		    Return
 		  End If
@@ -320,6 +354,9 @@ End
 		      Label = Label + EndOfLine + "Replaced with " + Behavior.ReplacementCreature.Label
 		      Self.List.AddRow(Label)
 		    Else
+		      If Behavior.PreventTaming Then
+		        Label = Label + EndOfLine + "Cannot be tamed"
+		      End If
 		      Self.List.AddRow(Label, Format(Behavior.DamageMultiplier, "0.0#####"), Format(Behavior.ResistanceMultiplier, "0.0#####"), Format(Behavior.TamedDamageMultiplier, "0.0#####"), Format(Behavior.TamedResistanceMultiplier, "0.0#####"))
 		    End If
 		    
@@ -515,6 +552,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

@@ -1,64 +1,32 @@
-#tag Interface
-Protected Interface DiscoveryEngine
+#tag Class
+Protected Class FTPFileListing
 	#tag Method, Flags = &h0
-		Sub Begin()
-		  
+		Sub Constructor(IsDirectory As Boolean, Filename As String)
+		  Self.mIsDirectory = IsDirectory
+		  Self.mFilename = Filename
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CommandLineOptions() As DIctionary
-		  
+		Function Filename() As String
+		  Return Self.mFilename
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Errored() As Boolean
-		  
+		Function IsDirectory() As Boolean
+		  Return Self.mIsDirectory
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function Finished() As Boolean
-		  
-		End Function
-	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function GameIniContent() As String
-		  
-		End Function
-	#tag EndMethod
+	#tag Property, Flags = &h21
+		Private mFilename As String
+	#tag EndProperty
 
-	#tag Method, Flags = &h0
-		Function GameUserSettingsIniContent() As String
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Map() As UInt64
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Name() As String
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Profile() As Beacon.ServerProfile
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Status() As String
-		  
-		End Function
-	#tag EndMethod
+	#tag Property, Flags = &h21
+		Private mIsDirectory As Boolean
+	#tag EndProperty
 
 
 	#tag ViewBehavior
@@ -102,6 +70,14 @@ Protected Interface DiscoveryEngine
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
+		#tag ViewProperty
+			Name="mIsDirectory"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
 	#tag EndViewBehavior
-End Interface
-#tag EndInterface
+End Class
+#tag EndClass

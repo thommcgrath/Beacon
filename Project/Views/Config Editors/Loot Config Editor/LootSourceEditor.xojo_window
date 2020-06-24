@@ -71,22 +71,14 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       TextUnit        =   0
       Top             =   140
       Transparent     =   True
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   250
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
-   End
-   Begin Beacon.ImportThread Importer
-      GameIniContent  =   ""
-      GameUserSettingsIniContent=   ""
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Priority        =   0
-      Scope           =   0
-      StackSize       =   0
-      TabPanelIndex   =   0
    End
    Begin BeaconToolbar Header
       AcceptFocus     =   False
@@ -400,7 +392,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       LockRight       =   False
       LockTop         =   True
       Notes           =   ""
-      Scope           =   0
+      Scope           =   2
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
@@ -425,15 +417,6 @@ End
 		  
 		  Self.SetListWidth(Preferences.ItemSetsSplitterPosition)
 		  Self.mSavePositions = True
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub EnableMenuItems()
-		  Self.BuildPresetMenu(DocumentAddItemSet)
-		  If Self.SetList.CanDelete Then
-		    DocumentRemoveItemSet.Enable
-		  End If
 		End Sub
 	#tag EndEvent
 
@@ -485,7 +468,7 @@ End
 		Private Sub AddSets(Sets() As Beacon.ItemSet)
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    For Each NewSet As Beacon.ItemSet In Sets
-		      Call Source.AddSet(New Beacon.ItemSet(NewSet), False)
+		      Call Source.ItemSets.Append(New Beacon.ItemSet(NewSet))
 		    Next
 		  Next
 		  
@@ -510,11 +493,11 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BuildPresetMenu(Parent As MenuItem)
-		  Dim Presets() As Beacon.Preset = Beacon.Data.Presets
-		  Dim Groups As New Dictionary
-		  Dim GroupNames() As String
+		  Var Presets() As Beacon.Preset = Beacon.Data.Presets
+		  Var Groups As New Dictionary
+		  Var GroupNames() As String
 		  For Each Preset As Beacon.Preset In Presets
-		    Dim Arr() As Beacon.Preset
+		    Var Arr() As Beacon.Preset
 		    If Groups.HasKey(Preset.Grouping) Then
 		      Arr = Groups.Value(Preset.Grouping)
 		    End If
@@ -531,16 +514,16 @@ End
 		    Parent.RemoveMenuAt(I)
 		  Next
 		  
-		  Dim EmptySetItem As New MenuItem("New Empty Set", Nil)
+		  Var EmptySetItem As New MenuItem("New Empty Set", Nil)
 		  AddHandler EmptySetItem.Action, WeakAddressOf Self.HandlePresetMenu
 		  Parent.AddMenu(EmptySetItem)
 		  
-		  Dim HasTarget As Boolean = Self.mSources.LastRowIndex > -1
+		  Var HasTarget As Boolean = Self.mSources.LastRowIndex > -1
 		  
 		  For Each Group As String In GroupNames
-		    Dim Arr() As Beacon.Preset = Groups.Value(Group)
-		    Dim Names() As String
-		    Dim Items() As Beacon.Preset
+		    Var Arr() As Beacon.Preset = Groups.Value(Group)
+		    Var Names() As String
+		    Var Items() As Beacon.Preset
 		    For Each Preset As Beacon.Preset In Arr
 		      If Preset.ValidForMask(Self.Document.MapCompatibility) Then
 		        Names.AddRow(Preset.Label)
@@ -555,12 +538,12 @@ End
 		    
 		    Parent.AddMenu(New MenuItem(MenuItem.TextSeparator))
 		    
-		    Dim Header As New MenuItem(Group)
+		    Var Header As New MenuItem(Group)
 		    Header.Enabled = False
 		    Parent.AddMenu(Header)
 		    
 		    For Each Preset As Beacon.Preset In Items
-		      Dim PresetItem As New MenuItem(Preset.Label, Preset)
+		      Var PresetItem As New MenuItem(Preset.Label, Preset)
 		      PresetItem.Enabled = HasTarget
 		      AddHandler PresetItem.Action, WeakAddressOf Self.HandlePresetMenu
 		      Parent.AddMenu(PresetItem)
@@ -571,12 +554,20 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CancelImport()
-		  Importer.Stop
-		  
-		  If Self.ImportProgress <> Nil Then
-		    Self.ImportProgress.Close
-		    Self.ImportProgress = Nil
+		  If Self.mImporter <> Nil Then
+		    Self.mImporter.Stop
 		  End If
+		  
+		  If Self.mImportProgress <> Nil Then
+		    Self.mImportProgress.Close
+		    Self.mImportProgress = Nil
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  
 		End Sub
 	#tag EndMethod
 
@@ -584,47 +575,6 @@ End
 		Private Function Document() As Beacon.Document
 		  Return RaiseEvent GetDocument
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub EnableMenuItems()
-		  Self.BuildPresetMenu(DocumentAddItemSet)
-		  
-		  #if false
-		    AddItemSetEmpty.Enable
-		    AddItemSetDesertClothClothing.Enable
-		    AddItemSetPlatformSaddles.Enable
-		    AddItemSetAdobeHousing.Enable
-		    AddItemSetAdvancedFirearms.Enable
-		    AddItemSetAdvancedFurniture.Enable
-		    AddItemSetBasicFurniture.Enable
-		    AddItemSetChitinArmor.Enable
-		    AddItemSetClothClothing.Enable
-		    AddItemSetFlakArmor.Enable
-		    AddItemSetGhillieSuit.Enable
-		    AddItemSetHideClothing.Enable
-		    AddItemSetLargeSaddles.Enable
-		    AddItemSetMediumSaddles.Enable
-		    AddItemSetMetalHousing.Enable
-		    AddItemSetMetalTools.Enable
-		    AddItemSetRiotArmor.Enable
-		    AddItemSetSimpleFirearms.Enable
-		    AddItemSetSmallSaddles.Enable
-		    AddItemSetStoneHousing.Enable
-		    AddItemSetStoneTools.Enable
-		    AddItemSetSupplies.Enable
-		    AddItemSetThatchHousing.Enable
-		    AddItemSetWoodHousing.Enable
-		    AddItemSetFurArmor.Enable
-		    AddItemSetGardening.Enable
-		  #endif
-		  If SetList.SelectedRowCount > 0 Then
-		    DocumentRemoveItemSet.Enable
-		  End If
-		  If SetList.SelectedRowCount = 1 Then
-		    Editor.EnableMenuItems
-		  End If
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -647,7 +597,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function HandlePresetMenu(Sender As MenuItem) As Boolean
-		  Dim SelectedPreset As Beacon.Preset = Sender.Tag
+		  Var SelectedPreset As Beacon.Preset = Sender.Tag
 		  
 		  Var Mask As UInt64 = Self.Document.MapCompatibility
 		  Var Mods As Beacon.StringList = Self.Document.Mods
@@ -662,7 +612,7 @@ End
 		      Set = New Beacon.ItemSet()
 		    End If
 		    
-		    NewItemSets.AddRow(Source.AddSet(Set, False))
+		    NewItemSets.AddRow(Source.ItemSets.Append(Set))
 		  Next
 		  
 		  Self.UpdateUI(NewItemSets)
@@ -677,13 +627,79 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Import(Content As String, Source As String)
-		  Self.ImportProgress = New ImporterWindow
-		  Self.ImportProgress.Source = Source
-		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
-		  Self.ImportProgress.ShowWithin(Self.TrueWindow)
-		  Self.Importer.Clear
-		  Self.Importer.GameIniContent = Content
-		  Self.Importer.Start
+		  Self.mImportProgress = New ImporterWindow
+		  Self.mImportProgress.Source = Source
+		  Self.mImportProgress.CancelAction = WeakAddressOf Self.CancelImport
+		  Self.mImportProgress.ShowWithin(Self.TrueWindow)
+		  
+		  Var Data As New Beacon.DiscoveredData
+		  Data.GameIniContent = Content
+		  
+		  Self.mImporter = New Beacon.ImportThread(Data, Self.Document)
+		  AddHandler mImporter.Finished, WeakAddressOf mImporter_Finished
+		  AddHandler mImporter.UpdateUI, WeakAddressOf mImporter_UpdateUI
+		  Self.mImporter.Start
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mImporter_Finished(Sender As Beacon.ImportThread, Document As Beacon.Document)
+		  #Pragma Unused Sender
+		  
+		  If Self.mImportProgress <> Nil Then
+		    Self.mImportProgress.Close
+		    Self.mImportProgress = Nil
+		  End If
+		  
+		  If Not Document.HasConfigGroup(BeaconConfigs.LootDrops.ConfigName) Then
+		    Return
+		  End If
+		  
+		  Var Drops As BeaconConfigs.LootDrops = BeaconConfigs.LootDrops(Document.ConfigGroup(BeaconConfigs.LootDrops.ConfigName))
+		  Var NewItemSets() As Beacon.ItemSet
+		  For Each SourceDrop As Beacon.LootSource In Drops
+		    For Each ItemSet As Beacon.ItemSet In SourceDrop.ItemSets
+		      NewItemSets.AddRow(ItemSet)
+		    Next
+		  Next
+		  Self.AddSets(NewItemSets)
+		  
+		  #if false
+		    Var Dicts() As Variant
+		    #Pragma BreakOnExceptions Off
+		    Try
+		      Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
+		    Catch Err As TypeMismatchException
+		      Dicts.AddRow(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
+		    End Try
+		    #Pragma BreakOnExceptions Default
+		    
+		    Var Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
+		    
+		    Var SourceLootSources() As Beacon.LootSource
+		    For Each ConfigDict As Dictionary In Dicts
+		      Var Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Difficulty)
+		      If Source <> Nil Then
+		        SourceLootSources.AddRow(Source)
+		      End If
+		    Next
+		    
+		    Var NewItemSets() As Beacon.ItemSet
+		    For Each Source As Beacon.LootSource In SourceLootSources
+		      For Each Set As Beacon.ItemSet In Source
+		        NewItemSets.AddRow(Set)
+		      Next
+		    Next
+		    Self.AddSets(NewItemSets)
+		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mImporter_UpdateUI(Sender As Beacon.ImportThread)
+		  If Self.mImportProgress <> Nil Then
+		    Self.mImportProgress.Progress = Sender.Progress
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -700,9 +716,9 @@ End
 		    Return
 		  End If
 		  
-		  Dim AvailableSpace As Integer = Self.Width - Self.FadedSeparator1.Width
-		  Dim ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - Self.EditorMinWidth)
-		  Dim EditorWidth As Integer = AvailableSpace - ListWidth
+		  Var AvailableSpace As Integer = Self.Width - Self.FadedSeparator1.Width
+		  Var ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - Self.EditorMinWidth)
+		  Var EditorWidth As Integer = AvailableSpace - ListWidth
 		  
 		  Self.Header.Width = ListWidth
 		  Self.HintsContainer.Width = ListWidth
@@ -754,7 +770,7 @@ End
 		  
 		  Preferences.SimulatorVisible = Value
 		  
-		  Dim NewPosition As Integer
+		  Var NewPosition As Integer
 		  If Value Then
 		    NewPosition = Self.Height - Preferences.SimulatorSize
 		    Self.Simulator.Height = Preferences.SimulatorSize
@@ -768,8 +784,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim Curve As AnimationKit.Curve = AnimationKit.Curve.CreateEaseOut
-		  Dim Duration As Double = 0.15
+		  Var Curve As AnimationKit.Curve = AnimationKit.Curve.CreateEaseOut
+		  Var Duration As Double = 0.15
 		  
 		  If Self.mSimulatorTask <> Nil Then
 		    Self.mSimulatorTask.Cancel
@@ -786,7 +802,7 @@ End
 	#tag Method, Flags = &h0
 		Function Sources() As Beacon.LootSource()
 		  // Clone the array, but not the items
-		  Dim Results() As Beacon.LootSource
+		  Var Results() As Beacon.LootSource
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    Results.AddRow(Source)
 		  Next
@@ -805,15 +821,7 @@ End
 		    Next
 		  End If
 		  
-		  If Self.mSources.LastRowIndex = 0 Then
-		    Self.Header.Simulate.Enabled = True
-		    Self.Simulator.Simulate(Self.mSources(0))
-		  Else
-		    Self.Header.Simulate.Enabled = False
-		    Self.Simulator.Clear()
-		  End If
-		  
-		  Dim CommonNotes As String
+		  Var CommonNotes As String
 		  If Self.mSources.LastRowIndex > -1 Then
 		    CommonNotes = Self.mSources(0).Notes
 		    For I As Integer = 1 To Self.mSources.LastRowIndex
@@ -847,7 +855,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Caption As String
+		  Var Caption As String
 		  If Self.SetList.SelectedRowCount > 0 Then
 		    Caption = Format(Self.SetList.SelectedRowCount, "0") + " of " + Str(Self.SetList.RowCount, "0") + " Item " + If(Self.SetList.RowCount = 1, "Set", "Sets") + " Selected"
 		  Else
@@ -870,7 +878,7 @@ End
 		  
 		  Var CombinedSets As New Dictionary
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    For Each Set As Beacon.ItemSet In Source
+		    For Each Set As Beacon.ItemSet In Source.ItemSets
 		      Var Hash As String = Set.Hash
 		      Var Organizer As ItemSetOrganizer
 		      If CombinedSets.HasKey(Hash) Then
@@ -918,6 +926,14 @@ End
 		  Self.SetList.SortingColumn = 0
 		  Self.SetList.Sort
 		  Self.SetList.SelectionChangeBlocked = False
+		  
+		  If Self.mSources.LastRowIndex = 0 Then
+		    Self.Header.Simulate.Enabled = True
+		    Self.Simulator.Simulate(Self.mSources(0))
+		  Else
+		    Self.Header.Simulate.Enabled = False
+		    Self.Simulator.Clear()
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -936,7 +952,11 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private ImportProgress As ImporterWindow
+		Private mImporter As Beacon.ImportThread
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mImportProgress As ImporterWindow
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1005,7 +1025,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.SelectedRowCount > -1
+		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -1033,7 +1053,7 @@ End
 		    Var Sources() As Beacon.LootSource = Organizer.Sources
 		    For Each Source As Beacon.LootSource In Sources
 		      Var Set As Beacon.ItemSet = Organizer.SetForSource(Source)
-		      Source.Remove(Set)
+		      Source.ItemSets.Remove(Set)
 		    Next
 		  Next
 		  
@@ -1129,14 +1149,14 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.SelectedRowCount > -1
+		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event
 		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
-		  Dim Targets() As ItemSetOrganizer
+		  Var Targets() As ItemSetOrganizer
 		  If Me.SelectedRowCount = 0 Then
-		    Dim Idx As Integer = Me.RowFromXY(X, Y)
+		    Var Idx As Integer = Me.RowFromXY(X, Y)
 		    If Idx = -1 Then
 		      Return False
 		    End If
@@ -1153,7 +1173,7 @@ End
 		    Return False
 		  End If
 		  
-		  Dim Preset As Beacon.Preset
+		  Var Preset As Beacon.Preset
 		  For Each Organizer As ItemSetOrganizer In Targets
 		    If Organizer.Template.SourcePresetID = "" Or Preset <> Nil Then
 		      Continue
@@ -1162,7 +1182,7 @@ End
 		    Preset = Beacon.Data.GetPreset(Organizer.Template.SourcePresetID)
 		  Next
 		  
-		  Dim CreateItem As New MenuItem("Create Preset…", Targets)
+		  Var CreateItem As New MenuItem("Create Preset…", Targets)
 		  CreateItem.Name = "createpreset"
 		  CreateItem.Enabled = Targets.LastRowIndex = 0
 		  If Preset <> Nil And CreateItem.Enabled Then
@@ -1170,7 +1190,7 @@ End
 		  End If
 		  Base.AddMenu(CreateItem)
 		  
-		  Dim ReconfigureItem As New MenuItem("Rebuild From Preset", Targets)
+		  Var ReconfigureItem As New MenuItem("Rebuild From Preset", Targets)
 		  ReconfigureItem.Name = "reconfigure"
 		  ReconfigureItem.Enabled = Preset <> Nil
 		  If ReconfigureItem.Enabled Then
@@ -1185,12 +1205,12 @@ End
 		  If Keyboard.OptionKey Then
 		    Base.AddMenu(New MenuItem(MenuItem.TextSeparator))
 		    
-		    Dim CopyJSONItem As New MenuItem("Copy JSON", Targets)
+		    Var CopyJSONItem As New MenuItem("Copy JSON", Targets)
 		    CopyJSONItem.Name = "copyjson"
 		    CopyJSONItem.Enabled = True
 		    Base.AddMenu(CopyJSONItem)
 		    
-		    Dim CopyConfigItem As New MenuItem("Copy Config Part", Targets)
+		    Var CopyConfigItem As New MenuItem("Copy Config Part", Targets)
 		    CopyConfigItem.Name = "copyconfig"
 		    CopyConfigItem.Enabled = True
 		    Base.AddMenu(CopyConfigItem)
@@ -1212,7 +1232,7 @@ End
 		    If Targets.LastRowIndex = 0 Then
 		      Var Organizer As ItemSetOrganizer = Targets(0)
 		      
-		      Var NewPreset As Beacon.Preset = MainWindow.Presets.CreatePreset(Organizer.Template)
+		      Var NewPreset As Beacon.Preset = App.MainWindow.Presets.CreatePreset(Organizer.Template)
 		      If NewPreset = Nil Then
 		        Return True
 		      End If
@@ -1294,14 +1314,12 @@ End
 		    End If
 		  Case "copyconfig"
 		    Var Multipliers As Beacon.Range
-		    Var UseBlueprints As Boolean
+		    Var UseBlueprints As Boolean = False
 		    Var Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
 		    If Self.mSources.LastRowIndex = 0 Then
 		      Multipliers = Self.mSources(0).Multipliers
-		      UseBlueprints = Self.mSources(0).UseBlueprints
 		    Else
 		      Multipliers = New Beacon.Range(1, 1)
-		      UseBlueprints = False
 		    End If
 		    
 		    Var Parts() As String
@@ -1320,64 +1338,15 @@ End
 		  Return True
 		End Function
 	#tag EndEvent
-	#tag Event
-		Function RowIsInvalid(Row As Integer) As Boolean
-		  Return ItemSetOrganizer(Me.RowTagAt(Row)).Template.IsValid(Self.Document) = False
-		End Function
-	#tag EndEvent
-#tag EndEvents
-#tag Events Importer
-	#tag Event
-		Sub UpdateUI()
-		  If Self.ImportProgress <> Nil Then
-		    Self.ImportProgress.Progress = Me.Progress
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Finished(ParsedData As Dictionary)
-		  If Self.ImportProgress <> Nil Then
-		    Self.ImportProgress.Close
-		    Self.ImportProgress = Nil
-		  End If
-		  
-		  Dim Dicts() As Variant
-		  #Pragma BreakOnExceptions Off
-		  Try
-		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
-		  Catch Err As TypeMismatchException
-		    Dicts.AddRow(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
-		  End Try
-		  #Pragma BreakOnExceptions Default
-		  
-		  Dim Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
-		  
-		  Dim SourceLootSources() As Beacon.LootSource
-		  For Each ConfigDict As Dictionary In Dicts
-		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Difficulty)
-		    If Source <> Nil Then
-		      SourceLootSources.AddRow(Source)
-		    End If
-		  Next
-		  
-		  Var NewItemSets() As Beacon.ItemSet
-		  For Each Source As Beacon.LootSource In SourceLootSources
-		    For Each Set As Beacon.ItemSet In Source
-		      NewItemSets.AddRow(Set)
-		    Next
-		  Next
-		  Self.AddSets(NewItemSets)
-		End Sub
-	#tag EndEvent
 #tag EndEvents
 #tag Events Header
 	#tag Event
 		Sub Open()
-		  Dim AddButton As New BeaconToolbarItem("AddSet", IconToolbarAdd)
+		  Var AddButton As New BeaconToolbarItem("AddSet", IconToolbarAdd)
 		  AddButton.HasMenu = True
 		  AddButton.HelpTag = "Add a new empty item set. Hold to add a preset from a menu."
 		  
-		  Dim SimulateButton As New BeaconToolbarItem("Simulate", IconToolbarSimulate)
+		  Var SimulateButton As New BeaconToolbarItem("Simulate", IconToolbarSimulate)
 		  SimulateButton.Enabled = False
 		  SimulateButton.HelpTag = "Simulate loot selection for this loot source."
 		  
@@ -1478,7 +1447,7 @@ End
 #tag Events SettingsContainer
 	#tag Event
 		Sub Resized()
-		  Dim ListTop As Integer = Me.Top + Me.Height
+		  Var ListTop As Integer = Me.Top + Me.Height
 		  
 		  If Self.HintsContainer.Visible Then
 		    If Self.HintsContainer.Top = ListTop Then
@@ -1504,7 +1473,7 @@ End
 		      Return
 		    End If
 		    
-		    Dim Diff As Integer = ListTop - Self.SetList.Top
+		    Var Diff As Integer = ListTop - Self.SetList.Top
 		    Self.SetList.Top = Self.SetList.Top + Diff
 		    Self.SetList.Height = Self.SetList.Height - Diff
 		  #endif

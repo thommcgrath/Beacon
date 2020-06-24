@@ -11,7 +11,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h21
 		Private Sub CheckCurrentFrames()
-		  Dim FirstFrame As AnimationKit.Frame
+		  Var FirstFrame As AnimationKit.Frame
 		  For I As Integer = 0 To Self.Frames.LastRowIndex
 		    If Self.Frames(I) <> Nil Then
 		      FirstFrame = Self.Frames(I)
@@ -43,14 +43,14 @@ Implements Iterable
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS)
 		Shared Function CreateFromSpriteSheet(Sprites As iOSImage, RetinaSprites As iOSImage, CellWidth As Integer, CellHeight As Integer, Rows As Integer, Columns As Integer) As AnimationKit.FrameSet
-		  Dim StandardCells() As iOSImage = SplitSprites(Sprites, CellWidth, CellHeight, Rows, Columns)
-		  Dim RetinaCells() As iOSImage
+		  Var StandardCells() As iOSImage = SplitSprites(Sprites, CellWidth, CellHeight, Rows, Columns)
+		  Var RetinaCells() As iOSImage
 		  If RetinaSprites <> Nil Then
 		    RetinaCells = SplitSprites(RetinaSprites, CellWidth * 2, CellHeight * 2, Rows, Columns)
 		  End If
 		  
-		  Dim Set As New AnimationKit.FrameSet()
-		  Redim Set(StandardCells.LastRowIndex)
+		  Var Set As New AnimationKit.FrameSet()
+		  Set.ResizeTo(StandardCells.LastRowIndex)
 		  For I As Integer = 0 To StandardCells.LastRowIndex
 		    If RetinaSprites <> Nil Then
 		      Set(I) = New AnimationKit.Frame(StandardCells(I), RetinaCells(I))
@@ -64,14 +64,14 @@ Implements Iterable
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI)
 		Shared Function CreateFromSpriteSheet(Sprites As Picture, RetinaSprites As Picture, CellWidth As Integer, CellHeight As Integer, Rows As Integer, Columns As Integer) As AnimationKit.FrameSet
-		  Dim StandardCells() As Picture = SplitSprites(Sprites, CellWidth, CellHeight, Rows, Columns)
-		  Dim RetinaCells() As Picture
+		  Var StandardCells() As Picture = SplitSprites(Sprites, CellWidth, CellHeight, Rows, Columns)
+		  Var RetinaCells() As Picture
 		  If RetinaSprites <> Nil Then
 		    RetinaCells = SplitSprites(RetinaSprites, CellWidth * 2, CellHeight * 2, Rows, Columns)
 		  End If
 		  
-		  Dim Set As New AnimationKit.FrameSet()
-		  Redim Set(StandardCells.LastRowIndex)
+		  Var Set As New AnimationKit.FrameSet()
+		  Set.ResizeTo(StandardCells.LastRowIndex)
 		  For I As Integer = 0 To StandardCells.LastRowIndex
 		    If RetinaSprites <> Nil Then
 		      Set(I) = New AnimationKit.Frame(StandardCells(I), RetinaCells(I))
@@ -148,7 +148,7 @@ Implements Iterable
 
 	#tag Method, Flags = &h0
 		Sub Operator_Redim(Bound As Integer)
-		  Redim Self.Frames(Bound)
+		  Self.Frames.ResizeTo(Bound)
 		  Self.CheckCurrentFrames()
 		End Sub
 	#tag EndMethod
@@ -173,8 +173,15 @@ Implements Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ResizeTo(Bound As Integer)
+		  Self.Frames.ResizeTo(Bound)
+		  Self.CheckCurrentFrames()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Reverse() As AnimationKit.FrameSet
-		  Dim Set As New AnimationKit.FrameSet
+		  Var Set As New AnimationKit.FrameSet
 		  For I As Integer = Self.Frames.LastRowIndex DownTo 0
 		    Set.Frames.AddRow(Self.Frames(I))
 		  Next
@@ -186,15 +193,15 @@ Implements Iterable
 	#tag Method, Flags = &h21, CompatibilityFlags = (TargetIOS)
 		Private Shared Function SplitSprites(Sprites As iOSImage, Width As Integer, Height As Integer, Rows As Integer, Columns As Integer) As iOSImage()
 		  If Sprites.Width <> (Rows + 1) * Width Or Sprites.Height <> (Columns + 1) * Height Then
-		    Dim Err As New UnsupportedOperationException
+		    Var Err As New UnsupportedOperationException
 		    Err.Reason = "Sprite sheet dimensions are not correct for the provided cell count."
 		    Raise Err
 		  End If
 		  
-		  Dim Cells() As iOSImage
+		  Var Cells() As iOSImage
 		  For Row As Integer = 0 To Rows - 1
 		    For Column As Integer = 0 To Columns - 1
-		      Dim Sprite As New iOSBitmap(Width, Height, Sprites.Scale)
+		      Var Sprite As New iOSBitmap(Width, Height, Sprites.Scale)
 		      Sprite.Graphics.DrawImage(Sprites, (Row * Column) * -1, (Column * Height) * -1)
 		      Cells.AddRow(Sprite.Image)
 		    Next
@@ -206,15 +213,15 @@ Implements Iterable
 	#tag Method, Flags = &h21, CompatibilityFlags = (TargetHasGUI)
 		Private Shared Function SplitSprites(Sprites As Picture, Width As Integer, Height As Integer, Rows As Integer, Columns As Integer) As Picture()
 		  If Sprites.Width <> (Rows + 1) * Width Or Sprites.Height <> (Columns + 1) * Height Then
-		    Dim Err As New UnsupportedOperationException
+		    Var Err As New UnsupportedOperationException
 		    Err.Reason = "Sprite sheet dimensions are not correct for the provided cell count."
 		    Raise Err
 		  End If
 		  
-		  Dim Cells() As Picture
+		  Var Cells() As Picture
 		  For Row As Integer = 0 To Rows - 1
 		    For Column As Integer = 0 To Columns - 1
-		      Dim Sprite As New Picture(Width, Height)
+		      Var Sprite As New Picture(Width, Height)
 		      Sprite.Graphics.DrawPicture(Sprites, (Row * Column) * -1, (Column * Height) * -1)
 		      Cells.AddRow(Sprite)
 		    Next
@@ -230,7 +237,7 @@ Implements Iterable
 		  End If
 		  
 		  If Frame.Dimensions.Width <> Self.Width Or Frame.Dimensions.Height <> Self.Height Then
-		    Dim Err As New UnsupportedOperationException
+		    Var Err As New UnsupportedOperationException
 		    Err.Reason = "Frame dimensions must match the set dimensions."
 		    Raise Err
 		  End If

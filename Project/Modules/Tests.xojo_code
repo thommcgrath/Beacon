@@ -3,6 +3,9 @@ Protected Module Tests
 	#tag Method, Flags = &h1
 		Protected Function Assert(Value As Boolean, Message As String) As Boolean
 		  If Value = False Then
+		    #if DebugBuild
+		      System.Beep
+		    #endif
 		    System.DebugLog(Message)
 		  End If
 		  Return Value
@@ -21,7 +24,21 @@ Protected Module Tests
 		    TestBlueprintSerialization()
 		    TestLimitCalculations()
 		    TestNamingThings()
+		    TestConfigKeys()
+		    TestNumberFormatting()
+		    TestArkML()
 		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestArkML()
+		  Var InputString As String = """This is a &quot;string&quot; with characters &amp; &lt;stuff&gt; like &#127817; that\nneeds to be encoded."""
+		  
+		  Var RTFString As String = BeaconConfigs.Metadata.ArkMLToRTF(InputString)
+		  Var ArkMLString As String = BeaconConfigs.Metadata.RTFToArkML(RTFString)
+		  
+		  Call Assert(ArkMLString = InputString, "ArkML did not parse the same as was generated. Input: `" + InputString + "` Output: `" + ArkMLString + "`")
 		End Sub
 	#tag EndMethod
 
@@ -54,23 +71,38 @@ Protected Module Tests
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub TestConfigKeys()
+		  Var LocalData As LocalData = LocalData.SharedInstance
+		  
+		  Var AllConfigKeys() As Beacon.ConfigKey = LocalData.SearchForConfigKey("", "", "")
+		  Call Assert(AllConfigKeys.Count > 0, "No config keys returned.")
+		  
+		  Var SpecificConfigKey As Beacon.ConfigKey = LocalData.GetConfigKey("GameUserSettings.ini", "ServerSettings", "DayTimeSpeedScale")
+		  Call Assert((SpecificConfigKey Is Nil) = False, "Could not find DayTimeSpeedScale key.")
+		  
+		  Var SpeedScales() As Beacon.ConfigKey = LocalData.SearchForConfigKey("GameUserSettings.ini", "ServerSettings", "*SpeedScale")
+		  Call Assert(SpeedScales.Count = 3, "Found incorrect number of *SpeedScale keys, expected 3, got " + SpeedScales.Count.ToString + ".")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub TestEncryption()
-		  Dim Identity As New Beacon.Identity
-		  Dim PublicKey As String = Identity.PublicKey
-		  Dim PrivateKey As String = Identity.PrivateKey
+		  Var Identity As New Beacon.Identity
+		  Var PublicKey As String = Identity.PublicKey
+		  Var PrivateKey As String = Identity.PrivateKey
 		  Call Assert(Crypto.RSAVerifyKey(PublicKey), "Unable to validate public key")
 		  Call Assert(Crypto.RSAVerifyKey(PrivateKey), "Unable to validate private key")
 		  
-		  Dim PEMPublic As String = BeaconEncryption.PEMEncodePublicKey(PublicKey)
+		  Var PEMPublic As String = BeaconEncryption.PEMEncodePublicKey(PublicKey)
 		  Call Assert(PEMPublic.BeginsWith("-----BEGIN PUBLIC KEY-----"), "Public key was not PEM encoded")
 		  Call Assert(BeaconEncryption.PEMDecodePublicKey(PEMPublic) = PublicKey, "PEM public key was not decoded")
 		  
-		  Dim PEMPrivate As String = BeaconEncryption.PEMEncodePrivateKey(PrivateKey)
+		  Var PEMPrivate As String = BeaconEncryption.PEMEncodePrivateKey(PrivateKey)
 		  Call Assert(PEMPrivate.BeginsWith("-----BEGIN PRIVATE KEY-----"), "Private key was not PEM encoded")
 		  Call Assert(BeaconEncryption.PEMDecodePrivateKey(PEMPrivate) = PrivateKey, "PEM private key was not decoded")
 		  
-		  Dim TestValue As MemoryBlock = Crypto.GenerateRandomBytes(24)
-		  Dim Encrypted, Decrypted As MemoryBlock
+		  Var TestValue As MemoryBlock = Crypto.GenerateRandomBytes(24)
+		  Var Encrypted, Decrypted As MemoryBlock
 		  
 		  Try
 		    Encrypted = Identity.Encrypt(TestValue)
@@ -86,7 +118,7 @@ Protected Module Tests
 		  
 		  Call Assert(TestValue = Decrypted, "Decrypted value does not match original")
 		  
-		  Dim Key As MemoryBlock = Crypto.GenerateRandomBytes(24)
+		  Var Key As MemoryBlock = Crypto.GenerateRandomBytes(24)
 		  
 		  Try
 		    Encrypted = BeaconEncryption.SymmetricEncrypt(Key, TestValue, 2)
@@ -134,14 +166,14 @@ Protected Module Tests
 
 	#tag Method, Flags = &h21
 		Private Sub TestMemoryBlockExtensions()
-		  Dim Original As MemoryBlock = "Frog blast the vent core!"
+		  Var Original As MemoryBlock = "Frog blast the vent core!"
 		  Original.LittleEndian = True
-		  Dim Clone As MemoryBlock = Original.Clone
+		  Var Clone As MemoryBlock = Original.Clone
 		  Call Assert(EncodeHex(Original) = EncodeHex(Clone) And Original.LittleEndian = Clone.LittleEndian, "Cloning MemoryBlocks does not work")
 		  
-		  Dim LeftRead As MemoryBlock = Original.Left(4)
-		  Dim RightRead As MemoryBlock = Original.Right(5)
-		  Dim MidRead As MemoryBlock = Original.Middle(5, 5)
+		  Var LeftRead As MemoryBlock = Original.Left(4)
+		  Var RightRead As MemoryBlock = Original.Right(5)
+		  Var MidRead As MemoryBlock = Original.Middle(5, 5)
 		  Call Assert(LeftRead = "Frog", "Incorrect MemoryBlock.Left read result.")
 		  Call Assert(RightRead = "core!", "Incorrect MemoryBlock.Right read result.")
 		  Call Assert(MidRead = "blast", "Incorrect MemoryBlock.Middle read result.")
@@ -208,6 +240,20 @@ Protected Module Tests
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub TestNumberFormatting()
+		  Var FormatWhole As String = Beacon.PrettyText(1.0, 4)
+		  Var FormatFraction As String = Beacon.PrettyText(1.1, 4)
+		  Var FormatPrecise As String = Beacon.PrettyText(1.234567, 4)
+		  Var FormatMicro As String = Beacon.PrettyText(0.00000001, 9)
+		  
+		  Call Assert(FormatWhole = "1", "Format of whole number is incorrect. Expected '1' but got '" + FormatWhole + "'.")
+		  Call Assert(FormatFraction = "1.1", "Format of fractional number is incorrect. Expected '1.1' but got '" + FormatFraction + "'.")
+		  Call Assert(FormatPrecise = "1.2346", "Format of high precision number is incorrect. Expected '1.2346' but got '" + FormatPrecise + "'.")
+		  Call Assert(FormatMicro = "0.00000001", "Format of micro scale number is incorrect. Expected '0.00000001' but got '" + FormatMicro + "'.")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub TestObjectResolution()
 		  // Ark object identifiers come in 3 forms: Blueprint'/Game/Path/Class.Class', BlueprintGeneratedClass'/Game/Path/Class.Class_C', and 'Class_C'
 		  // and all need to resolve to some object. Worse, that object could be known or unknown by Beacon.
@@ -232,37 +278,69 @@ Protected Module Tests
 		  NormalizedPath = Beacon.NormalizeBlueprintPath(ExpectedUnofficialPath, "Creatures")
 		  Call Assert(NormalizedPath = ExpectedUnofficialPath, "Failed to resolve path correctly. Expected " + ExpectedUnofficialPath + ", got " + NormalizedPath)
 		  
-		  
 		  NormalizedPath = Beacon.NormalizeBlueprintPath("Wyvern_Character_Blue_BP_PetCraftToo_C", "Creatures")
 		  Call Assert(NormalizedPath = ExpectedUnknownPath, "Failed to resolve path correctly. Expected " + ExpectedUnknownPath + ", got " + NormalizedPath)
+		  
+		  
+		  // Now we need to test Beacon's ability to resolve saved data into various objects
+		  Const DrakeSaddleID = "d45d0691-a430-4443-98e3-bcc501067317"
+		  Var ObjectData As New Dictionary
+		  ObjectData.Value("ObjectID") = DrakeSaddleID
+		  ObjectData.Value("Path") = "/Game/Aberration/Dinos/RockDrake/PrimalItemArmor_RockDrakeSaddle.PrimalItemArmor_RockDrakeSaddle"
+		  ObjectData.Value("Class") = "PrimalItemArmor_RockDrakeSaddle_C"
+		  
+		  Var Engram As Beacon.Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "Class", "Path")
+		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  
+		  Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "", "")
+		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data by id, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  
+		  Engram = Beacon.ResolveEngram(ObjectData, "", "Class", "")
+		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data by class, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  
+		  Engram = Beacon.ResolveEngram(ObjectData, "", "", "Path")
+		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data by path, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  
+		  // Now use faulty data and see how it resolves
+		  Const BadEngramID = "fd8b3b03-781b-4211-bc42-38a8639df878"
+		  ObjectData.Value("ObjectID") = BadEngramID
+		  
+		  Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "Class", "Path")
+		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = DrakeSaddleID, "Failed to resolve engram data, expected " + DrakeSaddleID + ", got " + Engram.ObjectID.StringValue)
+		  
+		  Engram = Beacon.ResolveEngram(ObjectData, "ObjectID", "", "")
+		  Call Assert(Engram <> Nil And Engram.ObjectID.StringValue = BadEngramID, "Failed to resolve engram data, expected " + BadEngramID + ", got " + Engram.ObjectID.StringValue)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub TestQualities()
 		  #if DebugBuild
-		    Dim Quality As Beacon.Quality = Beacon.Qualities.Tier4
-		    Dim StandardDifficulty As New BeaconConfigs.Difficulty(5)
-		    Dim HighDifficulty As New BeaconConfigs.Difficulty(15)
-		    Dim ExtremeDifficulty As New BeaconConfigs.Difficulty(100)
-		    Dim Source As Beacon.LootSource = LocalData.SharedInstance.GetLootSource("SupplyCrate_Cave_QualityTier3_ScorchedEarth_C")
+		    Var Quality As Beacon.Quality = Beacon.Qualities.Tier4
+		    Var StandardDifficulty As New BeaconConfigs.Difficulty(5)
+		    Var HighDifficulty As New BeaconConfigs.Difficulty(15)
+		    Var ExtremeDifficulty As New BeaconConfigs.Difficulty(100)
+		    Var Source As Beacon.LootSource = LocalData.SharedInstance.GetLootSource("SupplyCrate_Cave_QualityTier3_ScorchedEarth_C")
+		    If Source Is Nil Then
+		      Return
+		    End If
 		    
-		    Dim QualityStandardMin As Double = Quality.Value(Source.Multipliers.Min, StandardDifficulty)
-		    Dim QualityStandardMax As Double = Quality.Value(Source.Multipliers.Max, StandardDifficulty)
-		    Dim QualityHighMin As Double = Quality.Value(Source.Multipliers.Min, HighDifficulty)
-		    Dim QualityHighMax As Double = Quality.Value(Source.Multipliers.Max, HighDifficulty)
-		    Dim QualityExtremeMin As Double = Quality.Value(Source.Multipliers.Min, ExtremeDifficulty)
-		    Dim QualityExtremeMax As Double = Quality.Value(Source.Multipliers.Max, ExtremeDifficulty)
+		    Var QualityStandardMin As Double = Quality.Value(Source.Multipliers.Min, StandardDifficulty)
+		    Var QualityStandardMax As Double = Quality.Value(Source.Multipliers.Max, StandardDifficulty)
+		    Var QualityHighMin As Double = Quality.Value(Source.Multipliers.Min, HighDifficulty)
+		    Var QualityHighMax As Double = Quality.Value(Source.Multipliers.Max, HighDifficulty)
+		    Var QualityExtremeMin As Double = Quality.Value(Source.Multipliers.Min, ExtremeDifficulty)
+		    Var QualityExtremeMax As Double = Quality.Value(Source.Multipliers.Max, ExtremeDifficulty)
 		    
 		    // Compare backwards because we expect lower values for higher difficulties
 		    Call Assert(QualityExtremeMin < QualityHighMin And QualityHighMin < QualityStandardMin And QualityExtremeMax < QualityHighMax And QualityHighMax < QualityStandardMax, "Qualities are equal regardless of difficulty")
 		    
-		    Dim StandardQualityMin As Beacon.Quality = Beacon.Qualities.ForValue(QualityStandardMin, Source.Multipliers.Min, StandardDifficulty)
-		    Dim StandardQualityMax As Beacon.Quality = Beacon.Qualities.ForValue(QualityStandardMax, Source.Multipliers.Max, StandardDifficulty)
-		    Dim HighQualityMin As Beacon.Quality = Beacon.Qualities.ForValue(QualityHighMin, Source.Multipliers.Min, HighDifficulty)
-		    Dim HighQualityMax As Beacon.Quality = Beacon.Qualities.ForValue(QualityHighMax, Source.Multipliers.Max, HighDifficulty)
-		    Dim ExtremeQualityMin As Beacon.Quality = Beacon.Qualities.ForValue(QualityExtremeMin, Source.Multipliers.Min, ExtremeDifficulty)
-		    Dim ExtremeQualityMax As Beacon.Quality = Beacon.Qualities.ForValue(QualityExtremeMax, Source.Multipliers.Max, ExtremeDifficulty)
+		    Var StandardQualityMin As Beacon.Quality = Beacon.Qualities.ForValue(QualityStandardMin, Source.Multipliers.Min, StandardDifficulty)
+		    Var StandardQualityMax As Beacon.Quality = Beacon.Qualities.ForValue(QualityStandardMax, Source.Multipliers.Max, StandardDifficulty)
+		    Var HighQualityMin As Beacon.Quality = Beacon.Qualities.ForValue(QualityHighMin, Source.Multipliers.Min, HighDifficulty)
+		    Var HighQualityMax As Beacon.Quality = Beacon.Qualities.ForValue(QualityHighMax, Source.Multipliers.Max, HighDifficulty)
+		    Var ExtremeQualityMin As Beacon.Quality = Beacon.Qualities.ForValue(QualityExtremeMin, Source.Multipliers.Min, ExtremeDifficulty)
+		    Var ExtremeQualityMax As Beacon.Quality = Beacon.Qualities.ForValue(QualityExtremeMax, Source.Multipliers.Max, ExtremeDifficulty)
 		    
 		    Const Formatter = "-0.0000"
 		    Call Assert(StandardQualityMin = Quality, "Expected quality min " + Language.LabelForQuality(Quality) + "(" + Str(Quality.BaseValue, Formatter) + ") but got " + Language.LabelForQuality(StandardQualityMin) + "(" + Str(StandardQualityMin.BaseValue, Formatter) + ") for difficulty 5")
@@ -277,7 +355,7 @@ Protected Module Tests
 
 	#tag Method, Flags = &h21
 		Private Sub TestStrings()
-		  Dim StringValue As String = "Human"
+		  Var StringValue As String = "Human"
 		  Call Assert(StringValue.IndexOf("u") = 1, "String.IndexOf returns incorrect result. Expected 1, got " + StringValue.IndexOf("u").ToString + ".")
 		  Call Assert(StringValue.Middle(2) = "man", "String.Middle returns incorrect result. Expected 'man', got '" + StringValue.Middle(2) + "'.")
 		End Sub
@@ -285,7 +363,7 @@ Protected Module Tests
 
 	#tag Method, Flags = &h21
 		Private Sub TestUUID()
-		  Dim UUID As New v4UUID
+		  Var UUID As New v4UUID
 		  
 		  Try
 		    UUID = v4UUID.CreateNull
@@ -304,14 +382,14 @@ Protected Module Tests
 		  End Try
 		  
 		  Try
-		    Dim V As Variant = "ffc93232-2484-4947-8c9a-a691cf938d75"
+		    Var V As Variant = "ffc93232-2484-4947-8c9a-a691cf938d75"
 		    UUID = V.StringValue
 		  Catch Err As RuntimeException
 		    System.DebugLog("Unable to convert string in variant to UUID")
 		  End Try
 		  
 		  Try
-		    Dim V As Variant = New v4UUID
+		    Var V As Variant = New v4UUID
 		    UUID = v4UUID(V.ObjectValue)
 		  Catch Err As RuntimeException
 		    System.DebugLog("Unable to convert UUID in variant to UUID")

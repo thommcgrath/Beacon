@@ -19,7 +19,7 @@ Inherits Beacon.ConfigGroup
 		    If IsNull(Engram) Then
 		      Engram = Beacon.Engram.CreateFromPath(Entry.Key)
 		    End If
-		    If IsNull(Engram) = False And Engram.ValidForMods(SourceDocument.Mods) Then
+		    If IsNull(Engram) = False And Engram.ValidForDocument(SourceDocument) Then
 		      Var ClassString As String = Engram.ClassString
 		      Var Rate As Double = Entry.Value
 		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "HarvestResourceItemAmountClassMultipliers", "(ClassName=""" + ClassString + """,Multiplier=" + Rate.PrettyText + ")"))
@@ -39,6 +39,16 @@ Inherits Beacon.ConfigGroup
 		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "HarvestAmountMultiplier", Self.mHarvestAmountMultiplier.PrettyText))
 		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "HarvestHealthMultiplier", Self.mHarvestHealthMultiplier.PrettyText))
 		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ClampResourceHarvestDamage", If(Self.mClampResourceHarvestDamage, "True", "False")))
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MergeFrom(Other As Beacon.ConfigGroup)
+		  Var Source As BeaconConfigs.HarvestRates = BeaconConfigs.HarvestRates(Other)
+		  Var Engrams() As Beacon.Engram = Source.Engrams
+		  For Each Engram As Beacon.Engram In Engrams
+		    Self.Override(Engram) = Source.Override(Engram)
+		  Next
 		End Sub
 	#tag EndEvent
 
@@ -156,6 +166,10 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
+		  If ParsedData.HasAnyKey("HarvestAmountMultiplier", "HarvestHealthMultiplier", "PlayerHarvestingDamageMultiplier", "DinoHarvestingDamageMultiplier", "ClampResourceHarvestDamage", "HarvestResourceItemAmountClassMultipliers") = False And (CommandLineOptions Is Nil Or CommandLineOptions.HasKey("UseOptimizedHarvestingHealth") = False) Then
+		    Return Nil
+		  End If
+		  
 		  Var HarvestAmountMultiplier As Double = ParsedData.DoubleValue("HarvestAmountMultiplier", 1.0, True)
 		  Var HarvestHealthMultiplier As Double = ParsedData.DoubleValue("HarvestHealthMultiplier", 1.0, True)
 		  Var PlayerHarvestingDamageMultiplier As Double = ParsedData.DoubleValue("PlayerHarvestingDamageMultiplier", 1.0, True)
@@ -164,7 +178,7 @@ Inherits Beacon.ConfigGroup
 		  Var UseOptimizedRates As Boolean = False
 		  Var Overrides As New Dictionary
 		  
-		  If CommandLineOptions <> Nil And CommandLineOptions.HasKey("UseOptimizedHarvestingHealth") Then
+		  If (CommandLineOptions Is Nil) = False And CommandLineOptions.HasKey("UseOptimizedHarvestingHealth") Then
 		    Try
 		      UseOptimizedRates = CommandLineOptions.BooleanValue("UseOptimizedHarvestingHealth", False, False)
 		    Catch Err As RuntimeException
@@ -203,7 +217,6 @@ Inherits Beacon.ConfigGroup
 		    Next
 		  End If
 		  
-		  // Use the public properties here to toggle modified ...
 		  Var Config As New BeaconConfigs.HarvestRates
 		  Config.HarvestAmountMultiplier = HarvestAmountMultiplier
 		  Config.HarvestHealthMultiplier = HarvestHealthMultiplier
@@ -212,12 +225,7 @@ Inherits Beacon.ConfigGroup
 		  Config.ClampResourceHarvestDamage = ClampResourceHarvestDamage
 		  Config.UseOptimizedRates = UseOptimizedRates
 		  Config.mOverrides = Overrides
-		  
-		  // ... so it can be checked here to determine if any of the values are non-default
-		  If Config.Modified Or Config.mOverrides.KeyCount > 0 Then
-		    Config.Modified = False
-		    Return Config
-		  End If
+		  Return Config
 		End Function
 	#tag EndMethod
 
@@ -230,7 +238,7 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Function Override(Engram As Beacon.Engram) As Double
 		  If Engram <> Nil Then
-		    Return Self.mOverrides.Lookup(Engram.Path, 0)
+		    Return Self.mOverrides.Lookup(Engram.Path, 1.0)
 		  End If
 		End Function
 	#tag EndMethod

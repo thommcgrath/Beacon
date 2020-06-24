@@ -117,7 +117,7 @@ End
 
 	#tag Event
 		Sub SetupUI()
-		  Dim Multiplier As Double = Self.Config(False).Multiplier
+		  Var Multiplier As Double = Self.Config(False).Multiplier
 		  Self.LootScaleField.Value = Str(Multiplier, "0%")
 		  Self.ScaleSlider.Value = Multiplier * 100
 		End Sub
@@ -128,8 +128,8 @@ End
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.LootScale
 		  Static ConfigName As String = BeaconConfigs.LootScale.ConfigName
 		  
-		  Dim Document As Beacon.Document = Self.Document
-		  Dim Config As BeaconConfigs.LootScale
+		  Var Document As Beacon.Document = Self.Document
+		  Var Config As BeaconConfigs.LootScale
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.LootScale(Self.mConfigRef.Value)
@@ -179,7 +179,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double = CDbl(Me.Value)
+		  Var Value As Double = CDbl(Me.Value)
 		  If Value = 0 Then
 		    Return
 		  End If
@@ -204,6 +204,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

@@ -13,7 +13,7 @@ Inherits ControlCanvas
 
 	#tag Event
 		Sub MouseDrag(X As Integer, Y As Integer)
-		  Dim Pressed As Boolean = Self.mButtonRect <> Nil And Self.mButtonRect.Contains(X, Y)
+		  Var Pressed As Boolean = Self.mButtonRect <> Nil And Self.mButtonRect.Contains(X, Y)
 		  If Self.mPressed = True And Pressed = False Then
 		    Self.mPressed = False
 		    Self.Invalidate
@@ -54,7 +54,7 @@ Inherits ControlCanvas
 		  
 		  Const ButtonHeight = 30
 		  
-		  Dim InsetTop, InsetRight, InsetBottom, InsetLeft As Double
+		  Var InsetTop, InsetRight, InsetBottom, InsetLeft As Double
 		  If (Self.mBorders And Self.BorderTop) = Self.BorderTop Then
 		    InsetTop = 1
 		  End If
@@ -74,7 +74,7 @@ Inherits ControlCanvas
 		  G.FillRectangle(0, InsetTop, InsetLeft, G.Height - (InsetTop + InsetBottom))
 		  G.FillRectangle(G.Width - InsetRight, InsetTop, InsetRight, G.Height - (InsetTop + InsetBottom))
 		  
-		  Dim Clip As Graphics = G.Clip(InsetLeft, InsetTop, G.Width - (InsetLeft + InsetRight), G.Height - (InsetTop + InsetBottom))
+		  Var Clip As Graphics = G.Clip(InsetLeft, InsetTop, G.Width - (InsetLeft + InsetRight), G.Height - (InsetTop + InsetBottom))
 		  #if false
 		    Clip.DrawingColor = SystemColors.UnderPageBackgroundColor
 		    Clip.FillRectangle(0, 0, Clip.Width, Clip.Height)
@@ -86,19 +86,19 @@ Inherits ControlCanvas
 		  Clip.FontSize = 0
 		  Clip.Bold = True
 		  
-		  Dim ViewportWidth As Double = Clip.Width - 40
+		  Var ViewportWidth As Double = Clip.Width - 40
 		  
-		  Dim BodyHeight As Double = Clip.TextHeight(Self.mBody, ViewportWidth)
-		  Dim ContentHeight As Double = Clip.CapHeight + 20 + BodyHeight
+		  Var BodyHeight As Double = Clip.TextHeight(Self.mBody, ViewportWidth)
+		  Var ContentHeight As Double = Clip.CapHeight + 20 + BodyHeight
 		  If Self.mDetailURL <> "" Then
 		    ContentHeight = ContentHeight + ButtonHeight + 20
 		  End If
 		  
-		  Dim ViewportHeight As Double = Clip.Height - 40
+		  Var ViewportHeight As Double = Clip.Height - 40
 		  Self.mContentOverflow = Max(ContentHeight - ViewportHeight, 0)
 		  Self.mScrollPosition = Max(Min(Self.mScrollPosition, Self.mContentOverflow), 0)
 		  
-		  Dim TitleBaseline As Double = (20 + Clip.CapHeight) - Self.mScrollPosition
+		  Var TitleBaseline As Double = (20 + Clip.CapHeight) - Self.mScrollPosition
 		  Clip.DrawingColor = SystemColors.LabelColor
 		  Clip.Bold = False
 		  Clip.DrawText(Self.mBody, 20, TitleBaseline + 20 + Clip.CapHeight, ViewportWidth, False)
@@ -109,12 +109,12 @@ Inherits ControlCanvas
 		  If Self.mDetailURL <> "" Then
 		    Clip.Bold = False
 		    
-		    Dim ButtonTop As Double = Max(TitleBaseline + 40 + BodyHeight, Clip.Height - (ButtonHeight + 20))
-		    Dim CaptionWidth As Double = Clip.TextWidth("More Details")
-		    Dim ButtonWidth As Double = CaptionWidth + 40
-		    Dim ButtonLeft As Double = (Clip.Width - ButtonWidth) / 2
-		    Dim CaptionLeft As Double = ButtonLeft + 20
-		    Dim CaptionBaseline As Double = ButtonTop + ((ButtonHeight / 2) + (Clip.CapHeight / 2))
+		    Var ButtonTop As Double = Max(TitleBaseline + 40 + BodyHeight, Clip.Height - (ButtonHeight + 20))
+		    Var CaptionWidth As Double = Clip.TextWidth("More Details")
+		    Var ButtonWidth As Double = CaptionWidth + 40
+		    Var ButtonLeft As Double = (Clip.Width - ButtonWidth) / 2
+		    Var CaptionLeft As Double = ButtonLeft + 20
+		    Var CaptionBaseline As Double = ButtonTop + ((ButtonHeight / 2) + (Clip.CapHeight / 2))
 		    
 		    Clip.DrawingColor = SystemColors.ControlTextColor.AtOpacity(0.1)
 		    Clip.FillRoundRectangle(ButtonLeft, ButtonTop, ButtonWidth, ButtonHeight, 6, 6)
@@ -161,7 +161,7 @@ Inherits ControlCanvas
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Dim Mask As Integer = Self.BorderTop Or Self.BorderRight Or Self.BorderBottom Or Self.BorderLeft
+			  Var Mask As Integer = Self.BorderTop Or Self.BorderRight Or Self.BorderBottom Or Self.BorderLeft
 			  Value = Value And Mask
 			  If Self.mBorders <> Value Then
 			    Self.mBorders = Value

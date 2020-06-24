@@ -3,7 +3,7 @@ Protected Class GenericIterator
 Implements Iterator
 	#tag Method, Flags = &h0
 		Sub Constructor(Items() As Variant)
-		  Redim Self.mItems(Items.LastRowIndex)
+		  Self.mItems.ResizeTo(Items.LastRowIndex)
 		  For I As Integer = 0 To Self.mItems.LastRowIndex
 		    Self.mItems(I) = Items(I)
 		  Next

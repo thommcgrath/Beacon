@@ -1,10 +1,11 @@
 #tag Class
 Protected Class ModDetails
 	#tag Method, Flags = &h0
-		Sub Constructor(ModID As String, Name As String, ConsoleSafe As Boolean)
+		Sub Constructor(ModID As String, Name As String, ConsoleSafe As Boolean, DefaultEnabled As Boolean)
 		  Self.mModID = ModID
 		  Self.mName = Name
 		  Self.mConsoleSafe = ConsoleSafe
+		  Self.mDefaultEnabled = DefaultEnabled
 		End Sub
 	#tag EndMethod
 
@@ -18,8 +19,21 @@ Protected Class ModDetails
 		ConsoleSafe As Boolean
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mDefaultEnabled
+			End Get
+		#tag EndGetter
+		DefaultEnabled As Boolean
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mConsoleSafe As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDefaultEnabled As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -7,7 +7,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  Var Behaviors() As Beacon.CreatureBehavior = Self.All
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
-		    If Behavior.TargetCreature.ValidForMods(SourceDocument.Mods) = False Then
+		    If Behavior.TargetCreature.ValidForDocument(SourceDocument) = False Then
 		      Continue
 		    End If
 		    
@@ -28,7 +28,20 @@ Inherits Beacon.ConfigGroup
 		      If Behavior.TamedResistanceMultiplier <> 1.0 Then
 		        Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "TamedDinoClassResistanceMultipliers", "(ClassName=""" + Behavior.TargetClass + """,Multiplier=" + Behavior.TamedResistanceMultiplier.PrettyText + ")"))
 		      End If
+		      If Behavior.PreventTaming Then
+		        Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "PreventDinoTameClassNames", """" + Behavior.TargetClass + """"))
+		      End If
 		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MergeFrom(Other As Beacon.ConfigGroup)
+		  Var Source As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments(Other)
+		  Var Behaviors() As Beacon.CreatureBehavior = Source.All
+		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
+		    Self.Add(Behavior)
 		  Next
 		End Sub
 	#tag EndEvent
@@ -150,7 +163,7 @@ Inherits Beacon.ConfigGroup
 		        Behavior.ReplacementCreature = Replacement
 		      End If
 		      Config.Add(Behavior)
-		    Catch Err As TypeMismatchException
+		    Catch Err As RuntimeException
 		    End Try
 		  Next
 		  
@@ -168,7 +181,7 @@ Inherits Beacon.ConfigGroup
 		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
 		      Behavior.DamageMultiplier = Multiplier
 		      Config.Add(Behavior)
-		    Catch Err As TypeMismatchException
+		    Catch Err As RuntimeException
 		    End Try
 		  Next
 		  
@@ -186,7 +199,7 @@ Inherits Beacon.ConfigGroup
 		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
 		      Behavior.ResistanceMultiplier = Multiplier
 		      Config.Add(Behavior)
-		    Catch Err As TypeMismatchException
+		    Catch Err As RuntimeException
 		    End Try
 		  Next
 		  
@@ -204,7 +217,7 @@ Inherits Beacon.ConfigGroup
 		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
 		      Behavior.TamedDamageMultiplier = Multiplier
 		      Config.Add(Behavior)
-		    Catch Err As TypeMismatchException
+		    Catch Err As RuntimeException
 		    End Try
 		  Next
 		  
@@ -222,7 +235,18 @@ Inherits Beacon.ConfigGroup
 		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
 		      Behavior.TamedResistanceMultiplier = Multiplier
 		      Config.Add(Behavior)
-		    Catch Err As TypeMismatchException
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		  
+		  Var PreventTamedDinos() As Variant = ParsedData.AutoArrayValue("PreventDinoTameClassNames")
+		  For Each Entry As Variant In PreventTamedDinos
+		    Try
+		      Var TargetClass As String = Entry
+		      Var Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
+		      Behavior.PreventTaming = True
+		      Config.Add(Behavior)
+		    Catch Err As RuntimeException
 		    End Try
 		  Next
 		  

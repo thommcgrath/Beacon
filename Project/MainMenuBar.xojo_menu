@@ -345,115 +345,14 @@ Begin Menu MainMenuBar
          Visible = True
       End
    End
-   Begin MenuItem DocumentMenu
+   Begin MenuItem EditorMenu
       SpecialMenu = 0
-      Value = "Document"
+      Value = "Editor"
       Index = -2147483648
-      Text = "Document"
+      Text = "Editor"
       AutoEnabled = True
       AutoEnable = True
       Visible = True
-      Begin MenuItem DocumentRestoreConfigToDefault
-         SpecialMenu = 0
-         Value = "Restore Config to Default"
-         Index = -2147483648
-         Text = "Restore Config to Default"
-         AutoEnabled = False
-         AutoEnable = False
-         Visible = True
-      End
-      Begin MenuItem UntitledSeparator2
-         SpecialMenu = 0
-         Value = "-"
-         Index = -2147483648
-         Text = "-"
-         AutoEnabled = True
-         AutoEnable = True
-         Visible = True
-      End
-      Begin MenuItem DocumentAddBeacon
-         SpecialMenu = 0
-         Value = "Add Loot Source…"
-         Index = -2147483648
-         Text = "Add Loot Source…"
-         AutoEnabled = False
-         AutoEnable = False
-         Visible = True
-      End
-      Begin MenuItem DocumentDuplicateBeacon
-         SpecialMenu = 0
-         Value = "Duplicate Loot Source"
-         Index = -2147483648
-         Text = "Duplicate Loot Source"
-         AutoEnabled = False
-         AutoEnable = False
-         Visible = True
-      End
-      Begin MenuItem DocumentRemoveBeacon
-         SpecialMenu = 0
-         Value = "Remove Loot Source"
-         Index = -2147483648
-         Text = "Remove Loot Source"
-         AutoEnabled = False
-         AutoEnable = False
-         Visible = True
-      End
-      Begin MenuItem UntitledSeparator1
-         SpecialMenu = 0
-         Value = "-"
-         Index = -2147483648
-         Text = "-"
-         AutoEnabled = True
-         AutoEnable = True
-         Visible = True
-      End
-      Begin MenuItem DocumentAddItemSet
-         SpecialMenu = 0
-         Value = "Add Item Set"
-         Index = -2147483648
-         Text = "Add Item Set"
-         AutoEnabled = False
-         AutoEnable = False
-         SubMenu = True
-         Visible = True
-         Begin MenuItem AddItemSetEmpty
-            SpecialMenu = 0
-            Value = "New Empty Set"
-            Index = -2147483648
-            Text = "New Empty Set"
-            AutoEnabled = False
-            AutoEnable = False
-            Visible = True
-         End
-      End
-      Begin MenuItem DocumentRemoveItemSet
-         SpecialMenu = 0
-         Value = "Remove Item Set"
-         Index = -2147483648
-         Text = "Remove Item Set"
-         AutoEnabled = False
-         AutoEnable = False
-         Visible = True
-      End
-      Begin MenuItem UntitledSeparator7
-         SpecialMenu = 0
-         Value = "-"
-         Index = -2147483648
-         Text = "-"
-         AutoEnabled = True
-         AutoEnable = True
-         Visible = True
-      End
-      Begin MenuItem DocumentRebuildPresets
-         SpecialMenu = 0
-         Value = "Rebuild Item Sets from Presets"
-         Index = -2147483648
-         Text = "Rebuild Item Sets from Presets"
-         PCAltKey = True
-         AutoEnabled = False
-         AutoEnable = False
-         Visible = True
-      End
    End
    Begin MenuItem WindowMenu
       SpecialMenu = 0
@@ -552,6 +451,24 @@ Begin Menu MainMenuBar
          Value = "Admin Spawn Codes"
          Index = -2147483648
          Text = "Admin Spawn Codes"
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem HelpArkConfigFileReference
+         SpecialMenu = 0
+         Value = "Ark Config File Reference"
+         Index = -2147483648
+         Text = "Ark Config File Reference"
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem UntitledSeparator1
+         SpecialMenu = 0
+         Value = "-"
+         Index = -2147483648
+         Text = "-"
          AutoEnabled = True
          AutoEnable = True
          Visible = True

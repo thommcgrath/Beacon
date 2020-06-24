@@ -7,17 +7,17 @@ Protected Class IdentityManager
 		  // When trying to save the current user, the server will reply with a failure.
 		  // We should consider this a success though. So if the creation failed but the
 		  // UserID and PublicKey match what we're saving, then manually consider it a success
-		  Dim Success As Boolean = Response.Success
+		  Var Success As Boolean = Response.Success
 		  Try
 		    If Success = False And Response.JSON IsA Dictionary Then
-		      Dim Dict As Dictionary = Response.JSON
-		      Dim PublicKey As String = Dict.Value("public_key")
-		      Dim UserID As String = Dict.Value("user_id")
+		      Var Dict As Dictionary = Response.JSON
+		      Var PublicKey As String = Dict.Value("public_key")
+		      Var UserID As String = Dict.Value("user_id")
 		      
-		      Dim ConvertedPublicKey As MemoryBlock = BeaconEncryption.PEMDecodePublicKey(PublicKey)
-		      Dim TestValue As MemoryBlock = Crypto.GenerateRandomBytes(12)
-		      Dim Encrypted As MemoryBlock = Crypto.RSAEncrypt(TestValue, ConvertedPublicKey)
-		      Dim Decrypted As MemoryBlock = Crypto.RSADecrypt(Encrypted, Self.mPendingIdentity.PrivateKey)
+		      Var ConvertedPublicKey As MemoryBlock = BeaconEncryption.PEMDecodePublicKey(PublicKey)
+		      Var TestValue As MemoryBlock = Crypto.GenerateRandomBytes(12)
+		      Var Encrypted As MemoryBlock = Crypto.RSAEncrypt(TestValue, ConvertedPublicKey)
+		      Var Decrypted As MemoryBlock = Crypto.RSADecrypt(Encrypted, Self.mPendingIdentity.PrivateKey)
 		      
 		      If Self.mPendingIdentity.Identifier = UserID And TestValue = Decrypted Then
 		        Success = True
@@ -42,8 +42,8 @@ Protected Class IdentityManager
 		  
 		  If Response.Success Then
 		    Try
-		      Dim Dict As Dictionary = Response.JSON
-		      Dim Token As String = Dict.Value("session_id")
+		      Var Dict As Dictionary = Response.JSON
+		      Var Token As String = Dict.Value("session_id")
 		      Preferences.OnlineToken = Token
 		      
 		      Self.RefreshUserDetails()
@@ -82,7 +82,7 @@ Protected Class IdentityManager
 		  
 		  If Response.Success Then
 		    Try
-		      Dim Identity As Beacon.Identity
+		      Var Identity As Beacon.Identity
 		      If Self.mUserPassword <> "" Then
 		        Identity = Beacon.Identity.FromUserDictionary(Response.JSON, Self.mUserPassword)
 		        Self.CurrentIdentity(False) = Identity
@@ -127,12 +127,12 @@ Protected Class IdentityManager
 		  End If
 		  
 		  Try
-		    Dim Contents As String = Self.mFile.Read(Encodings.UTF8)
+		    Var Contents As String = Self.mFile.Read(Encodings.UTF8)
 		    If Contents = "" Then
 		      Return
 		    End If
 		    
-		    Dim Dict As Dictionary = Beacon.ParseJSON(Contents)
+		    Var Dict As Dictionary = Beacon.ParseJSON(Contents)
 		    Self.mCurrentIdentity = Beacon.Identity.Import(Dict)
 		  Catch Err As RuntimeException
 		  End Try
@@ -155,12 +155,12 @@ Protected Class IdentityManager
 		  Self.StartProcess()
 		  Self.mPendingIdentity = New Beacon.Identity()
 		  
-		  Dim Params As New Dictionary
+		  Var Params As New Dictionary
 		  Params.Value("user_id") = Self.mPendingIdentity.Identifier
 		  Params.Value("public_key") = Self.mPendingIdentity.PublicKey
 		  
-		  Dim Body As String = Beacon.GenerateJSON(Params, False)
-		  Dim Request As New BeaconAPI.Request("user", "POST", Body, "application/json", AddressOf APICallback_CreateUser)
+		  Var Body As String = Beacon.GenerateJSON(Params, False)
+		  Var Request As New BeaconAPI.Request("user", "POST", Body, "application/json", AddressOf APICallback_CreateUser)
 		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndMethod
@@ -183,9 +183,9 @@ Protected Class IdentityManager
 		    Return
 		  End If
 		  
-		  Dim OldUserID As String = If(Self.mCurrentIdentity <> Nil, Self.mCurrentIdentity.Identifier, "")
-		  Dim NewUserID As String = If(Value <> Nil, Value.Identifier, "")
-		  Dim ReplaceToken As Boolean = CheckSessionToken And OldUserID <> NewUserID
+		  Var OldUserID As String = If(Self.mCurrentIdentity <> Nil, Self.mCurrentIdentity.Identifier, "")
+		  Var NewUserID As String = If(Value <> Nil, Value.Identifier, "")
+		  Var ReplaceToken As Boolean = CheckSessionToken And OldUserID <> NewUserID
 		  
 		  Self.MergeIdentities(Value, Self.mCurrentIdentity)
 		  Self.mCurrentIdentity = Value
@@ -240,13 +240,13 @@ Protected Class IdentityManager
 		Private Sub GetSessionToken()
 		  Self.StartProcess()
 		  
-		  Dim Identity As Beacon.Identity = Self.CurrentIdentity
+		  Var Identity As Beacon.Identity = Self.CurrentIdentity
 		  If Identity = Nil Then
 		    RaiseEvent NeedsLogin()
 		    Return
 		  End If
 		  
-		  Dim Request As New BeaconAPI.Request("session", "POST", AddressOf APICallback_GetSessionToken)
+		  Var Request As New BeaconAPI.Request("session", "POST", AddressOf APICallback_GetSessionToken)
 		  Request.Sign(Identity)
 		  BeaconAPI.Send(Request)
 		End Sub
@@ -274,12 +274,12 @@ Protected Class IdentityManager
 		  // Yeah, the private key should never leave the computer, but there's no way to handle this
 		  // otherwise. And, to be fair, the key and user are about to be discarded anyway.
 		  
-		  Dim MergeKeys As New Dictionary
+		  Var MergeKeys As New Dictionary
 		  MergeKeys.Value("action") = "merge"
 		  MergeKeys.Value("user_id") = Source.Identifier
 		  MergeKeys.Value("private_key") = Source.PrivateKey
 		  
-		  Dim Request As New BeaconAPI.Request("user", "POST", Beacon.GenerateJSON(MergeKeys, False), "application/json", AddressOf APICallback_MergeUser)
+		  Var Request As New BeaconAPI.Request("user", "POST", Beacon.GenerateJSON(MergeKeys, False), "application/json", AddressOf APICallback_MergeUser)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(Request)
 		  
@@ -309,10 +309,10 @@ Protected Class IdentityManager
 		  Self.StartProcess()
 		  Self.mUserPassword = UserPassword
 		  
-		  Dim Fields As New Dictionary
+		  Var Fields As New Dictionary
 		  Fields.Value("hardware_id") = Beacon.HardwareID
 		  
-		  Dim Request As New BeaconAPI.Request("user", "GET", Fields, AddressOf APICallback_RefreshUserDetails)
+		  Var Request As New BeaconAPI.Request("user", "GET", Fields, AddressOf APICallback_RefreshUserDetails)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(Request)
 		End Sub
@@ -334,7 +334,7 @@ Protected Class IdentityManager
 		  End If
 		  
 		  If Self.mCurrentIdentity <> Nil Then
-		    Dim Writer As New Beacon.JSONWriter(Self.mCurrentIdentity.Export, Self.mFile)
+		    Var Writer As New Beacon.JSONWriter(Self.mCurrentIdentity.Export, Self.mFile)
 		    Writer.Start
 		  Else
 		    If Self.mFile.Exists Then

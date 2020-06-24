@@ -9,7 +9,7 @@ Implements ObservationKit.Observable
 		    Self.mObservers = New Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Var Refs() As WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -50,7 +50,7 @@ Implements ObservationKit.Observable
 		Private Sub mPulseTimer_Action(Sender As Timer)
 		  #Pragma Unused Sender
 		  
-		  Dim Amount As Double = Self.PulseAmount
+		  Var Amount As Double = Self.PulseAmount
 		  If Self.mLastPulseAmount <> Amount Then
 		    Self.NotifyObservers("PulseAmount", Amount)
 		    Self.mLastPulseAmount = Amount
@@ -78,7 +78,7 @@ Implements ObservationKit.Observable
 		    Self.mObservers = New Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Var Refs() As WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -89,7 +89,7 @@ Implements ObservationKit.Observable
 		      Continue
 		    End If
 		    
-		    Dim Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
+		    Var Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
 		    Observer.ObservedValueChanged(Self, Key, Value)
 		  Next
 		End Sub
@@ -103,7 +103,7 @@ Implements ObservationKit.Observable
 		    Self.mObservers = New Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Var Refs() As WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -138,6 +138,50 @@ Implements ObservationKit.Observable
 		Icon As Picture
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mLoading
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mLoading = Value Then
+			    Return
+			  End If
+			  
+			  Self.mLoading = Value
+			  Self.mLoadingState = 0
+			  Self.mLastLoadingLoopTime = System.Microseconds
+			  Self.NotifyObservers("Loading", Value)
+			End Set
+		#tag EndSetter
+		Loading As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Self.mLoading = False Then
+			    Return 0
+			  End If
+			  
+			  Const Duration = 1500000
+			  Var Now As Double = System.Microseconds
+			  Var Elapsed As Double = Now - Self.mLastLoadingLoopTime
+			  If Elapsed > Duration Then
+			    Elapsed = Elapsed - (Floor(Elapsed / Duration) * Duration)
+			    Self.mLastLoadingLoopTime = Now - Elapsed
+			  End If
+			  If Elapsed > Duration / 2 Then
+			    Elapsed = Duration - Elapsed
+			  End If
+			  Return Elapsed / Duration
+			End Get
+		#tag EndGetter
+		LoadingState As Double
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mCaption As String
 	#tag EndProperty
@@ -147,11 +191,23 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mLastLoadingLoopTime As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mLastPulseAmount As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mLastPulseTime As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLoading As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLoadingState As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -208,8 +264,8 @@ Implements ObservationKit.Observable
 			    Return 0
 			  End If
 			  
-			  Dim Elapsed As Double = (System.Microseconds - Self.mLastPulseTime) - (Self.PulseTimeout * 1000)
-			  Dim Amount As Double = Elapsed / (Self.PulseDuration * 1000)
+			  Var Elapsed As Double = (System.Microseconds - Self.mLastPulseTime) - (Self.PulseTimeout * 1000)
+			  Var Amount As Double = Elapsed / (Self.PulseDuration * 1000)
 			  If Amount >= 1.0 Then
 			    Self.mLastPulseTime = System.Microseconds
 			  End If

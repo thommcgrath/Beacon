@@ -15,17 +15,17 @@ Protected Class ConfigValue
 		  End If
 		  
 		  For Each Value As Beacon.ConfigValue In Values
-		    Dim SimplifiedKey As String = Value.SimplifiedKey
+		    Var SimplifiedKey As String = Value.SimplifiedKey
 		    
-		    Dim Header As String = Value.Header
-		    Dim Section As Dictionary
+		    Var Header As String = Value.Header
+		    Var Section As Dictionary
 		    If Dict.HasKey(Header) Then
 		      Section = Dict.Value(Header)
 		    Else
 		      Section = New Dictionary
 		    End If
 		    
-		    Dim Arr() As String
+		    Var Arr() As String
 		    If Section.HasKey(SimplifiedKey) Then
 		      Arr = Section.Value(SimplifiedKey)
 		    End If
@@ -71,7 +71,7 @@ Protected Class ConfigValue
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Dim Idx As Integer = Self.mKey.IndexOf("[")
+			  Var Idx As Integer = Self.mKey.IndexOf("[")
 			  If Idx = -1 Then
 			    Return Self.mKey
 			  Else

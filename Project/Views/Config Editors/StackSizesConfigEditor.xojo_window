@@ -213,9 +213,11 @@ Begin ConfigEditor StackSizesConfigEditor
       TextUnit        =   0
       Top             =   88
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   764
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -253,16 +255,16 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub ParsingFinished(ParsedData As Dictionary)
+		Function ParsingFinished(Document As Beacon.Document) As Boolean
 		  // Don't import the global multiplier, it would likely be confusing for users
 		  
-		  If ParsedData = Nil Then
-		    Return
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.StackSizes.ConfigName) = False Then
+		    Return True
 		  End If
 		  
-		  Var OtherConfig As BeaconConfigs.StackSizes = BeaconConfigs.StackSizes.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
+		  Var OtherConfig As BeaconConfigs.StackSizes = BeaconConfigs.StackSizes(Document.ConfigGroup(BeaconConfigs.StackSizes.ConfigName))
 		  If OtherConfig = Nil Or OtherConfig.Count = 0 Then
-		    Return
+		    Return True
 		  End If
 		  
 		  Var Config As BeaconConfigs.StackSizes = Self.Config(True)
@@ -272,7 +274,8 @@ End
 		  Next
 		  Self.Changed = True
 		  Self.UpdateList(Engrams)
-		End Sub
+		  Return True
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -325,7 +328,7 @@ End
 		  Var Config As BeaconConfigs.StackSizes = Self.Config(False)
 		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
 		  
-		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Stackables", CurrentEngrams, Self.Document.Mods, False)
+		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Stackables", CurrentEngrams, Self.Document.Mods, EngramSelectorDialog.SelectModes.ImpliedMultiple)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
@@ -350,7 +353,7 @@ End
 		  Var Config As BeaconConfigs.StackSizes = Self.Config(False)
 		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
 		  
-		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Stackables", CurrentEngrams, Self.Document.Mods, True)
+		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Stackables", CurrentEngrams, Self.Document.Mods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
@@ -607,6 +610,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

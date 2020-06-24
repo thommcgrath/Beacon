@@ -2,6 +2,12 @@
 Protected Class Creature
 Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
+		Function AlternateLabel() As NullableString
+		  Return Self.mAlternateLabel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Availability() As UInt64
 		  Return mAvailability
 		End Function
@@ -45,8 +51,11 @@ Implements Beacon.Blueprint
 		  Self.mIncubationTime = Source.mIncubationTime
 		  Self.mMatureTime = Source.mMatureTime
 		  Self.mStats = Source.mStats.Clone
+		  Self.mStatsMask = Source.mStatsMask
+		  Self.mMinMatingInterval = Source.mMinMatingInterval
+		  Self.mMaxMatingInterval = Source.mMaxMatingInterval
 		  
-		  Redim Self.mTags(-1)
+		  Self.mTags.ResizeTo(-1)
 		  For Each Tag As String In Source.mTags
 		    Self.mTags.AddRow(Tag)
 		  Next
@@ -128,6 +137,18 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MaxMatingInterval() As UInt64
+		  Return Self.mMaxMatingInterval
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MinMatingInterval() As UInt64
+		  Return Self.mMinMatingInterval
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ModID() As v4UUID
 		  Return Self.mModID
 		End Function
@@ -157,8 +178,8 @@ Implements Beacon.Blueprint
 		    Return 1
 		  End If
 		  
-		  Dim SelfPath As String = Self.Path
-		  Dim OtherPath As String = Other.Path
+		  Var SelfPath As String = Self.Path
+		  Var OtherPath As String = Other.Path
 		  Return SelfPath.Compare(OtherPath, ComparisonOptions.CaseSensitive)
 		End Function
 	#tag EndMethod
@@ -188,6 +209,12 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function StatsMask() As UInt16
+		  Return Self.mStatsMask
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function StatTamedValue(Stat As Beacon.Stat) As Double
 		  Return Self.StatValue(Stat, Self.KeyTamed)
 		End Function
@@ -199,7 +226,7 @@ Implements Beacon.Blueprint
 		    Return Self.MissingStatValue
 		  End If
 		  
-		  Dim Dict As Dictionary = Self.mStats.Value(Stat.Index)
+		  Var Dict As Dictionary = Self.mStats.Value(Stat.Index)
 		  Return Dict.Lookup(Key, Self.MissingStatValue)
 		End Function
 	#tag EndMethod
@@ -212,8 +239,8 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function Tags() As String()
-		  Dim Clone() As String
-		  Redim Clone(Self.mTags.LastRowIndex)
+		  Var Clone() As String
+		  Clone.ResizeTo(Self.mTags.LastRowIndex)
 		  For I As Integer = 0 To Self.mTags.LastRowIndex
 		    Clone(I) = Self.mTags(I)
 		  Next
@@ -247,6 +274,16 @@ Implements Beacon.Blueprint
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function UsesStats() As Beacon.Stat()
+		  Return Beacon.Stats.ForMask(Self.mStatsMask)
+		End Function
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h1
+		Protected mAlternateLabel As NullableString
+	#tag EndProperty
 
 	#tag Property, Flags = &h1
 		Protected mAvailability As UInt64
@@ -269,6 +306,14 @@ Implements Beacon.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
+		Protected mMaxMatingInterval As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mMinMatingInterval As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mModID As v4UUID
 	#tag EndProperty
 
@@ -286,6 +331,10 @@ Implements Beacon.Blueprint
 
 	#tag Property, Flags = &h1
 		Protected mStats As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mStatsMask As UInt16
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

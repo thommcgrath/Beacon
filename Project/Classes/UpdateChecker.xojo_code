@@ -27,7 +27,7 @@ Protected Class UpdateChecker
 		  AddHandler Self.mSocket.ContentReceived, WeakAddressOf Self.mSocket_ContentReceived
 		  Self.mSocket.RequestHeader("Cache-Control") = "no-cache"
 		  
-		  Dim Params As New Dictionary
+		  Var Params As New Dictionary
 		  Params.Value("build") = App.BuildNumber.ToString
 		  Params.Value("stage") = App.StageCode.ToString
 		  If Self.Is64Bit Then
@@ -44,7 +44,7 @@ Protected Class UpdateChecker
 		    Params.Value("platform") = "lin"
 		    
 		    Try
-		      Dim DebianFile As New FolderItem("/etc/debian_version", FolderItem.PathModes.Native)
+		      Var DebianFile As New FolderItem("/etc/debian_version", FolderItem.PathModes.Native)
 		      Params.Value("installer_format") = If(DebianFile.Exists, "deb", "rpm")
 		    Catch Err As RuntimeException
 		      Params.Value("installer_format") = "rpm"
@@ -64,12 +64,12 @@ Protected Class UpdateChecker
 		  
 		  #If TargetWin32 Then
 		    Soft Declare Function GetCurrentProcess Lib "kernel32"  As Integer
-		    Dim ProcessID As Integer = GetCurrentProcess
+		    Var ProcessID As Integer = GetCurrentProcess
 		    
 		    If System.IsFunctionAvailable("IsWow64Process2", "kernel32") Then
 		      Soft Declare Function IsWow64Process2 Lib "kernel32" (Handle As Integer, ByRef ProcessMachine As UInt16, ByRef NativeMachine As UInt16) As Boolean
 		      
-		      Dim ProcessMachine, NativeMachine As UInt16
+		      Var ProcessMachine, NativeMachine As UInt16
 		      If Not IsWow64Process2(ProcessID, ProcessMachine, NativeMachine) Then
 		        Return False
 		      End If
@@ -78,7 +78,7 @@ Protected Class UpdateChecker
 		    ElseIf System.IsFunctionAvailable("IsWow64Process", "kernel32") Then
 		      Soft Declare Function IsWow64Process Lib "kernel32" (Handle As Integer, ByRef Wow64Process As Boolean) As Boolean
 		      
-		      Dim Wow64Process As Boolean
+		      Var Wow64Process As Boolean
 		      If Not IsWow64Process(ProcessID, Wow64Process) Then
 		        Return False
 		      End If
@@ -101,7 +101,7 @@ Protected Class UpdateChecker
 		  
 		  Self.mChecking = False
 		  
-		  Dim Dict As Dictionary
+		  Var Dict As Dictionary
 		  Try
 		    Dict = Beacon.ParseJSON(Content)
 		  Catch Err As RuntimeException
@@ -112,11 +112,11 @@ Protected Class UpdateChecker
 		  End Try
 		  
 		  If Dict.HasKey("notices") Then
-		    Dim Notices() As Variant = Dict.Value("notices")
+		    Var Notices() As Variant = Dict.Value("notices")
 		    Dict.Remove("notices")
 		    
 		    For Each Notice As Dictionary In Notices
-		      Dim Notification As New Beacon.UserNotification(Notice.Value("message"))
+		      Var Notification As New Beacon.UserNotification(Notice.Value("message"))
 		      Notification.SecondaryMessage = Notice.Value("secondary_message")
 		      Notification.ActionURL = Notice.Value("action_url")
 		      Notification.DoNotResurrect = True
@@ -133,7 +133,7 @@ Protected Class UpdateChecker
 		  End If
 		  
 		  Try
-		    Dim LatestBuild As Integer = Dict.Value("build")
+		    Var LatestBuild As Integer = Dict.Value("build")
 		    If LatestBuild <= App.BuildNumber Then
 		      If Not Self.mSilent Then
 		        RaiseEvent NoUpdate()
@@ -141,11 +141,11 @@ Protected Class UpdateChecker
 		      Return
 		    End If
 		    
-		    Dim Version As String = Dict.Value("version")
-		    Dim NotesHTML As String = Dict.Value("notes")
-		    Dim NotesURL As String = Dict.Lookup("notes_url", "")
-		    Dim PreviewText As String = Dict.Lookup("preview", "")
-		    Dim Location As Dictionary
+		    Var Version As String = Dict.Value("version")
+		    Var NotesHTML As String = Dict.Value("notes")
+		    Var NotesURL As String = Dict.Lookup("notes_url", "")
+		    Var PreviewText As String = Dict.Lookup("preview", "")
+		    Var Location As Dictionary
 		    #if TargetMacOS
 		      Location = Dict.Value("mac")
 		    #elseif TargetWin32
@@ -157,8 +157,8 @@ Protected Class UpdateChecker
 		        RaiseEvent NoUpdate()
 		      End If
 		    #endif
-		    Dim PackageURL As String = Location.Value("url")
-		    Dim Signature As String = Location.Value("signature")
+		    Var PackageURL As String = Location.Value("url")
+		    Var Signature As String = Location.Value("signature")
 		    
 		    RaiseEvent UpdateAvailable(Version, PreviewText, NotesHTML, NotesURL, PackageURL, Signature)
 		  Catch Err As KeyNotFoundException
@@ -201,7 +201,7 @@ Protected Class UpdateChecker
 
 	#tag Method, Flags = &h21
 		Private Shared Function OSVersion() As String
-		  Dim MajorVersion, MinorVersion, BugVersion As Integer
+		  Var MajorVersion, MinorVersion, BugVersion As Integer
 		  OSVersion(MajorVersion, MinorVersion, BugVersion)
 		  Return Str(MajorVersion, "-0") + "." + Str(MinorVersion, "-0") + "." + Str(BugVersion, "-0")
 		End Function
@@ -214,8 +214,8 @@ Protected Class UpdateChecker
 		    Declare Function ProcessInfo Lib "AppKit" Selector "processInfo" (ClassRef As Ptr) As Ptr
 		    Declare Function OperatingSystemVersion Lib "AppKit" Selector "operatingSystemVersion" (NSProcessInfo As Ptr) As MacOSVersion
 		    
-		    Dim Info As Ptr = ProcessInfo(NSClassFromString("NSProcessInfo"))
-		    Dim Struct As MacOSVersion = OperatingSystemVersion(Info)
+		    Var Info As Ptr = ProcessInfo(NSClassFromString("NSProcessInfo"))
+		    Var Struct As MacOSVersion = OperatingSystemVersion(Info)
 		    
 		    MajorVersion = Struct.Major
 		    MinorVersion = Struct.Minor
@@ -224,7 +224,7 @@ Protected Class UpdateChecker
 		    If System.IsFunctionAvailable("RtlGetVersion", "ntdll.dll") Then
 		      Soft Declare Function RtlGetVersion Lib "ntdll.dll" (ByRef VersionInformation As WinOSVersion) As Int32
 		      
-		      Dim Struct As WinOSVersion
+		      Var Struct As WinOSVersion
 		      Struct.OSVersionInfoSize = WinOSVersion.Size
 		      
 		      Call RtlGetVersion(Struct)
@@ -250,8 +250,8 @@ Protected Class UpdateChecker
 		  End If
 		  
 		  Try
-		    Dim Stream As BinaryStream = BinaryStream.Open(File, False)
-		    Dim Contents As MemoryBlock = Stream.Read(Stream.Length)
+		    Var Stream As BinaryStream = BinaryStream.Open(File, False)
+		    Var Contents As MemoryBlock = Stream.Read(Stream.Length)
 		    Stream.Close
 		    
 		    Return Crypto.RSAVerifySignature(Contents, DecodeHex(Signature), PublicKey)

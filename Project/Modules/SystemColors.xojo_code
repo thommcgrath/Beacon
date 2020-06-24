@@ -2,7 +2,7 @@
 Protected Module SystemColors
 	#tag Method, Flags = &h1
 		Protected Function AlternateSelectedControlTextColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("alternateSelectedControlTextColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("alternateSelectedControlTextColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -115,7 +115,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function ControlAccentColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("controlAccentColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("controlAccentColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -126,7 +126,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function ControlBackgroundColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("controlBackgroundColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("controlBackgroundColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -137,7 +137,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function ControlColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("controlColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("controlColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -148,7 +148,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function ControlTextColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("controlTextColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("controlTextColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -159,7 +159,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function DisabledControlTextColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("disabledControlTextColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("disabledControlTextColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -170,7 +170,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function FindHighlightColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("findHighlightColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("findHighlightColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -181,7 +181,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function GridColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("gridColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("gridColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -192,7 +192,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function HeaderTextColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("headerTextColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("headerTextColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -203,7 +203,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function HighlightColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("highlightColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("highlightColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -232,7 +232,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function KeyboardFocusIndicatorColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("keyboardFocusIndicatorColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("keyboardFocusIndicatorColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -243,7 +243,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function LabelColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("labelColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("labelColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -254,7 +254,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function LinkColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("linkColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("linkColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -265,21 +265,21 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function ListEvenRowColor() As Color
-		  Dim Colors() As Color = SystemColors.RowColors
+		  Var Colors() As Color = SystemColors.RowColors
 		  Return Colors(0)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function ListOddRowColor() As Color
-		  Dim Colors() As Color = SystemColors.RowColors
+		  Var Colors() As Color = SystemColors.RowColors
 		  Return Colors(1)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function PlaceholderTextColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("placeholderTextColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("placeholderTextColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -290,7 +290,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function QuaternaryLabelColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("quaternaryLabelColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("quaternaryLabelColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -301,18 +301,18 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function RowColors() As Color()
-		  Dim Results() As SystemColors.NSColor = SystemColors.NSColor.GetAlternatingRowColors
-		  Dim Colors() As Color
-		  Redim Colors(Results.LastRowIndex)
+		  Var Results() As SystemColors.NSColor = SystemColors.NSColor.GetAlternatingRowColors
+		  Var Colors() As Color
+		  Colors.ResizeTo(Results.LastRowIndex)
 		  
 		  For I As Integer = 0 To Results.LastRowIndex
 		    Colors(I) = Results(I).ColorValue
 		  Next
 		  
 		  If Colors.LastRowIndex = -1 Then
-		    Redim Colors(1)
+		    Colors.ResizeTo(1)
 		    Colors(0) = If(SystemColors.IsDarkMode, &c1E1E1E00, &cFFFFFF00)
-		    Colors(1) = If(SystemColors.IsDarkMode, &cFFFFFFF3, &cF4F5F500)
+		    Colors(1) = If(SystemColors.IsDarkMode, &cFFFFFF00, &cF4F5F500)
 		  End If
 		  
 		  // This is to work around an issue where the even dark color isn't getting the proper alpha channel
@@ -327,7 +327,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function SecondaryLabelColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("secondaryLabelColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("secondaryLabelColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -338,7 +338,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function SelectedContentBackgroundColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("selectedContentBackgroundColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("selectedContentBackgroundColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -349,7 +349,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function SelectedControlColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("selectedControlColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("selectedControlColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -360,7 +360,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function SelectedControlTextColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("selectedControlTextColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("selectedControlTextColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -371,7 +371,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function SelectedMenuItemTextColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("selectedMenuItemTextColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("selectedMenuItemTextColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -382,7 +382,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function SelectedTextBackgroundColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("selectedTextBackgroundColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("selectedTextBackgroundColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -393,7 +393,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function SelectedTextColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("selectedTextColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("selectedTextColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -404,7 +404,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function SeparatorColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("separatorColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("separatorColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -415,7 +415,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function ShadowColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("shadowColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("shadowColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -426,7 +426,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function SystemBlueColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("systemBlueColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("systemBlueColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -437,7 +437,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function SystemBrownColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("systemBrownColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("systemBrownColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -448,7 +448,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function SystemGrayColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("systemGrayColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("systemGrayColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -459,7 +459,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function SystemGreenColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("systemGreenColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("systemGreenColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -470,7 +470,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function SystemOrangeColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("systemOrangeColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("systemOrangeColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -481,7 +481,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function SystemPinkColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("systemPinkColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("systemPinkColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -492,7 +492,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function SystemPurpleColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("systemPurpleColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("systemPurpleColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -503,7 +503,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function SystemRedColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("systemRedColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("systemRedColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -514,7 +514,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function SystemYellowColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("systemYellowColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("systemYellowColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -525,7 +525,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function TertiaryLabelColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("tertiaryLabelColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("tertiaryLabelColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -536,7 +536,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function TextBackgroundColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("textBackgroundColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("textBackgroundColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -547,7 +547,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function TextColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("textColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("textColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -558,7 +558,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function UnderPageBackgroundColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("underPageBackgroundColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("underPageBackgroundColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -569,7 +569,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function UnemphasizedSelectedContentBackgroundColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("unemphasizedSelectedContentBackgroundColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("unemphasizedSelectedContentBackgroundColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -580,7 +580,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function UnemphasizedSelectedTextBackgroundColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("unemphasizedSelectedTextBackgroundColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("unemphasizedSelectedTextBackgroundColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -591,7 +591,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function UnemphasizedSelectedTextColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("unemphasizedSelectedTextColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("unemphasizedSelectedTextColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -602,7 +602,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function WindowBackgroundColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("windowBackgroundColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("windowBackgroundColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If
@@ -613,7 +613,7 @@ Protected Module SystemColors
 
 	#tag Method, Flags = &h1
 		Protected Function WindowFrameTextColor() As Color
-		  Dim Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("windowFrameTextColor")
+		  Var Value As SystemColors.NSColor = SystemColors.NSColor.GetSystemColor("windowFrameTextColor")
 		  If Value <> Nil Then
 		    Return Value.ColorValue
 		  End If

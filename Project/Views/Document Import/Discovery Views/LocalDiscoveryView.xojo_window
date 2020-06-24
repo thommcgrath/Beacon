@@ -91,7 +91,7 @@ Begin DiscoveryView LocalDiscoveryView
       Multiline       =   True
       ReadOnly        =   False
       Scope           =   2
-      ScrollbarHorizontal=   False
+      ScrollbarHorizontal=   True
       ScrollbarVertical=   True
       Styled          =   False
       TabIndex        =   2
@@ -300,13 +300,44 @@ Begin DiscoveryView LocalDiscoveryView
       Width           =   560
    End
    Begin ClipboardWatcher Watcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
       Period          =   500
       Scope           =   2
       TabPanelIndex   =   0
+   End
+   Begin UITweaks.ResizedPopupMenu MapMenu
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   151
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      SelectedRowIndex=   0
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   356
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   214
    End
 End
 #tag EndWindow
@@ -335,20 +366,33 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Resize()
+		  Const NaturalMenuWidth = 200
+		  
+		  Var MinLeft As Integer = Self.ChooseFileButton.Left + Self.ChooseFileButton.Width + 12
+		  Var MaxWidth As Integer = Self.CancelButton.Left - (MinLeft + 12)
+		  Var MenuWidth As Integer = Min(NaturalMenuWidth, MaxWidth)
+		  
+		  Self.MapMenu.Width = MenuWidth
+		  Self.MapMenu.Left = MinLeft + ((MaxWidth - MenuWidth) / 2)
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h0
 		Sub AddFile(File As FolderItem, DetectSibling As Boolean = True)
-		  Dim Content As String = Self.ReadIniFile(File)
+		  Var Content As String = Self.ReadIniFile(File)
 		  If Content = "" Then
 		    Return
 		  End If
 		  
 		  Content  = Content.DefineEncoding(Encodings.UTF8)
-		  Dim Type As ConfigFileType = Self.DetectConfigType(Content)
+		  Var Type As ConfigFileType = Self.DetectConfigType(Content)
 		  Self.SetSwitcherForType(Type)
 		  
 		  If Self.ConfigArea.Value.Length <> 0 Then
-		    Dim Dialog As New MessageDialog
+		    Var Dialog As New MessageDialog
 		    Dialog.Title = ""
 		    Dialog.Message = "Would you like to replace the existing content, or add this file to it?"
 		    Select Case Type
@@ -363,7 +407,7 @@ End
 		    Dialog.CancelButton.Visible = True
 		    Dialog.AlternateActionButton.Caption = "Add To"
 		    Dialog.AlternateActionButton.Visible = True
-		    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		    Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
 		    
 		    Select Case Choice
 		    Case Dialog.ActionButton
@@ -377,11 +421,18 @@ End
 		    Self.ConfigArea.Value = Content.Trim
 		  End If
 		  
+		  Select Case Type
+		  Case ConfigFileType.GameIni
+		    Self.mGameIniFile = File
+		  Case ConfigFileType.GameUserSettingsIni
+		    Self.mGameUserSettingsIniFile = File
+		  End Select
+		  
 		  If Not DetectSibling Then
 		    Return
 		  End If
 		  
-		  Dim OtherFilename As String
+		  Var OtherFilename As String
 		  Select Case Type
 		  Case ConfigFileType.GameIni
 		    OtherFilename = "GameUserSettings.ini"
@@ -391,50 +442,17 @@ End
 		    Return
 		  End Select
 		  
-		  Dim OtherFile As FolderItem = File.Parent.Child(OtherFilename)
+		  Var OtherFile As FolderItem = File.Parent.Child(OtherFilename)
 		  If OtherFile <> Nil And OtherFile.Exists Then
 		    Self.AddFile(OtherFile, False)
 		  End If
-		  
-		  #if false
-		    If Self.mCurrentConfigType <> ConfigFileType.Combo Then
-		      Dim Other As FolderItem
-		      Dim Type As ConfigFileType = Self.DetectConfigType(Content)
-		      Select Case Type
-		      Case ConfigFileType.GameIni    
-		        Self.mGameIniFile = File
-		        If Self.mCurrentConfigType <> ConfigFileType.GameUserSettingsIni Then
-		          Other = File.Parent.Child("GameUserSettings.ini")
-		          Self.mGameUserSettingsFile = Other
-		        End If
-		      Case ConfigFileType.GameUserSettingsIni    
-		        Self.mGameUserSettingsFile = File
-		        If Self.mCurrentConfigType <> ConfigFileType.GameIni Then
-		          Other = File.Parent.Child("Game.ini")
-		          Self.mGameIniFile = Other
-		        End If
-		      End Select
-		      If Other <> Nil And Other.Exists Then
-		        Dim AdditionalContent As String = Self.ReadIniFile(Other)
-		        If AdditionalContent <> "" Then
-		          Content = Content + EndOfLine + EndOfLine + AdditionalContent.DefineEncoding(Encodings.UTF8)
-		        End If
-		      End If
-		    End If
-		    
-		    If Self.ConfigArea.Text = "" Then
-		      Self.ConfigArea.Text = Content
-		    Else
-		      Self.ConfigArea.Text = Self.ConfigArea.Text.Trim + EndOfLine + EndOfLine + Content
-		    End If
-		  #endif
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function DetectConfigType(Content As String, File As FolderItem = Nil) As ConfigFileType
-		  Dim GameIniPos As Integer = Content.IndexOf(Beacon.ShooterGameHeader)
-		  Dim SettingsIniPos As Integer = Content.IndexOf(Beacon.ServerSettingsHeader)
+		  Var GameIniPos As Integer = Content.IndexOf(Beacon.ShooterGameHeader)
+		  Var SettingsIniPos As Integer = Content.IndexOf(Beacon.ServerSettingsHeader)
 		  
 		  If GameIniPos > -1 And SettingsIniPos = -1 Then
 		    Return ConfigFileType.GameIni
@@ -467,9 +485,9 @@ End
 		Private Function ReadIniFile(File As FolderItem, Prompt As Boolean = True) As String
 		  Try
 		    #Pragma BreakOnExceptions False
-		    Dim Stream As TextInputStream = TextInputStream.Open(File)
+		    Var Stream As TextInputStream = TextInputStream.Open(File)
 		    #Pragma BreakOnExceptions Default
-		    Dim Contents As String = Stream.ReadAll()
+		    Var Contents As String = Stream.ReadAll()
 		    Stream.Close
 		    
 		    Contents = Contents.GuessEncoding
@@ -481,14 +499,14 @@ End
 		      Return ""
 		    End If
 		    
-		    Dim Dialog As New OpenFileDialog
+		    Var Dialog As New OpenFileDialog
 		    Dialog.InitialFolder = File.Parent
 		    Dialog.SuggestedFileName = File.Name
 		    Dialog.PromptText = "Select your " + File.Name + " file if you want to import it too"
 		    Dialog.ActionButtonCaption = "Import"
 		    Dialog.Filter = BeaconFileTypes.IniFile
 		    
-		    Dim Selected As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		    Var Selected As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		    If Selected = Nil Then
 		      Return ""
 		    End If
@@ -519,7 +537,15 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mGameIniFile As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mGameUserSettingsIniContent As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGameUserSettingsIniFile As FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -568,9 +594,19 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim Engines(0) As Beacon.DiscoveryEngine
-		  Engines(0) = New Beacon.LocalDiscoveryEngine(Self.mGameIniContent, Self.mGameUserSettingsIniContent)
-		  Self.ShouldFinish(Engines)
+		  Var Profile As New Beacon.LocalServerProfile
+		  Profile.Mask = Self.MapMenu.RowTagAt(Self.MapMenu.SelectedRowIndex)
+		  If Self.mGameIniFile <> Nil And Self.mGameUserSettingsIniFile <> Nil Then
+		    Profile.GameIniFile = New BookmarkedFolderItem(Self.mGameIniFile.NativePath, FolderItem.PathModes.Native)
+		    Profile.GameUserSettingsIniFile = New BookmarkedFolderItem(Self.mGameUserSettingsIniFile.NativePath, FolderItem.PathModes.Native)
+		  End If
+		  
+		  Var Data As New Beacon.DiscoveredData
+		  Data.Profile = Profile
+		  Data.GameIniContent = Self.mGameIniContent
+		  Data.GameUserSettingsIniContent = Self.mGameUserSettingsIniContent
+		  
+		  Self.ShouldFinish(Data)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -588,11 +624,11 @@ End
 		    Return
 		  End If
 		  
-		  Dim Dialog As New OpenFileDialog
+		  Var Dialog As New OpenFileDialog
 		  Dialog.SuggestedFileName = If(Self.mGameIniContent.Length > 0, "GameUserSettings.ini", "Game.ini")
 		  Dialog.Filter = BeaconFileTypes.IniFile
 		  
-		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Var File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File <> Nil Then
 		    Self.AddFile(File)
 		  End If
@@ -611,7 +647,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action()
-		  Dim SettingUp As Boolean = Self.mSettingUp
+		  Var SettingUp As Boolean = Self.mSettingUp
 		  Self.mSettingUp = True
 		  Select Case Me.SelectedIndex
 		  Case Self.GameIniIndex
@@ -628,8 +664,19 @@ End
 #tag Events Watcher
 	#tag Event
 		Sub ClipboardChanged(Content As String)
-		  Dim Type As ConfigFileType = Self.DetectConfigType(Content)
+		  Var Type As ConfigFileType = Self.DetectConfigType(Content)
 		  Self.SetSwitcherForType(Type)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MapMenu
+	#tag Event
+		Sub Open()
+		  Var Maps() As Beacon.Map = Beacon.Maps.All
+		  For Each Map As Beacon.Map In Maps
+		    Me.AddRow(Map.Name, Map.Mask)
+		  Next
+		  Me.SelectedRowIndex = 0
 		End Sub
 	#tag EndEvent
 #tag EndEvents

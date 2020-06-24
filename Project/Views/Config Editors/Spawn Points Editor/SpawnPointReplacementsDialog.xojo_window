@@ -256,6 +256,38 @@ Begin BeaconDialog SpawnPointReplacementsDialog
          Visible         =   True
          Width           =   120
       End
+      Begin UITweaks.ResizedPushButton ReplacementDeleteButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Delete"
+         Default         =   False
+         Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "ReplacementsGroup"
+         Italic          =   False
+         Left            =   172
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MacButtonStyle  =   "0"
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   250
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
       Begin BeaconListbox ReplacementsList
          AllowAutoDeactivate=   True
          AllowAutoHideScrollbars=   True
@@ -303,43 +335,13 @@ Begin BeaconDialog SpawnPointReplacementsDialog
          Tooltip         =   ""
          Top             =   290
          Transparent     =   False
+         TypeaheadColumn =   0
          Underline       =   False
          Visible         =   True
+         VisibleRowCount =   0
          Width           =   580
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
-      End
-      Begin UITweaks.ResizedPushButton ReplacementDeleteButton
-         AllowAutoDeactivate=   True
-         Bold            =   False
-         Cancel          =   False
-         Caption         =   "Delete"
-         Default         =   False
-         Enabled         =   False
-         FontName        =   "System"
-         FontSize        =   0.0
-         FontUnit        =   0
-         Height          =   20
-         Index           =   -2147483648
-         InitialParent   =   "ReplacementsGroup"
-         Italic          =   False
-         Left            =   172
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         MacButtonStyle  =   "0"
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   250
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
       End
    End
    Begin UITweaks.ResizedPushButton ActionButton
@@ -513,7 +515,7 @@ End
 #tag Events TargetCreatureButton
 	#tag Event
 		Sub Action()
-		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Self.mDefinedCreatures, False)
+		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Self.mDefinedCreatures, Self.mMods, EngramSelectorDialog.SelectModes.Single)
 		  If Creatures <> Nil And Creatures.LastRowIndex = 0 Then
 		    Self.mTargetCreature = Creatures(0)
 		    Self.TargetCreatureField.Value = Self.mTargetCreature.Label
@@ -526,7 +528,7 @@ End
 	#tag Event
 		Sub Action()
 		  Var Exclude() As Beacon.Creature = Self.mSpawnSet.ReplacementCreatures(Self.mTargetCreature)
-		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.mMods, True)
+		  Var Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.mMods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
 		  Self.ReplacementsList.SelectionChangeBlocked = True
 		  For Each Creature As Beacon.Creature In Creatures
 		    Self.ReplacementsList.AddRow("50", Creature.Label)
@@ -534,6 +536,13 @@ End
 		  Next
 		  Self.ReplacementsList.Sort
 		  Self.ReplacementsList.SelectionChangeBlocked = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ReplacementDeleteButton
+	#tag Event
+		Sub Action()
+		  Self.ReplacementsList.DoClear
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -573,13 +582,6 @@ End
 	#tag Event
 		Sub Change()
 		  Self.ReplacementDeleteButton.Enabled = Me.CanDelete
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ReplacementDeleteButton
-	#tag Event
-		Sub Action()
-		  Self.ReplacementsList.DoClear
 		End Sub
 	#tag EndEvent
 #tag EndEvents

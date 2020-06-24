@@ -2,6 +2,12 @@
 Protected Class Engram
 Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
+		Function AlternateLabel() As NullableString
+		  Return Self.mAlternateLabel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Availability() As UInt64
 		  Return Self.mAvailability
 		End Function
@@ -22,8 +28,8 @@ Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
 		Function ClassString() As String
 		  If Self.IsValid Then
-		    Dim Components() As String = Self.mPath.Split("/")
-		    Dim Tail As String = Components(Components.LastRowIndex)
+		    Var Components() As String = Self.mPath.Split("/")
+		    Var Tail As String = Components(Components.LastRowIndex)
 		    Components = Tail.Split(".")
 		    Return Components(Components.LastRowIndex) + "_C"
 		  Else
@@ -59,8 +65,13 @@ Implements Beacon.Blueprint
 		  Self.mIsValid = Source.mIsValid
 		  Self.mModID = Source.mModID
 		  Self.mModName = Source.mModName
+		  Self.mEngramEntryString = Source.mEngramEntryString
+		  Self.mRequiredPlayerLevel = Source.mRequiredPlayerLevel
+		  Self.mRequiredUnlockPoints = Source.mRequiredUnlockPoints
+		  Self.mStackSize = Source.mStackSize
+		  Self.mItemID = Source.mItemID
 		  
-		  Redim Self.mTags(-1)
+		  Self.mTags.ResizeTo(-1)
 		  For Each Tag As String In Source.mTags
 		    Self.mTags.AddRow(Tag)
 		  Next
@@ -74,8 +85,31 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function CreateFromEntryString(EntryString As String) As Beacon.Engram
+		  Var Base As String = EntryString
+		  If Base.BeginsWith("EngramEntry_") Then
+		    Base = Base.Middle(12)
+		  End If
+		  
+		  Var Engram As Beacon.Engram = CreateFromPath(Beacon.UnknownBlueprintPath("Engrams", "PrimalItemMystery_" + Base + "_C"))
+		  Engram.mEngramEntryString = EntryString
+		  Return Engram
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function CreateFromObjectID(ObjectID As v4UUID) As Beacon.Engram
+		  Var ObjectIDString As String = ObjectID.StringValue
+		  Var Engram As Beacon.Engram = CreateFromPath(Beacon.UnknownBlueprintPath("Engrams", "PrimalItemMystery_" + ObjectIDString + "_C"))
+		  Engram.mLabel = ObjectIDString
+		  Engram.mObjectID = ObjectID
+		  Return Engram
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function CreateFromPath(Path As String) As Beacon.Engram
-		  Dim Engram As New Beacon.Engram
+		  Var Engram As New Beacon.Engram
 		  If Path.Length > 6 And Path.Left(6) = "/Game/" Then
 		    If Path.Right(2) = "_C" Then
 		      // Appears to be a BlueprintGeneratedClass Path
@@ -89,6 +123,12 @@ Implements Beacon.Blueprint
 		  Engram.mObjectID = v4UUID.FromHash(Crypto.HashAlgorithms.MD5, Path.Lowercase)
 		  Engram.mTags.AddRow("blueprintable")
 		  Return Engram
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function EntryString() As String
+		  Return Self.mEngramEntryString
 		End Function
 	#tag EndMethod
 
@@ -119,6 +159,12 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasUnlockDetails() As Boolean
+		  Return Self.mEngramEntryString.Length > 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsTagged(Tag As String) As Boolean
 		  Return Self.mTags.IndexOf(Beacon.NormalizeTag(Tag)) > -1
 		End Function
@@ -127,6 +173,12 @@ Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
 		Function IsValid() As Boolean
 		  Return Self.mIsValid
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ItemID() As NullableDouble
+		  Return Self.mItemID
 		End Function
 	#tag EndMethod
 
@@ -156,19 +208,19 @@ Implements Beacon.Blueprint
 		    Return ""
 		  End If
 		  
-		  Dim Idx As Integer = Self.mPath.IndexOf(6, "/")
+		  Var Idx As Integer = Self.mPath.IndexOf(6, "/")
 		  If Idx = -1 Then
 		    Return "Unknown"
 		  End If
-		  Dim Name As String = Self.mPath.Middle(6, Idx - 6)
+		  Var Name As String = Self.mPath.Middle(6, Idx - 6)
 		  Select Case Name
 		  Case "PrimalEarth"
 		    Return "Ark Prime"
 		  Case "ScorchedEarth"
 		    Return "Scorched Earth"
 		  Case "Mods"
-		    Dim StartAt As Integer = Idx + 1
-		    Dim EndAt As Integer = Self.mPath.IndexOf(StartAt, "/")
+		    Var StartAt As Integer = Idx + 1
+		    Var EndAt As Integer = Self.mPath.IndexOf(StartAt, "/")
 		    If EndAt = -1 Then
 		      EndAt = Self.mPath.Length
 		    End If
@@ -197,8 +249,8 @@ Implements Beacon.Blueprint
 		    Return 1
 		  End If
 		  
-		  Dim SelfPath As String = If(Self.IsValid, Self.Path, Self.ClassString)
-		  Dim OtherPath As String = If(Other.IsValid, Other.Path, Other.ClassString)
+		  Var SelfPath As String = If(Self.IsValid, Self.Path, Self.ClassString)
+		  Var OtherPath As String = If(Other.IsValid, Other.Path, Other.ClassString)
 		  Return SelfPath.Compare(OtherPath, ComparisonOptions.CaseSensitive)
 		End Function
 	#tag EndMethod
@@ -214,9 +266,27 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function RequiredPlayerLevel() As NullableDouble
+		  Return Self.mRequiredPlayerLevel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RequiredUnlockPoints() As NullableDouble
+		  Return Self.mRequiredUnlockPoints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function StackSize() As NullableDouble
+		  Return Self.mStackSize
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Tags() As String()
-		  Dim Clone() As String
-		  Redim Clone(Self.mTags.LastRowIndex)
+		  Var Clone() As String
+		  Clone.ResizeTo(Self.mTags.LastRowIndex)
 		  For I As Integer = 0 To Self.mTags.LastRowIndex
 		    Clone(I) = Self.mTags(I)
 		  Next
@@ -241,11 +311,23 @@ Implements Beacon.Blueprint
 
 
 	#tag Property, Flags = &h1
+		Protected mAlternateLabel As NullableString
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mAvailability As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
+		Protected mEngramEntryString As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mIsValid As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mItemID As NullableDouble
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -266,6 +348,18 @@ Implements Beacon.Blueprint
 
 	#tag Property, Flags = &h1
 		Protected mPath As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mRequiredPlayerLevel As NullableDouble
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mRequiredUnlockPoints As NullableDouble
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mStackSize As NullableDouble
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

@@ -47,7 +47,7 @@ Implements ObservationKit.Observable
 		    Self.mObservers = New Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Var Refs() As WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -95,16 +95,16 @@ Implements ObservationKit.Observable
 		    Callback.Invoke(Self)
 		  End If
 		  
-		  Dim Dialog As New MessageDialog
+		  Var Dialog As New MessageDialog
 		  Dialog.Title = ""
-		  Dialog.Message = "Do you want to save the changes made to the document """ + Self.Title + """?"
+		  Dialog.Message = "Do you want to save the changes made to the document """ + Self.ToolbarCaption + """?"
 		  Dialog.Explanation = "Your changes will be lost if you don't save them."
 		  Dialog.ActionButton.Caption = "Save…"
 		  Dialog.CancelButton.Visible = True
 		  Dialog.AlternateActionButton.Caption = "Don't Save"
 		  Dialog.AlternateActionButton.Visible = True
 		  
-		  Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
 		  Select Case Choice
 		  Case Dialog.ActionButton
 		    Return RaiseEvent ShouldSave()
@@ -135,6 +135,12 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub GetEditorMenuItems(Items() As MenuItem)
+		  RaiseEvent GetEditorMenuItems(Items)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub NotifyObservers(Key As String, Value As Variant)
 		  // Part of the ObservationKit.Observable interface.
 		  
@@ -142,7 +148,7 @@ Implements ObservationKit.Observable
 		    Self.mObservers = New Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Var Refs() As WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -153,7 +159,7 @@ Implements ObservationKit.Observable
 		      Continue
 		    End If
 		    
-		    Dim Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
+		    Var Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
 		    Observer.ObservedValueChanged(Self, Key, Value)
 		  Next
 		End Sub
@@ -167,7 +173,7 @@ Implements ObservationKit.Observable
 		    Self.mObservers = New Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Var Refs() As WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -193,12 +199,13 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Sub SwitchedTo(UserData As Variant = Nil)
 		  RaiseEvent Shown(UserData)
+		  NotificationKit.Post(Self.Notification_ViewShown, Nil)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ViewID() As String
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Self)
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Self)
 		  Return Info.Name
 		End Function
 	#tag EndMethod
@@ -218,6 +225,10 @@ Implements ObservationKit.Observable
 
 	#tag Hook, Flags = &h0
 		Event EnableMenuItems()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event GetEditorMenuItems(Items() As MenuItem)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -301,6 +312,10 @@ Implements ObservationKit.Observable
 		Private mToolbarCaption As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mToolbarIcon As Picture
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -347,6 +362,28 @@ Implements ObservationKit.Observable
 		ToolbarCaption As String
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mToolbarIcon
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mToolbarIcon = Value Then
+			    Return
+			  End If
+			  
+			  Self.mToolbarIcon = Value
+			  Self.NotifyObservers("ToolbarIcon", Value)
+			End Set
+		#tag EndSetter
+		ToolbarIcon As Picture
+	#tag EndComputedProperty
+
+
+	#tag Constant, Name = Notification_ViewShown, Type = String, Dynamic = False, Default = \"BeaconSubview Shown", Scope = Public
+	#tag EndConstant
 
 	#tag Constant, Name = ProgressIndeterminate, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant
@@ -602,6 +639,14 @@ Implements ObservationKit.Observable
 			Group="Windows Behavior"
 			InitialValue="False"
 			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ToolbarIcon"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Picture"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

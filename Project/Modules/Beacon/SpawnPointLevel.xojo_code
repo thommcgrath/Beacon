@@ -75,14 +75,6 @@ Protected Class SpawnPointLevel
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function UserLevels(AtDifficulty As Double) As Beacon.Range
-		  Var MinLevel As Integer = Round(AtDifficulty) * Floor(Self.MinLevel + (0.0 * (Self.MaxLevel - Self.MinLevel)))
-		  Var MaxLevel As Integer = Round(AtDifficulty) * Floor(Self.MinLevel + (1.0 * (Self.MaxLevel - Self.MinLevel)))
-		  Return New Beacon.Range(MinLevel, MaxLevel)
-		End Function
-	#tag EndMethod
-
 
 	#tag Note, Name = Formula
 		Max level of 150 should equal 30.999999 at 5.0 difficulty

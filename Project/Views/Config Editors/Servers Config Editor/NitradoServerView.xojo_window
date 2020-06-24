@@ -26,10 +26,8 @@ Begin ServerViewContainer NitradoServerView
    Visible         =   True
    Width           =   600
    Begin Beacon.OAuth2Client Auth
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
-      Provider        =   ""
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -133,7 +131,6 @@ Begin ServerViewContainer NitradoServerView
       Width           =   110
    End
    Begin Timer RefreshTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -221,7 +218,7 @@ Begin ServerViewContainer NitradoServerView
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   142
+      Left            =   168
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -245,7 +242,7 @@ Begin ServerViewContainer NitradoServerView
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   438
+      Width           =   412
    End
    Begin UITweaks.ResizedLabel ServerNameLabel
       AutoDeactivate  =   True
@@ -280,7 +277,186 @@ Begin ServerViewContainer NitradoServerView
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   110
+      Width           =   136
+   End
+   Begin ArkMLEditor MessageOfTheDayArea
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackgroundColor=   False
+      Height          =   145
+      InitialParent   =   ""
+      Left            =   168
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RTFData         =   ""
+      Scope           =   2
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   158
+      Transparent     =   True
+      Visible         =   True
+      Width           =   412
+   End
+   Begin UITweaks.ResizedLabel MessageOfTheDayLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextAlignment   =   "3"
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   158
+      Transparent     =   False
+      Underline       =   False
+      Value           =   "Message of the Day:"
+      Visible         =   True
+      Width           =   136
+   End
+   Begin UITweaks.ResizedLabel MessageDurationLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextAlignment   =   "3"
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   315
+      Transparent     =   False
+      Underline       =   False
+      Value           =   "Message Duration:"
+      Visible         =   True
+      Width           =   136
+   End
+   Begin RangeField MessageDurationField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF00
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      DoubleValue     =   0.0
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   168
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextAlignment   =   "2"
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   315
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Value           =   ""
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedLabel MessageDurationSuffixLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   260
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextAlignment   =   "0"
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   315
+      Transparent     =   False
+      Underline       =   False
+      Value           =   "Seconds"
+      Visible         =   True
+      Width           =   320
    End
 End
 #tag EndWindow
@@ -294,13 +470,22 @@ End
 
 	#tag Event
 		Sub Open()
-		  Self.Auth.Provider = Beacon.OAuth2Client.ProviderNitrado
-		  Self.Auth.AuthData = Self.mDocument.OAuthData("Nitrado")
-		  Self.Auth.Authenticate(App.IdentityManager.CurrentIdentity)
+		  Var Account As Beacon.ExternalAccount = Self.mDocument.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID)
+		  If Account Is Nil Then
+		    Account = New Beacon.ExternalAccount(Self.mProfile.ExternalAccountUUID, Beacon.ExternalAccount.ProviderNitrado)
+		  End If
+		  
+		  If Self.Auth.SetAccount(Account) Then
+		    Self.Auth.Authenticate(App.IdentityManager.CurrentIdentity)
+		  Else
+		    Self.ShowAlert("Unsupported external account", "This version of Beacon does not support accounts from " + Beacon.ExternalAccount.ProviderNitrado + ". This means there is probably an update available.")
+		  End If
 		  
 		  Self.Controls.Caption = Self.mProfile.Name
 		  
 		  Self.ServerNameField.Value = Self.mProfile.Name
+		  Self.MessageOfTheDayArea.RTFData = Self.mProfile.MessageOfTheDay
+		  Self.MessageDurationField.DoubleValue = Self.mProfile.MessageDuration
 		End Sub
 	#tag EndEvent
 
@@ -319,12 +504,12 @@ End
 		  End If
 		  
 		  Try
-		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
-		    Dim Data As Dictionary = Response.Value("data")
-		    Dim GameServer As Dictionary = Data.Value("gameserver")
+		    Var Response As Dictionary = Beacon.ParseJSON(Content)
+		    Var Data As Dictionary = Response.Value("data")
+		    Var GameServer As Dictionary = Data.Value("gameserver")
 		    
-		    Dim ServerStatus As String = GameServer.Value("status")
-		    Dim Started, Enabled As Boolean
+		    Var ServerStatus As String = GameServer.Value("status")
+		    Var Started, Enabled As Boolean
 		    Select Case ServerStatus
 		    Case "started"
 		      Self.ServerStatusField.Value = "Running"
@@ -432,8 +617,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RefreshServerStatus()
-		  Dim Headers As New Dictionary
-		  Headers.Value("Authorization") = "Bearer " + Self.Auth.AccessToken
+		  Var Account As Beacon.ExternalAccount = Self.mDocument.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID)
+		  If Account Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Headers As New Dictionary
+		  Headers.Value("Authorization") = "Bearer " + Account.AccessToken
 		  
 		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers", AddressOf Callback_ServerStatus, Nil, Headers)
 		End Sub
@@ -458,13 +648,13 @@ End
 #tag Events Auth
 	#tag Event
 		Sub Authenticated()
-		  Self.mDocument.OAuthData("Nitrado") = Me.AuthData
+		  Self.mDocument.Accounts.Add(Me.Account)
 		  Self.RefreshServerStatus()
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function StartAuthentication(URL As String, Provider As String) As Boolean
-		  If Not Self.ShowConfirm("You must reauthorize " + Provider + " to allow Beacon to access your servers.", "The authorization tokens expires. If it has been a while since you've deployed, this can happen.", "Continue", "Cancel") Then
+		Function StartAuthentication(Account As Beacon.ExternalAccount, URL As String) As Boolean
+		  If Not Self.ShowConfirm(Account) Then
 		    Return False
 		  End If
 		  
@@ -486,28 +676,38 @@ End
 		  Self.mOAuthWindow.Show()
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub AccountUUIDChanged(OldUUID As v4UUID)
+		  Self.mDocument.ReplaceAccount(OldUUID, Me.Account)
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events Controls
 	#tag Event
 		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "PowerButton"
-		    Dim Headers As New Dictionary
-		    Headers.Value("Authorization") = "Bearer " + Self.Auth.AccessToken
+		    Var Account As Beacon.ExternalAccount = Self.mDocument.Accounts.GetByUUID(Self.mProfile.ExternalAccountUUID)
+		    If Account Is Nil Then
+		      Return
+		    End If
+		    
+		    Var Headers As New Dictionary
+		    Headers.Value("Authorization") = "Bearer " + Account.AccessToken
 		    
 		    If Item.Toggled Then
-		      Dim StopMessage As String = StopMessageDialog.Present(Self)
+		      Var StopMessage As String = StopMessageDialog.Present(Self)
 		      If StopMessage = "" Then
 		        Return
 		      End If
 		      
-		      Dim FormData As New Dictionary
+		      Var FormData As New Dictionary
 		      FormData.Value("message") = "Server stopped by Beacon (https://beaconapp.cc)"
 		      FormData.Value("stop_message") = StopMessage
 		      
 		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/stop", FormData, AddressOf Callback_ServerToggle, Nil, Headers)
 		    Else
-		      Dim FormData As New Dictionary
+		      Var FormData As New Dictionary
 		      FormData.Value("message") = "Server started by Beacon (https://beaconapp.cc)"
 		      
 		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/restart", FormData, AddressOf Callback_ServerToggle, Nil, Headers)
@@ -539,7 +739,39 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events MessageOfTheDayArea
+	#tag Event
+		Sub TextChange()
+		  Self.mProfile.MessageOfTheDay = Me.RTFData
+		  Self.Changed = Self.mProfile.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MessageDurationField
+	#tag Event
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 0
+		  MaxValue = 86400
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub TextChange()
+		  If IsNumeric(Me.Value) Then
+		    Self.mProfile.MessageDuration = Me.DoubleValue
+		    Self.Changed = Self.mProfile.Modified
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

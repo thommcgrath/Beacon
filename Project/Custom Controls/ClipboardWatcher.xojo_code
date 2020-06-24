@@ -3,8 +3,8 @@ Protected Class ClipboardWatcher
 Inherits Timer
 	#tag Event
 		Sub Action()
-		  Dim Board As New Clipboard
-		  Dim Hash As String
+		  Var Board As New Clipboard
+		  Var Hash As String
 		  If Not Board.TextAvailable Then
 		    Hash = Self.EmptyHash
 		  End If

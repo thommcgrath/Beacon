@@ -86,7 +86,6 @@ Begin BeaconContainer ColumnBrowser
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
-      RowCount        =   "0"
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -101,9 +100,11 @@ Begin BeaconContainer ColumnBrowser
       TextUnit        =   0
       Top             =   0
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   200
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -115,7 +116,6 @@ Begin BeaconContainer ColumnBrowser
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   285
       HelpTag         =   ""
       Index           =   0
@@ -163,6 +163,9 @@ End
 		  
 		  G.DrawingColor = SystemColors.UnderPageBackgroundColor
 		  G.FillRectangle(0, 0, G.Width, G.Height)
+		  
+		  G.DrawingColor = SystemColors.ListEvenRowColor
+		  G.FillRectangle(0, 0, G.Width, G.Height)
 		End Sub
 	#tag EndEvent
 
@@ -179,12 +182,12 @@ End
 	#tag Method, Flags = &h0
 		Sub AppendChildren(Children() As String)
 		  // Create new list if there is a selection
-		  Dim NewList As Boolean = Self.Lists(Self.mListBound).SelectedRowIndex > -1
-		  Dim TargetList As BeaconListbox
+		  Var NewList As Boolean = Self.Lists(Self.mListBound).SelectedRowIndex > -1
+		  Var TargetList As BeaconListbox
 		  
 		  If NewList Then
-		    Dim List As BeaconListbox = New Lists
-		    Dim Sep As FadedSeparator = New Separators
+		    Var List As BeaconListbox = New Lists
+		    Var Sep As FadedSeparator = New Separators
 		    List.Left = Self.Separators(Self.mListBound).Left + Self.Separators(Self.mListBound).Width
 		    List.Top = Self.Lists(0).Top
 		    List.Height = Self.Lists(0).Height
@@ -221,12 +224,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub FillList(List As BeaconListbox, Parent As String, Children() As String)
-		  Dim RestoreUpdating As Boolean = Self.mUpdating
+		  Var RestoreUpdating As Boolean = Self.mUpdating
 		  Self.mUpdating = True
 		  
 		  List.RemoveAllRows
 		  For I As Integer = 0 To Children.LastRowIndex  
-		    Dim Child As String = Children(I)
+		    Var Child As String = Children(I)
 		    If Child.EndsWith("/") Then
 		      Child = Child.Left(Child.Length - 1)
 		    End If
@@ -242,7 +245,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub MouseWheel(DeltaX As Integer, DeltaY As Integer)
-		  Dim WheelData As New BeaconUI.ScrollEvent(Self.Scroller.LineStep, DeltaX, DeltaY)
+		  Var WheelData As New BeaconUI.ScrollEvent(Self.Scroller.LineStep, DeltaX, DeltaY)
 		  Self.Scroller.Value = Self.Scroller.Value + WheelData.ScrollX
 		End Sub
 	#tag EndMethod
@@ -251,7 +254,7 @@ End
 		Sub Reset()
 		  Self.Lists(0).SelectedRowIndex = -1
 		  
-		  Dim DefaultChildren() As String
+		  Var DefaultChildren() As String
 		  Self.AppendChildren(DefaultChildren)
 		  
 		  // Beacuse there is no selection, NeedsChildrenForPath will never fire, so fire it now
@@ -261,10 +264,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateScrollbarMaximum()
-		  Dim ContentWidth As Integer = ((Self.Lists(0).Width + Self.Separators(0).Width) * (Self.mListBound + 1)) - Self.Separators(0).Width
-		  Dim Overflow As Integer = Max(ContentWidth - Self.Width, 0)
+		  Var ContentWidth As Integer = ((Self.Lists(0).Width + Self.Separators(0).Width) * (Self.mListBound + 1)) - Self.Separators(0).Width
+		  Var Overflow As Integer = Max(ContentWidth - Self.Width, 0)
 		  
-		  Dim Position As Integer = Min(Self.Scroller.Value, Overflow)
+		  Var Position As Integer = Min(Self.Scroller.Value, Overflow)
 		  If Self.Scroller.Value <> Position Then
 		    Self.Scroller.Value = Position
 		  End If
@@ -272,7 +275,7 @@ End
 		    Self.Scroller.MaximumValue = Overflow
 		  End If
 		  
-		  Dim ListHeight As Integer
+		  Var ListHeight As Integer
 		  If Overflow = 0 And Self.Scroller.Visible Then
 		    Self.Scroller.Visible = False
 		    ListHeight = Self.Height
@@ -339,7 +342,7 @@ End
 #tag Events Scroller
 	#tag Event
 		Sub ValueChanged()
-		  Dim Pos As Integer = Me.Value * -1
+		  Var Pos As Integer = Me.Value * -1
 		  For I As Integer = 0 To Self.mListBound
 		    Self.Lists(I).Left = Pos
 		    Self.Separators(I).Left = Self.Lists(I).Left + Self.Lists(I).Width
@@ -364,8 +367,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim NewPath As String
-		  Dim TriggerEvent As Boolean
+		  Var NewPath As String
+		  Var TriggerEvent As Boolean
 		  If Me.SelectedRowIndex > -1 Then
 		    NewPath = Me.RowTagAt(Me.SelectedRowIndex)
 		    TriggerEvent = True
@@ -390,7 +393,7 @@ End
 		  Self.mListBound = Index
 		  
 		  // To determine if a list gets added in NeedsChildrenForPath
-		  Dim StoredBound As Integer = Index
+		  Var StoredBound As Integer = Index
 		  
 		  // Raise the event
 		  Self.mCurrentPath = NewPath
@@ -423,16 +426,16 @@ End
 		    Return
 		  End If
 		  
-		  Dim Path As String = Me.RowTagAt(Row)
-		  Dim IsDir As Boolean = Path.EndsWith("/")
-		  Dim Mask As Picture
+		  Var Path As String = Me.RowTagAt(Row)
+		  Var IsDir As Boolean = Path.EndsWith("/")
+		  Var Mask As Picture
 		  If IsDir Then
 		    Mask = IconFTPFolder
 		  Else
 		    Mask = IconFTPFile
 		  End If
 		  
-		  Dim Icon As Picture = BeaconUI.IconWithColor(Mask, TextColor)
+		  Var Icon As Picture = BeaconUI.IconWithColor(Mask, TextColor)
 		  G.DrawPicture(Icon, (G.Width - Icon.Width) / 2, (G.Height - Icon.Height) / 2)
 		End Sub
 	#tag EndEvent

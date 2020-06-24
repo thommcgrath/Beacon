@@ -71,9 +71,11 @@ Begin BeaconContainer SimulatorView
       TextUnit        =   0
       Top             =   42
       Transparent     =   True
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   250
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -215,32 +217,23 @@ End
 		Sub Simulate()
 		  Self.List.RemoveAllRows()
 		  
-		  If Self.mTarget = Nil Then
+		  If IsNull(Self.mTarget)Then
 		    Return
 		  End If
 		  
-		  Static LootSourceInfo, ItemSetInfo As Introspection.TypeInfo
-		  If LootSourceInfo = Nil Then
-		    LootSourceInfo = GetTypeInfo(Beacon.LootSource)
-		  End If
-		  If ItemSetInfo = Nil Then
-		    ItemSetInfo = GetTypeInfo(Beacon.ItemSet)
-		  End If
-		  
-		  Dim Selections() As Beacon.SimulatedSelection
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Self.mTarget)
-		  If Info.IsSubclassOf(LootSourceInfo) Then
+		  Var Selections() As Beacon.SimulatedSelection
+		  If Self.mTarget IsA Beacon.LootSource Then
 		    Selections = Beacon.LootSource(Self.mTarget).Simulate()
-		  ElseIf Info.IsSubclassOf(ItemSetInfo) Then
+		  ElseIf Self.mTarget IsA Beacon.ItemSet Then
 		    Selections = Beacon.ItemSet(Self.mTarget).Simulate()
 		  Else
 		    Return
 		  End If
 		  
-		  Dim GroupedItems As New Dictionary
+		  Var GroupedItems As New Dictionary
 		  For Each Selection As Beacon.SimulatedSelection In Selections
-		    Dim Description As String = Selection.Description
-		    Dim Quantity As Integer
+		    Var Description As String = Selection.Description
+		    Var Quantity As Integer
 		    If GroupedItems.HasKey(Description) Then
 		      Quantity = GroupedItems.Value(Description)
 		    End If
@@ -248,8 +241,8 @@ End
 		  Next
 		  
 		  For Each Item As DictionaryEntry In GroupedItems
-		    Dim Description As String = Item.Key
-		    Dim Quantity As Integer = Item.Value
+		    Var Description As String = Item.Key
+		    Var Quantity As Integer = Item.Value
 		    List.AddRow(Str(Quantity, "0") + "x " + Description)
 		  Next
 		  
@@ -301,7 +294,7 @@ End
 		Sub ResizerDragged(DeltaX As Integer, DeltaY As Integer)
 		  #Pragma Unused DeltaX
 		  
-		  Dim NewSize As Integer = Self.Height - DeltaY
+		  Var NewSize As Integer = Self.Height - DeltaY
 		  RaiseEvent ShouldResize(NewSize)
 		End Sub
 	#tag EndEvent

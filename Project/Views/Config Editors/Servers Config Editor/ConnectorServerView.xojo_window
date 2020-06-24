@@ -27,7 +27,6 @@ Begin ServerViewContainer ConnectorServerView
    Width           =   600
    Begin Beacon.ConnectorClientSocket ClientSocket
       Address         =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Port            =   0
@@ -509,7 +508,6 @@ Begin ServerViewContainer ConnectorServerView
       Width           =   110
    End
    Begin Timer RefreshTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   30000
@@ -554,14 +552,14 @@ End
 		    Return
 		  End If
 		  
-		  Dim Port As Integer = CDbl(Self.PortField.Value)
-		  Dim Address As String = Self.AddressField.Value.Trim
-		  Dim Key As String = Self.KeyField.Value.Trim
+		  Var Port As Integer = CDbl(Self.PortField.Value)
+		  Var Address As String = Self.AddressField.Value.Trim
+		  Var Key As String = Self.KeyField.Value.Trim
 		  
 		  Self.Status = ServerStatus.Checking
 		  
 		  If Self.ClientSocket.IsConnected And Self.mLastTestedAddress = Address And Self.mLastTestedPort = Port And Self.mLastTestedKey.Compare(Key, ComparisonOptions.CaseSensitive) = 0 Then
-		    Dim Message As New Dictionary
+		    Var Message As New Dictionary
 		    Message.Value("Command") = "Status"
 		    Self.ClientSocket.Write(Message)
 		    Return
@@ -657,18 +655,18 @@ End
 		Sub Connected()
 		  Self.Status = ServerStatus.Checking
 		  
-		  Dim Message As New Dictionary
+		  Var Message As New Dictionary
 		  Message.Value("Command") = "Status"
 		  Me.Write(Message)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub MessageReceived(Message As Dictionary)
-		  Dim Command As String = Message.Lookup("Command", "")
+		  Var Command As String = Message.Lookup("Command", "")
 		  
 		  Select Case Command
 		  Case "Status"
-		    Dim Started As Boolean = Message.Lookup("Status", "stopped") = "started"
+		    Var Started As Boolean = Message.Lookup("Status", "stopped") = "started"
 		    Self.Status = If(Started, ServerStatus.Started, ServerStatus.Stopped)
 		    Self.RefreshTimer.Reset
 		    Self.RefreshTimer.RunMode = Timer.RunModes.Single
@@ -694,18 +692,18 @@ End
 		  Select Case Item.Name
 		  Case "PowerButton"
 		    If Self.Status = ServerStatus.Started And Self.ClientSocket.IsConnected Then
-		      Dim StopMessage As String = StopMessageDialog.Present(Self)
+		      Var StopMessage As String = StopMessageDialog.Present(Self)
 		      If StopMessage = "" Then
 		        Return
 		      End If
 		      
-		      Dim Message As New Dictionary
+		      Var Message As New Dictionary
 		      Message.Value("Command") = "Stop"
 		      Message.Value("Message") = StopMessage
 		      Self.ClientSocket.Write(Message)
 		      Self.RefreshServerStatus()
 		    ElseIf Self.Status = ServerStatus.Stopped And Self.ClientSocket.IsConnected Then
-		      Dim Message As New Dictionary
+		      Var Message As New Dictionary
 		      Message.Value("Command") = "Start"
 		      Self.ClientSocket.Write(Message)
 		      Self.RefreshServerStatus()
@@ -760,6 +758,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Progress"
 		Visible=false

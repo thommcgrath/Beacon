@@ -314,8 +314,10 @@ Begin BeaconContainer SpawnPointEditor
       Tooltip         =   ""
       Top             =   41
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   200
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -367,8 +369,10 @@ Begin BeaconContainer SpawnPointEditor
       Tooltip         =   ""
       Top             =   412
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   200
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -1120,7 +1124,7 @@ End
 		    Next
 		    
 		    If CommonLimit <> Nil Then
-		      Limits.Value(Creature.Path) = CommonLimit.Value
+		      Limits.Value(Creature.Path) = CommonLimit.IntegerValue
 		    End If
 		  Next
 		  

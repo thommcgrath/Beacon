@@ -10,7 +10,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
    Enabled         =   True
    EraseBackground =   True
    HasBackgroundColor=   False
-   Height          =   495
+   Height          =   631
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -28,7 +28,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
    Begin PagePanel PagePanel1
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   434
+      Height          =   570
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -2466,7 +2466,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   327
+         Top             =   395
          Transparent     =   False
          Underline       =   False
          Value           =   "Weight:"
@@ -2501,7 +2501,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   361
+         Top             =   429
          Transparent     =   False
          Underline       =   False
          Value           =   "Damage:"
@@ -2536,7 +2536,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          TextAlignment   =   "3"
          TextColor       =   &c00000000
          Tooltip         =   ""
-         Top             =   395
+         Top             =   463
          Transparent     =   False
          Underline       =   False
          Value           =   "Speed:"
@@ -2555,7 +2555,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          Enabled         =   True
          EraseBackground =   True
          HasBackgroundColor=   False
-         Height          =   328
+         Height          =   464
          InitialParent   =   "PagePanel1"
          Left            =   104
          LockBottom      =   False
@@ -2585,7 +2585,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          Enabled         =   True
          EraseBackground =   True
          HasBackgroundColor=   False
-         Height          =   328
+         Height          =   464
          InitialParent   =   "PagePanel1"
          Left            =   355
          LockBottom      =   False
@@ -2615,7 +2615,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          Enabled         =   True
          EraseBackground =   True
          HasBackgroundColor=   False
-         Height          =   328
+         Height          =   464
          InitialParent   =   "PagePanel1"
          Left            =   606
          LockBottom      =   False
@@ -2645,7 +2645,7 @@ Begin ConfigEditor StatMultipliersConfigEditor
          Enabled         =   True
          EraseBackground =   True
          HasBackgroundColor=   False
-         Height          =   328
+         Height          =   464
          InitialParent   =   "PagePanel1"
          Left            =   857
          LockBottom      =   False
@@ -2662,6 +2662,146 @@ Begin ConfigEditor StatMultipliersConfigEditor
          Transparent     =   True
          Visible         =   True
          Width           =   251
+      End
+      Begin UITweaks.ResizedLabel CreatureStatLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   5
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   14
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   327
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Water:"
+         Visible         =   True
+         Width           =   78
+      End
+      Begin UITweaks.ResizedLabel CreatureStatLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   6
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   15
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   361
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Temp:"
+         Visible         =   True
+         Width           =   78
+      End
+      Begin UITweaks.ResizedLabel CreatureStatLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   10
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   16
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   497
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Fortitude:"
+         Visible         =   True
+         Width           =   78
+      End
+      Begin UITweaks.ResizedLabel CreatureStatLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   11
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   17
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   531
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Crafting:"
+         Visible         =   True
+         Width           =   78
       End
    End
    Begin FadedSeparator FadedSeparator1
@@ -2738,14 +2878,14 @@ End
 		Sub Resize(Initial As Boolean)
 		  #Pragma Unused Initial
 		  
-		  Dim CreatureAvailableWidth As Integer = Self.Width - 118
-		  Dim CreatureGroupWidth As Integer = Floor(CreatureAvailableWidth / 4)
-		  Dim CreatureRemainder As Integer = CreatureAvailableWidth - (CreatureGroupWidth * 4)
+		  Var CreatureAvailableWidth As Integer = Self.Width - 118
+		  Var CreatureGroupWidth As Integer = Floor(CreatureAvailableWidth / 4)
+		  Var CreatureRemainder As Integer = CreatureAvailableWidth - (CreatureGroupWidth * 4)
 		  
-		  Dim FirstWidth As Integer = CreatureGroupWidth + If(CreatureRemainder > 0, 1, 0)
-		  Dim SecondWidth As Integer = CreatureGroupWidth + If(CreatureRemainder > 1, 1, 0)
-		  Dim ThirdWidth As Integer = CreatureGroupWidth + If(CreatureRemainder > 2, 1, 0)
-		  Dim FourthWidth As Integer = CreatureGroupWidth
+		  Var FirstWidth As Integer = CreatureGroupWidth + If(CreatureRemainder > 0, 1, 0)
+		  Var SecondWidth As Integer = CreatureGroupWidth + If(CreatureRemainder > 1, 1, 0)
+		  Var ThirdWidth As Integer = CreatureGroupWidth + If(CreatureRemainder > 2, 1, 0)
+		  Var FourthWidth As Integer = CreatureGroupWidth
 		  
 		  Self.WildCreatureStats.Width = FirstWidth
 		  Self.TamedCreatureStats.Left = Self.WildCreatureStats.Left + FirstWidth
@@ -2766,7 +2906,16 @@ End
 	#tag Event
 		Sub SetupUI()
 		  Self.UpdatePlayerUI
+		  Self.UpdateCreatureMenu
 		  Self.UpdateCreatureStats
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  #Pragma Unused UserData
+		  
+		  Self.SetupUI
 		End Sub
 	#tag EndEvent
 
@@ -2775,8 +2924,8 @@ End
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.StatMultipliers
 		  Static ConfigName As String = BeaconConfigs.StatMultipliers.ConfigName
 		  
-		  Dim Document As Beacon.Document = Self.Document
-		  Dim Config As BeaconConfigs.StatMultipliers
+		  Var Document As Beacon.Document = Self.Document
+		  Var Config As BeaconConfigs.StatMultipliers
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.StatMultipliers(Self.mConfigRef.Value)
@@ -2803,26 +2952,85 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub UpdateCreatureMenu()
+		  Var Menu As PopupMenu = Self.CreatureMenu
+		  Var SelectedIndex As Integer = Menu.SelectedRowIndex
+		  Var SelectedCreature As Beacon.Creature
+		  If SelectedIndex > -1 Then
+		    SelectedCreature = Menu.RowTagAt(SelectedIndex)
+		    SelectedIndex = -1
+		  End If
+		  
+		  Menu.RemoveAllRows
+		  
+		  Var Health As Beacon.Stat = Beacon.Stats.Health
+		  Var Creatures() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategoryCreatures, "", Self.Document.Mods, "")
+		  For Each Blueprint As Beacon.Blueprint In Creatures
+		    If Not Blueprint IsA Beacon.Creature Then
+		      Continue
+		    End If
+		    
+		    Var Creature As Beacon.Creature = Beacon.Creature(Blueprint)
+		    If Creature.StatBaseValue(Health) = Beacon.Creature.MissingStatValue Then
+		      Continue
+		    End If
+		    
+		    Menu.AddRow(Creature.Label, Creature)
+		    If (SelectedCreature Is Nil) = False And Creature.Path = SelectedCreature.Path Then
+		      SelectedIndex = Menu.LastRowIndex
+		    End If
+		  Next
+		  
+		  If Menu.RowCount > 0 Then
+		    Menu.SelectedRowIndex = Max(SelectedIndex, 0)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateCreatureStats(OnlyStatIndex As Integer = -1)
 		  If Self.CreatureMenu.SelectedRowIndex = -1 Then
 		    Return
 		  End If
 		  
-		  Dim Creature As Beacon.Creature = Self.CreatureMenu.RowTagAt(Self.CreatureMenu.SelectedRowIndex)
-		  Dim Config As BeaconConfigs.StatMultipliers = Self.Config(False)
+		  Var Creature As Beacon.Creature = Self.CreatureMenu.RowTagAt(Self.CreatureMenu.SelectedRowIndex)
+		  Var Config As BeaconConfigs.StatMultipliers = Self.Config(False)
 		  
-		  Self.WildCreatureStats.UpdateFigures(Beacon.Creature.KeyWild, Config, Creature, OnlyStatIndex, Self.SettingUp)
-		  Self.TamedCreatureStats.UpdateFigures(Beacon.Creature.KeyTamed, Config, Creature, OnlyStatIndex, Self.SettingUp)
-		  Self.TamedAddCreatureStats.UpdateFigures(Beacon.Creature.KeyAdd, Config, Creature, OnlyStatIndex, Self.SettingUp)
-		  Self.TamedAffinityCreatureStats.UpdateFigures(Beacon.Creature.KeyAffinity, Config, Creature, OnlyStatIndex, Self.SettingUp)
+		  Var TopPos As Integer = 157
+		  Var Stats() As Beacon.Stat = Beacon.Stats.All
+		  For Each Stat As Beacon.Stat In Stats
+		    Var Visible As Boolean = (Creature.StatsMask And Stat.Mask) = Stat.Mask
+		    Var StatLabel As Label = CreatureStatLabel(Stat.Index)
+		    If StatLabel Is Nil Then
+		      Continue
+		    End If
+		    
+		    If StatLabel.Visible <> Visible Then
+		      StatLabel.Visible = Visible
+		    End If
+		    
+		    If Visible Then
+		      If StatLabel.Top <> TopPos Then
+		        StatLabel.Top = TopPos
+		      End If
+		      TopPos = TopPos + 34
+		    End If
+		  Next
+		  
+		  Self.MinimumHeight = Max(495, TopPos + 8)
+		  
+		  Self.WildCreatureStats.UpdateFigures(Beacon.Creature.KeyWild, Config, Creature, OnlyStatIndex, Self.SettingUp, False, True)
+		  Self.TamedCreatureStats.UpdateFigures(Beacon.Creature.KeyTamed, Config, Creature, OnlyStatIndex, Self.SettingUp, True, False)
+		  Self.TamedAddCreatureStats.UpdateFigures(Beacon.Creature.KeyAdd, Config, Creature, OnlyStatIndex, Self.SettingUp, False, False)
+		  Self.TamedAffinityCreatureStats.UpdateFigures(Beacon.Creature.KeyAffinity, Config, Creature, OnlyStatIndex, Self.SettingUp, True, False)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdatePlayerUI(OnlyStatIndex As Integer = -1)
-		  Dim Stats() As Beacon.Stat = Beacon.Stats.All
-		  Dim Config As BeaconConfigs.StatMultipliers = Self.Config(False)
-		  Dim Focus As RectControl = Self.Focus
+		  Var Stats() As Beacon.Stat = Beacon.Stats.All
+		  Var Config As BeaconConfigs.StatMultipliers = Self.Config(False)
+		  Var Focus As RectControl = Self.Focus
 		  If Self.SettingUp Then
 		    Focus = Nil
 		  End If
@@ -2831,15 +3039,15 @@ End
 		      Continue
 		    End If
 		    
-		    Dim BaseField As TextField = PlayerBaseField(Stat.Index)
-		    Dim BaseLabel As Label = PlayerBaseLabel(Stat.Index)
-		    Dim PerLevelAmountLabel As Label = PlayerPerLevelAmountLabel(Stat.Index)
-		    Dim PerLevelMultiplierField As TextField = PlayerPerLevelMultiplierField(Stat.Index)
-		    Dim PerLevelMultiplierLabel As Label = PlayerPerLevelMultiplierLabel(Stat.Index)
-		    Dim PerLevelComputedLabel As Label = PlayerPerLevelComputedLabel(Stat.Index)
+		    Var BaseField As TextField = PlayerBaseField(Stat.Index)
+		    Var BaseLabel As Label = PlayerBaseLabel(Stat.Index)
+		    Var PerLevelAmountLabel As Label = PlayerPerLevelAmountLabel(Stat.Index)
+		    Var PerLevelMultiplierField As TextField = PlayerPerLevelMultiplierField(Stat.Index)
+		    Var PerLevelMultiplierLabel As Label = PlayerPerLevelMultiplierLabel(Stat.Index)
+		    Var PerLevelComputedLabel As Label = PlayerPerLevelComputedLabel(Stat.Index)
 		    
 		    If BaseField <> Nil And Focus <> BaseField Then
-		      Dim BaseAmount As Double = Stat.PlayerBase
+		      Var BaseAmount As Double = Stat.PlayerBase
 		      If Not Stat.PlayerBaseCapped Then
 		        BaseAmount = BaseAmount * Config.PlayerBaseMultiplier(Stat)
 		      End If
@@ -2859,7 +3067,7 @@ End
 		    End If
 		    
 		    If PerLevelComputedLabel <> Nil Then
-		      Dim PerLevelAmount As Double = Stat.PlayerPerLevelAmount * Config.PlayerPerLevelMultiplier(Stat)
+		      Var PerLevelAmount As Double = Stat.PlayerPerLevelAmount * Config.PlayerPerLevelMultiplier(Stat)
 		      PerLevelComputedLabel.Value = "= " + CreatureStatContainer.FormatStat(PerLevelAmount) + If(Stat.IsPercentage, "%", "")
 		    End If
 		  Next
@@ -2881,13 +3089,13 @@ End
 		    Return
 		  End If
 		  
-		  Dim Stat As Beacon.Stat = Beacon.Stats.WithIndex(Index)
+		  Var Stat As Beacon.Stat = Beacon.Stats.WithIndex(Index)
 		  If IsNull(Stat) Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Dim Multiplier As Double = CDbl(Me.Value)
+		  Var Multiplier As Double = CDbl(Me.Value)
 		  Self.Config(True).PlayerPerLevelMultiplier(Stat) = Multiplier
 		  Self.Changed = True
 		  Self.SettingUp = False
@@ -2902,14 +3110,14 @@ End
 		    Return
 		  End If
 		  
-		  Dim Stat As Beacon.Stat = Beacon.Stats.WithIndex(Index)
+		  Var Stat As Beacon.Stat = Beacon.Stats.WithIndex(Index)
 		  If IsNull(Stat) Then
 		    Return
 		  End If
 		  
 		  Self.SettingUp = True
-		  Dim DesiredBase As Double = CDbl(Me.Value)
-		  Dim Multiplier As Double = DesiredBase / Stat.PlayerBase
+		  Var DesiredBase As Double = CDbl(Me.Value)
+		  Var Multiplier As Double = DesiredBase / Stat.PlayerBase
 		  Self.Config(True).PlayerBaseMultiplier(Stat) = Multiplier
 		  Self.Changed = True
 		  Self.SettingUp = False
@@ -2926,28 +3134,6 @@ End
 		  Self.SettingUp = True
 		  Self.UpdateCreatureStats()
 		  Self.SettingUp = False
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Dim Health As Beacon.Stat = Beacon.Stats.Health
-		  Dim Creatures() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategoryCreatures, "", Self.Document.Mods, "")
-		  For Each Blueprint As Beacon.Blueprint In Creatures
-		    If Not Blueprint IsA Beacon.Creature Then
-		      Continue
-		    End If
-		    
-		    Dim Creature As Beacon.Creature = Beacon.Creature(Blueprint)
-		    If Creature.StatBaseValue(Health) = Beacon.Creature.MissingStatValue Then
-		      Continue
-		    End If
-		    
-		    Me.AddRow(Creature.Label, Creature)
-		  Next
-		  
-		  If Me.RowCount > 0 Then
-		    Me.SelectedRowIndex = 0
-		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -3004,6 +3190,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Progress"
 		Visible=false

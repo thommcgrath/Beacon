@@ -1337,8 +1337,8 @@ End
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.DayCycle
 		  Static ConfigName As String = BeaconConfigs.DayCycle.ConfigName
 		  
-		  Dim Document As Beacon.Document = Self.Document
-		  Dim Config As BeaconConfigs.DayCycle
+		  Var Document As Beacon.Document = Self.Document
+		  Var Config As BeaconConfigs.DayCycle
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.DayCycle(Self.mConfigRef.Value)
@@ -1391,7 +1391,7 @@ End
 		    ColdCycleMinutes = ColdDayMinutes + ColdNightMinutes
 		  End If
 		  
-		  Dim Focus As RectControl
+		  Var Focus As RectControl
 		  If Force = False Then
 		    Focus = Self.Focus
 		  End If
@@ -1625,6 +1625,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Progress"
 		Visible=false

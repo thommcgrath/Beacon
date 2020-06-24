@@ -4,7 +4,7 @@ Inherits M_Crypto.Encrypter
 Implements BcryptInterface
 	#tag Event
 		Sub CloneFrom(e As M_Crypto.Encrypter)
-		  dim other as M_Crypto.Blowfish_MTC = M_Crypto.Blowfish_MTC( e )
+		  Var other as M_Crypto.Blowfish_MTC = M_Crypto.Blowfish_MTC( e )
 		  
 		  if other.P isa object then
 		    P = new Xojo.Core.MutableMemoryBlock( other.P )
@@ -47,17 +47,17 @@ Implements BcryptInterface
 		  //
 		  // Set up an initial state
 		  //
-		  dim initialVector as Xojo.Core.MutableMemoryBlock = self.InitialVector
+		  Var initialVector as Xojo.Core.MutableMemoryBlock = self.InitialVector
 		  self.InitialVector = nil
-		  dim initialPadding as Padding = self.PaddingMethod
+		  Var initialPadding as Padding = self.PaddingMethod
 		  Constructor( Padding.PKCS )
 		  
 		  //
 		  // Set up the keys
 		  //
-		  dim mbKey as Xojo.Core.MutableMemoryBlock = M_Crypto.StringToMutableMemoryBlock( kKey )
-		  dim mbData as Xojo.Core.MutableMemoryBlock = M_Crypto.StringToMutableMemoryBlock( kData )
-		  dim result as string
+		  Var mbKey as Xojo.Core.MutableMemoryBlock = M_Crypto.StringToMutableMemoryBlock( kKey )
+		  Var mbData as Xojo.Core.MutableMemoryBlock = M_Crypto.StringToMutableMemoryBlock( kData )
+		  Var result as string
 		  
 		  //
 		  // Test ExpandState
@@ -123,8 +123,8 @@ Implements BcryptInterface
 		  end if
 		  
 		  if returnErrorMessage = "" then
-		    dim d0 as UInt32 = 1
-		    dim d1 as UInt32 = 126
+		    Var d0 as UInt32 = 1
+		    Var d1 as UInt32 = 126
 		    Encipher( d0, d1 )
 		    if d0 <> CType( 1759095662, UInt32 ) or d1 <> CType( 231467629, UInt32 ) then
 		      returnErrorMessage = "Encipher fail"
@@ -170,8 +170,8 @@ Implements BcryptInterface
 		Sub KeyChanged(key As String)
 		  InitKeyValues
 		  
-		  dim temp as MemoryBlock = key
-		  dim keyMB as new Xojo.Core.MutableMemoryBlock( temp, temp.Size )
+		  Var temp as MemoryBlock = key
+		  Var keyMB as new Xojo.Core.MutableMemoryBlock( temp, temp.Size )
 		  Expand0State 1, keyMB
 		End Sub
 	#tag EndEvent
@@ -216,21 +216,21 @@ Implements BcryptInterface
 		    #pragma StackOverflowChecking False
 		  #endif
 		  
-		  dim mySPtr as Ptr = SPtr
-		  dim myPPtr as Ptr = PPtr
+		  Var mySPtr as Ptr = SPtr
+		  Var myPPtr as Ptr = PPtr
 		  
 		  const kFF as UInt32 = &hFF
 		  const kShiftRight3 as UInt32 = 256 ^ 3
 		  const kShiftRight2 as UInt32 = 256 ^ 2
 		  const kShiftRight1 as UInt32 = 256
 		  
-		  dim xl as UInt32 = x0
-		  dim xr as UInt32 = x1
+		  Var xl as UInt32 = x0
+		  Var xr as UInt32 = x1
 		  
 		  xl = xl Xor myPPtr.UInt32( 17 * 4 )
 		  
-		  dim a, b, c, d as integer
-		  dim j as UInt32
+		  Var a, b, c, d as integer
+		  Var j as UInt32
 		  for i as integer = 16 downto 2 step 2
 		    j = xl
 		    
@@ -276,11 +276,11 @@ Implements BcryptInterface
 		    #pragma StackOverflowChecking False
 		  #endif
 		  
-		  dim dataPtr as Ptr = data.Data
-		  dim blocks as integer = data.Size \ 8
-		  dim byteIndex as integer
-		  dim x0 as UInt32
-		  dim x1 as UInt32
+		  Var dataPtr as Ptr = data.Data
+		  Var blocks as integer = data.Size \ 8
+		  Var byteIndex as integer
+		  Var x0 as UInt32
+		  Var x1 as UInt32
 		  
 		  for thisBlock as Integer = 1 to blocks
 		    x0 = dataPtr.UInt32( byteIndex )
@@ -305,11 +305,11 @@ Implements BcryptInterface
 		    #pragma StackOverflowChecking False
 		  #endif
 		  
-		  dim l, r as UInt32
-		  dim blocks as integer = data.Size \ 8
-		  dim byteIndex as integer = ( ( data.Size \ 8 ) * 8 ) - 8
+		  Var l, r as UInt32
+		  Var blocks as integer = data.Size \ 8
+		  Var byteIndex as integer = ( ( data.Size \ 8 ) * 8 ) - 8
 		  
-		  dim savedInitialVectorMB as new Xojo.Core.MutableMemoryBlock( 8 )
+		  Var savedInitialVectorMB as new Xojo.Core.MutableMemoryBlock( 8 )
 		  if zCurrentVector isa object then
 		    savedInitialVectorMB.Left( 8 ) = zCurrentVector
 		  elseif InitialVector isa object then
@@ -323,11 +323,11 @@ Implements BcryptInterface
 		    zCurrentVector.Left( 8 ) = data.Mid( byteIndex, 8 ) // For chain decrypting
 		  end if
 		  
-		  dim dataPtr as ptr = data.Data
+		  Var dataPtr as ptr = data.Data
 		  data.LittleEndian = false
 		  
-		  dim vectorMB as new Xojo.Core.MutableMemoryBlock( 8 )
-		  dim vectorPtr as Ptr = vectorMB.Data
+		  Var vectorMB as new Xojo.Core.MutableMemoryBlock( 8 )
+		  Var vectorPtr as Ptr = vectorMB.Data
 		  
 		  for i as integer = blocks downto 1
 		    if i = 1 then
@@ -361,9 +361,9 @@ Implements BcryptInterface
 		    #pragma StackOverflowChecking False
 		  #endif
 		  
-		  dim blocks as integer = data.Size \ 8
-		  dim byteIndex as integer
-		  dim l, r as UInt32
+		  Var blocks as integer = data.Size \ 8
+		  Var byteIndex as integer
+		  Var l, r as UInt32
 		  
 		  data.LittleEndian = false
 		  
@@ -400,16 +400,16 @@ Implements BcryptInterface
 		  const kShiftRight2 as UInt32 = 256 ^ 2
 		  const kShiftRight1 as UInt32 = 256
 		  
-		  dim mySPtr as Ptr = SPtr
-		  dim myPPtr as Ptr = PPtr
+		  Var mySPtr as Ptr = SPtr
+		  Var myPPtr as Ptr = PPtr
 		  
-		  dim xl as UInt32 = x0
-		  dim xr as Uint32 = x1
+		  Var xl as UInt32 = x0
+		  Var xr as Uint32 = x1
 		  
 		  xl = xl Xor myPPtr.UInt32( 0 )
 		  
-		  dim a, b, c, d as integer
-		  dim j as UInt32
+		  Var a, b, c, d as integer
+		  Var j as UInt32
 		  for i as integer = 1 to 16 step 2
 		    j = xl
 		    
@@ -466,21 +466,21 @@ Implements BcryptInterface
 		  const kPLastByte as integer = ( 18 * 4 ) - 1
 		  const kPLastInnerByte as integer = kPLastByte - 7
 		  
-		  dim dataPtr as Ptr = data.Data
-		  dim lastDataByte as integer = data.Size - 1
-		  dim d0 as UInt32
-		  dim d1 as UInt32
+		  Var dataPtr as Ptr = data.Data
+		  Var lastDataByte as integer = data.Size - 1
+		  Var d0 as UInt32
+		  Var d1 as UInt32
 		  
-		  dim a, b, c, d as integer // Used as indexes
-		  dim pptrEncoderIndex as integer
-		  dim xl as UInt32 
-		  dim xr as UInt32 
-		  dim j1 as UInt32
+		  Var a, b, c, d as integer // Used as indexes
+		  Var pptrEncoderIndex as integer
+		  Var xl as UInt32 
+		  Var xr as UInt32 
+		  Var j1 as UInt32
 		  
-		  dim myPPtr as ptr = PPtr
-		  dim mySPtr as ptr = SPtr
+		  Var myPPtr as ptr = PPtr
+		  Var mySPtr as ptr = SPtr
 		  
-		  dim firstPPtrValue as UInt32 = myPPtr.UInt32( 0 )
+		  Var firstPPtrValue as UInt32 = myPPtr.UInt32( 0 )
 		  for byteIndex as integer = 0 to lastDataByte step 8
 		    d0 = dataPtr.UInt32( byteIndex )
 		    d1 = dataPtr.UInt32( byteIndex + 4 )
@@ -548,7 +548,7 @@ Implements BcryptInterface
 		    #pragma StackOverflowChecking False
 		  #endif
 		  
-		  dim vectorMB as Xojo.Core.MutableMemoryBlock = zCurrentVector
+		  Var vectorMB as Xojo.Core.MutableMemoryBlock = zCurrentVector
 		  if vectorMB is nil and InitialVector isa object then
 		    vectorMB = new Xojo.Core.MutableMemoryBlock( InitialVector )
 		    zCurrentVector = vectorMB
@@ -558,12 +558,12 @@ Implements BcryptInterface
 		    vectorMB = new Xojo.Core.MutableMemoryBlock( 8 )
 		    zCurrentVector = vectorMB
 		  end if
-		  dim vectorPtr as ptr = vectorMB.Data
+		  Var vectorPtr as ptr = vectorMB.Data
 		  
-		  dim r, l as UInt32
-		  dim dataPtr as Ptr = data.Data
-		  dim blocks as integer = data.Size \ 8
-		  dim byteIndex as integer
+		  Var r, l as UInt32
+		  Var dataPtr as Ptr = data.Data
+		  Var blocks as integer = data.Size \ 8
+		  Var byteIndex as integer
 		  
 		  data.LittleEndian = false
 		  
@@ -594,9 +594,9 @@ Implements BcryptInterface
 		    #pragma StackOverflowChecking False
 		  #endif
 		  
-		  dim blocks as integer = data.Size \ 8
-		  dim byteIndex as integer
-		  dim l, r as UInt32
+		  Var blocks as integer = data.Size \ 8
+		  Var byteIndex as integer
+		  Var l, r as UInt32
 		  
 		  data.LittleEndian = false
 		  
@@ -638,8 +638,8 @@ Implements BcryptInterface
 		  const kPLastByte as integer = ( 18 * 4 ) - 1
 		  const kPLastInnerByte as integer = kPLastByte - 7
 		  
-		  dim myPPtr as ptr = PPtr
-		  dim mySPtr as ptr = SPtr
+		  Var myPPtr as ptr = PPtr
+		  Var mySPtr as ptr = SPtr
 		  
 		  //
 		  // Create the stream keys
@@ -647,8 +647,8 @@ Implements BcryptInterface
 		  const kStreamWordSize as integer = 8
 		  
 		  #if kDebug then
-		    dim startMs, elapsedMs as Double
-		    dim logPrefix as string = CurrentMethodName + ": "
+		    Var startMs, elapsedMs as Double
+		    Var logPrefix as string = CurrentMethodName + ": "
 		  #endif
 		  
 		  #if kDebug then
@@ -659,16 +659,16 @@ Implements BcryptInterface
 		    startMs = Microseconds
 		  #endif
 		  for keyIndex as integer = 0 to keys.LastRowIndex
-		    dim key as Xojo.Core.MutableMemoryBlock = keys( keyIndex )
-		    dim keySize as integer = key.Size
+		    Var key as Xojo.Core.MutableMemoryBlock = keys( keyIndex )
+		    Var keySize as integer = key.Size
 		    
 		    if keySize = 0 then
 		      RaiseErrorIf( true, kErrorKeyCannotBeEmpty )
 		    end if
 		    WasKeySet = true
 		    
-		    dim streamKey as Xojo.Core.MutableMemoryBlock
-		    dim streamKeySize as integer = keySize
+		    Var streamKey as Xojo.Core.MutableMemoryBlock
+		    Var streamKeySize as integer = keySize
 		    if ( keySize mod kStreamWordSize ) = 0 then
 		      streamKey = new Xojo.Core.MutableMemoryBlock( keySize )
 		      streamKey.Left( keySize ) = key
@@ -676,7 +676,7 @@ Implements BcryptInterface
 		      streamKeySize = streamKeySize * kStreamWordSize
 		      
 		      streamKey = new Xojo.Core.MutableMemoryBlock( streamKeySize )
-		      dim lastByte as integer = streamKeySize - 1
+		      Var lastByte as integer = streamKeySize - 1
 		      for thisByte as integer = 0 to lastByte step keySize
 		        streamKey.Mid( thisByte, keySize ) = key
 		      next
@@ -686,10 +686,10 @@ Implements BcryptInterface
 		      //
 		      // Swap the bytes
 		      //
-		      dim streamKeyPtr as ptr = streamKey.Data
-		      dim swapIndex as integer
+		      Var streamKeyPtr as ptr = streamKey.Data
+		      Var swapIndex as integer
 		      while swapIndex < streamKeySize
-		        dim temp as UInt32 = streamKeyPtr.UInt32( swapIndex )
+		        Var temp as UInt32 = streamKeyPtr.UInt32( swapIndex )
 		        streamKeyPtr.UInt32( swapIndex ) = _
 		        ( temp \ kShift3 ) or _
 		        ( ( temp and kMask1 ) \ kShift1 ) or _
@@ -712,22 +712,22 @@ Implements BcryptInterface
 		  // Encoding starts here
 		  //
 		  
-		  dim a, b, c, d as integer // Used as indexes
-		  dim s1, s2, s3, s4 as UInt32
-		  dim pValue1, pValue2 as UInt32
-		  dim xl as UInt32 
-		  dim xr as UInt32 
-		  dim temp as UInt32
-		  dim barrier as integer
-		  dim pptrEncoderIndex as integer
+		  Var a, b, c, d as integer // Used as indexes
+		  Var s1, s2, s3, s4 as UInt32
+		  Var pValue1, pValue2 as UInt32
+		  Var xl as UInt32 
+		  Var xr as UInt32 
+		  Var temp as UInt32
+		  Var barrier as integer
+		  Var pptrEncoderIndex as integer
 		  
-		  dim key as Xojo.Core.MutableMemoryBlock
-		  dim keyPtr as ptr
-		  dim keySize as integer
+		  Var key as Xojo.Core.MutableMemoryBlock
+		  Var keyPtr as ptr
+		  Var keySize as integer
 		  
-		  dim streamIndex as integer
-		  dim sByteIndex, pByteIndex as integer
-		  dim keyIndex as integer
+		  Var streamIndex as integer
+		  Var sByteIndex, pByteIndex as integer
+		  Var keyIndex as integer
 		  
 		  for rep as integer = 1 to repetitions
 		    
@@ -910,24 +910,24 @@ Implements BcryptInterface
 		  const kPLastByte as integer = ( 18 * 4 ) - 1
 		  const kPLastInnerByte as integer = kPLastByte - 7
 		  
-		  dim streamIndex as integer
-		  dim pByteIndex as integer
-		  dim sByteIndex as integer
-		  dim temp as UInt32
-		  dim d0 as UInt32
-		  dim d1 as UInt32
+		  Var streamIndex as integer
+		  Var pByteIndex as integer
+		  Var sByteIndex as integer
+		  Var temp as UInt32
+		  Var d0 as UInt32
+		  Var d1 as UInt32
 		  
-		  dim myPPtr as ptr = PPtr
-		  dim mySPtr as ptr = SPtr
+		  Var myPPtr as ptr = PPtr
+		  Var mySPtr as ptr = SPtr
 		  
 		  //
 		  // Create the streams
 		  //
 		  const kStreamWordSize as integer = 8
 		  
-		  dim streamData as Xojo.Core.MutableMemoryBlock
-		  dim dataSize as integer = data.Size
-		  dim streamDataSize as integer = dataSize
+		  Var streamData as Xojo.Core.MutableMemoryBlock
+		  Var dataSize as integer = data.Size
+		  Var streamDataSize as integer = dataSize
 		  
 		  if ( streamDataSize mod kStreamWordSize ) = 0 then
 		    streamData = new Xojo.Core.MutableMemoryBlock( streamDataSize )
@@ -936,16 +936,16 @@ Implements BcryptInterface
 		    streamDataSize = dataSize * kStreamWordSize
 		    streamData = new Xojo.Core.MutableMemoryBlock( streamDataSize )
 		    
-		    dim lastByte as integer = streamDataSize - 1
+		    Var lastByte as integer = streamDataSize - 1
 		    for thisByte as integer = 0 to lastByte step dataSize
 		      streamData.Mid( thisByte, dataSize ) = data
 		    next
 		  end if
 		  
-		  dim streamDataPtr as ptr = streamData.Data
+		  Var streamDataPtr as ptr = streamData.Data
 		  
 		  #if TargetLittleEndian then
-		    dim copyIndex as integer
+		    Var copyIndex as integer
 		    while copyIndex < streamDataSize
 		      temp = streamDataPtr.UInt32( copyIndex )
 		      streamDataPtr.UInt32( copyIndex ) = _
@@ -958,9 +958,9 @@ Implements BcryptInterface
 		    wend
 		  #endif
 		  
-		  dim streamKey as Xojo.Core.MutableMemoryBlock
-		  dim keySize as integer = key.Size
-		  dim streamKeySize as integer = keySize
+		  Var streamKey as Xojo.Core.MutableMemoryBlock
+		  Var keySize as integer = key.Size
+		  Var streamKeySize as integer = keySize
 		  
 		  if ( streamKeySize mod kStreamWordSize ) = 0 then
 		    streamKey = new Xojo.Core.MutableMemoryBlock( keySize )
@@ -969,13 +969,13 @@ Implements BcryptInterface
 		    streamKeySize = keySize * kStreamWordSize
 		    streamKey = new Xojo.Core.MutableMemoryBlock( streamKeySize )
 		    
-		    dim lastByte as integer = streamKeySize - 1
+		    Var lastByte as integer = streamKeySize - 1
 		    for thisByte as integer = 0 to lastByte step keySize
 		      streamKey.Mid( thisByte, keySize ) = key
 		    next
 		  end if
 		  
-		  dim streamKeyPtr as ptr = streamKey.Data
+		  Var streamKeyPtr as ptr = streamKey.Data
 		  
 		  #if TargetLittleEndian then
 		    copyIndex = 0
@@ -996,7 +996,7 @@ Implements BcryptInterface
 		  //
 		  
 		  streamIndex = 0
-		  dim barrier as integer = streamKeySize - kStreamWordSize
+		  Var barrier as integer = streamKeySize - kStreamWordSize
 		  for pByteIndex = 0 to kPLastByte step kStreamWordSize // Two words at a time
 		    'temp = Stream2Word( key, streamIndex, streamBuffer, streamBufferPtr )
 		    
@@ -1008,11 +1008,11 @@ Implements BcryptInterface
 		    end if
 		  next pByteIndex
 		  
-		  dim a, b, c, d as integer // Used as indexes
-		  dim xl as UInt32 
-		  dim xr as UInt32 
-		  dim j1 as UInt32
-		  dim pptrEncoderIndex as integer
+		  Var a, b, c, d as integer // Used as indexes
+		  Var xl as UInt32 
+		  Var xr as UInt32 
+		  Var j1 as UInt32
+		  Var pptrEncoderIndex as integer
 		  
 		  barrier = streamDataSize - 4
 		  streamIndex = 0
@@ -1080,7 +1080,7 @@ Implements BcryptInterface
 		    myPPtr.UInt32( pByteIndex + 4 ) = d1
 		  next pByteIndex
 		  
-		  dim firstPPtr as UInt32 = myPPtr.UInt32( 0 )
+		  Var firstPPtr as UInt32 = myPPtr.UInt32( 0 )
 		  for sByteIndex = 0 to kSLastByte step 8
 		    'd0 = d0 Xor Stream2Word( data, streamIndex, streamBuffer, streamBufferPtr )
 		    'd1 = d1 Xor Stream2Word( data, streamIndex, streamBuffer, streamBufferPtr )
@@ -1157,11 +1157,11 @@ Implements BcryptInterface
 		  
 		  if defaultS is nil then
 		    
-		    dim mySPtr as ptr = SPtr
+		    Var mySPtr as ptr = SPtr
 		    
-		    dim x as integer
+		    Var x as integer
 		    for i as integer = 0 to 3
-		      dim arr() as UInt32
+		      Var arr() as UInt32
 		      select case i
 		      case 0
 		        arr = S0
@@ -1190,9 +1190,9 @@ Implements BcryptInterface
 		  static defaultP as Xojo.Core.MutableMemoryBlock
 		  
 		  if defaultP is nil then
-		    dim myPPtr as ptr = PPtr
+		    Var myPPtr as ptr = PPtr
 		    
-		    dim vals() as UInt32 = UInt32Array( _
+		    Var vals() as UInt32 = UInt32Array( _
 		    &h243f6a88, &h85a308d3, &h13198a2e, &h03707344, _
 		    &ha4093822, &h299f31d0, &h082efa98, &hec4e6c89, _
 		    &h452821e6, &h38d01377, &hbe5466cf, &h34e90c6c, _
@@ -1501,11 +1501,11 @@ Implements BcryptInterface
 
 	#tag Method, Flags = &h21
 		Attributes( Hidden ) Private Shared Function SelfTestMemoryBlockHash(mbIn As Xojo.Core.MutableMemoryBlock, expectedSize As Integer) As String
-		  dim pIn as ptr = mbIn.Data
-		  dim mbOut as new MemoryBlock( expectedSize )
-		  dim pOut as ptr = mbOut
+		  Var pIn as ptr = mbIn.Data
+		  Var mbOut as new MemoryBlock( expectedSize )
+		  Var pOut as ptr = mbOut
 		  
-		  dim mbWordSize as integer
+		  Var mbWordSize as integer
 		  select case true
 		  case expectedSize = mbIn.Size
 		    mbWordSize = 4
@@ -1515,8 +1515,8 @@ Implements BcryptInterface
 		    raise new RuntimeException
 		  end select
 		  
-		  dim mbOutIndex as integer
-		  dim mbInLastByte as integer = mbIn.Size - 1
+		  Var mbOutIndex as integer
+		  Var mbInLastByte as integer = mbIn.Size - 1
 		  for mbInIndex as integer = 0 to mbInLastByte step mbWordSize
 		    if mbWordSize = 8 then
 		      pOut.UInt32( mbOutIndex ) = pIn.UInt64( mbInIndex )
@@ -1548,11 +1548,11 @@ Implements BcryptInterface
 		    #pragma StackOverflowChecking False
 		  #endif
 		  
-		  dim r as UInt32
+		  Var r as UInt32
 		  
-		  dim dataPtr as Ptr = data.Data
-		  dim dataSize as Integer = data.Size
-		  dim j as Integer = current
+		  Var dataPtr as Ptr = data.Data
+		  Var dataSize as Integer = data.Size
+		  Var j as Integer = current
 		  
 		  if j = dataSize then 
 		    j = 0 // Special case optimization
@@ -1569,15 +1569,15 @@ Implements BcryptInterface
 		    
 		  elseif dataSize >= 2 and j = ( dataSize - 2 ) then
 		    
-		    dim big as UInt32 = data.UInt16Value( j )
-		    dim small as UInt32 = data.UInt16Value( 0 )
+		    Var big as UInt32 = data.UInt16Value( j )
+		    Var small as UInt32 = data.UInt16Value( 0 )
 		    r = big * CType( 256 ^ 2, UInt32 ) + small
 		    j = 2
 		    
 		  elseif dataSize > 2 then
 		    
-		    dim fromTheEnd as integer = dataSize - j
-		    dim fromTheStart as integer = 4 - fromTheEnd
+		    Var fromTheEnd as integer = dataSize - j
+		    Var fromTheStart as integer = 4 - fromTheEnd
 		    
 		    buffer.Left( fromTheEnd ) = data.Right( fromTheEnd )
 		    buffer.Right( fromTheStart ) = data.Left( fromTheStart )
@@ -1588,7 +1588,7 @@ Implements BcryptInterface
 		    //
 		    // j must be 0
 		    //
-		    dim b as UInt32 = dataPtr.Byte( 0 )
+		    Var b as UInt32 = dataPtr.Byte( 0 )
 		    r = b * CType( 256 ^ 3, UInt32 ) + b * CType( 256 ^ 2, UInt32 ) + b * CType( 256, UInt32 ) + b
 		    j = 0
 		    

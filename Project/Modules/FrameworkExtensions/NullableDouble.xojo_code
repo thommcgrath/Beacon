@@ -1,6 +1,30 @@
 #tag Class
 Class NullableDouble
 	#tag Method, Flags = &h0
+		Function DoubleValue() As Double
+		  Return Self.mValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromDouble(Value As Double) As NullableDouble
+		  Return Value
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromInteger(Value As Integer) As NullableDouble
+		  Return Value
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IntegerValue() As Integer
+		  Return Round(Self.mValue)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Add(RHS As Double) As Double
 		  Return Self.mValue + RHS
 		End Function
@@ -26,7 +50,7 @@ Class NullableDouble
 
 	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As NullableDouble) As Integer
-		  If Other = Nil Or Self.mValue > Other.mValue Then
+		  If Other Is Nil Or Self.mValue > Other.mValue Then
 		    Return 1
 		  ElseIf Self.mValue < Other.mValue Then
 		    Return -1
@@ -81,12 +105,6 @@ Class NullableDouble
 	#tag Method, Flags = &h0
 		Function Operator_Subtract(RHS As Double) As Double
 		  Return Self.mValue - RHS
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Value() As Double
-		  Return Self.mValue
 		End Function
 	#tag EndMethod
 

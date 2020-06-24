@@ -5,17 +5,17 @@ Inherits Beacon.ConfigGroup
 		Sub DetectIssues(Document As Beacon.Document, Issues() As Beacon.Issue)
 		  #Pragma Unused Document
 		  
-		  Dim ConfigName As String = ConfigKey
-		  Dim Locale As Locale = Locale.Current
+		  Var ConfigName As String = ConfigKey
+		  Var Locale As Locale = Locale.Current
 		  
 		  If Self.mPlayerLevels.LastRowIndex > -1 And Self.PlayerLevelCap <= Self.AscensionLevels Then
 		    Issues.AddRow(New Beacon.Issue(ConfigName, "Must define at least " + Self.AscensionLevels.ToString(Locale) + " player levels to handle ascension correctly."))
 		  End If
 		  
 		  For I As Integer = 0 To Self.mPlayerLevels.LastRowIndex
-		    Dim Level As Integer = I + 2
-		    Dim XP As Integer = Self.mPlayerLevels(I)
-		    Dim LastXP As UInt64 = If(I > 0, Self.mPlayerLevels(I - 1), 0)
+		    Var Level As Integer = I + 2
+		    Var XP As Integer = Self.mPlayerLevels(I)
+		    Var LastXP As UInt64 = If(I > 0, Self.mPlayerLevels(I - 1), 0)
 		    If XP < LastXP Then
 		      Issues.AddRow(New Beacon.Issue(ConfigName, "Player level " + Level.ToString(Locale) + " required experience is lower than the previous level.", "Player:" + Level.ToString))
 		    End If
@@ -25,9 +25,9 @@ Inherits Beacon.ConfigGroup
 		  Next
 		  
 		  For I As Integer = 0 To Self.mDinoLevels.LastRowIndex
-		    Dim Level As Integer = I + 2
-		    Dim XP As Integer = Self.mDinoLevels(I)
-		    Dim LastXP As UInt64 = If(I > 0, Self.mDinoLevels(I - 1), 0)
+		    Var Level As Integer = I + 2
+		    Var XP As Integer = Self.mDinoLevels(I)
+		    Var LastXP As UInt64 = If(I > 0, Self.mDinoLevels(I - 1), 0)
 		    If XP < LastXP Then
 		      Issues.AddRow(New Beacon.Issue(ConfigName, "Dino level " + Level.ToString(Locale) + " required experience is lower than the previous level.", "Dino:" + Level.ToString))
 		    End If
@@ -46,7 +46,7 @@ Inherits Beacon.ConfigGroup
 		  Const CompactMode = False
 		  
 		  If Self.mPlayerLevels.LastRowIndex > -1 Then
-		    Dim MaxXP As UInt64 = Self.PlayerMaxExperience
+		    Var MaxXP As UInt64 = Self.PlayerMaxExperience
 		    
 		    // Index 0 is level 2!
 		    // Index 150 is level 152
@@ -97,26 +97,26 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Document
 		  
 		  If Dict.HasKey("Player Levels") Then
-		    Dim List() As Variant = Dict.Value("Player Levels")
+		    Var List() As Variant = Dict.Value("Player Levels")
 		    For Each LevelXP As UInt64 In List
 		      Self.mPlayerLevels.AddRow(LevelXP)
 		    Next
 		  ElseIf Dict.HasAllKeys("Player Curve", "Player Level Cap", "Player Max Experience") Then
-		    Dim Curve As Beacon.Curve = Beacon.Curve.Import(Dict.Value("Player Curve"))
-		    Dim MaxLevel As UInt64 = Dict.Value("Player Level Cap")
-		    Dim MaxXP As UInt64 = Dict.Value("Player Max Experience")
+		    Var Curve As Beacon.Curve = Beacon.Curve.Import(Dict.Value("Player Curve"))
+		    Var MaxLevel As UInt64 = Dict.Value("Player Level Cap")
+		    Var MaxXP As UInt64 = Dict.Value("Player Max Experience")
 		    Self.mPlayerLevels = Self.LegacyCurveImport(Curve, MaxLevel, MaxXP)
 		  End If
 		  
 		  If Dict.HasKey("Dino Levels") Then
-		    Dim List() As Variant = Dict.Value("Dino Levels")
+		    Var List() As Variant = Dict.Value("Dino Levels")
 		    For Each LevelXP As UInt64 In List
 		      Self.mDinoLevels.AddRow(LevelXP)
 		    Next
 		  ElseIf Dict.HasAllKeys("Dino Curve", "Dino Level Cap", "Dino Max Experience") Then
-		    Dim Curve As Beacon.Curve = Beacon.Curve.Import(Dict.Value("Dino Curve"))
-		    Dim MaxLevel As UInt64 = Dict.Value("Dino Level Cap")
-		    Dim MaxXP As UInt64 = Dict.Value("Dino Max Experience")
+		    Var Curve As Beacon.Curve = Beacon.Curve.Import(Dict.Value("Dino Curve"))
+		    Var MaxLevel As UInt64 = Dict.Value("Dino Level Cap")
+		    Var MaxXP As UInt64 = Dict.Value("Dino Max Experience")
 		    Self.mDinoLevels = Self.LegacyCurveImport(Curve, MaxLevel, MaxXP)
 		  End If
 		End Sub
@@ -170,9 +170,9 @@ Inherits Beacon.ConfigGroup
 		Sub Constructor()
 		  Super.Constructor()
 		  
-		  Dim List As String = Beacon.Data.GetStringVariable("Player Levels")
+		  Var List As String = Beacon.Data.GetStringVariable("Player Levels")
 		  If List <> "" Then
-		    Dim Values() As String = List.Split(",")
+		    Var Values() As String = List.Split(",")
 		    For Each Value As String In Values
 		      Self.mPlayerLevels.AddRow(UInt64.FromString(Value))
 		    Next
@@ -180,7 +180,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  List = Beacon.Data.GetStringVariable("Dino Levels")
 		  If List <> "" Then
-		    Dim Values() As String = List.Split(",")
+		    Var Values() As String = List.Split(",")
 		    For Each Value As String In Values
 		      Self.mDinoLevels.AddRow(UInt64.FromString(Value))
 		    Next
@@ -196,8 +196,8 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub DinoExperience(Index As Integer, Assigns XP As UInt64)
-		  Dim PreviousXP, NextXP As UInt64
-		  Dim PreviousIndex, NextIndex As Integer
+		  Var PreviousXP, NextXP As UInt64
+		  Var PreviousIndex, NextIndex As Integer
 		  PreviousXP = Self.FindLowValue(Self.mDinoLevels, Index, PreviousIndex)
 		  NextXP = Self.FindHighValue(Self.mDinoLevels, Index, NextIndex)
 		  
@@ -212,8 +212,8 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function DinoLevels() As UInt64()
-		  Dim Levels() As UInt64
-		  Redim Levels(Self.mDinoLevels.LastRowIndex)
+		  Var Levels() As UInt64
+		  Levels.ResizeTo(Self.mDinoLevels.LastRowIndex)
 		  For I As Integer = 0 To Self.mDinoLevels.LastRowIndex
 		    Levels(I) = Self.mDinoLevels(I)
 		  Next
@@ -269,9 +269,9 @@ Inherits Beacon.ConfigGroup
 		    Return Nil
 		  End If
 		  
-		  Dim Values As Variant = ParsedData.Value("LevelExperienceRampOverrides")
-		  Dim ValuesInfo As Introspection.TypeInfo = Introspection.GetType(Values)
-		  Dim Overrides() As Variant
+		  Var Values As Variant = ParsedData.Value("LevelExperienceRampOverrides")
+		  Var ValuesInfo As Introspection.TypeInfo = Introspection.GetType(Values)
+		  Var Overrides() As Variant
 		  If ValuesInfo.FullName = "Object()" Then
 		    Overrides = Values
 		  ElseIf ValuesInfo.FullName = "Dictionary" Then
@@ -283,27 +283,27 @@ Inherits Beacon.ConfigGroup
 		  Const IdxPlayerData = 0
 		  Const IdxTameData = 1
 		  
-		  Dim Config As New BeaconConfigs.ExperienceCurves
+		  Var Config As New BeaconConfigs.ExperienceCurves
 		  Config.mWasPerfectImport = True
 		  
 		  Var Bound As Integer = Min(Overrides.LastRowIndex, 1)
 		  For Idx As Integer = 0 To Bound
 		    Try
 		      Var Dict As Dictionary = Overrides(Idx)
-		      Dim Levels() As UInt64
+		      Var Levels() As UInt64
 		      For Each Entry As DictionaryEntry In Dict
-		        Dim Key As String = Entry.Key
+		        Var Key As String = Entry.Key
 		        If Key.BeginsWith("ExperiencePointsForLevel") Then
-		          Dim OpenTagPosition As Integer = Key.IndexOf("[")
-		          Dim CloseTagPosition As Integer = Key.IndexOf(OpenTagPosition, "]")
+		          Var OpenTagPosition As Integer = Key.IndexOf("[")
+		          Var CloseTagPosition As Integer = Key.IndexOf(OpenTagPosition, "]")
 		          If OpenTagPosition = -1 Or CloseTagPosition = -1 Then
 		            Continue
 		          End If
 		          OpenTagPosition = OpenTagPosition + 1
-		          Dim IndexTxt As String = Key.Middle(OpenTagPosition, CloseTagPosition - OpenTagPosition)
-		          Dim Index As Integer = Integer.FromString(IndexTxt)
+		          Var IndexTxt As String = Key.Middle(OpenTagPosition, CloseTagPosition - OpenTagPosition)
+		          Var Index As Integer = Integer.FromString(IndexTxt)
 		          If Levels.LastRowIndex < Index Then
-		            Redim Levels(Index)
+		            Levels.ResizeTo(Index)
 		          End If
 		          Levels(Index) = Entry.Value
 		        End If
@@ -316,17 +316,17 @@ Inherits Beacon.ConfigGroup
 		          Continue
 		        End If
 		        
-		        Dim PreviousXP, NextXP As UInt64
-		        Dim LowIndex, HighIndex As Integer
+		        Var PreviousXP, NextXP As UInt64
+		        Var LowIndex, HighIndex As Integer
 		        PreviousXP = FindLowValue(Levels, I, LowIndex)
 		        NextXP = FindHighValue(Levels, I, HighIndex)
 		        If LowIndex = -1 Or HighIndex = -1 Then
 		          Continue
 		        End If
 		        
-		        Dim Range As Integer = HighIndex - LowIndex
-		        Dim Difference As UInt64 = NextXP - PreviousXP
-		        Dim XPPerLevel As UInt64 = Round(Difference / Range)
+		        Var Range As Integer = HighIndex - LowIndex
+		        Var Difference As UInt64 = NextXP - PreviousXP
+		        Var XPPerLevel As UInt64 = Round(Difference / Range)
 		        For X As Integer = LowIndex + 1 To HighIndex - 1
 		          Levels(X) = PreviousXP + (XPPerLevel * (X - LowIndex))
 		          Config.mWasPerfectImport = False
@@ -347,10 +347,10 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h21
 		Private Shared Function LegacyCurveImport(Curve As Beacon.Curve, MaxLevel As UInt64, MaxXP As UInt64) As UInt64()
-		  Dim Levels() As UInt64
+		  Var Levels() As UInt64
 		  For Index As Integer = 0 To MaxLevel - 2
-		    Dim Level As Integer = Index + 2
-		    Dim XP As UInt64 = Round(Curve.Evaluate((Level - 1) / (MaxLevel - 1), 0, MaxXP))
+		    Var Level As Integer = Index + 2
+		    Var XP As UInt64 = Round(Curve.Evaluate((Level - 1) / (MaxLevel - 1), 0, MaxXP))
 		    Levels.AddRow(XP)
 		  Next
 		  Return Levels
@@ -365,8 +365,8 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub PlayerExperience(Index As Integer, Assigns XP As UInt64)
-		  Dim PreviousXP, NextXP As UInt64
-		  Dim PreviousIndex, NextIndex As Integer
+		  Var PreviousXP, NextXP As UInt64
+		  Var PreviousIndex, NextIndex As Integer
 		  PreviousXP = Self.FindLowValue(Self.mPlayerLevels, Index, PreviousIndex)
 		  NextXP = Self.FindHighValue(Self.mPlayerLevels, Index, NextIndex)
 		  
@@ -381,8 +381,8 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function PlayerLevels() As UInt64()
-		  Dim Levels() As UInt64
-		  Redim Levels(Self.mPlayerLevels.LastRowIndex)
+		  Var Levels() As UInt64
+		  Levels.ResizeTo(Self.mPlayerLevels.LastRowIndex)
 		  For I As Integer = 0 To Self.mPlayerLevels.LastRowIndex
 		    Levels(I) = Self.mPlayerLevels(I)
 		  Next
@@ -423,7 +423,7 @@ Inherits Beacon.ConfigGroup
 			    Return
 			  End If
 			  
-			  Redim Self.mDinoLevels(Value - 1)
+			  Self.mDinoLevels.ResizeTo(Value - 1)
 			  Self.Modified = True
 			End Set
 		#tag EndSetter
@@ -465,7 +465,7 @@ Inherits Beacon.ConfigGroup
 			    Return
 			  End If
 			  
-			  Redim Self.mPlayerLevels(Value - 2)
+			  Self.mPlayerLevels.ResizeTo(Value - 2)
 			  Self.Modified = True
 			End Set
 		#tag EndSetter

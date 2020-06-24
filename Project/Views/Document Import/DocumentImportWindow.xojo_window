@@ -40,7 +40,6 @@ Begin Window DocumentImportWindow
       HasBackColor    =   False
       Height          =   400
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -84,7 +83,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(ImportCallback As ImportFinishedDelegate, DestinationDocument As Beacon.Document, OtherDocuments() As Beacon.Document, RequireDeploy As Boolean) As DocumentImportWindow
-		  Dim Win As New DocumentImportWindow(ImportCallback, RequireDeploy)
+		  Var Win As New DocumentImportWindow(ImportCallback, RequireDeploy)
 		  Win.DocumentImportView1.PullValuesFromDocument(DestinationDocument) // Give discovery views a chance to get stuff like oauth keys
 		  Win.DocumentImportView1.SetOtherDocuments(OtherDocuments)
 		  Win.Show
@@ -94,7 +93,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(ImportCallback As ImportFinishedDelegate, DestinationDocument As Beacon.Document, File As FolderItem) As DocumentImportWindow
-		  Dim Win As New DocumentImportWindow(ImportCallback, False)
+		  Var Win As New DocumentImportWindow(ImportCallback, False)
 		  Win.DocumentImportView1.PullValuesFromDocument(DestinationDocument) // Give discovery views a chance to get stuff like oauth keys
 		  Win.DocumentImportView1.Import(File)
 		  Win.Show

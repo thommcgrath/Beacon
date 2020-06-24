@@ -680,8 +680,10 @@ Begin ConfigEditor StatLimitsConfigEditor
       Tooltip         =   ""
       Top             =   200
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   959
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -805,8 +807,8 @@ End
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.StatLimits
 		  Static ConfigName As String = BeaconConfigs.StatLimits.ConfigName
 		  
-		  Dim Document As Beacon.Document = Self.Document
-		  Dim Config As BeaconConfigs.StatLimits
+		  Var Document As Beacon.Document = Self.Document
+		  Var Config As BeaconConfigs.StatLimits
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.StatLimits(Self.mConfigRef.Value)
@@ -1251,6 +1253,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Progress"
 		Visible=false

@@ -166,6 +166,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       TextUnit        =   0
       Top             =   61
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -205,9 +206,9 @@ End
 		    Return
 		  End If
 		  
-		  Dim Tag As String = Issue.UserData
-		  Dim Parts() As String = Tag.Split(":")
-		  Dim Level As Integer = Integer.FromString(Parts(1))
+		  Var Tag As String = Issue.UserData
+		  Var Parts() As String = Tag.Split(":")
+		  Var Level As Integer = Integer.FromString(Parts(1))
 		  Select Case Parts(0)
 		  Case "Player"
 		    Self.Switcher.SelectedIndex = 1
@@ -215,7 +216,7 @@ End
 		    Self.Switcher.SelectedIndex = 2
 		  End Select
 		  
-		  Dim Levels(0) As Integer
+		  Var Levels(0) As Integer
 		  Levels(0) = Level
 		  Self.UpdateList(Levels)
 		End Sub
@@ -226,8 +227,8 @@ End
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.ExperienceCurves
 		  Static ConfigName As String = BeaconConfigs.ExperienceCurves.ConfigName
 		  
-		  Dim Document As Beacon.Document = Self.Document
-		  Dim Config As BeaconConfigs.ExperienceCurves
+		  Var Document As Beacon.Document = Self.Document
+		  Var Config As BeaconConfigs.ExperienceCurves
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.ExperienceCurves(Self.mConfigRef.Value)
@@ -259,11 +260,11 @@ End
 		    Return
 		  End If
 		  
-		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(True)
+		  Var Config As BeaconConfigs.ExperienceCurves = Self.Config(True)
 		  Config.DinoLevelCap = LocalData.SharedInstance.GetIntegerVariable("Dino Level Cap")
 		  
-		  Dim TextList As String = LocalData.SharedInstance.GetStringVariable("Dino Default Experience")
-		  Dim List() As String = TextList.Split(",")
+		  Var TextList As String = LocalData.SharedInstance.GetStringVariable("Dino Default Experience")
+		  Var List() As String = TextList.Split(",")
 		  For I As Integer = 0 To List.LastRowIndex
 		    Config.DinoExperience(I) = UInt64.FromString(List(I))
 		  Next
@@ -279,13 +280,13 @@ End
 		    Return
 		  End If
 		  
-		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(True)
-		  Config.PlayerLevelCap = LocalData.SharedInstance.GetIntegerVariable("Player Level Cap")
+		  Var Config As BeaconConfigs.ExperienceCurves = Self.Config(True)
+		  Config.PlayerLevelCap = 1
 		  
-		  Dim TextList As String = LocalData.SharedInstance.GetStringVariable("Player Default Experience")
-		  Dim List() As String = TextList.Split(",")
-		  For I As Integer = 0 To List.LastRowIndex
-		    Config.PlayerExperience(I) = UInt64.FromString(List(I))
+		  Var LevelData As Beacon.PlayerLevelData = LocalData.SharedInstance.OfficialPlayerLevelData
+		  Config.PlayerLevelCap = LevelData.MaxLevel
+		  For Level As Integer = 2 To LevelData.MaxLevel
+		    Config.PlayerExperience(Level - 2) = LevelData.ExperienceForLevel(Level)
 		  Next
 		  
 		  Self.UpdateList()
@@ -295,9 +296,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddExperience()
-		  Dim Level As Integer
-		  Dim LevelXP, MinXP As UInt64
-		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(False)
+		  Var Level As Integer
+		  Var LevelXP, MinXP As UInt64
+		  Var Config As BeaconConfigs.ExperienceCurves = Self.Config(False)
 		  
 		  If Self.ViewingPlayerStats Then
 		    Level = Config.PlayerLevelCap + 1
@@ -320,7 +321,7 @@ End
 		    Else
 		      Config.AppendDinoExperience(LevelXP)
 		    End If
-		    Dim SelectLevels(0) As Integer
+		    Var SelectLevels(0) As Integer
 		    SelectLevels(0) = Level
 		    Self.UpdateList(SelectLevels)
 		    Self.Changed = True
@@ -330,10 +331,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddExperienceWizard()
-		  Dim Level As Integer
-		  Dim MinXP As UInt64
-		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(False)
-		  Dim Players As Boolean = Self.ViewingPlayerStats
+		  Var Level As Integer
+		  Var MinXP As UInt64
+		  Var Config As BeaconConfigs.ExperienceCurves = Self.Config(False)
+		  Var Players As Boolean = Self.ViewingPlayerStats
 		  
 		  If Players Then
 		    Level = Config.PlayerLevelCap + 1
@@ -343,7 +344,7 @@ End
 		    MinXP = Config.DinoMaxExperience
 		  End If
 		  
-		  Dim Levels() As UInt64 = ExperienceWizard.Present(Self, Level, MinXP)
+		  Var Levels() As UInt64 = ExperienceWizard.Present(Self, Level, MinXP)
 		  If Levels.LastRowIndex = -1 Then
 		    Return
 		  End If
@@ -364,9 +365,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowEditExperience()
-		  Dim Level, Index, CapIndex As Integer
-		  Dim LevelXP, MinXP, MaxXP As UInt64
-		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(False)
+		  Var Level, Index, CapIndex As Integer
+		  Var LevelXP, MinXP, MaxXP As UInt64
+		  Var Config As BeaconConfigs.ExperienceCurves = Self.Config(False)
 		  
 		  Index = Self.List.SelectedRowIndex
 		  Level = Index + 2
@@ -390,7 +391,7 @@ End
 		    Else
 		      Config.DinoExperience(Index) = LevelXP
 		    End If
-		    Dim SelectLevels(0) As Integer
+		    Var SelectLevels(0) As Integer
 		    SelectLevels(0) = Level
 		    Self.UpdateList(SelectLevels)
 		    Self.Changed = True
@@ -400,7 +401,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Dim SelectedLevels() As Integer
+		  Var SelectedLevels() As Integer
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Self.List.Selected(I) Then
 		      SelectedLevels.AddRow(Val(Self.List.CellValueAt(I, 0)))
@@ -530,9 +531,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action()
-		  Dim SettingUp As Boolean = Self.SettingUp
+		  Var SettingUp As Boolean = Self.SettingUp
 		  Self.SettingUp = True
-		  Dim SelectedLevels() As Integer
+		  Var SelectedLevels() As Integer
 		  Self.UpdateList(SelectedLevels)
 		  Self.SettingUp = SettingUp
 		End Sub
@@ -556,7 +557,7 @@ End
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
 		  If Warn Then
-		    Dim Count As Integer = Self.List.SelectedRowCount
+		    Var Count As Integer = Self.List.SelectedRowCount
 		    If Count = 1 Then
 		      If Not Self.ShowConfirm("Are you sure you want to delete this experience requirement?", "You will be removing the experience requirement for the selected level. All later level requirements will be moved down. For example, when deleting level 2, level 3's requirement would become the new level 2 requirement.", "Delete", "Cancel") Then
 		        Return
@@ -568,9 +569,9 @@ End
 		    End If
 		  End If
 		  
-		  Dim Player As Boolean = Self.ViewingPlayerStats
-		  Dim Config As BeaconConfigs.ExperienceCurves
-		  Dim Modified As Boolean = Self.Changed
+		  Var Player As Boolean = Self.ViewingPlayerStats
+		  Var Config As BeaconConfigs.ExperienceCurves
+		  Var Modified As Boolean = Self.Changed
 		  
 		  For I As Integer = Self.List.RowCount - 1 DownTo 0
 		    If Not Self.List.Selected(I) Then
@@ -590,7 +591,7 @@ End
 		    Modified = True
 		  Next
 		  
-		  Dim Levels() As Integer
+		  Var Levels() As Integer
 		  Self.UpdateList(Levels)
 		  Self.Changed = Modified
 		End Sub
@@ -614,6 +615,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

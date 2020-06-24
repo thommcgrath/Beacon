@@ -72,11 +72,11 @@ Protected Class DocumentController
 
 	#tag Method, Flags = &h21
 		Private Shared Function ErrorMessageFromSocket(Socket As SimpleHTTP.SynchronousHTTPSocket) As String
-		  Dim Message As String = "The error reason is unknown"
+		  Var Message As String = "The error reason is unknown"
 		  If Socket.LastContent <> Nil Then
 		    Try
 		      Message = Socket.LastContent
-		      Dim Dict As Dictionary = Beacon.ParseJSON(Message)
+		      Var Dict As Dictionary = Beacon.ParseJSON(Message)
 		      If Dict.HasKey("message") Then
 		        Message = Dict.Value("message")
 		      ElseIf Dict.HasKey("description") Then
@@ -147,7 +147,7 @@ Protected Class DocumentController
 		    Return Nil
 		  End If
 		  
-		  Dim Controller As New Beacon.DocumentController(Self.mDocument, Self.mIdentity)
+		  Var Controller As New Beacon.DocumentController(Self.mDocument, Self.mIdentity)
 		  Controller.mDocumentURL = Destination
 		  If Self.mDocument.Title <> "" Then
 		    Destination.Name = Self.mDocument.Title
@@ -179,13 +179,13 @@ Protected Class DocumentController
 		  
 		  Select Case Self.mDocumentURL.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
-		    Dim Socket As New SimpleHTTP.SynchronousHTTPSocket
+		    Var Socket As New SimpleHTTP.SynchronousHTTPSocket
 		    Socket.RequestHeader("Authorization") = "Session " + Preferences.OnlineToken
 		    Socket.Send("DELETE", Self.mDocumentURL.WithScheme("https").URL)
 		    If Socket.LastHTTPStatus = 200 Then
 		      Call CallLater.Schedule(0, AddressOf TriggerDeleteSuccess)
 		    Else
-		      Dim Message As String = Self.ErrorMessageFromSocket(Socket)
+		      Var Message As String = Self.ErrorMessageFromSocket(Socket)
 		      Call CallLater.Schedule(0, AddressOf TriggerDeleteError, Message)
 		    End If
 		  Case Beacon.DocumentURL.TypeLocal
@@ -209,12 +209,12 @@ Protected Class DocumentController
 		Private Sub Thread_Load(Sender As Thread)
 		  #Pragma Unused Sender
 		  
-		  Dim FileContent As MemoryBlock
+		  Var FileContent As MemoryBlock
 		  
 		  Select Case Self.mDocumentURL.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
 		    // authenticated api request
-		    Dim Socket As New SimpleHTTP.SynchronousHTTPSocket
+		    Var Socket As New SimpleHTTP.SynchronousHTTPSocket
 		    Socket.RequestHeader("Accept-Encoding") = "gzip"
 		    Socket.RequestHeader("Authorization") = "Session " + Preferences.OnlineToken
 		    Socket.RequestHeader("Cache-Control") = "no-cache"
@@ -222,27 +222,27 @@ Protected Class DocumentController
 		    If Socket.LastHTTPStatus >= 200 Then
 		      FileContent = Socket.LastContent
 		    Else
-		      Dim Message As String = Self.ErrorMessageFromSocket(Socket)
+		      Var Message As String = Self.ErrorMessageFromSocket(Socket)
 		      Call CallLater.Schedule(0, AddressOf TriggerLoadError, Message)
 		    End If
 		  Case Beacon.DocumentURL.TypeWeb
 		    // basic https request
-		    Dim Socket As New SimpleHTTP.SynchronousHTTPSocket
+		    Var Socket As New SimpleHTTP.SynchronousHTTPSocket
 		    Socket.RequestHeader("Accept-Encoding") = "gzip"
 		    Socket.RequestHeader("Cache-Control") = "no-cache"
 		    Socket.Send("GET", Self.mDocumentURL.URL)
 		    If Socket.LastHTTPStatus >= 200 Then
 		      FileContent = Socket.LastContent
 		    Else
-		      Dim Message As String = Self.ErrorMessageFromSocket(Socket)
+		      Var Message As String = Self.ErrorMessageFromSocket(Socket)
 		      Call CallLater.Schedule(0, AddressOf TriggerLoadError, Message)
 		    End If
 		  Case Beacon.DocumentURL.TypeLocal
 		    // just a local file
-		    Dim Success As Boolean
-		    Dim Message As String = "Could not load data from file"
+		    Var Success As Boolean
+		    Var Message As String = "Could not load data from file"
 		    Try
-		      Dim File As BookmarkedFolderItem = Self.mDocumentURL.File
+		      Var File As BookmarkedFolderItem = Self.mDocumentURL.File
 		      If File <> Nil And File.Exists Then
 		        FileContent = File.Read()
 		        Self.mFileRef = File // Just to keep the security scoped bookmark open
@@ -257,7 +257,7 @@ Protected Class DocumentController
 		      Return
 		    End If
 		  Case Beacon.DocumentURL.TypeTransient
-		    Dim Temp As New Beacon.Document
+		    Var Temp As New Beacon.Document
 		    FileContent = Beacon.GenerateJSON(Temp.ToDictionary(Self.mIdentity), False)
 		  Else
 		    Return
@@ -270,8 +270,8 @@ Protected Class DocumentController
 		  
 		  If FileContent.Size > 2 And FileContent.UInt8Value(0) = &h1F And FileContent.UInt8Value(1) = &h8B Then
 		    #if Not TargetiOS
-		      Dim Compressor As New _GZipString
-		      Dim Decompressed As String = Compressor.Decompress(FileContent)
+		      Var Compressor As New _GZipString
+		      Var Decompressed As String = Compressor.Decompress(FileContent)
 		      If Decompressed <> "" Then
 		        FileContent = Decompressed.DefineEncoding(Encodings.UTF8)
 		      Else
@@ -284,7 +284,7 @@ Protected Class DocumentController
 		    #endif
 		  End If
 		  
-		  Dim Document As Beacon.Document = Beacon.Document.FromString(FileContent, Self.mIdentity)
+		  Var Document As Beacon.Document = Beacon.Document.FromString(FileContent, Self.mIdentity)
 		  If Document = Nil Then
 		    Call CallLater.Schedule(0, AddressOf TriggerLoadError, "Unable to parse document")
 		    Return
@@ -304,17 +304,17 @@ Protected Class DocumentController
 		Private Sub Thread_Upload(Sender As Thread)
 		  #Pragma Unused Sender
 		  
-		  Dim JSON As String = Beacon.GenerateJSON(Self.mDocument.ToDictionary(Self.mIdentity), False)
-		  Dim Headers As New Dictionary
+		  Var JSON As String = Beacon.GenerateJSON(Self.mDocument.ToDictionary(Self.mIdentity), False)
+		  Var Headers As New Dictionary
 		  Headers.Value("Authorization") = "Session " + Preferences.OnlineToken
 		  
-		  Dim Compressor As New _GZipString
+		  Var Compressor As New _GZipString
 		  Compressor.UseHeaders = True
 		  
-		  Dim Body As MemoryBlock = Compressor.Compress(JSON, _GZipString.DefaultCompression)
+		  Var Body As MemoryBlock = Compressor.Compress(JSON, _GZipString.DefaultCompression)
 		  Headers.Value("Content-Encoding") = "gzip"
 		  
-		  Dim Socket As New SimpleHTTP.SynchronousHTTPSocket
+		  Var Socket As New SimpleHTTP.SynchronousHTTPSocket
 		  For Each Entry As DictionaryEntry In Headers
 		    Socket.RequestHeader(Entry.Key) = Entry.Value
 		  Next
@@ -326,7 +326,7 @@ Protected Class DocumentController
 		    End If
 		    Call CallLater.Schedule(0, AddressOf TriggerWriteSuccess)
 		  Else
-		    Dim Message As String = Self.ErrorMessageFromSocket(Socket)
+		    Var Message As String = Self.ErrorMessageFromSocket(Socket)
 		    Call CallLater.Schedule(0, AddressOf TriggerWriteError, Message)
 		  End If
 		End Sub
@@ -404,12 +404,12 @@ Protected Class DocumentController
 		    
 		    RaiseEvent WriteSuccess()
 		  Else
-		    Dim Reason As String
-		    Dim Err As RuntimeException = Sender.Error
+		    Var Reason As String
+		    Var Err As RuntimeException = Sender.Error
 		    If Err <> Nil Then
 		      Reason = Err.Explanation
 		      If Reason = "" Then
-		        Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		        Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
 		        If Info <> Nil Then
 		          Reason = Info.Name + " from JSONWriter"
 		        End If
@@ -439,7 +439,7 @@ Protected Class DocumentController
 		    AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Upload
 		    Self.mActiveThread.Start
 		  Case Beacon.DocumentURL.TypeLocal
-		    Dim Writer As New Beacon.JSONWriter(Self.mDocument, Self.mIdentity, Destination.File)
+		    Var Writer As New Beacon.JSONWriter(Self.mDocument, Self.mIdentity, Destination.File)
 		    AddHandler Writer.Finished, AddressOf Writer_Finished
 		    Writer.Start
 		  End Select

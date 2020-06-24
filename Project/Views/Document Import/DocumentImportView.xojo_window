@@ -43,7 +43,6 @@ Begin ContainerControl DocumentImportView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -250,7 +249,6 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -280,7 +278,6 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -310,7 +307,6 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -394,59 +390,6 @@ Begin ContainerControl DocumentImportView
          Underline       =   False
          Visible         =   True
          Width           =   80
-      End
-      Begin BeaconListbox StatusList
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
-         Bold            =   False
-         Border          =   True
-         ColumnCount     =   1
-         ColumnsResizable=   False
-         ColumnWidths    =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   40
-         Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   False
-         HeadingIndex    =   -1
-         Height          =   336
-         HelpTag         =   ""
-         Hierarchical    =   False
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         InitialValue    =   ""
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   False
-         Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
-         SelectionType   =   0
-         ShowDropIndicator=   False
-         TabIndex        =   1
-         TabPanelIndex   =   5
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   60
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   560
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
       End
       Begin UITweaks.ResizedPushButton StatusActionButton
          AutoDeactivate  =   True
@@ -609,59 +552,6 @@ Begin ContainerControl DocumentImportView
          Visible         =   True
          Width           =   80
       End
-      Begin BeaconListbox OtherDocsList
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
-         Bold            =   False
-         Border          =   True
-         ColumnCount     =   2
-         ColumnsResizable=   False
-         ColumnWidths    =   "26,*"
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   26
-         Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   False
-         HeadingIndex    =   1
-         Height          =   336
-         HelpTag         =   ""
-         Hierarchical    =   False
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         InitialValue    =   ""
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   False
-         Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
-         SelectionType   =   0
-         ShowDropIndicator=   False
-         TabIndex        =   1
-         TabPanelIndex   =   6
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   60
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   560
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
       Begin ConnectorDiscoveryView ConnectorDiscoveryView1
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -674,7 +564,6 @@ Begin ContainerControl DocumentImportView
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   456
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -722,9 +611,118 @@ Begin ContainerControl DocumentImportView
          Visible         =   True
          Width           =   560
       End
+      Begin BeaconListbox StatusList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   True
+         ColumnCount     =   1
+         ColumnsResizable=   False
+         ColumnWidths    =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   40
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   False
+         HeadingIndex    =   -1
+         Height          =   336
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
+         SelectionType   =   0
+         ShowDropIndicator=   False
+         TabIndex        =   1
+         TabPanelIndex   =   5
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   60
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   560
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
+      Begin BeaconListbox OtherDocsList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   True
+         ColumnCount     =   2
+         ColumnsResizable=   False
+         ColumnWidths    =   "26,*"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   26
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   False
+         HeadingIndex    =   1
+         Height          =   336
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
+         SelectionType   =   0
+         ShowDropIndicator=   False
+         TabIndex        =   1
+         TabPanelIndex   =   6
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   60
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   560
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
    End
    Begin Timer DiscoveryWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -757,42 +755,23 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub BeginDiscovery(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
-		  Self.mEngines = Engines
-		  Self.mOAuthProvider = OAuthProvider
-		  Self.mOAuthData = OAuthData
-		  
-		  // Make sure the importers and engines stay in order because they need to be matched up later
-		  Redim Self.mImporters(-1) // To empty the array
-		  Redim Self.mImporters(Engines.LastRowIndex)
-		  Redim Self.mParsedData(-1)
-		  Redim Self.mParsedData(Engines.LastRowIndex)
-		  Redim Self.mDocuments(-1)
-		  Redim Self.mDocuments(Engines.LastRowIndex)
-		  
-		  Self.DiscoveryWatcher.RunMode = Timer.RunModes.Multiple
-		  
-		  Self.StatusList.RemoveAllRows
-		  For Each Engine As Beacon.DiscoveryEngine In Engines
-		    Self.StatusList.AddRow(Engine.Name + EndOfLine + Engine.Status)
-		    Self.StatusList.RowTagAt(Self.StatusList.LastAddedRowIndex) = Engine
-		    
-		    Engine.Begin()
+		Private Sub Finish()
+		  Var Documents() As Beacon.Document
+		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastRowIndex
+		    If Self.mImporters(I).Document <> Nil Then
+		      Documents.AddRow(Self.mImporters(I).Document)
+		    End If
 		  Next
-		  
-		  Self.Views.SelectedPanelIndex = Self.PageStatus
+		  Self.Finish(Documents)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Finish()
-		  Dim Documents() As Beacon.Document
-		  For I As Integer = 0 To Self.mDocuments.LastRowIndex
-		    If Self.mDocuments(I) <> Nil Then
-		      Documents.AddRow(Self.mDocuments(I))
-		    End If
-		  Next
+		Private Sub Finish(Documents() As Beacon.Document)
 		  If Documents.LastRowIndex > -1 Then
+		    For Idx As Integer = 0 To Documents.LastRowIndex
+		      Documents(Idx).Accounts.Import(Self.mAccounts)
+		    Next
 		    RaiseEvent DocumentsImported(Documents)
 		  End If
 		  RaiseEvent ShouldDismiss
@@ -808,160 +787,27 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Importer_ThreadedParseFinished(Sender As Beacon.ImportThread, ParsedData As Dictionary)
-		  Dim Idx As Integer = -1
-		  For I As Integer = 0 To Self.mImporters.LastRowIndex
-		    If Self.mImporters(I) = Sender Then
-		      Self.mParsedData(I) = ParsedData
-		      Idx = I
-		      Exit For I
-		    End If
+		Private Sub ImportFrom(Data() As Beacon.DiscoveredData)
+		  Self.mImporters.ResizeTo(Data.LastRowIndex)
+		  Self.StatusList.RowCount = Data.Count
+		  
+		  For I As Integer = Self.mImporters.FirstRowIndex To Self.mImporters.LastRowIndex
+		    Var Importer As New Beacon.ImportThread(Data(I), Self.mDestinationDocument)
+		    Importer.Start
+		    Self.mImporters(I) = Importer
+		    
+		    Self.StatusList.CellValueAt(I, 0) = Data(I).Profile.Name + EndOfLine + "Starting parser…"
+		    Self.StatusList.RowTagAt(I) = Importer
 		  Next
 		  
-		  If Idx = -1 Then
-		    Return
-		  End If
-		  
-		  Dim Engine As Beacon.DiscoveryEngine = Self.mEngines(Idx)
-		  Dim CommandLineOptions As Dictionary = Engine.CommandLineOptions
-		  If CommandLineOptions = Nil Then
-		    CommandLineOptions = New Dictionary
-		  End If
-		  Dim Document As New Beacon.Document
-		  Document.MapCompatibility = Engine.Map
-		  
-		  Try
-		    Dim Maps() As Beacon.Map = Beacon.Maps.ForMask(Engine.Map)
-		    If Maps.LastRowIndex = -1 Then
-		      Maps.AddRow(Beacon.Maps.TheIsland)
-		    End If
-		    Dim DifficultyTotal, DifficultyScale As Double
-		    For Each Map As Beacon.Map In Maps
-		      DifficultyTotal = DifficultyTotal + Map.DifficultyScale
-		    Next
-		    DifficultyScale = DifficultyTotal / (Maps.LastRowIndex + 1)
-		    
-		    Dim DifficultyValue As Double
-		    If CommandLineOptions.HasKey("OverrideOfficialDifficulty") And CommandLineOptions.DoubleValue("OverrideOfficialDifficulty") > 0 Then
-		      DifficultyValue = CommandLineOptions.DoubleValue("OverrideOfficialDifficulty")
-		    ElseIf ParsedData.HasKey("OverrideOfficialDifficulty") And ParsedData.DoubleValue("OverrideOfficialDifficulty") > 0 Then
-		      DifficultyValue = ParsedData.DoubleValue("OverrideOfficialDifficulty")
-		    Else
-		      If ParsedData.HasKey("DifficultyOffset") Then
-		        DifficultyValue = ParsedData.DoubleValue("DifficultyOffset") * (DifficultyScale - 0.5) + 0.5
-		      Else
-		        DifficultyValue = DifficultyScale
-		      End If
-		    End If
-		    
-		    Document.AddConfigGroup(New BeaconConfigs.Difficulty(DifficultyValue))
-		  Catch Err As RuntimeException
-		    Document.AddConfigGroup(New BeaconConfigs.Difficulty(5.0))
-		  End Try
-		  
-		  Try
-		    If Self.mOAuthData <> Nil And Self.mOAuthProvider <> "" Then
-		      Document.OAuthData(Self.mOAuthProvider) = Self.mOAuthData
-		    End If
-		  Catch Err As RuntimeException
-		    
-		  End Try
-		  
-		  Dim Profile As Beacon.ServerProfile = Engine.Profile
-		  If Profile <> Nil Then
-		    If ParsedData.HasKey("SessionName") Then
-		      Dim SessionNames() As Variant = ParsedData.AutoArrayValue("SessionName")
-		      For Each SessionName As Variant In SessionNames
-		        Try
-		          Profile.Name = SessionName
-		          Exit
-		        Catch Err As TypeMismatchException
-		        End Try
-		      Next
-		    End If
-		    
-		    Document.Add(Profile)
-		  End If
-		  
-		  Dim ConfigNames() As String = BeaconConfigs.AllConfigNames()
-		  Dim PurchasedOmniVersion As Integer = App.IdentityManager.CurrentIdentity.OmniVersion
-		  For Each ConfigName As String In ConfigNames
-		    If ConfigName = BeaconConfigs.Difficulty.ConfigName Or ConfigName = BeaconConfigs.CustomContent.ConfigName Then
-		      // Difficulty and custom content area special
-		      Continue For ConfigName
-		    End If
-		    
-		    If BeaconConfigs.ConfigPurchased(ConfigName, PurchasedOmniVersion) = False Then
-		      // Do not import code for groups that the user has not purchased
-		      Continue For ConfigName
-		    End If
-		    
-		    Dim ConfigInfo As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(ConfigName)
-		    Dim Methods() As Introspection.MethodInfo = ConfigInfo.GetMethods
-		    For Each Signature As Introspection.MethodInfo In Methods
-		      Try
-		        If Signature.IsShared And Signature.Name = "FromImport" And Signature.GetParameters.LastRowIndex = 3 And Signature.ReturnType <> Nil And Signature.ReturnType.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) Then
-		          Dim Params(3) As Variant
-		          Params(0) = ParsedData
-		          Params(1) = CommandLineOptions
-		          Params(2) = Document.MapCompatibility
-		          Params(3) = Document.Difficulty
-		          Dim Group As Beacon.ConfigGroup = Signature.Invoke(Nil, Params)
-		          If Group <> Nil Then
-		            Document.AddConfigGroup(Group)
-		          End If
-		          Continue For ConfigName
-		        End If
-		      Catch Err As RuntimeException
-		        
-		      End Try
-		    Next
-		  Next
-		  
-		  // Now figure out what configs we'll generate so CustomContent can figure out what NOT to capture.
-		  // Do not do this in the loop above to ensure all configs are loaded first, in case they rely on each other.
-		  Dim GameIniValues As New Dictionary
-		  Dim GameUserSettingsIniValues As New Dictionary
-		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
-		  Dim GenericProfile As New Beacon.GenericServerProfile(Document.Title, Beacon.Maps.All.Mask)
-		  Dim Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
-		  For Each Config As Beacon.ConfigGroup In Configs
-		    Var GameIniArray() As Beacon.ConfigValue = Config.GameIniValues(Document, Identity, GenericProfile)
-		    Var GameUserSettingsIniArray() As Beacon.ConfigValue = Config.GameUserSettingsIniValues(Document, Identity, GenericProfile)
-		    Var NonGeneratedKeys() As Beacon.ConfigKey = Config.NonGeneratedKeys(Identity)
-		    For Each Key As Beacon.ConfigKey In NonGeneratedKeys
-		      Select Case Key.File
-		      Case "Game.ini"
-		        GameIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
-		      Case "GameUserSettings.ini"
-		        GameUserSettingsIniArray.AddRow(New Beacon.ConfigValue(Key.Header, Key.Key, ""))
-		      End Select
-		    Next
-		    
-		    Beacon.ConfigValue.FillConfigDict(GameIniValues, GameIniArray)
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, GameUserSettingsIniArray)
-		  Next
-		  
-		  Dim CustomContent As New BeaconConfigs.CustomContent
-		  Try
-		    CustomContent.GameIniContent(GameIniValues) = Sender.GameIniContent
-		  Catch Err As RuntimeException
-		  End Try
-		  Try
-		    CustomContent.GameUserSettingsIniContent(GameUserSettingsIniValues) = Sender.GameUserSettingsIniContent
-		  Catch Err As RuntimeException
-		  End Try
-		  If CustomContent.Modified Then
-		    Document.AddConfigGroup(CustomContent)
-		  End If
-		  
-		  Self.mDocuments(Idx) = Document
-		  Exception Unhandled As RuntimeException
+		  Self.DiscoveryWatcher.RunMode = Timer.RunModes.Multiple
+		  Self.Views.SelectedPanelIndex = Self.PageStatus
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub PullValuesFromDocument(Document As Beacon.Document)
+		  Self.mDestinationDocument = Document
 		  Self.FTPDiscoveryView1.PullValuesFromDocument(Document)
 		  Self.LocalDiscoveryView1.PullValuesFromDocument(Document)
 		  Self.NitradoDiscoveryView1.PullValuesFromDocument(Document)
@@ -977,10 +823,7 @@ End
 		    End If
 		  Next
 		  
-		  Redim Self.mEngines(-1)
-		  Redim Self.mImporters(-1)
-		  Redim Self.mParsedData(-1)
-		  Redim Self.mDocuments(-1)
+		  Self.mImporters.ResizeTo(-1)
 		  
 		  If Self.Views.SelectedPanelIndex <> 0 Then
 		    Self.Views.SelectedPanelIndex = 0
@@ -1037,15 +880,15 @@ End
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
+		Private mAccounts As Beacon.ExternalAccountManager
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDeployRequired As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDocuments() As Beacon.Document
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mEngines() As Beacon.DiscoveryEngine
+		Private mDestinationDocument As Beacon.Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1053,19 +896,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOAuthData As Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mOAuthProvider As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mOtherDocuments() As Beacon.Document
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mParsedData() As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -1073,7 +904,7 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = ConnectorEnabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
+	#tag Constant, Name = ConnectorEnabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = PageConnector, Type = Double, Dynamic = False, Default = \"6", Scope = Private
@@ -1178,8 +1009,12 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
-		  Self.BeginDiscovery(Engines, OAuthProvider, OAuthData)
+		Sub Finished(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
+		  If Self.mAccounts = Nil Then
+		    Self.mAccounts = New Beacon.ExternalAccountManager
+		  End If
+		  Self.mAccounts.Import(Accounts)
+		  Self.ImportFrom(Data)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1199,8 +1034,12 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
-		  Self.BeginDiscovery(Engines, OAuthProvider, OAuthData)
+		Sub Finished(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
+		  If Self.mAccounts = Nil Then
+		    Self.mAccounts = New Beacon.ExternalAccountManager
+		  End If
+		  Self.mAccounts.Import(Accounts)
+		  Self.ImportFrom(Data)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1220,8 +1059,12 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
-		  Self.BeginDiscovery(Engines, OAuthProvider, OAuthData)
+		Sub Finished(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
+		  If Self.mAccounts = Nil Then
+		    Self.mAccounts = New Beacon.ExternalAccountManager
+		  End If
+		  Self.mAccounts.Import(Accounts)
+		  Self.ImportFrom(Data)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1244,16 +1087,16 @@ End
 #tag Events OtherDocsActionButton
 	#tag Event
 		Sub Action()
-		  Redim Self.mDocuments(-1)
+		  Var Documents() As Beacon.Document
 		  For I As Integer = 0 To OtherDocsList.RowCount - 1
 		    If Not OtherDocsList.CellCheckBoxValueAt(I, 0) Then
 		      Continue
 		    End If
 		    
-		    Dim Doc As Beacon.Document = OtherDocsList.RowTagAt(I)
-		    Self.mDocuments.AddRow(Doc)
+		    Var Doc As Beacon.Document = OtherDocsList.RowTagAt(I)
+		    Documents.AddRow(Doc)
 		  Next
-		  Self.Finish()
+		  Self.Finish(Documents)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1261,27 +1104,6 @@ End
 	#tag Event
 		Sub Action()
 		  Views.SelectedPanelIndex = Self.PageSources
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events OtherDocsList
-	#tag Event
-		Sub CellAction(row As Integer, column As Integer)
-		  #Pragma Unused Row
-		  
-		  If Column <> 0 Then
-		    Return
-		  End If
-		  
-		  Dim Enabled As Boolean
-		  For I As Integer = 0 To Me.RowCount - 1
-		    If Me.CellCheckBoxValueAt(I, Column) Then
-		      Enabled = True
-		      Exit For I
-		    End If
-		  Next
-		  
-		  OtherDocsActionButton.Enabled = Enabled
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1301,69 +1123,58 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
-		  Self.BeginDiscovery(Engines, OAuthProvider, OAuthData)
+		Sub Finished(Data() As Beacon.DiscoveredData, Accounts As Beacon.ExternalAccountManager)
+		  If Self.mAccounts = Nil Then
+		    Self.mAccounts = New Beacon.ExternalAccountManager
+		  End If
+		  Self.mAccounts.Import(Accounts)
+		  Self.ImportFrom(Data)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events OtherDocsList
+	#tag Event
+		Sub CellAction(row As Integer, column As Integer)
+		  #Pragma Unused Row
+		  
+		  If Column <> 0 Then
+		    Return
+		  End If
+		  
+		  Var Enabled As Boolean
+		  For I As Integer = 0 To Me.RowCount - 1
+		    If Me.CellCheckBoxValueAt(I, Column) Then
+		      Enabled = True
+		      Exit For I
+		    End If
+		  Next
+		  
+		  OtherDocsActionButton.Enabled = Enabled
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DiscoveryWatcher
 	#tag Event
 		Sub Action()
-		  Dim AllFinished As Boolean = True
-		  Dim SuccessCount As Integer
-		  Dim Errors As Boolean
-		  For I As Integer = 0 To Self.mEngines.LastRowIndex
-		    Dim Engine As Beacon.DiscoveryEngine = Self.mEngines(I)
-		    Dim Finished As Boolean
-		    Dim Status As String
-		    If Engine.Finished And Not Engine.Errored Then
-		      If Self.mImporters(I) = Nil Then
-		        Dim Importer As New Beacon.ImportThread
-		        Importer.GameIniContent = Engine.GameIniContent
-		        Importer.GameUserSettingsIniContent = Engine.GameUserSettingsIniContent
-		        AddHandler Importer.ThreadedParseFinished, WeakAddressOf Importer_ThreadedParseFinished      
-		        Self.mImporters(I) = Importer
-		        Status = "Parsing Config Files…"
-		        Importer.Start
-		      ElseIf Self.mImporters(I).Finished Then
-		        // Show import finished
-		        Finished = True
-		        If Self.mDocuments(I) <> Nil Then
-		          Status = "Finished"
-		          SuccessCount = SuccessCount + 1
-		        Else
-		          Errors = True
-		          Status = "Parse error"
-		        End If
+		  Var AllFinished As Boolean = True
+		  Var ErrorCount, SuccessCount As Integer
+		  For I As Integer = 0 To Self.StatusList.LastRowIndex
+		    Var Importer As Beacon.ImportThread = Self.StatusList.RowTagAt(I)
+		    AllFinished = AllFinished And Importer.Finished
+		    Self.StatusList.CellValueAt(I, 0) = Importer.Name + EndOfLine + Importer.Status
+		    
+		    If Importer.Finished Then
+		      If Importer.Document Is Nil Then
+		        ErrorCount = ErrorCount + 1
 		      Else
-		        // Show importer progress
-		        Dim Progress As Integer = Round(Self.mImporters(I).Progress * 100)
-		        If Self.mImporters(I).Progress >= 1 Then
-		          Status = "Finishing…"
-		        Else
-		          Status = "Parsing Config Files… (" + Progress.ToString() + "%)"
-		        End If
-		      End If
-		    Else
-		      // Show engine status
-		      Status = Engine.Status
-		      If Engine.Errored Then
-		        Finished = True
-		        Errors = True
+		        SuccessCount = SuccessCount + 1
 		      End If
 		    End If
-		    
-		    Status = Engine.Name + EndOfLine + Status
-		    If Self.StatusList.CellValueAt(I, 0) <> Status Then
-		      Self.StatusList.CellValueAt(I, 0) = Status
-		    End If
-		    
-		    AllFinished = AllFinished And Finished
 		  Next
 		  
 		  If AllFinished Then
 		    Me.RunMode = Timer.RunModes.Off
-		    If Errors = False Then
+		    If ErrorCount = 0 Then
 		      Self.Finish()
 		    ElseIf SuccessCount > 0 Then
 		      If Self.ShowConfirm("There were import errors.", "Not all files imported successfully. Do you want to continue importing with the files that did import?", "Continue Import", "Review Errors") Then
@@ -1371,8 +1182,8 @@ End
 		      Else
 		        Self.StatusActionButton.Visible = True
 		        #if TargetMacOS
-		          Dim CancelPos As Integer = Self.StatusActionButton.Left
-		          Dim ActionPos As Integer = Self.StatusCancelButton.Left
+		          Var CancelPos As Integer = Self.StatusActionButton.Left
+		          Var ActionPos As Integer = Self.StatusCancelButton.Left
 		          Self.StatusCancelButton.Left = CancelPos
 		          Self.StatusActionButton.Left = ActionPos
 		          Self.StatusActionButton.Default = True

@@ -37,7 +37,7 @@ Private Class SimpleHTTPSocket
 		  #Pragma Unused Sender
 		  
 		  If Self.Handler <> Nil Then
-		    Dim Reason As String
+		    Var Reason As String
 		    Select Case ErrorNum
 		    Case SocketCore.OpenDriverError
 		      Reason = "Open driver error"

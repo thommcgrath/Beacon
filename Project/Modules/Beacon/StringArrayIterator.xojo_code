@@ -3,7 +3,7 @@ Protected Class StringArrayIterator
 Implements Iterator
 	#tag Method, Flags = &h0
 		Sub Constructor(List() As String)
-		  Redim Self.mItems(List.LastRowIndex)
+		  Self.mItems.ResizeTo(List.LastRowIndex)
 		  For I As Integer = 0 To List.LastRowIndex
 		    Self.mItems(I) = List(I)
 		  Next

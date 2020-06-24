@@ -2,7 +2,7 @@
 Protected Class CreatureBehavior
 	#tag Method, Flags = &h0
 		Function Clone(NewTarget As Beacon.Creature) As Beacon.CreatureBehavior
-		  Dim Result As New Beacon.CreatureBehavior(Self)
+		  Var Result As New Beacon.CreatureBehavior(Self)
 		  Result.mTargetCreature = NewTarget
 		  Return Result
 		End Function
@@ -17,6 +17,7 @@ Protected Class CreatureBehavior
 		  Self.mTamedResistanceMultiplier = 1.0
 		  Self.mProhibitSpawning = False
 		  Self.mReplacementCreature = Nil
+		  Self.mPreventTaming = False
 		End Sub
 	#tag EndMethod
 
@@ -30,6 +31,7 @@ Protected Class CreatureBehavior
 		  Self.mResistanceMultiplier = Source.mResistanceMultiplier
 		  Self.mTamedDamageMultiplier = Source.mTamedDamageMultiplier
 		  Self.mTamedResistanceMultiplier = Source.mTamedResistanceMultiplier
+		  Self.mPreventTaming = Source.mPreventTaming
 		End Sub
 	#tag EndMethod
 
@@ -86,6 +88,7 @@ Protected Class CreatureBehavior
 		    Behavior.mResistanceMultiplier = Dict.Lookup("Resistance Multiplier", 1.0)
 		    Behavior.mTamedDamageMultiplier = Dict.Lookup("Tamed Damage Multiplier", 1.0)
 		    Behavior.mTamedResistanceMultiplier = Dict.Lookup("Tamed Resistance Multiplier", 1.0)
+		    Behavior.mPreventTaming = Dict.Lookup("PreventTaming", False)
 		  End If
 		  
 		  Return Behavior
@@ -102,6 +105,12 @@ Protected Class CreatureBehavior
 		Sub Modified(Assigns Value As Boolean)
 		  Self.mModified = Value
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function PreventTaming() As Boolean
+		  Return Self.mPreventTaming
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -154,7 +163,7 @@ Protected Class CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Function ToDictionary() As Dictionary
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("Class") = Self.mTargetCreature.ClassString
 		  Dict.Value("Path") = Self.mTargetCreature.Path
 		  If Self.mProhibitSpawning Then
@@ -175,6 +184,9 @@ Protected Class CreatureBehavior
 		    If Self.mTamedResistanceMultiplier <> 1.0 Then
 		      Dict.Value("Tamed Resistance Multiplier") = Self.mTamedResistanceMultiplier
 		    End If
+		    If Self.mPreventTaming Then
+		      Dict.Value("Prevent Taming") = True
+		    End If
 		  End If
 		  Return Dict
 		End Function
@@ -187,6 +199,10 @@ Protected Class CreatureBehavior
 
 	#tag Property, Flags = &h1
 		Protected mModified As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mPreventTaming As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

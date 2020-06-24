@@ -486,7 +486,7 @@ End
 		  
 		  Self.Modified = False
 		  
-		  Dim ObjID As v4UUID = Self.ObjectID
+		  Var ObjID As v4UUID = Self.ObjectID
 		  Self.ObjectID = v4UUID.CreateNull
 		  Self.ObjectID = ObjID
 		End Sub
@@ -494,8 +494,8 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Save()
-		  Dim Label As String = Self.NameField.Value.Trim
-		  Dim Path As String = Self.PathField.Value.Trim
+		  Var Label As String = Self.NameField.Value.Trim
+		  Var Path As String = Self.PathField.Value.Trim
 		  If Label = "" Then
 		    Self.ShowAlert("This object has no name", "You'll want to correct this, it will be hard to find this object again without a name.")
 		    Return
@@ -522,7 +522,7 @@ End
 		    End If
 		  End If
 		  
-		  Dim Tags() As String = Self.TagsField.Value.Split(",")
+		  Var Tags() As String = Self.TagsField.Value.Split(",")
 		  For I As Integer = Tags.LastRowIndex DownTo 0
 		    Tags(I) = Tags(I).Trim
 		    If Tags(I) = "" Then
@@ -530,7 +530,7 @@ End
 		    End If
 		  Next
 		  
-		  Dim Availability As UInt64 = Self.MapSelector.Mask
+		  Var Availability As UInt64 = Self.MapSelector.Mask
 		  If Availability = 0 Then
 		    Self.ShowAlert("Object is not available to any maps", "This object should be usable on at least one map.")
 		    Return
@@ -538,7 +538,7 @@ End
 		  
 		  Select Case Self.TypeMenu.SelectedRowIndex
 		  Case Self.IndexEngram
-		    Dim Engram As New Beacon.MutableEngram(Path, Self.mObjectID)
+		    Var Engram As New Beacon.MutableEngram(Path, Self.mObjectID)
 		    Engram.Label = Label
 		    Engram.Tags = Tags
 		    Engram.Availability = Availability
@@ -547,7 +547,7 @@ End
 		      Return
 		    End If
 		  Case Self.IndexCreature
-		    Dim Creature As New Beacon.MutableCreature(Path, Self.mObjectID)
+		    Var Creature As New Beacon.MutableCreature(Path, Self.mObjectID)
 		    Creature.Label = Label
 		    Creature.Tags = Tags
 		    Creature.Availability = Availability
@@ -592,7 +592,7 @@ End
 			  End If
 			  
 			  If Self.Modified Then
-			    Dim Dialog As New MessageDialog
+			    Var Dialog As New MessageDialog
 			    Dialog.Title = ""
 			    Dialog.Message = "Do you want to save changes to this object?"
 			    Dialog.Explanation = "If you do not save now, your changes will be lost."
@@ -601,7 +601,7 @@ End
 			    Dialog.AlternateActionButton.Caption = "Don't Save"
 			    Dialog.AlternateActionButton.Visible = True
 			    
-			    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+			    Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
 			    Select Case Choice
 			    Case Dialog.ActionButton
 			      // Build and save the object
@@ -615,7 +615,7 @@ End
 			  
 			  Self.mObjectID = Value
 			  
-			  Dim Blueprint As Beacon.Blueprint = LocalData.SharedInstance.GetBlueprintByObjectID(Self.mObjectID)
+			  Var Blueprint As Beacon.Blueprint = LocalData.SharedInstance.GetBlueprintByObjectID(Self.mObjectID)
 			  If Blueprint <> Nil Then
 			    Select Case Blueprint
 			    Case IsA Beacon.Creature
@@ -715,6 +715,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

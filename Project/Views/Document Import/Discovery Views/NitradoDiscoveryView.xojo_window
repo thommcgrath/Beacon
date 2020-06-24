@@ -109,8 +109,8 @@ Begin DiscoveryView NitradoDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   190
-         Transparent     =   True
+         Top             =   162
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   560
@@ -133,65 +133,11 @@ Begin DiscoveryView NitradoDiscoveryView
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         Top             =   222
+         Top             =   194
          Transparent     =   False
          Value           =   0.0
          Visible         =   True
          Width           =   560
-      End
-      Begin BeaconListbox List
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
-         Bold            =   False
-         Border          =   True
-         ColumnCount     =   3
-         ColumnsResizable=   False
-         ColumnWidths    =   "22,*,200"
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   22
-         Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   True
-         HeadingIndex    =   -1
-         Height          =   296
-         HelpTag         =   ""
-         Hierarchical    =   False
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         InitialValue    =   " 	Name	Address"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   False
-         Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
-         SelectionType   =   0
-         ShowDropIndicator=   False
-         TabIndex        =   1
-         TabPanelIndex   =   2
-         TabStop         =   True
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   52
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         VisibleRowCount =   0
-         Width           =   560
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
       End
       Begin Label ListMessageLabel
          AutoDeactivate  =   True
@@ -292,19 +238,140 @@ Begin DiscoveryView NitradoDiscoveryView
          Visible         =   True
          Width           =   80
       End
+      Begin UITweaks.ResizedPushButton NewAuthButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Link Another Nitrado Account"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         MacButtonStyle  =   "0"
+         Scope           =   2
+         TabIndex        =   4
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   360
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   214
+      End
+      Begin Label FindingStatus
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "SmallSystem"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   3
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextAlignment   =   "0"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   218
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Connecting…"
+         Visible         =   True
+         Width           =   560
+      End
+      Begin BeaconListbox List
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   True
+         ColumnCount     =   3
+         ColumnsResizable=   False
+         ColumnWidths    =   "22,*,200"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   22
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   True
+         HeadingIndex    =   -1
+         Height          =   296
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         InitialValue    =   " 	Name	Address"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
+         SelectionType   =   0
+         ShowDropIndicator=   False
+         TabIndex        =   1
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   52
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   560
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
    End
    Begin Beacon.OAuth2Client AuthClient
       Index           =   -2147483648
       LockedInPosition=   False
-      Provider        =   ""
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin Timer LookupStartTimer
+   Begin Timer StatusWatchTimer
       Index           =   -2147483648
       LockedInPosition=   False
-      Mode            =   0
-      Period          =   1000
+      Period          =   100
+      RunMode         =   "2"
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -314,21 +381,28 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Begin()
-		  Self.DesiredHeight = 124
-		  Self.LookupStartTimer.RunMode = Timer.RunModes.Single
-		  Self.PagePanel1.SelectedPanelIndex = 0
+		  If Self.mAccounts.Count = 0 Then
+		    Self.StartNewAccount()
+		    Return
+		  End If
+		  
+		  Var Accounts() As Beacon.ExternalAccount = Self.mAccounts.ForProvider(Beacon.ExternalAccount.ProviderNitrado)
+		  For Each Account As Beacon.ExternalAccount In Accounts
+		    Var Profile As New Beacon.NitradoServerProfile
+		    Profile.ExternalAccountUUID = Account.UUID
+		    Self.Authenticate(Profile)
+		  Next
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub GetValuesFromDocument(Document As Beacon.Document)
-		  Self.AuthClient.AuthData = Document.OAuthData("Nitrado")
+		  Self.mAccounts.Import(Document.Accounts)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Open()
-		  Self.AuthClient.Provider = Beacon.OAuth2Client.ProviderNitrado
 		  Self.SwapButtons()
 		  RaiseEvent Open
 		  Self.CheckActionEnabled
@@ -337,117 +411,58 @@ End
 
 	#tag Event
 		Sub Resize()
-		  Dim ContentHeight As Integer = FindingLabel.Height + 12 + FindingProgress.Height
-		  Dim AvailableHeight As Integer = Self.Height - (52 + FindingCancelButton.Height)
+		  Var ContentHeight As Integer = FindingLabel.Height + 12 + FindingProgress.Height + 6 + FindingStatus.Height
+		  Var AvailableHeight As Integer = Self.Height - (52 + FindingCancelButton.Height)
 		  
-		  Dim ContentTop As Integer = 20 + ((AvailableHeight - ContentHeight) / 2)
+		  Var ContentTop As Integer = 20 + ((AvailableHeight - ContentHeight) / 2)
 		  FindingLabel.Top = ContentTop
 		  FindingProgress.Top = ContentTop + FindingLabel.Height + 12
-		  
-		  AvailableHeight = Self.Height - 40
-		  ContentTop = 20 + ((AvailableHeight - ContentHeight) / 2)
+		  FindingStatus.Top = FindingProgress.Top + FindingProgress.Height + 6
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_ListServers(URL As String, Status As Integer, Content As MemoryBlock, Tag As Variant)
-		  #Pragma Unused URL
-		  #Pragma Unused Tag
+		Private Sub Authenticate(Profile As Beacon.NitradoServerProfile)
+		  Var Engine As New Beacon.NitradoIntegrationEngine(Profile)
+		  Self.mEngines.Value(Profile.ExternalAccountUUID.StringValue) = Engine
+		  AddHandler Engine.Discovered, WeakAddressOf Engine_Discovered
+		  AddHandler Engine.Wait, WeakAddressOf Engine_Wait
+		  Engine.BeginDiscovery()
 		  
-		  Select Case Status
-		  Case 401
-		    Self.ShowAlert("Nitrado API Error", "Authorization failed.")
-		    Self.ShouldCancel()
-		    Return
-		  Case 429
-		    Self.ShowAlert("Nitrado API Error", "The rate limit has been exceeded.")
-		    Self.ShouldCancel()
-		    Return
-		  Case 503
-		    Self.ShowAlert("Nitrado API Error", "Nitrado is currently offline for maintenance. Please try again later.")
-		    Self.ShouldCancel()
-		    Return
-		  Case 200
-		    // Good
-		  Else
-		    Self.ShowAlert("Nitrado API Error", "An unexpected error with the Nitrado API occurred. HTTP status " + Status.ToString + " was returned.")
-		    Self.ShouldCancel()
-		    Return
-		  End Select
+		  Self.mPendingListActions = Self.mPendingListActions + 1
 		  
-		  Try
-		    Dim Reply As Dictionary = Beacon.ParseJSON(Content)
-		    If Reply.HasKey("status") = False Or Reply.Value("status") <> "success" Then
-		      Self.ShowAlert("Nitrado API Error", "The request to list services was not successful.")
-		      Self.ShouldCancel()
-		      Return
-		    End If
-		    
-		    Self.List.RemoveAllRows
-		    
-		    Dim Data As Dictionary = Reply.Value("data")
-		    Dim Services() As Variant = Data.Value("services")
-		    For Each Service As Dictionary In Services
-		      Dim Type As String = Service.Value("type")
-		      If Type <> "gameserver" Then
-		        Continue
-		      End If
-		      
-		      Dim Details As Dictionary = Service.Value("details")
-		      If IsNull(Details) Or Details.HasKey("game") = False Then
-		        Continue
-		      End If
-		      
-		      Dim Game As String = Details.Value("game")
-		      If Not Game.BeginsWith("Ark: Survival Evolved") Then
-		        Continue
-		      End If
-		      
-		      Dim ServerName As String = Details.Value("name")
-		      If Service.Lookup("comment", Nil) <> Nil Then
-		        ServerName = Service.Value("comment")
-		      End If
-		      
-		      Dim Profile As New Beacon.NitradoServerProfile
-		      Profile.Name = ServerName
-		      Profile.Address = Details.Value("address")
-		      Profile.ServiceID = Service.Value("id")
-		      
-		      Self.List.AddRow("", Profile.Name, Profile.Address)
-		      Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Profile
-		    Next
-		    
-		    #if TargetWindows
-		      If Self.ScaleFactor Mod 100 <> 0 Then
-		        Self.List.HasHeader = False
-		      End If
-		    #endif
-		    
-		    Self.List.SortingColumn = 1
-		    Self.List.Sort
-		    Self.DesiredHeight = 400
-		    Self.PagePanel1.SelectedPanelIndex = 1
-		  Catch Err As RuntimeException
-		    
-		    App.LogAPIException(Err, CurrentMethodName, Status, Content)
-		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
-		    Self.ShowAlert("Nitrado API Error", "The Nitrado API responded in an unexpected manner. An unhandled " + Info.FullName + " was encountered.")
-		    Self.ShouldCancel()
-		  End Try
+		  If Self.PagePanel1.SelectedPanelIndex <> 0 Then
+		    Self.PagePanel1.SelectedPanelIndex = 0
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function Busy() As Boolean
+		  Return Self.AuthClient.Busy Or Self.mPendingListActions > 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub CheckActionEnabled()
-		  For I As Integer = 0 To Self.List.RowCount - 1
-		    If Self.List.CellCheckBoxValueAt(I, 0) Then
-		      Self.ListActionButton.Enabled = True
-		      Return
-		    End If
-		  Next
+		  If Not Self.Busy Then
+		    For I As Integer = 0 To Self.List.RowCount - 1
+		      If Self.List.CellCheckBoxValueAt(I, 0) Then
+		        Self.ListActionButton.Enabled = True
+		        Return
+		      End If
+		    Next
+		  End If
 		  
 		  Self.ListActionButton.Enabled = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.mAccounts = New Beacon.ExternalAccountManager
+		  Self.mEngines = New Dictionary
 		End Sub
 	#tag EndMethod
 
@@ -461,12 +476,88 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ListServers()
-		  Dim Headers As New Dictionary
-		  Headers.Value("Authorization") = "Bearer " + Self.AuthClient.AccessToken
+		Private Sub Engine_Discovered(Sender As Beacon.NitradoIntegrationEngine, Data() As Beacon.DiscoveredData)
+		  #Pragma Unused Sender
 		  
-		  Dim URL As String = "https://api.nitrado.net/services"
-		  SimpleHTTP.Get(URL, AddressOf Callback_ListServers, Nil, Headers)
+		  Self.mPendingListActions = Self.mPendingListActions - 1
+		  
+		  For Each Server As Beacon.DiscoveredData In Data
+		    Self.List.AddRow("", Server.Profile.Name, Beacon.NitradoServerProfile(Server.Profile).Address)
+		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Server
+		  Next
+		  
+		  If Self.PagePanel1.SelectedPanelIndex <> 1 And Self.Busy = False Then
+		    #if TargetWindows
+		      If Self.ScaleFactor Mod 100 <> 0 Then
+		        Self.List.HasHeader = False
+		      End If
+		    #endif
+		    
+		    Self.List.SortingColumn = 1
+		    Self.List.Sort
+		    Self.DesiredHeight = 400
+		    Self.PagePanel1.SelectedPanelIndex = 1
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Engine_Wait(Sender As Beacon.NitradoIntegrationEngine, Controller As Beacon.TaskWaitController)
+		  Select Case Controller.Action
+		  Case "Auth External"
+		    Var Profile As Beacon.ServerProfile = Sender.Profile
+		    Var Account As Beacon.ExternalAccount = Self.mAccounts.GetByUUID(Profile.ExternalAccountUUID)
+		    If Account Is Nil Then
+		      Account = New Beacon.ExternalAccount(Profile.ExternalAccountUUID, Beacon.ExternalAccount.ProviderNitrado)
+		    End If
+		    
+		    If Self.AuthClient.SetAccount(Account) Then
+		      Self.mAuthController = Controller
+		      Self.AuthClient.Authenticate(App.IdentityManager.CurrentIdentity)
+		    Else
+		      Controller.Cancelled = True
+		      Controller.ShouldResume = True
+		    End If
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ListServers(Account As Beacon.ExternalAccount)
+		  Var Profile As New Beacon.NitradoServerProfile
+		  Profile.ExternalAccountUUID = Account.UUID
+		  
+		  Var Engine As New Beacon.NitradoIntegrationEngine(Profile)
+		  Self.mEngines.Value(Profile.ExternalAccountUUID.StringValue) = Engine
+		  AddHandler Engine.Discovered, WeakAddressOf Engine_Discovered
+		  AddHandler Engine.Wait, WeakAddressOf Engine_Wait
+		  Engine.BeginDiscovery()
+		  
+		  Self.mPendingListActions = Self.mPendingListActions + 1
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ShouldCancel()
+		  If (Self.mAuthController Is Nil) = False Then
+		    Self.mAuthController.Cancelled = True
+		    Self.mAuthController.ShouldResume = True
+		    Self.mAuthController = Nil
+		  End If
+		  
+		  Super.ShouldCancel()
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub StartNewAccount()
+		  Var Account As New Beacon.ExternalAccount(Beacon.ExternalAccount.ProviderNitrado)
+		  Self.mAccounts.Add(Account)
+		  
+		  Var Profile As New Beacon.NitradoServerProfile
+		  Profile.ExternalAccountUUID = Account.UUID
+		  Self.Authenticate(Profile)
 		End Sub
 	#tag EndMethod
 
@@ -477,7 +568,23 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mAccounts As Beacon.ExternalAccountManager
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mAuthController As Beacon.TaskWaitController
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEngines As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mOAuthWindow As OAuthAuthorizationWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPendingListActions As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -494,25 +601,17 @@ End
 
 #tag EndWindowCode
 
+#tag Events PagePanel1
+	#tag Event
+		Sub Change()
+		  Self.StatusWatchTimer.RunMode = If(Me.SelectedPanelIndex = 0, Timer.RunModes.Multiple, Timer.RunModes.Off)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events FindingCancelButton
 	#tag Event
 		Sub Action()
 		  Self.ShouldCancel()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events List
-	#tag Event
-		Sub Open()
-		  Self.List.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub CellAction(row As Integer, column As Integer)
-		  #Pragma Unused Row
-		  #Pragma Unused Column
-		  
-		  Self.CheckActionEnabled()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -526,34 +625,80 @@ End
 #tag Events ListActionButton
 	#tag Event
 		Sub Action()
-		  Dim Engines() As Beacon.NitradoDiscoveryEngine
+		  Var Data() As Beacon.DiscoveredData
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.CellCheckBoxValueAt(I, 0) Then
 		      Continue
 		    End If
 		    
-		    Dim Profile As Beacon.NitradoServerProfile = Self.List.RowTagAt(I)
-		    Engines.AddRow(New Beacon.NitradoDiscoveryEngine(Profile, Self.AuthClient.AccessToken))
+		    Data.AddRow(Self.List.RowTagAt(I))
 		  Next
-		  Self.ShouldFinish(Engines, "Nitrado", Self.AuthClient.AuthData)
+		  Self.ShouldFinish(Data, Self.mAccounts)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events NewAuthButton
+	#tag Event
+		Sub Action()
+		  If Self.AuthClient.Busy THen
+		    Self.ShowAlert("Wait for the current Nitrado authentication to finish first.", "Beacon can only support one Nitrado authentication at a time.")
+		    Return
+		  End If
+		  
+		  Self.StartNewAccount()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events List
+	#tag Event
+		Sub Open()
+		  Me.ColumnTypeAt(0) = Listbox.CellTypes.CheckBox
+		  Me.TypeaheadColumn = 1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub CellAction(row As Integer, column As Integer)
+		  #Pragma Unused Row
+		  #Pragma Unused Column
+		  
+		  Self.CheckActionEnabled()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events AuthClient
 	#tag Event
 		Sub Authenticated()
-		  Self.ListServers()
+		  Var Account As Beacon.ExternalAccount = Me.Account
+		  Self.mAccounts.Add(Account)
+		  
+		  If (Self.mAuthController Is Nil) = False Then
+		    Dictionary(Self.mAuthController.UserData).Value("Account") = Account
+		    Self.mAuthController.ShouldResume = True
+		    Self.mAuthController = Nil
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub AuthenticationError()
-		  Self.ShowAlert("Unable to communicate with Nitrado", "Sorry, the Nitrado API is not available at this time.")
+		  Var Provider As String = "OAuth"
+		  If (Me.Account Is Nil) = False Then
+		    Provider = Me.Account.Provider
+		  End If
+		  
+		  Self.ShowAlert("Unable to communicate with " + Provider, "Sorry, the " + Provider + " API is not available at this time.")
+		  
+		  If (Self.mAuthController Is Nil) = False Then
+		    Self.mAuthController.Cancelled = True
+		    Self.mAuthController.ShouldResume = True
+		    Self.mAuthController = Nil
+		  End If
+		  
 		  Self.ShouldCancel()
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function StartAuthentication(URL As String, Provider As String) As Boolean
-		  If Not Self.ShowConfirm("Open your browser to authorize with " + Provider + "?", "To continue discovering servers, you must authorize " + Provider + " to allow Beacon to access your servers.", "Continue", "Cancel") Then
+		Function StartAuthentication(Account As Beacon.ExternalAccount, URL As String) As Boolean
+		  If Not Self.ShowConfirm("Open your browser to authorize with " + Account.Provider + "?", "To continue discovering servers, you must authorize " + Account.Provider + " to allow Beacon to access your servers.", "Continue", "Cancel") Then
 		    Return False
 		  End If
 		  
@@ -567,19 +712,71 @@ End
 		    Self.mOAuthWindow.Close
 		    Self.mOAuthWindow = Nil
 		  End If
+		  
+		  Self.NewAuthButton.Enabled = True
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub ShowWaitingWindow()
 		  Self.mOAuthWindow = New OAuthAuthorizationWindow(Me)
+		  Self.NewAuthButton.Enabled = False
 		  Self.mOAuthWindow.Show()
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub Busy()
+		  Self.NewAuthButton.Enabled = False
+		  Self.CheckActionEnabled()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Idle()
+		  Self.NewAuthButton.Enabled = True
+		  Self.CheckActionEnabled()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserCancelled()
+		  If Self.List.RowCount = 0 Then
+		    Self.ShouldCancel()
+		    Return
+		  End If
+		  
+		  Self.PagePanel1.SelectedPanelIndex = 1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub AccountUUIDChanged(OldUUID As v4UUID)
+		  Break
+		  
+		  If Self.mEngines.HasKey(OldUUID.StringValue) Then
+		    Var Engine As Beacon.IntegrationEngine = Self.mEngines.Value(OldUUID.StringValue)
+		    Engine.Profile.ExternalAccountUUID = Me.Account.UUID
+		    Self.mEngines.Remove(OldUUID.StringValue)
+		    Self.mEngines.Value(Me.Account.UUID.StringValue) = Engine
+		  End If
+		End Sub
+	#tag EndEvent
 #tag EndEvents
-#tag Events LookupStartTimer
+#tag Events StatusWatchTimer
 	#tag Event
 		Sub Action()
-		  Self.AuthClient.Authenticate(App.IdentityManager.CurrentIdentity)
+		  If Self.mEngines Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Label As String
+		  If Self.mEngines.KeyCount = 1 Then
+		    Var Key As Variant = Self.mEngines.Key(0)
+		    Var Engine As Beacon.NitradoIntegrationEngine = Self.mEngines.Value(Key)
+		    Label = Engine.Logs(True)
+		  Else
+		    Label = "Discovering servers on multiple accounts…"
+		  End If
+		  
+		  If Self.FindingStatus.Value.Compare(Label, ComparisonOptions.CaseSensitive, Locale.Current) <> 0 Then
+		    Self.FindingStatus.Value = Label
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

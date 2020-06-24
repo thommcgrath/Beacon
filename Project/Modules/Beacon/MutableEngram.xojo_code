@@ -3,6 +3,12 @@ Protected Class MutableEngram
 Inherits Beacon.Engram
 Implements Beacon.MutableBlueprint
 	#tag Method, Flags = &h0
+		Sub AlternateLabel(Assigns Value As NullableString)
+		  Self.mAlternateLabel = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Availability(Assigns Value As UInt64)
 		  Self.mAvailability = Value
 		End Sub
@@ -19,15 +25,27 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub EntryString(Assigns Value As String)
+		  Self.mEngramEntryString = Value.Trim
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub IsTagged(Tag As String, Assigns Value As Boolean)
 		  Tag = Beacon.NormalizeTag(Tag)
-		  Dim Idx As Integer = Self.mTags.IndexOf(Tag)
+		  Var Idx As Integer = Self.mTags.IndexOf(Tag)
 		  If Idx > -1 And Value = False Then
 		    Self.mTags.RemoveRowAt(Idx)
 		  ElseIf Idx = -1 And Value = True Then
 		    Self.mTags.AddRow(Tag)
 		    Self.mTags.Sort()
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ItemID(Assigns Value As NullableDouble)
+		  Self.mItemID = Value
 		End Sub
 	#tag EndMethod
 
@@ -57,8 +75,26 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub RequiredPlayerLevel(Assigns Level As NullableDouble)
+		  Self.mRequiredPlayerLevel = Level
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RequiredUnlockPoints(Assigns Points As NullableDouble)
+		  Self.mRequiredUnlockPoints = Points
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub StackSize(Assigns Value As NullableDouble)
+		  Self.mStackSize = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Tags(Assigns Tags() As String)
-		  Redim Self.mTags(-1)
+		  Self.mTags.ResizeTo(-1)
 		  
 		  For Each Tag As String In Tags
 		    Tag = Beacon.NormalizeTag(Tag)

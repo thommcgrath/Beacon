@@ -85,59 +85,6 @@ Begin BeaconDialog SharingDialog
          Visible         =   True
          Width           =   90
       End
-      Begin BeaconListbox UserList
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
-         Bold            =   False
-         Border          =   True
-         ColumnCount     =   2
-         ColumnsResizable=   False
-         ColumnWidths    =   "*,312"
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   26
-         Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   True
-         HeadingIndex    =   -1
-         Height          =   130
-         HelpTag         =   ""
-         Hierarchical    =   False
-         Index           =   -2147483648
-         InitialParent   =   "WriteAccessGroup"
-         InitialValue    =   "Username	Identifier"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   False
-         Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
-         SelectionType   =   0
-         ShowDropIndicator=   False
-         TabIndex        =   2
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   388
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   520
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
       Begin Label WriteAccessLabel
          AllowAutoDeactivate=   True
          Bold            =   False
@@ -194,6 +141,61 @@ Begin BeaconDialog SharingDialog
          Transparent     =   False
          Visible         =   False
          Width           =   16
+      End
+      Begin BeaconListbox UserList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   True
+         ColumnCount     =   2
+         ColumnsResizable=   False
+         ColumnWidths    =   "*,312"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   26
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   True
+         HeadingIndex    =   -1
+         Height          =   130
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "WriteAccessGroup"
+         InitialValue    =   "Username	Identifier"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
+         SelectionType   =   0
+         ShowDropIndicator=   False
+         TabIndex        =   2
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   388
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   520
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
       End
    End
    Begin Label MessageLabel
@@ -556,7 +558,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Win As New SharingDialog(Document)
+		  Var Win As New SharingDialog(Document)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  If Win.mUsersChanged Then
@@ -662,7 +664,7 @@ End
 #tag Events AddUserButton
 	#tag Event
 		Sub Action()
-		  Dim UserID, Username, PublicKey As String
+		  Var UserID, Username, PublicKey As String
 		  If ShareWithUserDialog.Present(Self, UserID, Username, PublicKey) Then
 		    If Self.mDocument.HasUser(UserID) = False Then
 		      Self.UserList.AddRow(Username, UserID)
@@ -679,7 +681,7 @@ End
 #tag Events UserList
 	#tag Event
 		Sub Open()
-		  Dim Users() As String = Self.mDocument.GetUsers()
+		  Var Users() As String = Self.mDocument.GetUsers()
 		  Users.Sort
 		  
 		  For Each UserID As String In Users
@@ -695,7 +697,7 @@ End
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
 		  If Warn Then
-		    Dim UserCount As Integer = Me.SelectedRowCount
+		    Var UserCount As Integer = Me.SelectedRowCount
 		    If Not Self.ShowConfirm("Are you sure you want to stop sharing this document with " + Language.NounWithQuantity(UserCount, "user", "users") + "?", "Changes will not be made until the document is saved. This document will no longer appear in the user's cloud documents and the user will be unable to save a new version.", "Stop Sharing", "Cancel") Then
 		      Return
 		    End If
@@ -733,7 +735,7 @@ End
 #tag Events CopyLinkButton
 	#tag Event
 		Sub Action()
-		  Dim Board As New Clipboard
+		  Var Board As New Clipboard
 		  Board.Text = Self.DownloadLinkLabel.Value
 		  
 		  Me.Caption = "Copied!"
@@ -746,6 +748,14 @@ End
 		Sub Action()
 		  Var DesiredStatus As String
 		  If Me.Caption = "Share" Then
+		    Var Description As String = Self.mDocument.Description.Trim
+		    If Description.IsEmpty Then
+		      Self.ShowAlert("Your document has no description and will be rejected if shared.", "This might be the best document ever, but nobody will download it if they don't know anything about it. Before sharing it to the world, go give it a nice description.")
+		      DocumentEditorView.SwitchToEditor(Self.mDocument, BeaconConfigs.Metadata.ConfigName)
+		      Self.Hide()
+		      Return
+		    End If
+		    
 		    DesiredStatus = "Requested"
 		  Else
 		    DesiredStatus = "Private"

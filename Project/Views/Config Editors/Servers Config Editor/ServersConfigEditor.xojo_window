@@ -71,9 +71,11 @@ Begin ConfigEditor ServersConfigEditor
       TextUnit        =   0
       Top             =   41
       Transparent     =   True
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   299
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -175,9 +177,26 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub EnableMenuItems()
+		  If Self.ServerList.SelectedRowCount > 0 Then
+		    Self.EnableEditorMenuItem("CopyMOTDToAllServers")
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub GetEditorMenuItems(Items() As MenuItem)
+		  Var ReplicateItem As New MenuItem("Copy Message of the Day to All Servers")
+		  ReplicateItem.Name = "CopyMOTDToAllServers"
+		  ReplicateItem.Enabled = (Self.ServerList.SelectedRowCount = 1)
+		  Items.AddRow(ReplicateItem)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  For I As Integer = 0 To Self.Document.ServerProfileCount - 1
-		    Dim Profile As Beacon.ServerProfile = Self.Document.ServerProfile(I)
+		    Var Profile As Beacon.ServerProfile = Self.Document.ServerProfile(I)
 		    
 		    Self.ServerList.AddRow(Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName)
 		    Self.ServerList.RowTagAt(Self.ServerList.LastAddedRowIndex) = Profile
@@ -195,7 +214,7 @@ End
 
 	#tag Event
 		Sub SetupUI()
-		  Dim SelectedProfiles() As Beacon.ServerProfile
+		  Var SelectedProfiles() As Beacon.ServerProfile
 		  For I As Integer = 0 To Self.ServerList.RowCount - 1
 		    If Self.ServerList.Selected(I) Then
 		      SelectedProfiles.AddRow(Self.ServerList.RowTagAt(I))
@@ -205,10 +224,10 @@ End
 		  Self.ServerList.RowCount = Self.Document.ServerProfileCount
 		  
 		  For I As Integer = 0 To Self.Document.ServerProfileCount - 1
-		    Dim Profile As Beacon.ServerProfile = Self.Document.ServerProfile(I)
+		    Var Profile As Beacon.ServerProfile = Self.Document.ServerProfile(I)
 		    
 		    // Don't use IndexOf as it doesn't utilize Operator_Compare
-		    Dim Selected As Boolean
+		    Var Selected As Boolean
 		    For X As Integer = 0 To SelectedProfiles.LastRowIndex
 		      If SelectedProfiles(X) = Profile Then
 		        Selected = True
@@ -223,6 +242,45 @@ End
 		  Next
 		End Sub
 	#tag EndEvent
+
+
+	#tag MenuHandler
+		Function CopyMOTDToAllServers() As Boolean Handles CopyMOTDToAllServers.Action
+			Var CurrentProfileID As String = Self.CurrentProfileID
+			If CurrentProfileID.IsEmpty Then
+			Return True
+			End If
+			Self.CurrentProfileID = ""
+			
+			Var SourceProfile As Beacon.ServerProfile
+			Var Bound As Integer = Self.Document.ServerProfileCount - 1
+			For Idx As Integer = 0 To Bound
+			If Self.Document.ServerProfile(Idx).ProfileID = CurrentProfileID Then
+			SourceProfile = Self.Document.ServerProfile(Idx)
+			Exit
+			End If
+			Next
+			
+			If SourceProfile Is Nil Then
+			Self.CurrentProfileID = CurrentProfileID
+			Return True
+			End If
+			
+			Var Message As String = SourceProfile.MessageOfTheDay
+			Var Duration As Integer = SourceProfile.MessageDuration
+			
+			For Idx As Integer = 0 To Bound
+			If Self.Document.ServerProfile(Idx).ProfileID <> CurrentProfileID Then
+			Self.Document.ServerProfile(Idx).MessageOfTheDay = Message
+			Self.Document.ServerProfile(Idx).MessageDuration = Duration
+			Self.Changed = Self.Changed Or Self.Document.Modified
+			End If
+			Next
+			
+			Self.CurrentProfileID = CurrentProfileID
+			Return True
+		End Function
+	#tag EndMenuHandler
 
 
 	#tag Method, Flags = &h0
@@ -243,8 +301,8 @@ End
 		  Self.Changed = Sender.Changed
 		  
 		  For I As Integer = 0 To Self.ServerList.RowCount - 1
-		    Dim Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(I)
-		    Dim Status As String = Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
+		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(I)
+		    Var Status As String = Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
 		    If Self.ServerList.CellValueAt(I, 0) <> Status Then
 		      Self.ServerList.CellValueAt(I, 0) = Status
 		    End If
@@ -266,7 +324,7 @@ End
 			  End If
 			  
 			  If Self.mCurrentProfileID <> "" Then
-			    Dim View As ServerViewContainer = Self.mViews.Value(Self.mCurrentProfileID)
+			    Var View As ServerViewContainer = Self.mViews.Value(Self.mCurrentProfileID)
 			    View.Visible = False
 			    Self.mCurrentProfileID = ""
 			  End If
@@ -275,7 +333,7 @@ End
 			    Return
 			  End If
 			  
-			  Dim View As ServerViewContainer = Self.mViews.Value(Value)
+			  Var View As ServerViewContainer = Self.mViews.Value(Value)
 			  View.Visible = True
 			  Self.mCurrentProfileID = Value
 			End Set
@@ -313,11 +371,11 @@ End
 		    Return
 		  End If
 		  
-		  Dim Profile As Beacon.ServerProfile = Me.RowTagAt(Me.SelectedRowIndex)
-		  Dim ProfileID As String = Profile.ProfileID
+		  Var Profile As Beacon.ServerProfile = Me.RowTagAt(Me.SelectedRowIndex)
+		  Var ProfileID As String = Profile.ProfileID
 		  If Not Self.mViews.HasKey(ProfileID) Then
 		    // Create the view
-		    Dim View As ServerViewContainer
+		    Var View As ServerViewContainer
 		    Select Case Profile
 		    Case IsA Beacon.NitradoServerProfile
 		      View = New NitradoServerView(Self.Document, Beacon.NitradoServerProfile(Profile))
@@ -325,6 +383,8 @@ End
 		      View = New FTPServerView(Beacon.FTPServerProfile(Profile))
 		    Case IsA Beacon.ConnectorServerProfile
 		      View = New ConnectorServerView(Beacon.ConnectorServerProfile(Profile))
+		    Case IsA Beacon.LocalServerProfile
+		      View = New LocalServerView(Beacon.LocalServerProfile(Profile))
 		    Else
 		      Self.CurrentProfileID = ""
 		      Return
@@ -344,14 +404,14 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  Dim SelCount As Integer = Me.SelectedRowCount
+		  Var SelCount As Integer = Me.SelectedRowCount
 		  If SelCount = 0 Then
 		    Return
 		  End If
 		  
 		  If Warn Then
-		    Dim Subject As String = If(SelCount = 1, "server", "servers")
-		    Dim DemonstrativeAdjective As String = If(SelCount = 1, "this", "these " + SelCount.ToString)
+		    Var Subject As String = If(SelCount = 1, "server", "servers")
+		    Var DemonstrativeAdjective As String = If(SelCount = 1, "this", "these " + SelCount.ToString)
 		    If Not Self.ShowConfirm("Are you sure you want to delete " + DemonstrativeAdjective + " " + Subject + "?", "The " + Subject + " can be added again later using the ""Import"" feature next to the ""Config Type"" menu.", "Delete", "Cancel") Then
 		      Return
 		    End If
@@ -359,13 +419,13 @@ End
 		  
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Me.Selected(I) Then
-		      Dim Profile As Beacon.ServerProfile = Me.RowTagAt(I)
+		      Var Profile As Beacon.ServerProfile = Me.RowTagAt(I)
 		      If Self.mViews.HasKey(Profile.ProfileID) Then
 		        If Self.CurrentProfileID = Profile.ProfileID Then
 		          Self.CurrentProfileID = ""
 		        End If
 		        
-		        Dim Panel As ServerViewContainer = Self.mViews.Value(Profile.ProfileID)
+		        Var Panel As ServerViewContainer = Self.mViews.Value(Profile.ProfileID)
 		        Panel.Close
 		        Self.mViews.Remove(Profile.ProfileID)
 		      End If
@@ -378,27 +438,27 @@ End
 	#tag EndEvent
 	#tag Event
 		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
-		  Dim CopyProfileMenuItem As New MenuItem("Copy Profile ID")
+		  Var CopyProfileMenuItem As New MenuItem("Copy Profile ID")
 		  CopyProfileMenuItem.Enabled = False
 		  Base.AddMenu(CopyProfileMenuItem)
 		  
 		  Var BackupsRoot As FolderItem = App.BackupsFolder
 		  
-		  Dim RowIndex As Integer = Me.RowFromXY(X, Y)
+		  Var RowIndex As Integer = Me.RowFromXY(X, Y)
 		  If RowIndex = -1 Then
 		    Base.AddMenu(New MenuItem("Show Config Backups", BackupsRoot))
 		    Return True
 		  End If
 		  
 		  Try
-		    Dim Profile As Beacon.ServerProfile = Me.RowTagAt(RowIndex)
+		    Var Profile As Beacon.ServerProfile = Me.RowTagAt(RowIndex)
 		    CopyProfileMenuItem.Tag = Profile.ProfileID.Left(8)
 		    CopyProfileMenuItem.Enabled = True
 		    
-		    Dim Folder As FolderItem = BackupsRoot.Child(Beacon.SanitizeFilename(Profile.Name))
+		    Var Folder As FolderItem = BackupsRoot.Child(Beacon.SanitizeFilename(Profile.Name))
 		    Base.AddMenu(New MenuItem("Show Config Backups", Folder))
 		  Catch Err As RuntimeException
-		    Dim Item As New MenuItem("Show Config Backups", BackupsRoot)
+		    Var Item As New MenuItem("Show Config Backups", BackupsRoot)
 		    Item.Enabled = False
 		    Base.AddMenu(Item)
 		  End Try
@@ -410,7 +470,7 @@ End
 		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
 		  Select Case HitItem.Value
 		  Case "Show Config Backups"
-		    Dim Folder As FolderItem = HitItem.Tag
+		    Var Folder As FolderItem = HitItem.Tag
 		    If Folder = Nil Then
 		      Return True
 		    End If
@@ -419,8 +479,8 @@ End
 		    End If
 		    App.ShowFile(Folder)
 		  Case "Copy Profile ID"
-		    Dim ProfileID As String = HitItem.Tag
-		    Dim Board As New Clipboard
+		    Var ProfileID As String = HitItem.Tag
+		    Var Board As New Clipboard
 		    Board.Text = ProfileID
 		  End Select
 		  
@@ -429,6 +489,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

@@ -499,7 +499,6 @@ Begin Window SubscribeDialog
    End
    Begin URLConnection SubscribeSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -525,7 +524,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present()
-		  Dim Win As New SubscribeDialog
+		  Var Win As New SubscribeDialog
 		  Win.Show
 		End Sub
 	#tag EndMethod
@@ -536,10 +535,10 @@ End
 #tag Events AddressField
 	#tag Event
 		Sub TextChange()
-		  Dim Regex As New RegEx
+		  Var Regex As New RegEx
 		  Regex.SearchPattern = "^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|""(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$"
 		  
-		  Dim Matches As RegExMatch = Regex.Search(Me.Value.Trim)
+		  Var Matches As RegExMatch = Regex.Search(Me.Value.Trim)
 		  ActionButton.Enabled = Matches <> Nil
 		  
 		End Sub
@@ -550,7 +549,7 @@ End
 		Sub Action()
 		  Self.Hide()
 		  
-		  Dim FormString As String = "email=" + EncodeURLComponent(AddressField.Value.Trim) + "&first_name=" + EncodeURLComponent(FirstNameField.Value.Trim) + "&last_name=" + EncodeURLComponent(LastNameField.Value.Trim)
+		  Var FormString As String = "email=" + EncodeURLComponent(AddressField.Value.Trim) + "&first_name=" + EncodeURLComponent(FirstNameField.Value.Trim) + "&last_name=" + EncodeURLComponent(LastNameField.Value.Trim)
 		  
 		  SubscribeSocket.AllowCertificateValidation = True
 		  SubscribeSocket.SetRequestContent(FormString, "application/x-www-form-urlencoded")

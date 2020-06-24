@@ -2,7 +2,7 @@
 Protected Class ConfigGroup
 	#tag Method, Flags = &h0
 		Function CommandLineOptions(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
-		  Dim Values() As Beacon.ConfigValue
+		  Var Values() As Beacon.ConfigValue
 		  
 		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
 		    RaiseEvent CommandLineOptions(SourceDocument, Values, Profile)
@@ -14,15 +14,15 @@ Protected Class ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function ConfigName() As String
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Self)
-		  Dim Methods() As Introspection.MethodInfo = Info.GetMethods
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Self)
+		  Var Methods() As Introspection.MethodInfo = Info.GetMethods
 		  For Each Signature As Introspection.MethodInfo In Methods
 		    If Signature.IsShared And Signature.Name = "ConfigName" And Signature.GetParameters.LastRowIndex = -1 And Signature.ReturnType.Name = "String" Then
 		      Return Signature.Invoke(Self)
 		    End If
 		  Next
 		  
-		  Dim Err As New UnsupportedOperationException
+		  Var Err As New UnsupportedOperationException
 		  Err.Message = "Class " + Info.FullName + " is missing its ConfigName() As String shared method."
 		  Raise Err
 		End Function
@@ -50,7 +50,7 @@ Protected Class ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function GameIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
-		  Dim Values() As Beacon.ConfigValue
+		  Var Values() As Beacon.ConfigValue
 		  
 		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
 		    RaiseEvent GameIniValues(SourceDocument, Values, Profile)
@@ -62,7 +62,7 @@ Protected Class ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity, Profile As Beacon.ServerProfile) As Beacon.ConfigValue()
-		  Dim Values() As Beacon.ConfigValue
+		  Var Values() As Beacon.ConfigValue
 		  
 		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
 		    RaiseEvent GameUserSettingsIniValues(SourceDocument, Values, Profile)
@@ -74,11 +74,38 @@ Protected Class ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function Issues(Document As Beacon.Document, Identity As Beacon.Identity) As Beacon.Issue()
-		  Dim Arr() As Beacon.Issue
+		  Var Arr() As Beacon.Issue
 		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
 		    RaiseEvent DetectIssues(Document, Arr)
 		  End If
 		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Merge(Other As Beacon.ConfigGroup) As Boolean
+		  If Not Self.SupportsMerging Or Other = Nil Then
+		    Return False
+		  End If
+		  
+		  Var SelfInfo As Introspection.TypeInfo = Introspection.GetType(Self)
+		  Var OtherInfo As Introspection.TypeInfo = Introspection.GetType(Other)
+		  If SelfInfo.FullName <> OtherInfo.FullName Then
+		    Var Err As New UnsupportedOperationException
+		    Err.Message = "Cannot merge " + OtherInfo.FullName + " into " + SelfInfo.FullName
+		    Raise Err
+		  End If
+		  
+		  Try
+		    Var WasModified As Boolean = Self.mModified
+		    Self.mModified = False
+		    RaiseEvent MergeFrom(Other)
+		    Var MergeMadeChanges As Boolean = Self.mModified
+		    Self.mModified = Self.mModified Or WasModified
+		    Return MergeMadeChanges
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -114,8 +141,14 @@ Protected Class ConfigGroup
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
+		Function SupportsMerging() As Boolean
+		  Return IsEventImplemented("MergeFrom")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ToDictionary(Document As Beacon.Document) As Dictionary
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("Implicit") = Self.mIsImplicit
 		  RaiseEvent WriteDictionary(Dict, Document)
 		  Return Dict
@@ -153,6 +186,10 @@ Protected Class ConfigGroup
 
 	#tag Hook, Flags = &h0
 		Event GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event MergeFrom(Other As Beacon.ConfigGroup)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

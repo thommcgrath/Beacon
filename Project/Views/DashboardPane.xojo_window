@@ -146,7 +146,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   275
+      Top             =   307
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -216,7 +216,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   297
+      Top             =   329
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -280,11 +280,35 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   329
+      Top             =   275
       Transparent     =   True
       Underline       =   True
       URL             =   ""
       Visible         =   True
+      Width           =   350
+   End
+   Begin ProgressBar EngramImportIndicator
+      AllowAutoDeactivate=   True
+      Enabled         =   True
+      Height          =   20
+      Indeterminate   =   True
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   229
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumValue    =   100
+      Scope           =   2
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      Tooltip         =   ""
+      Top             =   351
+      Transparent     =   False
+      Value           =   0.0
+      Visible         =   False
       Width           =   350
    End
 End
@@ -293,7 +317,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, LocalData.Notification_DatabaseUpdated, IdentityManager.Notification_IdentityChanged)
+		  NotificationKit.Ignore(Self, LocalData.Notification_DatabaseUpdated, LocalData.Notification_ImportStarted, LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed, IdentityManager.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
 
@@ -301,13 +325,15 @@ End
 		Sub Open()
 		  Self.ToolbarCaption = "Home"
 		  
-		  Self.mMainGroup = New ControlGroup(LogoCanvas, TitleCanvas, VersionLabel, NewFileButton, OpenFileButton, SyncLabel, WebsiteLink)
+		  Self.mMainGroup = New ControlGroup(LogoCanvas, TitleCanvas, VersionLabel, NewFileButton, OpenFileButton, SyncLabel, WebsiteLink, EngramImportIndicator)
 		  Self.mCopyrightGroup = New ControlGroup(CopyrightLabel)
 		  
 		  Self.MinimumHeight = Self.mMainGroup.Height + Self.mCopyrightGroup.Height + 100
 		  Self.MinimumWidth = Max(Self.mMainGroup.Width, Self.mCopyrightGroup.Width) + 40
 		  
-		  NotificationKit.Watch(Self, LocalData.Notification_DatabaseUpdated, IdentityManager.Notification_IdentityChanged)
+		  NotificationKit.Watch(Self, LocalData.Notification_DatabaseUpdated, LocalData.Notification_ImportStarted, LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed, IdentityManager.Notification_IdentityChanged)
+		  
+		  Self.UpdateEngramStatus
 		End Sub
 	#tag EndEvent
 
@@ -316,27 +342,27 @@ End
 		  #Pragma Unused Initial
 		  
 		  If Self.mCopyrightGroup <> Nil Then
-		    Dim Left As Integer = (Self.Width - Self.mCopyrightGroup.Width) / 2
-		    Dim Top As Integer = Self.Height - (Self.mCopyrightGroup.Height + 20)
-		    Dim DeltaX As Integer = Left - Self.mCopyrightGroup.Left
-		    Dim DeltaY As Integer = Top - Self.mCopyrightGroup.Top
+		    Var Left As Integer = (Self.Width - Self.mCopyrightGroup.Width) / 2
+		    Var Top As Integer = Self.Height - (Self.mCopyrightGroup.Height + 20)
+		    Var DeltaX As Integer = Left - Self.mCopyrightGroup.Left
+		    Var DeltaY As Integer = Top - Self.mCopyrightGroup.Top
 		    Self.mCopyrightGroup.Offset(DeltaX, DeltaY)
 		  End If
 		  
 		  If Self.mMainGroup <> Nil Then
-		    Dim AvailableTop As Integer = 60
-		    Dim AvailableBottom As Integer
+		    Var AvailableTop As Integer = 60
+		    Var AvailableBottom As Integer
 		    If Self.mCopyrightGroup <> Nil Then
 		      AvailableBottom = Self.mCopyrightGroup.Top - 20
 		    Else
 		      AvailableBottom = Self.CopyrightLabel.Top - 20
 		    End If
-		    Dim AvailableHeight As Integer = AvailableBottom - AvailableTop
+		    Var AvailableHeight As Integer = AvailableBottom - AvailableTop
 		    
-		    Dim Left As Integer = (Self.Width - Self.mMainGroup.Width) / 2
-		    Dim Top As Integer = AvailableTop + Max((AvailableHeight - Self.mMainGroup.Height) / 3, 0)
-		    Dim DeltaX As Integer = Left - Self.mMainGroup.Left
-		    Dim DeltaY As Integer = Top - Self.mMainGroup.Top
+		    Var Left As Integer = (Self.Width - Self.mMainGroup.Width) / 2
+		    Var Top As Integer = AvailableTop + Max((AvailableHeight - Self.mMainGroup.Height) / 3, 0)
+		    Var DeltaX As Integer = Left - Self.mMainGroup.Left
+		    Var DeltaY As Integer = Top - Self.mMainGroup.Top
 		    Self.mMainGroup.Offset(DeltaX, DeltaY)
 		  End If
 		End Sub
@@ -354,8 +380,21 @@ End
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
-		  Case LocalData.Notification_DatabaseUpdated
-		    Dim LastSync As DateTime = Notification.UserData
+		  Case LocalData.Notification_DatabaseUpdated, LocalData.Notification_ImportFailed, LocalData.Notification_ImportStarted, LocalData.Notification_ImportSuccess
+		    Var LastSync As DateTime = Notification.UserData
+		    Self.UpdateEngramStatus(LastSync)
+		  Case IdentityManager.Notification_IdentityChanged
+		    Self.TitleCanvas.Invalidate
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateEngramStatus(LastSync As DateTime = Nil)
+		  If LocalData.SharedInstance.Importing Then
+		    Self.SyncLabel.Value = "Importing engrams…"
+		    Self.EngramImportIndicator.Visible = True
+		  Else
 		    If IsNull(LastSync) Then
 		      LastSync = LocalData.SharedInstance.LastSync
 		    End If
@@ -364,9 +403,8 @@ End
 		    Else
 		      Self.SyncLabel.Value = "Engrams updated " + LastSync.ToString(Locale.Current, DateTime.FormatStyles.Long, DateTime.FormatStyles.Short) + " UTC"
 		    End If
-		  Case IdentityManager.Notification_IdentityChanged
-		    Self.TitleCanvas.Invalidate
-		  End Select
+		    Self.EngramImportIndicator.Visible = False
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -385,14 +423,14 @@ End
 #tag Events NewFileButton
 	#tag Event
 		Sub Action()
-		  MainWindow.Documents.NewDocument()
+		  App.MainWindow.Documents.NewDocument()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events OpenFileButton
 	#tag Event
 		Sub Action()
-		  MainWindow.Documents.ShowOpenDocument()
+		  App.MainWindow.Documents.ShowOpenDocument()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -415,7 +453,7 @@ End
 #tag Events SyncLabel
 	#tag Event
 		Sub Open()
-		  Dim LastSync As DateTime = LocalData.SharedInstance.LastSync
+		  Var LastSync As DateTime = LocalData.SharedInstance.LastSync
 		  If IsNull(LastSync) Then
 		    Me.Value = "No engram data available"
 		  Else
@@ -429,7 +467,7 @@ End
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  Dim TitleIcon As Picture
+		  Var TitleIcon As Picture
 		  If App.IdentityManager.CurrentIdentity <> Nil And App.IdentityManager.CurrentIdentity.OmniVersion > 0 Then
 		    TitleIcon = IconBeaconOmniText
 		  Else
@@ -452,6 +490,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

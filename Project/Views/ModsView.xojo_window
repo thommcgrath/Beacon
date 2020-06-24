@@ -71,9 +71,11 @@ Begin BeaconSubview ModsView
       TextUnit        =   0
       Top             =   41
       Transparent     =   True
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   235
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -118,7 +120,6 @@ Begin BeaconSubview ModsView
       HasBackColor    =   False
       Height          =   419
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   236
       LockBottom      =   True
@@ -279,16 +280,16 @@ End
 		    Return
 		  End If
 		  
-		  Dim SelectedMod As BeaconAPI.WorkshopMod
+		  Var SelectedMod As BeaconAPI.WorkshopMod
 		  If Self.ModList.SelectedRowIndex > -1 Then
 		    SelectedMod = Self.SelectedMod()
 		  End If
 		  
 		  Self.ModList.RemoveAllRows()
 		  
-		  Dim Arr() As Variant = Response.JSON
+		  Var Arr() As Variant = Response.JSON
 		  For Each Dict As Dictionary In Arr
-		    Dim UserMod As New BeaconAPI.WorkshopMod(Dict)
+		    Var UserMod As New BeaconAPI.WorkshopMod(Dict)
 		    
 		    Self.ModList.AddRow(UserMod.Name)
 		    Self.ModList.RowTagAt(Self.ModList.LastAddedRowIndex) = UserMod
@@ -306,7 +307,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RefreshMods()
-		  Dim Request As New BeaconAPI.Request("mod", "GET", AddressOf APICallback_ListMods)
+		  Var Request As New BeaconAPI.Request("mod", "GET", AddressOf APICallback_ListMods)
 		  Request.Authenticate(Preferences.OnlineToken)
 		  BeaconAPI.Send(Request)
 		End Sub
@@ -355,21 +356,21 @@ End
 		      Self.RefreshMods
 		    End If
 		  Case "RemoveButton"
-		    Dim Dialog As New MessageDialog
+		    Var Dialog As New MessageDialog
 		    Dialog.Title = ""
 		    Dialog.Message = "Are you sure you want to remove your mod?"
 		    Dialog.Explanation = "This cannot be undone. All associated engrams will also be removed."
 		    Dialog.ActionButton.Caption = "Delete"
 		    Dialog.CancelButton.Visible = True
 		    
-		    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		    Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
 		    If Choice = Dialog.ActionButton Then
-		      Dim Request As New BeaconAPI.Request(Self.SelectedMod.ResourceURL, "DELETE", AddressOf APICallback_DeleteMod)
+		      Var Request As New BeaconAPI.Request(Self.SelectedMod.ResourceURL, "DELETE", AddressOf APICallback_DeleteMod)
 		      Request.Authenticate(Preferences.OnlineToken)
 		      BeaconAPI.Send(Request)
 		    End If
 		  Case "SettingsButton"
-		    Dim WorkshopMod As BeaconAPI.WorkshopMod = Self.SelectedMod()
+		    Var WorkshopMod As BeaconAPI.WorkshopMod = Self.SelectedMod()
 		    If WorkshopMod <> Nil Then
 		      DeveloperModSettingsDialog.Present(Self, WorkshopMod)
 		    End If
@@ -403,12 +404,20 @@ End
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  Dim Icon As Picture = BeaconUI.IconWithColor(ImgToolbarDivider, SystemColors.SeparatorColor)
+		  Var Icon As Picture = BeaconUI.IconWithColor(ImgToolbarDivider, SystemColors.SeparatorColor)
 		  G.DrawPicture(Icon, 0, 0)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

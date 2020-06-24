@@ -2,24 +2,50 @@
 Protected Class BeaconListbox
 Inherits Listbox
 	#tag Event
+		Sub CellAction(row As Integer, column As Integer)
+		  If Self.mCellActionCascading Then
+		    // Looks like CellCheckBoxValueAt does not trigger CellAction, but just in case
+		    Return
+		  End If
+		  
+		  Self.mCellActionCascading = True
+		  RaiseEvent BulkColumnChangeStarted(Column)
+		  RaiseEvent CellAction(Row, Column)
+		  
+		  If Self.CellTypeAt(Row, Column) = Listbox.CellTypes.CheckBox And (TargetMacOS And Keyboard.AsyncCommandKey) Or (Not TargetMacOS And Keyboard.AsyncControlKey) Then
+		    Var DesiredValue As Boolean = Self.CellCheckBoxValueAt(Row, Column)
+		    For Idx As Integer = Self.LastRowIndex DownTo 0
+		      If Idx <> Row And Self.CellCheckBoxValueAt(Idx, Column) <> DesiredValue Then
+		        Self.CellCheckBoxValueAt(Idx, Column) = DesiredValue
+		        RaiseEvent CellAction(Idx, Column)
+		      End If
+		    Next
+		  End If
+		  
+		  Self.mCellActionCascading = False
+		  RaiseEvent BulkColumnChangeFinished(Column)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Function CellBackgroundPaint(g As Graphics, row As Integer, column As Integer) As Boolean
 		  #Pragma Unused Column
 		  
-		  Dim ColumnWidth As Integer = Self.ColumnAt(Column).WidthActual
-		  Dim RowHeight As Integer = Self.DefaultRowHeight
+		  Var ColumnWidth As Integer = Self.ColumnAt(Column).WidthActual
+		  Var RowHeight As Integer = Self.DefaultRowHeight
 		  
-		  Dim RowInvalid, RowSelected As Boolean
+		  Var RowInvalid, RowSelected As Boolean
 		  If Row < Self.RowCount Then
 		    RowInvalid = RowIsInvalid(Row)
 		    RowSelected = Self.Selected(Row)
 		  End If
 		  
 		  // To ensure a consistent drawing experience. Partially obscure rows traditionally have a truncated g.height value.
-		  Dim Clip As Graphics = G.Clip(0, 0, ColumnWidth, RowHeight)
+		  Var Clip As Graphics = G.Clip(0, 0, ColumnWidth, RowHeight)
 		  
 		  // Need to fill with color first so translucent system colors can apply correctly
 		  #if TargetMacOS
-		    Dim OSMajor, OSMinor, OSBug As Integer
+		    Var OSMajor, OSMinor, OSBug As Integer
 		    UpdateChecker.OSVersion(OSMajor, OSMinor, OSBug)
 		    If Self.Transparent And OSMajor >= 10 And OSMinor >= 14 Then
 		      Clip.ClearRectangle(0, 0, Clip.Width, Clip.Height)
@@ -32,8 +58,8 @@ Inherits Listbox
 		    Clip.FillRectangle(0, 0, Clip.Width, Clip.Height)
 		  #endif
 		  
-		  Dim BackgroundColor, TextColor, SecondaryTextColor As Color
-		  Dim IsHighlighted As Boolean = Self.Highlighted And Self.Window.Focus = Self
+		  Var BackgroundColor, TextColor, SecondaryTextColor As Color
+		  Var IsHighlighted As Boolean = Self.Highlighted And Self.Window.Focus = Self
 		  If RowSelected Then
 		    If IsHighlighted Then
 		      BackgroundColor = If(RowInvalid, SystemColors.SystemRedColor, SystemColors.SelectedContentBackgroundColor)
@@ -63,15 +89,15 @@ Inherits Listbox
 		  Const CellPadding = 4
 		  Const LineSpacing = 6
 		  
-		  Dim Contents As String = Me.CellValueAt(Row, Column).ReplaceLineEndings(EndOfLine)
-		  Dim Lines() As String = Contents.Split(EndOfLine)
-		  Dim MaxDrawWidth As Integer = ColumnWidth - (CellPadding * 4)
+		  Var Contents As String = Me.CellValueAt(Row, Column).ReplaceLineEndings(EndOfLine)
+		  Var Lines() As String = Contents.Split(EndOfLine)
+		  Var MaxDrawWidth As Integer = ColumnWidth - (CellPadding * 4)
 		  
 		  If Lines.LastRowIndex = -1 Then
 		    Return True
 		  End If
 		  
-		  Dim IsChecked As Boolean = Self.ColumnTypeAt(Column) = Listbox.CellTypes.CheckBox Or Self.CellTypeAt(Row, Column) = Listbox.CellTypes.CheckBox
+		  Var IsChecked As Boolean = Self.ColumnTypeAt(Column) = Listbox.CellTypes.CheckBox Or Self.CellTypeAt(Row, Column) = Listbox.CellTypes.CheckBox
 		  If IsChecked Then
 		    MaxDrawWidth = MaxDrawWidth - 20
 		  End If
@@ -81,19 +107,19 @@ Inherits Listbox
 		  Clip.Bold = RowInvalid
 		  
 		  // Need to compute the combined height of the lines
-		  Dim TotalTextHeight As Double = Clip.CapHeight
+		  Var TotalTextHeight As Double = Clip.CapHeight
 		  Clip.FontName = "SmallSystem"
 		  Clip.Bold = False
 		  TotalTextHeight = TotalTextHeight + ((Clip.CapHeight + LineSpacing) * Lines.LastRowIndex)
 		  Clip.FontName = "System"
 		  Clip.Bold = RowInvalid
 		  
-		  Dim DrawTop As Double = (Clip.Height - TotalTextHeight) / 2
+		  Var DrawTop As Double = (Clip.Height - TotalTextHeight) / 2
 		  For I As Integer = 0 To Lines.LastRowIndex
-		    Dim LineWidth As Integer = Min(Ceil(Clip.TextWidth(Lines(I))), MaxDrawWidth)
+		    Var LineWidth As Integer = Min(Ceil(Clip.TextWidth(Lines(I))), MaxDrawWidth)
 		    
-		    Dim DrawLeft As Integer
-		    Dim Align As Listbox.Alignments = Self.CellAlignmentAt(Row, Column)
+		    Var DrawLeft As Integer
+		    Var Align As Listbox.Alignments = Self.CellAlignmentAt(Row, Column)
 		    If Align = Listbox.Alignments.Default Then
 		      Align = Self.ColumnAlignmentAt(Column)
 		    End If
@@ -106,8 +132,8 @@ Inherits Listbox
 		      DrawLeft = Clip.Width - (LineWidth + CellPadding)
 		    End Select
 		    
-		    Dim LineHeight As Double = Clip.CapHeight
-		    Dim LinePosition As Integer = Round(DrawTop + LineHeight)
+		    Var LineHeight As Double = Clip.CapHeight
+		    Var LinePosition As Integer = Round(DrawTop + LineHeight)
 		    
 		    If Not CellTextPaint(Clip, Row, Column, Lines(I), TextColor, DrawLeft, LinePosition, IsHighlighted) Then
 		      Clip.DrawingColor = If(I = 0, TextColor, SecondaryTextColor)
@@ -239,10 +265,10 @@ Inherits Listbox
 		    Return
 		  End If
 		  
-		  Dim Board As New Clipboard
-		  Dim CanCopy As Boolean = RaiseEvent CanCopy()
-		  Dim CanDelete As Boolean = RaiseEvent CanDelete()
-		  Dim CanPaste As Boolean = RaiseEvent CanPaste(Board)
+		  Var Board As New Clipboard
+		  Var CanCopy As Boolean = RaiseEvent CanCopy()
+		  Var CanDelete As Boolean = RaiseEvent CanDelete()
+		  Var CanPaste As Boolean = RaiseEvent CanPaste(Board)
 		  
 		  EditCopy.Enabled = CanCopy
 		  EditCut.Enabled = CanCopy And CanDelete
@@ -255,13 +281,45 @@ Inherits Listbox
 
 	#tag Event
 		Function KeyDown(Key As String) As Boolean
+		  Self.mForwardKeyUp = False
+		  
 		  If (Key = Encodings.UTF8.Chr(8) Or Key = Encodings.UTF8.Chr(127)) And Self.CanDelete() Then
-		    RaiseEvent PerformClear(True)
+		    Self.DoClear()
 		    Return True
+		  ElseIf (Key = Encodings.UTF8.Chr(10) Or Key = Encodings.UTF8.Chr(13)) And Self.CanEdit() Then
+		    Self.DoEdit()
+		    Return True
+		  ElseIf RaiseEvent KeyDown(Key) Then
+		    Self.mForwardKeyUp = True
 		  Else
-		    Return RaiseEvent KeyDown(Key)
+		    Self.mTypeaheadBuffer = Self.mTypeaheadBuffer + Key
+		    If Self.mTypeaheadTimer.RunMode = Timer.RunModes.Off Then
+		      Self.mTypeaheadTimer.RunMode = Timer.RunModes.Single
+		    End If
+		    Self.mTypeaheadTimer.Reset
+		    Self.mTypeaheadTimer.Period = 1000
+		    
+		    If Not RaiseEvent Typeahead(Self.mTypeaheadBuffer) Then
+		      For Idx As Integer = 0 To Self.LastRowIndex
+		        If Self.CellValueAt(Idx, Self.TypeaheadColumn).BeginsWith(Self.mTypeaheadBuffer) Then
+		          Self.SelectedRowIndex = Idx
+		          Self.EnsureSelectionIsVisible()
+		          Exit
+		        End If
+		      Next
+		    End If
 		  End If
+		  
+		  Return True
 		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub KeyUp(Key As String)
+		  If Self.mForwardKeyUp Then
+		    RaiseEvent KeyUp(Key)
+		  End If
+		End Sub
 	#tag EndEvent
 
 	#tag Event
@@ -319,15 +377,30 @@ Inherits Listbox
 
 	#tag Method, Flags = &h0
 		Function CanEdit() As Boolean
-		  Return RaiseEvent CanEdit()
+		  If IsEventImplemented("CanEdit") Then
+		    Return RaiseEvent CanEdit()
+		  End If
+		  
+		  Return (Self.EditableCell Is Nil) = False
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function CanPaste() As Boolean
-		  Dim Board As New Clipboard
+		  Var Board As New Clipboard
 		  Return RaiseEvent CanPaste(Board)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.mTypeaheadTimer = New Timer
+		  Self.mTypeaheadTimer.RunMode = Timer.RunModes.Off
+		  AddHandler mTypeaheadTimer.Action, WeakAddressOf mTypeaheadTimer_Action
+		  
+		  Super.Constructor
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -344,14 +417,14 @@ Inherits Listbox
 
 	#tag Method, Flags = &h0
 		Sub DoCopy()
-		  Dim Board As New Clipboard
+		  Var Board As New Clipboard
 		  RaiseEvent PerformCopy(Board)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub DoCut()
-		  Dim Board As New Clipboard
+		  Var Board As New Clipboard
 		  RaiseEvent PerformCopy(Board)
 		  RaiseEvent PerformClear(False)
 		End Sub
@@ -359,15 +432,48 @@ Inherits Listbox
 
 	#tag Method, Flags = &h0
 		Sub DoEdit()
-		  RaiseEvent PerformEdit
+		  If IsEventImplemented("PerformEdit") Then
+		    RaiseEvent PerformEdit
+		    Return
+		  End If
+		  
+		  // Look through the columns for exactly one editable cell
+		  Var Cell As Point = Self.EditableCell
+		  If (Cell Is Nil) = False Then
+		    Self.EditCellAt(Cell.Y, Cell.X)
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub DoPaste()
-		  Dim Board As New Clipboard
+		  Var Board As New Clipboard
 		  RaiseEvent PerformPaste(Board)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function EditableCell() As Point
+		  If Self.SelectedRowCount <> 1 Then
+		    Return Nil
+		  End If
+		  
+		  Var Row As Integer = Self.SelectedRowIndex
+		  Var Editable As Integer = -1
+		  For Column As Integer = 0 To Self.LastColumnIndex
+		    If Self.CellTypeAt(Row, Column) = Listbox.CellTypes.TextField Then
+		      If Editable = -1 Then
+		        Editable = Column
+		      Else
+		        Editable = -2
+		      End If
+		    End If
+		  Next
+		  
+		  If Editable >= 0 Then
+		    Return New Point(Editable, Row)
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -375,7 +481,6 @@ Inherits Listbox
 		  If Self.SelectedRowCount = 0 Then
 		    Return
 		  End If
-		  
 		  
 		  Var VisibleStart As Integer = Self.ScrollPosition
 		  Var VisibleEnd As Integer = VisibleStart + Self.VisibleRowCount
@@ -419,6 +524,14 @@ Inherits Listbox
 		    #endif
 		  End If
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mTypeaheadTimer_Action(Sender As Timer)
+		  #Pragma Unused Sender
+		  
+		  Self.mTypeaheadBuffer = ""
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -468,6 +581,14 @@ Inherits Listbox
 
 
 	#tag Hook, Flags = &h0
+		Event BulkColumnChangeFinished(Column As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event BulkColumnChangeStarted(Column As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event CanCopy() As Boolean
 	#tag EndHook
 
@@ -481,6 +602,10 @@ Inherits Listbox
 
 	#tag Hook, Flags = &h0
 		Event CanPaste(Board As Clipboard) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event CellAction(row As Integer, column As Integer)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -516,6 +641,10 @@ Inherits Listbox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event KeyUp(Key As String)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Open()
 	#tag EndHook
 
@@ -539,13 +668,25 @@ Inherits Listbox
 		Event RowIsInvalid(Row As Integer) As Boolean
 	#tag EndHook
 
+	#tag Hook, Flags = &h0
+		Event Typeahead(Buffer As String) As Boolean
+	#tag EndHook
+
 
 	#tag Property, Flags = &h21
 		Private mBlockSelectionChangeCount As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mCellActionCascading As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mFireChangeWhenUnlocked As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mForwardKeyUp As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -554,6 +695,14 @@ Inherits Listbox
 
 	#tag Property, Flags = &h21
 		Private mScrollTask As AnimationKit.ScrollTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTypeaheadBuffer As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTypeaheadTimer As Timer
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -578,6 +727,10 @@ Inherits Listbox
 		#tag EndSetter
 		SelectionChangeBlocked As Boolean
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h0
+		TypeaheadColumn As Integer = 0
+	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -649,11 +802,107 @@ Inherits Listbox
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="RequiresSelection"
-			Visible=false
-			Group="Behavior"
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Height"
+			Visible=true
+			Group="Position"
+			InitialValue="100"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LockBottom"
+			Visible=true
+			Group="Position"
 			InitialValue=""
 			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LockLeft"
+			Visible=true
+			Group="Position"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LockRight"
+			Visible=true
+			Group="Position"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LockTop"
+			Visible=true
+			Group="Position"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabIndex"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabStop"
+			Visible=true
+			Group="Position"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Width"
+			Visible=true
+			Group="Position"
+			InitialValue="100"
+			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -753,209 +1002,6 @@ Inherits Listbox
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="FontName"
-			Visible=true
-			Group="Font"
-			InitialValue="System"
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="FontSize"
-			Visible=true
-			Group="Font"
-			InitialValue="0"
-			Type="Single"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="FontUnit"
-			Visible=true
-			Group="Font"
-			InitialValue="0"
-			Type="FontUnits"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Default"
-				"1 - Pixel"
-				"2 - Point"
-				"3 - Inch"
-				"4 - Millimeter"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowAutoHideScrollbars"
-			Visible=true
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowResizableColumns"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowRowDragging"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowRowReordering"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowExpandableRows"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="RowSelectionType"
-			Visible=true
-			Group="Behavior"
-			InitialValue="0"
-			Type="RowSelectionTypes"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Single"
-				"1 - Multiple"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Index"
-			Visible=true
-			Group="ID"
-			InitialValue="-2147483648"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Name"
-			Visible=true
-			Group="ID"
-			InitialValue=""
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Super"
-			Visible=true
-			Group="ID"
-			InitialValue=""
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Height"
-			Visible=true
-			Group="Position"
-			InitialValue="100"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group="Position"
-			InitialValue=""
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Left"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LockBottom"
-			Visible=true
-			Group="Position"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LockLeft"
-			Visible=true
-			Group="Position"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LockRight"
-			Visible=true
-			Group="Position"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LockTop"
-			Visible=true
-			Group="Position"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TabIndex"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TabPanelIndex"
-			Visible=false
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TabStop"
-			Visible=true
-			Group="Position"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Top"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Width"
-			Visible=true
-			Group="Position"
-			InitialValue="100"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Transparent"
 			Visible=true
 			Group="Appearance"
@@ -1020,20 +1066,35 @@ Inherits Listbox
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="_ScrollOffset"
-			Visible=false
-			Group="Appearance"
-			InitialValue="0"
-			Type="Integer"
+			Name="FontName"
+			Visible=true
+			Group="Font"
+			InitialValue="System"
+			Type="String"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="_ScrollWidth"
-			Visible=false
-			Group="Appearance"
-			InitialValue="-1"
-			Type="Integer"
+			Name="FontSize"
+			Visible=true
+			Group="Font"
+			InitialValue="0"
+			Type="Single"
 			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="FontUnit"
+			Visible=true
+			Group="Font"
+			InitialValue="0"
+			Type="FontUnits"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Default"
+				"1 - Pixel"
+				"2 - Point"
+				"3 - Inch"
+				"4 - Millimeter"
+			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Bold"
@@ -1076,6 +1137,58 @@ Inherits Listbox
 			EditorType="DataSource"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="AllowAutoHideScrollbars"
+			Visible=true
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowResizableColumns"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowRowDragging"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowRowReordering"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowExpandableRows"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RowSelectionType"
+			Visible=true
+			Group="Behavior"
+			InitialValue="0"
+			Type="RowSelectionTypes"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Single"
+				"1 - Multiple"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="SelectionChangeBlocked"
 			Visible=false
 			Group="Behavior"
@@ -1088,6 +1201,54 @@ Inherits Listbox
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TypeaheadColumn"
+			Visible=true
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RequiresSelection"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="InitialParent"
+			Visible=false
+			Group="Position"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabPanelIndex"
+			Visible=false
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="_ScrollOffset"
+			Visible=false
+			Group="Appearance"
+			InitialValue="0"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="_ScrollWidth"
+			Visible=false
+			Group="Appearance"
+			InitialValue="-1"
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

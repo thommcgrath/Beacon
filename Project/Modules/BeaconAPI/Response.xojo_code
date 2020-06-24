@@ -18,11 +18,11 @@ Protected Class Response
 		  
 		  Try
 		    #Pragma BreakOnExceptions False
-		    Dim JSON As Variant = Beacon.ParseJSON(Content)  
+		    Var JSON As Variant = Beacon.ParseJSON(Content)  
 		    Self.mJSONParsed = True
 		    Self.mJSON = JSON
 		    
-		    Dim Dict As Dictionary = JSON
+		    Var Dict As Dictionary = JSON
 		    If Dict.HasKey("message") And Dict.HasKey("details") Then
 		      Self.mMessage = Dict.Value("message")
 		      Self.mJSON = Dict.Value("details")

@@ -228,7 +228,6 @@ Begin BeaconDialog DeveloperImportURLDialog
    End
    Begin URLConnection Socket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -241,14 +240,14 @@ End
 #tag WindowCode
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window) As String
-		  Dim Win As New DeveloperImportURLDialog
-		  Dim C As New Clipboard
+		  Var Win As New DeveloperImportURLDialog
+		  Var C As New Clipboard
 		  If C.TextAvailable And C.Text.Left(4) = "http" Then
 		    Win.URLField.Value = C.Text
 		  End If
 		  Win.SwapButtons()
 		  Win.ShowModalWithin(Parent.TrueWindow)
-		  Dim Content As String = Win.mContent
+		  Var Content As String = Win.mContent
 		  Win.Close
 		  Return Content
 		End Function
@@ -272,7 +271,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim URL As String = URLField.Value.Trim
+		  Var URL As String = URLField.Value.Trim
 		  If URL.IndexOf("pasted.co/") > -1 Then
 		    Self.ShowAlert("Can't import from this url", "TinyPaste/pasted.co prevent pulling content from their pages. Instead, copy and paste the spawn codes into a text file and import that.")
 		    Return

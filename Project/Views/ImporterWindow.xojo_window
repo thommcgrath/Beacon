@@ -77,7 +77,6 @@ Begin BeaconDialog ImporterWindow
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Top             =   52
       Transparent     =   False
       Value           =   0.0
@@ -165,7 +164,7 @@ End
 			Set
 			  Self.mProgress = Value
 			  
-			  Dim BarValue As Integer = Round(Self.JobProgress.MaximumValue * Value)
+			  Var BarValue As Integer = Round(Self.JobProgress.MaximumValue * Value)
 			  If Self.JobProgress.Value <> BarValue Then
 			    Self.JobProgress.Value = BarValue
 			  End If

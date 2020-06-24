@@ -21,8 +21,8 @@ Protected Class Engram
 	#tag Method, Flags = &h0
 		Function ClassString() As String
 		  If Self.mPath.IndexOf("/") > -1 And Self.mPath.IndexOf(".") > -1 Then
-		    Dim Components() As String = Self.mPath.Split("/")
-		    Dim Tail As String = Components(Components.LastRowIndex)
+		    Var Components() As String = Self.mPath.Split("/")
+		    Var Tail As String = Components(Components.LastRowIndex)
 		    Components = Tail.Split(".")
 		    Return Components(Components.LastRowIndex) + "_C"
 		  End If
@@ -88,7 +88,7 @@ Protected Class Engram
 		  ElseIf Source.HasKey("environments") Then
 		    Var Environments() As Variant = Source.Value("environments")
 		    For Each Environment As String In Environments
-		      Dim Map As Beacon.Map
+		      Var Map As Beacon.Map
 		      Select Case Environment
 		      Case "island"
 		        Map = Beacon.Maps.TheIsland
@@ -119,7 +119,7 @@ Protected Class Engram
 
 	#tag Method, Flags = &h0
 		Function Hash() As String
-		  Dim Value As String = Self.mPath.Lowercase + ":" + Self.Label.Lowercase + ":" + Self.mAvailability.ToString + ":" + if(Self.CanBeBlueprint, "true", "false")
+		  Var Value As String = Self.mPath.Lowercase + ":" + Self.Label.Lowercase + ":" + Self.mAvailability.ToString + ":" + if(Self.CanBeBlueprint, "true", "false")
 		  Return EncodeHex(Crypto.MD5(Value))
 		End Function
 	#tag EndMethod

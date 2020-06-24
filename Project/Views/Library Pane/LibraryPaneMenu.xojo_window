@@ -116,7 +116,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Sub RebuildMenu()
-		  Dim Links() As Pair
+		  Var Links() As Pair
 		  Links.AddRow("Check for Updates" : "beacon://action/checkforupdate")
 		  If Self.Watcher.OptionHeld Then
 		    Links.AddRow("Refresh Engrams" : "beacon://action/refreshengrams")
@@ -157,7 +157,7 @@ End
 		Sub SetContents(Links() As Pair)
 		  If Self.mLabelsBound = Links.LastRowIndex Then
 		    // Possibly unchanged
-		    Dim Changed As Boolean
+		    Var Changed As Boolean
 		    For I As Integer = 0 To Links.LastRowIndex
 		      If If(Links(I) <> Nil, Links(I).Left, "") <> Self.Labels(I).Value And If(Links(I) <> Nil, Links(I).Right, "") <> Self.Labels(I).URL Then
 		        Changed = True
@@ -177,13 +177,13 @@ End
 		  Self.mLabelsBound = 0
 		  
 		  For I As Integer = 0 To Links.LastRowIndex
-		    Dim LastBottom As Integer = 20
+		    Var LastBottom As Integer = 20
 		    If I > 0 Then
 		      LastBottom = Self.Labels(I - 1).Top + Self.Labels(I - 1).Height
 		    End If
 		    
 		    If I > Self.mLabelsBound Then
-		      Dim NewLabel As New Labels
+		      Var NewLabel As New Labels
 		      Self.mLabelsBound = NewLabel.Index
 		    End If
 		    
@@ -210,7 +210,7 @@ End
 #tag Events Labels
 	#tag Event
 		Sub Action(index as Integer)
-		  Dim URL As String = Self.Labels(Index).URL
+		  Var URL As String = Self.Labels(Index).URL
 		  If URL = "" Then
 		    Return
 		  End If
@@ -219,11 +219,9 @@ End
 		  Case "beacon://releasenotes"
 		    App.ShowReleaseNotes()
 		  Case "beacon://enableonline"
-		    Dim WelcomeWindow As New UserWelcomeWindow(False)
-		    WelcomeWindow.ShowModal()
+		    UserWelcomeWindow.Present(False)
 		  Case "beacon://signin"
-		    Dim WelcomeWindow As New UserWelcomeWindow(True)
-		    WelcomeWindow.ShowModal()
+		    UserWelcomeWindow.Present(True)
 		  Case "beacon://showaccount"
 		    ShowURL(Beacon.WebURL("/account/auth?session_id=" + Preferences.OnlineToken + "&return=" + EncodeURLComponent(Beacon.WebURL("/account/"))))
 		  Case "beacon://spawncodes"
@@ -237,8 +235,8 @@ End
 		    Preferences.OnlineToken = ""
 		    App.IdentityManager.CurrentIdentity = Nil
 		    Self.RebuildMenu()
-		    Dim WelcomeWindow As New UserWelcomeWindow(False)
-		    WelcomeWindow.ShowModal()
+		    
+		    UserWelcomeWindow.Present(False)
 		  Case "beacon://syncusercloud"
 		    UserCloud.Sync(True)
 		    Return // So the pane doesn't close
@@ -262,6 +260,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

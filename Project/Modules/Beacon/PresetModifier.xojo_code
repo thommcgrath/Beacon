@@ -28,7 +28,7 @@ Protected Class PresetModifier
 		    Return Nil
 		  End If
 		  
-		  Dim Modifier As New Beacon.PresetModifier
+		  Var Modifier As New Beacon.PresetModifier
 		  Modifier.mModifierID = Source.Value("ModifierID")
 		  Modifier.mPattern = Source.Value("Pattern")
 		  Modifier.mLabel = Source.Value("Label")
@@ -44,11 +44,11 @@ Protected Class PresetModifier
 
 	#tag Method, Flags = &h0
 		Function Matches(Sources() As Beacon.LootSource) As Beacon.LootSource()
-		  Dim Results() As Beacon.LootSource
+		  Var Results() As Beacon.LootSource
 		  #if TargetiOS
 		    #Pragma Error "Not Yet Implemented"
 		  #else
-		    Dim Reg As New Regex
+		    Var Reg As New Regex
 		    Reg.Options.CaseSensitive = False
 		    Reg.SearchPattern = Self.mPattern
 		    
@@ -75,7 +75,7 @@ Protected Class PresetModifier
 		  #else
 		    #Pragma BreakOnExceptions False
 		    Try
-		      Dim Reg As New Regex
+		      Var Reg As New Regex
 		      Reg.Options.CaseSensitive = False
 		      Reg.SearchPattern = Self.mPattern
 		      
@@ -104,7 +104,7 @@ Protected Class PresetModifier
 		  #if TargetiOS
 		    #Pragma Error "Not Yet Implemented"
 		  #else
-		    Dim Reg As New Regex
+		    Var Reg As New Regex
 		    Reg.Options.CaseSensitive = False
 		    Reg.SearchPattern = Self.mPattern
 		    
@@ -124,7 +124,7 @@ Protected Class PresetModifier
 
 	#tag Method, Flags = &h0
 		Function ToDictionary() As Dictionary
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  Dict.Value("ModifierID") = Self.mModifierID
 		  Dict.Value("Pattern") = Self.mPattern
 		  Dict.Value("Label") = Self.mLabel

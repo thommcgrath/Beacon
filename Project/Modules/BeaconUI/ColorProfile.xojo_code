@@ -22,7 +22,7 @@ Protected Class ColorProfile
 
 	#tag Method, Flags = &h0
 		Function BlendWithProfile(OtherProfile As BeaconUI.ColorProfile, OtherPercent As Double) As BeaconUI.ColorProfile
-		  Dim Blended As New BeaconUI.ColorProfile
+		  Var Blended As New BeaconUI.ColorProfile
 		  Blended.mBorderColor = Self.mBorderColor.BlendWith(OtherProfile.mBorderColor, OtherPercent)
 		  Blended.mSelectedBackgroundColor = Self.mSelectedBackgroundColor.BlendWith(OtherProfile.mSelectedBackgroundColor, OtherPercent)
 		  Blended.mSelectedForegroundColor = Self.mSelectedForegroundColor.BlendWith(OtherProfile.mSelectedForegroundColor, OtherPercent)
@@ -52,23 +52,23 @@ Protected Class ColorProfile
 		  
 		  Self.mSelectedForegroundColor = PrimaryColor
 		  
-		  Dim ForegroundLuminance As Double = PrimaryColor.Luminance
-		  Dim DesiredGray As Double = 0.87
+		  Var ForegroundLuminance As Double = PrimaryColor.Luminance
+		  Var DesiredGray As Double = 0.87
 		  
-		  Dim Contrast As Double
+		  Var Contrast As Double
 		  If ForegroundLuminance > DesiredGray Then
 		    Contrast = (ForegroundLuminance + 0.05) / (DesiredGray + 0.05)
 		  Else
 		    Contrast = (DesiredGray + 0.05) / (ForegroundLuminance + 0.05)
 		  End If
 		  
-		  Dim SelectedGray As Double
+		  Var SelectedGray As Double
 		  If Contrast >= TargetContrast Then
 		    SelectedGray = DesiredGray
 		  Else
-		    Dim Grays(), Differences() As Double
+		    Var Grays(), Differences() As Double
 		    For I As Integer = 0 To 100
-		      Dim TestGray As Double = I / 100
+		      Var TestGray As Double = I / 100
 		      If ForegroundLuminance > TestGray Then
 		        Contrast = (ForegroundLuminance + 0.05) / (TestGray + 0.05)
 		      Else
@@ -79,7 +79,7 @@ Protected Class ColorProfile
 		        Continue
 		      End If
 		      
-		      Dim Difference As Double = Abs(TestGray - DesiredGray)
+		      Var Difference As Double = Abs(TestGray - DesiredGray)
 		      Grays.AddRow(TestGray)
 		      Differences.AddRow(Difference)
 		    Next
@@ -93,7 +93,7 @@ Protected Class ColorProfile
 		    End If
 		  End If
 		  
-		  Dim LuminanceDifference As Double = ForegroundLuminance - SelectedGray
+		  Var LuminanceDifference As Double = ForegroundLuminance - SelectedGray
 		  Self.mSelectedBackgroundColor = HSV(0, 0, SelectedGray)
 		  Self.mSelectedShadowColor = If(LuminanceDifference <= 0, &cFFFFFF, &C00000080)
 		  
@@ -128,8 +128,8 @@ Protected Class ColorProfile
 		    Return 0
 		  End If
 		  
-		  Dim SelfLuminance As Double = Self.mSelectedForegroundColor.Luminance
-		  Dim OtherLuminance As Double = Other.mSelectedForegroundColor.Luminance
+		  Var SelfLuminance As Double = Self.mSelectedForegroundColor.Luminance
+		  Var OtherLuminance As Double = Other.mSelectedForegroundColor.Luminance
 		  If SelfLuminance >= OtherLuminance Then
 		    // They cannot be considered equal
 		    Return 1

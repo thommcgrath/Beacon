@@ -2,6 +2,12 @@
 Protected Interface MutableBlueprint
 Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
+		Sub AlternateLabel(Assigns Value As NullableString)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Availability(Assigns Value As UInt64)
 		  
 		End Sub

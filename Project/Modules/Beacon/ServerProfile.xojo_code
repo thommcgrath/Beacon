@@ -8,7 +8,7 @@ Protected Class ServerProfile
 
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  Dim Err As New UnsupportedOperationException
+		  Var Err As New UnsupportedOperationException
 		  Err.Reason = "Do not instantiate this class, only its subclasses."
 		  Raise Err
 		End Sub
@@ -17,7 +17,7 @@ Protected Class ServerProfile
 	#tag Method, Flags = &h0
 		Sub Constructor(Dict As Dictionary)
 		  If Not Dict.HasAllKeys("Name", "Profile ID", "Enabled") Then
-		    Dim Err As New KeyNotFoundException
+		    Var Err As New KeyNotFoundException
 		    Err.Reason = "Incomplete server profile"
 		    Raise Err
 		  End If
@@ -26,11 +26,27 @@ Protected Class ServerProfile
 		  Self.Enabled = Dict.Value("Enabled")
 		  Self.mProfileID = Dict.Value("Profile ID")
 		  Self.mPlatform = Dict.Lookup("Platform", Self.PlatformUnknown)
+		  Self.mMask = Dict.Lookup("Map", 0)
+		  
+		  If Dict.HasKey("External Account") Then
+		    Self.mExternalAccountUUID = Dict.Value("External Account").StringValue
+		  End If
+		  
+		  If Dict.HasKey("Message of the Day") Then
+		    Self.mMessageOfTheDay = Dict.Value("Message of the Day").StringValue
+		    Self.mMessageDuration = Dict.Lookup("Message Duration", 30).IntegerValue
+		  End If
 		  
 		  RaiseEvent ReadFromDictionary(Dict)
 		  
 		  Self.Modified = False
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DeployCapable() As Boolean
+		  Return False
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -42,7 +58,7 @@ Protected Class ServerProfile
 		    Return Nil
 		  End If
 		  
-		  Dim Provider As String = Dict.Value("Provider")
+		  Var Provider As String = Dict.Value("Provider")
 		  Select Case Provider
 		  Case "Nitrado"
 		    Return New Beacon.NitradoServerProfile(Dict)
@@ -50,20 +66,31 @@ Protected Class ServerProfile
 		    Return New Beacon.FTPServerProfile(Dict)
 		  Case "Connector"
 		    Return New Beacon.ConnectorServerProfile(Dict)
+		  Case "Local"
+		    Return New Beacon.LocalServerProfile(Dict)
 		  End Select
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Mask() As UInt64
-		  Return Beacon.Maps.All.Mask
+		Function LinkPrefix() As String
+		  Return "Server"
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function OAuthProvider() As String
-		  
+		Function Mask() As UInt64
+		  Return Self.mMask
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Mask(Assigns Value As UInt64)
+		  If Self.mMask <> Value Then
+		    Self.mMask = Value
+		    Self.Modified = True
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -124,10 +151,10 @@ Protected Class ServerProfile
 
 	#tag Method, Flags = &h0
 		Function ToDictionary() As Dictionary
-		  Dim Dict As New Dictionary
+		  Var Dict As New Dictionary
 		  RaiseEvent WriteToDictionary(Dict)
 		  If Not Dict.HasKey("Provider") Then
-		    Dim Err As New KeyNotFoundException
+		    Var Err As New KeyNotFoundException
 		    Err.Reason = "No provider was set in Beacon.ServerProfile.WriteToDictionary"
 		    Raise Err
 		  End If
@@ -135,8 +162,24 @@ Protected Class ServerProfile
 		  Dict.Value("Profile ID") = Self.ProfileID // Do not call mProfileID here in order to force generation
 		  Dict.Value("Enabled") = Self.Enabled
 		  Dict.Value("Platform") = Self.mPlatform
+		  Dict.Value("Map") = Self.mMask
+		  If Self.mExternalAccountUUID <> Nil Then
+		    Dict.Value("External Account") = Self.mExternalAccountUUID.StringValue
+		  End If
+		  If Self.mMessageOfTheDay.IsEmpty = False Then
+		    Dict.Value("Message of the Day") = Self.mMessageOfTheDay
+		    Dict.Value("Message Duration") = Self.mMessageDuration
+		  End If
 		  Return Dict
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub UpdateDetailsFrom(Profile As Beacon.ServerProfile)
+		  // Doesn't normally do anything
+		  
+		  #Pragma Unused Profile
+		End Sub
 	#tag EndMethod
 
 
@@ -169,6 +212,23 @@ Protected Class ServerProfile
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mExternalAccountUUID
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mExternalAccountUUID <> Value Then
+			    Self.mExternalAccountUUID = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		ExternalAccountUUID As v4UUID
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mPlatform = Beacon.ServerProfile.PlatformXbox Or Self.mPlatform = Beacon.ServerProfile.PlatformPlayStation Or Self.mPlatform = Beacon.ServerProfile.PlatformSwitch
 			End Get
 		#tag EndGetter
@@ -177,6 +237,56 @@ Protected Class ServerProfile
 
 	#tag Property, Flags = &h21
 		Private mEnabled As Boolean
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mMessageDuration
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mMessageDuration <> Value Then
+			    Self.mMessageDuration = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		MessageDuration As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mMessageOfTheDay
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mMessageOfTheDay.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			    Self.mMessageOfTheDay = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		MessageOfTheDay As String
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mExternalAccountUUID As v4UUID
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMask As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMessageDuration As Integer = 30
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMessageOfTheDay As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

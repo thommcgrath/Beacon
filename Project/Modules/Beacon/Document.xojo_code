@@ -2,6 +2,12 @@
 Protected Class Document
 Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
+		Function Accounts() As Beacon.ExternalAccountManager
+		  Return Self.mAccounts
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Add(Profile As Beacon.ServerProfile)
 		  If Profile = Nil Then
 		    Return
@@ -17,16 +23,16 @@ Implements ObservationKit.Observable
 		  
 		  Self.mServerProfiles.AddRow(Profile.Clone)
 		  If Profile.IsConsole Then
-		    Dim SafeMods() As String = Beacon.Data.ConsoleSafeMods
-		    If Self.mMods = Nil Or Self.mMods.LastRowIndex = -1 Then
-		      Self.mMods = SafeMods
-		    Else
-		      For I As Integer = Self.mMods.LastRowIndex DownTo 0
-		        If SafeMods.IndexOf(Self.mMods(I)) = -1 Then
-		          Self.mMods.Remove(I)
-		        End If
-		      Next
-		    End If
+		    Self.ConsoleMode = True
+		    
+		    For Each Entry As DictionaryEntry In Self.mMods
+		      Var ModInfo As Beacon.ModDetails = Beacon.Data.ModWithID(Entry.Key.StringValue)
+		      If (ModInfo Is Nil Or ModInfo.ConsoleSafe = False) And Self.mMods.Value(Entry.Key).BooleanValue = True Then
+		        Self.mMods.Value(Entry.Key) = False
+		        Self.mModified = True
+		        Self.mModChangeTimestamp = System.Microseconds
+		      End If
+		    Next
 		  End If
 		  Self.mModified = True
 		End Sub
@@ -88,7 +94,7 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  If Create Then
-		    Dim Group As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName)
+		    Var Group As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName)
 		    If Group <> Nil Then
 		      Group.IsImplicit = True
 		      Self.AddConfigGroup(Group)
@@ -106,11 +112,137 @@ Implements ObservationKit.Observable
 		  Self.AddConfigGroup(New BeaconConfigs.Difficulty)
 		  Self.Difficulty.IsImplicit = True
 		  Self.mModified = False
-		  Self.mMods = New Beacon.StringList
 		  Self.UseCompression = True
 		  Self.mDocumentPassword = Crypto.GenerateRandomBytes(32)
 		  Self.mEncryptedPasswords = New Dictionary
+		  Self.mAccounts = New Beacon.ExternalAccountManager
+		  
+		  Self.mMods = New Dictionary
+		  Var AllMods() As Beacon.ModDetails = Beacon.Data.AllMods
+		  For Each ModInfo As Beacon.ModDetails In AllMods
+		    Self.mMods.Value(ModInfo.ModID) = ModInfo.DefaultEnabled
+		  Next
+		  Self.mModChangeTimestamp = System.Microseconds
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ConvertDinoReplacementsToSpawnOverrides() As Integer
+		  If Self.HasConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName) = False Then
+		    Return 0
+		  End If
+		  
+		  Var DinoConfig As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments(Self.ConfigGroup(BeaconConfigs.DinoAdjustments.ConfigName))
+		  If DinoConfig = Nil Then
+		    Return 0
+		  End If
+		  
+		  Var SpawnConfig As BeaconConfigs.SpawnPoints // Don't create it yet
+		  
+		  Var CountChanges As Integer
+		  Var Behaviors() As Beacon.CreatureBehavior = DinoConfig.All
+		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
+		    Var ReplacedCreature As Beacon.Creature = Behavior.TargetCreature
+		    Var ReplacementCreature As Beacon.Creature = Behavior.ReplacementCreature
+		    If ReplacementCreature = Nil Then
+		      Continue
+		    End If
+		    
+		    Var ConfigUpdated As Boolean
+		    Var SpawnPoints() As Beacon.SpawnPoint = Beacon.Data.GetSpawnPointsForCreature(ReplacedCreature, Self.Mods, "")
+		    For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
+		      Var Limit As Double = SpawnPoint.Limit(ReplacedCreature)
+		      Var NewSets() As Beacon.SpawnPointSet
+		      For Each Set As Beacon.SpawnPointSet In SpawnPoint
+		        Var NewSet As Beacon.MutableSpawnPointSet
+		        For Each Entry As Beacon.SpawnPointSetEntry In Set
+		          If Entry.Creature = ReplacedCreature Then
+		            If NewSet = Nil Then
+		              NewSet = New Beacon.MutableSpawnPointSet()
+		              NewSet.Weight = Set.Weight
+		              NewSet.Label = ReplacementCreature.Label
+		              If IsNull(Set.SpreadRadius) Then
+		                NewSet.SpreadRadius = 650
+		              Else
+		                NewSet.SpreadRadius = Set.SpreadRadius
+		              End If
+		            End If
+		            
+		            Const SpreadMultiplierHigh = 1.046153846
+		            Const SpreadMultiplierLow = 0.523076923
+		            
+		            Var NewEntry As Beacon.MutableSpawnPointSetEntry
+		            
+		            NewEntry = New Beacon.MutableSpawnPointSetEntry(ReplacementCreature)
+		            NewEntry.SpawnChance = 0.7
+		            NewSet.Append(NewEntry)
+		            
+		            NewEntry = New Beacon.MutableSpawnPointSetEntry(ReplacementCreature)
+		            NewEntry.SpawnChance = 1.0
+		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierHigh), 0.0)
+		            NewSet.Append(NewEntry)
+		            
+		            NewEntry = New Beacon.MutableSpawnPointSetEntry(ReplacementCreature)
+		            NewEntry.SpawnChance = 0.2
+		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierLow), 0.0)
+		            NewSet.Append(NewEntry)
+		            
+		            NewEntry = New Beacon.MutableSpawnPointSetEntry(ReplacementCreature)
+		            NewEntry.SpawnChance = 0.25
+		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierLow) * -1, 0.0)
+		            NewSet.Append(NewEntry)
+		            
+		            NewEntry = New Beacon.MutableSpawnPointSetEntry(ReplacementCreature)
+		            NewEntry.SpawnChance = 0.6
+		            NewEntry.Offset = New Beacon.Point3D(0.0, Round(NewSet.SpreadRadius * SpreadMultiplierHigh) * -1, 0.0)
+		            NewSet.Append(NewEntry)
+		          End If
+		        Next
+		        If NewSet <> Nil Then
+		          NewSets.AddRow(NewSet)
+		        End If
+		      Next
+		      
+		      If NewSets.Count > 0 Then
+		        If SpawnConfig = Nil Then
+		          SpawnConfig = BeaconConfigs.SpawnPoints(Self.ConfigGroup(BeaconConfigs.SpawnPoints.ConfigName, True))
+		        End If
+		        
+		        Var Override As Beacon.SpawnPoint = SpawnConfig.GetSpawnPoint(SpawnPoint.Path, Beacon.SpawnPoint.ModeAppend)
+		        If Override = Nil Then
+		          Override = SpawnConfig.GetSpawnPoint(SpawnPoint.Path, Beacon.SpawnPoint.ModeOverride)
+		        End If
+		        If Override = Nil Then
+		          Override = New Beacon.MutableSpawnPoint(SpawnPoint)
+		          Beacon.MutableSpawnPoint(Override).ResizeTo(-1)
+		          Beacon.MutableSpawnPoint(Override).LimitsString = "{}"
+		          Beacon.MutableSpawnPoint(Override).Mode = Beacon.SpawnPoint.ModeAppend
+		        End If
+		        
+		        Var Mutable As Beacon.MutableSpawnPoint = Override.MutableVersion
+		        Mutable.Limit(ReplacementCreature) = Limit
+		        For Each Set As Beacon.SpawnPointSet In NewSets
+		          Mutable.AddSet(Set)
+		        Next
+		        
+		        SpawnConfig.Add(Mutable)
+		        ConfigUpdated = True
+		      End If
+		    Next
+		    
+		    If ConfigUpdated Then
+		      CountChanges = CountChanges + 1
+		      
+		      Var NewBehavior As New Beacon.MutableCreatureBehavior(Behavior)
+		      NewBehavior.ProhibitSpawning = True
+		      NewBehavior.ReplacementCreature = Nil
+		      DinoConfig.RemoveBehavior(ReplacedCreature)
+		      DinoConfig.Add(NewBehavior)
+		    End If
+		  Next
+		  
+		  Return CountChanges
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -140,12 +272,12 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h21
 		Private Shared Function FromLegacy(Parsed As Variant, Identity As Beacon.Identity) As Beacon.Document
-		  Dim Doc As new Beacon.Document
-		  Dim LootSources() As Variant
-		  Dim Version As Integer
+		  Var Doc As new Beacon.Document
+		  Var LootSources() As Variant
+		  Var Version As Integer
 		  
 		  If Parsed.Type = Variant.TypeObject And Parsed.ObjectValue IsA Dictionary Then
-		    Dim Dict As Dictionary = Parsed
+		    Var Dict As Dictionary = Parsed
 		    Try
 		      If Dict.HasKey("LootSources") Then
 		        LootSources = Dict.Value("LootSources")
@@ -170,49 +302,55 @@ Implements ObservationKit.Observable
 		      Else
 		        Doc.mMapCompatibility = 0
 		      End If
-		      Dim DifficultyConfig As New BeaconConfigs.Difficulty
+		      Var DifficultyConfig As New BeaconConfigs.Difficulty
 		      If Dict.HasKey("DifficultyValue") Then
 		        DifficultyConfig.MaxDinoLevel = Dict.Value("DifficultyValue") * 30
 		      End If
 		      Doc.AddConfigGroup(DifficultyConfig)
 		      If Dict.HasKey("ConsoleModsOnly") Then
-		        Dim ConsoleModsOnly As Boolean = Dict.Value("ConsoleModsOnly")
+		        Var ConsoleModsOnly As Boolean = Dict.Value("ConsoleModsOnly")
 		        If ConsoleModsOnly Then
-		          Doc.mMods = Beacon.Data.ConsoleSafeMods()
+		          Var Selections As New Dictionary
+		          Var AllMods() As Beacon.ModDetails = Beacon.Data.AllMods
+		          For Each ModInfo As Beacon.ModDetails In AllMods
+		            Selections.Value(ModInfo.ModID) = ModInfo.DefaultEnabled And ModInfo.ConsoleSafe
+		          Next
+		          
+		          Doc.mConsoleMode = True
+		          Doc.mMods = Selections
+		          Doc.mModChangeTimestamp = System.Microseconds
 		        End If
 		      End If
 		      
 		      If Dict.HasKey("Secure") Then
-		        Dim SecureDict As Dictionary = ReadSecureData(Dict.Value("Secure"), Identity)
+		        Var SecureDict As Dictionary = ReadSecureData(Dict.Value("Secure"), Identity)
 		        If SecureDict <> Nil Then
-		          Dim ServerDicts() As Variant = SecureDict.Value("Servers")
-		          For Each ServerDict As Dictionary In ServerDicts
-		            Dim Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
-		            If Profile <> Nil Then
-		              Doc.mServerProfiles.AddRow(Profile)
-		            End If
-		          Next
-		          
 		          If SecureDict.HasKey("OAuth") Then
-		            Doc.mOAuthDicts = SecureDict.Value("OAuth")
+		            Var AccountManager As Beacon.ExternalAccountManager = Beacon.ExternalAccountManager.FromLegacyDict(SecureDict.Value("OAuth"))
+		            If IsNull(AccountManager) = False Then
+		              Doc.mAccounts = AccountManager
+		            End If
 		          End If
+		          
+		          Var ServerDicts() As Variant = SecureDict.Value("Servers")
+		          LoadServerProfiles(Doc, ServerDicts)
 		        End If
 		      ElseIf Dict.HasKey("FTPServers") Then
-		        Dim ServerDicts() As Variant = Dict.Value("FTPServers")
+		        Var ServerDicts() As Variant = Dict.Value("FTPServers")
 		        For Each ServerDict As Dictionary In ServerDicts
-		          Dim FTPInfo As Dictionary = ReadSecureData(ServerDict, Identity, True)
+		          Var FTPInfo As Dictionary = ReadSecureData(ServerDict, Identity, True)
 		          If FTPInfo <> Nil And FTPInfo.HasAllKeys("Description", "Host", "Port", "User", "Pass", "Path") Then
-		            Dim Profile As New Beacon.FTPServerProfile
+		            Var Profile As New Beacon.FTPServerProfile
 		            Profile.Name = FTPInfo.Value("Description")
 		            Profile.Host = FTPInfo.Value("Host")
 		            Profile.Port = FTPInfo.Value("Port")
 		            Profile.Username = FTPInfo.Value("User")
 		            Profile.Password = FTPInfo.Value("Pass")
 		            
-		            Dim Path As String = FTPInfo.Value("Path")
-		            Dim Components() As String = Path.Split("/")
+		            Var Path As String = FTPInfo.Value("Path")
+		            Var Components() As String = Path.Split("/")
 		            If Components.LastRowIndex > -1 Then
-		              Dim LastComponent As String = Components(Components.LastRowIndex)
+		              Var LastComponent As String = Components(Components.LastRowIndex)
 		              If LastComponent.Length > 4 And LastComponent.Right(4) = ".ini" Then
 		                Components.RemoveRowAt(Components.LastRowIndex)
 		              End If
@@ -236,23 +374,23 @@ Implements ObservationKit.Observable
 		    Return Nil
 		  End If
 		  
-		  Dim Presets() As Beacon.Preset
+		  Var Presets() As Beacon.Preset
 		  If Version < 2 Then
 		    // Will need this in a few lines
 		    Presets = Beacon.Data.Presets
 		  End If
 		  If LootSources.LastRowIndex > -1 Then
-		    Dim Drops As New BeaconConfigs.LootDrops
+		    Var Drops As New BeaconConfigs.LootDrops
 		    For Each LootSource As Dictionary In LootSources
-		      Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(LootSource)
+		      Var Source As Beacon.LootSource = Beacon.LoadLootSourceSaveData(LootSource)
 		      If Source <> Nil Then
 		        If Version < 2 Then
 		          // Match item set names to presets
-		          For Each Set As Beacon.ItemSet In Source
+		          For Each Set As Beacon.ItemSet In Source.ItemSets
 		            For Each Preset As Beacon.Preset In Presets
 		              If Set.Label = Preset.Label Then
 		                // Here's a hack to make assigning a preset possible: save current entries
-		                Dim Entries() As Beacon.SetEntry
+		                Var Entries() As Beacon.SetEntry
 		                For Each Entry As Beacon.SetEntry In Set
 		                  Entries.AddRow(New Beacon.SetEntry(Entry))
 		                Next
@@ -261,7 +399,7 @@ Implements ObservationKit.Observable
 		                Call Set.ReconfigureWithPreset(Preset, Source, Beacon.Maps.TheIsland.Mask, Doc.Mods)
 		                
 		                // Now "deconfigure" it
-		                Redim Set(Entries.LastRowIndex)
+		                Set.ResizeTo(Entries.LastRowIndex)
 		                For I As Integer = 0 To Entries.LastRowIndex
 		                  Set(I) = Entries(I)
 		                Next
@@ -284,16 +422,16 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Shared Function FromString(Contents As String, Identity As Beacon.Identity) As Beacon.Document
-		  Dim Parsed As Variant
+		  Var Parsed As Variant
 		  Try
 		    Parsed = Beacon.ParseJSON(Contents)
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
 		  
-		  Dim Doc As New Beacon.Document
-		  Dim Version As Integer = 1
-		  Dim Dict As Dictionary
+		  Var Doc As New Beacon.Document
+		  Var Version As Integer = 1
+		  Var Dict As Dictionary
 		  If Parsed IsA Dictionary Then
 		    Dict = Parsed
 		    Version = Dict.Lookup("Version", 0)
@@ -349,12 +487,12 @@ Implements ObservationKit.Observable
 		  
 		  // New config system
 		  If Dict.HasKey("Configs") Then
-		    Dim Groups As Dictionary = Dict.Value("Configs")
+		    Var Groups As Dictionary = Dict.Value("Configs")
 		    For Each Entry As DictionaryEntry In Groups
 		      Try
-		        Dim GroupName As String = Entry.Key
-		        Dim GroupData As Dictionary = Entry.Value
-		        Dim Instance As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName, GroupData, Identity, Doc)
+		        Var GroupName As String = Entry.Key
+		        Var GroupData As Dictionary = Entry.Value
+		        Var Instance As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName, GroupData, Identity, Doc)
 		        If Instance <> Nil Then
 		          Doc.mConfigGroups.Value(GroupName) = Instance
 		        End If
@@ -363,17 +501,6 @@ Implements ObservationKit.Observable
 		    Next
 		  End If
 		  
-		  If Dict.HasKey("Mods") Then
-		    Dim Mods As Beacon.StringList = Beacon.StringList.FromVariant(Dict.Value("Mods"))
-		    If Mods <> Nil Then
-		      Doc.mMods = Mods
-		    End If
-		  ElseIf Dict.HasKey("ConsoleModsOnly") Then
-		    Dim ConsoleModsOnly As Boolean = Dict.Value("ConsoleModsOnly")
-		    If ConsoleModsOnly Then
-		      Doc.mMods = Beacon.Data.ConsoleSafeMods()
-		    End If
-		  End If
 		  If Dict.HasKey("Map") Then
 		    Doc.MapCompatibility = Dict.Value("Map")
 		  ElseIf Dict.HasKey("MapPreference") Then
@@ -387,11 +514,11 @@ Implements ObservationKit.Observable
 		    Doc.UseCompression = True
 		  End If
 		  
-		  Dim SecureDict As Dictionary
+		  Var SecureDict As Dictionary
 		  If Dict.HasKey("EncryptedData") Then
 		    Try
 		      Doc.mLastSecureData = Dict.Value("EncryptedData")
-		      Dim Decrypted As String = Doc.Decrypt(Doc.mLastSecureData)
+		      Var Decrypted As String = Doc.Decrypt(Doc.mLastSecureData)
 		      Doc.mLastSecureHash = Beacon.Hash(Decrypted)
 		      SecureDict = Beacon.ParseJSON(Decrypted)
 		    Catch Err As RuntimeException
@@ -401,16 +528,69 @@ Implements ObservationKit.Observable
 		    SecureDict = ReadSecureData(Dict.Value("Secure"), Identity)
 		  End If
 		  If SecureDict <> Nil Then
-		    Dim ServerDicts() As Variant = SecureDict.Value("Servers")
-		    For Each ServerDict As Dictionary In ServerDicts
-		      Dim Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
-		      If Profile <> Nil Then
-		        Doc.mServerProfiles.AddRow(Profile)
+		    Var AccountManager As Beacon.ExternalAccountManager
+		    Try
+		      If SecureDict.HasKey("ExternalAccounts") Then
+		        AccountManager = Beacon.ExternalAccountManager.FromDict(SecureDict.Value("ExternalAccounts"))
+		      ElseIf SecureDict.HasKey("OAuth") Then
+		        AccountManager = Beacon.ExternalAccountManager.FromLegacyDict(SecureDict.Value("OAuth"))
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		    If IsNull(AccountManager) = False Then
+		      Doc.mAccounts = AccountManager
+		    End If
+		    
+		    Var ServerDicts() As Variant = SecureDict.Value("Servers")
+		    LoadServerProfiles(Doc, ServerDicts)
+		  End If
+		  
+		  If Dict.HasKey("IsConsole") Then
+		    Doc.mConsoleMode = Dict.Value("IsConsole").BooleanValue
+		  Else
+		    For Each Profile As Beacon.ServerProfile In Doc.mServerProfiles
+		      If Profile.IsConsole Then
+		        Doc.mConsoleMode = True
+		        Exit
+		      End If
+		    Next
+		  End If
+		  
+		  If Dict.HasKey("ModSelections") Then
+		    Var AllMods() As Beacon.ModDetails = Beacon.Data.AllMods
+		    Var Selections As Dictionary = Dict.Value("ModSelections")
+		    For Each Details As Beacon.ModDetails In AllMods
+		      If Selections.HasKey(Details.ModID) = False Then
+		        Selections.Value(Details.ModID) = Details.DefaultEnabled And (Details.ConsoleSafe Or Doc.mConsoleMode = False)
 		      End If
 		    Next
 		    
-		    If SecureDict.HasKey("OAuth") Then
-		      Doc.mOAuthDicts = SecureDict.Value("OAuth")
+		    Doc.mMods = Selections
+		    Doc.mModChangeTimestamp = System.Microseconds
+		  ElseIf Dict.HasKey("Mods") Then
+		    // In this mode, an empty list meant "all on" and populated list mean "only enable these."
+		    
+		    Var AllMods() As Beacon.ModDetails = Beacon.Data.AllMods
+		    Var SelectedMods As Beacon.StringList = Beacon.StringList.FromVariant(Dict.Value("Mods"))
+		    Var Selections As New Dictionary
+		    For Each Details As Beacon.ModDetails In AllMods
+		      Selections.Value(Details.ModID) = (Details.ConsoleSafe Or Doc.mConsoleMode = False) And (SelectedMods.Count = 0 Or SelectedMods.IndexOf(Details.ModID) > -1)
+		    Next
+		    
+		    Doc.mMods = Selections
+		    Doc.mModChangeTimestamp = System.Microseconds
+		  ElseIf Dict.HasKey("ConsoleModsOnly") Then
+		    Var ConsoleModsOnly As Boolean = Dict.Value("ConsoleModsOnly")
+		    If ConsoleModsOnly Then
+		      Var Selections As New Dictionary
+		      Var AllMods() As Beacon.ModDetails = Beacon.Data.AllMods
+		      For Each ModInfo As Beacon.ModDetails In AllMods
+		        Selections.Value(ModInfo.ModID) = ModInfo.DefaultEnabled And ModInfo.ConsoleSafe
+		      Next
+		      
+		      Doc.mConsoleMode = True
+		      Doc.mMods = Selections
+		      Doc.mModChangeTimestamp = System.Microseconds
 		    End If
 		  End If
 		  
@@ -434,7 +614,7 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function GetUsers() As String()
-		  Dim Users() As String
+		  Var Users() As String
 		  For Each Entry As DictionaryEntry In Self.mEncryptedPasswords
 		    Users.AddRow(Entry.Key)
 		  Next
@@ -456,7 +636,7 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function ImplementedConfigs() As Beacon.ConfigGroup()
-		  Dim Groups() As Beacon.ConfigGroup
+		  Var Groups() As Beacon.ConfigGroup
 		  For Each Entry As DictionaryEntry In Self.mConfigGroups
 		    Groups.AddRow(Entry.Value)
 		  Next
@@ -473,9 +653,9 @@ Implements ObservationKit.Observable
 		    Return False
 		  End If
 		  
-		  Dim Configs() As Beacon.ConfigGroup = Self.ImplementedConfigs()
+		  Var Configs() As Beacon.ConfigGroup = Self.ImplementedConfigs()
 		  For Each Config As Beacon.ConfigGroup In Configs
-		    Dim Issues() As Beacon.Issue = Config.Issues(Self, Identity)
+		    Var Issues() As Beacon.Issue = Config.Issues(Self, Identity)
 		    If Issues <> Nil And Issues.LastRowIndex > -1 Then
 		      Return False
 		    End If
@@ -493,10 +673,34 @@ Implements ObservationKit.Observable
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Sub LoadServerProfiles(Document As Beacon.Document, ServerDicts() As Variant)
+		  Var NitradoAccount As Beacon.ExternalAccount
+		  For Each ServerDict As Dictionary In ServerDicts
+		    Var Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
+		    If Profile <> Nil Then
+		      If Profile IsA Beacon.NitradoServerProfile And Profile.ExternalAccountUUID = Nil Then
+		        If IsNull(NitradoAccount) Then
+		          Var NitradoAccounts() As Beacon.ExternalAccount = Document.mAccounts.ForProvider(Beacon.ExternalAccount.ProviderNitrado)
+		          If NitradoAccounts.Count = 1 Then
+		            NitradoAccount = NitradoAccounts(0)
+		          End If
+		        End If
+		        If IsNull(NitradoAccount) = False Then
+		          Profile.ExternalAccountUUID = NitradoAccount.UUID
+		        End If
+		      End If
+		      
+		      Document.mServerProfiles.AddRow(Profile)
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Maps() As Beacon.Map()
-		  Dim Possibles() As Beacon.Map = Beacon.Maps.All
-		  Dim Matches() As Beacon.Map
+		  Var Possibles() As Beacon.Map = Beacon.Maps.All
+		  Var Matches() As Beacon.Map
 		  For Each Map As Beacon.Map In Possibles
 		    If Map.Matches(Self.mMapCompatibility) Then
 		      Matches.AddRow(Map)
@@ -509,11 +713,37 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Function Metadata(Create As Boolean = False) As BeaconConfigs.Metadata
 		  Static GroupName As String = BeaconConfigs.Metadata.ConfigName
-		  Dim Group As Beacon.ConfigGroup = Self.ConfigGroup(GroupName, Create)
+		  Var Group As Beacon.ConfigGroup = Self.ConfigGroup(GroupName, Create)
 		  If Group <> Nil Then
 		    Return BeaconConfigs.Metadata(Group)
 		  End If
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ModEnabled(ModID As v4UUID) As Boolean
+		  If ModID = Nil Then
+		    Return False
+		  End If
+		  
+		  Return Self.mMods.Lookup(ModID.StringValue, False)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ModEnabled(ModID As v4UUID, Assigns Value As Boolean)
+		  If ModID = Nil Then
+		    Return
+		  End If
+		  
+		  Var UUID As String = ModID
+		  
+		  If Self.mMods.HasKey(UUID) = False Or Self.mMods.Value(UUID).BooleanValue <> Value Then
+		    Self.mMods.Value(UUID) = Value
+		    Self.mModified = True
+		    Self.mModChangeTimestamp = System.Microseconds
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -522,12 +752,12 @@ Implements ObservationKit.Observable
 		    Return True
 		  End If
 		  
-		  If Self.mMods.Modified Then
+		  If Self.mAccounts.Modified Then
 		    Return True
 		  End If
 		  
 		  For Each Entry As DictionaryEntry In Self.mConfigGroups
-		    Dim Group As Beacon.ConfigGroup = Entry.Value
+		    Var Group As Beacon.ConfigGroup = Entry.Value
 		    If Group.Modified Then
 		      Return True
 		    End If
@@ -547,7 +777,7 @@ Implements ObservationKit.Observable
 		  
 		  If Value = False Then
 		    For Each Entry As DictionaryEntry In Self.mConfigGroups
-		      Dim Group As Beacon.ConfigGroup = Entry.Value
+		      Var Group As Beacon.ConfigGroup = Entry.Value
 		      Group.Modified = False
 		    Next
 		    
@@ -555,14 +785,20 @@ Implements ObservationKit.Observable
 		      Profile.Modified = False
 		    Next
 		    
-		    Self.mMods.Modified = False
+		    Self.mAccounts.Modified = False
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Mods() As Beacon.StringList
-		  Return Self.mMods
+		  Var List As New Beacon.StringList
+		  For Each Entry As DictionaryEntry In Self.mMods
+		    If Entry.Value.BooleanValue = True Then
+		      List.Append(Entry.Key.StringValue)
+		    End If
+		  Next
+		  Return List
 		End Function
 	#tag EndMethod
 
@@ -592,43 +828,9 @@ Implements ObservationKit.Observable
 		      Continue
 		    End If
 		    
-		    Dim Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
+		    Var Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
 		    Observer.ObservedValueChanged(Self, Key, Value)
 		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function OAuthData(Provider As String) As Dictionary
-		  If Self.mOAuthDicts <> Nil And Self.mOAuthDicts.HasKey(Provider) Then
-		    Return Dictionary(Self.mOAuthDicts.Value(Provider)).Clone
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub OAuthData(Provider As String, Assigns Dict As Dictionary)
-		  If Self.mOAuthDicts = Nil Then
-		    Self.mOAuthDicts = New Dictionary
-		  End If
-		  If Dict = Nil Then
-		    If Self.mOAuthDicts.HasKey(Provider) Then
-		      Self.mOAuthDicts.Remove(Provider)
-		      Self.mModified = True
-		    End If
-		  Else
-		    If Self.mOAuthDicts.HasKey(Provider) Then
-		      // Need to compare
-		      Dim OldJSON As String = Beacon.GenerateJSON(Self.mOAuthDicts.Value(Provider), False)
-		      Dim NewJSON As String = Beacon.GenerateJSON(Dict, False)
-		      If OldJSON = NewJSON Then
-		        Return
-		      End If
-		    End If
-		    
-		    Self.mOAuthDicts.Value(Provider) = Dict.Clone
-		    Self.mModified = True
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -648,19 +850,19 @@ Implements ObservationKit.Observable
 		    Return Nil
 		  End If
 		  
-		  Dim Key As MemoryBlock = Identity.Decrypt(DecodeHex(SecureDict.Value("Key")))
+		  Var Key As MemoryBlock = Identity.Decrypt(DecodeHex(SecureDict.Value("Key")))
 		  If Key = Nil Then
 		    Return Nil
 		  End If
 		  
-		  Dim ExpectedHash As String = SecureDict.Lookup("Hash", "")
-		  Dim Vector As MemoryBlock = DecodeHex(SecureDict.Value("Vector"))
-		  Dim Encrypted As MemoryBlock = DecodeHex(SecureDict.Value("Content"))
-		  Dim AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
+		  Var ExpectedHash As String = SecureDict.Lookup("Hash", "")
+		  Var Vector As MemoryBlock = DecodeHex(SecureDict.Value("Vector"))
+		  Var Encrypted As MemoryBlock = DecodeHex(SecureDict.Value("Content"))
+		  Var AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
 		  AES.SetKey(Key)
 		  AES.SetInitialVector(Vector)
 		  
-		  Dim Decrypted As String
+		  Var Decrypted As String
 		  Try
 		    Decrypted = AES.DecryptCBC(Encrypted)
 		  Catch Err As RuntimeException
@@ -668,7 +870,7 @@ Implements ObservationKit.Observable
 		  End Try
 		  
 		  If SkipHashVerification = False Then
-		    Dim ComputedHash As String = Beacon.Hash(Decrypted)
+		    Var ComputedHash As String = Beacon.Hash(Decrypted)
 		    If ComputedHash <> ExpectedHash Then
 		      Return Nil
 		    End If
@@ -679,7 +881,7 @@ Implements ObservationKit.Observable
 		  End If
 		  Decrypted = Decrypted.DefineEncoding(Encodings.UTF8)
 		  
-		  Dim DecryptedDict As Dictionary
+		  Var DecryptedDict As Dictionary
 		  Try
 		    DecryptedDict = Beacon.ParseJSON(Decrypted)
 		  Catch Err As RuntimeException
@@ -758,6 +960,39 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ReplaceAccount(OldAccount As Beacon.ExternalAccount, NewAccount As Beacon.ExternalAccount)
+		  If OldAccount = Nil Or NewAccount = Nil Then
+		    Return
+		  End If
+		  
+		  Self.ReplaceAccount(OldAccount.UUID, NewAccount)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ReplaceAccount(OldUUID As v4UUID, Account As Beacon.ExternalAccount)
+		  If OldUUID = Nil Or Account Is Nil Then
+		    Return
+		  End If
+		  
+		  // These will all handle their own modification states
+		  
+		  If (Self.mAccounts.GetByUUID(OldUUID) Is Nil) = False Then
+		    Self.mAccounts.Remove(OldUUID)
+		  End If
+		  If Self.mAccounts.GetByUUID(Account.UUID) Is Nil Then
+		    Self.mAccounts.Add(Account)
+		  End If
+		  
+		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
+		    If Profile.ExternalAccountUUID = OldUUID Then
+		      Profile.ExternalAccountUUID = Account.UUID
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ServerProfile(Index As Integer) As Beacon.ServerProfile
 		  Return Self.mServerProfiles(Index)
 		End Function
@@ -798,27 +1033,29 @@ Implements ObservationKit.Observable
 		    Self.AddUser(Identity.Identifier, Identity.PublicKey)
 		  End If
 		  
-		  Dim Document As New Dictionary
+		  Var Document As New Dictionary
 		  Document.Value("Version") = Self.DocumentVersion
 		  Document.Value("Identifier") = Self.DocumentID
 		  Document.Value("Trust") = Self.TrustKey
 		  Document.Value("EncryptionKeys") = Self.mEncryptedPasswords
 		  
-		  Dim ModsList() As String = Self.Mods
+		  Var ModsList() As String = Self.Mods
+		  Document.Value("ModSelections") = Self.mMods
 		  Document.Value("Mods") = ModsList
 		  Document.Value("UseCompression") = Self.UseCompression
 		  Document.Value("Timestamp") = DateTime.Now.SQLDateTimeWithOffset
 		  Document.Value("AllowUCS") = Self.AllowUCS
+		  Document.Value("IsConsole") = Self.ConsoleMode
 		  
-		  Dim Groups As New Dictionary
+		  Var Groups As New Dictionary
 		  For Each Entry As DictionaryEntry In Self.mConfigGroups
-		    Dim Group As Beacon.ConfigGroup = Entry.Value
-		    Dim GroupData As Dictionary = Group.ToDictionary(Self)
+		    Var Group As Beacon.ConfigGroup = Entry.Value
+		    Var GroupData As Dictionary = Group.ToDictionary(Self)
 		    If GroupData = Nil Then
 		      GroupData = New Dictionary
 		    End If
 		    
-		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Group)
+		    Var Info As Introspection.TypeInfo = Introspection.GetType(Group)
 		    Groups.Value(Info.Name) = GroupData
 		  Next
 		  Document.Value("Configs") = Groups
@@ -827,18 +1064,18 @@ Implements ObservationKit.Observable
 		    Document.Value("Map") = Self.mMapCompatibility
 		  End If
 		  
-		  Dim EncryptedData As New Dictionary
-		  Dim Profiles() As Dictionary
+		  Var EncryptedData As New Dictionary
+		  Var Profiles() As Dictionary
 		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
 		    Profiles.AddRow(Profile.ToDictionary)
 		  Next
 		  EncryptedData.Value("Servers") = Profiles
-		  If Self.mOAuthDicts <> Nil Then
-		    EncryptedData.Value("OAuth") = Self.mOAuthDicts
+		  If Self.mAccounts.Count > 0 Then
+		    EncryptedData.Value("ExternalAccounts") = Self.mAccounts.AsDictionary
 		  End If
 		  
-		  Dim Content As String = Beacon.GenerateJSON(EncryptedData, False)
-		  Dim Hash As String = Beacon.Hash(Content)
+		  Var Content As String = Beacon.GenerateJSON(EncryptedData, False)
+		  Var Hash As String = Beacon.Hash(Content)
 		  If Hash <> Self.mLastSecureHash Then
 		    Self.mLastSecureData = Self.Encrypt(Content)
 		    Self.mLastSecureHash = Hash
@@ -851,9 +1088,9 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function UsesOmniFeaturesWithoutOmni(Identity As Beacon.Identity) As Beacon.ConfigGroup()
-		  Dim OmniVersion As Integer = Identity.OmniVersion
-		  Dim Configs() As Beacon.ConfigGroup = Self.ImplementedConfigs()
-		  Dim ExcludedConfigs() As Beacon.ConfigGroup
+		  Var OmniVersion As Integer = Identity.OmniVersion
+		  Var Configs() As Beacon.ConfigGroup = Self.ImplementedConfigs()
+		  Var ExcludedConfigs() As Beacon.ConfigGroup
 		  For Each Config As Beacon.ConfigGroup In Configs
 		    If Config.Purchased(OmniVersion) = False Then
 		      ExcludedConfigs.AddRow(Config)
@@ -884,7 +1121,24 @@ Implements ObservationKit.Observable
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Dim Metadata As BeaconConfigs.Metadata = Self.Metadata
+			  Return Self.mConsoleMode
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mConsoleMode <> Value Then
+			    Self.mConsoleMode = Value
+			    Self.mModified = True
+			  End If
+			End Set
+		#tag EndSetter
+		ConsoleMode As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Var Metadata As BeaconConfigs.Metadata = Self.Metadata
 			  If Metadata <> Nil Then
 			    Return Metadata.Description
 			  End If
@@ -901,7 +1155,7 @@ Implements ObservationKit.Observable
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Dim Difficulty As BeaconConfigs.Difficulty = Self.Difficulty
+			  Var Difficulty As BeaconConfigs.Difficulty = Self.Difficulty
 			  If Difficulty <> Nil Then
 			    Return Difficulty.DifficultyValue
 			  Else
@@ -912,19 +1166,9 @@ Implements ObservationKit.Observable
 		DifficultyValue As Double
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return False
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  // Do Nothing
-			End Set
-		#tag EndSetter
-		Attributes( Deprecated ) IsPublic As Boolean
-	#tag EndComputedProperty
+	#tag Property, Flags = &h21
+		Private mAccounts As Beacon.ExternalAccountManager
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mAllowUCS As Boolean
@@ -938,15 +1182,16 @@ Implements ObservationKit.Observable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Dim Limit As UInt64 = Beacon.Maps.All.Mask
+			  Var Limit As UInt64 = Beacon.Maps.All.Mask
 			  Value = Value And Limit
 			  If Self.mMapCompatibility <> Value Then
-			    If Self.mMods <> Nil And Self.mMods.Count > 0 Then
-			      Dim Maps() As Beacon.Map = Beacon.Maps.ForMask(Value)
-			      For Each Map As Beacon.Map In Maps
-			        Self.mMods.Append(Map.ProvidedByModID)
-			      Next
-			    End If
+			    Var Maps() As Beacon.Map = Beacon.Maps.ForMask(Value)
+			    For Each Map As Beacon.Map In Maps
+			      If Self.mMods.Lookup(Map.ProvidedByModID, False).BooleanValue = False Then
+			        Self.mMods.Value(Map.ProvidedByModID) = True
+			        Self.mModChangeTimestamp = System.Microseconds
+			      End If
+			    Next
 			    
 			    Self.mMapCompatibility = Value
 			    Self.mModified = True
@@ -958,6 +1203,10 @@ Implements ObservationKit.Observable
 
 	#tag Property, Flags = &h21
 		Private mConfigGroups As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mConsoleMode As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -989,20 +1238,29 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mModChangeTimestamp As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mModified As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMods As Beacon.StringList
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mOAuthDicts As Dictionary
+		Private mMods As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mObservers As Dictionary
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mModChangeTimestamp
+			End Get
+		#tag EndGetter
+		ModChangeTimestamp As Double
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mServerProfiles() As Beacon.ServerProfile
@@ -1019,7 +1277,7 @@ Implements ObservationKit.Observable
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Dim Metadata As BeaconConfigs.Metadata = Self.Metadata
+			  Var Metadata As BeaconConfigs.Metadata = Self.Metadata
 			  If Metadata <> Nil Then
 			    Return Metadata.Title
 			  End If
@@ -1159,6 +1417,14 @@ Implements ObservationKit.Observable
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AllowUCS"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ConsoleMode"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""

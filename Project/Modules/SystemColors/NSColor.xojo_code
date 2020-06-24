@@ -7,14 +7,14 @@ Private Class NSColor
 		    Declare Function ColorUsingColorSpace Lib CocoaLib Selector "colorUsingColorSpace:" (Target As Ptr, ColorSpace As Ptr) As Ptr
 		    Declare Sub GetRGBValues Lib CocoaLib Selector "getRed:green:blue:alpha:" (Target As Ptr, ByRef Red As CGFloat, ByRef Green As CGFloat, ByRef Blue As CGFloat, ByRef Alpha As CGFloat)
 		    
-		    Dim NSColorSpace As Ptr = objc_getClass("NSColorSpace")
-		    Dim ColorSpace As Ptr = GetGenericRGBColorSpace(NSColorSpace)
-		    Dim Handle As Ptr = ColorUsingColorSpace(Self.mHandle, ColorSpace)
+		    Var NSColorSpace As Ptr = objc_getClass("NSColorSpace")
+		    Var ColorSpace As Ptr = GetGenericRGBColorSpace(NSColorSpace)
+		    Var Handle As Ptr = ColorUsingColorSpace(Self.mHandle, ColorSpace)
 		    If Handle = Nil Then
 		      Return &cFB02FE00
 		    End If
 		    
-		    Dim RedValue, GreenValue, BlueValue, AlphaValue As CGFloat
+		    Var RedValue, GreenValue, BlueValue, AlphaValue As CGFloat
 		    GetRGBValues(Handle, RedValue, GreenValue, BlueValue, AlphaValue)
 		    Return RGB(255 * RedValue, 255 * GreenValue, 255 * BlueValue, 255 - (AlphaValue * 255))
 		  #endif
@@ -29,11 +29,11 @@ Private Class NSColor
 
 	#tag Method, Flags = &h0
 		Shared Function GetAlternatingRowColors() As SystemColors.NSColor()
-		  Dim Colors() As SystemColors.NSColor
+		  Var Colors() As SystemColors.NSColor
 		  #if TargetMacOS
-		    Dim NSColor As Ptr = objc_getClass("NSColor")
+		    Var NSColor As Ptr = objc_getClass("NSColor")
 		    
-		    Dim ArrayRef As Ptr
+		    Var ArrayRef As Ptr
 		    If RespondsToSelector(NSColor, NSSelectorFromString("alternatingContentBackgroundColors")) Then
 		      Declare Function RowColors Lib CocoaLib Selector "alternatingContentBackgroundColors" (Target As Ptr) As Ptr
 		      ArrayRef = RowColors(NSColor)
@@ -45,9 +45,9 @@ Private Class NSColor
 		    Declare Function ArrayCount Lib CocoaLib Selector "count" (Target As Ptr) As UInteger
 		    Declare Function ArrayObjectAtIndex Lib CocoaLib Selector "objectAtIndex:" (Target As Ptr, Index As UInteger) As Ptr
 		    
-		    Dim ObjectCount As Integer = ArrayCount(ArrayRef)
+		    Var ObjectCount As Integer = ArrayCount(ArrayRef)
 		    For I As Integer = 0 To ObjectCount - 1
-		      Dim Handle As Ptr = ArrayObjectAtIndex(ArrayRef, I)
+		      Var Handle As Ptr = ArrayObjectAtIndex(ArrayRef, I)
 		      Colors.AddRow(New SystemColors.NSColor(Handle))
 		    Next
 		  #endif
@@ -58,7 +58,7 @@ Private Class NSColor
 	#tag Method, Flags = &h0
 		Shared Function GetSystemColor(SelectorName As String) As SystemColors.NSColor
 		  #If TargetMacOS
-		    Dim NSColor As Ptr = objc_getClass("NSColor")
+		    Var NSColor As Ptr = objc_getClass("NSColor")
 		    
 		    If Not RespondsToSelector(NSColor, NSSelectorFromString(SelectorName)) Then
 		      Select Case SelectorName
@@ -71,7 +71,7 @@ Private Class NSColor
 		      End Select
 		    End If
 		    
-		    Dim Handle As Ptr
+		    Var Handle As Ptr
 		    Select Case SelectorName
 		    Case "labelColor"
 		      Declare Function labelColor Lib CocoaLib Selector "labelColor" (Target As Ptr) As Ptr
@@ -233,7 +233,7 @@ Private Class NSColor
 		Function WithSystemEffect(Effect As SystemColors.NSColor.SystemEffect) As SystemColors.NSColor
 		  #if TargetMacOS
 		    Declare Function GetColorWithSystemEffect Lib CocoaLib Selector "colorWithSystemEffect:" (Target As Ptr, Effect As Integer) As Ptr
-		    Dim Handle As Ptr = GetColorWithSystemEffect(Self.mHandle, CType(Effect, Integer))
+		    Var Handle As Ptr = GetColorWithSystemEffect(Self.mHandle, CType(Effect, Integer))
 		    Return New SystemColors.NSColor(Handle)
 		  #else
 		    #Pragma Unused Effect

@@ -15,9 +15,9 @@ Protected Module Language
 		  ElseIf Items.LastRowIndex = 1 Then
 		    Return Items(0) + " and " + Items(1)
 		  Else
-		    Dim LastItem As String = Items(Items.LastRowIndex)
+		    Var LastItem As String = Items(Items.LastRowIndex)
 		    Items.RemoveRowAt(Items.LastRowIndex)
-		    Dim List As String = Items.Join(", ") + ", and " + LastItem
+		    Var List As String = Items.Join(", ") + ", and " + LastItem
 		    Items.AddRow(LastItem) // Gotta put it back
 		    Return List
 		  End If
@@ -84,6 +84,12 @@ Protected Module Language
 		    Return "Creature Spawn Points"
 		  Case BeaconConfigs.StatLimits.ConfigName
 		    Return "Item Stat Limits"
+		  Case BeaconConfigs.EngramControl.ConfigName
+		    Return "Engram Control"
+		  Case "deployments"
+		    Return "Servers"
+		  Case "maps"
+		    Return "Maps"
 		  End Select
 		End Function
 	#tag EndMethod
@@ -119,14 +125,14 @@ Protected Module Language
 
 	#tag Method, Flags = &h1
 		Protected Function NounWithQuantity(Quantity As Integer, Singular As String, Plural As String) As String
-		  Return Str(Quantity, "-0,") + " " + If(Quantity = 1, Singular, Plural)
+		  Return Format(Quantity, "-0,") + " " + If(Quantity = 1, Singular, Plural)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function ReplacePlaceholders(Source As String, ParamArray Values() As String) As String
 		  For I As Integer = 0 To Values.LastRowIndex
-		    Dim Placeholder As String = "?" + Str(I + 1, "0")
+		    Var Placeholder As String = "?" + Str(I + 1, "0")
 		    Source = Source.ReplaceAll(Placeholder, Values(I))
 		  Next
 		  Return Source

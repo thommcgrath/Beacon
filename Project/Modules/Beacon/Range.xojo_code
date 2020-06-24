@@ -1,6 +1,12 @@
 #tag Class
 Protected Class Range
 	#tag Method, Flags = &h0
+		Sub Constructor(Source As Beacon.Range)
+		  Self.Constructor(Source.Min, Source.Max)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Min As Double, Max As Double)
 		  If Min > Max Then
 		    Self.mMin = Max

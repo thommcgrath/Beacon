@@ -395,7 +395,6 @@ Begin DiscoveryView ConnectorDiscoveryView
    End
    Begin Beacon.ConnectorClientSocket TestSocket
       Address         =   ""
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Port            =   0
@@ -523,7 +522,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckEnabled()
-		  Dim Port As Integer
+		  Var Port As Integer
 		  If IsNumeric(Self.PortField.Value) Then
 		    Port = CDbl(Self.PortField.Value)
 		  End If
@@ -568,7 +567,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim Profile As New Beacon.ConnectorServerProfile
+		  Var Profile As New Beacon.ConnectorServerProfile
 		  Profile.Address = Self.AddressField.Value
 		  Profile.Port = CDbl(Self.PortField.Value)
 		  Profile.PreSharedKey = Self.KeyField.Value
@@ -603,9 +602,12 @@ End
 		Sub Connected()
 		  Me.Close
 		  
-		  Dim Engines(0) As Beacon.DiscoveryEngine
-		  Engines(0) = New Beacon.ConnectorDiscoveryEngine(Self.Profile)
-		  Self.ShouldFinish(Engines)
+		  #if DocumentImportView.ConnectorEnabled
+		    #Pragma Error "Connector discover UI not connected to integration engine."
+		  #endif
+		  
+		  Var Data() As Beacon.DiscoveredData
+		  Self.ShouldFinish(Data)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -616,7 +618,7 @@ End
 		  
 		  Self.CheckEnabled()
 		  
-		  Dim Message As String
+		  Var Message As String
 		  Select Case Err.ErrorNumber
 		  Case TCPSocket.LostConnection
 		    Message = "A connection was established, but it has been lost."

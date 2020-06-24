@@ -47,7 +47,7 @@ Inherits Beacon.SpawnPointSet
 		      Options.Remove(ToCreature.Path)
 		    End If
 		  Else
-		    Options.Value(ToCreature.Path) = Weight.Value
+		    Options.Value(ToCreature.Path) = Weight.DoubleValue
 		  End If
 		  
 		  If Options.KeyCount = 0 And Self.mReplacements.HasKey(FromCreature.Path) Then
@@ -73,7 +73,11 @@ Inherits Beacon.SpawnPointSet
 	#tag Method, Flags = &h0
 		Sub GroupOffset(Assigns Offset As Beacon.Point3D)
 		  If Self.mGroupOffset <> Offset Then
-		    Self.mGroupOffset = New Beacon.Point3D(Offset)
+		    If Offset Is Nil Then
+		      Self.mGroupOffset = Nil
+		    Else
+		      Self.mGroupOffset = New Beacon.Point3D(Offset)
+		    End If
 		    Self.Modified = True
 		  End If
 		End Sub

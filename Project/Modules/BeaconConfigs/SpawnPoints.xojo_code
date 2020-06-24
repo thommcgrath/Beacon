@@ -22,6 +22,17 @@ Implements Iterable
 	#tag EndEvent
 
 	#tag Event
+		Sub MergeFrom(Other As Beacon.ConfigGroup)
+		  Var Source As BeaconConfigs.SpawnPoints = BeaconConfigs.SpawnPoints(Other)
+		  
+		  For Each Entry As DictionaryEntry In Source.mSpawnPoints
+		    Var SpawnPoint As Beacon.SpawnPoint = Entry.Value
+		    Self.Add(New Beacon.SpawnPoint(SpawnPoint))
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub NonGeneratedKeys(Keys() As Beacon.ConfigKey)
 		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "ConfigOverrideNPCSpawnEntriesContainer"))
 		  Keys.AddRow(New Beacon.ConfigKey("Game.ini", Beacon.ShooterGameHeader, "ConfigAddNPCSpawnEntriesContainer"))
@@ -148,27 +159,27 @@ Implements Iterable
 		        End If
 		      End If
 		      If IncludeSpawnChance Then
-		        Var Chance As Double = If(Entry.SpawnChance <> Nil, Entry.SpawnChance.Value, 1.0) / SpawnSum
+		        Var Chance As Double = If(Entry.SpawnChance <> Nil, Entry.SpawnChance.DoubleValue, 1.0) / SpawnSum
 		        SpawnChanceMembers.AddRow(Chance.PrettyText)
 		      End If
 		      If IncludeMinLevelMultiplier Then
-		        Var Multiplier As Double = If(Entry.MinLevelMultiplier <> Nil, Entry.MinLevelMultiplier.Value, 1.0)
+		        Var Multiplier As Double = If(Entry.MinLevelMultiplier <> Nil, Entry.MinLevelMultiplier.DoubleValue, 1.0)
 		        MinLevelMultiplierMembers.AddRow(Multiplier.PrettyText)
 		      End If
 		      If IncludeMinLevelOffset Then
-		        Var Offset As Double = If(Entry.MinLevelOffset <> Nil, Entry.MinLevelOffset.Value, 0.0)
+		        Var Offset As Double = If(Entry.MinLevelOffset <> Nil, Entry.MinLevelOffset.DoubleValue, 0.0)
 		        MinLevelOffsetMembers.AddRow(Offset.PrettyText)
 		      End If
 		      If IncludeMaxLevelMultiplier Then
-		        Var Multiplier As Double = If(Entry.MaxLevelMultiplier <> Nil, Entry.MaxLevelMultiplier.Value, 1.0)
+		        Var Multiplier As Double = If(Entry.MaxLevelMultiplier <> Nil, Entry.MaxLevelMultiplier.DoubleValue, 1.0)
 		        MaxLevelMultiplierMembers.AddRow(Multiplier.PrettyText)
 		      End If
 		      If IncludeMaxLevelOffset Then
-		        Var Offset As Double = If(Entry.MaxLevelOffset <> Nil, Entry.MaxLevelOffset.Value, 0.0)
+		        Var Offset As Double = If(Entry.MaxLevelOffset <> Nil, Entry.MaxLevelOffset.DoubleValue, 0.0)
 		        MaxLevelOffsetMembers.AddRow(Offset.PrettyText)
 		      End If
 		      If IncludeLevelOverride Then
-		        Var Override As UInt8 = Round(If(Entry.LevelOverride <> Nil, Entry.LevelOverride.Value, 1.0))
+		        Var Override As UInt8 = Round(If(Entry.LevelOverride <> Nil, Entry.LevelOverride.DoubleValue, 1.0))
 		        LevelOverrideMembers.AddRow(Override.ToString)
 		      End If
 		    Next
@@ -204,23 +215,23 @@ Implements Iterable
 		    End If
 		    
 		    If Set.SpreadRadius <> Nil Then
-		      Members.AddRow("ManualSpawnPointSpreadRadius=" + Set.SpreadRadius.Value.PrettyText)
+		      Members.AddRow("ManualSpawnPointSpreadRadius=" + Set.SpreadRadius.DoubleValue.PrettyText)
 		    End If
 		    
 		    If Set.WaterOnlyMinimumHeight <> Nil Then
-		      Members.AddRow("WaterOnlySpawnMinimumWaterHeight=" + Set.WaterOnlyMinimumHeight.Value.PrettyText)
+		      Members.AddRow("WaterOnlySpawnMinimumWaterHeight=" + Set.WaterOnlyMinimumHeight.DoubleValue.PrettyText)
 		    End If
 		    
 		    If Set.MinDistanceFromStructuresMultiplier <> Nil Then
-		      Members.AddRow("SpawnMinDistanceFromStructuresMultiplier=" + Set.MinDistanceFromStructuresMultiplier.Value.PrettyText)
+		      Members.AddRow("SpawnMinDistanceFromStructuresMultiplier=" + Set.MinDistanceFromStructuresMultiplier.DoubleValue.PrettyText)
 		    End If
 		    
 		    If Set.MinDistanceFromPlayersMultiplier <> Nil Then
-		      Members.AddRow("SpawnMinDistanceFromPlayersMultiplier=" + Set.MinDistanceFromPlayersMultiplier.Value.PrettyText)
+		      Members.AddRow("SpawnMinDistanceFromPlayersMultiplier=" + Set.MinDistanceFromPlayersMultiplier.DoubleValue.PrettyText)
 		    End If
 		    
 		    If Set.MinDistanceFromTamedDinosMultiplier <> Nil Then
-		      Members.AddRow("SpawnMinDistanceFromTamedDinosMultiplier=" + Set.MinDistanceFromTamedDinosMultiplier.Value.PrettyText)
+		      Members.AddRow("SpawnMinDistanceFromTamedDinosMultiplier=" + Set.MinDistanceFromTamedDinosMultiplier.DoubleValue.PrettyText)
 		    End If
 		    
 		    If Set.GroupOffset <> Nil Then
@@ -308,6 +319,23 @@ Implements Iterable
 		  HandleConfig(SpawnPoints, ParsedData, "ConfigSubtractNPCSpawnEntriesContainer")
 		  If SpawnPoints.Count > 0 Then
 		    Return SpawnPoints
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetSpawnPoint(Path As String, Mode As Integer) As Beacon.SpawnPoint
+		  Var Key As String = Path
+		  Select Case Mode
+		  Case Beacon.SpawnPoint.ModeOverride
+		    Key = Key + ":Override"
+		  Case Beacon.SpawnPoint.ModeAppend
+		    Key = Key + ":Append"
+		  Case Beacon.SpawnPoint.ModeRemove
+		    Key = Key + ":Remove"
+		  End Select
+		  If Self.mSpawnPoints.HasKey(Key) Then
+		    Return Beacon.SpawnPoint(Self.mSpawnPoints.Value(Key)).ImmutableVersion
 		  End If
 		End Function
 	#tag EndMethod

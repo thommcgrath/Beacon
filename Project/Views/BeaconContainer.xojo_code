@@ -138,7 +138,7 @@ Inherits ContainerControl
 		Private Sub TriggerEmbeddingFinished()
 		  Self.mEmbedded = True
 		  For I As Integer = Self.mChildren.LastRowIndex DownTo 0
-		    Dim Ref As WeakRef = Self.mChildren(I)
+		    Var Ref As WeakRef = Self.mChildren(I)
 		    If Ref = Nil Or Ref.Value = Nil Then
 		      Self.mChildren.RemoveRowAt(I)
 		      Continue

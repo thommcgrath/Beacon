@@ -24,7 +24,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   744
+   Width           =   800
    Begin UITweaks.ResizedTextField MatureSpeedField
       AcceptTabs      =   False
       Alignment       =   2
@@ -654,9 +654,9 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       AutoHideScrollbars=   True
       Bold            =   False
       Border          =   True
-      ColumnCount     =   6
+      ColumnCount     =   7
       ColumnsResizable=   False
-      ColumnWidths    =   "6*,5*,5*,3*,3*,3*"
+      ColumnWidths    =   "6*,5*,5*,5*,3*,3*,3*"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
@@ -672,7 +672,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Creature	Incubation Time	Mature Time	Imprints	% Per Imprint	Max Imprint %"
+      InitialValue    =   "Creature	Incubation Time	Mature Time	Mating Cooldown	Imprints	% Per Imprint	Max Imprint %"
       Italic          =   False
       Left            =   20
       LockBottom      =   True
@@ -695,10 +695,12 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextUnit        =   0
       Top             =   431
       Transparent     =   False
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   704
+      VisibleRowCount =   0
+      Width           =   760
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -722,7 +724,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Top             =   381
       Transparent     =   False
       Visible         =   True
-      Width           =   704
+      Width           =   760
    End
    Begin UITweaks.ResizedTextField ImprintPeriodPreviewField
       AcceptTabs      =   False
@@ -1117,7 +1119,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   744
+      Width           =   800
    End
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
@@ -1145,7 +1147,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   744
+      Width           =   800
    End
    Begin UITweaks.ResizedTextField MatingSpeedField
       AcceptTabs      =   False
@@ -1379,7 +1381,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.MinimumWidth = 744
+		  Self.MinimumWidth = 800
 		  Self.MinimumHeight = 544
 		End Sub
 	#tag EndEvent
@@ -1392,7 +1394,7 @@ End
 
 	#tag Event
 		Sub SetupUI()
-		  Dim Config As BeaconConfigs.BreedingMultipliers = Self.Config(False)
+		  Var Config As BeaconConfigs.BreedingMultipliers = Self.Config(False)
 		  Self.EggLayPeriodField.Value = Format(Config.LayEggIntervalMultiplier, "0.0#####")
 		  Self.FoodConsumptionField.Value = Format(Config.BabyFoodConsumptionSpeedMultiplier, "0.0#####")
 		  Self.ImprintGracePeriodField.Value = Format(Config.BabyCuddleGracePeriodMultiplier, "0.0#####")
@@ -1407,13 +1409,21 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  #Pragma Unused UserData
+		  
+		  Self.SetupUI
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.BreedingMultipliers
 		  Static ConfigName As String = BeaconConfigs.BreedingMultipliers.ConfigName
 		  
-		  Dim Document As Beacon.Document = Self.Document
-		  Dim Config As BeaconConfigs.BreedingMultipliers
+		  Var Document As Beacon.Document = Self.Document
+		  Var Config As BeaconConfigs.BreedingMultipliers
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.BreedingMultipliers(Self.mConfigRef.Value)
@@ -1452,34 +1462,37 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStats()
-		  Dim CuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period") * Self.Config(False).BabyCuddleIntervalMultiplier
-		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.StringList)
-		  Dim SelectedClass As String
+		  Var CuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period") * Self.Config(False).BabyCuddleIntervalMultiplier
+		  Var Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", Self.Document.Mods)
+		  Var SelectedClass As String
 		  If CreaturesList.SelectedRowIndex > -1 Then
 		    SelectedClass = CreaturesList.RowTagAt(CreaturesList.SelectedRowIndex)
 		  End If
-		  Dim Position As Integer = Self.CreaturesList.ScrollPosition
+		  Var Position As Integer = Self.CreaturesList.ScrollPosition
 		  Self.CreaturesList.RemoveAllRows
 		  
-		  Dim IncubationMultiplier As Double = Self.Config(False).EggHatchSpeedMultiplier
-		  Dim MatureMultiplier As Double = Self.Config(False).BabyMatureSpeedMultiplier
+		  Var IncubationMultiplier As Double = Self.Config(False).EggHatchSpeedMultiplier
+		  Var MatureMultiplier As Double = Self.Config(False).BabyMatureSpeedMultiplier
+		  Var CooldownMultiplier As Double = Self.Config(False).MatingIntervalMultiplier
 		  
 		  For Each Creature As Beacon.Creature In Creatures
 		    If Creature.IncubationTime = 0 Or Creature.MatureTime = 0 Then
 		      Continue
 		    End If
 		    
-		    Dim IncubationSeconds As UInt64 = Creature.IncubationTime / IncubationMultiplier
-		    Dim MatureSeconds As UInt64 = Creature.MatureTime / MatureMultiplier
+		    Var IncubationSeconds As UInt64 = Creature.IncubationTime / IncubationMultiplier
+		    Var MatureSeconds As UInt64 = Creature.MatureTime / MatureMultiplier
+		    Var CooldownMin As UInt64 = Creature.MinMatingInterval * CooldownMultiplier
+		    Var CooldownMax As UInt64 = Creature.MaxMatingInterval * CooldownMultiplier
 		    
-		    Dim MaxCuddles As Integer = Floor(MatureSeconds / CuddlePeriod)
-		    Dim PerCuddle As Double = 0
+		    Var MaxCuddles As Integer = Floor(MatureSeconds / CuddlePeriod)
+		    Var PerCuddle As Double = 0
 		    If MaxCuddles > 0 Then
 		      PerCuddle = 1 / MaxCuddles
 		    End If
-		    Dim MaxImprint As Double = MaxCuddles * PerCuddle
+		    Var MaxImprint As Double = MaxCuddles * PerCuddle
 		    
-		    CreaturesList.AddRow(Creature.Label, Beacon.SecondsToString(IncubationSeconds), Beacon.SecondsToString(MatureSeconds), MaxCuddles.ToString, If(MaxCuddles = 0, "Can't Imprint", Format(PerCuddle, "0%")), If(PerCuddle = 0, "", Format(MaxImprint, "0%")))
+		    CreaturesList.AddRow(Creature.Label, Beacon.SecondsToString(IncubationSeconds), Beacon.SecondsToString(MatureSeconds), Beacon.SecondsToString(CooldownMin, CooldownMax), MaxCuddles.ToString, If(MaxCuddles = 0, "Can't Imprint", Format(PerCuddle, "0%")), If(PerCuddle = 0, "", Format(MaxImprint, "0%")))
 		    CreaturesList.CellTagAt(CreaturesList.LastAddedRowIndex, Self.ColumnIncubationTime) = IncubationSeconds
 		    CreaturesList.CellTagAt(CreaturesList.LastAddedRowIndex, Self.ColumnMatureTime) = MatureSeconds
 		    CreaturesList.RowTagAt(CreaturesList.LastAddedRowIndex) = Creature.ClassString
@@ -1501,7 +1514,10 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = ColumnBestImprint, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag Constant, Name = ColumnBestImprint, Type = Double, Dynamic = False, Default = \"6", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnCooldown, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnCreatureName, Type = Double, Dynamic = False, Default = \"0", Scope = Private
@@ -1513,10 +1529,10 @@ End
 	#tag Constant, Name = ColumnMatureTime, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnNumImprints, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = ColumnNumImprints, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnPerImprint, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = ColumnPerImprint, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
 
@@ -1529,7 +1545,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double
+		  Var Value As Double
 		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
@@ -1549,7 +1565,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double
+		  Var Value As Double
 		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
@@ -1569,7 +1585,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double
+		  Var Value As Double
 		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
@@ -1588,7 +1604,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double
+		  Var Value As Double
 		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
@@ -1607,7 +1623,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double
+		  Var Value As Double
 		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
@@ -1627,7 +1643,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double
+		  Var Value As Double
 		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
@@ -1646,7 +1662,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double
+		  Var Value As Double
 		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
@@ -1665,7 +1681,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double
+		  Var Value As Double
 		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
@@ -1681,8 +1697,8 @@ End
 	#tag Event
 		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  If Column = Self.ColumnIncubationTime Or Column = Self.ColumnMatureTime Then
-		    Dim Period1 As UInt64 = Me.CellTagAt(Row1, Column)
-		    Dim Period2 As UInt64 = Me.CellTagAt(Row2, Column)
+		    Var Period1 As UInt64 = Me.CellTagAt(Row1, Column)
+		    Var Period2 As UInt64 = Me.CellTagAt(Row2, Column)
 		    If Period1 = Period2 Then
 		      Result = 0
 		    ElseIf Period1 > Period2 Then
@@ -1702,17 +1718,18 @@ End
 		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AutoTuneButton"
-		    Dim Interval As Double = BreedingTunerDialog.Present(Self, Self.Config(False).BabyMatureSpeedMultiplier)
+		    Var Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", Self.Document.Mods)
+		    Var Interval As Double = BreedingTunerDialog.Present(Self, Self.Config(False).BabyMatureSpeedMultiplier, Creatures)
 		    If Interval > 0 Then
 		      Self.ImprintPeriodField.Value = Interval.PrettyText
 		      Self.UpdateStats
 		    End If
 		  Case "ShareLinkButton"
-		    Dim Config As BeaconConfigs.BreedingMultipliers = Self.Config(False)
-		    Dim Format As String = "-0.0#######"
-		    Dim MatureSpeedMultiplier As String = Str(Config.BabyMatureSpeedMultiplier, Format)
-		    Dim IncubationSpeedMultiplier As String = Str(Config.EggHatchSpeedMultiplier, Format)
-		    Dim ImprintPeriodMultiplier As String = Str(Config.BabyCuddleIntervalMultiplier, Format)
+		    Var Config As BeaconConfigs.BreedingMultipliers = Self.Config(False)
+		    Var Format As String = "-0.0#######"
+		    Var MatureSpeedMultiplier As String = Str(Config.BabyMatureSpeedMultiplier, Format)
+		    Var IncubationSpeedMultiplier As String = Str(Config.EggHatchSpeedMultiplier, Format)
+		    Var ImprintPeriodMultiplier As String = Str(Config.BabyCuddleIntervalMultiplier, Format)
 		    LinkSharingDialog.Present(Self, Beacon.WebURL("/tools/breeding?msm=" + EncodeURLComponent(MatureSpeedMultiplier) + "&ism=" + EncodeURLComponent(IncubationSpeedMultiplier) + "&ipm=" + EncodeURLComponent(ImprintPeriodMultiplier)))
 		  End Select
 		End Sub
@@ -1731,7 +1748,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double
+		  Var Value As Double
 		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
@@ -1750,7 +1767,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Double
+		  Var Value As Double
 		  If Not Self.ParseDouble(Me.Value, Value) Then
 		    Return
 		  End If
@@ -1759,10 +1776,19 @@ End
 		  Self.Config(True).MatingIntervalMultiplier = Value
 		  Self.Changed = True
 		  Self.SettingUp = False
+		  Self.UpdateStats
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

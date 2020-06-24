@@ -397,7 +397,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function LootSources() As Beacon.LootSource()
-		  Dim Results() As Beacon.LootSource
+		  Var Results() As Beacon.LootSource
 		  For I As Integer = 0 To Self.mSources.LastRowIndex
 		    If Self.mSources(I).Value <> Nil Then
 		      Results.AddRow(Beacon.LootSource(Self.mSources(I).Value))
@@ -411,7 +411,7 @@ End
 		Sub LootSources(Assigns Sources() As Beacon.LootSource)
 		  Self.mSettingUp = True
 		  
-		  Redim Self.mSources(Sources.LastRowIndex)
+		  Self.mSources.ResizeTo(Sources.LastRowIndex)
 		  
 		  If Sources.LastRowIndex = -1 Then
 		    Self.MinItemSetsField.Clear
@@ -419,10 +419,10 @@ End
 		    Self.NoDuplicatesCheck.VisualState = CheckBox.VisualStates.Unchecked
 		    Self.AppendModeCheck.VisualState = CheckBox.VisualStates.Unchecked
 		  Else
-		    Dim CommonMinItemSets As Integer = Sources(0).MinItemSets
-		    Dim CommonMaxItemSets As Integer = Sources(0).MaxItemSets
-		    Dim CommonNoDuplicates As CheckBox.VisualStates = If(Sources(0).SetsRandomWithoutReplacement, CheckBox.VisualStates.Checked, Checkbox.VisualStates.Unchecked)
-		    Dim CommonAppendMode As CheckBox.VisualStates = If(Sources(0).AppendMode, CheckBox.VisualStates.Checked, CheckBox.VisualStates.Unchecked)
+		    Var CommonMinItemSets As Integer = Sources(0).MinItemSets
+		    Var CommonMaxItemSets As Integer = Sources(0).MaxItemSets
+		    Var CommonNoDuplicates As CheckBox.VisualStates = If(Sources(0).PreventDuplicates, CheckBox.VisualStates.Checked, Checkbox.VisualStates.Unchecked)
+		    Var CommonAppendMode As CheckBox.VisualStates = If(Sources(0).AppendMode, CheckBox.VisualStates.Checked, CheckBox.VisualStates.Unchecked)
 		    
 		    For I As Integer = 0 To Sources.LastRowIndex
 		      Self.mSources(I) = New WeakRef(Sources(I))
@@ -433,7 +433,7 @@ End
 		      If Sources(I).MaxItemSets <> CommonMaxItemSets Then
 		        CommonMaxItemSets = -1
 		      End If
-		      If If(Sources(I).SetsRandomWithoutReplacement, CheckBox.VisualStates.Checked, Checkbox.VisualStates.Unchecked) <> CommonNoDuplicates Then
+		      If If(Sources(I).PreventDuplicates, CheckBox.VisualStates.Checked, Checkbox.VisualStates.Unchecked) <> CommonNoDuplicates Then
 		        CommonNoDuplicates = CheckBox.VisualStates.Indeterminate
 		      End If
 		      If If(Sources(I).AppendMode, CheckBox.VisualStates.Checked, Checkbox.VisualStates.Unchecked) <> CommonAppendMode Then
@@ -514,12 +514,12 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Integer = Val(Me.Value)
+		  Var Value As Integer = Val(Me.Value)
 		  If Value = 0 Then
 		    Return
 		  End If
 		  
-		  Dim Sources() As Beacon.LootSource = Self.LootSources
+		  Var Sources() As Beacon.LootSource = Self.LootSources
 		  For I As Integer = 0 To Sources.LastRowIndex
 		    Sources(I).MinItemSets = Value
 		  Next
@@ -555,12 +555,12 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Integer = Val(Me.Value)
+		  Var Value As Integer = Val(Me.Value)
 		  If Value = 0 Then
 		    Return
 		  End If
 		  
-		  Dim Sources() As Beacon.LootSource = Self.LootSources
+		  Var Sources() As Beacon.LootSource = Self.LootSources
 		  For I As Integer = 0 To Sources.LastRowIndex
 		    Sources(I).MaxItemSets = Value
 		  Next
@@ -596,9 +596,9 @@ End
 		    Return
 		  End If
 		  
-		  Dim Sources() As Beacon.LootSource = Self.LootSources
+		  Var Sources() As Beacon.LootSource = Self.LootSources
 		  For I As Integer = 0 To Sources.LastRowIndex
-		    Sources(I).SetsRandomWithoutReplacement = Me.Value
+		    Sources(I).PreventDuplicates = Me.Value
 		  Next
 		  
 		  RaiseEvent SettingsChanged
@@ -652,7 +652,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Sources() As Beacon.LootSource = Self.LootSources
+		  Var Sources() As Beacon.LootSource = Self.LootSources
 		  For I As Integer = 0 To Sources.LastRowIndex
 		    Sources(I).AppendMode = Me.Value
 		  Next

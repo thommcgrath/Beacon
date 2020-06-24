@@ -3,7 +3,7 @@ Protected Module AnimationKit
 	#tag CompatibilityFlags = ( not TargetHasGUI and not TargetWeb and not TargetIOS ) or ( TargetWeb ) or ( TargetHasGUI ) or ( TargetIOS )
 	#tag Method, Flags = &h0
 		Sub Animate(Extends Target As AnimationKit.FrameTarget, Frames As AnimationKit.FrameSet, DurationInSeconds As Double, Looping As Boolean)
-		  Dim Task As New AnimationKit.FrameTask(Target, Frames)
+		  Var Task As New AnimationKit.FrameTask(Target, Frames)
 		  Task.DurationInSeconds = DurationInSeconds
 		  Task.Looping = Looping
 		  Task.Run
@@ -12,7 +12,7 @@ Protected Module AnimationKit
 
 	#tag Method, Flags = &h0
 		Sub Animate(Extends Target As AnimationKit.ValueAnimator, Identifier As String, StartValue As Double, EndValue As Double, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
-		  Dim Task As New AnimationKit.ValueTask(Target, Identifier, StartValue, EndValue)
+		  Var Task As New AnimationKit.ValueTask(Target, Identifier, StartValue, EndValue)
 		  Task.DurationInSeconds = DurationInSeconds
 		  If Curve <> Nil Then
 		    Task.Curve = Curve
@@ -23,7 +23,7 @@ Protected Module AnimationKit
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI)
 		Sub Animate(Extends Target As RectControl, Destination As Xojo.Rect, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
-		  Dim Task As New AnimationKit.MoveTask(Target)
+		  Var Task As New AnimationKit.MoveTask(Target)
 		  Task.DurationInSeconds = DurationInSeconds
 		  Task.SetDestination(Destination)
 		  If Curve <> Nil Then
@@ -35,7 +35,7 @@ Protected Module AnimationKit
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetHasGUI)
 		Sub Animate(Extends Target As Window, Destination As Xojo.Rect, DurationInSeconds As Double, Curve As AnimationKit.Curve = Nil)
-		  Dim Task As New AnimationKit.MoveTask(Target)
+		  Var Task As New AnimationKit.MoveTask(Target)
 		  Task.DurationInSeconds = DurationInSeconds
 		  Task.SetDestination(Destination)
 		  If Curve <> Nil Then

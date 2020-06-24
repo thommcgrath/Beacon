@@ -43,7 +43,6 @@ Begin DiscoveryView FTPDiscoveryView
       Scope           =   2
       TabIndex        =   17
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -82,7 +81,7 @@ Begin DiscoveryView FTPDiscoveryView
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   86
+         Width           =   126
       End
       Begin UITweaks.ResizedPopupMenu ServerModeMenu
          AutoDeactivate  =   True
@@ -96,7 +95,7 @@ Begin DiscoveryView FTPDiscoveryView
          InitialParent   =   "ViewPanel"
          InitialValue    =   "Autodetect\nFTP\nFTP with TLS\nSFTP"
          Italic          =   False
-         Left            =   118
+         Left            =   158
          ListIndex       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -219,7 +218,7 @@ Begin DiscoveryView FTPDiscoveryView
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   86
+         Width           =   126
       End
       Begin UITweaks.ResizedTextField ServerHostField
          AcceptTabs      =   False
@@ -239,7 +238,7 @@ Begin DiscoveryView FTPDiscoveryView
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
-         Left            =   118
+         Left            =   158
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -263,7 +262,7 @@ Begin DiscoveryView FTPDiscoveryView
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   462
+         Width           =   422
       End
       Begin UITweaks.ResizedLabel ServerPortLabel
          AutoDeactivate  =   True
@@ -298,7 +297,7 @@ Begin DiscoveryView FTPDiscoveryView
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   86
+         Width           =   126
       End
       Begin UITweaks.ResizedTextField ServerPortField
          AcceptTabs      =   False
@@ -318,7 +317,7 @@ Begin DiscoveryView FTPDiscoveryView
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
-         Left            =   118
+         Left            =   158
          LimitText       =   5
          LockBottom      =   False
          LockedInPosition=   False
@@ -377,7 +376,7 @@ Begin DiscoveryView FTPDiscoveryView
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   86
+         Width           =   126
       End
       Begin UITweaks.ResizedTextField ServerUserField
          AcceptTabs      =   False
@@ -397,7 +396,7 @@ Begin DiscoveryView FTPDiscoveryView
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
-         Left            =   118
+         Left            =   158
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -421,7 +420,7 @@ Begin DiscoveryView FTPDiscoveryView
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   462
+         Width           =   422
       End
       Begin UITweaks.ResizedLabel ServerPassLabel
          AutoDeactivate  =   True
@@ -456,7 +455,7 @@ Begin DiscoveryView FTPDiscoveryView
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   86
+         Width           =   126
       End
       Begin UITweaks.ResizedTextField ServerPassField
          AcceptTabs      =   False
@@ -476,7 +475,7 @@ Begin DiscoveryView FTPDiscoveryView
          Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Italic          =   False
-         Left            =   118
+         Left            =   158
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -500,7 +499,7 @@ Begin DiscoveryView FTPDiscoveryView
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   462
+         Width           =   422
       End
       Begin Label DiscoveringMessage
          AutoDeactivate  =   True
@@ -555,7 +554,6 @@ Begin DiscoveryView FTPDiscoveryView
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
-         TabStop         =   "True"
          Top             =   161
          Transparent     =   False
          Value           =   0.0
@@ -786,7 +784,6 @@ Begin DiscoveryView FTPDiscoveryView
          HasBackColor    =   False
          Height          =   204
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Left            =   21
          LockBottom      =   True
@@ -891,10 +888,11 @@ Begin DiscoveryView FTPDiscoveryView
          Width           =   80
       End
    End
-   Begin BeaconAPI.Socket BrowseSocket
-      Enabled         =   True
+   Begin Timer StatusWatcher
       Index           =   -2147483648
       LockedInPosition=   False
+      Period          =   50
+      RunMode         =   "2"
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -917,60 +915,61 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DetectPath(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
-		  #Pragma Unused Request
+		Private Sub CheckHostForPort()
+		  Var Checker As New Regex
+		  Checker.SearchPattern = ":(\d{1,5})$"
+		  Checker.ReplacementPattern = ""
 		  
-		  Dim Info As Introspection.TypeInfo
-		  Dim Dict As Dictionary
-		  If Response.JSON <> Nil Then
-		    Info = Introspection.GetType(Response.JSON)
-		    If Info.FullName = "Dictionary" Then
-		      Dict = Response.JSON
+		  Var CheckedValue As String = Self.ServerHostField.Value.Trim
+		  
+		  Var Matches As RegexMatch = Checker.Search(CheckedValue)
+		  If Matches Is Nil Then
+		    If Self.ServerHostField.Value <> CheckedValue Then
+		      Self.ServerHostField.Value = CheckedValue
 		    End If
-		  End If
-		  
-		  If Dict <> Nil And Dict.HasKey("ftp_mode") Then
-		    Self.mProfile.Mode = Dict.Value("ftp_mode")
-		  End If
-		  
-		  If Response.Success Then
-		    // Discovery was able to find the path and the user doesn't need to do any further work.
-		    Dim Path As String = Dict.Value("path")
-		    
-		    Dim Engines(0) As Beacon.DiscoveryEngine
-		    Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, Path, App.IdentityManager.CurrentIdentity)
-		    Self.ShouldFinish(Engines)
-		    
 		    Return
 		  End If
 		  
-		  If Response.HTTPStatus = 404 Then
-		    // Server was connected, but the path could not be determined, so time to show the browser.
-		    Self.ViewPanel.SelectedPanelIndex = Self.PageBrowse
-		    Self.Browser.Reset()
-		    Return
-		  End If
-		  
-		  // The connection was not succesful
-		  Self.ViewPanel.SelectedPanelIndex = Self.PageGeneral
-		  
-		  Self.ShowAlert("Beacon was unable to discover the server.", "Reason: " + Response.Message)
+		  Self.ServerHostField.Value = CheckedValue.Left(CheckedValue.Length - Matches.SubExpressionString(0).Length)
+		  Self.ServerPortField.Value = Matches.SubExpressionString(1)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_ListPath(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
-		  #Pragma Unused Request
-		  
-		  If Not Response.Success Then
-		    Self.ShowAlert("Unable to list contents of " + Self.Browser.CurrentPath, Response.Message)
-		    Return
+		Private Sub CheckServerActionButton()
+		  Var Enabled As Boolean = Self.ServerHostField.Value.Length > 0 And Val(Self.ServerPortField.Value) > 0 And Self.ServerUserField.Value.Length > 0 And Self.ServerPassField.Value.Length > 0
+		  If Self.ServerActionButton.Enabled <> Enabled Then
+		    Self.ServerActionButton.Enabled = Enabled
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mEngine_Discovered(Sender As Beacon.FTPIntegrationEngine, Data() As Beacon.DiscoveredData)
+		  #Pragma Unused Sender
 		  
-		  Dim Dict As Dictionary = Response.JSON
-		  Dim Files() As Variant = Dict.Value("files")
-		  Dim Children() As String
-		  For Each Child As String In Files
+		  Self.ShouldFinish(Data)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mEngine_FilesListed(Sender As Beacon.FTPIntegrationEngine, Path As String, Files() As Beacon.FTPFileListing)
+		  #Pragma Unused Sender
+		  #Pragma Unused Path
+		  
+		  Self.Browser.Enabled = True
+		  Self.BrowseSpinner.Visible = False
+		  
+		  Var Children() As String
+		  For Each File As Beacon.FTPFileListing In Files
+		    If File.Filename = "." Or File.Filename = ".." Then
+		      Continue
+		    End If
+		    
+		    Var Child As String = File.Filename
+		    If File.IsDirectory Then
+		      Child = Child + "/"
+		    End If
 		    Children.AddRow(Child)
 		  Next
 		  Self.Browser.AppendChildren(Children)
@@ -978,19 +977,18 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub CheckServerActionButton()
-		  Self.ServerActionButton.Enabled = ServerHostField.Value <> "" And Val(ServerPortField.Value) > 0 And ServerUserField.Value <> "" And ServerPassField.Value <> ""
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function FormDataFromProfile() As Dictionary
-		  If Self.mProfile = Nil Then
-		    Return Nil
-		  End If
+		Private Sub mEngine_Wait(Sender As Beacon.FTPIntegrationEngine, Controller As Beacon.TaskWaitController)
+		  #Pragma Unused Sender
 		  
-		  Return Self.mProfile.AsFormData()
-		End Function
+		  Select Case Controller.Action
+		  Case "Locate Game.ini"
+		    // Beacon could not find anything, so we need to show a file browser
+		    Self.mActiveController = Controller
+		    Self.mBrowserRoot = Dictionary(Controller.UserData).Value("Root")
+		    Self.ViewPanel.SelectedPanelIndex = Self.PageBrowse
+		    Self.Browser.Reset()
+		  End Select
+		End Sub
 	#tag EndMethod
 
 
@@ -998,6 +996,18 @@ End
 		Event Open()
 	#tag EndHook
 
+
+	#tag Property, Flags = &h21
+		Private mActiveController As Beacon.TaskWaitController
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBrowserRoot As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEngine As Beacon.FTPIntegrationEngine
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mProfile As Beacon.FTPServerProfile
@@ -1016,10 +1026,22 @@ End
 
 #tag EndWindowCode
 
+#tag Events ServerModeMenu
+	#tag Event
+		Sub Change()
+		  Self.CheckServerActionButton
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ServerHostField
 	#tag Event
 		Sub TextChange()
 		  Self.CheckServerActionButton()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub LostFocus()
+		  Self.CheckHostForPort()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1047,21 +1069,22 @@ End
 #tag Events BrowseActionButton
 	#tag Event
 		Sub Action()
-		  Dim GameIniPath As String = Self.Browser.CurrentPath
-		  Dim Components() As String = GameIniPath.Split("/")
+		  Var GameIniPath As String = Self.Browser.CurrentPath
+		  Var Components() As String = GameIniPath.Split("/")
 		  If Components.LastRowIndex <= 2 Then
 		    Self.ShowAlert("FTP Access Too Restrictive", "Beacon needs to be able to access this server's ""Logs"" folder too, to learn more about the server than the config files can provide. The path to this server's Game.ini does not allow access to other directories needed within Ark's ""Saved"" directory.")
 		    Return
 		  End If
 		  Components.RemoveRowAt(Components.LastRowIndex) // Remove Game.ini
 		  Components.RemoveRowAt(Components.LastRowIndex) // Remove WindowsServer
-		  Components(Components.LastRowIndex) = "" // Remove Config but retain trailing slash
+		  Components.RemoveRowAt(Components.LastRowIndex) // Remove Config
 		  
 		  // Should now equal the "Saved" directory
-		  Dim InitialPath As String = Components.Join("/")
-		  Dim Engines(0) As Beacon.DiscoveryEngine
-		  Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, InitialPath, App.IdentityManager.CurrentIdentity)
-		  Self.ShouldFinish(Engines)
+		  Dictionary(Self.mActiveController.UserData).Value("path") = Components.Join("/")
+		  Self.mActiveController.Cancelled = False
+		  Self.mActiveController.ShouldResume = True
+		  
+		  Self.ViewPanel.SelectedPanelIndex = Self.PageDiscovering
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1075,19 +1098,17 @@ End
 #tag Events Browser
 	#tag Event
 		Sub NeedsChildrenForPath(Path As String)
-		  Dim Fields As Dictionary = Self.FormDataFromProfile()
-		  If Fields = Nil Then
+		  If Self.mEngine = Nil Then
 		    Return
 		  End If
-		  Fields.Value("path") = Path
 		  
-		  // For now, append an empty list
-		  Dim Empty() As String
+		  Self.Browser.Enabled = False
+		  Self.BrowseSpinner.Visible = True
+		  
+		  Var Empty() As String
 		  Me.AppendChildren(Empty)
 		  
-		  Dim Request As New BeaconAPI.Request("ftp", "GET", Fields, WeakAddressOf APICallback_ListPath)
-		  Request.Authenticate(Preferences.OnlineToken)
-		  Self.BrowseSocket.Start(Request)
+		  Self.mEngine.ListFiles(Path)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1106,9 +1127,11 @@ End
 #tag Events ServerActionButton
 	#tag Event
 		Sub Action()
+		  Self.CheckHostForPort()
+		  
 		  Self.mProfile = New Beacon.FTPServerProfile()
 		  Self.mProfile.Host = Self.ServerHostField.Value
-		  Self.mProfile.Port = Val(Self.ServerPortField.Value)
+		  Self.mProfile.Port = CDbl(Self.ServerPortField.Value)
 		  Self.mProfile.Username = Self.ServerUserField.Value
 		  Self.mProfile.Password = Self.ServerPassField.Value
 		  
@@ -1125,24 +1148,26 @@ End
 		  
 		  Self.ViewPanel.SelectedPanelIndex = Self.PageDiscovering
 		  
-		  Dim Fields As Dictionary = Self.FormDataFromProfile()
-		  Dim Request As New BeaconAPI.Request("ftp/path", "GET", Fields, WeakAddressOf APICallback_DetectPath)
-		  Request.Authenticate(Preferences.OnlineToken)
-		  BeaconAPI.Send(Request)
+		  Self.mEngine = New Beacon.FTPIntegrationEngine(Self.mProfile)
+		  AddHandler mEngine.Wait, WeakAddressOf mEngine_Wait
+		  AddHandler mEngine.Discovered, WeakAddressOf mEngine_Discovered
+		  AddHandler mEngine.FilesListed, WeakAddressOf mEngine_FilesListed
+		  Self.mEngine.BeginDiscovery
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events BrowseSocket
+#tag Events StatusWatcher
 	#tag Event
-		Sub WorkCompleted()
-		  Self.Browser.Enabled = True
-		  Self.BrowseSpinner.Visible = False
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub WorkStarted()
-		  Self.Browser.Enabled = False
-		  Self.BrowseSpinner.Visible = True
+		Sub Action()
+		  If Self.ViewPanel.SelectedPanelIndex = Self.PageDiscovering And Self.mEngine <> Nil Then
+		    If Self.mEngine.Errored And Self.mEngine.Finished Then
+		      Var ErrorMessage As String = Self.mEngine.Logs(True)
+		      Self.ShowAlert("There was a problem connecting to the FTP server", ErrorMessage)
+		      Self.ViewPanel.SelectedPanelIndex = Self.PageGeneral
+		    Else
+		      Self.DiscoveringMessage.Value = Self.mEngine.Logs(True)
+		    End If
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

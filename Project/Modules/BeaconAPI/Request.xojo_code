@@ -46,15 +46,15 @@ Protected Class Request
 		    Path = BeaconAPI.URL(Path)
 		  End If
 		  If Path.Length >= 8 And Path.Left(8) <> "https://" Then
-		    Dim Err As New UnsupportedOperationException
+		    Var Err As New UnsupportedOperationException
 		    Err.Reason = "Only https links are supported"
 		    Raise Err
 		  End If
 		  
 		  If Method = "GET" Or ContentType = "application/x-www-form-urlencoded" Then
-		    Dim QueryIndex As Integer = Path.IndexOf("?")
+		    Var QueryIndex As Integer = Path.IndexOf("?")
 		    If QueryIndex <> -1 Then
-		      Dim Query As String = Path.Middle(QueryIndex + 1)
+		      Var Query As String = Path.Middle(QueryIndex + 1)
 		      If Payload <> Nil Then
 		        Payload = Payload + "&" + Query
 		      Else
@@ -157,7 +157,7 @@ Protected Class Request
 
 	#tag Method, Flags = &h0
 		Sub Sign(Identity As Beacon.Identity)
-		  Dim Content As String = Self.mMethod + Encodings.UTF8.Chr(10) + Self.mURL
+		  Var Content As String = Self.mMethod + Encodings.UTF8.Chr(10) + Self.mURL
 		  If Self.mMethod = "GET" Then
 		    If Self.mPayload <> Nil And Self.mPayload.Size > 0 Then
 		      Content = Content + "?"
@@ -166,7 +166,7 @@ Protected Class Request
 		    Content = Content + Encodings.UTF8.Chr(10)
 		  End If
 		  
-		  Dim Payload As MemoryBlock = Content
+		  Var Payload As MemoryBlock = Content
 		  If Self.mPayload <> Nil Then
 		    Payload = Payload + Self.mPayload
 		  End If

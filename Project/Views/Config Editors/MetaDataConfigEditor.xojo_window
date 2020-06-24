@@ -9,7 +9,7 @@ Begin ConfigEditor MetaDataConfigEditor
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   374
+   Height          =   554
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
@@ -115,7 +115,7 @@ Begin ConfigEditor MetaDataConfigEditor
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   104
+      Height          =   182
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -204,7 +204,7 @@ Begin ConfigEditor MetaDataConfigEditor
       GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   2
-      Height          =   120
+      Height          =   190
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -230,11 +230,13 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   170
+      Top             =   248
       Transparent     =   False
+      TypeaheadColumn =   2
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   476
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -268,7 +270,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   170
+      Top             =   248
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -280,7 +282,7 @@ Begin ConfigEditor MetaDataConfigEditor
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      Height          =   86
+      Height          =   156
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -303,7 +305,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   204
+      Top             =   282
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -335,7 +337,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   302
+      Top             =   482
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -368,11 +370,44 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   334
+      Top             =   514
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
+      Width           =   476
+   End
+   Begin CheckBox ConsoleModeCheck
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Caption         =   "Maintain console compatibility"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   132
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   "Document compression can be disabled when the plain text version is needed, such as when storing the file in a version control system."
+      Top             =   450
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      VisualState     =   "0"
       Width           =   476
    End
 End
@@ -382,7 +417,7 @@ End
 	#tag Event
 		Sub RestoreToDefault()
 		  Self.Document.RemoveConfigGroup(BeaconConfigs.Metadata.ConfigName)
-		  Redim Self.Document.Mods(-1)
+		  Self.Document.Mods.ResizeTo(-1)
 		End Sub
 	#tag EndEvent
 
@@ -392,16 +427,17 @@ End
 		  Self.DescriptionArea.Value = Self.Document.Description
 		  Self.UncompressedCheckbox.Value = Not Self.Document.UseCompression
 		  Self.AllowUCSCheckbox.Value = Self.Document.AllowUCS
+		  Self.ConsoleModeCheck.Value = Self.Document.ConsoleMode
 		  
-		  Dim Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
-		  Dim ScrollPosition As Integer = Self.ModsList.ScrollPosition
-		  Dim ListIndex As Integer = Self.ModsList.SelectedRowIndex
+		  Var Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
+		  Var ScrollPosition As Integer = Self.ModsList.ScrollPosition
+		  Var ListIndex As Integer = Self.ModsList.SelectedRowIndex
 		  Self.ModsList.RemoveAllRows()
 		  For Each Details As Beacon.ModDetails In Mods
 		    Self.ModsList.AddRow("", If(Details.ConsoleSafe, "Yes", "No"), Details.Name)
-		    Dim Idx As Integer = Self.ModsList.LastAddedRowIndex
+		    Var Idx As Integer = Self.ModsList.LastAddedRowIndex
 		    Self.ModsList.RowTagAt(Idx) = Details
-		    Self.ModsList.CellCheckBoxValueAt(Idx, Self.ModColumnEnabled) = Self.Document.Mods.LastRowIndex = -1 Or Self.Document.Mods.IndexOf(Details.ModID) > -1
+		    Self.ModsList.CellCheckBoxValueAt(Idx, Self.ModColumnEnabled) = Self.Document.ModEnabled(Details.ModID)
 		  Next
 		  Self.ModsList.Sort
 		  Self.ModsList.ScrollPosition = ScrollPosition
@@ -472,6 +508,7 @@ End
 		Sub Open()
 		  Me.ColumnTypeAt(Self.ModColumnEnabled) = Listbox.CellTypes.CheckBox
 		  Me.ColumnAlignmentAt(Self.ModColumnConsoleSafe) = Listbox.Alignments.Center
+		  Me.TypeaheadColumn = Self.ModColumnName
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -482,27 +519,11 @@ End
 		    Return
 		  End If
 		  
-		  Dim AllChecked As Boolean = True
 		  For I As Integer = 0 To Me.RowCount - 1
-		    If Not Me.CellCheckBoxValueAt(I, Self.ModColumnEnabled) Then
-		      AllChecked = False
-		      Exit For I
-		    End If
+		    Var ModID As String = Beacon.ModDetails(Me.RowTagAt(I)).ModID
+		    Self.Document.ModEnabled(ModID) = Me.CellCheckBoxValueAt(I, Self.ModColumnEnabled)
 		  Next
-		  
-		  If AllChecked Then
-		    Redim Self.Document.Mods(-1)
-		    Self.Changed = True
-		  Else
-		    For I As Integer = 0 To Me.RowCount - 1
-		      If Me.CellCheckBoxValueAt(I, Self.ModColumnEnabled) Then
-		        Self.Document.Mods.Append(Beacon.ModDetails(Me.RowTagAt(I)).ModID)
-		      Else
-		        Self.Document.Mods.Remove(Beacon.ModDetails(Me.RowTagAt(I)).ModID)
-		      End If
-		    Next
-		    Self.Changed = Self.Changed Or Self.Document.Mods.Modified
-		  End If
+		  Self.Changed = Self.Changed Or Self.Document.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -536,7 +557,41 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events ConsoleModeCheck
+	#tag Event
+		Sub Action()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Self.Document.ConsoleMode = Me.Value
+		  Self.Document.Metadata.IsImplicit = False
+		  
+		  If Me.Value Then
+		    For Idx As Integer = 0 To Self.ModsList.LastRowIndex
+		      Var ModInfo As Beacon.ModDetails = Self.ModsList.RowTagAt(Idx)
+		      If ModInfo.ConsoleSafe = False Then
+		        Self.ModsList.CellCheckBoxValueAt(Idx, Self.ModColumnEnabled) = False
+		        Self.Document.ModEnabled(ModInfo.ModID) = False
+		      End If
+		    Next
+		  End If
+		  
+		  Self.Changed = True
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

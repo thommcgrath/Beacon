@@ -12,7 +12,7 @@ Inherits Beacon.ConfigGroup
 		      Engram = Beacon.Engram.CreateFromPath(Path)
 		    End If
 		    
-		    If IsNull(Engram) = False And Engram.ValidForMods(SourceDocument.Mods) Then
+		    If IsNull(Engram) = False And Engram.ValidForDocument(SourceDocument) Then
 		      Var StackSize As Integer = Entry.Value
 		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemMaxQuantity", "(ItemClassString=""" + Engram.ClassString + """,Quantity=(MaxItemQuantity=" + StackSize.ToString + ",bIgnoreMultiplier=true))"))
 		    End If
@@ -26,6 +26,16 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused SourceDocument
 		  
 		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ItemStackSizeMultiplier", Self.mGlobalMultiplier.PrettyText))
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MergeFrom(Other As Beacon.ConfigGroup)
+		  Var Source As BeaconConfigs.StackSizes = BeaconConfigs.StackSizes(Other)
+		  Var Engrams() As Beacon.Engram = Source.Engrams
+		  For Each Engram As Beacon.Engram In Engrams
+		    Self.Override(Engram) = Source.Override(Engram)
+		  Next
 		End Sub
 	#tag EndEvent
 
@@ -120,6 +130,10 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused Difficulty
 		  
+		  If ParsedData.HasAnyKey("ItemStackSizeMultiplier", "ConfigOverrideItemMaxQuantity") = False Then
+		    Return Nil
+		  End If
+		  
 		  Var GlobalMultiplier As Double = ParsedData.DoubleValue("ItemStackSizeMultiplier", 1.0, True)
 		  Var Overrides As New Dictionary
 		  
@@ -154,10 +168,6 @@ Inherits Beacon.ConfigGroup
 		        Overrides.Value(Engram.Path) = StackSize
 		      End If
 		    Next
-		  End If
-		  
-		  If GlobalMultiplier = 1.0 And Overrides.KeyCount = 0 Then
-		    Return Nil
 		  End If
 		  
 		  Var Config As New BeaconConfigs.StackSizes

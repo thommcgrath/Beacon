@@ -38,7 +38,6 @@ Begin LibrarySubview LibraryPaneSearch
       Caption         =   "Search"
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "False"
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -106,7 +105,6 @@ Begin LibrarySubview LibraryPaneSearch
       Width           =   280
    End
    Begin Timer SearchTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -116,13 +114,11 @@ Begin LibrarySubview LibraryPaneSearch
    End
    Begin URLConnection SearchSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
-      ValidateCertificates=   "False"
    End
    Begin ControlCanvas Area
       AcceptFocus     =   False
@@ -131,7 +127,6 @@ Begin LibrarySubview LibraryPaneSearch
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   "True"
       Height          =   218
       HelpTag         =   ""
       Index           =   -2147483648
@@ -176,41 +171,41 @@ End
 	#tag Method, Flags = &h21
 		Private Function DrawResult(G As Graphics, Top As Integer, Dict As Dictionary, Selected As Boolean) As Xojo.Rect
 		  Const FontSizePoints = 14.0
-		  Dim SmallFontSizePoints As Double = FontSizePoints * 0.8
+		  Var SmallFontSizePoints As Double = FontSizePoints * 0.8
 		  
-		  Dim Type As String = Dict.Lookup("type", "")
-		  Dim Title As String = Dict.Lookup("title", "")
-		  Dim Summary As String = Dict.Lookup("summary", "")
+		  Var Type As String = Dict.Lookup("type", "")
+		  Var Title As String = Dict.Lookup("title", "")
+		  Var Summary As String = Dict.Lookup("summary", "")
 		  
 		  G.FontName = "System"
 		  G.FontSize = FontSizePoints
-		  Dim TitleCapHeight As Double = G.CapHeight
-		  Dim TitleWidth As Integer = Ceil(G.TextWidth(Title))
+		  Var TitleCapHeight As Double = G.CapHeight
+		  Var TitleWidth As Integer = Ceil(G.TextWidth(Title))
 		  
 		  G.FontSize = SmallFontSizePoints
-		  Dim TypeCapHeight As Double = G.CapHeight
+		  Var TypeCapHeight As Double = G.CapHeight
 		  
-		  Dim RectHeight As Integer = ((Self.ResultPadding + 1) * 2) + Max(TitleCapHeight, TypeCapHeight)
-		  Dim MaxTextWidth As Integer = G.Width - ((Self.ResultSpacing + Self.ResultPadding + 1) * 2)
+		  Var RectHeight As Integer = ((Self.ResultPadding + 1) * 2) + Max(TitleCapHeight, TypeCapHeight)
+		  Var MaxTextWidth As Integer = G.Width - ((Self.ResultSpacing + Self.ResultPadding + 1) * 2)
 		  If Summary <> "" Then
 		    RectHeight = RectHeight + Self.ResultPadding + G.TextHeight(Summary, MaxTextWidth)
 		  End If
 		  
-		  Dim Rect As New Xojo.Rect(Self.ResultSpacing, Top, G.Width - (Self.ResultSpacing * 2), RectHeight)
-		  Dim TitleLeft As Integer = Rect.Left + 1 + Self.ResultPadding
-		  Dim TypeWidth As Integer = Ceil(G.TextWidth(Type)) + 8
-		  Dim TypeLeft As Integer = Min(TitleLeft + TitleWidth + Self.ResultPadding, (TitleLeft + MaxTextWidth) - TypeWidth)
-		  Dim TitleBaseline As Integer = Rect.Top + 1 + Self.ResultPadding + TitleCapHeight
-		  Dim TypeTop As Integer = TitleBaseline - (TypeCapHeight + 5)
-		  Dim TypeBottom As Integer = TitleBaseline + 5
-		  Dim TypeHeight As Integer = TypeBottom - TypeTop
-		  Dim TitleMaxWidth As Integer = Min(MaxTextWidth, (TypeLeft - (TitleLeft + Self.ResultPadding)))
+		  Var Rect As New Xojo.Rect(Self.ResultSpacing, Top, G.Width - (Self.ResultSpacing * 2), RectHeight)
+		  Var TitleLeft As Integer = Rect.Left + 1 + Self.ResultPadding
+		  Var TypeWidth As Integer = Ceil(G.TextWidth(Type)) + 8
+		  Var TypeLeft As Integer = Min(TitleLeft + TitleWidth + Self.ResultPadding, (TitleLeft + MaxTextWidth) - TypeWidth)
+		  Var TitleBaseline As Integer = Rect.Top + 1 + Self.ResultPadding + TitleCapHeight
+		  Var TypeTop As Integer = TitleBaseline - (TypeCapHeight + 5)
+		  Var TypeBottom As Integer = TitleBaseline + 5
+		  Var TypeHeight As Integer = TypeBottom - TypeTop
+		  Var TitleMaxWidth As Integer = Min(MaxTextWidth, (TypeLeft - (TitleLeft + Self.ResultPadding)))
 		  
 		  If Rect.Bottom < 0 Or Rect.Top > Self.Height Then
 		    Return Rect
 		  End If
 		  
-		  Dim BackgroundColor, TypeFrameColor, TypeTextColor, LinkColor, SummaryColor As Color
+		  Var BackgroundColor, TypeFrameColor, TypeTextColor, LinkColor, SummaryColor As Color
 		  If Selected Then
 		    BackgroundColor = SystemColors.SelectedContentBackgroundColor
 		    TypeFrameColor = SystemColors.AlternateSelectedControlTextColor
@@ -250,15 +245,15 @@ End
 		Private Sub Reset()
 		  Self.mSearchTerms = ""
 		  Self.mScrollPosition = 0
-		  Redim Self.mResultDicts(-1)
-		  Redim Self.mResultRects(-1)
+		  Self.mResultDicts.ResizeTo(-1)
+		  Self.mResultRects.ResizeTo(-1)
 		  Self.Area.Invalidate
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub SelectDict(Dict As Dictionary)
-		  Dim URL As String = Dict.Lookup("url", "")
+		  Var URL As String = Dict.Lookup("url", "")
 		  If URL = "" Then
 		    Self.ShowAlert("Unable to show search result", "Something is wrong, the result has no url.")
 		    Return
@@ -342,7 +337,7 @@ End
 #tag Events SearchTimer
 	#tag Event
 		Sub Action()
-		  Dim Terms As String = Self.SearchField.Value.Trim
+		  Var Terms As String = Self.SearchField.Value.Trim
 		  
 		  If Terms = "" Then
 		    Self.Reset()
@@ -368,14 +363,14 @@ End
 		    Return
 		  End If
 		  
-		  Dim Details As Dictionary
+		  Var Details As Dictionary
 		  Try
 		    Details = Beacon.ParseJSON(Content)
 		  Catch Err As RuntimeException
 		    Return
 		  End Try
 		  
-		  Dim Results() As Variant
+		  Var Results() As Variant
 		  Try
 		    Results = Details.Value("results")
 		    Self.mSearchTerms = Details.Value("terms")
@@ -404,19 +399,19 @@ End
 		      G.DrawText(Self.StringSearchHelp, 10, 20 + G.CapHeight, G.Width - 20, False)
 		    Else
 		      G.Bold = True
-		      Dim CaptionWidth As Integer = Ceil(G.TextWidth(Self.StringNoResults))
-		      Dim CaptionLeft As Integer = (G.Width - CaptionWidth) / 2
-		      Dim CaptionBaseline As Integer = (G.Height / 2) + (G.CapHeight / 2)
+		      Var CaptionWidth As Integer = Ceil(G.TextWidth(Self.StringNoResults))
+		      Var CaptionLeft As Integer = (G.Width - CaptionWidth) / 2
+		      Var CaptionBaseline As Integer = (G.Height / 2) + (G.CapHeight / 2)
 		      G.DrawText(Self.StringNoResults, CaptionLeft, CaptionBaseline, G.Width - 20, True)
 		    End If
 		    Return
 		  End If
 		  
 		  Self.mContentHeight = Self.ResultSpacing
-		  Dim NextTop As Integer = Self.ResultSpacing - Self.mScrollPosition
+		  Var NextTop As Integer = Self.ResultSpacing - Self.mScrollPosition
 		  For I As Integer = 0 To Self.mResultDicts.LastRowIndex
-		    Dim Dict As Dictionary = Self.mResultDicts(I)
-		    Dim Rect As Xojo.Rect = Self.DrawResult(G, NextTop, Dict, Self.mMousePressIndex = I)
+		    Var Dict As Dictionary = Self.mResultDicts(I)
+		    Var Rect As Xojo.Rect = Self.DrawResult(G, NextTop, Dict, Self.mMousePressIndex = I)
 		    If Rect <> Nil Then
 		      Self.mResultRects(I) = Rect
 		      NextTop = Rect.Bottom + Self.ResultSpacing
@@ -432,7 +427,7 @@ End
 		  #Pragma Unused PixelsX
 		  #Pragma Unused WheelData
 		  
-		  Dim ScrollMax As Integer = Max(Self.mContentHeight - Self.Height, 0)
+		  Var ScrollMax As Integer = Max(Self.mContentHeight - Self.Height, 0)
 		  Self.mScrollPosition = Min(Max(Self.mScrollPosition + PixelsY, 0), ScrollMax)
 		  Me.Invalidate()
 		  Return True
@@ -440,7 +435,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  Dim Point As New Xojo.Point(X, Y)
+		  Var Point As New Xojo.Point(X, Y)
 		  
 		  Self.mMouseDownIndex = -1
 		  For I As Integer = 0 To Self.mResultRects.LastRowIndex
@@ -462,8 +457,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim Point As New Xojo.Point(X, Y)
-		  Dim Rect As Xojo.Rect = Self.mResultRects(Self.mMouseDownIndex)
+		  Var Point As New Xojo.Point(X, Y)
+		  Var Rect As Xojo.Rect = Self.mResultRects(Self.mMouseDownIndex)
 		  If Rect.Contains(Point) Then
 		    If Self.mMousePressIndex <> Self.mMouseDownIndex Then
 		      Self.mMousePressIndex = Self.mMouseDownIndex
@@ -483,8 +478,8 @@ End
 		    Return
 		  End If
 		  
-		  Dim Point As New Xojo.Point(X, Y)
-		  Dim Rect As Xojo.Rect = Self.mResultRects(Self.mMouseDownIndex)
+		  Var Point As New Xojo.Point(X, Y)
+		  Var Rect As Xojo.Rect = Self.mResultRects(Self.mMouseDownIndex)
 		  If Rect.Contains(Point) Then
 		    Self.SelectDict(Self.mResultDicts(Self.mMouseDownIndex))
 		  End If
@@ -495,6 +490,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false

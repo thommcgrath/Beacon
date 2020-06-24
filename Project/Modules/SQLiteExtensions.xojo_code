@@ -2,7 +2,7 @@
 Protected Module SQLiteExtensions
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
 		Function UserVersion(Extends Source As iOSSQLiteDatabase) As Integer
-		  Dim Results As iOSSQLiteRecordSet = Source.SQLSelect("PRAGMA user_version;")
+		  Var Results As iOSSQLiteRecordSet = Source.SQLSelect("PRAGMA user_version;")
 		  Return Results.IdxField(0).IntegerValue
 		End Function
 	#tag EndMethod
@@ -15,7 +15,7 @@ Protected Module SQLiteExtensions
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function UserVersion(Extends Source As SQLiteDatabase) As Integer
-		  Dim Results As RowSet = Source.SelectSQL("PRAGMA user_version;")
+		  Var Results As RowSet = Source.SelectSQL("PRAGMA user_version;")
 		  Return Results.ColumnAt(0).IntegerValue
 		End Function
 	#tag EndMethod

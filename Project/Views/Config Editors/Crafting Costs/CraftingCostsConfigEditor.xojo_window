@@ -165,9 +165,11 @@ Begin ConfigEditor CraftingCostsConfigEditor
       TextUnit        =   0
       Top             =   41
       Transparent     =   True
+      TypeaheadColumn =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
+      VisibleRowCount =   0
       Width           =   250
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
@@ -311,10 +313,47 @@ Begin ConfigEditor CraftingCostsConfigEditor
          Width           =   399
       End
    End
+   Begin Thread FibercraftBuilderThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
+   Begin Thread AdjusterThread
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub EnableMenuItems()
+		  Self.EnableEditorMenuItem("CreateFibercraftServer")
+		  Self.EnableEditorMenuItem("AdjustCosts")
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub GetEditorMenuItems(Items() As MenuItem)
+		  Var CreateFibercraftItem As New MenuItem("Setup Fibercraft Server")
+		  CreateFibercraftItem.Name = "CreateFibercraftServer"
+		  CreateFibercraftItem.AutoEnabled = False
+		  Items.AddRow(CreateFibercraftItem)
+		  
+		  Var AdjustCostsItem As New MenuItem("Adjust All Crafting Costs")
+		  AdjustCostsItem.Name = "AdjustCosts"
+		  AdjustCostsItem.AutoEnabled = False
+		  Items.AddRow(AdjustCostsItem)
+		End Sub
+	#tag EndEvent
+
 	#tag Event
 		Sub Open()
 		  Self.MinimumWidth = Self.ListMinWidth + Self.ListSeparator.Width + Self.Editor.MinimumWidth
@@ -322,31 +361,29 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub ParsingFinished(ParsedData As Dictionary)
-		  If ParsedData = Nil Then
-		    Return
+		Function ParsingFinished(Document As Beacon.Document) As Boolean
+		  If Document Is Nil Or Document.HasConfigGroup(BeaconConfigs.CraftingCosts.ConfigName) = False Then
+		    Return True
 		  End If
 		  
-		  Dim OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.Difficulty)
-		  If OtherConfig = Nil Or OtherConfig.LastRowIndex = -1 Then
-		    Return
+		  Var OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts(Document.ConfigGroup(BeaconConfigs.CraftingCosts.ConfigName))
+		  If OtherConfig = Nil Or OtherConfig.Count = 0 Then
+		    Return True
 		  End If
 		  
-		  Dim Config As BeaconConfigs.CraftingCosts = Self.Config(True)
-		  Dim NewCosts() As Beacon.CraftingCost
-		  For I As Integer = 0 To OtherConfig.LastRowIndex
-		    Dim CraftingCost As Beacon.CraftingCost = OtherConfig(I)
-		    Dim Idx As Integer = Config.IndexOf(CraftingCost)
-		    If Idx > -1 Then
-		      Config(Idx) = CraftingCost
-		    Else
-		      Config.Append(CraftingCost)
-		    End If
-		    NewCosts.AddRow(CraftingCost)
+		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(True)
+		  Var NewCosts() As Beacon.CraftingCost
+		  Var NewEngrams() As Beacon.Engram = OtherConfig.Engrams
+		  For Each Engram As Beacon.Engram In NewEngrams
+		    Config.Cost(Engram) = OtherConfig.Cost(Engram)
+		    NewCosts.AddRow(Config.Cost(Engram))
 		  Next
+		  
 		  Self.Changed = True
 		  Self.UpdateList(NewCosts)
-		End Sub
+		  
+		  Return True
+		End Function
 	#tag EndEvent
 
 	#tag Event
@@ -380,7 +417,7 @@ End
 		  End If
 		  
 		  Try
-		    Dim Cost As Beacon.CraftingCost = Issue.UserData
+		    Var Cost As Beacon.CraftingCost = Issue.UserData
 		    If Cost <> Nil Then
 		      Self.UpdateList(Cost)
 		    End If
@@ -391,12 +428,47 @@ End
 	#tag EndEvent
 
 
+	#tag MenuHandler
+		Function AdjustCosts() As Boolean Handles AdjustCosts.Action
+			Self.AdjustCosts()
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function CreateFibercraftServer() As Boolean Handles CreateFibercraftServer.Action
+			Self.CreateFibercraftServer()
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
+
+
+	#tag Method, Flags = &h21
+		Private Sub AdjustCosts()
+		  // We need to adjust the currently defined costs, as well as inject new costs at the adjusted rate
+		  Var Multiplier As Double = AdjustCostDialog.Present(Self)
+		  If Multiplier = 1.0 Then
+		    Return
+		  End If
+		  
+		  If Self.AdjusterThread.ThreadState <> Thread.ThreadStates.NotRunning Then
+		    Return
+		  End If
+		  
+		  Self.mCostMultiplier = Multiplier
+		  Self.mProgressWindow = New ProgressWindow("Calculating new costs")
+		  Self.mProgressWindow.ShowWithin(Self.TrueWindow)
+		  Self.AdjusterThread.Start
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.CraftingCosts
 		  Static ConfigName As String = BeaconConfigs.CraftingCosts.ConfigName
 		  
-		  Dim Document As Beacon.Document = Self.Document
-		  Dim Config As BeaconConfigs.CraftingCosts
+		  Var Document As Beacon.Document = Self.Document
+		  Var Config As BeaconConfigs.CraftingCosts
 		  
 		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
 		    Config = BeaconConfigs.CraftingCosts(Self.mConfigRef.Value)
@@ -423,15 +495,27 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub CreateFibercraftServer()
+		  If Self.FibercraftBuilderThread.ThreadState <> Thread.ThreadStates.NotRunning Then
+		    Return
+		  End If
+		  
+		  Self.mProgressWindow = New ProgressWindow("Setting up fibercraft config")
+		  Self.mProgressWindow.ShowWithin(Self.TrueWindow)
+		  Self.FibercraftBuilderThread.Start
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub SetListWidth(NewSize As Integer)
 		  If Self.Width < Self.MinimumWidth Then
 		    // Don't compute anything
 		    Return
 		  End If
 		  
-		  Dim AvailableSpace As Integer = Self.Width - Self.ListSeparator.Width
-		  Dim ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - CraftingCostEditor.MinimumWidth)
-		  Dim EditorWidth As Integer = AvailableSpace - ListWidth
+		  Var AvailableSpace As Integer = Self.Width - Self.ListSeparator.Width
+		  Var ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - CraftingCostEditor.MinimumWidth)
+		  Var EditorWidth As Integer = AvailableSpace - ListWidth
 		  
 		  Self.Header.Width = ListWidth
 		  Self.HeaderSeparator.Width = ListWidth
@@ -447,27 +531,27 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddEngram()
-		  Dim CurrentEngrams() As Beacon.Engram
-		  Dim Config As BeaconConfigs.CraftingCosts = Self.Config(False)
-		  For I As Integer = 0 To Config.LastRowIndex
-		    If Config(I).Engram = Nil Then
-		      Continue
-		    End If
-		    
-		    CurrentEngrams.AddRow(Config(I).Engram)
-		  Next
+		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
+		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
 		  
-		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, False)
+		  Var WithDefaults As Boolean = True
+		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, EngramSelectorDialog.SelectModes.ImpliedMultiple, WithDefaults)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
 		  Config = Self.Config(True)
 		  
-		  Dim NewCosts() As Beacon.CraftingCost
+		  Var NewCosts() As Beacon.CraftingCost
 		  For Each Engram As Beacon.Engram In NewEngrams
-		    Dim Cost As New Beacon.CraftingCost(Engram)
-		    Config.Append(Cost)
+		    Var Cost As Beacon.CraftingCost
+		    If WithDefaults Then
+		      Cost = LocalData.SharedInstance.GetRecipeForEngram(Engram)
+		    End If
+		    If Cost Is Nil Then
+		      Cost = New Beacon.CraftingCost(Engram)
+		    End If
+		    Config.Add(Cost)
 		    NewCosts.AddRow(Cost)
 		  Next
 		  
@@ -482,29 +566,22 @@ End
 		    Return
 		  End If
 		  
-		  Dim CurrentEngrams() As Beacon.Engram
-		  Dim Config As BeaconConfigs.CraftingCosts = Self.Config(False)
-		  For I As Integer = 0 To Config.LastRowIndex
-		    If Config(I).Engram = Nil Then
-		      Continue
-		    End If
-		    
-		    CurrentEngrams.AddRow(Config(I).Engram)
-		  Next
+		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
+		  Var CurrentEngrams() As Beacon.Engram = Config.Engrams
 		  
-		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, True)
+		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
 		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
 		    Return
 		  End If
 		  
-		  Dim SourceCost As Beacon.CraftingCost = Self.List.RowTagAt(Self.List.SelectedRowIndex)
+		  Var SourceCost As Beacon.CraftingCost = Self.List.RowTagAt(Self.List.SelectedRowIndex)
 		  Config = Self.Config(True)
 		  
-		  Dim NewCosts() As Beacon.CraftingCost
+		  Var NewCosts() As Beacon.CraftingCost
 		  For Each Engram As Beacon.Engram In NewEngrams
-		    Dim Cost As New Beacon.CraftingCost(SourceCost)
+		    Var Cost As New Beacon.CraftingCost(SourceCost)
 		    Cost.Engram = Engram
-		    Config.Append(Cost)
+		    Config.Add(Cost)
 		    NewCosts.AddRow(Cost)
 		  Next
 		  
@@ -515,7 +592,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Dim Arr() As Beacon.CraftingCost
+		  Var Arr() As Beacon.CraftingCost
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.Selected(I) Then
 		      Continue
@@ -529,19 +606,20 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectItems() As Beacon.CraftingCost)
-		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
+		  Var ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.SelectionChangeBlocked = True
 		  
-		  Dim ObjectIDs() As String
+		  Var ObjectIDs() As String
 		  For Each Item As Beacon.CraftingCost In SelectItems
 		    ObjectIDs.AddRow(Item.ObjectID)
 		  Next
 		  
 		  Self.List.RemoveAllRows
-		  Dim Config As BeaconConfigs.CraftingCosts = Self.Config(False)
-		  For I As Integer = 0 To Config.LastRowIndex
-		    Dim Cost As Beacon.CraftingCost = Config(I)
-		    Self.List.AddRow(If(Cost.Engram <> Nil, Cost.Engram.Label, "No Engram Selected"))
+		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
+		  Var Engrams() As Beacon.Engram = Config.Engrams
+		  For I As Integer = 0 To Engrams.LastRowIndex
+		    Var Cost As Beacon.CraftingCost = Config.Cost(Engrams(I))
+		    Self.List.AddRow(Cost.Engram.Label)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Cost
 		    Self.List.Selected(Self.List.LastAddedRowIndex) = ObjectIDs.IndexOf(Cost.ObjectID) > -1
 		  Next
@@ -555,7 +633,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectItem As Beacon.CraftingCost)
-		  Dim Arr() As Beacon.CraftingCost
+		  Var Arr() As Beacon.CraftingCost
 		  If SelectItem <> Nil Then
 		    Arr.AddRow(SelectItem)
 		  End If
@@ -566,10 +644,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStatus()
-		  Dim TotalItems As Integer = Self.List.RowCount
-		  Dim SelectedItems As Integer = Self.List.SelectedRowCount
+		  Var TotalItems As Integer = Self.List.RowCount
+		  Var SelectedItems As Integer = Self.List.SelectedRowCount
 		  
-		  Dim Noun As String = If(TotalItems = 1, "Engram", "Engrams")
+		  Var Noun As String = If(TotalItems = 1, "Engram", "Engrams")
 		  
 		  If SelectedItems > 0 Then
 		    Self.ListStatusBar.Caption = Str(SelectedItems, "-0") + " of " + Str(TotalItems, "-0") + " " + Noun + " Selected"
@@ -582,6 +660,14 @@ End
 
 	#tag Property, Flags = &h21
 		Private mConfigRef As WeakRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCostMultiplier As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProgressWindow As ProgressWindow
 	#tag EndProperty
 
 
@@ -612,10 +698,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Dim AddButton As New BeaconToolbarItem("AddEngram", IconToolbarAdd)
+		  Var AddButton As New BeaconToolbarItem("AddEngram", IconToolbarAdd)
 		  AddButton.HelpTag = "Change the crafting cost for a new item."
 		  
-		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
+		  Var DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
 		  DuplicateButton.HelpTag = "Duplicate the selected crafting override."
 		  
 		  Me.LeftItems.Append(AddButton)
@@ -704,39 +790,63 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Dicts() As Dictionary
+		  Var Dicts() As Dictionary
+		  Var SelectedCosts() As Beacon.CraftingCost
 		  For I As Integer = 0 To Me.RowCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Dim Cost As Beacon.CraftingCost = Me.RowTagAt(I)
+		    Var Cost As Beacon.CraftingCost = Me.RowTagAt(I)
+		    SelectedCosts.AddRow(Cost)
 		    Dicts.AddRow(Cost.Export)
 		  Next
 		  
 		  Board.AddRawData(Beacon.GenerateJSON(Dicts, False), Self.kClipboardType)
+		  
+		  If Not BeaconConfigs.ConfigPurchased(BeaconConfigs.CraftingCosts.ConfigName, App.IdentityManager.CurrentIdentity.OmniVersion) Then
+		    Return
+		  End If
+		  
+		  Var Lines() As String
+		  For Each Cost As Beacon.CraftingCost In SelectedCosts
+		    If Cost.Engram Is Nil Or Cost.Engram.ValidForDocument(Self.Document) = False Then
+		      Continue
+		    End If
+		    
+		    Var Config As Beacon.ConfigValue = BeaconConfigs.CraftingCosts.ConfigValueForCraftingCost(Cost)
+		    If (Config Is Nil) = False Then
+		      Lines.AddRow(Config.Key + "=" + Config.Value)
+		    End If
+		  Next
+		  
+		  If Lines.Count = 0 Then
+		    Return
+		  End If
+		  
+		  Board.Text = Lines.Join(EndOfLine)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
 		  If Board.TextAvailable And Board.Text.IndexOf("ConfigOverrideItemCraftingCosts") > -1 Then
-		    Dim ImportText As String = Board.Text.GuessEncoding
+		    Var ImportText As String = Board.Text.GuessEncoding
 		    Self.Parse(ImportText, "Clipboard")
 		    Return
 		  End If
 		  
 		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Dim Dicts() As Variant
+		    Var Dicts() As Variant
 		    Try
-		      Dim Contents As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
+		      Var Contents As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
 		      Dicts = Beacon.ParseJSON(Contents)
 		      
-		      Dim Costs() As Beacon.CraftingCost
-		      Dim Config As BeaconConfigs.CraftingCosts = Self.Config(True)
+		      Var Costs() As Beacon.CraftingCost
+		      Var Config As BeaconConfigs.CraftingCosts = Self.Config(True)
 		      For Each Dict As Dictionary In Dicts
-		        Dim Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(Dict)
+		        Var Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(Dict)
 		        If Cost <> Nil Then
-		          Config.Append(Cost)
+		          Config.Add(Cost)
 		          Costs.AddRow(Cost)
 		        End If
 		      Next
@@ -749,11 +859,6 @@ End
 		    Return
 		  End If
 		End Sub
-	#tag EndEvent
-	#tag Event
-		Function RowIsInvalid(Row As Integer) As Boolean
-		  Return Not Beacon.CraftingCost(Me.RowTagAt(Row)).IsValid
-		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events Editor
@@ -774,7 +879,157 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
+#tag Events FibercraftBuilderThread
+	#tag Event
+		Sub Run()
+		  Var Fiber As Beacon.Engram = Beacon.Data.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Fibers.PrimalItemResource_Fibers")
+		  
+		  Var Config As BeaconConfigs.CraftingCosts = Self.Config(False)
+		  Var Engrams() As Beacon.Engram = Config.Engrams
+		  Var EngramDict As New Dictionary
+		  For Each Engram As Beacon.Engram In Engrams
+		    If Self.mProgressWindow.CancelPressed Then
+		      Self.mProgressWindow.Close
+		      Self.mProgressWindow = Nil
+		      Return
+		    End If
+		    
+		    EngramDict.Value(Engram.Path) = Engram
+		  Next
+		  
+		  Engrams = Beacon.Data.SearchForEngrams("", Self.Document.Mods, "blueprintable")
+		  For Each Engram As Beacon.Engram In Engrams
+		    If Self.mProgressWindow.CancelPressed Then
+		      Self.mProgressWindow.Close
+		      Self.mProgressWindow = Nil
+		      Return
+		    End If
+		    
+		    EngramDict.Value(Engram.Path) = Engram
+		  Next
+		  
+		  Config = New BeaconConfigs.CraftingCosts
+		  Var NumItems As Integer = EngramDict.KeyCount
+		  Var ProcessedItems As Integer
+		  Self.mProgressWindow.Progress = ProcessedItems / NumItems
+		  For Each Entry As DictionaryEntry In EngramDict
+		    If Self.mProgressWindow.CancelPressed Then
+		      Self.mProgressWindow.Close
+		      Self.mProgressWindow = Nil
+		      Return
+		    End If
+		    
+		    Var Engram As Beacon.Engram = Entry.Value
+		    Var Cost As New Beacon.CraftingCost(Engram)
+		    Cost.Append(Fiber, 1.0, False)
+		    Config.Add(Cost)
+		    ProcessedItems = ProcessedItems + 1
+		    Self.mProgressWindow.Progress = ProcessedItems / NumItems
+		    Self.mProgressWindow.Detail = "Configured " + ProcessedItems.ToString(Locale.Current, "#,##0") + " of " + NumItems.ToString(Locale.Current, "#,##0") + " engrams"
+		  Next
+		  
+		  Self.Document.AddConfigGroup(Config)
+		  Self.mConfigRef = New WeakRef(Config)
+		  
+		  Self.mProgressWindow.Close
+		  Self.mProgressWindow = Nil
+		  
+		  Var NotifyDict As New Dictionary
+		  NotifyDict.Value("Finished") = True
+		  Me.AddUserInterfaceUpdate(NotifyDict)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Dict As Dictionary In Data
+		    If Dict.HasKey("Finished") And Dict.Value("Finished").BooleanValue = True THen
+		      Self.SetupUI()
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AdjusterThread
+	#tag Event
+		Sub UserInterfaceUpdate(data() as Dictionary)
+		  For Each Dict As Dictionary In Data
+		    If Dict.HasKey("Finished") And Dict.Value("Finished").BooleanValue = True THen
+		      Self.SetupUI()
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Run()
+		  Var OriginalConfig As BeaconConfigs.CraftingCosts = Self.Config(False)
+		  Var Engrams() As Beacon.Engram = OriginalConfig.Engrams
+		  Var Filter As New Dictionary
+		  For Each Engram As Beacon.Engram In Engrams
+		    Filter.Value(Engram.Path) = True
+		  Next
+		  
+		  Var Paths() As String = LocalData.SharedInstance.GetPathsWithCraftingCosts(Self.Document.Mods, Self.Document.MapCompatibility)
+		  For Each Path As String In Paths
+		    If Filter.HasKey(Path) Then
+		      Continue
+		    End If
+		    
+		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByPath(Path)
+		    If (Engram Is Nil) = False Then
+		      Engrams.AddRow(Engram)
+		    End If
+		  Next
+		  
+		  Var NumProcessed As Integer
+		  Var ReplacementConfig As New BeaconConfigs.CraftingCosts
+		  For Each Engram As Beacon.Engram In Engrams
+		    If Self.mProgressWindow.CancelPressed Then
+		      Self.mProgressWindow.Close
+		      Self.mProgressWindow = Nil
+		      Return
+		    End If
+		    
+		    NumProcessed = NumProcessed + 1
+		    Var Cost As Beacon.CraftingCost = OriginalConfig.Cost(Engram)
+		    If Cost Is Nil Then
+		      Cost = LocalData.SharedInstance.GetRecipeForEngram(Engram)
+		    End If
+		    
+		    If Cost Is Nil Then
+		      Continue
+		    End If
+		    
+		    For IngredientIdx As Integer = 0 To Cost.LastRowIndex
+		      Cost.Quantity(IngredientIdx) = Ceil(Cost.Quantity(IngredientIdx) * Self.mCostMultiplier)
+		    Next
+		    
+		    ReplacementConfig.Add(Cost)
+		    
+		    Self.mProgressWindow.Progress = NumProcessed / Engrams.Count
+		    Self.mProgressWindow.Detail = "Updated " + Format(NumProcessed, "0,") + " of " + Format(Engrams.Count, "0,")
+		  Next
+		  
+		  Self.Document.AddConfigGroup(ReplacementConfig)
+		  Self.mConfigRef = New WeakRef(ReplacementConfig)
+		  
+		  Self.mProgressWindow.Close
+		  Self.mProgressWindow = Nil
+		  
+		  Var NotifyDict As New Dictionary
+		  NotifyDict.Value("Finished") = True
+		  Me.AddUserInterfaceUpdate(NotifyDict)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
