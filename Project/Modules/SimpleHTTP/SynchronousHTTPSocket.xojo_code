@@ -56,6 +56,25 @@ Inherits URLConnection
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub SendSync(method As String, URL As String, file As FolderItem, timeout As Integer = 0)
+		  // Don't call this method
+		  #Pragma Unused Method
+		  #Pragma Unused URL
+		  #Pragma Unused File
+		  #Pragma Unused Timeout
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SendSync(method As String, URL As String, timeout As Integer = 0) As String
+		  // Don't call this method
+		  #Pragma Unused Method
+		  #Pragma Unused URL
+		  #Pragma Unused Timeout
+		End Function
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event Error(err as RuntimeException)

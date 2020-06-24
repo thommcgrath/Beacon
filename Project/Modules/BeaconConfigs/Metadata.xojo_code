@@ -122,6 +122,7 @@ Implements ObservationKit.Observable
 		  ArkData = ArkData.ReplaceAll("\n", EndOfLine.UNIX)
 		  ArkData = HTMLDecode(ArkData)
 		  
+		  Var NewLine As Boolean = True
 		  Var Offset As Integer = 0
 		  Var Styles As New StyledText
 		  While True
@@ -134,9 +135,13 @@ Implements ObservationKit.Observable
 		    End If
 		    
 		    If Pos > Offset Then
-		      Var Run As New StyleRun(ArkData.Middle(Offset, Pos - Offset))
+		      Var Unstyled As String = ArkData.Middle(Offset, Pos - Offset)
+		      Var Run As New StyleRun(Unstyled)
 		      Run.TextColor = &cFFFFFF00
 		      Styles.AddStyleRun(Run)
+		      If Unstyled.IndexOf(EndOfLine.UNIX) > -1 Then
+		        NewLine = True
+		      End If
 		    End If
 		    
 		    Var EndPos As Integer = ArkData.IndexOf(Offset, "</>") + 3
@@ -158,13 +163,20 @@ Implements ObservationKit.Observable
 		      Var BlueAmount As Integer = Round(255 * ColorParts(2).Trim.ToDouble)
 		      Var AlphaAmount As Integer = 255 - Round(255 * ColorParts(3).Trim.ToDouble)
 		      
-		      Var Space As New StyleRun(" ")
-		      Space.TextColor = &CFFFFFF
-		      Styles.AddStyleRun(Space)
+		      If NewLine Then
+		        Var Space As New StyleRun(" ")
+		        Space.TextColor = &CFFFFFF
+		        Styles.AddStyleRun(Space)
+		        NewLine = False
+		      End If
 		      
 		      Var Run As New StyleRun(Chunk)
 		      Run.TextColor = Color.RGB(RedAmount, GreenAmount, BlueAmount, AlphaAmount)
 		      Styles.AddStyleRun(Run)
+		      
+		      If Chunk.IndexOf(EndOfLine.UNIX) > -1 Then
+		        NewLine = True
+		      End If
 		    End If
 		    
 		    Offset = EndPos
@@ -568,8 +580,6 @@ Implements ObservationKit.Observable
 		    If Body.IsEmpty Then
 		      Continue
 		    End If
-		    Body = HTMLEncode(Body)
-		    Body = Body.ReplaceAll("/", "&#47;") // For some reason Ark gets confused with slashes
 		    
 		    If Run.TextColor.IsWhite = False And WhitespaceMatcher.Search(Body) Is Nil Then
 		      Var RedAmount As Double = Run.TextColor.Red / 255
@@ -590,16 +600,24 @@ Implements ObservationKit.Observable
 		        End If
 		      Next
 		      
-		      Body = Pieces.Join("\n")
+		      Body = Pieces.Join(EndOfLine)
 		    End If
 		    
 		    Parts.AddRow(Body)
 		  Next
 		  
-		  Var Message As String = Parts.Join("")
-		  Message = Message.ReplaceLineEndings("\n")
+		  // The first <RichColor> on each line gets replaced with a space. Whatever Ark...
+		  // So we need one more split on EndOfLine
+		  Parts = Parts.Join("").Split(EndOfLine)
+		  For Idx As Integer = 0 To Parts.LastRowIndex
+		    Var Pos As Integer = Parts(Idx).IndexOf("<RichColor")
+		    If Pos > 0 And Parts(Idx).Middle(Pos - 1, 1) = " " Then
+		      Parts(Idx) = Parts(Idx).Left(Pos - 1) + Parts(Idx).Middle(Pos)
+		    End If
+		  Next
+		  
+		  Var Message As String = Parts.Join("\n")
 		  Message = Message.ReplaceAll("""", "\""")
-		  Message = Message.ReplaceAll(" <RichColor", "<RichColor") // Because the <RichColor> tag ends up being treated as a space.
 		  
 		  // Move whitespace from the end of a color tag to outside it
 		  Var Cleaner As New Regex
