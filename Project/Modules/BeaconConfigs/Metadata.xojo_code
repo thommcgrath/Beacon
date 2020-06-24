@@ -119,6 +119,7 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  ArkData = ArkData.ReplaceAll("\""", """")
+		  ArkData = ArkData.ReplaceAll("\/","/")
 		  ArkData = ArkData.ReplaceAll("\n", EndOfLine.UNIX)
 		  ArkData = HTMLDecode(ArkData)
 		  
@@ -569,7 +570,7 @@ Implements ObservationKit.Observable
 		      Continue
 		    End If
 		    Body = HTMLEncode(Body)
-		    Body = Body.ReplaceAll("/", "&#47;") // For some reason Ark gets confused with slashes
+		    Body = Body.ReplaceAll("/", "\/") // Ark treats slashes as tag closing markup, despite not being in a tag.
 		    
 		    If Run.TextColor.IsWhite = False And WhitespaceMatcher.Search(Body) Is Nil Then
 		      Var RedAmount As Double = Run.TextColor.Red / 255

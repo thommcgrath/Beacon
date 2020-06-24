@@ -33,7 +33,7 @@ Protected Module Tests
 
 	#tag Method, Flags = &h21
 		Private Sub TestArkML()
-		  Var InputString As String = """This is a &quot;string&quot; with characters &amp; &lt;stuff&gt; like &#127817; that\nneeds to be encoded."""
+		  Var InputString As String = """This is a &quot;string&quot; with characters &amp; &lt;stuff&gt; like &#127817; and https:\/\/discord.gg\/invite that\nneeds to be encoded."""
 		  
 		  Var RTFString As String = BeaconConfigs.Metadata.ArkMLToRTF(InputString)
 		  Var ArkMLString As String = BeaconConfigs.Metadata.RTFToArkML(RTFString)
