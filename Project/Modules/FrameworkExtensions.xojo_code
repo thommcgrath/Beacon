@@ -340,14 +340,14 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NearestMultiple(Original As Double, Factor As Double) As Double
-		  Var Whole As Integer = Floor(Original)
-		  If Whole = Original Then
-		    Return Original
+		Function NearestMultiple(Value As Double, Factor As Double) As Double
+		  // If this is already a whole number, there's no reason for more math.
+		  Var Whole As Integer = Floor(Value)
+		  If Whole = Value Then
+		    Return Value
 		  End If
 		  
-		  Var Multiplier As Double = 1 / Factor
-		  Return Round(Original * Multiplier) / Multiplier
+		  Return Round(Value * Factor) / Factor
 		End Function
 	#tag EndMethod
 
@@ -466,6 +466,16 @@ Protected Module FrameworkExtensions
 		  
 		  Source.Constructor(Year, Month, Day, Hour, Minute, Second, Nanosecond, New TimeZone(Offset))
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Sum(Extends Values() As Double, ValueBetween As Double = 0) As Double
+		  Var Total As Double
+		  For Each Value As Double In Values
+		    Total = Total + Value
+		  Next
+		  Return Total + (ValueBetween * (Values.Count - 1))
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
