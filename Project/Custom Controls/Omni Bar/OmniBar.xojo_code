@@ -2,13 +2,117 @@
 Protected Class OmniBar
 Inherits ControlCanvas
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  #Pragma Unused Areas
+		Sub Activate()
+		  Self.Invalidate
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Deactivate()
+		  Self.Invalidate
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function MouseDown(X As Integer, Y As Integer) As Boolean
+		  Self.mMouseDown = True
+		  Self.mMousePoint = New Point(X, Y)
+		  Self.mMouseDownPoint = New Point(X, Y)
+		  Self.mMouseDownIndex = Self.IndexAtPoint(Self.mMouseDownPoint)
+		  Self.mMouseOverIndex = Self.mMouseDownIndex
+		  Self.Invalidate
+		  Return True
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub MouseDrag(X As Integer, Y As Integer)
+		  If Not Self.mMouseDown Then
+		    Return
+		  End If
 		  
+		  Self.mMousePoint = New Point(X, Y)
+		  
+		  Var Idx As Integer = Self.IndexAtPoint(Self.mMousePoint)
+		  If Idx <> Self.mMouseOverIndex Then
+		    Self.mMouseOverIndex = Idx
+		    Self.Invalidate
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MouseEnter()
+		  If Self.mMouseDown Then
+		    Return
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MouseExit()
+		  If Self.mMouseDown Then
+		    Return
+		  End If
+		  
+		  Self.mMousePoint = Nil
+		  
+		  If Self.mMouseOverIndex <> -1 Then
+		    Self.mMouseOverIndex = -1
+		    Self.Invalidate
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MouseMove(X As Integer, Y As Integer)
+		  If Self.mMouseDown Then
+		    Return
+		  End If
+		  
+		  Self.mMousePoint = New Point(X, Y)
+		  Var OldIndex As Integer = Self.mMouseOverIndex
+		  Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)
+		  
+		  If OldIndex > -1 And Self.mMouseOverIndex <> OldIndex Then
+		    Var OldRect As Rect = Self.mItemRects(OldIndex)
+		    Self.Invalidate(OldRect.Left, OldRect.Top, OldRect.Width, OldRect.Height)
+		  End If
+		  
+		  If Self.mMouseOverIndex > -1 Then
+		    Var OverRect As Rect = Self.mItemRects(Self.mMouseOverIndex)
+		    Self.Invalidate(OverRect.Left, OverRect.Top, OverRect.Width, OverRect.Height)
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MouseUp(X As Integer, Y As Integer)
+		  If Not Self.mMouseDown Then
+		    Return
+		  End If
+		  
+		  Self.mMousePoint = New Point(X, Y)
+		  
+		  If Self.mMouseDownIndex > -1 And Self.IndexAtPoint(Self.mMousePoint) = Self.mMouseDownIndex Then
+		    RaiseEvent ItemPressed(Self.mItems(Self.mMouseDownIndex))
+		  End If
+		  
+		  Self.mMouseDown = False
+		  Self.mMouseDownIndex = -1
+		  
+		  Self.Invalidate
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  // First, compute the rectangles for each item. It's ok to assume left alignment here,
 		  // as we'll apply an offset later.
 		  
-		  Var NextPos As Double = Self.ItemSpacing
+		  Var Highlighted As Boolean = Self.Highlighted
+		  
+		  Var NextPos As Double = If(Self.LeftPadding = -1, Self.ItemSpacing, Self.LeftPadding)
 		  Var Rects() As Rect
 		  Rects.ResizeTo(Self.mItems.LastRowIndex)
 		  For Idx As Integer = 0 To Self.mItems.LastRowIndex
@@ -19,6 +123,7 @@ Inherits ControlCanvas
 		    
 		    Var Segments() As Double
 		    If Item.Caption.IsEmpty = False Then
+		      G.Bold = Item.Toggled
 		      Segments.AddRow(G.TextWidth(Item.Caption))
 		    End If
 		    If (Item.Icon Is Nil) = False Then
@@ -28,34 +133,266 @@ Inherits ControlCanvas
 		      Segments.AddRow(Self.CloseIconSize)
 		    End If
 		    
-		    Var ItemWidth As Double = NearestMultiple(Segments.Sum(8), G.ScaleX)
+		    Var ItemWidth As Double = NearestMultiple(Segments.Sum(Self.ElementSpacing), 1.0) // Yes, round to nearest whole
 		    Rects(Idx) = New Rect(NextPos, 0, ItemWidth, G.Height)
 		    If ItemWidth > 0 Then
 		      NextPos = NextPos + ItemWidth + Self.ItemSpacing
 		    End If
 		  Next
+		  Self.mItemRects = Rects
+		  G.Bold = False
 		  
 		  G.ClearRectangle(0, 0, G.Width, G.Height)
 		  G.DrawingColor = SystemColors.ControlBackgroundColor
 		  G.FillRectangle(0, 0, G.Width, G.Height)
 		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.FillRectangle(0, G.Height - 1, G.Width, 1)
+		  
+		  For Idx As Integer = 0 To Self.mItems.LastRowIndex
+		    Var Item As OmniBarItem = Self.mItems(Idx)
+		    Var ItemRect As Rect = Rects(Idx)
+		    If Item Is Nil Or ItemRect Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var ShouldDraw As Boolean
+		    If Areas.LastRowIndex = -1 Then
+		      ShouldDraw = True
+		    Else
+		      For Each Area As Rect In Areas
+		        If Area.Intersects(ItemRect) Then
+		          ShouldDraw = True
+		        End If
+		      Next
+		    End If
+		    If Not ShouldDraw Then
+		      Continue
+		    End If
+		    
+		    Var State As Integer
+		    If Self.mMouseDown And Self.mMouseOverIndex = Idx Then
+		      // Pressed
+		      State = Self.StatePressed
+		    ElseIf Self.mMouseOverIndex = Idx Then
+		      // Hover
+		      State = Self.StateHover
+		    Else
+		      // Normal
+		      State = Self.StateNormal
+		    End If
+		    
+		    Var LocalPoint As Point
+		    If (Self.mMousePoint Is Nil) = False Then
+		      LocalPoint = ItemRect.LocalPoint(Self.mMousePoint)
+		    End If
+		    
+		    Var Clip As Graphics = G.Clip(ItemRect.Left, ItemRect.Top, ItemRect.Width, ItemRect.Height)
+		    Self.DrawItem(Clip, Item, Highlighted, State, LocalPoint)
+		  Next
 		End Sub
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h21
+		Private Shared Function ActiveColorToColor(Value As OmniBarItem.ActiveColors) As Color
+		  Select Case Value
+		  Case OmniBarItem.ActiveColors.Blue
+		    Return SystemColors.SystemBlueColor
+		  Case OmniBarItem.ActiveColors.Brown
+		    Return SystemColors.SystemBrownColor
+		  Case OmniBarItem.ActiveColors.Gray
+		    Return SystemColors.SystemGrayColor
+		  Case OmniBarItem.ActiveColors.Green
+		    Return SystemColors.SystemGreenColor
+		  Case OmniBarItem.ActiveColors.Orange
+		    Return SystemColors.SystemOrangeColor
+		  Case OmniBarItem.ActiveColors.Pink
+		    Return SystemColors.SystemPinkColor
+		  Case OmniBarItem.ActiveColors.Purple
+		    Return SystemColors.SystemPurpleColor
+		  Case OmniBarItem.ActiveColors.Red
+		    Return SystemColors.SystemRedColor
+		  Case OmniBarItem.ActiveColors.Yellow
+		    Return SystemColors.SystemYellowColor
+		  Else
+		    Return SystemColors.ControlAccentColor
+		  End Select
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
-		Sub Append(Item As OmniBarItem)
-		  If (Item Is Nil) = False And Self.IndexOf(Item) = -1 Then
-		    Self.mItems.AddRow(Item)
-		    Self.Invalidate
-		  End If
+		Sub Append(ParamArray Items() As OmniBarItem)
+		  For Each Item As OmniBarItem In Items
+		    If (Item Is Nil) = False And Self.IndexOf(Item) = -1 Then
+		      Self.mItems.AddRow(Item)
+		      Self.Invalidate
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
 		  Return Self.mItems.Count
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DrawItem(G As Graphics, Item As OmniBarItem, Highlighted As Boolean, State As Integer, LocalMousePoint As Point)
+		  Var HasIcon As Boolean = (Item.Icon Is Nil) = False
+		  Var HasCaption As Boolean = Item.Caption.IsEmpty = False
+		  If HasIcon = False And HasCaption = False Then
+		    // There's nothing here to draw
+		    Return
+		  End If
+		  
+		  If Item.Toggled Then
+		    G.ClearRectangle(0, G.Height - 2, G.Width, 2)
+		    If Highlighted Then
+		      G.DrawingColor = Self.ActiveColorToColor(Item.ActiveColor)
+		    Else
+		      G.DrawingColor = SystemColors.SeparatorColor
+		    End If
+		    G.DrawRectangle(0, G.Height - 2, G.Width, 2)
+		  End If
+		  
+		  If HasIcon = True And HasCaption = False Then
+		    // Draw as button
+		    Self.DrawItemAsButton(G, Item, Highlighted, State)
+		    Return
+		  End If
+		  
+		  // Find the color we'll be using
+		  Var ForeColor As Color
+		  If Highlighted Then
+		    If Item.Toggled Or Item.AlwaysUseActiveColor Then
+		      ForeColor = Self.ActiveColorToColor(Item.ActiveColor)
+		    ElseIf State = Self.StateHover Then
+		      ForeColor = SystemColors.LabelColor
+		    Else
+		      ForeColor = SystemColors.SecondaryLabelColor
+		    End If
+		  Else
+		    ForeColor = SystemColors.SecondaryLabelColor
+		  End If
+		  
+		  Var OriginalForeColor As Color = ForeColor
+		  If State = Self.StatePressed Then
+		    ForeColor = ForeColor.Darker(0.5)
+		  End If
+		  
+		  // Draw as text, with an icon to the left if available.
+		  // Accessory comes first, as it may change the hover and pressed appearances
+		  
+		  Var AccessoryImage As Picture
+		  Var AccessoryRect As New Rect(G.Width - Self.IconSize, NearestMultiple((G.Height - Self.IconSize) / 2, G.ScaleY), Self.IconSize, Self.IconSize)
+		  Var AccessoryColor As Color
+		  If Item.CanBeClosed And (State = Self.StateHover Or State = Self.StatePressed) Then
+		    Var AccessoryState As Integer = State
+		    If (LocalMousePoint Is Nil) = False And AccessoryRect.Contains(LocalMousePoint) Then
+		      G.DrawingColor = SystemColors.QuaternaryLabelColor
+		      G.FillRoundRectangle(AccessoryRect.Left, AccessoryRect.Top, AccessoryRect.Width, AccessoryRect.Height, 6, 6)
+		      State = Self.StateNormal
+		      ForeColor = OriginalForeColor
+		    End If
+		    
+		    G.DrawPicture(BeaconUI.IconWithColor(IconClose, SystemColors.TertiaryLabelColor), AccessoryRect.Left, AccessoryRect.Top, AccessoryRect.Width, AccessoryRect.Height, 0, 0, IconClose.Width, IconClose.Height)
+		    
+		    If AccessoryState = Self.StatePressed Then
+		      If (LocalMousePoint Is Nil) = False And AccessoryRect.Contains(LocalMousePoint) Then
+		        G.DrawingColor = &C00000090
+		        G.FillRoundRectangle(AccessoryRect.Left, AccessoryRect.Top, AccessoryRect.Width, AccessoryRect.Height, 6, 6)
+		      Else
+		        G.DrawPicture(BeaconUI.IconWithColor(IconClose, &C00000090), AccessoryRect.Left, AccessoryRect.Top, AccessoryRect.Width, AccessoryRect.Height, 0, 0, IconClose.Width, IconClose.Height)
+		      End If
+		    End If
+		  ElseIf Item.HasUnsavedChanges Then
+		    AccessoryColor = ForeColor
+		    AccessoryImage = IconModified
+		  End If
+		  If (AccessoryImage Is Nil) = False Then
+		    AccessoryImage = BeaconUI.IconWithColor(AccessoryImage, AccessoryColor)
+		    G.DrawPicture(AccessoryImage, AccessoryRect.Left, AccessoryRect.Top, AccessoryRect.Width, AccessoryRect.Height, 0, 0, AccessoryImage.Width, AccessoryImage.Height)
+		  End If
+		  
+		  Var CaptionLeft As Double = 0
+		  If HasIcon = True Then
+		    CaptionLeft = Self.IconSize + Self.ElementSpacing
+		    
+		    Var IconTop As Double = NearestMultiple((G.Height - Self.IconSize) / 2, G.ScaleY)
+		    Var Icon As Picture = BeaconUI.IconWithColor(Item.Icon, Forecolor)
+		    G.DrawPicture(Icon, 0, IconTop, Self.IconSize, Self.IconSize, 0, 0, Icon.Width, Icon.Height)
+		  End If
+		  
+		  If Item.Toggled Then
+		    G.Bold = True
+		  End If
+		  
+		  Var CaptionWidth As Double = G.TextWidth(Item.Caption)
+		  Var CaptionBaseline As Double = NearestMultiple((G.Height / 2) + (G.CapHeight / 2), G.ScaleY)
+		  Var AccessoryLeft As Double = NearestMultiple(CaptionLeft + CaptionWidth + Self.ElementSpacing, G.ScaleX)
+		  G.DrawingColor = ForeColor
+		  G.DrawText(Item.Caption, CaptionLeft, CaptionBaseline)
+		  G.Bold = False
+		  
+		  #if false
+		    Var AccessoryImage As Picture
+		    If State = Self.StateHover Or State = Self.StatePressed Then
+		      If Item.CanBeClosed Then
+		        AccessoryImage = IconClose
+		      ElseIf Item.HasUnsavedChanges Then
+		        AccessoryImage = IconModified
+		      End If
+		    Else
+		      If Item.HasUnsavedChanges Then
+		        AccessoryImage = IconModified
+		      ElseIf Item.CanBeClosed Then
+		        AccessoryImage = IconClose
+		      End If
+		    End If
+		    If (AccessoryImage Is Nil) = False Then
+		      Var AccessoryTop As Double = NearestMultiple((G.Height - Self.IconSize) / 2, G.ScaleY)
+		      AccessoryRect = New Rect(AccessoryLeft, AccessoryTop, Self.IconSize, Self.IconSize)
+		      
+		      AccessoryImage = BeaconUI.IconWithColor(AccessoryImage, ForeColor)
+		      
+		      If (LocalMousePoint Is Nil) = False And AccessoryRect.Contains(LocalMousePoint) And Item.CanBeClosed Then
+		        // Mouse is over the close button
+		        If State = Self.StateHover Then
+		          G.DrawingColor = SystemColors.QuaternaryLabelColor
+		          G.FillRoundRectangle(AccessoryRect.Left, AccessoryRect.Top, AccessoryRect.Width, AccessoryRect.Height, 6, 6)
+		        End If
+		      End If
+		      
+		      G.DrawPicture(AccessoryImage, AccessoryRect.Left, AccessoryRect.Top, AccessoryRect.Width, AccessoryRect.Height, 0, 0, AccessoryImage.Width, AccessoryImage.Height)
+		    End If
+		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DrawItemAsButton(G As Graphics, Item As OmniBarItem, Highlighted As Boolean, State As Integer)
+		  If Highlighted And State = Self.StateHover Then
+		    // Draw a little box behind the icon
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function IndexAtPoint(X As Integer, Y As Integer) As Integer
+		  Return Self.IndexAtPoint(New Point(X, Y))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function IndexAtPoint(Point As Point) As Integer
+		  For Idx As Integer = 0 To Self.mItemRects.LastRowIndex
+		    If (Self.mItemRects(Idx) Is Nil) = False And Self.mItemRects(Idx).Contains(Point) Then
+		      Return Idx
+		    End If
+		  Next
+		  Return -1
+		  
 		End Function
 	#tag EndMethod
 
@@ -156,6 +493,11 @@ Inherits ControlCanvas
 	#tag EndMethod
 
 
+	#tag Hook, Flags = &h0
+		Event ItemPressed(Item As OmniBarItem)
+	#tag EndHook
+
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -173,13 +515,79 @@ Inherits ControlCanvas
 		Alignment As Integer
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mLeftPadding
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mLeftPadding <> Value Then
+			    Self.mLeftPadding = Value
+			    Self.Invalidate
+			  End If
+			End Set
+		#tag EndSetter
+		LeftPadding As Integer
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mAlignment As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mItemRects() As Rect
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mItems() As OmniBarItem
 	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLeftPadding As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMouseDown As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMouseDownIndex As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMouseDownPoint As Point
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMouseOverIndex As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMousePoint As Point
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRightPadding As Integer
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mRightPadding
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mRightPadding <> Value Then
+			    Self.mRightPadding = Value
+			    Self.Invalidate
+			  End If
+			End Set
+		#tag EndSetter
+		RightPadding As Integer
+	#tag EndComputedProperty
 
 
 	#tag Constant, Name = AlignCenter, Type = Double, Dynamic = False, Default = \"1", Scope = Public
@@ -194,89 +602,29 @@ Inherits ControlCanvas
 	#tag Constant, Name = CloseIconSize, Type = Double, Dynamic = False, Default = \"16", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = ElementSpacing, Type = Double, Dynamic = False, Default = \"8", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = FirstRowIndex, Type = Double, Dynamic = False, Default = \"0", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = IconSize, Type = Double, Dynamic = False, Default = \"16", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ItemSpacing, Type = Double, Dynamic = False, Default = \"30", Scope = Private
+	#tag Constant, Name = ItemSpacing, Type = Double, Dynamic = False, Default = \"20", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StateHover, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StateNormal, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatePressed, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=false
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Tooltip"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowAutoDeactivate"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowFocusRing"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowFocus"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AllowTabs"
-			Visible=true
-			Group="Behavior"
-			InitialValue=""
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Backdrop"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="Picture"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Enabled"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Height"
-			Visible=true
-			Group="Position"
-			InitialValue="100"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -286,11 +634,27 @@ Inherits ControlCanvas
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="InitialParent"
-			Visible=false
-			Group=""
+			Name="Name"
+			Visible=true
+			Group="ID"
 			InitialValue=""
 			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Height"
+			Visible=true
+			Group="Position"
+			InitialValue="100"
+			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -334,32 +698,8 @@ Inherits ControlCanvas
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Name"
-			Visible=true
-			Group="ID"
-			InitialValue=""
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Super"
-			Visible=true
-			Group="ID"
-			InitialValue=""
-			Type="String"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="TabIndex"
 			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TabPanelIndex"
-			Visible=false
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
@@ -382,9 +722,49 @@ Inherits ControlCanvas
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Transparent"
+			Name="Width"
 			Visible=true
-			Group="Behavior"
+			Group="Position"
+			InitialValue="100"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Tooltip"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowAutoDeactivate"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowFocusRing"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Backdrop"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="Picture"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Enabled"
+			Visible=true
+			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
 			EditorType=""
@@ -398,11 +778,27 @@ Inherits ControlCanvas
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Width"
+			Name="AllowFocus"
 			Visible=true
-			Group="Position"
-			InitialValue="100"
-			Type="Integer"
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AllowTabs"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Transparent"
+			Visible=true
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -410,6 +806,59 @@ Inherits ControlCanvas
 			Visible=false
 			Group="Behavior"
 			InitialValue="20"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Alignment"
+			Visible=true
+			Group="Behavior"
+			InitialValue="0"
+			Type="Integer"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Left"
+				"1 - Center"
+				"2 - Right"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LeftPadding"
+			Visible=true
+			Group="Behavior"
+			InitialValue="-1"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RightPadding"
+			Visible=true
+			Group="Behavior"
+			InitialValue="-1"
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DoubleBuffer"
+			Visible=false
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="InitialParent"
+			Visible=false
+			Group=""
+			InitialValue=""
+			Type="String"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabPanelIndex"
+			Visible=false
+			Group="Position"
+			InitialValue="0"
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

@@ -16,6 +16,16 @@ Protected Class OmniBarItem
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Operator_Compare(Other As OmniBarItem) As Integer
+		  If Other Is Nil Then
+		    Return 1
+		  End If
+		  
+		  Return Self.mName.Compare(Other.mName, ComparisonOptions.CaseSensitive)
+		End Function
+	#tag EndMethod
+
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -95,6 +105,22 @@ Protected Class OmniBarItem
 			End Set
 		#tag EndSetter
 		Enabled As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mHasMenu
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mHasMenu <> Value Then
+			    Self.mHasMenu = Value
+			  End If
+			End Set
+		#tag EndSetter
+		HasMenu As Boolean
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -180,6 +206,10 @@ Protected Class OmniBarItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mHasMenu As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mHasProgressIndicator As Boolean
 	#tag EndProperty
 
@@ -201,6 +231,10 @@ Protected Class OmniBarItem
 
 	#tag Property, Flags = &h21
 		Private mProgress As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mToggled As Boolean
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -226,6 +260,22 @@ Protected Class OmniBarItem
 			End Set
 		#tag EndSetter
 		Progress As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mToggled
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mToggled <> Value Then
+			    Self.mToggled = Value
+			  End If
+			End Set
+		#tag EndSetter
+		Toggled As Boolean
 	#tag EndComputedProperty
 
 
@@ -294,6 +344,106 @@ Protected Class OmniBarItem
 			Group="Behavior"
 			InitialValue=""
 			Type="OmniBarItem.ActiveColors"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Accent"
+				"1 - Blue"
+				"2 - Brown"
+				"3 - Gray"
+				"4 - Green"
+				"5 - Orange"
+				"6 - Pink"
+				"7 - Purple"
+				"8 - Red"
+				"9 - Yellow"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AlwaysUseActiveColor"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="CanBeClosed"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Caption"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Enabled"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HasProgressIndicator"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HasUnsavedChanges"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HelpTag"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Icon"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Picture"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Progress"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HasMenu"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Toggled"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

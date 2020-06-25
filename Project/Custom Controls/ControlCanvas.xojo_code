@@ -85,6 +85,18 @@ Inherits Canvas
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h1
+		Protected Function Highlighted() As Boolean
+		  Var Highlighted As Boolean = True
+		  #if TargetCocoa And BeaconUI.ToolbarHasBackground = False
+		    Declare Function IsMainWindow Lib "Cocoa.framework" Selector "isMainWindow" (Target As Integer) As Boolean
+		    Declare Function IsKeyWindow Lib "Cocoa.framework" Selector "isKeyWindow" (Target As Integer) As Boolean
+		    Highlighted = IsKeyWindow(Self.TrueWindow.Handle) Or IsMainWindow(Self.TrueWindow.Handle)
+		  #endif
+		  Return Highlighted
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Invalidate(eraseBackground As Boolean = True)
 		  #if XojoVersion >= 2018.01

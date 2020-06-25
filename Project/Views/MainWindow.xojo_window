@@ -51,7 +51,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   0
+      Top             =   60
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
@@ -61,7 +61,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    Begin PagePanel Views
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   375
+      Height          =   315
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -76,7 +76,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      Top             =   25
+      Top             =   85
       Transparent     =   False
       Value           =   0
       Visible         =   True
@@ -91,7 +91,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   375
+         Height          =   315
          HelpTag         =   ""
          InitialParent   =   "Views"
          Left            =   41
@@ -109,11 +109,42 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          TabStop         =   True
          ToolbarCaption  =   ""
          ToolbarIcon     =   0
-         Top             =   25
+         Top             =   85
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
          Width           =   759
+         Begin OmniBar OmniBar1
+            Alignment       =   0
+            AllowAutoDeactivate=   True
+            AllowFocus      =   False
+            AllowFocusRing  =   True
+            AllowTabs       =   False
+            Backdrop        =   0
+            DoubleBuffer    =   False
+            Enabled         =   True
+            Height          =   41
+            Index           =   -2147483648
+            InitialParent   =   "DashboardPane1"
+            Left            =   61
+            LeftPadding     =   0
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            RightPadding    =   0
+            Scope           =   2
+            ScrollSpeed     =   20
+            TabIndex        =   0
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Tooltip         =   ""
+            Top             =   105
+            Transparent     =   True
+            Visible         =   True
+            Width           =   280
+         End
       End
    End
    Begin ControlCanvas UpdateBar
@@ -182,7 +213,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
-      Height          =   400
+      Height          =   340
       HelpTag         =   ""
       InitialParent   =   ""
       Left            =   -259
@@ -195,11 +226,42 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   0
+      Top             =   60
       Transparent     =   True
       UseFocusRing    =   False
       Visible         =   True
       Width           =   300
+   End
+   Begin OmniBar NavBar
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   40
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   0
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   800
    End
 End
 #tag EndWindow
@@ -257,6 +319,9 @@ End
 	#tag Event
 		Sub Close()
 		  NotificationKit.Ignore(Self, App.Notification_UpdateFound, BeaconSubview.Notification_ViewShown)
+		  #if TargetMacOS
+		    NSNotificationCenterMBS.DefaultCenter.RemoveObserver(Self.mObserver)
+		  #endif
 		End Sub
 	#tag EndEvent
 
@@ -310,6 +375,24 @@ End
 		    Var Top As Integer = Min(Max(Bounds.Top, AvailableBounds.Top), AvailableBounds.Bottom - Height)
 		    Self.Bounds = New Xojo.Rect(Left, Top, Width, Height)
 		  End If
+		  
+		  #if TargetMacOS
+		    Var Win As NSWindowMBS = Self.NSWindowMBS
+		    Win.StyleMask = Win.StyleMask Or NSWindowMBS.NSFullSizeContentViewWindowMask
+		    Win.TitlebarAppearsTransparent = True
+		    Win.TitleVisibility = NSWindowMBS.NSWindowTitleHidden
+		    
+		    Var Toolbar As New NSToolbarMBS("com.thezaz.beacon.mainwindow.toolbar")
+		    Toolbar.sizeMode = NSToolbarMBS.NSToolbarDisplayModeIconOnly
+		    Toolbar.showsBaselineSeparator = False
+		    Self.mToolbar = Toolbar
+		    
+		    Win.toolbar = Toolbar
+		    
+		    Var CloseButton As NSButtonMBS = Win.StandardWindowButton(NSWindowMBS.NSWindowCloseButton)
+		    Var ZoomButton As NSButtonMBS = Win.StandardWindowButton(NSWindowMBS.NSWindowZoomButton)
+		    Self.NavBar.LeftPadding = CloseButton.Frame.MinX + ZoomButton.Frame.MaxX
+		  #endif
 		  
 		  Self.UpdateSizeForView(Self.DashboardPane1)
 		  NotificationKit.Watch(Self, App.Notification_UpdateFound, BeaconSubview.Notification_ViewShown)
@@ -407,6 +490,20 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor()
+		  #if TargetMacOS
+		    Self.mObserver = New NSNotificationObserverMBS
+		    AddHandler mObserver.GotNotification, WeakAddressOf mObserver_GotNotification
+		    
+		    NSNotificationCenterMBS.DefaultCenter.AddObserver(Self.mObserver, NSWindowMBS.NSWindowWillEnterFullScreenNotification)
+		    NSNotificationCenterMBS.DefaultCenter.addObserver(Self.mObserver, NSWindowMBS.NSWindowDidExitFullScreenNotification)
+		  #endif
+		  
+		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CurrentView() As BeaconSubview
 		  Return Self.mCurrentView
 		End Function
@@ -461,6 +558,28 @@ End
 		    End If
 		  Next
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mObserver_GotNotification(Sender As NSNotificationObserverMBS, Notification As NSNotificationMBS)
+		  #Pragma Unused Sender
+		  
+		  If Notification Is Nil Then
+		    Return
+		  End If
+		  
+		  Select Case Notification.Name
+		  Case NSWindowMBS.NSWindowWillEnterFullScreenNotification
+		    Self.NSWindowMBS.Toolbar = Nil
+		    Self.NavBar.LeftPadding = -1
+		  Case NSWindowMBS.NSWindowDidExitFullScreenNotification
+		    Self.NSWindowMBS.Toolbar = Self.mToolbar
+		    
+		    Var CloseButton As NSButtonMBS = Self.NSWindowMBS.StandardWindowButton(NSWindowMBS.NSWindowCloseButton)
+		    Var ZoomButton As NSButtonMBS = Self.NSWindowMBS.StandardWindowButton(NSWindowMBS.NSWindowZoomButton)
+		    Self.NavBar.LeftPadding = CloseButton.Frame.MinX + ZoomButton.Frame.MaxX
+		  End Select
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -675,6 +794,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mObserver As NSNotificationObserverMBS
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mOpened As Boolean
 	#tag EndProperty
 
@@ -696,6 +819,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mTabBarAnimation As AnimationKit.MoveTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mToolbar As NSToolbarMBS
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -788,6 +915,22 @@ End
 		  If ViewIndex <= Self.mSubviews.LastRowIndex Then
 		    Self.ShowView(Self.mSubviews(ViewIndex))
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events OmniBar1
+	#tag Event
+		Sub Open()
+		  Var Item As OmniBarItem
+		  
+		  Item = New OmniBarItem("RecentDocuments", "Recents")
+		  Me.Append(Item)
+		  
+		  Item = New OmniBarItem("NewDocument1", "Untitled Document 1", IconCloudDocument)
+		  Item.HasUnsavedChanges = True
+		  Item.CanBeClosed = True
+		  Item.Toggled = True
+		  Me.Append(Item)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -933,6 +1076,29 @@ End
 		  Self.mOverlayFillAnimation.Curve = Self.mLibraryPaneAnimation.Curve
 		  Self.mOverlayFillAnimation.DurationInSeconds = Self.mLibraryPaneAnimation.DurationInSeconds
 		  Self.mOverlayFillAnimation.Run
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events NavBar
+	#tag Event
+		Sub Open()
+		  Var Documents As New OmniBarItem("NavDocuments", "Documents")
+		  Documents.Toggled = True
+		  
+		  Var Blueprints As New OmniBarItem("NavBlueprints", "Blueprints")
+		  
+		  Var Presets As New OmniBarItem("NavPresets", "Presets")
+		  
+		  Var Help As New OmniBarItem("NavHelp", "Help")
+		  
+		  Me.Append(Documents, Blueprints, Presets, Help)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem)
+		  For Idx As Integer = 0 To Me.LastRowIndex
+		    Me.Item(Idx).Toggled = Item = Me.Item(Idx)
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
