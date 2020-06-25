@@ -581,6 +581,8 @@ Implements ObservationKit.Observable
 		      Continue
 		    End If
 		    
+		    Body = HTMLEncode(Body)
+		    
 		    If Run.TextColor.IsWhite = False And WhitespaceMatcher.Search(Body) Is Nil Then
 		      Var RedAmount As Double = Run.TextColor.Red / 255
 		      Var GreenAmount As Double = Run.TextColor.Green / 255
