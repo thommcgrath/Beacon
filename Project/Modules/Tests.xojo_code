@@ -26,7 +26,9 @@ Protected Module Tests
 		    TestNamingThings()
 		    TestConfigKeys()
 		    TestNumberFormatting()
-		    TestArkML()
+		    #if Beacon.MOTDEditingEnabled
+		      TestArkML()
+		    #endif
 		  #endif
 		End Sub
 	#tag EndMethod

@@ -408,6 +408,22 @@ Protected Class ServerProfile
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MessageDuration"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MessageOfTheDay"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
 #tag EndClass

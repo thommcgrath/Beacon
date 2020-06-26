@@ -50,10 +50,12 @@ Implements ObservationKit.Observable
 		    Return
 		  End If
 		  
-		  If Profile.MessageOfTheDay.IsEmpty = False Then
-		    Values.AddRow(New Beacon.ConfigValue("MessageOfTheDay", "Message", Self.RTFToArkML(Profile.MessageOfTheDay)))
-		    Values.AddRow(New Beacon.ConfigValue("MessageOfTheDay", "Duration", Profile.MessageDuration.ToString))
-		  End If
+		  #if Beacon.MOTDEditingEnabled Then
+		    If Profile.MessageOfTheDay.IsEmpty = False Then
+		      Values.AddRow(New Beacon.ConfigValue("MessageOfTheDay", "Message", Self.RTFToArkML(Profile.MessageOfTheDay)))
+		      Values.AddRow(New Beacon.ConfigValue("MessageOfTheDay", "Duration", Profile.MessageDuration.ToString))
+		    End If
+		  #endif
 		End Sub
 	#tag EndEvent
 

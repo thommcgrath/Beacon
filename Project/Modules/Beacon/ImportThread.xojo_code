@@ -195,16 +195,18 @@ Inherits Beacon.Thread
 		      Next
 		    End If
 		    
-		    If ParsedData.HasKey("Message") Then
-		      Var Duration As Integer = 30
-		      If ParsedData.HasKey("Duration") Then
-		        Duration = Round(ParsedData.DoubleValue("Duration", 30, True))
+		    #if Beacon.MOTDEditingEnabled
+		      If ParsedData.HasKey("Message") Then
+		        Var Duration As Integer = 30
+		        If ParsedData.HasKey("Duration") Then
+		          Duration = Round(ParsedData.DoubleValue("Duration", 30, True))
+		        End If
+		        
+		        Var Message As String = BeaconConfigs.Metadata.ArkMLToRTF(ParsedData.StringValue("Message", "", True).Trim())
+		        Profile.MessageOfTheDay = Message
+		        Profile.MessageDuration = Duration
 		      End If
-		      
-		      Var Message As String = BeaconConfigs.Metadata.ArkMLToRTF(ParsedData.StringValue("Message", "", True).Trim())
-		      Profile.MessageOfTheDay = Message
-		      Profile.MessageDuration = Duration
-		    End If
+		    #endif
 		    
 		    Document.Add(Profile)
 		  End If

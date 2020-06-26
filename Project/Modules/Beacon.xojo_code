@@ -1555,6 +1555,9 @@ Protected Module Beacon
 	#tag Constant, Name = CategorySpawnPoints, Type = String, Dynamic = False, Default = \"spawn_points", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = MOTDEditingEnabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = OmniVersion, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
 	#tag EndConstant
 
