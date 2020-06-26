@@ -1,5 +1,37 @@
 #tag Class
 Protected Class OmniBarItem
+Implements ObservationKit.Observable
+	#tag Method, Flags = &h0
+		Sub AddObserver(Observer As ObservationKit.Observer, Key As String)
+		  // Part of the ObservationKit.Observable interface.
+		  
+		  If Self.mObservers = Nil Then
+		    Self.mObservers = New Dictionary
+		  End If
+		  
+		  Var Refs() As WeakRef
+		  If Self.mObservers.HasKey(Key) Then
+		    Refs = Self.mObservers.Value(Key)
+		  End If
+		  
+		  For I As Integer = Refs.LastRowIndex DownTo 0
+		    If Refs(I).Value = Nil Then
+		      Refs.RemoveRowAt(I)
+		      Continue
+		    End If
+		    
+		    If Refs(I).Value = Observer Then
+		      // Already being watched
+		      Return
+		    End If
+		  Next
+		  
+		  Refs.AddRow(New WeakRef(Observer))
+		  Self.mObservers.Value(Key) = Refs
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor(Name As String, Caption As String, Icon As Picture = Nil)
 		  Self.mActiveColor = OmniBarItem.ActiveColors.Accent
@@ -17,6 +49,31 @@ Protected Class OmniBarItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub NotifyObservers(Key As String, Value As Variant)
+		  // Part of the ObservationKit.Observable interface.
+		  
+		  If Self.mObservers = Nil Then
+		    Self.mObservers = New Dictionary
+		  End If
+		  
+		  Var Refs() As WeakRef
+		  If Self.mObservers.HasKey(Key) Then
+		    Refs = Self.mObservers.Value(Key)
+		  End If
+		  
+		  For I As Integer = Refs.LastRowIndex DownTo 0
+		    If Refs(I).Value = Nil Then
+		      Refs.RemoveRowAt(I)
+		      Continue
+		    End If
+		    
+		    Var Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
+		    Observer.ObservedValueChanged(Self, Key, Value)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As OmniBarItem) As Integer
 		  If Other Is Nil Then
 		    Return 1
@@ -24,6 +81,31 @@ Protected Class OmniBarItem
 		  
 		  Return Self.mName.Compare(Other.mName, ComparisonOptions.CaseSensitive)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveObserver(Observer As ObservationKit.Observer, Key As String)
+		  // Part of the ObservationKit.Observable interface.
+		  
+		  If Self.mObservers = Nil Then
+		    Self.mObservers = New Dictionary
+		  End If
+		  
+		  Var Refs() As WeakRef
+		  If Self.mObservers.HasKey(Key) Then
+		    Refs = Self.mObservers.Value(Key)
+		  End If
+		  
+		  For I As Integer = Refs.LastRowIndex DownTo 0
+		    If Refs(I).Value = Nil Or Refs(I).Value = Observer Then
+		      Refs.RemoveRowAt(I)
+		      Continue
+		    End If
+		  Next
+		  
+		  Self.mObservers.Value(Key) = Refs
+		  
+		End Sub
 	#tag EndMethod
 
 
@@ -37,6 +119,7 @@ Protected Class OmniBarItem
 			Set
 			  If Self.mActiveColor <> Value Then
 			    Self.mActiveColor = Value
+			    Self.NotifyObservers("Changed", Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -53,6 +136,7 @@ Protected Class OmniBarItem
 			Set
 			  If Self.mAlwaysUseActiveColor <> Value Then
 			    Self.mAlwaysUseActiveColor = Value
+			    Self.NotifyObservers("Changed", Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -69,6 +153,7 @@ Protected Class OmniBarItem
 			Set
 			  If Self.mCanBeClosed <> Value Then
 			    Self.mCanBeClosed = Value
+			    Self.NotifyObservers("Changed", Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -85,6 +170,7 @@ Protected Class OmniBarItem
 			Set
 			  If Self.mCaption.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mCaption = Value
+			    Self.NotifyObservers("Changed", Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -101,6 +187,7 @@ Protected Class OmniBarItem
 			Set
 			  If Self.mEnabled <> Value Then
 			    Self.mEnabled = Value
+			    Self.NotifyObservers("Changed", Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -117,6 +204,7 @@ Protected Class OmniBarItem
 			Set
 			  If Self.mHasMenu <> Value Then
 			    Self.mHasMenu = Value
+			    Self.NotifyObservers("Changed", Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -133,6 +221,7 @@ Protected Class OmniBarItem
 			Set
 			  If Self.mHasProgressIndicator <> Value Then
 			    Self.mHasProgressIndicator = Value
+			    Self.NotifyObservers("Changed", Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -149,6 +238,7 @@ Protected Class OmniBarItem
 			Set
 			  If Self.mHasUnsavedChanges <> Value Then
 			    Self.mHasUnsavedChanges = Value
+			    Self.NotifyObservers("Changed", Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -165,6 +255,7 @@ Protected Class OmniBarItem
 			Set
 			  If Self.mHelpTag.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mHelpTag = Value
+			    Self.NotifyObservers("Changed", Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -180,6 +271,7 @@ Protected Class OmniBarItem
 		#tag Setter
 			Set
 			  Self.mIcon = Value
+			  Self.NotifyObservers("Changed", Value)
 			End Set
 		#tag EndSetter
 		Icon As Picture
@@ -230,6 +322,10 @@ Protected Class OmniBarItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mObservers As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mProgress As Double
 	#tag EndProperty
 
@@ -256,6 +352,7 @@ Protected Class OmniBarItem
 			Set
 			  If Self.mProgress <> Value Then
 			    Self.mProgress = Value
+			    Self.NotifyObservers("Changed", Value)
 			  End If
 			End Set
 		#tag EndSetter
@@ -272,6 +369,7 @@ Protected Class OmniBarItem
 			Set
 			  If Self.mToggled <> Value Then
 			    Self.mToggled = Value
+			    Self.NotifyObservers("Changed", Value)
 			  End If
 			End Set
 		#tag EndSetter

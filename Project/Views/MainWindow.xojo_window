@@ -51,7 +51,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   60
+      Top             =   38
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
@@ -61,7 +61,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    Begin PagePanel Views
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   315
+      Height          =   337
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -76,7 +76,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      Top             =   85
+      Top             =   63
       Transparent     =   False
       Value           =   0
       Visible         =   True
@@ -91,7 +91,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   315
+         Height          =   337
          HelpTag         =   ""
          InitialParent   =   "Views"
          Left            =   41
@@ -109,42 +109,11 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          TabStop         =   True
          ToolbarCaption  =   ""
          ToolbarIcon     =   0
-         Top             =   85
+         Top             =   63
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
          Width           =   759
-         Begin OmniBar OmniBar1
-            Alignment       =   0
-            AllowAutoDeactivate=   True
-            AllowFocus      =   False
-            AllowFocusRing  =   True
-            AllowTabs       =   False
-            Backdrop        =   0
-            DoubleBuffer    =   False
-            Enabled         =   True
-            Height          =   41
-            Index           =   -2147483648
-            InitialParent   =   "DashboardPane1"
-            Left            =   61
-            LeftPadding     =   0
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            RightPadding    =   0
-            Scope           =   2
-            ScrollSpeed     =   20
-            TabIndex        =   0
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Tooltip         =   ""
-            Top             =   105
-            Transparent     =   True
-            Visible         =   True
-            Width           =   280
-         End
       End
    End
    Begin ControlCanvas UpdateBar
@@ -213,7 +182,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
-      Height          =   340
+      Height          =   362
       HelpTag         =   ""
       InitialParent   =   ""
       Left            =   -259
@@ -226,7 +195,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   60
+      Top             =   38
       Transparent     =   True
       UseFocusRing    =   False
       Visible         =   True
@@ -241,7 +210,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   40
+      Height          =   38
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -391,7 +360,9 @@ End
 		    
 		    Var CloseButton As NSButtonMBS = Win.StandardWindowButton(NSWindowMBS.NSWindowCloseButton)
 		    Var ZoomButton As NSButtonMBS = Win.StandardWindowButton(NSWindowMBS.NSWindowZoomButton)
-		    Self.NavBar.LeftPadding = CloseButton.Frame.MinX + ZoomButton.Frame.MaxX
+		    If (CloseButton Is Nil Or ZoomButton Is Nil) = False Then
+		      Self.NavBar.LeftPadding = CloseButton.Frame.MinX + ZoomButton.Frame.MaxX
+		    End If
 		  #endif
 		  
 		  Self.UpdateSizeForView(Self.DashboardPane1)
@@ -577,7 +548,9 @@ End
 		    
 		    Var CloseButton As NSButtonMBS = Self.NSWindowMBS.StandardWindowButton(NSWindowMBS.NSWindowCloseButton)
 		    Var ZoomButton As NSButtonMBS = Self.NSWindowMBS.StandardWindowButton(NSWindowMBS.NSWindowZoomButton)
-		    Self.NavBar.LeftPadding = CloseButton.Frame.MinX + ZoomButton.Frame.MaxX
+		    If (CloseButton Is Nil Or ZoomButton Is Nil) = False Then
+		      Self.NavBar.LeftPadding = CloseButton.Frame.MinX + ZoomButton.Frame.MaxX
+		    End If
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -915,22 +888,6 @@ End
 		  If ViewIndex <= Self.mSubviews.LastRowIndex Then
 		    Self.ShowView(Self.mSubviews(ViewIndex))
 		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events OmniBar1
-	#tag Event
-		Sub Open()
-		  Var Item As OmniBarItem
-		  
-		  Item = New OmniBarItem("RecentDocuments", "Recents")
-		  Me.Append(Item)
-		  
-		  Item = New OmniBarItem("NewDocument1", "Untitled Document 1", IconCloudDocument)
-		  Item.HasUnsavedChanges = True
-		  Item.CanBeClosed = True
-		  Item.Toggled = True
-		  Me.Append(Item)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

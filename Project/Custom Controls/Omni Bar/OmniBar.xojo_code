@@ -1,6 +1,7 @@
 #tag Class
 Protected Class OmniBar
 Inherits ControlCanvas
+Implements ObservationKit.Observer
 	#tag Event
 		Sub Activate()
 		  Self.Invalidate
@@ -20,7 +21,8 @@ Inherits ControlCanvas
 		  Self.mMouseDownPoint = New Point(X, Y)
 		  Self.mMouseDownIndex = Self.IndexAtPoint(Self.mMouseDownPoint)
 		  Self.mMouseOverIndex = Self.mMouseDownIndex
-		  Self.Invalidate
+		  Self.Invalidate(Self.mMouseDownIndex)
+		  
 		  Return True
 		End Function
 	#tag EndEvent
@@ -33,10 +35,17 @@ Inherits ControlCanvas
 		  
 		  Self.mMousePoint = New Point(X, Y)
 		  
-		  Var Idx As Integer = Self.IndexAtPoint(Self.mMousePoint)
-		  If Idx <> Self.mMouseOverIndex Then
-		    Self.mMouseOverIndex = Idx
-		    Self.Invalidate
+		  Var OldIndex As Integer = Self.mMouseOverIndex
+		  Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)
+		  
+		  If OldIndex > -1 And Self.mMouseOverIndex <> OldIndex Then
+		    Var OldRect As Rect = Self.mItemRects(OldIndex)
+		    Self.Invalidate(OldRect.Left, OldRect.Top, OldRect.Width, OldRect.Height)
+		  End If
+		  
+		  If Self.mMouseOverIndex > -1 Then
+		    Var OverRect As Rect = Self.mItemRects(Self.mMouseOverIndex)
+		    Self.Invalidate(OverRect.Left, OverRect.Top, OverRect.Width, OverRect.Height)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -58,8 +67,8 @@ Inherits ControlCanvas
 		  Self.mMousePoint = Nil
 		  
 		  If Self.mMouseOverIndex <> -1 Then
+		    Self.Invalidate(Self.mMouseOverIndex)
 		    Self.mMouseOverIndex = -1
-		    Self.Invalidate
 		  End If
 		End Sub
 	#tag EndEvent
@@ -75,13 +84,11 @@ Inherits ControlCanvas
 		  Self.mMouseOverIndex = Self.IndexAtPoint(Self.mMousePoint)
 		  
 		  If OldIndex > -1 And Self.mMouseOverIndex <> OldIndex Then
-		    Var OldRect As Rect = Self.mItemRects(OldIndex)
-		    Self.Invalidate(OldRect.Left, OldRect.Top, OldRect.Width, OldRect.Height)
+		    Self.Invalidate(OldIndex)
 		  End If
 		  
 		  If Self.mMouseOverIndex > -1 Then
-		    Var OverRect As Rect = Self.mItemRects(Self.mMouseOverIndex)
-		    Self.Invalidate(OverRect.Left, OverRect.Top, OverRect.Width, OverRect.Height)
+		    Self.Invalidate(Self.mMouseOverIndex)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -94,8 +101,21 @@ Inherits ControlCanvas
 		  
 		  Self.mMousePoint = New Point(X, Y)
 		  
-		  If Self.mMouseDownIndex > -1 And Self.IndexAtPoint(Self.mMousePoint) = Self.mMouseDownIndex Then
-		    RaiseEvent ItemPressed(Self.mItems(Self.mMouseDownIndex))
+		  If Self.mMouseDownIndex > -1 And Self.IndexAtPoint(Self.mMousePoint) = Self.mMouseDownIndex And Self.mItems(Self.mMouseDownIndex).Enabled = True Then
+		    Var Item As OmniBarItem = Self.mItems(Self.mMouseDownIndex)
+		    Var ItemRect As Rect = Self.mItemRects(Self.mMouseDownIndex)
+		    Var FirePressed As Boolean = True
+		    If Item.CanBeClosed Then
+		      Var AccessoryRect As New Rect(ItemRect.Right - Self.IconSize, (Self.Height - Self.IconSize) / 2, Self.IconSize, Self.IconSize)
+		      If AccessoryRect.Contains(Self.mMousePoint) Then
+		        FirePressed = False
+		        RaiseEvent ShouldCloseItem(Item)
+		      End If
+		    End If
+		    
+		    If FirePressed Then
+		      RaiseEvent ItemPressed(Item)
+		    End If
 		  End If
 		  
 		  Self.mMouseDown = False
@@ -124,7 +144,7 @@ Inherits ControlCanvas
 		    Var Segments() As Double
 		    If Item.Caption.IsEmpty = False Then
 		      G.Bold = Item.Toggled
-		      Segments.AddRow(G.TextWidth(Item.Caption))
+		      Segments.AddRow(Min(G.TextWidth(Item.Caption), Self.MaxCaptionWidth))
 		    End If
 		    If (Item.Icon Is Nil) = False Then
 		      Segments.AddRow(Self.IconSize)
@@ -139,6 +159,36 @@ Inherits ControlCanvas
 		      NextPos = NextPos + ItemWidth + Self.ItemSpacing
 		    End If
 		  Next
+		  
+		  If Self.mAlignment = Self.AlignCenter Or Self.mAlignment = Self.AlignRight Then
+		    Var MinX, MaxX As Integer
+		    For Idx As Integer = 0 To Rects.LastRowIndex
+		      If Idx = 0 Then
+		        MinX = Rects(Idx).Left
+		        MaxX = Rects(Idx).Right
+		      Else
+		        MinX = Min(MinX, Rects(Idx).Left)
+		        MaxX = Max(MaxX, Rects(Idx).Right)
+		      End If
+		    Next
+		    
+		    Var ItemsWidth As Integer = MaxX - MinX
+		    Var TargetX As Integer
+		    
+		    If Self.mAlignment = Self.AlignCenter Then
+		      TargetX = (Self.Width - ItemsWidth) / 2
+		    Else
+		      TargetX = Self.Width - (If(Self.RightPadding = -1, Self.ItemSpacing, Self.RightPadding) + ItemsWidth)
+		    End If
+		    
+		    Var OffsetX As Integer = TargetX - MinX
+		    If OffsetX <> 0 Then
+		      For Idx As Integer = 0 To Rects.LastRowIndex
+		        Rects(Idx).Offset(OffsetX, 0)
+		      Next
+		    End If
+		  End If
+		  
 		  Self.mItemRects = Rects
 		  G.Bold = False
 		  
@@ -224,6 +274,7 @@ Inherits ControlCanvas
 		Sub Append(ParamArray Items() As OmniBarItem)
 		  For Each Item As OmniBarItem In Items
 		    If (Item Is Nil) = False And Self.IndexOf(Item) = -1 Then
+		      Item.AddObserver(Self, "Changed")
 		      Self.mItems.AddRow(Item)
 		      Self.Invalidate
 		    End If
@@ -264,7 +315,9 @@ Inherits ControlCanvas
 		  
 		  // Find the color we'll be using
 		  Var ForeColor As Color
-		  If Highlighted Then
+		  If Item.Enabled = False Then
+		    ForeColor = SystemColors.DisabledControlTextColor
+		  ElseIf Highlighted = True Then
 		    If Item.Toggled Or Item.AlwaysUseActiveColor Then
 		      ForeColor = Self.ActiveColorToColor(Item.ActiveColor)
 		    ElseIf State = Self.StateHover Then
@@ -277,7 +330,7 @@ Inherits ControlCanvas
 		  End If
 		  
 		  Var OriginalForeColor As Color = ForeColor
-		  If State = Self.StatePressed Then
+		  If State = Self.StatePressed And Item.Enabled Then
 		    ForeColor = ForeColor.Darker(0.5)
 		  End If
 		  
@@ -302,13 +355,16 @@ Inherits ControlCanvas
 		      If (LocalMousePoint Is Nil) = False And AccessoryRect.Contains(LocalMousePoint) Then
 		        G.DrawingColor = &C00000090
 		        G.FillRoundRectangle(AccessoryRect.Left, AccessoryRect.Top, AccessoryRect.Width, AccessoryRect.Height, 6, 6)
-		      Else
+		      ElseIf Item.Enabled Then
 		        G.DrawPicture(BeaconUI.IconWithColor(IconClose, &C00000090), AccessoryRect.Left, AccessoryRect.Top, AccessoryRect.Width, AccessoryRect.Height, 0, 0, IconClose.Width, IconClose.Height)
 		      End If
 		    End If
 		  ElseIf Item.HasUnsavedChanges Then
 		    AccessoryColor = ForeColor
 		    AccessoryImage = IconModified
+		  ElseIf Item.CanBeClosed Then
+		    AccessoryColor = SystemColors.TertiaryLabelColor
+		    AccessoryImage = IconClose
 		  End If
 		  If (AccessoryImage Is Nil) = False Then
 		    AccessoryImage = BeaconUI.IconWithColor(AccessoryImage, AccessoryColor)
@@ -328,45 +384,12 @@ Inherits ControlCanvas
 		    G.Bold = True
 		  End If
 		  
-		  Var CaptionWidth As Double = G.TextWidth(Item.Caption)
+		  Var CaptionWidth As Double = Min(G.TextWidth(Item.Caption), Self.MaxCaptionWidth)
 		  Var CaptionBaseline As Double = NearestMultiple((G.Height / 2) + (G.CapHeight / 2), G.ScaleY)
 		  Var AccessoryLeft As Double = NearestMultiple(CaptionLeft + CaptionWidth + Self.ElementSpacing, G.ScaleX)
 		  G.DrawingColor = ForeColor
-		  G.DrawText(Item.Caption, CaptionLeft, CaptionBaseline)
+		  G.DrawText(Item.Caption, CaptionLeft, CaptionBaseline, Self.MaxCaptionWidth, True)
 		  G.Bold = False
-		  
-		  #if false
-		    Var AccessoryImage As Picture
-		    If State = Self.StateHover Or State = Self.StatePressed Then
-		      If Item.CanBeClosed Then
-		        AccessoryImage = IconClose
-		      ElseIf Item.HasUnsavedChanges Then
-		        AccessoryImage = IconModified
-		      End If
-		    Else
-		      If Item.HasUnsavedChanges Then
-		        AccessoryImage = IconModified
-		      ElseIf Item.CanBeClosed Then
-		        AccessoryImage = IconClose
-		      End If
-		    End If
-		    If (AccessoryImage Is Nil) = False Then
-		      Var AccessoryTop As Double = NearestMultiple((G.Height - Self.IconSize) / 2, G.ScaleY)
-		      AccessoryRect = New Rect(AccessoryLeft, AccessoryTop, Self.IconSize, Self.IconSize)
-		      
-		      AccessoryImage = BeaconUI.IconWithColor(AccessoryImage, ForeColor)
-		      
-		      If (LocalMousePoint Is Nil) = False And AccessoryRect.Contains(LocalMousePoint) And Item.CanBeClosed Then
-		        // Mouse is over the close button
-		        If State = Self.StateHover Then
-		          G.DrawingColor = SystemColors.QuaternaryLabelColor
-		          G.FillRoundRectangle(AccessoryRect.Left, AccessoryRect.Top, AccessoryRect.Width, AccessoryRect.Height, 6, 6)
-		        End If
-		      End If
-		      
-		      G.DrawPicture(AccessoryImage, AccessoryRect.Left, AccessoryRect.Top, AccessoryRect.Width, AccessoryRect.Height, 0, 0, AccessoryImage.Width, AccessoryImage.Height)
-		    End If
-		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -420,9 +443,27 @@ Inherits ControlCanvas
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Item As OmniBarItem)
 		  If (Item Is Nil) = False And Self.IndexOf(Item) = -1 Then
+		    Item.AddObserver(Self, "Changed")
 		    Self.mItems.AddRowAt(Index, Item)
 		    Self.Invalidate
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Invalidate(Idx As Integer)
+		  If Idx < Self.mItems.FirstRowIndex Or Idx > Self.mItems.LastRowIndex Then
+		    Super.Invalidate(False)
+		    Return
+		  End If
+		  
+		  Var ItemRect As Rect = Self.mItemRects(Idx)
+		  If ItemRect Is Nil Then
+		    Super.Invalidate(False)
+		    Return
+		  End If
+		  
+		  Super.Invalidate(ItemRect.Left, ItemRect.Top, ItemRect.Width, ItemRect.Height, False)
 		End Sub
 	#tag EndMethod
 
@@ -437,6 +478,7 @@ Inherits ControlCanvas
 	#tag Method, Flags = &h0
 		Sub Item(Idx As Integer, Assigns NewItem As OmniBarItem)
 		  If (NewItem Is Nil) = False And Self.IndexOf(NewItem) = -1 Then
+		    NewItem.AddObserver(Self, "Changed")
 		    Self.mItems(Idx) = NewItem
 		    Self.Invalidate
 		  End If
@@ -457,8 +499,25 @@ Inherits ControlCanvas
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, Value As Variant)
+		  // Part of the ObservationKit.Observer interface.
+		  
+		  #Pragma Unused Value
+		  
+		  If Key <> "Changed" Or (Source IsA OmniBarItem) = False Then
+		    Return
+		  End If
+		  
+		  Var Item As OmniBarItem = OmniBarItem(Source)
+		  Var Idx As Integer = Self.IndexOf(Item)
+		  Self.Invalidate(Idx)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Remove(Idx As Integer)
 		  If Idx >= 0 And Idx <= Self.mItems.LastRowIndex Then
+		    Self.mItems(Idx).RemoveObserver(Self, "Changed")
 		    Self.mItems.RemoveRowAt(Idx)
 		    Self.Invalidate
 		  End If
@@ -486,7 +545,10 @@ Inherits ControlCanvas
 	#tag Method, Flags = &h0
 		Sub RemoveAllItems()
 		  If Self.mItems.Count > 0 Then
-		    Self.mItems.RemoveAllRows()
+		    For Idx As Integer = Self.mItems.LastRowIndex DownTo 0
+		      Self.mItems(Idx).RemoveObserver(Self, "Changed")
+		      Self.mItems.RemoveRowAt(Idx)
+		    Next
 		    Self.Invalidate
 		  End If
 		End Sub
@@ -495,6 +557,10 @@ Inherits ControlCanvas
 
 	#tag Hook, Flags = &h0
 		Event ItemPressed(Item As OmniBarItem)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ShouldCloseItem(Item As OmniBarItem)
 	#tag EndHook
 
 
@@ -612,6 +678,9 @@ Inherits ControlCanvas
 	#tag EndConstant
 
 	#tag Constant, Name = ItemSpacing, Type = Double, Dynamic = False, Default = \"20", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = MaxCaptionWidth, Type = Double, Dynamic = False, Default = \"250", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = StateHover, Type = Double, Dynamic = False, Default = \"1", Scope = Private
