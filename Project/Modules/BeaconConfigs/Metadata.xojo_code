@@ -641,6 +641,7 @@ Implements ObservationKit.Observable
 		  
 		  // Links seem to screw up Ark
 		  Message = Message.ReplaceAll("https://", "")
+		  Message = Message.ReplaceAll("http://", "")
 		  
 		  Return Message
 		  //Return """" + Message + """"
