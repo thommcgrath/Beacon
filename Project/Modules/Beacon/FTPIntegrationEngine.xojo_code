@@ -285,7 +285,7 @@ Inherits Beacon.IntegrationEngine
 		    Var Params(1) As Variant
 		    Params(0) = Path
 		    Params(1) = Files
-		    Call CallLater.Schedule(1, WeakAddressOf TriggerFilesListed, Params)
+		    Self.mPendingCalls.AddRow(CallLater.Schedule(1, WeakAddressOf TriggerFilesListed, Params))
 		    Return
 		  End If
 		  

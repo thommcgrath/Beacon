@@ -104,7 +104,9 @@ Protected Class IntegrationEngine
 		  Var Controller As Beacon.TaskWaitController
 		  If Param IsA Beacon.TaskWaitController Then
 		    Controller = Beacon.TaskWaitController(Param)
-		  Else
+		  End If
+		  
+		  If Controller Is Nil Then
 		    Return
 		  End If
 		  
@@ -797,8 +799,8 @@ Protected Class IntegrationEngine
 		Private mOptions As UInt64
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mPendingCalls() As String
+	#tag Property, Flags = &h1
+		Protected mPendingCalls() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
