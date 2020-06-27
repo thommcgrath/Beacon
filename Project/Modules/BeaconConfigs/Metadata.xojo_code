@@ -621,7 +621,7 @@ Implements ObservationKit.Observable
 		  Next
 		  
 		  Var Message As String = Parts.Join("\n")
-		  Message = Message.ReplaceAll("""", "\""")
+		  //Message = Message.ReplaceAll("""", "\""")
 		  
 		  // Move whitespace from the end of a color tag to outside it
 		  Var Cleaner As New Regex
@@ -639,7 +639,11 @@ Implements ObservationKit.Observable
 		  Cleaner.ReplacementPattern = ""
 		  Message = Cleaner.Replace(Message)
 		  
-		  Return """" + Message + """"
+		  // Links seem to screw up Ark
+		  Message = Message.ReplaceAll("https://", "")
+		  
+		  Return Message
+		  //Return """" + Message + """"
 		End Function
 	#tag EndMethod
 
