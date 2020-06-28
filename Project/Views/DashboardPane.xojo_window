@@ -370,6 +370,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Top             =   73
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   "1"
       Width           =   100
@@ -402,6 +403,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Top             =   105
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
       VisualState     =   "1"
       Width           =   100

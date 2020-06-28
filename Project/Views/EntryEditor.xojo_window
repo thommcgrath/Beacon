@@ -173,6 +173,7 @@ Begin BeaconDialog EntryEditor
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
+         EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
@@ -347,6 +348,7 @@ Begin BeaconDialog EntryEditor
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
+         EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False

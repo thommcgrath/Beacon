@@ -100,6 +100,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   34
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False

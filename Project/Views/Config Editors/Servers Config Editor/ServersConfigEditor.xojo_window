@@ -36,6 +36,7 @@ Begin ConfigEditor ServersConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   40
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False

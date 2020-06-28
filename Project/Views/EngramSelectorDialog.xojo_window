@@ -116,6 +116,7 @@ Begin BeaconDialog EngramSelectorDialog
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -235,6 +236,7 @@ Begin BeaconDialog EngramSelectorDialog
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False

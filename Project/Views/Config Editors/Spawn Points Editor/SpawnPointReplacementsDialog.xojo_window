@@ -303,6 +303,7 @@ Begin BeaconDialog SpawnPointReplacementsDialog
          DataSource      =   ""
          DefaultRowHeight=   -1
          DropIndicatorVisible=   False
+         EditCaption     =   "Edit"
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0

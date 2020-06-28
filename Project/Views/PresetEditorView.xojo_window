@@ -669,6 +669,7 @@ Begin BeaconSubview PresetEditorView
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
+         EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
@@ -724,6 +725,7 @@ Begin BeaconSubview PresetEditorView
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   -1
+         EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False

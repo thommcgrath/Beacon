@@ -394,7 +394,7 @@ Implements ObservationKit.Observer
 		  
 		  Var CaptionWidth As Double = Min(G.TextWidth(Item.Caption), Self.MaxCaptionWidth)
 		  Var CaptionBaseline As Double = NearestMultiple((G.Height / 2) + (G.CapHeight / 2), G.ScaleY)
-		  Var AccessoryLeft As Double = NearestMultiple(CaptionLeft + CaptionWidth + Self.ElementSpacing, G.ScaleX)
+		  
 		  G.DrawingColor = ForeColor
 		  G.DrawText(Item.Caption, CaptionLeft, CaptionBaseline, Self.MaxCaptionWidth, True)
 		  G.Bold = False
@@ -730,7 +730,7 @@ Implements ObservationKit.Observer
 			Name="Height"
 			Visible=true
 			Group="Position"
-			InitialValue="100"
+			InitialValue="38"
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

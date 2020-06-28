@@ -36,6 +36,7 @@ Begin BeaconContainer SimulatorView
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False

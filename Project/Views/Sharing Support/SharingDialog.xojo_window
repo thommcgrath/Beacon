@@ -153,6 +153,7 @@ Begin BeaconDialog SharingDialog
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   26
+         EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False

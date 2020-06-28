@@ -72,6 +72,7 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False

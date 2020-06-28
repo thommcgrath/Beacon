@@ -622,6 +622,7 @@ Begin ContainerControl DocumentImportView
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   40
+         EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
@@ -677,6 +678,7 @@ Begin ContainerControl DocumentImportView
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   26
+         EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False

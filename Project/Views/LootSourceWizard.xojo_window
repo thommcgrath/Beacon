@@ -1063,6 +1063,7 @@ Begin BeaconDialog LootSourceWizard
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   34
+         EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
@@ -1118,6 +1119,7 @@ Begin BeaconDialog LootSourceWizard
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
+         EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False

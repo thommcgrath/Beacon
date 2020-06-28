@@ -178,6 +178,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False

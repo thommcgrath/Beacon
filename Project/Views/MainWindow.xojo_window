@@ -39,7 +39,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   41
+      Left            =   21
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -51,7 +51,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   38
+      Top             =   -115
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
@@ -66,17 +66,17 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   41
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   True
+      LockRight       =   False
       LockTop         =   True
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      Top             =   63
+      Top             =   -409
       Transparent     =   False
       Value           =   0
       Visible         =   True
@@ -109,7 +109,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          TabStop         =   True
          ToolbarCaption  =   ""
          ToolbarIcon     =   0
-         Top             =   63
+         Top             =   -409
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
@@ -185,7 +185,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Height          =   362
       HelpTag         =   ""
       InitialParent   =   ""
-      Left            =   -259
+      Left            =   -323
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -195,7 +195,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   38
+      Top             =   -420
       Transparent     =   True
       UseFocusRing    =   False
       Visible         =   True
@@ -214,13 +214,13 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
-      LeftPadding     =   0
+      LeftPadding     =   -1
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      RightPadding    =   0
+      RightPadding    =   -1
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   5
@@ -231,6 +231,86 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Transparent     =   True
       Visible         =   True
       Width           =   800
+   End
+   Begin PagePanel Pages
+      AllowAutoDeactivate=   True
+      Enabled         =   True
+      Height          =   362
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      PanelCount      =   4
+      Panels          =   ""
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      Tooltip         =   ""
+      Top             =   38
+      Transparent     =   False
+      Value           =   0
+      Visible         =   True
+      Width           =   800
+      Begin DocumentsComponent DocumentsComponent1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   362
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
+         Progress        =   0.0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         ToolbarCaption  =   ""
+         ToolbarIcon     =   0
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         Visible         =   True
+         Width           =   800
+      End
+      Begin HTMLViewer HelpViewer
+         AllowAutoDeactivate=   True
+         Enabled         =   True
+         Height          =   362
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Renderer        =   0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Visible         =   True
+         Width           =   800
+      End
    End
 End
 #tag EndWindow
@@ -763,6 +843,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mHelpLoaded As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mLibraryPaneAnimation As AnimationKit.MoveTask
 	#tag EndProperty
 
@@ -842,6 +926,18 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = MinSplitterPosition, Type = Double, Dynamic = False, Default = \"300", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageBlueprints, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageDocuments, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageHelp, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PagePresets, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 
@@ -1053,9 +1149,79 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ItemPressed(Item As OmniBarItem)
+		  Var CurrentIndex As Integer = Self.Pages.SelectedPanelIndex
+		  
+		  Var NewIndex As Integer
+		  Select Case Item.Name
+		  Case "NavDocuments"
+		    NewIndex = Self.PageDocuments
+		  Case "NavBlueprints"
+		    NewIndex = Self.PageBlueprints
+		  Case "NavPresets"
+		    NewIndex = Self.PagePresets
+		  Case "NavHelp"
+		    NewIndex = Self.PageHelp
+		  End Select
+		  
+		  If CurrentIndex = NewIndex Then
+		    Return
+		  End If
+		  
+		  Select Case CurrentIndex
+		  Case Self.PageDocuments
+		    Self.DocumentsComponent1.SwitchedFrom()
+		  Case Self.PageBlueprints
+		    
+		  Case Self.PagePresets
+		    
+		  Case Self.PageHelp
+		    
+		  End Select
+		  
+		  Self.Pages.SelectedPanelIndex = NewIndex
+		  
+		  Select Case NewIndex
+		  Case Self.PageDocuments
+		    Self.DocumentsComponent1.SwitchedTo(Nil)
+		  Case Self.PageBlueprints
+		    
+		  Case Self.PagePresets
+		    
+		  Case Self.PageHelp
+		    If Self.mHelpLoaded = False Then
+		      Self.HelpViewer.LoadURL(Beacon.WebURL("/help"))
+		    End If
+		  End Select
+		  
 		  For Idx As Integer = 0 To Me.LastRowIndex
 		    Me.Item(Idx).Toggled = Item = Me.Item(Idx)
 		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events HelpViewer
+	#tag Event
+		Sub DocumentComplete(url as String)
+		  #Pragma Unused URL
+		  
+		  Self.NavBar.Item("NavHelp").HasProgressIndicator = False
+		  Self.mHelpLoaded = True
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub DocumentProgressChanged(URL as String, percentageComplete as Integer)
+		  #Pragma Unused URL
+		  
+		  Self.NavBar.Item("NavHelp").Progress = PercentageComplete
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub DocumentBegin(url as String)
+		  #Pragma Unused URL
+		  
+		  Var Item As OmniBarItem = Self.NavBar.Item("NavHelp")
+		  Item.HasProgressIndicator = True
+		  Item.Progress = OmniBarItem.ProgressIndeterminate
 		End Sub
 	#tag EndEvent
 #tag EndEvents

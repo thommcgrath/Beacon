@@ -73,6 +73,7 @@ Begin BeaconDialog DocumentMergerWindow
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   -1
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False

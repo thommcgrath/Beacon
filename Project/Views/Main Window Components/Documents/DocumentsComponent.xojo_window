@@ -1,5 +1,5 @@
 #tag Window
-Begin ConfigEditor AccountsConfigEditor
+Begin BeaconPagedSubview DocumentsComponent
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -10,7 +10,7 @@ Begin ConfigEditor AccountsConfigEditor
    Enabled         =   True
    EraseBackground =   True
    HasBackgroundColor=   False
-   Height          =   508
+   Height          =   570
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -24,32 +24,27 @@ Begin ConfigEditor AccountsConfigEditor
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   784
-   Begin BeaconToolbar Header
+   Width           =   896
+   Begin OmniBar Nav
+      Alignment       =   0
       AllowAutoDeactivate=   True
       AllowFocus      =   False
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
-      BorderBottom    =   True
-      BorderLeft      =   False
-      BorderRight     =   False
-      Borders         =   0
-      BorderTop       =   False
-      Caption         =   "Accounts"
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   41
+      Height          =   38
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
+      LeftPadding     =   -1
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Resizer         =   "0"
-      ResizerEnabled  =   False
+      RightPadding    =   -1
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   0
@@ -57,240 +52,238 @@ Begin ConfigEditor AccountsConfigEditor
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
-      Transparent     =   False
+      Transparent     =   True
       Visible         =   True
-      Width           =   784
+      Width           =   896
    End
-   Begin BeaconListbox List
+   Begin PagePanel Views
       AllowAutoDeactivate=   True
-      AllowAutoHideScrollbars=   True
-      AllowExpandableRows=   False
-      AllowFocusRing  =   False
-      AllowResizableColumns=   False
-      AllowRowDragging=   False
-      AllowRowReordering=   False
-      Bold            =   False
-      ColumnCount     =   3
-      ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      DefaultRowHeight=   "#BeaconListbox.StandardRowHeight"
-      DropIndicatorVisible=   False
-      EditCaption     =   "Edit"
       Enabled         =   True
-      FontName        =   "System"
-      FontSize        =   0.0
-      FontUnit        =   0
-      GridLinesHorizontalStyle=   "0"
-      GridLinesVerticalStyle=   "0"
-      HasBorder       =   False
-      HasHeader       =   True
-      HasHorizontalScrollbar=   False
-      HasVerticalScrollbar=   True
-      HeadingIndex    =   1
-      Height          =   467
+      Height          =   532
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Provider	Account Name	Used By"
-      Italic          =   False
       Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      RequiresSelection=   False
-      RowSelectionType=   "1"
+      PanelCount      =   3
+      Panels          =   ""
       Scope           =   2
-      SelectionChangeBlocked=   False
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Tooltip         =   ""
-      Top             =   41
+      Top             =   38
       Transparent     =   False
-      TypeaheadColumn =   0
-      Underline       =   False
+      Value           =   0
       Visible         =   True
-      VisibleRowCount =   0
-      Width           =   784
-      _ScrollOffset   =   0
-      _ScrollWidth    =   -1
+      Width           =   896
+      Begin RecentDocumentsComponent RecentDocumentsComponent1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   532
+         InitialParent   =   "Views"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
+         Progress        =   0.0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         ToolbarCaption  =   ""
+         ToolbarIcon     =   0
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         Visible         =   True
+         Width           =   896
+      End
+      Begin CloudDocumentsComponent CloudDocumentsComponent1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   532
+         InitialParent   =   "Views"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
+         Progress        =   0.0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         ToolbarCaption  =   ""
+         ToolbarIcon     =   0
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         Visible         =   True
+         Width           =   896
+      End
+      Begin CommunityDocumentsComponent CommunityDocumentsComponent1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   532
+         InitialParent   =   "Views"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
+         Progress        =   0.0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         ToolbarCaption  =   ""
+         ToolbarIcon     =   0
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         Visible         =   True
+         Width           =   896
+      End
    End
 End
 #tag EndWindow
 
 #tag WindowCode
 	#tag Event
-		Sub RestoreToDefault()
-		  Self.Document.Accounts.RemoveAll
+		Sub Open()
+		  Self.AppendPage(Self.RecentDocumentsComponent1)
+		  Self.AppendPage(Self.CloudDocumentsComponent1)
+		  Self.AppendPage(Self.CommunityDocumentsComponent1)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub SetupUI()
-		  Var Selected() As String
-		  For I As Integer = 0 To Self.List.LastRowIndex
-		    If Self.List.Selected(I) Then
-		      Selected.AddRow(Beacon.ExternalAccount(Self.List.RowTagAt(I)).UUID)
-		    End If
-		  Next
+		Sub PageChanged(OldIndex As Integer, NewIndex As Integer)
+		  If OldIndex > -1 Then
+		    Self.Nav.Item(OldIndex).Toggled = False
+		  End If
 		  
-		  Var Accounts() As Beacon.ExternalAccount = Self.Document.Accounts.All
-		  Self.List.RowCount = Accounts.Count
+		  If NewIndex > -1 Then
+		    Self.Nav.Item(NewIndex).Toggled = True
+		  End If
 		  
-		  Var ProfileCount As Integer = Self.Document.ServerProfileCount
-		  Var Profiles() As Beacon.ServerProfile
-		  For Idx As Integer = 0 To ProfileCount - 1
-		    Profiles.AddRow(Self.Document.ServerProfile(Idx))
-		  Next
-		  
-		  For Idx As Integer = Accounts.FirstRowIndex To Accounts.LastRowIndex
-		    Var Account As Beacon.ExternalAccount = Accounts(Idx)
-		    Var ServerCount As Integer
-		    For Each Profile As Beacon.ServerProfile In Profiles
-		      If Profile.ExternalAccountUUID = Account.UUID Then
-		        ServerCount = ServerCount + 1
-		      End If
-		    Next
-		    
-		    Self.List.RowTagAt(Idx) = Account
-		    Self.List.CellValueAt(Idx, Self.ColumnProvider) = Account.Provider
-		    Self.List.CellValueAt(Idx, Self.ColumnLabel) = Account.Label
-		    Self.List.CellValueAt(Idx, Self.ColumnServerCount) = Language.NounWithQuantity(ServerCount, "Server", "Servers")
-		  Next
-		  
-		  Self.List.Sort
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Shown(UserData As Variant = Nil)
-		  #Pragma Unused UserData
-		  
-		  Self.SetupUI
+		  Self.Views.SelectedPanelIndex = NewIndex
 		End Sub
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h0
-		Function ConfigLabel() As String
-		  Return "Accounts"
-		End Function
+	#tag Method, Flags = &h1
+		Protected Sub OpenDocument(URL As Beacon.DocumentURL)
+		  MessageBox(URL.URL)
+		End Sub
 	#tag EndMethod
 
 
-	#tag Constant, Name = ColumnLabel, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = PageCloud, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnProvider, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag Constant, Name = PageCommunity, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnServerCount, Type = Double, Dynamic = False, Default = \"2", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.account", Scope = Private
+	#tag Constant, Name = PageRecents, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
 
 #tag EndWindowCode
 
-#tag Events List
+#tag Events Nav
 	#tag Event
-		Function CanDelete() As Boolean
-		  Return Me.SelectedRowCount > 0
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub PerformClear(Warn As Boolean)
-		  Var Bound As Integer = Me.LastRowIndex
-		  Var Accounts() As Beacon.ExternalAccount
-		  For I As Integer = 0 To Bound
-		    If Me.Selected(I) = False Then
-		      Continue
-		    End If
-		    
-		    Accounts.AddRow(Me.RowTagAt(I))
-		  Next
+		Sub Open()
+		  Var Recents As New OmniBarItem("NavRecents", "Recents")
+		  Var Cloud As New OmniBarItem("NavCloud", "Cloud")
+		  Var Community As New OmniBarItem("NavCommunity", "Community")
 		  
-		  If Warn And Self.ShowDeleteConfirmation(Accounts, "account", "accounts") = False Then
-		    Return
-		  End If
+		  Recents.Toggled = True
 		  
-		  For Each Account As Beacon.ExternalAccount In Accounts
-		    Self.Document.Accounts.Remove(Account)
-		  Next
-		  
-		  Self.SetupUI
+		  Me.Append(Recents, Cloud, Community)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function CanCopy() As Boolean
-		  Return Me.SelectedRowCount > 0
-		End Function
-	#tag EndEvent
-	#tag Event
-		Function CanPaste(Board As Clipboard) As Boolean
-		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Return True
-		  End If
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub PerformCopy(Board As Clipboard)
-		  Var Accounts() As Dictionary
-		  For Idx As Integer = 0 To Me.LastRowIndex
-		    Var Account As Beacon.ExternalAccount = Me.RowTagAt(Idx)
-		    Accounts.AddRow(Account.AsDictionary)
-		  Next
-		  Board.AddRawData(Beacon.GenerateJSON(Accounts, False), Self.kClipboardType)
+		Sub ItemPressed(Item As OmniBarItem)
+		  Select Case Item.Name
+		  Case "NavRecents"
+		    Self.CurrentPageIndex = Self.PageRecents
+		  Case "NavCloud"
+		    Self.CurrentPageIndex = Self.PageCloud
+		  Case "NavCommunity"
+		    Self.CurrentPageIndex = Self.PageCommunity
+		  Else
+		    
+		  End Select
 		End Sub
 	#tag EndEvent
+#tag EndEvents
+#tag Events RecentDocumentsComponent1
 	#tag Event
-		Sub PerformPaste(Board As Clipboard)
-		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
-		    Return
-		  End If
-		  
-		  Var Accounts() As Variant
-		  Try
-		    Accounts = Beacon.ParseJSON(Board.RawData(Self.kClipboardType))
-		  Catch Err As RuntimeException
-		  End Try
-		  
-		  Var Changed As Boolean
-		  For Each Dict As Dictionary In Accounts
-		    Var Account As Beacon.ExternalAccount = Beacon.ExternalAccount.FromDictionary(Dict)
-		    If Account Is Nil Then
-		      Continue
-		    End If
-		    
-		    Self.Document.Accounts.Add(Account)
-		    Changed = True
-		  Next
-		  
-		  If Changed Then
-		    Self.SetupUI
-		  End If
+		Sub OpenDocument(URL As Beacon.DocumentURL)
+		  Self.OpenDocument(URL)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CloudDocumentsComponent1
+	#tag Event
+		Sub OpenDocument(URL As Beacon.DocumentURL)
+		  Self.OpenDocument(URL)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CommunityDocumentsComponent1
+	#tag Event
+		Sub OpenDocument(URL As Beacon.DocumentURL)
+		  Self.OpenDocument(URL)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
+		Name="ToolbarCaption"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
-		Type="Picture"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
-		EditorType=""
+		Type="String"
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -309,12 +302,20 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="ToolbarCaption"
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ToolbarIcon"
 		Visible=false
 		Group="Behavior"
 		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
+		Type="Picture"
+		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"

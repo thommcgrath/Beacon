@@ -138,6 +138,7 @@ Begin BeaconDialog AddSpawnPointDialog
       DataSource      =   ""
       DefaultRowHeight=   26
       DropIndicatorVisible=   False
+      EditCaption     =   "Edit"
       Enabled         =   True
       FontName        =   "System"
       FontSize        =   0.0

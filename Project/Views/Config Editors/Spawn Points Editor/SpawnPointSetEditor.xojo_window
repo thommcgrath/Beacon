@@ -164,6 +164,7 @@ Begin BeaconContainer SpawnPointSetEditor
          DataSource      =   ""
          DefaultRowHeight=   34
          DropIndicatorVisible=   False
+         EditCaption     =   "Edit"
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -344,6 +345,7 @@ Begin BeaconContainer SpawnPointSetEditor
          DataSource      =   ""
          DefaultRowHeight=   34
          DropIndicatorVisible=   False
+         EditCaption     =   "Edit"
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0

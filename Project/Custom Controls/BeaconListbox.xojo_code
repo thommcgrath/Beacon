@@ -31,6 +31,9 @@ Inherits Listbox
 		Function CellBackgroundPaint(g As Graphics, row As Integer, column As Integer) As Boolean
 		  #Pragma Unused Column
 		  
+		  Const InsetAmount = 20
+		  Const CornerRadius = 8
+		  
 		  Var ColumnWidth As Integer = Self.ColumnAt(Column).WidthActual
 		  Var RowHeight As Integer = Self.DefaultRowHeight
 		  
@@ -40,23 +43,39 @@ Inherits Listbox
 		    RowSelected = Self.Selected(Row)
 		  End If
 		  
-		  // To ensure a consistent drawing experience. Partially obscure rows traditionally have a truncated g.height value.
-		  Var Clip As Graphics = G.Clip(0, 0, ColumnWidth, RowHeight)
-		  
 		  // Need to fill with color first so translucent system colors can apply correctly
-		  #if TargetMacOS
-		    Var OSMajor, OSMinor, OSBug As Integer
-		    UpdateChecker.OSVersion(OSMajor, OSMinor, OSBug)
-		    If Self.Transparent And OSMajor >= 10 And OSMinor >= 14 Then
-		      Clip.ClearRectangle(0, 0, Clip.Width, Clip.Height)
-		    Else
-		      Clip.DrawingColor = SystemColors.UnderPageBackgroundColor
-		      Clip.FillRectangle(0, 0, Clip.Width, Clip.Height)
-		    End If
-		  #else
-		    Clip.DrawingColor = SystemColors.UnderPageBackgroundColor
-		    Clip.FillRectangle(0, 0, Clip.Width, Clip.Height)
+		  If Self.Transparent Then
+		    G.ClearRectangle(0, 0, G.Width, G.Height)
+		  End If
+		  G.DrawingColor = SystemColors.ControlBackgroundColor
+		  G.FillRectangle(0, 0, G.Width, G.Height)
+		  
+		  #if false
+		    #if TargetMacOS
+		      Var OSMajor, OSMinor, OSBug As Integer
+		      UpdateChecker.OSVersion(OSMajor, OSMinor, OSBug)
+		      If Self.Transparent And OSMajor >= 10 And OSMinor >= 14 Then
+		        G.ClearRectangle(0, 0, G.Width, G.Height)
+		      Else
+		        G.DrawingColor = SystemColors.UnderPageBackgroundColor
+		        G.FillRectangle(0, 0, G.Width, G.Height)
+		      End If
+		    #else
+		      G.DrawingColor = SystemColors.UnderPageBackgroundColor
+		      G.FillRectangle(0, 0, G.Width, G.Height)
+		    #endif
 		  #endif
+		  
+		  Var InsetLeft, InsetRight As Integer
+		  If Column = 0 Then
+		    InsetLeft = InsetAmount
+		  End If
+		  If Column = Self.ColumnCount - 1 Then
+		    InsetRight = InsetAmount
+		  End If
+		  
+		  // To ensure a consistent drawing experience. Partially obscure rows traditionally have a truncated g.height value.
+		  Var Clip As Graphics = G.Clip(InsetLeft, 0, ColumnWidth - (InsetLeft + InsetRight), RowHeight)
 		  
 		  Var BackgroundColor, TextColor, SecondaryTextColor As Color
 		  Var IsHighlighted As Boolean = Self.Highlighted And Self.Window.Focus = Self
@@ -76,7 +95,15 @@ Inherits Listbox
 		  End If
 		  
 		  Clip.DrawingColor = BackgroundColor
-		  Clip.FillRectangle(0, 0, G.Width, G.Height)
+		  
+		  Var LeftPad, RightPad As Integer = CornerRadius
+		  If Column = 0 Then
+		    LeftPad = 0
+		  End If
+		  If Column = Self.ColumnCount - 1 Then
+		    RightPad = 0
+		  End If
+		  Clip.FillRoundRectangle(0 - LeftPad, 0, Clip.Width + LeftPad + RightPad, Clip.Height, CornerRadius, CornerRadius)
 		  
 		  Call CellBackgroundPaint(Clip, Row, Column, BackgroundColor, TextColor, IsHighlighted)
 		  
@@ -183,7 +210,7 @@ Inherits Listbox
 		  Var CanDelete As Boolean = RaiseEvent CanDelete()
 		  Var CanPaste As Boolean = RaiseEvent CanPaste(Board)
 		  
-		  Var EditItem As New MenuItem("Edit", "edit")
+		  Var EditItem As New MenuItem(Self.mEditCaption, "edit")
 		  EditItem.Enabled = CanEdit
 		  Base.AddMenu(EditItem)
 		  
@@ -673,12 +700,32 @@ Inherits Listbox
 	#tag EndHook
 
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mEditCaption
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mEditCaption.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
+			    Self.mEditCaption = Value
+			  End If
+			End Set
+		#tag EndSetter
+		EditCaption As String
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mBlockSelectionChangeCount As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mCellActionCascading As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEditCaption As String = "Edit"
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1211,6 +1258,14 @@ Inherits Listbox
 			InitialValue="0"
 			Type="Integer"
 			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="EditCaption"
+			Visible=true
+			Group="Behavior"
+			InitialValue="Edit"
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="RequiresSelection"
