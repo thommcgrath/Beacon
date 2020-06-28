@@ -108,7 +108,7 @@ Begin ConfigEditor DifficultyConfigEditor
       Bold            =   False
       Caption         =   "Reference Values"
       Enabled         =   True
-      Height          =   180
+      Height          =   248
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -447,6 +447,164 @@ Begin ConfigEditor DifficultyConfigEditor
          Visible         =   True
          Width           =   179
       End
+      Begin UITweaks.ResizedTextField MaxTekLevelField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ReferenceValuesGroup"
+         Italic          =   False
+         Left            =   231
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   True
+         Scope           =   2
+         TabIndex        =   8
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "0"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   226
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedTextField MaxWyvernLevelField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ReferenceValuesGroup"
+         Italic          =   False
+         Left            =   231
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   True
+         Scope           =   2
+         TabIndex        =   9
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "0"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   260
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedLabel MaxTekLevelLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "ReferenceValuesGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   10
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   226
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Max Tek Level:"
+         Visible         =   True
+         Width           =   179
+      End
+      Begin UITweaks.ResizedLabel MaxWyvernLevelLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "ReferenceValuesGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   11
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   260
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Max Wyvern Level:"
+         Visible         =   True
+         Width           =   179
+      End
    End
 End
 #tag EndWindow
@@ -462,7 +620,7 @@ End
 	#tag Event
 		Sub SetupUI()
 		  Var Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
-		  Self.MaxDinoLevelField.Value = Str(Difficulty.MaxDinoLevel, "0")
+		  Self.MaxDinoLevelField.Value = Format(Difficulty.MaxDinoLevel, "0,")
 		  Self.FillReferenceFields(Difficulty)
 		End Sub
 	#tag EndEvent
@@ -476,10 +634,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub FillReferenceFields(Difficulty As BeaconConfigs.Difficulty)
-		  Self.LootScaleField.Value = Str(Difficulty.DifficultyValue, "0%")
-		  Self.DifficultyValueField.Value = Difficulty.DifficultyValue.PrettyText
-		  Self.DifficultyOffsetField.Value = "1.0"
-		  Self.OverrideOfficialDifficultyField.Value = Difficulty.OverrideOfficialDifficulty.PrettyText
+		  Self.LootScaleField.Value = Format(Difficulty.DifficultyValue, "0%")
+		  Self.DifficultyValueField.Value = Difficulty.DifficultyValue.PrettyText(True)
+		  Self.DifficultyOffsetField.Value = Format(1.0, "0.0")
+		  Self.OverrideOfficialDifficultyField.Value = Difficulty.OverrideOfficialDifficulty.PrettyText(True)
+		  Self.MaxTekLevelField.Value = Format(Difficulty.MaxTekLevel, "0,")
+		  Self.MaxWyvernLevelField.Value = Format(Difficulty.MaxWyvernLevel, "0,")
 		End Sub
 	#tag EndMethod
 
@@ -493,7 +653,7 @@ End
 		    Return
 		  End If
 		  
-		  Var Value As Integer = Val(Me.Value)
+		  Var Value As Integer = CDbl(Me.Value)
 		  If Value <= 0 Then
 		    Return
 		  End If

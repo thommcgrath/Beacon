@@ -968,10 +968,28 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function PrettyText(Value As Double, DecimalPlaces As Integer = 9) As String
+		Protected Function PrettyText(Value As Double) As String
+		  Return PrettyText(Value, DefaultPrettyDecimals, DefaultPrettyLocalized)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function PrettyText(Value As Double, Localized As Boolean) As String
+		  Return PrettyText(Value, DefaultPrettyDecimals, Localized)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function PrettyText(Value As Double, DecimalPlaces As Integer) As String
+		  Return PrettyText(Value, DecimalPlaces, DefaultPrettyLocalized)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function PrettyText(Value As Double, DecimalPlaces As Integer, Localized As Boolean) As String
 		  Var Multiplier As UInteger = 1
 		  Var Places As Integer = 0
-		  Var Format As String = "0"
+		  Var Format As String = "-0"
 		  
 		  While Places < DecimalPlaces
 		    Var TestValue As Double = Value * Multiplier
@@ -983,18 +1001,40 @@ Protected Module Beacon
 		    Places = Places + 1
 		  Wend
 		  
-		  If Format.Length > 1 Then
-		    Format = Format.Left(1) + "." + Format.Middle(1)
+		  If Format.Length > 2 Then
+		    Format = Format.Left(2) + "." + Format.Middle(2)
 		  End If
 		  
 		  Var RoundedValue As Double = Round(Value * Multiplier) / Multiplier
-		  Return RoundedValue.ToString(Locale.Raw, Format)
+		  If Localized Then
+		    Return Format(RoundedValue, Format)
+		  Else
+		    Return Str(RoundedValue, Format)
+		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function PrettyText(Extends Value As Double, DecimalPlaces As Integer = 9) As String
-		  Return PrettyText(Value, DecimalPlaces)
+		Function PrettyText(Extends Value As Double) As String
+		  Return PrettyText(Value, DefaultPrettyDecimals, DefaultPrettyLocalized)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function PrettyText(Extends Value As Double, Localized As Boolean) As String
+		  Return PrettyText(Value, DefaultPrettyDecimals, Localized)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function PrettyText(Extends Value As Double, DecimalPlaces As Integer) As String
+		  Return PrettyText(Value, DecimalPlaces, DefaultPrettyLocalized)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function PrettyText(Extends Value As Double, DecimalPlaces As Integer, Localized As Boolean) As String
+		  Return PrettyText(Value, DecimalPlaces, Localized)
 		End Function
 	#tag EndMethod
 
@@ -1553,6 +1593,12 @@ Protected Module Beacon
 	#tag EndConstant
 
 	#tag Constant, Name = CategorySpawnPoints, Type = String, Dynamic = False, Default = \"spawn_points", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = DefaultPrettyDecimals, Type = Double, Dynamic = False, Default = \"9", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = DefaultPrettyLocalized, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = MOTDEditingEnabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Protected
