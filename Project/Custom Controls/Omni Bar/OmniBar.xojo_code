@@ -70,6 +70,10 @@ Implements ObservationKit.Observer
 		    Self.Invalidate(Self.mMouseOverIndex)
 		    Self.mMouseOverIndex = -1
 		  End If
+		  
+		  #if TargetMacOS
+		    Self.TrueWindow.NSWindowMBS.Movable = True
+		  #endif
 		End Sub
 	#tag EndEvent
 
@@ -90,6 +94,10 @@ Implements ObservationKit.Observer
 		  If Self.mMouseOverIndex > -1 Then
 		    Self.Invalidate(Self.mMouseOverIndex)
 		  End If
+		  
+		  #if TargetMacOS
+		    Self.TrueWindow.NSWindowMBS.Movable = Self.mMouseOverIndex = -1
+		  #endif
 		End Sub
 	#tag EndEvent
 
