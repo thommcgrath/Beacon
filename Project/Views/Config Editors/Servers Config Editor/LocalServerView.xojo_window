@@ -655,8 +655,17 @@ End
 		  If Self.mProfile.GameUserSettingsIniFile <> Nil Then
 		    Self.GameUserSettingsIniPathField.Value = Self.mProfile.GameUserSettingsIniFile.NativePath
 		  End If
-		  Self.MessageOfTheDayArea.RTFData = Self.mProfile.MessageOfTheDay
-		  Self.MessageDurationField.DoubleValue = Self.mProfile.MessageDuration
+		  
+		  #if Beacon.MOTDEditingEnabled
+		    Self.MessageOfTheDayArea.RTFData = Self.mProfile.MessageOfTheDay
+		    Self.MessageDurationField.DoubleValue = Self.mProfile.MessageDuration
+		  #endif
+		  
+		  Self.MessageOfTheDayArea.Visible = Beacon.MOTDEditingEnabled
+		  Self.MessageOfTheDayLabel.Visible = Beacon.MOTDEditingEnabled
+		  Self.MessageDurationField.Visible = Beacon.MOTDEditingEnabled
+		  Self.MessageDurationLabel.Visible = Beacon.MOTDEditingEnabled
+		  Self.MessageDurationSuffixLabel.Visible = Beacon.MOTDEditingEnabled
 		End Sub
 	#tag EndEvent
 

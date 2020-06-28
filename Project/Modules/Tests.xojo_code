@@ -26,14 +26,16 @@ Protected Module Tests
 		    TestNamingThings()
 		    TestConfigKeys()
 		    TestNumberFormatting()
-		    TestArkML()
+		    #if Beacon.MOTDEditingEnabled
+		      TestArkML()
+		    #endif
 		  #endif
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub TestArkML()
-		  Var InputString As String = """This is a &quot;string&quot; with characters &amp; &lt;stuff&gt; like &#127817; and https://discord.gg/invite that\nneeds to be encoded."""
+		  Var InputString As String = "This is a &quot;string&quot; with characters &amp; &lt;stuff&gt; like &#127817; and discord.gg/invite that\nneeds to be encoded."
 		  
 		  Var RTFString As String = BeaconConfigs.Metadata.ArkMLToRTF(InputString)
 		  Var ArkMLString As String = BeaconConfigs.Metadata.RTFToArkML(RTFString)
@@ -245,11 +247,13 @@ Protected Module Tests
 		  Var FormatFraction As String = Beacon.PrettyText(1.1, 4)
 		  Var FormatPrecise As String = Beacon.PrettyText(1.234567, 4)
 		  Var FormatMicro As String = Beacon.PrettyText(0.00000001, 9)
+		  Var FormatNegative As String = Beacon.PrettyText(-1.334, 4)
 		  
 		  Call Assert(FormatWhole = "1", "Format of whole number is incorrect. Expected '1' but got '" + FormatWhole + "'.")
 		  Call Assert(FormatFraction = "1.1", "Format of fractional number is incorrect. Expected '1.1' but got '" + FormatFraction + "'.")
 		  Call Assert(FormatPrecise = "1.2346", "Format of high precision number is incorrect. Expected '1.2346' but got '" + FormatPrecise + "'.")
 		  Call Assert(FormatMicro = "0.00000001", "Format of micro scale number is incorrect. Expected '0.00000001' but got '" + FormatMicro + "'.")
+		  Call Assert(FormatNegative = "-1.334", "Format of negative number is incorrect. Expected '-1.334' but got '" + FormatNegative + "'.")
 		End Sub
 	#tag EndMethod
 
@@ -407,6 +411,12 @@ Protected Module Tests
 		  Catch Err As UnsupportedFormatException
 		    System.DebugLog("MD5UUID generated bad format")
 		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub Untitled()
+		  
 		End Sub
 	#tag EndMethod
 

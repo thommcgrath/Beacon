@@ -50,10 +50,12 @@ Implements ObservationKit.Observable
 		    Return
 		  End If
 		  
-		  If Profile.MessageOfTheDay.IsEmpty = False Then
-		    Values.AddRow(New Beacon.ConfigValue("MessageOfTheDay", "Message", Self.RTFToArkML(Profile.MessageOfTheDay)))
-		    Values.AddRow(New Beacon.ConfigValue("MessageOfTheDay", "Duration", Profile.MessageDuration.ToString))
-		  End If
+		  #if Beacon.MOTDEditingEnabled Then
+		    If Profile.MessageOfTheDay.IsEmpty = False Then
+		      Values.AddRow(New Beacon.ConfigValue("MessageOfTheDay", "Message", Self.RTFToArkML(Profile.MessageOfTheDay)))
+		      Values.AddRow(New Beacon.ConfigValue("MessageOfTheDay", "Duration", Profile.MessageDuration.ToString))
+		    End If
+		  #endif
 		End Sub
 	#tag EndEvent
 
@@ -619,7 +621,7 @@ Implements ObservationKit.Observable
 		  Next
 		  
 		  Var Message As String = Parts.Join("\n")
-		  Message = Message.ReplaceAll("""", "\""")
+		  //Message = Message.ReplaceAll("""", "\""")
 		  
 		  // Move whitespace from the end of a color tag to outside it
 		  Var Cleaner As New Regex
@@ -637,7 +639,12 @@ Implements ObservationKit.Observable
 		  Cleaner.ReplacementPattern = ""
 		  Message = Cleaner.Replace(Message)
 		  
-		  Return """" + Message + """"
+		  // Links seem to screw up Ark
+		  Message = Message.ReplaceAll("https://", "")
+		  Message = Message.ReplaceAll("http://", "")
+		  
+		  Return Message
+		  //Return """" + Message + """"
 		End Function
 	#tag EndMethod
 

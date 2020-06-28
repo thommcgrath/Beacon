@@ -102,11 +102,7 @@ Inherits Beacon.ConfigGroup
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Var MaxLevel As Integer = Floor(Value * 30)
-			  If Self.mMaxDinoLevel <> MaxLevel Then
-			    Self.mMaxDinoLevel = MaxLevel
-			    Self.Modified = True
-			  End If
+			  Self.MaxDinoLevel = Floor(Value * 30)
 			End Set
 		#tag EndSetter
 		DifficultyValue As Double
@@ -120,6 +116,8 @@ Inherits Beacon.ConfigGroup
 		#tag EndGetter
 		#tag Setter
 			Set
+			  Value = Min(Value, 2999999970)
+			  
 			  If Self.mMaxDinoLevel <> Value Then
 			    Self.mMaxDinoLevel = Value
 			    Self.Modified = True
@@ -127,6 +125,24 @@ Inherits Beacon.ConfigGroup
 			End Set
 		#tag EndSetter
 		MaxDinoLevel As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.DifficultyValue * 36
+			End Get
+		#tag EndGetter
+		MaxTekLevel As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.DifficultyValue * 38
+			End Get
+		#tag EndGetter
+		MaxWyvernLevel As Integer
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
