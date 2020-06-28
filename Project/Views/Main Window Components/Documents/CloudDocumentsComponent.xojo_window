@@ -10,7 +10,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
    Enabled         =   True
    EraseBackground =   True
    HasBackgroundColor=   False
-   Height          =   300
+   Height          =   508
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   True
@@ -24,13 +24,384 @@ Begin DocumentsComponentView CloudDocumentsComponent
    Top             =   0
    Transparent     =   True
    Visible         =   True
-   Width           =   300
+   Width           =   804
+   Begin PagePanel Pages
+      AllowAutoDeactivate=   True
+      Enabled         =   True
+      Height          =   508
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      PanelCount      =   5
+      Panels          =   ""
+      Scope           =   2
+      SelectedPanelIndex=   0
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   False
+      Value           =   3
+      Visible         =   True
+      Width           =   804
+      Begin ProgressBar LoadingProgressBar
+         AllowAutoDeactivate=   True
+         Enabled         =   True
+         Height          =   20
+         Indeterminate   =   True
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   277
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumValue    =   0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         Tooltip         =   ""
+         Top             =   256
+         Transparent     =   False
+         Value           =   0.0
+         Visible         =   True
+         Width           =   250
+      End
+      Begin Label LoadingLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   277
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextAlignment   =   "2"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   232
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Loading documents…"
+         Visible         =   True
+         Width           =   250
+      End
+      Begin BeaconListbox List
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   False
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
+         Bold            =   False
+         ColumnCount     =   2
+         ColumnWidths    =   "46,*"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   26
+         DropIndicatorVisible=   False
+         EditCaption     =   "Open"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLinesHorizontalStyle=   "0"
+         GridLinesVerticalStyle=   "0"
+         HasBorder       =   False
+         HasHeader       =   False
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
+         HeadingIndex    =   -1
+         Height          =   508
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         RowSelectionType=   "1"
+         Scope           =   2
+         SelectionChangeBlocked=   False
+         TabIndex        =   0
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   False
+         TypeaheadColumn =   1
+         Underline       =   False
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   804
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
+   End
+   Begin BeaconAPI.Socket APISocket
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
+		  Var LoadingGroup As New ControlGroup(Self.LoadingLabel, Self.LoadingProgressBar)
+		  LoadingGroup.Left = (Self.Width - LoadingGroup.Width) / 2
+		  LoadingGroup.Top = (Self.Height - LoadingGroup.Height) / 2
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  #Pragma Unused UserData
+		  
+		  If Preferences.OnlineEnabled = False Or App.IdentityManager.CurrentIdentity Is Nil Then
+		    Self.Pages.SelectedPanelIndex = Self.PagePermission
+		    Return
+		  End If
+		  
+		  If Self.APISocket.Working = False Then
+		    Var Params As New Dictionary
+		    Params.Value("user_id") = App.IdentityManager.CurrentIdentity.Identifier
+		    
+		    Var Request As BeaconAPI.Request
+		    Var Token As String = Preferences.OnlineToken
+		    If Token.IsEmpty Then
+		      Request = New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_ListDocumentsWithIdentity)
+		      Request.Sign(App.IdentityManager.CurrentIdentity)
+		    Else
+		      Request = New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_ListDocumentsWithToken)
+		      Request.Authenticate(Token)
+		    End If
+		    Self.APISocket.Start(Request)
+		  End If
+		  
+		  Self.Pages.SelectedPanelIndex = Self.PageLoading
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_ListDocumentsWithIdentity(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  If Response.HTTPStatus = 401 Then
+		    Self.Pages.SelectedPanelIndex = Self.PageLogin
+		    Return
+		  End If
+		  
+		  Self.UpdateList(Response)
+		  Self.Pages.SelectedPanelIndex = Self.PageList
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_ListDocumentsWithToken(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  If Response.HTTPStatus = 401 Then
+		    Var Params As New Dictionary
+		    Params.Value("user_id") = App.IdentityManager.CurrentIdentity.Identifier
+		    
+		    Var NewAttempt As New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_ListDocumentsWithIdentity)
+		    NewAttempt.Sign(App.IdentityManager.CurrentIdentity)
+		    Self.APISocket.Start(NewAttempt)
+		    Return
+		  End If
+		  
+		  Self.UpdateList(Response)
+		  Self.Pages.SelectedPanelIndex = Self.PageList
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateFilter()
+		  Var SelectedURLs() As String
+		  For I As Integer = 0 To Self.List.LastRowIndex
+		    If Self.List.Selected(I) Then
+		      Var URL As Beacon.DocumentURL = Self.List.RowTagAt(I)
+		      SelectedURLs.AddRow(URL)
+		    End If
+		  Next
+		  
+		  Self.List.RowCount = Self.mDocuments.Count
+		  
+		  For I As Integer = 0 To Self.mDocuments.LastRowIndex
+		    Var URL As Beacon.DocumentURL = Self.mDocuments(I)
+		    Self.List.CellValueAt(I, Self.ColumnName) = URL.Name
+		    Self.List.RowTagAt(I) = URL
+		    Self.List.Selected(I) = SelectedURLs.IndexOf(URL) > -1
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateList(Response As BeaconAPI.Response)
+		  If Response.Success = False Then
+		    Self.Pages.SelectedPanelIndex = Self.PageError
+		    Return
+		  End If
+		  
+		  Self.mDocuments.ResizeTo(-1)
+		  
+		  Var Dicts() As Variant = Response.JSON
+		  For Each Dict As Dictionary In Dicts
+		    Var Document As New BeaconAPI.Document(Dict)
+		    Var URL As String = Beacon.DocumentURL.TypeCloud + "://" + Document.ResourceURL.Middle(Document.ResourceURL.IndexOf("://") + 3)
+		    Self.mDocuments.AddRow(URL)
+		  Next
+		  
+		  Self.UpdateFilter()
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mDocuments() As Beacon.DocumentURL
+	#tag EndProperty
+
+
+	#tag Constant, Name = ColumnIcon, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageError, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageList, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageLoading, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageLogin, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PagePermission, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+
 #tag EndWindowCode
 
+#tag Events List
+	#tag Event
+		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
+		  #Pragma Unused BackgroundColor
+		  #Pragma Unused IsHighlighted
+		  
+		  If Column <> Self.ColumnIcon Or Row >= Me.RowCount Then
+		    Return
+		  End If
+		  
+		  Var URL As Beacon.DocumentURL = Me.RowTagAt(Row)
+		  If URL = Nil Then
+		    Return
+		  End If
+		  
+		  Var IconColor As Color = TextColor.AtOpacity(0.5)
+		  Var Icon As Picture
+		  Select Case URL.Scheme
+		  Case Beacon.DocumentURL.TypeCloud
+		    Icon = BeaconUI.IconWithColor(IconCloudDocument, IconColor)
+		  Case Beacon.DocumentURL.TypeWeb
+		    Icon = BeaconUI.IconWithColor(IconCommunityDocument, IconColor)
+		  End Select
+		  
+		  If Icon = Nil Then
+		    Return
+		  End If
+		  
+		  G.DrawPicture(Icon, (G.Width - Icon.Width) / 2, (G.Height - Icon.Height) / 2)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CellTextPaint(G As Graphics, Row As Integer, Column As Integer, Line As String, ByRef TextColor As Color, HorizontalPosition As Integer, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
+		  #Pragma Unused G
+		  #Pragma Unused Row
+		  #Pragma Unused Line
+		  #Pragma Unused TextColor
+		  #Pragma Unused HorizontalPosition
+		  #Pragma Unused VerticalPosition
+		  #Pragma Unused IsHighlighted
+		  
+		  Return Column = Self.ColumnIcon
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  Select Case Column
+		  Case 0
+		    Var Row1URL As Beacon.DocumentURL = Me.RowTagAt(Row1)
+		    Var Row2URL As Beacon.DocumentURL = Me.RowTagAt(Row2)
+		    
+		    Result = Row1URL.Name.Compare(Row2URL.Name, ComparisonOptions.CaseSensitive)
+		    
+		    Return True
+		  End Select
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
+		  #Pragma Unused Warn
+		  
+		  System.Beep
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformEdit()
+		  For Row As Integer = 0 To Me.LastRowIndex
+		    If Me.Selected(Row) = False Then
+		      Continue
+		    End If
+		    
+		    Var URL As Beacon.DocumentURL = Me.RowTagAt(Row)
+		    Self.OpenDocument(URL)
+		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="ToolbarCaption"
