@@ -143,6 +143,7 @@ Implements ObservationKit.Observer
 		  Var NextPos As Double = If(Self.LeftPadding = -1, Self.ItemSpacing, Self.LeftPadding)
 		  Var Rects() As Rect
 		  Rects.ResizeTo(Self.mItems.LastRowIndex)
+		  G.Bold = True // Assume all are toggled for the sake of spacing
 		  For Idx As Integer = 0 To Self.mItems.LastRowIndex
 		    Var Item As OmniBarItem = Self.mItems(Idx)
 		    If Item Is Nil Then
@@ -151,7 +152,6 @@ Implements ObservationKit.Observer
 		    
 		    Var Segments() As Double
 		    If Item.Caption.IsEmpty = False Then
-		      G.Bold = Item.Toggled
 		      Segments.AddRow(Min(G.TextWidth(Item.Caption), Self.MaxCaptionWidth))
 		    End If
 		    If (Item.Icon Is Nil) = False Then
@@ -365,6 +365,7 @@ Implements ObservationKit.Observer
 		  Var AccessoryImage As Picture
 		  Var AccessoryRect As New Rect(G.Width - Self.IconSize, NearestMultiple((G.Height - Self.IconSize) / 2, G.ScaleY), Self.IconSize, Self.IconSize)
 		  Var AccessoryColor As Color
+		  Var WithAccessory As Boolean = True
 		  If Item.CanBeClosed And (State = Self.StateHover Or State = Self.StatePressed) Then
 		    Var AccessoryState As Integer = State
 		    If (LocalMousePoint Is Nil) = False And AccessoryRect.Contains(LocalMousePoint) Then
@@ -390,15 +391,17 @@ Implements ObservationKit.Observer
 		  ElseIf Item.CanBeClosed Then
 		    AccessoryColor = SystemColors.TertiaryLabelColor
 		    AccessoryImage = IconClose
+		  Else
+		    WithAccessory = False
 		  End If
 		  If (AccessoryImage Is Nil) = False Then
 		    AccessoryImage = BeaconUI.IconWithColor(AccessoryImage, AccessoryColor)
 		    G.DrawPicture(AccessoryImage, AccessoryRect.Left, AccessoryRect.Top, AccessoryRect.Width, AccessoryRect.Height, 0, 0, AccessoryImage.Width, AccessoryImage.Height)
 		  End If
 		  
-		  Var CaptionLeft As Double = 0
+		  Var CaptionOffset As Double = 0
 		  If HasIcon = True Then
-		    CaptionLeft = Self.IconSize + Self.ElementSpacing
+		    CaptionOffset = Self.IconSize + Self.ElementSpacing
 		    
 		    Var IconTop As Double = NearestMultiple((G.Height - Self.IconSize) / 2, G.ScaleY)
 		    Var Icon As Picture = BeaconUI.IconWithColor(Item.Icon, Forecolor)
@@ -409,6 +412,8 @@ Implements ObservationKit.Observer
 		    G.Bold = True
 		  End If
 		  
+		  Var CaptionSpace As Double = If(WithAccessory, AccessoryRect.Left, G.Width) - CaptionOffset
+		  Var CaptionLeft As Double = NearestMultiple((CaptionSpace - Min(G.TextWidth(Item.Caption), Self.MaxCaptionWidth)) / 2, G.ScaleX)
 		  Var CaptionBaseline As Double = NearestMultiple((G.Height / 2) + (G.CapHeight / 2), G.ScaleY)
 		  
 		  G.DrawingColor = ForeColor
@@ -476,7 +481,7 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h0
 		Sub Invalidate(Idx As Integer)
-		  If Idx < Self.mItems.FirstRowIndex Or Idx > Self.mItems.LastRowIndex Then
+		  If Idx < Self.mItemRects.FirstRowIndex Or Idx > Self.mItemRects.LastRowIndex Then
 		    Super.Invalidate(False)
 		    Return
 		  End If

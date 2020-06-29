@@ -76,7 +76,7 @@ Begin BeaconPagedSubview DocumentsComponent
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   896
       Begin RecentDocumentsComponent RecentDocumentsComponent1
@@ -306,8 +306,43 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub OpenDocument(URL As Beacon.DocumentURL)
+	#tag Method, Flags = &h0
+		Sub ImportFile(File As FolderItem)
+		  Call DocumentImportWindow.Present(WeakAddressOf LoadImportedDocuments, New Beacon.Document, File)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LoadImportedDocuments(Documents() As Beacon.Document)
+		  For Each Document As Beacon.Document In Documents
+		    Self.NewDocument(Document)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NewDocument(Document As Beacon.Document = Nil)
+		  If Document Is Nil Then
+		    Document = New Beacon.Document
+		    
+		    Static NewDocumentNumber As Integer = 1
+		    Document.Title = "Untitled Document " + NewDocumentNumber.ToString
+		    Document.Modified = False
+		    NewDocumentNumber = NewDocumentNumber + 1
+		  End If
+		  
+		  Var Controller As New Beacon.DocumentController(Document, App.IdentityManager.CurrentIdentity)
+		  Var NavItem As New OmniBarItem(Controller.URL.Hash, Controller.Name)
+		  Self.Nav.Append(NavItem)
+		  
+		  Self.AttachControllerEvents(Controller)
+		  
+		  Controller.Load()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub OpenDocument(URL As Beacon.DocumentURL, AddToRecents As Boolean = True)
 		  Var Hash As String = URL.Hash
 		  Var NavItem As OmniBarItem = Self.Nav.Item(Hash)
 		  If (NavItem Is Nil) = False Then
@@ -330,6 +365,17 @@ End
 		  Self.AttachControllerEvents(Controller)
 		  
 		  Controller.Load()
+		  
+		  If AddToRecents Then
+		    Preferences.AddToRecentDocuments(URL)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub OpenDocument(File As FolderItem, AddToRecents As Boolean = True)
+		  Var URL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(New BookmarkedFolderItem(File))
+		  Self.OpenDocument(URL, AddToRecents)
 		End Sub
 	#tag EndMethod
 
@@ -371,6 +417,11 @@ End
 		      Return
 		    End If
 		  Next
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldCloseItem(Item As OmniBarItem)
+		  Break
 		End Sub
 	#tag EndEvent
 #tag EndEvents

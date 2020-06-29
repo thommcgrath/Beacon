@@ -586,8 +586,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Documents() As LibraryPaneDocuments
-		  Return Self.LibraryPane1.DocumentsPane
+		Function Documents(SwitchTo As Boolean = True) As DocumentsComponent
+		  If SwitchTo Then
+		    Self.SwitchView(Self.PageDocuments)
+		  End If
+		  
+		  Return Self.DocumentsComponent1
 		End Function
 	#tag EndMethod
 
@@ -773,6 +777,49 @@ End
 		    End If
 		  End If
 		  Self.TabBar1.Invalidate
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SwitchView(Index As Integer)
+		  Var CurrentIndex As Integer = Self.Pages.SelectedPanelIndex
+		  If CurrentIndex = Index Then
+		    Return
+		  End If
+		  
+		  Select Case CurrentIndex
+		  Case Self.PageHome
+		    Self.DashboardPane1.SwitchedFrom()
+		  Case Self.PageDocuments
+		    Self.DocumentsComponent1.SwitchedFrom()
+		  Case Self.PageBlueprints
+		    
+		  Case Self.PagePresets
+		    
+		  Case Self.PageHelp
+		    
+		  End Select
+		  
+		  Self.Pages.SelectedPanelIndex = Index
+		  
+		  Select Case Index
+		  Case Self.PageHome
+		    Self.DashboardPane1.SwitchedTo(Nil)
+		  Case Self.PageDocuments
+		    Self.DocumentsComponent1.SwitchedTo(Nil)
+		  Case Self.PageBlueprints
+		    
+		  Case Self.PagePresets
+		    
+		  Case Self.PageHelp
+		    If Self.mHelpLoaded = False Then
+		      Self.HelpViewer.LoadURL(Beacon.WebURL("/help"))
+		    End If
+		  End Select
+		  
+		  For Idx As Integer = 0 To Self.NavBar.LastRowIndex
+		    Self.NavBar.Item(Idx).Toggled = (Idx = Index)
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -1148,8 +1195,6 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ItemPressed(Item As OmniBarItem)
-		  Var CurrentIndex As Integer = Self.Pages.SelectedPanelIndex
-		  
 		  Var NewIndex As Integer
 		  Select Case Item.Name
 		  Case "NavDocuments"
@@ -1162,45 +1207,11 @@ End
 		    NewIndex = Self.PageHelp
 		  Case "NavHome"
 		    NewIndex = Self.PageHome
-		  End Select
-		  
-		  If CurrentIndex = NewIndex Then
+		  Else
 		    Return
-		  End If
-		  
-		  Select Case CurrentIndex
-		  Case Self.PageHome
-		    Self.DashboardPane1.SwitchedFrom()
-		  Case Self.PageDocuments
-		    Self.DocumentsComponent1.SwitchedFrom()
-		  Case Self.PageBlueprints
-		    
-		  Case Self.PagePresets
-		    
-		  Case Self.PageHelp
-		    
 		  End Select
 		  
-		  Self.Pages.SelectedPanelIndex = NewIndex
-		  
-		  Select Case NewIndex
-		  Case Self.PageHome
-		    Self.DashboardPane1.SwitchedTo(Nil)
-		  Case Self.PageDocuments
-		    Self.DocumentsComponent1.SwitchedTo(Nil)
-		  Case Self.PageBlueprints
-		    
-		  Case Self.PagePresets
-		    
-		  Case Self.PageHelp
-		    If Self.mHelpLoaded = False Then
-		      Self.HelpViewer.LoadURL(Beacon.WebURL("/help"))
-		    End If
-		  End Select
-		  
-		  For Idx As Integer = 0 To Me.LastRowIndex
-		    Me.Item(Idx).Toggled = Item = Me.Item(Idx)
-		  Next
+		  Self.SwitchView(NewIndex)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1227,6 +1238,14 @@ End
 		  Var Item As OmniBarItem = Self.NavBar.Item("NavHelp")
 		  Item.HasProgressIndicator = True
 		  Item.Progress = OmniBarItem.ProgressIndeterminate
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DashboardPane1
+	#tag Event
+		Sub NewDocument()
+		  Self.SwitchView(Self.PageDocuments)
+		  Self.DocumentsComponent1.NewDocument()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

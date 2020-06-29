@@ -409,6 +409,11 @@ End
 	#tag EndMethod
 
 
+	#tag Hook, Flags = &h0
+		Event NewDocument()
+	#tag EndHook
+
+
 	#tag Property, Flags = &h21
 		Private mCopyrightGroup As ControlGroup
 	#tag EndProperty
@@ -423,14 +428,14 @@ End
 #tag Events NewFileButton
 	#tag Event
 		Sub Action()
-		  App.MainWindow.Documents.NewDocument()
+		  RaiseEvent NewDocument()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events OpenFileButton
 	#tag Event
 		Sub Action()
-		  App.MainWindow.Documents.ShowOpenDocument()
+		  App.ShowOpenDocument(Self.TrueWindow)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

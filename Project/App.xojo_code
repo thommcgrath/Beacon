@@ -220,9 +220,7 @@ Implements NotificationKit.Receiver
 
 	#tag MenuHandler
 		Function FileOpen() As Boolean Handles FileOpen.Action
-			If (Self.mMainWindow Is Nil) = False Then
-			Self.mMainWindow.Documents.ShowOpenDocument()
-			End If
+			Self.ShowOpenDocument()
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -649,7 +647,7 @@ Implements NotificationKit.Receiver
 		    End If
 		    
 		    Var FileURL As String = "https://" + URL
-		    Self.mMainWindow.Documents.OpenURL(FileURL)
+		    Self.mMainWindow.Documents.OpenDocument(FileURL)
 		  End If
 		  
 		  Return True
@@ -958,7 +956,7 @@ Implements NotificationKit.Receiver
 		Private Function mOpenRecent_OpenFile(Sender As MenuItem) As Boolean
 		  If (Self.mMainWindow Is Nil) = False Then
 		    Var Document As Beacon.DocumentURL = Sender.Tag
-		    Self.mMainWindow.Documents.OpenURL(Document)
+		    Self.mMainWindow.Documents.OpenDocument(Document)
 		    Return True
 		  End If
 		End Function
@@ -1051,7 +1049,7 @@ Implements NotificationKit.Receiver
 		  
 		  If File.IsType(BeaconFileTypes.BeaconDocument) Then
 		    Self.mMainWindow.BringToFront()
-		    Self.mMainWindow.Documents.OpenFile(File)
+		    Self.mMainWindow.Documents.OpenDocument(File)
 		    Return
 		  End If
 		  
@@ -1144,6 +1142,23 @@ Implements NotificationKit.Receiver
 		  #else
 		    File.Open
 		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowOpenDocument(Parent As Window = Nil)
+		  Var Dialog As New OpenFileDialog
+		  Dialog.Filter = BeaconFileTypes.BeaconDocument + BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconIdentity
+		  
+		  Var File As FolderItem
+		  If Parent Is Nil Then
+		    File = Dialog.ShowModal
+		  Else
+		    File = Dialog.ShowModalWithin(Parent.TrueWindow)
+		  End If
+		  If (File Is Nil) = False Then
+		    Self.OpenDocument(File)
+		  End If
 		End Sub
 	#tag EndMethod
 
