@@ -161,13 +161,10 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
-         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         ToolbarCaption  =   ""
-         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -195,13 +192,10 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
-         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
-         ToolbarCaption  =   ""
-         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -798,14 +792,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Picture"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
@@ -870,14 +856,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
 		Group="Behavior"
@@ -891,14 +869,6 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

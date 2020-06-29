@@ -33,14 +33,6 @@ End
 
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
 		Group="Behavior"
@@ -54,22 +46,6 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarIcon"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Picture"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

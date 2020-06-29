@@ -100,13 +100,10 @@ Begin BeaconPagedSubview DocumentsComponent
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
-         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         ToolbarCaption  =   ""
-         ToolbarIcon     =   0
          Tooltip         =   ""
          Top             =   38
          Transparent     =   True
@@ -134,13 +131,10 @@ Begin BeaconPagedSubview DocumentsComponent
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
-         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         ToolbarCaption  =   ""
-         ToolbarIcon     =   0
          Tooltip         =   ""
          Top             =   38
          Transparent     =   True
@@ -168,13 +162,10 @@ Begin BeaconPagedSubview DocumentsComponent
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
-         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
-         ToolbarCaption  =   ""
-         ToolbarIcon     =   0
          Tooltip         =   ""
          Top             =   38
          Transparent     =   True
@@ -209,9 +200,136 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h21
+		Private Sub AttachControllerEvents(Controller As Beacon.DocumentController)
+		  AddHandler Controller.Loaded, WeakAddressOf Controller_Loaded
+		  AddHandler Controller.LoadError, WeakAddressOf Controller_LoadError
+		  AddHandler Controller.LoadProgress, WeakAddressOf Controller_LoadProgress
+		  AddHandler Controller.LoadStarted, WeakAddressOf Controller_LoadStarted
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Controller_Loaded(Sender As Beacon.DocumentController, Document As Beacon.Document)
+		  #Pragma Unused Document
+		  
+		  Self.DetachControllerEvents(Sender)
+		  
+		  #if false
+		    Var URL As Beacon.DocumentURL = Sender.URL
+		    Select Case URL.Scheme
+		    Case Beacon.DocumentURL.TypeLocal, Beacon.DocumentURL.TypeTransient
+		      Self.View = Self.ViewRecentDocuments
+		    Case Beacon.DocumentURL.TypeCloud
+		      Self.View = Self.ViewCloudDocuments
+		    Case Beacon.DocumentURL.TypeWeb
+		      Self.View = Self.ViewCommunityDocuments
+		    End Select
+		    Self.SelectDocument(URL)
+		  #endif
+		  
+		  Var View As New DocumentEditorView(Sender)
+		  View.Changed = Sender.Document.Modified
+		  View.LinkedOmniBarItem = Self.Nav.Item(Sender.URL.Hash)
+		  View.LinkedOmniBarItem.CanBeClosed = True
+		  View.LinkedOmniBarItem.HasUnsavedChanges = View.Changed
+		  
+		  Self.Views.AddPanel
+		  Var PanelIndex As Integer = Self.Views.LastAddedPanelIndex
+		  View.EmbedWithinPanel(Self.Views, PanelIndex, 0, 0, Self.Views.Width, Self.Views.Height)
+		  
+		  Self.AppendPage(View)
+		  Self.CurrentPage = View
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Controller_LoadError(Sender As Beacon.DocumentController, Reason As String)
+		  #Pragma Unused Reason
+		  
+		  Self.DetachControllerEvents(Sender)
+		  
+		  Var NavItem As OmniBarItem = Self.Nav.Item(Sender.URL.Hash)
+		  If (NavItem Is Nil) = False Then
+		    Self.Nav.Remove(NavItem)
+		  End If
+		  
+		  Var RecentIdx As Integer = -1
+		  Var Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
+		  For I As Integer = 0 To Recents.LastRowIndex
+		    If Recents(I) = Sender.URL Then
+		      RecentIdx = I
+		      Exit For I
+		    End If
+		  Next
+		  
+		  If RecentIdx > -1 Then
+		    If Self.ShowConfirm("Unable to load """ + Sender.Name + """", "The document could not be loaded. It may have been deleted. Would you like to remove it from the recent documents list?", "Remove", "Keep") Then
+		      Recents.RemoveRowAt(RecentIdx)
+		      Preferences.RecentDocuments = Recents
+		    End If
+		  Else
+		    Self.ShowAlert("Unable to load """ + Sender.Name + """", "The document could not be loaded. It may have been deleted.")
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Controller_LoadProgress(Sender As Beacon.DocumentController, BytesReceived As Int64, BytesTotal As Int64)
+		  #Pragma Unused Sender
+		  
+		  Var NavItem As OmniBarItem = Self.Nav.Item(Sender.URL.Hash)
+		  If (NavItem Is Nil) = False Then
+		    NavItem.Progress = BytesReceived / BytesTotal
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Controller_LoadStarted(Sender As Beacon.DocumentController)
+		  Var NavItem As OmniBarItem = Self.Nav.Item(Sender.URL.Hash)
+		  If NavItem Is Nil Then
+		    Return
+		  End If
+		  
+		  NavItem.HasProgressIndicator = True
+		  NavItem.Progress = OmniBarItem.ProgressIndeterminate
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DetachControllerEvents(Controller As Beacon.DocumentController)
+		  RemoveHandler Controller.Loaded, WeakAddressOf Controller_Loaded
+		  RemoveHandler Controller.LoadError, WeakAddressOf Controller_LoadError
+		  RemoveHandler Controller.LoadProgress, WeakAddressOf Controller_LoadProgress
+		  RemoveHandler Controller.LoadStarted, WeakAddressOf Controller_LoadStarted
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub OpenDocument(URL As Beacon.DocumentURL)
-		  MessageBox(URL.URL)
+		  Var Hash As String = URL.Hash
+		  Var NavItem As OmniBarItem = Self.Nav.Item(Hash)
+		  If (NavItem Is Nil) = False Then
+		    // We've already started loading this item
+		    For Idx As Integer = 0 To Self.LastPageIndex
+		      Var Page As BeaconSubview = Self.Page(Idx)
+		      If Page.LinkedOmniBarItem = NavItem Then
+		        Self.CurrentPageIndex = Idx
+		        Return
+		      End If
+		    Next
+		    
+		    Return
+		  End If
+		  
+		  Var Controller As New Beacon.DocumentController(URL, App.IdentityManager.CurrentIdentity)
+		  NavItem = New OmniBarItem(Hash, Controller.Name)
+		  Self.Nav.Append(NavItem)
+		  
+		  Self.AttachControllerEvents(Controller)
+		  
+		  Controller.Load()
 		End Sub
 	#tag EndMethod
 
@@ -246,16 +364,13 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ItemPressed(Item As OmniBarItem)
-		  Select Case Item.Name
-		  Case "NavRecents"
-		    Self.CurrentPageIndex = Self.PageRecents
-		  Case "NavCloud"
-		    Self.CurrentPageIndex = Self.PageCloud
-		  Case "NavCommunity"
-		    Self.CurrentPageIndex = Self.PageCommunity
-		  Else
-		    
-		  End Select
+		  For Idx As Integer = 0 To Self.LastPageIndex
+		    Var Page As BeaconSubview = Self.Page(Idx)
+		    If Page.LinkedOmniBarItem = Item Then
+		      Self.CurrentPageIndex = Idx
+		      Return
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -282,14 +397,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
 		Group="Behavior"
@@ -303,22 +410,6 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarIcon"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Picture"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

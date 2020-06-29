@@ -45,7 +45,7 @@ Protected Class DocumentController
 		  End If
 		  
 		  Self.mActiveThread = New Thread
-		  Self.mActiveThread.Priority = 10
+		  Self.mActiveThread.Priority = Thread.LowestPriority
 		  AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Delete
 		  Self.mActiveThread.Start
 		End Sub
@@ -104,6 +104,7 @@ Protected Class DocumentController
 		  End If
 		  
 		  Self.mActiveThread = New Thread
+		  Self.mActiveThread.Priority = Thread.LowestPriority
 		  AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Load
 		  Self.mActiveThread.Start
 		  
@@ -435,7 +436,7 @@ Protected Class DocumentController
 		  Select Case Destination.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
 		    Self.mActiveThread = New Thread
-		    Self.mActiveThread.Priority = 1
+		    Self.mActiveThread.Priority = Thread.LowestPriority
 		    AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Upload
 		    Self.mActiveThread.Start
 		  Case Beacon.DocumentURL.TypeLocal

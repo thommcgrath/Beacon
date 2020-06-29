@@ -40,13 +40,12 @@ Begin DocumentsComponentView CloudDocumentsComponent
       PanelCount      =   5
       Panels          =   ""
       Scope           =   2
-      SelectedPanelIndex=   0
       TabIndex        =   0
       TabPanelIndex   =   0
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
-      Value           =   3
+      Value           =   0
       Visible         =   True
       Width           =   804
       Begin ProgressBar LoadingProgressBar
@@ -173,6 +172,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
          AllowFocusRing  =   True
          AllowTabs       =   False
          Backdrop        =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   1
          Index           =   -2147483648
@@ -282,6 +282,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_ListDocumentsWithIdentity(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  If Response.HTTPStatus = 401 Then
 		    Self.Pages.SelectedPanelIndex = Self.PageLogin
 		    Return
@@ -294,6 +296,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_ListDocumentsWithToken(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  If Response.HTTPStatus = 401 Then
 		    Var Params As New Dictionary
 		    Params.Value("user_id") = App.IdentityManager.CurrentIdentity.Identifier
@@ -538,14 +542,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
 		Group="Behavior"
@@ -559,22 +555,6 @@ End
 		Group="Behavior"
 		InitialValue="300"
 		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarIcon"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Picture"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty

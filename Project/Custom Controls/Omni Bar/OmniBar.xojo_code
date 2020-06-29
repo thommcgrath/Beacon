@@ -282,7 +282,7 @@ Implements ObservationKit.Observer
 		Sub Append(ParamArray Items() As OmniBarItem)
 		  For Each Item As OmniBarItem In Items
 		    If (Item Is Nil) = False And Self.IndexOf(Item) = -1 Then
-		      Item.AddObserver(Self, "Changed")
+		      Item.AddObserver(Self, "MinorChange", "MajorChange")
 		      Self.mItems.AddRow(Item)
 		      Self.Invalidate
 		    End If
@@ -305,7 +305,24 @@ Implements ObservationKit.Observer
 		    Return
 		  End If
 		  
-		  If Item.Toggled Then
+		  If Item.HasProgressIndicator Then
+		    If Item.Progress = OmniBarItem.ProgressIndeterminate Then
+		      Const BarMaxPercent = 0.75
+		      
+		      Var Phase As Double = Item.IndeterminatePhase
+		      Var RangeMin As Double = (G.Width * BarMaxPercent) * -1
+		      Var RangeMax As Double = G.Width
+		      Var BarLeft As Double = NearestMultiple(RangeMin + ((RangeMax - RangeMin) * Phase), G.ScaleX)
+		      Var BarWidth As Double = NearestMultiple(G.Width * BarMaxpercent, G.ScaleX)
+		      
+		      G.DrawingColor = Self.ActiveColorToColor(Item.ActiveColor)
+		      G.FillRectangle(BarLeft, G.Height - 2, BarWidth, 2)
+		    Else
+		      Var BarWidth As Double = NearestMultiple(G.Width * Item.Progress, G.ScaleX)
+		      G.DrawingColor = Self.ActiveColorToColor(Item.ActiveColor)
+		      G.FillRectangle(0, G.Height - 2, BarWidth, 2)
+		    End If
+		  ElseIf Item.Toggled Then
 		    G.ClearRectangle(0, G.Height - 2, G.Width, 2)
 		    If Highlighted Then
 		      G.DrawingColor = Self.ActiveColorToColor(Item.ActiveColor)
@@ -392,7 +409,6 @@ Implements ObservationKit.Observer
 		    G.Bold = True
 		  End If
 		  
-		  Var CaptionWidth As Double = Min(G.TextWidth(Item.Caption), Self.MaxCaptionWidth)
 		  Var CaptionBaseline As Double = NearestMultiple((G.Height / 2) + (G.CapHeight / 2), G.ScaleY)
 		  
 		  G.DrawingColor = ForeColor
@@ -451,7 +467,7 @@ Implements ObservationKit.Observer
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Item As OmniBarItem)
 		  If (Item Is Nil) = False And Self.IndexOf(Item) = -1 Then
-		    Item.AddObserver(Self, "Changed")
+		    Item.AddObserver(Self, "MinorChange", "MajorChange")
 		    Self.mItems.AddRowAt(Index, Item)
 		    Self.Invalidate
 		  End If
@@ -486,7 +502,7 @@ Implements ObservationKit.Observer
 	#tag Method, Flags = &h0
 		Sub Item(Idx As Integer, Assigns NewItem As OmniBarItem)
 		  If (NewItem Is Nil) = False And Self.IndexOf(NewItem) = -1 Then
-		    NewItem.AddObserver(Self, "Changed")
+		    NewItem.AddObserver(Self, "MinorChange", "MajorChange")
 		    Self.mItems(Idx) = NewItem
 		    Self.Invalidate
 		  End If
@@ -512,20 +528,20 @@ Implements ObservationKit.Observer
 		  
 		  #Pragma Unused Value
 		  
-		  If Key <> "Changed" Or (Source IsA OmniBarItem) = False Then
-		    Return
+		  If Key = "MajorChange" Then
+		    Self.Invalidate(False)
+		  ElseIf Key = "MinorChange" And Source IsA OmniBarItem Then
+		    Var Item As OmniBarItem = OmniBarItem(Source)
+		    Var Idx As Integer = Self.IndexOf(Item)
+		    Self.Invalidate(Idx)
 		  End If
-		  
-		  Var Item As OmniBarItem = OmniBarItem(Source)
-		  Var Idx As Integer = Self.IndexOf(Item)
-		  Self.Invalidate(Idx)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Remove(Idx As Integer)
 		  If Idx >= 0 And Idx <= Self.mItems.LastRowIndex Then
-		    Self.mItems(Idx).RemoveObserver(Self, "Changed")
+		    Self.mItems(Idx).RemoveObserver(Self, "MinorChange", "MajorChange")
 		    Self.mItems.RemoveRowAt(Idx)
 		    Self.Invalidate
 		  End If
@@ -554,7 +570,7 @@ Implements ObservationKit.Observer
 		Sub RemoveAllItems()
 		  If Self.mItems.Count > 0 Then
 		    For Idx As Integer = Self.mItems.LastRowIndex DownTo 0
-		      Self.mItems(Idx).RemoveObserver(Self, "Changed")
+		      Self.mItems(Idx).RemoveObserver(Self, "MinorChange", "MajorChange")
 		      Self.mItems.RemoveRowAt(Idx)
 		    Next
 		    Self.Invalidate

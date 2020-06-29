@@ -102,13 +102,10 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
-         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         ToolbarCaption  =   ""
-         ToolbarIcon     =   0
          Top             =   -409
          Transparent     =   True
          UseFocusRing    =   False
@@ -276,13 +273,10 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
-         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         ToolbarCaption  =   ""
-         ToolbarIcon     =   0
          Tooltip         =   ""
          Top             =   38
          Transparent     =   True

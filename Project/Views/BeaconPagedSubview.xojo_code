@@ -90,6 +90,14 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Page(Idx As Integer) As BeaconSubview
+		  If Idx <= Self.mPages.LastRowIndex And Idx >= 0 Then
+		    Return Self.mPages(Idx)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function PageCount() As Integer
 		  Return Self.mPages.Count
 		End Function

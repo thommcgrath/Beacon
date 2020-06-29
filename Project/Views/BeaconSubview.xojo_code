@@ -13,6 +13,10 @@ Implements ObservationKit.Observable
 		Sub ContentsChanged()
 		  RaiseEvent ContentsChanged
 		  RaiseEvent OwnerModifiedHook
+		  
+		  If (Self.LinkedOmniBarItem Is Nil) = False Then
+		    Self.LinkedOmniBarItem.HasUnsavedChanges = Self.Changed
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -338,9 +342,21 @@ Implements ObservationKit.Observable
 			    Self.mProgress = Value
 			    Self.NotifyObservers("BeaconSubview.Progress", Value)
 			  End If
+			  
+			  If (Self.LinkedOmniBarItem Is Nil) = False Then
+			    If Value = Self.ProgressNone Then
+			      Self.LinkedOmniBarItem.HasProgressIndicator = False
+			    ElseIf Value = Self.ProgressIndeterminate Then
+			      Self.LinkedOmniBarItem.HasProgressIndicator = True
+			      Self.LinkedOmniBarItem.Progress = OmniBarItem.ProgressIndeterminate
+			    Else
+			      Self.LinkedOmniBarItem.HasProgressIndicator = True
+			      Self.LinkedOmniBarItem.Progress = Value
+			    End If
+			  End If
 			End Set
 		#tag EndSetter
-		Progress As Double
+		Attributes( Deprecated = "LinkedOmniBarItem.Progress" ) Progress As Double
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -361,9 +377,13 @@ Implements ObservationKit.Observable
 			    Self.mToolbarCaption = Value
 			    Self.NotifyObservers("ToolbarCaption", Value)
 			  End If
+			  
+			  If (Self.LinkedOmniBarItem Is Nil) = False Then
+			    Self.LinkedOmniBarItem.Caption = Value
+			  End If
 			End Set
 		#tag EndSetter
-		ToolbarCaption As String
+		Attributes( Deprecated = "LinkedOmniBarItem.Caption" ) ToolbarCaption As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -380,9 +400,13 @@ Implements ObservationKit.Observable
 			  
 			  Self.mToolbarIcon = Value
 			  Self.NotifyObservers("ToolbarIcon", Value)
+			  
+			  If (Self.LinkedOmniBarItem Is Nil) = False Then
+			    Self.LinkedOmniBarItem.Icon = Value
+			  End If
 			End Set
 		#tag EndSetter
-		ToolbarIcon As Picture
+		Attributes( Deprecated = "LinkedOmniBarItem.Icon" ) ToolbarIcon As Picture
 	#tag EndComputedProperty
 
 
@@ -598,14 +622,6 @@ Implements ObservationKit.Observable
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="ToolbarCaption"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Transparent"
 			Visible=true
 			Group="Behavior"
@@ -630,27 +646,11 @@ Implements ObservationKit.Observable
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Progress"
-			Visible=false
-			Group="Behavior"
-			InitialValue="ProgressNone"
-			Type="Double"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="DoubleBuffer"
 			Visible=true
 			Group="Windows Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ToolbarIcon"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Picture"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
