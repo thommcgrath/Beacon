@@ -199,6 +199,8 @@ Begin ConfigEditor EngramControlConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
       DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
@@ -223,6 +225,7 @@ Begin ConfigEditor EngramControlConfigEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   "1"
       Scope           =   2
@@ -255,6 +258,8 @@ Begin ConfigEditor EngramControlConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
       DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
@@ -279,6 +284,7 @@ Begin ConfigEditor EngramControlConfigEditor
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   "1"
       Scope           =   2

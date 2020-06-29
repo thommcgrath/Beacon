@@ -50,6 +50,34 @@ Protected Module Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ListSortColumn(Key As String, Assigns Idx As Integer)
+		  Init
+		  mManager.IntegerValue(Key + " Sort Column") = Idx
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ListSortColumn(Key As String, Default As Integer) As Integer
+		  Init
+		  Return mManager.IntegerValue(Key + " Sort Column", Default)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ListSortDirection(Key As String, Assigns Direction As Listbox.SortDirections)
+		  Init
+		  mManager.IntegerValue(Key + " Sort Direction") = CType(Direction, Integer)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ListSortDirection(Key As String, Default As Listbox.SortDirections) As Listbox.SortDirections
+		  Init
+		  Return CType(mManager.IntegerValue(Key + " Sort Direction", CType(Default, Integer)), Listbox.SortDirections)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub LoadWindowPosition(Extends Win As Window)
 		  Var Info As Introspection.TypeInfo = Introspection.GetType(Win)
 		  

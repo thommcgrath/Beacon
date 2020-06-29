@@ -137,6 +137,8 @@ Begin BeaconDialog AddSpawnPointDialog
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
       DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
@@ -161,6 +163,7 @@ Begin BeaconDialog AddSpawnPointDialog
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   "1"
       Scope           =   2

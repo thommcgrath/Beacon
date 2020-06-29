@@ -105,6 +105,8 @@ Begin BeaconDialog ResolveIssuesDialog
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
       EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
@@ -126,6 +128,7 @@ Begin BeaconDialog ResolveIssuesDialog
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False

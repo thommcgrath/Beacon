@@ -281,6 +281,8 @@ Begin BeaconContainer SpawnPointEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
       DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
@@ -305,6 +307,7 @@ Begin BeaconContainer SpawnPointEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   "1"
       Scope           =   2
@@ -337,6 +340,8 @@ Begin BeaconContainer SpawnPointEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
       DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
@@ -361,6 +366,7 @@ Begin BeaconContainer SpawnPointEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   False
+      PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   "1"
       Scope           =   2

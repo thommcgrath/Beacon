@@ -38,6 +38,8 @@ Begin BeaconAutopositionWindow DeployManager
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
       DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
@@ -62,6 +64,7 @@ Begin BeaconAutopositionWindow DeployManager
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   "0"
       Scope           =   2

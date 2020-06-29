@@ -117,11 +117,13 @@ Begin DocumentsComponentView CloudDocumentsComponent
          AllowRowDragging=   False
          AllowRowReordering=   False
          Bold            =   False
-         ColumnCount     =   2
-         ColumnWidths    =   "46,*"
+         ColumnCount     =   5
+         ColumnWidths    =   "46,2*,*,100,*"
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   26
+         DefaultSortColumn=   "#ColumnUpdated"
+         DefaultSortDirection=   -1
          DropIndicatorVisible=   False
          EditCaption     =   "Open"
          Enabled         =   True
@@ -131,14 +133,14 @@ Begin DocumentsComponentView CloudDocumentsComponent
          GridLinesHorizontalStyle=   "0"
          GridLinesVerticalStyle=   "0"
          HasBorder       =   False
-         HasHeader       =   False
+         HasHeader       =   True
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
          HeadingIndex    =   -1
          Height          =   508
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         InitialValue    =   ""
+         InitialValue    =   " 	Name	Map	Console Safe	Last Updated"
          Italic          =   False
          Left            =   0
          LockBottom      =   True
@@ -146,6 +148,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PreferencesKey  =   "Cloud Documents"
          RequiresSelection=   False
          RowSelectionType=   "1"
          Scope           =   2
@@ -156,7 +159,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
          Tooltip         =   ""
          Top             =   0
          Transparent     =   False
-         TypeaheadColumn =   1
+         TypeaheadColumn =   "#ColumnName"
          Underline       =   False
          Visible         =   True
          VisibleRowCount =   0
@@ -175,6 +178,12 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  
+		End Sub
+	#tag EndEvent
+
 	#tag Event
 		Sub Resize(Initial As Boolean)
 		  #Pragma Unused Initial
@@ -246,22 +255,27 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
-		  Var SelectedURLs() As String
+		  Var SelectedDocuments() As String
 		  For I As Integer = 0 To Self.List.LastRowIndex
 		    If Self.List.Selected(I) Then
-		      Var URL As Beacon.DocumentURL = Self.List.RowTagAt(I)
-		      SelectedURLs.AddRow(URL)
+		      Var Document As BeaconAPI.Document = Self.List.RowTagAt(I)
+		      SelectedDocuments.AddRow(Document.ResourceURL)
 		    End If
 		  Next
 		  
 		  Self.List.RowCount = Self.mDocuments.Count
 		  
 		  For I As Integer = 0 To Self.mDocuments.LastRowIndex
-		    Var URL As Beacon.DocumentURL = Self.mDocuments(I)
-		    Self.List.CellValueAt(I, Self.ColumnName) = URL.Name
-		    Self.List.RowTagAt(I) = URL
-		    Self.List.Selected(I) = SelectedURLs.IndexOf(URL) > -1
+		    Var Document As BeaconAPI.Document = Self.mDocuments(I)
+		    Self.List.CellValueAt(I, Self.ColumnName) = Document.Name
+		    Self.List.CellValueAt(I, Self.ColumnMaps) = Beacon.Maps.ForMask(Document.MapMask).Label
+		    Self.List.CellValueAt(I, Self.ColumnConsole) = If(Document.ConsoleSafe, "Yes", "")
+		    Self.List.CellValueAt(I, Self.ColumnUpdated) = Document.LastUpdated.ToString(Locale.Current, DateTime.FormatStyles.Medium, DateTime.FormatStyles.Medium)
+		    Self.List.RowTagAt(I) = Document
+		    Self.List.Selected(I) = SelectedDocuments.IndexOf(Document.ResourceURL) > -1
 		  Next
+		  
+		  Self.List.Sort
 		End Sub
 	#tag EndMethod
 
@@ -277,24 +291,38 @@ End
 		  Var Dicts() As Variant = Response.JSON
 		  For Each Dict As Dictionary In Dicts
 		    Var Document As New BeaconAPI.Document(Dict)
-		    Var URL As String = Beacon.DocumentURL.TypeCloud + "://" + Document.ResourceURL.Middle(Document.ResourceURL.IndexOf("://") + 3)
-		    Self.mDocuments.AddRow(URL)
+		    Self.mDocuments.AddRow(Document)
 		  Next
 		  
 		  Self.UpdateFilter()
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Function URLForDocument(Document As BeaconAPI.Document) As Beacon.DocumentURL
+		  Return Beacon.DocumentURL.TypeCloud + "://" + Document.ResourceURL.Middle(Document.ResourceURL.IndexOf("://") + 3)
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
-		Private mDocuments() As Beacon.DocumentURL
+		Private mDocuments() As BeaconAPI.Document
 	#tag EndProperty
 
+
+	#tag Constant, Name = ColumnConsole, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = ColumnIcon, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = ColumnMaps, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnUpdated, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageError, Type = Double, Dynamic = False, Default = \"4", Scope = Private
@@ -325,21 +353,19 @@ End
 		    Return
 		  End If
 		  
-		  Var URL As Beacon.DocumentURL = Me.RowTagAt(Row)
-		  If URL = Nil Then
+		  Var Document As BeaconAPI.Document = Me.RowTagAt(Row)
+		  If Document Is Nil Then
 		    Return
 		  End If
 		  
 		  Var IconColor As Color = TextColor.AtOpacity(0.5)
 		  Var Icon As Picture
-		  Select Case URL.Scheme
-		  Case Beacon.DocumentURL.TypeCloud
+		  If Document.IsGuest Then
+		  Else
 		    Icon = BeaconUI.IconWithColor(IconCloudDocument, IconColor)
-		  Case Beacon.DocumentURL.TypeWeb
-		    Icon = BeaconUI.IconWithColor(IconCommunityDocument, IconColor)
-		  End Select
+		  End If
 		  
-		  If Icon = Nil Then
+		  If Icon Is Nil Then
 		    Return
 		  End If
 		  
@@ -367,11 +393,17 @@ End
 	#tag Event
 		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Select Case Column
-		  Case 0
-		    Var Row1URL As Beacon.DocumentURL = Me.RowTagAt(Row1)
-		    Var Row2URL As Beacon.DocumentURL = Me.RowTagAt(Row2)
+		  Case Self.ColumnUpdated
+		    Var Row1Document As BeaconAPI.Document = Me.RowTagAt(Row1)
+		    Var Row2Document As BeaconAPI.Document = Me.RowTagAt(Row2)
 		    
-		    Result = Row1URL.Name.Compare(Row2URL.Name, ComparisonOptions.CaseSensitive)
+		    If Row1Document.LastUpdated.SecondsFrom1970 > Row2Document.LastUpdated.SecondsFrom1970 Then
+		      Result = 1
+		    ElseIf Row1Document.LastUpdated.SecondsFrom1970 < Row2Document.LastUpdated.SecondsFrom1970 Then
+		      Result = -1
+		    Else
+		      Result = 0
+		    End If
 		    
 		    Return True
 		  End Select
@@ -396,9 +428,35 @@ End
 		      Continue
 		    End If
 		    
-		    Var URL As Beacon.DocumentURL = Me.RowTagAt(Row)
-		    Self.OpenDocument(URL)
+		    Var Document As BeaconAPI.Document = Me.RowTagAt(Row)
+		    Self.OpenDocument(Self.URLForDocument(Document))
 		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events APISocket
+	#tag Event
+		Sub WorkCompleted()
+		  If (Self.LinkedOmniBarItem Is Nil) = False Then
+		    Self.LinkedOmniBarItem.HasProgressIndicator = False
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub WorkProgress(Request As BeaconAPI.Request, BytesReceived As Int64, BytesTotal As Int64)
+		  #Pragma Unused Request
+		  
+		  If (Self.LinkedOmniBarItem Is Nil) = False Then
+		    Self.LinkedOmniBarItem.Progress = BytesReceived / BytesTotal
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub WorkStarted()
+		  If (Self.LinkedOmniBarItem Is Nil) = False Then
+		    Self.LinkedOmniBarItem.HasProgressIndicator = True
+		    Self.LinkedOmniBarItem.Progress = OmniBarItem.ProgressIndeterminate
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -647,6 +647,8 @@ Begin ConfigEditor StatLimitsConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
       DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
@@ -671,6 +673,7 @@ Begin ConfigEditor StatLimitsConfigEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   "0"
       Scope           =   2

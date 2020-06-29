@@ -238,6 +238,10 @@ End
 		  Recents.Toggled = True
 		  
 		  Me.Append(Recents, Cloud, Community)
+		  
+		  Self.RecentDocumentsComponent1.LinkedOmniBarItem = Recents
+		  Self.CloudDocumentsComponent1.LinkedOmniBarItem = Cloud
+		  Self.CommunityDocumentsComponent1.LinkedOmniBarItem = Community
 		End Sub
 	#tag EndEvent
 	#tag Event

@@ -252,6 +252,10 @@ Implements ObservationKit.Observable
 	#tag EndHook
 
 
+	#tag Property, Flags = &h0
+		LinkedOmniBarItem As OmniBarItem
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mClosed As Boolean
 	#tag EndProperty

@@ -73,6 +73,8 @@ Begin BeaconDialog DocumentMergerWindow
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   -1
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
       EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
@@ -94,6 +96,7 @@ Begin BeaconDialog DocumentMergerWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False

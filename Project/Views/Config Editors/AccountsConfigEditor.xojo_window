@@ -75,6 +75,8 @@ Begin ConfigEditor AccountsConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   "#BeaconListbox.StandardRowHeight"
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
       DropIndicatorVisible=   False
       EditCaption     =   "Edit"
       Enabled         =   True
@@ -99,6 +101,7 @@ Begin ConfigEditor AccountsConfigEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   "1"
       Scope           =   2

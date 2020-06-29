@@ -256,6 +256,8 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
       EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
@@ -277,6 +279,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False

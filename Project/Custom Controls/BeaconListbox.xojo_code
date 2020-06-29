@@ -307,6 +307,21 @@ Inherits Listbox
 	#tag EndEvent
 
 	#tag Event
+		Function HeaderPressed(column as Integer) As Boolean
+		  If RaiseEvent HeaderPressed(Column) Then
+		    Return True
+		  End If
+		  
+		  If Self.mOpened = False Or Self.PreferencesKey.IsEmpty Then
+		    Return False
+		  End If
+		  
+		  Preferences.ListSortColumn(Self.PreferencesKey) = Column
+		  Preferences.ListSortDirection(Self.PreferencesKey) = Self.ColumnSortDirectionAt(Column)
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Function KeyDown(Key As String) As Boolean
 		  Self.mForwardKeyUp = False
 		  
@@ -354,9 +369,18 @@ Inherits Listbox
 		  Self.FontName = "SmallSystem"
 		  Self.DefaultRowHeight = Max(26, Self.DefaultRowHeight)
 		  
+		  If Not Self.PreferencesKey.IsEmpty Then
+		    Var Column As Integer = Preferences.ListSortColumn(Self.PreferencesKey, Self.DefaultSortColumn)
+		    Var Direction As Listbox.SortDirections = Preferences.ListSortDirection(Self.PreferencesKey, CType(Self.DefaultSortDirection, Listbox.SortDirections))
+		    Self.SortingColumn = Column
+		    Self.HeadingIndex = Column
+		    Self.ColumnSortDirectionAt(Column) = Direction
+		  End If
+		  
 		  RaiseEvent Open
 		  
 		  Self.mPostOpenInvalidateCallbackKey = CallLater.Schedule(0, WeakAddressOf PostOpenInvalidate)
+		  Self.mOpened = True
 		End Sub
 	#tag EndEvent
 
@@ -664,6 +688,10 @@ Inherits Listbox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event HeaderPressed(column as Integer) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event KeyDown(Key As String) As Boolean
 	#tag EndHook
 
@@ -699,6 +727,14 @@ Inherits Listbox
 		Event Typeahead(Buffer As String) As Boolean
 	#tag EndHook
 
+
+	#tag Property, Flags = &h0
+		DefaultSortColumn As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		DefaultSortDirection As Integer
+	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -737,6 +773,10 @@ Inherits Listbox
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mOpened As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mPostOpenInvalidateCallbackKey As String
 	#tag EndProperty
 
@@ -750,6 +790,10 @@ Inherits Listbox
 
 	#tag Property, Flags = &h21
 		Private mTypeaheadTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		PreferencesKey As String
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -1266,6 +1310,35 @@ Inherits Listbox
 			InitialValue="Edit"
 			Type="String"
 			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="PreferencesKey"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DefaultSortDirection"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - None"
+				"1 - A to Z"
+				"-1 - Z to A"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DefaultSortColumn"
+			Visible=true
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="RequiresSelection"

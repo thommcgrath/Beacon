@@ -39,6 +39,8 @@ Begin DocumentsComponentView RecentDocumentsComponent
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
       DropIndicatorVisible=   False
       EditCaption     =   "Open"
       Enabled         =   True
@@ -63,6 +65,7 @@ Begin DocumentsComponentView RecentDocumentsComponent
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       RowSelectionType=   "1"
       Scope           =   2

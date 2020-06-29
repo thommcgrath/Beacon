@@ -669,6 +669,8 @@ Begin BeaconSubview PresetEditorView
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
          EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
@@ -690,6 +692,7 @@ Begin BeaconSubview PresetEditorView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PreferencesKey  =   ""
          RequiresSelection=   False
          Scope           =   2
          ScrollbarHorizontal=   False
@@ -725,6 +728,8 @@ Begin BeaconSubview PresetEditorView
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   -1
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
          EditCaption     =   "Edit"
          Enabled         =   True
          EnableDrag      =   False
@@ -746,6 +751,7 @@ Begin BeaconSubview PresetEditorView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         PreferencesKey  =   ""
          RequiresSelection=   False
          Scope           =   2
          ScrollbarHorizontal=   False
