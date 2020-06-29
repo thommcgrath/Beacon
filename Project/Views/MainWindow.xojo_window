@@ -81,37 +81,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Value           =   0
       Visible         =   True
       Width           =   759
-      Begin DashboardPane DashboardPane1
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
-         Backdrop        =   0
-         DoubleBuffer    =   False
-         Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
-         Height          =   337
-         HelpTag         =   ""
-         InitialParent   =   "Views"
-         Left            =   41
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MinimumHeight   =   300
-         MinimumWidth    =   400
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Top             =   -409
-         Transparent     =   True
-         UseFocusRing    =   False
-         Visible         =   True
-         Width           =   759
-      End
    End
    Begin ControlCanvas UpdateBar
       AcceptFocus     =   False
@@ -241,7 +210,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   4
+      PanelCount      =   5
       Panels          =   ""
       Scope           =   2
       TabIndex        =   6
@@ -275,7 +244,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   1
+         TabPanelIndex   =   2
          TabStop         =   True
          Tooltip         =   ""
          Top             =   38
@@ -298,10 +267,41 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          Renderer        =   0
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   4
+         TabPanelIndex   =   5
          TabStop         =   True
          Tooltip         =   ""
          Top             =   38
+         Visible         =   True
+         Width           =   800
+      End
+      Begin DashboardPane DashboardPane1
+         AcceptFocus     =   False
+         AcceptTabs      =   True
+         AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   362
+         HelpTag         =   ""
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   38
+         Transparent     =   True
+         UseFocusRing    =   False
          Visible         =   True
          Width           =   800
       End
@@ -922,16 +922,19 @@ End
 	#tag Constant, Name = MinSplitterPosition, Type = Double, Dynamic = False, Default = \"300", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PageBlueprints, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = PageBlueprints, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PageDocuments, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag Constant, Name = PageDocuments, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PageHelp, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = PageHelp, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PagePresets, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag Constant, Name = PageHome, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PagePresets, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 
@@ -1129,8 +1132,10 @@ End
 #tag Events NavBar
 	#tag Event
 		Sub Open()
+		  Var Home As New OmniBarItem("NavHome", "Home")
+		  Home.Toggled = True
+		  
 		  Var Documents As New OmniBarItem("NavDocuments", "Documents")
-		  Documents.Toggled = True
 		  
 		  Var Blueprints As New OmniBarItem("NavBlueprints", "Blueprints")
 		  
@@ -1138,7 +1143,7 @@ End
 		  
 		  Var Help As New OmniBarItem("NavHelp", "Help")
 		  
-		  Me.Append(Documents, Blueprints, Presets, Help)
+		  Me.Append(Home, Documents, Blueprints, Presets, Help)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1155,6 +1160,8 @@ End
 		    NewIndex = Self.PagePresets
 		  Case "NavHelp"
 		    NewIndex = Self.PageHelp
+		  Case "NavHome"
+		    NewIndex = Self.PageHome
 		  End Select
 		  
 		  If CurrentIndex = NewIndex Then
@@ -1162,6 +1169,8 @@ End
 		  End If
 		  
 		  Select Case CurrentIndex
+		  Case Self.PageHome
+		    Self.DashboardPane1.SwitchedFrom()
 		  Case Self.PageDocuments
 		    Self.DocumentsComponent1.SwitchedFrom()
 		  Case Self.PageBlueprints
@@ -1175,6 +1184,8 @@ End
 		  Self.Pages.SelectedPanelIndex = NewIndex
 		  
 		  Select Case NewIndex
+		  Case Self.PageHome
+		    Self.DashboardPane1.SwitchedTo(Nil)
 		  Case Self.PageDocuments
 		    Self.DocumentsComponent1.SwitchedTo(Nil)
 		  Case Self.PageBlueprints
