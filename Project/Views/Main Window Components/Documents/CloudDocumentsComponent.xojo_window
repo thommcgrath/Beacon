@@ -137,7 +137,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
          HeadingIndex    =   -1
-         Height          =   508
+         Height          =   445
          Index           =   -2147483648
          InitialParent   =   "Pages"
          InitialValue    =   " 	Name	Map	Console Safe	Last Updated"
@@ -157,7 +157,7 @@ Begin DocumentsComponentView CloudDocumentsComponent
          TabPanelIndex   =   4
          TabStop         =   True
          Tooltip         =   ""
-         Top             =   0
+         Top             =   63
          Transparent     =   False
          TypeaheadColumn =   "#ColumnName"
          Underline       =   False
@@ -166,6 +166,62 @@ Begin DocumentsComponentView CloudDocumentsComponent
          Width           =   804
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
+      End
+      Begin FadedSeparator FadedSeparator1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   True
+         AllowTabs       =   False
+         Backdrop        =   0
+         Enabled         =   True
+         Height          =   1
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   2
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   62
+         Transparent     =   True
+         Visible         =   True
+         Width           =   804
+      End
+      Begin DocumentFilterControl DocumentFilterControl1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   62
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   0
+         Transparent     =   True
+         Visible         =   True
+         Width           =   804
       End
    End
    Begin BeaconAPI.Socket APISocket
@@ -263,10 +319,23 @@ End
 		    End If
 		  Next
 		  
-		  Self.List.RowCount = Self.mDocuments.Count
+		  Var SearchText As String = Self.DocumentFilterControl1.SearchText
+		  Var FilteredDocuments() As BeaconAPI.Document
+		  If SearchText.IsEmpty Then
+		    FilteredDocuments = Self.mDocuments
+		  Else
+		    For Each Document As BeaconAPI.Document In Self.mDocuments
+		      If Document.Name.IndexOf(SearchText) > -1 Then
+		        FilteredDocuments.AddRow(Document)
+		      End If
+		    Next
+		  End If
 		  
-		  For I As Integer = 0 To Self.mDocuments.LastRowIndex
-		    Var Document As BeaconAPI.Document = Self.mDocuments(I)
+		  Self.List.RowCount = FilteredDocuments.Count
+		  
+		  For I As Integer = 0 To FilteredDocuments.LastRowIndex
+		    Var Document As BeaconAPI.Document = FilteredDocuments(I)
+		    
 		    Self.List.CellValueAt(I, Self.ColumnName) = Document.Name
 		    Self.List.CellValueAt(I, Self.ColumnMaps) = Beacon.Maps.ForMask(Document.MapMask).Label
 		    Self.List.CellValueAt(I, Self.ColumnConsole) = If(Document.ConsoleSafe, "Yes", "")
@@ -431,6 +500,13 @@ End
 		    Var Document As BeaconAPI.Document = Me.RowTagAt(Row)
 		    Self.OpenDocument(Self.URLForDocument(Document))
 		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DocumentFilterControl1
+	#tag Event
+		Sub Changed()
+		  Self.UpdateFilter
 		End Sub
 	#tag EndEvent
 #tag EndEvents

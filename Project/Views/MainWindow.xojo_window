@@ -7,7 +7,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    Frame           =   0
    FullScreen      =   False
    FullScreenButton=   True
-   HasBackColor    =   False
+   HasBackColor    =   True
    Height          =   400
    ImplicitInstance=   False
    LiveResize      =   "True"
