@@ -32,7 +32,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   0
+      Left            =   231
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -47,7 +47,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Transparent     =   False
       Value           =   0
       Visible         =   True
-      Width           =   858
+      Width           =   627
       Begin LogoFillCanvas LogoFillCanvas1
          AcceptFocus     =   False
          AcceptTabs      =   False
@@ -60,7 +60,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
-         Left            =   0
+         Left            =   231
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -75,7 +75,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          Transparent     =   True
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   858
+         Width           =   627
       End
       Begin Canvas OmniNoticeBanner
          AcceptFocus     =   False
@@ -88,7 +88,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
-         Left            =   0
+         Left            =   231
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -102,7 +102,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          Transparent     =   True
          UseFocusRing    =   True
          Visible         =   False
-         Width           =   858
+         Width           =   627
       End
    End
    Begin FadedSeparator FadedSeparator1
@@ -150,7 +150,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   233
+      Left            =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -167,7 +167,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   625
+      Width           =   858
    End
    Begin HelpDrawer HelpDrawer
       AcceptFocus     =   False
@@ -209,37 +209,62 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin UITweaks.ResizedPopupMenu ConfigMenu
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
+   Begin SourceList ConfigList
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
+      Height          =   487
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   ""
-      Italic          =   False
-      Left            =   9
-      ListIndex       =   0
-      LockBottom      =   False
+      Left            =   0
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   5
+      ScrollSpeed     =   20
+      SelectedRowIndex=   0
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   10
-      Transparent     =   False
-      Underline       =   False
+      Tooltip         =   ""
+      Top             =   41
+      Transparent     =   True
       Visible         =   True
-      Width           =   215
+      Width           =   230
+   End
+   Begin FadedSeparator SourceSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      Height          =   487
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   230
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   40
+      Transparent     =   True
+      Visible         =   True
+      Width           =   1
    End
 End
 #tag EndWindow
@@ -889,7 +914,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateMinimumDimensions()
-		  Self.MinimumWidth = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumWidth, Self.LocalMinWidth), Self.LocalMinWidth) + If(Self.mHelpDrawerOpen, Self.HelpDrawer.Width, 0)
+		  Self.MinimumWidth = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumWidth, Self.LocalMinWidth), Self.LocalMinWidth) + If(Self.mHelpDrawerOpen, Self.HelpDrawer.Width, 0) + Self.PagePanel1.Left
 		  Self.MinimumHeight = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumHeight, Self.LocalMinHeight), Self.LocalMinHeight) + Self.PagePanel1.Top
 		End Sub
 	#tag EndMethod
@@ -1063,7 +1088,7 @@ End
 			    Self.PagePanel1.SelectedPanelIndex = 0
 			  End If
 			  
-			  Self.ConfigMenu.SelectByTag(Value)
+			  Self.ConfigList.SelectByTag(Value)
 			  
 			  Self.UpdateMinimumDimensions()
 			End Set
@@ -1258,12 +1283,12 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ConfigMenu
+#tag Events ConfigList
 	#tag Event
 		Sub Change()
 		  Var TagVar As Variant
 		  If Me.SelectedRowIndex > -1 Then
-		    TagVar = Me.RowTagAt(Me.SelectedRowIndex)
+		    TagVar = Me.Item(Me.SelectedRowIndex).Tag
 		  End If
 		  If IsNull(TagVar) = False And (TagVar.Type = Variant.TypeString Or TagVar.Type = Variant.TypeText) Then
 		    Self.CurrentConfigName = TagVar.StringValue
@@ -1293,7 +1318,7 @@ End
 		  Labels.SortWith(Tags)
 		  
 		  For I As Integer = 0 To Labels.LastRowIndex
-		    Me.AddRow(Labels(I), Tags(I))
+		    Me.Append(New SourceListItem(Labels(I), Tags(I)))
 		  Next
 		End Sub
 	#tag EndEvent

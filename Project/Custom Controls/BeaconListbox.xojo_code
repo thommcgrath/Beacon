@@ -31,8 +31,8 @@ Inherits Listbox
 		Function CellBackgroundPaint(g As Graphics, row As Integer, column As Integer) As Boolean
 		  #Pragma Unused Column
 		  
-		  Const InsetAmount = 20
-		  Const CornerRadius = 8
+		  Const InsetAmount = 10
+		  Const CornerRadius = 4
 		  
 		  Var ColumnWidth As Integer = Self.ColumnAt(Column).WidthActual
 		  Var RowHeight As Integer = Self.DefaultRowHeight
@@ -66,11 +66,11 @@ Inherits Listbox
 		    #endif
 		  #endif
 		  
-		  Var InsetLeft, InsetRight As Integer
-		  If Column = 0 Then
+		  Var InsetLeft, InsetRight As Integer 
+		  If Column = 0 And Self.ColumnTypeAt(0) <> Listbox.CellTypes.CheckBox Then
 		    InsetLeft = InsetAmount
 		  End If
-		  If Column = Self.ColumnCount - 1 Then
+		  If Column = Self.ColumnCount - 1 And Self.ColumnTypeAt(0) <> Listbox.CellTypes.CheckBox Then
 		    InsetRight = InsetAmount
 		  End If
 		  
@@ -96,14 +96,18 @@ Inherits Listbox
 		  
 		  Clip.DrawingColor = BackgroundColor
 		  
-		  Var LeftPad, RightPad As Integer = CornerRadius
-		  If Column = 0 Then
-		    LeftPad = 0
+		  If InsetLeft > 0 Or InsetRight > 0 Then
+		    Var LeftPad, RightPad As Integer = CornerRadius
+		    If Column = 0 Then
+		      LeftPad = 0
+		    End If
+		    If Column = Self.ColumnCount - 1 Then
+		      RightPad = 0
+		    End If
+		    Clip.FillRoundRectangle(0 - LeftPad, 0, Clip.Width + LeftPad + RightPad, Clip.Height, CornerRadius * G.ScaleX, CornerRadius * G.ScaleY) // Xojo doesn't seem to scale the corners
+		  Else
+		    Clip.FillRectangle(0, 0, Clip.Width, Clip.Height)
 		  End If
-		  If Column = Self.ColumnCount - 1 Then
-		    RightPad = 0
-		  End If
-		  Clip.FillRoundRectangle(0 - LeftPad, 0, Clip.Width + LeftPad + RightPad, Clip.Height, CornerRadius, CornerRadius)
 		  
 		  Call CellBackgroundPaint(Clip, Row, Column, BackgroundColor, TextColor, IsHighlighted)
 		  

@@ -96,7 +96,7 @@ Begin ConfigEditor LootConfigEditor
       Border          =   False
       ColumnCount     =   2
       ColumnsResizable=   False
-      ColumnWidths    =   "30,*"
+      ColumnWidths    =   "50,*"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   34
@@ -906,16 +906,11 @@ End
 		    Return
 		  End If
 		  
-		  Var PrecisionX As Double = 1 / G.ScaleX
-		  Var PrecisionY As Double = 1 / G.ScaleY
-		  
 		  If Column = 0 Then
 		    Var Source As Beacon.LootSource = Me.RowTagAt(Row)
 		    Var Icon As Picture = LocalData.SharedInstance.IconForLootSource(Source, BackgroundColor)
-		    Var SpaceWidth As Integer = Me.ColumnAt(Column).WidthActual
-		    Var SpaceHeight As Integer = Me.DefaultRowHeight
 		    
-		    G.DrawPicture(Icon, NearestMultiple((SpaceWidth - Icon.Width) / 2, PrecisionX), NearestMultiple((SpaceHeight - Icon.Height) / 2, PrecisionY))
+		    G.DrawPicture(Icon, NearestMultiple((G.Width - Icon.Width) / 2, G.ScaleX), NearestMultiple((G.Height - Icon.Height) / 2, G.ScaleY))
 		  End If
 		End Sub
 	#tag EndEvent

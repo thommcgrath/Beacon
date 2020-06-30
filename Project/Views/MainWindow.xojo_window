@@ -7,7 +7,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    Frame           =   0
    FullScreen      =   False
    FullScreenButton=   True
-   HasBackColor    =   True
+   HasBackColor    =   False
    Height          =   400
    ImplicitInstance=   False
    LiveResize      =   "True"
@@ -437,6 +437,9 @@ End
 		    If (CloseButton Is Nil Or ZoomButton Is Nil) = False Then
 		      Self.NavBar.LeftPadding = CloseButton.Frame.MinX + ZoomButton.Frame.MaxX
 		    End If
+		  #else
+		    Self.HasBackgroundColor = True
+		    Self.BackgroundColor = SystemColors.ControlBackgroundColor
 		  #endif
 		  
 		  Self.UpdateSizeForView(Self.DashboardPane1)
@@ -444,6 +447,19 @@ End
 		  Self.SetupUpdateUI()
 		  
 		  Self.mOpened = True
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused Areas
+		  
+		  #if TargetMacOS
+		    G.DrawingColor = SystemColors.ControlBackgroundColor
+		    G.FillRectangle(0, 0, G.Width, G.Height)
+		  #else
+		    #Pragma Unused G
+		  #endif
 		End Sub
 	#tag EndEvent
 
