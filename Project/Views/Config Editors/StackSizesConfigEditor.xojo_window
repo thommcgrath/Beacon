@@ -336,7 +336,13 @@ End
 		  Config = Self.Config(True)
 		  
 		  For Each Engram As Beacon.Engram In NewEngrams
-		    Config.Override(Engram) = 100
+		    If Engram.StackSize Is Nil Then
+		      Config.Override(Engram) = 100
+		    ElseIf Engram.StackSize.DoubleValue = 1.0 Then
+		      Config.Override(Engram) = 1
+		    Else
+		      Config.Override(Engram) = Min(Round(Engram.StackSize.DoubleValue * Config.GlobalMultiplier), BeaconConfigs.StackSizes.MaximumQuantity)
+		    End If
 		  Next
 		  
 		  Self.UpdateList(NewEngrams)
@@ -407,7 +413,7 @@ End
 		  Self.List.RemoveAllRows()
 		  For Each Engram As Beacon.Engram In Engrams
 		    Var Size As Integer = Config.Override(Engram)
-		    Self.List.AddRow(Engram.Label, Size.ToString)
+		    Self.List.AddRow(Engram.Label, Format(Size, Self.NumberFormat))
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = Engram
 		    Self.List.Selected(Self.List.LastAddedRowIndex) = SelectPaths.IndexOf(Engram.Path) > -1
 		  Next
@@ -432,6 +438,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.stacksize", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = NumberFormat, Type = String, Dynamic = False, Default = \"0\x2C", Scope = Private
 	#tag EndConstant
 
 
@@ -494,7 +503,14 @@ End
 		    Return
 		  End If
 		  
-		  Var Size As Integer = Val(Me.CellValueAt(Row, Column))
+		  Var Size As Integer = CDbl(Me.CellValueAt(Row, Column))
+		  If Size > BeaconConfigs.StackSizes.MaximumQuantity Then
+		    Size = BeaconConfigs.StackSizes.MaximumQuantity
+		    System.Beep
+		    Self.ShowAlert("Stack size too high", "Ark has a maximum stack size of " + Format(BeaconConfigs.StackSizes.MaximumQuantity, Self.NumberFormat) + ".")
+		  End If
+		  Me.CellValueAt(Row, Column) = Format(Size, Self.NumberFormat)
+		  
 		  Var Engram As Beacon.Engram = Me.RowTagAt(Row)
 		  
 		  Var Config As BeaconConfigs.StackSizes = Self.Config(True)
