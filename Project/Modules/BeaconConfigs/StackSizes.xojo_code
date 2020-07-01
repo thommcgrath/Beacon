@@ -13,10 +13,22 @@ Inherits Beacon.ConfigGroup
 		    End If
 		    
 		    If IsNull(Engram) = False And Engram.ValidForDocument(SourceDocument) Then
-		      Var StackSize As Integer = Entry.Value
+		      Var StackSize As Integer = Min(Entry.Value, Self.MaximumQuantity)
 		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemMaxQuantity", "(ItemClassString=""" + Engram.ClassString + """,Quantity=(MaxItemQuantity=" + StackSize.ToString + ",bIgnoreMultiplier=true))"))
 		    End If
 		  Next
+		  
+		  // Inject overrides for things that would go over the limit
+		  If Self.mGlobalMultiplier <> 1.0 Then
+		    Var AllEngrams() As Beacon.Engram = Beacon.Data.SearchForEngrams("", SourceDocument.Mods)
+		    For Each Engram As Beacon.Engram In AllEngrams
+		      If Self.mOverrides.HasKey(Engram.Path) Or Engram.StackSize Is Nil Or Engram.StackSize.DoubleValue = 1 Or Engram.StackSize.DoubleValue * Self.mGlobalMultiplier < Self.MaximumQuantity Then
+		        Continue
+		      End If
+		      
+		      Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemMaxQuantity", "(ItemClassString=""" + Engram.ClassString + """,Quantity=(MaxItemQuantity=" + Self.MaximumQuantity.ToString + ",bIgnoreMultiplier=true))"))
+		    Next
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -25,7 +37,11 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ItemStackSizeMultiplier", Self.mGlobalMultiplier.PrettyText))
+		  If Self.mGlobalMultiplier >= Self.MaximumQuantity Then
+		    Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ItemStackSizeMultiplier", "1.0"))
+		  Else
+		    Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ItemStackSizeMultiplier", Self.mGlobalMultiplier.PrettyText))
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -232,6 +248,10 @@ Inherits Beacon.ConfigGroup
 	#tag Property, Flags = &h21
 		Private mOverrides As Dictionary
 	#tag EndProperty
+
+
+	#tag Constant, Name = MaximumQuantity, Type = Double, Dynamic = False, Default = \"65535", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior
