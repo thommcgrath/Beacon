@@ -548,13 +548,7 @@ End
 		  
 		  Var NewCosts() As Beacon.CraftingCost
 		  For Each Engram As Beacon.Engram In NewEngrams
-		    Var Cost As Beacon.CraftingCost
-		    If WithDefaults Then
-		      Cost = LocalData.SharedInstance.GetRecipeForEngram(Engram)
-		    End If
-		    If Cost Is Nil Then
-		      Cost = New Beacon.CraftingCost(Engram)
-		    End If
+		    Var Cost As New Beacon.CraftingCost(Engram, WithDefaults)
 		    Config.Add(Cost)
 		    NewCosts.AddRow(Cost)
 		  Next
@@ -969,16 +963,16 @@ End
 		  Var Engrams() As Beacon.Engram = OriginalConfig.Engrams
 		  Var Filter As New Dictionary
 		  For Each Engram As Beacon.Engram In Engrams
-		    Filter.Value(Engram.Path) = True
+		    Filter.Value(Engram.ObjectID.StringValue) = True
 		  Next
 		  
-		  Var Paths() As String = LocalData.SharedInstance.GetPathsWithCraftingCosts(Self.Document.Mods, Self.Document.MapCompatibility)
-		  For Each Path As String In Paths
-		    If Filter.HasKey(Path) Then
+		  Var ObjectIDs() As String = LocalData.SharedInstance.GetObjectIDsWithCraftingCosts(Self.Document.Mods, Self.Document.MapCompatibility)
+		  For Each ObjectID As String In ObjectIDs
+		    If Filter.HasKey(ObjectID) Then
 		      Continue
 		    End If
 		    
-		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByPath(Path)
+		    Var Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByID(ObjectID)
 		    If (Engram Is Nil) = False Then
 		      Engrams.AddRow(Engram)
 		    End If
@@ -996,10 +990,10 @@ End
 		    NumProcessed = NumProcessed + 1
 		    Var Cost As Beacon.CraftingCost = OriginalConfig.Cost(Engram)
 		    If Cost Is Nil Then
-		      Cost = LocalData.SharedInstance.GetRecipeForEngram(Engram)
+		      Cost = New Beacon.CraftingCost(Engram, True)
 		    End If
 		    
-		    If Cost Is Nil Then
+		    If Cost Is Nil Or Cost.Count = 0 Then
 		      Continue
 		    End If
 		    

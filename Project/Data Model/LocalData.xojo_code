@@ -859,8 +859,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetPathsWithCraftingCosts(Mods As Beacon.StringList, Mask As UInt64) As String()
-		  Var SQL As String = "SELECT path FROM engrams WHERE recipe != '[]' AND (availability & " + Mask.ToString + ") > 0"
+		Function GetObjectIDsWithCraftingCosts(Mods As Beacon.StringList, Mask As UInt64) As String()
+		  Var SQL As String = "SELECT object_id FROM engrams WHERE recipe != '[]' AND (availability & " + Mask.ToString + ") > 0"
 		  If (Mods Is Nil) = False And Mods.Count > 0 Then
 		    Var List() As String
 		    For Each ModID As String In Mods
@@ -872,7 +872,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Var Rows As RowSet = Self.SQLSelect(SQL)
 		  Var Results() As String
 		  While Not Rows.AfterLastRow
-		    Results.AddRow(Rows.Column("path").StringValue)
+		    Results.AddRow(Rows.Column("object_id").StringValue)
 		    Rows.MoveToNextRow
 		  Wend
 		  Return Results
@@ -901,48 +901,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Dict.Value("Pattern") = Results.Column("pattern").StringValue
 		  Dict.Value("Label") = Results.Column("label").StringValue
 		  Return Beacon.PresetModifier.FromDictionary(Dict)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "Beacon.Engram.Recipe" )  Function GetRecipeForEngram(Engram As Beacon.Engram) As Beacon.CraftingCost
-		  Var Cost As New Beacon.CraftingCost(Engram)
-		  Var Ingredients() As Beacon.RecipeIngredient = Engram.Recipe
-		  For Each Ingredient As Beacon.RecipeIngredient In Ingredients
-		    Cost.Append(Ingredient.Engram, Ingredient.Quantity, Ingredient.RequireExact)
-		  Next
-		  Cost.Modified = False
-		  Return Cost
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "Beacon.Engram.Recipe" )  Function GetRecipeForEngram(Path As String) As Beacon.CraftingCost
-		  If Path.IsEmpty Then
-		    Return Nil
-		  End If
-		  
-		  Var Engram As Beacon.Engram = Self.GetEngramByPath(Path)
-		  If Engram Is Nil Then
-		    Return Nil
-		  End If
-		  
-		  Return Self.GetRecipeForEngram(Engram)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "Beacon.Engram.Recipe" )  Function GetRecipeForEngram(EngramID As v4UUID) As Beacon.CraftingCost
-		  If EngramID = Nil Then
-		    Return Nil
-		  End If
-		  
-		  Var Engram As Beacon.Engram = Self.GetEngramByID(EngramID)
-		  If Engram Is Nil Then
-		    Return Nil
-		  End If
-		  
-		  Return Self.GetRecipeForEngram(Engram)
 		End Function
 	#tag EndMethod
 

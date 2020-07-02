@@ -11,9 +11,7 @@ Implements Beacon.NamedItem
 		    Return
 		  End If
 		  
-		  Self.mResources.AddRow(Resource)
-		  Self.mQuantities.AddRow(Quantity)
-		  Self.mRequireExacts.AddRow(RequireExact)
+		  Self.mIngredients.AddRow(New Beacon.RecipeIngredient(Resource, Quantity, RequireExact))
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -27,24 +25,33 @@ Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.CraftingCost)
 		  Self.Constructor()
-		  Self.Engram = Source.Engram
-		  For I As Integer = 0 To Source.LastRowIndex
-		    Self.Append(Source.Resource(I), Source.Quantity(I), Source.RequireExactResource(I))
+		  Self.mEngram = Source.mEngram
+		  Self.mIngredients.ResizeTo(Source.mIngredients.LastRowIndex)
+		  For Idx As Integer = 0 To Source.mIngredients.LastRowIndex
+		    Self.mIngredients(Idx) = Source.mIngredients(Idx)
 		  Next
 		  Self.Modified = Source.Modified
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Engram As Beacon.Engram)
+		Sub Constructor(Engram As Beacon.Engram, LoadRecipe As Boolean = False)
 		  Self.Constructor()
-		  Self.Engram = Engram
+		  Self.Engram = Engram.ImmutableVersion
+		  
+		  If LoadRecipe Then
+		    Var Ingredients() As Beacon.RecipeIngredient = Engram.Recipe
+		    Self.mIngredients.ResizeTo(-1)
+		    For Idx As Integer = 0 To Self.mIngredients.LastRowIndex
+		      Self.mIngredients(Idx) = Ingredients(Idx)
+		    Next
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return Self.mResources.Count
+		  Return Self.mIngredients.Count
 		End Function
 	#tag EndMethod
 
@@ -57,21 +64,17 @@ Implements Beacon.NamedItem
 		    Dict.Value("EngramID") = Self.mEngram.ObjectID.StringValue
 		  End If
 		  
-		  Var Resources() As Dictionary
-		  For I As Integer = 0 To Self.mResources.LastRowIndex
-		    Var Engram As Beacon.Engram = Self.mResources(I)
-		    Var Quantity As Integer = Self.mQuantities(I)
-		    Var RequireExact As Boolean = Self.mRequireExacts(I)
-		    
+		  Var Ingredients() As Dictionary
+		  For Idx As Integer = 0 To Self.mIngredients.LastRowIndex
 		    Var Resource As New Dictionary
-		    Resource.Value("Class") = Engram.ClassString
-		    Resource.Value("EngramID") = Engram.ObjectID.StringValue
-		    Resource.Value("Quantity") = Quantity
-		    Resource.Value("Exact") = RequireExact
+		    Resource.Value("Class") = Self.mIngredients(Idx).Engram.ClassString
+		    Resource.Value("EngramID") = Self.mIngredients(Idx).Engram.ObjectID.StringValue
+		    Resource.Value("Quantity") = Self.mIngredients(Idx).Quantity
+		    Resource.Value("Exact") = Self.mIngredients(Idx).RequireExact
 		    
-		    Resources.AddRow(Resource)
+		    Ingredients.AddRow(Resource)
 		  Next
-		  Dict.Value("Resources") = Resources
+		  Dict.Value("Resources") = Ingredients
 		  
 		  Return Dict
 		End Function
@@ -86,9 +89,8 @@ Implements Beacon.NamedItem
 		    For Each Resource As Dictionary In Resources
 		      Var Quantity As Integer = Resource.Lookup("Quantity", 1)
 		      Var RequireExact As Boolean = Resource.Lookup("Exact", False)
-		      Cost.mQuantities.AddRow(Quantity)
-		      Cost.mRequireExacts.AddRow(RequireExact)
-		      Cost.mResources.AddRow(Beacon.ResolveEngram(Resource, "EngramID", "Class", ""))
+		      
+		      Cost.mIngredients.AddRow(New Beacon.RecipeIngredient(Beacon.ResolveEngram(Resource, "EngramID", "Class", ""), Quantity, RequireExact))
 		    Next
 		  End If
 		  
@@ -127,6 +129,7 @@ Implements Beacon.NamedItem
 		      Next
 		    End If
 		    
+		    Cost.Modified = False
 		    Return Cost
 		  Catch Err As RuntimeException
 		    Return Nil
@@ -136,9 +139,9 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Resource As Beacon.Engram) As Integer
-		  For I As Integer = 0 To Self.mResources.LastRowIndex
-		    If Self.mResources(I) = Resource Then
-		      Return I
+		  For Idx As Integer = 0 To Self.mIngredients.LastRowIndex
+		    If Self.mIngredients(Idx).Engram = Resource Then
+		      Return Idx
 		    End If
 		  Next
 		  Return -1
@@ -146,7 +149,7 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Insert(Index As Integer, Resource As Beacon.Engram, Quantity As Integer, RequireExact As Boolean)
+		Sub Insert(Idx As Integer, Resource As Beacon.Engram, Quantity As Integer, RequireExact As Boolean)
 		  If Resource = Nil Then
 		    Return
 		  End If
@@ -155,9 +158,7 @@ Implements Beacon.NamedItem
 		    Return
 		  End If
 		  
-		  Self.mResources.AddRowAt(Index, Resource)
-		  Self.mQuantities.AddRowAt(Index, Quantity)
-		  Self.mRequireExacts.AddRowAt(Index,RequireExact)
+		  Self.mIngredients.AddRowAt(Idx, New Beacon.RecipeIngredient(Resource, Quantity, RequireExact))
 		  Self.Modified = True
 		End Sub
 	#tag EndMethod
@@ -174,7 +175,7 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function LastRowIndex() As Integer
-		  Return Self.mResources.LastRowIndex
+		  Return Self.mIngredients.LastRowIndex
 		End Function
 	#tag EndMethod
 
@@ -224,25 +225,26 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Quantity(Index As Integer) As Integer
-		  If Index < Self.mQuantities.FirstRowIndex Or Index > Self.mQuantities.LastRowIndex Then
+		Function Quantity(Idx As Integer) As Integer
+		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastRowIndex Then
 		    Return 0
 		  End If
 		  
-		  Return Self.mQuantities(Index)
+		  Return Self.mIngredients(Idx).Quantity
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Quantity(Index As Integer, Assigns Value As Integer)
-		  If Index < Self.mQuantities.FirstRowIndex Or Index > Self.mQuantities.LastRowIndex Then
+		Sub Quantity(Idx As Integer, Assigns Value As Integer)
+		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastRowIndex Then
 		    Return
 		  End If
 		  
 		  Value = Min(Max(Value, 1), 65535)
 		  
-		  If Self.mQuantities(Index) <> Value Then
-		    Self.mQuantities(Index) = Value
+		  Var Ingredient As Beacon.RecipeIngredient = Self.mIngredients(Idx)
+		  If Ingredient.Quantity <> Value Then
+		    Self.mIngredients(Idx) = New Beacon.RecipeIngredient(Ingredient.Engram, Value, Ingredient.RequireExact)
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -258,61 +260,57 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Remove(Index As Integer)
-		  If Index >= Self.mQuantities.FirstRowIndex And Index <= Self.mQuantities.LastRowIndex Then
-		    Self.mQuantities.RemoveRowAt(Index)
-		  End If
-		  If Index >= Self.mRequireExacts.FirstRowIndex And Index <= Self.mRequireExacts.LastRowIndex Then
-		    Self.mRequireExacts.RemoveRowAt(Index)
-		  End If
-		  If Index >= Self.mResources.FirstRowIndex And Index <= Self.mResources.LastRowIndex Then
-		    Self.mResources.RemoveRowAt(Index)
-		  End If
-		  Self.Modified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function RequireExactResource(Index As Integer) As Boolean
-		  If Index < Self.mRequireExacts.FirstRowIndex Or Index > Self.mRequireExacts.LastRowIndex Then
-		    Return False
-		  End If
-		  
-		  Return Self.mRequireExacts(Index)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub RequireExactResource(Index As Integer, Assigns Value As Boolean)
-		  If Index < Self.mRequireExacts.FirstRowIndex Or Index > Self.mRequireExacts.LastRowIndex Then
-		    Return
-		  End If
-		  
-		  If Self.mRequireExacts(Index) <> Value Then
-		    Self.mRequireExacts(Index) = Value
+		Sub Remove(Idx As Integer)
+		  If Idx >= Self.mIngredients.FirstRowIndex And Idx <= Self.mIngredients.LastRowIndex Then
+		    Self.mIngredients.RemoveRowAt(Idx)
 		    Self.Modified = True
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Resource(Index As Integer) As Beacon.Engram
-		  If Index < Self.mResources.FirstRowIndex Or Index > Self.mResources.LastRowIndex Then
-		    Return Nil
+		Function RequireExactResource(Idx As Integer) As Boolean
+		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastRowIndex Then
+		    Return False
 		  End If
 		  
-		  Return Self.mResources(Index)
+		  Return Self.mIngredients(Idx).RequireExact
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Resource(Index As Integer, Assigns Value As Beacon.Engram)
-		  If Index < Self.mResources.FirstRowIndex Or Index > Self.mResources.LastRowIndex Then
+		Sub RequireExactResource(Idx As Integer, Assigns Value As Boolean)
+		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastRowIndex Then
 		    Return
 		  End If
 		  
-		  If Self.mResources(Index) <> Value Then
-		    Self.mResources(Index) = Value
+		  Var Ingredient As Beacon.RecipeIngredient = Self.mIngredients(Idx)
+		  If Ingredient.RequireExact <> Value Then
+		    Self.mIngredients(Idx) = New Beacon.RecipeIngredient(Ingredient.Engram, Ingredient.Quantity, Value)
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Resource(Idx As Integer) As Beacon.Engram
+		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastRowIndex Then
+		    Return Nil
+		  End If
+		  
+		  Return Self.mIngredients(Idx).Engram
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Resource(Idx As Integer, Assigns Value As Beacon.Engram)
+		  If Idx < Self.mIngredients.FirstRowIndex Or Idx > Self.mIngredients.LastRowIndex Then
+		    Return
+		  End If
+		  
+		  Var Ingredient As Beacon.RecipeIngredient = Self.mIngredients(Idx)
+		  If Ingredient.Engram <> Value Then
+		    Self.mIngredients(Idx) = New Beacon.RecipeIngredient(Value, Ingredient.Quantity, Ingredient.RequireExact)
 		    Self.Modified = True
 		  End If
 		End Sub
@@ -321,10 +319,10 @@ Implements Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function StringValue() As String
 		  Var Components() As String
-		  For I As Integer = 0 To Self.mResources.LastRowIndex
-		    Var ClassString As String = Self.mResources(I).ClassString
-		    Var QuantityString As String = Self.mQuantities(I).ToString(Locale.Raw, "0")
-		    Var RequireExactString As String = If(Self.mRequireExacts(I), "true", "false")
+		  For Idx As Integer = 0 To Self.mIngredients.LastRowIndex
+		    Var ClassString As String = Self.mIngredients(Idx).Engram.ClassString
+		    Var QuantityString As String = Self.mIngredients(Idx).Quantity.ToString(Locale.Raw, "0")
+		    Var RequireExactString As String = If(Self.mIngredients(Idx).RequireExact, "true", "false")
 		    Components.AddRow("(ResourceItemTypeString=""" + ClassString + """,BaseResourceRequirement=" + QuantityString + ",bCraftingRequireExactResourceType=" + RequireExactString + ")")
 		  Next
 		  
@@ -360,6 +358,10 @@ Implements Beacon.NamedItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mIngredients() As Beacon.RecipeIngredient
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mLastModifiedTime As Double
 	#tag EndProperty
 
@@ -369,18 +371,6 @@ Implements Beacon.NamedItem
 
 	#tag Property, Flags = &h21
 		Private mObjectID As v4UUID
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mQuantities() As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mRequireExacts() As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mResources() As Beacon.Engram
 	#tag EndProperty
 
 
