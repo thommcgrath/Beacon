@@ -1525,8 +1525,17 @@ Protected Module Beacon
 		  Var ModInfo As Dictionary = Dict.Value("mod")
 		  
 		  Var Tags() As String
-		  If Dict.Value("tags").IsArray And Dict.Value("tags").ArrayElementType = Variant.TypeString Then
-		    Tags = Dict.Value("tags")
+		  If Dict.Value("tags").IsArray Then
+		    If Dict.Value("tags").ArrayElementType = Variant.TypeString Then
+		      Tags = Dict.Value("tags")
+		    ElseIf Dict.Value("tags").ArrayElementType = Variant.TypeObject Then
+		      Var Temp() As Variant = Dict.Value("tags")
+		      For Each Tag As Variant In Temp
+		        If Tag.Type = Variant.TypeString Then
+		          Tags.AddRow(Tag.StringValue)
+		        End If
+		      Next
+		    End If
 		  End If
 		  
 		  If IsNull(Dict.Value("alternate_label")) = False And Dict.Value("alternate_label").StringValue.IsEmpty = False Then

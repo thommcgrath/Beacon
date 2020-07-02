@@ -167,7 +167,57 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Sub Pack(Dict As Dictionary)
-		  #Pragma Warning "Not implemented"
+		  If Self.mIncubationTime > 0 Then
+		    Dict.Value("incubation_time") = Self.mIncubationTime
+		  Else
+		    Dict.Value("incubation_time") = Nil
+		  End If
+		  
+		  If Self.mMatureTime > 0 Then
+		    Dict.Value("mature_time") = Self.mMatureTime
+		  Else
+		    Dict.Value("mature_time")= Nil
+		  End If
+		  
+		  If (Self.mStats Is Nil) = False And Self.mStats.KeyCount > 0 Then
+		    Var Stats() As Dictionary
+		    Var Indexes() As Integer
+		    
+		    For Each Entry As DictionaryEntry In Self.mStats
+		      Var StatIndex As Integer = Entry.Key
+		      Var StatInfo As Dictionary = Entry.Value
+		      
+		      Var PackedStats As New Dictionary
+		      PackedStats.Value("stat_index") = StatIndex
+		      PackedStats.Value("base_value") = StatInfo.Lookup(Self.KeyBase, Self.MissingStatValue)
+		      PackedStats.Value("per_level_wild_multiplier") = StatInfo.Lookup(Self.KeyWild, Self.MissingStatValue)
+		      PackedStats.Value("per_level_tamed_multiplier") = StatInfo.Lookup(Self.KeyTamed, Self.MissingStatValue)
+		      PackedStats.Value("add_multiplier") = StatInfo.Lookup(Self.KeyAdd, Self.MissingStatValue)
+		      PackedStats.Value("affinity_multiplier") = StatInfo.Lookup(Self.KeyAffinity, Self.MissingStatValue)
+		      
+		      Stats.AddRow(PackedStats)
+		      Indexes.AddRow(StatIndex)
+		    Next
+		    
+		    Indexes.SortWith(Stats)
+		    Dict.Value("stats") = Stats
+		  Else
+		    Dict.Value("stats") = Nil
+		  End If
+		  
+		  If Self.mStatsMask > 0 Then
+		    Dict.Value("used_stats") = Self.mStatsMask
+		  Else
+		    Dict.Value("used_stats") = Nil
+		  End If
+		  
+		  If Self.mMinMatingInterval > 0 And Self.mMaxMatingInterval > 0 Then
+		    Dict.Value("mating_interval_min") = Self.mMinMatingInterval
+		    Dict.Value("mating_interval_max") = Self.mMaxMatingInterval
+		  Else
+		    Dict.Value("mating_interval_min") = Nil
+		    Dict.Value("mating_interval_max") = Nil
+		  End If
 		End Sub
 	#tag EndMethod
 

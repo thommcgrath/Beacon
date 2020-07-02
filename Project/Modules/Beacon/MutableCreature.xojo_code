@@ -154,7 +154,75 @@ Implements Beacon.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Unpack(Dict As Dictionary)
-		  #Pragma Warning "Not implemented"
+		  If Dict.HasKey("incubation_time") And IsNull(Dict.Value("incubation_time")) = False Then
+		    Self.mIncubationTime = Dict.Value("incubation_time").UInt64Value
+		  Else
+		    Self.mIncubationTime = 0
+		  End If
+		  
+		  If Dict.HasKey("mature_time") ANd IsNull(Dict.Value("mature_time")) = False Then
+		    Self.mMatureTime = Dict.Value("mature_time").UInt64Value
+		  Else
+		    Self.mMatureTime = 0
+		  End If
+		  
+		  If Dict.HasKey("stats") And IsNull(Dict.Value("stats")) = False Then
+		    Var Dicts() As Dictionary
+		    Var Info As Introspection.TypeInfo = Introspection.GetType(Dict.Value("stats"))
+		    Select Case Info.FullName
+		    Case "Dictionary()"
+		      Dicts = Dict.Value("stats")
+		    Case "Object()"
+		      Var Temp() As Object = Dict.Value("stats")
+		      For Each Obj As Object In Temp
+		        If (Obj Is Nil) = False And Obj IsA Dictionary Then
+		          Dicts.AddRow(Dictionary(Obj))
+		        End If
+		      Next
+		    End Select
+		    
+		    Self.mStats = New Dictionary
+		    For Each StatInfo As Dictionary In Dicts
+		      If Not StatInfo.HasAllKeys("stat_index", "base_value", "per_level_wild_multiplier", "per_level_tamed_multiplier", "add_multiplier", "affinity_multiplier") Then
+		        Continue
+		      End If
+		      
+		      Var StatIndex As Integer = StatInfo.Value("stat_index")
+		      Var Base As Double = StatInfo.Value("base_value")
+		      Var PerLevelWild As Double = StatInfo.Value("per_level_wild_multiplier")
+		      Var PerLevelTamed As Double = StatInfo.Value("per_level_tamed_multiplier")
+		      Var Add As Double = StatInfo.Value("add_multiplier")
+		      Var Affinity As Double = StatInfo.Value("affinity_multiplier")
+		      
+		      If StatIndex = Self.MissingStatValue Or Base = Self.MissingStatValue Or PerLevelWild = Self.MissingStatValue Or PerLevelTamed = Self.MissingStatValue Or Add = Self.MissingStatValue Or Affinity = Self.MissingStatValue Then
+		        Continue
+		      End If
+		      
+		      Var Stat As New Dictionary
+		      Stat.Value(Self.KeyBase) = Base
+		      Stat.Value(Self.KeyWild) = PerLevelWild
+		      Stat.Value(Self.KeyTamed) = PerLevelTamed
+		      Stat.Value(Self.KeyAdd) = Add
+		      Stat.Value(Self.KeyAffinity) = Affinity
+		      Self.mStats.Value(StatIndex) = Stat
+		    Next
+		  Else
+		    Self.mStats = New Dictionary
+		  End If
+		  
+		  If Dict.HasKey("used_stats") And IsNull(Dict.Value("used_stats")) = False Then
+		    Self.mStatsMask = Dict.Value("used_stats").UInt32Value
+		  Else
+		    Self.mStatsMask = 0
+		  End If
+		  
+		  If Dict.HasAllKeys("mating_interval_min", "mating_interval_max") And IsNull(Dict.Value("mating_interval_min")) = False And IsNull(Dict.Value("mating_interval_max")) = False Then
+		    Self.mMinMatingInterval = Dict.Value("mating_interval_min").UInt64Value
+		    Self.mMaxMatingInterval = Dict.Value("mating_interval_max").UInt64Value
+		  Else
+		    Self.mMinMatingInterval = 0
+		    Self.mMaxMatingInterval = 0
+		  End If
 		End Sub
 	#tag EndMethod
 

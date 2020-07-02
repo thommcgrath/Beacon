@@ -317,14 +317,6 @@ Inherits BlueprintController
 			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mModUUID"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
 #tag EndClass

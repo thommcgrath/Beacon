@@ -66,16 +66,29 @@ Protected Class RecipeIngredient
 		    End Try
 		  ElseIf Value.IsArray And Value.ArrayElementType = Variant.TypeObject Then
 		    // Array of dictionaries
+		    Var Dicts() As Dictionary
 		    Try
-		      Var Values() As Dictionary = Value
-		      For Each Dict As Dictionary In Values
+		      #Pragma BreakOnExceptions False
+		      Dicts = Value
+		      #Pragma BreakOnExceptions Default
+		    Catch Err As RuntimeException
+		      Var Values() As Variant = Value
+		      For Each Obj As Variant In Values
+		        If Obj IsA Dictionary Then
+		          Dicts.AddRow(Dictionary(Obj))
+		        End If
+		      Next
+		    End Try
+		    
+		    For Each Dict As Dictionary In Dicts
+		      Try
 		        Var Ingredient As Beacon.RecipeIngredient = Beacon.RecipeIngredient.FromDictionary(Dict)
 		        If (Ingredient Is Nil) = False Then
 		          Ingredients.AddRow(Ingredient)
 		        End If
-		      Next
-		    Catch Err As RuntimeException
-		    End Try
+		      Catch Err As RuntimeException
+		      End Try
+		    Next
 		  End If
 		  
 		  Return Ingredients

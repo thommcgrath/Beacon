@@ -76,6 +76,16 @@ Protected Module Tests
 		  If Not Assert(SourceHash = UnserializedHash, "Source blueprint and unserialized blueprint hashes do not match. Expected `" + SourceHash + "` but got `" + UnserializedHash + "`.") Then
 		    Break
 		  End If
+		  
+		  // Also test unserializing from json
+		  Var JSON As String = Beacon.GenerateJSON(Serialized, False)
+		  Serialized = Beacon.ParseJSON(JSON)
+		  Unserialized = Beacon.UnpackBlueprint(Serialized)
+		  UnserializedHash = Unserialized.Hash
+		  
+		  If Not Assert(SourceHash = UnserializedHash, "Source blueprint and unserialized blueprint hashes do not match. Expected `" + SourceHash + "` but got `" + UnserializedHash + "`.") Then
+		    Break
+		  End If
 		End Sub
 	#tag EndMethod
 
