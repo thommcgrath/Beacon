@@ -134,7 +134,7 @@ Inherits ControlCanvas
 		    Var OutsideRect As NSRectMBS = MyView.Frame
 		    
 		    MyView.RemoveFromSuperviewWithoutNeedingDisplay
-		    MyView.AutoresizingMask = NSViewMBS.NSViewWidthSizable
+		    MyView.AutoresizingMask = NSViewMBS.NSViewWidthSizable Or NSViewMBS.NSViewMinYMargin
 		    
 		    Var ScrollView As New NSScrollViewMBS(OutsideRect.X, OutsideRect.Y, OutsideRect.Width, OutsideRect.Height)
 		    ScrollView.HasVerticalScroller = True
@@ -315,7 +315,7 @@ Inherits ControlCanvas
 	#tag Method, Flags = &h0
 		Sub Remove(Idx As Integer)
 		  If Idx >= 0 And Idx <= Self.mItems.LastRowIndex Then
-		    Self.mItems.Remove(Idx)
+		    Self.mItems.RemoveRowAt(Idx)
 		    
 		    If Idx <= Self.mSelectedRowIndex Then
 		      Self.mSelectedRowIndex = Self.mSelectedRowIndex - 1

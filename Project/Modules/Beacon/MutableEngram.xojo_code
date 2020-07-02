@@ -104,6 +104,12 @@ Implements Beacon.MutableBlueprint
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Unpack(Dict As Dictionary)
+		  #Pragma Warning "Not implemented"
+		End Sub
+	#tag EndMethod
+
 
 	#tag ViewBehavior
 		#tag ViewProperty

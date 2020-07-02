@@ -133,7 +133,7 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromDictionary(Dict As Dictionary) As Beacon.Engram
+		Attributes( Deprecated )  Shared Function FromDictionary(Dict As Dictionary) As Beacon.Engram
 		  If Dict.HasKey("Category") = False Or Dict.Value("Category") <> Beacon.CategoryEngrams Then
 		    Return Nil
 		  End If
@@ -256,6 +256,12 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Pack(Dict As Dictionary)
+		  #Pragma Warning "Not implemented"
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Path() As String
 		  If Self.IsValid Then
 		    Return Self.mPath
@@ -291,21 +297,6 @@ Implements Beacon.Blueprint
 		    Clone(I) = Self.mTags(I)
 		  Next
 		  Return Clone
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ToDictionary() As Dictionary
-		  Var Dict As New Dictionary
-		  Dict.Value("Category") = Self.Category
-		  Dict.Value("UUID") = Self.ObjectID.StringValue
-		  Dict.Value("Label") = Self.Label
-		  Dict.Value("Path") = Self.Path
-		  Dict.Value("Availability") = Self.Availability
-		  Dict.Value("Tags") = Self.Tags
-		  Dict.Value("ModID") = Self.ModID.StringValue
-		  Dict.Value("ModName") = Self.ModName
-		  Return Dict
 		End Function
 	#tag EndMethod
 

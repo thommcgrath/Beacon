@@ -82,34 +82,6 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function BlueprintFromDictionary(Dict As Dictionary) As Beacon.Blueprint
-		  Try
-		    Var Blueprint As Beacon.Blueprint = Beacon.Engram.FromDictionary(Dict)
-		    If Blueprint <> Nil Then
-		      Return Blueprint
-		    End If
-		  Catch Err As RuntimeException
-		  End Try
-		  
-		  Try
-		    Var Blueprint As Beacon.Blueprint = Beacon.Creature.FromDictionary(Dict)
-		    If Blueprint <> Nil Then
-		      Return Blueprint
-		    End If
-		  Catch Err As RuntimeException
-		  End Try
-		  
-		  Try
-		    Var Blueprint As Beacon.Blueprint = Beacon.SpawnPoint.FromDictionary(Dict)
-		    If Blueprint <> Nil Then
-		      Return Blueprint
-		    End If
-		  Catch Err As RuntimeException
-		  End Try
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function BooleanValue(Extends Dict As Dictionary, Key As Variant, Default As Boolean, AllowArray As Boolean = False) As Boolean
 		  Return GetValueAsType(Dict, Key, "Boolean", Default, AllowArray, AddressOf CoerceToBoolean)
 		End Function
@@ -590,7 +562,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function Hash(Extends Blueprint As Beacon.Blueprint) As String
-		  Return EncodeHex(Crypto.SHA1(Beacon.GenerateJSON(Blueprint.ToDictionary, False)))
+		  Return EncodeHex(Crypto.SHA1(Beacon.GenerateJSON(Beacon.PackBlueprint(Blueprint), False))).Lowercase
 		End Function
 	#tag EndMethod
 
@@ -945,6 +917,40 @@ Protected Module Beacon
 		  TagString = Sanitizer.Replace(TagString)
 		  
 		  Return TagString
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function PackBlueprint(Blueprint As Beacon.Blueprint) As Dictionary
+		  Var Dict As New Dictionary
+		  
+		  Select Case Blueprint
+		  Case IsA Beacon.Engram
+		    Dict.Value("group") = "engrams"
+		  Case IsA Beacon.Creature
+		    Dict.Value("group") = "creatures"
+		  Case IsA Beacon.SpawnPoint
+		    Dict.Value("group") = "spawn_points"
+		  Else
+		    Return Nil
+		  End Select
+		  
+		  Var ModInfo As New Dictionary
+		  ModInfo.Value("id") = Blueprint.ModID.StringValue
+		  ModInfo.Value("name") = Blueprint.ModName
+		  
+		  Dict.Value("id") = Blueprint.ObjectID.StringValue
+		  Dict.Value("label") = Blueprint.Label
+		  Dict.Value("alternate_label") = Blueprint.AlternateLabel
+		  Dict.Value("mod") = ModInfo
+		  Dict.Value("tags") = Blueprint.Tags
+		  Dict.Value("availability") = Blueprint.Availability
+		  Dict.Value("path") = Blueprint.Path
+		  
+		  // Let the blueprint add whatever additional data it needs
+		  Blueprint.Pack(Dict)
+		  
+		  Return Dict
 		End Function
 	#tag EndMethod
 
@@ -1485,6 +1491,54 @@ Protected Module Beacon
 		  End If
 		  
 		  Return UnknownBlueprintPrefix + FolderName + "/" + ClassName + "." + ClassName
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UnpackBlueprint(Dict As Dictionary) As Beacon.MutableBlueprint
+		  If Not Dict.HasAllKeys("id", "label", "alternate_label", "path", "group", "tags", "availability", "mod") Then
+		    Return Nil
+		  End If
+		  
+		  Var Group As String = Dict.Value("group")
+		  Var Path As String = Dict.Value("path")
+		  Var ObjectID As String = Dict.Value("id")
+		  
+		  If Path.IsEmpty Or ObjectID.IsEmpty Or Group.IsEmpty Then
+		    Return Nil
+		  End If
+		  
+		  Var Blueprint As Beacon.MutableBlueprint
+		  Select Case Group
+		  Case "engrams"
+		    Blueprint = New Beacon.MutableEngram(Path, ObjectID)
+		  Case "creatures"
+		    Blueprint = New Beacon.MutableCreature(Path, ObjectID)
+		  Case "spawn_points"
+		    Blueprint = New Beacon.MutableSpawnPoint(Path, ObjectID)
+		  End Select
+		  
+		  Var ModInfo As Dictionary = Dict.Value("mod")
+		  
+		  Var Tags() As String
+		  If Dict.Value("tags").IsArray And Dict.Value("tags").ArrayElementType = Variant.TypeString Then
+		    Tags = Dict.Value("tags")
+		  End If
+		  
+		  Blueprint.AlternateLabel = Dict.Value("alternate_label").StringValue
+		  Blueprint.Availability = Dict.Value("availability").UInt64Value
+		  Blueprint.Label = Dict.Value("label").StringValue
+		  Blueprint.ModID = ModInfo.Value("id").StringValue
+		  Blueprint.ModName = ModInfo.Value("name").StringValue
+		  Blueprint.Tags = Tags
+		  
+		  // Let the blueprint grab whatever additional data it needs
+		  Blueprint.Unpack(Dict)
+		  
+		  Return Blueprint
+		  
+		  Exception Err As RuntimeException
+		    Return Nil
 		End Function
 	#tag EndMethod
 

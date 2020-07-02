@@ -82,37 +82,6 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromDictionary(Dict As Dictionary) As Beacon.Creature
-		  If Dict.HasKey("Category") = False Or Dict.Value("Category") <> Beacon.CategoryCreatures Then
-		    Return Nil
-		  End If
-		  
-		  If Not Dict.HasAllKeys("UUID", "Label", "Path", "Availability", "Tags", "ModID", "ModName", "IncubationTime", "MatureTime", "Stats") Then
-		    Return Nil
-		  End If
-		  
-		  Var Creature As New Beacon.MutableCreature(Dict.Value("Path").StringValue, Dict.Value("UUID").StringValue)
-		  Creature.Label = Dict.Value("Label").StringValue
-		  Creature.Availability = Dict.Value("Availability").UInt64Value
-		  Creature.Tags = Dict.Value("Tags")
-		  Creature.ModID = Dict.Value("ModID").StringValue
-		  Creature.ModName = Dict.Value("ModName").StringValue
-		  Creature.IncubationTime = Dict.Value("IncubationTime").UInt64Value
-		  Creature.MatureTime = Dict.Value("MatureTime").UInt64Value
-		  
-		  Var Immutable As New Beacon.Creature(Creature)
-		  Var StatData As Dictionary = Dict.Value("Stats")
-		  Var Stats() As Beacon.Stat = Beacon.Stats.All
-		  For Each Stat As Beacon.Stat In Stats
-		    If StatData.HasKey(Stat.Key) Then
-		      Immutable.mStats.Value(Stat.Index) = StatData.Value(Stat.Key)
-		    End If
-		  Next
-		  Return Immutable
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function IncubationTime() As UInt64
 		  Return Self.mIncubationTime
 		End Function
@@ -185,6 +154,12 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Pack(Dict As Dictionary)
+		  #Pragma Warning "Not implemented"
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Path() As String
 		  Return Self.mPath
 		End Function
@@ -245,32 +220,6 @@ Implements Beacon.Blueprint
 		    Clone(I) = Self.mTags(I)
 		  Next
 		  Return Clone
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ToDictionary() As Dictionary
-		  Var StatData As New Dictionary
-		  Var Stats() As Beacon.Stat = Beacon.Stats.All
-		  For Each Stat As Beacon.Stat In Stats
-		    If Self.mStats.HasKey(Stat.Index) Then
-		      StatData.Value(Stat.Key) = Self.mStats.Value(Stat.Index)
-		    End If
-		  Next
-		  
-		  Var Dict As New Dictionary
-		  Dict.Value("Category") = Self.Category
-		  Dict.Value("UUID") = Self.ObjectID.StringValue
-		  Dict.Value("Label") = Self.Label
-		  Dict.Value("Path") = Self.Path
-		  Dict.Value("Availability") = Self.Availability
-		  Dict.Value("Tags") = Self.Tags
-		  Dict.Value("ModID") = Self.ModID.StringValue
-		  Dict.Value("ModName") = Self.ModName
-		  Dict.Value("IncubationTime") = Self.IncubationTime
-		  Dict.Value("MatureTime") = Self.MatureTime
-		  Dict.Value("Stats") = StatData
-		  Return Dict
 		End Function
 	#tag EndMethod
 

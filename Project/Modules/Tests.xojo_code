@@ -46,9 +46,11 @@ Protected Module Tests
 
 	#tag Method, Flags = &h21
 		Private Sub TestBlueprintSerialization()
-		  TestBlueprintSerialization(Beacon.Data.GetEngramByClass("PrimalItemArmor_RockDrakeSaddle_C"))
-		  TestBlueprintSerialization(Beacon.Data.GetCreatureByClass("Spindles_Character_BP_C"))
-		  TestBlueprintSerialization(Beacon.Data.GetSpawnPointByClass("DinoSpawnEntries_DarkWater_Mosa_Caves_C"))
+		  // Use object ids here just in case
+		  
+		  TestBlueprintSerialization(Beacon.Data.GetEngramByID("d45d0691-a430-4443-98e3-bcc501067317")) // PrimalItemArmor_RockDrakeSaddle_C
+		  TestBlueprintSerialization(Beacon.Data.GetCreatureByID("d4d0a3d3-8a26-494a-887c-ef992cdf7d52")) // Spindles_Character_BP_C
+		  TestBlueprintSerialization(Beacon.Data.GetSpawnPointByID("34f7776e-46f3-4251-85a6-9cc4998f340a")) // DinoSpawnEntries_DarkWater_Mosa_Caves_C
 		End Sub
 	#tag EndMethod
 
@@ -58,17 +60,20 @@ Protected Module Tests
 		    Return
 		  End If
 		  
-		  Var Serialized As Dictionary = SourceBlueprint.ToDictionary
+		  Var Serialized As Dictionary = Beacon.PackBlueprint(SourceBlueprint)
 		  If Not Assert(Serialized <> Nil, "Unable to produce serialized blueprint") Then
 		    Return
 		  End If
 		  
-		  Var Unserialized As Beacon.Blueprint = Beacon.BlueprintFromDictionary(Serialized)
+		  Var Unserialized As Beacon.Blueprint = Beacon.UnpackBlueprint(Serialized)
 		  If Not Assert(Unserialized <> Nil, "Unable to unserialize blueprint") Then
 		    Return
 		  End If
 		  
-		  Call Assert(SourceBlueprint.Hash = Unserialized.Hash, "Source blueprint and unserialized blueprint hashes do not match")
+		  Var SourceHash As String = SourceBlueprint.Hash
+		  Var UnserializedHash As String = Unserialized.Hash
+		  
+		  Call Assert(SourceHash = UnserializedHash, "Source blueprint and unserialized blueprint hashes do not match. Expected `" + SourceHash + "` but got `" + UnserializedHash + "`.")
 		End Sub
 	#tag EndMethod
 

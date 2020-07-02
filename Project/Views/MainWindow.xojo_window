@@ -305,6 +305,37 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          Visible         =   True
          Width           =   800
       End
+      Begin BlueprintsComponent BlueprintsComponent1
+         AllowAutoDeactivate=   True
+         AllowFocus      =   False
+         AllowFocusRing  =   False
+         AllowTabs       =   True
+         Backdrop        =   0
+         BackgroundColor =   &cFFFFFF00
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackgroundColor=   False
+         Height          =   362
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   38
+         Transparent     =   True
+         Visible         =   True
+         Width           =   800
+      End
    End
 End
 #tag EndWindow
@@ -1197,10 +1228,13 @@ End
 		Sub Open()
 		  Var Home As New OmniBarItem("NavHome", "Home")
 		  Home.Toggled = True
+		  Self.DashboardPane1.LinkedOmniBarItem = Home
 		  
 		  Var Documents As New OmniBarItem("NavDocuments", "Documents")
+		  Self.DocumentsComponent1.LinkedOmniBarItem = Documents
 		  
 		  Var Blueprints As New OmniBarItem("NavBlueprints", "Blueprints")
+		  Self.BlueprintsComponent1.LinkedOmniBarItem = Blueprints
 		  
 		  Var Presets As New OmniBarItem("NavPresets", "Presets")
 		  

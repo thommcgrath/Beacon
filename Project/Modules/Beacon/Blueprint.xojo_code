@@ -62,6 +62,12 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Pack(Dict As Dictionary)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Path() As String
 		  
 		End Function
@@ -69,12 +75,6 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function Tags() As String()
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ToDictionary() As Dictionary
 		  
 		End Function
 	#tag EndMethod

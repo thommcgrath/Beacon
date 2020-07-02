@@ -49,6 +49,12 @@ Implements Beacon.Blueprint
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Unpack(Dict As Dictionary)
+		  
+		End Sub
+	#tag EndMethod
+
 
 End Interface
 #tag EndInterface
