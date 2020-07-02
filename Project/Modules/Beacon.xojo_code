@@ -562,7 +562,11 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function Hash(Extends Blueprint As Beacon.Blueprint) As String
-		  Return EncodeHex(Crypto.SHA1(Beacon.GenerateJSON(Beacon.PackBlueprint(Blueprint), False))).Lowercase
+		  #if DebugBuild
+		    Return Beacon.GenerateJSON(Beacon.PackBlueprint(Blueprint), True)
+		  #else
+		    Return EncodeHex(Crypto.SHA1(Beacon.GenerateJSON(Beacon.PackBlueprint(Blueprint), False))).Lowercase
+		  #endif
 		End Function
 	#tag EndMethod
 
@@ -1525,7 +1529,11 @@ Protected Module Beacon
 		    Tags = Dict.Value("tags")
 		  End If
 		  
-		  Blueprint.AlternateLabel = Dict.Value("alternate_label").StringValue
+		  If IsNull(Dict.Value("alternate_label")) = False And Dict.Value("alternate_label").StringValue.IsEmpty = False Then
+		    Blueprint.AlternateLabel = Dict.Value("alternate_label").StringValue
+		  Else
+		    Blueprint.AlternateLabel = Nil
+		  End If
 		  Blueprint.Availability = Dict.Value("availability").UInt64Value
 		  Blueprint.Label = Dict.Value("label").StringValue
 		  Blueprint.ModID = ModInfo.Value("id").StringValue

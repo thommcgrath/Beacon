@@ -43,7 +43,7 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Clone() As Beacon.Blueprint
+		Function Clone() As Beacon.Engram
 		  Return New Beacon.Engram(Self)
 		End Function
 	#tag EndMethod
@@ -74,6 +74,12 @@ Implements Beacon.Blueprint
 		  Self.mTags.ResizeTo(-1)
 		  For Each Tag As String In Source.mTags
 		    Self.mTags.AddRow(Tag)
+		  Next
+		  
+		  Self.mHasLoadedIngredients = Source.mHasLoadedIngredients
+		  Self.mIngredients.ResizeTo(Source.mIngredients.LastRowIndex)
+		  For Idx As Integer = 0 To Self.mIngredients.LastRowIndex
+		    Self.mIngredients(Idx) = Source.mIngredients(Idx)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -160,7 +166,13 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function HasUnlockDetails() As Boolean
-		  Return Self.mEngramEntryString.Length > 0
+		  Return Not Self.mEngramEntryString.IsEmpty
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ImmutableVersion() As Beacon.Engram
+		  Return Self
 		End Function
 	#tag EndMethod
 
@@ -232,7 +244,13 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MutableClone() As Beacon.MutableBlueprint
+		Function MutableClone() As Beacon.MutableEngram
+		  Return New Beacon.MutableEngram(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MutableVersion() As Beacon.MutableEngram
 		  Return New Beacon.MutableEngram(Self)
 		End Function
 	#tag EndMethod
@@ -257,7 +275,47 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Sub Pack(Dict As Dictionary)
-		  #Pragma Warning "Not implemented"
+		  If Self.HasUnlockDetails Then
+		    Dict.Value("engram_string") = Self.mEngramEntryString
+		    If Self.mItemID Is Nil Then
+		      Dict.Value("item_id") = Nil
+		    Else
+		      Dict.Value("item_id") = Self.mItemID.IntegerValue
+		    End If
+		    If Self.mRequiredPlayerLevel Is Nil Then
+		      Dict.Value("required_level") = Nil
+		    Else
+		      Dict.Value("required_level") = Self.mRequiredPlayerLevel.IntegerValue
+		    End If
+		    If Self.mRequiredUnlockPoints Is Nil Then
+		      Dict.Value("required_points") = Nil
+		    Else
+		      Dict.Value("required_points") = Self.mRequiredUnlockPoints.IntegerValue
+		    End If
+		  Else
+		    Dict.Value("engram_string") = Nil
+		    Dict.Value("item_id") = Nil
+		    Dict.Value("required_points") = Nil
+		    Dict.Value("required_level") = Nil
+		  End If
+		  
+		  If Self.mStackSize Is Nil Then
+		    Dict.Value("stack_size") = Nil
+		  Else
+		    Dict.Value("stack_size") = Self.mStackSize.IntegerValue
+		  End If
+		  
+		  Call Self.Recipe // Forces the recipe to load
+		  
+		  If Self.mIngredients.Count = 0 Then
+		    Dict.Value("recipe") = Nil
+		  Else
+		    Var Ingredients() As Dictionary
+		    For Each Ingredient As Beacon.RecipeIngredient In Self.mIngredients
+		      Ingredients.AddRow(Ingredient.ToDictionary)
+		    Next
+		    Dict.Value("recipe") = Ingredients
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -268,6 +326,22 @@ Implements Beacon.Blueprint
 		  Else
 		    Return ""
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Recipe() As Beacon.RecipeIngredient()
+		  // To prevent recursion, engrams only load ingredients on demand
+		  If Self.mHasLoadedIngredients = False Then
+		    Self.mIngredients = Beacon.Data.LoadIngredientsForEngram(Self)
+		    Self.mHasLoadedIngredients = True
+		  End If
+		  
+		  Var Ingredients() As Beacon.RecipeIngredient
+		  For Each Ingredient As Beacon.RecipeIngredient In Self.mIngredients
+		    Ingredients.AddRow(Ingredient)
+		  Next
+		  Return Ingredients
 		End Function
 	#tag EndMethod
 
@@ -311,6 +385,14 @@ Implements Beacon.Blueprint
 
 	#tag Property, Flags = &h1
 		Protected mEngramEntryString As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mHasLoadedIngredients As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mIngredients() As Beacon.RecipeIngredient
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

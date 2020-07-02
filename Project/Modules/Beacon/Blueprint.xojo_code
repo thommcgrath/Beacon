@@ -32,6 +32,12 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ImmutableVersion() As Beacon.Blueprint
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsTagged(Tag As String) As Boolean
 		  
 		End Function
@@ -51,6 +57,12 @@ Implements Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Function MutableClone() As Beacon.MutableBlueprint
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MutableVersion() As Beacon.MutableBlueprint
 		  
 		End Function
 	#tag EndMethod

@@ -61,6 +61,12 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ImmutableVersion() As Beacon.Creature
+		  Return New Beacon.Creature(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub IncubationTime(Assigns Value As UInt64)
 		  Self.mIncubationTime = Value
 		End Sub
@@ -113,6 +119,12 @@ Implements Beacon.MutableBlueprint
 		Sub ModName(Assigns Value As String)
 		  Self.mModName = Value
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MutableVersion() As Beacon.MutableCreature
+		  Return Self
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

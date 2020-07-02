@@ -32,7 +32,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Clone() As Beacon.Blueprint
+		Function Clone() As Beacon.SpawnPoint
 		  // Part of the Beacon.Blueprint interface.
 		  
 		  Return New Beacon.SpawnPoint(Self)
@@ -295,7 +295,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MutableClone() As Beacon.MutableBlueprint
+		Function MutableClone() As Beacon.MutableSpawnPoint
 		  // Part of the Beacon.Blueprint interface.
 		  
 		  Return New Beacon.MutableSpawnPoint(Self)

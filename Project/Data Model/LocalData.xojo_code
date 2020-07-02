@@ -905,56 +905,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetRecipeForEngram(Engram As Beacon.Engram) As Beacon.CraftingCost
+		Attributes( Deprecated = "Beacon.Engram.Recipe" )  Function GetRecipeForEngram(Engram As Beacon.Engram) As Beacon.CraftingCost
 		  Var Cost As New Beacon.CraftingCost(Engram)
-		  
-		  Var Results As RowSet = Self.SQLSelect("SELECT recipe FROM engrams WHERE object_id = ?1;", Engram.ObjectID.StringValue)
-		  If Results.RowCount = 0 Then
-		    Return Cost
-		  End If
-		  
-		  Var Raw As String = Results.Column("recipe").StringValue
-		  Var Dicts() As Variant
-		  Try
-		    Dicts = Beacon.ParseJSON(Raw)
-		  Catch Err As RuntimeException
-		    Return Cost
-		  End Try
-		  
-		  For Each Dict As Dictionary In Dicts
-		    Var Quantity As Integer = Dict.Lookup("quantity", 0).IntegerValue
-		    If Quantity <= 0 Then
-		      Continue
-		    End If
-		    
-		    Var Ingredient As Beacon.Engram
-		    Try
-		      If Dict.HasKey("object_id") Then
-		        Ingredient = Self.GetEngramByID(Dict.Value("object_id").StringValue)
-		      ElseIf Dict.HasKey("path") Then
-		        Ingredient = Self.GetEngramByPath(Dict.Value("path").StringValue)
-		      End If
-		    Catch Err As RuntimeException
-		      Continue
-		    End Try
-		    If Ingredient = Nil Then
-		      Continue
-		    End If
-		    
-		    Var Exact As Boolean = Dict.Lookup("exact", False).BooleanValue
-		    
-		    Cost.Append(Ingredient, Quantity, Exact)
+		  Var Ingredients() As Beacon.RecipeIngredient = Engram.Recipe
+		  For Each Ingredient As Beacon.RecipeIngredient In Ingredients
+		    Cost.Append(Ingredient.Engram, Ingredient.Quantity, Ingredient.RequireExact)
 		  Next
-		  
-		  If (Cost Is Nil) = False Then
-		    Cost.Modified = False
-		  End If
+		  Cost.Modified = False
 		  Return Cost
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetRecipeForEngram(Path As String) As Beacon.CraftingCost
+		Attributes( Deprecated = "Beacon.Engram.Recipe" )  Function GetRecipeForEngram(Path As String) As Beacon.CraftingCost
 		  If Path.IsEmpty Then
 		    Return Nil
 		  End If
@@ -969,7 +932,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetRecipeForEngram(EngramID As v4UUID) As Beacon.CraftingCost
+		Attributes( Deprecated = "Beacon.Engram.Recipe" )  Function GetRecipeForEngram(EngramID As v4UUID) As Beacon.CraftingCost
 		  If EngramID = Nil Then
 		    Return Nil
 		  End If
@@ -1824,6 +1787,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Return NewDateFromSQLDateTime(LastSync)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LoadIngredientsForEngram(Engram As Beacon.Engram) As Beacon.RecipeIngredient()
+		  Var Ingredients() As Beacon.RecipeIngredient
+		  If (Engram Is Nil) = False Then
+		    Var Results As RowSet = Self.SQLSelect("SELECT recipe FROM engrams WHERE object_id = ?1;", Engram.ObjectID.StringValue)
+		    If Results.RowCount = 1 Then
+		      Ingredients = Beacon.RecipeIngredient.FromVariant(Results.Column("recipe").Value)
+		    End If
+		  End If
+		  Return Ingredients
 		End Function
 	#tag EndMethod
 

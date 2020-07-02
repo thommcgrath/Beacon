@@ -43,6 +43,12 @@ Implements Beacon.NamedItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Count() As Integer
+		  Return Self.mResources.Count
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Export() As Dictionary
 		  Var Dict As New Dictionary
 		  

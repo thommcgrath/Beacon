@@ -163,6 +163,12 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function LoadIngredientsForEngram(Engram As Beacon.Engram) As Beacon.RecipeIngredient()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub LoadPresets()
 		  
 		End Sub

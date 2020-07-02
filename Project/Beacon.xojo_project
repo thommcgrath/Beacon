@@ -461,6 +461,7 @@ Folder=Blueprint Controllers;Views/Main Window Components/Blueprints/Blueprint C
 Class=BlueprintController;Views/Main Window Components/Blueprints/Blueprint Controllers/BlueprintController.xojo_code;&h000000004A2927FF;&h000000005E3967FF;false
 Class=LocalBlueprintController;Views/Main Window Components/Blueprints/Blueprint Controllers/LocalBlueprintController.xojo_code;&h00000000153527FF;&h000000005E3967FF;false
 Class=RemoteBlueprintController;Views/Main Window Components/Blueprints/Blueprint Controllers/RemoteBlueprintController.xojo_code;&h000000007DD9E7FF;&h000000005E3967FF;false
+Class=RecipeIngredient;Modules/Beacon/RecipeIngredient.xojo_code;&h0000000003F977FF;&h0000000055ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=4

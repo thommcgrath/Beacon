@@ -26,7 +26,7 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Clone() As Beacon.Blueprint
+		Function Clone() As Beacon.Creature
 		  Return New Beacon.Creature(Self)
 		End Function
 	#tag EndMethod
@@ -82,6 +82,12 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ImmutableVersion() As Beacon.Creature
+		  Return Self
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IncubationTime() As UInt64
 		  Return Self.mIncubationTime
 		End Function
@@ -130,7 +136,13 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MutableClone() As Beacon.MutableBlueprint
+		Function MutableClone() As Beacon.MutableCreature
+		  Return New Beacon.MutableCreature(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MutableVersion() As Beacon.MutableCreature
 		  Return New Beacon.MutableCreature(Self)
 		End Function
 	#tag EndMethod

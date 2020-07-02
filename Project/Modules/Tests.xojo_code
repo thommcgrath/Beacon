@@ -73,7 +73,9 @@ Protected Module Tests
 		  Var SourceHash As String = SourceBlueprint.Hash
 		  Var UnserializedHash As String = Unserialized.Hash
 		  
-		  Call Assert(SourceHash = UnserializedHash, "Source blueprint and unserialized blueprint hashes do not match. Expected `" + SourceHash + "` but got `" + UnserializedHash + "`.")
+		  If Not Assert(SourceHash = UnserializedHash, "Source blueprint and unserialized blueprint hashes do not match. Expected `" + SourceHash + "` but got `" + UnserializedHash + "`.") Then
+		    Break
+		  End If
 		End Sub
 	#tag EndMethod
 
