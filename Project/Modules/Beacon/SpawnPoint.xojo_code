@@ -318,7 +318,23 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub Pack(Dict As Dictionary)
-		  #Pragma Warning "Not implemented"
+		  Var Sets() As Dictionary
+		  For Each Set As Beacon.SpawnPointSet In Self.mSets
+		    Var Creatures() As String
+		    For Each Entry As Beacon.SpawnPointSetEntry In Set
+		      Creatures.AddRow(Entry.Creature.Path)
+		    Next
+		    
+		    Var PackedSet As New Dictionary
+		    PackedSet.Value("label") = Set.Label
+		    PackedSet.Value("group_id") = Set.ID
+		    PackedSet.Value("weight") = Set.Weight
+		    PackedSet.Value("creatures") = Creatures
+		    Sets.AddRow(PackedSet)
+		  Next
+		  
+		  Dict.Value("groups") = Sets
+		  Dict.Value("limits") = Self.mLimits
 		End Sub
 	#tag EndMethod
 
