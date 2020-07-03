@@ -457,6 +457,7 @@ Class=SourceList;Custom Controls/Source List/SourceList.xojo_code;&h000000007C60
 Class=SourceListItem;Custom Controls/Source List/SourceListItem.xojo_code;&h000000007FFC37FF;&h00000000598E47FF;false
 Folder=Blueprints;Views/Main Window Components/Blueprints;&h00000000472E07FF;&h0000000008626FFF;false
 Window=BlueprintsComponent;Views/Main Window Components/Blueprints/BlueprintsComponent.xojo_window;&h000000007E5FAFFF;&h00000000472E07FF;false
+Window=ModEditorView;Views/Main Window Components/Blueprints/ModEditorView.xojo_window;&h00000000246957FF;&h00000000472E07FF;false
 Folder=Blueprint Controllers;Views/Main Window Components/Blueprints/Blueprint Controllers;&h000000005E3967FF;&h00000000472E07FF;false
 Class=BlueprintController;Views/Main Window Components/Blueprints/Blueprint Controllers/BlueprintController.xojo_code;&h000000004A2927FF;&h000000005E3967FF;false
 Class=LocalBlueprintController;Views/Main Window Components/Blueprints/Blueprint Controllers/LocalBlueprintController.xojo_code;&h00000000153527FF;&h000000005E3967FF;false

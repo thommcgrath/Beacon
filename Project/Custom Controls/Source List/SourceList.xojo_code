@@ -124,30 +124,8 @@ Inherits ControlCanvas
 
 	#tag Event
 		Sub Open()
+		  Self.mSelectedRowIndex = -1
 		  RaiseEvent Open
-		  
-		  #if TargetMacOS
-		    Self.LockBottom = False
-		    
-		    Var MyView As NSViewMBS = Self.NSViewMBS
-		    Var ContentView As NSViewMBS = MyView.Superview
-		    Var OutsideRect As NSRectMBS = MyView.Frame
-		    
-		    MyView.RemoveFromSuperviewWithoutNeedingDisplay
-		    MyView.AutoresizingMask = NSViewMBS.NSViewWidthSizable Or NSViewMBS.NSViewMinYMargin
-		    
-		    Var ScrollView As New NSScrollViewMBS(OutsideRect.X, OutsideRect.Y, OutsideRect.Width, OutsideRect.Height)
-		    ScrollView.HasVerticalScroller = True
-		    ScrollView.VerticalScrollElasticity = ScrollView.NSScrollElasticityAllowed
-		    ScrollView.DocumentView = MyView
-		    ScrollView.ContentView.ScrollToPoint(New NSPointMBS(0, 0))
-		    ScrollView.AutoresizingMask = NSViewMBS.NSViewHeightSizable
-		    
-		    ContentView.AddSubview(ScrollView)
-		    
-		    Self.mMacScrollView = ScrollView
-		    Self.mMacSelfView = MyView
-		  #endif
 		End Sub
 	#tag EndEvent
 
@@ -203,7 +181,7 @@ Inherits ControlCanvas
 		    Else
 		      Clip.DrawingColor = SystemColors.ControlTextColor
 		    End If
-		    Clip.DrawText(Self.mItems(Idx).Caption, CaptionLeft, CaptionBaseline, Clip.Width * (Padding * 2), True)
+		    Clip.DrawText(Self.mItems(Idx).Caption, CaptionLeft, CaptionBaseline, Clip.Width - (Padding * 2), True)
 		    
 		    If Self.mMouseDown And Self.mMouseOverIndex = Idx And Self.mMouseDownIndex = Idx Then
 		      Clip.DrawingColor = &c000000AA
@@ -314,6 +292,8 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h0
 		Sub Remove(Idx As Integer)
+		  #Pragma Warning "Won't trigger change event"
+		  
 		  If Idx >= 0 And Idx <= Self.mItems.LastRowIndex Then
 		    Self.mItems.RemoveRowAt(Idx)
 		    
@@ -328,6 +308,8 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h0
 		Sub RemoveAllItems()
+		  #Pragma Warning "Won't trigger change event"
+		  
 		  Self.mItems.ResizeTo(-1)
 		  Self.mSelectedRowIndex = -1
 		  Self.Invalidate
@@ -335,7 +317,33 @@ Inherits ControlCanvas
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SelectByTag(Tag As Variant)
+		Function SelectedItem() As SourceListItem
+		  If Self.SelectedRowIndex = -1 Then
+		    Return Nil
+		  End If
+		  
+		  Return Self.Item(Self.SelectedRowIndex)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SelectedItem(Assigns Item As SourceListItem)
+		  Self.SelectedRowIndex = Self.IndexOf(Item)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SelectedTag() As Variant
+		  If Self.mSelectedRowIndex = -1 Then
+		    Return Nil
+		  End If
+		  
+		  Return Self.mItems(Self.mSelectedRowIndex).Tag
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SelectedTag(Assigns Tag As Variant)
 		  For Idx As Integer = 0 To Self.mItems.LastRowIndex
 		    If Self.mItems(Idx).Tag = Tag Then
 		      Self.SelectedRowIndex = Idx
@@ -355,7 +363,12 @@ Inherits ControlCanvas
 		    Names.AddRow(Self.mItems(Idx).Caption)
 		  Next
 		  
-		  Names.SortWith(Self.mItems, Self.mItemRects)
+		  If Self.mItemRects.LastRowIndex = Self.mItems.LastRowIndex Then
+		    Names.SortWith(Self.mItems, Self.mItemRects)
+		  Else
+		    Names.SortWith(Self.mItems)
+		    Self.mItemRects.ResizeTo(-1)
+		  End If
 		  
 		  If (SelectedItem Is Nil) = False Then
 		    Self.mSelectedRowIndex = Self.IndexOf(SelectedItem)
@@ -374,6 +387,10 @@ Inherits ControlCanvas
 		Event Open()
 	#tag EndHook
 
+	#tag Hook, Flags = &h0
+		Event ShouldChange(DesiredIndex As Integer) As Boolean
+	#tag EndHook
+
 
 	#tag ComputedProperty, Flags = &h21
 		#tag Getter
@@ -389,10 +406,6 @@ Inherits ControlCanvas
 			  
 			  Self.mContentHeight = Value
 			  Self.Invalidate()
-			  
-			  #if TargetMacOS
-			    Self.mMacSelfView.Frame = New NSRectMBS(0, 0, Self.Width, Value)
-			  #endif
 			End Set
 		#tag EndSetter
 		Private ContentHeight As Integer
@@ -408,14 +421,6 @@ Inherits ControlCanvas
 
 	#tag Property, Flags = &h21
 		Private mItems() As SourceListItem
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMacScrollView As NSScrollViewMBS
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMacSelfView As NSViewMBS
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -439,7 +444,7 @@ Inherits ControlCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectedRowIndex As Integer
+		Private mSelectedRowIndex As Integer = -1
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -451,6 +456,12 @@ Inherits ControlCanvas
 		#tag Setter
 			Set
 			  If Self.mSelectedRowIndex <> Value Then
+			    If IsEventImplemented("ShouldChange") Then
+			      If Not RaiseEvent ShouldChange(Value) Then
+			        Return
+			      End If
+			    End If
+			    
 			    If Self.mSelectedRowIndex > -1 Then
 			      Self.Invalidate(Self.mSelectedRowIndex)
 			    End If

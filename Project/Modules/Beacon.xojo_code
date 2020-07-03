@@ -925,7 +925,13 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function PackBlueprint(Blueprint As Beacon.Blueprint) As Dictionary
+		Function Pack(Extends Blueprint As Beacon.Blueprint) As Dictionary
+		  Return PackBlueprint(Blueprint)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function PackBlueprint(Blueprint As Beacon.Blueprint) As Dictionary
 		  Var Dict As New Dictionary
 		  
 		  Select Case Blueprint
@@ -1498,8 +1504,8 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function UnpackBlueprint(Dict As Dictionary) As Beacon.MutableBlueprint
+	#tag Method, Flags = &h1
+		Protected Function UnpackBlueprint(Dict As Dictionary) As Beacon.MutableBlueprint
 		  If Not Dict.HasAllKeys("id", "label", "alternate_label", "path", "group", "tags", "availability", "mod") Then
 		    Return Nil
 		  End If

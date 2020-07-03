@@ -25,12 +25,240 @@ Begin BeaconSubview BlueprintsComponent
    Transparent     =   True
    Visible         =   True
    Width           =   800
+   Begin SourceList ModsList
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   486
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   -250
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      SelectedRowIndex=   0
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   250
+   End
+   Begin ModEditorView Editor
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   False
+      AllowTabs       =   True
+      Backdrop        =   0
+      BackgroundColor =   &cFFFFFF00
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackgroundColor=   False
+      Height          =   300
+      InitialParent   =   ""
+      Left            =   375
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   54
+      Transparent     =   True
+      Visible         =   True
+      Width           =   300
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  Self.ModsList.Append(New SourceListItem(LocalData.UserModName, LocalData.UserModID))
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown(UserData As Variant = Nil)
+		  #Pragma Unused UserData
+		  
+		  If Self.ModsList.SelectedRowIndex = -1 Then
+		    Self.ModsList.SelectedRowIndex = 0
+		  End If
+		  Self.RefreshMods()
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_ListMods(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
+		  If Self.ModsList = Nil Then
+		    // This view already closed
+		    Return
+		  End If
+		  
+		  If Not Response.Success Then
+		    Return
+		  End If
+		  
+		  Var SelectedModID As String
+		  If Self.ModsList.SelectedRowIndex > -1 Then
+		    SelectedModID = Self.ModsList.Item(Self.ModsList.SelectedRowIndex).Tag
+		  End If
+		  
+		  Self.mUpdatingModsList = True
+		  Self.ModsList.RemoveAllItems
+		  
+		  Var Arr() As Variant = Response.JSON
+		  For Each Dict As Dictionary In Arr
+		    Var UserMod As New BeaconAPI.WorkshopMod(Dict)
+		    Self.ModsList.Append(New SourceListItem(UserMod.Name, UserMod.ModID))
+		    If SelectedModID = UserMod.ModID Then
+		      Self.ModsList.SelectedRowIndex = Self.ModsList.LastItemIndex
+		    End If
+		  Next
+		  Self.ModsList.Sort
+		  
+		  Self.ModsList.Insert(0, New SourceListItem(LocalData.UserModName, LocalData.UserModID))
+		  If SelectedModID = LocalData.UserModID Then
+		    Self.ModsList.SelectedRowIndex = 0
+		  End If
+		  
+		  Self.ModsListVisible = Self.ModsList.Count > 1
+		  If Self.ModsList.SelectedRowIndex = -1 Then
+		    Self.ModsList.SelectedRowIndex = 0
+		  End If
+		  Self.mUpdatingModsList = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.mModsListAnimating = False
+		  Self.mModsListVisible = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  If (Self.mModsListAnimation Is Nil) = False And Self.mModsListAnimating Then
+		    RemoveHandler Self.mModsListAnimation.Completed, WeakAddressOf mModsListAnimation_Completed
+		    Self.mModsListAnimation.Cancel
+		    Self.mModsListAnimation = Nil
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mModsListAnimation_Completed(Sender As AnimationKit.MoveTask)
+		  #Pragma Unused Sender
+		  
+		  Self.mModsListAnimating = False
+		  Self.mModsListAnimation = Nil
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RefreshMods()
+		  Var Request As New BeaconAPI.Request("mod", "GET", AddressOf APICallback_ListMods)
+		  Request.Authenticate(Preferences.OnlineToken)
+		  BeaconAPI.Send(Request)
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mModsListAnimating As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mModsListAnimation As AnimationKit.MoveTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mModsListVisible As Boolean
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  Return Self.mModsListVisible
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mModsListVisible = Value Then
+			    Return
+			  End If
+			  
+			  If (Self.mModsListAnimation Is Nil) = False And Self.mModsListAnimating Then
+			    RemoveHandler Self.mModsListAnimation.Completed, WeakAddressOf mModsListAnimation_Completed
+			    Self.mModsListAnimation.Cancel
+			    Self.mModsListAnimation = Nil
+			  End If
+			  
+			  Self.mModsListAnimation = New AnimationKit.MoveTask(Self.ModsList)
+			  Self.mModsListAnimation.DurationInSeconds = 0.15
+			  Self.mModsListAnimation.Curve = AnimationKit.Curve.CreateEaseOut
+			  AddHandler Self.mModsListAnimation.Completed, WeakAddressOf mModsListAnimation_Completed
+			  
+			  If Value Then
+			    Self.mModsListAnimation.Left = 0
+			  Else
+			    Self.mModsListAnimation.Left = Self.ModsList.Width * -1
+			  End If
+			  
+			  Self.mModsListAnimation.Run
+			  
+			  Self.mModsListVisible = Value
+			  Self.mModsListAnimating = True
+			End Set
+		#tag EndSetter
+		Private ModsListVisible As Boolean
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mUpdatingModsList As Boolean
+	#tag EndProperty
+
+
 #tag EndWindowCode
 
+#tag Events ModsList
+	#tag Event
+		Function ShouldChange(DesiredIndex As Integer) As Boolean
+		  If DesiredIndex = -1 Or Self.mUpdatingModsList Then
+		    Return True
+		  End If
+		  
+		  Var Controller As BlueprintController
+		  Var Tag As Variant = Me.Item(DesiredIndex).Tag
+		  If Tag = LocalData.UserModID Then
+		    Controller = New LocalBlueprintController
+		  Else
+		    Controller = New RemoteBlueprintController(Tag.StringValue)
+		  End If
+		  
+		  Return Self.Editor.SetController(Controller)
+		End Function
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="MinimumWidth"

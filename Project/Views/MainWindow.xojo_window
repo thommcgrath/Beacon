@@ -218,7 +218,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   800
       Begin DocumentsComponent DocumentsComponent1
@@ -840,7 +840,7 @@ End
 		  Case Self.PageDocuments
 		    Self.DocumentsComponent1.SwitchedFrom()
 		  Case Self.PageBlueprints
-		    
+		    Self.BlueprintsComponent1.SwitchedFrom()
 		  Case Self.PagePresets
 		    
 		  Case Self.PageHelp
@@ -855,7 +855,7 @@ End
 		  Case Self.PageDocuments
 		    Self.DocumentsComponent1.SwitchedTo(Nil)
 		  Case Self.PageBlueprints
-		    
+		    Self.BlueprintsComponent1.SwitchedTo(Nil)
 		  Case Self.PagePresets
 		    
 		  Case Self.PageHelp

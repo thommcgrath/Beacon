@@ -1088,7 +1088,7 @@ End
 			    Self.PagePanel1.SelectedPanelIndex = 0
 			  End If
 			  
-			  Self.ConfigList.SelectByTag(Value)
+			  Self.ConfigList.SelectedTag = Value
 			  
 			  Self.UpdateMinimumDimensions()
 			End Set

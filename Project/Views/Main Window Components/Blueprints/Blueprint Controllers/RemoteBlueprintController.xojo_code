@@ -88,7 +88,7 @@ Inherits BlueprintController
 		    Return
 		  End If
 		  
-		  Var Objects() As Dictionary
+		  Var Objects() As Variant
 		  Try
 		    Objects = Beacon.ParseJSON(Response.Content)
 		  Catch Err As RuntimeException
@@ -125,7 +125,7 @@ Inherits BlueprintController
 		    Return
 		  End If
 		  
-		  Var Objects() As Dictionary
+		  Var Objects() As Variant
 		  Try
 		    Objects = Beacon.ParseJSON(Response.Content)
 		  Catch Err As RuntimeException
@@ -162,7 +162,7 @@ Inherits BlueprintController
 		    Return
 		  End If
 		  
-		  Var Objects() As Dictionary
+		  Var Objects() As Variant
 		  Try
 		    Objects = Beacon.ParseJSON(Response.Content)
 		  Catch Err As RuntimeException
