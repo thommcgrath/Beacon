@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconSubview BlueprintsComponent
+Begin BeaconSubview BlueprintsComponent Implements AnimationKit.ValueAnimator
    AllowAutoDeactivate=   True
    AllowFocus      =   False
    AllowFocusRing  =   False
@@ -31,11 +31,12 @@ Begin BeaconSubview BlueprintsComponent
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   486
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   -250
+      Left            =   -251
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -64,23 +65,52 @@ Begin BeaconSubview BlueprintsComponent
       Enabled         =   True
       EraseBackground =   True
       HasBackgroundColor=   False
-      Height          =   300
+      Height          =   486
       InitialParent   =   ""
-      Left            =   375
-      LockBottom      =   False
+      Left            =   0
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
+      MinimumHeight   =   300
+      MinimumWidth    =   400
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   54
+      Top             =   0
       Transparent     =   True
       Visible         =   True
-      Width           =   300
+      Width           =   800
+   End
+   Begin FadedSeparator ModsListSeparator
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   486
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   -1
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   1
    End
 End
 #tag EndWindow
@@ -103,6 +133,20 @@ End
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Sub AnimationStep(Identifier As String, Value As Double)
+		  // Part of the AnimationKit.ValueAnimator interface.
+		  
+		  Select Case Identifier
+		  Case "ListWidth"
+		    Self.ModsListSeparator.Left = Floor(Value)
+		    Self.Editor.Left = Self.ModsListSeparator.Left + Self.ModsListSeparator.Width
+		    Self.Editor.Width = Self.Width - Self.Editor.Left
+		    Self.ModsList.Left = Self.ModsListSeparator.Left - Self.ModsList.Width
+		  End Select
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_ListMods(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
@@ -166,7 +210,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mModsListAnimation_Completed(Sender As AnimationKit.MoveTask)
+		Private Sub mModsListAnimation_Completed(Sender As AnimationKit.ValueTask)
 		  #Pragma Unused Sender
 		  
 		  Self.mModsListAnimating = False
@@ -188,7 +232,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mModsListAnimation As AnimationKit.MoveTask
+		Private mModsListAnimation As AnimationKit.ValueTask
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -213,17 +257,17 @@ End
 			    Self.mModsListAnimation = Nil
 			  End If
 			  
-			  Self.mModsListAnimation = New AnimationKit.MoveTask(Self.ModsList)
+			  Var EndValue As Integer
+			  If Value Then
+			    EndValue = Self.ModsList.Width
+			  Else
+			    EndValue = Self.ModsListSeparator.Width * -1
+			  End If
+			  
+			  Self.mModsListAnimation = New AnimationKit.ValueTask(Self, "ListWidth", Self.ModsListSeparator.Left, EndValue)
 			  Self.mModsListAnimation.DurationInSeconds = 0.15
 			  Self.mModsListAnimation.Curve = AnimationKit.Curve.CreateEaseOut
 			  AddHandler Self.mModsListAnimation.Completed, WeakAddressOf mModsListAnimation_Completed
-			  
-			  If Value Then
-			    Self.mModsListAnimation.Left = 0
-			  Else
-			    Self.mModsListAnimation.Left = Self.ModsList.Width * -1
-			  End If
-			  
 			  Self.mModsListAnimation.Run
 			  
 			  Self.mModsListVisible = Value

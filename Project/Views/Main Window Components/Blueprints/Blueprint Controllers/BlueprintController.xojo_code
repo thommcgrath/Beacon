@@ -7,6 +7,14 @@ Protected Class BlueprintController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Blueprint(ObjectID As String) As Beacon.Blueprint
+		  If Self.mBlueprints.HasKey(ObjectID) Then
+		    Return Self.mBlueprints.Value(ObjectID)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function BlueprintCount() As Integer
 		  Return Self.mBlueprints.KeyCount
 		End Function
@@ -347,6 +355,30 @@ Protected Class BlueprintController
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IsLoading"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IsPublishing"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IsWorking"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

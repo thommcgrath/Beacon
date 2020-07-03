@@ -139,7 +139,7 @@ Inherits ControlCanvas
 		  
 		  Const RowHeight = 30
 		  Const Inset = 10
-		  Const CornerRadius = 4
+		  Const CornerRadius = 8
 		  Const Padding = 8
 		  
 		  Var RowTop As Integer = Inset
@@ -185,7 +185,7 @@ Inherits ControlCanvas
 		    
 		    If Self.mMouseDown And Self.mMouseOverIndex = Idx And Self.mMouseDownIndex = Idx Then
 		      Clip.DrawingColor = &c000000AA
-		      Clip.FillRoundRectangle(0, 0, Clip.Width, Clip.Height, CornerRadius * Clip.ScaleX, CornerRadius * Clip.ScaleY)
+		      Clip.FillRoundRectangle(0, 0, Clip.Width, Clip.Height, CornerRadius, CornerRadius)
 		    End If
 		  Next
 		End Sub

@@ -32,15 +32,19 @@ Inherits Listbox
 		  #Pragma Unused Column
 		  
 		  Const InsetAmount = 10
-		  Const CornerRadius = 4
+		  Const CornerRadius = 8
 		  
 		  Var ColumnWidth As Integer = Self.ColumnAt(Column).WidthActual
 		  Var RowHeight As Integer = Self.DefaultRowHeight
 		  
-		  Var RowInvalid, RowSelected As Boolean
+		  Var RowInvalid, RowSelected, NextRowSelected, PreviousRowSelected As Boolean
 		  If Row < Self.RowCount Then
 		    RowInvalid = RowIsInvalid(Row)
 		    RowSelected = Self.Selected(Row)
+		    If RowSelected Then
+		      PreviousRowSelected = Row > 0 And Row <= Self.LastRowIndex And Self.Selected(Row - 1)
+		      NextRowSelected = Row >= 0 And Row < Self.LastRowIndex And Self.Selected(Row + 1)
+		    End If
 		  End If
 		  
 		  // Need to fill with color first so translucent system colors can apply correctly
@@ -98,13 +102,20 @@ Inherits Listbox
 		  
 		  If InsetLeft > 0 Or InsetRight > 0 Then
 		    Var LeftPad, RightPad As Integer = CornerRadius
+		    Var TopPad, BottomPad As Integer = 0
 		    If Column = 0 Then
 		      LeftPad = 0
 		    End If
 		    If Column = Self.ColumnCount - 1 Then
 		      RightPad = 0
 		    End If
-		    Clip.FillRoundRectangle(0 - LeftPad, 0, Clip.Width + LeftPad + RightPad, Clip.Height, CornerRadius * G.ScaleX, CornerRadius * G.ScaleY) // Xojo doesn't seem to scale the corners
+		    If RowSelected And PreviousRowSelected Then
+		      TopPad = CornerRadius * -1
+		    End If
+		    If RowSelected And NextRowSelected Then
+		      BottomPad = CornerRadius * -1
+		    End If
+		    Clip.FillRoundRectangle(0 - LeftPad, TopPad, Clip.Width + LeftPad + RightPad, Clip.Height - (TopPad + BottomPad), CornerRadius, CornerRadius)
 		  Else
 		    Clip.FillRectangle(0, 0, Clip.Width, Clip.Height)
 		  End If

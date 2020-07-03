@@ -459,6 +459,13 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Function ShouldSave() As Boolean
+		  // Hide this
+		End Function
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  Return Self.mModified
@@ -479,6 +486,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function NewBlueprint() As Boolean
+		  Return Self.SetBlueprint(Nil)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Revert(Confirm As Boolean)
 		  If Confirm And Not Self.ShowConfirm("Revert this object?", "Unsaved changes will be lost. That's the point.", "Revert", "Cancel") Then
 		    Return
@@ -486,9 +499,13 @@ End
 		  
 		  Self.Modified = False
 		  
-		  Var ObjID As v4UUID = Self.ObjectID
-		  Self.ObjectID = v4UUID.CreateNull
-		  Self.ObjectID = ObjID
+		  If (Self.mOriginalBlueprint Is Nil) = False Then
+		    Self.mBlueprint = Self.mOriginalBlueprint.MutableClone
+		  Else
+		    Self.mBlueprint = Nil
+		  End If
+		  
+		  Self.SetupUI()
 		End Sub
 	#tag EndMethod
 
@@ -536,111 +553,123 @@ End
 		    Return
 		  End If
 		  
-		  Select Case Self.TypeMenu.SelectedRowIndex
-		  Case Self.IndexEngram
-		    Var Engram As New Beacon.MutableEngram(Path, Self.mObjectID)
-		    Engram.Label = Label
-		    Engram.Tags = Tags
-		    Engram.Availability = Availability
-		    If Not LocalData.SharedInstance.SaveBlueprint(Engram, True) Then
-		      Self.ShowAlert("This engram did not save", "Its blueprint path may already be in the database.")
-		      Return
-		    End If
-		  Case Self.IndexCreature
-		    Var Creature As New Beacon.MutableCreature(Path, Self.mObjectID)
-		    Creature.Label = Label
-		    Creature.Tags = Tags
-		    Creature.Availability = Availability
-		    If Not LocalData.SharedInstance.SaveBlueprint(Creature, True) Then
-		      Self.ShowAlert("This creature did not save", "Its blueprint path may already be in the database.")
-		      Return
-		    End If
-		  Case Self.IndexSpawnPoint
-		    Var Point As New Beacon.MutableSpawnPoint(Path, Self.mObjectID)
-		    Point.Label = Label
-		    Point.Tags = Tags
-		    Point.Availability = Availability
-		    If Not LocalData.SharedInstance.SaveBlueprint(Point, True) Then
-		      Self.ShowAlert("This spawn point did not save", "Its blueprint path may already be in the database.")
-		      Return
-		    End If
-		  End Select
+		  If Self.mBlueprint Is Nil Then
+		    Select Case Self.TypeMenu.SelectedRowIndex
+		    Case Self.IndexEngram
+		      Self.mBlueprint = New Beacon.MutableEngram(Path, New v4UUID)
+		    Case Self.IndexCreature
+		      Self.mBlueprint = New Beacon.MutableCreature(Path, New v4UUID)
+		    Case Self.IndexSpawnPoint
+		      Self.mBlueprint = New Beacon.MutableSpawnPoint(Path, New v4UUID)
+		    End Select
+		  End If
+		  
+		  Self.mBlueprint.Path = Path
+		  Self.mBlueprint.Label = Label
+		  Self.mBlueprint.Tags = Tags
+		  Self.mBlueprint.Availability = Availability
+		  RaiseEvent Save(Self.mBlueprint)
+		  
+		  Self.Modified = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SetBlueprint(Blueprint As Beacon.Blueprint) As Boolean
+		  If Self.Modified Then
+		    // Prompt for changes
+		    Var Choice As BeaconUI.ConfirmResponses = Self.ShowConfirm("Would you like to save changes to this blueprint?", "Changes have been made to this blueprint. If you do not save, the changes will be lost.", "Save", "Cance", "Don't Save")
+		    Select Case Choice
+		    Case BeaconUI.ConfirmResponses.Action
+		      Self.Save()
+		      If Self.Modified Then
+		        Return False
+		      End If
+		    Case BeaconUI.ConfirmResponses.Cancel
+		      Return False
+		    Case BeaconUI.ConfirmResponses.Alternate
+		      
+		    End Select
+		  End If
+		  
+		  Self.Modified = False
+		  
+		  If Blueprint Is Nil Then
+		    Self.mBlueprint = Nil
+		    Self.SetupUI()
+		    Return True
+		  End If
+		  
+		  Self.mBlueprint = Blueprint.MutableClone
+		  Self.mOriginalBlueprint = Blueprint
+		  Self.SetupUI()
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SetupUI()
+		  If (Self.mBlueprint Is Nil) = False Then
+		    Select Case Self.mBlueprint
+		    Case IsA Beacon.Creature
+		      Self.TypeMenu.SelectByCaption("Creature")
+		    Case IsA Beacon.Engram
+		      Self.TypeMenu.SelectByCaption("Engram")
+		    Case IsA Beacon.SpawnPoint
+		      Self.TypeMenu.SelectByCaption("Spawn Point")
+		    End Select
+		    Self.TypeMenu.Enabled = False
+		    Self.PathField.Value = Self.mBlueprint.Path
+		    Self.NameField.Value = Self.mBlueprint.Label
+		    Self.TagsField.Value = Self.mBlueprint.Tags.Join(", ")
+		    Self.MapSelector.Mask = Self.mBlueprint.Availability
+		  Else
+		    Self.TypeMenu.SelectedRowIndex = -1
+		    Self.TypeMenu.Enabled = True
+		    Self.PathField.Value = ""
+		    Self.NameField.Value = ""
+		    Self.TagsField.Value = ""
+		    Self.MapSelector.Mask = 0
+		  End If
 		  
 		  Self.Modified = False
 		End Sub
 	#tag EndMethod
 
 
+	#tag Hook, Flags = &h0
+		Event Save(Blueprint As Beacon.Blueprint)
+	#tag EndHook
+
+
+	#tag Property, Flags = &h21
+		Private mBlueprint As Beacon.MutableBlueprint
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mModified As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mObjectID As v4UUID
+		Private mOriginalBlueprint As Beacon.Blueprint
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mObjectID
+			  If Self.mBlueprint Is Nil Then
+			    Return v4UUID.CreateNull
+			  Else
+			    Return Self.mBlueprint.ObjectID
+			  End If
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mObjectID = Value Then
-			    Return
-			  End If
-			  
-			  If Self.Modified Then
-			    Var Dialog As New MessageDialog
-			    Dialog.Title = ""
-			    Dialog.Message = "Do you want to save changes to this object?"
-			    Dialog.Explanation = "If you do not save now, your changes will be lost."
-			    Dialog.ActionButton.Caption = "Save"
-			    Dialog.CancelButton.Visible = True
-			    Dialog.AlternateActionButton.Caption = "Don't Save"
-			    Dialog.AlternateActionButton.Visible = True
-			    
-			    Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
-			    Select Case Choice
-			    Case Dialog.ActionButton
-			      // Build and save the object
-			      Self.Save()
-			    Case Dialog.AlternateActionButton
-			      // Do nothing
-			    Case Dialog.CancelButton
-			      Return
-			    End Select
-			  End If
-			  
-			  Self.mObjectID = Value
-			  
-			  Var Blueprint As Beacon.Blueprint = LocalData.SharedInstance.GetBlueprintByObjectID(Self.mObjectID)
-			  If Blueprint <> Nil Then
-			    Select Case Blueprint
-			    Case IsA Beacon.Creature
-			      Self.TypeMenu.SelectByCaption("Creature")
-			    Case IsA Beacon.Engram
-			      Self.TypeMenu.SelectByCaption("Engram")
-			    Case IsA Beacon.SpawnPoint
-			      Self.TypeMenu.SelectByCaption("Spawn Point")
-			    End Select
-			    Self.PathField.Value = Blueprint.Path
-			    Self.NameField.Value = Blueprint.Label
-			    Self.TagsField.Value = Blueprint.Tags.Join(", ")
-			    Self.MapSelector.Mask = Blueprint.Availability
-			  Else
-			    Self.TypeMenu.SelectedRowIndex = -1
-			    Self.PathField.Value = ""
-			    Self.NameField.Value = ""
-			    Self.TagsField.Value = ""
-			    Self.MapSelector.Mask = 0
-			  End If
-			  
-			  Self.Modified = False
+			  // 
 			End Set
 		#tag EndSetter
-		ObjectID As v4UUID
+		Attributes( Deprecated = "SetBlueprint" ) ObjectID As v4UUID
 	#tag EndComputedProperty
 
 

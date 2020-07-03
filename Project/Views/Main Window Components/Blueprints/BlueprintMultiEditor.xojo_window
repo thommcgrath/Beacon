@@ -365,6 +365,12 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SetBlueprints(Blueprints() As Beacon.MutableBlueprint) As Boolean
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub SetupUI()
 		  Self.mSettingUp = True
