@@ -140,37 +140,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          Visible         =   True
          Width           =   510
       End
-      Begin BlueprintMultiEditor MultiEditor
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
-         Backdrop        =   0
-         DoubleBuffer    =   False
-         Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
-         Height          =   592
-         HelpTag         =   ""
-         InitialParent   =   "Pages"
-         Left            =   296
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MinimumHeight   =   300
-         MinimumWidth    =   400
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Top             =   0
-         Transparent     =   True
-         UseFocusRing    =   False
-         Visible         =   True
-         Width           =   510
-      End
       Begin BeaconToolbar EditorHeader
          AcceptFocus     =   False
          AcceptTabs      =   False
@@ -348,8 +317,8 @@ End
 		Function ShouldSave() As Boolean
 		  If Self.Pages.SelectedPanelIndex = Self.PageEditor Then
 		    
-		  ElseIf Self.Pages.SelectedPanelIndex = Self.PageMulti And Self.MultiEditor.Modified Then
-		    Self.MultiEditor.Save()
+		  ElseIf Self.Pages.SelectedPanelIndex = Self.PageMulti Then
+		    
 		  End If
 		End Function
 	#tag EndEvent
@@ -393,7 +362,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfirmClose(Callback As BeaconSubview.BringToFrontDelegate) As Boolean
-		  If Self.Pages.SelectedPanelIndex = Self.PageEmpty Or (Self.Pages.SelectedPanelIndex = Self.PageEditor) Or (Self.Pages.SelectedPanelIndex = Self.PageMulti And Not Self.MultiEditor.Modified) Then
+		  If Self.Pages.SelectedPanelIndex = Self.PageEmpty Or (Self.Pages.SelectedPanelIndex = Self.PageEditor) Or (Self.Pages.SelectedPanelIndex = Self.PageMulti) Then
 		    Return True
 		  End If
 		  
@@ -404,8 +373,7 @@ End
 		  If Self.Pages.SelectedPanelIndex = Self.PageEditor Then
 		    Return False
 		  ElseIf Self.Pages.SelectedPanelIndex = Self.PageMulti Then
-		    Self.MultiEditor.Blueprints = Nil
-		    Return Not Self.MultiEditor.Modified
+		    Return False
 		  End If
 		End Function
 	#tag EndMethod
@@ -553,17 +521,11 @@ End
 		    If Self.Pages.SelectedPanelIndex = Self.PageEditor Then
 		      Self.Pages.SelectedPanelIndex = Self.PageEmpty
 		    ElseIf Self.Pages.SelectedPanelIndex = Self.PageMulti Then
-		      Self.MultiEditor.Blueprints = Nil
-		      If Not Self.MultiEditor.Modified Then
-		        Self.Pages.SelectedPanelIndex = Self.PageEmpty
-		      End If
+		      Self.Pages.SelectedPanelIndex = Self.PageEmpty
 		    End If
 		  ElseIf Self.List.SelectedRowCount = 1 Then
 		    If Self.Pages.SelectedPanelIndex = Self.PageMulti Then
-		      Self.MultiEditor.Blueprints = Nil
-		      If Self.MultiEditor.Modified Then
-		        Return
-		      End If
+		      Return
 		    End If
 		    
 		    Var Blueprint As Beacon.Blueprint = Self.List.RowTagAt(Self.List.SelectedRowIndex)
@@ -582,7 +544,6 @@ End
 		        Blueprints.AddRow(Beacon.Blueprint(Self.List.RowTagAt(I)))
 		      End If
 		    Next
-		    Self.MultiEditor.Blueprints = Blueprints
 		    
 		    If Self.Pages.SelectedPanelIndex <> Self.PageMulti Then
 		      Self.Pages.SelectedPanelIndex = Self.PageMulti
@@ -649,15 +610,6 @@ End
 		  Case Self.PageMulti
 		    Self.Changed = False
 		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MultiEditor
-	#tag Event
-		Sub ContentsChanged()
-		  If Self.Pages.SelectedPanelIndex = Self.PageMulti Then
-		    Self.Changed = Me.Changed
-		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

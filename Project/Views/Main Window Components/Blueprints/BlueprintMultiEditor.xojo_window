@@ -1,94 +1,29 @@
 #tag Window
-Begin BeaconSubview BlueprintMultiEditor
-   AcceptFocus     =   False
-   AcceptTabs      =   True
-   AutoDeactivate  =   True
-   BackColor       =   &cFFFFFF00
+Begin BeaconDialog BlueprintMultiEditor
    Backdrop        =   0
-   DoubleBuffer    =   False
-   Enabled         =   True
-   EraseBackground =   True
-   HasBackColor    =   False
-   Height          =   520
-   HelpTag         =   ""
-   InitialParent   =   ""
-   Left            =   0
-   LockBottom      =   True
-   LockLeft        =   True
-   LockRight       =   True
-   LockTop         =   True
-   TabIndex        =   0
-   TabPanelIndex   =   0
-   TabStop         =   True
-   Top             =   0
-   Transparent     =   True
-   UseFocusRing    =   False
+   BackgroundColor =   &cFFFFFF00
+   Composite       =   False
+   DefaultLocation =   "1"
+   FullScreen      =   False
+   HasBackgroundColor=   False
+   HasCloseButton  =   False
+   HasFullScreenButton=   False
+   HasMaximizeButton=   False
+   HasMinimizeButton=   False
+   Height          =   400
+   ImplicitInstance=   False
+   MacProcID       =   0
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
+   MenuBar         =   0
+   MenuBarVisible  =   True
+   MinimumHeight   =   400
+   MinimumWidth    =   540
+   Resizeable      =   True
+   Title           =   "Edit Blueprints"
+   Type            =   "8"
    Visible         =   True
-   Width           =   510
-   Begin BeaconToolbar Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderBottom    =   False
-      BorderLeft      =   False
-      BorderRight     =   False
-      Borders         =   0
-      BorderTop       =   False
-      Caption         =   "Edit Multiple"
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   40
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   "0"
-      ResizerEnabled  =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   510
-   End
-   Begin FadedSeparator HeaderSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   40
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   510
-   End
+   Width           =   540
    Begin TagPicker Picker
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -113,11 +48,11 @@ Begin BeaconSubview BlueprintMultiEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   61
+      Top             =   52
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   338
+      Width           =   368
    End
    Begin UITweaks.ResizedLabel MapLabel
       AutoDeactivate  =   True
@@ -148,7 +83,7 @@ Begin BeaconSubview BlueprintMultiEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   173
+      Top             =   164
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -183,7 +118,7 @@ Begin BeaconSubview BlueprintMultiEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   61
+      Top             =   52
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -218,7 +153,7 @@ Begin BeaconSubview BlueprintMultiEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   87
+      Top             =   78
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -235,7 +170,7 @@ Begin BeaconSubview BlueprintMultiEditor
       Enabled         =   True
       EraseBackground =   True
       HasBackgroundColor=   False
-      Height          =   339
+      Height          =   188
       InitialParent   =   ""
       Left            =   146
       LockBottom      =   True
@@ -249,133 +184,116 @@ Begin BeaconSubview BlueprintMultiEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   167
+      Top             =   158
       Transparent     =   True
       Visible         =   True
-      Width           =   350
+      Width           =   380
+   End
+   Begin Label MessageLabel
+      AllowAutoDeactivate=   True
+      Bold            =   True
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextAlignment   =   "0"
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   20
+      Transparent     =   False
+      Underline       =   False
+      Value           =   "Edit Blueprints"
+      Visible         =   True
+      Width           =   500
+   End
+   Begin UITweaks.ResizedPushButton ActionButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   False
+      Caption         =   "OK"
+      Default         =   True
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   446
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      MacButtonStyle  =   "0"
+      Scope           =   2
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   360
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedPushButton CancelButton
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Cancel          =   True
+      Caption         =   "Cancel"
+      Default         =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   354
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      MacButtonStyle  =   "0"
+      Scope           =   2
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   360
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
    End
 End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Method, Flags = &h0
-		Function Blueprints() As Beacon.Blueprint()
-		  Var Blueprints() As Beacon.Blueprint
-		  Blueprints.ResizeTo(Self.mBlueprints.LastRowIndex)
-		  For I As Integer = 0 To Self.mBlueprints.LastRowIndex
-		    Blueprints(I) = Self.mBlueprints(I).Clone
-		  Next
-		  Return Blueprints
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Blueprints(Assigns Blueprints() As Beacon.Blueprint)
-		  If Self.Modified Then
-		    Var Dialog As New MessageDialog
-		    Dialog.Title = ""
-		    Dialog.Message = "Do you want to save changes to these objects"
-		    Dialog.Explanation = "If you do not save now, your changes will be lost."
-		    Dialog.ActionButton.Caption = "Save"
-		    Dialog.CancelButton.Visible = True
-		    Dialog.AlternateActionButton.Caption = "Don't Save"
-		    Dialog.AlternateActionButton.Visible = True
-		    
-		    Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
-		    Select Case Choice
-		    Case Dialog.ActionButton
-		      // Build and save the object
-		      Self.Save()
-		    Case Dialog.AlternateActionButton
-		      // Do nothing
-		    Case Dialog.CancelButton
-		      Return
-		    End Select
-		  End If
-		  
-		  If Blueprints <> Nil Then
-		    Self.mBlueprints.ResizeTo(Blueprints.LastRowIndex)
-		    For I As Integer = 0 To Blueprints.LastRowIndex
-		      Self.mBlueprints(I) = Blueprints(I).MutableClone
-		    Next
-		  Else
-		    Self.mBlueprints.ResizeTo(-1)
-		  End If
-		  
-		  Self.SetupUI()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Modified() As Boolean
-		  Return Self.mModified
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub Modified(Assigns Value As Boolean)
-		  If Self.mModified = Value Then
-		    Return
-		  End If
-		  
-		  Self.mModified = Value
-		  Self.Changed = Value
-		  Self.Header.SaveButton.Enabled = Value
-		  Self.Header.RevertButton.Enabled = Value
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Revert(Confirm As Boolean)
-		  If Confirm And Not Self.ShowConfirm("Revert these objects?", "Unsaved changes will be lost. That's the point.", "Revert", "Cancel") Then
-		    Return
-		  End If
-		  
-		  Var Blueprints() As Beacon.Blueprint
-		  For Each Blueprint As Beacon.Blueprint In Self.mBlueprints
-		    Var Saved As Beacon.Blueprint = LocalData.SharedInstance.GetBlueprintByObjectID(Blueprint.ObjectID)
-		    If Saved <> Nil Then
-		      Blueprints.AddRow(Saved)
-		    End If
-		  Next
-		  Self.Modified = False
-		  Self.Blueprints = Blueprints
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Save()
-		  Var AddTags() As String = Self.Picker.RequiredTags
-		  Var RemoveTags() As String = Self.Picker.ExcludedTags
-		  
-		  Var AddMask As UInt64 = Self.MapSelector.CheckedMask
-		  Var ClearMask As UInt64 = Self.MapSelector.UncheckedMask
-		  
-		  For Each Blueprint As Beacon.MutableBlueprint In Self.mBlueprints
-		    Blueprint.Availability = (Blueprint.Availability Or AddMask) And Not ClearMask
-		    Blueprint.AddTags(AddTags)
-		    Blueprint.RemoveTags(RemoveTags)
-		  Next
-		  
-		  If LocalData.SharedInstance.SaveBlueprints(Self.mBlueprints) <> (Self.mBlueprints.LastRowIndex + 1) Then
-		    Break
-		  Else
-		    Self.Modified = False
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SetBlueprints(Blueprints() As Beacon.MutableBlueprint) As Boolean
-		  #Pragma Warning "Not implemented"
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub SetupUI()
-		  Self.mSettingUp = True
-		  
+	#tag Event
+		Sub Open()
 		  Self.Picker.ClearSelections()
 		  Self.Picker.Tags = LocalData.SharedInstance.AllTags()
 		  
@@ -402,51 +320,97 @@ End
 		  Next
 		  Self.Picker.SetSelections(CommonTags, Nil)
 		  
-		  Self.mSettingUp = False
 		  Self.Modified = False
 		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h21
+		Private Sub Constructor(Blueprints() As Beacon.Blueprint)
+		  // Calling the overridden superclass constructor.
+		  Self.mBlueprints.ResizeTo(Blueprints.LastRowIndex)
+		  For Idx As Integer = 0 To Blueprints.LastRowIndex
+		    Self.mBlueprints(Idx) = Blueprints(Idx)
+		  Next
+		  
+		  Super.Constructor
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Modified() As Boolean
+		  Return Self.mModified
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub Modified(Assigns Value As Boolean)
+		  If Self.mModified = Value Then
+		    Return
+		  End If
+		  
+		  Self.mModified = Value
+		  Self.ActionButton.Enabled = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As Window, Blueprints() As Beacon.Blueprint) As Beacon.Blueprint()
+		  If Parent Is Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var Win As New BlueprintMultiEditor(Blueprints)
+		  Win.ShowModalWithin(Parent.TrueWindow)
+		  
+		  Var EditedBlueprints() As Beacon.Blueprint
+		  If Not Win.mCancelled Then
+		    EditedBlueprints = Win.mBlueprints
+		  End If
+		  Win.Close
+		  Return EditedBlueprints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function Save() As Boolean
+		  Var AddTags() As String = Self.Picker.RequiredTags
+		  Var RemoveTags() As String = Self.Picker.ExcludedTags
+		  
+		  Var AddMask As UInt64 = Self.MapSelector.CheckedMask
+		  Var ClearMask As UInt64 = Self.MapSelector.UncheckedMask
+		  
+		  For Idx As Integer = 0 To Self.mBlueprints.LastRowIndex
+		    Var Blueprint As Beacon.MutableBlueprint = Self.mBlueprints(Idx).MutableVersion
+		    Blueprint.Availability = (Blueprint.Availability Or AddMask) And Not ClearMask
+		    Blueprint.AddTags(AddTags)
+		    Blueprint.RemoveTags(RemoveTags)
+		    Self.mBlueprints(Idx) = Blueprint.ImmutableVersion
+		  Next
+		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mBlueprints() As Beacon.MutableBlueprint
+		Private mBlueprints() As Beacon.Blueprint
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCancelled As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mModified As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mSettingUp As Boolean
-	#tag EndProperty
-
 
 #tag EndWindowCode
 
-#tag Events Header
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "SaveButton"
-		    Self.Save()
-		  Case "RevertButton"
-		    Self.Revert(True)
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("SaveButton", IconToolbarSave, False, "Save Object"))
-		  Me.LeftItems.Append(New BeaconToolbarItem("RevertButton", IconToolbarRevert, False, "Revert Changes"))
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events Picker
 	#tag Event
 		Sub TagsChanged()
-		  If Not Self.mSettingUp Then
-		    Self.Modified = True
-		  End If
+		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -468,44 +432,182 @@ End
 #tag Events MapSelector
 	#tag Event
 		Sub Changed()
-		  If Self.mSettingUp Then
-		    Return
-		  End If
-		  
 		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ActionButton
+	#tag Event
+		Sub Action()
+		  If Self.Save() Then
+		    Self.mCancelled = False
+		    Self.Hide
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CancelButton
+	#tag Event
+		Sub Action()
+		  Self.mCancelled = True
+		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="EraseBackground"
+		Name="MaximumWidth"
+		Visible=true
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MaximumHeight"
+		Visible=true
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Type"
+		Visible=true
+		Group="Frame"
+		InitialValue="0"
+		Type="Types"
+		EditorType="Enum"
+		#tag EnumValues
+			"0 - Document"
+			"1 - Movable Modal"
+			"2 - Modal Dialog"
+			"3 - Floating Window"
+			"4 - Plain Box"
+			"5 - Shadowed Box"
+			"6 - Rounded Window"
+			"7 - Global Floating Window"
+			"8 - Sheet Window"
+			"9 - Metal Window"
+			"11 - Modeless Dialog"
+		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasCloseButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasMaximizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasMinimizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasFullScreenButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="DefaultLocation"
+		Visible=true
+		Group="Behavior"
+		InitialValue="0"
+		Type="Locations"
+		EditorType="Enum"
+		#tag EnumValues
+			"0 - Default"
+			"1 - Parent Window"
+			"2 - Main Screen"
+			"3 - Parent Window Screen"
+			"4 - Stagger"
+		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Interfaces"
+		Visible=true
+		Group="ID"
+		InitialValue=""
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Title"
+		Visible=true
+		Group="Frame"
+		InitialValue="Untitled"
+		Type="String"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Resizeable"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composite"
 		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MacProcID"
+		Visible=false
+		Group="OS X (Carbon)"
+		InitialValue="0"
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ImplicitInstance"
+		Visible=true
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Tooltip"
-		Visible=true
-		Group="Appearance"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AllowAutoDeactivate"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
+		Name="FullScreen"
+		Visible=false
+		Group="Behavior"
+		InitialValue="False"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="AllowFocusRing"
+		Name="MenuBar"
 		Visible=true
-		Group="Appearance"
-		InitialValue="False"
+		Group="Menus"
+		InitialValue=""
+		Type="MenuBar"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MenuBarVisible"
+		Visible=true
+		Group="Deprecated"
+		InitialValue="True"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
@@ -522,22 +624,6 @@ End
 		Visible=true
 		Group="Background"
 		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AllowFocus"
-		Visible=true
-		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="AllowTabs"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
 		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
@@ -590,95 +676,7 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="InitialParent"
-		Visible=false
-		Group="Position"
-		InitialValue=""
-		Type="String"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Left"
-		Visible=true
-		Group="Position"
-		InitialValue=""
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Top"
-		Visible=true
-		Group="Position"
-		InitialValue=""
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="LockLeft"
-		Visible=true
-		Group="Position"
-		InitialValue=""
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="LockTop"
-		Visible=true
-		Group="Position"
-		InitialValue=""
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="LockRight"
-		Visible=true
-		Group="Position"
-		InitialValue=""
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="LockBottom"
-		Visible=true
-		Group="Position"
-		InitialValue=""
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="TabPanelIndex"
-		Visible=false
-		Group="Position"
-		InitialValue="0"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="TabIndex"
-		Visible=true
-		Group="Position"
-		InitialValue="0"
-		Type="Integer"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="TabStop"
-		Visible=true
-		Group="Position"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Visible"
-		Visible=true
-		Group="Appearance"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Enabled"
 		Visible=true
 		Group="Appearance"
 		InitialValue="True"
@@ -691,22 +689,6 @@ End
 		Group="Background"
 		InitialValue=""
 		Type="Picture"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Transparent"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
-		Type="Boolean"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior

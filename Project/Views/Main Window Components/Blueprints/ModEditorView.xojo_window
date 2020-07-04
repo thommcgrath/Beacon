@@ -226,37 +226,6 @@ Begin BeaconSubview ModEditorView
          Visible         =   True
          Width           =   543
       End
-      Begin BlueprintMultiEditor MultiEditor
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
-         Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
-         Enabled         =   True
-         EraseBackground =   True
-         HasBackgroundColor=   False
-         Height          =   432
-         InitialParent   =   "Pages"
-         Left            =   301
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MinimumHeight   =   300
-         MinimumWidth    =   400
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   0
-         Transparent     =   True
-         Visible         =   True
-         Width           =   543
-      End
    End
    Begin ClipboardWatcher Watcher
       Index           =   -2147483648
@@ -441,10 +410,7 @@ End
 		  Case Self.PageSingleEditor
 		    
 		  Case Self.PageMultiEditor
-		    Var Blueprints() As Beacon.MutableBlueprint
-		    If Not Self.MultiEditor.SetBlueprints(Blueprints) Then
-		      Return
-		    End If
+		    
 		  End Select
 		  
 		  Var DesiredPage As Integer
@@ -466,15 +432,7 @@ End
 		  Case Self.PageSingleEditor
 		    
 		  Case Self.PageMultiEditor
-		    Var Blueprints() As Beacon.MutableBlueprint
-		    For Row As Integer = 0 To Me.LastRowIndex
-		      If Not Me.Selected(Row) Then
-		        Continue
-		      End If
-		      
-		      Blueprints.AddRow(Self.mController.Blueprint(Me.RowTagAt(Row).StringValue).MutableVersion)
-		    Next
-		    Call Self.MultiEditor.SetBlueprints(Blueprints)
+		    
 		  End Select
 		  
 		  Self.Pages.SelectedPanelIndex = DesiredPage
@@ -515,7 +473,19 @@ End
 		    
 		    Self.mController.SaveBlueprint(Blueprint)
 		  ElseIf Me.SelectedRowCount > 1 Then
-		    #Pragma Warning "Not implemented"
+		    Var Blueprints() As Beacon.Blueprint
+		    For Row As Integer = 0 To Me.LastRowIndex
+		      If Me.Selected(Row) Then
+		        Blueprints.AddRow(Self.mController.Blueprint(Me.RowTagAt(Row).StringValue))
+		      End If
+		    Next
+		    
+		    Var ModifiedBlueprints() As Beacon.Blueprint = BlueprintMultiEditor.Present(Self, Blueprints)
+		    If (ModifiedBlueprints Is Nil) = False Then
+		      For Each Blueprint As Beacon.Blueprint In Blueprints
+		        Self.mController.SaveBlueprint(Blueprint)
+		      Next
+		    End If
 		  End If
 		End Sub
 	#tag EndEvent
