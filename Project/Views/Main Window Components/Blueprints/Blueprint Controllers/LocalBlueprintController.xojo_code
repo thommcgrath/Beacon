@@ -19,7 +19,22 @@ Inherits BlueprintController
 		  Var Mods As New Beacon.StringList(0)
 		  Mods(0) = LocalData.UserModID
 		  
-		  Self.CacheBlueprints(LocalData.SharedInstance.SearchForBlueprints("", "", Mods, ""))
+		  Var Engrams() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints(Beacon.CategoryEngrams, "", Mods, "")
+		  Var Creatures() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints(Beacon.CategoryCreatures, "", Mods, "")
+		  Var Spawns() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints(Beacon.CategorySpawnPoints, "", Mods, "")
+		  
+		  Var Blueprints() As Beacon.Blueprint = Engrams
+		  Var Offset As Integer = Engrams.Count
+		  Blueprints.ResizeTo((Engrams.Count + Creatures.Count + Spawns.Count) - 1)
+		  For Idx As Integer = 0 To Creatures.LastRowIndex
+		    Blueprints(Idx + Offset) = Creatures(Idx)
+		  Next
+		  Offset = Offset + Creatures.Count
+		  For Idx As Integer = 0 To Spawns.LastRowIndex
+		    Blueprints(Idx + Offset) = Spawns(Idx)
+		  Next
+		  
+		  Self.CacheBlueprints(Blueprints)
 		End Sub
 	#tag EndEvent
 

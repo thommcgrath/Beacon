@@ -141,10 +141,7 @@ Protected Class BlueprintController
 		  End If
 		  
 		  RaiseEvent WorkFinished()
-		  
-		  If Not Success Then
-		    RaiseEvent PublishError(ErrorMessage)
-		  End If
+		  RaiseEvent PublishFinished(Success, ErrorMessage)
 		End Sub
 	#tag EndMethod
 
@@ -248,7 +245,7 @@ Protected Class BlueprintController
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event PublishError(Reason As String)
+		Event PublishFinished(Success As Boolean, Reason As String)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

@@ -226,37 +226,6 @@ Begin BeaconSubview ModEditorView
          Visible         =   True
          Width           =   543
       End
-      Begin BlueprintEditor SingleEditor
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   False
-         AllowTabs       =   True
-         Backdrop        =   0
-         BackgroundColor =   &cFFFFFF00
-         DoubleBuffer    =   False
-         Enabled         =   True
-         EraseBackground =   True
-         HasBackgroundColor=   False
-         Height          =   432
-         InitialParent   =   "Pages"
-         Left            =   301
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MinimumHeight   =   300
-         MinimumWidth    =   400
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   0
-         Transparent     =   True
-         Visible         =   True
-         Width           =   543
-      End
       Begin BlueprintMultiEditor MultiEditor
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -289,10 +258,30 @@ Begin BeaconSubview ModEditorView
          Width           =   543
       End
    End
+   Begin ClipboardWatcher Watcher
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Period          =   1000
+      RunMode         =   "2"
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Method, Flags = &h0
+		Shared Function ClipboardHasCodes() As Boolean
+		  Var Board As New Clipboard
+		  If Not Board.TextAvailable Then
+		    Return False
+		  End If
+		  
+		  Var Content As String = Board.Text
+		  Return Content.IndexOf("Blueprint") > -1 Or Content.IndexOf("giveitem") > -1 Or Content.IndexOf("spawndino") > -1
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub mController_BlueprintsLoaded(Sender As BlueprintController)
 		  Var Blueprints() As Beacon.Blueprint = Sender.Blueprints
@@ -333,8 +322,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mController_PublishError(Sender As BlueprintController, Reason As String)
+		Private Sub mController_PublishFinished(Sender As BlueprintController, Success As Boolean, Reason As String)
+		  Self.UpdatePublishButton()
 		  
+		  If Success Then
+		    Self.mController.LoadBlueprints()
+		  Else
+		    Self.ShowAlert("Beacon was unable to publish the requested changes.", Reason)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -351,6 +346,20 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function PromptForImportFile(Parent As Window) As FolderItem
+		  Var Dialog As New OpenFileDialog
+		  Dialog.Filter = BeaconFileTypes.Text + BeaconFileTypes.CSVFile
+		  Return Dialog.ShowModalWithin(Parent.TrueWindow)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function PromptForImportURL(Parent As Window) As String
+		  Return LibraryEngramsURLDialog.Present(Parent)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SetController(Controller As BlueprintController) As Boolean
 		  If Self.mController = Controller Then
 		    Return False
@@ -362,27 +371,46 @@ End
 		    End If
 		    
 		    RemoveHandler Self.mController.BlueprintsLoaded, WeakAddressOf mController_BlueprintsLoaded
-		    RemoveHandler Self.mController.PublishError, WeakAddressOf mController_PublishError
+		    RemoveHandler Self.mController.PublishFinished, WeakAddressOf mController_PublishFinished
 		    RemoveHandler Self.mController.WorkStarted, WeakAddressOf mController_WorkStarted
 		    RemoveHandler Self.mController.WorkFinished, WeakAddressOf mController_WorkFinished
 		    Self.mController = Nil
 		    Self.BlueprintList.RemoveAllRows
 		  End If
 		  
-		  AddHandler Controller.BlueprintsLoaded, WeakAddressOf mController_BlueprintsLoaded
-		  AddHandler Controller.PublishError, WeakAddressOf mController_PublishError
-		  AddHandler Controller.WorkStarted, WeakAddressOf mController_WorkStarted
-		  AddHandler Controller.WorkFinished, WeakAddressOf mController_WorkFinished
+		  If (Controller Is Nil) = False Then
+		    AddHandler Controller.BlueprintsLoaded, WeakAddressOf mController_BlueprintsLoaded
+		    AddHandler Controller.PublishFinished, WeakAddressOf mController_PublishFinished
+		    AddHandler Controller.WorkStarted, WeakAddressOf mController_WorkStarted
+		    AddHandler Controller.WorkFinished, WeakAddressOf mController_WorkFinished
+		    
+		    Self.mController = Controller
+		    Self.UpdatePublishButton()
+		    Self.mController.LoadBlueprints()
+		  End If
 		  
-		  Self.mController = Controller
-		  Self.mController.LoadBlueprints()
 		  Return True
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdatePublishButton()
+		  Self.mPublishButton.Enabled = (Self.mController Is Nil) = False And Self.mController.HasUnpublishedChanges
+		  Self.mRevertButton.Enabled = Self.mPublishButton.Enabled
+		End Sub
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
 		Private mController As BlueprintController
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPublishButton As BeaconToolbarItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRevertButton As BeaconToolbarItem
 	#tag EndProperty
 
 
@@ -411,9 +439,7 @@ End
 		  Case Self.PageNoSelection
 		    // Nothing to do
 		  Case Self.PageSingleEditor
-		    If Not Self.SingleEditor.SetBlueprint(Nil) Then
-		      Return
-		    End If
+		    
 		  Case Self.PageMultiEditor
 		    Var Blueprints() As Beacon.MutableBlueprint
 		    If Not Self.MultiEditor.SetBlueprints(Blueprints) Then
@@ -438,8 +464,7 @@ End
 		  // we already set them to neutral above.
 		  Select Case DesiredPage
 		  Case Self.PageSingleEditor
-		    Var Blueprint As Beacon.MutableBlueprint = Self.mController.Blueprint(Me.RowTagAt(Me.SelectedRowIndex).StringValue).MutableVersion
-		    Call Self.SingleEditor.SetBlueprint(Blueprint)
+		    
 		  Case Self.PageMultiEditor
 		    Var Blueprints() As Beacon.MutableBlueprint
 		    For Row As Integer = 0 To Me.LastRowIndex
@@ -455,21 +480,98 @@ End
 		  Self.Pages.SelectedPanelIndex = DesiredPage
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
+		  
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformEdit()
+		  If Self.mController Is Nil Then
+		    Return
+		  End If
+		  
+		  If Me.SelectedRowCount = 1 Then
+		    Var ObjectID As String = Me.RowTagAt(Me.SelectedRowIndex)
+		    Var Blueprint As Beacon.Blueprint = Self.mController.Blueprint(ObjectID)
+		    If Blueprint Is Nil Then
+		      Return
+		    End If
+		    
+		    Blueprint = BlueprintEditorDialog.Present(Self, Blueprint)
+		    If Blueprint Is Nil Then
+		      Return
+		    End If
+		    
+		    Self.mController.SaveBlueprint(Blueprint)
+		  ElseIf Me.SelectedRowCount > 1 Then
+		    #Pragma Warning "Not implemented"
+		  End If
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events BlueprintHeader
 	#tag Event
 		Sub Open()
 		  Var AddButton As New BeaconToolbarItem("AddButton", IconToolbarAdd, "Add a new blueprint to this mod")
 		  Me.LeftItems.Append(AddButton)
+		  
+		  Var ImportFileButton As New BeaconToolbarItem("ImportFile", IconToolbarFile, "Import from file")
+		  Me.LeftItems.Append(ImportFileButton)
+		  
+		  Var ImportURLButton As New BeaconToolbarItem("ImportURL", IconToolbarLink, "Import from website")
+		  Me.LeftItems.Append(ImportURLButton)
+		  
+		  Var ImportClipboardButton As New BeaconToolbarItem("ImportClipboard", IconToolbarCopied, Self.ClipboardHasCodes, "Import from copied text")
+		  Me.LeftItems.Append(ImportClipboardButton)
+		  
+		  Self.mPublishButton = New BeaconToolbarItem("PublishButton", IconToolbarPublish, False, "Make changes live")
+		  Self.mRevertButton = New BeaconToolbarItem("RevertButton", IconToolbarRevert, False, "Cancel changes and revert to the blueprints on the server.")
+		  
+		  Me.RightItems.Append(Self.mRevertButton)
+		  Me.RightItems.Append(Self.mPublishButton)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action(Item As BeaconToolbarItem)
+		  If Self.mController Is Nil Then
+		    Return
+		  End If
+		  
+		  Select Case Item.Name
+		  Case "AddButton"
+		    Var Blueprint As Beacon.Blueprint = BlueprintEditorDialog.Present(Self, Nil)
+		    If (Blueprint Is Nil) = False Then
+		      Self.mController.SaveBlueprint(Blueprint)
+		    End If
+		  Case "ImportFile"
+		    
+		  Case "ImportURL"
+		    
+		  Case "ImportClipboard"
+		    
+		  Case "PublishButton"
+		    Self.mController.Publish()
+		  Case "RevertButton"
+		    Self.mController.DiscardChanges()
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events SingleEditor
+#tag Events Watcher
 	#tag Event
-		Sub Save(Blueprint As Beacon.Blueprint)
-		  If (Self.mController Is Nil) = False Then
-		    Self.mController.SaveBlueprint(Blueprint)
-		  End If
+		Sub ClipboardChanged(Content As String)
+		  Self.BlueprintHeader.ImportClipboard.Enabled = Self.ClipboardHasCodes
 		End Sub
 	#tag EndEvent
 #tag EndEvents

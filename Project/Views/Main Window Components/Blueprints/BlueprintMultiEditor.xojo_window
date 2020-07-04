@@ -367,7 +367,8 @@ End
 
 	#tag Method, Flags = &h0
 		Function SetBlueprints(Blueprints() As Beacon.MutableBlueprint) As Boolean
-		  
+		  #Pragma Warning "Not implemented"
+		  Return True
 		End Function
 	#tag EndMethod
 

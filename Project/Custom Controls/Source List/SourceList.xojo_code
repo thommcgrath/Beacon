@@ -176,7 +176,7 @@ Inherits ControlCanvas
 		    
 		    If Self.SelectedRowIndex = Idx Then
 		      Clip.DrawingColor = If(Self.Highlighted, SystemColors.ControlAccentColor, SystemColors.UnemphasizedSelectedContentBackgroundColor)
-		      Clip.FillRoundRectangle(0, 0, Clip.Width, Clip.Height, CornerRadius * Clip.ScaleX, CornerRadius * Clip.ScaleY)
+		      Clip.FillRoundRectangle(0, 0, Clip.Width, Clip.Height, CornerRadius, CornerRadius)
 		      Clip.DrawingColor = If(Self.Highlighted, SystemColors.AlternateSelectedControlTextColor, SystemColors.UnemphasizedSelectedTextColor)
 		    Else
 		      Clip.DrawingColor = SystemColors.ControlTextColor

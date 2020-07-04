@@ -146,6 +146,15 @@ Implements ObservationKit.Observable,ObservationKit.Observer,Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Remove(Item As BeaconToolbarItem)
+		  Var Idx As Integer = Self.IndexOf(Item)
+		  If Idx > -1 Then
+		    Self.Remove(Idx)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
 		  Var OldValue As BeaconToolbarItem = Self.mItems(Index)
 		  If OldValue <> Nil Then
