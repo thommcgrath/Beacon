@@ -506,7 +506,7 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TotalSeconds(Extends Interval As DateInterval) As UInt64
+		Function TotalSeconds(Extends Interval As DateInterval) As Double
 		  Var Now As DateTime = DateTime.Now
 		  Var Future As DateTime = Now + Interval
 		  Return Future.SecondsFrom1970 - Now.SecondsFrom1970

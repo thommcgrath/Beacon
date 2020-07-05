@@ -965,6 +965,32 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function ParseInterval(Input As String) As DateInterval
+		  Input = Input.Trim
+		  If Input.IsEmpty Then
+		    Return Nil
+		  End If
+		  
+		  Var Parser As New Regex
+		  Parser.SearchPattern = "^((\d+)\s*(d|day|days))?\s*((\d+)\s*(h|hour|hours))?\s*((\d+)\s*(m|minute|minutes))?\s*((\d+)(\.(\d+))?\s*(s|second|seconds))?$"
+		  
+		  Var Matches As RegExMatch = Parser.Search(Input)
+		  If Matches = Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var MatchCount As Integer = Matches.SubExpressionCount
+		  Var Days As String = If(MatchCount >= 2, Matches.SubExpressionString(2), "")
+		  Var Hours As String = If(MatchCount >= 5, Matches.SubExpressionString(5), "")
+		  Var Minutes As String = If(MatchCount >= 8, Matches.SubExpressionString(8), "")
+		  Var Seconds As String = If(MatchCount >= 11, Matches.SubExpressionString(11), "")
+		  Var PartialSeconds As String = If(MatchCount >= 12, "0" + Matches.SubExpressionString(12), "0.0")
+		  
+		  Return New DateInterval(0, 0, Val(Days), Val(Hours), Val(Minutes), Val(Seconds), 1000000000 * Val(PartialSeconds))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function ParseJSON(Source As String) As Variant
 		  Const UseMBS = False
 		  
@@ -1270,16 +1296,16 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function SecondsToString(ParamArray Intervals() As UInt64) As String
+		Protected Function SecondsToString(ParamArray Intervals() As Double) As String
 		  Var WithDays, WithHours, WithMinutes As Boolean = True
-		  For Each Interval As UInt64 In Intervals
+		  For Each Interval As Double In Intervals
 		    WithDays = WithDays And Interval >= SecondsPerDay
 		    WithHours = WithHours And Interval >= SecondsPerHour
 		    WithMinutes = WithMinutes And Interval >= SecondsPerMinute
 		  Next
 		  
 		  Var Values() As String
-		  For Each Interval As UInt64 In Intervals
+		  For Each Interval As Double In Intervals
 		    Values.AddRow(SecondsToString(Interval, WithDays, WithHours, WithMinutes))
 		  Next
 		  
@@ -1294,7 +1320,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function SecondsToString(Seconds As UInt64, WithDays As Boolean, WithHours As Boolean, WithMinutes As Boolean) As String
+		Private Function SecondsToString(Seconds As Double, WithDays As Boolean, WithHours As Boolean, WithMinutes As Boolean) As String
 		  Var Days, Hours, Minutes As Integer
 		  
 		  If WithDays Then
@@ -1323,7 +1349,7 @@ Protected Module Beacon
 		    Parts.AddRow(Str(Minutes, "-0") + "m")
 		  End If
 		  If Seconds > 0 Then
-		    Parts.AddRow(Str(Seconds, "-0") + "s")
+		    Parts.AddRow(Seconds.PrettyText(False) + "s")
 		  End If
 		  Return Parts.Join(" ")
 		End Function

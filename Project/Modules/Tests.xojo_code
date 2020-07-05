@@ -29,6 +29,7 @@ Protected Module Tests
 		    #if Beacon.MOTDEditingEnabled
 		      TestArkML()
 		    #endif
+		    TestIntervalParsing()
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -166,6 +167,40 @@ Protected Module Tests
 		  End Try
 		  
 		  Call Assert(TestValue = Decrypted, "Symmetric(legacy) decrypted value does not match original")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TestIntervalParsing()
+		  Var Interval As DateInterval
+		  
+		  Interval = Beacon.ParseInterval("2d3h4m5s")
+		  If Assert((Interval Is Nil) = False, "Failed to parse interval `2d3h4m5s`, result is nil.") Then
+		    Call Assert(Interval.TotalSeconds = 183845, "Failed to parse interval `2d3h4m5s` into 183845, got " + Str(Interval.TotalSeconds, "0.0") + ".")
+		  End If
+		  
+		  Interval = Beacon.ParseInterval("4m")
+		  If Assert((Interval Is Nil) = False, "Failed to parse interval `4m`, result is nil.") Then
+		    Call Assert(Interval.TotalSeconds = 240, "Failed to parse interval `4m` into 240, got " + Str(Interval.TotalSeconds, "0.0") + ".")
+		  End If
+		  
+		  Interval = Beacon.ParseInterval("4 minutes")
+		  If Assert((Interval Is Nil) = False, "Failed to parse interval `4 minutes`, result is nil.") Then
+		    Call Assert(Interval.TotalSeconds = 240, "Failed to parse interval `4 minutes` into 240, got " + Str(Interval.TotalSeconds, "0.0") + ".")
+		  End If
+		  
+		  Interval = Beacon.ParseInterval("4 minutes 6 seconds")
+		  If Assert((Interval Is Nil) = False, "Failed to parse interval `4 minutes 6 seconds`, result is nil.") Then
+		    Call Assert(Interval.TotalSeconds = 246, "Failed to parse interval `4 minutes 6 seconds` into 246, got " + Str(Interval.TotalSeconds, "0.0") + ".")
+		  End If
+		  
+		  Interval = Beacon.ParseInterval("6.5 seconds")
+		  If Assert((Interval Is Nil) = False, "Failed to parse interval `6.5 seconds`, result is nil.") Then
+		    Call Assert(Interval.TotalSeconds = 6.5, "Failed to parse interval `6.5 seconds` into 6.5, got " + Str(Interval.TotalSeconds, "0.0") + ".")
+		  End If
+		  
+		  Var TimeString As String = Beacon.SecondsToString(6.45)
+		  Call Assert(TimeString = "6.45s", "Failed to generate fractional time string: expected `6.45s`, got `" + TimeString + "`.")
 		End Sub
 	#tag EndMethod
 
