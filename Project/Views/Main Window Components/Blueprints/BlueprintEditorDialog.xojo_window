@@ -610,7 +610,7 @@ Begin BeaconDialog BlueprintEditorDialog
          DefaultSortColumn=   0
          DefaultSortDirection=   0
          DropIndicatorVisible=   False
-         EditCaption     =   "Edit"
+         EditCaption     =   "Edit Quantity"
          Enabled         =   True
          FontName        =   "System"
          FontSize        =   0.0
@@ -635,7 +635,7 @@ Begin BeaconDialog BlueprintEditorDialog
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
-         RowSelectionType=   "0"
+         RowSelectionType=   "1"
          Scope           =   2
          TabIndex        =   9
          TabPanelIndex   =   2
@@ -683,11 +683,11 @@ Begin BeaconDialog BlueprintEditorDialog
          Visible         =   True
          Width           =   80
       End
-      Begin UITweaks.ResizedPushButton EngramRemoveIngredientButton
+      Begin UITweaks.ResizedPushButton EngramEditIngredientButton
          AllowAutoDeactivate=   True
          Bold            =   False
          Cancel          =   False
-         Caption         =   "Remove"
+         Caption         =   "Edit"
          Default         =   False
          Enabled         =   False
          FontName        =   "System"
@@ -889,6 +889,38 @@ Begin BeaconDialog BlueprintEditorDialog
          Value           =   "Crafting Recipe:"
          Visible         =   True
          Width           =   164
+      End
+      Begin UITweaks.ResizedPushButton EngramRemoveIngredientButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Remove"
+         Default         =   False
+         Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   380
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         MacButtonStyle  =   "0"
+         Scope           =   2
+         TabIndex        =   12
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   420
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
       End
    End
    Begin OmniBar PageSelector
@@ -1381,6 +1413,7 @@ End
 	#tag Event
 		Sub Change()
 		  Self.EngramRemoveIngredientButton.Enabled = Me.CanDelete
+		  Self.EngramEditIngredientButton.Enabled = Me.CanEdit
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1480,6 +1513,15 @@ End
 		  
 		  Self.EngramCraftingCostList.Sort
 		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EngramEditIngredientButton
+	#tag Event
+		Sub Action()
+		  If Self.EngramCraftingCostList.CanEdit Then
+		    Self.EngramCraftingCostList.DoEdit
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
