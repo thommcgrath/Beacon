@@ -88,6 +88,12 @@ Implements Beacon.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Recipe(Assigns Ingredients() As Beacon.RecipeIngredient)
+		  If Ingredients Is Nil Then
+		    Self.mIngredients.ResizeTo(-1)
+		    Self.mHasLoadedIngredients = True
+		    Return
+		  End If
+		  
 		  Self.mIngredients.ResizeTo(Ingredients.LastRowIndex)
 		  For Idx As Integer = 0 To Self.mIngredients.LastRowIndex
 		    Self.mIngredients(Idx) = Ingredients(Idx)
@@ -128,14 +134,14 @@ Implements Beacon.MutableBlueprint
 
 	#tag Method, Flags = &h0
 		Sub Unpack(Dict As Dictionary)
-		  If Dict.HasAllKeys("engram_string", "required_points", "required_level") Then
-		    If IsNull(Dict.Value("engram_string")) Or Dict.Value("engram_string").StringValue.IsEmpty Then
+		  If Dict.HasAllKeys("entry_string", "required_points", "required_level") Then
+		    If IsNull(Dict.Value("entry_string")) Or Dict.Value("entry_string").StringValue.IsEmpty Then
 		      Self.mEngramEntryString = ""
 		      Self.mRequiredUnlockPoints = Nil
 		      Self.mRequiredPlayerLevel = Nil
 		      Self.mItemID = Nil
 		    Else
-		      Self.mEngramEntryString = Dict.Value("engram_string").StringValue
+		      Self.mEngramEntryString = Dict.Value("entry_string").StringValue
 		      
 		      If Dict.HasKey("item_id") And IsNull(Dict.Value("item_id")) = False Then
 		        Self.mItemID = Dict.Value("item_id").IntegerValue

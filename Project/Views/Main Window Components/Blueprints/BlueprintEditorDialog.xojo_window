@@ -417,6 +417,479 @@ Begin BeaconDialog BlueprintEditorDialog
          Visible         =   True
          Width           =   120
       End
+      Begin UITweaks.ResizedTextField EngramEntryStringField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   196
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextAlignment   =   "0"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   58
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   324
+      End
+      Begin UITweaks.ResizedTextField EngramPlayerLevelField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   196
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextAlignment   =   "2"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   92
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedTextField EngramRequiredPointsField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   196
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   5
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextAlignment   =   "2"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   126
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedTextField EngramStackSizeField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   196
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   7
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextAlignment   =   "2"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   160
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   80
+      End
+      Begin BeaconListbox EngramCraftingCostList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
+         Bold            =   False
+         ColumnCount     =   3
+         ColumnWidths    =   "*,75,75"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   -1
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         DropIndicatorVisible=   False
+         EditCaption     =   "Edit"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLinesHorizontalStyle=   "0"
+         GridLinesVerticalStyle=   "0"
+         HasBorder       =   True
+         HasHeader       =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
+         HeadingIndex    =   -1
+         Height          =   214
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   "Ingredient	Quantity	No Subst."
+         Italic          =   False
+         Left            =   196
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         PreferencesKey  =   ""
+         RequiresSelection=   False
+         RowSelectionType=   "0"
+         Scope           =   2
+         TabIndex        =   9
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   194
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   324
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
+      Begin PushButton EngramAddIngredient
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Add"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   196
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         MacButtonStyle  =   "0"
+         Scope           =   2
+         TabIndex        =   10
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   420
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedPushButton EngramRemoveIngredientButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Remove"
+         Default         =   False
+         Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   288
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         MacButtonStyle  =   "0"
+         Scope           =   2
+         TabIndex        =   11
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   420
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedLabel EngramEntryStringLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   58
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Entry String:"
+         Visible         =   True
+         Width           =   164
+      End
+      Begin UITweaks.ResizedLabel EngramPlayerLevelLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   2
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   92
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Unlockable At Level:"
+         Visible         =   True
+         Width           =   164
+      End
+      Begin UITweaks.ResizedLabel EngramRequiredPointsLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   4
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   126
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Required Engram Points:"
+         Visible         =   True
+         Width           =   164
+      End
+      Begin UITweaks.ResizedLabel EngramStackSizeLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   6
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   160
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Stack Size:"
+         Visible         =   True
+         Width           =   164
+      End
+      Begin UITweaks.ResizedLabel EngramCraftingCostLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   8
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   194
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Crafting Recipe:"
+         Visible         =   True
+         Width           =   164
+      End
    End
    Begin OmniBar PageSelector
       Alignment       =   1
@@ -534,6 +1007,11 @@ End
 		    Self.NameField.Value = Self.mOriginalBlueprint.Label
 		    Self.TagsField.Value = Self.mOriginalBlueprint.Tags.Join(", ")
 		    Self.MapSelector.Mask = Self.mOriginalBlueprint.Availability
+		    
+		    Select Case Self.mOriginalBlueprint
+		    Case IsA Beacon.Engram
+		      Self.LoadEngram(Beacon.Engram(Self.mOriginalBlueprint))
+		    End Select
 		  Else
 		    Self.TypeMenu.SelectedRowIndex = -1
 		    Self.TypeMenu.Enabled = True
@@ -555,6 +1033,33 @@ End
 		  End If
 		  Super.Constructor
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LoadEngram(Engram As Beacon.Engram)
+		  Self.EngramEntryStringField.Value = Engram.EntryString
+		  
+		  If (Engram.RequiredPlayerLevel Is Nil) = False Then
+		    Self.EngramPlayerLevelField.Value = Format(Engram.RequiredPlayerLevel.IntegerValue, "0,")
+		  End If
+		  
+		  If (Engram.RequiredUnlockPoints Is Nil) = False Then
+		    Self.EngramRequiredPointsField.Value = Format(Engram.RequiredUnlockPoints.IntegerValue, "0,")
+		  End If
+		  
+		  If (Engram.StackSize Is Nil) = False Then
+		    Self.EngramStackSizeField.Value = Format(Engram.StackSize.IntegerValue, "0,")
+		  End If
+		  
+		  Var Ingredients() As Beacon.RecipeIngredient = Engram.Recipe
+		  For Each Ingredient As Beacon.RecipeIngredient In Ingredients
+		    Self.EngramCraftingCostList.AddRow(Ingredient.Engram.Label, Format(Ingredient.Quantity, "0,"))
+		    Self.EngramCraftingCostList.CellCheckBoxValueAt(Self.EngramCraftingCostList.LastAddedRowIndex, 2) = Ingredient.RequireExact
+		    Self.EngramCraftingCostList.RowTagAt(Self.EngramCraftingCostList.LastAddedRowIndex) = Ingredient
+		  Next
+		  Self.EngramCraftingCostList.SortingColumn = 0
+		  Self.EngramCraftingCostList.Sort
 		End Sub
 	#tag EndMethod
 
@@ -659,8 +1164,91 @@ End
 		  Blueprint.Tags = Tags
 		  Blueprint.Availability = Availability
 		  
+		  Select Case Blueprint
+		  Case IsA Beacon.MutableEngram
+		    If Not Self.UpdateEngram(Beacon.MutableEngram(Blueprint)) Then
+		      Return False
+		    End If
+		  End Select
+		  
 		  Self.mModifiedBlueprint = Blueprint.ImmutableVersion
 		  Self.Modified = False
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function UpdateEngram(Engram As Beacon.MutableEngram) As Boolean
+		  Var EntryString As String = Self.EngramEntryStringField.Value.Trim
+		  Var RequiredLevelString As String = Self.EngramPlayerLevelField.Value.Trim
+		  Var RequiredPointsString As String = Self.EngramRequiredPointsField.Value.Trim
+		  Var HasUnlockDetails As Boolean = EntryString.IsEmpty = False
+		  
+		  If HasUnlockDetails Then
+		    If EntryString.IsEmpty = False Then
+		      If EntryString.EndsWith("_C") = False Then
+		        Self.ShowAlert("Invalid Entry String", "Engram entry strings usually start with EngramEntry and always end with _C.")
+		        Return False
+		      End If
+		      
+		      Engram.EntryString = EntryString
+		    Else
+		      Engram.EntryString = ""
+		    End If
+		    
+		    Var UnlocksByTek As Boolean = RequiredLevelString = "Tek"
+		    If RequiredLevelString.IsEmpty = False Then 
+		      If IsNumeric(RequiredLevelString) = False And UnlocksByTek = False Then
+		        Self.ShowAlert("Invalid Required Level Value", "Required player level must be numeric or Tek.")
+		        Return False
+		      End If
+		      
+		      If UnlocksByTek Then
+		        Engram.RequiredPlayerLevel = Nil
+		      Else
+		        Engram.RequiredPlayerLevel = CDbl(RequiredLevelString)
+		      End If
+		    Else
+		      Engram.RequiredPlayerLevel = Nil
+		    End If
+		    
+		    If RequiredPointsString.IsEmpty = False Then
+		      If UnlocksByTek Then
+		        Self.ShowAlert("Invalid Points Value", "Engrams unlocked by Tek do not have point requirements.")
+		        Return False
+		      ElseIf IsNumeric(RequiredPointsString) = False Then
+		        Self.ShowAlert("Invalid Points Value", "Required engram points must be numeric.")
+		        Return False
+		      End If
+		      
+		      Engram.RequiredUnlockPoints = CDbl(RequiredPointsString)
+		    Else
+		      Engram.RequiredUnlockPoints = Nil
+		    End If
+		  End If
+		  
+		  Var StackSizeString As String = Self.EngramStackSizeField.Value.Trim
+		  If StackSizeString.IsEmpty = False Then
+		    If IsNumeric(StackSizeString) = False Then
+		      Self.ShowAlert("Invalid Stack Size", "The stack size value should be numeric.")
+		      Return False
+		    End If
+		    
+		    Engram.StackSize = CDbl(StackSizeString)
+		  Else
+		    Engram.StackSize = Nil
+		  End If
+		  
+		  If Self.EngramCraftingCostList.RowCount > 0  Then
+		    Var Ingredients() As Beacon.RecipeIngredient
+		    For Row As Integer = 0 To Self.EngramCraftingCostList.LastRowIndex
+		      Ingredients.AddRow(Self.EngramCraftingCostList.RowTagAt(Row))
+		    Next
+		    Engram.Recipe = Ingredients
+		  Else
+		    Engram.Recipe = Nil
+		  End If
 		  
 		  Return True
 		End Function
@@ -758,6 +1346,149 @@ End
 	#tag Event
 		Sub TextChange()
 		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EngramEntryStringField
+	#tag Event
+		Sub TextChange()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EngramPlayerLevelField
+	#tag Event
+		Sub TextChange()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EngramRequiredPointsField
+	#tag Event
+		Sub TextChange()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EngramStackSizeField
+	#tag Event
+		Sub TextChange()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EngramCraftingCostList
+	#tag Event
+		Sub Change()
+		  Self.EngramRemoveIngredientButton.Enabled = Me.CanDelete
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount = 1
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformEdit()
+		  If Me.SelectedRowCount <> 1 Then
+		    Return
+		  End If
+		  
+		  Me.EditCellAt(Me.SelectedRowIndex, 1)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
+		  Var Labels() As String
+		  
+		  If Warn Then
+		    For Row As Integer = 0 To Me.LastRowIndex
+		      If Me.Selected(Row) Then
+		        Var Ingredient As Beacon.RecipeIngredient = Me.RowTagAt(Row)
+		        Labels.AddRow(Ingredient.Engram.Label)
+		      End If
+		    Next
+		    
+		    If Self.ShowDeleteConfirmation(Labels, "ingredient", "ingredients", False) = False Then
+		      Return
+		    End If
+		  End If
+		  
+		  For Row As Integer = Me.LastRowIndex DownTo 0
+		    If Me.Selected(Row) Then
+		      Me.RemoveRowAt(Row)
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.ColumnAlignmentAt(1) = Listbox.Alignments.Right
+		  Me.ColumnAlignmentAt(2) = Listbox.Alignments.Center
+		  Me.ColumnTypeAt(1) = Listbox.CellTypes.TextField
+		  Me.ColumnTypeAt(2) = Listbox.CellTypes.CheckBox
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub CellAction(row As Integer, column As Integer)
+		  Var Ingredient As Beacon.RecipeIngredient = Me.RowTagAt(Row)
+		  
+		  Select Case Column
+		  Case 1
+		    Var Value As String = Me.CellValueAt(Row, Column)
+		    Var Quantity As Integer = Round(CDbl(Value))
+		    If IsNumeric(Value) = False Or Quantity <= 0 Then
+		      System.Beep
+		      Me.CellValueAt(Row, Column) = Format(Ingredient.Quantity, "0,")
+		      Return
+		    End If
+		    
+		    Me.RowTagAt(Row) = New Beacon.RecipeIngredient(Ingredient.Engram, Quantity, Ingredient.RequireExact)
+		    Me.CellValueAt(Row, Column) = Format(Quantity, "0,")
+		  Case 2
+		    Me.RowTagAt(Row) = New Beacon.RecipeIngredient(Ingredient.Engram, Ingredient.Quantity, Me.CellCheckBoxValueAt(Row, Column))
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EngramAddIngredient
+	#tag Event
+		Sub Action()
+		  Var Engrams() As Beacon.Engram
+		  For Row As Integer = 0 To Self.EngramCraftingCostList.LastRowIndex
+		    Engrams.AddRow(Beacon.RecipeIngredient(Self.EngramCraftingCostList.RowTagAt(Row)).Engram)
+		  Next
+		  
+		  Var Mods As New Beacon.StringList
+		  Var NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Resources", Engrams, Mods, EngramSelectorDialog.SelectModes.ExplicitMultiple)
+		  If NewEngrams = Nil Or NewEngrams.LastRowIndex = -1 Then
+		    Return
+		  End If
+		  
+		  For Each Engram As Beacon.Engram In NewEngrams
+		    If (Engram Is Nil) = False Then
+		      Var Ingredient As New Beacon.RecipeIngredient(Engram, 1, False)
+		      Self.EngramCraftingCostList.AddRow(Engram.Label, "1")
+		      Self.EngramCraftingCostList.RowTagAt(Self.EngramCraftingCostList.LastAddedRowIndex) = Ingredient
+		    End If
+		  Next
+		  
+		  Self.EngramCraftingCostList.Sort
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EngramRemoveIngredientButton
+	#tag Event
+		Sub Action()
+		  If Self.EngramCraftingCostList.CanDelete Then
+		    Self.EngramCraftingCostList.DoClear
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

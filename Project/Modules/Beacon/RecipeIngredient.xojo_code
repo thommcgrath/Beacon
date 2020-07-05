@@ -118,6 +118,16 @@ Protected Class RecipeIngredient
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Shared Function ToJSON(Ingredients() As Beacon.RecipeIngredient, Pretty As Boolean = False) As String
+		  Var Dicts() As Dictionary
+		  For Each Ingredient As Beacon.RecipeIngredient In Ingredients
+		    Dicts.AddRow(Ingredient.ToDictionary)
+		  Next
+		  Return Beacon.GenerateJSON(Dicts, Pretty)
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mEngram As Beacon.Engram
@@ -170,14 +180,6 @@ Protected Class RecipeIngredient
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mEngram"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

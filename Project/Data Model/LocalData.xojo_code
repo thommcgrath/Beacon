@@ -2248,7 +2248,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Engram.TagString = Results.Column("tags").StringValue
 		    Engram.ModID = Results.Column("mod_id").StringValue
 		    Engram.ModName = Results.Column("mod_name").StringValue
-		    If IsNull(Results.Column("entry_string").Value) = False Then
+		    If IsNull(Results.Column("entry_string").Value) = False And Results.Column("entry_string").StringValue.IsEmpty = False Then
 		      Engram.EntryString = Results.Column("entry_string").StringValue
 		      
 		      If IsNull(Results.Column("required_points").Value) = False And IsNull(Results.Column("required_level").Value) = False Then
@@ -2427,6 +2427,28 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Columns.Value("limits") = Beacon.SpawnPoint(Blueprint).LimitsString(False)
 		        CacheDict = Self.mSpawnPointCache
 		      Case IsA Beacon.Engram
+		        Var Engram As Beacon.Engram = Beacon.Engram(Blueprint)
+		        Columns.Value("recipe") = Beacon.RecipeIngredient.ToJSON(Engram.Recipe, False)
+		        If Engram.EntryString.IsEmpty Then
+		          Columns.Value("entry_string") = Nil
+		        Else
+		          Columns.Value("entry_string") = Engram.EntryString
+		        End If
+		        If Engram.RequiredPlayerLevel Is Nil Then
+		          Columns.Value("required_level") = Nil
+		        Else
+		          Columns.Value("required_level") = Engram.RequiredPlayerLevel.IntegerValue
+		        End If
+		        If Engram.RequiredUnlockPoints Is Nil Then
+		          Columns.Value("required_points") = Nil
+		        Else
+		          Columns.Value("required_points") = Engram.RequiredUnlockPoints.IntegerValue
+		        End If
+		        If Engram.StackSize Is Nil Then
+		          Columns.Value("stack_size") = Nil
+		        Else
+		          Columns.Value("stack_size") = Engram.StackSize.IntegerValue
+		        End If
 		        CacheDict = Self.mEngramCache
 		      End Select
 		      

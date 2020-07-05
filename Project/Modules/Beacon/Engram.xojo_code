@@ -276,7 +276,7 @@ Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
 		Sub Pack(Dict As Dictionary)
 		  If Self.HasUnlockDetails Then
-		    Dict.Value("engram_string") = Self.mEngramEntryString
+		    Dict.Value("entry_string") = Self.mEngramEntryString
 		    If Self.mItemID Is Nil Then
 		      Dict.Value("item_id") = Nil
 		    Else
@@ -293,7 +293,7 @@ Implements Beacon.Blueprint
 		      Dict.Value("required_points") = Self.mRequiredUnlockPoints.IntegerValue
 		    End If
 		  Else
-		    Dict.Value("engram_string") = Nil
+		    Dict.Value("entry_string") = Nil
 		    Dict.Value("item_id") = Nil
 		    Dict.Value("required_points") = Nil
 		    Dict.Value("required_level") = Nil
