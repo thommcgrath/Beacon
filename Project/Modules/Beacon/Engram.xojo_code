@@ -277,11 +277,6 @@ Implements Beacon.Blueprint
 		Sub Pack(Dict As Dictionary)
 		  If Self.HasUnlockDetails Then
 		    Dict.Value("entry_string") = Self.mEngramEntryString
-		    If Self.mItemID Is Nil Then
-		      Dict.Value("item_id") = Nil
-		    Else
-		      Dict.Value("item_id") = Self.mItemID.IntegerValue
-		    End If
 		    If Self.mRequiredPlayerLevel Is Nil Then
 		      Dict.Value("required_level") = Nil
 		    Else

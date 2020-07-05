@@ -143,12 +143,6 @@ Implements Beacon.MutableBlueprint
 		    Else
 		      Self.mEngramEntryString = Dict.Value("entry_string").StringValue
 		      
-		      If Dict.HasKey("item_id") And IsNull(Dict.Value("item_id")) = False Then
-		        Self.mItemID = Dict.Value("item_id").IntegerValue
-		      Else
-		        Self.mItemID = Nil
-		      End If
-		      
 		      If IsNull(Dict.Value("required_level")) = False Then
 		        Self.mRequiredPlayerLevel = Dict.Value("required_level").IntegerValue
 		      Else
