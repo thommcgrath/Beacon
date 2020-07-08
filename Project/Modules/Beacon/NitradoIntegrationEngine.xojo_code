@@ -766,7 +766,28 @@ Inherits Beacon.IntegrationEngine
 		  Var Content As String = Sock.LastContent
 		  Var Status As Integer = Sock.LastHTTPStatus
 		  
-		  If Self.Finished Or (Status <> 200 And Mode = DownloadFailureMode.ErrorsAllowed) Or (Status = 404 And Mode = DownloadFailureMode.MissingAllowed) Or Self.CheckError(Status, Content) Then
+		  If Self.Finished Then
+		    Return ""
+		  End If
+		  
+		  If Status <> 200 Then
+		    Select Case Mode
+		    Case DownloadFailureMode.MissingAllowed
+		      Var Message As String
+		      Call Self.CheckResponseForError(Status, Content, Message)
+		      If Status = 500 And Message = "Nitrado Error: File doesn't exist (anymore?)" Then
+		        // Bad Nitrado
+		        Status = 404
+		      End If
+		      If Status <> 404 Then
+		        Self.SetError(Message)
+		      End If
+		    Case DownloadFailureMode.ErrorsAllowed
+		      // Do nothing
+		    Case DownloadFailureMode.Required
+		      Call Self.CheckError(Status, Content)
+		    End Select
+		    
 		    Return ""
 		  End If
 		  

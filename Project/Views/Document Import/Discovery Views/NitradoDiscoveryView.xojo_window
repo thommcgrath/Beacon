@@ -747,8 +747,6 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub AccountUUIDChanged(OldUUID As v4UUID)
-		  Break
-		  
 		  If Self.mEngines.HasKey(OldUUID.StringValue) Then
 		    Var Engine As Beacon.IntegrationEngine = Self.mEngines.Value(OldUUID.StringValue)
 		    Engine.Profile.ExternalAccountUUID = Me.Account.UUID
