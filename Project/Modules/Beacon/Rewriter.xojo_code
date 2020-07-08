@@ -222,6 +222,11 @@ Inherits Global.Thread
 		              End Select
 		            End If
 		            
+		            If Header = "SessionSettings" Then
+		              // Never remove anything from SessionSettings, only add/replace
+		              Continue
+		            End If
+		            
 		            Var ManagedKeys() As String = ArrayTextContent.Split(",")
 		            Var SectionContents As Dictionary
 		            If UntouchedConfigs.HasKey(Header) Then
