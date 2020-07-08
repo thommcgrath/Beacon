@@ -73,7 +73,7 @@ Protected Class DocumentController
 	#tag Method, Flags = &h21
 		Private Shared Function ErrorMessageFromSocket(Socket As SimpleHTTP.SynchronousHTTPSocket) As String
 		  Var Message As String = "The error reason is unknown"
-		  If Socket.LastContent <> Nil Then
+		  If (Socket.LastContent Is Nil) = False Then
 		    Try
 		      Message = Socket.LastContent
 		      Var Dict As Dictionary = Beacon.ParseJSON(Message)
@@ -85,7 +85,7 @@ Protected Class DocumentController
 		    Catch Err As RuntimeException
 		      
 		    End Try
-		  ElseIf Socket.LastException <> Nil Then
+		  ElseIf (Socket.LastException Is Nil) = False Then
 		    Message = Socket.LastException.Explanation
 		  End If
 		  Return Message
