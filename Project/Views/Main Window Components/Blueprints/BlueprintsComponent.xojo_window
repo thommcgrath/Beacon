@@ -91,6 +91,7 @@ Begin BeaconSubview BlueprintsComponent Implements AnimationKit.ValueAnimator
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   486
       Index           =   -2147483648

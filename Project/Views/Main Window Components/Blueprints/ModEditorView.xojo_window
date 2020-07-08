@@ -69,6 +69,7 @@ Begin BeaconSubview ModEditorView
       RequiresSelection=   False
       RowSelectionType=   "1"
       Scope           =   2
+      SelectionChangeBlocked=   False
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -95,6 +96,7 @@ Begin BeaconSubview ModEditorView
       Borders         =   0
       BorderTop       =   False
       Caption         =   "Blueprints"
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   41
       Index           =   -2147483648
@@ -114,6 +116,7 @@ Begin BeaconSubview ModEditorView
       TabStop         =   True
       Tooltip         =   ""
       Top             =   0
+      Transparent     =   False
       Visible         =   True
       Width           =   300
    End
@@ -123,6 +126,7 @@ Begin BeaconSubview ModEditorView
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   432
       Index           =   -2147483648
@@ -159,7 +163,6 @@ Begin BeaconSubview ModEditorView
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
-      SelectedPanelIndex=   0
       TabIndex        =   3
       TabPanelIndex   =   0
       Tooltip         =   ""
@@ -175,6 +178,7 @@ Begin BeaconSubview ModEditorView
          AllowFocusRing  =   True
          AllowTabs       =   False
          Backdrop        =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   41
          Index           =   -2147483648
@@ -205,6 +209,7 @@ Begin BeaconSubview ModEditorView
          AllowTabs       =   False
          Backdrop        =   0
          Caption         =   "No Selection"
+         DoubleBuffer    =   False
          Enabled         =   True
          Height          =   391
          Index           =   -2147483648

@@ -448,16 +448,16 @@ End
 		  Next
 		  
 		  // Get fastest maturing creature
-		  Var FastestMature As UInt64
+		  Var FastestMature As Double
 		  For Each Creature As Beacon.Creature In Creatures
-		    Var MatureSeconds As UInt64 = Creature.MatureTime / Self.mMatureSpeedMultiplier
+		    Var MatureSeconds As Double = Creature.MatureTime / Self.mMatureSpeedMultiplier
 		    If FastestMature = 0 Or MatureSeconds < FastestMature Then
 		      FastestMature = MatureSeconds
 		    End If
 		  Next
 		  
 		  // Reduce the target by a set amount and compute the imprint multiplier
-		  Var TargetCuddleSeconds As UInt64 = FastestMature * Threshold
+		  Var TargetCuddleSeconds As Double = FastestMature * Threshold
 		  Var OfficialCuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period")
 		  Var ImprintMultiplier As Double = TargetCuddleSeconds / OfficialCuddlePeriod
 		  

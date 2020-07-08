@@ -88,7 +88,7 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IncubationTime() As UInt64
+		Function IncubationTime() As Double
 		  Return Self.mIncubationTime
 		End Function
 	#tag EndMethod
@@ -106,19 +106,19 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MatureTime() As UInt64
+		Function MatureTime() As Double
 		  Return Self.mMatureTime
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MaxMatingInterval() As UInt64
+		Function MaxMatingInterval() As Double
 		  Return Self.mMaxMatingInterval
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MinMatingInterval() As UInt64
+		Function MinMatingInterval() As Double
 		  Return Self.mMinMatingInterval
 		End Function
 	#tag EndMethod
@@ -305,7 +305,7 @@ Implements Beacon.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mIncubationTime As UInt64
+		Protected mIncubationTime As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -313,15 +313,15 @@ Implements Beacon.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mMatureTime As UInt64
+		Protected mMatureTime As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mMaxMatingInterval As UInt64
+		Protected mMaxMatingInterval As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mMinMatingInterval As UInt64
+		Protected mMinMatingInterval As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

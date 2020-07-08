@@ -67,7 +67,7 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub IncubationTime(Assigns Value As UInt64)
+		Sub IncubationTime(Assigns Value As Double)
 		  Self.mIncubationTime = Value
 		End Sub
 	#tag EndMethod
@@ -92,19 +92,19 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub MatureTime(Assigns Value As UInt64)
+		Sub MatureTime(Assigns Value As Double)
 		  Self.mMatureTime = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub MaxMatingInterval(Assigns Value As UInt64)
+		Sub MaxMatingInterval(Assigns Value As Double)
 		  Self.mMaxMatingInterval = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub MinMatingInterval(Assigns Value As UInt64)
+		Sub MinMatingInterval(Assigns Value As Double)
 		  Self.mMinMatingInterval = Value
 		End Sub
 	#tag EndMethod

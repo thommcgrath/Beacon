@@ -39,7 +39,6 @@ Begin BeaconDialog BlueprintEditorDialog
       PanelCount      =   4
       Panels          =   ""
       Scope           =   2
-      SelectedPanelIndex=   0
       TabIndex        =   1
       TabPanelIndex   =   0
       Tooltip         =   ""
@@ -637,6 +636,7 @@ Begin BeaconDialog BlueprintEditorDialog
          RequiresSelection=   False
          RowSelectionType=   "1"
          Scope           =   2
+         SelectionChangeBlocked=   False
          TabIndex        =   9
          TabPanelIndex   =   2
          TabStop         =   True
@@ -864,7 +864,7 @@ Begin BeaconDialog BlueprintEditorDialog
          FontName        =   "System"
          FontSize        =   0.0
          FontUnit        =   0
-         Height          =   20
+         Height          =   22
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
@@ -922,6 +922,381 @@ Begin BeaconDialog BlueprintEditorDialog
          Visible         =   True
          Width           =   80
       End
+      Begin UITweaks.ResizedTextField CreatureIncubationTimeField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   163
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         TextAlignment   =   "0"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   58
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   212
+      End
+      Begin UITweaks.ResizedLabel CreatureIncubationTimeLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   1
+         TabPanelIndex   =   3
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   58
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Incubation Time:"
+         Visible         =   True
+         Width           =   131
+      End
+      Begin UITweaks.ResizedTextField CreatureMatureTimeField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   163
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   3
+         TabStop         =   True
+         TextAlignment   =   "0"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   92
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   212
+      End
+      Begin UITweaks.ResizedLabel CreatureMatureTimeLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   3
+         TabPanelIndex   =   3
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   92
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Mature Time:"
+         Visible         =   True
+         Width           =   131
+      End
+      Begin UITweaks.ResizedTextField CreatureIntervalMinTimeField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   163
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   4
+         TabPanelIndex   =   3
+         TabStop         =   True
+         TextAlignment   =   "0"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   126
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   212
+      End
+      Begin UITweaks.ResizedLabel CreatureIntervalMinTimeLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   5
+         TabPanelIndex   =   3
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   126
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Mating Interval Min:"
+         Visible         =   True
+         Width           =   131
+      End
+      Begin UITweaks.ResizedTextField CreatureIntervalMaxTimeField
+         AllowAutoDeactivate=   True
+         AllowFocusRing  =   True
+         AllowSpellChecking=   False
+         AllowTabs       =   False
+         BackgroundColor =   &cFFFFFF00
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Format          =   ""
+         HasBorder       =   True
+         Height          =   22
+         Hint            =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   163
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MaximumCharactersAllowed=   0
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   6
+         TabPanelIndex   =   3
+         TabStop         =   True
+         TextAlignment   =   "0"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   160
+         Transparent     =   False
+         Underline       =   False
+         ValidationMask  =   ""
+         Value           =   ""
+         Visible         =   True
+         Width           =   212
+      End
+      Begin UITweaks.ResizedLabel CreatureIntervalMaxTimeLabel
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   22
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   7
+         TabPanelIndex   =   3
+         TabStop         =   True
+         TextAlignment   =   "3"
+         TextColor       =   &c00000000
+         Tooltip         =   ""
+         Top             =   160
+         Transparent     =   False
+         Underline       =   False
+         Value           =   "Mating Interval Max:"
+         Visible         =   True
+         Width           =   131
+      End
+      Begin BeaconListbox CreatureStatsList
+         AllowAutoDeactivate=   True
+         AllowAutoHideScrollbars=   True
+         AllowExpandableRows=   False
+         AllowFocusRing  =   True
+         AllowResizableColumns=   False
+         AllowRowDragging=   False
+         AllowRowReordering=   False
+         Bold            =   False
+         ColumnCount     =   6
+         ColumnWidths    =   "*,70,70,70,70,70"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   -1
+         DefaultSortColumn=   0
+         DefaultSortDirection=   0
+         DropIndicatorVisible=   False
+         EditCaption     =   "Edit"
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         GridLinesHorizontalStyle=   "0"
+         GridLinesVerticalStyle=   "0"
+         HasBorder       =   True
+         HasHeader       =   True
+         HasHorizontalScrollbar=   False
+         HasVerticalScrollbar=   True
+         HeadingIndex    =   -1
+         Height          =   246
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   "Stat	Base	Wild	Tamed	Add	Affinity"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         PreferencesKey  =   ""
+         RequiresSelection=   False
+         RowSelectionType=   "0"
+         Scope           =   2
+         SelectionChangeBlocked=   False
+         TabIndex        =   8
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   194
+         Transparent     =   False
+         TypeaheadColumn =   0
+         Underline       =   False
+         Visible         =   True
+         VisibleRowCount =   0
+         Width           =   500
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
    End
    Begin OmniBar PageSelector
       Alignment       =   1
@@ -930,6 +1305,7 @@ Begin BeaconDialog BlueprintEditorDialog
       AllowFocusRing  =   True
       AllowTabs       =   False
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       Height          =   38
       Index           =   -2147483648
@@ -1043,6 +1419,8 @@ End
 		    Select Case Self.mOriginalBlueprint
 		    Case IsA Beacon.Engram
 		      Self.LoadEngram(Beacon.Engram(Self.mOriginalBlueprint))
+		    Case IsA Beacon.Creature
+		      Self.LoadCreature(Beacon.Creature(Self.mOriginalBlueprint))
 		    End Select
 		  Else
 		    Self.TypeMenu.SelectedRowIndex = -1
@@ -1065,6 +1443,57 @@ End
 		  End If
 		  Super.Constructor
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function FirstValue(ParamArray Values() As String) As String
+		  For Each Value As String In Values
+		    If Value.IsEmpty = False Then
+		      Return Value
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LoadCreature(Creature As Beacon.Creature)
+		  If Creature.IncubationTime > 0 Then
+		    Self.CreatureIncubationTimeField.Value = Beacon.SecondsToString(Creature.IncubationTime)
+		  End If
+		  
+		  If Creature.MatureTime > 0 Then
+		    Self.CreatureMatureTimeField.Value = Beacon.SecondsToString(Creature.MatureTime)
+		  End If
+		  
+		  If Creature.MinMatingInterval > 0 Then
+		    Self.CreatureIntervalMinTimeField.Value = Beacon.SecondsToString(Creature.MinMatingInterval)
+		  End If
+		  
+		  If Creature.MaxMatingInterval > 0 Then
+		    Self.CreatureIntervalMaxTimeField.Value = Beacon.SecondsToString(Creature.MaxMatingInterval)
+		  End If
+		  
+		  Var Stats() As Beacon.Stat = Beacon.Stats.All
+		  Var Mask As UInt16 = Creature.StatsMask
+		  For Each Stat As Beacon.Stat In Stats
+		    Var BaseValue As Double = Creature.StatBaseValue(Stat)
+		    Self.CreatureStatsList.CellValueAt(Stat.Index, Self.CreatureStatColumnBase) = If(BaseValue <> Beacon.Creature.MissingStatValue, BaseValue.PrettyText, "")
+		    
+		    Var WildValue As Double = Creature.StatWildValue(Stat)
+		    Self.CreatureStatsList.CellValueAt(Stat.Index, Self.CreatureStatColumnWild) = If(WildValue <> Beacon.Creature.MissingStatValue, WildValue.PrettyText, "")
+		    
+		    Var TamedValue As Double = Creature.StatTamedValue(Stat)
+		    Self.CreatureStatsList.CellValueAt(Stat.Index, Self.CreatureStatColumnTamed) = If(TamedValue <> Beacon.Creature.MissingStatValue, TamedValue.PrettyText, "")
+		    
+		    Var AddValue As Double = Creature.StatAddValue(Stat)
+		    Self.CreatureStatsList.CellValueAt(Stat.Index, Self.CreatureStatColumnAdd) = If(AddValue <> Beacon.Creature.MissingStatValue, AddValue.PrettyText, "")
+		    
+		    Var AffinityValue As Double = Creature.StatAffinityValue(Stat)
+		    Self.CreatureStatsList.CellValueAt(Stat.Index, Self.CreatureStatColumnAffinity) = If(AffinityValue <> Beacon.Creature.MissingStatValue, AffinityValue.PrettyText, "")
+		    
+		    Self.CreatureStatsList.CellCheckBoxValueAt(Stat.Index, Self.CreatureStatColumnLabel) = (Mask And Stat.Mask) = Stat.Mask
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -1201,10 +1630,70 @@ End
 		    If Not Self.UpdateEngram(Beacon.MutableEngram(Blueprint)) Then
 		      Return False
 		    End If
+		  Case IsA Beacon.MutableCreature
+		    If Not Self.UpdateCreature(Beacon.MutableCreature(Blueprint)) Then
+		      Return False
+		    End If
 		  End Select
 		  
 		  Self.mModifiedBlueprint = Blueprint.ImmutableVersion
 		  Self.Modified = False
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function UpdateCreature(Creature As Beacon.MutableCreature) As Boolean
+		  Const ParseInstructions = "Use a format like ""2 days 3 hours 4 minutes 5 seconds"" to specify an amount of time. Short versions such as ""2d3h4m5s"" may also be used. Omit any units that are not needed. Decimal values may only be used on the seconds field."
+		  
+		  Var IncubationString As String = Self.CreatureIncubationTimeField.Value.Trim
+		  If IncubationString.IsEmpty = False Then
+		    Var Interval As DateInterval = Beacon.ParseInterval(IncubationString)
+		    If Interval Is Nil Then
+		      Self.ShowAlert("Unable to parse the incubation time", ParseInstructions)
+		      Return False
+		    End If
+		    
+		    Creature.IncubationTime = Interval.TotalSeconds
+		  Else
+		    Creature.IncubationTime = 0
+		  End If
+		  
+		  Var MatureString As String = Self.CreatureMatureTimeField.Value.Trim
+		  If MatureString.IsEmpty = False Then
+		    Var Interval As DateInterval = Beacon.ParseInterval(MatureString)
+		    If Interval Is Nil Then
+		      Self.ShowAlert("Unable to parse the mature time", ParseInstructions)
+		      Return False
+		    End If
+		    
+		    Creature.MatureTime = Interval.TotalSeconds
+		  Else
+		    Creature.MatureTime = 0
+		  End If
+		  
+		  Var MinIntervalString As String = Self.CreatureIntervalMinTimeField.Value
+		  Var MaxIntervalString As String = Self.CreatureIntervalMaxTimeField.Value
+		  If MinIntervalString.IsEmpty = False Or MaxIntervalString.IsEmpty = False Then
+		    Var MinInterval As DateInterval = Beacon.ParseInterval(FirstValue(MinIntervalString, MaxIntervalString))
+		    Var MaxInterval As DateInterval = Beacon.ParseInterval(FirstValue(MaxIntervalString, MinIntervalString))
+		    
+		    If MinInterval Is Nil Then
+		      Self.ShowAlert("Unable to parse minimum mating interval", ParseInstructions)
+		      Return False
+		    End If
+		    If MaxInterval Is Nil Then
+		      Self.ShowAlert("Unable to parse maximum mating interval", ParseInstructions)
+		      Return False
+		    End If
+		    
+		    Creature.MinMatingInterval = MinInterval.TotalSeconds
+		    Creature.MaxMatingInterval = MaxInterval.TotalSeconds
+		  Else
+		    Creature.MinMatingInterval = 0
+		    Creature.MaxMatingInterval = 0
+		  End If
 		  
 		  Return True
 		End Function
@@ -1303,6 +1792,24 @@ End
 		Private mOriginalBlueprint As Beacon.Blueprint
 	#tag EndProperty
 
+
+	#tag Constant, Name = CreatureStatColumnAdd, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CreatureStatColumnAffinity, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CreatureStatColumnBase, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CreatureStatColumnLabel, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CreatureStatColumnTamed, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = CreatureStatColumnWild, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = IndexCreature, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
@@ -1531,6 +2038,47 @@ End
 		  If Self.EngramCraftingCostList.CanDelete Then
 		    Self.EngramCraftingCostList.DoClear
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CreatureStatsList
+	#tag Event
+		Sub Open()
+		  Me.ColumnTypeAt(Self.CreatureStatColumnLabel) = Listbox.CellTypes.CheckBox
+		  
+		  Me.ColumnTypeAt(Self.CreatureStatColumnBase) = Listbox.CellTypes.TextField
+		  Me.ColumnTypeAt(Self.CreatureStatColumnWild) = Listbox.CellTypes.TextField
+		  Me.ColumnTypeAt(Self.CreatureStatColumnTamed) = Listbox.CellTypes.TextField
+		  Me.ColumnTypeAt(Self.CreatureStatColumnAdd) = Listbox.CellTypes.TextField
+		  Me.ColumnTypeAt(Self.CreatureStatColumnAffinity) = Listbox.CellTypes.TextField
+		  
+		  Me.ColumnAlignmentAt(Self.CreatureStatColumnBase) = Listbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.CreatureStatColumnWild) = Listbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.CreatureStatColumnTamed) = Listbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.CreatureStatColumnAdd) = Listbox.Alignments.Right
+		  Me.ColumnAlignmentAt(Self.CreatureStatColumnAffinity) = Listbox.Alignments.Right
+		  
+		  Var Stats() As Beacon.Stat = Beacon.Stats.All
+		  Me.RowCount = Stats.Count
+		  For Each Stat As Beacon.Stat In Stats
+		    Var Label As String = Stat.Key
+		    Select Case Label
+		    Case Beacon.Stats.CraftingSpeed.Key
+		      Label = "Crafting"
+		    Case Beacon.Stats.Temperature.Key
+		      Label = "Temp"
+		    End Select
+		    
+		    Me.CellValueAt(Stat.Index, Self.CreatureStatColumnLabel) = Label
+		  Next
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub CellAction(row As Integer, column As Integer)
+		  #Pragma Unused Row
+		  #Pragma Unused Column
+		  
+		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents

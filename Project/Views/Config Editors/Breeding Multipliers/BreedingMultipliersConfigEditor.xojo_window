@@ -730,7 +730,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Visible         =   True
       Width           =   760
    End
-   Begin UITweaks.ResizedTextField ImprintPeriodPreviewField
+   Begin DelayedTextField ImprintPeriodPreviewField
       AcceptTabs      =   False
       Alignment       =   2
       AutoDeactivate  =   True
@@ -757,7 +757,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockTop         =   True
       Mask            =   ""
       Password        =   False
-      ReadOnly        =   True
+      ReadOnly        =   False
       Scope           =   2
       TabIndex        =   34
       TabPanelIndex   =   0
@@ -1466,7 +1466,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStats()
-		  Var CuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period") * Self.Config(False).BabyCuddleIntervalMultiplier
+		  Var CuddlePeriod As Double = LocalData.SharedInstance.GetDoubleVariable("Cuddle Period") * Self.Config(False).BabyCuddleIntervalMultiplier
 		  Var Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", Self.Document.Mods)
 		  Var SelectedClass As String
 		  If CreaturesList.SelectedRowIndex > -1 Then
@@ -1484,10 +1484,10 @@ End
 		      Continue
 		    End If
 		    
-		    Var IncubationSeconds As UInt64 = Creature.IncubationTime / IncubationMultiplier
-		    Var MatureSeconds As UInt64 = Creature.MatureTime / MatureMultiplier
-		    Var CooldownMin As UInt64 = Creature.MinMatingInterval * CooldownMultiplier
-		    Var CooldownMax As UInt64 = Creature.MaxMatingInterval * CooldownMultiplier
+		    Var IncubationSeconds As Double = Round(Creature.IncubationTime / IncubationMultiplier)
+		    Var MatureSeconds As Double = Round(Creature.MatureTime / MatureMultiplier)
+		    Var CooldownMin As Double = Round(Creature.MinMatingInterval * CooldownMultiplier)
+		    Var CooldownMax As Double = Round(Creature.MaxMatingInterval * CooldownMultiplier)
 		    
 		    Var MaxCuddles As Integer = Floor(MatureSeconds / CuddlePeriod)
 		    Var PerCuddle As Double = 0
@@ -1508,7 +1508,9 @@ End
 		  CreaturesList.ScrollPosition = Position
 		  CreaturesList.Sort
 		  
-		  Self.ImprintPeriodPreviewField.Value = Beacon.SecondsToString(CuddlePeriod)
+		  If Self.Focus <> Self.ImprintPeriodPreviewField Then
+		    Self.ImprintPeriodPreviewField.Value = Beacon.SecondsToString(Round(CuddlePeriod))
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -1701,8 +1703,8 @@ End
 	#tag Event
 		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  If Column = Self.ColumnIncubationTime Or Column = Self.ColumnMatureTime Then
-		    Var Period1 As UInt64 = Me.CellTagAt(Row1, Column)
-		    Var Period2 As UInt64 = Me.CellTagAt(Row2, Column)
+		    Var Period1 As Double = Me.CellTagAt(Row1, Column)
+		    Var Period2 As Double = Me.CellTagAt(Row2, Column)
 		    If Period1 = Period2 Then
 		      Result = 0
 		    ElseIf Period1 > Period2 Then
@@ -1710,11 +1712,45 @@ End
 		    Else
 		      Result = -1
 		    End If
-		    Return True
+		  ElseIf Column = Self.ColumnNumImprints Then
+		    Var Val1 As Integer = Me.CellValueAt(Row1, Column).ToInteger
+		    Var Val2 As Integer = Me.CellValueAt(Row2, Column).ToInteger
+		    If Val1 = Val2 Then
+		      Result = 0
+		    ElseIf Val1 > Val2 Then
+		      Result = 1
+		    Else
+		      Result = -1
+		    End If
 		  Else
 		    Return False
 		  End If
+		  
+		  Return True
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events ImprintPeriodPreviewField
+	#tag Event
+		Sub TextChange()
+		  If Self.SettingUp Or Self.Focus <> Me Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Var Interval As DateInterval = Beacon.ParseInterval(Me.Value)
+		  If Interval = Nil Then
+		    Self.SettingUp = False
+		    Return
+		  End If
+		  Var DesiredSeconds As Double = Interval.TotalSeconds
+		  Var OfficialSeconds As Double = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period")
+		  Self.Config(True).BabyCuddleIntervalMultiplier = DesiredSeconds / OfficialSeconds
+		  Self.ImprintPeriodField.Value = Format(Self.Config(True).BabyCuddleIntervalMultiplier, "0.0#####")
+		  Self.Changed = True
+		  Self.SettingUp = False
+		  Self.UpdateStats()
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Header

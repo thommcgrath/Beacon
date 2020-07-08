@@ -204,7 +204,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT NOT NULL PRIMARY KEY, title TEXT NOT NULL, body TEXT NOT NULL, detail_url TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE notifications (notification_id TEXT NOT NULL PRIMARY KEY, message TEXT NOT NULL, secondary_message TEXT, user_data TEXT NOT NULL, moment TEXT NOT NULL, read INTEGER NOT NULL, action_url TEXT, deleted INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', incubation_time INTEGER, mature_time INTEGER, stats TEXT, used_stats INTEGER, mating_interval_min INTEGER, mating_interval_max INTEGER);")
+		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', incubation_time REAL, mature_time REAL, stats TEXT, used_stats INTEGER, mating_interval_min REAL, mating_interval_max REAL);")
 		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', groups TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
 		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, tags TEXT NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT NOT NULL, header TEXT NOT NULL, key TEXT NOT NULL, value_type TEXT NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT, nitrado_format TEXT);")
 		  
@@ -2218,14 +2218,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    
 		    If Results.Column("incubation_time").Value <> Nil Then
-		      Creature.IncubationTime = Results.Column("incubation_time").Value.UInt64Value
+		      Creature.IncubationTime = Results.Column("incubation_time").DoubleValue
 		    End If
 		    If Results.Column("mature_time").Value <> Nil Then
-		      Creature.MatureTime = Results.Column("mature_time").Value.UInt64Value
+		      Creature.MatureTime = Results.Column("mature_time").DoubleValue
 		    End If
 		    If Results.Column("mating_interval_min").Value <> Nil And Results.Column("mating_interval_max").Value <> Nil Then
-		      Creature.MinMatingInterval = Results.Column("mating_interval_min").Value.UInt64Value
-		      Creature.MaxMatingInterval = Results.Column("mating_interval_max").Value.UInt64Value
+		      Creature.MinMatingInterval = Results.Column("mating_interval_min").DoubleValue
+		      Creature.MaxMatingInterval = Results.Column("mating_interval_max").DoubleValue
 		    End If
 		    
 		    Creatures.AddRow(Creature)
