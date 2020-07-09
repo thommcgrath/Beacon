@@ -680,12 +680,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub AuthenticationError()
-		  Var Provider As String = "OAuth"
-		  If (Me.Account Is Nil) = False Then
-		    Provider = Me.Account.Provider
+		  If Self.ShowConfirm("Beacon is unable to communicate with its server", "If your internet connection is working, make sure Beacon can contact its server at beaconapp.cc. Press the ""More Info"" button for some troubleshooting tips.", "More Info", "Cancel") Then
+		    ShowURL(Beacon.WebURL("/help/solving_connection_problems_to"))
 		  End If
-		  
-		  Self.ShowAlert("Unable to communicate with " + Provider, "Sorry, the " + Provider + " API is not available at this time.")
 		  
 		  If (Self.mAuthController Is Nil) = False Then
 		    Self.mAuthController.Cancelled = True
