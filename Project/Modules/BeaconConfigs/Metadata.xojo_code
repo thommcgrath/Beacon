@@ -187,7 +187,12 @@ Implements ObservationKit.Observable
 		  Wend
 		  
 		  If Styles.StyleRunCount > 0 Then
-		    Return Styles.RTFData
+		    // This errors sometimes for who knows why
+		    Try
+		      Return Styles.RTFData
+		    Catch Err As RuntimeException
+		      Return ""
+		    End Try
 		  Else
 		    Return ""
 		  End If
