@@ -9,7 +9,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   544
+   Height          =   608
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
@@ -693,7 +693,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   431
+      Top             =   495
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -721,7 +721,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabIndex        =   32
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   381
+      Top             =   445
       Transparent     =   False
       Visible         =   True
       Width           =   760
@@ -763,7 +763,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   397
+      Top             =   461
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -799,7 +799,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   397
+      Top             =   461
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1244,7 +1244,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   621
+      Left            =   263
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -1263,7 +1263,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   317
+      Top             =   381
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -1281,7 +1281,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   378
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -1299,7 +1299,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   317
+      Top             =   381
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1351,7 +1351,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   378
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -1369,9 +1369,122 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
+      Top             =   415
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   346
+   End
+   Begin UITweaks.ResizedLabel ImprintAmountLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   22
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   378
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   36
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextAlignment   =   "3"
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   317
+      Transparent     =   False
+      Underline       =   False
+      Value           =   "Imprint Amount Multiplier:"
+      Visible         =   True
+      Width           =   231
+   End
+   Begin UITweaks.ResizedTextField ImprintAmountField
+      AllowAutoDeactivate=   True
+      AllowFocusRing  =   True
+      AllowSpellChecking=   False
+      AllowTabs       =   False
+      BackgroundColor =   &cFFFFFF00
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Format          =   ""
+      HasBorder       =   True
+      Height          =   22
+      Hint            =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   621
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      MaximumCharactersAllowed=   0
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   37
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextAlignment   =   "2"
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   317
+      Transparent     =   False
+      Underline       =   False
+      ValidationMask  =   ""
+      Value           =   "1.0"
+      Visible         =   True
+      Width           =   103
+   End
+   Begin Label ImprintAmountHelp
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   18
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   378
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   38
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextAlignment   =   "3"
+      TextColor       =   &c00000000
+      Tooltip         =   ""
       Top             =   351
       Transparent     =   False
       Underline       =   False
+      Value           =   "Greater than 1.0 imprints more per cuddle"
       Visible         =   True
       Width           =   346
    End
@@ -1382,7 +1495,7 @@ End
 	#tag Event
 		Sub Open()
 		  Self.MinimumWidth = 800
-		  Self.MinimumHeight = 544
+		  Self.MinimumHeight = 608
 		End Sub
 	#tag EndEvent
 
@@ -1401,6 +1514,7 @@ End
 		  Self.ImprintLossSpeedField.Value = Format(Config.BabyCuddleLoseImprintQualitySpeedMultiplier, "0.0#####")
 		  Self.ImprintPeriodField.Value = Format(Config.BabyCuddleIntervalMultiplier, "0.0#####")
 		  Self.ImprintStatScaleField.Value = Format(Config.BabyImprintingStatScaleMultiplier, "0.0#####")
+		  Self.ImprintAmountField.Value = Format(Config.BabyImprintAmountMultiplier, "0.0#####")
 		  Self.IncubationSpeedField.Value = Format(Config.EggHatchSpeedMultiplier, "0.0#####")
 		  Self.MatureSpeedField.Value = Format(Config.BabyMatureSpeedMultiplier, "0.0#####")
 		  Self.MatingSpeedField.Value = Format(Config.MatingSpeedMultiplier, "0.0#####")
@@ -1474,6 +1588,7 @@ End
 		  Var IncubationMultiplier As Double = Self.Config(False).EggHatchSpeedMultiplier
 		  Var MatureMultiplier As Double = Self.Config(False).BabyMatureSpeedMultiplier
 		  Var CooldownMultiplier As Double = Self.Config(False).MatingIntervalMultiplier
+		  Var ImprintAmountMultiplier As Double = Self.Config(False).BabyImprintAmountMultiplier
 		  
 		  For Each Creature As Beacon.Creature In Creatures
 		    If Creature.IncubationTime = 0 Or Creature.MatureTime = 0 Then
@@ -1485,12 +1600,19 @@ End
 		    Var CooldownMin As UInt64 = Creature.MinMatingInterval * CooldownMultiplier
 		    Var CooldownMax As UInt64 = Creature.MaxMatingInterval * CooldownMultiplier
 		    
-		    Var MaxCuddles As Integer = Floor(MatureSeconds / CuddlePeriod)
+		    Var MaxCuddles As Integer = 0
 		    Var PerCuddle As Double = 0
-		    If MaxCuddles > 0 Then
-		      PerCuddle = 1 / MaxCuddles
+		    If ImprintAmountMultiplier > 0 Then
+		      MaxCuddles = Floor(MatureSeconds / CuddlePeriod)
+		      
+		      If MaxCuddles > 0 Then
+		        PerCuddle = Min((1 / MaxCuddles) * ImprintAmountMultiplier, 1.0)
+		        
+		        // Thanks to BabyImprintAmountMultiplier, the number of cuddles may be reduced, so we need to recompute
+		        MaxCuddles = Ceil(1.0 / PerCuddle)
+		      End If
 		    End If
-		    Var MaxImprint As Double = MaxCuddles * PerCuddle
+		    Var MaxImprint As Double = Min(MaxCuddles * PerCuddle, 1.0)
 		    
 		    CreaturesList.AddRow(Creature.Label, Beacon.SecondsToString(IncubationSeconds), Beacon.SecondsToString(MatureSeconds), Beacon.SecondsToString(CooldownMin, CooldownMax), MaxCuddles.ToString, If(MaxCuddles = 0, "Can't Imprint", Format(PerCuddle, "0%")), If(PerCuddle = 0, "", Format(MaxImprint, "0%")))
 		    CreaturesList.CellTagAt(CreaturesList.LastAddedRowIndex, Self.ColumnIncubationTime) = IncubationSeconds
@@ -1719,7 +1841,7 @@ End
 		  Select Case Item.Name
 		  Case "AutoTuneButton"
 		    Var Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", Self.Document.Mods)
-		    Var Interval As Double = BreedingTunerDialog.Present(Self, Self.Config(False).BabyMatureSpeedMultiplier, Creatures)
+		    Var Interval As Double = BreedingTunerDialog.Present(Self, Self.Config(False).BabyMatureSpeedMultiplier, Self.Config(False).BabyImprintAmountMultiplier, Creatures)
 		    If Interval > 0 Then
 		      Self.ImprintPeriodField.Value = Interval.PrettyText
 		      Self.UpdateStats
@@ -1777,6 +1899,26 @@ End
 		  Self.Changed = True
 		  Self.SettingUp = False
 		  Self.UpdateStats
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ImprintAmountField
+	#tag Event
+		Sub TextChange()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Var Value As Double
+		  If Not Self.ParseDouble(Me.Value, Value) Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Self.Config(True).BabyImprintAmountMultiplier = Value
+		  Self.Changed = True
+		  Self.SettingUp = False
+		  Self.UpdateStats()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

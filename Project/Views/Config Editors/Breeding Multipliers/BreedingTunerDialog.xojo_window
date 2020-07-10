@@ -369,21 +369,22 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(MatureSpeedMultiplier As Double, Creatures() As Beacon.Creature)
+		Private Sub Constructor(MatureSpeedMultiplier As Double, ImprintAmountMultiplier As Double, Creatures() As Beacon.Creature)
 		  // Calling the overridden superclass constructor.
 		  Self.mMatureSpeedMultiplier = MatureSpeedMultiplier
 		  Self.mCreatures = Creatures
+		  Self.mImprintAmountMultiplier = ImprintAmountMultiplier
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, MatureSpeedMultiplier As Double, Creatures() As Beacon.Creature) As Double
+		Shared Function Present(Parent As Window, MatureSpeedMultiplier As Double, ImprintAmountMultiplier As Double, Creatures() As Beacon.Creature) As Double
 		  If Parent = Nil Then
 		    Return 0
 		  End If
 		  
-		  Var Win As New BreedingTunerDialog(MatureSpeedMultiplier, Creatures)
+		  Var Win As New BreedingTunerDialog(MatureSpeedMultiplier, ImprintAmountMultiplier, Creatures)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  Var Multiplier As Double = Win.mChosenMultiplier
 		  Win.Close
@@ -403,6 +404,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mCreatures() As Beacon.Creature
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mImprintAmountMultiplier As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -434,7 +439,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Const Threshold = 0.95
+		  Const Threshold = 0.90
 		  
 		  Var Creatures() As Beacon.Creature
 		  For I As Integer = 0 To Self.CreaturesList.RowCount - 1
@@ -455,7 +460,7 @@ End
 		  // Reduce the target by a set amount and compute the imprint multiplier
 		  Var TargetCuddleSeconds As UInt64 = FastestMature * Threshold
 		  Var OfficialCuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period")
-		  Var ImprintMultiplier As Double = TargetCuddleSeconds / OfficialCuddlePeriod
+		  Var ImprintMultiplier As Double = (TargetCuddleSeconds / Self.mImprintAmountMultiplier) / OfficialCuddlePeriod
 		  
 		  Preferences.BreedingTunerCreatures = Self.mLastCheckedList
 		  Self.mChosenMultiplier = ImprintMultiplier
