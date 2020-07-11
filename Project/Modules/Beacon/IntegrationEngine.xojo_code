@@ -88,6 +88,18 @@ Protected Class IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ErrorMessage() As String
+		  Return Self.mErrorMessage
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ErrorMessage(Assigns Value As String)
+		  Self.mErrorMessage = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Finished() As Boolean
 		  Return Self.mFinished Or Self.mErrored Or Self.mCancelled
 		End Function
@@ -492,6 +504,7 @@ Protected Class IntegrationEngine
 		  End If
 		  
 		  Self.Log("Error: Unhandled " + Info.FullName + ": '" + Reason + "'")
+		  Self.ErrorMessage = "Error: Unhandled " + Info.FullName + ": '" + Reason + "'"
 		  Self.Errored = True
 		  Self.Finished = True
 		End Sub
@@ -500,6 +513,7 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h1
 		Protected Sub SetError(Message As String)
 		  Self.Log(Message)
+		  Self.ErrorMessage = Message
 		  Self.Errored = True
 		  Self.Finished = True
 		End Sub
@@ -769,6 +783,10 @@ Protected Class IntegrationEngine
 
 	#tag Property, Flags = &h21
 		Private mErrored As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mErrorMessage As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
