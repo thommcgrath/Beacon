@@ -958,6 +958,26 @@ End
 		    RemovePrereq = Self.RemovePrereqCheck.Value
 		  End If
 		  
+		  // Tek engrams must always be auto unlocked
+		  If EditAutoUnlock Or (EditLevel And (RequiredLevel Is Nil) = False) Or (EditPoints And (RequiredPoints Is Nil) = False) Then
+		    For Each Engram As Beacon.Engram In Engrams
+		      If Engram.RequiredPlayerLevel Is Nil Then
+		        // Tek unlock
+		        Var EngramIsAutoUnlocked As Boolean
+		        If EditAutoUnlock Then
+		          EngramIsAutoUnlocked = AutoUnlock
+		        Else
+		          EngramIsAutoUnlocked = If(Self.mConfig.AutoUnlockEngram(Engram) Is Nil, False, Self.mConfig.AutoUnlockEngram(Engram).BooleanValue)
+		        End If
+		        If EngramIsAutoUnlocked = False Then
+		          // Can't do that
+		          Self.ShowAlert(Engram.Label + " is a Tek engram and must be configured to auto unlock.", "Tek engrams are normally automatically unlocked by defeating bosses. Enter 'Tek' into the 'Required Level' field to use the official unlock config. To have the engram unlocked when the player reaches a certain level, make sure the 'Automatically Unlocks' box is checked.")
+		          Return
+		        End If
+		      End If
+		    Next
+		  End If
+		  
 		  For Each Engram As Beacon.Engram In Engrams
 		    If EditHidden Then
 		      Self.mConfig.Hidden(Engram) = Hidden
