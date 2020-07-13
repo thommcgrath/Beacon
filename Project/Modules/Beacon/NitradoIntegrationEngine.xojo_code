@@ -648,9 +648,9 @@ Inherits Beacon.IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function CheckError(HTTPStatus As Integer, HTTPResponse As MemoryBlock) As Boolean
+		Private Function CheckError(HTTPStatus As Integer, HTTPResponse As MemoryBlock, HTTPException As RuntimeException) As Boolean
 		  Var Message As String
-		  If Self.CheckResponseForError(HTTPStatus, HTTPResponse, Message) Then
+		  If Self.CheckResponseForError(HTTPStatus, HTTPResponse, HTTPException, Message) Then
 		    Self.SetError(Message)
 		    Return True
 		  End If
@@ -659,12 +659,12 @@ Inherits Beacon.IntegrationEngine
 
 	#tag Method, Flags = &h21
 		Private Function CheckError(Socket As SimpleHTTP.SynchronousHTTPSocket) As Boolean
-		  Return Self.CheckError(Socket.LastHTTPStatus, Socket.LastContent)
+		  Return Self.CheckError(Socket.LastHTTPStatus, Socket.LastContent, Socket.LastException)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CheckResponseForError(HTTPStatus As Integer, HTTPResponse As MemoryBlock, ByRef Message As String) As Boolean
+		Shared Function CheckResponseForError(HTTPStatus As Integer, HTTPResponse As MemoryBlock, HTTPException As RuntimeException, ByRef Message As String) As Boolean
 		  Select Case HTTPStatus
 		  Case 401
 		    Message = "Error: Authorization failed."
@@ -691,7 +691,9 @@ Inherits Beacon.IntegrationEngine
 		      Message = "Error: Nitrado responded with an error but no message."
 		    End If
 		  Case 0
-		    If HTTPResponse <> Nil And HTTPResponse.Size > 0 Then
+		    If (HTTPException Is Nil) = False And HTTPException.Message.IsEmpty = False Then
+		      Message = "Connection error: " + HTTPException.Message
+		    ElseIf (HTTPResponse Is Nil) = False And HTTPResponse.Size > 0 Then
 		      Message = "Connection error: " + HTTPResponse.StringValue(0, HTTPResponse.Size).GuessEncoding
 		    Else
 		      Message = "Connection error"
@@ -774,7 +776,7 @@ Inherits Beacon.IntegrationEngine
 		    Select Case Mode
 		    Case DownloadFailureMode.MissingAllowed
 		      Var Message As String
-		      Call Self.CheckResponseForError(Status, Content, Message)
+		      Call Self.CheckResponseForError(Status, Content, Sock.LastException, Message)
 		      If Status = 500 And Message = "Nitrado Error: File doesn't exist (anymore?)" Then
 		        // Bad Nitrado
 		        Status = 404
@@ -785,7 +787,7 @@ Inherits Beacon.IntegrationEngine
 		    Case DownloadFailureMode.ErrorsAllowed
 		      // Do nothing
 		    Case DownloadFailureMode.Required
-		      Call Self.CheckError(Status, Content)
+		      Call Self.CheckError(Sock)
 		    End Select
 		    
 		    Return ""
