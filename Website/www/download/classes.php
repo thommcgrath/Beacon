@@ -1,5 +1,6 @@
 <?php
-	
+
+$api_version = 1;
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 
 $request_method = strtoupper($_SERVER['REQUEST_METHOD']);
