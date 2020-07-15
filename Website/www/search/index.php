@@ -23,7 +23,7 @@ $items = array();
 $results = $database->Query('SELECT COUNT(id) AS result_count FROM search_contents, to_tsquery($1) AS keywords WHERE keywords @@ lexemes AND min_version <= $2;', $query, BeaconCommon::MinVersion());
 $result_count = $results->Field('result_count');
 if ($result_count > 0) {
-	$results = $database->Query('SELECT id, title, body, type, uri, ts_rank(lexemes, keywords) AS rank FROM search_contents, to_tsquery($1) AS keywords WHERE keywords @@ lexemes AND min_version <= $3 ORDER BY rank DESC, title ASC LIMIT $2;', $query, $max_results, BeaconCommon::MinVersion());
+	$results = $database->Query('SELECT id, title, body, type, subtype, uri, ts_rank(lexemes, keywords) AS rank FROM search_contents, to_tsquery($1) AS keywords WHERE keywords @@ lexemes AND min_version <= $3 ORDER BY rank DESC, title ASC LIMIT $2;', $query, $max_results, BeaconCommon::MinVersion());
 	while (!$results->EOF()) {
 		$summary = $results->Field('body');
 		if (strlen($summary) > 200) {
@@ -33,11 +33,29 @@ if ($result_count > 0) {
 			}
 		}
 		
+		$type = $results->Field('type');
+		if ($type == 'Object') {
+			switch ($results->Field('subtype')) {
+			case 'engrams':
+				$type = 'Engram';
+				break;
+			case 'loot_sources':
+				$type = 'Loot Source';
+				break;
+			case 'spawn_points':
+				$type = 'Spawn Point';
+				break;
+			case 'creatures':
+				$type = 'Creature';
+				break;
+			}
+		}
+		
 		$item = array(
 			'id' => $results->Field('id'),
 			'title' => $results->Field('title'),
 			'summary' => $summary,
-			'type' => $results->Field('type'),
+			'type' => $type,
 			'quality' => floatval($results->Field('rank')),
 			'url' => $results->Field('uri')
 		);
