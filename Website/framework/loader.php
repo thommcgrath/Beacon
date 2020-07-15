@@ -18,7 +18,7 @@ spl_autoload_register(function($class_name) {
 	}
 	
 	// check the most recent api too
-	$file = dirname(__FILE__, 2) . '/api/v1/classes/' . $filename;
+	$file = dirname(__FILE__, 2) . '/api/v2/classes/' . $filename;
 	if (file_exists($file)) {
 		include($file);
 	}

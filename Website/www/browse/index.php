@@ -50,6 +50,12 @@ $document_count = BeaconDocument::Search($search_keys, $sort_order, $limit, $off
 $documents = BeaconDocument::Search($search_keys, $sort_order, $limit, $offset, false);
 $end_time = microtime(true);
 
+$maps = BeaconMaps::Masks();
+$map_checkboxes = [];
+foreach ($maps as $mask => $label) {
+	$map_checkboxes[] = '<div><label class="checkbox"><input type="checkbox" name="maps[]" value="' . $mask . '" id="map_checkbox_' . $mask . '"' . (($selected_maps & $mask) == $mask ? ' checked' : '') . '><span></span>' . htmlentities($label) . '</label></div>';
+}
+
 ?><h1>Browse Documents</h1>
 <div id="search_form" class="separator-color">
 	<form action="" method="get">
@@ -58,15 +64,7 @@ $end_time = microtime(true);
 				<td class="label">Maps</td>
 				<td>
 					<div class="option_group">
-						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::TheIsland; ?>" id="map_checkbox_island"<?php if (($selected_maps & BeaconMaps::TheIsland) == BeaconMaps::TheIsland) { echo ' checked'; } ?>><span></span>The Island</label></div>
-						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::ScorchedEarth; ?>" id="map_checkbox_scorched"<?php if (($selected_maps & BeaconMaps::ScorchedEarth) == BeaconMaps::ScorchedEarth) { echo ' checked'; } ?>><span></span>Scorched Earth</label></div>
-						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::Aberration; ?>" id="map_checkbox_aberration"<?php if (($selected_maps & BeaconMaps::Aberration) == BeaconMaps::Aberration) { echo ' checked'; } ?>><span></span>Aberration</label></div>
-						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::Extinction; ?>" id="map_checkbox_extinction"<?php if (($selected_maps & BeaconMaps::Extinction) == BeaconMaps::Extinction) { echo ' checked'; } ?>><span></span>Extinction</label></div>
-						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::Genesis; ?>" id="map_checkbox_genesis"<?php if (($selected_maps & BeaconMaps::Genesis) == BeaconMaps::Genesis) { echo ' checked'; } ?>><span></span>Genesis</label></div>
-						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::TheCenter; ?>" id="map_checkbox_center"<?php if (($selected_maps & BeaconMaps::TheCenter) == BeaconMaps::TheCenter) { echo ' checked'; } ?>><span></span>The Center</label></div>
-						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::Ragnarok; ?>" id="map_checkbox_ragnarok"<?php if (($selected_maps & BeaconMaps::Ragnarok) == BeaconMaps::Ragnarok) { echo ' checked'; } ?>><span></span>Ragnarok</label></div>
-						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::Valguero; ?>" id="map_checkbox_valguero"<?php if (($selected_maps & BeaconMaps::Valguero) == BeaconMaps::Valguero) { echo ' checked'; } ?>><span></span>Valguero</label></div>
-						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::CrystalIsles; ?>" id="map_checkbox_crystalisles"<?php if (($selected_maps & BeaconMaps::CrystalIsles) == BeaconMaps::CrystalIsles) { echo ' checked'; } ?>><span></span>Crystal Isles</label></div>
+						<?php echo implode("\n", $map_checkboxes); ?>
 					</div>
 				</td>
 			</tr>

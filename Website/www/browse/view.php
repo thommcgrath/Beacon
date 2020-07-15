@@ -36,6 +36,7 @@ BeaconTemplate::AddScript(BeaconCommon::AssetURI('generator.js'));
 $author_id = $document->UserID();
 $author = BeaconUser::GetByUserID($author_id);
 $author_name = $author->IsAnonymous() ? 'Anonymous' : $author->Username();
+$maps = BeaconMaps::Masks($document->MapMask());
 
 ?><h1><?php echo htmlentities($document->Name()); ?><br><span class="subtitle">By <?php echo htmlentities($author_name); ?><span class="user-suffix">#<?php echo htmlentities($author->Suffix()); ?></span></span></h1>
 <h3>Description</h3>
@@ -45,7 +46,7 @@ $author_name = $author->IsAnonymous() ? 'Anonymous' : $author->Username();
 <h3>Requirements</h3>
 <div class="indent">
 	<p>Maps: <?php
-$map_names = BeaconMaps::Names($document->MapMask());
+$map_names = array_values($maps);
 if (count($map_names) >= 3) {
 	$last = array_pop($map_names);
 	echo implode(', ', $map_names) . ', and ' . $last;
@@ -123,10 +124,9 @@ if (count($map_names) >= 3) {
 	<div id="mode_customizations">
 		<input type="hidden" id="map_mask" name="map_mask" value="<?php echo ($map_filter & $document->MapMask()); ?>">
 		<table id="options_table">
-		<?php if (count($map_names) > 1) { ?><tr><td class="label">Include Maps:</td><td><?php
+		<?php if (count($maps) > 1) { ?><tr><td class="label">Include Maps:</td><td><?php
 		
-		foreach ($map_names as $name) {
-			$value = BeaconMaps::ValueForName($name);
+		foreach ($maps as $value => $name) {
 			$id = 'map_check_' . $value;
 			echo ' <label class="checkbox"><input id="' . $id . '" type="checkbox" value="' . $value . '"' . (($map_filter & $value) == $value ? ' checked' : '') . '><span></span>' . htmlentities($name) . '</label>';
 		}

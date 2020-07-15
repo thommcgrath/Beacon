@@ -113,38 +113,42 @@ function PullMod(BeaconMod $mod) {
 		$tags = '{' . implode(',', $tags) . '}';
 		
 		$availability = 0;
-		if (is_string($availability_keys)) {
-			$availability_keys = explode(',', $availability_keys);
-		}
-		if (is_array($availability_keys)) {
-			foreach ($availability_keys as $key) {
-				$key = strtolower(trim($key));
-				if ($key === 'island') {
-					$availability = $availability | BeaconEngram::ENVIRONMENT_ISLAND;
-				}
-				if ($key === 'scorched') {
-					$availability = $availability | BeaconEngram::ENVIRONMENT_SCORCHED;
-				}
-				if ($key === 'center') {
-					$availability = $availability | BeaconMaps::TheCenter;
-				}
-				if ($key === 'ragnarok') {
-					$availability = $availability | BeaconMaps::Ragnarok;
-				}
-				if (($key === 'abberation') || ($key === 'aberration')) {
-					$availability = $availability | BeaconMaps::Aberration;
-				}
-				if ($key === 'extinction') {
-					$availability = $availability | BeaconMaps::Extinction;
-				}
-				if ($key === 'valguero') {
-					$availability = $availability | BeaconMaps::Valguero;
-				}
-				if ($key === 'genesis') {
-					$availability = $availability | BeaconMaps::Genesis;
-				}
-				if ($key === 'crystalisles') {
-					$availability = $availability | BeaconMaps::CrystalIsles;
+		if (is_int($availability_keys)) {
+			$availability = $availability_keys;
+		} else {
+			if (is_string($availability_keys)) {
+				$availability_keys = explode(',', $availability_keys);
+			}
+			if (is_array($availability_keys)) {
+				foreach ($availability_keys as $key) {
+					$key = strtolower(trim($key));
+					if ($key === 'island') {
+						$availability = $availability | 1;
+					}
+					if ($key === 'scorched') {
+						$availability = $availability | 2;
+					}
+					if ($key === 'center') {
+						$availability = $availability | 4;
+					}
+					if ($key === 'ragnarok') {
+						$availability = $availability | 8;
+					}
+					if (($key === 'abberation') || ($key === 'aberration')) {
+						$availability = $availability | 16;
+					}
+					if ($key === 'extinction') {
+						$availability = $availability | 32;
+					}
+					if ($key === 'valguero') {
+						$availability = $availability | 64;
+					}
+					if ($key === 'genesis') {
+						$availability = $availability | 128;
+					}
+					if ($key === 'crystalisles') {
+						$availability = $availability | 256;
+					}
 				}
 			}
 		}
