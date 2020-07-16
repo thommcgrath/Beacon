@@ -6,7 +6,9 @@ Implements ObservationKit.Observable
 		Sub GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Profile As Beacon.ServerProfile)
 		  #Pragma Unused SourceDocument
 		  
-		  Values.AddRow(New Beacon.ConfigValue("SessionSettings", "SessionName", Profile.Name))
+		  If (Profile Is Nil Or Profile IsA Beacon.GenericServerProfile Or Profile.Name.IsEmpty) = False Then
+		    Values.AddRow(New Beacon.ConfigValue("SessionSettings", "SessionName", Profile.Name))
+		  End If
 		  
 		  If App.IdentityManager.CurrentIdentity.IsBanned Then
 		    Var Messages() As String
@@ -185,7 +187,12 @@ Implements ObservationKit.Observable
 		  Wend
 		  
 		  If Styles.StyleRunCount > 0 Then
-		    Return Styles.RTFData
+		    // This errors sometimes for who knows why
+		    Try
+		      Return Styles.RTFData
+		    Catch Err As RuntimeException
+		      Return ""
+		    End Try
 		  Else
 		    Return ""
 		  End If

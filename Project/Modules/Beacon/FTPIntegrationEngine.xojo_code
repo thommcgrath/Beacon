@@ -483,11 +483,18 @@ Inherits Beacon.IntegrationEngine
 		Private Function UploadFile(Path As String, Contents As String) As Boolean
 		  Self.mSocketLock.Enter
 		  Self.mSocket.OptionURL = Path
+		  Self.mSocket.OptionUpload = True
 		  Self.SetTLSValues()
 		  Self.mSocket.SetInputData(Contents)
-		  Var Response As Integer = Self.mSocket.PerformMT
+		  Call Self.mSocket.PerformMT
+		  Var ErrorCode As Integer = Self.mSocket.Lasterror
+		  Var ErrorMessage As String = Self.mSocket.LasterrorMessage
+		  Self.mSocket.OptionUpload = False
 		  Self.mSocketLock.Leave
-		  Return Response = CURLSMBS.kError_OK
+		  If ErrorCode <> CURLSMBS.kError_OK Then
+		    App.Log("Error uploading " + Path + ": " + ErrorMessage + ", code " + Str(ErrorCode, "-0"))
+		  End If
+		  Return ErrorCode = CURLSMBS.kError_OK
 		End Function
 	#tag EndMethod
 

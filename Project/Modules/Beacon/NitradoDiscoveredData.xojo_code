@@ -70,6 +70,13 @@ Inherits Beacon.DiscoveredData
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub GameIniContent(Assigns Value As String)
+		  Super.GameIniContent = Value
+		  Self.mGameIniLoaded = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GameUserSettingsIniContent() As String
 		  If Self.mGameUserSettingsIniLoaded = False Then
 		    Super.GameUserSettingsIniContent = Self.DownloadFile("GameUserSettings.ini")
@@ -77,6 +84,13 @@ Inherits Beacon.DiscoveredData
 		  End If
 		  Return Super.GameUserSettingsIniContent
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub GameUserSettingsIniContent(Assigns Value As String)
+		  Super.GameUserSettingsIniContent = Value
+		  Self.mGameUserSettingsIniLoaded = True
+		End Sub
 	#tag EndMethod
 
 

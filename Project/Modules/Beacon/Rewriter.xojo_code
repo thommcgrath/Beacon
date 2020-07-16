@@ -214,15 +214,31 @@ Inherits Global.Thread
 		              ArrayTextContent = KeyLine.Middle(ArrayPos, ArrayEndPos - ArrayPos)
 		            End If
 		            
+		            If BeaconGroupVersion < 10400000 Then
+		              // For safety, Beacon will pretend it didn't manage these sections in the past
+		              Select Case Header
+		              Case "/Script/Engine.GameSession", "/Script/ShooterGame.ShooterGameUserSettings", "ScalabilityGroups"
+		                Continue
+		              End Select
+		            End If
+		            
+		            If Header = "SessionSettings" Then
+		              // Never remove anything from SessionSettings, only add/replace
+		              Continue
+		            End If
+		            
 		            Var ManagedKeys() As String = ArrayTextContent.Split(",")
-		            Var SectionContents As Dictionary = UntouchedConfigs.Value(Header)
-		            For Each ManagedKey As String In ManagedKeys
-		              If SectionContents.HasKey(ManagedKey) Then
-		                SectionContents.Remove(ManagedKey)
+		            Var SectionContents As Dictionary
+		            If UntouchedConfigs.HasKey(Header) Then
+		              SectionContents = UntouchedConfigs.Value(Header)
+		              For Each ManagedKey As String In ManagedKeys
+		                If SectionContents.HasKey(ManagedKey) Then
+		                  SectionContents.Remove(ManagedKey)
+		                End If
+		              Next
+		              If SectionContents.KeyCount = 0 Then
+		                UntouchedConfigs.Remove(Header)
 		              End If
-		            Next
-		            If SectionContents.KeyCount = 0 Then
-		              UntouchedConfigs.Remove(Header)
 		            End If
 		          Next
 		        End If

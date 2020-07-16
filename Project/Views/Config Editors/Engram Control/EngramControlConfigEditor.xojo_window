@@ -395,6 +395,10 @@ End
 		Private Sub SetupEngramsList(SelectEngrams() As Beacon.Engram = Nil)
 		  Var Config As BeaconConfigs.EngramControl = Self.Config(False)
 		  Var Engrams() As Beacon.Engram = Beacon.Merge(Config.SpecifiedEngrams, LocalData.SharedInstance.SearchForEngramEntries("", Self.Document.Mods, ""))
+		  Var LabelCounts As New Dictionary
+		  For Each Engram As Beacon.Engram In Engrams
+		    LabelCounts.Value(Engram.Label) = LabelCounts.Lookup(Engram.Label, 0) + 1
+		  Next
 		  
 		  Var Selected() As String
 		  If SelectEngrams = Nil Then
@@ -415,7 +419,11 @@ End
 		  For Idx As Integer = 0 To Bound
 		    Var Engram As Beacon.Engram = Engrams(Idx)
 		    Self.EngramList.RowTagAt(Idx) = Engram
-		    Self.EngramList.CellValueAt(Idx, 0) = Engram.Label
+		    If LabelCounts.Lookup(Engram.Label, 0) > 1 Then
+		      Self.EngramList.CellValueAt(Idx, 0) = Engram.Label + " (" + Engram.ModName + ")"
+		    Else
+		      Self.EngramList.CellValueAt(Idx, 0) = Engram.Label
+		    End If
 		    
 		    Var Behaviors() As String
 		    
@@ -452,7 +460,7 @@ End
 		          Behaviors.AddRow("Auto unlocks at spawn")
 		        End If
 		      Else
-		        If IsNull(RequiredLevel) = False And IsNull(RequiredPoints) = False Then
+		        If (Engram.RequiredPlayerLevel Is Nil) = False And IsNull(RequiredLevel) = False And IsNull(RequiredPoints) = False Then
 		          Behaviors.AddRow("Unlockable at " + If(RequiredLevel.IntegerValue > 0, "level " + RequiredLevel.IntegerValue.ToString, "spawn") + " for " + If(RequiredPoints.IntegerValue > 0, RequiredPoints.IntegerValue.ToString + " points", "free"))
 		        Else
 		          Behaviors.AddRow("Auto unlocks by special event")

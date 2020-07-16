@@ -782,6 +782,8 @@ End
 		  Var Now As DateTime = DateTime.Now
 		  Self.DeployLabel = Str(NowGMT.Year, "0000") + "-" + Str(NowGMT.Month, "00") + "-" + Str(NowGMT.Day, "00") + " " + Str(NowGMT.Hour, "00") + ":" + Str(NowGMT.Minute, "00") + ":" + Str(NowGMT.Second, "00") + " GMT (" + Now.ToString(Locale.Current, DateTime.FormatStyles.None, DateTime.FormatStyles.Short) + " " + Now.Timezone.Abbreviation + ")"
 		  
+		  Var ProfileProblems As New Dictionary
+		  
 		  Self.Engines = New Dictionary
 		  For I As Integer = Self.ServerList.LastRowIndex DownTo 0
 		    If Not Self.ServerList.CellCheckBoxValueAt(I, 0) Then
@@ -790,18 +792,25 @@ End
 		    End If
 		    
 		    Var Profile As Beacon.ServerProfile = Self.ServerList.RowTagAt(I)
+		    If Profile Is Nil Then
+		      ProfileProblems.Value("profile at row " + Str(I, "0")) = "Nil profile"
+		      Continue
+		    End If
+		    
 		    Var Engine As Beacon.IntegrationEngine
 		    Select Case Profile
 		    Case IsA Beacon.NitradoServerProfile
 		      Engine = New Beacon.NitradoIntegrationEngine(Profile)
 		    Case IsA Beacon.FTPServerProfile
-		      //DeploymentEngine = New Beacon.FTPDeploymentEngine(Beacon.FTPServerProfile(Profile))
+		      Engine = New Beacon.FTPIntegrationEngine(Profile)
 		    Case IsA Beacon.ConnectorServerProfile
 		      //DeploymentEngine = New Beacon.ConnectorDeploymentEngine(Beacon.ConnectorServerProfile(Profile))
 		    Case IsA Beacon.LocalServerProfile
 		      Engine = New Beacon.LocalIntegrationEngine(Profile)
 		    End Select
-		    If IsNull(Engine) Then
+		    If Engine Is Nil Then
+		      Var ProfileInfo As Introspection.TypeInfo = Introspection.GetType(Profile)
+		      ProfileProblems.Value("profile """ + Profile.Name + """") = "Unknown profile class: " + ProfileInfo.FullName
 		      Continue
 		    End If
 		    
@@ -810,6 +819,18 @@ End
 		    Self.Engines.Value(Engine) = Profile
 		    Self.ServerList.CellTagAt(I, 1) = Engine
 		  Next
+		  
+		  If ProfileProblems.KeyCount > 0 Then
+		    Var Problems() As String
+		    For Each Entry As DictionaryEntry In ProfileProblems
+		      Problems.AddRow("Problem with " + Entry.Key.StringValue + " is """ + Entry.Value.StringValue + """")
+		    Next
+		    
+		    Var Explanation As String = "The following problems were reported. Please report this issue." + EndOfLine + EndOfLine + Problems.Join(EndOfLine) + EndOfLine + EndOfLine + "Importing again may solve the problem, but the issue should still be reported."
+		    Self.ShowAlert("There was a problem starting the deploy. One or more server profiles did not setup correctly.", Explanation)
+		    Self.Close
+		    Return
+		  End If
 		  
 		  // Hide the checkbox column
 		  Self.ServerList.ColumnWidths = "0,*"

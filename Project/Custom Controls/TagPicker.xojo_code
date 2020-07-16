@@ -77,9 +77,116 @@ Inherits ControlCanvas
 	#tag EndEvent
 
 	#tag Event
+		Sub Open()
+		  RaiseEvent Open()
+		  Self.AutoResize()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
+		  Var HeightDelta As Integer
+		  Self.Paint(G, HeightDelta)
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h21
+		Private Shared Function ArrayToString(Source() As String) As String
+		  Var Clone() As String
+		  For Each Value As String In Source
+		    Clone.AddRow(Value)
+		  Next
+		  Clone.Sort
+		  Return Clone.Join(",")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AutoResize()
+		  Var HeightDelta As Integer
+		  Var Temp As New Picture(Self.Width, Self.Height)
+		  Self.Paint(Temp.Graphics, HeightDelta)
+		  If HeightDelta <> 0 Then
+		    Self.ResizeBy(HeightDelta)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ClearSelections()
+		  Var Arr() As String
+		  Self.SetSelections(Arr, Arr)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function ColorsAreSimilar(Color1 As Color, Color2 As Color, Threshold As Double) As Boolean
+		  Var Red As Double = (Color1.Red - Color2.Red)
+		  Var Green As Double = (Color1.Green - Color2.Green)
+		  Var Blue As Double = (Color1.Blue - Color2.Blue)
+		  Return ((Red * Red) + (Green * Green) + (Blue * Blue)) <= Threshold * Threshold
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.Border = Self.BorderTop Or Self.BorderLeft Or Self.BorderBottom Or Self.BorderRight
+		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ContentArea() As Xojo.Rect
+		  Var X, Y, W, H As Integer
+		  W = Self.Width
+		  H = Self.Height
+		  
+		  Var Borders As Integer = Self.Border
+		  If (Borders And Self.BorderTop) = Self.BorderTop Then
+		    Y = Y + 1
+		    H = H - 1
+		  End If
+		  If (Borders And Self.BorderBottom) = Self.BorderBottom Then
+		    H = H - 1
+		  End If
+		  If (Borders And Self.BorderLeft) = Self.BorderLeft Then
+		    X = X + 1
+		    W = W - 1
+		  End If
+		  If (Borders And Self.BorderRight) = Self.BorderRight Then
+		    W = W - 1
+		  End If
+		  
+		  Return New Xojo.Rect(X, Y, W, H)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ExcludedTags() As String()
+		  Var Tags() As String
+		  For Each Tag As String In Self.mExcludeTags
+		    Tags.AddRow(Tag)
+		  Next
+		  Return Tags
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LocalizeCoordinates(ByRef X As Integer, ByRef Y As Integer)
+		  If (Self.Border And Self.BorderTop) = Self.BorderTop Then
+		    Y = Y + 1
+		  End If
+		  If (Self.Border And Self.BorderLeft) = Self.BorderLeft Then
+		    X = X + 1
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Paint(G As Graphics, ByRef HeightDelta As Integer)
 		  Var ContentArea As Xojo.Rect = Self.ContentArea
 		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.DrawRectangle(ContentArea.Left - 1, ContentArea.Top - 1, ContentArea.Width + 2, ContentArea.Height + 2)
@@ -157,14 +264,8 @@ Inherits ControlCanvas
 		  Next
 		  
 		  Self.mContentHeight = YPos + CellHeight + VerticalSpacing
-		  Var HeightDelta As Integer = Self.mContentHeight - ContentArea.Height
+		  HeightDelta = Self.mContentHeight - ContentArea.Height
 		  Self.mOverflowHeight = Max(HeightDelta, 0)
-		  If HeightDelta <> 0 Then
-		    If Self.mRepaintKey <> "" Then
-		      CallLater.Cancel(Self.mRepaintKey)
-		    End If
-		    Self.mRepaintKey = CallLater.Schedule(1, AddressOf ResizeBy, HeightDelta)
-		  End If
 		  
 		  If Self.mOverflowHeight > 0 Then
 		    Var TrackHeight As Integer = ContentArea.Height - 10  
@@ -173,88 +274,6 @@ Inherits ControlCanvas
 		    
 		    G.DrawingColor = SystemColors.LabelColor.AtOpacity(0.1)
 		    G.FillRoundRectangle(ContentArea.Right - 10, ThumbTop, 5, ThumbHeight, 5, 5)
-		  End If
-		End Sub
-	#tag EndEvent
-
-
-	#tag Method, Flags = &h21
-		Private Shared Function ArrayToString(Source() As String) As String
-		  Var Clone() As String
-		  For Each Value As String In Source
-		    Clone.AddRow(Value)
-		  Next
-		  Clone.Sort
-		  Return Clone.Join(",")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ClearSelections()
-		  Var Arr() As String
-		  Self.SetSelections(Arr, Arr)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Shared Function ColorsAreSimilar(Color1 As Color, Color2 As Color, Threshold As Double) As Boolean
-		  Var Red As Double = (Color1.Red - Color2.Red)
-		  Var Green As Double = (Color1.Green - Color2.Green)
-		  Var Blue As Double = (Color1.Blue - Color2.Blue)
-		  Return ((Red * Red) + (Green * Green) + (Blue * Blue)) <= Threshold * Threshold
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor()
-		  Self.Border = Self.BorderTop Or Self.BorderLeft Or Self.BorderBottom Or Self.BorderRight
-		  Super.Constructor
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function ContentArea() As Xojo.Rect
-		  Var X, Y, W, H As Integer
-		  W = Self.Width
-		  H = Self.Height
-		  
-		  Var Borders As Integer = Self.Border
-		  If (Borders And Self.BorderTop) = Self.BorderTop Then
-		    Y = Y + 1
-		    H = H - 1
-		  End If
-		  If (Borders And Self.BorderBottom) = Self.BorderBottom Then
-		    H = H - 1
-		  End If
-		  If (Borders And Self.BorderLeft) = Self.BorderLeft Then
-		    X = X + 1
-		    W = W - 1
-		  End If
-		  If (Borders And Self.BorderRight) = Self.BorderRight Then
-		    W = W - 1
-		  End If
-		  
-		  Return New Xojo.Rect(X, Y, W, H)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ExcludedTags() As String()
-		  Var Tags() As String
-		  For Each Tag As String In Self.mExcludeTags
-		    Tags.AddRow(Tag)
-		  Next
-		  Return Tags
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub LocalizeCoordinates(ByRef X As Integer, ByRef Y As Integer)
-		  If (Self.Border And Self.BorderTop) = Self.BorderTop Then
-		    Y = Y + 1
-		  End If
-		  If (Self.Border And Self.BorderLeft) = Self.BorderLeft Then
-		    X = X + 1
 		  End If
 		End Sub
 	#tag EndMethod
@@ -383,6 +402,7 @@ Inherits ControlCanvas
 		      End If
 		    End If
 		    
+		    Self.AutoResize()
 		    Self.Invalidate()
 		  End If
 		End Sub
@@ -395,6 +415,10 @@ Inherits ControlCanvas
 		End Sub
 	#tag EndMethod
 
+
+	#tag Hook, Flags = &h0
+		Event Open()
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event ShouldAdjustHeight(Delta As Integer)

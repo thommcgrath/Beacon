@@ -15,7 +15,7 @@ Protected Class OAuth2Client
 		    Return
 		  End If
 		  
-		  If Force = True Or Self.mAccount = Nil Then
+		  If Force = True Or Self.mAccount Is Nil Or Self.mAccount.RefreshToken.IsEmpty Then
 		    // Start a brand new authorization
 		    Self.NewAuthorization()
 		    Return
@@ -56,13 +56,18 @@ Protected Class OAuth2Client
 
 	#tag Method, Flags = &h21
 		Private Sub CheckStatus()
-		  If Self.mCheckSocket = Nil Then
-		    Self.mCheckSocket = New URLConnection
-		    AddHandler mCheckSocket.Error, WeakAddressOf mCheckSocket_Error
-		    AddHandler mCheckSocket.ContentReceived, WeakAddressOf mCheckSocket_ContentReceived
+		  If (Self.mCheckSocket Is Nil) = False Then
+		    RemoveHandler mCheckSocket.Error, WeakAddressOf mCheckSocket_Error
+		    RemoveHandler mCheckSocket.ContentReceived, WeakAddressOf mCheckSocket_ContentReceived
+		    Self.mCheckSocket.Disconnect
+		    Self.mCheckSocket = Nil
 		  End If
 		  
-		  Self.mCheckSocket.Send("GET", Self.AuthURL + "lookup?requestid=" + EncodeURLComponent(Self.mRequestID))
+		  Self.mCheckSocket = New URLConnection
+		  AddHandler mCheckSocket.Error, WeakAddressOf mCheckSocket_Error
+		  AddHandler mCheckSocket.ContentReceived, WeakAddressOf mCheckSocket_ContentReceived
+		  
+		  Self.mCheckSocket.Send("GET", Self.AuthURL + "lookup?requestid=" + EncodeURLComponent(Self.mRequestID), 10)
 		End Sub
 	#tag EndMethod
 
@@ -73,7 +78,9 @@ Protected Class OAuth2Client
 		    Self.mCheckStatusKey = ""
 		  End If
 		  
-		  If Self.mCheckSocket <> Nil Then
+		  If (Self.mCheckSocket Is Nil) = False Then
+		    RemoveHandler mCheckSocket.Error, WeakAddressOf mCheckSocket_Error
+		    RemoveHandler mCheckSocket.ContentReceived, WeakAddressOf mCheckSocket_ContentReceived
 		    Self.mCheckSocket.Disconnect
 		    Self.mCheckSocket = Nil
 		  End If
@@ -135,7 +142,11 @@ Protected Class OAuth2Client
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  
-		  If HTTPStatus <> 200 Then
+		  If HTTPStatus <= 0 Then
+		    RaiseEvent DismissWaitingWindow()
+		    RaiseEvent AuthenticationError()
+		    Return
+		  ElseIf HTTPStatus <> 200 Then
 		    Self.mCheckStatusKey = CallLater.Schedule(5000, AddressOf CheckStatus)
 		    Return
 		  End If
@@ -185,7 +196,7 @@ Protected Class OAuth2Client
 		    
 		    RaiseEvent Authenticated
 		  Catch Err As RuntimeException
-		    RaiseEvent AuthenticationError
+		    RaiseEvent AuthenticationError()
 		  End Try
 		  Self.EndTask()
 		End Sub
@@ -234,7 +245,9 @@ Protected Class OAuth2Client
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
-		  If Status <> 200 Then
+		  If Status <= 0 Then
+		    RaiseEvent AuthenticationError()
+		  ElseIf Status <> 200 Then
 		    Self.NewAuthorization()
 		  Else
 		    Var Dict As Dictionary

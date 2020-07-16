@@ -47,6 +47,16 @@ Inherits URLConnection
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function LastString() As String
+		  If Self.mLastContent Is Nil Then
+		    Return ""
+		  Else
+		    Return Self.mLastContent
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Send(Method As String, URL As String)
 		  Self.mOriginThread = App.CurrentThread
 		  Super.Send(Method, URL)

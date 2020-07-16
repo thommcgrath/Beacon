@@ -157,12 +157,11 @@ Inherits Beacon.IntegrationEngine
 		    Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		    Sock.SetFormData(FormData)
 		    Sock.Send("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings")
-		    Var Content As String = Sock.LastContent
-		    Var Status As Integer = Sock.LastHTTPStatus
-		    
-		    If Self.Finished Or Self.CheckError(Status, Content) Then
+		    If Self.Finished Or Self.CheckError(Sock) Then
 		      Return False
 		    End If
+		    Var Content As String = Sock.LastString
+		    Var Status As Integer = Sock.LastHTTPStatus
 		    
 		    Try
 		      Var Response As Dictionary = Beacon.ParseJSON(Content)
@@ -239,12 +238,11 @@ Inherits Beacon.IntegrationEngine
 		  
 		  Self.Log("Finding servers…")
 		  Socket.Send("GET", "https://api.nitrado.net/services")
-		  Var Content As String = Socket.LastContent
-		  Var Status As Integer = Socket.LastHTTPStatus
-		  
-		  If Self.Finished Or Self.CheckError(Status, Content) Then
+		  If Self.Finished Or Self.CheckError(Socket) Then
 		    Return Servers
 		  End If
+		  Var Content As String = Socket.LastString
+		  Var Status As Integer = Socket.LastHTTPStatus
 		  
 		  Var Parsed As Variant
 		  Try
@@ -301,11 +299,10 @@ Inherits Beacon.IntegrationEngine
 		      Var DetailsSocket As New SimpleHTTP.SynchronousHTTPSocket
 		      DetailsSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		      DetailsSocket.Send("GET", "https://api.nitrado.net/services/" + Profile.ServiceID.ToString(Locale.Raw, "#") + "/gameservers")
-		      Var DetailsContent As String = DetailsSocket.LastContent
-		      Var DetailsStatus As Integer = DetailsSocket.LastHTTPStatus
-		      If Self.Finished Or Self.CheckError(DetailsStatus, DetailsContent) Then
+		      If Self.Finished Or Self.CheckError(DetailsSocket) Then
 		        Continue
 		      End If
+		      Var DetailsContent As String = DetailsSocket.LastString
 		      
 		      Var DetailsResponse As Dictionary = Beacon.ParseJSON(DetailsContent)
 		      Var DetailsData As Dictionary = DetailsResponse.Value("data")
@@ -416,7 +413,7 @@ Inherits Beacon.IntegrationEngine
 		  // First we need to look up the current time, since we cannot trust the user's clock
 		  Var TimeLookupSocket As New SimpleHTTP.SynchronousHTTPSocket
 		  TimeLookupSocket.Send("GET", BeaconAPI.URL("/now"))
-		  Var TimeString As String = TimeLookupSocket.LastContent
+		  Var TimeString As String = TimeLookupSocket.LastString
 		  Var Now As DateTime
 		  Try
 		    Now = NewDateFromSQLDateTime(TimeString)
@@ -474,12 +471,11 @@ Inherits Beacon.IntegrationEngine
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  Sock.Send("GET", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers")
-		  Var Content As String = Sock.LastContent
-		  Var Status As Integer = Sock.LastHTTPStatus
-		  
-		  If Self.Finished Or Self.CheckError(Status, Content) Then
+		  If Self.Finished Or Self.CheckError(Sock) Then
 		    Return
 		  End If
+		  Var Content As String = Sock.LastString
+		  Var Status As Integer = Sock.LastHTTPStatus
 		  
 		  Try
 		    Var Response As Dictionary = Beacon.ParseJSON(Content)
@@ -562,12 +558,11 @@ Inherits Beacon.IntegrationEngine
 		  FormData.Value("message") = "Server started by Beacon (https://beaconapp.cc)"
 		  Sock.SetFormData(FormData)
 		  Sock.Send("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/restart")
-		  Var Content As String = Sock.LastContent
-		  Var Status As Integer = Sock.LastHTTPStatus
-		  
-		  If Self.Finished Or Self.CheckError(Status, Content) Then
+		  If Self.Finished Or Self.CheckError(Sock) Then
 		    Return
 		  End If
+		  Var Content As String = Sock.LastString
+		  Var Status As Integer = Sock.LastHTTPStatus
 		  
 		  Try
 		    Var Response As Dictionary = Beacon.ParseJSON(Content)
@@ -595,12 +590,11 @@ Inherits Beacon.IntegrationEngine
 		  FormData.Value("stop_message") = Self.StopMessage
 		  Sock.SetFormData(FormData)
 		  Sock.Send("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/stop")
-		  Var Content As String = Sock.LastContent
-		  Var Status As Integer = Sock.LastHTTPStatus
-		  
-		  If Self.Finished Or Self.CheckError(Status, Content) Then
+		  If Self.Finished Or Self.CheckError(Sock) Then
 		    Return
 		  End If
+		  Var Content As String = Sock.LastString
+		  Var Status As Integer = Sock.LastHTTPStatus
 		  
 		  Try
 		    Var Response As Dictionary = Beacon.ParseJSON(Content)
@@ -654,17 +648,23 @@ Inherits Beacon.IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function CheckError(HTTPStatus As Integer, HTTPResponse As MemoryBlock) As Boolean
+		Private Function CheckError(HTTPStatus As Integer, HTTPResponse As MemoryBlock, HTTPException As RuntimeException) As Boolean
 		  Var Message As String
-		  If Self.CheckResponseForError(HTTPStatus, HTTPResponse, Message) Then
+		  If Self.CheckResponseForError(HTTPStatus, HTTPResponse, HTTPException, Message) Then
 		    Self.SetError(Message)
 		    Return True
 		  End If
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function CheckError(Socket As SimpleHTTP.SynchronousHTTPSocket) As Boolean
+		  Return Self.CheckError(Socket.LastHTTPStatus, Socket.LastContent, Socket.LastException)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
-		Shared Function CheckResponseForError(HTTPStatus As Integer, HTTPResponse As MemoryBlock, ByRef Message As String) As Boolean
+		Shared Function CheckResponseForError(HTTPStatus As Integer, HTTPResponse As MemoryBlock, HTTPException As RuntimeException, ByRef Message As String) As Boolean
 		  Select Case HTTPStatus
 		  Case 401
 		    Message = "Error: Authorization failed."
@@ -676,20 +676,24 @@ Inherits Beacon.IntegrationEngine
 		    Message = "Error: Nitrado appears to be having an unplanned outage."
 		  Case 500
 		    Var TempMessage As String
-		    Try
-		      Var Parsed As Variant = Beacon.ParseJSON(HTTPResponse)
-		      If Parsed.Type = Variant.TypeObject And Parsed.ObjectValue IsA Dictionary And Dictionary(Parsed.ObjectValue).HasKey("message") Then
-		        TempMessage = "Nitrado Error: " + Dictionary(Parsed.ObjectValue).Value("message").StringValue
-		      End If
-		    Catch Err As RuntimeException
-		    End Try
+		    If (HTTPResponse Is Nil) = False Then
+		      Try
+		        Var Parsed As Variant = Beacon.ParseJSON(HTTPResponse)
+		        If Parsed.Type = Variant.TypeObject And Parsed.ObjectValue IsA Dictionary And Dictionary(Parsed.ObjectValue).HasKey("message") Then
+		          TempMessage = "Nitrado Error: " + Dictionary(Parsed.ObjectValue).Value("message").StringValue
+		        End If
+		      Catch Err As RuntimeException
+		      End Try
+		    End If
 		    If TempMessage <> "" Then
 		      Message = TempMessage
 		    Else
 		      Message = "Error: Nitrado responded with an error but no message."
 		    End If
 		  Case 0
-		    If HTTPResponse <> Nil And HTTPResponse.Size > 0 Then
+		    If (HTTPException Is Nil) = False And HTTPException.Message.IsEmpty = False Then
+		      Message = "Connection error: " + HTTPException.Message
+		    ElseIf (HTTPResponse Is Nil) = False And HTTPResponse.Size > 0 Then
 		      Message = "Connection error: " + HTTPResponse.StringValue(0, HTTPResponse.Size).GuessEncoding
 		    Else
 		      Message = "Connection error"
@@ -731,12 +735,11 @@ Inherits Beacon.IntegrationEngine
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  Sock.SetFormData(FormData)
 		  Sock.Send("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings/sets")
-		  Var Content As String = Sock.LastContent
-		  Var Status As Integer = Sock.LastHTTPStatus
-		  
-		  If Self.Finished Or Self.CheckError(Status, Content) Then
+		  If Self.Finished Or Self.CheckError(Sock) Then
 		    Return
 		  End If
+		  Var Content As String = Sock.LastString
+		  Var Status As Integer = Sock.LastHTTPStatus
 		  
 		  Try
 		    Var Response As Dictionary = Beacon.ParseJSON(Content)
@@ -763,10 +766,30 @@ Inherits Beacon.IntegrationEngine
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  Sock.Send("GET", "https://api.nitrado.net/services/" + ServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/download?file=" + EncodeURLComponent(Path))
-		  Var Content As String = Sock.LastContent
+		  If Self.Finished Then
+		    Return ""
+		  End If
+		  Var Content As MemoryBlock = Sock.LastContent
 		  Var Status As Integer = Sock.LastHTTPStatus
 		  
-		  If Self.Finished Or (Status <> 200 And Mode = DownloadFailureMode.ErrorsAllowed) Or (Status = 404 And Mode = DownloadFailureMode.MissingAllowed) Or Self.CheckError(Status, Content) Then
+		  If Status <> 200 Then
+		    Select Case Mode
+		    Case DownloadFailureMode.MissingAllowed
+		      Var Message As String
+		      Call Self.CheckResponseForError(Status, Content, Sock.LastException, Message)
+		      If Status = 500 And Message = "Nitrado Error: File doesn't exist (anymore?)" Then
+		        // Bad Nitrado
+		        Status = 404
+		      End If
+		      If Status <> 404 Then
+		        Self.SetError(Message)
+		      End If
+		    Case DownloadFailureMode.ErrorsAllowed
+		      // Do nothing
+		    Case DownloadFailureMode.Required
+		      Call Self.CheckError(Sock)
+		    End Select
+		    
 		    Return ""
 		  End If
 		  
@@ -790,14 +813,12 @@ Inherits Beacon.IntegrationEngine
 		  Var FetchSocket As New SimpleHTTP.SynchronousHTTPSocket
 		  FetchSocket.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  FetchSocket.Send("GET", FetchURL)
-		  Content = FetchSocket.LastContent
-		  Status = FetchSocket.LastHTTPStatus
 		  
-		  If Self.Finished Or (Status <> 200 And Mode = DownloadFailureMode.ErrorsAllowed) Or (Status = 404 And Mode = DownloadFailureMode.MissingAllowed) Or Self.CheckError(Status, Content) Then
+		  If Self.Finished Or (FetchSocket.LastHTTPStatus <> 200 And Mode = DownloadFailureMode.ErrorsAllowed) Or (FetchSocket.LastHTTPStatus = 404 And Mode = DownloadFailureMode.MissingAllowed) Or Self.CheckError(FetchSocket) Then
 		    Return ""
 		  End If
 		  
-		  Return Content
+		  Return FetchSocket.LastString
 		End Function
 	#tag EndMethod
 
@@ -893,11 +914,10 @@ Inherits Beacon.IntegrationEngine
 		  
 		  Self.Log("Enabling expert mode…", True)
 		  ExpertToggleSocket.Send("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/settings")
-		  Var ExpertContent As String = ExpertToggleSocket.LastContent
-		  Var ExpertStatus As Integer = ExpertToggleSocket.LastHTTPStatus
-		  If Self.Finished Or Self.CheckError(ExpertStatus, ExpertContent) Then
+		  If Self.Finished Or Self.CheckError(ExpertToggleSocket) Then
 		    Return
 		  End If
+		  Var ExpertContent As String = ExpertToggleSocket.LastString
 		  
 		  Var ExpertResponse As Dictionary = Beacon.ParseJSON(ExpertContent)
 		  If ExpertResponse.Value("status") <> "success" Then
@@ -924,12 +944,11 @@ Inherits Beacon.IntegrationEngine
 		  FormData.Value("file") = Filename
 		  Sock.SetFormData(FormData)
 		  Sock.Send("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/upload")
-		  Var Content As String = Sock.LastContent
-		  Var Status As Integer = Sock.LastHTTPStatus
-		  
-		  If Self.Finished Or Self.CheckError(Status, Content) Then
+		  If Self.Finished Or Self.CheckError(Sock) Then
 		    Return
 		  End If
+		  Var Content As String = Sock.LastString
+		  Var Status As Integer = Sock.LastHTTPStatus
 		  
 		  Var PutURL, PutToken As String
 		  Try
@@ -954,12 +973,10 @@ Inherits Beacon.IntegrationEngine
 		  PutSocket.RequestHeader("token") = PutToken
 		  PutSocket.SetRequestContent(FileContent, "text/plain")
 		  PutSocket.Send("POST", PutURL)
-		  Content = PutSocket.LastContent
-		  Status = PutSocket.LastHTTPStatus
-		  
-		  If Self.Finished Or Self.CheckError(Status, Content) Then
+		  If Self.Finished Then
 		    Return
 		  End If
+		  Call Self.CheckError(PutSocket)
 		End Sub
 	#tag EndMethod
 
