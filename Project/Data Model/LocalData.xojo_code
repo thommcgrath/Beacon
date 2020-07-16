@@ -102,6 +102,22 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub AdvanceDeltaQueue()
+		  If Self.mDeltaDownloadQueue.Count = 0 Then
+		    Return
+		  End If
+		  
+		  Var Downloader As New URLConnection
+		  AddHandler Downloader.ContentReceived, WeakAddressOf mDeltaDownload_ContentReceived
+		  AddHandler Downloader.Error, WeakAddressOf mDeltaDownload_Error
+		  AddHandler Downloader.ReceivingProgressed, WeakAddressOf mDeltaDownload_ReceivingProgressed
+		  Downloader.Send("GET", Self.mDeltaDownloadQueue(0))
+		  Self.mDeltaDownloadQueue.RemoveRowAt(0)
+		  Self.mDeltaDownloader = Downloader
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function AllMods() As Beacon.ModDetails()
 		  Var Mods() As Beacon.ModDetails
@@ -277,7 +293,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Self.mCheckingForUpdates = True
 		  Var CheckURL As String = Self.ClassesURL(ForceRefresh)
-		  App.Log("Checking for engram updates from " + CheckURL)
+		  App.Log("Checking for blueprint updates from " + CheckURL)
 		  Self.mUpdater.Send("GET", CheckURL)
 		End Sub
 	#tag EndMethod
@@ -285,12 +301,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Function ClassesURL(ForceRefresh As Boolean) As String
 		  Var Version As Integer = App.BuildNumber
-		  Var CheckURL As String = Beacon.WebURL("/download/classes?version=" + Version.ToString)
+		  Var CheckURL As String = BeaconAPI.URL("/deltas?version=" + Str(Self.EngramsVersion))
 		  
 		  If ForceRefresh = False Then
 		    Var LastSync As String = Self.Variable("sync_time")
 		    If LastSync <> "" Then
-		      CheckURL = CheckURL + "&changes_since=" + EncodeURLComponent(LastSync)
+		      CheckURL = CheckURL + "&since=" + EncodeURLComponent(LastSync)
 		    End If
 		  End If
 		  
@@ -1288,6 +1304,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Function ImportInner(Content As String) As Boolean
+		  If Content.BeginsWith(Encodings.ASCII.Chr(&h1F) + Encodings.ASCII.Chr(&h8B)) Then
+		    Var Decompressor As New _GZipString
+		    Content = Decompressor.Decompress(Content)
+		  End If
+		  
 		  Var ChangeDict As Dictionary
 		  Try
 		    ChangeDict = Beacon.ParseJSON(Content)
@@ -1305,7 +1326,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Next
 		  
 		  Var FileVersion As Integer = ChangeDict.Value("beacon_version")
-		  If FileVersion <> 4 Then
+		  If FileVersion <> Self.EngramsVersion Then
 		    App.Log("Cannot import classes because file format is not correct for this version. Get correct classes from " + Self.ClassesURL(True))
 		    Return False
 		  End If
@@ -1673,7 +1694,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub ImportLocalClasses()
-		  Var File As FolderItem = App.ResourcesFolder.Child("Classes.json")
+		  Var File As FolderItem = App.ResourcesFolder.Child("Complete.beacondata")
 		  If File.Exists Then
 		    Var Content As MemoryBlock = File.Read(Encodings.UTF8)
 		    If Content <> Nil Then
@@ -1832,6 +1853,47 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Return Self.mDropsLabelCacheDict
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mDeltaDownload_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
+		  #Pragma Unused Sender
+		  #Pragma Unused URL
+		  
+		  Self.mDeltaDownloader = Nil
+		  
+		  If HTTPStatus < 200 Or HTTPStatus >= 300 Then
+		    Self.mDeltaDownloadQueue.RemoveAllRows
+		    App.Log("Failed to download blueprints delta: HTTP " + Str(HTTPStatus, "-0"))
+		    Self.mCheckingForUpdates = False
+		    Return
+		  End If
+		  
+		  Self.Import(Content)
+		  Self.AdvanceDeltaQueue()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mDeltaDownload_Error(Sender As URLConnection, Err As RuntimeException)
+		  #Pragma Unused Sender
+		  
+		  Self.mDeltaDownloader = Nil
+		  Self.mDeltaDownloadQueue.RemoveAllRows
+		  
+		  App.Log("Failed to download blueprints delta: " + Err.Message)
+		  Self.mCheckingForUpdates = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mDeltaDownload_ReceivingProgressed(Sender As URLConnection, BytesReceived As Int64, TotalBytes As Int64, NewData As String)
+		  #Pragma Unused Sender
+		  #Pragma Unused TotalBytes
+		  #Pragma Unused NewData
+		  
+		  Self.mDeltaDownloadedBytes = Self.mDeltaDownloadedBytes + BytesReceived
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -2098,23 +2160,51 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  #Pragma Unused URL
 		  
 		  If HTTPStatus <> 200 Then
-		    App.Log("Engram update returned HTTP " + Str(HTTPStatus, "-0"))
-		    NotificationKit.Post(Self.Notification_ImportFailed, Self.LastSync)
+		    App.Log("Blueprint update returned HTTP " + Str(HTTPStatus, "-0"))
+		    Self.mCheckingForUpdates = False
 		    Return
 		  End If
 		  
-		  Var ExpectedHash As String = Sender.ResponseHeader("Content-MD5")
-		  Var ComputedHash As String = EncodeHex(Crypto.MD5(Content))
-		  
-		  If ComputedHash <> ExpectedHash Then
-		    App.Log("Engram update hash mismatch. Expected " + ExpectedHash + ", computed " + ComputedHash + ".")
-		    NotificationKit.Post(Self.Notification_ImportFailed, Self.LastSync)
+		  Try
+		    Var Parsed As Variant = Beacon.ParseJSON(Content)
+		    If Parsed Is Nil Or (Parsed IsA Dictionary) = False Then
+		      App.Log("No blueprint updates available.")
+		      Self.mCheckingForUpdates = False
+		      Return
+		    End If
+		    
+		    Var Dict As Dictionary = Parsed
+		    If Not Dict.HasAllKeys("total_size", "files") Then
+		      App.Log("Blueprint update is missing keys.")
+		      Self.mCheckingForUpdates = False
+		      Return
+		    End If
+		    
+		    Self.mDeltaDownloadedBytes = 0
+		    Self.mDeltaDownloadTotalBytes = Dict.Value("total_size")
+		    
+		    Var Files() As Object = Dict.Value("files")
+		    For Each FileInfo As Object In Files
+		      Var UpdateURL As String = Dictionary(FileInfo).Lookup("url", "")
+		      If UpdateURL.IsEmpty Then
+		        Continue
+		      End If
+		      
+		      Self.mDeltaDownloadQueue.AddRow(UpdateURL)
+		    Next
+		    
+		    If Self.mDeltaDownloadQueue.Count = 0 Then
+		      App.Log("No blueprint updates available.")
+		      Self.mCheckingForUpdates = False
+		      Return
+		    End If
+		    
+		    Self.AdvanceDeltaQueue
+		  Catch Err As RuntimeException
+		    App.Log("Unable to parse blueprint delta JSON: " + Err.Message)
+		    Self.mCheckingForUpdates = False
 		    Return
-		  End If
-		  
-		  Self.Import(Content)
-		  
-		  Self.mCheckingForUpdates = False
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -2122,9 +2212,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private Sub mUpdater_Error(Sender As URLConnection, Error As RuntimeException)
 		  #Pragma Unused Sender
 		  
-		  App.Log("Engram check error: " + Error.Reason)
-		  NotificationKit.Post(Self.Notification_ImportFailed, Self.LastSync)
-		  
+		  App.Log("Blueprint check error: " + Error.Reason)
 		  Self.mCheckingForUpdates = False
 		End Sub
 	#tag EndMethod
@@ -3062,6 +3150,22 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDeltaDownloadedBytes As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDeltaDownloader As URLConnection
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDeltaDownloadQueue() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDeltaDownloadTotalBytes As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDropsLabelCacheDict As Dictionary
 	#tag EndProperty
 
@@ -3134,6 +3238,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndConstant
 
 	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT engrams.object_id\x2C engrams.path\x2C engrams.label\x2C engrams.alternate_label\x2C engrams.availability\x2C engrams.tags\x2C engrams.entry_string\x2C engrams.required_level\x2C engrams.required_points\x2C engrams.stack_size\x2C engrams.item_id\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = EngramsVersion, Type = Double, Dynamic = False, Default = \"5", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = LootSourcesSelectColumns, Type = String, Dynamic = False, Default = \"path\x2C class_string\x2C label\x2C alternate_label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements", Scope = Private

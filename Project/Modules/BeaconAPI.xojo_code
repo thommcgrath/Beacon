@@ -15,7 +15,7 @@ Protected Module BeaconAPI
 		  If Path.Length = 0 Or Path.Left(1) <> "/" Then
 		    Path = "/" + Path
 		  End If
-		  URL = URL.Left(8) + "api." + URL.Middle(8) + "v1" + Path
+		  URL = URL.Left(8) + "api." + URL.Middle(8) + "v2" + Path
 		  Return URL
 		End Function
 	#tag EndMethod

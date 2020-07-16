@@ -12,14 +12,14 @@
 					Var AppName As String = CurrentBuildAppName
 					If TargetMacOS Then
 					Var ResourcesPath As String = CurrentBuildLocationNative + "/" + AppName + " Resources"
-					Call DoShellCommand("/usr/bin/curl https://lab.beaconapp.cc/download/classes?version=" + PropertyValue("App.ShortVersion") + " > '" + ResourcesPath + "/Classes.json'")
+					Call DoShellCommand("/usr/bin/curl https://lab.beaconapp.cc/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > '" + ResourcesPath + "/Complete.beacondata'")
 					End If
 				End
 				Begin IDEScriptBuildStep DownloadClassesBuildLinux , AppliesTo = 2
 					Var AppName As String = CurrentBuildAppName
 					If TargetMacOS Then
 					Var ResourcesPath As String = CurrentBuildLocationNative + "/" + AppName + " Resources"
-					Call DoShellCommand("/usr/bin/curl https://beaconapp.cc/download/classes?version=" + PropertyValue("App.ShortVersion") + " > '" + ResourcesPath + "/Classes.json'")
+					Call DoShellCommand("/usr/bin/curl https://beaconapp.cc/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > '" + ResourcesPath + "/Complete.beacondata'")
 					End If
 				End
 			End
@@ -44,6 +44,7 @@
 					FolderItem = Li4vLi4vRm9udHMv
 					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25BdXRoLmljbnM=
 					FolderItem = Li4vQXNzZXRzLmNhcg==
+					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25EYXRhLmljbnM=
 				End
 				Begin CopyFilesBuildStep CopyMigration
 					AppliesTo = 2
@@ -54,13 +55,13 @@
 				Begin IDEScriptBuildStep DownloadClassesDebugMac , AppliesTo = 3
 					If TargetMacOS Then
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
-					Call DoShellCommand("/usr/bin/curl https://lab.beaconapp.cc/download/classes?version=" + PropertyValue("App.ShortVersion") + " > " + App + "/Contents/Resources/Classes.json")
+					Call DoShellCommand("/usr/bin/curl https://lab.beaconapp.cc/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > " + App + "/Contents/Resources/Complete.beacondata")
 					End If
 				End
 				Begin IDEScriptBuildStep DownloadClassesBuildMac , AppliesTo = 2
 					If TargetMacOS Then
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
-					Call DoShellCommand("/usr/bin/curl https://beaconapp.cc/download/classes?version=" + PropertyValue("App.ShortVersion") + " > " + App + "/Contents/Resources/Classes.json")
+					Call DoShellCommand("/usr/bin/curl https://beaconapp.cc/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > " + App + "/Contents/Resources/Complete.beacondata")
 					End If
 				End
 				Begin IDEScriptBuildStep Sign , AppliesTo = 0
@@ -84,20 +85,20 @@
 					Var AppName As String = Left(CurrentBuildAppName, Len(CurrentBuildAppName) - 4)
 					If TargetWindows Then
 					Var ResourcesPath As String = CurrentBuildLocationNative + "\" + AppName + " Resources"
-					Call DoShellCommand("powershell -Command ""Invoke-WebRequest https://lab.beaconapp.cc/download/classes?version=" + PropertyValue("App.ShortVersion") + " -OutFile '" + ResourcesPath + "\Classes.json'""")
+					Call DoShellCommand("powershell -Command ""Invoke-WebRequest https://lab.beaconapp.cc/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " -OutFile '" + ResourcesPath + "\Complete.beacondata'""")
 					ElseIf TargetMacOS Then
 					Var ResourcesPath As String = CurrentBuildLocationNative + "/" + AppName + " Resources"
-					Call DoShellCommand("/usr/bin/curl https://lab.beaconapp.cc/download/classes?version=" + PropertyValue("App.ShortVersion") + " > '" + ResourcesPath + "/Classes.json'")
+					Call DoShellCommand("/usr/bin/curl https://lab.beaconapp.cc/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > '" + ResourcesPath + "/Complete.beacondata'")
 					End If
 				End
 				Begin IDEScriptBuildStep DownloadClassesBuildWin , AppliesTo = 2
 					Var AppName As String = Left(CurrentBuildAppName, Len(CurrentBuildAppName) - 4)
 					If TargetWindows Then
 					Var ResourcesPath As String = CurrentBuildLocationNative + "\" + AppName + " Resources"
-					Call DoShellCommand("powershell -Command ""Invoke-WebRequest https://beaconapp.cc/download/classes?version=" + PropertyValue("App.ShortVersion") + " -OutFile '" + ResourcesPath + "\Classes.json'""")
+					Call DoShellCommand("powershell -Command ""Invoke-WebRequest https://beaconapp.cc/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " -OutFile '" + ResourcesPath + "\Complete.beacondata'""")
 					ElseIf TargetMacOS Then
 					Var ResourcesPath As String = CurrentBuildLocationNative + "/" + AppName + " Resources"
-					Call DoShellCommand("/usr/bin/curl https://beaconapp.cc/download/classes?version=" + PropertyValue("App.ShortVersion") + " > '" + ResourcesPath + "/Classes.json'")
+					Call DoShellCommand("/usr/bin/curl https://beaconapp.cc/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > '" + ResourcesPath + "/Complete.beacondata'")
 					End If
 				End
 			End
