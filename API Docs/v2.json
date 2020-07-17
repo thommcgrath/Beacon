@@ -1,0 +1,684 @@
+{
+  "openapi": "3.0.3",
+  "tags": [
+    "ark",
+    {
+      "name": "authorization"
+    }
+  ],
+  "info": {
+    "title": "Beacon API",
+    "description": "Service for working with Beacon's cloud database",
+    "contact": {
+      "name": "Beacon",
+      "url": "https://beaconapp.cc/help",
+      "email": "forgotmyparachute@beaconapp.cc"
+    },
+    "license": {
+      "name": "GNU General Public License v3.0",
+      "url": "https://github.com/thommcgrath/Beacon/blob/master/LICENSE"
+    },
+    "version": "2.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.beaconapp.cc/v2",
+      "description": "Production"
+    },
+    {
+      "url": "https://workbench.beaconapp.cc/v2",
+      "description": "Test Server"
+    }
+  ],
+  "paths": {
+    "/challenge/{user_uuid}": {
+      "summary": "Challenges are a means for an anonymous user to obtain a session token using their private key.",
+      "parameters": [
+        {
+          "name": "user_uuid",
+          "in": "path",
+          "description": "v4 UUID of the user to create a challenge for",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "User Challenges",
+        "responses": {
+          "200": {
+            "description": "An object containing the user uuid and new challenge. If the user had a challenge previously, it will be replaced.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user_id": {
+                      "type": "string"
+                    },
+                    "challenge": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "New Challenge": {
+                    "value": {
+                      "user_id": "9297b256-f957-4293-b0b4-988afebca4a7",
+                      "challenge": "e594a3d0-997c-4cd2-95ab-428afb534bc2"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Creates a challenge the user can use with the private key to obtain a session token.",
+        "operationId": "createUserChallenge",
+        "tags": [
+          "authorization"
+        ],
+        "security": []
+      }
+    },
+    "/creature": {
+      "get": {
+        "summary": "Get a list of creatures",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "An array of creature objects",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Creature"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "getCreatureList",
+        "description": "Obtain an array creature objects",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "21619a77-24b9-4d57-8c22-6934259b9dec"
+            },
+            "in": "query",
+            "name": "mod_id",
+            "description": "The Beacon UUID of the mod to lookup creatures for. Lookup the creatures for multiple mods by separating their UUIDs with commas."
+          }
+        ],
+        "security": []
+      },
+      "put": {
+        "summary": "Save creatures",
+        "operationId": "putCreatures",
+        "responses": {
+          "200": {
+            "description": "All the creatures were saved. The new creature objects are returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Creature"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "One or more creatures could not be saved. The details object will contain the creature object that caused the error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInfo"
+                }
+              }
+            }
+          }
+        },
+        "description": "Save new or changed creatures. The `id` value of the creature object is absolutely required. Other values will only be changed if presented. Multiple creatures may be saved by uploading an array.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Creature"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Creature"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete creatures",
+        "operationId": "deleteCreatures",
+        "responses": {
+          "200": {
+            "description": "The creature or creatures have been deleted"
+          },
+          "400": {
+            "description": "One or more of the creatures could not be deleted. This is usually a permissions issue, but could also be caused by reference issues, such as the creature being used in a spawn point.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInfo"
+                }
+              }
+            }
+          }
+        },
+        "description": "Delete any number of creatures",
+        "requestBody": {
+          "content": {
+            "text/plain": {
+              "schema": {
+                "type": "string"
+              },
+              "examples": {}
+            }
+          },
+          "description": "A comma separated list of one or more creature UUIDs to be deleted."
+        }
+      }
+    },
+    "/creature/{creature_uuid}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": "creature_uuid",
+          "in": "path",
+          "required": true,
+          "description": "The UUID of the desired creature."
+        }
+      ],
+      "get": {
+        "summary": "Get a specific creature or creatures",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Creature"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "One or more of the creatures could not be deleted. This is usually a permissions issue, but could also be caused by reference issues, such as the creature being used in a spawn point.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInfo"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "getSpecificCreature",
+        "description": "Used for requesting specific creature objects. Separate multiple UUIDs with commas. If only a single creature is found, the creature will be returned as-is. If multiple creatures are requested and found, an array of creatures will be returned.",
+        "security": []
+      },
+      "delete": {
+        "summary": "Delete a creature or creatures",
+        "operationId": "deleteSpecificCreature",
+        "responses": {
+          "200": {
+            "description": "The creature or creatures have been deleted"
+          },
+          "400": {
+            "description": "At least one of the creatures could not be deleted. This is most likely a permissions error, though there could be other reasons, such as the creature still being needed by a spawn point. If any creature cannot be deleted, the whole operation will fail.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInfo"
+                }
+              }
+            }
+          }
+        },
+        "description": "Used for deleting a creature or creatures. Separate the creature UUIDs with commas."
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Creature": {
+        "title": "Creature",
+        "type": "object",
+        "description": "",
+        "x-examples": {
+          "Ankylosaurus": {
+            "id": "a1ab65dd-08f9-44e8-94c6-978b02128511",
+            "label": "Ankylosaurus",
+            "alternate_label": null,
+            "mod": {
+              "id": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+              "name": "Ark Prime"
+            },
+            "group": "creatures",
+            "tags": [],
+            "availability": 495,
+            "path": "/Game/PrimalEarth/Dinos/Ankylo/Ankylo_Character_BP.Ankylo_Character_BP",
+            "class_string": "Ankylo_Character_BP_C",
+            "spawn": "cheat spawndino \"Blueprint'/Game/PrimalEarth/Dinos/Ankylo/Ankylo_Character_BP.Ankylo_Character_BP'\" 1 1 1 30",
+            "tamable": false,
+            "taming_diet_id": null,
+            "taming_method": "None",
+            "tamed_diet": null,
+            "rideable": false,
+            "carryable": false,
+            "breedable": true,
+            "related_object_ids": [
+              "58d09df1-19b6-457a-9ac6-d10b5607e785",
+              "b9b45107-c6cb-4514-86c9-74f12892c68b",
+              "04cbc4a8-3166-4461-96bf-a0fe93646a45",
+              "bd8653e4-4b44-4040-bb31-92c41e8b7b4c",
+              "4669601e-77ac-4d0a-ad15-c16a4b656a55"
+            ],
+            "incubation_time": 9473,
+            "mature_time": 175439,
+            "resource_url": "https://api.lab.beaconapp.cc/v2/creature/a1ab65dd-08f9-44e8-94c6-978b02128511",
+            "stats": [
+              {
+                "stat_index": 0,
+                "base_value": 700,
+                "per_level_wild_multiplier": 0.2,
+                "per_level_tamed_multiplier": 0.27,
+                "add_multiplier": 0.5,
+                "affinity_multiplier": 0
+              },
+              {
+                "stat_index": 1,
+                "base_value": 175,
+                "per_level_wild_multiplier": 0.1,
+                "per_level_tamed_multiplier": 0.1,
+                "add_multiplier": 0,
+                "affinity_multiplier": 0
+              },
+              {
+                "stat_index": 2,
+                "base_value": 420,
+                "per_level_wild_multiplier": 0.06,
+                "per_level_tamed_multiplier": 0,
+                "add_multiplier": 0.5,
+                "affinity_multiplier": 0
+              },
+              {
+                "stat_index": 3,
+                "base_value": 150,
+                "per_level_wild_multiplier": 0.1,
+                "per_level_tamed_multiplier": 0.1,
+                "add_multiplier": 0,
+                "affinity_multiplier": 0
+              },
+              {
+                "stat_index": 4,
+                "base_value": 3000,
+                "per_level_wild_multiplier": 0.1,
+                "per_level_tamed_multiplier": 0.1,
+                "add_multiplier": 0,
+                "affinity_multiplier": 0.15
+              },
+              {
+                "stat_index": 7,
+                "base_value": 250,
+                "per_level_wild_multiplier": 0.02,
+                "per_level_tamed_multiplier": 0.04,
+                "add_multiplier": 0,
+                "affinity_multiplier": 0
+              },
+              {
+                "stat_index": 8,
+                "base_value": 1,
+                "per_level_wild_multiplier": 0.05,
+                "per_level_tamed_multiplier": 0.1,
+                "add_multiplier": 1,
+                "affinity_multiplier": 0.4
+              },
+              {
+                "stat_index": 9,
+                "base_value": 1,
+                "per_level_wild_multiplier": 0,
+                "per_level_tamed_multiplier": 0.02,
+                "add_multiplier": 0.35,
+                "affinity_multiplier": 0
+              }
+            ],
+            "used_stats": 927,
+            "mating_interval_min": 64800,
+            "mating_interval_max": 172800
+          }
+        },
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "UUID for the creature.",
+            "format": "uuid",
+            "example": "452f88c9-be8f-475d-9d3f-b02a0aec2d96"
+          },
+          "label": {
+            "type": "string",
+            "description": "The user visible name of the creature"
+          },
+          "alternate_label": {
+            "type": "string",
+            "description": "Useful for creature \"common names\" that can be searched for and appear on Beacon's website."
+          },
+          "mod": {
+            "$ref": "#/components/schemas/ModInfo"
+          },
+          "group": {
+            "type": "string",
+            "description": "The category of object this blueprint refers to. Creatures will always set this value to `creatures`."
+          },
+          "tags": {
+            "type": "array",
+            "description": "Zero or more tags the creature carries, useful for filtering. There are no creature tags with special meanings.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "availability": {
+            "$ref": "#/components/schemas/AvailabilityMask"
+          },
+          "path": {
+            "type": "string",
+            "description": "The full path of the creature relative to the game root."
+          },
+          "class_string": {
+            "type": "string",
+            "description": "The less-specific class string of the creature. **Beacon will always derive the class from the path**."
+          },
+          "spawn": {
+            "type": "string",
+            "description": "The cheat code for spawning the creature. **Beacon will always derive the cheat code from the path**."
+          },
+          "tamable": {
+            "type": "boolean",
+            "description": "If true, the creature can be tamed in some manner. This value is currently unused, but may be in the future."
+          },
+          "taming_diet_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid",
+            "description": "This value is unused and should be left as `null`."
+          },
+          "taming_method": {
+            "type": "string",
+            "default": "None",
+            "description": "This value is unused and should be left as `None`."
+          },
+          "rideable": {
+            "type": "boolean",
+            "description": "If true, the creature can be ridden. This value is currently unused, but may be in the future."
+          },
+          "carryable": {
+            "type": "boolean",
+            "description": "If true, the creature can be carried by something. This value is currently unused and may some day be replaced with a more specific property."
+          },
+          "breedable": {
+            "type": "boolean",
+            "description": "If true, the creature can be bred in some way. This value is currently unused, but may be in the future."
+          },
+          "related_object_ids": {
+            "type": "array",
+            "description": "References other blueprints by UUID. This is useful for linking creatures to their eggs and saddles, for example.",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "incubation_time": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "format": "double",
+            "description": "Number of seconds required to incubate or gestate the creature. Fractional seconds are allowed."
+          },
+          "mature_time": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "format": "double",
+            "description": "Number of seconds required for the creature to raise from newborn to adult. Fractional seconds are allowed."
+          },
+          "resource_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Specific URI for the creature. **This value is generated by Beacon**."
+          },
+          "stats": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "description": "Array of up to 12 stat objects.",
+            "items": {
+              "$ref": "#/components/schemas/CreatureStat"
+            }
+          },
+          "used_stats": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "A bitmask representing the stats actually used by the creature. Bit 0 for health, bit 1 for stamina, and so on."
+          },
+          "mating_interval_min": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "format": "double",
+            "description": "The minimum number of seconds required between mating. Fractional seconds are allowed."
+          },
+          "mating_interval_max": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "format": "double",
+            "description": "The maximum number of seconds required between mating. Fractional seconds are allowed."
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ]
+      },
+      "CreatureStat": {
+        "title": "Creature Stat",
+        "type": "object",
+        "description": "Used to represent the stats of a creature.",
+        "properties": {
+          "stat_index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 11,
+            "description": "0: Health\n1: Stamina\n2: Torpor\n3: Oxygen\n4: Food\n5: Water\n6: Temperature\n7: Weight\n8: Melee\n9: Speed\n10: Fortitude\n11: Crafting Speed"
+          },
+          "base_value": {
+            "type": "number",
+            "format": "double"
+          },
+          "per_level_wild_multiplier": {
+            "type": "number",
+            "format": "double"
+          },
+          "per_level_tamed_multiplier": {
+            "type": "number",
+            "format": "double"
+          },
+          "add_multiplier": {
+            "type": "number",
+            "format": "double"
+          },
+          "affinity_multiplier": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": [
+          "stat_index",
+          "base_value",
+          "per_level_wild_multiplier",
+          "per_level_tamed_multiplier",
+          "add_multiplier",
+          "affinity_multiplier"
+        ],
+        "x-examples": {
+          "Abberrant Achatina Health Stat": {
+            "stat_index": 0,
+            "base_value": 75,
+            "per_level_wild_multiplier": 0.2,
+            "per_level_tamed_multiplier": 0.27,
+            "add_multiplier": 0.5,
+            "affinity_multiplier": 0
+          }
+        }
+      },
+      "ModInfo": {
+        "title": "Mod Info",
+        "type": "object",
+        "x-examples": {
+          "Ark Prime": {
+            "id": "30bbab29-44b2-4f4b-a373-6d4740d9d3b5",
+            "name": "Ark Prime"
+          }
+        },
+        "description": "Provides information about the mod which supplies a blueprint",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The UUID of the mod in Beacon's database."
+          },
+          "name": {
+            "type": "string",
+            "description": "This human-readable name of the mod."
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "AvailabilityMask": {
+        "type": "integer",
+        "title": "Availability Mask",
+        "format": "int64",
+        "description": "Objects can be found on multiple maps in Ark. Availability masks allow Beacon to track those availabilities with a single number. Perform a bitwise OR operation to combine masks.\n\n1: The Island\n2: Scorched Earth\n4: The Center\n8: Ragnarok\n16: Aberration\n32: Extinction\n64: Valguero\n128: Genesis\n256: Crystal Isles",
+        "enum": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256
+        ],
+        "x-examples": {
+          "The Island": 1,
+          "Aberration and Valguero": 80
+        }
+      },
+      "ErrorInfo": {
+        "title": "Error Info",
+        "type": "object",
+        "description": "Contains information about the reason for an error.",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Human-readable reason for the error."
+          },
+          "details": {
+            "oneOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "array",
+                "items": {}
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "If more details about the error are available, they will be available in this property. The contents depend on the error itself."
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Email and Password": {
+        "type": "http",
+        "scheme": "basic",
+        "description": "Simple HTTP basic authentication using the user's email address as the username and their Beacon account password."
+      },
+      "UUID and Signature": {
+        "type": "http",
+        "scheme": "basic",
+        "description": "For anonymous Beacon accounts, this scheme allows using the private key to generate a signature. Use the `/challenge` endpoint to generate a challenge, then sign that value with the private key. Submit an HTTP basic authentication header with the user's UUID for the username and signature for password. Hex encoding the password is encouraged, but not required."
+      },
+      "Session Token": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "A session token previously obtained using either the \"Email and Password\" or \"UUID and Signature\" authorization schemes."
+      },
+      "Alternate Session Token": {
+        "name": "X-Beacon-Token",
+        "type": "apiKey",
+        "in": "header",
+        "description": "Same as the \"Session Token\" authorization scheme, but sent with a header instead. Do not include the `Bearer` prefix. This is useful for working around CORS protections."
+      }
+    }
+  },
+  "security": [
+    {
+      "Email and Password": []
+    },
+    {
+      "UUID and Signature": []
+    },
+    {
+      "Session Token": []
+    },
+    {
+      "Alternate Session Token": []
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "formats": {
+    "openapi": {
+      "rootDir": "API Docs",
+      "include": ["API Docs/v2.json"]
+    }
+  }
+}
