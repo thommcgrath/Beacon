@@ -3,7 +3,10 @@
   "tags": [
     "ark",
     {
-      "name": "authorization"
+      "name": "Creatures"
+    },
+    {
+      "name": "Authorization"
     }
   ],
   "info": {
@@ -45,7 +48,7 @@
         }
       ],
       "get": {
-        "summary": "User Challenges",
+        "summary": "Get a User Challenge",
         "responses": {
           "200": {
             "description": "An object containing the user uuid and new challenge. If the user had a challenge previously, it will be replaced.",
@@ -76,16 +79,18 @@
         },
         "description": "Creates a challenge the user can use with the private key to obtain a session token.",
         "operationId": "createUserChallenge",
+        "security": [],
         "tags": [
-          "authorization"
-        ],
-        "security": []
+          "Authorization"
+        ]
       }
     },
     "/creature": {
       "get": {
-        "summary": "Get a list of creatures",
-        "tags": [],
+        "summary": "List Creatures",
+        "tags": [
+          "Creatures"
+        ],
         "responses": {
           "200": {
             "description": "An array of creature objects",
@@ -118,11 +123,11 @@
         "security": []
       },
       "put": {
-        "summary": "Save creatures",
+        "summary": "Upload Creatures",
         "operationId": "putCreatures",
         "responses": {
           "200": {
-            "description": "All the creatures were saved. The new creature objects are returned.",
+            "description": "All the creatures were saved. The updated creature objects are returned.",
             "content": {
               "application/json": {
                 "schema": {
@@ -145,7 +150,7 @@
             }
           }
         },
-        "description": "Save new or changed creatures. The `id` value of the creature object is absolutely required. Other values will only be changed if presented. Multiple creatures may be saved by uploading an array.",
+        "description": "Save new or changed creatures. The `id` value of the creature object is strictly required. Other values will only be changed if presented. Multiple creatures may be saved by uploading an array.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -161,13 +166,37 @@
                     }
                   }
                 ]
+              },
+              "examples": {
+                "Add Alternate Label": {
+                  "value": {
+                    "id": "5c114a71-1b46-4c8f-b655-2eb206f5e00e",
+                    "alernate_label": "Sheep"
+                  }
+                },
+                "Set Mature Times": {
+                  "value": [
+                    {
+                      "id": "5c114a71-1b46-4c8f-b655-2eb206f5e00e",
+                      "mature_time": 175439
+                    },
+                    {
+                      "id": "70fa0c50-204b-48af-9318-46fb09c74189",
+                      "mature_time": 175439
+                    }
+                  ]
+                }
               }
             }
-          }
-        }
+          },
+          "description": "Specify as many creatures as necessary using an array, or a single creature directly. Only provide the values that need to be changed. New creatures must have at least `label`, `mod`, and `path` properties."
+        },
+        "tags": [
+          "Creatures"
+        ]
       },
       "delete": {
-        "summary": "Delete creatures",
+        "summary": "Delete Creatures",
         "operationId": "deleteCreatures",
         "responses": {
           "200": {
@@ -195,7 +224,10 @@
             }
           },
           "description": "A comma separated list of one or more creature UUIDs to be deleted."
-        }
+        },
+        "tags": [
+          "Creatures"
+        ]
       }
     },
     "/creature/{creature_uuid}": {
@@ -212,8 +244,10 @@
         }
       ],
       "get": {
-        "summary": "Get a specific creature or creatures",
-        "tags": [],
+        "summary": "Get a Creature",
+        "tags": [
+          "Creatures"
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -241,7 +275,7 @@
         "security": []
       },
       "delete": {
-        "summary": "Delete a creature or creatures",
+        "summary": "Delete a Creature",
         "operationId": "deleteSpecificCreature",
         "responses": {
           "200": {
@@ -258,7 +292,10 @@
             }
           }
         },
-        "description": "Used for deleting a creature or creatures. Separate the creature UUIDs with commas."
+        "description": "Used for deleting a creature or creatures. Separate the creature UUIDs with commas.",
+        "tags": [
+          "Creatures"
+        ]
       }
     }
   },
@@ -510,6 +547,9 @@
         "required": [
           "id",
           "label"
+        ],
+        "x-tags": [
+          "Objects"
         ]
       },
       "CreatureStat": {
@@ -561,7 +601,10 @@
             "add_multiplier": 0.5,
             "affinity_multiplier": 0
           }
-        }
+        },
+        "x-tags": [
+          "Objects"
+        ]
       },
       "ModInfo": {
         "title": "Mod Info",
@@ -572,7 +615,10 @@
             "name": "Ark Prime"
           }
         },
-        "description": "Provides information about the mod which supplies a blueprint",
+        "description": "Provides information about the mod which provides a object.",
+        "x-tags": [
+          "Objects"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -608,7 +654,10 @@
         "x-examples": {
           "The Island": 1,
           "Aberration and Valguero": 80
-        }
+        },
+        "x-tags": [
+          "Objects"
+        ]
       },
       "ErrorInfo": {
         "title": "Error Info",
@@ -640,7 +689,10 @@
             ],
             "description": "If more details about the error are available, they will be available in this property. The contents depend on the error itself."
           }
-        }
+        },
+        "x-tags": [
+          "Objects"
+        ]
       }
     },
     "securitySchemes": {
