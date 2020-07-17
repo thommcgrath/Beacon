@@ -124,6 +124,7 @@ foreach ($alternate_links as $link) {
 $results = $database->Query("SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE objects.min_version <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM game_variables)) AS merged;", $build);
 $last_database_update = new DateTime($results->Field("stamp"), new DateTimeZone('UTC'));
 $prerelease = $database->Query("SELECT mac_url, win_64_url, win_combo_url, win_32_url, build_display, build_number, stage FROM updates WHERE stage < 3 AND build_number > $1 ORDER BY build_number DESC LIMIT 1;", $build);
+$stable_136 = $database->Query("SELECT win_combo_url FROM updates WHERE build_number = 10306300;");
 
 ?><h1>Current Version</h1>
 <p class="text-center">Version <?php echo $version; ?></p>
@@ -163,6 +164,13 @@ $prerelease = $database->Query("SELECT mac_url, win_64_url, win_combo_url, win_3
 <div class="indent">
 	<p>Beacon <?php echo htmlentities($prerelease->Field('build_display')); ?> is available for testing. Preview releases may not be stable and users should make backups of any data they are not willing to lose. To create a backup, launch Beacon and choose &quot;Open Data Folder&quot; from the &quot;Help&quot; menu. The folder shown contains valuable user data. Copy the folder to a safe location, along with any Beacon files desired.</p>
 	<p>Links: <?php echo implode(', ', $prerelease_links); ?></p>
+</div>
+<?php } ?>
+<?php if ($stable_136->RecordCount() == 1) { ?>
+<h3 id="legacy">Legacy Stable Version 1.3.6</h3>
+<div class="indent">
+	<p>In very rare cases, some users on Windows 7 are unable to connect to Nitrado using Beacon 1.4 and newer. While we wait for a bug fix from our dev tool provider, Beacon 1.3.6 is available as an alternative.</p>
+	<p><a href="<?php echo htmlentities(BeaconCommon::SignDownloadURL($stable_136->Field('win_combo_url'))); ?>" rel="nofollow">Windows Download</a></p>
 </div>
 <?php } ?>
 <h3 id="requirements">System Requirements</h3>

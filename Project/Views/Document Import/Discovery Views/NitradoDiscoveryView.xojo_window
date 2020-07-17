@@ -381,6 +381,8 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Begin()
+		  Self.List.RemoveAllRows()
+		  
 		  If Self.mAccounts.Count = 0 Then
 		    Self.StartNewAccount()
 		    Return
@@ -477,9 +479,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Engine_Discovered(Sender As Beacon.NitradoIntegrationEngine, Data() As Beacon.DiscoveredData)
-		  #Pragma Unused Sender
-		  
 		  Self.mPendingListActions = Self.mPendingListActions - 1
+		  
+		  If Sender.Errored Then
+		    Self.ShowAlert("Unable to retrieve server list from Nitrado", "The error message provided was:" + EndOfLine + EndOfLine + Sender.ErrorMessage + EndOfLine + EndOfLine + "This error may be temporary, so try again in a few minutes. If the problem persists, make sure your antivirus or malware protection is not blocking Beacon from contacting Nitrado's servers.")
+		    Self.ShouldCancel()
+		    Return
+		  End If
 		  
 		  For Each Server As Beacon.DiscoveredData In Data
 		    Self.List.AddRow("", Server.Profile.Name, Beacon.NitradoServerProfile(Server.Profile).Address)
@@ -487,6 +493,12 @@ End
 		  Next
 		  
 		  If Self.PagePanel1.SelectedPanelIndex <> 1 And Self.Busy = False Then
+		    If Self.List.RowCount = 0 Then
+		      Self.ShowAlert("No eligible servers were found", "Beacon could not find any PC, Xbox, or PS4 Ark servers on any of the connected Nitrado accounts.")
+		      Self.ShouldCancel()
+		      Return
+		    End If
+		    
 		    #if TargetWindows
 		      If Self.ScaleFactor Mod 100 <> 0 Then
 		        Self.List.HasHeader = False

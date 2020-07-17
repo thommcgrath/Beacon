@@ -315,7 +315,12 @@ End
 			  Self.mSwitchingModes = True
 			  If Value Then
 			    // Convert RTF data to ArkML
-			    Var ArkML As String = BeaconConfigs.Metadata.RTFToArkML(Self.Field.StyledText.RTFData)
+			    Var ArkML As String
+			    Try
+			      ArkML = BeaconConfigs.Metadata.RTFToArkML(Self.Field.StyledText.RTFData)
+			    Catch Err As RuntimeException
+			      // Something went wrong
+			    End Try
 			    Self.Field.Value = ""
 			    Self.Field.BackgroundColor = &cFFFFFF
 			    Self.Field.TextColor = &c000000
@@ -324,7 +329,12 @@ End
 			    Self.mRawMode = True
 			  Else
 			    // Convert ArkML to RTF
-			    Var RTF As String = BeaconConfigs.Metadata.ArkMLToRTF(Self.Field.Value)
+			    Var RTF As String
+			    Try
+			      RTF = BeaconConfigs.Metadata.ArkMLToRTF(Self.Field.Value)
+			    Catch Err As RuntimeException
+			      // Something went wrong
+			    End Try
 			    Self.Field.Value = ""
 			    Self.Field.AllowStyledText = True
 			    Self.Field.BackgroundColor = &c1B384B
