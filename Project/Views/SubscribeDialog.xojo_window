@@ -20,7 +20,7 @@ Begin Window SubscribeDialog
    MinHeight       =   270
    MinimizeButton  =   False
    MinWidth        =   500
-   Placement       =   2
+   Placement       =   3
    Resizable       =   "True"
    Resizeable      =   False
    SystemUIVisible =   "True"
