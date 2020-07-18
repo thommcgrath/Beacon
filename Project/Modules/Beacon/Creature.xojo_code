@@ -69,6 +69,16 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function CreateFromObjectID(ObjectID As v4UUID) As Beacon.Creature
+		  Var ObjectIDString As String = ObjectID.StringValue
+		  Var Creature As Beacon.Creature = CreateFromPath(Beacon.UnknownBlueprintPath("Creatures", ObjectIDString + "_Character_BP_C"))
+		  Creature.mLabel = ObjectIDString
+		  Creature.mObjectID = ObjectID
+		  Return Creature
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function CreateFromPath(Path As String) As Beacon.Creature
 		  Var Creature As New Beacon.Creature
 		  Creature.mClassString = Beacon.ClassStringFromPath(Path)

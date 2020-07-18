@@ -1322,7 +1322,7 @@ Implements ObservationKit.Observable
 	#tag EndComputedProperty
 
 
-	#tag Constant, Name = DocumentVersion, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = DocumentVersion, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
 
@@ -1429,6 +1429,14 @@ Implements ObservationKit.Observable
 			Group="Behavior"
 			InitialValue=""
 			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ModChangeTimestamp"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

@@ -18,11 +18,17 @@ Protected Class Point3D
 
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(Dict As Dictionary) As Beacon.Point3D
-		  If Not Dict.HasAllKeys("X", "Y", "Z") Then
+		  If Dict Is Nil Then
 		    Return Nil
 		  End If
 		  
-		  Return New Beacon.Point3D(Dict.Value("X"), Dict.Value("Y"), Dict.Value("Z"))
+		  If Dict.HasAllKeys("x", "y", "z") Then
+		    Return New Beacon.Point3D(Dict.Value("x"), Dict.Value("y"), Dict.Value("z"))
+		  ElseIf Dict.HasAllKeys("X", "Y", "Z") Then
+		    Return New Beacon.Point3D(Dict.Value("X"), Dict.Value("Y"), Dict.Value("Z"))
+		  Else
+		    Return Nil
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -48,9 +54,9 @@ Protected Class Point3D
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("X") = Self.X
-		  Dict.Value("Y") = Self.Y
-		  Dict.Value("Z") = Self.Z
+		  Dict.Value("x") = Self.X
+		  Dict.Value("y") = Self.Y
+		  Dict.Value("z") = Self.Z
 		  Return Dict
 		End Function
 	#tag EndMethod

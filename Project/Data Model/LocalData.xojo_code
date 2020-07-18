@@ -221,7 +221,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE notifications (notification_id TEXT NOT NULL PRIMARY KEY, message TEXT NOT NULL, secondary_message TEXT, user_data TEXT NOT NULL, moment TEXT NOT NULL, read INTEGER NOT NULL, action_url TEXT, deleted INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', incubation_time REAL, mature_time REAL, stats TEXT, used_stats INTEGER, mating_interval_min REAL, mating_interval_max REAL);")
-		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', groups TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
+		  Self.SQLExecute("CREATE TABLE spawn_points (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', sets TEXT NOT NULL DEFAULT '[]', limits TEXT NOT NULL DEFAULT '{}');")
 		  Self.SQLExecute("CREATE TABLE ini_options (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE " + ModsOnDelete + " DEFERRABLE INITIALLY DEFERRED, label TEXT NOT NULL, alternate_label TEXT, tags TEXT NOT NULL DEFAULT '', native_editor_version INTEGER, file TEXT NOT NULL, header TEXT NOT NULL, key TEXT NOT NULL, value_type TEXT NOT NULL, max_allowed INTEGER, description TEXT NOT NULL, default_value TEXT, nitrado_path TEXT, nitrado_format TEXT);")
 		  
 		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts5(tags, object_id, source_table);")
@@ -1001,7 +1001,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function GetSpawnPointsForCreature(Creature As Beacon.Creature, Mods As Beacon.StringList, Tags As String) As Beacon.SpawnPoint()
 		  Var Clauses() As String
 		  Var Values() As Variant
-		  Clauses.AddRow("LOWER(spawn_points.groups) LIKE :placeholder:")
+		  Clauses.AddRow("LOWER(spawn_points.sets) LIKE :placeholder:")
 		  Values.AddRow("%" + Creature.Path.Lowercase + "%")
 		  
 		  Var Blueprints() As Beacon.Blueprint = Self.SearchForBlueprints(Beacon.CategorySpawnPoints, "", Mods, Tags, Clauses, Values)
@@ -1304,7 +1304,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Function ImportInner(Content As String) As Boolean
-		  If Content.BeginsWith(Encodings.ASCII.Chr(&h1F) + Encodings.ASCII.Chr(&h8B)) Then
+		  If Content.Bytes < 2 Then
+		    Return False
+		  End If
+		  
+		  Var MagicBytes As String = Content.LeftBytes(2)
+		  If MagicBytes = Encodings.ASCII.Chr(&h1F) + Encodings.ASCII.Chr(&h8B) Then
 		    Var Decompressor As New _GZipString
 		    Content = Decompressor.Decompress(Content)
 		  End If
@@ -1512,11 +1517,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    
 		    If ChangeDict.HasKey("spawn_points") Then
+		      Break
 		      Var SpawnPoints() As Variant = ChangeDict.Value("spawn_points")
 		      For Each Dict As Dictionary In SpawnPoints
 		        Var ExtraColumns As New Dictionary
-		        If IsNull(Dict.Value("groups")) = False Then
-		          ExtraColumns.Value("groups") = Beacon.GenerateJSON(Dict.Value("groups"), False)
+		        If IsNull(Dict.Value("sets")) = False Then
+		          ExtraColumns.Value("sets") = Beacon.GenerateJSON(Dict.Value("sets"), False)
 		        End If
 		        If IsNull(Dict.Value("limits")) = False Then
 		          ExtraColumns.Value("limits") = Beacon.GenerateJSON(Dict.Value("limits"), False)
@@ -1995,13 +2001,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  // Spawn Points
-		  If FromSchemaVersion >= 14 Then
+		  If FromSchemaVersion >= 19 Then
 		    Commands.AddRow("INSERT INTO spawn_points SELECT * FROM legacy.spawn_points;")
-		  ElseIf FromSchemaVersion >= 12 Then
-		    Commands.AddRow("INSERT INTO spawn_points (object_id, mod_id, label, availability, path, class_string, tags, groups, limits) SELECT object_id, mod_id, label, availability, path, class_string, tags, groups, limits FROM legacy.spawn_points;")
 		  End If
 		  
-		  // Spawn Points
+		  // Ini Options
 		  If FromSchemaVersion >= 15 Then
 		    Commands.AddRow("INSERT INTO ini_options SELECT * FROM legacy.ini_options")
 		  End If
@@ -2439,7 +2443,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Point.TagString = Results.Column("tags").StringValue
 		    Point.ModID = Results.Column("mod_id").StringValue
 		    Point.ModName = Results.Column("mod_name").StringValue
-		    Point.SetsString = Results.Column("groups").StringValue
+		    Point.SetsString = Results.Column("sets").StringValue
 		    Point.LimitsString = Results.Column("limits").StringValue
 		    Point.Modified = False
 		    SpawnPoints.AddRow(New Beacon.SpawnPoint(Point))
@@ -2946,7 +2950,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Label = Label + " (" + Maps.Label + ")"
 		      End If
 		      
-		      Dict.Value(Points(I).Path) = Label
+		      Dict.Value(Points(I).ObjectID.StringValue) = Label
 		    Next
 		    
 		    Self.mSpawnLabelCacheDict = Dict
@@ -3267,10 +3271,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = Notification_PresetsChanged, Type = String, Dynamic = False, Default = \"Presets Changed", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"18", Scope = Private
+	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"19", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.tags\x2C spawn_points.groups\x2C spawn_points.limits\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.tags\x2C spawn_points.sets\x2C spawn_points.limits\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = UserModID, Type = String, Dynamic = False, Default = \"23ecf24c-377f-454b-ab2f-d9d8f31a5863", Scope = Public

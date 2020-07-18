@@ -18,11 +18,17 @@ Protected Class SpawnPointLevel
 
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(Dict As Dictionary) As Beacon.SpawnPointLevel
-		  If Dict = Nil Or Dict.HasAllKeys("Min", "Max", "Diff") = False Then
+		  If Dict Is Nil Then
 		    Return Nil
 		  End If
 		  
-		  Return New Beacon.SpawnPointLevel(Dict.Value("Min"), Dict.Value("Max"), Dict.Value("Diff"))
+		  If Dict.HasAllKeys("min_level", "max_level", "difficulty") Then
+		    Return New Beacon.SpawnPointLevel(Dict.Value("min_level"), Dict.Value("max_level"), Dict.Value("difficulty"))
+		  ElseIf Dict.HasAllKeys("Min", "Max", "Diff") = False Then
+		    Return New Beacon.SpawnPointLevel(Dict.Value("Min"), Dict.Value("Max"), Dict.Value("Diff"))
+		  Else
+		    Return Nil
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -68,9 +74,9 @@ Protected Class SpawnPointLevel
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("Min") = Self.MinLevel
-		  Dict.Value("Max") = Self.MaxLevel
-		  Dict.Value("Diff") = Self.Difficulty
+		  Dict.Value("min_level") = Self.MinLevel
+		  Dict.Value("max_level") = Self.MaxLevel
+		  Dict.Value("difficulty") = Self.Difficulty
 		  Return Dict
 		End Function
 	#tag EndMethod

@@ -1149,6 +1149,70 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function ResolveCreature(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String) As Beacon.Creature
+		  Var ObjectID, Path, ClassString As String
+		  
+		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
+		    ObjectID = Dict.Value(ObjectIDKey)
+		  End If
+		  
+		  If PathKey.IsEmpty = False And Dict.HasKey(PathKey) Then
+		    Path = Dict.Value(PathKey)
+		  End If
+		  
+		  If ClassKey.IsEmpty = False And Dict.HasKey(ClassKey) Then
+		    ClassString = Dict.Value(ClassKey)
+		  End If
+		  
+		  Return Beacon.ResolveCreature(ObjectID, Path, ClassString)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ResolveCreature(ObjectID As String, Path As String, ClassString As String) As Beacon.Creature
+		  If ObjectID.IsEmpty = False Then
+		    Try
+		      Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByID(ObjectID)
+		      If (Creature Is Nil) = False Then
+		        Return Creature
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  If Path.IsEmpty = False Then
+		    Try
+		      Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Path)
+		      If (Creature Is Nil) = False Then
+		        Return Creature
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  If ClassString.IsEmpty = False Then
+		    Try
+		      Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)
+		      If (Creature Is Nil) = False Then
+		        Return Creature
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  If Path.IsEmpty = False Then
+		    Return Beacon.Creature.CreateFromPath(Path)
+		  ElseIf ClassString.IsEmpty = False Then
+		    Return Beacon.Creature.CreateFromClass(ClassString)
+		  ElseIf ObjectID.IsEmpty = False Then
+		    Return Beacon.Creature.CreateFromObjectID(ObjectID)
+		  End If
+		  
+		  Return Beacon.Creature.CreateFromClass("BeaconNoData_Character_BP_C")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function ResolveEngram(Dict As Dictionary, ObjectIDKey As String, ClassKey As String, PathKey As String) As Beacon.Engram
 		  Var ObjectID, Path, ClassString As String
 		  
@@ -1156,7 +1220,7 @@ Protected Module Beacon
 		    ObjectID = Dict.Value(ObjectIDKey)
 		    Try
 		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByID(ObjectID)
-		      If Engram <> Nil Then
+		      If (Engram Is Nil) = False Then
 		        Return Engram
 		      End If
 		    Catch Err As RuntimeException
@@ -1167,7 +1231,7 @@ Protected Module Beacon
 		    Path = Dict.Value(PathKey)
 		    Try
 		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
-		      If Engram <> Nil Then
+		      If (Engram Is Nil) = False Then
 		        Return Engram
 		      End If
 		    Catch Err As RuntimeException
@@ -1178,7 +1242,7 @@ Protected Module Beacon
 		    ClassString = Dict.Value(ClassKey)
 		    Try
 		      Var Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
-		      If Engram <> Nil Then
+		      If (Engram Is Nil) = False Then
 		        Return Engram
 		      End If
 		    Catch Err As RuntimeException
@@ -1194,6 +1258,70 @@ Protected Module Beacon
 		  End If
 		  
 		  Return Beacon.Engram.CreateFromClass("PrimalItemMystery_NoData_C")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ResolveSpawnPoint(Dict As Dictionary, ObjectIDKey As String, PathKey As String, ClassKey As String) As Beacon.SpawnPoint
+		  Var ObjectID, Path, ClassString As String
+		  
+		  If ObjectIDKey.IsEmpty = False And Dict.HasKey(ObjectIDKey) Then
+		    ObjectID = Dict.Value(ObjectIDKey)
+		  End If
+		  
+		  If PathKey.IsEmpty = False And Dict.HasKey(PathKey) Then
+		    Path = Dict.Value(PathKey)
+		  End If
+		  
+		  If ClassKey.IsEmpty = False And Dict.HasKey(ClassKey) Then
+		    ClassString = Dict.Value(ClassKey)
+		  End If
+		  
+		  Return Beacon.ResolveSpawnPoint(ObjectID, Path, ClassString)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ResolveSpawnPoint(ObjectID As String, Path As String, ClassString As String) As Beacon.SpawnPoint
+		  If ObjectID.IsEmpty = False Then
+		    Try
+		      Var SpawnPoint As Beacon.SpawnPoint = Beacon.Data.GetSpawnPointByID(ObjectID)
+		      If (SpawnPoint Is Nil) = False Then
+		        Return SpawnPoint
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  If Path.IsEmpty = False Then
+		    Try
+		      Var SpawnPoint As Beacon.SpawnPoint = Beacon.Data.GetSpawnPointByPath(Path)
+		      If (SpawnPoint Is Nil) = False Then
+		        Return SpawnPoint
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  If ClassString.IsEmpty = False Then
+		    Try
+		      Var SpawnPoint As Beacon.SpawnPoint = Beacon.Data.GetSpawnPointByClass(ClassString)
+		      If (SpawnPoint Is Nil) = False Then
+		        Return SpawnPoint
+		      End If
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
+		  If Path.IsEmpty = False Then
+		    Return Beacon.SpawnPoint.CreateFromPath(Path)
+		  ElseIf ClassString.IsEmpty = False Then
+		    Return Beacon.SpawnPoint.CreateFromClass(ClassString)
+		  ElseIf ObjectID.IsEmpty = False Then
+		    Return Beacon.SpawnPoint.CreateFromObjectID(ObjectID)
+		  End If
+		  
+		  Return Beacon.SpawnPoint.CreateFromClass("BeaconSpawn_NoData_C")
 		End Function
 	#tag EndMethod
 

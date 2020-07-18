@@ -27,14 +27,21 @@ Inherits Beacon.SpawnPointSet
 
 	#tag Method, Flags = &h0
 		Sub CreatureReplacementWeight(FromCreature As Beacon.Creature, ToCreature As Beacon.Creature, Assigns Weight As NullableDouble)
+		  If FromCreature Is Nil Or ToCreature Is Nil Then
+		    Return
+		  End If
+		  
 		  Var CurrentWeight As NullableDouble = Self.CreatureReplacementWeight(FromCreature, ToCreature)
 		  If CurrentWeight = Weight Then
 		    Return
 		  End If
 		  
+		  Var FromCreatureUUID As String = FromCreature.ObjectID
+		  Var ToCreatureUUID As String = ToCreature.ObjectID
+		  
 		  Var Options As Dictionary
-		  If Self.mReplacements.HasKey(FromCreature.Path) Then
-		    Options = Self.mReplacements.Value(FromCreature.Path)
+		  If Self.mReplacements.HasKey(FromCreatureUUID) Then
+		    Options = Self.mReplacements.Value(FromCreatureUUID)
 		  Else
 		    If Weight = Nil Then
 		      Return
@@ -43,17 +50,17 @@ Inherits Beacon.SpawnPointSet
 		  End If
 		  
 		  If Weight = Nil Then
-		    If Options.HasKey(ToCreature.Path) Then
-		      Options.Remove(ToCreature.Path)
+		    If Options.HasKey(ToCreatureUUID) Then
+		      Options.Remove(ToCreatureUUID)
 		    End If
 		  Else
-		    Options.Value(ToCreature.Path) = Weight.DoubleValue
+		    Options.Value(ToCreatureUUID) = Weight.DoubleValue
 		  End If
 		  
-		  If Options.KeyCount = 0 And Self.mReplacements.HasKey(FromCreature.Path) Then
-		    Self.mReplacements.Remove(FromCreature.Path)
+		  If Options.KeyCount = 0 And Self.mReplacements.HasKey(FromCreatureUUID) Then
+		    Self.mReplacements.Remove(FromCreatureUUID)
 		  Else
-		    Self.mReplacements.Value(FromCreature.Path) = Options
+		    Self.mReplacements.Value(FromCreatureUUID) = Options
 		  End If
 		  
 		  Self.Modified = True

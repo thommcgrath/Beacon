@@ -96,6 +96,16 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function CreateFromObjectID(ObjectID As v4UUID) As Beacon.SpawnPoint
+		  Var ObjectIDString As String = ObjectID.StringValue
+		  Var SpawnPoint As Beacon.SpawnPoint = CreateFromPath(Beacon.UnknownBlueprintPath("SpawnPoints", "BeaconSpawn_" + ObjectIDString + "_C"))
+		  SpawnPoint.mLabel = ObjectIDString
+		  SpawnPoint.mObjectID = ObjectID
+		  Return SpawnPoint
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function CreateFromPath(Path As String) As Beacon.SpawnPoint
 		  Var SpawnPoint As New Beacon.SpawnPoint
 		  SpawnPoint.mClassString = Beacon.ClassStringFromPath(Path)
@@ -111,23 +121,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(Dict As Dictionary) As Beacon.SpawnPoint
 		  Try
-		    Var SpawnPoint As Beacon.SpawnPoint
-		    If Dict.HasKey("Path") Then
-		      SpawnPoint = Beacon.Data.GetSpawnPointByPath(Dict.Value("Path"))
-		      If SpawnPoint = Nil Then
-		        SpawnPoint = Beacon.SpawnPoint.CreateFromPath(Dict.Value("Path"))
-		      End If
-		    End If
-		    If SpawnPoint = Nil And Dict.HasKey("Class") Then
-		      SpawnPoint = Beacon.Data.GetSpawnPointByClass(Dict.Value("Class"))
-		      If SpawnPoint = Nil Then
-		        SpawnPoint = Beacon.SpawnPoint.CreateFromClass(Dict.Value("Class"))
-		      End If
-		    End If
-		    If SpawnPoint = Nil Then
-		      Return Nil
-		    End If
-		    
+		    Var SpawnPoint As Beacon.SpawnPoint = Beacon.ResolveSpawnPoint(Dict, "UUID", "Path", "Class")
 		    SpawnPoint = New Beacon.SpawnPoint(SpawnPoint)
 		    SpawnPoint.mSets.ResizeTo(-1)
 		    If Dict.HasKey("Label") Then
@@ -355,6 +349,7 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  
 		  Var Keys As New Dictionary
 		  Keys.Value("Label") = Self.Label
+		  Keys.Value("UUID") = Self.ObjectID.StringValue
 		  Keys.Value("Path") = Self.Path
 		  Keys.Value("Class") = Self.ClassString
 		  Keys.Value("Mode") = Self.Mode

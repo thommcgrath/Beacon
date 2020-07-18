@@ -62,54 +62,77 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 
 	#tag Method, Flags = &h0
 		Shared Function FromSaveData(Dict As Dictionary) As Beacon.SpawnPointSetEntry
-		  If Dict = Nil Or Dict.HasKey("Creature") = False Then
+		  If Dict Is Nil Or (Dict.HasKey("creature_id") = False And Dict.HasKey("Creature") = False) Then
 		    Return Nil
 		  End If
 		  
 		  Var Entry As New Beacon.SpawnPointSetEntry
-		  Entry.mCreature = Beacon.Data.GetCreatureByPath(Dict.Value("Creature"))
-		  If Entry.mCreature = Nil Then
+		  If Dict.HasKey("creature_id") Then
+		    Var CreatureUUID As String = Dict.Value("creature_id")
+		    Entry.mCreature = Beacon.ResolveCreature(CreatureUUID, "", "")
+		  Else
+		    Var CreaturePath As String = Dict.Value("Creature")
+		    Entry.mCreature = Beacon.ResolveCreature("", CreaturePath, "")
+		  End If
+		  If Entry.mCreature Is Nil Then
 		    Return Nil
 		  End If
 		  
-		  If Dict.HasKey("SpawnChance") Then
-		    Entry.mChance = Dict.Value("SpawnChance").DoubleValue
+		  If Dict.HasKey("weight") Then
+		    Entry.mChance = NullableDouble.FromVariant(Dict.Value("weight"))
+		  ElseIf Dict.HasKey("SpawnChance") Then
+		    Entry.mChance = NullableDouble.FromVariant(Dict.Value("SpawnChance"))
 		  ElseIf Dict.HasKey("Chance") Then
-		    Entry.mChance = Dict.Value("Chance").DoubleValue
+		    Entry.mChance = NullableDouble.FromVariant(Dict.Value("Chance"))
 		  End If
 		  
-		  If Dict.HasKey("Offset") Then
+		  If Dict.HasKey("spawn_offset") Then
+		    Entry.mOffset = Beacon.Point3D.FromSaveData(Dict.Value("spawn_offset"))
+		  ElseIf Dict.HasKey("Offset") Then
 		    Entry.mOffset = Beacon.Point3D.FromSaveData(Dict.Value("Offset"))
 		  End If
 		  
-		  If Dict.HasKey("Levels") Then
-		    Var Levels() As Variant = Dict.Value("Levels")
-		    For Each LevelData As Dictionary In Levels
-		      Var Level As Beacon.SpawnPointLevel = Beacon.SpawnPointLevel.FromSaveData(LevelData)
-		      If Level <> Nil Then
-		        Entry.mLevels.AddRow(Level)
-		      End If
-		    Next
+		  Var Levels() As Variant
+		  If Dict.HasKey("level_overrides") And IsNull(Dict.Value("level_overrides")) = False Then
+		    Levels = Dict.Value("level_overrides")
+		  ElseIf Dict.HasKey("Levels") And IsNull(Dict.Value("Levels")) = False Then
+		    Levels = Dict.Value("Levels")
+		  End If
+		  For Each LevelData As Dictionary In Levels
+		    Var Level As Beacon.SpawnPointLevel = Beacon.SpawnPointLevel.FromSaveData(LevelData)
+		    If Level <> Nil Then
+		      Entry.mLevels.AddRow(Level)
+		    End If
+		  Next
+		  
+		  If Dict.HasKey("max_level_multiplier") Then
+		    Entry.mMaxLevelMultiplier = NullableDouble.FromVariant(Dict.Value("max_level_multiplier"))
+		  ElseIf Dict.HasKey("MaxLevelMultiplier") Then
+		    Entry.mMaxLevelMultiplier = NullableDouble.FromVariant(Dict.Value("MaxLevelMultiplier"))
 		  End If
 		  
-		  If Dict.HasKey("MaxLevelMultiplier") Then
-		    Entry.mMaxLevelMultiplier = Dict.Value("MaxLevelMultiplier").DoubleValue
+		  If Dict.HasKey("max_level_offset") Then
+		    Entry.mMaxLevelOffset = NullableDouble.FromVariant(Dict.Value("max_level_offset"))
+		  ElseIf Dict.HasKey("MaxLevelOffset") Then
+		    Entry.mMaxLevelOffset = NullableDouble.FromVariant(Dict.Value("MaxLevelOffset"))
 		  End If
 		  
-		  If Dict.HasKey("MaxLevelOffset") Then
-		    Entry.mMaxLevelOffset = Dict.Value("MaxLevelOffset").DoubleValue
+		  If Dict.HasKey("min_level_multiplier") Then
+		    Entry.mMinLevelMultiplier = NullableDouble.FromVariant(Dict.Value("min_level_multiplier"))
+		  ElseIf Dict.HasKey("MinLevelMultiplier") Then
+		    Entry.mMinLevelMultiplier = NullableDouble.FromVariant(Dict.Value("MinLevelMultiplier"))
 		  End If
 		  
-		  If Dict.HasKey("MinLevelMultiplier") Then
-		    Entry.mMinLevelMultiplier = Dict.Value("MinLevelMultiplier").DoubleValue
+		  If Dict.HasKey("min_level_offset") Then
+		    Entry.mMinLevelOffset = NullableDouble.FromVariant(Dict.Value("min_level_offset"))
+		  ElseIf Dict.HasKey("MinLevelOffset") Then
+		    Entry.mMinLevelOffset = NullableDouble.FromVariant(Dict.Value("MinLevelOffset"))
 		  End If
 		  
-		  If Dict.HasKey("MinLevelOffset") Then
-		    Entry.mMinLevelOffset = Dict.Value("MinLevelOffset").DoubleValue
-		  End If
-		  
-		  If Dict.HasKey("LevelOverride") Then
-		    Entry.mLevelOverride = Dict.Value("LevelOverride").DoubleValue
+		  If Dict.HasKey("override") Then
+		    Entry.mLevelOverride = NullableDouble.FromVariant(Dict.Value("override"))
+		  ElseIf Dict.HasKey("LevelOverride") Then
+		    Entry.mLevelOverride = NullableDouble.FromVariant(Dict.Value("LevelOverride"))
 		  End If
 		  
 		  Return Entry
@@ -382,13 +405,13 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 	#tag Method, Flags = &h0
 		Function SaveData() As Dictionary
 		  Var Dict As New Dictionary
-		  Dict.Value("Creature") = Self.mCreature.Path
-		  Dict.Value("Type") = "SpawnPointSetEntry"
+		  Dict.Value("creature_id") = Self.mCreature.ObjectID.StringValue
+		  Dict.Value("type") = "SpawnPointSetEntry"
 		  If Self.mChance <> Nil Then
-		    Dict.Value("SpawnChance") = Self.mChance.DoubleValue
+		    Dict.Value("weight") = Self.mChance.DoubleValue
 		  End If
 		  If Self.mOffset <> Nil Then
-		    Dict.Value("Offset") = Self.mOffset.SaveData
+		    Dict.Value("spawn_offset") = Self.mOffset.SaveData
 		  End If
 		  If Self.mLevels.LastRowIndex > -1 Then
 		    Var Levels() As Dictionary
@@ -396,22 +419,22 @@ Implements Beacon.DocumentItem,Beacon.NamedItem
 		    For I As Integer = 0 To Self.mLevels.LastRowIndex
 		      Levels(I) = Self.mLevels(I).SaveData
 		    Next
-		    Dict.Value("Levels") = Levels
+		    Dict.Value("level_overrides") = Levels
 		  End If
 		  If Self.mMaxLevelMultiplier <> Nil Then
-		    Dict.Value("MaxLevelMultiplier") = Self.mMaxLevelMultiplier.DoubleValue
+		    Dict.Value("max_level_multiplier") = Self.mMaxLevelMultiplier.DoubleValue
 		  End If
 		  If Self.mMaxLevelOffset <> Nil Then
-		    Dict.Value("MaxLevelOffset") = Self.mMaxLevelOffset.DoubleValue
+		    Dict.Value("max_level_offset") = Self.mMaxLevelOffset.DoubleValue
 		  End If
 		  If Self.mMinLevelMultiplier <> Nil Then
-		    Dict.Value("MinLevelMultiplier") = Self.mMinLevelMultiplier.DoubleValue
+		    Dict.Value("min_level_multiplier") = Self.mMinLevelMultiplier.DoubleValue
 		  End If
 		  If Self.mMinLevelOffset <> Nil Then
-		    Dict.Value("MinLevelOffset") = Self.mMinLevelOffset.DoubleValue
+		    Dict.Value("min_level_offset") = Self.mMinLevelOffset.DoubleValue
 		  End If
 		  If Self.mLevelOverride <> Nil Then
-		    Dict.Value("LevelOverride") = Self.mLevelOverride.DoubleValue
+		    Dict.Value("override") = Self.mLevelOverride.DoubleValue
 		  End If
 		  Return Dict
 		End Function

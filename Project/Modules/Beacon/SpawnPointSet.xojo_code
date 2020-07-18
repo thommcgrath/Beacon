@@ -72,13 +72,21 @@ Implements Beacon.DocumentItem,Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function CreatureReplacementWeight(FromCreature As Beacon.Creature, ToCreature As Beacon.Creature) As NullableDouble
-		  If Not Self.mReplacements.HasKey(FromCreature.Path) Then
+		  If FromCreature Is Nil Or ToCreature Is Nil Then
 		    Return Nil
 		  End If
 		  
-		  Var Options As Dictionary = Self.mReplacements.Value(FromCreature.Path)
-		  If Options.HasKey(ToCreature.Path) Then
-		    Return Options.Value(ToCreature.Path).DoubleValue
+		  Var FromCreatureUUID As String = FromCreature.ObjectID
+		  
+		  If Not Self.mReplacements.HasKey(FromCreatureUUID) Then
+		    Return Nil
+		  End If
+		  
+		  Var ToCreatureUUID As String = ToCreature.ObjectID
+		  
+		  Var Options As Dictionary = Self.mReplacements.Value(FromCreatureUUID)
+		  If Options.HasKey(ToCreatureUUID) Then
+		    Return Options.Value(ToCreatureUUID).DoubleValue
 		  Else
 		    Return Nil
 		  End If
@@ -109,23 +117,28 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  End If
 		  
 		  Var Set As New Beacon.MutableSpawnPointSet
-		  If SaveData.HasKey("Label") Then
-		    Set.Label = SaveData.Value("Label")
-		  ElseIf SaveData.HasKey("label") Then
+		  If SaveData.HasKey("label") Then
 		    Set.Label = SaveData.Value("label")
+		  ElseIf SaveData.HasKey("Label") Then
+		    Set.Label = SaveData.Value("Label")
 		  Else
 		    Return Nil
 		  End If
-		  If SaveData.HasKey("Weight") Then
-		    Set.Weight = SaveData.Value("Weight")
-		  ElseIf SaveData.HasKey("weight") Then
-		    Set.Weight = SaveData.Value("weight")
+		  If SaveData.HasKey("weight") Then
+		    Set.Weight = SaveData.Value("weight").DoubleValue
+		  ElseIf SaveData.HasKey("Weight") Then
+		    Set.Weight = SaveData.Value("Weight").DoubleValue
 		  Else
 		    Return Nil
 		  End If
 		  
-		  If SaveData.HasKey("Entries") Then
-		    Var Entries() As Variant = SaveData.Value("Entries")
+		  If SaveData.HasKey("entries") Or SaveData.HasKey("Entries") Then
+		    Var Entries() As Variant
+		    If SaveData.HasKey("entries") Then
+		      Entries = SaveData.Value("entries")
+		    Else
+		      Entries = SaveData.Value("Entries")
+		    End If
 		    For Each EntrySaveData As Dictionary In Entries
 		      Var Entry As Beacon.SpawnPointSetEntry = Beacon.SpawnPointSetEntry.FromSaveData(EntrySaveData)
 		      If Entry = Nil Then
@@ -148,58 +161,82 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		    Return Nil
 		  End If
 		  
-		  If SaveData.HasKey("SpreadRadius") Then
-		    Set.SpreadRadius = SaveData.Value("SpreadRadius").DoubleValue
+		  If SaveData.HasKey("spread_radius") Then
+		    Set.SpreadRadius = NullableDouble.FromVariant(SaveData.Value("spread_radius"))
+		  ElseIf SaveData.HasKey("SpreadRadius") Then
+		    Set.SpreadRadius = NullableDouble.FromVariant(SaveData.Value("SpreadRadius"))
 		  End If
 		  
-		  If SaveData.HasKey("GroupOffset") And SaveData.Value("GroupOffset") <> Nil Then
-		    Var GroupOffset As Beacon.Point3D = Beacon.Point3D.FromSaveData(SaveData.Value("GroupOffset"))
-		    If GroupOffset <> Nil Then
-		      Set.GroupOffset = GroupOffset
-		    End If
+		  Var SpawnOffset As Beacon.Point3D
+		  If SaveData.HasKey("spawn_offset") And SaveData.Value("spawn_offset") <> Nil Then
+		    SpawnOffset = Beacon.Point3D.FromSaveData(SaveData.Value("spawn_offset"))
+		  ElseIf SaveData.HasKey("GroupOffset") And SaveData.Value("GroupOffset") <> Nil Then
+		    SpawnOffset = Beacon.Point3D.FromSaveData(SaveData.Value("GroupOffset"))
+		  End If
+		  If (SpawnOffset Is Nil) = False Then
+		    Set.GroupOffset = SpawnOffset
 		  End If
 		  
-		  If SaveData.HasKey("WaterOnlyMinimumHeight") Then
-		    Set.WaterOnlyMinimumHeight = SaveData.Value("WaterOnlyMinimumHeight").DoubleValue
+		  If SaveData.HasKey("water_only_minimum_height") Then
+		    Set.WaterOnlyMinimumHeight = NullableDouble.FromVariant(SaveData.Value("water_only_minimum_height"))
+		  ElseIf SaveData.HasKey("WaterOnlyMinimumHeight") Then
+		    Set.WaterOnlyMinimumHeight = NullableDouble.FromVariant(SaveData.Value("WaterOnlyMinimumHeight"))
 		  End If
 		  
-		  If SaveData.HasKey("MinDistanceFromPlayersMultiplier") Then
-		    Set.MinDistanceFromPlayersMultiplier = SaveData.Value("MinDistanceFromPlayersMultiplier").DoubleValue
+		  If SaveData.HasKey("min_distance_from_players_multiplier") Then
+		    Set.MinDistanceFromPlayersMultiplier = NullableDouble.FromVariant(SaveData.Value("min_distance_from_players_multiplier"))
+		  ElseIf SaveData.HasKey("MinDistanceFromPlayersMultiplier") Then
+		    Set.MinDistanceFromPlayersMultiplier = NullableDouble.FromVariant(SaveData.Value("MinDistanceFromPlayersMultiplier"))
 		  End If
 		  
-		  If SaveData.HasKey("MinDistanceFromStructuresMultiplier") Then
-		    Set.MinDistanceFromStructuresMultiplier = SaveData.Value("MinDistanceFromStructuresMultiplier").DoubleValue
+		  If SaveData.HasKey("min_distance_from_structures_multiplier") Then
+		    Set.MinDistanceFromStructuresMultiplier = NullableDouble.FromVariant(SaveData.Value("min_distance_from_structures_multiplier"))
+		  ElseIf SaveData.HasKey("MinDistanceFromStructuresMultiplier") Then
+		    Set.MinDistanceFromStructuresMultiplier = NullableDouble.FromVariant(SaveData.Value("MinDistanceFromStructuresMultiplier"))
 		  End If
 		  
-		  If SaveData.HasKey("MinDistanceFromTamedDinosMultiplier") Then
-		    Set.MinDistanceFromTamedDinosMultiplier = SaveData.Value("MinDistanceFromTamedDinosMultiplier").DoubleValue
+		  If SaveData.HasKey("min_distance_from_tamed_dinos_multiplier") Then
+		    Set.MinDistanceFromTamedDinosMultiplier = NullableDouble.FromVariant(SaveData.Value("min_distance_from_tamed_dinos_multiplier"))
+		  ElseIf SaveData.HasKey("MinDistanceFromTamedDinosMultiplier") Then
+		    Set.MinDistanceFromTamedDinosMultiplier = NullableDouble.FromVariant(SaveData.Value("MinDistanceFromTamedDinosMultiplier"))
 		  End If
 		  
-		  If SaveData.HasKey("Replacements") Then
-		    Var Replacements As Dictionary = SaveData.Value("Replacements")
-		    For Each Entry As DictionaryEntry In Replacements
-		      Var FromPath As String = Entry.Key
-		      Var FromCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(FromPath)
-		      If FromCreature = Nil Then
-		        FromCreature = Beacon.Creature.CreateFromPath(FromPath)
-		      End If
-		      
-		      Var ToDict As Dictionary = Entry.Value
-		      For Each SubEntry As DictionaryEntry In ToDict
-		        Var ToPath As String = SubEntry.Key
-		        Var Weight As Double = SubEntry.Value
-		        Var ToCreature As Beacon.Creature = Beacon.Data.GetCreatureByPath(ToPath)
-		        If ToCreature = Nil Then
-		          ToCreature = Beacon.Creature.CreateFromPath(ToPath)
-		        End If
-		        
-		        Set.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
-		      Next
-		    Next
-		  End If
-		  
-		  If SaveData.HasKey("OffsetBeforeMultiplier") Then
+		  If SaveData.HasKey("offset_before_multiplier") Then
+		    Set.LevelOffsetBeforeMultiplier = SaveData.Value("offset_before_multiplier").BooleanValue
+		  ElseIf SaveData.HasKey("OffsetBeforeMultiplier") Then
 		    Set.LevelOffsetBeforeMultiplier = SaveData.Value("OffsetBeforeMultiplier").BooleanValue
+		  End If
+		  
+		  If SaveData.HasKey("replacements") Then
+		    Var Replacements As Dictionary = SaveData.Value("replacements")
+		    If (Replacements Is Nil) = False Then
+		      For Each Entry As DictionaryEntry In Replacements
+		        Var FromUUID As String = Entry.Key
+		        Var FromCreature As Beacon.Creature = Beacon.ResolveCreature(FromUUID, "", "")
+		        Var ToDict As Dictionary = Entry.Value
+		        For Each SubEntry As DictionaryEntry In ToDict
+		          Var ToUUID As String = SubEntry.Key
+		          Var Weight As Double = SubEntry.Value
+		          Var ToCreature As Beacon.Creature = Beacon.ResolveCreature(ToUUID, "", "")
+		          Set.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
+		        Next
+		      Next
+		    End If
+		  ElseIf SaveData.HasKey("Replacements") Then
+		    Var Replacements As Dictionary = SaveData.Value("Replacements")
+		    If (Replacements Is Nil) = False Then
+		      For Each Entry As DictionaryEntry In Replacements
+		        Var FromPath As String = Entry.Key
+		        Var FromCreature As Beacon.Creature = Beacon.ResolveCreature("", FromPath, "")
+		        Var ToDict As Dictionary = Entry.Value
+		        For Each SubEntry As DictionaryEntry In ToDict
+		          Var ToPath As String = SubEntry.Key
+		          Var Weight As Double = SubEntry.Value
+		          Var ToCreature As Beacon.Creature = Beacon.ResolveCreature("", ToPath, "")
+		          Set.CreatureReplacementWeight(FromCreature, ToCreature) = Weight
+		        Next
+		      Next
+		    End If
 		  End If
 		  
 		  Set.Modified = False
@@ -365,12 +402,11 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		Function ReplacedCreatures() As Beacon.Creature()
 		  Var Arr() As Beacon.Creature
 		  For Each Entry As DictionaryEntry In Self.mReplacements
-		    Var Path As String = Entry.Key
-		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Path)
-		    If Creature = Nil Then
-		      Creature = Beacon.Creature.CreateFromPath(Path)
+		    Var CreatureUUID As String = Entry.Key
+		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByID(CreatureUUID)
+		    If (Creature Is Nil) = False Then
+		      Arr.AddRow(Creature)
 		    End If
-		    Arr.AddRow(Creature)
 		  Next
 		  Return Arr
 		End Function
@@ -379,18 +415,21 @@ Implements Beacon.DocumentItem,Beacon.Countable
 	#tag Method, Flags = &h0
 		Function ReplacementCreatures(FromCreature As Beacon.Creature) As Beacon.Creature()
 		  Var Arr() As Beacon.Creature
-		  If FromCreature = Nil Or Self.mReplacements.HasKey(FromCreature.Path) = False Then
+		  If FromCreature Is Nil Then
 		    Return Arr
 		  End If
 		  
-		  Var Options As Dictionary = Self.mReplacements.Value(FromCreature.Path)
+		  Var CreatureUUID As String = FromCreature.ObjectID
+		  If Self.mReplacements.HasKey(CreatureUUID) = False Then
+		    Return Arr
+		  End If
+		  
+		  Var Options As Dictionary = Self.mReplacements.Value(CreatureUUID)
 		  For Each Entry As DictionaryEntry In Options
-		    Var Path As String = Entry.Key
-		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByPath(Path)
-		    If Creature = Nil Then
-		      Creature = Beacon.Creature.CreateFromPath(Path)
+		    Var Creature As Beacon.Creature = Beacon.Data.GetCreatureByID(Entry.Key.StringValue)
+		    If (Creature Is Nil) = False Then
+		      Arr.AddRow(Creature)
 		    End If
-		    Arr.AddRow(Creature)
 		  Next
 		  
 		  Return Arr
@@ -411,31 +450,31 @@ Implements Beacon.DocumentItem,Beacon.Countable
 		  Next
 		  
 		  Var SaveData As New Dictionary
-		  SaveData.Value("Type") = "SpawnPointSet"
-		  SaveData.Value("Label") = Self.Label
-		  SaveData.Value("Weight") = Self.Weight
-		  SaveData.Value("Entries") = Entries
-		  SaveData.Value("OffsetBeforeMultiplier") = Self.mOffsetBeforeMultiplier
+		  SaveData.Value("type") = "SpawnPointSet"
+		  SaveData.Value("label") = Self.Label
+		  SaveData.Value("weight") = Self.Weight
+		  SaveData.Value("entries") = Entries
+		  SaveData.Value("offset_before_multiplier") = Self.mOffsetBeforeMultiplier
 		  If Self.mGroupOffset <> Nil Then
-		    SaveData.Value("GroupOffset") = Self.mGroupOffset.SaveData
+		    SaveData.Value("spawn_offset") = Self.mGroupOffset.SaveData
 		  End If
 		  If Self.mSpreadRadius <> Nil Then
-		    SaveData.Value("SpreadRadius") = Self.mSpreadRadius.DoubleValue
+		    SaveData.Value("spread_radius") = Self.mSpreadRadius.DoubleValue
 		  End If
 		  If Self.mWaterOnlyMinimumHeight <> Nil Then
-		    SaveData.Value("WaterOnlyMinimumHeight") = Self.mWaterOnlyMinimumHeight.DoubleValue
+		    SaveData.Value("water_only_minimum_height") = Self.mWaterOnlyMinimumHeight.DoubleValue
 		  End If
 		  If Self.mMinDistanceFromPlayersMultiplier <> Nil Then
-		    SaveData.Value("MinDistanceFromPlayersMultiplier") = Self.mMinDistanceFromPlayersMultiplier.DoubleValue
+		    SaveData.Value("min_distance_from_players_multiplier") = Self.mMinDistanceFromPlayersMultiplier.DoubleValue
 		  End If
 		  If Self.mMinDistanceFromStructuresMultiplier <> Nil Then
-		    SaveData.Value("MinDistanceFromStructuresMultiplier") = Self.mMinDistanceFromStructuresMultiplier.DoubleValue
+		    SaveData.Value("min_distance_from_structures_multiplier") = Self.mMinDistanceFromStructuresMultiplier.DoubleValue
 		  End If
 		  If Self.mMinDistanceFromTamedDinosMultiplier <> Nil Then
-		    SaveData.Value("MinDistanceFromTamedDinosMultiplier") = Self.mMinDistanceFromTamedDinosMultiplier.DoubleValue
+		    SaveData.Value("min_distance_from_tamed_dinos_multiplier") = Self.mMinDistanceFromTamedDinosMultiplier.DoubleValue
 		  End If
 		  If Self.mReplacements.KeyCount > 0 Then
-		    SaveData.Value("Replacements") = Self.mReplacements
+		    SaveData.Value("replacements") = Self.mReplacements
 		  End If
 		  Return SaveData
 		End Function

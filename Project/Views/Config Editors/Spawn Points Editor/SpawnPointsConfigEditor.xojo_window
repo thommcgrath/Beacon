@@ -487,9 +487,14 @@ End
 		      Prefix = "Add to"
 		    Case Beacon.SpawnPoint.ModeRemove
 		      Prefix = "Remove from"
+		    Else
+		      #if DebugBuild
+		        System.DebugLog("Unknown mode for spawn point `" + SpawnPoints(I).Path + "`: " + CType(SpawnPoints(I).Mode, Integer).ToString)
+		      #endif
 		    End Select
 		    
-		    Self.List.CellValueAt(I, 0) = Prefix + " " + Labels.Lookup(SpawnPoints(I).Path, SpawnPoints(I).Label).StringValue
+		    Var RowLabel As String = Prefix + " " + Labels.Lookup(SpawnPoints(I).ObjectID.StringValue, SpawnPoints(I).Label).StringValue
+		    Self.List.CellValueAt(I, 0) = RowLabel
 		    Self.List.RowTagAt(I) = SpawnPoints(I)
 		    Self.List.Selected(I) = Selected.HasKey(SpawnPoints(I).UniqueKey)
 		  Next

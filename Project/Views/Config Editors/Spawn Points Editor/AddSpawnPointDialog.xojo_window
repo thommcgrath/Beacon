@@ -544,7 +544,7 @@ End
 		      Continue
 		    End If
 		    
-		    Self.List.AddRow(Labels.Lookup(SpawnPoint.Path, SpawnPoint.Label).StringValue)
+		    Self.List.AddRow(Labels.Lookup(SpawnPoint.ObjectID.StringValue, SpawnPoint.Label).StringValue)
 		    Self.List.RowTagAt(Self.List.LastAddedRowIndex) = SpawnPoint
 		  Next
 		  Self.List.SortingColumn = 0

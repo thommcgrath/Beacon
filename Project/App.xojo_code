@@ -1025,7 +1025,7 @@ Implements NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  If File.IsType(BeaconFileTypes.JsonFile) Then
+		  If File.IsType(BeaconFileTypes.BeaconData) Or File.IsType(BeaconFileTypes.JsonFile) Then
 		    Try
 		      Var Content As String = File.Read(Encodings.UTF8)
 		      LocalData.SharedInstance.Import(Content)
