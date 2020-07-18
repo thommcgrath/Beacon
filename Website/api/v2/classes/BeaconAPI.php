@@ -151,6 +151,7 @@ abstract class BeaconAPI {
 			
 			switch ($auth_type) {
 			case 'session':
+			case 'bearer':
 				$authorized = self::AuthorizeWithSessionID($auth_value);
 				break;
 			case 'basic':
