@@ -22,8 +22,9 @@ $database = BeaconCommon::Database();
 $items = array();
 $results = $database->Query('SELECT COUNT(id) AS result_count FROM search_contents, to_tsquery($1) AS keywords WHERE keywords @@ lexemes AND min_version <= $2;', $query, BeaconCommon::MinVersion());
 $result_count = $results->Field('result_count');
+$name_map = [];
 if ($result_count > 0) {
-	$results = $database->Query('SELECT id, title, body, type, subtype, uri, ts_rank(lexemes, keywords) AS rank FROM search_contents, to_tsquery($1) AS keywords WHERE keywords @@ lexemes AND min_version <= $3 ORDER BY rank DESC, title ASC LIMIT $2;', $query, $max_results, BeaconCommon::MinVersion());
+	$results = $database->Query('SELECT id, title, body, type, subtype, uri, mods.mod_id, mods.name AS mod_name, ts_rank(lexemes, keywords) AS rank FROM search_contents LEFT JOIN mods ON (search_contents.mod_id = mods.mod_id), to_tsquery($1) AS keywords WHERE keywords @@ lexemes AND min_version <= $3 ORDER BY rank DESC, title ASC LIMIT $2;', $query, $max_results, BeaconCommon::MinVersion());
 	while (!$results->EOF()) {
 		$summary = $results->Field('body');
 		if (strlen($summary) > 200) {
@@ -51,17 +52,33 @@ if ($result_count > 0) {
 			}
 		}
 		
-		$item = array(
+		$item = [
 			'id' => $results->Field('id'),
 			'title' => $results->Field('title'),
 			'summary' => $summary,
 			'type' => $type,
 			'quality' => floatval($results->Field('rank')),
-			'url' => $results->Field('uri')
-		);
+			'url' => $results->Field('uri'),
+			'mod' => [
+				'id' => $results->Field('mod_id'),
+				'name' => $results->Field('mod_name')
+			]
+		];
+		if (isset($name_map[$results->Field('title')])) {
+			$name_map[$results->Field('title')] = $name_map[$results->Field('title')] + 1;
+		} else {
+			$name_map[$results->Field('title')] = 1;
+		}
 		
 		$items[] = $item;
 		$results->MoveNext();
+	}
+}
+
+for ($idx = 0; $idx < count($items); $idx++) {
+	$title = $items[$idx]['title'];
+	if ($name_map[$title] > 1 && is_null($items[$idx]['mod']['name']) == false) {
+		$items[$idx]['title'] = $title . ' (' . $items[$idx]['mod']['name'] . ')';
 	}
 }
 
