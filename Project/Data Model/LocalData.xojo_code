@@ -1787,6 +1787,22 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Return Ingredients
 		End Function
 	#tag EndMethod
+	
+	#tag Method, Flags = &h0
+		Sub LoadDefaults(SpawnPoint As Beacon.MutableSpawnPoint)
+		  If SpawnPoint Is Nil Then
+		    Return
+		  End If
+		  
+		  Var Rows As RowSet = Self.SQLSelect("SELECT sets, limits FROM spawn_points WHERE object_id = ?1;", SpawnPoint.ObjectID.StringValue)
+		  If Rows.RowCount = 0 Then
+		    Return
+		  End If
+		  
+		  SpawnPoint.SetsString = Rows.Column("sets").StringValue
+		  SpawnPoint.LimitsString = Rows.Column("limits").StringValue
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub LoadPresets()
@@ -2443,8 +2459,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Point.TagString = Results.Column("tags").StringValue
 		    Point.ModID = Results.Column("mod_id").StringValue
 		    Point.ModName = Results.Column("mod_name").StringValue
-		    Point.SetsString = Results.Column("sets").StringValue
-		    Point.LimitsString = Results.Column("limits").StringValue
 		    Point.Modified = False
 		    SpawnPoints.AddRow(New Beacon.SpawnPoint(Point))
 		    Results.MoveToNextRow
@@ -3274,7 +3288,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"19", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.tags\x2C spawn_points.sets\x2C spawn_points.limits\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag Constant, Name = SpawnPointSelectSQL, Type = String, Dynamic = False, Default = \"SELECT spawn_points.object_id\x2C spawn_points.path\x2C spawn_points.label\x2C spawn_points.alternate_label\x2C spawn_points.availability\x2C spawn_points.tags\x2C mods.mod_id\x2C mods.name AS mod_name FROM spawn_points INNER JOIN mods ON (spawn_points.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = UserModID, Type = String, Dynamic = False, Default = \"23ecf24c-377f-454b-ab2f-d9d8f31a5863", Scope = Public
