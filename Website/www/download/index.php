@@ -123,16 +123,16 @@ foreach ($alternate_links as $link) {
 }
 
 if ($stable_engrams_version >= 5) {
-	$results = $database->Query("SELECT MAX(created) AS stamp FROM update_deltas WHERE version = $1;", $stable_engrams_version);
-	$last_database_update = new DateTime($results->Field("stamp"));
-	$engrams_url = 'https://updates.beaconapp.cc/v' . $stable_engrams_version . (BeaconCommon::InProduction() == false ? '/' . BeaconCommon::EnvironmentName() : '') . '/Complete.beacondata?t=' . $last_database_update->format('U');
+	$results = $database->Query('SELECT path, created FROM update_files WHERE version = $1 AND type = \'Complete\';', $stable_engrams_version);
+	$last_database_update = new DateTime($results->Field('created'));
+	$engrams_url = 'https://updates.beaconapp.cc' . $results->Field('path');
 } else {
-	$results = $database->Query("SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE objects.min_version <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM game_variables)) AS merged;", $build);
-	$last_database_update = new DateTime($results->Field("stamp"));
+	$results = $database->Query('SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE objects.min_version <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM game_variables)) AS merged;', $build);
+	$last_database_update = new DateTime($results->Field('stamp'));
 	$engrams_url = 'classes.php?version=' . $build;
 }
-$prerelease = $database->Query("SELECT mac_url, win_64_url, win_combo_url, win_32_url, build_display, build_number, stage, delta_version FROM updates WHERE stage < 3 AND build_number > $1 ORDER BY build_number DESC LIMIT 1;", $build);
-$stable_136 = $database->Query("SELECT win_combo_url FROM updates WHERE build_number = 10306300;");
+$prerelease = $database->Query('SELECT mac_url, win_64_url, win_combo_url, win_32_url, build_display, build_number, stage, delta_version FROM updates WHERE stage < 3 AND build_number > $1 ORDER BY build_number DESC LIMIT 1;', $build);
+$stable_136 = $database->Query('SELECT win_combo_url FROM updates WHERE build_number = 10306300;');
 
 ?><h1>Current Version</h1>
 <p class="text-center">Version <?php echo $version; ?></p>
@@ -171,9 +171,8 @@ $stable_136 = $database->Query("SELECT win_combo_url FROM updates WHERE build_nu
 	if ($prerelease_engrams_version == $stable_engrams_version) {
 		$prerelease_engrams_url = $engrams_url;
 	} elseif ($prerelease_engrams_version >= 5) {
-		$results = $database->Query("SELECT MAX(created) AS stamp FROM update_deltas WHERE version = $1;", $prerelease_engrams_version);
-		$last_database_update = new DateTime($results->Field("stamp"));
-		$prerelease_engrams_url = 'https://updates.beaconapp.cc/v' . $prerelease_engrams_version . (BeaconCommon::InProduction() == false ? '/' . BeaconCommon::EnvironmentName() : '') . '/Complete.beacondata?t=' . $last_database_update->format('U');
+		$results = $database->Query('SELECT path FROM update_files WHERE version = $1 AND type = \'Complete\';', $prerelease_engrams_version);
+		$prerelease_engrams_url = 'https://updates.beaconapp.cc' . $results->Field('path');
 	} else {
 		$prerelease_engrams_url = 'classes.php?version=' . $prerelease->Field('build_number');
 	}

@@ -15,7 +15,7 @@ if ($last_database_update >= $cutoff) {
 }
 
 $required_versions = [5];
-$results = $database->Query('SELECT delta_id, version FROM update_deltas WHERE created = $1;', $last_database_update->format('Y-m-d h:i:sO'));
+$results = $database->Query('SELECT file_id, version FROM update_files WHERE created = $1;', $last_database_update->format('Y-m-d h:i:sO'));
 if ($results->RecordCount() > 0) {
 	while (!$results->EOF()) {
 		$version = $results->Field('version');
@@ -39,7 +39,7 @@ foreach ($required_versions as $version) {
 	$full_data = DataForVersion($version, null);
 	$full_data['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
 	
-	$results = $database->Query('SELECT MAX(created) AS since FROM update_deltas WHERE version = $1;', $version);
+	$results = $database->Query('SELECT MAX(created) AS since FROM update_files WHERE version = $1 AND type = \'Delta\';', $version);
 	if (is_null($results->Field('since')) == false) {
 		$since = new DateTime($results->Field('since'));
 		
@@ -54,10 +54,14 @@ foreach ($required_versions as $version) {
 		$prefix .= '/' . BeaconCommon::EnvironmentName();
 	}
 	
-	$full_path = $prefix . '/Complete.beacondata';
+	$database->BeginTransaction();
+	
+	$full_path = $prefix . '/Complete.beacondata?t=' . $last_database_update->format('U');
 	$full_prepared = gzencode(json_encode($full_data));
+	$full_size = strlen($full_prepared);
 	if (UploadFile($full_path, $full_prepared) === false) {
 		echo "Unable to upload $full_path\n";
+		$database->Rollback();
 		continue;
 	}
 	
@@ -67,6 +71,7 @@ foreach ($required_versions as $version) {
 		$delta_size = strlen($delta_prepared);
 		if (UploadFile($delta_path, $delta_prepared) === false) {
 			echo "Unable to upload $delta_path\n";
+			$database->Rollback();
 			continue;
 		}
 	} else {
@@ -74,8 +79,13 @@ foreach ($required_versions as $version) {
 		$delta_size = strlen($full_prepared);
 	}
 	
-	$database->BeginTransaction();
-	$database->Query('INSERT INTO update_deltas (created, version, path, size) VALUES ($1, $2, $3, $4);', $last_database_update->format('Y-m-d h:i:sO'), $version, $delta_path, $delta_size);
+	$results = $database->Query('SELECT file_id FROM update_files WHERE version = $1 AND type = \'Complete\';', $version);
+	if ($results->RecordCount() == 1) {
+		$database->Query('UPDATE update_files SET created = $2, path = $3, size = $4 WHERE file_id = $1;', $results->Field('file_id'), $last_database_update->format('Y-m-d h:i:sO'), $full_path, $full_size);
+	} else {
+		$database->Query('INSERT INTO update_files (created, version, path, size, type) VALUES ($1, $2, $3, $4, \'Complete\');', $last_database_update->format('Y-m-d h:i:sO'), $version, $full_path, $full_size);
+	}
+	$database->Query('INSERT INTO update_files (created, version, path, size, type) VALUES ($1, $2, $3, $4, \'Delta\');', $last_database_update->format('Y-m-d h:i:sO'), $version, $delta_path, $delta_size);
 	$database->Commit();
 	
 	echo "Delta for version $version uploaded to $delta_path\n";

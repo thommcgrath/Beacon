@@ -13,15 +13,15 @@ if (isset($_GET['version'])) {
 }
 
 if ($version >= 5) {
-	$results = $database->Query('SELECT MAX(created) AS stamp FROM update_deltas WHERE version = $1;', $version);
-	if (is_null($results->Field('stamp'))) {
+	$results = $database->Query('SELECT path FROM update_files WHERE version = $1 AND type = \'Complete\';', $version);
+	if ($results->RecordCount() == 0) {
 		http_response_code(404);
 		header('Content-Type: text/plain');
 		echo 'Unknown delta version';
 		exit;
 	}
-	$stamp = new DateTime($results->Field('stamp'));
-	$destination = 'https://updates.beaconapp.cc/v' . $version . (BeaconCommon::InProduction() == false ? '/' . BeaconCommon::EnvironmentName() : '') . '/Complete.beacondata?t=' . $stamp->format('U');
+	
+	$destination = 'https://updates.beaconapp.cc' . $results->Field('path');
 } else {
 	if (isset($build_number) == false) {
 		$results = $database->Query('SELECT build_number FROM updates WHERE delta_version = $1 ORDER BY build_number DESC LIMIT 1;', $version);
