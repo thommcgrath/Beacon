@@ -633,7 +633,7 @@ End
 		  ElseIf Self.RemoveRadio.Value Then
 		    Mode = Beacon.SpawnPoint.ModeRemove
 		  End If
-		  Var ClearPoints As Boolean = Mode <> Beacon.SpawnPoint.ModeOverride Or Self.LoadDefaultsCheck.Value = False
+		  Var LoadDefaults As Boolean = Mode = Beacon.SpawnPoint.ModeOverride And Self.LoadDefaultsCheck.Value = True
 		  
 		  For I As Integer = 0 To Self.List.RowCount - 1
 		    If Not Self.List.Selected(I) Then
@@ -643,9 +643,8 @@ End
 		    Var SpawnPoint As Beacon.SpawnPoint = Self.List.RowTagAt(I)
 		    Var MutableSpawnPoint As Beacon.MutableSpawnPoint = SpawnPoint.MutableVersion
 		    
-		    If ClearPoints Then
-		      MutableSpawnPoint.ResizeTo(-1)
-		      MutableSpawnPoint.LimitsString = "{}"
+		    If LoadDefaults Then
+		      LocalData.SharedInstance.LoadDefaults(MutableSpawnPoint)
 		    End If
 		    
 		    MutableSpawnPoint.Mode = Mode

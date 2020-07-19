@@ -20,7 +20,7 @@ Begin BeaconWindow UpdateWindow
    MinHeight       =   132
    MinimizeButton  =   True
    MinWidth        =   600
-   Placement       =   2
+   Placement       =   3
    Resizable       =   "True"
    Resizeable      =   True
    SystemUIVisible =   "True"

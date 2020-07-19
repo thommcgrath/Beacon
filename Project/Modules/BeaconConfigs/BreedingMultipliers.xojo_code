@@ -6,16 +6,17 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyCuddleGracePeriodMultiplier", Self.mBabyCuddleGracePeriodMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyCuddleIntervalMultiplier", Self.mBabyCuddleIntervalMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyCuddleLoseImprintQualitySpeedMultiplier", Self.mBabyCuddleLoseImprintQualitySpeedMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyFoodConsumptionSpeedMultiplier", Self.mBabyFoodConsumptionSpeedMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyImprintingStatScaleMultiplier", Self.mBabyImprintingStatScaleMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyMatureSpeedMultiplier", Self.mBabyMatureSpeedMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "EggHatchSpeedMultiplier", Self.mEggHatchSpeedMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LayEggIntervalMultiplier", Self.mLayEggIntervalMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "MatingIntervalMultiplier", Self.mMatingIntervalMultiplier.PrettyText))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "MatingSpeedMultiplier", Self.mMatingSpeedMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyCuddleGracePeriodMultiplier", Self.BabyCuddleGracePeriodMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyCuddleIntervalMultiplier", Self.BabyCuddleIntervalMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyCuddleLoseImprintQualitySpeedMultiplier", Self.BabyCuddleLoseImprintQualitySpeedMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyFoodConsumptionSpeedMultiplier", Self.BabyFoodConsumptionSpeedMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyImprintingStatScaleMultiplier", Self.BabyImprintingStatScaleMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyImprintAmountMultiplier", Self.BabyImprintAmountMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyMatureSpeedMultiplier", Self.BabyMatureSpeedMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "EggHatchSpeedMultiplier", Self.EggHatchSpeedMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LayEggIntervalMultiplier", Self.LayEggIntervalMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "MatingIntervalMultiplier", Self.MatingIntervalMultiplier.PrettyText))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "MatingSpeedMultiplier", Self.MatingSpeedMultiplier.PrettyText))
 		End Sub
 	#tag EndEvent
 
@@ -29,6 +30,7 @@ Inherits Beacon.ConfigGroup
 		  Self.mBabyCuddleLoseImprintQualitySpeedMultiplier = Dict.Lookup("BabyCuddleLoseImprintQualitySpeedMultiplier", 1.0)
 		  Self.mBabyFoodConsumptionSpeedMultiplier = Dict.Lookup("BabyFoodConsumptionSpeedMultiplier", 1.0)
 		  Self.mBabyImprintingStatScaleMultiplier = Dict.Lookup("BabyImprintingStatScaleMultiplier", 1.0)
+		  Self.mBabyImprintAmountMultiplier = Dict.Lookup("BabyImprintAmountMultiplier", 1.0)
 		  Self.mBabyMatureSpeedMultiplier = Dict.Lookup("BabyMatureSpeedMultiplier", 1.0)
 		  Self.mEggHatchSpeedMultiplier = Dict.Lookup("EggHatchSpeedMultiplier", 1.0)
 		  Self.mLayEggIntervalMultiplier = Dict.Lookup("LayEggIntervalMultiplier", 1.0)
@@ -46,6 +48,7 @@ Inherits Beacon.ConfigGroup
 		  Dict.Value("BabyCuddleLoseImprintQualitySpeedMultiplier") = Self.mBabyCuddleLoseImprintQualitySpeedMultiplier
 		  Dict.Value("BabyFoodConsumptionSpeedMultiplier") = Self.mBabyFoodConsumptionSpeedMultiplier
 		  Dict.Value("BabyImprintingStatScaleMultiplier") = Self.mBabyImprintingStatScaleMultiplier
+		  Dict.Value("BabyImprintAmountMultiplier") = Self.mBabyImprintAmountMultiplier
 		  Dict.Value("BabyMatureSpeedMultiplier") = Self.mBabyMatureSpeedMultiplier
 		  Dict.Value("EggHatchSpeedMultiplier") = Self.mEggHatchSpeedMultiplier
 		  Dict.Value("LayEggIntervalMultiplier") = Self.mLayEggIntervalMultiplier
@@ -69,6 +72,7 @@ Inherits Beacon.ConfigGroup
 		  Self.mBabyCuddleLoseImprintQualitySpeedMultiplier = 1.0
 		  Self.mBabyFoodConsumptionSpeedMultiplier = 1.0
 		  Self.mBabyImprintingStatScaleMultiplier = 1.0
+		  Self.mBabyImprintAmountMultiplier = 1.0
 		  Self.mBabyMatureSpeedMultiplier = 1.0
 		  Self.mEggHatchSpeedMultiplier = 1.0
 		  Self.mLayEggIntervalMultiplier = 1.0
@@ -95,6 +99,7 @@ Inherits Beacon.ConfigGroup
 		  Var BabyCuddleIntervalMultiplier As Double = ParsedData.DoubleValue("BabyCuddleIntervalMultiplier", 1.0, True)
 		  Var BabyCuddleLoseImprintQualitySpeedMultiplier As Double = ParsedData.DoubleValue("BabyCuddleLoseImprintQualitySpeedMultiplier", 1.0, True)
 		  Var BabyImprintingStatScaleMultiplier As Double = ParsedData.DoubleValue("BabyImprintingStatScaleMultiplier", 1.0, True)
+		  Var BabyImprintAmountMultiplier As Double = ParsedData.DoubleValue("BabyImprintAmountMultiplier", 1.0, True)
 		  Var MatingIntervalMultiplier As Double = ParsedData.DoubleValue("MatingIntervalMultiplier", 1.0, True)
 		  Var MatingSpeedMultiplier As Double = ParsedData.DoubleValue("MatingSpeedMultiplier", 1.0, True)
 		  
@@ -107,6 +112,7 @@ Inherits Beacon.ConfigGroup
 		  Multipliers.mEggHatchSpeedMultiplier = EggHatchSpeedMultiplier
 		  Multipliers.mLayEggIntervalMultiplier = LayEggIntervalMultiplier
 		  Multipliers.mBabyImprintingStatScaleMultiplier = BabyImprintingStatScaleMultiplier
+		  Multipliers.mBabyImprintAmountMultiplier = BabyImprintAmountMultiplier
 		  Multipliers.mMatingIntervalMultiplier = MatingIntervalMultiplier
 		  Multipliers.mMatingSpeedMultiplier = MatingSpeedMultiplier
 		  Return Multipliers
@@ -134,11 +140,13 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mBabyCuddleIntervalMultiplier
+			  Return Max(Self.mBabyCuddleIntervalMultiplier, Self.MinImprintIntervalMultiplier)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
+			  Value = Max(Value, Self.MinImprintIntervalMultiplier)
+			  
 			  If Self.mBabyCuddleIntervalMultiplier <> Value Then
 			    Self.mBabyCuddleIntervalMultiplier = Value
 			    Self.Modified = True
@@ -180,6 +188,23 @@ Inherits Beacon.ConfigGroup
 			End Set
 		#tag EndSetter
 		BabyFoodConsumptionSpeedMultiplier As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mBabyImprintAmountMultiplier
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mBabyImprintAmountMultiplier <> Value Then
+			    Self.mBabyImprintAmountMultiplier = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		BabyImprintAmountMultiplier As Double
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -301,6 +326,10 @@ Inherits Beacon.ConfigGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mBabyImprintAmountMultiplier As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mBabyImprintingStatScaleMultiplier As Double
 	#tag EndProperty
 
@@ -323,6 +352,10 @@ Inherits Beacon.ConfigGroup
 	#tag Property, Flags = &h21
 		Private mMatingSpeedMultiplier As Double
 	#tag EndProperty
+
+
+	#tag Constant, Name = MinImprintIntervalMultiplier, Type = Double, Dynamic = False, Default = \"0.0001", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior
@@ -448,6 +481,14 @@ Inherits Beacon.ConfigGroup
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MatingSpeedMultiplier"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BabyImprintAmountMultiplier"
 			Visible=false
 			Group="Behavior"
 			InitialValue=""
