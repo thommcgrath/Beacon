@@ -32,10 +32,12 @@ class BeaconSession implements JsonSerializable {
 	
 	public static function Create(string $user_id) {
 		$session_id = BeaconCommon::GenerateUUID();
+		$remote_ip = $_SERVER['REMOTE_ADDR'];
 		
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query("INSERT INTO sessions (session_id, user_id, valid_until) VALUES (encode(digest($1, 'sha512'), 'hex'), $2, CURRENT_TIMESTAMP + '30d');", $session_id, $user_id);
+		$database->Query("INSERT INTO sessions (session_id, user_id, valid_until, remote_ip) VALUES (encode(digest($1, 'sha512'), 'hex'), $2, CURRENT_TIMESTAMP + '30d', $3);", $session_id, $user_id, $remote_ip);
+		$database->Query('DELETE FROM sessions WHERE valid_until < CURRENT_TIMESTAMP;');
 		$database->Commit();
 		
 		return static::GetBySessionID($session_id);
