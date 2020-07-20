@@ -505,6 +505,9 @@ End
 		      End If
 		    #endif
 		    
+		    App.FrontmostMBS = True
+		    Self.TrueWindow.ActivateWindowMBS
+		    
 		    Self.List.SortingColumn = 1
 		    Self.List.Sort
 		    Self.DesiredHeight = 400
