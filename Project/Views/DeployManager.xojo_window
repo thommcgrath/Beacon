@@ -773,44 +773,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Backup(Engine As Beacon.IntegrationEngine, Controller As Beacon.TaskWaitController, Label As String)
-		  Var UserData As Dictionary = Controller.UserData
-		  Try
-		    Var BackupsFolder As FolderItem = App.BackupsFolder
-		    If Not BackupsFolder.Exists Then
-		      BackupsFolder.CreateFolder
-		    End If
-		    
-		    Var EngineFolder As FolderItem = BackupsFolder.Child(Beacon.SanitizeFilename(Engine.Name))
-		    If Not EngineFolder.Exists Then
-		      EngineFolder.CreateFolder
-		    End If
-		    
-		    Var MomentFolder As FolderItem = EngineFolder.Child(Beacon.SanitizeFilename(Label))
-		    If Not MomentFolder.Exists Then
-		      MomentFolder.CreateFolder
-		    End If
-		    
-		    Var OutStream As TextOutputStream
-		    
-		    OutStream = TextOutputStream.Create(MomentFolder.Child("Game.ini"))
-		    OutStream.Write(UserData.Value("Game.ini").StringValue)
-		    OutStream.Close
-		    
-		    OutStream = TextOutputStream.Create(MomentFolder.Child("GameUserSettings.ini"))
-		    OutStream.Write(UserData.Value("GameUserSettings.ini").StringValue)
-		    OutStream.Close
-		  Catch Err As RuntimeException
-		    Controller.Cancelled = True
-		    
-		    Self.ShowAlert("Beacon was unable to save ini files for " + Engine.Name + ".", "Check that there is space available on the disk. Use ""Open Data Folder"" from the ""Help"" menu to find the backup destination.")
-		  End Try
-		  
-		  Controller.ShouldResume = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub Begin()
 		  Var NowGMT As New DateTime(DateTime.Now.SecondsFrom1970, New TimeZone(0))
 		  Var Now As DateTime = DateTime.Now
@@ -933,9 +895,52 @@ End
 		Private Sub Engine_Wait(Sender As Beacon.IntegrationEngine, Controller As Beacon.TaskWaitController)
 		  Select Case Controller.Action
 		  Case "Backup"
-		    Self.Backup(Sender, Controller, Self.DeployLabel)
-		  Case "BackupLive"
-		    Self.Backup(Sender, Controller, "Current")
+		    Var UserData As Dictionary = Controller.UserData
+		    Try
+		      Var BackupsFolder As FolderItem = App.BackupsFolder
+		      If Not BackupsFolder.Exists Then
+		        BackupsFolder.CreateFolder
+		      End If
+		      
+		      Var EngineFolder As FolderItem = BackupsFolder.Child(Beacon.SanitizeFilename(Sender.Name))
+		      If Not EngineFolder.Exists Then
+		        EngineFolder.CreateFolder
+		      End If
+		      
+		      Var MomentFolder As FolderItem = EngineFolder.Child(Beacon.SanitizeFilename(Self.DeployLabel))
+		      If Not MomentFolder.Exists Then
+		        MomentFolder.CreateFolder
+		      End If
+		      
+		      Var OutStream As TextOutputStream
+		      
+		      OutStream = TextOutputStream.Create(MomentFolder.Child("Game.ini"))
+		      OutStream.Write(UserData.Value("Game.ini").StringValue)
+		      OutStream.Close
+		      
+		      OutStream = TextOutputStream.Create(MomentFolder.Child("GameUserSettings.ini"))
+		      OutStream.Write(UserData.Value("GameUserSettings.ini").StringValue)
+		      OutStream.Close
+		      
+		      Var CurrentFolder As FolderItem = EngineFolder.Child("Current")
+		      If Not CurrentFolder.Exists Then
+		        CurrentFolder.CreateFolder
+		      End If
+		      
+		      OutStream = TextOutputStream.Create(CurrentFolder.Child("Game.ini"))
+		      OutStream.Write(UserData.Value("New Game.ini").StringValue)
+		      OutStream.Close
+		      
+		      OutStream = TextOutputStream.Create(CurrentFolder.Child("GameUserSettings.ini"))
+		      OutStream.Write(UserData.Value("New GameUserSettings.ini").StringValue)
+		      OutStream.Close
+		    Catch Err As RuntimeException
+		      Controller.Cancelled = True
+		      
+		      Self.ShowAlert("Beacon was unable to save ini files for " + Sender.Name + ".", "Check that there is space available on the disk. Use ""Open Data Folder"" from the ""Help"" menu to find the backup destination.")
+		    End Try
+		    
+		    Controller.ShouldResume = True
 		  Case "Review Files"
 		    If Sender = Self.SelectedEngine Then
 		      Self.UpdateMainView()
