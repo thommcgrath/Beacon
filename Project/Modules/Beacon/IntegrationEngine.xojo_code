@@ -423,6 +423,22 @@ Protected Class IntegrationEngine
 		    End If
 		  End If
 		  
+		  // Run the backup if requested
+		  If Self.BackupEnabled Then
+		    Var Dict As New Dictionary
+		    Dict.Value("Game.ini") = GameIniRewritten
+		    Dict.Value("GameUserSettings.ini") = GameUserSettingsIniRewritten
+		    
+		    Var Controller As New Beacon.TaskWaitController("BackupLive", Dict)
+		    
+		    Self.Log("Making local copies of new config files…")
+		    Self.Wait(Controller)
+		    If Controller.Cancelled Then
+		      Self.Cancel
+		      Return
+		    End If
+		  End If
+		  
 		  // Stop the server
 		  If Self.SupportsRestarting Then
 		    Self.StopServer()
