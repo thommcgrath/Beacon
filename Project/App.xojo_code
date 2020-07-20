@@ -416,7 +416,7 @@ Implements NotificationKit.Receiver
 		  End If
 		  
 		  Var Matcher As New Regex
-		  Matcher.SearchPattern = "^(\d{4})-(\d{2})-(\d{2}) (\d{2}).(\d{2}).(\d{2}) GMT$"
+		  Matcher.SearchPattern = "^(\d{4})-(\d{2})-(\d{2}) (\d{2}).(\d{2}).(\d{2}) GMT"
 		  
 		  Var Zone As New TimeZone(0)
 		  For Each ServerFolder As FolderItem In BackupsRoot.Children
