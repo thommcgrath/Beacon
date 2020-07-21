@@ -129,6 +129,18 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CompareValues(Value1 As Double, Value2 As Double) As Integer
+		  If Value1 > Value2 Then
+		    Return 1
+		  ElseIf Value1 < Value2 Then
+		    Return -1
+		  Else
+		    Return 0
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub CorrectWindowPlacement(Extends Win As Window, Parent As Window)
 		  #if TargetWin32
 		    If Win = Nil Or Parent = Nil Then

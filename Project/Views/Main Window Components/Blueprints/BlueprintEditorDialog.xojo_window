@@ -952,7 +952,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   3
          TabStop         =   True
          TextAlignment   =   "0"
@@ -988,7 +988,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   1
+         TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
          TextAlignment   =   "3"
@@ -1031,7 +1031,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   3
          TabPanelIndex   =   3
          TabStop         =   True
          TextAlignment   =   "0"
@@ -1067,7 +1067,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   3
+         TabIndex        =   2
          TabPanelIndex   =   3
          TabStop         =   True
          TextAlignment   =   "3"
@@ -1110,7 +1110,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   4
+         TabIndex        =   5
          TabPanelIndex   =   3
          TabStop         =   True
          TextAlignment   =   "0"
@@ -1146,7 +1146,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   5
+         TabIndex        =   4
          TabPanelIndex   =   3
          TabStop         =   True
          TextAlignment   =   "3"
@@ -1189,7 +1189,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   6
+         TabIndex        =   7
          TabPanelIndex   =   3
          TabStop         =   True
          TextAlignment   =   "0"
@@ -1225,7 +1225,7 @@ Begin BeaconDialog BlueprintEditorDialog
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   7
+         TabIndex        =   6
          TabPanelIndex   =   3
          TabStop         =   True
          TextAlignment   =   "3"
@@ -1266,8 +1266,8 @@ Begin BeaconDialog BlueprintEditorDialog
          HasHeader       =   True
          HasHorizontalScrollbar=   False
          HasVerticalScrollbar=   True
-         HeadingIndex    =   -1
-         Height          =   246
+         HeadingIndex    =   0
+         Height          =   214
          Index           =   -2147483648
          InitialParent   =   "Pages"
          InitialValue    =   "Stat	Base	Wild	Tamed	Add	Affinity"
@@ -1280,7 +1280,7 @@ Begin BeaconDialog BlueprintEditorDialog
          LockTop         =   True
          PreferencesKey  =   ""
          RequiresSelection=   False
-         RowSelectionType=   "0"
+         RowSelectionType=   "1"
          Scope           =   2
          SelectionChangeBlocked=   False
          TabIndex        =   8
@@ -1296,6 +1296,102 @@ Begin BeaconDialog BlueprintEditorDialog
          Width           =   500
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
+      End
+      Begin UITweaks.ResizedPushButton CreatureAddStatButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Define Stat"
+         Default         =   False
+         Enabled         =   True
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         MacButtonStyle  =   "0"
+         Scope           =   2
+         TabIndex        =   9
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   420
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   94
+      End
+      Begin UITweaks.ResizedPushButton CreatureEditStatButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Edit"
+         Default         =   False
+         Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   126
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         MacButtonStyle  =   "0"
+         Scope           =   2
+         TabIndex        =   10
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   420
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedPushButton CreatureDeleteStatButton
+         AllowAutoDeactivate=   True
+         Bold            =   False
+         Cancel          =   False
+         Caption         =   "Remove"
+         Default         =   False
+         Enabled         =   False
+         FontName        =   "System"
+         FontSize        =   0.0
+         FontUnit        =   0
+         Height          =   20
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   218
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         MacButtonStyle  =   "0"
+         Scope           =   2
+         TabIndex        =   11
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Tooltip         =   ""
+         Top             =   420
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
       End
    End
    Begin OmniBar PageSelector
@@ -1477,23 +1573,16 @@ End
 		  Var Stats() As Beacon.Stat = Beacon.Stats.All
 		  Var Mask As UInt16 = Creature.StatsMask
 		  For Each Stat As Beacon.Stat In Stats
-		    Var BaseValue As Double = Creature.StatBaseValue(Stat)
-		    Self.CreatureStatsList.CellValueAt(Stat.Index, Self.CreatureStatColumnBase) = If(BaseValue <> Beacon.Creature.MissingStatValue, BaseValue.PrettyText, "")
+		    Var Values As Beacon.CreatureStatValue = Creature.StatValue(Stat)
+		    If Values Is Nil Then
+		      Continue
+		    End If
 		    
-		    Var WildValue As Double = Creature.StatWildValue(Stat)
-		    Self.CreatureStatsList.CellValueAt(Stat.Index, Self.CreatureStatColumnWild) = If(WildValue <> Beacon.Creature.MissingStatValue, WildValue.PrettyText, "")
-		    
-		    Var TamedValue As Double = Creature.StatTamedValue(Stat)
-		    Self.CreatureStatsList.CellValueAt(Stat.Index, Self.CreatureStatColumnTamed) = If(TamedValue <> Beacon.Creature.MissingStatValue, TamedValue.PrettyText, "")
-		    
-		    Var AddValue As Double = Creature.StatAddValue(Stat)
-		    Self.CreatureStatsList.CellValueAt(Stat.Index, Self.CreatureStatColumnAdd) = If(AddValue <> Beacon.Creature.MissingStatValue, AddValue.PrettyText, "")
-		    
-		    Var AffinityValue As Double = Creature.StatAffinityValue(Stat)
-		    Self.CreatureStatsList.CellValueAt(Stat.Index, Self.CreatureStatColumnAffinity) = If(AffinityValue <> Beacon.Creature.MissingStatValue, AffinityValue.PrettyText, "")
-		    
-		    Self.CreatureStatsList.CellCheckBoxValueAt(Stat.Index, Self.CreatureStatColumnLabel) = (Mask And Stat.Mask) = Stat.Mask
+		    Self.CreatureStatsList.AddRow("")
+		    Var Row As Integer = Self.CreatureStatsList.LastAddedRowIndex
+		    Self.ShowStatInRow(Row, Values)
 		  Next
+		  Self.CreatureStatsList.Sort
 		End Sub
 	#tag EndMethod
 
@@ -1644,6 +1733,28 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ShowStatInRow(Row As Integer, Values As Beacon.CreatureStatValue)
+		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnLabel) = Language.LabelForStat(Values.Stat)
+		  Self.CreatureStatsList.RowTagAt(Row) = Values
+		  
+		  Var BaseValue As Double = Values.BaseValue
+		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnBase) = If(BaseValue <> Beacon.Creature.MissingStatValue, BaseValue.PrettyText(True), "")
+		  
+		  Var WildValue As Double = Values.WildMultiplier
+		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnWild) = If(WildValue <> Beacon.Creature.MissingStatValue, WildValue.PrettyText(True), "")
+		  
+		  Var TamedValue As Double = Values.TamedMultiplier
+		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnTamed) = If(TamedValue <> Beacon.Creature.MissingStatValue, TamedValue.PrettyText(True), "")
+		  
+		  Var AddValue As Double = Values.AddMultiplier
+		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnAdd) = If(AddValue <> Beacon.Creature.MissingStatValue, AddValue.PrettyText(True), "")
+		  
+		  Var AffinityValue As Double = Values.AffinityMultiplier
+		  Self.CreatureStatsList.CellValueAt(Row, Self.CreatureStatColumnAffinity) = If(AffinityValue <> Beacon.Creature.MissingStatValue, AffinityValue.PrettyText(True), "")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function UpdateCreature(Creature As Beacon.MutableCreature) As Boolean
 		  Const ParseInstructions = "Use a format like ""2 days 3 hours 4 minutes 5 seconds"" to specify an amount of time. Short versions such as ""2d3h4m5s"" may also be used. Omit any units that are not needed. Decimal values may only be used on the seconds field."
 		  
@@ -1694,6 +1805,15 @@ End
 		    Creature.MinMatingInterval = 0
 		    Creature.MaxMatingInterval = 0
 		  End If
+		  
+		  Creature.ClearStats
+		  Var Mask As UInt16
+		  For Row As Integer = 0 To Self.CreatureStatsList.LastRowIndex
+		    Var Values As Beacon.CreatureStatValue = Self.CreatureStatsList.RowTagAt(Row)
+		    Creature.AddStatValue(Values)
+		    Mask = Mask Or Values.Mask
+		  Next
+		  Creature.StatsMask = Mask
 		  
 		  Return True
 		End Function
@@ -2041,44 +2161,150 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events CreatureIncubationTimeField
+	#tag Event
+		Sub TextChange()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CreatureMatureTimeField
+	#tag Event
+		Sub TextChange()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CreatureIntervalMinTimeField
+	#tag Event
+		Sub TextChange()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CreatureIntervalMaxTimeField
+	#tag Event
+		Sub TextChange()
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events CreatureStatsList
 	#tag Event
 		Sub Open()
-		  Me.ColumnTypeAt(Self.CreatureStatColumnLabel) = Listbox.CellTypes.CheckBox
-		  
-		  Me.ColumnTypeAt(Self.CreatureStatColumnBase) = Listbox.CellTypes.TextField
-		  Me.ColumnTypeAt(Self.CreatureStatColumnWild) = Listbox.CellTypes.TextField
-		  Me.ColumnTypeAt(Self.CreatureStatColumnTamed) = Listbox.CellTypes.TextField
-		  Me.ColumnTypeAt(Self.CreatureStatColumnAdd) = Listbox.CellTypes.TextField
-		  Me.ColumnTypeAt(Self.CreatureStatColumnAffinity) = Listbox.CellTypes.TextField
-		  
 		  Me.ColumnAlignmentAt(Self.CreatureStatColumnBase) = Listbox.Alignments.Right
 		  Me.ColumnAlignmentAt(Self.CreatureStatColumnWild) = Listbox.Alignments.Right
 		  Me.ColumnAlignmentAt(Self.CreatureStatColumnTamed) = Listbox.Alignments.Right
 		  Me.ColumnAlignmentAt(Self.CreatureStatColumnAdd) = Listbox.Alignments.Right
 		  Me.ColumnAlignmentAt(Self.CreatureStatColumnAffinity) = Listbox.Alignments.Right
-		  
-		  Var Stats() As Beacon.Stat = Beacon.Stats.All
-		  Me.RowCount = Stats.Count
-		  For Each Stat As Beacon.Stat In Stats
-		    Var Label As String = Stat.Key
-		    Select Case Label
-		    Case Beacon.Stats.CraftingSpeed.Key
-		      Label = "Crafting"
-		    Case Beacon.Stats.Temperature.Key
-		      Label = "Temp"
-		    End Select
-		    
-		    Me.CellValueAt(Stat.Index, Self.CreatureStatColumnLabel) = Label
-		  Next
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub CellAction(row As Integer, column As Integer)
-		  #Pragma Unused Row
-		  #Pragma Unused Column
+		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  Var Values1 As Beacon.CreatureStatValue = Me.RowTagAt(Row1)
+		  Var Values2 As Beacon.CreatureStatValue = Me.RowTagAt(Row2)
+		  
+		  Select Case Column
+		  Case Self.CreatureStatColumnLabel
+		    Result = CompareValues(Values1.Stat.Index, Values2.Stat.Index)
+		  Case Self.CreatureStatColumnBase
+		    Result = CompareValues(Values1.BaseValue, Values2.BaseValue)
+		  Case Self.CreatureStatColumnWild
+		    Result = CompareValues(Values1.WildMultiplier, Values2.WildMultiplier)
+		  Case Self.CreatureStatColumnTamed
+		    Result = CompareValues(Values1.TamedMultiplier, Values2.TamedMultiplier)
+		  Case Self.CreatureStatColumnAdd
+		    Result = CompareValues(Values1.AddMultiplier, Values2.AddMultiplier)
+		  Case Self.CreatureStatColumnAffinity
+		    Result = CompareValues(Values1.AffinityMultiplier, Values2.AffinityMultiplier)
+		  Else
+		    Return False
+		  End Select
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return Me.SelectedRowCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanEdit() As Boolean
+		  Return Me.SelectedRowCount = 1
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  Self.CreatureEditStatButton.Enabled = Me.CanEdit
+		  Self.CreatureDeleteStatButton.Enabled = Me.CanDelete
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformEdit()
+		  Var Values As Beacon.CreatureStatValue = Me.RowTagAt(Me.SelectedRowIndex)
+		  
+		  Var UsedStats As UInt16
+		  For Row As Integer = 0 To Self.CreatureStatsList.LastRowIndex
+		    UsedStats = UsedStats Or Beacon.CreatureStatValue(Self.CreatureStatsList.RowTagAt(Row)).Mask
+		  Next
+		  
+		  Var NewStat As Beacon.CreatureStatValue = DefineStatDialog.Present(Self, UsedStats, Values)
+		  If NewStat Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.ShowStatInRow(Me.SelectedRowIndex, NewStat)
+		  Self.CreatureStatsList.Sort
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
+		  #Pragma Unused Warn
+		  
+		  For Row As Integer = Me.LastRowIndex DownTo 0
+		    If Me.Selected(Row) Then
+		      Me.RemoveRowAt(Row)
+		    End If
+		  Next
 		  
 		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CreatureAddStatButton
+	#tag Event
+		Sub Action()
+		  Var UsedStats As UInt16
+		  For Row As Integer = 0 To Self.CreatureStatsList.LastRowIndex
+		    Var Values As Beacon.CreatureStatValue = Self.CreatureStatsList.RowTagAt(Row)
+		    UsedStats = UsedStats Or Values.Mask
+		  Next
+		  
+		  Var NewStat As Beacon.CreatureStatValue = DefineStatDialog.Present(Self, UsedStats)
+		  If NewStat Is Nil Then
+		    Return
+		  End If
+		  
+		  Self.CreatureStatsList.AddRow("")
+		  Self.ShowStatInRow(Self.CreatureStatsList.LastAddedRowIndex, NewStat)
+		  Self.CreatureStatsList.Sort
+		  Self.Modified = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CreatureEditStatButton
+	#tag Event
+		Sub Action()
+		  Self.CreatureStatsList.DoEdit
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CreatureDeleteStatButton
+	#tag Event
+		Sub Action()
+		  Self.CreatureStatsList.DoClear
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -3,6 +3,25 @@ Protected Class MutableCreature
 Inherits Beacon.Creature
 Implements Beacon.MutableBlueprint
 	#tag Method, Flags = &h0
+		Sub AddStatValue(Values As Beacon.CreatureStatValue)
+		  If Values Is Nil Then
+		    If (Self.mStats Is Nil) = False And Self.mStats.HasKey(Values.Stat.Index) Then
+		      Self.mStats.Remove(Values.Stat.Index)
+		    End If
+		    Return
+		  End If
+		  
+		  Var Dict As New Dictionary
+		  Dict.Value(Self.KeyBase) = Values.BaseValue
+		  Dict.Value(Self.KeyWild) = Values.WildMultiplier
+		  Dict.Value(Self.KeyTamed) = Values.TamedMultiplier
+		  Dict.Value(Self.KeyAdd) = Values.AddMultiplier
+		  Dict.Value(Self.KeyAffinity) = Values.AffinityMultiplier
+		  Self.mStats.Value(Values.Stat.Index) = Dict
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub AlternateLabel(Assigns Value As NullableString)
 		  Self.mAlternateLabel = Value
 		End Sub
@@ -11,6 +30,12 @@ Implements Beacon.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub Availability(Assigns Value As UInt64)
 		  Self.mAvailability = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ClearStats()
+		  Self.mStats = New Dictionary
 		End Sub
 	#tag EndMethod
 

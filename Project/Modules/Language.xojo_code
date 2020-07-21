@@ -124,6 +124,43 @@ Protected Module Language
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function LabelForStat(Stat As Beacon.Stat) As String
+		  If Stat Is Nil Then
+		    Return "Unknown Stat"
+		  End If
+		  
+		  Select Case Stat
+		  Case Beacon.Stats.CraftingSpeed
+		    Return "Crafting"
+		  Case Beacon.Stats.Food
+		    Return "Food"
+		  Case Beacon.Stats.Fortitude
+		    Return "Fortitude"
+		  Case Beacon.Stats.Health
+		    Return "Health"
+		  Case Beacon.Stats.Melee
+		    Return "Melee"
+		  Case Beacon.Stats.Oxygen
+		    Return "Oxygen"
+		  Case Beacon.Stats.Speed
+		    Return "Speed"
+		  Case Beacon.Stats.Stamina
+		    Return "Stamina"
+		  Case Beacon.Stats.Temperature
+		    Return "Temperature"
+		  Case Beacon.Stats.Torpor
+		    Return "Torpor"
+		  Case Beacon.Stats.Water
+		    Return "Water"
+		  Case Beacon.Stats.Weight
+		    Return "Weight"
+		  Else
+		    Return "Stat " + Str(Stat.Index, "-0")
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function NounWithQuantity(Quantity As Integer, Singular As String, Plural As String) As String
 		  Return Format(Quantity, "-0,") + " " + If(Quantity = 1, Singular, Plural)
 		End Function

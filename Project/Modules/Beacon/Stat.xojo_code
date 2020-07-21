@@ -1,10 +1,9 @@
 #tag Class
 Protected Class Stat
 	#tag Method, Flags = &h0
-		Sub Constructor(Key As String, Index As Integer, Mask As UInt16, IsPercentage As Boolean, PlayerBase As Double, PlayerBaseCapped As Boolean, PlayerPerLevelAmount As Double, PlayerPerLevelEditable As Boolean, WildDefault As Double, TamedDefault As Double, TamedAddDefault As Double, TamedAffinityDefault As Double)
+		Sub Constructor(Key As String, Index As Integer, IsPercentage As Boolean, PlayerBase As Double, PlayerBaseCapped As Boolean, PlayerPerLevelAmount As Double, PlayerPerLevelEditable As Boolean, WildDefault As Double, TamedDefault As Double, TamedAddDefault As Double, TamedAffinityDefault As Double)
 		  Self.mKey = Key
 		  Self.mIndex = Index
-		  Self.mMask = Mask
 		  Self.mIsPercentage = IsPercentage
 		  Self.mPlayerBase = PlayerBase
 		  Self.mPlayerBaseCapped = PlayerBaseCapped
@@ -37,7 +36,19 @@ Protected Class Stat
 
 	#tag Method, Flags = &h0
 		Function Mask() As UInt16
-		  Return Self.mMask
+		  Return Bitwise.ShiftLeft(1, Self.mIndex)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Operator_Compare(Other As Beacon.Stat) As Integer
+		  If Other Is Nil Or Self.Index > Other.Index Then
+		    Return 1
+		  ElseIf Self.Index < Other.Index Then
+		    Return -1
+		  Else
+		    Return 0
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -100,10 +111,6 @@ Protected Class Stat
 
 	#tag Property, Flags = &h21
 		Private mKey As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMask As UInt16
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -2,6 +2,25 @@
 Protected Class Creature
 Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
+		Function AllStatValues() As Beacon.CreatureStatValue()
+		  Var Values() As Beacon.CreatureStatValue
+		  If Self.mStats Is Nil Then
+		    Return Values
+		  End If
+		  
+		  Var Stats() As Beacon.Stat = Beacon.Stats.All
+		  For Each Stat As Beacon.Stat In Stats
+		    Var Value As Beacon.CreatureStatValue = Self.StatValue(Stat)
+		    If (Value Is Nil) = False Then
+		      Values.AddRow(Value)
+		    End If
+		  Next
+		  
+		  Return Values
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function AlternateLabel() As NullableString
 		  Return Self.mAlternateLabel
 		End Function
@@ -264,6 +283,26 @@ Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
 		Function StatTamedValue(Stat As Beacon.Stat) As Double
 		  Return Self.StatValue(Stat, Self.KeyTamed)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function StatValue(Stat As Beacon.Stat) As Beacon.CreatureStatValue
+		  If Stat Is Nil Or Self.mStats Is Nil Or Self.mStats.HasKey(Stat.Index) = False Then
+		    Return Nil
+		  End If
+		  
+		  Var Dict As Dictionary = Self.mStats.Value(Stat.Index)
+		  Var BaseValue As Double = Dict.Lookup(Self.KeyBase, Self.MissingStatValue).DoubleValue
+		  Var WildMultiplier As Double = Dict.Lookup(Self.KeyWild, Self.MissingStatValue).DoubleValue
+		  Var TamedMultiplier As Double = Dict.Lookup(Self.KeyTamed, Self.MissingStatValue).DoubleValue
+		  Var AddMultiplier As Double = Dict.Lookup(Self.KeyAdd, Self.MissingStatValue).DoubleValue
+		  Var AffinityMultiplier As Double = Dict.Lookup(Self.KeyAffinity, Self.MissingStatValue).DoubleValue
+		  If BaseValue = Self.MissingStatValue And BaseValue = WildMultiplier And WildMultiplier = TamedMultiplier And TamedMultiplier = AddMultiplier And AddMultiplier = AffinityMultiplier Then
+		    Return Nil
+		  End If
+		  
+		  Return New Beacon.CreatureStatValue(Stat, BaseValue, WildMultiplier, TamedMultiplier, AddMultiplier, AffinityMultiplier)
 		End Function
 	#tag EndMethod
 

@@ -1517,7 +1517,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    
 		    If ChangeDict.HasKey("spawn_points") Then
-		      Break
 		      Var SpawnPoints() As Variant = ChangeDict.Value("spawn_points")
 		      For Each Dict As Dictionary In SpawnPoints
 		        Var ExtraColumns As New Dictionary
@@ -1776,19 +1775,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LoadIngredientsForEngram(Engram As Beacon.Engram) As Beacon.RecipeIngredient()
-		  Var Ingredients() As Beacon.RecipeIngredient
-		  If (Engram Is Nil) = False Then
-		    Var Results As RowSet = Self.SQLSelect("SELECT recipe FROM engrams WHERE object_id = ?1;", Engram.ObjectID.StringValue)
-		    If Results.RowCount = 1 Then
-		      Ingredients = Beacon.RecipeIngredient.FromVariant(Results.Column("recipe").Value)
-		    End If
-		  End If
-		  Return Ingredients
-		End Function
-	#tag EndMethod
-	
-	#tag Method, Flags = &h0
 		Sub LoadDefaults(SpawnPoint As Beacon.MutableSpawnPoint)
 		  If SpawnPoint Is Nil Then
 		    Return
@@ -1802,6 +1788,19 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  SpawnPoint.SetsString = Rows.Column("sets").StringValue
 		  SpawnPoint.LimitsString = Rows.Column("limits").StringValue
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LoadIngredientsForEngram(Engram As Beacon.Engram) As Beacon.RecipeIngredient()
+		  Var Ingredients() As Beacon.RecipeIngredient
+		  If (Engram Is Nil) = False Then
+		    Var Results As RowSet = Self.SQLSelect("SELECT recipe FROM engrams WHERE object_id = ?1;", Engram.ObjectID.StringValue)
+		    If Results.RowCount = 1 Then
+		      Ingredients = Beacon.RecipeIngredient.FromVariant(Results.Column("recipe").Value)
+		    End If
+		  End If
+		  Return Ingredients
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -2507,6 +2506,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        ObjectID = Blueprint.ObjectID
 		      End If
 		      
+		      If Blueprint.Path.IsEmpty Or Blueprint.ClassString.IsEmpty Then
+		        Continue
+		      End If
+		      
 		      Var Category As String = Blueprint.Category
 		      Var Columns As New Dictionary
 		      Columns.Value("object_id") = ObjectID.StringValue
@@ -2527,9 +2530,25 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Columns.Value("incubation_time") = Nil
 		          Columns.Value("mature_time") = Nil
 		        End If
+		        If Creature.MinMatingInterval > 0 And Creature.MaxMatingInterval > 0 Then
+		          Columns.Value("mating_interval_min") = Creature.MinMatingInterval
+		          Columns.Value("mating_interval_max") = Creature.MaxMatingInterval
+		        Else
+		          Columns.Value("mating_interval_min") = Nil
+		          Columns.Value("mating_interval_max") = Nil
+		        End If
+		        Columns.Value("used_stats") = Creature.StatsMask
+		        
+		        Var StatDicts() As Dictionary
+		        Var StatValues() As Beacon.CreatureStatValue = Creature.AllStatValues
+		        For Each StatValue As Beacon.CreatureStatValue In StatValues
+		          StatDicts.AddRow(StatValue.SaveData)
+		        Next
+		        Columns.Value("stats") = Beacon.GenerateJSON(StatDicts, False)
+		        
 		        CacheDict = Self.mCreatureCache
 		      Case IsA Beacon.SpawnPoint
-		        Columns.Value("groups") = Beacon.SpawnPoint(Blueprint).SetsString(False)
+		        Columns.Value("sets") = Beacon.SpawnPoint(Blueprint).SetsString(False)
 		        Columns.Value("limits") = Beacon.SpawnPoint(Blueprint).LimitsString(False)
 		        CacheDict = Self.mSpawnPointCache
 		      Case IsA Beacon.Engram
