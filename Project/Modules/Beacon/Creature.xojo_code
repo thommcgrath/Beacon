@@ -64,6 +64,7 @@ Implements Beacon.Blueprint
 		  Self.mObjectID = Source.mObjectID
 		  Self.mAvailability = Source.mAvailability
 		  Self.mPath = Source.mPath
+		  Self.mClassString = Source.mClassString
 		  Self.mLabel = Source.mLabel
 		  Self.mModID = Source.mModID
 		  Self.mModName = Source.mModName

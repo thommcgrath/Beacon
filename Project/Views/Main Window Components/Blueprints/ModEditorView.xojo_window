@@ -63,7 +63,7 @@ Begin BeaconSubview ModEditorView
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       PreferencesKey  =   ""
       RequiresSelection=   False
@@ -80,7 +80,7 @@ Begin BeaconSubview ModEditorView
       Underline       =   False
       Visible         =   True
       VisibleRowCount =   0
-      Width           =   300
+      Width           =   844
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -118,119 +118,7 @@ Begin BeaconSubview ModEditorView
       Top             =   0
       Transparent     =   False
       Visible         =   True
-      Width           =   300
-   End
-   Begin FadedSeparator BlueprintSeparator
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   432
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   300
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   0
-      Transparent     =   True
-      Visible         =   True
-      Width           =   1
-   End
-   Begin PagePanel Pages
-      AllowAutoDeactivate=   True
-      Enabled         =   True
-      Height          =   432
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   301
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      PanelCount      =   3
-      Panels          =   ""
-      Scope           =   2
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      Tooltip         =   ""
-      Top             =   0
-      Transparent     =   False
-      Value           =   1
-      Visible         =   True
-      Width           =   543
-      Begin OmniBar NoSelectionHeader
-         Alignment       =   0
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
-         Backdrop        =   0
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   41
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   301
-         LeftPadding     =   -1
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RightPadding    =   -1
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   0
-         Transparent     =   True
-         Visible         =   True
-         Width           =   543
-      End
-      Begin LogoFillCanvas NoSelectionCanvas
-         AllowAutoDeactivate=   True
-         AllowFocus      =   False
-         AllowFocusRing  =   True
-         AllowTabs       =   False
-         Backdrop        =   0
-         Caption         =   "No Selection"
-         DoubleBuffer    =   False
-         Enabled         =   True
-         Height          =   391
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   301
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Tooltip         =   ""
-         Top             =   41
-         Transparent     =   True
-         Visible         =   True
-         Width           =   543
-      End
+      Width           =   844
    End
    Begin ClipboardWatcher Watcher
       Index           =   -2147483648
@@ -388,16 +276,6 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = PageMultiEditor, Type = Double, Dynamic = False, Default = \"2", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = PageNoSelection, Type = Double, Dynamic = False, Default = \"0", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = PageSingleEditor, Type = Double, Dynamic = False, Default = \"1", Scope = Private
-	#tag EndConstant
-
-
 #tag EndWindowCode
 
 #tag Events BlueprintList
@@ -407,55 +285,41 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
-		  Var CurrentPage As Integer = Self.Pages.SelectedPanelIndex
-		  Select Case CurrentPage
-		  Case Self.PageNoSelection
-		    // Nothing to do
-		  Case Self.PageSingleEditor
-		    
-		  Case Self.PageMultiEditor
-		    
-		  End Select
-		  
-		  Var DesiredPage As Integer
-		  If Me.SelectedRowCount = 0 Then
-		    DesiredPage = Self.PageNoSelection
-		  ElseIf Me.SelectedRowCount = 1 Then
-		    DesiredPage = Self.PageSingleEditor
-		  Else
-		    DesiredPage = Self.PageMultiEditor
-		  End If
-		  
-		  If CurrentPage = DesiredPage And CurrentPage = Self.PageNoSelection Then
-		    Return
-		  End If
-		  
-		  // We don't need to care about the return value of SetBlueprint here because
-		  // we already set them to neutral above.
-		  Select Case DesiredPage
-		  Case Self.PageSingleEditor
-		    
-		  Case Self.PageMultiEditor
-		    
-		  End Select
-		  
-		  Self.Pages.SelectedPanelIndex = DesiredPage
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Function CanDelete() As Boolean
-		  Return True
+		  Return Me.SelectedRowCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event
 		Function CanEdit() As Boolean
-		  Return True
+		  Return Me.SelectedRowCount = 1
 		End Function
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
+		  If Self.mController Is Nil Then
+		    Return
+		  End If
 		  
+		  Var Blueprints() As Beacon.Blueprint
+		  For Row As Integer = 0 To Me.LastRowIndex
+		    If Not Me.Selected(Row) Then
+		      Continue
+		    End If
+		    
+		    Var ObjectID As String = Me.RowTagAt(Row)
+		    Var Blueprint As Beacon.Blueprint = Self.mController.Blueprint(ObjectID)
+		    If Blueprint Is Nil Then
+		      Continue
+		    End If
+		    
+		    Blueprints.AddRow(Blueprint)
+		  Next
+		  
+		  If Warn And Not Self.ShowDeleteConfirmation(Blueprints, "blueprint", "blueprints") Then
+		    Return
+		  End If
+		  
+		  Self.mController.DeleteBlueprints(Blueprints)
 		End Sub
 	#tag EndEvent
 	#tag Event
