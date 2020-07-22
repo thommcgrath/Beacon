@@ -19,7 +19,7 @@ abstract class BeaconCommon {
 			} else {
 				session_name('beacon_dev');
 			}
-			session_set_cookie_params(0, '/', '.beaconapp.cc', true, true);
+			session_set_cookie_params(0, '/', '.usebeacon.app', true, true);
 			session_start();
 		}
 	}
@@ -147,9 +147,9 @@ abstract class BeaconCommon {
 	public static function AbsoluteURL(string $path) {
 		// Because the host can be spoofed, only trust it in development.
 		if (self::InProduction()) {
-			$url = 'https://beaconapp.cc' . $path;
+			$url = 'https://usebeacon.app' . $path;
 		} else {
-			$url = 'https://' . self::EnvironmentName() . '.beaconapp.cc' . $path;
+			$url = 'https://' . self::EnvironmentName() . '.usebeacon.app' . $path;
 		}
 		return $url;
 	}
@@ -505,7 +505,7 @@ abstract class BeaconCommon {
 	}
 	
 	public static function SignDownloadURL(string $url, int $expires = 3600) {
-		if (strtolower(substr($url, 0, 29)) === 'https://releases.beaconapp.cc') {
+		if (strtolower(substr($url, 0, 29)) === 'https://releases.usebeacon.app') {
 			$key = static::GetGlobal('BunnyCDN_Signing_Key');
 			if (is_null($key)) {
 				return $url;

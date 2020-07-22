@@ -21,7 +21,7 @@ if ($version >= 5) {
 		exit;
 	}
 	
-	$destination = 'https://updates.beaconapp.cc' . $results->Field('path');
+	$destination = 'https://updates.usebeacon.app' . $results->Field('path');
 } else {
 	if (isset($build_number) == false) {
 		$results = $database->Query('SELECT build_number FROM updates WHERE delta_version = $1 ORDER BY build_number DESC LIMIT 1;', $version);

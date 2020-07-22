@@ -21,7 +21,7 @@ if (isset($_GET['since'])) {
 	$results = $database->Query('SELECT path, size FROM update_files WHERE type = \'Delta\' AND version = $1 AND created > $2 ORDER BY created ASC;', $version, $since->format('Y-m-d H:i:sO'));
 	while (!$results->EOF()) {
 		$paths[] = [
-			'url' => 'https://updates.beaconapp.cc' . $results->Field('path'),
+			'url' => 'https://updates.usebeacon.app' . $results->Field('path'),
 			'size' => $results->Field('size')
 		];
 		$total += $results->Field('size');
@@ -31,7 +31,7 @@ if (isset($_GET['since'])) {
 	$results = $database->Query('SELECT path, size FROM update_files WHERE version = $1 AND type = \'Complete\';', $version);
 	if ($results->RecordCount() > 0) {
 		$size = $results->Field('size');
-		$paths = [['url' => 'https://updates.beaconapp.cc' . $results->Field('path'), 'size' => $size]];
+		$paths = [['url' => 'https://updates.usebeacon.app' . $results->Field('path'), 'size' => $size]];
 		$total = $size;
 	}
 }

@@ -14,8 +14,8 @@
     "description": "Service for working with Beacon's cloud database",
     "contact": {
       "name": "Beacon",
-      "url": "https://beaconapp.cc/help",
-      "email": "forgotmyparachute@beaconapp.cc"
+      "url": "https://usebeacon.app/help",
+      "email": "forgotmyparachute@usebeacon.app"
     },
     "license": {
       "name": "GNU General Public License v3.0",
@@ -25,11 +25,11 @@
   },
   "servers": [
     {
-      "url": "https://api.beaconapp.cc/v2",
+      "url": "https://api.usebeacon.app/v2",
       "description": "Production"
     },
     {
-      "url": "https://workbench.beaconapp.cc/v2",
+      "url": "https://workbench.usebeacon.app/v2",
       "description": "Test Server"
     }
   ],
@@ -336,7 +336,7 @@
             ],
             "incubation_time": 9473,
             "mature_time": 175439,
-            "resource_url": "https://api.lab.beaconapp.cc/v2/creature/a1ab65dd-08f9-44e8-94c6-978b02128511",
+            "resource_url": "https://api.lab.usebeacon.app/v2/creature/a1ab65dd-08f9-44e8-94c6-978b02128511",
             "stats": [
               {
                 "stat_index": 0,

@@ -8,7 +8,7 @@ The content which needs to be signed is two or three lines separated by line fee
 
 The first line is always the uppercase HTTP method.
 
-Second line is the full url, starting with https://beaconapp.cc regardless of the request's `Host` header. For `GET` requests, the query string must be included on this line. The ? should not be included if there are no parameters.
+Second line is the full url, starting with https://usebeacon.app regardless of the request's `Host` header. For `GET` requests, the query string must be included on this line. The ? should not be included if there are no parameters.
 
 For requests other than `GET`, there should be a third line with the request body. Even if there is no content in the request body, a third line should be included.
 
@@ -16,20 +16,20 @@ A few examples
 
 ```plain
 GET
-https://api.beaconapp.cc/v1/mod.php
+https://api.usebeacon.app/v1/mod.php
 ```
 ```plain
 GET
-https://api.beaconapp.cc/v1/engram.php?mod_id=123456
+https://api.usebeacon.app/v1/engram.php?mod_id=123456
 ```
 ```plain
 POST
-https://api.beaconapp.cc/v1/engram.php
+https://api.usebeacon.app/v1/engram.php
 {"class":"Prefix_MyEngram_C","label":"My Engram","environments":["Island","Scorched"],"can_blueprint": true,"mod_id": 123456}
 ```
 ```plain
 DELETE
-https://api.beaconapp.cc/v1/engram.php/Prefix_MyEngram_C,Prefix_OtherEngram_C
+https://api.usebeacon.app/v1/engram.php/Prefix_MyEngram_C,Prefix_OtherEngram_C
 
 ```
 

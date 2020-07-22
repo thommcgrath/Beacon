@@ -230,11 +230,11 @@ function ShowGiftCodes() {
 		$code = $results->Field('code');
 		$redeemed = is_null($results->Field('redemption_date')) === false;
 		
-		echo '<tr><td>' . htmlentities($code) . '</td><td>' . ($redeemed ? 'Redeemed' : '&nbsp;') . '</td><td>' . ($redeemed ? '&nbsp;' : 'https://beaconapp.cc/redeem/' . htmlentities($code)) . '</td>';
+		echo '<tr><td>' . htmlentities($code) . '</td><td>' . ($redeemed ? 'Redeemed' : '&nbsp;') . '</td><td>' . ($redeemed ? '&nbsp;' : 'https://usebeacon.app/redeem/' . htmlentities($code)) . '</td>';
 		$results->MoveNext();
 	}
 	echo '</table>';
-	echo '<p>Codes can be redeemed at <a href="https://beaconapp.cc/redeem">https://beaconapp.cc/redeem</a> or using the link next to each code.</p>';
+	echo '<p>Codes can be redeemed at <a href="https://usebeacon.app/redeem">https://usebeacon.app/redeem</a> or using the link next to each code.</p>';
 }
 
 ?>

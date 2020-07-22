@@ -91,7 +91,7 @@ if (!BeaconTemplate::IsHTML()) {
 				<footer class="inner">
 					<p><a id="footer_github_logo" href="https://github.com/thommcgrath/Beacon" title="GitHub"><img height="24" src="/assets/images/github-color.svg"></a><a id="footer_discord_logo" href="/discord.php" title="Discord"><img height="24" src="/assets/images/discord-color.svg"></a></p>
 					<p>Beacon is an open source project by Thom McGrath. Copyright 2016-<?php echo date('Y'); ?>.</p>
-					<p>Get in touch using <a href="mailto:forgotmyparachute@beaconapp.cc">forgotmyparachute@beaconapp.cc</a>.</p>
+					<p>Get in touch using <a href="mailto:help@usebeacon.app">help@usebeacon.app</a>.</p>
 				</footer>
 			</div>
 		</div>
