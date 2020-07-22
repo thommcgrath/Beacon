@@ -341,29 +341,6 @@ Protected Class IntegrationEngine
 		    Return
 		  End If
 		  
-		  // Run the backup if requested
-		  If Self.BackupEnabled Then
-		    Var Dict As New Dictionary
-		    Dict.Value("Game.ini") = GameIniOriginal
-		    Dict.Value("GameUserSettings.ini") = GameUserSettingsIniOriginal
-		    
-		    Var Controller As New Beacon.TaskWaitController("Backup", Dict)
-		    
-		    Self.Log("Backing up config files…")
-		    Self.Wait(Controller)
-		    If Controller.Cancelled Then
-		      Self.Cancel
-		      Return
-		    End If
-		    
-		    If Self.SupportsCheckpoints And Self.mCheckpointCreated = False Then
-		      RaiseEvent CreateCheckpoint
-		      If Self.Finished Then
-		        Return
-		      End If
-		    End If
-		  End If
-		  
 		  // Build the new ini files
 		  Self.Log("Generating new ini files…")
 		  
@@ -420,6 +397,31 @@ Protected Class IntegrationEngine
 		    Self.Wait(Controller)
 		    If Controller.Cancelled Then
 		      Return
+		    End If
+		  End If
+		  
+		  // Run the backup if requested
+		  If Self.BackupEnabled Then
+		    Var Dict As New Dictionary
+		    Dict.Value("Game.ini") = GameIniOriginal
+		    Dict.Value("GameUserSettings.ini") = GameUserSettingsIniOriginal
+		    Dict.Value("New Game.ini") = GameIniRewritten
+		    Dict.Value("New GameUserSettings.ini") = GameUserSettingsIniRewritten
+		    
+		    Var Controller As New Beacon.TaskWaitController("Backup", Dict)
+		    
+		    Self.Log("Backing up config files…")
+		    Self.Wait(Controller)
+		    If Controller.Cancelled Then
+		      Self.Cancel
+		      Return
+		    End If
+		    
+		    If Self.SupportsCheckpoints And Self.mCheckpointCreated = False Then
+		      RaiseEvent CreateCheckpoint
+		      If Self.Finished Then
+		        Return
+		      End If
 		    End If
 		  End If
 		  

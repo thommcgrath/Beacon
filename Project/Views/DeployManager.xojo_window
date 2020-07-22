@@ -921,10 +921,23 @@ End
 		      OutStream = TextOutputStream.Create(MomentFolder.Child("GameUserSettings.ini"))
 		      OutStream.Write(UserData.Value("GameUserSettings.ini").StringValue)
 		      OutStream.Close
+		      
+		      Var CurrentFolder As FolderItem = EngineFolder.Child("Current")
+		      If Not CurrentFolder.Exists Then
+		        CurrentFolder.CreateFolder
+		      End If
+		      
+		      OutStream = TextOutputStream.Create(CurrentFolder.Child("Game.ini"))
+		      OutStream.Write(UserData.Value("New Game.ini").StringValue)
+		      OutStream.Close
+		      
+		      OutStream = TextOutputStream.Create(CurrentFolder.Child("GameUserSettings.ini"))
+		      OutStream.Write(UserData.Value("New GameUserSettings.ini").StringValue)
+		      OutStream.Close
 		    Catch Err As RuntimeException
 		      Controller.Cancelled = True
 		      
-		      Self.ShowAlert("Beacon was unable to backup the ini files for " + Sender.Name + ".", "Check that there is space available on the disk. Use ""Open Data Folder"" from the ""Help"" menu to find the backup destination.")
+		      Self.ShowAlert("Beacon was unable to save ini files for " + Sender.Name + ".", "Check that there is space available on the disk. Use ""Open Data Folder"" from the ""Help"" menu to find the backup destination.")
 		    End Try
 		    
 		    Controller.ShouldResume = True
