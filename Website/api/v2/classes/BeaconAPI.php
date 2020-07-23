@@ -249,7 +249,7 @@ abstract class BeaconAPI {
 		if (strlen($path) == 0 || substr($path, 0, 1) != '/') {
 			$path = '/' . $path;
 		}
-		$domain = BeaconCommon::InProduction() ? 'api.usebeacon.app' : 'api.' . BeaconCommon::EnvironmentName() . '.usebeacon.app';
+		$domain = BeaconCommon::InProduction() ? 'api.usebeacon.app' : BeaconCommon::EnvironmentName() . '-api.usebeacon.app';
 		return 'https://' . $domain . '/v2' . $path;
 	}
 }

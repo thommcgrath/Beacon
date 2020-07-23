@@ -178,7 +178,18 @@ document.addEventListener('DOMContentLoaded', function() {
 			
 			show_page('loading');
 			
-			request.post('https://api.' + window.location.hostname + '/v1/session.php', {}, function(obj) {
+			let hostnamePattern = /(([^\.]+)\.)?([^\.]+\.[^\.]+)/i;
+			let hostnameResults = hostnamePattern.exec(window.location.hostname);
+			let apiHost;
+			if (hostnameResults === null) {
+				apiHost = 'api.usebeacon.app';
+			} else if (hostnameResults[2] === undefined || hostnameResults[2] === 'www') {
+				apiHost = 'api.' + hostnameResults[3];
+			} else {
+				apiHost = hostnameResults[2] + '-api.' + hostnameResults[3];
+			}
+			
+			request.post('https://' + apiHost + '/v2/session', {}, function(obj) {
 				if (localStorage && loginRemember) {
 					localStorage.setItem('email', loginEmail);
 				}
@@ -246,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				recoverEmail = recoverEmailField.value.trim();
 			}
 			
-			request.post('/account/login/email.php', {'email': recoverEmail}, function(obj) {
+			request.post('/account/login/email', {'email': recoverEmail}, function(obj) {
 				if (recoverActionButton) {
 					recoverActionButton.disabled = false;
 				}
@@ -298,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				verifiedEmail = verifyEmailField.value.trim();
 			}
 			
-			request.post('/account/login/verify.php', {'email': verifiedEmail, 'code': verificationCode}, function(obj) {
+			request.post('/account/login/verify', {'email': verifiedEmail, 'code': verificationCode}, function(obj) {
 				if (obj.verified) {
 					if (passwordEmailField && passwordCodeField) {
 						passwordEmailField.value = obj.email;
@@ -374,7 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 			
 			show_page('loading');
-			request.post('/account/login/password.php', {'email': passwordEmail, 'username': passwordUsername, 'password': passwordInitial, 'code': passwordVerificationCode, 'allow_vulnerable': passwordAllowVulnerable}, function(obj) {
+			request.post('/account/login/password', {'email': passwordEmail, 'username': passwordUsername, 'password': passwordInitial, 'code': passwordVerificationCode, 'allow_vulnerable': passwordAllowVulnerable}, function(obj) {
 				if (localStorage && loginRemember) {
 					localStorage.setItem('email', passwordEmail);
 				}
@@ -428,7 +439,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 	if (passwordNewSuggestionLink) {
 		passwordNewSuggestionLink.addEventListener('click', function(ev) {
-			request.get('/account/login/suggest.php', {}, function(obj) {
+			request.get('/account/login/suggest', {}, function(obj) {
 				if (passwordUseSuggestedLink) {
 					passwordUseSuggestedLink.innerText = obj.username;
 					passwordUseSuggestedLink.setAttribute('beacon-username', obj.username);
