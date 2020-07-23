@@ -11,12 +11,15 @@ Protected Module BeaconAPI
 
 	#tag Method, Flags = &h1
 		Protected Function URL(Path As String = "/") As String
-		  Var URL As String = Beacon.WebURL()
+		  #if DebugBuild
+		    Var Domain As String = "https://lab-api.usebeacon.app"
+		  #else
+		    Var Domain As String = "https://api.usebeacon.app"
+		  #endif
 		  If Path.Length = 0 Or Path.Left(1) <> "/" Then
 		    Path = "/" + Path
 		  End If
-		  URL = URL.Left(8) + "api." + URL.Middle(8) + "v2" + Path
-		  Return URL
+		  Return Domain + "/v2" + Path
 		End Function
 	#tag EndMethod
 

@@ -699,7 +699,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub AuthenticationError()
-		  If Self.ShowConfirm("Beacon is unable to communicate with its server", "If your internet connection is working, make sure Beacon can contact its server at beaconapp.cc. Press the ""More Info"" button for some troubleshooting tips.", "More Info", "Cancel") Then
+		  If Self.ShowConfirm("Beacon is unable to communicate with its server", "If your internet connection is working, make sure Beacon can contact its server at usebeacon.app. Press the ""More Info"" button for some troubleshooting tips.", "More Info", "Cancel") Then
 		    ShowURL(Beacon.WebURL("/help/solving_connection_problems_to"))
 		  End If
 		  

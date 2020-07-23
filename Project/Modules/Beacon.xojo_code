@@ -593,7 +593,7 @@ Protected Module Beacon
 		Function IsBeaconURL(ByRef Value As String) As Boolean
 		  Var PossiblePrefixes() As String
 		  PossiblePrefixes.AddRow(Beacon.URLScheme + "://")
-		  PossiblePrefixes.AddRow("https://app.beaconapp.cc/")
+		  PossiblePrefixes.AddRow("https://app.usebeacon.app/")
 		  
 		  Var URLLength As Integer = Value.Length
 		  For Each PossiblePrefix As String In PossiblePrefixes
@@ -1790,9 +1790,9 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function WebURL(Path As String = "/") As String
 		  #if DebugBuild
-		    Var Domain As String = "https://lab.beaconapp.cc"
+		    Var Domain As String = "https://lab.usebeacon.app"
 		  #else
-		    Var Domain As String = "https://beaconapp.cc"
+		    Var Domain As String = "https://usebeacon.app"
 		  #endif
 		  If Path.Length = 0 Or Path.Left(1) <> "/" Then
 		    Path = "/" + Path

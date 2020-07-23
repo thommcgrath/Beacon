@@ -328,7 +328,7 @@ Begin BeaconDialog SharingDialog
          Top             =   88
          Transparent     =   False
          Underline       =   False
-         Value           =   "https://api.beaconapp.cc/v1/document"
+         Value           =   "https://api.usebeacon.app/v1/document"
          Visible         =   True
          Width           =   428
       End

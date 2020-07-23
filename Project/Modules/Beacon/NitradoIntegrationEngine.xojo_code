@@ -555,7 +555,7 @@ Inherits Beacon.IntegrationEngine
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  
 		  Var FormData As New Dictionary
-		  FormData.Value("message") = "Server started by Beacon (https://beaconapp.cc)"
+		  FormData.Value("message") = "Server started by Beacon (https://usebeacon.app)"
 		  Sock.SetFormData(FormData)
 		  Sock.Send("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/restart")
 		  If Self.Finished Or Self.CheckError(Sock) Then
@@ -586,7 +586,7 @@ Inherits Beacon.IntegrationEngine
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  
 		  Var FormData As New Dictionary
-		  FormData.Value("message") = "Server is being stopped by Beacon (https://beaconapp.cc)"
+		  FormData.Value("message") = "Server is being stopped by Beacon (https://usebeacon.app)"
 		  FormData.Value("stop_message") = Self.StopMessage
 		  Sock.SetFormData(FormData)
 		  Sock.Send("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/stop")

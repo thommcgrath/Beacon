@@ -427,7 +427,7 @@ Begin Window UserWelcomeWindow
          BackColor       =   &cFFFFFF00
          Bold            =   False
          Border          =   True
-         CueText         =   "raptorpounce@beaconapp.cc"
+         CueText         =   "raptorpounce@usebeacon.app"
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
@@ -752,7 +752,7 @@ Begin Window UserWelcomeWindow
          BackColor       =   &cFFFFFF00
          Bold            =   False
          Border          =   True
-         CueText         =   "aggressivedodo@beaconapp.cc"
+         CueText         =   "aggressivedodo@usebeacon.app"
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
@@ -1888,15 +1888,15 @@ End
 		Private Sub ShowError(Message As String, HTTPStatus As Integer)
 		  Select Case HTTPStatus
 		  Case 404
-		    Self.ShowAlert(Message, "The connector was not found. Please contact forgotmyparachute@beaconapp.cc for support.")
+		    Self.ShowAlert(Message, "The connector was not found. Please contact help@usebeacon.app for support.")
 		  Case 403, 401
-		    Self.ShowAlert(Message, "The connector thinks this request is not authorized. Please contact forgotmyparachute@beaconapp.cc for support.")
+		    Self.ShowAlert(Message, "The connector thinks this request is not authorized. Please contact help@usebeacon.app for support.")
 		  Case 400
-		    Self.ShowAlert(Message, "The connector received incorrect parameters. Please contact forgotmyparachute@beaconapp.cc for support.")
+		    Self.ShowAlert(Message, "The connector received incorrect parameters. Please contact help@usebeacon.app for support.")
 		  Case 500
-		    Self.ShowAlert(Message, "The connector had an error. Please contact forgotmyparachute@beaconapp.cc for support.")
+		    Self.ShowAlert(Message, "The connector had an error. Please contact help@usebeacon.app for support.")
 		  Else
-		    Self.ShowAlert(Message, "The connector returned HTTP status " + Str(HTTPStatus, "-0") + " which Beacon was not prepared for. Please contact forgotmyparachute@beaconapp.cc for support.")
+		    Self.ShowAlert(Message, "The connector returned HTTP status " + Str(HTTPStatus, "-0") + " which Beacon was not prepared for. Please contact help@usebeacon.app for support.")
 		  End Select
 		End Sub
 	#tag EndMethod

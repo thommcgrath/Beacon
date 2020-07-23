@@ -274,7 +274,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "https://beaconapp.cc/"
+      Text            =   "https://usebeacon.app/"
       TextAlign       =   1
       TextColor       =   &c0000FF00
       TextFont        =   "SmallSystem"

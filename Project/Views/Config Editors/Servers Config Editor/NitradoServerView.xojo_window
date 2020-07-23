@@ -711,13 +711,13 @@ End
 		      End If
 		      
 		      Var FormData As New Dictionary
-		      FormData.Value("message") = "Server stopped by Beacon (https://beaconapp.cc)"
+		      FormData.Value("message") = "Server stopped by Beacon (https://usebeacon.app)"
 		      FormData.Value("stop_message") = StopMessage
 		      
 		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/stop", FormData, AddressOf Callback_ServerToggle, Nil, Headers)
 		    Else
 		      Var FormData As New Dictionary
-		      FormData.Value("message") = "Server started by Beacon (https://beaconapp.cc)"
+		      FormData.Value("message") = "Server started by Beacon (https://usebeacon.app)"
 		      
 		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToString + "/gameservers/restart", FormData, AddressOf Callback_ServerToggle, Nil, Headers)
 		    End If

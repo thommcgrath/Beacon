@@ -12,14 +12,14 @@
 					Var AppName As String = CurrentBuildAppName
 					If TargetMacOS Then
 					Var ResourcesPath As String = CurrentBuildLocationNative + "/" + AppName + " Resources"
-					Call DoShellCommand("/usr/bin/curl https://lab.beaconapp.cc/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > '" + ResourcesPath + "/Complete.beacondata'")
+					Call DoShellCommand("/usr/bin/curl https://lab.usebeacon.app/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > '" + ResourcesPath + "/Complete.beacondata'")
 					End If
 				End
 				Begin IDEScriptBuildStep DownloadClassesBuildLinux , AppliesTo = 2
 					Var AppName As String = CurrentBuildAppName
 					If TargetMacOS Then
 					Var ResourcesPath As String = CurrentBuildLocationNative + "/" + AppName + " Resources"
-					Call DoShellCommand("/usr/bin/curl https://beaconapp.cc/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > '" + ResourcesPath + "/Complete.beacondata'")
+					Call DoShellCommand("/usr/bin/curl https://usebeacon.app/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > '" + ResourcesPath + "/Complete.beacondata'")
 					End If
 				End
 			End
@@ -55,13 +55,13 @@
 				Begin IDEScriptBuildStep DownloadClassesDebugMac , AppliesTo = 3
 					If TargetMacOS Then
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
-					Call DoShellCommand("/usr/bin/curl https://lab.beaconapp.cc/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > " + App + "/Contents/Resources/Complete.beacondata")
+					Call DoShellCommand("/usr/bin/curl https://lab.usebeacon.app/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > " + App + "/Contents/Resources/Complete.beacondata")
 					End If
 				End
 				Begin IDEScriptBuildStep DownloadClassesBuildMac , AppliesTo = 2
 					If TargetMacOS Then
 					Var App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
-					Call DoShellCommand("/usr/bin/curl https://beaconapp.cc/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > " + App + "/Contents/Resources/Complete.beacondata")
+					Call DoShellCommand("/usr/bin/curl https://usebeacon.app/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > " + App + "/Contents/Resources/Complete.beacondata")
 					End If
 				End
 				Begin IDEScriptBuildStep Sign , AppliesTo = 0
@@ -85,20 +85,20 @@
 					Var AppName As String = Left(CurrentBuildAppName, Len(CurrentBuildAppName) - 4)
 					If TargetWindows Then
 					Var ResourcesPath As String = CurrentBuildLocationNative + "\" + AppName + " Resources"
-					Call DoShellCommand("powershell -Command ""Invoke-WebRequest https://lab.beaconapp.cc/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " -OutFile '" + ResourcesPath + "\Complete.beacondata'""")
+					Call DoShellCommand("powershell -Command ""Invoke-WebRequest https://lab.usebeacon.app/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " -OutFile '" + ResourcesPath + "\Complete.beacondata'""")
 					ElseIf TargetMacOS Then
 					Var ResourcesPath As String = CurrentBuildLocationNative + "/" + AppName + " Resources"
-					Call DoShellCommand("/usr/bin/curl https://lab.beaconapp.cc/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > '" + ResourcesPath + "/Complete.beacondata'")
+					Call DoShellCommand("/usr/bin/curl https://lab.usebeacon.app/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > '" + ResourcesPath + "/Complete.beacondata'")
 					End If
 				End
 				Begin IDEScriptBuildStep DownloadClassesBuildWin , AppliesTo = 2
 					Var AppName As String = Left(CurrentBuildAppName, Len(CurrentBuildAppName) - 4)
 					If TargetWindows Then
 					Var ResourcesPath As String = CurrentBuildLocationNative + "\" + AppName + " Resources"
-					Call DoShellCommand("powershell -Command ""Invoke-WebRequest https://beaconapp.cc/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " -OutFile '" + ResourcesPath + "\Complete.beacondata'""")
+					Call DoShellCommand("powershell -Command ""Invoke-WebRequest https://usebeacon.app/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " -OutFile '" + ResourcesPath + "\Complete.beacondata'""")
 					ElseIf TargetMacOS Then
 					Var ResourcesPath As String = CurrentBuildLocationNative + "/" + AppName + " Resources"
-					Call DoShellCommand("/usr/bin/curl https://beaconapp.cc/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > '" + ResourcesPath + "/Complete.beacondata'")
+					Call DoShellCommand("/usr/bin/curl https://usebeacon.app/download/complete?version=" + ConstantValue("LocalData.EngramsVersion") + " > '" + ResourcesPath + "/Complete.beacondata'")
 					End If
 				End
 			End
