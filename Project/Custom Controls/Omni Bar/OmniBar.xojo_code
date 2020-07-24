@@ -200,8 +200,9 @@ Implements ObservationKit.Observer
 		  Self.mItemRects = Rects
 		  G.Bold = False
 		  
+		  Var BackgroundColor As Color = SystemColors.ControlBackgroundColor
 		  G.ClearRectangle(0, 0, G.Width, G.Height)
-		  G.DrawingColor = SystemColors.ControlBackgroundColor
+		  G.DrawingColor = BackgroundColor
 		  G.FillRectangle(0, 0, G.Width, G.Height)
 		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.FillRectangle(0, G.Height - 1, G.Width, 1)
@@ -245,7 +246,7 @@ Implements ObservationKit.Observer
 		    End If
 		    
 		    Var Clip As Graphics = G.Clip(ItemRect.Left, ItemRect.Top, ItemRect.Width, ItemRect.Height)
-		    Self.DrawItem(Clip, Item, Highlighted, State, LocalPoint)
+		    Self.DrawItem(Clip, BackgroundColor, Item, Highlighted, State, LocalPoint)
 		  Next
 		End Sub
 	#tag EndEvent
@@ -297,7 +298,7 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DrawItem(G As Graphics, Item As OmniBarItem, Highlighted As Boolean, State As Integer, LocalMousePoint As Point)
+		Private Sub DrawItem(G As Graphics, BackgroundColor As Color, Item As OmniBarItem, Highlighted As Boolean, State As Integer, LocalMousePoint As Point)
 		  Var HasIcon As Boolean = (Item.Icon Is Nil) = False
 		  Var HasCaption As Boolean = Item.Caption.IsEmpty = False
 		  If HasIcon = False And HasCaption = False Then
@@ -344,7 +345,7 @@ Implements ObservationKit.Observer
 		    ForeColor = SystemColors.DisabledControlTextColor
 		  ElseIf Highlighted = True Then
 		    If Item.Toggled Or Item.AlwaysUseActiveColor Then
-		      ForeColor = Self.ActiveColorToColor(Item.ActiveColor)
+		      ForeColor = BeaconUI.FindContrastingColor(BackgroundColor, Self.ActiveColorToColor(Item.ActiveColor))
 		    ElseIf State = Self.StateHover Then
 		      ForeColor = SystemColors.LabelColor
 		    Else

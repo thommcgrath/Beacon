@@ -175,7 +175,7 @@ Inherits ControlCanvas
 		    Var CaptionLeft As Double = Padding
 		    
 		    If Self.SelectedRowIndex = Idx Then
-		      Clip.DrawingColor = If(Self.Highlighted, SystemColors.ControlAccentColor, SystemColors.UnemphasizedSelectedContentBackgroundColor)
+		      Clip.DrawingColor = If(Self.Highlighted, SystemColors.SelectedContentBackgroundColor, SystemColors.UnemphasizedSelectedContentBackgroundColor)
 		      Clip.FillRoundRectangle(0, 0, Clip.Width, Clip.Height, CornerRadius, CornerRadius)
 		      Clip.DrawingColor = If(Self.Highlighted, SystemColors.AlternateSelectedControlTextColor, SystemColors.UnemphasizedSelectedTextColor)
 		    Else

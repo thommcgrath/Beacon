@@ -218,23 +218,43 @@ Protected Module BeaconUI
 
 	#tag Method, Flags = &h1
 		Protected Function FindContrastingColor(BackgroundColor As Color, ForegroundColor As Color) As Color
-		  For Percent As Double = 0.0 To 1.0 Step 0.01
-		    Var Darker As Color = ForegroundColor.Darker(Percent)
-		    Var Lighter As Color = ForegroundColor.Lighter(Percent)
-		    If Darker.ContrastAgainst(BackgroundColor) >= 4.5 Then
-		      Return Darker
-		    ElseIf Lighter.ContrastAgainst(BackgroundColor) >= 4.5 Then
-		      Return Lighter
-		    End If
-		  Next
-		  
-		  Var WhiteContrast As Double = BackgroundColor.ContrastAgainst(&cFFFFFF)
-		  Var BlackContrast As Double = BackgroundColor.ContrastAgainst(&c000000)
-		  If WhiteContrast > BlackContrast Then
-		    Return &cFFFFFF
-		  Else
-		    Return &c000000
+		  If mContrastingColors Is Nil Then
+		    mContrastingColors = New Dictionary
 		  End If
+		  
+		  Var Key As String = BackgroundColor.ToHex + ":" + ForegroundColor.ToHex
+		  If mContrastingColors.HasKey(Key) = False Then
+		    Var ComputedColor As Color
+		    
+		    Var Computed As Boolean
+		    For Percent As Double = 0.0 To 1.0 Step 0.01
+		      Var Darker As Color = ForegroundColor.Darker(Percent)
+		      Var Lighter As Color = ForegroundColor.Lighter(Percent)
+		      If Darker.ContrastAgainst(BackgroundColor) >= 4.5 Then
+		        ComputedColor = Darker
+		        Computed = True
+		        Exit
+		      ElseIf Lighter.ContrastAgainst(BackgroundColor) >= 4.5 Then
+		        ComputedColor = Lighter
+		        Computed = True
+		        Exit
+		      End If
+		    Next
+		    
+		    If Computed = False Then
+		      Var WhiteContrast As Double = BackgroundColor.ContrastAgainst(&cFFFFFF)
+		      Var BlackContrast As Double = BackgroundColor.ContrastAgainst(&c000000)
+		      If WhiteContrast > BlackContrast Then
+		        ComputedColor = &cFFFFFF
+		      Else
+		        ComputedColor = &c000000
+		      End If
+		    End If
+		    
+		    mContrastingColors.Value(Key) = ComputedColor
+		  End If
+		  
+		  Return mContrastingColors.Value(Key)
 		End Function
 	#tag EndMethod
 
@@ -553,6 +573,10 @@ Protected Module BeaconUI
 
 	#tag Property, Flags = &h21
 		Private mColorProfile As BeaconUI.ColorProfile
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mContrastingColors As Dictionary
 	#tag EndProperty
 
 
