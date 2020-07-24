@@ -8,8 +8,8 @@
 		MacType=
 		Name=Beacon Document
 		UTI=com.thezaz.beacon.document
-		UTIConformsTo=public.text, public.data
-		Description=
+		UTIConformsTo=public.content,public.data
+		Description=Beacon's main document format contains all information about a cluster of servers.
 		MimeType=
 		Imported=False
 		HandlerRank=&h11
@@ -41,8 +41,8 @@
 		MacType=
 		Name=Beacon Identity
 		UTI=com.thezaz.beacon.identity
-		UTIConformsTo=public.text, public.data
-		Description=
+		UTIConformsTo=public.text,public.data
+		Description=Contains the private key for a Beacon user account.
 		MimeType=
 		Imported=False
 		HandlerRank=&h11
@@ -58,8 +58,8 @@
 		MacType=
 		Name=Beacon Preset
 		UTI=com.thezaz.beacon.preset
-		UTIConformsTo=public.text, public.data
-		Description=
+		UTIConformsTo=public.text,public.data
+		Description=A Beacon preset is a form of template used for building item sets in loot drops.
 		MimeType=
 		Imported=False
 		HandlerRank=&h11
@@ -90,7 +90,7 @@
 		MacType=TEXT
 		Name=text/plain
 		UTI=public.text
-		UTIConformsTo=public.content,public.data
+		UTIConformsTo=public.content, public.data
 		Description=
 		MimeType=
 		Imported=True
@@ -123,8 +123,8 @@
 		MacType=
 		Name=Beacon Authorization
 		UTI=com.thezaz.beacon.auth
-		UTIConformsTo=public.text, public.data
-		Description=
+		UTIConformsTo=public.text,public.data
+		Description=Used to generate an identity file using Beacon's website.
 		MimeType=
 		Imported=False
 		HandlerRank=&h9
@@ -133,14 +133,14 @@
 
 	#tag FileType
 		CodeName=BeaconData
-		DocIcon=Beacon.xojo_resources;&h2A92850
+		DocIcon=Beacon.xojo_resources;&h2A960B0
 		Extension=.beacondata
 		Flags=&h9
 		MacCreator=
 		MacType=
 		Name=Beacon Data Update
 		UTI=com.thezaz.beacon.updatedelta
-		UTIConformsTo=public.data
+		UTIConformsTo=public.content,public.data
 		Description=Contains updates to Beacon's blueprints and loot sources.
 		MimeType=
 		Imported=False
