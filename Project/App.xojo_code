@@ -896,8 +896,8 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Log(Err As RuntimeException, Location As String)
-		  Self.mLogManager.Log(Err, Location)
+		Sub Log(Err As RuntimeException, Location As String, MoreDetail As String = "")
+		  Self.mLogManager.Log(Err, Location, MoreDetail)
 		End Sub
 	#tag EndMethod
 

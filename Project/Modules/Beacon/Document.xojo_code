@@ -517,6 +517,7 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  Var SecureDict As Dictionary
+		  #Pragma BreakOnExceptions False
 		  If Dict.HasKey("EncryptedData") Then
 		    Try
 		      Doc.mLastSecureData = Dict.Value("EncryptedData")
@@ -529,6 +530,7 @@ Implements ObservationKit.Observable
 		  ElseIf Dict.HasKey("Secure") Then
 		    SecureDict = ReadSecureData(Dict.Value("Secure"), Identity)
 		  End If
+		  #Pragma BreakOnExceptions Default
 		  If SecureDict <> Nil Then
 		    Var AccountManager As Beacon.ExternalAccountManager
 		    Try

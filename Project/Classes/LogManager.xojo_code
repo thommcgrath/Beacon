@@ -116,7 +116,7 @@ Protected Class LogManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Log(Err As RuntimeException, Location As String)
+		Sub Log(Err As RuntimeException, Location As String, MoreDetail As String = "")
 		  If Err Is Nil Then
 		    Return
 		  End If
@@ -126,7 +126,17 @@ Protected Class LogManager
 		    Return
 		  End If
 		  
-		  Self.Log("Unhandled " + Info.FullName + " in " + Location + ": " + Err.Message)
+		  Var Stack() As StackFrame = Err.StackFrames
+		  While Stack.LastRowIndex >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
+		    Stack.RemoveRowAt(0)
+		  Wend
+		  
+		  Var Origin As String = "Unknown"
+		  If Stack.LastRowIndex >= 0 Then
+		    Origin = Stack(0).Name
+		  End If
+		  
+		  Self.Log("Unhandled " + Info.FullName + " in " + Origin + ", caught in " + Location + If(MoreDetail.IsEmpty = False, " (" + MoreDetail + ")", "") + ": " + Err.Message)
 		End Sub
 	#tag EndMethod
 
