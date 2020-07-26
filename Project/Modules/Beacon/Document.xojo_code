@@ -426,6 +426,7 @@ Implements ObservationKit.Observable
 		  Try
 		    Parsed = Beacon.ParseJSON(Contents)
 		  Catch Err As RuntimeException
+		    App.Log("Unable to load document due to JSON parsing error: " + Err.Message)
 		    Return Nil
 		  End Try
 		  
@@ -497,6 +498,7 @@ Implements ObservationKit.Observable
 		          Doc.mConfigGroups.Value(GroupName) = Instance
 		        End If
 		      Catch Err As RuntimeException
+		        App.Log("Unable to load config group " + Entry.Key + " from document " + Doc.DocumentID + " due to an unhandled " + Err.ClassName + ": " + Err.Message)
 		      End Try
 		    Next
 		  End If
@@ -1429,6 +1431,14 @@ Implements ObservationKit.Observable
 			Group="Behavior"
 			InitialValue=""
 			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ModChangeTimestamp"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
