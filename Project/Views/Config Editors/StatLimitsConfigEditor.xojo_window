@@ -1066,6 +1066,13 @@ End
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("783df1df-f5fe-4208-92a3-77e062875968") // Tropeognathus Saddle
+		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.0, 0.2)
+		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(50.0, 0.001, 0.25)
+		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.00136, 0.1)
+		    Self.mPreviewItemStats.AddRow(Dict)
+		    
+		    Dict = New Dictionary
 		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("419e00c5-5201-43a6-bcfe-639f1073eb86") // Metal Shield
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(1250.0, 0.001, 0.25)
 		    Self.mPreviewItemStats.AddRow(Dict)
