@@ -941,8 +941,20 @@ End
 		    RemovePrereq = Self.RemovePrereqCheck.Value
 		  End If
 		  
+		  Var HasOfficialEngram As Boolean
+		  For Idx As Integer = 0 To Self.mEngrams.LastRowIndex
+		    If Self.mEngrams(Idx) Is Nil Then
+		      Continue
+		    End If
+		    
+		    If Beacon.Data.EngramIsCustom(Self.mEngrams(Idx)) = False Then
+		      HasOfficialEngram = True
+		      Exit For Idx
+		    End If
+		  Next
+		  
 		  // Tek engrams must always be auto unlocked
-		  If EditAutoUnlock Or (EditLevel And (RequiredLevel Is Nil) = False) Or (EditPoints And (RequiredPoints Is Nil) = False) Then
+		  If HasOfficialEngram And (EditAutoUnlock Or (EditLevel And (RequiredLevel Is Nil) = False) Or (EditPoints And (RequiredPoints Is Nil) = False)) Then
 		    For Each Engram As Beacon.Engram In Engrams
 		      If Engram.RequiredPlayerLevel Is Nil Then
 		        // Tek unlock

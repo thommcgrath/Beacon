@@ -452,7 +452,7 @@ End
 		          Behaviors.AddRow("Auto unlocks at spawn")
 		        End If
 		      Else
-		        If (Engram.RequiredPlayerLevel Is Nil) = False And IsNull(RequiredLevel) = False And IsNull(RequiredPoints) = False Then
+		        If ((Engram.RequiredPlayerLevel Is Nil) = False Or Beacon.Data.EngramIsCustom(Engram)) And IsNull(RequiredLevel) = False And IsNull(RequiredPoints) = False Then
 		          Behaviors.AddRow("Unlockable at " + If(RequiredLevel.IntegerValue > 0, "level " + RequiredLevel.IntegerValue.ToString, "spawn") + " for " + If(RequiredPoints.IntegerValue > 0, RequiredPoints.IntegerValue.ToString + " points", "free"))
 		        Else
 		          Behaviors.AddRow("Auto unlocks by special event")

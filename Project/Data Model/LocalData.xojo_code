@@ -541,6 +541,27 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function EngramIsCustom(Engram As Beacon.Engram) As Boolean
+		  If Engram Is Nil Then
+		    Return True
+		  End If
+		  
+		  If Engram.ModID = Self.UserModID Then
+		    Return True
+		  End If
+		  
+		  Var ObjectID As String = Engram.ObjectID
+		  
+		  If Self.mEngramCache.HasKey(ObjectID) Then
+		    Return Beacon.Engram(Self.mEngramCache.Value(ObjectID)).ModID = Self.UserModID
+		  End If
+		  
+		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id FROM engrams WHERE object_id = ?1;", ObjectID)
+		  Return Results.RowCount = 0 Or Results.Column("mod_id").StringValue = Self.UserModID
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetBlueprintByObjectID(ObjectID As v4UUID) As Beacon.Blueprint
 		  Var Results As RowSet = Self.SQLSelect("SELECT category FROM blueprints WHERE object_id = ?1;", ObjectID.StringValue)
 		  If Results.RowCount <> 1 Then
