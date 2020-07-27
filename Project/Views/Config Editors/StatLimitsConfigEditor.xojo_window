@@ -863,90 +863,90 @@ End
 		    Var Dict As Dictionary
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponBow.PrimalItem_WeaponBow")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("fbe652a8-62f0-4daf-af89-a2d501b4f3f8") // Bow
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(50.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponCrossbow.PrimalItem_WeaponCrossbow")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("afb5a381-1da6-48d8-8eb7-a185b381c87f") // Crossbow
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(100.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponCompoundBow.PrimalItem_WeaponCompoundBow")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("d5647622-9a5e-4790-871d-33b1b7261458") // Compound Bow
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(55.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponRifle.PrimalItem_WeaponRifle")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("f7cc1e6c-2b40-4204-8272-10ff56fe55f3") // Assault Rifle
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(40.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponOneShotRifle.PrimalItem_WeaponOneShotRifle")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("10e10423-a2fd-462e-9ca1-45dbcbfdd511") // Longneck Rifle
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(70.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMachinedSniper.PrimalItem_WeaponMachinedSniper")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("215228dc-968b-4093-bb25-d56ff57f6ad6") // Fabricated Sniper Rifle
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(70.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponGun.PrimalItem_WeaponGun")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("9728096c-9057-43ea-9732-92817eaf3a92") // Simple Pistol
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(60.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMachinedPistol.PrimalItem_WeaponMachinedPistol")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("52187247-2dff-4567-91f6-0080fa24f988") // Fabricated Pistol
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(210.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponShotgun.PrimalItem_WeaponShotgun")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("3a9479b3-6b76-4cf7-95a5-b1a5f1beb1a9") // Shotgun
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(300.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMachinedShotgun.PrimalItem_WeaponMachinedShotgun")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("72e9e30e-f3ea-4880-875d-b41aa9f38703") // Pump Shotgun
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(300.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.001, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_TekRifle.PrimalItem_TekRifle")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("1f5b289a-2665-4d68-879d-7309274f94c4") // Tek Rifle
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(80.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.0003, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/Aberration/WeaponTekSniper/PrimalItem_TekSniper.PrimalItem_TekSniper")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("d35d97ff-1f4b-4925-9956-61a61ae607e8") // Railgun
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(80.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponDamage) = Self.BuildStatDict(100.0, 0.0003, 0.1)
 		    Dict.Value(BeaconConfigs.StatLimits.StatWeaponAmmo) = Self.BuildStatDict(0.0, 1.0, 0.0)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Items/Armor/Cloth/PrimalItemArmor_ClothShirt.PrimalItemArmor_ClothShirt")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("75f7a97a-f4d9-4c4d-8807-01b5a35502d0") // Cloth Shirt
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(10.0, 0.001, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(25.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(8.0, 0.001, 0.2)
@@ -954,7 +954,7 @@ End
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothShirt.PrimalItemArmor_DesertClothShirt")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("684b5ba4-b656-4bcf-9f58-e8c506bc108c") // Desert Cloth Shirt
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(40.0, 0.001, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(45.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(8.0, 0.001, 0.2)
@@ -962,7 +962,7 @@ End
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Items/Armor/Leather/PrimalItemArmor_HideShirt.PrimalItemArmor_HideShirt")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("591c1e36-fb17-473b-8299-a3bee995662f") // Hide Shirt
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(20.0, 0.001, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(45.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(20.0, 0.001, 0.2)
@@ -970,7 +970,7 @@ End
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinShirt.PrimalItemArmor_ChitinShirt")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("f8608f38-b6ca-49b0-af9c-11d43a846fe1") // Chitin Chestpiece
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(50.0, 0.001, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(50.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(10.0, 0.001, 0.2)
@@ -978,7 +978,7 @@ End
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Items/Armor/Fur/PrimalItemArmor_FurShirt.PrimalItemArmor_FurShirt")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("8bd65538-3798-44be-ae77-cde30ebcad78") // Fur Chestpiece
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(40.0, 0.001, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(120.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(65.0, 0.001, 0.2)
@@ -986,7 +986,7 @@ End
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Items/Armor/SCUBA/PrimalItemArmor_ScubaShirt_SuitWithTank.PrimalItemArmor_ScubaShirt_SuitWithTank")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("590a1041-b086-493e-8592-5b306ecc10c0") // SCUBA Tank
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(0.0, 0.001, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(45.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(40.0, 0.001, 0.2)
@@ -994,7 +994,7 @@ End
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/Aberration/CoreBlueprints/Items/Armor/HazardSuit/PrimalItemArmor_HazardSuitShirt.PrimalItemArmor_HazardSuitShirt")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("293c9a0e-498c-4ed2-a66a-619672e441f7") // Hazard Shirt
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(65.0, 0.001, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(85.5, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(10.0, 0.001, 0.2)
@@ -1002,7 +1002,7 @@ End
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalShirt.PrimalItemArmor_MetalShirt")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("b0cc8932-0469-4a6b-9c0c-81eb06f9bb3a") // Flak Chestpiece
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(100.0, 0.001, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(120.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(15.0, 0.001, 0.2)
@@ -1010,7 +1010,7 @@ End
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Items/Armor/Riot/PrimalItemArmor_RiotShirt.PrimalItemArmor_RiotShirt")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("ac1a9096-df5e-4148-9d84-a30f17564f3c") // Riot Chestpiece
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(115.0, 0.001, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(120.0, 0.001, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(15.0, 0.001, 0.2)
@@ -1018,7 +1018,7 @@ End
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekShirt.PrimalItemArmor_TekShirt")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("58989713-f1d2-4daa-b641-72f786e174f2") // Tek Chestpiece
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(180.0, 0.00075, 0.2)
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(300.0, 0.00055, 0.25)
 		    Dict.Value(BeaconConfigs.StatLimits.StatHypothermal) = Self.BuildStatDict(15.0, 0.001, 0.2)
@@ -1026,57 +1026,57 @@ End
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_RaptorSaddle.PrimalItemArmor_RaptorSaddle")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("bf214282-9872-408a-a074-2baca78d535a") // Raptor Saddle
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.2)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_PteroSaddle.PrimalItemArmor_PteroSaddle")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("13b4abbc-321e-45a1-ba64-e7691c3725a0") // Pteranodon Saddle
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.2)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_RexSaddle.PrimalItemArmor_RexSaddle")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("6de040fc-6a9f-48bf-8b14-6a3714439299") // Rex Saddle
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.2)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_RexSaddle_Tek.PrimalItemArmor_RexSaddle_Tek")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("427992ed-de43-4809-a98b-0d8e13f44707") // Tek Rex Saddle
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(45.0, 0.001, 0.2)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/Aberration/Dinos/RockDrake/PrimalItemArmor_RockDrakeSaddle.PrimalItemArmor_RockDrakeSaddle")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("d45d0691-a430-4443-98e3-bcc501067317") // Rock Drake Saddle
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.2)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/Aberration/Dinos/RockDrake/PrimalItemArmor_RockDrakeSaddle_Tek.PrimalItemArmor_RockDrakeSaddle_Tek")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("c52794f4-4329-4d15-8952-68631fd61060") // Tek Rock Drake Saddle
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(45.0, 0.001, 0.2)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_DoedSaddle.PrimalItemArmor_DoedSaddle")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("86bc8625-7e65-4539-8f4f-32d85f68e815") // Doesdicurus Saddle
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.1)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/ScorchedEarth/Dinos/RockGolem/PrimalItemArmor_RockGolemSaddle.PrimalItemArmor_RockGolemSaddle")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("52ece996-649e-4fb7-abca-7cfbe72dae24") // Rock Golem Saddle
 		    Dict.Value(BeaconConfigs.StatLimits.StatArmor) = Self.BuildStatDict(25.0, 0.001, 0.1)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Items/Armor/Shields/PrimalItemArmor_MetalShield.PrimalItemArmor_MetalShield")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("419e00c5-5201-43a6-bcfe-639f1073eb86") // Metal Shield
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(1250.0, 0.001, 0.25)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Items/Armor/Shields/PrimalItemArmor_TransparentRiotShield.PrimalItemArmor_TransparentRiotShield")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("f40512df-c37f-4fcc-af62-bc805cac2736") // Riot Shield
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(2300.0, 0.001, 0.25)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		    
 		    Dict = New Dictionary
-		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByPath("/Game/PrimalEarth/CoreBlueprints/Items/Armor/Shields/PrimalItemArmor_ShieldTek.PrimalItemArmor_ShieldTek")
+		    Dict.Value("Engram") = LocalData.SharedInstance.GetEngramByID("b30c8597-6c47-40df-b180-268f43e18764") // Tek Shield
 		    Dict.Value(BeaconConfigs.StatLimits.StatMaxDurability) = Self.BuildStatDict(2300.0, 0.001, 0.25)
 		    Self.mPreviewItemStats.AddRow(Dict)
 		  End If
