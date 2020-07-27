@@ -88,7 +88,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       BorderBottom    =   False
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Item Sets"
       DoubleBuffer    =   False

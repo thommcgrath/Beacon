@@ -33,7 +33,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
       BorderBottom    =   False
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Engrams"
       DoubleBuffer    =   False

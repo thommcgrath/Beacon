@@ -196,7 +196,6 @@ Begin LibrarySubview LibraryPaneEngrams
       BorderBottom    =   False
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Blueprints"
       DoubleBuffer    =   False

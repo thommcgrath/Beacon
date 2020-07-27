@@ -94,7 +94,6 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       BorderBottom    =   False
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Documents"
       DoubleBuffer    =   False

@@ -34,7 +34,6 @@ Begin ConfigEditor EngramControlConfigEditor
       BorderBottom    =   True
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Engrams"
       DoubleBuffer    =   False
@@ -100,7 +99,6 @@ Begin ConfigEditor EngramControlConfigEditor
       BorderBottom    =   True
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Unlock Points"
       DoubleBuffer    =   False

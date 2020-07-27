@@ -141,7 +141,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       BorderBottom    =   False
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   ""
       DoubleBuffer    =   False
