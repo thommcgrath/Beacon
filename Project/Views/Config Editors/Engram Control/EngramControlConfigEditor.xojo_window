@@ -741,7 +741,7 @@ End
 		  Next
 		  
 		  Board.Text = Beacon.GenerateJSON(Dict, True)
-		  Board.AddRawData(Board.Text, Self.kEngramsClipboardType)
+		  Board.RawData(Self.kEngramsClipboardType) = Board.Text
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -905,7 +905,7 @@ End
 		  Next
 		  
 		  Board.Text = Beacon.GenerateJSON(Dicts, True)
-		  Board.AddRawData(Board.Text, Self.kPointsClipboardType)
+		  Board.RawData(Self.kPointsClipboardType) = Board.Text
 		End Sub
 	#tag EndEvent
 	#tag Event

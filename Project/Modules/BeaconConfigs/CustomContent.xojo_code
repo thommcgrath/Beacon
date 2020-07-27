@@ -157,7 +157,7 @@ Inherits Beacon.ConfigGroup
 		    End If
 		  End If
 		  
-		  If StrComp(Self.mGameIniContent, Value, 0) <> 0 Then
+		  If Self.mGameIniContent.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 		    Self.mGameIniContent = Value
 		    Self.Modified = True
 		  End If
@@ -235,7 +235,7 @@ Inherits Beacon.ConfigGroup
 		    End If
 		  End If
 		  
-		  If StrComp(Self.mGameUserSettingsIniContent, Value, 0) <> 0 Then
+		  If Self.mGameUserSettingsIniContent.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 		    Self.mGameUserSettingsIniContent = Value
 		    Self.Modified = True
 		  End If

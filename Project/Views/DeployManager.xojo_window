@@ -128,6 +128,7 @@ Begin BeaconAutopositionWindow DeployManager
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   "True"
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
@@ -379,6 +380,7 @@ Begin BeaconAutopositionWindow DeployManager
          Top             =   52
          Transparent     =   False
          Underline       =   False
+         UnicodeMode     =   "0"
          ValidationMask  =   ""
          Value           =   ""
          Visible         =   True
@@ -612,6 +614,7 @@ Begin BeaconAutopositionWindow DeployManager
          Top             =   73
          Transparent     =   False
          Underline       =   False
+         UnicodeMode     =   "0"
          ValidationMask  =   ""
          Value           =   ""
          Visible         =   True
@@ -648,6 +651,7 @@ Begin BeaconAutopositionWindow DeployManager
       End
    End
    Begin Timer DeployWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   50
@@ -656,6 +660,7 @@ Begin BeaconAutopositionWindow DeployManager
       TabPanelIndex   =   0
    End
    Begin Beacon.OAuth2Client Authorizer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

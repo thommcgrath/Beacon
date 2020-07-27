@@ -160,57 +160,6 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CreateWeightIndicator(OffsetPercent As Double, WeightPercent As Double, WidthInPoints As Integer, HeightInPoints As Integer, Scale As Double = 1.0) As Picture
-		  Var Pic As New Picture(WidthInPoints * Scale, HeightInPoints * Scale)
-		  ' Pic.Graphics.ScaleX = Scale
-		  ' Pic.Graphics.ScaleY = Scale
-		  ' Pic.HorizontalResolution = 72 * Scale
-		  ' Pic.VerticalResolution = 72 * Scale
-		  
-		  Pic.Graphics.DrawingColor = &c000000
-		  Pic.Graphics.FillRectangle(0, 0, Pic.Width, Pic.Height)
-		  
-		  Pic.Graphics.DrawingColor = &cFFFFFF
-		  Pic.Graphics.FillOval(2 * Scale, 2 * Scale, Pic.Width - (4 * Scale) , Pic.Height - (4 * Scale))
-		  
-		  Var CenterPoint As New Xojo.Point(Pic.Width / 2, Pic.Height / 2)
-		  
-		  Var Angles(1) As Double
-		  Angles(0) = (360 * OffsetPercent) - 90
-		  Angles(1) = (360 * (OffsetPercent + WeightPercent)) - 90
-		  
-		  Var Radius As Double = Min(Pic.Width, Pic.Height) / 2
-		  Var Distance As Double = Radius * 1.5
-		  Var Points(2) As Integer
-		  Points(1) = Round(CenterPoint.X)
-		  Points(2) = Round(CenterPoint.Y)
-		  For Each Angle As Double In Angles
-		    While Angle >= 270
-		      Angle = Angle - 360
-		    Wend
-		    Var Rads As Double = Angle * 0.01745329252
-		    Var LegX As Double = CenterPoint.X + (Distance * Cos(Rads))
-		    Var LegY As Double = CenterPoint.Y + (Distance * Sin(Rads))
-		    Points.AddRow(Round(LegX))
-		    Points.AddRow(Round(LegY))
-		  Next
-		  
-		  Pic.Graphics.DrawingColor = &c000000
-		  Pic.Graphics.FillPolygon(Points)
-		  
-		  Var Mask As New Picture(Pic.Width, Pic.Height, 32)
-		  Mask.Graphics.DrawingColor = &c000000
-		  Mask.Graphics.FillOval(0, 0, Mask.Width, Mask.Height)
-		  Pic.ApplyMask(Mask)
-		  
-		  Var Final As New Picture(Pic.Width, Pic.Height, 32)
-		  Final.Graphics.DrawPicture(Pic, 0, 0)
-		  
-		  Return New Picture(WidthInPoints, HeightInPoints, Array(Final))
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Darker(Extends Source As Color, Percent As Double) As Color
 		  Return Color.HSV(Source.Hue, Source.Saturation, Source.Value * (1 - Percent))
 		End Function

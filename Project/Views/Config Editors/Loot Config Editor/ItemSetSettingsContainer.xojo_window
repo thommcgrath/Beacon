@@ -664,7 +664,7 @@ End
 		    Return
 		  End If
 		  
-		  If StrComp(Self.ItemSet.Label, Me.Value, 0) = 0 Then
+		  If Self.ItemSet.Label.Compare(Me.Value, ComparisonOptions.CaseSensitive) = 0 Then
 		    Return
 		  End If
 		  

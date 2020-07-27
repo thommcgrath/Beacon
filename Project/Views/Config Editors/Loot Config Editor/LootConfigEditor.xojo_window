@@ -166,6 +166,7 @@ Begin ConfigEditor LootConfigEditor
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -183,6 +184,7 @@ Begin ConfigEditor LootConfigEditor
          HasBackColor    =   False
          Height          =   436
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -987,7 +989,7 @@ End
 		    RawData = Beacon.GenerateJSON(Dicts, False)
 		  End If
 		  
-		  Board.AddRawData(RawData, Self.kClipboardType)
+		  Board.RawData(Self.kClipboardType) = RawData
 		  Board.Text = Lines.Join(Encodings.UTF8.Chr(10))
 		End Sub
 	#tag EndEvent

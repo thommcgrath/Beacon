@@ -158,7 +158,7 @@ Inherits Listbox
 		  
 		  Var DrawTop As Double = (Clip.Height - TotalTextHeight) / 2
 		  For I As Integer = 0 To Lines.LastRowIndex
-		    Var LineWidth As Integer = Min(Ceil(Clip.TextWidth(Lines(I))), MaxDrawWidth)
+		    Var LineWidth As Integer = Min(Ceiling(Clip.TextWidth(Lines(I))), MaxDrawWidth)
 		    
 		    Var DrawLeft As Integer
 		    Var Align As Listbox.Alignments = Self.CellAlignmentAt(Row, Column)

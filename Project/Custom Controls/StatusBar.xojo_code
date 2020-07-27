@@ -69,7 +69,7 @@ Inherits ControlCanvas
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mCaption, Value, 0) <> 0 Then
+			  If Self.mCaption.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mCaption = Value
 			    Self.Tooltip = Self.mCaption
 			    Self.Invalidate

@@ -246,7 +246,7 @@ End
 		    Var Account As Beacon.ExternalAccount = Me.RowTagAt(Idx)
 		    Accounts.AddRow(Account.AsDictionary)
 		  Next
-		  Board.AddRawData(Beacon.GenerateJSON(Accounts, False), Self.kClipboardType)
+		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Accounts, False)
 		End Sub
 	#tag EndEvent
 	#tag Event

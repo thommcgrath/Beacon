@@ -1549,7 +1549,7 @@ End
 		  
 		  Var JSON As String = Beacon.GenerateJSON(Items, True)
 		  Board.Text = JSON.Trim
-		  Board.AddRawData(JSON, Self.kEntryClipboardType)
+		  Board.RawData(Self.kEntryClipboardType) = JSON
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1746,7 +1746,7 @@ End
 		  
 		  Var JSON As String = Beacon.GenerateJSON(Items, True)
 		  Board.Text = JSON.Trim
-		  Board.AddRawData(Self.kReplacementClipboardType, JSON)
+		  Board.RawData(JSON) = Self.kReplacementClipboardType
 		End Sub
 	#tag EndEvent
 	#tag Event

@@ -68,6 +68,14 @@ Inherits MenuItem
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="LastRowIndex"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Enabled"
 			Visible=false
 			Group="Behavior"

@@ -235,6 +235,7 @@ Begin BeaconDialog EngramControlWizard
       Width           =   80
    End
    Begin Thread WorkThread
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   3

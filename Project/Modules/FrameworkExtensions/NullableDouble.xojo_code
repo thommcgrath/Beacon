@@ -27,8 +27,6 @@ Class NullableDouble
 		  Select Case Value.Type
 		  Case Variant.TypeDouble
 		    Return NullableDouble.FromDouble(Value.DoubleValue)
-		  Case Variant.TypeInteger
-		    Return NullableDouble.FromInteger(Value.IntegerValue)
 		  Case Variant.TypeInt32
 		    Return NullableDouble.FromInteger(Value.Int32Value)
 		  Case Variant.TypeInt64

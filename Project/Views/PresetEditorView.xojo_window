@@ -138,6 +138,7 @@ Begin BeaconSubview PresetEditorView
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   "True"
       Top             =   61
       Transparent     =   False
       Value           =   0
@@ -160,6 +161,8 @@ Begin BeaconSubview PresetEditorView
          SelectionStyle  =   "1"
          TabIndex        =   0
          TabPanelIndex   =   2
+         TabStop         =   True
+         Tooltip         =   ""
          Top             =   81
          Transparent     =   False
          Visible         =   True
@@ -1383,7 +1386,7 @@ End
 		  End If
 		  
 		  Var Value As String = Me.Value.Trim
-		  If Value <> "" And StrComp(Self.mPreset.Grouping, Value, 0) <> 0 Then
+		  If Value <> "" And Self.mPreset.Grouping.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 		    Self.mPreset.Grouping = Value
 		    Self.Changed = True
 		  End If
@@ -1398,7 +1401,7 @@ End
 		  End If
 		  
 		  Var Value As String = Me.Value.Trim
-		  If Value <> "" And StrComp(Self.mPreset.Label, Value, 0) <> 0 Then
+		  If Value <> "" And Self.mPreset.Label.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 		    Self.mPreset.Label = Value
 		    Self.Changed = True
 		  End If
@@ -1644,7 +1647,7 @@ End
 		    Modifiers.Value(ModifierID) = Dict
 		  Next
 		  
-		  Board.AddRawData(Beacon.GenerateJSON(Modifiers, False), Self.ModifierClipboardType)
+		  Board.RawData(Self.ModifierClipboardType) = Beacon.GenerateJSON(Modifiers, False)
 		End Sub
 	#tag EndEvent
 	#tag Event

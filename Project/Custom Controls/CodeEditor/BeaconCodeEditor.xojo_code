@@ -71,8 +71,8 @@ Inherits ScrollCanvas
 		  G.FontUnit = FontUnits.Point
 		  
 		  Self.mCharacterWidth = G.TextWidth("m")
-		  Self.mLineHeight = Ceil(G.TextHeight * 1.2)
-		  Self.mBaselineHeight = Ceil((((G.TextHeight * 1.2) - G.CapHeight) / 2) + G.CapHeight)
+		  Self.mLineHeight = Ceiling(G.TextHeight * 1.2)
+		  Self.mBaselineHeight = Ceiling((((G.TextHeight * 1.2) - G.CapHeight) / 2) + G.CapHeight)
 		  
 		  Var LineTop As Integer = Self.ScrollY * -1
 		  Var Area As Graphics = G.Clip(Self.GutterWidth + 1, 0, G.Width - 41, G.Height)
@@ -309,7 +309,7 @@ Inherits ScrollCanvas
 			  Var EOL As String = Encodings.ASCII.Chr(10)
 			  Value = Value.ReplaceLineEndings(EOL)
 			  
-			  If StrComp(Self.mContent, Value, 0) <> 0 Then
+			  If Self.mContent.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mContent = Value
 			    
 			    Var NewLines() As String = Value.Split(EOL)
@@ -345,6 +345,14 @@ Inherits ScrollCanvas
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Tooltip"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Width"
 			Visible=true
@@ -432,14 +440,6 @@ Inherits ScrollCanvas
 			InitialValue="True"
 			Type="Boolean"
 			EditorType="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HelpTag"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AutoDeactivate"

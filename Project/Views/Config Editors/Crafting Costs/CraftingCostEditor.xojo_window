@@ -381,7 +381,7 @@ End
 		    Dicts.AddRow(Dict)
 		  Next
 		  
-		  Board.AddRawData(Beacon.GenerateJSON(Dicts, False), Self.kClipboardType)
+		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Dicts, False)
 		End Sub
 	#tag EndEvent
 	#tag Event

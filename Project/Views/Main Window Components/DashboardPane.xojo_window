@@ -304,6 +304,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Scope           =   2
       TabIndex        =   11
       TabPanelIndex   =   0
+      TabStop         =   "True"
       Tooltip         =   ""
       Top             =   351
       Transparent     =   False

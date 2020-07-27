@@ -275,6 +275,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       Scope           =   2
       TabIndex        =   9
       TabPanelIndex   =   0
+      TabStop         =   "True"
       Top             =   158
       Transparent     =   False
       Value           =   0

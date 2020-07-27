@@ -100,6 +100,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       Top             =   61
       Transparent     =   False
       Underline       =   False
+      UnicodeMode     =   "0"
       UseFocusRing    =   False
       Visible         =   True
       Width           =   608

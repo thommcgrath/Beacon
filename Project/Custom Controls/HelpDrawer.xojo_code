@@ -144,7 +144,7 @@ Inherits ControlCanvas
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mBody, Value, 0) <> 0 Then
+			  If Self.mBody.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mBody = Value
 			    Self.Invalidate
 			  End If
@@ -180,7 +180,7 @@ Inherits ControlCanvas
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mDetailURL, Value, 0) <> 0 Then
+			  If Self.mDetailURL.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mDetailURL = Value
 			    Self.Invalidate
 			  End If
@@ -229,7 +229,7 @@ Inherits ControlCanvas
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mTitle, Value, 0) <> 0 Then
+			  If Self.mTitle.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mTitle = Value
 			    Self.Invalidate
 			  End If

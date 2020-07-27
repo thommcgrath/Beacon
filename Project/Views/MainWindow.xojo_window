@@ -76,6 +76,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   "True"
       Top             =   -409
       Transparent     =   False
       Value           =   0
@@ -150,6 +151,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       HasBackColor    =   False
       Height          =   362
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   -323
       LockBottom      =   True
@@ -215,6 +217,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0
+      TabStop         =   "True"
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
@@ -233,6 +236,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   362
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   0
          LockBottom      =   True
@@ -286,6 +290,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          HasBackColor    =   False
          Height          =   362
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   0
          LockBottom      =   True
@@ -317,6 +322,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   362
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   0
          LockBottom      =   True
@@ -1090,7 +1096,7 @@ End
 		  
 		  Var Caption As String = Self.mUpdateText
 		  Var MaxCaptionWidth As Integer = G.Width - 40
-		  Var CaptionWidth As Integer = Min(Ceil(G.TextWidth(Caption)), MaxCaptionWidth)
+		  Var CaptionWidth As Integer = Min(Ceiling(G.TextWidth(Caption)), MaxCaptionWidth)
 		  Var CaptionLeft As Integer = Round((G.Width - CaptionWidth) / 2)
 		  Var CaptionBaseline As Double = ((G.Height - 1) / 2) + (G.CapHeight / 2)
 		  

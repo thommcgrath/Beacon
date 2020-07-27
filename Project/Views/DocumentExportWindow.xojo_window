@@ -103,6 +103,7 @@ Begin BeaconDialog DocumentExportWindow
       Top             =   61
       Transparent     =   False
       Underline       =   False
+      UnicodeMode     =   "0"
       UseFocusRing    =   True
       Visible         =   True
       Width           =   900
@@ -204,6 +205,7 @@ Begin BeaconDialog DocumentExportWindow
       Width           =   140
    End
    Begin Timer ClipboardWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -420,6 +422,7 @@ Begin BeaconDialog DocumentExportWindow
       Width           =   442
    End
    Begin Beacon.Rewriter GameIniRewriter
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -428,6 +431,7 @@ Begin BeaconDialog DocumentExportWindow
       TabPanelIndex   =   0
    End
    Begin Beacon.Rewriter GameUserSettingsRewriter
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -436,6 +440,7 @@ Begin BeaconDialog DocumentExportWindow
       TabPanelIndex   =   0
    End
    Begin Beacon.Rewriter FileRewriter
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -444,6 +449,7 @@ Begin BeaconDialog DocumentExportWindow
       TabPanelIndex   =   0
    End
    Begin Beacon.Rewriter ClipboardRewriter
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5

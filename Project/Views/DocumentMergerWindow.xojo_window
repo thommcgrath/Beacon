@@ -560,7 +560,7 @@ End
 		  Const IndicatorWidth = 8
 		  Const IndicatorHeight = 4
 		  
-		  Var LineEnd As Integer = Ceil(HorizontalPosition + G.TextWidth(Line))
+		  Var LineEnd As Integer = Ceiling(HorizontalPosition + G.TextWidth(Line))
 		  Var IndicatorLeft As Integer = LineEnd + 4
 		  Var IndicatorTop As Integer = Round((Me.DefaultRowHeight - IndicatorHeight) / 2)
 		  

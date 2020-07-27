@@ -234,6 +234,8 @@ Begin BeaconDialog AddSpawnPointDialog
       SelectionStyle  =   "0"
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
       Top             =   52
       Transparent     =   False
       Visible         =   True

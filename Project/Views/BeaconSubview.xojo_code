@@ -373,7 +373,7 @@ Implements ObservationKit.Observable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mToolbarCaption, Value, 0) <> 0 Then
+			  If Self.mToolbarCaption.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mToolbarCaption = Value
 			    Self.NotifyObservers("ToolbarCaption", Value)
 			  End If

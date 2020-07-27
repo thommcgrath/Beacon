@@ -272,6 +272,15 @@ Implements AnimationKit.ValueAnimator
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Refresh(X As Integer, Y As Integer, Width As Integer, Height As Integer, EraseBackground As Boolean = True)
+		  // Calling the overridden superclass method.
+		  #Pragma Unused EraseBackground
+		  Super.Refresh(X, Y, Width, Height, False)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub RefreshGutters()
 		  Var LeftGutter, TopGutter, RightGutter, BottomGutter As Integer
 		  RaiseEvent SetupGutters(LeftGutter, TopGutter, RightGutter, BottomGutter)
@@ -295,14 +304,6 @@ Implements AnimationKit.ValueAnimator
 		  If NeedsInvalidation Then
 		    Self.Invalidate
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub RefreshRect(X As Integer, Y As Integer, Width As Integer, Height As Integer, EraseBackground As Boolean = True)
-		  #Pragma Unused EraseBackground
-		  Super.RefreshRect(X, Y, Width, Height, False)
-		  
 		End Sub
 	#tag EndMethod
 
@@ -677,6 +678,14 @@ Implements AnimationKit.ValueAnimator
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Tooltip"
+			Visible=true
+			Group="Appearance"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Width"
 			Visible=true
 			Group="Position"
@@ -763,14 +772,6 @@ Implements AnimationKit.ValueAnimator
 			InitialValue="True"
 			Type="Boolean"
 			EditorType="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HelpTag"
-			Visible=true
-			Group="Appearance"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AutoDeactivate"

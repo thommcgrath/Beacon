@@ -68,6 +68,7 @@ Begin ContainerControl ArkMLEditor
       Top             =   42
       Transparent     =   False
       Underline       =   False
+      UnicodeMode     =   "0"
       ValidationMask  =   ""
       Value           =   ""
       Visible         =   True
@@ -280,7 +281,7 @@ End
 		  
 		  Var Board As New Clipboard
 		  Board.Text = RTFData
-		  Board.AddRawData(RTFData, "public.rtf")
+		  Board.RawData("public.rtf") = RTFData
 		  
 		  Self.ShowAlert("Shareable version copied", "You can now paste it where you need it.")
 		End Sub

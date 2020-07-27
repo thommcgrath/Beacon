@@ -201,7 +201,7 @@ Inherits ControlCanvas
 		  Var XPos As Integer = HorizontalSpacing + ContentArea.Left
 		  Var YPos As Integer = VerticalSpacing + ContentArea.Top
 		  Var MaxCellWidth As Integer = ContentArea.Width - ((HorizontalSpacing * 2) + 10)
-		  Var CapHeight As Integer = Ceil(G.CapHeight)
+		  Var CapHeight As Integer = Ceiling(G.CapHeight)
 		  Var CellHeight As Integer = CapHeight + (VerticalPadding * 2)
 		  Var Clip As Graphics = G.Clip(ContentArea.Left, ContentArea.Top, ContentArea.Width, ContentArea.Height)
 		  
@@ -223,7 +223,7 @@ Inherits ControlCanvas
 		    Var Pressed As Boolean = Self.mMousePressedIndex = I
 		    Tag = Tag.ReplaceAll("_", " ").Titlecase
 		    
-		    Var CaptionWidth As Integer = Ceil(Clip.TextWidth(Tag))
+		    Var CaptionWidth As Integer = Ceiling(Clip.TextWidth(Tag))
 		    Var CellWidth As Integer = Min(MaxCellWidth, CaptionWidth + (HorizontalPadding * 2))
 		    If XPos + CellWidth > ContentArea.Right - HorizontalSpacing Then
 		      XPos = ContentArea.Left + HorizontalSpacing
@@ -372,7 +372,7 @@ Inherits ControlCanvas
 		    Changed = True
 		  End If
 		  For I As Integer = 0 To Values.LastRowIndex
-		    If StrComp(Self.mTags(I), Values(I), 0) <> 0 Then
+		    If Self.mTags(I).Compare(Values(I), ComparisonOptions.CaseSensitive) <> 0 Then
 		      Self.mTags(I) = Values(I)
 		      Changed = True
 		    End If

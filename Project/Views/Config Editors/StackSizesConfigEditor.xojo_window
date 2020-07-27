@@ -577,7 +577,7 @@ End
 		    Items.Value(Engram.Path) = Size
 		  Next
 		  
-		  Board.AddRawData(Beacon.GenerateJSON(Items, False), Self.kClipboardType)
+		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(Items, False)
 		End Sub
 	#tag EndEvent
 	#tag Event

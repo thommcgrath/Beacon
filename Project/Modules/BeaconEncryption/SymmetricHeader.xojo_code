@@ -47,7 +47,7 @@ Private Class SymmetricHeader
 		    Factor = 16
 		  End Select
 		  
-		  Var Blocks As Integer = Ceil(Self.mLength / Factor)
+		  Var Blocks As Integer = Ceiling(Self.mLength / Factor)
 		  If Self.mLength Mod Factor = 0 Then
 		    Blocks = Blocks + 1
 		  End If

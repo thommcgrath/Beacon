@@ -43,6 +43,7 @@ Begin ContainerControl DocumentImportView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -249,6 +250,7 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -278,6 +280,7 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -307,6 +310,7 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -564,6 +568,7 @@ Begin ContainerControl DocumentImportView
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   456
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -731,6 +736,7 @@ Begin ContainerControl DocumentImportView
       End
    End
    Begin Timer DiscoveryWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0

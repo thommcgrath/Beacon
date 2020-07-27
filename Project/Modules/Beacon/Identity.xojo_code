@@ -21,7 +21,7 @@ Protected Class Identity
 		  
 		  Var LeftString As String = EncodeHex(Left)
 		  Var RightString As String = EncodeHex(Right)
-		  Return StrComp(LeftString, RightString, REALbasic.StrCompLexical)
+		  Return LeftString.Compare(RightString, ComparisonOptions.CaseInsensitive)
 		End Function
 	#tag EndMethod
 
@@ -284,14 +284,14 @@ Protected Class Identity
 		  End If
 		  
 		  // Case changes do matter
-		  Var Result As Integer = StrComp(Self.mLoginKey, Other.mLoginKey, REALbasic.StrCompLexical)
+		  Var Result As Integer = Self.mLoginKey.Compare(Other.mLoginKey, ComparisonOptions.CaseSensitive)
 		  If Result <> 0 Then
 		    Return Result
 		  End If
 		  
 		  // Case changes do not matter
 		  If Self.mIdentifier <> Other.mIdentifier Then
-		    Return StrComp(Self.mIdentifier, Other.mIdentifier, REALbasic.StrCompLexical)
+		    Return Self.mIdentifier.Compare(Other.mIdentifier, ComparisonOptions.CaseInsensitive)
 		  End If
 		  
 		  // Newer sorts after older

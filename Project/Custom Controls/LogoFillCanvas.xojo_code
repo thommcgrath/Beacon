@@ -18,7 +18,7 @@ Inherits ControlCanvas
 		  
 		  Var CaptionTop As Integer = LogoTop + LogoMask.Height + 8
 		  Var CaptionBase As Integer = CaptionTop + G.CapHeight
-		  Var CaptionWidth As Integer = Min(Ceil(G.TextWidth(Self.mCaption)), G.Width - 40)
+		  Var CaptionWidth As Integer = Min(Ceiling(G.TextWidth(Self.mCaption)), G.Width - 40)
 		  Var CaptionLeft As Integer = (G.Width - CaptionWidth) / 2
 		  
 		  G.DrawingColor = ForeColor
@@ -35,7 +35,7 @@ Inherits ControlCanvas
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mCaption, Value, 0) <> 0 Then
+			  If Self.mCaption.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mCaption = Value
 			    Self.Invalidate
 			  End If

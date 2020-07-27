@@ -489,7 +489,7 @@ Implements ObservationKit.Observer
 		    Var CaptionSize As Double = 0
 		    
 		    G.FontSize = CaptionSize
-		    Var CaptionWidth As Integer = Ceil(G.TextWidth(Caption))
+		    Var CaptionWidth As Integer = Ceiling(G.TextWidth(Caption))
 		    
 		    If CaptionWidth > ContentRect.Width Then
 		      ContentRect = OffsetContentRect
@@ -696,7 +696,7 @@ Implements ObservationKit.Observer
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mCaption, Value, 0) <> 0 Then
+			  If Self.mCaption.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mCaption = Value
 			    Self.Invalidate
 			  End If

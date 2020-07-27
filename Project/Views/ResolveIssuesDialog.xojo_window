@@ -232,6 +232,7 @@ Begin BeaconDialog ResolveIssuesDialog
       Top             =   275
       Transparent     =   False
       Underline       =   False
+      UnicodeMode     =   "0"
       UseFocusRing    =   True
       Visible         =   True
       Width           =   560

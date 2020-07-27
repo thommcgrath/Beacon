@@ -142,6 +142,7 @@ Begin BeaconContainer SpawnPointEditor
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   "True"
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
@@ -160,6 +161,7 @@ Begin BeaconContainer SpawnPointEditor
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   664
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   201
          LockBottom      =   True
@@ -997,7 +999,7 @@ End
 		  
 		  Var JSON As String = Beacon.GenerateJSON(Items, True)
 		  Board.Text = JSON
-		  Board.AddRawData(JSON, Self.kSetsClipboardType)
+		  Board.RawData(Self.kSetsClipboardType) = JSON
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1145,7 +1147,7 @@ End
 		  
 		  Var JSON As String = Beacon.GenerateJSON(Limits, True).Trim
 		  Board.Text = JSON
-		  Board.AddRawData(JSON, Self.kLimitsClipboardType)
+		  Board.RawData(Self.kLimitsClipboardType) = JSON
 		End Sub
 	#tag EndEvent
 	#tag Event

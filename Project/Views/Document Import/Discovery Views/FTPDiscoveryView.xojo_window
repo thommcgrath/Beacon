@@ -43,6 +43,7 @@ Begin DiscoveryView FTPDiscoveryView
       Scope           =   2
       TabIndex        =   17
       TabPanelIndex   =   0
+      TabStop         =   "True"
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -554,6 +555,7 @@ Begin DiscoveryView FTPDiscoveryView
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
+         TabStop         =   "True"
          Top             =   161
          Transparent     =   False
          Value           =   0.0
@@ -784,6 +786,7 @@ Begin DiscoveryView FTPDiscoveryView
          HasBackColor    =   False
          Height          =   204
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Left            =   21
          LockBottom      =   True
@@ -889,6 +892,7 @@ Begin DiscoveryView FTPDiscoveryView
       End
    End
    Begin Timer StatusWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   50

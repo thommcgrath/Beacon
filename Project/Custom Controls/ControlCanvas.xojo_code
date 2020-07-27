@@ -131,8 +131,12 @@ Inherits Canvas
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RefreshRect(x As Integer, y As Integer, width As Integer, height As Integer, eraseBackground As Boolean = True)
-		  #if XojoVersion >= 2018.01
+		Sub Refresh(x As Integer, y As Integer, width As Integer, height As Integer, eraseBackground As Boolean = True)
+		  // Calling the overridden superclass method.
+		  Super.Refresh(x, y, width, height, eraseBackground)
+		  #if XojoVersion >= 2020.01
+		    Super.Refresh(X, Y, Width, Height, EraseBackground)
+		  #elseif XojoVersion >= 2018.01
 		    Super.RefreshRect(X, Y, Width, Height, EraseBackground)
 		  #else
 		    #Pragma Unused eraseBackground

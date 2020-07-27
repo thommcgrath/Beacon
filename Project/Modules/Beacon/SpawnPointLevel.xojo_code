@@ -37,8 +37,8 @@ Protected Class SpawnPointLevel
 		  // See note Formula
 		  
 		  Var Levels As New Beacon.SpawnPointLevel(0, 0, 0)
-		  Levels.MinLevel = Max(Ceil(MinLevel / Difficulty), 1.0)
-		  Levels.MaxLevel = Max(Ceil(MaxLevel / Difficulty), 1.0) + 0.999999
+		  Levels.MinLevel = Max(Ceiling(MinLevel / Difficulty), 1.0)
+		  Levels.MaxLevel = Max(Ceiling(MaxLevel / Difficulty), 1.0) + 0.999999
 		  Return Levels
 		End Function
 	#tag EndMethod

@@ -195,6 +195,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   "True"
       Tooltip         =   ""
       Top             =   0
       Transparent     =   False
@@ -213,6 +214,7 @@ Begin ConfigEditor SpawnPointsConfigEditor
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   548
+         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   251
          LockBottom      =   True
@@ -658,7 +660,7 @@ End
 		    SaveData.AddRow(SpawnPoint.SaveData)
 		  Next
 		  
-		  Board.AddRawData(Beacon.GenerateJSON(SaveData, False), Self.kClipboardType)
+		  Board.RawData(Self.kClipboardType) = Beacon.GenerateJSON(SaveData, False)
 		  
 		  If Not BeaconConfigs.ConfigPurchased(BeaconConfigs.SpawnPoints.ConfigName, App.IdentityManager.CurrentIdentity.OmniVersion) Then
 		    Return

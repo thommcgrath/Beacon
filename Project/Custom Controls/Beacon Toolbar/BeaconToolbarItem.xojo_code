@@ -124,7 +124,7 @@ Implements ObservationKit.Observable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mCaption, Value, 0) <> 0 Then
+			  If Self.mCaption.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mCaption = Value
 			    Self.NotifyObservers(Self.KeyChanged, Value)
 			  End If
@@ -276,7 +276,7 @@ Implements ObservationKit.Observable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mSubcaption, Value, 0) <> 0 Then
+			  If Self.mSubcaption.Compare(Value, ComparisonOptions.CaseSensitive) <> 0 Then
 			    Self.mSubcaption = Value
 			    Self.NotifyObservers(Self.KeyChanged, Value)
 			  End If

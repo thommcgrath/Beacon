@@ -1613,7 +1613,7 @@ End
 		        PerCuddle = Min((1 / MaxCuddles) * ImprintAmountMultiplier, 1.0)
 		        
 		        // Thanks to BabyImprintAmountMultiplier, the number of cuddles may be reduced, so we need to recompute
-		        MaxCuddles = Ceil(1.0 / PerCuddle)
+		        MaxCuddles = Ceiling(1.0 / PerCuddle)
 		      End If
 		    End If
 		    Var MaxImprint As Double = Min(MaxCuddles * PerCuddle, 1.0)

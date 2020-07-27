@@ -105,6 +105,7 @@ Begin LibrarySubview LibraryPaneSearch
       Width           =   280
    End
    Begin Timer SearchTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -114,6 +115,7 @@ Begin LibrarySubview LibraryPaneSearch
    End
    Begin URLConnection SearchSocket
       AllowCertificateValidation=   False
+      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
@@ -180,7 +182,7 @@ End
 		  G.FontName = "System"
 		  G.FontSize = FontSizePoints
 		  Var TitleCapHeight As Double = G.CapHeight
-		  Var TitleWidth As Integer = Ceil(G.TextWidth(Title))
+		  Var TitleWidth As Integer = Ceiling(G.TextWidth(Title))
 		  
 		  G.FontSize = SmallFontSizePoints
 		  Var TypeCapHeight As Double = G.CapHeight
@@ -193,7 +195,7 @@ End
 		  
 		  Var Rect As New Xojo.Rect(Self.ResultSpacing, Top, G.Width - (Self.ResultSpacing * 2), RectHeight)
 		  Var TitleLeft As Integer = Rect.Left + 1 + Self.ResultPadding
-		  Var TypeWidth As Integer = Ceil(G.TextWidth(Type)) + 8
+		  Var TypeWidth As Integer = Ceiling(G.TextWidth(Type)) + 8
 		  Var TypeLeft As Integer = Min(TitleLeft + TitleWidth + Self.ResultPadding, (TitleLeft + MaxTextWidth) - TypeWidth)
 		  Var TitleBaseline As Integer = Rect.Top + 1 + Self.ResultPadding + TitleCapHeight
 		  Var TypeTop As Integer = TitleBaseline - (TypeCapHeight + 5)
@@ -399,7 +401,7 @@ End
 		      G.DrawText(Self.StringSearchHelp, 10, 20 + G.CapHeight, G.Width - 20, False)
 		    Else
 		      G.Bold = True
-		      Var CaptionWidth As Integer = Ceil(G.TextWidth(Self.StringNoResults))
+		      Var CaptionWidth As Integer = Ceiling(G.TextWidth(Self.StringNoResults))
 		      Var CaptionLeft As Integer = (G.Width - CaptionWidth) / 2
 		      Var CaptionBaseline As Integer = (G.Height / 2) + (G.CapHeight / 2)
 		      G.DrawText(Self.StringNoResults, CaptionLeft, CaptionBaseline, G.Width - 20, True)

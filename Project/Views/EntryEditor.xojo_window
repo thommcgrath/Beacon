@@ -262,6 +262,7 @@ Begin BeaconDialog EntryEditor
          HasBackColor    =   False
          Height          =   209
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
          Left            =   422
          LockBottom      =   True
@@ -799,7 +800,7 @@ End
 		      Var Engram1 As Beacon.Engram = Me.RowTagAt(Row1)
 		      Var Engram2 As Beacon.Engram = Me.RowTagAt(Row2)
 		      
-		      Result = StrComp(Engram1.Label, Engram2.Label, 0)
+		      Result = Engram1.Label.Compare(Engram2.Label, ComparisonOptions.CaseSensitive)
 		    End If
 		  Case Self.ColumnWeight
 		    Var Weight1 As Double = Val(Me.CellValueAt(Row1, Column))

@@ -16,7 +16,7 @@ Inherits AnimationKit.DeltaTask
 		  Var RectWidth As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartBounds.Width, Self.EndBounds.Width)
 		  Var RectHeight As Double = Self.Curve.Evaluate(Elapsed / Duration, Self.StartBounds.Height, Self.EndBounds.Height)
 		  
-		  Self.ApplyRect(New Rect(Floor(RectLeft), Floor(RectTop), Ceil(RectWidth), Ceil(RectHeight)))
+		  Self.ApplyRect(New Rect(Floor(RectLeft), Floor(RectTop), Ceiling(RectWidth), Ceiling(RectHeight)))
 		End Sub
 	#tag EndEvent
 

@@ -27,6 +27,7 @@ Begin ServerViewContainer ConnectorServerView
    Width           =   600
    Begin Beacon.ConnectorClientSocket ClientSocket
       Address         =   ""
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Port            =   0
@@ -508,6 +509,7 @@ Begin ServerViewContainer ConnectorServerView
       Width           =   110
    End
    Begin Timer RefreshTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   30000

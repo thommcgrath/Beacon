@@ -160,6 +160,7 @@ Begin BeaconContainer ItemSetEditor
       HasBackColor    =   False
       Height          =   23
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -495,7 +496,7 @@ End
 		    Contents = Beacon.GenerateJSON(Entries, False)
 		  End If
 		  
-		  Board.AddRawData(Contents, Self.kClipboardType)
+		  Board.RawData(Self.kClipboardType) = Contents
 		End Sub
 	#tag EndEvent
 	#tag Event
