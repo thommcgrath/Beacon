@@ -56,7 +56,7 @@ foreach ($required_versions as $version) {
 	
 	$database->BeginTransaction();
 	
-	$full_path = $prefix . '/Complete.beacondata?t=' . $last_database_update->format('U');
+	$full_path = $prefix . '/Complete.beacondata?t=' . $last_database_update->format('U') . '&bcdn_filename=Complete.beacondata';
 	$full_prepared = gzencode(json_encode($full_data));
 	$full_size = strlen($full_prepared);
 	if (UploadFile($full_path, $full_prepared) === false) {
@@ -66,7 +66,7 @@ foreach ($required_versions as $version) {
 	}
 	
 	if (is_null($delta_data) == false) {
-		$delta_path = $prefix . '/' . $last_database_update->format('YmdHis') . '.beacondata';
+		$delta_path = $prefix . '/' . $last_database_update->format('YmdHis') . '.beacondata?bcdn_filename=' . $last_database_update->format('YmdHis') . '.beacondata';
 		$delta_prepared = gzencode(json_encode($delta_data));
 		$delta_size = strlen($delta_prepared);
 		if (UploadFile($delta_path, $delta_prepared) === false) {
