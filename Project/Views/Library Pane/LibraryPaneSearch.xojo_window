@@ -33,7 +33,6 @@ Begin LibrarySubview LibraryPaneSearch
       BorderBottom    =   False
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Search"
       DoubleBuffer    =   False

@@ -34,7 +34,6 @@ Begin ConfigEditor AccountsConfigEditor
       BorderBottom    =   True
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Accounts"
       DoubleBuffer    =   False

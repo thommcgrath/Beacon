@@ -33,7 +33,6 @@ Begin BeaconContainer CraftingCostEditor
       BorderBottom    =   False
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Resources Required"
       DoubleBuffer    =   False

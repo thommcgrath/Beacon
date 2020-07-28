@@ -33,7 +33,6 @@ Begin LibrarySubview LibraryPaneNotifications Implements NotificationKit.Receive
       BorderBottom    =   False
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Notifications"
       DoubleBuffer    =   False

@@ -33,7 +33,6 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       BorderBottom    =   False
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Presets"
       DoubleBuffer    =   False

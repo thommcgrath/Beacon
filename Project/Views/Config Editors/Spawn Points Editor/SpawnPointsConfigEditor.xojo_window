@@ -34,7 +34,6 @@ Begin ConfigEditor SpawnPointsConfigEditor
       BorderBottom    =   True
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Spawn Points"
       DoubleBuffer    =   False
@@ -544,9 +543,6 @@ End
 		  
 		  Me.LeftItems.Append(AddButton)
 		  Me.LeftItems.Append(DuplicateButton)
-		  
-		  // Sometimes Xojo feels like changing the value of this property for... reasons
-		  Me.Borders = BeaconUI.BorderBottom
 		End Sub
 	#tag EndEvent
 	#tag Event

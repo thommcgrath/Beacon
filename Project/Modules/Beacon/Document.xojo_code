@@ -426,6 +426,7 @@ Implements ObservationKit.Observable
 		  Try
 		    Parsed = Beacon.ParseJSON(Contents)
 		  Catch Err As RuntimeException
+		    App.Log("Unable to load document due to JSON parsing error: " + Err.Message)
 		    Return Nil
 		  End Try
 		  
@@ -497,6 +498,7 @@ Implements ObservationKit.Observable
 		          Doc.mConfigGroups.Value(GroupName) = Instance
 		        End If
 		      Catch Err As RuntimeException
+		        App.Log("Unable to load config group " + Entry.Key + " from document " + Doc.DocumentID + " due to an unhandled " + Err.ClassName + ": " + Err.Message)
 		      End Try
 		    Next
 		  End If
@@ -515,6 +517,7 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  Var SecureDict As Dictionary
+		  #Pragma BreakOnExceptions False
 		  If Dict.HasKey("EncryptedData") Then
 		    Try
 		      Doc.mLastSecureData = Dict.Value("EncryptedData")
@@ -527,6 +530,7 @@ Implements ObservationKit.Observable
 		  ElseIf Dict.HasKey("Secure") Then
 		    SecureDict = ReadSecureData(Dict.Value("Secure"), Identity)
 		  End If
+		  #Pragma BreakOnExceptions Default
 		  If SecureDict <> Nil Then
 		    Var AccountManager As Beacon.ExternalAccountManager
 		    Try

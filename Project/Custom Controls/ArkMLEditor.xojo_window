@@ -83,7 +83,6 @@ Begin ContainerControl ArkMLEditor
       BorderBottom    =   False
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   ""
       DoubleBuffer    =   False

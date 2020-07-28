@@ -92,7 +92,6 @@ Begin BeaconContainer ItemSetEditor
       BorderBottom    =   False
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Item Set Contents"
       DoubleBuffer    =   False

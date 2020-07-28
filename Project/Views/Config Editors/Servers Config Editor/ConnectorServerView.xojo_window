@@ -43,7 +43,6 @@ Begin ServerViewContainer ConnectorServerView
       BorderBottom    =   False
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Untitled"
       DoubleBuffer    =   False

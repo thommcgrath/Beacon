@@ -31,6 +31,12 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function EngramIsCustom(Engram As Beacon.Engram) As Boolean
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetBlueprintByObjectID(ObjectID As v4UUID) As Beacon.Blueprint
 		  
 		End Function

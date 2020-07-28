@@ -1097,7 +1097,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       BorderBottom    =   False
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Breeding Multipliers"
       DoubleBuffer    =   False

@@ -737,25 +737,33 @@ Protected Module Beacon
 		  Try
 		    Source.MinItemSets = SaveData.Lookup("MinItemSets", 1).IntegerValue
 		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading MinItemSets value")
 		  End Try
 		  
 		  Try
 		    Source.MaxItemSets = SaveData.Lookup("MaxItemSets", 1).IntegerValue
 		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading MaxItemSets value")
 		  End Try
 		  
 		  Try
 		    Source.PreventDuplicates = SaveData.Lookup("bSetsRandomWithoutReplacement", True).BooleanValue
 		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading bSetsRandomWithoutReplacement value")
 		  End Try
 		  
 		  Try
 		    Source.AppendMode = SaveData.Lookup("bAppendMode", False).BooleanValue
 		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading bAppendMode value")
 		  End Try
 		  
 		  If SaveData.HasKey("ItemSets") Then
-		    Source.ItemSets = Beacon.ItemSetCollection.FromSaveData(SaveData.Value("ItemSets"))
+		    Try
+		      Source.ItemSets = Beacon.ItemSetCollection.FromSaveData(SaveData.Value("ItemSets"))
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Reading ItemSets value")
+		    End Try
 		  End If
 		  
 		  If Not Source.LoadSaveData(SaveData) Then

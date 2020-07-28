@@ -141,7 +141,6 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       BorderBottom    =   False
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   ""
       DoubleBuffer    =   False

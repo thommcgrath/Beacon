@@ -62,7 +62,6 @@ Begin BeaconContainer SpawnPointEditor
       BorderBottom    =   True
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   2
       BorderTop       =   False
       Caption         =   "Limits"
       DoubleBuffer    =   False
@@ -98,7 +97,6 @@ Begin BeaconContainer SpawnPointEditor
       BorderBottom    =   True
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   2
       BorderTop       =   False
       Caption         =   "Spawn Sets"
       DoubleBuffer    =   False

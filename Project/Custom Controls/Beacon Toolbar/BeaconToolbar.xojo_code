@@ -648,25 +648,6 @@ Implements ObservationKit.Observer
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mBorders
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Value = Value And (BeaconUI.BorderTop Or BeaconUI.BorderBottom Or BeaconUI.BorderLeft Or BeaconUI.BorderRight)
-			  
-			  If Self.mBorders <> Value Then
-			    Self.mBorders = Value
-			    Self.Invalidate
-			  End If
-			End Set
-		#tag EndSetter
-		Borders As Integer
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
 			  Return (Self.mBorders And BeaconUI.BorderTop) = BeaconUI.BorderTop
 			End Get
 		#tag EndGetter
@@ -1047,14 +1028,6 @@ Implements ObservationKit.Observer
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Borders"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty

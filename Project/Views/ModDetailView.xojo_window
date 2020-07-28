@@ -260,7 +260,6 @@ Begin BeaconContainer ModDetailView
          BorderBottom    =   False
          BorderLeft      =   False
          BorderRight     =   False
-         Borders         =   0
          BorderTop       =   False
          Caption         =   "Mod Detail"
          DoubleBuffer    =   False
@@ -296,7 +295,6 @@ Begin BeaconContainer ModDetailView
          BorderBottom    =   False
          BorderLeft      =   False
          BorderRight     =   False
-         Borders         =   0
          BorderTop       =   False
          Caption         =   "No Mod Selected"
          DoubleBuffer    =   False
@@ -332,7 +330,6 @@ Begin BeaconContainer ModDetailView
          BorderBottom    =   False
          BorderLeft      =   False
          BorderRight     =   False
-         Borders         =   0
          BorderTop       =   False
          Caption         =   "Mod Detail"
          DoubleBuffer    =   False
@@ -368,7 +365,6 @@ Begin BeaconContainer ModDetailView
          BorderBottom    =   False
          BorderLeft      =   False
          BorderRight     =   False
-         Borders         =   0
          BorderTop       =   False
          Caption         =   "Untitled"
          DoubleBuffer    =   False
