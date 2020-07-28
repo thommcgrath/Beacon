@@ -82,25 +82,33 @@ Implements Iterable
 		  #Pragma Unused Identity
 		  #Pragma Unused Document
 		  
-		  If Dict.HasKey("Contents") Then
-		    // Only keep the most recent of the duplicates
-		    Var Contents() As Variant = Dict.Value("Contents")
-		    Var UniqueClasses As New Dictionary
-		    For Each DropDict As Dictionary In Contents
-		      Var Source As Beacon.LootSource = Beacon.LoadLootSourceSaveData(DropDict)
-		      If Source Is Nil Then
-		        Continue
-		      End If
-		      
-		      Var Idx As Integer = UniqueClasses.Lookup(Source.ClassString, -1)
-		      If Idx = -1 Then
-		        Self.mSources.AddRow(Source)
-		        UniqueClasses.Value(Source.ClassString) = Self.mSources.LastRowIndex
-		      Else
-		        Self.mSources(Idx) = Source
-		      End If
-		    Next
+		  If Dict.HasKey("Contents") = False Then
+		    App.Log("Unable to load LootDrops because there is no Contents key.")
+		    Return
 		  End If
+		  
+		  // Only keep the most recent of the duplicates
+		  Var Contents() As Variant = Dict.Value("Contents")
+		  Var UniqueClasses As New Dictionary
+		  For Each DropDict As Dictionary In Contents
+		    Var Source As Beacon.LootSource
+		    Try
+		      Source = Beacon.LoadLootSourceSaveData(DropDict)
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Reading DropDict with Beacon.LoadLootSourceSaveData")
+		    End Try
+		    If Source Is Nil Then
+		      Continue
+		    End If
+		    
+		    Var Idx As Integer = UniqueClasses.Lookup(Source.ClassString, -1)
+		    If Idx = -1 Then
+		      Self.mSources.AddRow(Source)
+		      UniqueClasses.Value(Source.ClassString) = Self.mSources.LastRowIndex
+		    Else
+		      Self.mSources(Idx) = Source
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 

@@ -37,8 +37,12 @@ Protected Class ConfigGroup
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document)
 		  Self.Constructor
-		  Self.mIsImplicit = Source.Lookup("Implicit", False)
-		  RaiseEvent ReadDictionary(Source, Identity, Document)
+		  Try
+		    RaiseEvent ReadDictionary(Source, Identity, Document)
+		    Self.mIsImplicit = Source.Lookup("Implicit", False)
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Creating config group from source dictionary")
+		  End Try
 		End Sub
 	#tag EndMethod
 
