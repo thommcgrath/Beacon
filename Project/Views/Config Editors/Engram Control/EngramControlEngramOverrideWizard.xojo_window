@@ -666,8 +666,13 @@ End
 		    
 		    For Each Engram As Beacon.Engram In Self.mEngrams
 		      Var LevelRequirement As NullableDouble = Self.mConfig.RequiredPlayerLevel(Engram)
-		      If IsNull(LevelRequirement) Then
+		      If LevelRequirement Is Nil Then
 		        LevelRequirement = Engram.RequiredPlayerLevel
+		      End If
+		      
+		      Var PointRequirement As NullableDouble = Self.mConfig.RequiredPoints(Engram)
+		      If PointRequirement Is Nil Then
+		        PointRequirement = Engram.RequiredUnlockPoints
 		      End If
 		      
 		      Var DoesAutoUnlock As Boolean
@@ -680,7 +685,7 @@ End
 		      AutoUnlocks.AddRow(DoesAutoUnlock)
 		      Hiddens.AddRow(Self.mConfig.EffectivelyHidden(Engram))
 		      RequiredLevels.AddRow(LevelRequirement)
-		      RequiredPointses.AddRow(Self.mConfig.RequiredPoints(Engram))
+		      RequiredPointses.AddRow(PointRequirement)
 		      RemovePrereqs.AddRow(Self.mConfig.RemovePrerequisites(Engram))
 		    Next
 		    
@@ -706,12 +711,23 @@ End
 		    
 		    If Beacon.AreElementsEqual(RequiredLevels) Then
 		      Var RequiredLevel As NullableDouble = RequiredLevels(0)
-		      If IsNull(RequiredLevel) = False Then
+		      If (RequiredLevel Is Nil) = False Then
 		        Self.RequiredLevelField.Value = RequiredLevel.IntegerValue.ToString
 		      ElseIf Beacon.AreElementsEqual(AutoUnlocks) And AutoUnlocks(0) = True Then
 		        Self.RequiredLevelField.Value = "0"
 		      Else
 		        Self.RequiredLevelField.Value = "Tek"
+		      End If
+		    End If
+		    
+		    If Beacon.AreElementsEqual(RequiredPointses) Then
+		      Var RequiredPoints As NullableDouble = RequiredPointses(0)
+		      If (RequiredPoints Is Nil) = False Then
+		        Self.RequiredPointsField.Value = RequiredPoints.IntegerValue.ToString
+		      ElseIf Beacon.AreElementsEqual(AutoUnlocks) And AutoUnlocks(0) = True Then
+		        Self.RequiredPointsField.Value = ""
+		      Else
+		        Self.RequiredPointsField.Value = ""
 		      End If
 		    End If
 		    
@@ -723,39 +739,6 @@ End
 		        Self.RemovePrereqCheck.Value = False
 		      End If
 		    End If
-		    
-		    // Var Engram As Beacon.Engram = Self.mEngrams(0)
-		    // 
-		    // Var Hidden As Boolean = Self.mConfig.EffectivelyHidden(Engram)
-		    // If Hidden Then
-		    // Self.DisabledRadio.Value = True
-		    // Else
-		    // Self.EnabledRadio.Value = True
-		    // End If
-		    // 
-		    // Var RequiredLevel As NullableDouble = Self.mConfig.RequiredPlayerLevel(Engram)
-		    // If IsNull(RequiredLevel) Then
-		    // RequiredLevel = Engram.RequiredPlayerLevel
-		    // End If
-		    // If IsNull(RequiredLevel) Then
-		    // Self.RequiredLevelField.Enabled = False
-		    // Self.RequiredLevelLabel.Enabled = False
-		    // Self.RequiredLevelField.Value = "Tek"
-		    // Else
-		    // Self.RequiredLevelField.Value = RequiredLevel.IntegerValue.ToString
-		    // End If
-		    // 
-		    // Var RequiredPoints As NullableDouble = Self.mConfig.RequiredPoints(Engram)
-		    // If IsNull(RequiredPoints) Then
-		    // RequiredPoints = Engram.RequiredUnlockPoints
-		    // End If
-		    // If IsNull(RequiredPoints) Then
-		    // Self.RequiredPointsField.Enabled = False
-		    // Self.RequiredPointsLabel.Enabled = False
-		    // Self.RequiredPointsField.Value = "Tek"
-		    // Else
-		    // Self.RequiredPointsField.Value = RequiredPoints.IntegerValue.ToString
-		    // End If
 		  End If
 		  
 		  If Self.mEngrams.LastRowIndex > 0 Then
@@ -956,6 +939,38 @@ End
 		  Var RemovePrereq As NullableBoolean
 		  If EditPrereq Then
 		    RemovePrereq = Self.RemovePrereqCheck.Value
+		  End If
+		  
+		  Var HasOfficialEngram As Boolean
+		  For Idx As Integer = 0 To Self.mEngrams.LastRowIndex
+		    If Self.mEngrams(Idx) Is Nil Then
+		      Continue
+		    End If
+		    
+		    If Beacon.Data.EngramIsCustom(Self.mEngrams(Idx)) = False Then
+		      HasOfficialEngram = True
+		      Exit For Idx
+		    End If
+		  Next
+		  
+		  // Tek engrams must always be auto unlocked
+		  If HasOfficialEngram And (EditAutoUnlock Or (EditLevel And (RequiredLevel Is Nil) = False) Or (EditPoints And (RequiredPoints Is Nil) = False)) Then
+		    For Each Engram As Beacon.Engram In Engrams
+		      If Engram.RequiredPlayerLevel Is Nil Then
+		        // Tek unlock
+		        Var EngramIsAutoUnlocked As Boolean
+		        If EditAutoUnlock Then
+		          EngramIsAutoUnlocked = AutoUnlock
+		        Else
+		          EngramIsAutoUnlocked = If(Self.mConfig.AutoUnlockEngram(Engram) Is Nil, False, Self.mConfig.AutoUnlockEngram(Engram).BooleanValue)
+		        End If
+		        If EngramIsAutoUnlocked = False Then
+		          // Can't do that
+		          Self.ShowAlert(Engram.Label + " is a Tek engram and must be configured to auto unlock.", "Tek engrams are normally automatically unlocked by defeating bosses. Enter 'Tek' into the 'Required Level' field to use the official unlock config. To have the engram unlocked when the player reaches a certain level, make sure the 'Automatically Unlocks' box is checked.")
+		          Return
+		        End If
+		      End If
+		    Next
 		  End If
 		  
 		  For Each Engram As Beacon.Engram In Engrams

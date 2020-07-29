@@ -167,9 +167,6 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		    
 		    SpawnPoint = New Beacon.SpawnPoint(SpawnPoint)
 		    SpawnPoint.mSets.ResizeTo(-1)
-		    If Dict.HasKey("Label") Then
-		      SpawnPoint.mLabel = Dict.Value("Label")
-		    End If
 		    If Dict.HasKey("Limits") Then
 		      SpawnPoint.mLimits = Dictionary(Dict.Value("Limits").ObjectValue).Clone
 		    Else
@@ -369,7 +366,6 @@ Implements Beacon.Blueprint,Beacon.Countable,Beacon.DocumentItem
 		  Next
 		  
 		  Var Keys As New Dictionary
-		  Keys.Value("Label") = Self.Label
 		  Keys.Value("Path") = Self.Path
 		  Keys.Value("Class") = Self.ClassString
 		  Keys.Value("Mode") = Self.Mode

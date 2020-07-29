@@ -20,7 +20,7 @@ Begin Window ExceptionWindow
    MinHeight       =   64
    MinimizeButton  =   False
    MinWidth        =   64
-   Placement       =   2
+   Placement       =   3
    Resizable       =   "True"
    Resizeable      =   False
    SystemUIVisible =   "True"

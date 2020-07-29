@@ -2,6 +2,13 @@
 Protected Class BeaconAutopositionWindow
 Inherits BeaconWindow
 	#tag Event
+		Sub Moved()
+		  RaiseEvent Moved
+		  Self.SaveWindowPosition
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.LoadWindowPosition
 		  RaiseEvent Open
@@ -15,6 +22,10 @@ Inherits BeaconWindow
 		End Sub
 	#tag EndEvent
 
+
+	#tag Hook, Flags = &h0
+		Event Moved()
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event Open()

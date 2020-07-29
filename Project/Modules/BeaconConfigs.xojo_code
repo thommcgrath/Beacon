@@ -79,7 +79,11 @@ Protected Module BeaconConfigs
 	#tag Method, Flags = &h1
 		Protected Function CreateInstance(GroupName As String) As Beacon.ConfigGroup
 		  Var Info As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
-		  If Info = Nil Or Info.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) = False Then
+		  If Info Is Nil Then
+		    App.Log("Could not create config group """ + GroupName + """ because the type info is missing.")
+		    Return Nil
+		  ElseIf Info.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) = False Then
+		    App.Log("Could not create config group """ + GroupName + """ because the class is not a subclass of Beacon.ConfigGroup.")
 		    Return Nil
 		  End If 
 		  
@@ -96,7 +100,11 @@ Protected Module BeaconConfigs
 	#tag Method, Flags = &h1
 		Protected Function CreateInstance(GroupName As String, GroupData As Dictionary, Identity As Beacon.Identity, Document As Beacon.Document) As Beacon.ConfigGroup
 		  Var Info As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
-		  If Info = Nil Or Info.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) = False Then
+		  If Info Is Nil Then
+		    App.Log("Could not create config group """ + GroupName + """ because the type info is missing.")
+		    Return Nil
+		  ElseIf Info.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) = False Then
+		    App.Log("Could not create config group """ + GroupName + """ because the class is not a subclass of Beacon.ConfigGroup.")
 		    Return Nil
 		  End If 
 		  
@@ -111,13 +119,23 @@ Protected Module BeaconConfigs
 		      Return Signature.Invoke(Values)
 		    End If
 		  Next
+		  
+		  App.Log("Could not create config group """ + GroupName + """ because the correct constructor could not be found.")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function CreateInstance(GroupName As String, ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, Difficulty As BeaconConfigs.Difficulty) As Beacon.ConfigGroup
-		  Var ConfigInfo As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
-		  Var Methods() As Introspection.MethodInfo = ConfigInfo.GetMethods
+		  Var Info As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
+		  If Info Is Nil Then
+		    App.Log("Could not create config group """ + GroupName + """ because the type info is missing.")
+		    Return Nil
+		  ElseIf Info.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) = False Then
+		    App.Log("Could not create config group """ + GroupName + """ because the class is not a subclass of Beacon.ConfigGroup.")
+		    Return Nil
+		  End If
+		  
+		  Var Methods() As Introspection.MethodInfo = Info.GetMethods
 		  For Each Signature As Introspection.MethodInfo In Methods
 		    Try
 		      If Signature.IsShared And Signature.Name = "FromImport" And Signature.GetParameters.LastRowIndex = 3 And Signature.ReturnType <> Nil And Signature.ReturnType.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) Then

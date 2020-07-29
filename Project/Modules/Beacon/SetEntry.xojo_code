@@ -241,32 +241,77 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.SetEntry
 		  Var Entry As New Beacon.SetEntry
-		  If Dict.HasKey("Weight") Then
-		    Entry.RawWeight = Dict.Value("Weight")
-		  ElseIf Dict.HasKey("EntryWeight") Then
-		    Entry.RawWeight = Dict.Value("EntryWeight") * 1000.0
-		  End If
-		  If Dict.HasKey("MinQuality") Then
-		    Entry.MinQuality = Beacon.Qualities.ForKey(Dict.Value("MinQuality"))
-		  End If
-		  If Dict.HasKey("MaxQuality") Then
-		    Entry.MaxQuality = Beacon.Qualities.ForKey(Dict.Value("MaxQuality"))
-		  End If
-		  If Dict.HasKey("MinQuantity") Then
-		    Entry.MinQuantity = Dict.Value("MinQuantity")
-		  End If
-		  If Dict.HasKey("MaxQuantity") Then
-		    Entry.MaxQuantity = Dict.Value("MaxQuantity")
-		  End If
-		  If Dict.HasKey("ChanceToBeBlueprintOverride") Then
-		    Entry.ChanceToBeBlueprint = Dict.Value("ChanceToBeBlueprintOverride")
-		  End If
+		  
+		  Try
+		    If Dict.HasKey("Weight") Then
+		      Entry.RawWeight = Dict.Value("Weight")
+		    ElseIf Dict.HasKey("EntryWeight") Then
+		      Entry.RawWeight = Dict.Value("EntryWeight") * 1000.0
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading Weight value")
+		  End Try
+		  
+		  Try
+		    If Dict.HasKey("MinQuality") Then
+		      Entry.MinQuality = Beacon.Qualities.ForKey(Dict.Value("MinQuality"))
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading MinQuality value")
+		  End Try
+		  
+		  Try
+		    If Dict.HasKey("MaxQuality") Then
+		      Entry.MaxQuality = Beacon.Qualities.ForKey(Dict.Value("MaxQuality"))
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading MaxQuality value")
+		  End Try
+		  
+		  Try
+		    If Dict.HasKey("MinQuantity") Then
+		      Entry.MinQuantity = Dict.Value("MinQuantity")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading MinQuantity value")
+		  End Try
+		  
+		  Try
+		    If Dict.HasKey("MaxQuantity") Then
+		      Entry.MaxQuantity = Dict.Value("MaxQuantity")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading MaxQuantity value")
+		  End Try
+		  
+		  Try
+		    If Dict.HasKey("ChanceToBeBlueprintOverride") Then
+		      Entry.ChanceToBeBlueprint = Dict.Value("ChanceToBeBlueprintOverride")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading ChangeToBeBlueprintOverride value")
+		  End Try
+		  
 		  If Dict.HasKey("Items") Then
-		    Var Children() As Variant = Dict.Value("Items")
-		    For Each Child As Dictionary In Children
-		      Entry.Append(Beacon.SetEntryOption.ImportFromBeacon(Child))
+		    Var Children() As Variant
+		    Try
+		      Children = Dict.Value("Items")
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Casting Items to array")
+		    End Try
+		    
+		    For Idx As Integer = 0 To Children.LastRowIndex
+		      Try
+		        Var Option As Beacon.SetEntryOption = Beacon.SetEntryOption.ImportFromBeacon(Dictionary(Children(Idx)))
+		        If (Option Is Nil) = False Then
+		          Entry.Append(Option)
+		        End If
+		      Catch Err As RuntimeException
+		        App.Log(Err, CurrentMethodName, "Reading option dictionary #" + Str(Idx, "-0"))
+		      End Try
 		    Next
 		  End If
+		  
 		  Entry.Modified = False
 		  Return Entry
 		End Function

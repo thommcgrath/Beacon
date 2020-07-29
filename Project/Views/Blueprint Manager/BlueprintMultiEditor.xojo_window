@@ -33,7 +33,6 @@ Begin BeaconSubview BlueprintMultiEditor
       BorderBottom    =   False
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Edit Multiple"
       DoubleBuffer    =   False

@@ -30,10 +30,9 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      BorderBottom    =   False
+      BorderBottom    =   True
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Creature Adjustments"
       DoubleBuffer    =   False

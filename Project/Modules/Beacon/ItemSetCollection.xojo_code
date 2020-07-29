@@ -104,20 +104,21 @@ Implements Beacon.Countable
 		  Try
 		    Dicts = SaveData
 		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Casting SaveData to array")
 		    Return Sets
 		  End Try
 		  
-		  For Each Dict As Variant In Dicts
-		    If IsNull(Dict) Or Dict.IsArray = True Or Dict.Type <> Variant.TypeObject Or (Dict.ObjectValue IsA Dictionary) = False Then
-		      Continue
-		    End If
-		    
-		    Var Set As Beacon.ItemSet
+		  For Idx As Integer = 0 To Dicts.LastRowIndex
 		    Try
-		      Set = Beacon.ItemSet.ImportFromBeacon(Dictionary(Dict))
+		      Var Dict As Variant = Dicts(Idx)
+		      If IsNull(Dict) Or Dict.IsArray = True Or Dict.Type <> Variant.TypeObject Or (Dict.ObjectValue IsA Dictionary) = False Then
+		        Continue
+		      End If
+		      
+		      Var Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Dictionary(Dict))
 		      Call Sets.Append(Set)
 		    Catch Err As RuntimeException
-		      Continue
+		      App.Log(Err, CurrentMethodName, "Reading item set dictionary #" + Str(Idx, "-0"))
 		    End Try
 		  Next
 		  
@@ -253,14 +254,6 @@ Implements Beacon.Countable
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mItemSets()"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
 			Type="Integer"
 			EditorType=""
 		#tag EndViewProperty

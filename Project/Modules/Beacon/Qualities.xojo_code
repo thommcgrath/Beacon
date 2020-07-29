@@ -60,7 +60,7 @@ Protected Module Qualities
 
 	#tag Method, Flags = &h1
 		Protected Function Tier1() As Beacon.Quality
-		  Return New Beacon.Quality(0.0, "Tier1")
+		  Return New Beacon.Quality(0.5, "Tier1")
 		End Function
 	#tag EndMethod
 
