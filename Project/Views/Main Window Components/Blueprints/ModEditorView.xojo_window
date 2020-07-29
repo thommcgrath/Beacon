@@ -93,7 +93,6 @@ Begin BeaconSubview ModEditorView
       BorderBottom    =   True
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Blueprints"
       DoubleBuffer    =   False
@@ -121,7 +120,6 @@ Begin BeaconSubview ModEditorView
       Width           =   844
    End
    Begin ClipboardWatcher Watcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   1000

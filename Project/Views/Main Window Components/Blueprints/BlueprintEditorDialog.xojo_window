@@ -1573,7 +1573,6 @@ End
 		  End If
 		  
 		  Var Stats() As Beacon.Stat = Beacon.Stats.All
-		  Var Mask As UInt16 = Creature.StatsMask
 		  For Each Stat As Beacon.Stat In Stats
 		    Var Values As Beacon.CreatureStatValue = Creature.StatValue(Stat)
 		    If Values Is Nil Then

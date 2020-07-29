@@ -300,7 +300,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Function ClassesURL(ForceRefresh As Boolean) As String
-		  Var Version As Integer = App.BuildNumber
 		  Var CheckURL As String = BeaconAPI.URL("/deltas?version=" + Str(Self.EngramsVersion))
 		  
 		  If ForceRefresh = False Then
