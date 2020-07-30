@@ -290,6 +290,14 @@ Implements NotificationKit.Receiver
 	#tag EndMenuHandler
 
 	#tag MenuHandler
+		Function HelpCreateSupportTicket() As Boolean Handles HelpCreateSupportTicket.Action
+			Var Win As New SupportTicketWindow
+			Win.Show
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function HelpOpenDataFolder() As Boolean Handles HelpOpenDataFolder.Action
 			Self.ShowFile(Self.ApplicationSupport)
 			Return True
@@ -919,6 +927,12 @@ Implements NotificationKit.Receiver
 		  End If
 		  Self.Log("Unhandled " + Info.FullName + " in " + Location + ": HTTP " + Str(HTTPStatus, "-0") + " " + Base64)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LogsFolder() As FolderItem
+		  Return Self.mLogManager.Destination
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

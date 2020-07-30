@@ -420,6 +420,14 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SelectedRowTag(Extends Menu As PopupMenu) As Variant
+		  If Menu.SelectedRowIndex > -1 Then
+		    Return Menu.RowTagAt(Menu.SelectedRowIndex)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SQLDateTimeWithOffset(Extends Source As DateTime) As String
 		  Var Zone As TimeZone = Source.Timezone
 		  Var Offset As Double = Abs(Zone.SecondsFromGMT / 3600)
