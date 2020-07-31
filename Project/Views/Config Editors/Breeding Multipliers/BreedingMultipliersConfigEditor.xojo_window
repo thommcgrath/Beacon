@@ -1618,11 +1618,15 @@ End
 		    Var MaxImprint As Double = Min(MaxCuddles * PerCuddle, 1.0)
 		    
 		    CreaturesList.AddRow(Creature.Label, Beacon.SecondsToString(IncubationSeconds), Beacon.SecondsToString(MatureSeconds), Beacon.SecondsToString(CooldownMin, CooldownMax), MaxCuddles.ToString, If(MaxCuddles = 0, "Can't Imprint", Format(PerCuddle, "0%")), If(PerCuddle = 0, "", Format(MaxImprint, "0%")))
-		    CreaturesList.CellTagAt(CreaturesList.LastAddedRowIndex, Self.ColumnIncubationTime) = IncubationSeconds
-		    CreaturesList.CellTagAt(CreaturesList.LastAddedRowIndex, Self.ColumnMatureTime) = MatureSeconds
-		    CreaturesList.RowTagAt(CreaturesList.LastAddedRowIndex) = Creature.ClassString
+		    Var Idx As Integer = CreaturesList.LastAddedRowIndex
+		    CreaturesList.CellTagAt(Idx, Self.ColumnIncubationTime) = IncubationSeconds
+		    CreaturesList.CellTagAt(Idx, Self.ColumnMatureTime) = MatureSeconds
+		    CreaturesList.CellTagAt(Idx, Self.ColumnNumImprints) = MaxCuddles
+		    CreaturesList.CellTagAt(Idx, Self.ColumnPerImprint) = PerCuddle
+		    CreaturesList.CellTagAt(Idx, Self.ColumnBestImprint) = MaxImprint
+		    CreaturesList.RowTagAt(Idx) = Creature.ClassString
 		    If Creature.ClassString = SelectedClass Then
-		      CreaturesList.SelectedRowIndex = CreaturesList.LastAddedRowIndex
+		      CreaturesList.SelectedRowIndex = Idx
 		    End If
 		  Next
 		  
@@ -1833,16 +1837,18 @@ End
 		    Else
 		      Result = -1
 		    End If
-		  ElseIf Column = Self.ColumnNumImprints Then
-		    Var Val1 As Integer = Me.CellValueAt(Row1, Column).ToInteger
-		    Var Val2 As Integer = Me.CellValueAt(Row2, Column).ToInteger
-		    If Val1 = Val2 Then
+		    Return True
+		  ElseIf Column = Self.ColumnNumImprints Or Column = Self.ColumnPerImprint Or Column = Self.ColumnBestImprint Then
+		    Var Value1 As Double = Me.CellTagAt(Row1, Column)
+		    Var Value2 As Double = Me.CellTagAt(Row2, Column)
+		    If Value1 = Value2 Then
 		      Result = 0
-		    ElseIf Val1 > Val2 Then
+		    ElseIf Value1 > Value2 Then
 		      Result = 1
 		    Else
 		      Result = -1
 		    End If
+		    Return True
 		  Else
 		    Return False
 		  End If

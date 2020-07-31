@@ -511,17 +511,21 @@ End
 		    Return
 		  End If
 		  
-		  Var AutosaveCount As Integer = AutosaveFolder.Count
-		  If AutosaveCount = 0 Then
+		  Var Extension As String = BeaconFileTypes.BeaconDocument.PrimaryExtension
+		  Var Files() As FolderItem
+		  For Each Child As FolderItem In AutosaveFolder.Children
+		    If Child.Name.EndsWith(Extension) Then
+		      Files.AddRow(Child)
+		    End If
+		  Next
+		  
+		  If Files.Count = 0 Then
 		    Return
 		  End If
 		  
-		  If Self.ShowConfirm("Beacon found " + Language.NounWithQuantity(AutosaveCount, "unsaved document", "unsaved documents") + ". Would you like to recover the " + If(AutosaveCount = 1, "file", "files") + "?", "This can happen if Beacon finishes unexpectedly, such as during a crash. If the " + If(AutosaveCount = 1, "file is", "files are") + " not restored, " + If(AutosaveCount = 1, "it", "they") + " will be permanently deleted.", "Recover", "Discard") Then
-		    For I As Integer = 0 To AutosaveCount - 1
-		      Var File As BookmarkedFolderItem = New BookmarkedFolderItem(AutosaveFolder.ChildAt(I))
-		      If Not File.Name.EndsWith(BeaconFileTypes.BeaconDocument.PrimaryExtension) Then
-		        Continue
-		      End If
+		  If Self.ShowConfirm("Beacon found " + Language.NounWithQuantity(Files.Count, "unsaved document", "unsaved documents") + ". Would you like to recover the " + If(Files.Count = 1, "file", "files") + "?", "This can happen if Beacon finishes unexpectedly, such as during a crash. If the " + If(Files.Count = 1, "file is", "files are") + " not restored, " + If(Files.Count = 1, "it", "they") + " will be permanently deleted.", "Recover", "Discard") Then
+		    For Idx As Integer = 0 To Files.LastRowIndex
+		      Var File As BookmarkedFolderItem = New BookmarkedFolderItem(Files(Idx))
 		      
 		      Var FileURL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(File)
 		      App.Log("Attempting to restore autosave " + FileURL.URL)
@@ -532,11 +536,8 @@ End
 		      Controller.Load()
 		    Next
 		  Else
-		    For I As Integer = AutosaveCount - 1 DownTo 0
-		      Var File As BookmarkedFolderItem = New BookmarkedFolderItem(AutosaveFolder.ChildAt(I))
-		      If Not File.Name.EndsWith(BeaconFileTypes.BeaconDocument.PrimaryExtension) Then
-		        Continue
-		      End If
+		    For Idx As Integer = Files.LastRowIndex DownTo 0
+		      Var File As BookmarkedFolderItem = New BookmarkedFolderItem(Files(Idx))
 		      
 		      Try
 		        File.Remove

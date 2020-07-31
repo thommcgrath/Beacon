@@ -597,6 +597,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Resize()
+		  Self.Picker.AutoResize()
 		  Var ButtonsHeight As Integer = (Self.RemoveFromSelectionsButton.Top + Self.RemoveFromSelectionsButton.Height) - Self.AddToSelectionsButton.Top
 		  Var ButtonsTop As Integer = Self.SelectedList.Top + ((Self.SelectedList.Height - ButtonsHeight) / 2)
 		  Self.AddToSelectionsButton.Top = ButtonsTop
