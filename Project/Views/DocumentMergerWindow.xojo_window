@@ -254,6 +254,7 @@ End
 		  
 		  Var Enabled As Boolean
 		  Var UsePrefixes As Boolean = SourceDocuments.LastRowIndex > 0
+		  Var UniqueMods As New Dictionary
 		  For Each Document As Beacon.Document In SourceDocuments
 		    Var Prefix As String = If(UsePrefixes, Document.Title + ": ", "")
 		    Var Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
@@ -299,6 +300,25 @@ End
 		        Win.List.CellValueAt(Win.List.LastAddedRowIndex, 2) = If(Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0), StrAdd, StrDoNotImport)
 		      End If
 		      Enabled = Enabled Or Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0)
+		    Next
+		    
+		    Var EnabledMods() As String = Document.Mods
+		    For Each ModID As String In EnabledMods
+		      If UniqueMods.HasKey(ModID) Then
+		        Continue
+		      End If
+		      UniqueMods.Value(ModID) = True
+		      
+		      Var ModInfo As Beacon.ModDetails = LocalData.SharedInstance.ModWithID(ModID)
+		      If (ModInfo Is Nil) = False And DestinationDocument.ModEnabled(ModID) = False Then
+		        Win.List.AddRow("", "Enable Mod: " + ModInfo.Name)
+		        Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0) = True
+		        Win.List.RowTagAt(Win.List.LastAddedRowIndex) = ModInfo
+		        If UseMergeUI Then
+		          Win.List.CellValueAt(Win.List.LastAddedRowIndex, 2) = StrAdd
+		        End If
+		        Enabled = True
+		      End If
 		    Next
 		  Next
 		  
@@ -613,6 +633,8 @@ End
 		            Self.mDestination.Accounts.Add(Account)
 		          End If
 		        End If
+		      Case IsA Beacon.ModDetails
+		        Self.mDestination.ModEnabled(Beacon.ModDetails(Tag).ModID) = True
 		      End Select
 		    Case Variant.TypeString
 		      Var StringValue As String = Tag.StringValue

@@ -330,7 +330,7 @@ Inherits Beacon.IntegrationEngine
 		        Profile.Platform = Beacon.ServerProfile.PlatformUnknown
 		      End Select
 		      
-		      Var Server As New Beacon.NitradoDiscoveredData(Profile.ServiceID, Self.mAccount.AccessToken, Profile.ConfigPath)
+		      Var Server As New Beacon.NitradoDiscoveredData(Profile.ServiceID, Self.mAccount.AccessToken, Profile.ConfigPath, General.Lookup("PrimitivePlus", False).BooleanValue)
 		      Server.Profile = Profile
 		      Server.CommandLineOptions = Settings.Value("start-param")
 		      
