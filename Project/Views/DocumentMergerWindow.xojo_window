@@ -313,7 +313,7 @@ End
 		      End If
 		      UniqueMods.Value(ModID) = True
 		      
-		      Var ModInfo As Beacon.ModDetails = LocalData.SharedInstance.ModWithID(ModID)
+		      Var ModInfo As Beacon.ModDetails = LocalData.SharedInstance.GetModWithID(ModID)
 		      If (ModInfo Is Nil) = False And DestinationDocument.ModEnabled(ModID) = False Then
 		        Win.List.AddRow("", "Enable Mod: " + ModInfo.Name)
 		        Win.List.CellCheckBoxValueAt(Win.List.LastAddedRowIndex, 0) = True

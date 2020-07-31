@@ -161,6 +161,17 @@ Inherits Beacon.Thread
 		    Document.ModEnabled("68d1be8b-a66e-41a2-b0b4-cb2a724fc80b") = True
 		  End If
 		  
+		  If ParsedData.HasKey("ActiveMods") And IsNull(ParsedData.Value("ActiveMods")) = False Then
+		    Var ActiveMods As String = ParsedData.StringValue("ActiveMods", "")
+		    Var ModIDs() As String = ActiveMods.Split(",")
+		    For Each ModID As String In ModIDs
+		      Var ModInfo As Beacon.ModDetails = Beacon.Data.GetModWithWorkshopID(ModID.ToInteger)
+		      If (ModInfo Is Nil) = False Then
+		        Document.ModEnabled(ModInfo.ModID) = True
+		      End If
+		    Next
+		  End If
+		  
 		  Try
 		    Var Maps() As Beacon.Map = Document.Maps
 		    Var DifficultyTotal, DifficultyScale As Double

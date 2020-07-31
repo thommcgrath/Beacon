@@ -872,6 +872,28 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetModWithID(ModID As v4UUID) As Beacon.ModDetails
+		  If ModID = Nil Then
+		    Return Nil
+		  End If
+		  
+		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe, default_enabled, workshop_id FROM mods WHERE mod_id = ?1;", ModID.StringValue)
+		  If Results.RowCount = 1 Then
+		    Return New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("workshop_id").IntegerValue)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetModWithWorkshopID(WorkshopID As Integer) As Beacon.ModDetails
+		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe, default_enabled, workshop_id FROM mods WHERE workshop_id = ?1;", WorkshopID)
+		  If Results.RowCount = 1 Then
+		    Return New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("workshop_id").IntegerValue)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetNotifications() As Beacon.UserNotification()
 		  Var Notifications() As Beacon.UserNotification
 		  Var Results As RowSet = Self.SQLSelect("SELECT * FROM notifications WHERE deleted = 0 ORDER BY moment DESC;")
@@ -2195,28 +2217,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.CheckForEngramUpdates()
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ModWithID(ModID As v4UUID) As Beacon.ModDetails
-		  If ModID = Nil Then
-		    Return Nil
-		  End If
-		  
-		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe, default_enabled, workshop_id FROM mods WHERE mod_id = ?1;", ModID.StringValue)
-		  If Results.RowCount = 1 Then
-		    Return New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("workshop_id").IntegerValue)
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ModWithWorkshopID(WorkshopID As Integer) As Beacon.ModDetails
-		  Var Results As RowSet = Self.SQLSelect("SELECT mod_id, name, console_safe, default_enabled, workshop_id FROM mods WHERE workshop_id = ?1;", WorkshopID)
-		  If Results.RowCount = 1 Then
-		    Return New Beacon.ModDetails(Results.Column("mod_id").StringValue, Results.Column("name").StringValue, Results.Column("console_safe").BooleanValue, Results.Column("default_enabled").BooleanValue, Results.Column("workshop_id").IntegerValue)
-		  End If
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

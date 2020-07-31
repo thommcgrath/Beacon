@@ -26,7 +26,7 @@ Implements ObservationKit.Observable
 		    Self.ConsoleMode = True
 		    
 		    For Each Entry As DictionaryEntry In Self.mMods
-		      Var ModInfo As Beacon.ModDetails = Beacon.Data.ModWithID(Entry.Key.StringValue)
+		      Var ModInfo As Beacon.ModDetails = Beacon.Data.GetModWithID(Entry.Key.StringValue)
 		      If (ModInfo Is Nil Or ModInfo.ConsoleSafe = False) And Self.mMods.Value(Entry.Key).BooleanValue = True Then
 		        Self.mMods.Value(Entry.Key) = False
 		        Self.mModified = True

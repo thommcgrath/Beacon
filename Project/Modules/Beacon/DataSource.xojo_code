@@ -115,6 +115,18 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetModWithID(ModID As v4UUID) As Beacon.ModDetails
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetModWithWorkshopID(WorkshopID As Integer) As Beacon.ModDetails
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetPreset(PresetID As String) As Beacon.Preset
 		  
 		End Function
@@ -178,12 +190,6 @@ Protected Interface DataSource
 		Sub LoadPresets()
 		  
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ModWithID(ModID As v4UUID) As Beacon.ModDetails
-		  
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
