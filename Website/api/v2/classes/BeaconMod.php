@@ -120,9 +120,15 @@ class BeaconMod implements JsonSerializable {
 		return self::GetFromResults($results);
 	}
 	
-	public static function GetLive() {
+	public static function GetLive($since = null) {
+		$sql =  '(SELECT COUNT(object_id) FROM objects WHERE objects.mod_id = mods.mod_id) > 0 AND mods.confirmed = TRUE';
+		
 		$database = BeaconCommon::Database();
-		$results = $database->Query(self::BuildSQL('(SELECT COUNT(object_id) FROM objects WHERE objects.mod_id = mods.mod_id) > 0 AND mods.confirmed = TRUE'));
+		if (is_null($since)) {
+			$results = $database->Query(self::BuildSQL($sql));
+		} else {
+			$results = $database->Query(self::BuildSQL($sql . ' AND last_update > $1'), $since->format('Y-m-d H:i:sO'));
+		}
 		return self::GetFromResults($results);
 	}
 	
@@ -151,9 +157,9 @@ class BeaconMod implements JsonSerializable {
 			'workshop_url' => BeaconWorkshopItem::URLForModID($this->workshop_id),
 			'confirmed' => $this->confirmed,
 			'confirmation_code' => $this->confirmation_code,
-			'resource_url' => BeaconAPI::URL('/mod.php/' . $this->workshop_id),
-			'confirm_url' => BeaconAPI::URL('/mod.php/' . $this->workshop_id . '?action=confirm'),
-			'engrams_url' => BeaconAPI::URL('/engram.php?mod_id=' . $this->workshop_id),
+			'resource_url' => BeaconAPI::URL('/mod/' . $this->workshop_id),
+			'confirm_url' => BeaconAPI::URL('/mod/' . $this->workshop_id . '?action=confirm'),
+			'engrams_url' => BeaconAPI::URL('/engram?mod_id=' . $this->workshop_id),
 			'spawncodes_url' => BeaconCommon::AbsoluteURL('/spawn/?mod_id=' . $this->workshop_id),
 			'pull_url' => $this->pull_url
 		);

@@ -4,7 +4,7 @@
 require(dirname(__FILE__, 2) . '/framework/loader.php');
 
 $database = BeaconCommon::Database();
-$results = $database->Query("SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM deletions) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM game_variables)) AS merged;");
+$results = $database->Query("SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM deletions) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM game_variables) UNION (SELECT MAX(last_update) AS stamp FROM mods)) AS merged;");
 $last_database_update = new DateTime($results->Field("stamp"));
 $cutoff = new DateTime();
 $cutoff->sub(new DateInterval('PT15M'));
@@ -104,7 +104,7 @@ function DataForVersion(int $version, $since) {
 		'diets' => BeaconDiet::GetAll(-1, $since, true),
 		'help_topics' => BeaconHelpTopic::GetAll($since),
 		'game_variables' => BeaconGameVariable::GetAll($since),
-		'mods' => BeaconMod::GetLive(),
+		'mods' => BeaconMod::GetLive($since),
 		'deletions' => BeaconObject::Deletions(-1, $since),
 		'ini_options' => BeaconConfigLine::GetAll(-1, $since),
 		'spawn_points' => BeaconSpawnPoint::GetAll(-1, $since),

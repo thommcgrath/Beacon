@@ -254,7 +254,7 @@ class BeaconObject implements JsonSerializable {
 		if (count($clauses) > 0) {
 			$clauses = array('(' . implode(' OR ', $clauses) . ')');
 		}
-		array_unshift($clauses, 'min_version <= $1', 'last_update > $2');
+		array_unshift($clauses, 'min_version <= $1', $table = static::TableName() . '.last_update > $2');
 		if ($confirmed_only == true) {
 			$clauses[] = 'mods.confirmed = TRUE';
 		}
