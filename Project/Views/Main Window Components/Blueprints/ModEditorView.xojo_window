@@ -120,6 +120,7 @@ Begin BeaconSubview ModEditorView
       Width           =   844
    End
    Begin ClipboardWatcher Watcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   1000

@@ -171,7 +171,6 @@ Begin BeaconDialog BlueprintMultiEditor
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   188
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   146
       LockBottom      =   True
@@ -301,12 +300,12 @@ End
 		  Var Masks() As UInt64
 		  Var Tags As New Dictionary
 		  For Each Blueprint As Beacon.Blueprint In Self.mBlueprints
-			Masks.AddRow(Blueprint.Availability)
-			
-			Var BlueprintTags() As String = Blueprint.Tags
-			For Each Tag As String In BlueprintTags
-			  Tags.Value(Tag) = Tags.Lookup(Tag, 0) + 1
-			Next
+		    Masks.AddRow(Blueprint.Availability)
+		    
+		    Var BlueprintTags() As String = Blueprint.Tags
+		    For Each Tag As String In BlueprintTags
+		      Tags.Value(Tag) = Tags.Lookup(Tag, 0) + 1
+		    Next
 		  Next
 		  
 		  Var BlueprintCount As Integer = Self.mBlueprints.LastRowIndex + 1
@@ -314,10 +313,10 @@ End
 		  
 		  Var CommonTags() As String
 		  For I As Integer = 0 To Tags.KeyCount - 1
-			Var Tag As String = Tags.Key(I)
-			If Tags.Lookup(Tag, 0) = BlueprintCount Then
-			  CommonTags.AddRow(Tag)
-			End If
+		    Var Tag As String = Tags.Key(I)
+		    If Tags.Lookup(Tag, 0) = BlueprintCount Then
+		      CommonTags.AddRow(Tag)
+		    End If
 		  Next
 		  Self.Picker.SetSelections(CommonTags, Nil)
 		  
@@ -326,25 +325,17 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Resize(Initial As Boolean)
-		  #Pragma Unused Initial
-		  
+		Sub Resized()
 		  Self.Picker.AutoResize()
 		End Sub
 	#tag EndEvent
 
-	#tag Method, Flags = &h21
-		Private Sub Constructor(Blueprints() As Beacon.Blueprint)
-		  // Calling the overridden superclass constructor.
-		  Self.mBlueprints.ResizeTo(Blueprints.LastRowIndex)
-		  For Idx As Integer = 0 To Blueprints.LastRowIndex
-		    Self.mBlueprints(Idx) = Blueprints(Idx)
-		  Next
-		  
-		  Super.Constructor
-		  
+	#tag Event
+		Sub Resizing()
+		  Self.Picker.AutoResize()
 		End Sub
-	#tag EndMethod
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Blueprints() As Beacon.Blueprint)
