@@ -257,6 +257,15 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
+		  Self.Picker.AutoResize()
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Function Blueprints() As Beacon.Blueprint()
 		  Var Blueprints() As Beacon.Blueprint
