@@ -127,8 +127,7 @@ if ($stable_engrams_version >= 5) {
 	$last_database_update = new DateTime($results->Field('created'));
 	$engrams_url = 'https://updates.usebeacon.app' . $results->Field('path');
 } else {
-	$results = $database->Query('SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE objects.min_version <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM game_variables) UNION (SELECT MAX(last_update) AS stamp FROM mods)) AS merged;', $build);
-	$last_database_update = new DateTime($results->Field('stamp'));
+	$last_database_update = BeaconCommon::NewestUpdateTimestamp($build);
 	$engrams_url = 'classes.php?version=' . $build;
 }
 $prerelease = $database->Query('SELECT mac_url, win_64_url, win_combo_url, win_32_url, build_display, build_number, stage, delta_version FROM updates WHERE stage < 3 AND build_number > $1 ORDER BY build_number DESC LIMIT 1;', $build);
