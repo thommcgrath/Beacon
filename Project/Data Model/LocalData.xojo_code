@@ -1455,7 +1455,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var Results As RowSet = Self.SQLSelect("SELECT name, console_safe, default_enabled FROM mods WHERE mod_id = ?1;", ModID)
 		      If Results.RowCount = 1 Then
 		        If ModName.Compare(Results.Column("name").StringValue, ComparisonOptions.CaseSensitive) <> 0 Or ConsoleSafe <> Results.Column("console_safe").BooleanValue Then
-		          Self.SQLExecute("UPDATE mods SET name = ?2, console_safe = ?3, default_enabled WHERE mod_id = ?1;", ModID, ModName, ConsoleSafe, DefaultEnabled)
+		          Self.SQLExecute("UPDATE mods SET name = ?2, console_safe = ?3, default_enabled = ?4 WHERE mod_id = ?1;", ModID, ModName, ConsoleSafe, DefaultEnabled)
 		        End If
 		      Else
 		        Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe, default_enabled) VALUES (?1, ?2, ?3, ?4);", ModID, ModName, ConsoleSafe, DefaultEnabled)
