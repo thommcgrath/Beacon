@@ -815,7 +815,6 @@ Begin ServerViewContainer FTPServerView
       EraseBackground =   True
       HasBackgroundColor=   False
       Height          =   145
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   204
       LockBottom      =   False

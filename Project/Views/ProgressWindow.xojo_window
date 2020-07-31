@@ -76,7 +76,6 @@ Begin BeaconDialog ProgressWindow
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Tooltip         =   ""
       Top             =   52
       Transparent     =   False
@@ -152,7 +151,6 @@ Begin BeaconDialog ProgressWindow
       Width           =   80
    End
    Begin Timer UpdateTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   10

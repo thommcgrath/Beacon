@@ -76,7 +76,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Top             =   -409
       Transparent     =   False
       Value           =   0
@@ -151,7 +150,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       HasBackColor    =   False
       Height          =   362
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   -323
       LockBottom      =   True
@@ -217,11 +215,10 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   2
+      Value           =   0
       Visible         =   True
       Width           =   800
       Begin DocumentsComponent DocumentsComponent1
@@ -236,7 +233,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   362
-         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   0
          LockBottom      =   True
@@ -290,7 +286,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          HasBackColor    =   False
          Height          =   362
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   0
          LockBottom      =   True
@@ -322,7 +317,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          EraseBackground =   True
          HasBackgroundColor=   False
          Height          =   362
-         Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   0
          LockBottom      =   True

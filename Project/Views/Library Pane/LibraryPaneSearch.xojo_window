@@ -104,7 +104,6 @@ Begin LibrarySubview LibraryPaneSearch
       Width           =   280
    End
    Begin Timer SearchTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -114,7 +113,6 @@ Begin LibrarySubview LibraryPaneSearch
    End
    Begin URLConnection SearchSocket
       AllowCertificateValidation=   False
-      Enabled         =   True
       HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False

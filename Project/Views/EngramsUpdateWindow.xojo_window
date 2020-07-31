@@ -45,7 +45,6 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   "True"
       Top             =   52
       Transparent     =   False
       Value           =   0.0
@@ -88,7 +87,6 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       Width           =   410
    End
    Begin Timer RevealTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   1

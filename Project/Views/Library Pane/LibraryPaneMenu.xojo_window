@@ -63,7 +63,6 @@ Begin LibrarySubview LibraryPaneMenu Implements NotificationKit.Receiver
       Width           =   260
    End
    Begin ModifierWatcher Watcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Period          =   100
