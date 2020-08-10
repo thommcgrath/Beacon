@@ -37,6 +37,12 @@ Protected Class DiscoveredData
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsPrimitivePlus() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Profile() As Beacon.ServerProfile
 		  Return Self.mProfile
 		End Function

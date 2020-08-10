@@ -244,48 +244,90 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.ItemSet
 		  Var Set As New Beacon.ItemSet
-		  If Dict.HasKey("NumItemsPower") Then
-		    Set.NumItemsPower = Dict.Value("NumItemsPower")
-		  End If
-		  If Dict.HasKey("Weight") Then
-		    Set.RawWeight = Dict.Value("Weight")
-		  ElseIf Dict.HasKey("SetWeight") Then
-		    Set.RawWeight = Dict.Value("SetWeight") * 1000.0
-		  End If
-		  If Dict.HasKey("bItemsRandomWithoutReplacement") Then
-		    Set.ItemsRandomWithoutReplacement = Dict.Value("bItemsRandomWithoutReplacement")
-		  ElseIf Dict.HasKey("ItemsRandomWithoutReplacement") Then
-		    Set.ItemsRandomWithoutReplacement = Dict.Value("ItemsRandomWithoutReplacement")
-		  End If
-		  If Dict.HasKey("Label") Then
-		    Set.Label = Dict.Value("Label")
-		  ElseIf Dict.HasKey("SetName") Then
-		    Set.Label = Dict.Value("SetName")
-		  End If
+		  
+		  Try
+		    If Dict.HasKey("NumItemsPower") Then
+		      Set.NumItemsPower = Dict.Value("NumItemsPower")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading NumItemsPower value")
+		  End Try
+		  
+		  Try
+		    If Dict.HasKey("Weight") Then
+		      Set.RawWeight = Dict.Value("Weight")
+		    ElseIf Dict.HasKey("SetWeight") Then
+		      Set.RawWeight = Dict.Value("SetWeight") * 1000.0
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading Weight value")
+		  End Try
+		  
+		  Try
+		    If Dict.HasKey("bItemsRandomWithoutReplacement") Then
+		      Set.ItemsRandomWithoutReplacement = Dict.Value("bItemsRandomWithoutReplacement")
+		    ElseIf Dict.HasKey("ItemsRandomWithoutReplacement") Then
+		      Set.ItemsRandomWithoutReplacement = Dict.Value("ItemsRandomWithoutReplacement")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading bItemsRandomWithoutReplacement value")
+		  End Try
+		  
+		  Try
+		    If Dict.HasKey("Label") Then
+		      Set.Label = Dict.Value("Label")
+		    ElseIf Dict.HasKey("SetName") Then
+		      Set.Label = Dict.Value("SetName")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading Label value")
+		  End Try
 		  
 		  Var Children() As Variant
-		  If Dict.HasKey("ItemEntries") Then
-		    Children = Dict.Value("ItemEntries")
-		  ElseIf Dict.HasKey("Items") Then
-		    Children = Dict.Value("Items")
-		  End If
-		  For Each Child As Dictionary In Children
-		    Var Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Child)
-		    If Entry <> Nil Then
-		      Set.Append(Entry)
+		  Try
+		    If Dict.HasKey("ItemEntries") Then
+		      Children = Dict.Value("ItemEntries")
+		    ElseIf Dict.HasKey("Items") Then
+		      Children = Dict.Value("Items")
 		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Casting ItemEntries to array")
+		  End Try
+		  
+		  For Idx As Integer = 0 To Children.LastRowIndex
+		    Try
+		      Var Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Dictionary(Children(Idx)))
+		      If (Entry Is Nil) = False Then
+		        Set.Append(Entry)
+		      End If
+		    Catch Err As RuntimeException
+		      App.Log(Err, CurrentMethodName, "Reading set entry dictionary #" + Str(Idx, "-0"))
+		    End Try
 		  Next
 		  
-		  If Dict.HasKey("MinNumItems") Then
-		    Set.MinNumItems = Dict.Value("MinNumItems")
-		  End If
-		  If Dict.HasKey("MaxNumItems") Then
-		    Set.MaxNumItems = Dict.Value("MaxNumItems")
-		  End If
+		  Try
+		    If Dict.HasKey("MinNumItems") Then
+		      Set.MinNumItems = Dict.Value("MinNumItems")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading MinNumItems value")
+		  End Try
 		  
-		  If Dict.HasKey("SourcePresetID") Then
-		    Set.mSourcePresetID = Dict.Value("SourcePresetID")
-		  End If
+		  Try
+		    If Dict.HasKey("MaxNumItems") Then
+		      Set.MaxNumItems = Dict.Value("MaxNumItems")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading MaxNumItems value")
+		  End Try
+		  
+		  Try
+		    If Dict.HasKey("SourcePresetID") Then
+		      Set.mSourcePresetID = Dict.Value("SourcePresetID")
+		    End If
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading SourcePresetID value")
+		  End Try
 		  
 		  Set.Modified = False
 		  Return Set

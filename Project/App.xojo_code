@@ -65,6 +65,8 @@ Implements NotificationKit.Receiver
 
 	#tag Event
 		Sub Open()
+		  Self.mLogManager = New LogManager
+		  
 		  #If TargetMacOS
 		    Self.Log("Beacon " + Str(Self.BuildNumber, "-0") + " for Mac.")
 		  #ElseIf TargetWin32
@@ -151,6 +153,7 @@ Implements NotificationKit.Receiver
 		  End Try
 		  
 		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_CheckBetaExpiration)
+		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_SetupLogs)
 		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_PrivacyCheck)
 		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_SetupDatabase)
 		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_CleanupConfigBackups)
@@ -843,6 +846,42 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_SetupLogs()
+		  Var LogsFolder As FolderItem = Self.ApplicationSupport.Child("Logs")
+		  If LogsFolder Is Nil Then
+		    BeaconUI.ShowAlert("Unable to start log system", "Beacon was unable to create its logs folder. Disk write access may be disabled or the disk may be full.")
+		    Quit
+		    Return
+		  End If
+		  
+		  Try
+		    Self.mLogManager.Destination = LogsFolder
+		  Catch Err As RuntimeException
+		    BeaconUI.ShowAlert("Unable to start log system", "Beacon was unable to create its logs folder at " + LogsFolder.NativePath + ". Disk write access may be disabled or the disk may be full.")
+		    Quit
+		    Return
+		  End Try
+		  
+		  Try
+		    Self.mLogManager.Claim(Self.ApplicationSupport.Child("Events.log"))
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Try
+		    Self.mLogManager.Cleanup
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Try
+		    Self.mLogManager.Flush
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Self.NextLaunchQueueTask()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_ShowMainWindow()
 		  Self.mMainWindow = New MainWindow
 		  Self.mMainWindow.Show()
@@ -857,34 +896,14 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Log(Err As RuntimeException, Location As String, MoreDetail As String = "")
+		  Self.mLogManager.Log(Err, Location, MoreDetail)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Log(Message As String)
-		  If Self.mLogLock = Nil Then
-		    Self.mLogLock = New CriticalSection
-		  End If
-		  
-		  Self.mLogLock.Enter
-		  
-		  Var Now As DateTime = DateTime.Now
-		  Var DetailedMessage As String = Now.ToString(Locale.Raw) + Str(Now.Nanosecond / 1000000000, ".0000000000") + " " + Now.TimeZone.Abbreviation + Encodings.UTF8.Chr(9) + Message
-		  
-		  #if DebugBuild
-		    System.DebugLog(DetailedMessage)
-		  #else
-		    Try
-		      Self.mQueuedLogMessages.AddRow(DetailedMessage)
-		      
-		      Var LogFile As FolderItem = Self.ApplicationSupport.Child("Events.log")
-		      Var Stream As TextOutputStream = TextOutputStream.Open(LogFile)
-		      While Self.mQueuedLogMessages.LastRowIndex > -1
-		        Stream.WriteLine(Self.mQueuedLogMessages(0))
-		        Self.mQueuedLogMessages.Remove(0)
-		      Wend
-		      Stream.Close
-		    Catch Err As IOException
-		    End Try
-		  #endif
-		  
-		  Self.mLogLock.Leave
+		  Self.mLogManager.Log(Message)
 		End Sub
 	#tag EndMethod
 
@@ -1233,7 +1252,7 @@ Implements NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLogLock As CriticalSection
+		Private mLogManager As LogManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1246,10 +1265,6 @@ Implements NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mPendingURLs() As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mQueuedLogMessages() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

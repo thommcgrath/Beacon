@@ -48,7 +48,7 @@ $description = BeaconTemplate::PageDescription();
 		<div id="header_wrapper">
 			<div id="header" class="pagebody">
 				<div id="header_logo_cell"><a href="/"><img id="header_logo" src="<?php echo BeaconCommon::AssetURI('beacon-header-color.svg'); ?>" height="80" alt="Beacon for Ark: Survival Evolved"></a></div>
-				<div id="header_links_cell"><ul><li><a id="menu_explore_link" href="#">Explore</a></li><li><a id="menu_download_link" href="/download/">Download</a></li><li><a id="menu_support_link" href="/help/">Support</a></li><li><a id="menu_buy_link" href="/omni/">Buy</a></li></ul></div>
+				<div id="header_links_cell"><ul><li><a id="menu_explore_link" href="#">Explore</a></li><li><a id="menu_download_link" href="/download/">Download</a></li><li><a id="menu_support_link" href="/help/">Help</a></li><li><a id="menu_buy_link" href="/omni/">Buy</a></li></ul></div>
 			</div>
 		</div>
 		<div id="content_wrapper">

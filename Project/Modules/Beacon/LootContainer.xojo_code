@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LootContainer
-Implements Beacon.DocumentItem, Beacon.NamedItem, Beacon.LootSource
+Implements Beacon.DocumentItem,Beacon.NamedItem,Beacon.LootSource
 	#tag Method, Flags = &h0
 		Function AppendMode() As Boolean
 		  // Part of the Beacon.LootSource interface.

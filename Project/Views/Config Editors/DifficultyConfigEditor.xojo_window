@@ -635,9 +635,9 @@ End
 	#tag Method, Flags = &h21
 		Private Sub FillReferenceFields(Difficulty As BeaconConfigs.Difficulty)
 		  Self.LootScaleField.Value = Format(Difficulty.DifficultyValue, "0%")
-		  Self.DifficultyValueField.Value = Difficulty.DifficultyValue.PrettyText(True)
+		  Self.DifficultyValueField.Value = Difficulty.DifficultyValue.PrettyText(BeaconConfigs.Difficulty.DecimalPlaces, True)
 		  Self.DifficultyOffsetField.Value = Format(1.0, "0.0")
-		  Self.OverrideOfficialDifficultyField.Value = Difficulty.OverrideOfficialDifficulty.PrettyText(True)
+		  Self.OverrideOfficialDifficultyField.Value = Difficulty.OverrideOfficialDifficulty.PrettyText(BeaconConfigs.Difficulty.DecimalPlaces, True)
 		  Self.MaxTekLevelField.Value = Format(Difficulty.MaxTekLevel, "0,")
 		  Self.MaxWyvernLevelField.Value = Format(Difficulty.MaxWyvernLevel, "0,")
 		End Sub

@@ -87,6 +87,16 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ClassName(Extends Err As RuntimeException) As String
+		  Var Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		  If Info Is Nil Then
+		    Return ""
+		  End If
+		  Return Info.FullName
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Clone(Source As Dictionary) As Dictionary
 		  // This method only exists because the built-in clone method causes crashes.
 		  // However, this only handles basic cases.

@@ -141,7 +141,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       BorderBottom    =   False
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   ""
       DoubleBuffer    =   False
@@ -655,6 +654,10 @@ End
 		Private Sub mController_WriteError(Sender As Beacon.DocumentController, Reason As String)
 		  If Not Self.Closed Then
 		    Self.Progress = BeaconSubview.ProgressNone
+		  End If
+		  
+		  If Reason.Encoding = Nil Then
+		    Reason = Reason.GuessEncoding
 		  End If
 		  
 		  Var Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save!", Beacon.UserNotification.Severities.Elevated)

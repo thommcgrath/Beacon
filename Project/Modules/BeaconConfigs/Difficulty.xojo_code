@@ -6,7 +6,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Profile
 		  #Pragma Unused SourceDocument
 		  
-		  Values.AddRow(New Beacon.ConfigValue("?", "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(1)))
+		  Values.AddRow(New Beacon.ConfigValue("?", "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(Self.DecimalPlaces)))
 		End Sub
 	#tag EndEvent
 
@@ -16,7 +16,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused SourceDocument
 		  
 		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DifficultyOffset", "1.0"))
-		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(1)))
+		  Values.AddRow(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(Self.DecimalPlaces)))
 		End Sub
 	#tag EndEvent
 
@@ -157,6 +157,10 @@ Inherits Beacon.ConfigGroup
 		#tag EndGetter
 		OverrideOfficialDifficulty As Double
 	#tag EndComputedProperty
+
+
+	#tag Constant, Name = DecimalPlaces, Type = Double, Dynamic = False, Default = \"4", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior

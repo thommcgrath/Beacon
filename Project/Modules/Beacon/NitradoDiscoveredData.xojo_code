@@ -8,10 +8,11 @@ Inherits Beacon.DiscoveredData
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ServiceID As Integer, AuthToken As String, ConfigPath As String)
+		Sub Constructor(ServiceID As Integer, AuthToken As String, ConfigPath As String, PrimitivePlus As Boolean)
 		  Self.mServiceID = ServiceID
 		  Self.mAuthToken = AuthToken
 		  Self.mConfigPath = ConfigPath
+		  Self.mPrimitivePlus = PrimitivePlus
 		  
 		  While Self.mConfigPath.EndsWith("/")
 		    Self.mConfigPath = Self.mConfigPath.Left(Self.mConfigPath.Length - 1)
@@ -93,6 +94,12 @@ Inherits Beacon.DiscoveredData
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function IsPrimitivePlus() As Boolean
+		  Return Self.mPrimitivePlus
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mAuthToken As String
@@ -108,6 +115,10 @@ Inherits Beacon.DiscoveredData
 
 	#tag Property, Flags = &h21
 		Private mGameUserSettingsIniLoaded As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPrimitivePlus As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

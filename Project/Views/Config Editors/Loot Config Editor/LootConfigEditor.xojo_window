@@ -33,7 +33,6 @@ Begin ConfigEditor LootConfigEditor
       BorderBottom    =   False
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Sources"
       DoubleBuffer    =   False

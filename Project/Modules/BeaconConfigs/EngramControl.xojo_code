@@ -88,11 +88,21 @@ Inherits Beacon.ConfigGroup
 		        If Behaviors.HasKey(Self.KeyPlayerLevel) Then
 		          Var Level As Integer = Round(Behaviors.Value(Self.KeyPlayerLevel).DoubleValue)
 		          Arguments.AddRow("EngramLevelRequirement=" + Level.ToString)
+		        ElseIf Self.OnlyAllowSpecifiedEngrams Then
+		          Var Level As NullableDouble = Engram.RequiredPlayerLevel
+		          If (Level Is Nil) = False Then
+		            Arguments.AddRow("EngramLevelRequirement=" + Level.IntegerValue.ToString)
+		          End If
 		        End If
 		        
 		        If Behaviors.HasKey(Self.KeyUnlockPoints) Then
 		          Var Points As Integer = Round(Behaviors.Value(Self.KeyUnlockPoints).DoubleValue)
 		          Arguments.AddRow("EngramPointsCost=" + Points.ToString)
+		        ElseIf Self.OnlyAllowSpecifiedEngrams Then
+		          Var Points As NullableDouble = Engram.RequiredUnlockPoints
+		          If (Points Is Nil) = False Then
+		            Arguments.AddRow("EngramPointsCost=" + Points.IntegerValue.ToString)
+		          End If
 		        End If
 		      End If
 		    End If

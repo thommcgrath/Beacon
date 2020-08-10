@@ -83,29 +83,14 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.SetEntryOption
-		  Var Weight As Double = Dict.Value("Weight")
-		  Var Engram, BackupEngram As Beacon.Engram
+		  Var Weight As Double = 0.5
+		  Try
+		    Weight = Dict.Value("Weight")
+		  Catch Err As RuntimeException
+		    App.Log(Err, CurrentMethodName, "Reading Weight value")
+		  End Try
 		  
-		  If Dict.HasKey("Path") Then
-		    Engram = Beacon.Data.GetEngramByPath(Dict.Value("Path"))
-		    If Engram = Nil Then
-		      BackupEngram = Beacon.Engram.CreateFromPath(Dict.Value("Path"))
-		    End If
-		  End If
-		  
-		  If Engram = Nil And Dict.HasKey("Class") Then
-		    Engram = Beacon.Data.GetEngramByClass(Dict.Value("Class"))
-		    If Engram = Nil And BackupEngram = Nil Then
-		      BackupEngram = Beacon.Engram.CreateFromClass(Dict.Value("Class"))
-		    End If
-		  End If
-		  
-		  If Engram = Nil Then
-		    If BackupEngram = Nil Then
-		      Return Nil
-		    End If
-		    Engram = BackupEngram
-		  End If
+		  Var Engram As Beacon.Engram = Beacon.ResolveEngram(Dict, "", "Class", "Path")
 		  
 		  Var Option As New Beacon.SetEntryOption(Engram, Weight)
 		  Option.Modified = False

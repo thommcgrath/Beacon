@@ -1093,7 +1093,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       BorderBottom    =   False
       BorderLeft      =   False
       BorderRight     =   False
-      Borders         =   0
       BorderTop       =   False
       Caption         =   "Breeding Multipliers"
       DoubleBuffer    =   False
@@ -1615,11 +1614,15 @@ End
 		    Var MaxImprint As Double = Min(MaxCuddles * PerCuddle, 1.0)
 		    
 		    CreaturesList.AddRow(Creature.Label, Beacon.SecondsToString(IncubationSeconds), Beacon.SecondsToString(MatureSeconds), Beacon.SecondsToString(CooldownMin, CooldownMax), MaxCuddles.ToString, If(MaxCuddles = 0, "Can't Imprint", Format(PerCuddle, "0%")), If(PerCuddle = 0, "", Format(MaxImprint, "0%")))
-		    CreaturesList.CellTagAt(CreaturesList.LastAddedRowIndex, Self.ColumnIncubationTime) = IncubationSeconds
-		    CreaturesList.CellTagAt(CreaturesList.LastAddedRowIndex, Self.ColumnMatureTime) = MatureSeconds
-		    CreaturesList.RowTagAt(CreaturesList.LastAddedRowIndex) = Creature.ClassString
+		    Var Idx As Integer = CreaturesList.LastAddedRowIndex
+		    CreaturesList.CellTagAt(Idx, Self.ColumnIncubationTime) = IncubationSeconds
+		    CreaturesList.CellTagAt(Idx, Self.ColumnMatureTime) = MatureSeconds
+		    CreaturesList.CellTagAt(Idx, Self.ColumnNumImprints) = MaxCuddles
+		    CreaturesList.CellTagAt(Idx, Self.ColumnPerImprint) = PerCuddle
+		    CreaturesList.CellTagAt(Idx, Self.ColumnBestImprint) = MaxImprint
+		    CreaturesList.RowTagAt(Idx) = Creature.ClassString
 		    If Creature.ClassString = SelectedClass Then
-		      CreaturesList.SelectedRowIndex = CreaturesList.LastAddedRowIndex
+		      CreaturesList.SelectedRowIndex = Idx
 		    End If
 		  Next
 		  
@@ -1824,6 +1827,17 @@ End
 		    If Period1 = Period2 Then
 		      Result = 0
 		    ElseIf Period1 > Period2 Then
+		      Result = 1
+		    Else
+		      Result = -1
+		    End If
+		    Return True
+		  ElseIf Column = Self.ColumnNumImprints Or Column = Self.ColumnPerImprint Or Column = Self.ColumnBestImprint Then
+		    Var Value1 As Double = Me.CellTagAt(Row1, Column)
+		    Var Value2 As Double = Me.CellTagAt(Row2, Column)
+		    If Value1 = Value2 Then
+		      Result = 0
+		    ElseIf Value1 > Value2 Then
 		      Result = 1
 		    Else
 		      Result = -1

@@ -157,6 +157,10 @@ Inherits Beacon.Thread
 		    CommandLineOptions = New Dictionary
 		  End If
 		  
+		  If (Self.mData Is Nil) = False And Self.mData.IsPrimitivePlus Then
+		    Document.ModEnabled("68d1be8b-a66e-41a2-b0b4-cb2a724fc80b") = True
+		  End If
+		  
 		  Try
 		    Var Maps() As Beacon.Map = Document.Maps
 		    Var DifficultyTotal, DifficultyScale As Double
