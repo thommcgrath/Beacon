@@ -120,9 +120,11 @@ var set_view_mode = function() {
 
 var update_checkout_components = function() {
 	if (owns_omni) {
-		document.getElementById('omni_row').className = 'hidden';
+		document.getElementById('omni_checkbox_frame').className = 'hidden';
+		document.getElementById('omni_owned_caption').className = 'text-lighter';
 	} else {
-		document.getElementById('omni_row').className = '';
+		document.getElementById('omni_checkbox_frame').className = '';
+		document.getElementById('omni_owned_caption').className = 'hidden';
 	}
 	update_total();
 };
@@ -362,17 +364,17 @@ BeaconTemplate::FinishScript();
 </div>
 <div id="page_cart" class="hidden">
 	<p id="cart_back_paragraph"><button id="cart_back_button">&laquo; Back</button></p>
-	<div id="simple_auth" class="text-center">
-		<div id="email_section" class="separator-color">
-			<h3 class="text-left">Beacon Account E-Mail Address</h3>
-			<p><input type="email" name="email" id="checkout_email_field" placeholder="E-Mail Address"><br>
-			<span class="text-lighter smaller">If you do not already have an account, you will be required to verify this email address before you can use your purchase.</span></p>
-		</div>
-	</div>
 	<table class="generic">
-		<tr id="omni_row">
+		<tr>
+			<td colspan="3">
+				<p>Beacon Account E-Mail Address</p>
+				<p><input type="email" name="email" id="checkout_email_field" placeholder="E-Mail Address"></p>
+				<p class="text-lighter smaller">If you do not already have an account, you will be required to verify this email address before you can use your purchase.</p>
+			</td>
+		</tr>
+		<tr>
 			<td>Beacon Omni<br><span class="smaller text-lighter">Purchase a copy of Beacon Omni for yourself.</span></td>
-			<td class="quantity_column"><div><label class="checkbox"><input type="checkbox" name="omni" id="omni_checkbox" checked><span></span></label></div></td>
+			<td class="quantity_column"><div id="omni_checkbox_frame"><label class="checkbox"><input type="checkbox" name="omni" id="omni_checkbox" checked><span></span></label></div><span id="omni_owned_caption" class="hidden">Owned</span></td>
 			<td class="price_column"><?php echo htmlentities($product_details['omni']['price_formatted']); ?></td>
 		</tr>
 		<tr>
