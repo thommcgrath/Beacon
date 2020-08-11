@@ -8,12 +8,16 @@ mb_http_output('UTF-8');
 mb_http_input('UTF-8');
 mb_internal_encoding('UTF-8');
 
+global $api_version;
+if (isset($_SERVER['API_VERSION'])) {
+	$api_version = $_SERVER['API_VERSION'];
+}
+if (is_int($api_version) === false || isset($api_version) === false || empty($api_version)) {
+	$api_version = 2;
+}
+$_SERVER['API_VERSION'] = $api_version;
+
 spl_autoload_register(function($class_name) {
-	global $api_version;
-	if (is_int($api_version) == false || isset($api_version) == false || empty($api_version)) {
-		$api_version = 2;
-	}
-	
 	$filename = str_replace('\\', '/', $class_name) . '.php';
 	
 	// check the global classes
@@ -23,7 +27,7 @@ spl_autoload_register(function($class_name) {
 	}
 	
 	// check the most recent api too
-	$file = dirname(__FILE__, 2) . '/api/v' . $api_version . '/classes/' . $filename;
+	$file = dirname(__FILE__, 2) . '/api/v' . $_SERVER['API_VERSION'] . '/classes/' . $filename;
 	if (file_exists($file)) {
 		include($file);
 	}

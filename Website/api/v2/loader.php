@@ -5,7 +5,12 @@ header('Cache-Control: no-cache');
 
 // classes local to this API will get loaded first
 spl_autoload_register(function($class_name) {
-	$file = dirname(__FILE__) . '/classes/' . str_replace('\\', '/', $class_name) . '.php';
+	if (substr($class_name, 0, 10) === 'BeaconAPI\\') {
+		$file = dirname(__FILE__, 2) . '/common/' . str_replace('\\', '/', substr($class_name, 10)) . '.php';
+	} else {
+		$file = dirname(__FILE__) . '/classes/' . str_replace('\\', '/', $class_name) . '.php';
+	}
+	
 	if (file_exists($file)) {
 		include($file);
 	}
