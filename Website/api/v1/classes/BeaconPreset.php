@@ -1,43 +1,16 @@
 <?php
 
-class BeaconPreset extends BeaconObject {
-	protected $contents;
-	
-	protected static function SQLColumns() {
-		$columns = parent::SQLColumns();
-		$columns[] = 'contents';
-		return $columns;
-	}
-	
-	protected static function TableName() {
-		return 'presets';
-	}
-	
-	protected static function FromRow(BeaconRecordSet $row) {
-		$obj = parent::FromRow($row);
-		if ($obj === null) {
-			return null;
-		}
-		$obj->contents = $row->Field('contents');
-		return $obj;
-	}
-	
-	public function jsonSerialize() {
-		$json = parent::jsonSerialize();
-		$json['contents'] = $this->contents;
-		$json['resource_url'] = BeaconAPI::URL('/preset.php/' . urlencode($this->ObjectID()));
-		return $json;
-	}
-	
+class BeaconPreset extends BeaconAPI\Preset {
 	public function Contents(bool $legacy_style = true) {
-		if (!$legacy_style) {
-			return $this->contents;
+		$contents = parent::Contents(false);
+		if ($legacy_style === false) {
+			return $contents;
 		}
 		
-		$json = json_decode($this->contents, true);
+		$json = json_decode($contents, true);
 		if (isset($json['Version']) == false || intval($json['Version']) < 2) {
 			// already legacy
-			return $this->contents;
+			return $contents;
 		}
 		
 		$modifiers = $json['Modifiers'];

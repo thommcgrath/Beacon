@@ -24,12 +24,23 @@ spl_autoload_register(function($class_name) {
 	$file = dirname(__FILE__) . '/classes/' . $filename;
 	if (file_exists($file)) {
 		include($file);
+		return;
 	}
 	
-	// check the most recent api too
+	// check the common API
+	if (substr($class_name, 0, 10) === 'BeaconAPI\\') {
+		$file = dirname(__FILE__, 2) . '/api/common/' . str_replace('\\', '/', substr($class_name, 10)) . '.php';
+		if (file_exists($file)) {
+			include($file);
+			return;
+		}
+	}
+	
+	// check the versioned api too
 	$file = dirname(__FILE__, 2) . '/api/v' . $_SERVER['API_VERSION'] . '/classes/' . $filename;
 	if (file_exists($file)) {
 		include($file);
+		return;
 	}
 });
 

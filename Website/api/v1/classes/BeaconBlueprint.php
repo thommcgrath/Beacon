@@ -1,53 +1,10 @@
 <?php
 
-class BeaconBlueprint extends BeaconObject {
-	private $availability;
-	private $path;
-	private $class_string;
-	private $is_ambiguous = false;
-	
-	public static function GetByObjectPath(string $path, int $min_version = -1, DateTime $updated_since = null) {
-		$objects = static::Get('path:' . $path, $min_version, $updated_since);
-		if (count($objects) == 1) {
-			return $objects[0];
-		}
-	}
-	
-	protected static function SQLColumns() {
-		$columns = parent::SQLColumns();
-		$columns[] = 'availability';
-		$columns[] = 'path';
-		$columns[] = 'class_string';
-		$columns[] = '(SELECT COUNT(object_id) FROM ' . static::TableName() . ' AS x WHERE x.class_string = ' . static::TableName() . '.class_string) AS duplicate_count';
-		return $columns;
-	}
-	
-	protected static function TableName() {
-		return 'blueprints';
-	}
-	
-	protected function GetColumnValue(string $column) {
-		switch ($column) {
-		case 'availability':
-			return $this->availability;
-		case 'path':
-			return $this->path;
-		case 'class_string':
-			return $this->class_string;
-		default:
-			return parent::GetColumnValue($column);
-		}
-	}
-	
+class BeaconBlueprint extends BeaconAPI\Blueprint {
 	public function ConsumeJSON(array $json) {
 		parent::ConsumeJSON($json);
 		
-		if (array_key_exists('path', $json)) {
-			$this->path = $json['path'];
-		}
-		if (array_key_exists('availability', $json) && is_int($json['availability'])) {
-			$this->availability = intval($json['availability']);
-		} else {
+		if (array_key_exists('availability', $json) === false || is_int($json['availability']) === false) {
 			if (array_key_exists('environments', $json)) {
 				$environments = $json['environments'];
 			} elseif (array_key_exists('availability', $json)) {
@@ -93,35 +50,6 @@ class BeaconBlueprint extends BeaconObject {
 		}
 	}
 	
-	protected static function FromRow(BeaconRecordSet $row) {
-		$obj = parent::FromRow($row);
-		if ($obj === null) {
-			return null;
-		}
-		$obj->availability = intval($row->Field('availability'));
-		$obj->path = $row->Field('path');
-		$obj->class_string = $row->Field('class_string');
-		$obj->is_ambiguous = intval($row->Field('duplicate_count')) > 1;
-		return $obj;
-	}
-	
-	protected static function ListValueToParameter($value, array &$possible_columns) {
-		if (is_string($value)) {
-			if (strtoupper(substr($value, -2)) == '_C') {
-				$possible_columns[] = 'class_string';
-				return $value;
-			} elseif (preg_match('/^[A-F0-9]{32}$/i', $value)) {
-				$possible_columns[] = 'MD5(LOWER(path))';
-				return $value;
-			} elseif (strtolower(substr($value, 0, 6)) == '/game/') {
-				$possible_columns[] = 'path';
-				return $value;
-			}
-		}
-		
-		return parent::ListValueToParameter($value, $possible_columns);
-	}
-	
 	public function jsonSerialize() {
 		$environments = array();
 		if ($this->AvailableToIsland()) {
@@ -153,54 +81,9 @@ class BeaconBlueprint extends BeaconObject {
 		}
 		
 		$json = parent::jsonSerialize();
-		$json['availability'] = intval($this->availability);
 		$json['environments'] = $environments;
-		$json['path'] = $this->path;
-		$json['class_string'] = $this->class_string;
-		$json['spawn'] = $this->SpawnCode();
 		
 		return $json;
-	}
-	
-	public function Path() {
-		return $this->path;
-	}
-	
-	public function Hash() {
-		return md5(strtolower($this->path));
-	}
-	
-	public function SetPath(string $path) {
-		$this->path = $path;
-		$this->class_string = self::ClassFromPath($path);
-	}
-	
-	public function ClassString() {
-		return $this->class_string;
-	}
-	
-	public function IsAmbiguous() {
-		return $this->is_ambiguous;
-	}
-	
-	public function Availability() {
-		return $this->availability;
-	}
-	
-	public function SetAvailability(int $availability) {
-		$this->availability = $availability;
-	}
-	
-	public function AvailableTo(int $mask) {
-		return ($this->availability & $mask) !== 0;
-	}
-	
-	public function SetAvailableTo(int $mask, bool $available) {
-		if ($available) {
-			$this->availability = $this->availability | $mask;
-		} else {
-			$this->availability = $this->availability & ~$mask;
-		}
 	}
 	
 	public function AvailableToIsland() {
@@ -271,24 +154,13 @@ class BeaconBlueprint extends BeaconObject {
 		return $this->AvailableTo(BeaconMaps::CrystalIsles);
 	}
 	
+	// Typo, still here for compatibility
 	public function SetAvailableToCrystlIsles(bool $available) {
 		return $this->SetAvailableTo(BeaconMaps::CrystalIsles, $available);
 	}
 	
-	public function SpawnCode() {
-		return 'cheat summon ' . $this->ClassString();
-	}
-	
-	protected static function ClassFromPath(string $path) {
-		$components = explode('/', $path);
-		$tail = array_pop($components);
-		$components = explode('.', $tail);
-		$class = array_pop($components);
-		return $class . '_C';
-	}
-	
-	public function RelatedObjectIDs() {
-		return array();
+	public function SetAvailableToCrystalIsles(bool $available) {
+		return $this->SetAvailableTo(BeaconMaps::CrystalIsles, $available);
 	}
 }
 
