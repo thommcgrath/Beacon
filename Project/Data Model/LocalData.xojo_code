@@ -271,6 +271,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.mUpdater = New URLConnection
 		    Self.mUpdater.AllowCertificateValidation = True
 		    Self.mUpdater.RequestHeader("Cache-Control") = "no-cache"
+		    Self.mUpdater.RequestHeader("User-Agent") = App.UserAgent
 		    AddHandler Self.mUpdater.ContentReceived, WeakAddressOf Self.mUpdater_ContentReceived
 		    AddHandler Self.mUpdater.Error, WeakAddressOf Self.mUpdater_Error
 		  End If

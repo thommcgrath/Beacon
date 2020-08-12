@@ -26,6 +26,7 @@ Protected Class UpdateChecker
 		  AddHandler Self.mSocket.HeadersReceived, WeakAddressOf Self.mSocket_HeadersReceived
 		  AddHandler Self.mSocket.ContentReceived, WeakAddressOf Self.mSocket_ContentReceived
 		  Self.mSocket.RequestHeader("Cache-Control") = "no-cache"
+		  Self.mSocket.RequestHeader("User-Agent") = App.UserAgent
 		  
 		  Var Params As New Dictionary
 		  Params.Value("build") = App.BuildNumber.ToString
