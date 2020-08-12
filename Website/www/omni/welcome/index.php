@@ -2,8 +2,6 @@
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
 
-BeaconCommon::StartSession();
-
 BeaconTemplate::SetTitle('Thanks for purchasing!');
 BeaconTemplate::StartScript(); ?>
 <script>
@@ -11,8 +9,12 @@ BeaconTemplate::StartScript(); ?>
 var number_of_checks = 0;
 
 document.addEventListener('DOMContentLoaded', function() {
+	let client_reference_id = null;
+	if (sessionStorage) {
+		client_reference_id = sessionStorage.getItem('client_reference_id');
+	}
 	setTimeout(function() {
-		check_purchase_status(<?php echo (isset($_SESSION['client_reference_id']) ? json_encode($_SESSION['client_reference_id']) : 'null'); ?>);
+		check_purchase_status(client_reference_id);
 	}, 1000);
 });
 
@@ -137,6 +139,7 @@ BeaconTemplate::FinishStyles();
 <div id="purchase_confirmed" class="welcome_content">
 	<p id="confirmed_text"></p>
 	<p class="text-center"><a href="" id="activate_button" class="button">Activate Omni</a>
+	<p class="text-lighter smaller text-center">If there is a mistake with your purchase, please do not purchase again. <a href="/help/contact">Open a support ticket</a> so the mistake can be corrected.</p>
 </div>
 <div id="purchase_unknown" class="welcome_content">
 	<p>Your purchase status cannot be retrieved. Maybe your browser is blocking cookies. Maybe you're visiting this page from a different browser than the one you purchased with. Or maybe something has simply gone wrong.</p>

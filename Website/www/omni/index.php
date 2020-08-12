@@ -7,34 +7,41 @@ define('GIFT_UUID', '2207d5c1-4411-4854-b26f-bc4b48aa33bf');
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconTemplate::AddHeaderLine('<script src="https://js.stripe.com/v3/"></script>');
 
-BeaconCommon::StartSession();
-if (!isset($_SESSION['client_reference_id'])) {
-	$client_reference_id = BeaconCommon::GenerateUUID();
-	$_SESSION['client_reference_id'] = $client_reference_id;
-} else {
-	$client_reference_id = $_SESSION['client_reference_id'];
-}
-
 $database = BeaconCommon::Database();
 
-$results = $database->Query('SELECT stripe_sku, retail_price FROM products WHERE product_id = $1;', OMNI_UUID);
-if ($results->RecordCount() != 1) {
+$results = $database->Query('SELECT product_id, stripe_sku, retail_price FROM products;');
+$product_details = [];
+while (!$results->EOF()) {
+	$key = '';
+	switch ($results->Field('product_id')) {
+	case OMNI_UUID:
+		$key = 'omni';
+		break;
+	case STW_UUID:
+		$key = 'stw';
+		break;
+	case GIFT_UUID:
+		$key = 'gift';
+		break;
+	}
+	if (empty($key)) {
+		$results->MoveNext();
+		continue;
+	}
+	
+	$product_details[$key] = [
+		'price' => $results->Field('retail_price'),
+		'price_formatted' => '$' . number_format($results->Field('retail_price'), 2, '.', ',') . ' USD',
+		'sku' => $results->Field('stripe_sku')
+	];
+	
+	$results->MoveNext();
+}
+
+if (isset($product_details['omni']) === false) {
 	throw new Exception('Unable to find Omni product');
 	exit;
 }
-$omni_sku = $results->Field('stripe_sku');
-$omni_price = $results->Field('retail_price');
-$omni_price_formatted = '$' . number_format($omni_price, 2, '.', ',') . ' USD';
-
-$results = $database->Query('SELECT stripe_sku, retail_price FROM products WHERE product_id = $1;', STW_UUID);
-$stw_sku = $results->Field('stripe_sku');
-$stw_price = $results->Field('retail_price');
-$stw_price_formatted = '$' . number_format($stw_price, 2, '.', ',') . ' USD';
-
-$results = $database->Query('SELECT stripe_sku, retail_price FROM products WHERE product_id = $1;', GIFT_UUID);
-$gift_sku = $results->Field('stripe_sku');
-$gift_price = $results->Field('retail_price');
-$gift_price_formatted = '$' . number_format($gift_price, 2, '.', ',') . ' USD';
 
 BeaconTemplate::StartStyles(); ?>
 <style type="text/css">
@@ -57,47 +64,30 @@ table.generic .bullet-column {
 	text-align: center;
 }
 
+#email_section {
+	border-width: 1px;
+	border-style: solid;
+	clear: both;
+	padding: 20px;
+	margin: 20px auto;
+	border-radius: 6px;
+	max-width: 400px;
+}
+
 </style>
 <?php
 BeaconTemplate::FinishStyles();
 
-$session = BeaconSession::GetFromCookie();
-if (!is_null($session)) {
-	$user = BeaconUser::GetByUserID($session->UserID());
-	$results = $database->Query('SELECT purchases.merchant_reference FROM purchased_products INNER JOIN purchases ON (purchased_products.purchase_id = purchases.purchase_id) INNER JOIN users ON (purchased_products.purchaser_email = users.email_id) WHERE purchased_products.product_id = $1 AND users.user_id = $2 LIMIT 1;', OMNI_UUID, $user->UserID());
-} else {
-	$user = null;
-	$results = $database->Query('SELECT purchases.merchant_reference FROM purchased_products INNER JOIN purchases ON (purchased_products.purchase_id = purchases.purchase_id) WHERE purchased_products.product_id = $1 AND purchased_products.client_reference_id = $2 LIMIT 1;', OMNI_UUID, $client_reference_id);
-}
-
-$purchased = false;
-$subtext = 'Already purchased?';
-$buy_button_caption = 'Buy Omni';
-$purchase_email = null;
-if ($results->RecordCount() == 1) {
-	$purchased = true;
-	$subtext = 'You have already purchased Beacon Omni.';
-	$buy_button_caption = 'Gift Omni to Others';
-	
-	$merchant_reference = $results->Field('merchant_reference');
-	if (substr($merchant_reference, 0, 3) == 'pi_') {
-		// Stripe PaymentIntent
-		$api = new BeaconStripeAPI(BeaconCommon::GetGlobal('Stripe_Secret_Key'));
-		$purchase_email = $api->EmailForPaymentIntent($merchant_reference);
-		if (!empty($purchase_email)) {
-			$subtext = 'Your Beacon Omni purchase is tied to ' . $purchase_email . '.';
-			$user = BeaconUser::GetByEmail($purchase_email);
-		}
-	}
-}
-
 BeaconTemplate::StartScript();
 ?>
 <script>
+var owns_omni = false;
+
 var update_total = function() {
-	var include_omni = document.getElementById('omni_checkbox').checked;
+	var include_omni = owns_omni === false && document.getElementById('omni_checkbox').checked;
 	var stw_quantity = Math.min(document.getElementById('stw_quantity_field').value, 10);
 	var gift_quantity = Math.min(document.getElementById('gift_quantity_field').value, 10);
+	
 	if (document.getElementById('stw_quantity_field').value != stw_quantity) {
 		document.getElementById('stw_quantity_field').value = stw_quantity;
 	}
@@ -105,9 +95,9 @@ var update_total = function() {
 		document.getElementById('gift_quantity_field').value = gift_quantity;
 	}
 	
-	var omni_price = <?php echo json_encode($omni_price * 100); ?>;
-	var stw_price = <?php echo json_encode($stw_price * 100); ?>;
-	var gift_price = <?php echo json_encode($gift_price * 100); ?>;
+	var omni_price = <?php echo json_encode($product_details['omni']['price'] * 100); ?>;
+	var stw_price = <?php echo json_encode($product_details['stw']['price'] * 100); ?>;
+	var gift_price = <?php echo json_encode($product_details['gift']['price'] * 100); ?>;
 	var total = (stw_price * stw_quantity) + (gift_price * gift_quantity);
 	if (include_omni) {
 		total += omni_price;
@@ -117,17 +107,58 @@ var update_total = function() {
 	document.getElementById('stripe_checkout_button').disabled = (total == 0);
 };
 
-document.addEventListener('DOMContentLoaded', function() {
-	update_total();
-	
-	document.getElementById('buy-button').addEventListener('click', function() {
+var set_view_mode = function() {
+	window.scrollTo(window.scrollX, 0);
+	if (window.location.hash === '#checkout') {
 		document.getElementById('page_landing').className = 'hidden';
 		document.getElementById('page_cart').className = '';
+	} else {
+		document.getElementById('page_landing').className = '';
+		document.getElementById('page_cart').className = 'hidden';
+	}
+};
+
+var update_checkout_components = function() {
+	if (owns_omni) {
+		document.getElementById('omni_checkbox_frame').className = 'hidden';
+		document.getElementById('omni_owned_caption').className = 'text-lighter';
+	} else {
+		document.getElementById('omni_checkbox_frame').className = '';
+		document.getElementById('omni_owned_caption').className = 'hidden';
+	}
+	update_total();
+};
+
+var lookup_email = function(email) {
+	request.get('/omni/lookup', {'email': email}, function(obj) {
+		owns_omni = obj.omni;
+		update_checkout_components();
+	}, function(status, body) {
+		owns_omni = false;
+		update_checkout_components();
+	});
+};
+
+var validate_email = function(email) {
+	const re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+	return re.test(String(email).toLowerCase());
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+	update_checkout_components();
+	set_view_mode();
+	
+	document.getElementById('buy-button').addEventListener('click', function(ev) {
+		history.pushState({}, '', '/omni/#checkout');
+		var popStateEvent = new PopStateEvent('popstate', {});
+		dispatchEvent(popStateEvent);
+		ev.preventDefault();
 	});
 	
 	document.getElementById('cart_back_button').addEventListener('click', function(ev) {
-		document.getElementById('page_landing').className = '';
-		document.getElementById('page_cart').className = 'hidden';
+		history.pushState({}, '', '/omni/');
+		var popStateEvent = new PopStateEvent('popstate', {});
+		dispatchEvent(popStateEvent);
 		ev.preventDefault();
 	});
 	
@@ -144,37 +175,47 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 	
 	document.getElementById('stripe_checkout_button').addEventListener('click', function(ev) {
+		if (validate_email(document.getElementById('checkout_email_field').value) === false) {
+			dialog.show('Please enter a valid email address.', 'Without a real email address, you would not be able to use your purchase.');
+			return;
+		}
+		
 		this.disabled = true;
 		
-		var include_omni = document.getElementById('omni_checkbox').checked;
+		var include_omni = owns_omni === false && document.getElementById('omni_checkbox').checked;
 		var stw_quantity = Math.min(document.getElementById('stw_quantity_field').value, 10);
 		var gift_quantity = Math.min(document.getElementById('gift_quantity_field').value, 10);
 		
 		var items = [];
 		if (include_omni) {
-			items.push({sku: <?php echo json_encode($omni_sku); ?>, quantity: 1});
+			items.push({sku: <?php echo json_encode($product_details['omni']['sku']); ?>, quantity: 1});
 		}
 		if (stw_quantity > 0) {
-			items.push({sku: <?php echo json_encode($stw_sku); ?>, quantity: stw_quantity});
+			items.push({sku: <?php echo json_encode($product_details['stw']['sku']); ?>, quantity: stw_quantity});
 		}
 		if (gift_quantity > 0) {
-			items.push({sku: <?php echo json_encode($gift_sku); ?>, quantity: gift_quantity});
+			items.push({sku: <?php echo json_encode($product_details['gift']['sku']); ?>, quantity: gift_quantity});
 		}
 		
 		var stripe = Stripe(<?php echo json_encode(BeaconCommon::GetGlobal('Stripe_Public_Key')); ?>, {});
 		
+		function uuidv4() {
+			return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
+		}
+		
+		var client_reference_id = uuidv4();
+		if (sessionStorage) {
+			sessionStorage.setItem('client_reference_id', client_reference_id);
+		}
+		
 		var checkout = {
 			items: items,
 			successUrl: <?php echo json_encode(BeaconCommon::AbsoluteURL('/omni/welcome/')); ?>,
-			cancelUrl: <?php echo json_encode(BeaconCommon::AbsoluteURL('/omni/')); ?>,
-			clientReferenceId: <?php echo json_encode($client_reference_id); ?>,
-			billingAddressCollection: 'required'
+			cancelUrl: <?php echo json_encode(BeaconCommon::AbsoluteURL('/omni/#checkout')); ?>,
+			clientReferenceId: client_reference_id,
+			billingAddressCollection: 'required',
+			customerEmail: document.getElementById('checkout_email_field').value
 		};
-		<?php
-		if (!is_null($purchase_email)) {
-			echo 'checkout.customerEmail = ' . json_encode($purchase_email) . ';';
-		}
-		?>
 		
 		stripe.redirectToCheckout(checkout).then(function (result) {
 			if (result.error) {
@@ -182,23 +223,38 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		});
 	});
+	
+	document.getElementById('checkout_email_field').addEventListener('input', function() {
+		var callback = function () {
+			lookup_email(this.value);
+		};
+		callback = callback.bind(this);
+		
+		if (this.timer) {
+			clearTimeout(this.timer);
+		}
+		this.timer = setTimeout(callback, 250);
+	});
+	
+	var email = null;
+	if (sessionStorage) {
+		email = sessionStorage.getItem('email');
+	}
+	if (!email && localStorage) {
+		email = localStorage.getItem('email');
+	}
+	if (email) {
+		document.getElementById('checkout_email_field').value = email;
+		lookup_email(email);
+	}
+});
+	
+window.addEventListener('popstate', function(ev) {
+	set_view_mode();
 });
 </script>
 <?php
 BeaconTemplate::FinishScript();
-
-$account_link = '/account/#omni';
-if (is_null($session)) {
-	$account_link = '/account/login/?return=' . urlencode($account_link);
-	if (!is_null($purchase_email)) {
-		$account_link .= '&email=' . urlencode($purchase_email);
-		if (is_null($user)) {
-			$account_link .= '#create';
-		}
-	}
-}
-
-$min_version = BeaconCommon::MinVersion();
 
 ?>
 <div id="page_landing">
@@ -206,7 +262,7 @@ $min_version = BeaconCommon::MinVersion();
 	<p>Beacon does a lot for free. Loot drops, server control, file sharing, and more. But when it's time to get into more advanced configuration like crafting costs and player experience, then it's time to upgrade to Beacon Omni.</p>
 	<p>All users of Beacon can use all features, however Omni-only config types will not be included in generated Game.ini and GameUserSettings.ini files.</p>
 	<div class="double_column">
-		<div class="column text-center"><button id="buy-button" class="default"><?php echo htmlentities($buy_button_caption); ?></button><br><span class="smaller"><?php echo htmlentities($subtext); ?> See <a href="<?php echo $account_link; ?>">your account control panel</a> for more details.</span></div>
+		<div class="column text-center"><button id="buy-button" class="default">Buy Omni</button><br><span class="smaller">Already purchased? See <a href="/account/#omni">your account control panel</a> for more details.</span></div>
 		<div class="column text-center">Unable to purchase for some reason? Learn more about Beacon's <em><a href="stw">Share The Wealth</a></em> program.</div>
 	</div>
 	<table class="generic">
@@ -293,11 +349,11 @@ $min_version = BeaconCommon::MinVersion();
 				<td class="text-center bullet-column">&nbsp;</td>
 				<td class="text-center bullet-column">&#10687;</td>
 			</tr>
-			<?php if ($min_version >= 10400300) { ?><tr>
+			<tr>
 				<td>Engram Control<br><span class="smaller text-lighter">Change when engrams are unlockable, if they auto-unlock, and the number of engram points awarded each level. Beacon's powerful wizard allows users to instantly build full engram designs, such as auto-unlocking everything except tek items at spawn.</span></td>
 				<td class="text-center bullet-column">&nbsp;</td>
 				<td class="text-center bullet-column">&#10687;</td>
-			</tr><?php } ?>
+			</tr>
 			<tr>
 				<td>More config types on the way<br><span class="smaller text-lighter">With each major release, Beacon adds new editor types to both the free edition and Beacon Omni.</span></td>
 				<td class="text-center bullet-column">&#10687;</td>
@@ -309,24 +365,31 @@ $min_version = BeaconCommon::MinVersion();
 <div id="page_cart" class="hidden">
 	<p id="cart_back_paragraph"><button id="cart_back_button">&laquo; Back</button></p>
 	<table class="generic">
-		<tr<?php if ($purchased) { echo ' class="hidden"'; } ?>>
+		<tr>
+			<td colspan="3">
+				<p>Beacon Account E-Mail Address</p>
+				<p><input type="email" name="email" id="checkout_email_field" placeholder="E-Mail Address"></p>
+				<p class="text-lighter smaller">If you do not already have an account, you will be required to verify this email address before you can use your purchase.</p>
+			</td>
+		</tr>
+		<tr>
 			<td>Beacon Omni<br><span class="smaller text-lighter">Purchase a copy of Beacon Omni for yourself.</span></td>
-			<td class="quantity_column"><div><label class="checkbox"><input type="checkbox" name="omni" id="omni_checkbox" <?php echo ($purchased ? 'disabled' : 'checked'); ?>><span></span></label></div></td>
-			<td class="price_column"><?php echo htmlentities($omni_price_formatted); ?></td>
+			<td class="quantity_column"><div id="omni_checkbox_frame"><label class="checkbox"><input type="checkbox" name="omni" id="omni_checkbox" checked><span></span></label></div><span id="omni_owned_caption" class="hidden">Owned</span></td>
+			<td class="price_column"><?php echo htmlentities($product_details['omni']['price_formatted']); ?></td>
 		</tr>
 		<tr>
 			<td>Beacon Omni Gift Codes<br><span class="smaller text-lighter">If you would like to purchase a copy of Beacon Omni for somebody else, this is the option for you. You'll be given codes which you can distribute any way you feel like.</span></td>
-			<td class="quantity_column"><input class="text-center" type="number" value="<?php echo ($purchased ? 1 : 0); ?>" id="gift_quantity_field" min="0" max="10"></td>
-			<td class="price_column"><?php echo htmlentities($gift_price_formatted); ?>
+			<td class="quantity_column"><input class="text-center" type="number" value="0" id="gift_quantity_field" min="0" max="10"></td>
+			<td class="price_column"><?php echo htmlentities($product_details['gift']['price_formatted']); ?>
 		</tr>
 		<tr>
 			<td>Beacon Share The Wealth<br><span class="smaller text-lighter">Beacon Share The Wealth is an optional purchase that allows you to show further financial support by gifting copies of Beacon Omni to <em>random</em> users at a reduced cost. <a href="stw">Learn More</a></span></td>
 			<td class="quantity_column"><input class="text-center" type="number" value="0" id="stw_quantity_field" min="0" max="10"></td>
-			<td class="price_column"><?php echo htmlentities($stw_price_formatted); ?>
+			<td class="price_column"><?php echo htmlentities($product_details['stw']['price_formatted']); ?>
 		</tr>
 		<tr>
 			<td colspan="2" class="text-right">Total</td>
-			<td class="price_column" id="total_field"><?php echo htmlentities($omni_price_formatted); ?></td>
+			<td class="price_column" id="total_field"><?php echo htmlentities($product_details['omni']['price_formatted']); ?></td>
 		</tr>
 		<tr>
 			<td colspan="3" class="text-center"><button class="default" id="stripe_checkout_button">Checkout</button></td>

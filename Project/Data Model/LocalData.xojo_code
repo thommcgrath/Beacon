@@ -271,6 +271,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.mUpdater = New URLConnection
 		    Self.mUpdater.AllowCertificateValidation = True
 		    Self.mUpdater.RequestHeader("Cache-Control") = "no-cache"
+		    Self.mUpdater.RequestHeader("User-Agent") = App.UserAgent
 		    AddHandler Self.mUpdater.ContentReceived, WeakAddressOf Self.mUpdater_ContentReceived
 		    AddHandler Self.mUpdater.Error, WeakAddressOf Self.mUpdater_Error
 		  End If
@@ -1455,7 +1456,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Var Results As RowSet = Self.SQLSelect("SELECT name, console_safe, default_enabled FROM mods WHERE mod_id = ?1;", ModID)
 		      If Results.RowCount = 1 Then
 		        If ModName.Compare(Results.Column("name").StringValue, ComparisonOptions.CaseSensitive) <> 0 Or ConsoleSafe <> Results.Column("console_safe").BooleanValue Then
-		          Self.SQLExecute("UPDATE mods SET name = ?2, console_safe = ?3, default_enabled WHERE mod_id = ?1;", ModID, ModName, ConsoleSafe, DefaultEnabled)
+		          Self.SQLExecute("UPDATE mods SET name = ?2, console_safe = ?3, default_enabled = ?4 WHERE mod_id = ?1;", ModID, ModName, ConsoleSafe, DefaultEnabled)
 		        End If
 		      Else
 		        Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe, default_enabled) VALUES (?1, ?2, ?3, ?4);", ModID, ModName, ConsoleSafe, DefaultEnabled)
@@ -2601,6 +2602,14 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Return
 		  End If
 		  
+		  Var UserDataString As String = "{}"
+		  If (Notification.UserData Is Nil) = False Then
+		    Try
+		      UserDataString = Beacon.GenerateJSON(Notification.UserData, False)
+		    Catch Err As RuntimeException
+		    End Try
+		  End If
+		  
 		  Self.BeginTransaction()
 		  Var Results As RowSet = Self.SQLSelect("SELECT deleted, read FROM notifications WHERE notification_id = ?1;", Notification.Identifier)
 		  Var Deleted As Boolean = Results.RowCount = 1 And Results.Column("deleted").BooleanValue = True
@@ -2612,7 +2621,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Try
 		    Var Notify As Boolean = Results.RowCount = 0 Or Deleted Or Read
-		    Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification_id, message, secondary_message, moment, read, action_url, user_data, deleted) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.SQLDateTimeWithOffset, If(Notification.Read Or Notification.Severity = Beacon.UserNotification.Severities.Elevated, 1, 0), Notification.ActionURL, If(Notification.UserData <> Nil, Beacon.GenerateJSON(Notification.UserData, False), "{}"))
+		    Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification_id, message, secondary_message, moment, read, action_url, user_data, deleted) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.SQLDateTimeWithOffset, If(Notification.Read Or Notification.Severity = Beacon.UserNotification.Severities.Elevated, 1, 0), Notification.ActionURL, UserDataString)
 		    Self.Commit
 		    
 		    If Notify Then

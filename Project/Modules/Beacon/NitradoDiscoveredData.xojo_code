@@ -8,10 +8,11 @@ Inherits Beacon.DiscoveredData
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ServiceID As Integer, AuthToken As String, ConfigPath As String)
+		Sub Constructor(ServiceID As Integer, AuthToken As String, ConfigPath As String, PrimitivePlus As Boolean)
 		  Self.mServiceID = ServiceID
 		  Self.mAuthToken = AuthToken
 		  Self.mConfigPath = ConfigPath
+		  Self.mPrimitivePlus = PrimitivePlus
 		  
 		  While Self.mConfigPath.EndsWith("/")
 		    Self.mConfigPath = Self.mConfigPath.Left(Self.mConfigPath.Length - 1)
@@ -23,6 +24,7 @@ Inherits Beacon.DiscoveredData
 		Private Function DownloadFile(Filename As String) As String
 		  Var Sock As New URLConnection
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAuthToken
+		  Sock.RequestHeader("User-Agent") = App.UserAgent
 		  
 		  Var Content As String = Sock.SendSync("GET", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/download?file=" + EncodeURLComponent(Self.mConfigPath + "/" + Filename), Beacon.NitradoIntegrationEngine.ConnectionTimeout)
 		  Var Status As Integer = Sock.HTTPStatusCode
@@ -48,6 +50,7 @@ Inherits Beacon.DiscoveredData
 		  
 		  Var FetchSocket As New URLConnection
 		  FetchSocket.RequestHeader("Authorization") = "Bearer " + Self.mAuthToken
+		  FetchSocket.RequestHeader("User-Agent") = App.UserAgent
 		  Content = FetchSocket.SendSync("GET", FetchURL, Beacon.NitradoIntegrationEngine.ConnectionTimeout)
 		  Status = FetchSocket.HTTPStatusCode
 		  
@@ -93,6 +96,12 @@ Inherits Beacon.DiscoveredData
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function IsPrimitivePlus() As Boolean
+		  Return Self.mPrimitivePlus
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mAuthToken As String
@@ -108,6 +117,10 @@ Inherits Beacon.DiscoveredData
 
 	#tag Property, Flags = &h21
 		Private mGameUserSettingsIniLoaded As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPrimitivePlus As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

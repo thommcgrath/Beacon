@@ -477,6 +477,13 @@ End
 	#tag Event
 		Sub Resized()
 		  Preferences.EntryEditorSize = New Size(Self.Width, Self.Height)
+		  Self.Picker.AutoResize()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resizing()
+		  Self.Picker.AutoResize()
 		End Sub
 	#tag EndEvent
 
