@@ -252,7 +252,7 @@ table.generic {
 	td, th {
 		border-width: 1px;
 		border-style: solid;
-		padding: 0.6em;
+		padding: 6pt;
 	}
 	
 	thead {
@@ -275,6 +275,32 @@ table.generic {
 		ul {
 			padding-left: 40px;
 		}
+	}
+	
+	div.row-details {
+		display: flex;
+		flex-wrap: wrap;
+		flex-direction: row;
+		justify-content: start;
+		font-size: 10pt;
+		border-top-style: solid;
+		border-top-width: 1px;
+		margin-top: 8pt;
+		margin-bottom: -2pt;
+		padding-top: 2pt;
+		word-break: break-word;
+		
+		span.detail {
+			margin: 4pt;
+		}
+		
+		a {
+			word-break: normal;
+		}
+	}
+	
+	.low-priority {
+		display: none;
 	}
 }
 
@@ -1109,6 +1135,16 @@ ul.object_list {
 			padding-left: 20px;
 			padding-top: 0px;
 			margin-top: 0px;
+		}
+	}
+	
+	table.generic {
+		div.row-details {
+			display: none;
+		}
+		
+		.low-priority {
+			display: table-cell;
 		}
 	}
 }

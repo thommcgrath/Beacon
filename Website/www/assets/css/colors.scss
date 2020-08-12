@@ -190,6 +190,11 @@
 				color: inherit;
 			}
 		}
+		
+		div.row-details {
+			border-color: $separator-color;
+			color: mix($foreground-color, $background-color, 50%);
+		}
 	}
 	
 	#header_wrapper {
@@ -489,6 +494,24 @@
 		border-color: mix($text-yellow, $background-color, 35%);
 		color: $text-yellow;
 		background-color: mix($text-yellow, $background-color, 3%);
+	}
+	
+	/* !Account Navigation */
+	#account_toolbar_menu {
+		div {
+			a {
+				color: $accent-color;
+				background-color: none;
+			}
+			
+			&.active {
+				background-color: $accent-color;
+				
+				a {
+					color: $accent-text-color;
+				}
+			}
+		}
 	}
 	
 	@media print {

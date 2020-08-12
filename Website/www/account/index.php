@@ -22,26 +22,38 @@ BeaconTemplate::StartStyles(); ?>
 	padding: 0px;
 	display: flex;
 	flex-direction: row;
-	max-width: 320px;
 	margin-left: auto;
 	margin-right: auto;
+	margin-bottom: 20px;
 	justify-content: center;
 	border-color: inherit;
+	flex-wrap: wrap;
 	
-	li {
-		flex-grow: 1;
+	div {
+		flex: 0 0 0px;
 		text-align: center;
-		font-size: larger;
 		border-color: inherit;
+		white-space: nowrap;
+		margin: 0px;
+		border-radius: 4pt;
+		padding: 6pt 8pt;
+		font-size: 14pt;
+		line-height: 1.0em;
+		
+		&.active {
+			font-weight: 500;
+		}
 		
 		a {
 			text-decoration: none;
-		}
-		
-		&.active {
-			font-weight: 600;
+			padding: 0px;
+			margin: 0px;
 		}
 	}
+}
+
+#account_views {
+	max-width: 100%;
 }
 
 </style><?php
@@ -49,6 +61,15 @@ BeaconTemplate::FinishStyles();
 
 BeaconTemplate::StartScript(); ?>
 <script>
+var switchViewFromFragment = function() {
+	var fragment = window.location.hash.substr(1);
+	if (fragment !== '') {
+		switchView(fragment);
+	} else {
+		switchView('documents');
+	}
+}
+
 var currentView = 'documents';
 var switchView = function(newView) {
 	if (newView == currentView) {
@@ -63,34 +84,22 @@ var switchView = function(newView) {
 };
 
 document.addEventListener('DOMContentLoaded', function(event) {
-	document.getElementById('toolbar_documents_button').addEventListener('click', function(event) {
-		switchView('documents');
-	});
-	document.getElementById('toolbar_omni_button').addEventListener('click', function(event) {
-		switchView('omni');
-	});
-	document.getElementById('toolbar_settings_button').addEventListener('click', function(event) {
-		switchView('settings');
-	});
-	document.getElementById('toolbar_sessions_button').addEventListener('click', function(event) {
-		switchView('sessions');
-	});
-	
-	var fragment = window.location.hash.substr(1);
-	if (fragment !== '') {
-		switchView(fragment);
-	}
+	switchViewFromFragment();
+});
+
+window.addEventListener('popstate', function(ev) {
+	switchViewFromFragment();
 });
 </script><?php
 BeaconTemplate::FinishScript();
 
 ?><h1><?php echo htmlentities($user->Username()); ?><span class="user-suffix">#<?php echo htmlentities($user->Suffix()); ?></span><br><span class="subtitle"><a href="/account/auth.php?return=<?php echo urlencode('/'); ?>" title="Sign Out">Sign Out</a></span></h1>
-<ul id="account_toolbar_menu" class="separator-color">
-	<li id="account_toolbar_menu_documents" class="active"><a href="#documents" id="toolbar_documents_button">Documents</a></li>
-	<li id="account_toolbar_menu_omni"><a href="#omni" id="toolbar_omni_button">Omni</a></li>
-	<li id="account_toolbar_menu_settings"><a href="#settings" id="toolbar_settings_button">Settings</a></li>
-	<li id="account_toolbar_menu_sessions"><a href="#sessions" id="toolbar_sessions_button">Sessions</a></li>
-</ul>
+<div id="account_toolbar_menu" class="separator-color">
+	<div id="account_toolbar_menu_documents" class="active"><a href="#documents" id="toolbar_documents_button">Documents</a></div>
+	<div id="account_toolbar_menu_omni"><a href="#omni" id="toolbar_omni_button">Omni</a></div>
+	<div id="account_toolbar_menu_settings"><a href="#settings" id="toolbar_settings_button">Settings</a></div>
+	<div id="account_toolbar_menu_sessions"><a href="#sessions" id="toolbar_sessions_button">Sessions</a></div>
+</div>
 <div id="account_views">
 	<div id="account_view_documents"><?php include('includes/documents.php'); ?></div>
 	<div id="account_view_omni" class="hidden"><?php include('includes/omni.php'); ?></div>

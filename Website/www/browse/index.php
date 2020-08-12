@@ -107,13 +107,13 @@ if ($document_count == 0) {
 
 if (count($documents) > 0) {
 	echo '<table id="browse_results" class="generic">';
-	echo '<thead><tr><th>Name</th><th class="low-priority-detail">Downloads</th><th class="low-priority-detail">Updated</th><th class="low-priority-detail">Revision</th></thead><tbody>';
+	echo '<thead><tr><th>Name</th><th class="low-priority">Downloads</th><th class="low-priority">Updated</th><th class="low-priority">Revision</th></thead><tbody>';
 	foreach ($documents as $document) {
 		echo '<tr>';
-		echo '<td><a href="' . urlencode($document->DocumentID()) . '?map_filter=' . $selected_maps . '" class="document_name">' . htmlentities($document->Name()) . '</a><br><span class="document_description">' . htmlentities($document->Description()) . '</span><div class="properties-text">Updated: ' . $document->LastUpdated()->format('M jS, Y g:i A') . ' UTC</div></td>';
-		echo '<td class="text-right low-priority-detail">' . number_format($document->DownloadCount()) . '</td>';
-		echo '<td class="nowrap text-center low-priority-detail"><time datetime="' . $document->LastUpdated()->format('c') . '">' . $document->LastUpdated()->format('M jS, Y g:i A') . ' UTC</time></td>';
-		echo '<td class="text-right low-priority-detail">' . number_format($document->Revision()) . '</td>';
+		echo '<td><a href="' . urlencode($document->DocumentID()) . '?map_filter=' . $selected_maps . '" class="document_name">' . htmlentities($document->Name()) . '</a><br><span class="document_description">' . htmlentities($document->Description()) . '</span><div class="row-details"><span class="detail">Updated: ' . $document->LastUpdated()->format('M jS, Y g:i A') . ' UTC</span></div></td>';
+		echo '<td class="text-right low-priority">' . number_format($document->DownloadCount()) . '</td>';
+		echo '<td class="nowrap text-center low-priority"><time datetime="' . $document->LastUpdated()->format('c') . '">' . $document->LastUpdated()->format('M jS, Y g:i A') . ' UTC</time></td>';
+		echo '<td class="text-right low-priority">' . number_format($document->Revision()) . '</td>';
 		echo '</tr>';
 	}
 	echo '</tbody></table>';

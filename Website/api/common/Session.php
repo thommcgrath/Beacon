@@ -80,7 +80,7 @@ class Session implements \JsonSerializable {
 		$session_id = \BeaconCommon::GenerateUUID();
 		$remote_ip = \BeaconCommon::RemoteAddr();
 		$remote_country = \BeaconCommon::RemoteCountry();
-		$remote_agent = $_SESSION['HTTP_USER_AGENT'];
+		$remote_agent = $_SERVER['HTTP_USER_AGENT'];
 		
 		$database = \BeaconCommon::Database();
 		$database->BeginTransaction();

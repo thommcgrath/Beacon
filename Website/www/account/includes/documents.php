@@ -36,37 +36,6 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <?php
 BeaconTemplate::FinishScript();
 
-BeaconTemplate::StartStyles(); ?>
-<style>
-.low-priority {
-	display: none;
-}
-
-.details {
-	border-top-style: solid;
-	border-top-width: 1px;
-	font-size: smaller;
-	margin-top: 0.5em;
-	padding-top: 0.5em;
-}
-
-.tab-space {
-	margin-left: 5px;
-	margin-right: 5px;
-}
-
-@media (min-width: 635px) {
-	.low-priority {
-		display: table-cell;
-	}
-	
-	.details {
-		display: none;
-	}
-}
-</style><?php
-BeaconTemplate::FinishStyles();
-
 $keys = array(
 	'user_id' => $user->UserID()
 );
@@ -98,7 +67,7 @@ if (count($documents) > 0) {
 		);
 		
 		echo '<tr>';
-		echo '<td><a href="' . htmlentities($document->ResourceURL()) . '">' . htmlentities($document->Name()) . '</a><br><span class="document_description">' . htmlentities($document->Description()) . '</span><div class="details separator-color text-lighter">' . implode('<span class="tab-space">&nbsp;</span>', $details) . '</div></td>';
+		echo '<td><a href="' . htmlentities($document->ResourceURL()) . '">' . htmlentities($document->Name()) . '</a><br><span class="document_description">' . htmlentities($document->Description()) . '</span><div class="row-details"><span class="detail">' . implode('</span><span class="detail">', $details) . '</span></div></td>';
 		echo '<td class="low-priority text-right nowrap">' . number_format($document->DownloadCount()) . '</td>';
 		echo '<td class="low-priority text-right nowrap">' . number_format($document->Revision()) . '</td>';
 		echo '<td class="low-priority text-center nowrap">' . nl2br(htmlentities($status)) . '</td>';
