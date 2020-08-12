@@ -30,10 +30,9 @@ Protected Class UpdateChecker
 		  Var Params As New Dictionary
 		  Params.Value("build") = App.BuildNumber.ToString
 		  Params.Value("stage") = App.StageCode.ToString
+		  Params.Value("arch") = If(Self.IsARM, "arm", "x86")
 		  If Self.Is64Bit Then
-		    Params.Value("arch") = "x86_64"
-		  Else
-		    Params.Value("arch") = "x86"
+		    Params.Value("arch") = Params.Value("arch").StringValue + "_64"
 		  End If
 		  Params.Value("osversion") = OSVersion
 		  #if TargetMacOS
@@ -86,6 +85,17 @@ Protected Class UpdateChecker
 		      Return Wow64Process
 		    End If
 		  #Endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function IsARM() As Boolean
+		  #if TargetARM
+		    // Since the code is already compiled ARM, we know this to be true
+		    Return True
+		  #endif
+		  
+		  Return SystemInformationMBS.IsARM Or SystemInformationMBS.IsTranslated = 1
 		End Function
 	#tag EndMethod
 
@@ -234,12 +244,6 @@ Protected Class UpdateChecker
 		      BugVersion = Struct.BuildNumber
 		    End If
 		  #endif
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Untitled()
-		  
 		End Sub
 	#tag EndMethod
 
