@@ -7,6 +7,7 @@ if (is_null($session)) {
 	BeaconCommon::Redirect('/account/login/');
 	exit;
 }
+$session->Renew();
 
 header('Cache-Control: no-cache');
 
@@ -71,6 +72,9 @@ document.addEventListener('DOMContentLoaded', function(event) {
 	document.getElementById('toolbar_settings_button').addEventListener('click', function(event) {
 		switchView('settings');
 	});
+	document.getElementById('toolbar_sessions_button').addEventListener('click', function(event) {
+		switchView('sessions');
+	});
 	
 	var fragment = window.location.hash.substr(1);
 	if (fragment !== '') {
@@ -85,9 +89,11 @@ BeaconTemplate::FinishScript();
 	<li id="account_toolbar_menu_documents" class="active"><a href="#documents" id="toolbar_documents_button">Documents</a></li>
 	<li id="account_toolbar_menu_omni"><a href="#omni" id="toolbar_omni_button">Omni</a></li>
 	<li id="account_toolbar_menu_settings"><a href="#settings" id="toolbar_settings_button">Settings</a></li>
+	<li id="account_toolbar_menu_sessions"><a href="#sessions" id="toolbar_sessions_button">Sessions</a></li>
 </ul>
 <div id="account_views">
 	<div id="account_view_documents"><?php include('includes/documents.php'); ?></div>
 	<div id="account_view_omni" class="hidden"><?php include('includes/omni.php'); ?></div>
 	<div id="account_view_settings" class="hidden"><?php include('includes/settings.php'); ?></div>
+	<div id="account_view_sessions" class="hidden"><?php include('includes/sessions.php'); ?></div>
 </div>

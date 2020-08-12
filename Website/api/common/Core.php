@@ -106,11 +106,7 @@ abstract class Core {
 			self::$user_id = $session->UserID();
 			self::$auth_style = self::AUTH_STYLE_SESSION;
 			
-			$database = \BeaconCommon::Database();
-			$database->BeginTransaction();
-			$database->Query('UPDATE sessions SET valid_until = CURRENT_TIMESTAMP + \'30 days\'::INTERVAL, remote_ip = $2 WHERE (remote_ip IS DISTINCT FROM $2 OR valid_until < CURRENT_TIMESTAMP + \'15 days\'::INTERVAL) AND session_id = encode(digest($1, \'sha512\'), \'hex\');', $session_id, \BeaconCommon::RemoteAddr());
-			$database->Query('DELETE FROM sessions WHERE valid_until < CURRENT_TIMESTAMP;');
-			$database->Commit();
+			$session->Renew();
 			
 			return true;
 		}
@@ -119,8 +115,7 @@ abstract class Core {
 	
 	protected static function AuthorizeWithPassword(string $username, string $password) {
 		$user = \BeaconUser::GetByEmail($username);
-		$upgrade = isset($_SERVER['HTTP_X_BEACON_UPGRADE_ENCRYPTION']) && boolval($_SERVER['HTTP_X_BEACON_UPGRADE_ENCRYPTION']);
-		if (is_null($user) == false && $user->TestPassword($password, $upgrade)) {
+		if (is_null($user) == false && $user->IsEnabled() && $user->TestPassword($password)) {
 			self::$user_id = $user->UserID();
 			self::$auth_style = self::AUTH_STYLE_EMAIL_WITH_PASSWORD;
 			return true;
@@ -129,7 +124,7 @@ abstract class Core {
 	}
 	
 	protected static function AuthorizeWithSignature(\BeaconUser $user, string $challenge, string $signature) {
-		if (is_null($user)) {
+		if (is_null($user) || $user->IsEnabled() === false) {
 			return false;
 		}
 		
@@ -229,6 +224,10 @@ abstract class Core {
 	
 	public static function UserID() {
 		return self::$user_id;
+	}
+	
+	public static function User() {
+		return \BeaconUser::GetByUserID(self::$user_id);
 	}
 	
 	public static function ObjectID(int $place = 0) {

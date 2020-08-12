@@ -567,6 +567,8 @@ abstract class BeaconCommon {
 	public static function RemoteCountry() {
 		if (empty($_SERVER['HTTP_CF_IPCOUNTRY']) === false) {
 			return $_SERVER['HTTP_CF_IPCOUNTRY'];
+		} else {
+			return 'XX';
 		}
 	}
 }

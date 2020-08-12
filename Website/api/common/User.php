@@ -17,6 +17,7 @@ class User implements \JsonSerializable {
 	protected $expiration = '';
 	protected $usercloud_key = null;
 	protected $banned = false;
+	protected $enabled = true;
 	
 	public function __construct($source = null) {
 		if ($source instanceof \BeaconRecordSet) {
@@ -29,6 +30,7 @@ class User implements \JsonSerializable {
 			$this->private_key_iterations = intval($source->Field('private_key_iterations'));
 			$this->usercloud_key = $source->Field('usercloud_key');
 			$this->banned = $source->Field('banned');
+			$this->enabled = $source->Field('enabled');
 			
 			if (self::OmniFree) {
 				$this->purchased_omni_version = 1;
@@ -184,11 +186,12 @@ class User implements \JsonSerializable {
 	}
 	
 	public function IsEnabled() {
-		return true;
+		return $this->enabled;
 	}
 	
-	public function SetIsEnabled() {
-		return false;
+	public function SetIsEnabled(bool $enabled) {
+		$this->enabled = $enabled;
+		return true;
 	}
 	
 	/* !Child Accounts */
@@ -520,13 +523,14 @@ class User implements \JsonSerializable {
 			$changes['private_key_salt'] = $this->private_key_salt;
 			$changes['private_key_iterations'] = $this->private_key_iterations;
 			$changes['usercloud_key'] = $this->usercloud_key;
+			$changes['enabled'] = $this->enabled;
 			try {
 				$database->Insert('users', $changes);
 			} catch (\Exception $e) {
 				return false;
 			}
 		} else {
-			$keys = array('username', 'email_id', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key');
+			$keys = array('username', 'email_id', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key', 'enabled');
 			foreach ($keys as $key) {
 				if ($this->$key !== $original_user->$key) {
 					$changes[$key] = $this->$key;
@@ -567,7 +571,7 @@ class User implements \JsonSerializable {
 	}
 	
 	protected static function SQLColumns() {
-		return array('user_id', 'email_id', 'username', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key', 'banned');
+		return array('user_id', 'email_id', 'username', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key', 'banned', 'enabled');
 	}
 	
 	public function jsonSerialize() {

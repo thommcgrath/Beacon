@@ -219,7 +219,7 @@ function ShowGiftCodes() {
 	global $user;
 	
 	$database = BeaconCommon::Database();
-	$results = $database->Query('SELECT code, redemption_date FROM purchase_codes WHERE purchaser_email_id = $1;', $user->Email());
+	$results = $database->Query('SELECT code, redemption_date FROM purchase_codes WHERE purchaser_email_id = $1;', $user->EmailID());
 	if ($results->RecordCount() == 0) {
 		return;
 	}
