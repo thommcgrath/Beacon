@@ -231,12 +231,12 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function IconWithColor(Icon As Picture, FillColor As Color, Overlay As Picture = Nil) As Picture
+		Protected Function IconWithColor(Icon As Picture, FillColor As Color, MinFactor As Double, MaxFactor As Double, Overlay As Picture = Nil) As Picture
 		  Var Width As Integer = Icon.Width
 		  Var Height As Integer = Icon.Height
 		  
 		  Var Bitmaps() As Picture
-		  For Factor As Integer = 1 To 3
+		  For Factor As Integer = MinFactor To MaxFactor
 		    Var ScaledIcon As Picture = Icon.BestRepresentation(Width, Height, Factor)
 		    
 		    Var Pic As New Picture(Width * Factor, Height * Factor)
@@ -266,6 +266,12 @@ Protected Module BeaconUI
 		    Bitmaps.AddRow(Pic)
 		  Next
 		  Return New Picture(Width, Height, Bitmaps)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function IconWithColor(Icon As Picture, FillColor As Color, Overlay As Picture = Nil) As Picture
+		  Return IconWithColor(Icon, FillColor, 1, 3, Overlay)
 		End Function
 	#tag EndMethod
 

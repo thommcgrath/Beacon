@@ -196,7 +196,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Top             =   0
       Transparent     =   True
       Visible         =   True
-      Width           =   800
+      Width           =   600
    End
    Begin PagePanel Pages
       AllowAutoDeactivate=   True
@@ -336,6 +336,36 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          Visible         =   True
          Width           =   800
       End
+   End
+   Begin OmniBar AppBar
+      Alignment       =   2
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   38
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   600
+      LeftPadding     =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   7
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   200
    End
 End
 #tag EndWindow

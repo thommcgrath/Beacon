@@ -155,7 +155,11 @@ Implements ObservationKit.Observer
 		      Segments.AddRow(Min(G.TextWidth(Item.Caption), Self.MaxCaptionWidth))
 		    End If
 		    If (Item.Icon Is Nil) = False Then
-		      Segments.AddRow(Self.IconSize)
+		      If Item.Caption.IsEmpty Then
+		        Segments.AddRow(Self.IconSize + (Self.ButtonPadding * 2))
+		      Else
+		        Segments.AddRow(Self.IconSize)
+		      End If
 		    End If
 		    If Item.CanBeClosed Or Item.HasUnsavedChanges Then
 		      Segments.AddRow(Self.CloseIconSize)
@@ -425,8 +429,36 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h21
 		Private Sub DrawItemAsButton(G As Graphics, Item As OmniBarItem, Highlighted As Boolean, State As Integer)
-		  If Highlighted And State = Self.StateHover Then
-		    // Draw a little box behind the icon
+		  Const CornerRadius = 6
+		  
+		  Var ForeColor, BackColor As Color = &c000000FF
+		  If Item.Toggled Then
+		    ForeColor = SystemColors.ControlBackgroundColor
+		    If Highlighted Then
+		      BackColor = Self.ActiveColorToColor(Item.ActiveColor)
+		    Else
+		      BackColor = SystemColors.SecondaryLabelColor
+		    End If
+		  ElseIf Highlighted And Item.AlwaysUseActiveColor Then
+		    ForeColor = Self.ActiveColorToColor(Item.ActiveColor)
+		  Else
+		    ForeColor = SystemColors.SecondaryLabelColor
+		  End If
+		  
+		  Var IconRect As New Rect(NearestMultiple((G.Width - Self.IconSize) / 2, G.ScaleX), NearestMultiple((G.Height - Self.IconSize) / 2, G.ScaleY), Self.IconSize, Self.IconSize)
+		  Var Factor As Double = Max(G.ScaleX, G.ScaleY)
+		  Var Icon As Picture = BeaconUI.IconWithColor(Item.Icon, ForeColor, Factor, Factor)
+		  
+		  If BackColor.Alpha < 255 Then
+		    G.DrawingColor = BackColor
+		    G.FillRoundRectangle(IconRect.Left - Self.ButtonPadding, IconRect.Top - Self.ButtonPadding, IconRect.Width + (Self.ButtonPadding * 2), IconRect.Height + (Self.ButtonPadding * 2), CornerRadius, CornerRadius)
+		  End If
+		  
+		  G.DrawPicture(Icon, IconRect.Left, IconRect.Top, IconRect.Width, IconRect.Height, 0, 0, IconRect.Width, IconRect.Height)
+		  
+		  If State = Self.StatePressed And Item.Enabled Then
+		    G.DrawingColor = &c00000080
+		    G.FillRoundRectangle(IconRect.Left, IconRect.Top, IconRect.Width, IconRect.Height, CornerRadius, CornerRadius)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -693,6 +725,9 @@ Implements ObservationKit.Observer
 	#tag EndConstant
 
 	#tag Constant, Name = AlignRight, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ButtonPadding, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = CloseIconSize, Type = Double, Dynamic = False, Default = \"16", Scope = Private

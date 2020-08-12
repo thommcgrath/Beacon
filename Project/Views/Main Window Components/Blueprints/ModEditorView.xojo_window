@@ -104,7 +104,7 @@ Begin BeaconSubview ModEditorView
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       Resizer         =   "0"
       ResizerEnabled  =   False
