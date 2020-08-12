@@ -66,6 +66,7 @@ Protected Class OAuth2Client
 		  Self.mCheckSocket = New URLConnection
 		  AddHandler mCheckSocket.Error, WeakAddressOf mCheckSocket_Error
 		  AddHandler mCheckSocket.ContentReceived, WeakAddressOf mCheckSocket_ContentReceived
+		  Self.mCheckSocket.RequestHeader("User-Agent") = App.UserAgent
 		  
 		  Self.mCheckSocket.Send("GET", Self.AuthURL + "lookup?requestid=" + EncodeURLComponent(Self.mRequestID), 10)
 		End Sub

@@ -65,6 +65,7 @@ Protected Class Socket
 		Sub Constructor()
 		  Self.Socket = New URLConnection
 		  Self.Socket.AllowCertificateValidation = True
+		  Self.Socket.RequestHeader("User-Agent") = App.UserAgent
 		  AddHandler Self.Socket.Error, WeakAddressOf Socket_Error
 		  AddHandler Self.Socket.ContentReceived, WeakAddressOf Socket_ContentReceived
 		  AddHandler Self.Socket.ReceivingProgressed, WeakAddressOf Socket_ReceivingProgressed

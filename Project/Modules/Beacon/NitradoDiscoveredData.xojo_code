@@ -24,6 +24,7 @@ Inherits Beacon.DiscoveredData
 		Private Function DownloadFile(Filename As String) As String
 		  Var Sock As New URLConnection
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAuthToken
+		  Sock.RequestHeader("User-Agent") = App.UserAgent
 		  
 		  Var Content As String = Sock.SendSync("GET", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/download?file=" + EncodeURLComponent(Self.mConfigPath + "/" + Filename), Beacon.NitradoIntegrationEngine.ConnectionTimeout)
 		  Var Status As Integer = Sock.HTTPStatusCode
@@ -49,6 +50,7 @@ Inherits Beacon.DiscoveredData
 		  
 		  Var FetchSocket As New URLConnection
 		  FetchSocket.RequestHeader("Authorization") = "Bearer " + Self.mAuthToken
+		  FetchSocket.RequestHeader("User-Agent") = App.UserAgent
 		  Content = FetchSocket.SendSync("GET", FetchURL, Beacon.NitradoIntegrationEngine.ConnectionTimeout)
 		  Status = FetchSocket.HTTPStatusCode
 		  
