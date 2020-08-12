@@ -67,11 +67,7 @@ Implements NotificationKit.Receiver
 		Sub Open()
 		  Self.mLogManager = New LogManager
 		  
-		  #If TargetMacOS
-		    Self.Log("Beacon " + Str(Self.BuildNumber, "-0") + " for Mac.")
-		  #ElseIf TargetWin32
-		    Self.Log("Beacon " + Str(Self.BuildNumber, "-0") + " for Windows.")
-		  #EndIf
+		  Self.Log(Self.UserAgent)
 		  
 		  #if Not DebugBuild
 		    Try
@@ -1245,6 +1241,24 @@ Implements NotificationKit.Receiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function UserAgent() As String
+		  If Self.mUserAgent.IsEmpty Then
+		    Var Components() As String
+		    Components.AddRow("Language=Xojo/" + XojoVersionString)
+		    Components.AddRow("Platform=" + SystemInformationMBS.OSName + "/" + SystemInformationMBS.OSVersionString)
+		    #if Target32Bit
+		      Components.AddRow("Architecture=32-bit " + If(TargetARM, "ARM", "Intel"))
+		    #else
+		      Components.AddRow("Architecture=64-bit " + If(TargetARM, "ARM", "Intel"))
+		    #endif
+		    
+		    Self.mUserAgent = "Beacon/" + Self.BuildVersion + " (" + Components.Join("; ") + ")"
+		  End If
+		  Return Self.mUserAgent
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h0
 		LaunchOnQuit As FolderItem
@@ -1288,6 +1302,10 @@ Implements NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mUpdateData As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUserAgent As String
 	#tag EndProperty
 
 

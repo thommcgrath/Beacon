@@ -681,6 +681,10 @@ End
 		    Self.Progress = BeaconSubview.ProgressNone
 		  End If
 		  
+		  If Reason.Encoding = Nil Then
+		    Reason = Reason.GuessEncoding
+		  End If
+		  
 		  Var Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save!", Beacon.UserNotification.Severities.Elevated)
 		  Notification.SecondaryMessage = Reason
 		  Notification.UserData = New Dictionary
