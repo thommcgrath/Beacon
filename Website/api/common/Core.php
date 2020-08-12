@@ -16,6 +16,10 @@ abstract class Core {
 		return 'v0';
 	}
 	
+	public static function UsesLegacyEncryption() {
+		return true;
+	}
+	
 	public static function Body() {
 		if (self::$body_raw === null) {
 			if (self::Method() == 'GET') {

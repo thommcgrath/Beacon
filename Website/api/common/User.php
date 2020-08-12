@@ -47,25 +47,43 @@ class User implements \JsonSerializable {
 					$purchases->MoveNext();
 				}
 			}
+		} elseif (is_string($source) && \BeaconCommon::IsUUID($source)) {
+			$this->user_id = $source;
 		} elseif (is_null($source)) {
 			$this->user_id = \BeaconCommon::GenerateUUID();
 		}
 	}
 	
+	/* !Basic Properties */
+	
 	public function UserID() {
 		return $this->user_id;
 	}
 	
-	public function Email() {
+	public function EmailID() {
 		return $this->email_id;
+	}
+	
+	public function SetEmailID(string $email_id) {
+		if (\BeaconCommon::IsUUID($email_id)) {
+			$this->email_id = $email_id;
+			return true;
+		}
+		return false;
+	}
+	
+	public function SetEmailAddress(string $email) {
+		if (self::ValidateEmail($email)) {
+			$database = \BeaconCommon::Database();
+			$results = $database->Query('SELECT uuid_for_email($1, TRUE) AS email_id;', $email);
+			$this->email_id = $results->Field('email_id');
+			return true;
+		}
+		return false;
 	}
 	
 	public function Suffix() {
 		return substr($this->user_id, 0, 8);
-	}
-	
-	public function LoginKey() {
-		return $this->username;
 	}
 	
 	public function Username() {
@@ -74,6 +92,7 @@ class User implements \JsonSerializable {
 	
 	public function SetUsername(string $username) {
 		$this->username = trim($username);
+		return true;
 	}
 	
 	public function PublicKey() {
@@ -83,13 +102,65 @@ class User implements \JsonSerializable {
 	public function SetPublicKey(string $public_key) {
 		if (is_null($this->public_key) || $public_key !== $this->public_key) {
 			$this->public_key = $public_key;
-			$this->usercloud_key = null;
-			$this->AssignUsercloudKey();
+			return true;
 		}
+		return false;
 	}
 	
 	public function PrivateKey() {
 		return $this->private_key;
+	}
+	
+	public function SetPrivateKey(string $encrypted_private_key, string $salt, int $iterations) {
+		$this->private_key = $encrypted_private_key;
+		$this->private_key_salt = $salt;
+		$this->private_key_iterations = $iterations;
+		return true;
+	}
+	
+	public function DecryptedPrivateKey(string $password) {
+		$hash = \BeaconEncryption::HashFromPassword($password, hex2bin($this->private_key_salt), $this->private_key_iterations);
+		try {
+			$decrypted = \BeaconEncryption::SymmetricDecrypt($hash, hex2bin($this->private_key));
+			if (is_null($decrypted)) {
+				return null;
+			}
+			return $decrypted;
+		} catch (\Exception $e) {
+			return null;
+		}
+	}
+	
+	public function SetDecryptedPrivateKey(string $password, string $private_key) {
+		$salt = \BeaconEncryption::GenerateSalt();
+		$iterations = 12000;
+		$hash = \BeaconEncryption::HashFromPassword($password, hex2bin($salt), $iterations);
+		$encrypted = bin2hex(\BeaconEncryption::SymmetricEncrypt($hash, $private_key, \BeaconAPI::UsesLegacyEncryption()));
+		$salt = bin2hex($salt);
+		
+		// test if the public key needs to be changed
+		try {
+			$test_value = \BeaconCommon::GenerateUUID();
+			$signature = \BeaconEncryption::RSASign($private_key, $test_value);
+			$verified = \BeaconEncryption::RSAVerify($this->public_key, $test_value, $signature);
+		} catch (\Exception $err) {
+			$verified = false;
+		}
+		if ($verified === false) {
+			$new_public_key = \BeaconEncryption::ExtractPublicKey($private_key);
+			if (is_null($new_public_key) === false) {
+				$this->public_key = $new_public_key;
+				$this->SetDecryptedUsercloudKey(self::GenerateUsercloudKey());
+			} else {
+				return false;
+			}
+		}
+		
+		$this->private_key_salt = $salt;
+		$this->private_key_iterations = $iterations;
+		$this->private_key = $encrypted;
+		
+		return true;
 	}
 	
 	public function PrivateKeySalt() {
@@ -112,82 +183,182 @@ class User implements \JsonSerializable {
 		return $this->banned;
 	}
 	
-	public function jsonSerialize() {
-		$arr = array(
-			'user_id' => $this->user_id,
-			'login_key' => $this->username,
-			'username' => $this->username,
-			'public_key' => $this->public_key,
-			'private_key' => $this->private_key,
-			'private_key_salt' => $this->private_key_salt,
-			'private_key_iterations' => $this->private_key_iterations,
-			'banned' => $this->banned,
-			'signatures' => $this->signatures,
-			'omni_version' => $this->purchased_omni_version,
-			'usercloud_key' => $this->usercloud_key
-		);
-		if (!empty($this->expiration)) {
-			$arr['expiration'] = $this->expiration;
-		}
-		return $arr;
+	public function IsEnabled() {
+		return true;
 	}
 	
-	public function PrepareSignatures(string $hardware_id) {
-		// version 1
-		$fields = array($hardware_id, strtolower($this->UserID()), strval($this->purchased_omni_version));
-		if (self::OmniFree) {
-			$expires = (floor(time() / 604800) * 604800) + 2592000;
-			$this->expiration = date('Y-m-d H:i:sO', $expires);
-			$fields[] = $this->expiration;
-		}
-		$signature = '';
-		if (openssl_sign(implode(' ', $fields), $signature, \BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
-			$this->signatures['1'] = bin2hex($signature);
+	public function SetIsEnabled() {
+		return false;
+	}
+	
+	/* !Child Accounts */
+	
+	public function IsChildAccount() {
+		return false;
+	}
+	
+	public function HasChildAccounts() {
+		return false;
+	}
+	
+	public function ChildAccounts() {
+		return [];
+	}
+	
+	public function ParentAccountID() {
+		return null;
+	}
+	
+	public function SetParentAccountID($parent_account_id) {
+		return false;
+	}
+	
+	public function ParentAccount() {
+		return null;
+	}
+	
+	public function TotalChildSeats() {
+		return 0;
+	}
+	
+	public function UsedChildSeats() {
+		return 0;
+	}
+	
+	public function RemainingChildSeats() {
+		return $this->TotalChildSeats() - $this->UsedChildSeats();
+	}
+	
+	public function CanAddChildAccount() {
+		return $this->RemainingChildSeats() > 0;
+	}
+	
+	/* !Two Factor Authentication */
+	
+	public function IsVerified() {
+		return true;
+	}
+	
+	public function Is2FAProtected() {
+		return false;
+	}
+	
+	public function Set2FAKey($key) {
+		return false;
+	}
+	
+	/* !Cloud Files */
+	
+	public function CloudUserID() {
+		return $this->user_id;
+	}
+	
+	public function UsercloudKey() {
+		return $this->usercloud_key;
+	}
+	
+	public function SetUsercloudKey(string $key) {
+		$this->usercloud_key = $key;
+		
+		$children = $this->ChildAccounts();
+		foreach ($children as $child) {
+			$child->SetUsercloudKey($key);
 		}
 		
-		// version 2
-		$fields = array($hardware_id, strtolower($this->UserID()), strval($this->purchased_omni_version), ($this->banned ? 'Banned' : 'Clean'));
-		if (self::OmniFree) {
-			$expires = (floor(time() / 604800) * 604800) + 2592000;
-			$this->expiration = date('Y-m-d H:i:sO', $expires);
-			$fields[] = $this->expiration;
-		}
-		$signature = '';
-		if (openssl_sign(implode(' ', $fields), $signature, \BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
-			$this->signatures['2'] = bin2hex($signature);
+		return true;
+	}
+	
+	public function DecryptedUsercloudKey(string $private_key) {
+		try {
+			return \BeaconEncryption::RSADecrypt($private_key, hex2bin($this->usercloud_key));
+		} catch (\Exception $err) {
+			return null;
 		}
 	}
 	
-	public function TestPassword(string $password, bool $upgradeEncryption = false) {
-		$hash = \BeaconEncryption::HashFromPassword($password, hex2bin($this->private_key_salt), $this->private_key_iterations);
+	public function SetDecryptedUsercloudKey(string $key) {
 		try {
-			$decrypted = \BeaconEncryption::SymmetricDecrypt($hash, hex2bin($this->private_key));
-			if ($upgradeEncryption && strtolower(substr($this->private_key, 0, 4)) === '8a01') {
-				$encrypted = bin2hex(\BeaconEncryption::SymmetricEncrypt($hash, $decrypted, false));
-				$database = \BeaconCommon::Database();
-				$database->BeginTransaction();
-				$database->Query('UPDATE users SET private_key = $2 WHERE user_id = $1;', $this->user_id, $encrypted);
-				$database->Commit();
-				$this->private_key = $encrypted;
-				unset($encrypted);
+			$this->usercloud_key = bin2hex(\BeaconEncryption::RSAEncrypt($this->public_key, $key));
+			
+			$children = $this->ChildAccounts();
+			foreach ($children as $child) {
+				$child->SetDecryptedUsercloudKey($key);
 			}
-			unset($decrypted);
+			
 			return true;
-		} catch (\Exception $e) {
+		} catch (\Exception $err) {
 			return false;
 		}
 	}
 	
-	public function ReplacePassword(string $password, string $private_key, bool $upgradedEncryption = false) {
+	public static function GenerateUsercloudKey() {
+		return random_bytes(128);
+	}
+	
+	public function HasFiles() {
+		$database = \BeaconCommon::Database();
+		$results = $database->Query('SELECT COUNT(remote_path) AS num_files FROM usercloud WHERE remote_path LIKE $1 AND size_in_bytes > 0 AND deleted = FALSE;', '/' . $this->UserID() . '/%');
+		return $results->Field('num_files') > 0;
+	}
+	
+	public function HasEncryptedFiles() {
+		$database = \BeaconCommon::Database();
+		$results = $database->Query('SELECT COUNT(remote_path) AS num_files FROM usercloud WHERE remote_path LIKE $1 AND size_in_bytes > 0 AND deleted = FALSE AND header IS NOT NULL;', '/' . $this->UserID() . '/%');
+		return $results->Field('num_files') > 0;
+	}
+	
+	/* !Passwords & Authentication */
+	
+	public function RequiresPasswordChange() {
+		return false;
+	}
+	
+	public function SetRequiresPasswordChange(bool $required) {
+		return false;
+	}
+	
+	public function TestPassword(string $password) {
+		$decrypted = $this->DecryptedPrivateKey($password);
+		if (is_null($decrypted)) {
+			return false;
+		}
+		
+		if (\BeaconAPI::UsesLegacyEncryption() === false && strtolower(substr($decrypted, 0, 4)) === '8a01') {
+			$this->SetDecryptedPrivateKey($password, $decrypted, \BeaconAPI::UsesLegacyEncryption());
+		}
+		
+		return true;
+	}
+	
+	public function ReplacePassword(string $password, string $private_key, string $usercloud_key, array &$child_account_passwords) {
 		if (empty($this->email_id)) {
 			return false;
 		}
 		
-		unset($this->private_key);
-		return $this->AddAuthentication($this->username, $this->email_id, $password, $private_key, $upgradedEncryption);
+		if (is_null($usercloud_key)) {
+			$usercloud_key = static::GenerateUsercloudKey();
+		}
+		
+		if ($this->SetDecryptedPrivateKey($password, $private_key)) {
+			$this->SetDecryptedUsercloudKey($usercloud_key);
+			
+			$children = $this->ChildAccounts();
+			foreach ($children as $child) {
+				$child_password = \BeaconCommon::GenerateUUID();
+				$temp = [];
+				if ($child->ReplacePassword($child_password, $private_key, $usercloud_key, $temp)) {
+					$child->SetRequiresPasswordChange(true);
+					$child_account_passwords[$child->UserID()] = $child_password;
+				}
+			}
+			
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
-	public function AddAuthentication(string $username, string $email, string $password, string $private_key, bool $upgradedEncryption = false) {
+	public function AddAuthentication(string $username, string $email, string $password, string $private_key) {
 		if (empty($this->private_key) == false) {
 			return false;
 		}
@@ -211,17 +382,11 @@ class User implements \JsonSerializable {
 				}
 			}
 			
-			$salt = \BeaconEncryption::GenerateSalt();
-			$iterations = 12000;
-			$hash = \BeaconEncryption::HashFromPassword($password, $salt, $iterations);
-			$encrypted_private_key = bin2hex(\BeaconEncryption::SymmetricEncrypt($hash, $private_key, !$upgradedEncryption));
-			$salt = bin2hex($salt);
+			$this->SetDecryptedPrivateKey($password, $private_key);
+			$this->SetDecryptedUsercloudKey(static::GenerateUsercloudKey());
 			
 			$this->username = $username;
 			$this->email_id = $email_id;
-			$this->private_key_salt = $salt;
-			$this->private_key_iterations = $iterations;
-			$this->private_key = $encrypted_private_key;
 			
 			return true;
 		} catch (\Exception $e) {
@@ -229,26 +394,98 @@ class User implements \JsonSerializable {
 		}
 	}
 	
-	public function ChangePassword(string $old_password, string $new_password, bool $upgradedEncryption = false) {
+	public function ChangePassword(string $old_password, string $new_password) {
 		try {
-			$old_hash = \BeaconEncryption::HashFromPassword($old_password, hex2bin($this->private_key_salt), $this->private_key_iterations);
-			$private_key = \BeaconEncryption::SymmetricDecrypt($old_hash, hex2bin($this->private_key));
-			$salt = \BeaconEncryption::GenerateSalt();
-			$iterations = 12000;
-			$new_hash = \BeaconEncryption::HashFromPassword($new_password, $salt, $iterations);
-			$encrypted_private_key = bin2hex(\BeaconEncryption::SymmetricEncrypt($new_hash, $private_key, $upgradedEncryption));
-			$salt = bin2hex($salt);
-			unset($private_key, $old_hash);
-			
-			$this->private_key_salt = $salt;
-			$this->private_key_iterations = $iterations;
-			$this->private_key = $encrypted_private_key;
-			
+			$private_key = $this->DecryptedPrivateKey($old_password);
+			if (is_null($private_key)) {
+				return false;
+			}
+			$this->SetDecryptedPrivateKey($new_password, $private_key);
 			return true;
 		} catch (\Exception $e) {
 			return false;
 		}
 	}
+	
+	/* !User Lookup */
+	
+	public static function GetByEmail(string $email) {
+		// When doing a SELECT with uuid_for_email(email, create), you must wrap it in its own SELECT statement.
+		// This is because the function is VOLATILE and will be executed for every row in the user table unless
+		// treated as a subquery. Or omit the second parameter, which is a STABLE function and performs fine.
+		// The second parameter should only be used when updating the email row is desired.
+		$database = \BeaconCommon::Database();
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE email_id IS NOT NULL AND email_id = (SELECT uuid_for_email($1, FALSE));', $email);
+		$users = static::GetFromResults($results);
+		if (count($users) == 1) {
+			return $users[0];
+		}
+	}
+	
+	public static function GetByUserID(string $user_id) {
+		$database = \BeaconCommon::Database();
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE user_id = ANY($1);', '{' . $user_id . '}');
+		$users = static::GetFromResults($results);
+		if (count($users) == 1) {
+			return $users[0];
+		}
+	}
+	
+	public static function GetByExtendedUsername(string $username) {
+		$display_name = substr($username, 0, -9);
+		$suffix = strtolower(substr($username, -8));
+		
+		$database = \BeaconCommon::Database();
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE username = $1 AND SUBSTRING(LOWER(user_id::TEXT) FROM 1 FOR 8) = $2;', $display_name, $suffix);
+		$users = static::GetFromResults($results);
+		if (count($users) == 1) {
+			return $users[0];
+		}
+	}
+	
+	protected static function GetFromResults(\BeaconRecordSet $results) {
+		if ($results === null || $results->RecordCount() === 0) {
+			return array();
+		}
+		
+		$users = array();
+		while (!$results->EOF()) {
+			$user = new static($results);
+			$users[] = $user;
+			$results->MoveNext();
+		}
+		return $users;
+	}
+	
+	/* !Validation */
+	
+	public static function ValidateEmail(string $email) {
+		return filter_var($email, FILTER_VALIDATE_EMAIL);
+	}
+	
+	public static function ValidatePassword(string $password) {
+		$passlen = strlen($password);
+		
+		if ($passlen < 8) {
+			return false;
+		}
+		
+		$chars = count_chars($password);
+		foreach ($chars as $char => $count) {
+			$percent = $count / $passlen;
+			if ($percent > 0.3) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	public static function IsExtendedUsername(string $username) {
+		return preg_match('/#[a-fA-F0-9]{8}$/', $username) === 1;
+	}
+	
+	/* !Everything Else */
 	
 	public function MergeUsers(... $user_ids) {
 		$database = \BeaconCommon::Database();
@@ -305,6 +542,17 @@ class User implements \JsonSerializable {
 					$database->Query('DELETE FROM email_verification WHERE email_id = $1;', $this->email_id);
 					$database->Query('DELETE FROM sessions WHERE user_id = $1;', $this->user_id);
 				}
+				
+				if ($this->IsChildAccount() === false && array_key_exists('usercloud_key', $changes)) {
+					// The cloud key has been changed, so we need to cleanup the cloud files
+					$cloud_files = \BeaconCloudStorage::ListFiles('/' . $this->UserID() . '/');
+					foreach ($cloud_files as $file) {
+						if ($file['deleted'] === false && is_null($file['header']) === false) {
+							\BeaconCloudStorage::DeleteFile($file['path']);
+						}
+					}
+				}
+				
 				$database->Commit();
 			} catch (\Exception $e) {
 				return false;
@@ -318,102 +566,53 @@ class User implements \JsonSerializable {
 		return \BeaconEncryption::RSAVerify($this->public_key, $data, $signature);
 	}
 	
-	public function AssignUsercloudKey() {
-		if (is_null($this->usercloud_key)) {
-			$this->usercloud_key = bin2hex(\BeaconEncryption::RSAEncrypt($this->public_key, random_bytes(128)));
-			return true;
-		}
-		return false;
-	}
-	
-	private static function SQLColumns() {
+	protected static function SQLColumns() {
 		return array('user_id', 'email_id', 'username', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key', 'banned');
 	}
 	
-	public static function GetByEmail(string $email) {
-		// When doing a SELECT with uuid_for_email(email, create), you must wrap it in its own SELECT statement.
-		// This is because the function is VOLATILE and will be executed for every row in the user table unless
-		// treated as a subquery. Or omit the second parameter, which is a STABLE function and performs fine.
-		// The second parameter should only be used when updating the email row is desired.
-		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE email_id IS NOT NULL AND email_id = (SELECT uuid_for_email($1, FALSE));', $email);
-		$users = static::GetFromResults($results);
-		if (count($users) == 1) {
-			return $users[0];
+	public function jsonSerialize() {
+		$arr = array(
+			'user_id' => $this->user_id,
+			'username' => $this->username,
+			'public_key' => $this->public_key,
+			'private_key' => $this->private_key,
+			'private_key_salt' => $this->private_key_salt,
+			'private_key_iterations' => $this->private_key_iterations,
+			'banned' => $this->banned,
+			'signatures' => $this->signatures,
+			'omni_version' => $this->purchased_omni_version,
+			'usercloud_key' => $this->usercloud_key
+		);
+		if (!empty($this->expiration)) {
+			$arr['expiration'] = $this->expiration;
 		}
+		return $arr;
 	}
 	
-	public static function GetByUserID(string $user_id) {
-		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE user_id = ANY($1);', '{' . $user_id . '}');
-		$users = static::GetFromResults($results);
-		if (count($users) == 1) {
-			return $users[0];
+	public function PrepareSignatures(string $hardware_id) {
+		// version 1
+		$fields = array($hardware_id, strtolower($this->UserID()), strval($this->purchased_omni_version));
+		if (self::OmniFree) {
+			$expires = (floor(time() / 604800) * 604800) + 2592000;
+			$this->expiration = date('Y-m-d H:i:sO', $expires);
+			$fields[] = $this->expiration;
 		}
-	}
-	
-	public static function GetByExtendedUsername(string $username) {
-		$display_name = substr($username, 0, -9);
-		$suffix = strtolower(substr($username, -8));
-		
-		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE username = $1 AND SUBSTRING(LOWER(user_id::TEXT) FROM 1 FOR 8) = $2;', $display_name, $suffix);
-		$users = static::GetFromResults($results);
-		if (count($users) == 1) {
-			return $users[0];
-		}
-	}
-	
-	protected static function GetFromResults(\BeaconRecordSet $results) {
-		if ($results === null || $results->RecordCount() === 0) {
-			return array();
+		$signature = '';
+		if (openssl_sign(implode(' ', $fields), $signature, \BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
+			$this->signatures['1'] = bin2hex($signature);
 		}
 		
-		$users = array();
-		while (!$results->EOF()) {
-			$user = new static($results);
-			$users[] = $user;
-			$results->MoveNext();
+		// version 2
+		$fields = array($hardware_id, strtolower($this->UserID()), strval($this->purchased_omni_version), ($this->banned ? 'Banned' : 'Clean'));
+		if (self::OmniFree) {
+			$expires = (floor(time() / 604800) * 604800) + 2592000;
+			$this->expiration = date('Y-m-d H:i:sO', $expires);
+			$fields[] = $this->expiration;
 		}
-		return $users;
-	}
-	
-	public static function ValidateEmail(string $email) {
-		return filter_var($email, FILTER_VALIDATE_EMAIL);
-	}
-	
-	public static function ValidatePassword(string $password) {
-		$passlen = strlen($password);
-		
-		if ($passlen < 8) {
-			return false;
+		$signature = '';
+		if (openssl_sign(implode(' ', $fields), $signature, \BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
+			$this->signatures['2'] = bin2hex($signature);
 		}
-		
-		$chars = count_chars($password);
-		foreach ($chars as $char => $count) {
-			$percent = $count / $passlen;
-			if ($percent > 0.3) {
-				return false;
-			}
-		}
-		
-		return true;
-	}
-	
-	public static function IsExtendedUsername(string $username) {
-		return preg_match('/#[a-fA-F0-9]{8}$/', $username) === 1;
-	}
-	
-	public function HasFiles() {
-		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT COUNT(remote_path) AS num_files FROM usercloud WHERE remote_path LIKE $1 AND size_in_bytes > 0 AND deleted = FALSE;', '/' . $this->UserID() . '/%');
-		return $results->Field('num_files') > 0;
-	}
-	
-	public function HasEncryptedFiles() {
-		$database = \BeaconCommon::Database();
-		$results = $database->Query('SELECT COUNT(remote_path) AS num_files FROM usercloud WHERE remote_path LIKE $1 AND size_in_bytes > 0 AND deleted = FALSE AND header IS NOT NULL;', '/' . $this->UserID() . '/%');
-		return $results->Field('num_files') > 0;
 	}
 }
 

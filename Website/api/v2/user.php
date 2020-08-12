@@ -52,7 +52,7 @@ case 'GET':
 		if (isset($_GET['hardware_id'])) {
 			$user->PrepareSignatures(trim($_GET['hardware_id']));
 		}
-		if ($user->AssignUsercloudKey()) {
+		if (is_null($user->UsercloudKey()) && $user->SetDecryptedUsercloudKey(BeaconUser::GenerateUsercloudKey())) {
 			$user->Commit();
 		}
 		BeaconAPI::ReplySuccess($user);
@@ -100,24 +100,23 @@ case 'DELETE':
 		BeaconAPI::ReplyError('Cannot delete another user.');
 	}
 	
-	$database->BeginTransaction();
-	$database->Query('DELETE FROM documents WHERE user_id = $1;', BeaconAPI::UserID());
-	$database->Query('DELETE FROM mods WHERE user_id = $1;', BeaconAPI::UserID());
-	$database->Query('DELETE FROM users WHERE user_id = $1;', BeaconAPI::UserID());
-	$database->Commit();
-	
-	BeaconAPI::ReplySuccess();
+	$user = BeaconUser::GetByUserID(BeaconAPI::UserID());
+	if ($user->SetIsEnabled(false) && $user->Commit()) {
+		BeaconAPI::ReplySuccess();
+	} else {
+		BeaconAPI::ReplyError('Could not disable user', BeaconAPI::UserID(), 400);
+	}
 	
 	break;
 }
 
 function SaveUser(array $values, string &$message) {
-	if (array_key_exists('user_id', $values) == false || BeaconCommon::IsUUID($values['user_id']) == false) {
-		$message = 'User ID is missing or not a v4 UUID.';
-		return null;
+	$user = null;
+	if (array_key_exists('user_id', $values) && BeaconCommon::IsUUID($values['user_id'])) {
+		$user_id = $values['user_id'];
+		$user = BeaconUser::GetByUserID($user_id);
 	}
-	$user_id = $values['user_id'];
-	$user = BeaconUser::GetByUserID($user_id);
+	
 	$database = BeaconCommon::Database();
 	
 	$authenticated_user = null;
@@ -126,7 +125,7 @@ function SaveUser(array $values, string &$message) {
 	}
 	
 	if (isset($values['action']) && strtolower($values['action']) === 'merge') {
-		// merge an anonymous user into the currently authenticated user
+		// Merge an anonymous user into the currently authenticated user.
 		
 		if (isset($values['private_key']) == false) {
 			$message = 'Private key not included.';
@@ -136,92 +135,67 @@ function SaveUser(array $values, string &$message) {
 		return MergeUsers($authenticated_user, $user, $values['private_key'], $message);
 	}
 	
-	if (array_key_exists('login_key', $values)) {
-		// wants to save a named user
-		if (is_null($authenticated_user) == false && strtolower($authenticated_user->UserID()) == strtolower($user_id)) {
-			// we are authenticated as the user we are trying to edit, this is simple
-			$changes = array();
-			if (strtolower($authenticated_user->LoginKey()) != strtolower($values['login_key'])) {
-				$changes['login_key'] = $values['login_key'];
-			}
-			
-			// if any of these keys are included, all are required
-			// if the login_key is currently blank, then require these too
-			if (empty($authenticated_user->LoginKey()) || array_key_exists('private_key', $values) || array_key_exists('private_key_salt', $values) || array_key_exists('private_key_iterations', $values)) {
-				if (BeaconCommon::HasAllKeys($values, 'private_key', 'private_key_salt', 'private_key_iterations') == false) {
-					$message = 'Incomplete private key information.';
-					return null;
-				}
-				
-				if (strtolower($authenticated_user->PrivateKey()) != strtolower($values['private_key'])) {
-					$changes['private_key'] = $values['private_key'];
-				}
-				if (strtolower($authenticated_user->PrivateKeySalt()) != strtolower($values['private_key_salt'])) {
-					$changes['private_key_salt'] = $values['private_key_salt'];
-				}
-				if ($authenticated_user->PrivateKeyIterations() != intval($values['private_key_iterations'])) {
-					$changes['private_key_iterations'] = $values['private_key_iterations'];
-				}
-			}
-			
-			if (count($changes) > 0) {
-				try {
-					$database->Update('users', $changes, array('user_id' => $authenticated_user->UserID()));
-				} catch (Exception $e) {
-					$message = $e->getMessage();
-					return null;
-				}
-			}
-			
-			return BeaconUser::GetByUserID($user_id);
-		}
-		
-		if (array_key_exists('public_key', $values) == false) {
-			$message = 'Public key is missing.';
-			return null;
-		}
-		$public_key = BeaconEncryption::PublicKeyToPEM($values['public_key']);
-		if (BeaconCommon::HasAllKeys($values, 'private_key', 'private_key_salt', 'private_key_iterations') == false) {
-			$message = 'Missing private key information.';
+	// If `user_id` is not specified, changes affect the authenticated user.
+	if (is_null($authenticated_user) === false && is_null($user) === true) {
+		$user = $authenticated_user;
+	}
+	
+	// `email` is the modern tag. Migrate `login_key` to email if it is present.
+	if (array_key_exists('login_key', $values) && array_key_exists('email', $values) === false) {
+		$values['email'] = $values['login_key'];
+	}
+	
+	// If `$user` is not null, then we edit the user, as long as the user is the authenticated user.
+	if (is_null($user) === false) {
+		if (is_null($authenticated_user) || $authenticated_user->UserID() !== $user->UserID()) {
+			$message = 'May not edit another user';
 			return null;
 		}
 		
-		if (is_null($user)) {
-			try {
-				$database->BeginTransaction();
-				$database->Query('INSERT INTO users (user_id, login_key, public_key, private_key, private_key_salt, private_key_iterations) VALUES ($1, $2, $3, $4, $5, $6);', $user_id, $values['login_key'], $public_key, $values['private_key'], $values['private_key_salt'], $values['private_key_iterations']);
-				$database->Commit();
-			} catch (Exception $e) {
-				$message = $e->getMessage();
+		if (array_key_exists('username', $values) && $user->SetUsername($values['username']) === false) {
+			$message = 'Unable to set username to ' . $values['username'] . '.';
+			return null;
+		}
+		
+		if (array_key_exists('email', $values) && $user->SetEmailAddress($values['email']) === false) {
+			$message = 'Unable to set account email address to ' . $values['email'] . '.';
+			return null;
+		}
+	} else {
+		if (empty($user_id)) {
+			$message = 'User ID is missing or not a v4 UUID.';
+			return null;
+		}
+		if (empty($values['public_key'])) {
+			$message = 'Missing public key.';
+			return null;
+		}
+		$user = new BeaconUser($user_id);
+		$user->SetPublicKey(BeaconEncryption::PublicKeyToPEM($values['public_key']));
+		$user->SetDecryptedUsercloudKey(BeaconUser::GenerateUsercloudKey());
+		
+		if (array_key_exists('email', $values)) {
+			// The goal is to create a named user
+			if (BeaconCommon::HasAllKeys($values, 'private_key', 'private_key_salt', 'private_key_iterations') === false) {
+				$message = 'Incomplete user profile.';
 				return null;
 			}
-			return BeaconUser::GetByUserID($user_id);
-		} else {
-			$message = 'User ID or email already exists.';
-			return null;
-		}		
+			
+			if (empty($values['username'])) {
+				$values['username'] = $values['email'];
+			}
+			
+			$user->SetEmailAddress($values['email']);
+			$user->SetUsername($values['username']);
+			$user->SetPrivateKey($values['private_key'], $values['private_key_salt'], $values['private_key_iterations']);
+		}
+	}
+	
+	if ($user->Commit()) {
+		return BeaconUser::GetByUserID($user->UserID());
 	} else {
-		// wants to save an anonymous user
-		if (is_null($user) == false) {
-			$message = 'User ' . $user_id . ' already exists.';
-			return null;
-		}
-		if (array_key_exists('public_key', $values) == false) {
-			$message = 'Public key is missing.';
-			return null;
-		}
-		$public_key = BeaconEncryption::PublicKeyToPEM($values['public_key']);
-		
-		try {
-			$database->BeginTransaction();
-			$database->Query('INSERT INTO users (user_id, public_key) VALUES ($1, $2);', $user_id, $public_key);
-			$database->Commit();
-		} catch (Exception $e) {
-			$message = $e->getMessage();
-			return null;
-		}
-		
-		return BeaconUser::GetByUserID($user_id);;
+		$message = 'Unable to save changes the user.';
+		return null;
 	}
 }
 

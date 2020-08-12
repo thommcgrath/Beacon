@@ -30,6 +30,15 @@ abstract class BeaconEncryption {
 		}
 	}
 	
+	public static function RSASign(string $private_key, string $data) {
+		$signature = null;
+		if (@openssl_sign($data, $signature, $private_key, OPENSSL_ALGO_SHA1)) {
+			return $signature;
+		} else {
+			throw new Exception('Unable to create signature: ' . openssl_error_string());
+		}
+	}
+	
 	public static function RSAVerify(string $public_key, string $data, string $signature) {
 		$status = @openssl_verify($data, $signature, $public_key, OPENSSL_ALGO_SHA1);
 		if ($status == -1) {
