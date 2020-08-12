@@ -34,7 +34,7 @@ class Session implements \JsonSerializable {
 	
 	public static function Create(string $user_id) {
 		$session_id = \BeaconCommon::GenerateUUID();
-		$remote_ip = $_SERVER['REMOTE_ADDR'];
+		$remote_ip = \BeaconCommon::RemoteAddr();
 		
 		$database = \BeaconCommon::Database();
 		$database->BeginTransaction();

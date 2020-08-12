@@ -108,7 +108,7 @@ abstract class Core {
 			
 			$database = \BeaconCommon::Database();
 			$database->BeginTransaction();
-			$database->Query('UPDATE sessions SET valid_until = CURRENT_TIMESTAMP + \'30 days\'::INTERVAL, remote_ip = $2 WHERE (remote_ip IS DISTINCT FROM $2 OR valid_until < CURRENT_TIMESTAMP + \'15 days\'::INTERVAL) AND session_id = encode(digest($1, \'sha512\'), \'hex\');', $session_id, $_SERVER['REMOTE_ADDR']);
+			$database->Query('UPDATE sessions SET valid_until = CURRENT_TIMESTAMP + \'30 days\'::INTERVAL, remote_ip = $2 WHERE (remote_ip IS DISTINCT FROM $2 OR valid_until < CURRENT_TIMESTAMP + \'15 days\'::INTERVAL) AND session_id = encode(digest($1, \'sha512\'), \'hex\');', $session_id, \BeaconCommon::RemoteAddr());
 			$database->Query('DELETE FROM sessions WHERE valid_until < CURRENT_TIMESTAMP;');
 			$database->Commit();
 			

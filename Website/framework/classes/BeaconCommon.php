@@ -553,6 +553,22 @@ abstract class BeaconCommon {
 	public static function CompressedResponseAllowed() {
 		return (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && stripos(strtolower($_SERVER['HTTP_ACCEPT_ENCODING']), 'gzip') !== false);
 	}
+	
+	public static function RemoteAddr() {
+		if (empty($_SERVER['HTTP_X_FORWARDED_FOR']) === false) {
+			return $_SERVER['HTTP_X_FORWARDED_FOR'];
+		} elseif (empty($_SERVER['HTTP_CF_CONNECTING_IP']) === false) {
+			return $_SERVER['HTTP_CF_CONNECTING_IP'];
+		} else {
+			return $_SERVER['REMOTE_ADDR'];
+		}
+	}
+	
+	public static function RemoteCountry() {
+		if (empty($_SERVER['HTTP_CF_IPCOUNTRY']) === false) {
+			return $_SERVER['HTTP_CF_IPCOUNTRY'];
+		}
+	}
 }
 
 ?>
