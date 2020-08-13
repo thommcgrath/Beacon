@@ -138,6 +138,16 @@ abstract class BeaconEncryption {
 		openssl_pkey_free($handle);
 	}
 	
+	public static function ExtractPublicKey(string $private_key) {
+		$handle = @openssl_pkey_get_private($private_key);
+		$details = @openssl_pkey_get_details($handle);
+		if (is_array($details) && array_key_exists('key', $details)) {
+			return $details['key'];
+		} else {
+			return null;
+		}
+	}
+	
 	public static function IsEncrypted(string $data) {
 		return (unpack('C', $data[0])[1] === self::SymmetricMagicByte);
 	}

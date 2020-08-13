@@ -808,7 +808,7 @@ div.results {
 	bottom: 0px;
 	left: 0px;
 	right: 0px;
-	transition-duration: 0.15s;
+	transition-duration: 0.25s;
 	transition-timing-function: ease-out;
 	transition-property: background-color, -webkit-backdrop-filter;
 	z-index: 2000;
@@ -828,10 +828,10 @@ div.results {
 	right: 0px;
 	z-index: 2001;
 	opacity: 0;
-	transition-duration: 0.15s;
+	transition-duration: 0.25s;
 	transition-timing-function: ease-out;
-	transition-property: opacity;
-	transition-delay: 0s;
+	transition-property: opacity, filter;
+	filter: blur(30px);
 	
 	&.exist {
 		display: block;
@@ -839,7 +839,7 @@ div.results {
 	
 	&.visible {
 		opacity: 1;
-		transition-delay: 0.2s;
+		filter: none;
 	}
 	
 	p {

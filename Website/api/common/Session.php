@@ -73,7 +73,7 @@ class Session implements \JsonSerializable {
 	
 	public static function Create(string $user_id) {
 		$user = \BeaconUser::GetByUserID($user_id);
-		if (is_null($user) || $user->IsEnabled() === false) {
+		if (is_null($user) || $user->IsEnabled() === false || $user->RequiresPasswordChange() === true) {
 			return null;
 		}
 		
@@ -92,7 +92,7 @@ class Session implements \JsonSerializable {
 	
 	public static function GetBySessionID(string $session_id) {
 		$database = \BeaconCommon::Database();
-		$results = $database->Query("SELECT $1::text AS session_id, " . implode(', ', static::SQLColumns()) . " FROM " . static::SQLTable() . " WHERE users.enabled = TRUE AND sessions.session_id = encode(digest($1, 'sha512'), 'hex') AND sessions.valid_until >= CURRENT_TIMESTAMP;", $session_id);
+		$results = $database->Query("SELECT $1::text AS session_id, " . implode(', ', static::SQLColumns()) . " FROM " . static::SQLTable() . " WHERE users.enabled = TRUE AND users.require_password_change = FALSE AND sessions.session_id = encode(digest($1, 'sha512'), 'hex') AND sessions.valid_until >= CURRENT_TIMESTAMP;", $session_id);
 		if ($results->RecordCount() === 1) {
 			return self::GetFromResult($results);
 		} else {
@@ -102,7 +102,7 @@ class Session implements \JsonSerializable {
 	
 	public static function GetBySessionHash(string $session_hash) {
 		$database = \BeaconCommon::Database();
-		$results = $database->Query("SELECT '' AS session_id, " . implode(', ', static::SQLColumns()) . " FROM " . static::SQLTable() . " WHERE users.enabled = TRUE AND sessions.session_id = $1 AND sessions.valid_until >= CURRENT_TIMESTAMP;", $session_hash);
+		$results = $database->Query("SELECT '' AS session_id, " . implode(', ', static::SQLColumns()) . " FROM " . static::SQLTable() . " WHERE users.enabled = TRUE AND users.require_password_change = FALSE AND sessions.session_id = $1 AND sessions.valid_until >= CURRENT_TIMESTAMP;", $session_hash);
 		if ($results->RecordCount() === 1) {
 			return self::GetFromResult($results);
 		} else {
@@ -113,7 +113,7 @@ class Session implements \JsonSerializable {
 	public static function GetForUserID(string $user_id) {
 		try {
 			$database = \BeaconCommon::Database();
-			$results = $database->Query('SELECT \'\' AS session_id, ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLTable() . ' WHERE users.enabled = TRUE AND sessions.user_id = $1 ORDER BY valid_until DESC;', $user_id);
+			$results = $database->Query('SELECT \'\' AS session_id, ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLTable() . ' WHERE users.enabled = TRUE AND users.require_password_change = FALSE AND sessions.user_id = $1 ORDER BY valid_until DESC;', $user_id);
 			return static::GetFromResults($results);
 		} catch (\Exception $err) {
 			return [];

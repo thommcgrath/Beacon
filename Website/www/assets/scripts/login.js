@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 	var current_page;
-	var pages = ['intro', 'login', 'recover', 'verify', 'password', 'loading'];
+	var pages = ['login', 'recover', 'verify', 'password', 'loading'];
 	pages.forEach(function(page) {
 		var element = document.getElementById('page_' + page);
 		if (!element) {
@@ -55,11 +55,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	};
 	
-	var introPage = document.getElementById('page_intro');
-	var introContinueButton = document.getElementById('intro_continue_button');
-	var introLoginButton = document.getElementById('intro_login_button');
-	var introDeclineButton = document.getElementById('intro_decline_button');
-	
 	var loginPage = document.getElementById('page_login');
 	var loginForm = document.getElementById('login_form_intro');
 	var loginEmailField = document.getElementById('login_email_field');
@@ -71,6 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	var loginActionButton = document.getElementById('login_action_button');
 	var loginExplicitEmailField = document.getElementById('login_explicit_email');
 	var loginExplicitCodeField = document.getElementById('login_explicit_code');
+	var loginExplicitPasswordField = document.getElementById('login_explicit_password');
 	
 	var recoverForm = document.getElementById('login_recover_form');
 	var recoverEmailField = document.getElementById('recover_email_field');
@@ -115,29 +111,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	var consumeURI;
 	if (passwordPage) {
 		consumeURI = passwordPage.getAttribute('beacon-consumer-uri');
-	}	
-	
-	// !Intro page
-	if (introContinueButton) {
-		introContinueButton.addEventListener('click', function(ev) {
-			ev.preventDefault();
-			show_page('loading');
-			window.location = 'beacon://set_user_privacy?action=anonymous';
-		});
-	}
-	if (introLoginButton) {
-		introLoginButton.addEventListener('click', function(ev) {
-			ev.preventDefault();
-			show_page('login');
-			focus_first([loginEmailField, loginPasswordField, loginRememberCheck, loginActionButton]);
-		});
-	}
-	if (introDeclineButton) {
-		introDeclineButton.addEventListener('click', function(ev) {
-			ev.preventDefault();
-			show_page('loading');
-			window.location = 'beacon://set_user_privacy?action=full';
-		});
 	}
 	
 	// !Login Page
@@ -201,13 +174,13 @@ document.addEventListener('DOMContentLoaded', function() {
 				url = url.replace('{{temporary}}', (loginRemember == false ? 'false' : 'true'));
 				
 				window.location = url;
-			}, function(http_status) {
+			}, function(http_status, error_body) {
 				show_page('login');
 				
 				switch (http_status) {
 				case 401:
 				case 403:
-					dialog.show('Incorrect Login', 'Username or password is not correct.');
+					dialog.show('Incorrect Login', 'Email or password is not correct.');
 					break;
 				default:
 					dialog.show('Unable to complete login', 'Sorry, there was a ' + http_status + ' error.');
@@ -235,11 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	if (loginCancelButton) {
 		loginCancelButton.addEventListener('click', function(ev) {
 			ev.preventDefault();
-			if (introPage) {
-				show_page('intro');
-			} else {
-				window.location = 'beacon://dismiss_me';
-			}
+			window.location = 'beacon://dismiss_me';
 			return false;
 		});
 	}
@@ -275,12 +244,22 @@ document.addEventListener('DOMContentLoaded', function() {
 					show_page('verify');
 					focus_first([verifyCodeField, verifyActionButton]);
 				}
-			}, function(http_status) {
+			}, function(http_status, response) {
 				if (recoverActionButton) {
 					recoverActionButton.disabled = false;
 				}
+				
+				var message = 'There was a ' + http_status + ' error while trying to send the verification email.';
+				try {
+					var obj = JSON.parse(response);
+					if (obj.message) {
+						message = obj.message;
+					}
+				} catch (err) {
+				}
+				
 				show_page('recover');
-				dialog.show('Unable to continue', 'There was a ' + http_status + ' error while trying to send the verification email.');
+				dialog.show('Unable to continue', message);
 			});
 			return false;
 		});
@@ -335,6 +314,8 @@ document.addEventListener('DOMContentLoaded', function() {
 				show_page('verify');
 				dialog.show('Unable to confirm', 'There was a ' + http_status + ' error while trying to verify the code.');
 			});
+			
+			return false;
 		});
 	}
 	if (verifyCancelButton) {
@@ -357,6 +338,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			var passwordInitial = '';
 			var passwordConfirm = '';
 			var passwordAllowVulnerable = false;
+			var passwordPrevious = null;
 			
 			if (passwordEmailField) {
 				passwordEmail = passwordEmailField.value.trim();
@@ -383,9 +365,12 @@ document.addEventListener('DOMContentLoaded', function() {
 				dialog.show('Passwords do not match', 'Please make sure the two passwords match.');
 				return;
 			}
+			if (loginExplicitPasswordField) {
+				passwordPrevious = loginExplicitPasswordField.value;
+			}
 			
 			show_page('loading');
-			request.post('/account/login/password', {'email': passwordEmail, 'username': passwordUsername, 'password': passwordInitial, 'code': passwordVerificationCode, 'allow_vulnerable': passwordAllowVulnerable}, function(obj) {
+			request.post('/account/login/password', {'email': passwordEmail, 'username': passwordUsername, 'password': passwordInitial, 'previousPassword': passwordPrevious, 'code': passwordVerificationCode, 'allow_vulnerable': passwordAllowVulnerable}, function(obj) {
 				if (localStorage && loginRemember) {
 					localStorage.setItem('email', passwordEmail);
 				}
@@ -421,7 +406,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	if (passwordCancelButton) {
 		passwordCancelButton.addEventListener('click', function(event) {
 			event.preventDefault();
-			show_page('intro');
+			show_page('login');
 			focus_first([loginEmailField, loginPasswordField, loginActionButton]);
 			return false;
 		});
@@ -456,9 +441,15 @@ document.addEventListener('DOMContentLoaded', function() {
 			recoverEmailField.value = explicitEmail;
 		}
 		show_page('recover');
-	} else if (loginExplicitEmailField && loginExplicitCodeField) {
-		passwordEmailField.value = loginExplicitEmailField.value;
-		passwordCodeField.value = loginExplicitCodeField.value;
-		show_page('password');
+	} else if (loginExplicitEmailField && loginExplicitCodeField && verifyCodeField && verifyEmailField) {
+		verifyEmailField.value = loginExplicitEmailField.value;
+		verifyCodeField.value = loginExplicitCodeField.value;
+		
+		var event = new Event('submit', {'bubbles': true, 'cancelable': true});
+		verifyForm.dispatchEvent(event);
+	}
+	
+	if (window.location.search !== '') {
+		window.history.pushState({}, '', '/account/login/');	
 	}
 });

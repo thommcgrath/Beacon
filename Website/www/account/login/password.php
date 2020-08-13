@@ -77,15 +77,23 @@ if (is_null($user_id)) {
 	$user = BeaconUser::GetByUserID($user_id);
 }
 
-$public_key = null;
-$private_key = null;
-BeaconEncryption::GenerateKeyPair($public_key, $private_key);
-
-$child_passwords = [];
-if ($user->AddAuthentication($username, $email, $password, $private_key) == false && $user->ReplacePassword($password, $private_key, BeaconUser::GenerateUsercloudKey(), $child_passwords) == false) {
-	http_response_code(500);
-	echo json_encode(array('message' => 'There was an error updating authentication parameters.'), JSON_PRETTY_PRINT);
-	exit;
+if (empty($_POST['previousPassword'])) {
+	$public_key = null;
+	$private_key = null;
+	BeaconEncryption::GenerateKeyPair($public_key, $private_key);
+	
+	$child_passwords = [];
+	if ($user->AddAuthentication($username, $email, $password, $private_key) === false && $user->ReplacePassword($password, $private_key, BeaconUser::GenerateUsercloudKey(), $child_passwords) === false) {
+		http_response_code(500);
+		echo json_encode(array('message' => 'There was an error updating authentication parameters.'), JSON_PRETTY_PRINT);
+		exit;
+	}
+} else {
+	if ($user->ChangePassword($_POST['previousPassword'], $password) === false) {
+		http_response_code(500);
+		echo json_encode(array('message' => 'Failed to gracefully change password.'), JSON_PRETTY_PRINT);
+		exit;
+	}
 }
 if ($user->Commit() == false) {
 	http_response_code(500);

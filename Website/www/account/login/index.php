@@ -27,12 +27,16 @@ if (empty($_GET['key']) === false) {
 	$_SESSION['login_explicit_key'] = $_GET['key'];
 	$cleanup_url = true;
 }
+if (empty($_GET['password']) === false) {
+	$_SESSION['login_explicit_password'] = $_GET['password'];
+	$cleanup_url = true;
+}
 
-if ($cleanup_url) {
+/*if ($cleanup_url) {
 	header('Location: /account/login/');
 	http_response_code(302);
 	exit;
-}
+}*/
 
 if (isset($_SESSION['login_return_url'])) {
 	$return_url = $_SESSION['login_return_url'];
@@ -54,6 +58,11 @@ if (isset($_SESSION['login_explicit_key'])) {
 	$explicit_key = $_SESSION['login_explicit_key'];
 } else {
 	$explicit_key = null;
+}
+if (isset($_SESSION['login_explicit_password'])) {
+	$explicit_password = $_SESSION['login_explicit_password'];
+} else {
+	$explicit_password = null;
 }
 
 if (is_null($explicit_email) === false && is_null($explicit_code) === false) {
@@ -115,7 +124,7 @@ if (is_null($explicit_email) === false && is_null($explicit_key) === false) {
 	} else {
 		$explicit_key = null;
 	}
-} else
+}
 
 $session = BeaconSession::GetFromCookie();
 if (is_null($session) == false) {
@@ -147,7 +156,10 @@ BeaconTemplate::FinishStyles();
 
 ?>
 <div id="login_container">
-	<h1>Beacon Login<input type="hidden" id="login_return_field" value="<?php echo htmlentities($return_url); ?>"><?php if (!is_null($explicit_email)) { ?><input type="hidden" id="login_explicit_email" value="<?php echo htmlentities($explicit_email); ?>"><?php } ?><?php if (!is_null($explicit_code)) { ?><input type="hidden" id="login_explicit_code" value="<?php echo htmlentities($explicit_code); ?>"><?php } ?></h1>
+	<h1>Beacon Login<input type="hidden" id="login_return_field" value="<?php echo htmlentities($return_url); ?>">
+	<?php if (is_null($explicit_email) === false) { ?><input type="hidden" id="login_explicit_email" value="<?php echo htmlentities($explicit_email); ?>"><?php } ?>
+	<?php if (is_null($explicit_code) === false) { ?><input type="hidden" id="login_explicit_code" value="<?php echo htmlentities($explicit_code); ?>"><?php } ?>
+	<?php if (is_null($explicit_email) === false && is_null($explicit_code) === false && is_null($explicit_password) === false) { ?><input type="hidden" id="login_explicit_password" value="<?php echo htmlentities($explicit_password); ?>"><?php } ?></h1>
 	<?php
 		$login = new BeaconLogin();
 		$login->with_remember_me = true;

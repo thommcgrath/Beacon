@@ -133,7 +133,7 @@ var dialog = {
 				if (handler) {
 					handler();
 				}
-			}, 200);
+			}, 300);
 		}
 	}
 };

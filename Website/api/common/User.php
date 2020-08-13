@@ -18,6 +18,8 @@ class User implements \JsonSerializable {
 	protected $usercloud_key = null;
 	protected $banned = false;
 	protected $enabled = true;
+	protected $require_password_change = false;
+	protected $parent_account_id = false;
 	
 	public function __construct($source = null) {
 		if ($source instanceof \BeaconRecordSet) {
@@ -31,6 +33,8 @@ class User implements \JsonSerializable {
 			$this->usercloud_key = $source->Field('usercloud_key');
 			$this->banned = $source->Field('banned');
 			$this->enabled = $source->Field('enabled');
+			$this->require_password_change = $source->Field('require_password_change');
+			$this->parent_account_id = $source->Field('parent_account_id');
 			
 			if (self::OmniFree) {
 				$this->purchased_omni_version = 1;
@@ -136,7 +140,7 @@ class User implements \JsonSerializable {
 	public function SetDecryptedPrivateKey(string $password, string $private_key) {
 		$salt = \BeaconEncryption::GenerateSalt();
 		$iterations = 12000;
-		$hash = \BeaconEncryption::HashFromPassword($password, hex2bin($salt), $iterations);
+		$hash = \BeaconEncryption::HashFromPassword($password, $salt, $iterations);
 		$encrypted = bin2hex(\BeaconEncryption::SymmetricEncrypt($hash, $private_key, \BeaconAPI::UsesLegacyEncryption()));
 		$salt = bin2hex($salt);
 		
@@ -197,7 +201,7 @@ class User implements \JsonSerializable {
 	/* !Child Accounts */
 	
 	public function IsChildAccount() {
-		return false;
+		return is_null($this->parent_account_id) === false;
 	}
 	
 	public function HasChildAccounts() {
@@ -209,14 +213,18 @@ class User implements \JsonSerializable {
 	}
 	
 	public function ParentAccountID() {
-		return null;
+		return $this->parent_account_id;
 	}
 	
 	public function SetParentAccountID($parent_account_id) {
-		return false;
+		$this->parent_account_id = $parent_account_id;
+		return true;
 	}
 	
 	public function ParentAccount() {
+		if (is_null($this->parent_account_id) === false) {
+			return \BeaconUser::GetByUserID($this->parent_account_id);
+		}
 		return null;
 	}
 	
@@ -253,7 +261,11 @@ class User implements \JsonSerializable {
 	/* !Cloud Files */
 	
 	public function CloudUserID() {
-		return $this->user_id;
+		if (is_null($this->parent_account_id)) {
+			return $this->user_id;
+		} else {
+			return $this->parent_account_id;
+		}
 	}
 	
 	public function UsercloudKey() {
@@ -313,11 +325,12 @@ class User implements \JsonSerializable {
 	/* !Passwords & Authentication */
 	
 	public function RequiresPasswordChange() {
-		return false;
+		return $this->require_password_change;
 	}
 	
 	public function SetRequiresPasswordChange(bool $required) {
-		return false;
+		$this->require_password_change = $required;
+		return true;
 	}
 	
 	public function TestPassword(string $password) {
@@ -344,6 +357,7 @@ class User implements \JsonSerializable {
 		
 		if ($this->SetDecryptedPrivateKey($password, $private_key)) {
 			$this->SetDecryptedUsercloudKey($usercloud_key);
+			$this->SetRequiresPasswordChange(false);
 			
 			$children = $this->ChildAccounts();
 			foreach ($children as $child) {
@@ -387,6 +401,7 @@ class User implements \JsonSerializable {
 			
 			$this->SetDecryptedPrivateKey($password, $private_key);
 			$this->SetDecryptedUsercloudKey(static::GenerateUsercloudKey());
+			$this->SetRequiresPasswordChange(false);
 			
 			$this->username = $username;
 			$this->email_id = $email_id;
@@ -404,6 +419,7 @@ class User implements \JsonSerializable {
 				return false;
 			}
 			$this->SetDecryptedPrivateKey($new_password, $private_key);
+			$this->SetRequiresPasswordChange(false);
 			return true;
 		} catch (\Exception $e) {
 			return false;
@@ -524,13 +540,15 @@ class User implements \JsonSerializable {
 			$changes['private_key_iterations'] = $this->private_key_iterations;
 			$changes['usercloud_key'] = $this->usercloud_key;
 			$changes['enabled'] = $this->enabled;
+			$changes['require_password_change'] = $this->require_password_change;
+			$changes['parent_account_id'] = $this->parent_account_id;
 			try {
 				$database->Insert('users', $changes);
 			} catch (\Exception $e) {
 				return false;
 			}
 		} else {
-			$keys = array('username', 'email_id', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key', 'enabled');
+			$keys = array('username', 'email_id', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key', 'enabled', 'require_password_change', 'parent_account_id');
 			foreach ($keys as $key) {
 				if ($this->$key !== $original_user->$key) {
 					$changes[$key] = $this->$key;
@@ -571,7 +589,7 @@ class User implements \JsonSerializable {
 	}
 	
 	protected static function SQLColumns() {
-		return array('user_id', 'email_id', 'username', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key', 'banned', 'enabled');
+		return array('user_id', 'email_id', 'username', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key', 'banned', 'enabled', 'require_password_change', 'parent_account_id');
 	}
 	
 	public function jsonSerialize() {

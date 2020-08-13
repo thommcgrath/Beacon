@@ -115,7 +115,13 @@ abstract class Core {
 	
 	protected static function AuthorizeWithPassword(string $username, string $password) {
 		$user = \BeaconUser::GetByEmail($username);
-		if (is_null($user) == false && $user->IsEnabled() && $user->TestPassword($password)) {
+		if (is_null($user) == false && $user->TestPassword($password)) {
+			if ($user->IsEnabled() === false) {
+				return false;
+			} elseif ($user->RequiresPasswordChange() === true) {
+				\BeaconLogin::SendForcedPasswordChangeEmail($username, $password);
+				return false;
+			}
 			self::$user_id = $user->UserID();
 			self::$auth_style = self::AUTH_STYLE_EMAIL_WITH_PASSWORD;
 			return true;
@@ -124,7 +130,7 @@ abstract class Core {
 	}
 	
 	protected static function AuthorizeWithSignature(\BeaconUser $user, string $challenge, string $signature) {
-		if (is_null($user) || $user->IsEnabled() === false) {
+		if (is_null($user) || $user->IsEnabled() === false || $user->RequiresPasswordChange() === true) {
 			return false;
 		}
 		
@@ -137,6 +143,7 @@ abstract class Core {
 			self::$auth_style = self::AUTH_STYLE_PUBLIC_KEY;
 			return true;
 		}
+		
 		return false;
 	}
 	

@@ -3,14 +3,15 @@
 require(dirname(__FILE__) . '/loader.php');
 
 BeaconAPI::Authorize(true);
+$user = BeaconAPI::User();
 $method = BeaconAPI::Method();
-$remote_path = '/' . BeaconAPI::UserID();
+$remote_path = '/' . $user->CloudUserID();
 $components = explode('/', substr($_SERVER['PATH_INFO'], 1));
 foreach ($components as $component) {
 	$remote_path .= '/' . urlencode($component);
 }
 
-$prohibited_path = '/' . BeaconAPI::UserID() . '/Documents/';
+$prohibited_path = '/' . $user->CloudUserID() . '/Documents/';
 $prohibited_path_len = strlen($prohibited_path);
 if (substr($remote_path, 0, $prohibited_path_len) === $prohibited_path) {
 	BeaconAPI::ReplyError('Use the document API for accessing documents', null, 446);
@@ -20,7 +21,7 @@ switch ($method) {
 case 'GET':
 	$dir = substr($remote_path, -1, 1) === '/';
 	if ($dir) {
-		$prefix_len = strlen('/' . BeaconAPI::UserID());
+		$prefix_len = strlen('/' . $user->CloudUserID());
 		$list = BeaconCloudStorage::ListFiles($remote_path);
 		$filtered = array();
 		foreach ($list as $file) {
@@ -39,7 +40,7 @@ case 'GET':
 case 'POST':
 case 'PUT':
 	if (BeaconCloudStorage::PutFile($remote_path, BeaconAPI::Body())) {
-		$prefix_len = strlen('/' . BeaconAPI::UserID());
+		$prefix_len = strlen('/' . $user->CloudUserID());
 		$details = BeaconCloudStorage::DetailsForFile($remote_path);
 		$details['path'] = substr($details['path'], $prefix_len);
 		BeaconAPI::ReplySuccess($details);
