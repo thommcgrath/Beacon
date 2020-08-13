@@ -67,8 +67,6 @@ Implements NotificationKit.Receiver
 		Sub Open()
 		  Self.mLogManager = New LogManager
 		  
-		  Self.Log(Self.UserAgent)
-		  
 		  #if Not DebugBuild
 		    Try
 		      Var JSON As String = BeaconEncryption.SymmetricDecrypt(Self.MBSKey, DecodeBase64(Self.MBSSerial))
@@ -81,6 +79,8 @@ Implements NotificationKit.Receiver
 		      Quit
 		    End Try
 		  #endif
+		  
+		  Self.Log(Self.UserAgent)
 		  
 		  Var Lock As New Mutex("com.thezaz.beacon" + If(DebugBuild, ".debug", ""))
 		  If Not Lock.TryEnter Then
