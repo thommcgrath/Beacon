@@ -22,10 +22,12 @@ if (isset($_GET['html'])) {
 // Beacon 1.2.0 and its betas did not report architecture correctly
 if ($current_build >= 10201300 && isset($_GET['arch'])) {
 	switch ($_GET['arch']) {
-	case 'x86_64', 'arm_64':
+	case 'x86_64':
+	case 'arm_64':
 		$arch_priority = array('64', 'combo');
 		break;
-	case 'x86', 'arm':
+	case 'x86':
+	case 'arm':
 		$arch_priority = array('32', 'combo');
 		break;
 	}
