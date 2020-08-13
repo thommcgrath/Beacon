@@ -21,6 +21,9 @@ class User implements \JsonSerializable {
 	protected $require_password_change = false;
 	protected $parent_account_id = false;
 	
+	private $has_child_accounts = null;
+	private $child_accounts = null;
+	
 	public function __construct($source = null) {
 		if ($source instanceof \BeaconRecordSet) {
 			$this->user_id = $source->Field('user_id');
@@ -38,9 +41,13 @@ class User implements \JsonSerializable {
 			
 			if (self::OmniFree) {
 				$this->purchased_omni_version = 1;
-			} else {
+			} elseif ($this->enabled === true) {
 				$database = \BeaconCommon::Database();
-				$purchases = $database->Query('SELECT * FROM purchased_products WHERE purchaser_email = $1;', $this->email_id);
+				if (is_null($this->parent_account_id)) {
+					$purchases = $database->Query('SELECT * FROM purchased_products WHERE purchaser_email = $1;', $this->email_id);
+				} else {
+					$purchases = $database->Query('SELECT DISTINCT product_id FROM purchased_products INNER JOIN users ON (purchased_products.purchaser_email = users.email_id) WHERE users.user_id = $1;', $this->parent_account_id);
+				}
 				while (!$purchases->EOF()) {
 					$omni_version = 0;
 					$product_id = $purchases->Field('product_id');
@@ -205,11 +212,22 @@ class User implements \JsonSerializable {
 	}
 	
 	public function HasChildAccounts() {
-		return false;
+		if (is_null($this->has_child_accounts)) {
+ 			$database = \BeaconCommon::Database();
+ 			$results = $database->Query('SELECT COUNT(user_id) AS user_count FROM users WHERE parent_account_id = $1;', $this->user_id);
+ 			$this->has_child_accounts = intval($results->Field('user_count')) > 0;
+ 		}
+ 		return $this->has_child_accounts;
 	}
 	
 	public function ChildAccounts() {
-		return [];
+		if (is_null($this->child_accounts)) {
+ 			$database = \BeaconCommon::Database();
+ 			$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE parent_account_id = $1;', $this->user_id);
+ 			$this->child_accounts = static::GetFromResults($results);
+ 			$this->has_child_accounts = count($this->child_accounts) > 0;
+ 		}
+ 		return $this->child_accounts;
 	}
 	
 	public function ParentAccountID() {
@@ -229,11 +247,19 @@ class User implements \JsonSerializable {
 	}
 	
 	public function TotalChildSeats() {
-		return 0;
+		if ($this->banned) {
+ 			return 0;
+ 		}
+
+  		$database = \BeaconCommon::Database();
+ 		$results = $database->Query('SELECT SUM(child_seat_count) AS total_seat_count FROM purchased_products WHERE purchaser_email = $1;', $this->email_id);
+ 		return intval($results->Field('total_seat_count'));
 	}
 	
 	public function UsedChildSeats() {
-		return 0;
+		$database = \BeaconCommon::Database();
+ 		$results = $database->Query('SELECT COUNT(users) AS used_seat_count FROM users WHERE parent_account_id = $1 AND enabled = TRUE AND banned = FALSE;', $this->user_id);
+ 		return intval($results->Field('used_seat_count'));
 	}
 	
 	public function RemainingChildSeats() {

@@ -1,0 +1,42 @@
+.child_seat_status {
+	text-align: center;
+	margin-top: 40px;
+	margin-bottom: 40px;
+	
+	.slot_explanation {
+		font-size: 1.2em;
+	}
+	
+	.slot_count {
+		font-weight: bold;
+	}
+	
+	button {
+		margin: 6px;
+	}
+}
+
+table.generic {
+	td:nth-of-type(2), th:nth-of-type(2) {
+		width: 100px;
+	}
+	
+	td:nth-of-type(3), th:nth-of-type(3) {
+		width: 200px;
+	}
+}
+
+.mobile-actions {
+	border-top-style: solid;
+	border-top-width: 1px;
+	font-size: smaller;
+	margin-top: 0.8em;
+	padding-top: 0.4em;
+	display: block;
+}
+
+@media (min-width: 635px) {
+	.mobile-actions {
+		display: none;
+	}
+}

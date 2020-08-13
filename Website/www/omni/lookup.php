@@ -31,9 +31,9 @@ try {
 
 http_response_code(200);
 if (is_null($user)) {
-	echo json_encode(['error' => false, 'email' => $_GET['email'], 'omni' => false], JSON_PRETTY_PRINT);
+	echo json_encode(['error' => false, 'email' => $_GET['email'], 'omni' => false, 'child' => false], JSON_PRETTY_PRINT);
 } else {
-	echo json_encode(['error' => false, 'email' => $_GET['email'], 'omni' => ($user->OmniVersion() >= 1)], JSON_PRETTY_PRINT);
+	echo json_encode(['error' => false, 'email' => $_GET['email'], 'omni' => ($user->OmniVersion() >= 1), 'child' => $user->IsChildAccount()], JSON_PRETTY_PRINT);
 }
 
 ?>

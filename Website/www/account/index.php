@@ -99,10 +99,12 @@ BeaconTemplate::FinishScript();
 	<div id="account_toolbar_menu_omni"><a href="#omni" id="toolbar_omni_button">Omni</a></div>
 	<div id="account_toolbar_menu_settings"><a href="#settings" id="toolbar_settings_button">Settings</a></div>
 	<div id="account_toolbar_menu_sessions"><a href="#sessions" id="toolbar_sessions_button">Sessions</a></div>
+	<div id="account_toolbar_menu_team"><a href="#team" id="toolbar_team_button">Team</a></div>
 </div>
 <div id="account_views">
 	<div id="account_view_documents"><?php include('includes/documents.php'); ?></div>
 	<div id="account_view_omni" class="hidden"><?php include('includes/omni.php'); ?></div>
 	<div id="account_view_settings" class="hidden"><?php include('includes/settings.php'); ?></div>
 	<div id="account_view_sessions" class="hidden"><?php include('includes/sessions.php'); ?></div>
+	<div id="account_view_team" class="hidden"><?php include('includes/team.php'); ?></div>
 </div>
