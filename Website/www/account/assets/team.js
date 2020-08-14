@@ -49,12 +49,6 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		return false;
 	};
 	
-	let resetFunction = function(event) {
-		event.preventDefault();
-		let userID = this.getAttribute('beacon-user-id');
-		return false;
-	};
-	
 	let deleteFunction = function(event) {
 		event.preventDefault();
 		let userID = this.getAttribute('beacon-user-id');
@@ -92,11 +86,6 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		link.addEventListener('click', disableFunction);
 	});
 	
-	let resetLinks = document.querySelectorAll('a.reset-button');
-	resetLinks.forEach(function(link) {
-		link.addEventListener('click', resetFunction);
-	});
-	
 	let deleteLinks = document.querySelectorAll('a.delete-button');
 	deleteLinks.forEach(function(link) {
 		link.addEventListener('click', deleteFunction);
@@ -128,6 +117,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 			addUsernameField.value = '';
 			addPasswordField.value = '';
 			addErrorSpace.classList.add('hidden');
+			addMemberInputFunction(event);
 			
 			dialog.showModal('add-team-modal');
 		});
@@ -183,5 +173,79 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		addPasswordField.addEventListener('input', addMemberInputFunction);
 	}
 	
+	function setupResetModal() {
+		let resetMemberButton = document.getElementById('reset-member-button');
+		let resetCancelButton = document.getElementById('reset-cancel-button');
+		let resetActionButton = document.getElementById('reset-action-button');
+		let resetEmailField = document.getElementById('reset-email-field');
+		let resetPasswordField = document.getElementById('reset-password-field');
+		let resetSpinner = document.getElementById('reset-spinner');
+		let resetErrorSpace = document.getElementById('reset-error-space');
+		
+		let resetInputFunction = function(event) {
+			resetActionButton.disabled = (resetEmailField.value.trim() === '' || resetPasswordField.value === '');
+		};
+		resetEmailField.addEventListener('input', resetInputFunction);
+		resetPasswordField.addEventListener('input', resetInputFunction);
+		
+		resetMemberButton.addEventListener('click', function(event) {
+			event.preventDefault();
+			
+			resetErrorSpace.classList.add('hidden');
+			resetEmailField.value = '';
+			resetPasswordField.value = '';
+			resetInputFunction(event);
+			
+			dialog.showModal('reset-password-modal');
+		});
+		
+		resetCancelButton.addEventListener('click', function(event) {
+			event.preventDefault();
+			
+			dialog.hideModal('reset-password-modal');
+		});
+		
+		resetActionButton.addEventListener('click', function(event) {
+			event.preventDefault();
+			
+			resetActionButton.disabled = true;
+			resetCancelButton.disabled = true;
+			resetSpinner.classList.remove('hidden');
+			resetEmailField.disabled = true;
+			resetPasswordField.disabled = true;
+			resetErrorSpace.classList.add('hidden');
+			
+			request.start('POST', 'actions/team', 'application/json', JSON.stringify({
+				'action': 'reset',
+				'email': resetEmailField.value,
+				'password': resetPasswordField.value
+			}), function(obj) {
+				dialog.hideModal('reset-password-modal');
+				setTimeout(function() {
+					dialog.show('Member password reset', 'The user will receive an email with a link they must follow to set their password. They will not be able to sign in until their password is changed.');
+				}, 500);
+			}, function(http_status, body) {
+				resetEmailField.disabled = false;
+				resetPasswordField.disabled = false;
+				resetCancelButton.disabled = false;
+				resetSpinner.classList.add('hidden');
+				resetInputFunction(event);
+				
+				let message = 'There was an HTTP ' + http_status + ' error.';
+				try {
+					let obj = JSON.parse(body);
+					if (obj.message) {
+						message = obj.message;
+					}
+				} catch (err) {
+				}
+				
+				resetErrorSpace.innerText = message;
+				resetErrorSpace.classList.remove('hidden');
+			});
+		});
+	}
+	
 	setupAddMemberModal();
+	setupResetModal();
 });

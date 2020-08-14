@@ -29,6 +29,9 @@ $parent_user = $session->User();
 try {
 	switch(strtolower($object['action'])) {
 	case 'create':
+		if ($parent_user->CanAddChildAccount() === false) {
+			Finish(400, 'Cannot add more members');
+		}
 		if (empty($object['password'])) {
 			Finish(400, 'Missing password parameter');
 		}
@@ -68,29 +71,31 @@ try {
 		
 		break;
 	case 'reset':
-		if (empty($object['child_id'])) {
-			Finish(400, 'Missing child_id parameter');
+		if (empty($object['email'])) {
+			Finish(400, 'Missing email parameter');
+		}
+		if (BeaconUser::ValidateEmail($object['email']) === false) {
+			Finish(400, 'Email address is not valid');
 		}
 		if (empty($object['password'])) {
 			Finish(400, 'Missing password parameter');
 		}
 		
-		$child_id = $object['child_id'];
-		$child = BeaconUser::GetByUserID($child_id);
+		$child = BeaconUser::GetByEmail($object['email']);
 		if (is_null($child) || $child->ParentAccountID() != $parent_user->UserID()) {
 			Finish(400, 'Unknown team member');
 		}
 		
 		$private_key = $parent_user->DecryptedPrivateKey($object['password']);
-		if ($private_key === false) {
+		if (is_null($private_key)) {
 			Finish(400, 'Incorrect password');
 		}
 		$usercloud_key = $parent_user->DecryptedUsercloudKey($private_key);
 		
 		$child_password = BeaconCommon::GenerateUUID();
 		$temp = [];
-		if ($child->ReplacePassword($child_password, $private_key, $usercloud_key, $temp) && $child->Commit()) {
-			Finish(200, 'Password changed', ['user_id' => $child->UserID(), 'password' => $child_password]);
+		if ($child->ReplacePassword($child_password, $private_key, $usercloud_key, $temp) && $child->Commit() && BeaconLogin::SendForcedPasswordChangeEmail($object['email'], $child_password)) {
+			Finish(200, 'Password changed', ['user_id' => $child->UserID()]);
 		} else {
 			Finish(400, 'Unable to replace password team account password');
 		}

@@ -32,7 +32,7 @@ if (count($children) === 0) {
 echo '<table class="generic">';
 echo '<thead><tr><th>Name</th><th class="low-priority">Enabled</th><th class="low-priority">Actions</th></tr></thead>';
 foreach ($children as $child) {
-	$action_links = ['<a href="team/reset" class="reset-button" beacon-user-id="' . $child->UserID() . '" beacon-user-name="' . htmlentities($child->Username()) . '">Reset Password</a>'];
+	$action_links = [];
 	if ($child->IsEnabled() === false && $remaining_seats > 0) {
 		$action_links[] = '<a href="team/enable" class="enable-button" beacon-user-id="' . $child->UserID() . '" beacon-user-name="' . htmlentities($child->Username()) . '">Enable</a>';
 		$action_links[] = '<a href="team/delete" class="delete-button" beacon-user-id="' . $child->UserID() . '" beacon-user-name="' . htmlentities($child->Username()) . '">Delete</a>';
@@ -46,7 +46,7 @@ foreach ($children as $child) {
 	echo '<td class="low-priority text-center nowrap">' . implode('<br>', $action_links) . '</td>';
 }
 echo '</table>';
-echo '<p class="smaller text-center text-lighter">Disabled accounts do not count against your license usage.</p>';
+echo '<p class="smaller text-center text-lighter">Disabled accounts do not count against your license usage.<br><a href="team/reset" id="reset-member-button">Reset Member Password</a></p>';
 
 BeaconTemplate::StartModal('add-team-modal');
 ?><p class="title-bar">Add Team Member</p>
@@ -56,6 +56,15 @@ BeaconTemplate::StartModal('add-team-modal');
 <p class="field-pair"><label for="add-username-field">Member Username</label><input type="text" id="add-username-field" placeholder="Member Username"></p>
 <p class="field-pair"><label for="add-password-field">Your Account Password</label><input type="password" id="add-password-field" placeholder="Your Account Password"></p>
 <div class="button-bar"><div class="left"><div class="spinner hidden" id="add-spinner"></div></div><div class="right"><button id="add-cancel-button">Cancel</button><button id="add-action-button" class="default" disabled>Add Member</button></div></div><?php
+BeaconTemplate::FinishModal();
+
+BeaconTemplate::StartModal('reset-password-modal');
+?><p class="title-bar">Reset Member Password</p>
+<p>If a team member forgets their password, only you can reset their password. Because Beacon does not store email addresses, you will need to provide the email address to the user's account so they can be sent a reset link email.</p>
+<p class="notice-block notice-warning hidden" id="reset-error-space">That didn't work</p>
+<p class="field-pair"><label for="reset-email-field">Member Email Address</label><input type="email" id="reset-email-field" placeholder="Member Email Address"></p>
+<p class="field-pair"><label for="reset-password-field">Your Account Password</label><input type="password" id="reset-password-field" placeholder="Your Account Password"></p>
+<div class="button-bar"><div class="left"><div class="spinner hidden" id="reset-spinner"></div></div><div class="right"><button id="reset-cancel-button">Cancel</button><button id="reset-action-button" class="default" disabled>Reset Password</button></div></div><?php
 BeaconTemplate::FinishModal();
 
 ?>
