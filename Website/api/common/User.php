@@ -372,7 +372,7 @@ class User implements \JsonSerializable {
 		return true;
 	}
 	
-	public function ReplacePassword(string $password, string $private_key, string $usercloud_key, array &$child_account_passwords) {
+	public function ReplacePassword(string $password, string $private_key, string $usercloud_key) {
 		if (empty($this->email_id)) {
 			return false;
 		}
@@ -388,10 +388,8 @@ class User implements \JsonSerializable {
 			$children = $this->ChildAccounts();
 			foreach ($children as $child) {
 				$child_password = \BeaconCommon::GenerateUUID();
-				$temp = [];
-				if ($child->ReplacePassword($child_password, $private_key, $usercloud_key, $temp)) {
+				if ($child->ReplacePassword($child_password, $private_key, $usercloud_key)) {
 					$child->SetRequiresPasswordChange(true);
-					$child_account_passwords[$child->UserID()] = $child_password;
 				}
 			}
 			

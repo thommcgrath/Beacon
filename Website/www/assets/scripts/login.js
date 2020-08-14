@@ -335,6 +335,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	
 	// !Password form
 	if (passwordForm) {
+		var passwordConfirmChildrenReset = false;
+		
 		passwordForm.addEventListener('submit', function(event) {
 			event.preventDefault();
 			
@@ -375,8 +377,20 @@ document.addEventListener('DOMContentLoaded', function() {
 				passwordPrevious = loginExplicitPasswordField.value;
 			}
 			
+			let form = {
+				'email': passwordEmail,
+				'username': passwordUsername,
+				'password': passwordInitial,
+				'code': passwordVerificationCode,
+				'allow_vulnerable': passwordAllowVulnerable,
+				'confirm_reset_children': passwordConfirmChildrenReset
+			};
+			if (passwordPrevious) {
+				form.previous_password = passwordPrevious;
+			}
+			
 			show_page('loading');
-			request.post('/account/login/password', {'email': passwordEmail, 'username': passwordUsername, 'password': passwordInitial, 'previousPassword': passwordPrevious, 'code': passwordVerificationCode, 'allow_vulnerable': passwordAllowVulnerable}, function(obj) {
+			request.post('/account/login/password', form, function(obj) {
 				if (localStorage && loginRemember) {
 					localStorage.setItem('email', passwordEmail);
 				}
@@ -401,6 +415,13 @@ document.addEventListener('DOMContentLoaded', function() {
 				case 438:
 					known_vulnerable_password = passwordInitial;
 					dialog.show('Your password is vulnerable.', 'Your password has been leaked in a previous breach and should not be used. To ignore this warning, you may submit the password again, but that is not recommended.');
+					break;
+				case 439:
+					dialog.confirm('WARNING!', 'Your team members will be unable to sign into their accounts until you reset each of their passwords once you sign in. See the "Team" section of your Beacon account control panel.', 'Reset Password', 'Cancel', function() {
+						passwordConfirmChildrenReset = true;
+						var event = new Event('submit', {'bubbles': true, 'cancelable': true});
+						passwordForm.dispatchEvent(event);
+					});
 					break;
 				default:
 					dialog.show('Unable to create user', 'There was a ' + http_status + ' error while trying to create your account.');
