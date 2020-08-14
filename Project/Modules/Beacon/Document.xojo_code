@@ -150,7 +150,10 @@ Implements ObservationKit.Observable
 		    
 		    Var ConfigUpdated As Boolean
 		    Var SpawnPoints() As Beacon.SpawnPoint = Beacon.Data.GetSpawnPointsForCreature(ReplacedCreature, Self.Mods, "")
-		    For Each SpawnPoint As Beacon.SpawnPoint In SpawnPoints
+		    For Each SourceSpawnPoint As Beacon.SpawnPoint In SpawnPoints
+		      Var SpawnPoint As Beacon.MutableSpawnPoint = SourceSpawnPoint.MutableClone
+		      LocalData.SharedInstance.LoadDefaults(SpawnPoint)
+		      
 		      Var Limit As Double = SpawnPoint.Limit(ReplacedCreature)
 		      Var NewSets() As Beacon.SpawnPointSet
 		      For Each Set As Beacon.SpawnPointSet In SpawnPoint
