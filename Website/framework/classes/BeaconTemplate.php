@@ -9,6 +9,8 @@ abstract class BeaconTemplate {
 	protected static $body_class = '';
 	protected static $page_description = '';
 	protected static $use_photoswipe = false;
+	protected static $current_modal = null;
+	protected static $modals = [];
 	
 	protected static function CacheKey() {
 		return md5($_SERVER['REQUEST_URI']);
@@ -190,6 +192,20 @@ abstract class BeaconTemplate {
 		}
 	}
 	
+	public static function StartModal(string $id) {
+		self::$current_modal = $id;
+		ob_start();
+	}
+	
+	public static function FinishModal() {
+		$content = trim(ob_get_contents());
+		ob_end_clean();
+		
+		$id = self::$current_modal;
+		self::$current_modal = null;
+		self::$modals[$id] = $content;
+	}
+	
 	public static function IsHTML() {
 		if (php_sapi_name() == "cli") {
 			return false;
@@ -215,6 +231,14 @@ abstract class BeaconTemplate {
 		} else {
 			return true;
 		}
+	}
+	
+	public static function Modals() {
+		return array_keys(self::$modals);
+	}
+	
+	public static function ModalContent(string $id) {
+		return self::$modals[$id];
 	}
 	
 	public static function BodyClass() {

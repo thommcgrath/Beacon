@@ -35,6 +35,9 @@ try {
 		if (empty($object['email'])) {
 			Finish(400, 'Missing email parameter');
 		}
+		if (BeaconUser::ValidateEmail($object['email']) === false) {
+			Finish(400, 'Email address is not valid');
+		}
 		$child = BeaconUser::GetByEmail($object['email']);
 		if (is_null($child) === false) {
 			Finish(400, 'User already exists');
@@ -44,7 +47,7 @@ try {
 			Finish(400, 'Missing username parameter');
 		}
 		$private_key = $parent_user->DecryptedPrivateKey($object['password']);
-		if ($private_key === false) {
+		if (is_null($private_key)) {
 			Finish(400, 'Incorrect password');
 		}
 		$usercloud_key = $parent_user->DecryptedUsercloudKey($private_key);

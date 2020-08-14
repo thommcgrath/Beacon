@@ -92,6 +92,14 @@ $description = BeaconTemplate::PageDescription();
 				<p id="dialog_buttons"><button id="dialog_cancel_button">Cancel</button><button id="dialog_action_button" class="default">Ok</button></p>
 			</div>
 		</div>
-		<?php BeaconTemplate::PhotoSwipeDOM(); ?>
+		<?php
+		
+		$modals = BeaconTemplate::Modals();
+		foreach ($modals as $modal_id) {
+			$modal_content = BeaconTemplate::ModalContent($modal_id);
+			echo '<div id="' . $modal_id . '" class="modal">' . $modal_content . '</div>';
+		}
+		
+		BeaconTemplate::PhotoSwipeDOM(); ?>
 	</body>
 </html>

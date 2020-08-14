@@ -476,6 +476,20 @@ button, input[type="button"], input[type="submit"], input[type="reset"], a.butto
 		cursor: default;
 		opacity: 0.25;
 	}
+	
+	.spinner {
+		display: none;
+	}
+	
+	&.working {
+		.caption {
+			display: none;
+		}
+		
+		.spinner {
+			display: initial;
+		}
+	}
 }
 
 /* !Fields */
@@ -507,6 +521,13 @@ input[type="text"], input[type="password"], input[type="email"], input[type="url
 		line-height: 1.0em;
 		vertical-align: bottom;
 		padding-top: 0.3em;
+	}
+}
+
+.field-pair {
+	label {
+		padding-left: 6px;
+		line-height: 1.6em;
 	}
 }
 
@@ -865,6 +886,120 @@ div.results {
 
 #dialog_buttons {
 	text-align: center;
+}
+
+.modal {
+	display: none;
+	opacity: 0;
+	transition-duration: 0.25s;
+	transition-timing-function: ease-out;
+	transition-property: opacity, top;
+	z-index: 2001;
+	position: fixed;
+	top: 35%;
+	left: 50%;
+	width: 600px;
+	margin-left: -300px;
+	margin-right: auto;
+	padding: 20px;
+	border-radius: 6px;
+	box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.45);
+	box-sizing: border-box;
+	transform: translateY(-50%);
+	
+	&.exist {
+		display: block;
+	}
+	
+	&.visible {
+		opacity: 1;
+		top: 40%;
+	}
+	
+	.button-bar {
+		display: flex;
+		margin-top: 20px;
+		justify-content: space-between;
+		align-items: center;
+		
+		.left {
+			text-align: left;
+			flex: 1 1 auto;
+		}
+		
+		.middle {
+			text-align: center;
+			flex: 1 1 auto;
+		}
+		
+		.right {
+			text-align: right;
+			flex: 1 1 auto;
+		}
+	}
+	
+	.title-bar {
+		font-weight: 600;
+		margin-bottom: 20px;
+	}
+	
+	@media (max-width: 640px) {
+		left: 20px;
+		width: auto;
+		right: 20px;
+		margin: 0px;
+		top: 45%;
+		
+		&.visible {
+			top: 50%;	
+		}
+	}
+}
+
+.spinner {
+	display: inline-block;
+	
+	@mixin create-spinner-size($size) {
+		width: $size;
+		height: $size;
+		
+		&:after {
+			width: $size * 0.8;
+			height: $size * 0.8;
+			border-width: $size * 0.075;
+		}
+	}
+	
+	&.large {
+		@include create-spinner-size(65px);
+	}
+	
+	@include create-spinner-size(30px);
+	
+	&.small {
+		@include create-spinner-size(20px);
+	}
+	
+	&:after {
+		content: ' ';
+		display: block;
+		border-radius: 50%;
+		border-style: solid;
+		animation: spinner-keyframes 1.2s linear infinite;
+	}
+	
+	&.hidden {
+		display: none;
+	}
+}
+
+@keyframes spinner-keyframes {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
 }
 
 #knowledge_wrapper {

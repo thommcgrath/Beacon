@@ -20,9 +20,9 @@ if ($purchased_seat_count == 0) {
 }
 echo '</p><p><button id="buy_slots_button" class="default">Buy More Licenses</button>';
 if ($remaining_seats > 0) {
-	echo '<button id="add_account_button">Add Team Member</button>';
+	echo '<button id="add-account-button">Add Team Member</button>';
 }
-echo '</p><p><a href="#">Learn more about Beacon for teams</a></div>';
+echo '</p><p><a href="/omni/team">Learn more about Beacon for teams</a></div>';
 
 $children = $user->ChildAccounts();
 if (count($children) === 0) {
@@ -32,11 +32,12 @@ if (count($children) === 0) {
 echo '<table class="generic">';
 echo '<thead><tr><th>Name</th><th class="low-priority">Enabled</th><th class="low-priority">Actions</th></tr></thead>';
 foreach ($children as $child) {
-	$action_links = ['<a href="#">Reset Password</a>'];
+	$action_links = ['<a href="team/reset" class="reset-button" beacon-user-id="' . $child->UserID() . '" beacon-user-name="' . htmlentities($child->Username()) . '">Reset Password</a>'];
 	if ($child->IsEnabled() === false && $remaining_seats > 0) {
-		$action_links[] = '<a href="#">Enable</a>';	
+		$action_links[] = '<a href="team/enable" class="enable-button" beacon-user-id="' . $child->UserID() . '" beacon-user-name="' . htmlentities($child->Username()) . '">Enable</a>';
+		$action_links[] = '<a href="team/delete" class="delete-button" beacon-user-id="' . $child->UserID() . '" beacon-user-name="' . htmlentities($child->Username()) . '">Delete</a>';
 	} else if ($child->IsEnabled()) {
-		$action_links[] = '<a href="#">Disable</a>';
+		$action_links[] = '<a href="team/disable" class="disable-button" beacon-user-id="' . $child->UserID() . '" beacon-user-name="' . htmlentities($child->Username()) . '">Disable</a>';
 	}
 	
 	echo '<tr>';
@@ -46,5 +47,15 @@ foreach ($children as $child) {
 }
 echo '</table>';
 echo '<p class="smaller text-center text-lighter">Disabled accounts do not count against your license usage.</p>';
+
+BeaconTemplate::StartModal('add-team-modal');
+?><p class="title-bar">Add Team Member</p>
+<p>Enter the email address of the new member, as well as a default username. The user will be able to change their username later. An email will be sent containing a link which must be followed to begin using the account.</p>
+<p class="notice-block notice-warning hidden" id="add-error-space">That didn't work</p>
+<p class="field-pair"><label for="add-email-field">Member Email Address</label><input type="email" id="add-email-field" placeholder="Member Email Address"></p>
+<p class="field-pair"><label for="add-username-field">Member Username</label><input type="text" id="add-username-field" placeholder="Member Username"></p>
+<p class="field-pair"><label for="add-password-field">Your Account Password</label><input type="password" id="add-password-field" placeholder="Your Account Password"></p>
+<div class="button-bar"><div class="left"><div class="spinner hidden" id="add-spinner"></div></div><div class="right"><button id="add-cancel-button">Cancel</button><button id="add-action-button" class="default" disabled>Add Member</button></div></div><?php
+BeaconTemplate::FinishModal();
 
 ?>

@@ -662,6 +662,19 @@ class User implements \JsonSerializable {
 			$this->signatures['2'] = bin2hex($signature);
 		}
 	}
+	
+	public function Delete() {
+		$database = \BeaconCommon::Database();
+		try {
+			$database->BeginTransaction();
+			$database->Query('DELETE FROM users WHERE user_id = $1;', $this->user_id);
+			$database->Commit();
+			return true;
+		} catch (\Exception $err) {
+			$database->Rollback();
+			return false;
+		}
+	}
 }
 
 ?>

@@ -121,7 +121,7 @@ var dialog = {
 			dialog_cancel_button.innerText = cancel_caption;
 		}
 	},
-	hide: function (handler) {
+	hide: function(handler) {
 		var overlay = document.getElementById('overlay');
 		var dialog_frame = document.getElementById('dialog');
 		if (overlay && dialog_frame) {
@@ -133,6 +133,32 @@ var dialog = {
 				if (handler) {
 					handler();
 				}
+			}, 300);
+		}
+	},
+	showModal: function(id) {
+		let overlay = document.getElementById('overlay');
+		let modal = document.getElementById(id);
+		if (overlay && modal) {
+			overlay.classList.add('exist');
+			modal.classList.add('exist');
+			
+			setTimeout(function() {
+				overlay.classList.add('visible');
+				modal.classList.add('visible');
+			}, 10);
+		}
+	},
+	hideModal: function(id) {
+		let overlay = document.getElementById('overlay');
+		let modal = document.getElementById(id);
+		if (overlay && modal) {
+			overlay.classList.remove('visible');
+			modal.classList.remove('visible');
+			
+			setTimeout(function() {
+				overlay.classList.remove('exist');
+				modal.classList.remove('exist');
 			}, 300);
 		}
 	}
