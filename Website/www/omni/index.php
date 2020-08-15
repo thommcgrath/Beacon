@@ -136,7 +136,7 @@ var update_checkout_components = function() {
 		document.getElementById('slot_quantity_field').className = 'hidden';
 		document.getElementById('slot_quantity_prohibited').className = 'text-lighter';
 	} else {
-		document.getElementById('slot_quantity_field').className = '';
+		document.getElementById('slot_quantity_field').className = 'text-center';
 		document.getElementById('slot_quantity_prohibited').className = 'hidden';
 	}
 	if (is_child || owns_omni) {
@@ -221,46 +221,54 @@ document.addEventListener('DOMContentLoaded', function() {
  			dialog.show('You must own Beacon Omni to purchase team licenses.', 'Team members inherit their license from your account. You must own Beacon Omni to add members to your team.');
  			return;
  		}
-		
-		var items = [];
-		if (include_omni) {
-			items.push({sku: <?php echo json_encode($product_details['omni']['sku']); ?>, quantity: 1});
-		}
-		if (stw_quantity > 0) {
-			items.push({sku: <?php echo json_encode($product_details['stw']['sku']); ?>, quantity: stw_quantity});
-		}
-		if (gift_quantity > 0) {
-			items.push({sku: <?php echo json_encode($product_details['gift']['sku']); ?>, quantity: gift_quantity});
-		}
-		if (slot_quantity > 0) {
- 			items.push({sku: <?php echo json_encode($product_details['slot']['sku']); ?>, quantity: slot_quantity});
- 		}
-		
-		var stripe = Stripe(<?php echo json_encode(BeaconCommon::GetGlobal('Stripe_Public_Key')); ?>, {});
-		
-		function uuidv4() {
-			return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
-		}
-		
-		var client_reference_id = uuidv4();
-		if (sessionStorage) {
-			sessionStorage.setItem('client_reference_id', client_reference_id);
-		}
-		
-		var checkout = {
-			items: items,
-			successUrl: <?php echo json_encode(BeaconCommon::AbsoluteURL('/omni/welcome/')); ?>,
-			cancelUrl: <?php echo json_encode(BeaconCommon::AbsoluteURL('/omni/#checkout')); ?>,
-			clientReferenceId: client_reference_id,
-			billingAddressCollection: 'required',
-			customerEmail: document.getElementById('checkout_email_field').value
-		};
-		
-		stripe.redirectToCheckout(checkout).then(function (result) {
-			if (result.error) {
-				dialog.show('Unable to start Stripe checkout', result.error.message);
+ 		
+ 		let checkout_final = function() {
+	 		var items = [];
+			if (include_omni) {
+				items.push({sku: <?php echo json_encode($product_details['omni']['sku']); ?>, quantity: 1});
 			}
-		});
+			if (stw_quantity > 0) {
+				items.push({sku: <?php echo json_encode($product_details['stw']['sku']); ?>, quantity: stw_quantity});
+			}
+			if (gift_quantity > 0) {
+				items.push({sku: <?php echo json_encode($product_details['gift']['sku']); ?>, quantity: gift_quantity});
+			}
+			if (slot_quantity > 0) {
+	 			items.push({sku: <?php echo json_encode($product_details['slot']['sku']); ?>, quantity: slot_quantity});
+	 		}
+			
+			var stripe = Stripe(<?php echo json_encode(BeaconCommon::GetGlobal('Stripe_Public_Key')); ?>, {});
+			
+			function uuidv4() {
+				return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
+			}
+			
+			var client_reference_id = uuidv4();
+			if (sessionStorage) {
+				sessionStorage.setItem('client_reference_id', client_reference_id);
+			}
+			
+			var checkout = {
+				items: items,
+				successUrl: <?php echo json_encode(BeaconCommon::AbsoluteURL('/omni/welcome/')); ?>,
+				cancelUrl: <?php echo json_encode(BeaconCommon::AbsoluteURL('/omni/#checkout')); ?>,
+				clientReferenceId: client_reference_id,
+				billingAddressCollection: 'required',
+				customerEmail: document.getElementById('checkout_email_field').value
+			};
+			
+			stripe.redirectToCheckout(checkout).then(function (result) {
+				if (result.error) {
+					dialog.show('Unable to start Stripe checkout', result.error.message);
+				}
+			});
+	 	};
+	 	
+	 	if (slot_quantity > 0) {
+		 	dialog.confirm('Beacon Team licenses are not for resale.', 'Team licenses are intended for your admins to help you run your server or cluster. If you are caught abusing this feature in any way, such as reselling licenses, all your licenses will be terminated and you will not receive a refund.', 'I Agree', 'Cancel').then(checkout_final).catch(update_total);
+		} else {
+			checkout_final();
+		}
 	});
 	
 	document.getElementById('checkout_email_field').addEventListener('input', function() {
