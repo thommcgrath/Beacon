@@ -407,7 +407,7 @@ class Document implements \JsonSerializable {
 		return '/' . strtolower($user_id) . '/Documents/' . strtolower($document_id) . '.beacon';
 	}
 	
-	public static function SaveFromContent(string $document_id, string $user_id, $content, string &$reason) {
+	public static function SaveFromContent(string $document_id, \BeaconUser $user, $content, string &$reason) {
 		if (is_array($content)) {
 			$document = $content;
 		} elseif (is_string($content)) {
@@ -448,7 +448,7 @@ class Document implements \JsonSerializable {
 		
 		// confirm write permission of the document
 		if ($new_document == false) {
-			$results = $database->Query('SELECT role, owner_id FROM allowed_documents WHERE document_id = $1 AND user_id = $2;', $document_id, $user_id);
+			$results = $database->Query('SELECT role, owner_id FROM allowed_documents WHERE document_id = $1 AND user_id = $2;', $document_id, $user->UserID());
 			if ($results->RecordCount() == 0) {
 				$reason = 'Access denied for document ' . $document_id . '.';
 				return false;
@@ -456,8 +456,13 @@ class Document implements \JsonSerializable {
 			$role = $results->Field('role');
 			$owner_id = $results->Field('owner_id');
 		} else {
-			$role = 'Owner';
-			$owner_id = $user_id;
+			if ($user->IsChildAccount()) {
+				$role = 'Team';
+				$owner_id = $user->ParentAccount();
+			} else {
+				$role = 'Owner';
+				$owner_id = $user->UserID();
+			}
 		}
 		
 		// gather document details
@@ -479,15 +484,8 @@ class Document implements \JsonSerializable {
 			$encryption_keys = $document['EncryptionKeys'];
 			$allowed_users = array_keys($encryption_keys);
 			
-			if ($new_document) {
-				$owner_user_id = strtolower($user_id);
-			} else {
-				$results = $database->Query('SELECT user_id FROM documents WHERE document_id = $1;', $document_id);
-				$owner_user_id = $results->Field('user_id');
-			}
-			
 			$desired_guests = array();
-			$results = $database->Query('SELECT user_id FROM users WHERE user_id = ANY($1) AND user_id != $2;', '{' . implode(',', $allowed_users) . '}', $owner_user_id);
+			$results = $database->Query('SELECT user_id FROM users WHERE user_id = ANY($1) AND user_id != $2;', '{' . implode(',', $allowed_users) . '}', $owner_id);
 			while (!$results->EOF()) {
 				$desired_guests[] = $results->Field('user_id');
 				$results->MoveNext();
@@ -616,7 +614,7 @@ class Document implements \JsonSerializable {
 		try {
 			$database->BeginTransaction();
 			if ($new_document) {
-				$database->Query('INSERT INTO documents (document_id, user_id, title, description, map, difficulty, console_safe, mods, included_editors, last_update) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, CURRENT_TIMESTAMP);', $document_id, $user_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
+				$database->Query('INSERT INTO documents (document_id, user_id, title, description, map, difficulty, console_safe, mods, included_editors, last_update) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, CURRENT_TIMESTAMP);', $document_id, $owner_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
 			} else {
 				$database->Query('UPDATE documents SET revision = revision + 1, title = $3, description = $4, map = $5, difficulty = $6, console_safe = $7, mods = $8, included_editors = $9, last_update = CURRENT_TIMESTAMP WHERE document_id = $1 AND user_id = $2;', $document_id, $owner_id, $title, $description, $mask, $difficulty, $console_safe, $mods, $editors);
 			}
