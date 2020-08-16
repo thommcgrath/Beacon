@@ -14,6 +14,14 @@ class BeaconUser extends BeaconAPI\User {
 		$arr['login_key'] = $this->username;
 		return $arr;
 	}
+	
+	public function IsEnabled() {
+		// Child accounts cannot sign in with the v1 API.
+		if ($this->IsChildAccount()) {
+			return false;
+		}
+		return parent::IsEnabled();
+	}
 }
 
 ?>

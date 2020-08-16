@@ -72,11 +72,6 @@ class Session implements \JsonSerializable {
 	}
 	
 	public static function Create(string $user_id) {
-		$user = \BeaconUser::GetByUserID($user_id);
-		if (is_null($user) || $user->IsEnabled() === false || $user->RequiresPasswordChange() === true) {
-			return null;
-		}
-		
 		$session_id = \BeaconCommon::GenerateUUID();
 		$remote_ip = \BeaconCommon::RemoteAddr();
 		$remote_country = \BeaconCommon::RemoteCountry();
@@ -84,15 +79,19 @@ class Session implements \JsonSerializable {
 		
 		$database = \BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query("INSERT INTO sessions (session_id, user_id, valid_until, remote_ip, remote_country, remote_agent) VALUES (encode(digest($1, 'sha512'), 'hex'), $2, CURRENT_TIMESTAMP + '30d', $3, $4, $5);", $session_id, $user_id, $remote_ip, $remote_country, $remote_agent);
-		$database->Commit();
+		try {
+			$database->Query("INSERT INTO sessions (session_id, user_id, valid_until, remote_ip, remote_country, remote_agent) VALUES (encode(digest($1, 'sha512'), 'hex'), $2, CURRENT_TIMESTAMP + '30d', $3, $4, $5);", $session_id, $user_id, $remote_ip, $remote_country, $remote_agent);
+			$database->Commit();
+		} catch (\Exception $err) {
+			return null;
+		}
 		
 		return static::GetBySessionID($session_id);
 	}
 	
 	public static function GetBySessionID(string $session_id) {
 		$database = \BeaconCommon::Database();
-		$results = $database->Query("SELECT $1::text AS session_id, " . implode(', ', static::SQLColumns()) . " FROM " . static::SQLTable() . " WHERE users.enabled = TRUE AND users.require_password_change = FALSE AND sessions.session_id = encode(digest($1, 'sha512'), 'hex') AND sessions.valid_until >= CURRENT_TIMESTAMP;", $session_id);
+		$results = $database->Query("SELECT $1::text AS session_id, " . implode(', ', static::SQLColumns()) . " FROM " . static::SQLTable() . " WHERE sessions.session_id = encode(digest($1, 'sha512'), 'hex') AND sessions.valid_until >= CURRENT_TIMESTAMP;", $session_id);
 		if ($results->RecordCount() === 1) {
 			return self::GetFromResult($results);
 		} else {
@@ -102,7 +101,7 @@ class Session implements \JsonSerializable {
 	
 	public static function GetBySessionHash(string $session_hash) {
 		$database = \BeaconCommon::Database();
-		$results = $database->Query("SELECT '' AS session_id, " . implode(', ', static::SQLColumns()) . " FROM " . static::SQLTable() . " WHERE users.enabled = TRUE AND users.require_password_change = FALSE AND sessions.session_id = $1 AND sessions.valid_until >= CURRENT_TIMESTAMP;", $session_hash);
+		$results = $database->Query("SELECT '' AS session_id, " . implode(', ', static::SQLColumns()) . " FROM " . static::SQLTable() . " WHERE sessions.session_id = $1 AND sessions.valid_until >= CURRENT_TIMESTAMP;", $session_hash);
 		if ($results->RecordCount() === 1) {
 			return self::GetFromResult($results);
 		} else {
@@ -113,7 +112,7 @@ class Session implements \JsonSerializable {
 	public static function GetForUserID(string $user_id) {
 		try {
 			$database = \BeaconCommon::Database();
-			$results = $database->Query('SELECT \'\' AS session_id, ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLTable() . ' WHERE users.enabled = TRUE AND users.require_password_change = FALSE AND sessions.user_id = $1 ORDER BY valid_until DESC;', $user_id);
+			$results = $database->Query('SELECT \'\' AS session_id, ' . implode(', ', static::SQLColumns()) . ' FROM ' . static::SQLTable() . ' WHERE sessions.user_id = $1 ORDER BY valid_until DESC;', $user_id);
 			return static::GetFromResults($results);
 		} catch (\Exception $err) {
 			return [];
@@ -162,7 +161,7 @@ class Session implements \JsonSerializable {
 	}
 	
 	protected static function SQLTable() {
-		return 'sessions INNER JOIN users ON (sessions.user_id = users.user_id)';
+		return 'sessions';
 	}
 	
 	protected static function GetFromResult(\BeaconRecordSet $results) {

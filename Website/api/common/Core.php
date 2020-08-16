@@ -103,6 +103,11 @@ abstract class Core {
 	protected static function AuthorizeWithSessionID(string $session_id) {
 		$session = \BeaconSession::GetBySessionID($session_id);
 		if (is_null($session) == false) {
+			$user = $session->User();
+			if (is_null($user) || $user->CanSignIn() === false) {
+				return false;
+			}
+			
 			self::$user_id = $session->UserID();
 			self::$auth_style = self::AUTH_STYLE_SESSION;
 			
@@ -116,10 +121,10 @@ abstract class Core {
 	protected static function AuthorizeWithPassword(string $username, string $password) {
 		$user = \BeaconUser::GetByEmail($username);
 		if (is_null($user) == false && $user->TestPassword($password)) {
-			if ($user->IsEnabled() === false) {
-				return false;
-			} elseif ($user->RequiresPasswordChange() === true) {
-				\BeaconLogin::SendForcedPasswordChangeEmail($username, $password);
+			if ($user->CanSignIn() === false) {
+				if ($user->RequiresPasswordChange() === true) {
+					\BeaconLogin::SendForcedPasswordChangeEmail($username, $password);
+				}
 				return false;
 			}
 			self::$user_id = $user->UserID();
@@ -130,7 +135,7 @@ abstract class Core {
 	}
 	
 	protected static function AuthorizeWithSignature(\BeaconUser $user, string $challenge, string $signature) {
-		if (is_null($user) || $user->IsEnabled() === false || $user->RequiresPasswordChange() === true) {
+		if (is_null($user) || $user->CanSignIn() === false) {
 			return false;
 		}
 		
@@ -212,7 +217,7 @@ abstract class Core {
 			$database = \BeaconCommon::Database();
 			$database->BeginTransaction();
 			$database->Query('DELETE FROM user_challenges WHERE user_id = $1;', self::$user_id);
-			$database->Commit();	
+			$database->Commit();
 		}
 		
 		if ((!$authorized) && (!$optional)) {

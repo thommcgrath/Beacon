@@ -13,7 +13,7 @@ class User implements \JsonSerializable {
 	protected $private_key_salt = null;
 	protected $private_key_iterations = null;
 	protected $signatures = array();
-	protected $purchased_omni_version = 0;
+	protected $purchased_omni_version = -1;
 	protected $expiration = '';
 	protected $usercloud_key = null;
 	protected $banned = false;
@@ -38,28 +38,6 @@ class User implements \JsonSerializable {
 			$this->enabled = $source->Field('enabled');
 			$this->require_password_change = $source->Field('require_password_change');
 			$this->parent_account_id = $source->Field('parent_account_id');
-			
-			if (self::OmniFree) {
-				$this->purchased_omni_version = 1;
-			} elseif ($this->enabled === true) {
-				$database = \BeaconCommon::Database();
-				if (is_null($this->parent_account_id)) {
-					$purchases = $database->Query('SELECT * FROM purchased_products WHERE purchaser_email = $1;', $this->email_id);
-				} else {
-					$purchases = $database->Query('SELECT DISTINCT product_id FROM purchased_products INNER JOIN users ON (purchased_products.purchaser_email = users.email_id) WHERE users.user_id = $1;', $this->parent_account_id);
-				}
-				while (!$purchases->EOF()) {
-					$omni_version = 0;
-					$product_id = $purchases->Field('product_id');
-					switch ($product_id) {
-					case '972f9fc5-ad64-4f9c-940d-47062e705cc5':
-						$omni_version = 1;
-						break;
-					}
-					$this->purchased_omni_version = max($this->purchased_omni_version, $omni_version);
-					$purchases->MoveNext();
-				}
-			}
 		} elseif (is_string($source) && \BeaconCommon::IsUUID($source)) {
 			$this->user_id = $source;
 		} elseif (is_null($source)) {
@@ -189,6 +167,29 @@ class User implements \JsonSerializable {
 	}
 	
 	public function OmniVersion() {
+		if ($this->purchased_omni_version === -1) {
+			if (self::OmniFree) {
+				$this->purchased_omni_version = 1;
+			} elseif ($this->enabled === true) {
+				$database = \BeaconCommon::Database();
+				if (is_null($this->parent_account_id)) {
+					$purchases = $database->Query('SELECT product_id FROM purchased_products WHERE purchaser_email = $1;', $this->email_id);
+				} else {
+					$purchases = $database->Query('SELECT DISTINCT product_id FROM purchased_products INNER JOIN users ON (purchased_products.purchaser_email = users.email_id) WHERE users.user_id = $1;', $this->parent_account_id);
+				}
+				while (!$purchases->EOF()) {
+					$omni_version = 0;
+					$product_id = $purchases->Field('product_id');
+					switch ($product_id) {
+					case '972f9fc5-ad64-4f9c-940d-47062e705cc5':
+						$omni_version = 1;
+						break;
+					}
+					$this->purchased_omni_version = max($this->purchased_omni_version, $omni_version);
+					$purchases->MoveNext();
+				}
+			}	
+		}
 		return $this->purchased_omni_version;
 	}
 	
@@ -203,6 +204,11 @@ class User implements \JsonSerializable {
 	public function SetIsEnabled(bool $enabled) {
 		$this->enabled = $enabled;
 		return true;
+	}
+	
+	public function CanSignIn() {
+		// Use the methods here so subclasses can override correctly.
+		return $this->IsEnabled() === true && $this->RequiresPasswordChange() === false;
 	}
 	
 	/* !Child Accounts */
@@ -613,7 +619,20 @@ class User implements \JsonSerializable {
 	}
 	
 	protected static function SQLColumns() {
-		return array('user_id', 'email_id', 'username', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key', 'banned', 'enabled', 'require_password_change', 'parent_account_id');
+		return [
+			'users.user_id',
+			'users.email_id',
+			'users.username',
+			'users.public_key',
+			'users.private_key',
+			'users.private_key_salt',
+			'users.private_key_iterations',
+			'users.usercloud_key',
+			'users.banned',
+			'users.enabled',
+			'users.require_password_change',
+			'users.parent_account_id'
+		];
 	}
 	
 	public function jsonSerialize() {
@@ -626,7 +645,7 @@ class User implements \JsonSerializable {
 			'private_key_iterations' => $this->private_key_iterations,
 			'banned' => $this->banned,
 			'signatures' => $this->signatures,
-			'omni_version' => $this->purchased_omni_version,
+			'omni_version' => $this->OmniVersion(),
 			'usercloud_key' => $this->usercloud_key
 		);
 		if (!empty($this->expiration)) {
@@ -637,7 +656,7 @@ class User implements \JsonSerializable {
 	
 	public function PrepareSignatures(string $hardware_id) {
 		// version 1
-		$fields = array($hardware_id, strtolower($this->UserID()), strval($this->purchased_omni_version));
+		$fields = array($hardware_id, strtolower($this->UserID()), strval($this->OmniVersion()));
 		if (self::OmniFree) {
 			$expires = (floor(time() / 604800) * 604800) + 2592000;
 			$this->expiration = date('Y-m-d H:i:sO', $expires);
@@ -649,7 +668,7 @@ class User implements \JsonSerializable {
 		}
 		
 		// version 2
-		$fields = array($hardware_id, strtolower($this->UserID()), strval($this->purchased_omni_version), ($this->banned ? 'Banned' : 'Clean'));
+		$fields = array($hardware_id, strtolower($this->UserID()), strval($this->OmniVersion()), ($this->banned ? 'Banned' : 'Clean'));
 		if (self::OmniFree) {
 			$expires = (floor(time() / 604800) * 604800) + 2592000;
 			$this->expiration = date('Y-m-d H:i:sO', $expires);
