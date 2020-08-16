@@ -25,7 +25,7 @@ var request = {
 				return;
 			}
 			
-			if (xhr.status != 200) {
+			if (xhr.status < 200 || xhr.status >= 300) {
 				error_handler(xhr.status, xhr.responseText);
 				return;
 			}
