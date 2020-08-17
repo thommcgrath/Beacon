@@ -67,8 +67,6 @@ Implements NotificationKit.Receiver
 		Sub Open()
 		  Self.mLogManager = New LogManager
 		  
-		  Self.Log(Self.UserAgent)
-		  
 		  #if Not DebugBuild
 		    Try
 		      Var JSON As String = BeaconEncryption.SymmetricDecrypt(Self.MBSKey, DecodeBase64(Self.MBSSerial))
@@ -81,6 +79,8 @@ Implements NotificationKit.Receiver
 		      Quit
 		    End Try
 		  #endif
+		  
+		  Self.Log(Self.UserAgent)
 		  
 		  Var Lock As New Mutex("com.thezaz.beacon" + If(DebugBuild, ".debug", ""))
 		  If Not Lock.TryEnter Then
@@ -279,6 +279,14 @@ Implements NotificationKit.Receiver
 			BeaconUI.ShowAlert("Could not create offline authorization request.", "There was a problem writing the file to disk.")
 			End If
 			
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function HelpCreateSupportTicket() As Boolean Handles HelpCreateSupportTicket.Action
+			Var Win As New SupportTicketWindow
+			Win.Show
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -913,6 +921,12 @@ Implements NotificationKit.Receiver
 		  End If
 		  Self.Log("Unhandled " + Info.FullName + " in " + Location + ": HTTP " + Str(HTTPStatus, "-0") + " " + Base64)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LogsFolder() As FolderItem
+		  Return Self.mLogManager.Destination
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

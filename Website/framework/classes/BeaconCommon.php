@@ -163,6 +163,15 @@ abstract class BeaconCommon {
 		return true;
 	}
 	
+	public static function HasAnyKeys(array $arr, ...$keys) {
+		foreach ($keys as $key) {
+			if (array_key_exists($key, $arr)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public static function SetGlobal(string $key, $value) {
 		self::$globals[$key] = $value;
 	}

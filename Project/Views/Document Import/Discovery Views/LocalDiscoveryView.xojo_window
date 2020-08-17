@@ -226,7 +226,7 @@ Begin DiscoveryView LocalDiscoveryView
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   True
-      Scope           =   0
+      Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   6
       TabPanelIndex   =   0
@@ -254,7 +254,7 @@ Begin DiscoveryView LocalDiscoveryView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Scope           =   0
+      Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   7
       TabPanelIndex   =   0
@@ -382,17 +382,42 @@ End
 
 
 	#tag Method, Flags = &h0
-		Sub AddFile(File As FolderItem, DetectSibling As Boolean = True)
-		  Var Content As String = Self.ReadIniFile(File)
+		Sub AddFile(File As FolderItem)
+		  Self.AddFile(File, ConfigFileType.Other)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub AddFile(File As FolderItem, ForceType As ConfigFileType)
+		  Var Content As String = Self.ReadIniFile(File).Trim
 		  If Content = "" Then
 		    Return
 		  End If
 		  
 		  Content  = Content.DefineEncoding(Encodings.UTF8)
-		  Var Type As ConfigFileType = Self.DetectConfigType(Content)
-		  Self.SetSwitcherForType(Type)
 		  
-		  If Self.ConfigArea.Value.Length <> 0 Then
+		  Var Type As ConfigFileType = ForceType
+		  If Type = ConfigFileType.Other Then
+		    Type = Self.DetectConfigType(Content)
+		    If Type = ConfigFileType.Other Then
+		      Select Case Self.Switcher.SelectedIndex
+		      Case Self.GameIniIndex
+		        Type = ConfigFileType.GameIni
+		      Case Self.GameUserSettingsIniIndex
+		        Type = ConfigFileType.GameUserSettingsIni
+		      End Select
+		    End If
+		  End If
+		  
+		  Var ExistingContent As String
+		  Select Case Type
+		  Case ConfigFileType.GameIni
+		    ExistingContent = Self.mGameIniContent
+		  Case ConfigFileType.GameUserSettingsIni
+		    ExistingContent = Self.mGameUserSettingsIniContent
+		  End Select
+		  
+		  If ExistingContent.IsEmpty = False Then
 		    Var Dialog As New MessageDialog
 		    Dialog.Title = ""
 		    Dialog.Message = "Would you like to replace the existing content, or add this file to it?"
@@ -401,8 +426,6 @@ End
 		      Dialog.Explanation = "The selected file would replace or become added to your Game.ini content."
 		    Case ConfigFileType.GameUserSettingsIni
 		      Dialog.Explanation = "The selected file would replace or become added to your GameUserSettings.ini content."
-		    Case ConfigFileType.Other
-		      Dialog.Explanation = "Beacon was unable to determine which config file was selected."
 		    End Select
 		    Dialog.ActionButton.Caption = "Replace"
 		    Dialog.CancelButton.Visible = True
@@ -412,41 +435,42 @@ End
 		    
 		    Select Case Choice
 		    Case Dialog.ActionButton
-		      Self.ConfigArea.Value = Content.Trim
+		      // Do nothing
 		    Case Dialog.CancelButton
 		      Return
 		    Case Dialog.AlternateActionButton
-		      Self.ConfigArea.Value = Self.ConfigArea.Value + EndOfLine + Content.Trim
+		      Content = ExistingContent.Trim + EndOfLine + EndOfLine + Content
 		    End Select
-		  Else
-		    Self.ConfigArea.Value = Content.Trim
 		  End If
 		  
+		  Var OtherFilename, OtherContent As String
+		  Var OtherType As ConfigFileType
 		  Select Case Type
 		  Case ConfigFileType.GameIni
 		    Self.mGameIniFile = File
+		    Self.mGameIniContent = Content
+		    OtherFilename = "GameUserSettings.ini"
+		    OtherContent = Self.mGameUserSettingsIniContent
+		    OtherType = ConfigFileType.GameUserSettingsIni
 		  Case ConfigFileType.GameUserSettingsIni
 		    Self.mGameUserSettingsIniFile = File
+		    Self.mGameUserSettingsIniContent = Content
+		    OtherFilename = "Game.ini"
+		    OtherContent = Self.mGameIniContent
+		    OtherType = ConfigFileType.GameIni
 		  End Select
 		  
-		  If Not DetectSibling Then
+		  If OtherContent.IsEmpty = False Then
+		    Self.RefreshContentArea(True)
 		    Return
 		  End If
-		  
-		  Var OtherFilename As String
-		  Select Case Type
-		  Case ConfigFileType.GameIni
-		    OtherFilename = "GameUserSettings.ini"
-		  Case ConfigFileType.GameUserSettingsIni
-		    OtherFilename = "Game.ini"
-		  Else
-		    Return
-		  End Select
 		  
 		  Var OtherFile As FolderItem = File.Parent.Child(OtherFilename)
 		  If OtherFile <> Nil And OtherFile.Exists Then
-		    Self.AddFile(OtherFile, False)
+		    Self.AddFile(OtherFile, OtherType)
 		  End If
+		  
+		  Self.RefreshContentArea(True)
 		End Sub
 	#tag EndMethod
 
@@ -518,6 +542,30 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub RefreshContentArea(ChangeIfEmpty As Boolean = False)
+		  Var SettingUp As Boolean = Self.mSettingUp
+		  Self.mSettingUp = True
+		  Select Case Self.Switcher.SelectedIndex
+		  Case Self.GameIniIndex
+		    If ChangeIfEmpty And Self.mGameIniContent.IsEmpty And Self.mGameUserSettingsIniContent.IsEmpty = False Then
+		      Self.Switcher.SelectedIndex = Self.GameUserSettingsIniIndex
+		    Else
+		      Self.ConfigArea.Value = Self.mGameIniContent
+		    End If
+		  Case Self.GameUserSettingsIniIndex
+		    If ChangeIfEmpty And Self.mGameIniContent.IsEmpty = False And Self.mGameUserSettingsIniContent.IsEmpty Then
+		      Self.Switcher.SelectedIndex = Self.GameIniIndex
+		    Else
+		      Self.ConfigArea.Value = Self.mGameUserSettingsIniContent
+		    End If
+		  Else
+		    Self.ConfigArea.Value = ""
+		  End Select
+		  Self.mSettingUp = SettingUp
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub SetSwitcherForType(Type As ConfigFileType)
 		  If Type = ConfigFileType.GameIni And Self.Switcher.SelectedIndex <> Self.GameIniIndex Then
 		    Self.Switcher.SelectedIndex = Self.GameIniIndex
@@ -582,7 +630,7 @@ End
 		    End Select
 		  End If
 		  
-		  Self.ActionButton.Enabled = Self.mGameIniContent.Length > 0 Or Self.mGameUserSettingsIniContent.Length > 0
+		  Self.ActionButton.Enabled = (Self.mGameIniContent.IsEmpty Or Self.mGameUserSettingsIniContent.IsEmpty) = False
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -648,17 +696,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action()
-		  Var SettingUp As Boolean = Self.mSettingUp
-		  Self.mSettingUp = True
-		  Select Case Me.SelectedIndex
-		  Case Self.GameIniIndex
-		    Self.ConfigArea.Value = Self.mGameIniContent
-		  Case Self.GameUserSettingsIniIndex
-		    Self.ConfigArea.Value = Self.mGameUserSettingsIniContent
-		  Else
-		    Self.ConfigArea.Value = ""
-		  End Select
-		  Self.mSettingUp = SettingUp
+		  Self.RefreshContentArea(False)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -473,11 +473,11 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem HelpReportAProblem
+      Begin MenuItem HelpCreateSupportTicket
          SpecialMenu = 0
-         Value = "Report a Problem…"
+         Value = "Create Support Ticket…"
          Index = -2147483648
-         Text = "Report a Problem…"
+         Text = "Create Support Ticket…"
          AutoEnabled = True
          AutoEnable = True
          Visible = True
@@ -487,6 +487,15 @@ Begin Menu MainMenuBar
          Value = "Open Data Folder"
          Index = -2147483648
          Text = "Open Data Folder"
+         AutoEnabled = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem HelpReportAProblem
+         SpecialMenu = 0
+         Value = "Report a Problem…"
+         Index = -2147483648
+         Text = "Report a Problem…"
          AutoEnabled = True
          AutoEnable = True
          Visible = True
