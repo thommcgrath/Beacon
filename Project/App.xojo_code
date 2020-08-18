@@ -270,7 +270,7 @@ Implements NotificationKit.Receiver
 			Var Signed As MemoryBlock = Identity.Sign(HardwareID)
 			
 			Var Dict As New Dictionary
-			Dict.Value("UserID") = Identity.Identifier
+			Dict.Value("UserID") = Identity.UserID
 			Dict.Value("Signed") = EncodeHex(Signed)
 			Dict.Value("Device") = HardwareID
 			

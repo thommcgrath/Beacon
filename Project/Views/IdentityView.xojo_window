@@ -468,7 +468,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI(Identity As Beacon.Identity)
-		  UserIDField.Value = Identity.Identifier
+		  UserIDField.Value = Identity.UserID
 		  PublicKeyArea.Value = BeaconEncryption.PEMEncodePublicKey(Identity.PublicKey)
 		  PrivateKeyArea.Value = BeaconEncryption.PEMEncodePrivateKey(Identity.PrivateKey)
 		End Sub

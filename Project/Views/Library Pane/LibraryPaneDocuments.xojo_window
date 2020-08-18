@@ -602,7 +602,7 @@ End
 		Private Sub UpdateCloudDocuments()
 		  If App.IdentityManager.CurrentIdentity <> Nil Then
 		    Var Params As New Dictionary
-		    Params.Value("user_id") = App.IdentityManager.CurrentIdentity.Identifier
+		    Params.Value("user_id") = App.IdentityManager.CurrentIdentity.UserID
 		    
 		    Var Request As New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_CloudDocumentsList)
 		    Request.Authenticate(Preferences.OnlineToken)

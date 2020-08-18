@@ -689,7 +689,7 @@ End
 		  Users.Sort
 		  
 		  For Each UserID As String In Users
-		    If UserID = App.IdentityManager.CurrentIdentity.Identifier Then
+		    If UserID = App.IdentityManager.CurrentIdentity.UserID Then
 		      Continue
 		    End If
 		    Me.AddRow("", UserID)

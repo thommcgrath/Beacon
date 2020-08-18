@@ -193,12 +193,6 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "Identity.UserID" )  Function Identifier() As String
-		  Return Self.mIdentifier
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Shared Function Import(Source As Dictionary) As Beacon.Identity
 		  If Source.HasKey("Identifier") = False Or Source.HasKey("Public") = False Or Source.HasKey("Private") = False Then
 		    Return Nil

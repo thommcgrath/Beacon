@@ -669,7 +669,7 @@ End
 		  
 		  Var Identity As Beacon.Identity = App.IdentityManager.CurrentIdentity
 		  If (Identity Is Nil) = False Then
-		    Self.mUserID = Identity.Identifier
+		    Self.mUserID = Identity.UserID
 		    If Beacon.ValidateEmail(Identity.LoginKey) Then
 		      Self.EmailField.Value = Identity.LoginKey
 		    End If

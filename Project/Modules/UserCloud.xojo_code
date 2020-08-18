@@ -522,7 +522,7 @@ Protected Module UserCloud
 		Private Function UserID() As String
 		  Try
 		    If (App.IdentityManager.CurrentIdentity Is Nil) = False Then
-		      Return App.IdentityManager.CurrentIdentity.Identifier.Lowercase
+		      Return App.IdentityManager.CurrentIdentity.UserID
 		    End If
 		  Catch Err As RuntimeException
 		  End Try

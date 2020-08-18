@@ -456,7 +456,7 @@ Implements ObservationKit.Observable
 		    Var Passwords As Dictionary = Dict.Value("EncryptionKeys")
 		    For Each Entry As DictionaryEntry In Passwords
 		      Var UserID As String = Entry.Key
-		      If UserID = Identity.Identifier Then
+		      If UserID = Identity.UserID Then
 		        Continue
 		      End If
 		      

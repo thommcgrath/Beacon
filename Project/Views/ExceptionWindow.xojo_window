@@ -668,7 +668,7 @@ End
 		  Fields.Value("reason") = Reason
 		  Fields.Value("location") = Location
 		  If App.IdentityManager <> Nil And App.IdentityManager.CurrentIdentity <> Nil Then
-		    Fields.Value("user_id") = App.IdentityManager.CurrentIdentity.Identifier
+		    Fields.Value("user_id") = App.IdentityManager.CurrentIdentity.UserID
 		  End If
 		  
 		  Return Fields

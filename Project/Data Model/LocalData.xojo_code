@@ -311,7 +311,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  If App.IdentityManager <> Nil And App.IdentityManager.CurrentIdentity <> Nil Then
-		    CheckURL = CheckURL + "&user_id=" + EncodeURLComponent(App.IdentityManager.CurrentIdentity.Identifier)
+		    CheckURL = CheckURL + "&user_id=" + EncodeURLComponent(App.IdentityManager.CurrentIdentity.UserID)
 		  End If
 		  
 		  Return CheckURL
@@ -3188,7 +3188,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h1
 		Protected Function UserID() As String
 		  Try
-		    Return App.IdentityManager.CurrentIdentity.Identifier.Lowercase
+		    Return App.IdentityManager.CurrentIdentity.UserID
 		  Catch Err As RuntimeException
 		    Return v4UUID.CreateNull
 		  End Try

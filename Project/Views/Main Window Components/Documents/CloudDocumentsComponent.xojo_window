@@ -261,7 +261,7 @@ End
 		  
 		  If Self.APISocket.Working = False Then
 		    Var Params As New Dictionary
-		    Params.Value("user_id") = App.IdentityManager.CurrentIdentity.Identifier
+		    Params.Value("user_id") = App.IdentityManager.CurrentIdentity.UserID
 		    
 		    Var Request As BeaconAPI.Request
 		    Var Token As String = Preferences.OnlineToken
@@ -300,7 +300,7 @@ End
 		  
 		  If Response.HTTPStatus = 401 Then
 		    Var Params As New Dictionary
-		    Params.Value("user_id") = App.IdentityManager.CurrentIdentity.Identifier
+		    Params.Value("user_id") = App.IdentityManager.CurrentIdentity.UserID
 		    
 		    Var NewAttempt As New BeaconAPI.Request("document", "GET", Params, AddressOf APICallback_ListDocumentsWithIdentity)
 		    NewAttempt.Sign(App.IdentityManager.CurrentIdentity)

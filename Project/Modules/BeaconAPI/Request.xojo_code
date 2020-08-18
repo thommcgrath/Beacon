@@ -171,7 +171,7 @@ Protected Class Request
 		    Payload = Payload + Self.mPayload
 		  End If
 		  
-		  Self.Authenticate(Identity.Identifier, Identity.Sign(Payload))
+		  Self.Authenticate(Identity.UserID, Identity.Sign(Payload))
 		  Self.mAuthType = BeaconAPI.Request.AuthTypes.Signature
 		End Sub
 	#tag EndMethod
@@ -267,6 +267,14 @@ Protected Class Request
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HasBeenRetried"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Boolean"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior
