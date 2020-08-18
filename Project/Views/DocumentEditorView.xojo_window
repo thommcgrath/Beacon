@@ -403,7 +403,7 @@ End
 		    Self.Autosave()
 		    
 		    If Not Self.ReadyToDeploy Then
-		      If Self.ShowConfirm("This document is not ready for deploy.", "You must link at least one server with this document to use the deploy feature.", "Link a Server", "Cancel") Then 
+		      If Self.ShowConfirm("This document is not ready for deploy.", "You must import at least one server with this document to use the deploy feature.", "Import a Server", "Cancel") Then 
 		        Self.BeginImport(True)
 		      End If
 		      Return
@@ -466,9 +466,9 @@ End
 		    
 		    Var Ref As DocumentImportWindow
 		    If ForDeployment Then
-		      Ref = DocumentImportWindow.Present(AddressOf ImportAndDeployCallback, Self.Document, OtherDocuments, True)
+		      Ref = DocumentImportWindow.Present(AddressOf ImportAndDeployCallback, Self.Document, OtherDocuments)
 		    Else
-		      Ref = DocumentImportWindow.Present(AddressOf ImportCallback, Self.Document, OtherDocuments, False)
+		      Ref = DocumentImportWindow.Present(AddressOf ImportCallback, Self.Document, OtherDocuments)
 		    End If
 		    Self.mImportWindowRef = New WeakRef(Ref)
 		  End If

@@ -87,6 +87,7 @@ $user_has_omni = false;
 $email_has_omni = false;
 $user_matches_purchase = false;
 
+$omni_description = '';
 if ($has_expanded_parameters) {
 	$database = BeaconCommon::Database();
 	$results = $database->Query('SELECT purchaser_email FROM purchases INNER JOIN purchase_items ON (purchases.purchase_id = purchase_items.purchase_id) WHERE purchases.refunded = FALSE AND purchase_items.product_id = $2 AND purchases.purchaser_email = uuid_for_email($1);', $email, '972f9fc5-ad64-4f9c-940d-47062e705cc5');
@@ -104,7 +105,6 @@ if ($has_expanded_parameters) {
 	} catch (Exception $e) {
 	}
 	
-	$omni_description = '';
 	if ($user_has_omni) {
 		$omni_description = "\n\nHas Omni: Yes.";
 	} elseif ($email_has_omni) {
@@ -130,7 +130,7 @@ if ($has_expanded_parameters) {
 	}
 } else {
 	$user = BeaconUser::GetByEmail($email);
-	if ($user->OmniVersion() >= 1) {
+	if (is_null($user) === false && $user->OmniVersion() >= 1) {
 		$omni_description = "\n\nHas Omni: Yes.";
 	}
 }
