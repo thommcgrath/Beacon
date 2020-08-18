@@ -384,7 +384,8 @@ class CommonObject implements \JsonSerializable {
 				'name' => $this->mod_name
 			),
 			'group' => $this->object_group,
-			'tags' => $this->tags
+			'tags' => $this->tags,
+			'min_version' => $this->min_version
 		);
 	}
 	
