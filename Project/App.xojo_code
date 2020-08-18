@@ -772,7 +772,7 @@ Implements NotificationKit.Receiver
 		  Var LastScreen As Size = Preferences.LastUsedScreenSize
 		  If LastScreen Is Nil Or ScreenSize.Width <> LastScreen.Width Or ScreenSize.Height <> LastScreen.Height Then
 		    // Warn
-		    If ScreenSize < 1280 Or ScreenSize < 720 Then
+		    If ScreenSize.Width < 1280 Or ScreenSize.Height < 720 Then
 		      BeaconUI.ShowAlert("Beacon was not designed for your screen resolution.", "Beacon needs a screen resolution of at least 1280x720 points. You may find that Beacon's window does not fit nicely on your screen.")
 		    End If
 		    Preferences.LastUsedScreenSize = ScreenSize
