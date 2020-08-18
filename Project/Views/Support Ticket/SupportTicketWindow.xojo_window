@@ -529,6 +529,7 @@ Begin BeaconWindow SupportTicketWindow
       Top             =   226
       Transparent     =   False
       Underline       =   False
+      UnicodeMode     =   "0"
       ValidationMask  =   ""
       Value           =   ""
       Visible         =   True

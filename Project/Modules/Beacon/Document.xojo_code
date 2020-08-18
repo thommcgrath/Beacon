@@ -467,18 +467,19 @@ Implements ObservationKit.Observable
 		    Next
 		    
 		    For Each PossibleIdentity As Beacon.Identity In PossibleIdentities
-		      If Passwords.HasKey(PossibleIdentity.Identifier.Lowercase) = False Then
+		      Var UserID As String = PossibleIdentity.UserIDForEncryption
+		      If Passwords.HasKey(UserID) = False Then
 		        Continue
 		      End If
 		      
 		      Try
-		        Var DocumentPassword As String = Crypto.RSADecrypt(DecodeBase64(Passwords.Value(PossibleIdentity.Identifier.Lowercase)), PossibleIdentity.PrivateKey)
+		        Var DocumentPassword As String = Crypto.RSADecrypt(DecodeBase64(Passwords.Value(UserID)), PossibleIdentity.PrivateKey)
 		        Doc.mDocumentPassword = DocumentPassword
 		        Doc.mEncryptedPasswords = Passwords
 		        
-		        If Passwords.HasKey(Identity.Identifier.Lowercase) = False Then
+		        If Passwords.HasKey(UserID) = False Then
 		          // Add a password for the current user
-		          Doc.AddUser(Identity.Identifier, Identity.PublicKey)
+		          Doc.AddUser(UserID, Identity.PublicKey)
 		        End If
 		        
 		        Exit
@@ -1036,8 +1037,8 @@ Implements ObservationKit.Observable
 
 	#tag Method, Flags = &h0
 		Function ToDictionary(Identity As Beacon.Identity) As Dictionary
-		  If Not Self.mEncryptedPasswords.HasKey(Identity.Identifier) Then
-		    Self.AddUser(Identity.Identifier, Identity.PublicKey)
+		  If Not Self.mEncryptedPasswords.HasKey(Identity.UserIDForEncryption) Then
+		    Self.AddUser(Identity.UserIDForEncryption, Identity.PublicKey)
 		  End If
 		  
 		  Var Document As New Dictionary

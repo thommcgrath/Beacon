@@ -42,7 +42,7 @@ Protected Class Identity
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Identifier As String, PublicKey As String, PrivateKey As String)
-		  Self.mIdentifier = Identifier
+		  Self.mIdentifier = Identifier.Lowercase
 		  Self.mPublicKey = PublicKey
 		  Self.mPrivateKey = PrivateKey
 		End Sub
@@ -99,6 +99,14 @@ Protected Class Identity
 		    
 		  End Try
 		  
+		  Try
+		    If Dict.HasKey("parent_account_id") And Dict.Value("parent_account_id") <> Nil Then
+		      Self.mParentAccountID = Dict.Value("parent_account_id").StringValue
+		    End If
+		  Catch Err As RuntimeException
+		    
+		  End Try
+		  
 		  Return True
 		End Function
 	#tag EndMethod
@@ -138,6 +146,9 @@ Protected Class Identity
 		  End If
 		  If Self.mUsercloudKey <> Nil Then
 		    Dict.Value("Cloud Key") = EncodeHex(Self.mUsercloudKey)
+		  End If
+		  If Self.IsChildAccount Then
+		    Dict.Value("Parent Account ID") = Self.mParentAccountID.StringValue
 		  End If
 		  Return Dict
 		End Function
@@ -182,7 +193,7 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Identifier() As String
+		Attributes( Deprecated = "Identity.UserID" )  Function Identifier() As String
 		  Return Self.mIdentifier
 		End Function
 	#tag EndMethod
@@ -237,6 +248,10 @@ Protected Class Identity
 		    Identity.mBanned = Source.Value("Banned")
 		  End If
 		  
+		  If Source.HasKey("Parent Account ID") Then
+		    Identity.mParentAccountID = Source.Value("Parent Account ID").StringValue
+		  End If
+		  
 		  Identity.Validate()
 		  
 		  Return Identity
@@ -252,6 +267,12 @@ Protected Class Identity
 	#tag Method, Flags = &h0
 		Function IsBanned() As Boolean
 		  Return Self.mBanned
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsChildAccount() As Boolean
+		  Return (Self.mParentAccountID Is Nil) = False And Self.mParentAccountID.IsNull
 		End Function
 	#tag EndMethod
 
@@ -284,7 +305,7 @@ Protected Class Identity
 		  End If
 		  
 		  // Case changes do matter
-		  Var Result As Integer = Self.mLoginKey.Compare(Other.mLoginKey, ComparisonOptions.CaseSensitive)
+		  Var Result As Integer = Self.mLoginKey.Compare(Other.mLoginKey, ComparisonOptions.CaseInsensitive)
 		  If Result <> 0 Then
 		    Return Result
 		  End If
@@ -344,8 +365,21 @@ Protected Class Identity
 		    Return Result
 		  End If
 		  
+		  Var SelfParent As String = If(Self.mParentAccountID Is Nil, "", Self.mParentAccountID.StringValue)
+		  Var OtherParent As String = If(Other.mParentAccountID Is Nil, "", Other.mParentAccountID.StringValue)
+		  Result = SelfParent.Compare(OtherParent, ComparisonOptions.CaseInsensitive)
+		  If Result <> 0 Then
+		    Return Result
+		  End If
+		  
 		  // They are fully equal
 		  Return 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ParentAccountID() As v4UUID
+		  Return Self.mParentAccountID
 		End Function
 	#tag EndMethod
 
@@ -371,6 +405,26 @@ Protected Class Identity
 		Function UserCloudKey() As MemoryBlock
 		  If Self.mUsercloudKey <> Nil Then
 		    Return Self.mUsercloudKey.StringValue(0, Self.mUsercloudKey.Size)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UserID() As String
+		  Return Self.mIdentifier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UserIDForEncryption() As String
+		  // For use when decrypting a document. Returns the parent id for child accounts,
+		  // or the user's actual id for regular accounts. Return as string since this is
+		  // most useful as a dictionary key.
+		  
+		  If Self.IsChildAccount Then
+		    Return Self.mParentAccountID
+		  Else
+		    Return Self.mIdentifier
 		  End If
 		End Function
 	#tag EndMethod
@@ -443,6 +497,10 @@ Protected Class Identity
 
 	#tag Property, Flags = &h21
 		Private mLoginKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mParentAccountID As v4UUID
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
