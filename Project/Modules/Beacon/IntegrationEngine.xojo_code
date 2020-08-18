@@ -56,6 +56,7 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h1
 		Protected Sub Constructor(Profile As Beacon.ServerProfile)
 		  Self.mProfile = Profile
+		  Self.mID = EncodeHex(Crypto.GenerateRandomBytes(4)).Lowercase()
 		  Self.Log("Getting started…")
 		End Sub
 	#tag EndMethod
@@ -131,6 +132,12 @@ Protected Class IntegrationEngine
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ID() As String
+		  Return Self.mID
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function Identity() As Beacon.Identity
 		  Return Self.mIdentity
@@ -145,7 +152,7 @@ Protected Class IntegrationEngine
 
 	#tag Method, Flags = &h1
 		Protected Sub Log(Message As String, ReplaceLast As Boolean = False)
-		  App.Log(Message)
+		  App.Log(Self.mID + Encodings.ASCII.Chr(9) + Message)
 		  
 		  If Self.mLogMessages.Count > 0 And Self.mLogMessages(Self.mLogMessages.LastRowIndex) = Message Then
 		    // Don't duplicate the logs
@@ -793,6 +800,10 @@ Protected Class IntegrationEngine
 
 	#tag Property, Flags = &h21
 		Private mFinished As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
