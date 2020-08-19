@@ -311,11 +311,12 @@ End
 		    End If
 		    
 		    Var AvailableBounds As New Rect(IdealScreen.AvailableLeft, IdealScreen.AvailableTop, IdealScreen.AvailableWidth, IdealScreen.AvailableHeight)
-		    
-		    Var Width As Integer = Min(Max(Bounds.Width, Self.MinimumWidth + XDelta), Self.MaximumWidth, AvailableBounds.Width)
-		    Var Height As Integer = Min(Max(Bounds.Height, Self.MinimumHeight + YDelta), Self.MaximumHeight, AvailableBounds.Height)
-		    Var Left As Integer = Min(Max(Bounds.Left, AvailableBounds.Left), AvailableBounds.Right - Width)
-		    Var Top As Integer = Min(Max(Bounds.Top, AvailableBounds.Top), AvailableBounds.Bottom - Height)
+		    Var WidthRange As New Beacon.Range(Self.MinimumWidth + XDelta, Self.MaximumWidth + XDelta)
+		    Var HeightRange As New Beacon.Range(Self.MinimumHeight + YDelta, Self.MaximumHeight + YDelta)
+		    Var Width As Integer = WidthRange.Fit(Min(Bounds.Width, AvailableBounds.Width))
+		    Var Height As Integer = HeightRange.Fit(Min(Bounds.Height, AvailableBounds.Height))
+		    Var Left As Integer = Max(Min(Max(Bounds.Left, AvailableBounds.Left), AvailableBounds.Right - Width), 0)
+		    Var Top As Integer = Max(Min(Max(Bounds.Top, AvailableBounds.Top), AvailableBounds.Bottom - Height), 0)
 		    Self.Bounds = New Xojo.Rect(Left, Top, Width, Height)
 		  End If
 		  
