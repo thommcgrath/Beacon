@@ -53,7 +53,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -90,7 +90,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Mature Speed Multiplier:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -131,7 +131,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   9
+      TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -166,9 +166,9 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   8
+      TabIndex        =   4
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Incubation Speed Multiplier:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -209,7 +209,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   15
+      TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -244,9 +244,9 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   14
+      TabIndex        =   6
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Egg Lay Period Multiplier:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -287,7 +287,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   21
+      TabIndex        =   18
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -322,9 +322,9 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   20
+      TabIndex        =   8
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Baby Food Consumption Multiplier:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -365,7 +365,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   33
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -400,9 +400,9 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   4
+      TabIndex        =   21
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Imprint Period Multiplier:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -443,7 +443,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   11
+      TabIndex        =   35
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -451,7 +451,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   125
+      Top             =   189
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -478,16 +478,16 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   10
+      TabIndex        =   25
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Imprint Stat Scale Multiplier:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   125
+      Top             =   189
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -521,7 +521,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   17
+      TabIndex        =   36
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -529,7 +529,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   189
+      Top             =   253
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -556,16 +556,16 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   16
+      TabIndex        =   27
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Imprint Grace Period Multiplier:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   189
+      Top             =   253
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -599,7 +599,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   23
+      TabIndex        =   37
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -607,7 +607,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   253
+      Top             =   317
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -634,16 +634,16 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   22
+      TabIndex        =   29
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Imprint Loss Speed Multiplier:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   253
+      Top             =   317
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -667,7 +667,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   0
-      Height          =   93
+      Height          =   143
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -687,13 +687,13 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
-      TabIndex        =   35
+      TabIndex        =   14
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   495
+      Top             =   445
       Transparent     =   False
       TypeaheadColumn =   0
       Underline       =   False
@@ -703,28 +703,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Width           =   760
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
-   End
-   Begin Separator Separator1
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Height          =   4
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   32
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   445
-      Transparent     =   False
-      Visible         =   True
-      Width           =   760
    End
    Begin UITweaks.ResizedTextField ImprintPeriodPreviewField
       AcceptTabs      =   False
@@ -744,7 +722,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   263
+      Left            =   621
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -757,13 +735,13 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Scope           =   2
       TabIndex        =   34
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "1.0"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   461
+      Top             =   125
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -781,7 +759,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   20
+      Left            =   378
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -790,16 +768,16 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   33
+      TabIndex        =   23
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Imprint Frequency:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   461
+      Top             =   125
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -825,16 +803,16 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   6
+      TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Greater than 1.0 matures faster"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   95
+      Top             =   87
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -860,16 +838,16 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   12
+      TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Greater than 1.0 incubates faster"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   159
+      Top             =   151
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -895,22 +873,22 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   18
+      TabIndex        =   7
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Less than 1.0 produces more eggs"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   223
+      Top             =   215
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   346
    End
-   Begin Label FeedConsumptionHelp
+   Begin Label FoodConsumptionHelp
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
@@ -930,16 +908,16 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   24
+      TabIndex        =   9
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Greater than 1.0 eats more often"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   287
+      Top             =   279
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -965,16 +943,16 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   7
+      TabIndex        =   22
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Less than 1.0 imprints more frequently"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   95
+      Top             =   87
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1000,16 +978,16 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   13
+      TabIndex        =   26
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Greater than 1.0 increases imprinting stat bonuses"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   159
+      Top             =   215
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1035,16 +1013,16 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   19
+      TabIndex        =   28
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Greater than 1.0 increases time before decay"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   223
+      Top             =   279
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1070,16 +1048,16 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   25
+      TabIndex        =   30
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Less than 1.0 reduces imprint decay"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   287
+      Top             =   343
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1090,14 +1068,14 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      BorderBottom    =   False
+      BorderBottom    =   True
       BorderLeft      =   False
       BorderRight     =   False
       BorderTop       =   False
       Caption         =   "Breeding Multipliers"
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   40
+      Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -1116,34 +1094,6 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabStop         =   True
       Top             =   0
       Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   800
-   End
-   Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   40
-      Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
       Width           =   800
@@ -1176,7 +1126,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   27
+      TabIndex        =   19
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -1211,9 +1161,9 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   26
+      TabIndex        =   10
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Mating Speed Multiplier:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -1254,7 +1204,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   29
+      TabIndex        =   20
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -1289,9 +1239,9 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   28
+      TabIndex        =   12
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Mating Interval Multiplier:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -1324,16 +1274,16 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   30
+      TabIndex        =   11
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Greater than 1.0 mates faster"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   351
+      Top             =   343
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1359,16 +1309,16 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   31
+      TabIndex        =   13
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       Text            =   "Less than 1.0 mates more often"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   415
+      Top             =   407
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1396,13 +1346,13 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   36
+      TabIndex        =   31
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   317
+      Top             =   381
       Transparent     =   False
       Underline       =   False
       Value           =   "Imprint Amount Multiplier:"
@@ -1438,13 +1388,13 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   37
+      TabIndex        =   38
       TabPanelIndex   =   0
       TabStop         =   True
       TextAlignment   =   "2"
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   317
+      Top             =   381
       Transparent     =   False
       Underline       =   False
       ValidationMask  =   ""
@@ -1474,16 +1424,51 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   38
+      TabIndex        =   32
       TabPanelIndex   =   0
-      TabStop         =   True
+      TabStop         =   False
       TextAlignment   =   "3"
       TextColor       =   &c00000000
       Tooltip         =   ""
-      Top             =   351
+      Top             =   407
       Transparent     =   False
       Underline       =   False
       Value           =   "Greater than 1.0 imprints more per cuddle"
+      Visible         =   True
+      Width           =   346
+   End
+   Begin Label ImprintPeriodPreviewHelp
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      FontName        =   "SmallSystem"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   18
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   378
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   24
+      TabPanelIndex   =   0
+      TabStop         =   False
+      TextAlignment   =   "3"
+      TextColor       =   &c00000000
+      Tooltip         =   ""
+      Top             =   151
+      Transparent     =   False
+      Underline       =   False
+      Value           =   "(Read Only) The amount of real time between imprint events"
       Visible         =   True
       Width           =   346
    End
@@ -1493,8 +1478,28 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.MinimumWidth = 800
-		  Self.MinimumHeight = 608
+		  Self.mFieldGroups.AddRow(New ControlGroup(MatureSpeedLabel, MatureSpeedField, MatureSpeedHelp))
+		  Self.mFieldGroups.AddRow(New ControlGroup(IncubationSpeedLabel, IncubationSpeedField, IncubationSpeedHelp))
+		  Self.mFieldGroups.AddRow(New ControlGroup(EggLayPeriodLabel, EggLayPeriodField, EggLayPeriodHelp))
+		  Self.mFieldGroups.AddRow(New ControlGroup(FoodConsumptionLabel, FoodConsumptionField, FoodConsumptionHelp))
+		  Self.mFieldGroups.AddRow(New ControlGroup(MatingSpeedLabel, MatingSpeedField, MatingSpeedHelp))
+		  Self.mFieldGroups.AddRow(New ControlGroup(MatingIntervalLabel, MatingIntervalField, MatingIntervalHelp))
+		  Self.mFieldGroups.AddRow(New ControlGroup(ImprintPeriodLabel, ImprintPeriodField, ImprintPeriodHelp))
+		  Self.mFieldGroups.AddRow(New ControlGroup(ImprintPeriodPreviewLabel, ImprintPeriodPreviewField, ImprintPeriodPreviewHelp))
+		  Self.mFieldGroups.AddRow(New ControlGroup(ImprintStatScaleLabel, ImprintStatScaleField, ImprintStatScaleHelp))
+		  Self.mFieldGroups.AddRow(New ControlGroup(ImprintGracePeriodLabel, ImprintGracePeriodField, ImprintGracePeriodHelp))
+		  Self.mFieldGroups.AddRow(New ControlGroup(ImprintLossSpeedLabel, ImprintLossSpeedField, ImprintLossSpeedHelp))
+		  Self.mFieldGroups.AddRow(New ControlGroup(ImprintAmountLabel, ImprintAmountField, ImprintAmountHelp))
+		  
+		  Self.PlaceControlGroups()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
+		  Self.PlaceControlGroups()
 		End Sub
 	#tag EndEvent
 
@@ -1574,6 +1579,59 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub PlaceControlGroups()
+		  Const MaxColumnWidth = 340
+		  
+		  If Self.mFieldGroups.Count = 0 Then
+		    Return
+		  End If
+		  
+		  Var AvailableWidth As Integer = Self.Width - 40
+		  Var NumColumns As Integer = Floor(AvailableWidth / MaxColumnWidth)
+		  Var TotalColumnWidth As Integer = AvailableWidth - ((NumColumns - 1) * 12)
+		  Var StandardColumnWidth As Integer = Floor(TotalColumnWidth / NumColumns)
+		  Var RowsPerColumn As Integer = Floor(Self.mFieldGroups.Count / NumColumns)
+		  Var WidthRemainder As Integer = AvailableWidth - ((StandardColumnWidth * NumColumns) + ((NumColumns - 1) * 12))
+		  Var CompleteRows As Integer = Floor(Self.mFieldGroups.Count / NumColumns)
+		  Var CompleteColumns As Integer = Self.mFieldGroups.Count - (CompleteRows * NumColumns)
+		  
+		  Var GroupIdx As Integer = 0
+		  Var ColumnLeft As Integer = 20
+		  Var Bottom As Integer
+		  For ColumnIdx As Integer = 1 To NumColumns
+		    Var ColumnWidth As Integer = StandardColumnWidth
+		    Var RowTop As Integer = Self.Header.Top + Self.Header.Height + 20
+		    If ColumnIdx <= WidthRemainder Then
+		      ColumnWidth = ColumnWidth + 1
+		    End If
+		    For RowIdx As Integer = 1 To RowsPerColumn + If(ColumnIdx <= CompleteColumns, 1, 0)
+		      If GroupIdx > Self.mFieldGroups.LastRowIndex Then
+		        Exit For ColumnIdx
+		      End If
+		      Self.mFieldGroups(GroupIdx).Top = RowTop
+		      Self.mFieldGroups(GroupIdx).Left = ColumnLeft
+		      Bottom = Max(Bottom, Self.mFieldGroups(GroupIdx).Bottom)
+		      
+		      Var GroupLabel As Label = Label(Self.mFieldGroups(GroupIdx).Member(0))
+		      Var GroupField As TextField = TextField(Self.mFieldGroups(GroupIdx).Member(1))
+		      Var GroupHelp As Label = Label(Self.mFieldGroups(GroupIdx).Member(2))
+		      GroupLabel.Width = ColumnWidth - 112
+		      GroupField.Left = GroupLabel.Left + GroupLabel.Width + 12
+		      GroupField.Width = 100
+		      GroupHelp.Width = ColumnWidth
+		      
+		      RowTop = RowTop + Self.mFieldGroups(GroupIdx).Height + 12
+		      GroupIdx = GroupIdx + 1
+		    Next
+		    ColumnLeft = ColumnLeft + ColumnWidth + 12
+		  Next
+		  
+		  Self.CreaturesList.Top = Bottom + 20
+		  Self.CreaturesList.Height = Self.Height - (20 + Self.CreaturesList.Top)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateStats()
 		  Var CuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period") * Self.Config(False).BabyCuddleIntervalMultiplier
 		  Var Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", Self.Document.Mods)
@@ -1636,6 +1694,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mConfigRef As WeakRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFieldGroups() As ControlGroup
 	#tag EndProperty
 
 
