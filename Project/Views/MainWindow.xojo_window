@@ -508,28 +508,12 @@ End
 		    If (CloseButton Is Nil Or ZoomButton Is Nil) = False Then
 		      Self.NavBar.LeftPadding = CloseButton.Frame.MinX + ZoomButton.Frame.MaxX
 		    End If
-		  #else
-		    Self.HasBackgroundColor = True
-		    Self.BackgroundColor = SystemColors.ControlBackgroundColor
 		  #endif
 		  
 		  NotificationKit.Watch(Self, App.Notification_UpdateFound, BeaconSubview.Notification_ViewShown)
 		  Self.SetupUpdateUI()
 		  
 		  Self.mOpened = True
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  #Pragma Unused Areas
-		  
-		  #if TargetMacOS
-		    G.DrawingColor = SystemColors.ControlBackgroundColor
-		    G.FillRectangle(0, 0, G.Width, G.Height)
-		  #else
-		    #Pragma Unused G
-		  #endif
 		End Sub
 	#tag EndEvent
 

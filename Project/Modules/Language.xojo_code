@@ -57,15 +57,15 @@ Protected Module Language
 		  Case BeaconConfigs.Difficulty.ConfigName
 		    Return "Difficulty"
 		  Case BeaconConfigs.LootDrops.ConfigName
-		    Return "Loot Drop Contents"
+		    Return "Loot Drops"
 		  Case BeaconConfigs.LootScale.ConfigName
 		    Return "Loot Quality Scaling"
 		  Case BeaconConfigs.Metadata.ConfigName
 		    Return "Document Properties"
 		  Case BeaconConfigs.ExperienceCurves.ConfigName
-		    Return "Player and Tame Levels"
+		    Return "Levels and XP"
 		  Case BeaconConfigs.CustomContent.ConfigName
-		    Return "Custom Config Content"
+		    Return "Custom Config"
 		  Case BeaconConfigs.CraftingCosts.ConfigName
 		    Return "Crafting Costs"
 		  Case BeaconConfigs.StackSizes.ConfigName
@@ -77,11 +77,11 @@ Protected Module Language
 		  Case BeaconConfigs.DinoAdjustments.ConfigName
 		    Return "Creature Adjustments"
 		  Case BeaconConfigs.StatMultipliers.ConfigName
-		    Return "Player and Creature Stat Multipliers"
+		    Return "Stat Multipliers"
 		  Case BeaconConfigs.DayCycle.ConfigName
 		    Return "Day and Night Cycle"
 		  Case BeaconConfigs.SpawnPoints.ConfigName
-		    Return "Creature Spawn Points"
+		    Return "Creature Spawns"
 		  Case BeaconConfigs.StatLimits.ConfigName
 		    Return "Item Stat Limits"
 		  Case BeaconConfigs.EngramControl.ConfigName

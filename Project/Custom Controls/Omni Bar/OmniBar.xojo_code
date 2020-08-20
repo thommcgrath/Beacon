@@ -206,8 +206,8 @@ Implements ObservationKit.Observer
 		  
 		  Var BackgroundColor As Color = SystemColors.ControlBackgroundColor
 		  G.ClearRectangle(0, 0, G.Width, G.Height)
-		  G.DrawingColor = BackgroundColor
-		  G.FillRectangle(0, 0, G.Width, G.Height)
+		  //G.DrawingColor = BackgroundColor
+		  //G.FillRectangle(0, 0, G.Width, G.Height)
 		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.FillRectangle(0, G.Height - 1, G.Width, 1)
 		  
@@ -344,20 +344,19 @@ Implements ObservationKit.Observer
 		  End If
 		  
 		  // Find the color we'll be using
-		  Var ForeColor As Color
+		  Var ForeColor, ShadowColor As Color
 		  If Item.Enabled = False Then
 		    ForeColor = SystemColors.DisabledControlTextColor
 		  ElseIf Highlighted = True Then
-		    If Item.Toggled Or Item.AlwaysUseActiveColor Then
+		    If Item.Toggled Or Item.AlwaysUseActiveColor Or State = Self.StateHover Or State = Self.StatePressed Then
 		      ForeColor = BeaconUI.FindContrastingColor(BackgroundColor, Self.ActiveColorToColor(Item.ActiveColor))
-		    ElseIf State = Self.StateHover Then
-		      ForeColor = SystemColors.LabelColor
 		    Else
-		      ForeColor = SystemColors.SecondaryLabelColor
+		      ForeColor = SystemColors.ControlTextColor
 		    End If
 		  Else
-		    ForeColor = SystemColors.SecondaryLabelColor
+		    ForeColor = SystemColors.ControlTextColor
 		  End If
+		  ShadowColor = SystemColors.TextBackgroundColor
 		  
 		  Var OriginalForeColor As Color = ForeColor
 		  If State = Self.StatePressed And Item.Enabled Then
@@ -421,6 +420,8 @@ Implements ObservationKit.Observer
 		  Var CaptionLeft As Double = NearestMultiple((CaptionSpace - Min(G.TextWidth(Item.Caption), Self.MaxCaptionWidth)) / 2, G.ScaleX)
 		  Var CaptionBaseline As Double = NearestMultiple((G.Height / 2) + (G.CapHeight / 2), G.ScaleY)
 		  
+		  G.DrawingColor = ShadowColor
+		  G.DrawText(Item.Caption, CaptionLeft, CaptionBaseline + 1, Self.MaxCaptionWidth, True)
 		  G.DrawingColor = ForeColor
 		  G.DrawText(Item.Caption, CaptionLeft, CaptionBaseline, Self.MaxCaptionWidth, True)
 		  G.Bold = False
