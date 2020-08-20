@@ -158,6 +158,7 @@ Implements NotificationKit.Receiver
 		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_CheckUpdates)
 		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_NewsletterPrompt)
 		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_GettingStarted)
+		  Self.mLaunchQueue.AddRow(AddressOf LaunchQueue_CheckScreenSize)
 		  Self.NextLaunchQueueTask
 		  
 		  #If TargetWin32
@@ -747,6 +748,33 @@ Implements NotificationKit.Receiver
 		  End If
 		  
 		  Self.NextLaunchQueueTask()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_CheckScreenSize()
+		  // Find the largest screen
+		  Var LargestScreen As Integer = -1
+		  Var Bound As Integer = ScreenCount - 1
+		  For Idx As Integer = 0 To Bound
+		    If LargestScreen = -1 Then
+		      LargestScreen = Idx
+		    Else
+		      If (Screen(Idx).Width * Screen(Idx).Height) > (Screen(LargestScreen).Width * Screen(LargestScreen).Height) Then
+		        LargestScreen = Idx
+		      End If
+		    End If
+		  Next
+		  
+		  Var ScreenSize As New Size(Screen(LargestScreen).Width, Screen(LargestScreen).Height)
+		  Var LastScreen As Size = Preferences.LastUsedScreenSize
+		  If LastScreen Is Nil Or ScreenSize.Width <> LastScreen.Width Or ScreenSize.Height <> LastScreen.Height Then
+		    // Warn
+		    If ScreenSize.Width < 1280 Or ScreenSize.Height < 720 Then
+		      BeaconUI.ShowAlert("Beacon was not designed for your screen resolution.", "Beacon needs a screen resolution of at least 1280x720 points. You may find that Beacon's window does not fit nicely on your screen.")
+		    End If
+		    Preferences.LastUsedScreenSize = ScreenSize
+		  End If
 		End Sub
 	#tag EndMethod
 

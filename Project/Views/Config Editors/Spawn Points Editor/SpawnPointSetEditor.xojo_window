@@ -1214,14 +1214,54 @@ End
 		  #Pragma Unused Initial
 		  
 		  Const ReplaceMinWidth = 304
+		  Const DesiredButtonsWidth = 80
 		  
 		  Var AvailableWidth As Integer = Self.Width - 52
 		  Var ReplacementsWidth As Integer = Max(AvailableWidth * 0.4, ReplaceMinWidth)
 		  Var EntriesWidth As Integer = AvailableWidth - ReplacementsWidth
+		  Var DownsizeButtons As Boolean
+		  If EntriesWidth < ReplaceMinWidth Then
+		    EntriesWidth = Ceil(AvailableWidth / 2)
+		    ReplacementsWidth = Floor(AvailableWidth / 2)
+		    DownsizeButtons = True
+		  End If
 		  
 		  Self.EntriesGroup.Width = EntriesWidth
 		  Self.ReplaceGroup.Left = Self.EntriesGroup.Left + Self.EntriesGroup.Width + 12
 		  Self.ReplaceGroup.Width = ReplacementsWidth
+		  
+		  If DownSizeButtons Then
+		    Var MaxButtonsWidth As Integer = Floor((Self.EntriesList.Width - 24) / 3)
+		    Var Remainder As Integer = (Self.EntriesList.Width - 24) - (MaxButtonsWidth * 3)
+		    
+		    Self.EntryAddButton.Left = Self.EntriesList.Left
+		    Self.EntryAddButton.Width = MaxButtonsWidth + If(Remainder > 0, 1, 0)
+		    Self.EntryEditButton.Left = Self.EntryAddButton.Left + Self.EntryAddButton.Width + 12
+		    Self.EntryEditButton.Width = MaxButtonsWidth + If(Remainder > 1, 1, 0)
+		    Self.EntryDeleteButton.Left = Self.EntryEditButton.Left + Self.EntryEditButton.Width + 12
+		    Self.EntryDeleteButton.Width = MaxButtonsWidth + If(Remainder > 2, 1, 0)
+		    
+		    Self.ReplaceAddButton.Left = Self.ReplaceList.Left
+		    Self.ReplaceAddButton.Width = MaxButtonsWidth + If(Remainder > 0, 1, 0)
+		    Self.ReplaceEditButton.Left = Self.ReplaceAddButton.Left + Self.ReplaceAddButton.Width + 12
+		    Self.ReplaceEditButton.Width = MaxButtonsWidth + If(Remainder > 1, 1, 0)
+		    Self.ReplaceDeleteButton.Left = Self.ReplaceEditButton.Left + Self.ReplaceEditButton.Width + 12
+		    Self.ReplaceDeleteButton.Width = MaxButtonsWidth + If(Remainder > 2, 1, 0)
+		  ElseIf Self.EntryAddButton.Width <> DesiredButtonsWidth Then
+		    Self.EntryAddButton.Left = Self.EntriesList.Left
+		    Self.EntryAddButton.Width = DesiredButtonsWidth
+		    Self.EntryEditButton.Left = Self.EntryAddButton.Left + Self.EntryAddButton.Width + 12
+		    Self.EntryEditButton.Width = DesiredButtonsWidth
+		    Self.EntryDeleteButton.Left = Self.EntryEditButton.Left + Self.EntryEditButton.Width + 12
+		    Self.EntryDeleteButton.Width = DesiredButtonsWidth
+		    
+		    Self.ReplaceAddButton.Left = Self.ReplaceList.Left
+		    Self.ReplaceAddButton.Width = DesiredButtonsWidth
+		    Self.ReplaceEditButton.Left = Self.ReplaceAddButton.Left + Self.ReplaceAddButton.Width + 12
+		    Self.ReplaceEditButton.Width = DesiredButtonsWidth
+		    Self.ReplaceDeleteButton.Left = Self.ReplaceEditButton.Left + Self.ReplaceEditButton.Width + 12
+		    Self.ReplaceDeleteButton.Width = DesiredButtonsWidth
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -1447,7 +1487,7 @@ End
 	#tag Constant, Name = kReplacementClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.spawn.replacement", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"660", Scope = Public
+	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"584", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = WeightScale, Type = Double, Dynamic = False, Default = \"1.0", Scope = Private

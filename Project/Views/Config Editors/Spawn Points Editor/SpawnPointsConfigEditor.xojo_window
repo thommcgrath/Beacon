@@ -524,7 +524,7 @@ End
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.spawnpoint", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"250", Scope = Public
+	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"225", Scope = Public
 	#tag EndConstant
 
 

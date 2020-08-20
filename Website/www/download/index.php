@@ -128,6 +128,7 @@ $stable_136 = $database->Query("SELECT win_combo_url FROM updates WHERE build_nu
 
 ?><h1>Current Version</h1>
 <p class="text-center">Version <?php echo $version; ?></p>
+<p class="notice-block notice-caution hidden" id="screenCompatibilityNotice"></p>
 <p class="text-center"><?php foreach ($primary_links as $link) { ?><a class="button" href="<?php echo BeaconCommon::SignDownloadURL($link['url']); ?>" rel="nofollow"><?php echo htmlentities($link['label']); ?></a><?php } ?><br><span class="mini"><?php echo implode(' | ' , $alternate_html); ?></span></p>
 <h3>Engrams Database</h3>
 <div class="indent">
@@ -179,12 +180,50 @@ $stable_136 = $database->Query("SELECT win_combo_url FROM updates WHERE build_nu
 		<p><strong>Mac</strong></p>
 		<ul>
 			<li>El Capitan (10.11), Sierra (10.12), High Sierra (10.13), Mojave (10.14), Catalina (10.15), or newer.</li>
+			<li>1280x720 screen resolution or greater. Retina screens will need 2560x1440 pixels or greater.</li>
 		</ul>
 	</div>
 	<div class="column">
 		<p><strong>Windows</strong></p>
 		<ul>
 			<li>Windows 7 with Service Pack 1, Windows 8, Windows 8.1, Windows 10, or newer.</li>
+			<li>1280x720 screen resolution or greater. Windows scaling settings will affect this number. For example, a 150% scaling setting would require 1.5 times more pixels, which is 1920x1080. At 200% scaling, the minimum screen resolution is 2560x1440.</li>
 		</ul>
 	</div>
-</div>
+</div><?php
+
+BeaconTemplate::StartScript();
+?><script>
+let updateScreenNotice = function() {
+	let screen = window.screen;
+	let screenWidthPoints = screen.width;
+	let screenHeightPoints = screen.height;
+	let screenWidthPixels = screenWidthPoints * window.devicePixelRatio;
+	let screenHeightPixels = screenHeightPoints * window.devicePixelRatio;
+	
+	let isMac = navigator.platform.indexOf('Mac') > -1;
+	let isWindows = navigator.platform.indexOf('Win') > -1;
+	
+	let notice = null;
+	if (screenWidthPoints < 1280 || screenHeightPoints < 720) {
+		notice = 'This screen may not be supported. A resolution of at least 1280x720 points is required.';
+		if (screenWidthPixels >= 1280 && screenHeightPixels >= 720) {
+			let maxScalingSupported = Math.round(Math.min(screenWidthPixels / 1280, screenHeightPixels / 720) * 100);
+			if (isWindows) {
+				notice = 'Your display scaling settings may prevent Beacon from fitting on your screen. If you experience trouble fitting Beacon\'s window on your screen, try changing your display scaling to ' + maxScalingSupported + '% or lower. <a href="https://www.windowscentral.com/how-set-custom-display-scaling-setting-windows-10#change_display_scaling_default_settings_windows10">Learn how to change scaling settings.</a>';
+			}
+		}
+	}
+	
+	if (notice) {
+		let screenNotice = document.getElementById('screenCompatibilityNotice');
+		screenNotice.innerHTML = notice;
+		screenNotice.classList.remove('hidden');
+	}
+};
+
+document.addEventListener('DOMContentLoaded', updateScreenNotice);
+
+</script><?php
+BeaconTemplate::FinishScript();
+?>
