@@ -501,6 +501,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ChangeMapsCallback(Mask As UInt64)
+		  Self.Document.MapCompatibility = Mask
+		  Self.Changed = Self.Document.Modified
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub CleanupAutosave()
 		  Var AutosaveFile As FolderItem = Self.AutosaveFile()
 		  If AutosaveFile <> Nil And AutosaveFile.Exists Then
@@ -1003,8 +1010,6 @@ End
 			      NewPanel = Self.Panels.Value(Value)
 			    Else
 			      Select Case Value
-			      Case "maps"
-			        NewPanel = New MapsConfigEditor(Self.mController)
 			      Case "deployments"
 			        NewPanel = New ServersConfigEditor(Self.mController)
 			      Case "accounts"
@@ -1239,6 +1244,7 @@ End
 		    Var DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToExport, "Make config changes live")
 		  #endif
 		  Var ShareButton As New BeaconToolbarItem("ShareButton", IconToolbarShare, "Copy link to this document")
+		  Var MapsButton As New BeaconToolbarItem("MapsButton", IconToolbarMaps, "Change the maps for this document")
 		  
 		  Var HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarHelp, False, "Toggle help panel")
 		  
@@ -1248,6 +1254,7 @@ End
 		    Me.LeftItems.Append(DeployButton)
 		  #endif
 		  Me.LeftItems.Append(ShareButton)
+		  Me.LeftItems.Append(MapsButton)
 		  
 		  Me.RightItems.Append(HelpButton)
 		End Sub
@@ -1275,6 +1282,8 @@ End
 		    End If
 		  Case "DeployButton"
 		    Self.BeginDeploy()
+		  Case "MapsButton"
+		    MapSelectionSheet.Present(Me, Self.Document.MapCompatibility, AddressOf ChangeMapsCallback, Item.Rect)
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -1303,8 +1312,6 @@ End
 	#tag Event
 		Sub Open()
 		  Var Labels(), Tags() As String
-		  Labels.AddRow("Maps")
-		  Tags.AddRow("maps")
 		  #if DeployEnabled
 		    Labels.AddRow("Servers")
 		    Tags.AddRow("deployments")

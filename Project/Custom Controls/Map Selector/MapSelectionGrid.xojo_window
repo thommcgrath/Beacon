@@ -107,8 +107,11 @@ End
 		    Self.mBoxes.AddRow(Box)
 		  Next
 		  
-		  Self.Height = (OfficialMaps.LastRowIndex + 1) * 32
-		  Self.Width = 304
+		  Self.mDesiredHeight = (OfficialMaps.LastRowIndex + 1) * 32
+		  Self.mDesiredWidth = 304
+		  
+		  Self.Height = Self.mDesiredHeight
+		  Self.Width = Self.mDesiredWidth
 		  
 		  RaiseEvent Open
 		  Self.mSettingUp = False
@@ -178,6 +181,24 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mDesiredHeight
+			End Get
+		#tag EndGetter
+		DesiredHeight As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mDesiredWidth
+			End Get
+		#tag EndGetter
+		DesiredWidth As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Var Combined As UInt64
 			  For Each Box As BeaconUI.MapCheckBox In Self.mBoxes
 			    If Box.Value Then
@@ -206,6 +227,14 @@ End
 
 	#tag Property, Flags = &h21
 		Private mBoxes() As BeaconUI.MapCheckBox
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDesiredHeight As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDesiredWidth As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -449,6 +478,22 @@ End
 		Group="Behavior"
 		InitialValue=""
 		Type="UInt64"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="DesiredWidth"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Integer"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="DesiredHeight"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Integer"
 		EditorType=""
 	#tag EndViewProperty
 #tag EndViewBehavior
