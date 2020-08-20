@@ -121,7 +121,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   69
+      Left            =   -512
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -132,7 +132,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   445
+      Top             =   584
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   False
@@ -196,12 +196,12 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Top             =   0
       Transparent     =   True
       Visible         =   True
-      Width           =   600
+      Width           =   1000
    End
    Begin PagePanel Pages
       AllowAutoDeactivate=   True
       Enabled         =   True
-      Height          =   362
+      Height          =   642
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -220,7 +220,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Transparent     =   False
       Value           =   0
       Visible         =   True
-      Width           =   800
+      Width           =   1200
       Begin DocumentsComponent DocumentsComponent1
          AllowAutoDeactivate=   True
          AllowFocus      =   False
@@ -232,7 +232,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          Enabled         =   True
          EraseBackground =   True
          HasBackgroundColor=   False
-         Height          =   362
+         Height          =   642
          InitialParent   =   "Pages"
          Left            =   0
          LockBottom      =   True
@@ -250,12 +250,12 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          Top             =   38
          Transparent     =   True
          Visible         =   True
-         Width           =   800
+         Width           =   1200
       End
       Begin HTMLViewer HelpViewer
          AllowAutoDeactivate=   True
          Enabled         =   True
-         Height          =   362
+         Height          =   642
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Left            =   0
@@ -272,7 +272,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          Tooltip         =   ""
          Top             =   38
          Visible         =   True
-         Width           =   800
+         Width           =   1200
       End
       Begin DashboardPane DashboardPane1
          AcceptFocus     =   False
@@ -284,7 +284,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   362
+         Height          =   642
          HelpTag         =   ""
          InitialParent   =   "Pages"
          Left            =   0
@@ -303,7 +303,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   800
+         Width           =   1200
       End
       Begin BlueprintsComponent BlueprintsComponent1
          AllowAutoDeactivate=   True
@@ -316,7 +316,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          Enabled         =   True
          EraseBackground =   True
          HasBackgroundColor=   False
-         Height          =   362
+         Height          =   642
          InitialParent   =   "Pages"
          Left            =   0
          LockBottom      =   True
@@ -334,7 +334,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          Top             =   38
          Transparent     =   True
          Visible         =   True
-         Width           =   800
+         Width           =   1200
       End
    End
    Begin OmniBar AppBar
@@ -349,7 +349,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Height          =   38
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   600
+      Left            =   1000
       LeftPadding     =   0
       LockBottom      =   False
       LockedInPosition=   False

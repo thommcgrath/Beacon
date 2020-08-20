@@ -660,6 +660,9 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
+      DefaultSortColumn=   0
+      DefaultSortDirection=   0
+      EditCaption     =   "Edit"
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -680,6 +683,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      PreferencesKey  =   ""
       RequiresSelection=   False
       Scope           =   2
       ScrollbarHorizontal=   False
@@ -2000,14 +2004,6 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="ToolbarIcon"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="Picture"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="EraseBackground"
 		Visible=false
 		Group="Behavior"
@@ -2072,14 +2068,6 @@ End
 		EditorType=""
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Progress"
-		Visible=false
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
-		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
 		Group="Behavior"
@@ -2094,14 +2082,6 @@ End
 		InitialValue="300"
 		Type="Integer"
 		EditorType=""
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarCaption"
-		Visible=false
-		Group="Behavior"
-		InitialValue=""
-		Type="String"
-		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
