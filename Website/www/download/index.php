@@ -180,14 +180,14 @@ $stable_136 = $database->Query("SELECT win_combo_url FROM updates WHERE build_nu
 		<p><strong>Mac</strong></p>
 		<ul>
 			<li>El Capitan (10.11), Sierra (10.12), High Sierra (10.13), Mojave (10.14), Catalina (10.15), or newer.</li>
-			<li>1280x720 screen resolution or greater. Retina screens will need 2560x1440 pixels or greater. <p id="macScreenNotice" class="hidden"></p></li>
+			<li>1280x720 screen resolution or greater. Retina screens will need 2560x1440 pixels or greater.</li>
 		</ul>
 	</div>
 	<div class="column">
 		<p><strong>Windows</strong></p>
 		<ul>
 			<li>Windows 7 with Service Pack 1, Windows 8, Windows 8.1, Windows 10, or newer.</li>
-			<li>1280x720 screen resolution or greater. Windows scaling settings will affect this number. For example, a 150% scaling setting would require 1.5 times more pixels, which is 1920x1080. At 200% scaling, the minimum screen resolution is 2560x1440.<p id="winScreenNotice" class="hidden"></p></li>
+			<li>1280x720 screen resolution or greater. Windows scaling settings will affect this number. For example, a 150% scaling setting would require 1.5 times more pixels, which is 1920x1080. At 200% scaling, the minimum screen resolution is 2560x1440.</li>
 		</ul>
 	</div>
 </div><?php
