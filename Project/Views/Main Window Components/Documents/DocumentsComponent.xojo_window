@@ -332,7 +332,7 @@ End
 		  End If
 		  
 		  Var Controller As New Beacon.DocumentController(Document, App.IdentityManager.CurrentIdentity)
-		  Var NavItem As New OmniBarItem(Controller.URL.Hash, Controller.Name)
+		  Var NavItem As OmniBarItem = OmniBarItem.CreateTab(Controller.URL.Hash, Controller.Name)
 		  Self.Nav.Append(NavItem)
 		  
 		  Self.AttachControllerEvents(Controller)
@@ -359,7 +359,7 @@ End
 		  End If
 		  
 		  Var Controller As New Beacon.DocumentController(URL, App.IdentityManager.CurrentIdentity)
-		  NavItem = New OmniBarItem(Hash, Controller.Name)
+		  NavItem = OmniBarItem.CreateTab(Hash, Controller.Name)
 		  Self.Nav.Append(NavItem)
 		  
 		  Self.AttachControllerEvents(Controller)
@@ -395,9 +395,9 @@ End
 #tag Events Nav
 	#tag Event
 		Sub Open()
-		  Var Recents As New OmniBarItem("NavRecents", "Recents")
-		  Var Cloud As New OmniBarItem("NavCloud", "Cloud")
-		  Var Community As New OmniBarItem("NavCommunity", "Community")
+		  Var Recents As OmniBarItem = OmniBarItem.CreateTab("NavRecents", "Recents")
+		  Var Cloud As OmniBarItem = OmniBarItem.CreateTab("NavCloud", "Cloud")
+		  Var Community As OmniBarItem = OmniBarItem.CreateTab("NavCommunity", "Community")
 		  
 		  Recents.Toggled = True
 		  
@@ -409,7 +409,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ItemPressed(Item As OmniBarItem)
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
 		  For Idx As Integer = 0 To Self.LastPageIndex
 		    Var Page As BeaconSubview = Self.Page(Idx)
 		    If Page.LinkedOmniBarItem = Item Then

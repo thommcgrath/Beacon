@@ -28,7 +28,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
    Begin PagePanel PagePanel1
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   487
+      Height          =   478
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -43,7 +43,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
-      Top             =   41
+      Top             =   50
       Transparent     =   False
       Value           =   0
       Visible         =   True
@@ -56,7 +56,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          Caption         =   "There was an error loading the editor"
          DoubleBuffer    =   False
          Enabled         =   True
-         Height          =   487
+         Height          =   478
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
@@ -71,7 +71,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         Top             =   41
+         Top             =   50
          Transparent     =   True
          UseFocusRing    =   True
          Visible         =   True
@@ -98,7 +98,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         Top             =   41
+         Top             =   50
          Transparent     =   True
          UseFocusRing    =   True
          Visible         =   False
@@ -116,7 +116,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   0
+      Left            =   13
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -127,7 +127,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   40
+      Top             =   -107
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
@@ -149,7 +149,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   0
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -162,7 +162,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   0
+      Top             =   -159
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -178,7 +178,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       DetailURL       =   ""
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   487
+      Height          =   478
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -194,7 +194,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       TabPanelIndex   =   0
       TabStop         =   True
       Title           =   ""
-      Top             =   41
+      Top             =   50
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   False
@@ -216,7 +216,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   487
+      Height          =   478
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -232,7 +232,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   41
+      Top             =   50
       Transparent     =   True
       Visible         =   True
       Width           =   230
@@ -245,7 +245,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Backdrop        =   0
       DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   487
+      Height          =   478
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   230
@@ -260,10 +260,40 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   40
+      Top             =   49
       Transparent     =   True
       Visible         =   True
       Width           =   1
+   End
+   Begin OmniBar OmniBar1
+      Alignment       =   0
+      AllowAutoDeactivate=   True
+      AllowFocus      =   False
+      AllowFocusRing  =   True
+      AllowTabs       =   False
+      Backdrop        =   0
+      Enabled         =   True
+      Height          =   50
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LeftPadding     =   -1
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RightPadding    =   -1
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Tooltip         =   ""
+      Top             =   0
+      Transparent     =   True
+      Visible         =   True
+      Width           =   858
    End
 End
 #tag EndWindow
@@ -502,6 +532,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ChangeMapsCallback(Mask As UInt64)
+		  Self.OmniBar1.Item("MapsButton").Toggled = False
 		  Self.Document.MapCompatibility = Mask
 		  Self.Changed = Self.Document.Modified
 		End Sub
@@ -1330,6 +1361,56 @@ End
 		  For I As Integer = 0 To Labels.LastRowIndex
 		    Me.Append(New SourceListItem(Labels(I), Tags(I)))
 		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events OmniBar1
+	#tag Event
+		Sub Open()
+		  Me.Append(OmniBarItem.CreateButton("ImportButton", "Import", IconToolbarImport, "Import config files"))
+		  Me.Append(OmniBarItem.CreateSpace())
+		  Me.Append(OmniBarItem.CreateButton("ExportButton", "Export", IconToolbarExport, "Save new config file"))
+		  
+		  #if DeployEnabled
+		    Me.Append(OmniBarItem.CreateButton("DeployButton", "Deploy", IconToolbarDeploy, "Make config changes live"))
+		  #endif
+		  
+		  Me.Append(OmniBarItem.CreateSpace())
+		  Me.Append(OmniBarItem.CreateButton("ShareButton", "Share", IconToolbarShare, "Share this document with other users"))
+		  
+		  Me.Append(OmniBarItem.CreateSeparator())
+		  Me.Append(OmniBarItem.CreateButton("MapsButton", "Maps", IconToolbarMaps, "Change the maps for this document"))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
+		  Select Case Item.Name
+		  Case "ImportButton"
+		    Self.BeginImport(False)
+		  Case "ExportButton"
+		    Self.BeginExport()
+		  Case "HelpButton"
+		    If Self.mHelpDrawerOpen Then
+		      Self.HideHelpDrawer()
+		    Else
+		      Self.ShowHelpDrawer()
+		    End If
+		  Case "ShareButton"
+		    If Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud Then
+		      SharingDialog.Present(Self, Self.Document)
+		    ElseIf Self.mController.URL.Scheme = Beacon.DocumentURL.TypeLocal Then
+		      Self.ShowAlert("Document sharing is only available to cloud documents", "Use ""Save As…"" under the file menu to save a new copy of this document to the cloud if you would like to use Beacon's sharing features.")
+		    Else
+		      Self.ShowAlert("Document sharing is only available to cloud documents", "If you would like to use Beacon's sharing features, first save your document using ""Save"" under the file menu.")
+		    End If
+		  Case "DeployButton"
+		    Self.BeginDeploy()
+		  Case "MapsButton"
+		    If Item.Toggled = False Then
+		      Item.Toggled = True
+		      MapSelectionSheet.Present(Me, Self.Document.MapCompatibility, AddressOf ChangeMapsCallback, ItemRect)
+		    End If
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents

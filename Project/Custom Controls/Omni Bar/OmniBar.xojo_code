@@ -1,7 +1,7 @@
 #tag Class
 Protected Class OmniBar
 Inherits ControlCanvas
-Implements ObservationKit.Observer
+Implements ObservationKit.Observer, NotificationKit.Receiver
 	#tag Event
 		Sub Activate()
 		  Self.Invalidate
@@ -114,7 +114,7 @@ Implements ObservationKit.Observer
 		    Var ItemRect As Rect = Self.mItemRects(Self.mMouseDownIndex)
 		    Var FirePressed As Boolean = True
 		    If Item.CanBeClosed Then
-		      Var AccessoryRect As New Rect(ItemRect.Right - Self.IconSize, (Self.Height - Self.IconSize) / 2, Self.IconSize, Self.IconSize)
+		      Var AccessoryRect As New Rect(ItemRect.Right - OmniBarItem.IconSize, (Self.Height - OmniBarItem.IconSize) / 2, OmniBarItem.IconSize, OmniBarItem.IconSize)
 		      If AccessoryRect.Contains(Self.mMousePoint) Then
 		        FirePressed = False
 		        RaiseEvent ShouldCloseItem(Item)
@@ -122,7 +122,11 @@ Implements ObservationKit.Observer
 		    End If
 		    
 		    If FirePressed Then
-		      RaiseEvent ItemPressed(Item)
+		      Var InsetRect As Rect = ItemRect
+		      If (Item.InsetRect Is Nil) = False Then
+		        InsetRect = New Rect(ItemRect.Left + Item.InsetRect.Left, ItemRect.Top + Item.InsetRect.Top, Min(ItemRect.Width, Item.InsetRect.Width), Min(ItemRect.Height, Item.InsetRect.Height))
+		      End If
+		      RaiseEvent ItemPressed(Item, InsetRect)
 		    End If
 		  End If
 		  
@@ -135,13 +139,19 @@ Implements ObservationKit.Observer
 
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  Const DefaultEdgePadding = 20
+		  
+		  Var Highlighted As Boolean = Self.Highlighted
+		  If Self.mColorProfile Is Nil Then
+		    Self.mColorProfile = New OmniBarColorProfile
+		  End If
+		  
 		  // First, compute the rectangles for each item. It's ok to assume left alignment here,
 		  // as we'll apply an offset later.
 		  
-		  Var Highlighted As Boolean = Self.Highlighted
-		  
-		  Var NextPos As Double = If(Self.LeftPadding = -1, Self.ItemSpacing, Self.LeftPadding)
+		  Var NextPos As Double = If(Self.LeftPadding = -1, DefaultEdgePadding, Self.LeftPadding)
 		  Var Rects() As Rect
+		  Var FlexSpaceIndexes() As Integer
 		  Rects.ResizeTo(Self.mItems.LastRowIndex)
 		  G.Bold = True // Assume all are toggled for the sake of spacing
 		  For Idx As Integer = 0 To Self.mItems.LastRowIndex
@@ -150,29 +160,19 @@ Implements ObservationKit.Observer
 		      Continue
 		    End If
 		    
-		    Var Segments() As Double
-		    If Item.Caption.IsEmpty = False Then
-		      Segments.AddRow(Min(G.TextWidth(Item.Caption), Self.MaxCaptionWidth))
-		    End If
-		    If (Item.Icon Is Nil) = False Then
-		      If Item.Caption.IsEmpty Then
-		        Segments.AddRow(Self.IconSize + (Self.ButtonPadding * 2))
-		      Else
-		        Segments.AddRow(Self.IconSize)
+		    If Item.Type = OmniBarItem.Types.FlexSpace Then
+		      FlexSpaceIndexes.AddRow(Idx)
+		      Rects(Idx) = New Rect(NextPos, 0, 0, G.Height)
+		    Else
+		      Var ItemWidth As Double = Item.Width(G)
+		      Rects(Idx) = New Rect(NextPos, 0, ItemWidth, G.Height)
+		      If ItemWidth > 0 And Idx < Self.mItems.LastRowIndex Then
+		        NextPos = NextPos + ItemWidth + Max(Item.Margin, Self.mItems(Idx + 1).Margin)
 		      End If
-		    End If
-		    If Item.CanBeClosed Or Item.HasUnsavedChanges Then
-		      Segments.AddRow(Self.CloseIconSize)
-		    End If
-		    
-		    Var ItemWidth As Double = NearestMultiple(Segments.Sum(Self.ElementSpacing), 1.0) // Yes, round to nearest whole
-		    Rects(Idx) = New Rect(NextPos, 0, ItemWidth, G.Height)
-		    If ItemWidth > 0 Then
-		      NextPos = NextPos + ItemWidth + Self.ItemSpacing
 		    End If
 		  Next
 		  
-		  If Self.mAlignment = Self.AlignCenter Or Self.mAlignment = Self.AlignRight Then
+		  If FlexSpaceIndexes.Count > 0 Then
 		    Var MinX, MaxX As Integer
 		    For Idx As Integer = 0 To Rects.LastRowIndex
 		      If Idx = 0 Then
@@ -184,30 +184,26 @@ Implements ObservationKit.Observer
 		      End If
 		    Next
 		    
+		    Var AvailableWidth As Integer = Self.Width - (If(Self.LeftPadding = -1, DefaultEdgePadding, Self.LeftPadding) + If(Self.RightPadding = -1, DefaultEdgePadding, Self.RightPadding))
 		    Var ItemsWidth As Integer = MaxX - MinX
-		    Var TargetX As Integer
+		    Var FlexWidth As Integer = AvailableWidth - ItemsWidth
+		    Var FlexItemWidth As Integer = Floor(FlexWidth / FlexSpaceIndexes.Count)
+		    Var FlexRemainder As Integer = AvailableWidth - (FlexItemWidth * FlexSpaceIndexes.Count)
 		    
-		    If Self.mAlignment = Self.AlignCenter Then
-		      TargetX = (Self.Width - ItemsWidth) / 2
-		    Else
-		      TargetX = Self.Width - (If(Self.RightPadding = -1, Self.ItemSpacing, Self.RightPadding) + ItemsWidth)
-		    End If
-		    
-		    Var OffsetX As Integer = TargetX - MinX
-		    If OffsetX <> 0 Then
-		      For Idx As Integer = 0 To Rects.LastRowIndex
-		        Rects(Idx).Offset(OffsetX, 0)
+		    For FlexNum As Integer = 0 To FlexSpaceIndexes.LastRowIndex
+		      Var Idx As Integer = FlexSpaceIndexes(FlexNum)
+		      Var ItemWidth As Integer = FlexItemWidth + If(FlexNum < FlexRemainder, 1, 0)
+		      Rects(Idx) = New Rect(Rects(Idx).Left, Rects(Idx).Top, ItemWidth, Rects(Idx).Height)
+		      For ItemIdx As Integer = Idx + 1 To Rects.LastRowIndex
+		        Rects(ItemIdx).Offset(ItemWidth, 0)
 		      Next
-		    End If
+		    Next
 		  End If
 		  
 		  Self.mItemRects = Rects
 		  G.Bold = False
 		  
-		  Var BackgroundColor As Color = SystemColors.ControlBackgroundColor
 		  G.ClearRectangle(0, 0, G.Width, G.Height)
-		  //G.DrawingColor = BackgroundColor
-		  //G.FillRectangle(0, 0, G.Width, G.Height)
 		  G.DrawingColor = SystemColors.SeparatorColor
 		  G.FillRectangle(0, G.Height - 1, G.Width, 1)
 		  
@@ -232,16 +228,14 @@ Implements ObservationKit.Observer
 		      Continue
 		    End If
 		    
-		    Var State As Integer
+		    Var MouseHover, MouseDown As Boolean
 		    If Self.mMouseDown And Self.mMouseOverIndex = Idx Then
 		      // Pressed
-		      State = Self.StatePressed
+		      MouseDown = True
+		      MouseHover = True
 		    ElseIf Self.mMouseOverIndex = Idx Then
 		      // Hover
-		      State = Self.StateHover
-		    Else
-		      // Normal
-		      State = Self.StateNormal
+		      MouseHover = True
 		    End If
 		    
 		    Var LocalPoint As Point
@@ -250,38 +244,11 @@ Implements ObservationKit.Observer
 		    End If
 		    
 		    Var Clip As Graphics = G.Clip(ItemRect.Left, ItemRect.Top, ItemRect.Width, ItemRect.Height)
-		    Self.DrawItem(Clip, BackgroundColor, Item, Highlighted, State, LocalPoint)
+		    Item.DrawInto(Clip, Self.mColorProfile, MouseDown, MouseHover, LocalPoint, Highlighted)
 		  Next
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h21
-		Private Shared Function ActiveColorToColor(Value As OmniBarItem.ActiveColors) As Color
-		  Select Case Value
-		  Case OmniBarItem.ActiveColors.Blue
-		    Return SystemColors.SystemBlueColor
-		  Case OmniBarItem.ActiveColors.Brown
-		    Return SystemColors.SystemBrownColor
-		  Case OmniBarItem.ActiveColors.Gray
-		    Return SystemColors.SystemGrayColor
-		  Case OmniBarItem.ActiveColors.Green
-		    Return SystemColors.SystemGreenColor
-		  Case OmniBarItem.ActiveColors.Orange
-		    Return SystemColors.SystemOrangeColor
-		  Case OmniBarItem.ActiveColors.Pink
-		    Return SystemColors.SystemPinkColor
-		  Case OmniBarItem.ActiveColors.Purple
-		    Return SystemColors.SystemPurpleColor
-		  Case OmniBarItem.ActiveColors.Red
-		    Return SystemColors.SystemRedColor
-		  Case OmniBarItem.ActiveColors.Yellow
-		    Return SystemColors.SystemYellowColor
-		  Else
-		    Return SystemColors.ControlAccentColor
-		  End Select
-		End Function
-	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Append(ParamArray Items() As OmniBarItem)
@@ -296,171 +263,22 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Super.Constructor
+		  
+		  NotificationKit.Watch(Self, App.Notification_AppearanceChanged)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Count() As Integer
 		  Return Self.mItems.Count
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub DrawItem(G As Graphics, BackgroundColor As Color, Item As OmniBarItem, Highlighted As Boolean, State As Integer, LocalMousePoint As Point)
-		  Var HasIcon As Boolean = (Item.Icon Is Nil) = False
-		  Var HasCaption As Boolean = Item.Caption.IsEmpty = False
-		  If HasIcon = False And HasCaption = False Then
-		    // There's nothing here to draw
-		    Return
-		  End If
-		  
-		  If Item.HasProgressIndicator Then
-		    If Item.Progress = OmniBarItem.ProgressIndeterminate Then
-		      Const BarMaxPercent = 0.75
-		      
-		      Var Phase As Double = Item.IndeterminatePhase
-		      Var RangeMin As Double = (G.Width * BarMaxPercent) * -1
-		      Var RangeMax As Double = G.Width
-		      Var BarLeft As Double = NearestMultiple(RangeMin + ((RangeMax - RangeMin) * Phase), G.ScaleX)
-		      Var BarWidth As Double = NearestMultiple(G.Width * BarMaxpercent, G.ScaleX)
-		      
-		      G.DrawingColor = Self.ActiveColorToColor(Item.ActiveColor)
-		      G.FillRectangle(BarLeft, G.Height - 2, BarWidth, 2)
-		    Else
-		      Var BarWidth As Double = NearestMultiple(G.Width * Item.Progress, G.ScaleX)
-		      G.DrawingColor = Self.ActiveColorToColor(Item.ActiveColor)
-		      G.FillRectangle(0, G.Height - 2, BarWidth, 2)
-		    End If
-		  ElseIf Item.Toggled Then
-		    G.ClearRectangle(0, G.Height - 2, G.Width, 2)
-		    If Highlighted Then
-		      G.DrawingColor = Self.ActiveColorToColor(Item.ActiveColor)
-		    Else
-		      G.DrawingColor = SystemColors.SeparatorColor
-		    End If
-		    G.DrawRectangle(0, G.Height - 2, G.Width, 2)
-		  End If
-		  
-		  If HasIcon = True And HasCaption = False Then
-		    // Draw as button
-		    Self.DrawItemAsButton(G, Item, Highlighted, State)
-		    Return
-		  End If
-		  
-		  // Find the color we'll be using
-		  Var ForeColor, ShadowColor As Color
-		  If Item.Enabled = False Then
-		    ForeColor = SystemColors.DisabledControlTextColor
-		  ElseIf Highlighted = True Then
-		    If Item.Toggled Or Item.AlwaysUseActiveColor Or State = Self.StateHover Or State = Self.StatePressed Then
-		      ForeColor = BeaconUI.FindContrastingColor(BackgroundColor, Self.ActiveColorToColor(Item.ActiveColor))
-		    Else
-		      ForeColor = SystemColors.ControlTextColor
-		    End If
-		  Else
-		    ForeColor = SystemColors.ControlTextColor
-		  End If
-		  ShadowColor = SystemColors.TextBackgroundColor
-		  
-		  Var OriginalForeColor As Color = ForeColor
-		  If State = Self.StatePressed And Item.Enabled Then
-		    ForeColor = ForeColor.Darker(0.5)
-		  End If
-		  
-		  // Draw as text, with an icon to the left if available.
-		  // Accessory comes first, as it may change the hover and pressed appearances
-		  
-		  Var AccessoryImage As Picture
-		  Var AccessoryRect As New Rect(G.Width - Self.IconSize, NearestMultiple((G.Height - Self.IconSize) / 2, G.ScaleY), Self.IconSize, Self.IconSize)
-		  Var AccessoryColor As Color
-		  Var WithAccessory As Boolean = True
-		  If Item.CanBeClosed And (State = Self.StateHover Or State = Self.StatePressed) Then
-		    Var AccessoryState As Integer = State
-		    If (LocalMousePoint Is Nil) = False And AccessoryRect.Contains(LocalMousePoint) Then
-		      G.DrawingColor = SystemColors.QuaternaryLabelColor
-		      G.FillRoundRectangle(AccessoryRect.Left, AccessoryRect.Top, AccessoryRect.Width, AccessoryRect.Height, 6, 6)
-		      State = Self.StateNormal
-		      ForeColor = OriginalForeColor
-		    End If
-		    
-		    G.DrawPicture(BeaconUI.IconWithColor(IconClose, SystemColors.TertiaryLabelColor), AccessoryRect.Left, AccessoryRect.Top, AccessoryRect.Width, AccessoryRect.Height, 0, 0, IconClose.Width, IconClose.Height)
-		    
-		    If AccessoryState = Self.StatePressed Then
-		      If (LocalMousePoint Is Nil) = False And AccessoryRect.Contains(LocalMousePoint) Then
-		        G.DrawingColor = &C00000090
-		        G.FillRoundRectangle(AccessoryRect.Left, AccessoryRect.Top, AccessoryRect.Width, AccessoryRect.Height, 6, 6)
-		      ElseIf Item.Enabled Then
-		        G.DrawPicture(BeaconUI.IconWithColor(IconClose, &C00000090), AccessoryRect.Left, AccessoryRect.Top, AccessoryRect.Width, AccessoryRect.Height, 0, 0, IconClose.Width, IconClose.Height)
-		      End If
-		    End If
-		  ElseIf Item.HasUnsavedChanges Then
-		    AccessoryColor = ForeColor
-		    AccessoryImage = IconModified
-		  ElseIf Item.CanBeClosed Then
-		    AccessoryColor = SystemColors.TertiaryLabelColor
-		    AccessoryImage = IconClose
-		  Else
-		    WithAccessory = False
-		  End If
-		  If (AccessoryImage Is Nil) = False Then
-		    AccessoryImage = BeaconUI.IconWithColor(AccessoryImage, AccessoryColor)
-		    G.DrawPicture(AccessoryImage, AccessoryRect.Left, AccessoryRect.Top, AccessoryRect.Width, AccessoryRect.Height, 0, 0, AccessoryImage.Width, AccessoryImage.Height)
-		  End If
-		  
-		  Var CaptionOffset As Double = 0
-		  If HasIcon = True Then
-		    CaptionOffset = Self.IconSize + Self.ElementSpacing
-		    
-		    Var IconTop As Double = NearestMultiple((G.Height - Self.IconSize) / 2, G.ScaleY)
-		    Var Icon As Picture = BeaconUI.IconWithColor(Item.Icon, Forecolor)
-		    G.DrawPicture(Icon, 0, IconTop, Self.IconSize, Self.IconSize, 0, 0, Icon.Width, Icon.Height)
-		  End If
-		  
-		  If Item.Toggled Then
-		    G.Bold = True
-		  End If
-		  
-		  Var CaptionSpace As Double = If(WithAccessory, AccessoryRect.Left, G.Width) - CaptionOffset
-		  Var CaptionLeft As Double = NearestMultiple((CaptionSpace - Min(G.TextWidth(Item.Caption), Self.MaxCaptionWidth)) / 2, G.ScaleX)
-		  Var CaptionBaseline As Double = NearestMultiple((G.Height / 2) + (G.CapHeight / 2), G.ScaleY)
-		  
-		  G.DrawingColor = ShadowColor
-		  G.DrawText(Item.Caption, CaptionLeft, CaptionBaseline + 1, Self.MaxCaptionWidth, True)
-		  G.DrawingColor = ForeColor
-		  G.DrawText(Item.Caption, CaptionLeft, CaptionBaseline, Self.MaxCaptionWidth, True)
-		  G.Bold = False
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub DrawItemAsButton(G As Graphics, Item As OmniBarItem, Highlighted As Boolean, State As Integer)
-		  Const CornerRadius = 6
-		  
-		  Var ForeColor, BackColor As Color = &c000000FF
-		  If Item.Toggled Then
-		    ForeColor = SystemColors.ControlBackgroundColor
-		    If Highlighted Then
-		      BackColor = Self.ActiveColorToColor(Item.ActiveColor)
-		    Else
-		      BackColor = SystemColors.SecondaryLabelColor
-		    End If
-		  ElseIf Highlighted And Item.AlwaysUseActiveColor Then
-		    ForeColor = Self.ActiveColorToColor(Item.ActiveColor)
-		  Else
-		    ForeColor = SystemColors.SecondaryLabelColor
-		  End If
-		  
-		  Var IconRect As New Rect(NearestMultiple((G.Width - Self.IconSize) / 2, G.ScaleX), NearestMultiple((G.Height - Self.IconSize) / 2, G.ScaleY), Self.IconSize, Self.IconSize)
-		  Var Factor As Double = Max(G.ScaleX, G.ScaleY)
-		  Var Icon As Picture = BeaconUI.IconWithColor(Item.Icon, ForeColor, Factor, Factor)
-		  
-		  If BackColor.Alpha < 255 Then
-		    G.DrawingColor = BackColor
-		    G.FillRoundRectangle(IconRect.Left - Self.ButtonPadding, IconRect.Top - Self.ButtonPadding, IconRect.Width + (Self.ButtonPadding * 2), IconRect.Height + (Self.ButtonPadding * 2), CornerRadius, CornerRadius)
-		  End If
-		  
-		  G.DrawPicture(Icon, IconRect.Left, IconRect.Top, IconRect.Width, IconRect.Height, 0, 0, IconRect.Width, IconRect.Height)
-		  
-		  If State = Self.StatePressed And Item.Enabled Then
-		    G.DrawingColor = &c00000080
-		    G.FillRoundRectangle(IconRect.Left, IconRect.Top, IconRect.Width, IconRect.Height, CornerRadius, CornerRadius)
-		  End If
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  NotificationKit.Ignore(Self, App.Notification_AppearanceChanged)
 		End Sub
 	#tag EndMethod
 
@@ -562,6 +380,17 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case App.Notification_AppearanceChanged
+		    Self.Invalidate()
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, Value As Variant)
 		  // Part of the ObservationKit.Observer interface.
 		  
@@ -574,6 +403,12 @@ Implements ObservationKit.Observer
 		    Var Idx As Integer = Self.IndexOf(Item)
 		    Self.Invalidate(Idx)
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Sub RebuildColors()
+		  mColorProfile = Nil
 		End Sub
 	#tag EndMethod
 
@@ -619,7 +454,7 @@ Implements ObservationKit.Observer
 
 
 	#tag Hook, Flags = &h0
-		Event ItemPressed(Item As OmniBarItem)
+		Event ItemPressed(Item As OmniBarItem, ItemRect As Rect)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -663,6 +498,10 @@ Implements ObservationKit.Observer
 
 	#tag Property, Flags = &h21
 		Private mAlignment As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mColorProfile As OmniBarColorProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -728,25 +567,7 @@ Implements ObservationKit.Observer
 	#tag Constant, Name = AlignRight, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = ButtonPadding, Type = Double, Dynamic = False, Default = \"4", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = CloseIconSize, Type = Double, Dynamic = False, Default = \"16", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = ElementSpacing, Type = Double, Dynamic = False, Default = \"8", Scope = Private
-	#tag EndConstant
-
 	#tag Constant, Name = FirstRowIndex, Type = Double, Dynamic = False, Default = \"0", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = IconSize, Type = Double, Dynamic = False, Default = \"16", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = ItemSpacing, Type = Double, Dynamic = False, Default = \"20", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = MaxCaptionWidth, Type = Double, Dynamic = False, Default = \"250", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = StateHover, Type = Double, Dynamic = False, Default = \"1", Scope = Private

@@ -145,12 +145,17 @@ End
 		  Var Win As New MapSelectionSheet(Mask, Callback)
 		  #if TargetMacOS
 		    If NSPopoverMBS.Available Then
-		      Win.mFireCallbackInRealtime = True
 		      Win.Visible = False
 		      
-		      Var Popover As New MapSelectionPopover(Win.Grid)
+		      If (LastPopover Is Nil) = False Then
+		        LastPopover.performClose
+		        LastPopover = Nil
+		      End If
+		      
+		      Var Popover As New MapSelectionPopover(Win.Grid, Callback)
 		      Popover.Animates = True
 		      Popover.Behavior = NSPopoverMBS.NSPopoverBehaviorSemitransient
+		      LastPopover = Popover
 		      
 		      Var ParentView As NSViewMBS = Parent.NSViewMBS
 		      Var PositionRect As NSRectMBS
@@ -164,7 +169,7 @@ End
 		    End If
 		  #endif
 		  
-		  Win.ShowWithin(Parent.Window.TrueWindow)
+		  Win.ShowModalWithin(Parent.Window.TrueWindow)
 		End Sub
 	#tag EndMethod
 
@@ -174,11 +179,11 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mCallback As SelectionCallback
+		Private Shared LastPopover As MapSelectionPopover
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mFireCallbackInRealtime As Boolean
+		Private mCallback As SelectionCallback
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -204,13 +209,6 @@ End
 		  Self.Height = Self.MaximumHeight
 		  Self.MinimumWidth = Self.Width
 		  Self.MinimumHeight = Self.Height
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Changed()
-		  If Self.mFireCallbackInRealtime Then
-		    Self.mCallback.Invoke(Me.Mask)
-		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

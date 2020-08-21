@@ -1219,25 +1219,25 @@ End
 #tag Events NavBar
 	#tag Event
 		Sub Open()
-		  Var Home As New OmniBarItem("NavHome", "Home")
+		  Var Home As OmniBarItem = OmniBarItem.CreateTab("NavHome", "Home")
 		  Home.Toggled = True
 		  Self.DashboardPane1.LinkedOmniBarItem = Home
 		  
-		  Var Documents As New OmniBarItem("NavDocuments", "Documents")
+		  Var Documents As OmniBarItem = OmniBarItem.CreateTab("NavDocuments", "Documents")
 		  Self.DocumentsComponent1.LinkedOmniBarItem = Documents
 		  
-		  Var Blueprints As New OmniBarItem("NavBlueprints", "Blueprints")
+		  Var Blueprints As OmniBarItem = OmniBarItem.CreateTab("NavBlueprints", "Blueprints")
 		  Self.BlueprintsComponent1.LinkedOmniBarItem = Blueprints
 		  
-		  Var Presets As New OmniBarItem("NavPresets", "Presets")
+		  Var Presets As OmniBarItem = OmniBarItem.CreateTab("NavPresets", "Presets")
 		  
-		  Var Help As New OmniBarItem("NavHelp", "Help")
+		  Var Help As OmniBarItem = OmniBarItem.CreateTab("NavHelp", "Help")
 		  
 		  Me.Append(Home, Documents, Blueprints, Presets, Help)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ItemPressed(Item As OmniBarItem)
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
 		  Var NewIndex As Integer
 		  Select Case Item.Name
 		  Case "NavDocuments"

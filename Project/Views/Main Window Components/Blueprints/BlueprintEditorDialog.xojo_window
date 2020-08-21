@@ -1989,11 +1989,11 @@ End
 		  
 		  Select Case Me.SelectedRowIndex
 		  Case Self.IndexEngram
-		    Self.PageSelector.Append(New OmniBarItem("PageEngram", "Advanced"))
+		    Self.PageSelector.Append(OmniBarItem.CreateTab("PageEngram", "Advanced"))
 		  Case Self.IndexCreature
-		    Self.PageSelector.Append(New OmniBarItem("PageCreature", "Advanced"))
+		    Self.PageSelector.Append(OmniBarItem.CreateTab("PageCreature", "Advanced"))
 		  Case Self.IndexSpawnPoint
-		    Self.PageSelector.Append(New OmniBarItem("PageSpawn", "Advanced"))
+		    Self.PageSelector.Append(OmniBarItem.CreateTab("PageSpawn", "Advanced"))
 		  End Select
 		  
 		  Self.Modified = True
@@ -2310,13 +2310,13 @@ End
 #tag Events PageSelector
 	#tag Event
 		Sub Open()
-		  Var CommonItem As New OmniBarItem("PageCommon", "Common")
+		  Var CommonItem As OmniBarItem = OmniBarItem.CreateTab("PageCommon", "Common")
 		  CommonItem.Toggled = True
 		  Me.Append(CommonItem)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ItemPressed(Item As OmniBarItem)
+		Sub ItemPressed(Item As OmniBarItem, ItemRect As Rect)
 		  For Idx As Integer = 0 To Me.LastRowIndex
 		    Me.Item(Idx).Toggled = (Me.Item(Idx) = Item)
 		  Next

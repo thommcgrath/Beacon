@@ -5,6 +5,8 @@ Implements NotificationKit.Receiver
 	#tag Event
 		Sub AppearanceChanged()
 		  NotificationKit.Post(Self.Notification_AppearanceChanged, Nil)
+		  
+		  OmniBar.RebuildColors()
 		End Sub
 	#tag EndEvent
 

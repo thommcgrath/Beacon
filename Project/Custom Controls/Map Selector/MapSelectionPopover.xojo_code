@@ -1,9 +1,19 @@
 #tag Class
 Protected Class MapSelectionPopover
 Inherits NSPopoverMBS
+	#tag Event
+		Sub popoverWillClose(notification as NSNotificationMBS)
+		  #Pragma Unused Notification
+		  
+		  Self.mCallback.Invoke(Self.mGrid.Mask)
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
-		Sub Constructor(Grid As MapSelectionGrid)
+		Sub Constructor(Grid As MapSelectionGrid, Callback As MapSelectionSheet.SelectionCallback)
 		  Self.mGrid = Grid
+		  Self.mCallback = Callback
 		  
 		  Var Controller As New NSViewControllerMBS
 		  Controller.View = Grid.NSViewMBS
@@ -16,6 +26,10 @@ Inherits NSPopoverMBS
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mCallback As MapSelectionSheet.SelectionCallback
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mGrid As MapSelectionGrid
