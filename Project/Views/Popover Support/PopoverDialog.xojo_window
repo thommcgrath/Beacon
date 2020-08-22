@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconDialog MapSelectionSheet
+Begin BeaconDialog PopoverDialog
    Backdrop        =   0
    BackgroundColor =   &cFFFFFF00
    Composite       =   False
@@ -10,51 +10,20 @@ Begin BeaconDialog MapSelectionSheet
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   False
-   Height          =   280
+   Height          =   400
    ImplicitInstance=   False
    MacProcID       =   0
-   MaximumHeight   =   280
-   MaximumWidth    =   332
+   MaximumHeight   =   32000
+   MaximumWidth    =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinimumHeight   =   280
-   MinimumWidth    =   332
-   Resizeable      =   False
-   Title           =   "Select Maps"
+   MinimumHeight   =   64
+   MinimumWidth    =   64
+   Resizeable      =   True
+   Title           =   "Dialog"
    Type            =   "8"
    Visible         =   True
-   Width           =   332
-   Begin MapSelectionGrid Grid
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   False
-      AllowTabs       =   True
-      Backdrop        =   0
-      BackgroundColor =   &cFFFFFF00
-      DesiredHeight   =   0
-      DesiredWidth    =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      HasBackgroundColor=   False
-      Height          =   212
-      InitialParent   =   ""
-      Left            =   14
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   0
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   14
-      Transparent     =   True
-      Visible         =   True
-      Width           =   304
-   End
+   Width           =   600
    Begin UITweaks.ResizedPushButton ActionButton
       AllowAutoDeactivate=   True
       Bold            =   False
@@ -69,7 +38,7 @@ Begin BeaconDialog MapSelectionSheet
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   232
+      Left            =   500
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -77,11 +46,11 @@ Begin BeaconDialog MapSelectionSheet
       LockTop         =   False
       MacButtonStyle  =   "0"
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   240
+      Top             =   360
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -101,7 +70,7 @@ Begin BeaconDialog MapSelectionSheet
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   140
+      Left            =   408
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -109,11 +78,11 @@ Begin BeaconDialog MapSelectionSheet
       LockTop         =   False
       MacButtonStyle  =   "0"
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Tooltip         =   ""
-      Top             =   240
+      Top             =   360
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -123,113 +92,63 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Method, Flags = &h21
-		Private Sub Constructor(Mask As UInt64, Callback As SelectionCallback)
-		  Self.mOriginalMask = Mask
-		  Self.mCallback = Callback
+	#tag Event
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused Areas
+		  #if DebugBuild
+		    G.DrawingColor = &cFF0000
+		    G.FillRectangle(20, 20, Self.Width - 40, Self.Height - 80)
+		  #else
+		    #Pragma Unused G
+		  #endif
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Controller As PopoverController)
+		  // Calling the overridden superclass constructor.
+		  Self.mController = New WeakRef(Controller)
 		  Super.Constructor
-		  Self.Grid.Mask = Mask
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub Present(Parent As RectControl, Mask As UInt64, Callback As MapSelectionSheet.SelectionCallback, InsideRect As Rect = Nil)
-		  #if Not TargetMacOS
-		    #Pragma Unused InsideRect
-		  #endif
-		  
-		  If Parent Is Nil Or Parent.Window Is Nil Then
-		    Return
-		  End If
-		  
-		  Var Win As New MapSelectionSheet(Mask, Callback)
-		  #if TargetMacOS
-		    If NSPopoverMBS.Available Then
-		      Win.Visible = False
-		      
-		      If (LastPopover Is Nil) = False Then
-		        LastPopover.performClose
-		        LastPopover = Nil
-		      End If
-		      
-		      Var Popover As New MapSelectionPopover(Win.Grid, Callback)
-		      Popover.Animates = True
-		      Popover.Behavior = NSPopoverMBS.NSPopoverBehaviorSemitransient
-		      LastPopover = Popover
-		      
-		      Var ParentView As NSViewMBS = Parent.NSViewMBS
-		      Var PositionRect As NSRectMBS
-		      If InsideRect Is Nil Then
-		        PositionRect = ParentView.Bounds
-		      Else
-		        PositionRect = New NSRectMBS(InsideRect.Left, InsideRect.Top, InsideRect.Width, InsideRect.Height)
-		      End If
-		      Popover.ShowRelativeToRect(PositionRect, ParentView, NSPopoverMBS.MinYEdge)
-		      Return
-		    End If
-		  #endif
-		  
-		  Win.ShowModalWithin(Parent.Window.TrueWindow)
-		End Sub
+		Function Embed(Container As ContainerControl, PaddingX As Integer, PaddingY As Integer) As RectControl
+		  Container.EmbedWithin(Self, PaddingX, PaddingY, Container.Width, Container.Height)
+		  Self.Width = Container.Width + (PaddingX * 2)
+		  Self.Height = Container.Height + (PaddingY * 2) + 40
+		  Return RectControl(Self.Control(Self.ControlCount - 1))
+		End Function
 	#tag EndMethod
 
-	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub SelectionCallback(Mask As UInt64)
-	#tag EndDelegateDeclaration
-
 
 	#tag Property, Flags = &h21
-		Private Shared LastPopover As MapSelectionPopover
+		Private mController As WeakRef
 	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mCallback As SelectionCallback
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mOriginalMask As UInt64
-	#tag EndProperty
-
-
-	#tag Constant, Name = PaddingHeight, Type = Double, Dynamic = False, Default = \"68", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = PaddingWidth, Type = Double, Dynamic = False, Default = \"28", Scope = Private
-	#tag EndConstant
 
 
 #tag EndWindowCode
 
-#tag Events Grid
-	#tag Event
-		Sub Open()
-		  Self.MaximumWidth = Me.DesiredWidth + Self.PaddingWidth
-		  Self.MaximumHeight = Me.DesiredHeight + Self.PaddingHeight
-		  Self.Width = Self.MaximumWidth
-		  Self.Height = Self.MaximumHeight
-		  Self.MinimumWidth = Self.Width
-		  Self.MinimumHeight = Self.Height
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  If Self.Grid.Mask = 0 Then
-		    System.Beep
-		    Return
+		  If (Self.mController Is Nil) = False And (Self.mController.Value Is Nil) = False And (Self.mController.Value IsA PopoverController) Then
+		    PopoverController(Self.mController.Value).Dismiss(False)
+		  Else
+		    Self.Close
 		  End If
-		  
-		  Self.mCallback.Invoke(Self.Grid.Mask)
-		  Self.Close
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
-		  Self.mCallback.Invoke(Self.mOriginalMask)
-		  Self.Close
+		  If (Self.mController Is Nil) = False And (Self.mController.Value Is Nil) = False And (Self.mController.Value IsA PopoverController) Then
+		    PopoverController(Self.mController.Value).Dismiss(True)
+		  Else
+		    Self.Close
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

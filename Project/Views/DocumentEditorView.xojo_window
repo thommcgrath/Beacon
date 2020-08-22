@@ -531,14 +531,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ChangeMapsCallback(Mask As UInt64)
-		  Self.OmniBar1.Item("MapsButton").Toggled = False
-		  Self.Document.MapCompatibility = Mask
-		  Self.Changed = Self.Document.Modified
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub CleanupAutosave()
 		  Var AutosaveFile As FolderItem = Self.AutosaveFile()
 		  If AutosaveFile <> Nil And AutosaveFile.Exists Then
@@ -710,6 +702,18 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ImportCallback(Documents() As Beacon.Document)
 		  Call CallLater.Schedule(0, WeakAddressOf CopyFromDocuments, Documents)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub MapsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
+		  If Not Cancelled Then
+		    Self.Document.MapCompatibility = MapSelectionGrid(Sender.Container).Mask
+		    Self.Changed = Self.Document.Modified
+		  End If
+		  
+		  Self.OmniBar1.Item("MapsButton").Toggled = False
+		  Self.mMapsPopoverController = Nil
 		End Sub
 	#tag EndMethod
 
@@ -1176,6 +1180,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mMapsPopoverController As PopoverController
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mPagesAnimation As AnimationKit.MoveTask
 	#tag EndProperty
 
@@ -1313,8 +1321,6 @@ End
 		    End If
 		  Case "DeployButton"
 		    Self.BeginDeploy()
-		  Case "MapsButton"
-		    MapSelectionSheet.Present(Me, Self.Document.MapCompatibility, AddressOf ChangeMapsCallback, Item.Rect)
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -1380,6 +1386,7 @@ End
 		  
 		  Me.Append(OmniBarItem.CreateSeparator())
 		  Me.Append(OmniBarItem.CreateButton("MapsButton", "Maps", IconToolbarMaps, "Change the maps for this document"))
+		  Me.Append(OmniBarItem.CreateButton("ModsButton", "Mods", IconToolbarMods, "Enable or disable Beacon's built-in mods"))
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1406,10 +1413,23 @@ End
 		  Case "DeployButton"
 		    Self.BeginDeploy()
 		  Case "MapsButton"
-		    If Item.Toggled = False Then
-		      Item.Toggled = True
-		      MapSelectionSheet.Present(Me, Self.Document.MapCompatibility, AddressOf ChangeMapsCallback, ItemRect)
+		    If (Self.mMapsPopoverController Is Nil) = False And Self.mMapsPopoverController.Visible Then
+		      Self.mMapsPopoverController.Dismiss(False)
+		      Self.mMapsPopoverController = Nil
+		      Item.Toggled = False
+		      Return
 		    End If
+		    
+		    Var Editor As New MapSelectionGrid
+		    Var Controller As New PopoverController(Editor)
+		    Editor.Mask = Self.Document.MapCompatibility
+		    Controller.Show(Me, ItemRect)
+		    
+		    Item.Toggled = True
+		    
+		    AddHandler Controller.Finished, WeakAddressOf MapsPopoverController_Finished
+		    Self.mMapsPopoverController = Controller
+		  Case "ModsButton"
 		  End Select
 		End Sub
 	#tag EndEvent
