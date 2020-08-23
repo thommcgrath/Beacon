@@ -19,7 +19,7 @@ Begin BeaconDialog PopoverDialog
    MenuBarVisible  =   True
    MinimumHeight   =   64
    MinimumWidth    =   64
-   Resizeable      =   True
+   Resizeable      =   False
    Title           =   "Dialog"
    Type            =   "8"
    Visible         =   True

@@ -1221,7 +1221,7 @@ End
 		  Var EntriesWidth As Integer = AvailableWidth - ReplacementsWidth
 		  Var DownsizeButtons As Boolean
 		  If EntriesWidth < ReplaceMinWidth Then
-		    EntriesWidth = Ceil(AvailableWidth / 2)
+		    EntriesWidth = Ceiling(AvailableWidth / 2)
 		    ReplacementsWidth = Floor(AvailableWidth / 2)
 		    DownsizeButtons = True
 		  End If

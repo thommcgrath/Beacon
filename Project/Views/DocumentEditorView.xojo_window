@@ -637,6 +637,18 @@ End
 		  If Self.mEditorRefs <> Nil And Self.mEditorRefs.HasKey(Self.mController.Document.DocumentID) Then
 		    Self.mEditorRefs.Remove(Self.mController.Document.DocumentID)
 		  End If
+		  
+		  If (Self.mMapsPopoverController Is Nil) = False Then
+		    RemoveHandler mMapsPopoverController.Finished, WeakAddressOf MapsPopoverController_Finished
+		    Self.mModsPopoverController.Dismiss(True)
+		    Self.mMapsPopoverController = Nil
+		  End If
+		  
+		  If (Self.mModsPopoverController Is Nil) = False Then
+		    RemoveHandler mModsPopoverController.Finished, WeakAddressOf ModsPopoverController_Finished
+		    Self.mModsPopoverController.Dismiss(True)
+		    Self.mModsPopoverController = Nil
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -786,6 +798,23 @@ End
 		    Self.BeaconToolbar1.HelpButton.Enabled = (Self.CurrentPanel <> Nil And Self.HelpDrawer.Body <> "")
 		    Self.MinimumWidth = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumWidth, Self.LocalMinWidth), Self.LocalMinWidth)
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ModsPopoverController_Finished(Sender As PopoverController, Cancelled As Boolean)
+		  If Not Cancelled Then
+		    Var Editor As ModSelectionGrid = ModSelectionGrid(Sender.Container)
+		    Var Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
+		    For Each Details As Beacon.ModDetails In Mods
+		      Self.Document.ModEnabled(Details.ModID) = Editor.ModEnabled(Details.ModID)
+		    Next
+		    
+		    Self.Changed = Self.Document.Modified
+		  End If
+		  
+		  Self.OmniBar1.Item("ModsButton").Toggled = False
+		  Self.mModsPopoverController = Nil
 		End Sub
 	#tag EndMethod
 
@@ -1184,6 +1213,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mModsPopoverController As PopoverController
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mPagesAnimation As AnimationKit.MoveTask
 	#tag EndProperty
 
@@ -1430,6 +1463,21 @@ End
 		    AddHandler Controller.Finished, WeakAddressOf MapsPopoverController_Finished
 		    Self.mMapsPopoverController = Controller
 		  Case "ModsButton"
+		    If (Self.mModsPopoverController Is Nil) = False And Self.mModsPopoverController.Visible Then
+		      Self.mModsPopoverController.Dismiss(False)
+		      Self.mModsPopoverController = Nil
+		      Item.Toggled = False
+		      Return
+		    End If
+		    
+		    Var Editor As New ModSelectionGrid(Self.Document.Mods)
+		    Var Controller As New PopoverController(Editor)
+		    Controller.Show(Me, ItemRect)
+		    
+		    Item.Toggled = True
+		    
+		    AddHandler Controller.Finished, WeakAddressOf ModsPopoverController_Finished
+		    Self.mModsPopoverController = Controller
 		  End Select
 		End Sub
 	#tag EndEvent

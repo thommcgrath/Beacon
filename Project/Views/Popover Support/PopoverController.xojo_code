@@ -49,8 +49,8 @@ Protected Class PopoverController
 		      ViewController.View.SetBoundsOrigin(New NSPointMBS(Self.mPaddingX * -1, Self.mPaddingY)) // No idea why the X should be negative here
 		      
 		      Self.mPopover = New BeaconPopover
-		      Self.mPopover.ContentSize = New NSSizeMBS(Container.Width + (Self.mPaddingX * 2), Container.Height + (Self.mPaddingY * 2))
 		      Self.mPopover.ContentViewController = ViewController
+		      Self.mPopover.ContentSize = New NSSizeMBS(Container.Width + (Self.mPaddingX * 2), Container.Height + (Self.mPaddingY * 2))
 		      Self.mPopover.Animates = True
 		      Self.mPopover.Behavior = NSPopoverMBS.NSPopoverBehaviorSemitransient
 		      
@@ -68,11 +68,30 @@ Protected Class PopoverController
 
 	#tag Method, Flags = &h21
 		Private Sub Container_Resize(Sender As ContainerControl)
-		  Self.mDialog.Width = Sender.Width + (Self.mPaddingX * 2)
-		  Self.mDialog.Height = Sender.Height + (Self.mPaddingY * 2) + 40
+		  Var CurrentWidth As Integer = Self.mDialog.Width
+		  Var TargetWidth As Integer = Sender.Width + (Self.mPaddingX * 2)
+		  Var TargetHeight As Integer = Sender.Height + (Self.mPaddingY * 2) + 40
+		  Var DeltaX As Integer = CurrentWidth - TargetWidth
+		  
+		  Self.mDialog.MaximumWidth = TargetWidth
+		  Self.mDialog.MaximumHeight = TargetHeight
+		  Self.mDialog.Width = TargetWidth
+		  Self.mDialog.Height = TargetHeight
+		  Self.mDialog.MinimumWidth = TargetWidth
+		  Self.mDialog.MinimumHeight = TargetHeight
+		  
+		  Self.mDialog.Left = Self.mDialog.Left + Floor(DeltaX / 2)
+		  #if Not TargetMacOS
+		    Var CurrentHeight As Integer = Self.mDialog.Height
+		    Var DeltaY As Integer = CurrentHeight - TargetHeight
+		    Self.mDialog.Top = Self.mDialog.Top + Floor(DeltaY / 2)
+		  #endif
 		  
 		  If (Self.mPopover Is Nil) = False Then
+		    Self.mPopover.Animates = False
+		    Self.mPopover.ContentViewController.View.SetBoundsOrigin(New NSPointMBS(0, 0))
 		    Self.mPopover.ContentSize = New NSSizeMBS(Sender.Width + (Self.mPaddingX * 2), Sender.Height + (Self.mPaddingY * 2))
+		    Self.mPopover.Animates = True
 		  End If
 		End Sub
 	#tag EndMethod
@@ -152,6 +171,7 @@ Protected Class PopoverController
 	#tag Method, Flags = &h21
 		Private Sub Subview_Resize(Sender As BeaconSubview, Initial As Boolean)
 		  #Pragma Unused Sender
+		  #Pragma Unused Initial
 		  
 		  Self.Container_Resize(Sender)
 		End Sub

@@ -153,7 +153,7 @@ Implements ObservationKit.Observable
 		  
 		  Var CaptionWidth As Double = G.TextWidth(Self.Caption)
 		  Var CaptionLeft As Double = NearestMultiple((G.Width - CaptionWidth) / 2, G.ScaleX)
-		  Var CaptionBaseline As Double = NearestMultiple(IconRect.Bottom + Spacing + G.TextAscent, G.ScaleY)
+		  Var CaptionBaseline As Double = NearestMultiple(IconRect.Bottom + Spacing + G.FontAscent, G.ScaleY)
 		  
 		  G.DrawingColor = ShadowColor
 		  G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline + 1, G.Width, True)
@@ -301,7 +301,7 @@ Implements ObservationKit.Observable
 		    Var IconTop As Double = NearestMultiple((G.Height - Self.IconSize) / 2, G.ScaleY)
 		    Var Icon As Picture = BeaconUI.IconWithColor(Self.Icon, Forecolor)
 		    Var Shadow As Picture = BeaconUI.IconWithColor(Self.Icon, ShadowColor)
-		    G.DrawPicture(Icon, 0, IconTop + 1, Self.IconSize, Self.IconSize, 0, 0, Icon.Width, Icon.Height)
+		    G.DrawPicture(Shadow, 0, IconTop + 1, Self.IconSize, Self.IconSize, 0, 0, Icon.Width, Icon.Height)
 		    G.DrawPicture(Icon, 0, IconTop, Self.IconSize, Self.IconSize, 0, 0, Icon.Width, Icon.Height)
 		  End If
 		  

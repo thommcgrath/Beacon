@@ -115,7 +115,7 @@ Begin ConfigEditor MetaDataConfigEditor
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   182
+      Height          =   384
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -182,135 +182,6 @@ Begin ConfigEditor MetaDataConfigEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   54
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   100
-   End
-   Begin BeaconListbox ModsList
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
-      Bold            =   False
-      Border          =   True
-      ColumnCount     =   3
-      ColumnsResizable=   False
-      ColumnWidths    =   "26,100,*"
-      DataField       =   ""
-      DataSource      =   ""
-      DefaultRowHeight=   26
-      DefaultSortColumn=   0
-      DefaultSortDirection=   0
-      EditCaption     =   "Edit"
-      Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   True
-      HeadingIndex    =   2
-      Height          =   190
-      HelpTag         =   ""
-      Hierarchical    =   False
-      Index           =   -2147483648
-      InitialParent   =   ""
-      InitialValue    =   " 	Console Safe	Mod"
-      Italic          =   False
-      Left            =   132
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      PreferencesKey  =   ""
-      RequiresSelection=   False
-      Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionChangeBlocked=   False
-      SelectionType   =   0
-      ShowDropIndicator=   False
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   248
-      Transparent     =   False
-      TypeaheadColumn =   2
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      VisibleRowCount =   0
-      Width           =   476
-      _ScrollOffset   =   0
-      _ScrollWidth    =   -1
-   End
-   Begin UITweaks.ResizedLabel ModsLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Enabled Mods:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   248
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   100
-   End
-   Begin Label ModsNoteLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   156
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Multiline       =   True
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Does not change anything on the server, only limits which engrams are shown in lists."
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   282
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -433,20 +304,6 @@ End
 		  Self.UncompressedCheckbox.Value = Not Self.Document.UseCompression
 		  Self.AllowUCSCheckbox.Value = Self.Document.AllowUCS
 		  Self.ConsoleModeCheck.Value = Self.Document.ConsoleMode
-		  
-		  Var Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
-		  Var ScrollPosition As Integer = Self.ModsList.ScrollPosition
-		  Var ListIndex As Integer = Self.ModsList.SelectedRowIndex
-		  Self.ModsList.RemoveAllRows()
-		  For Each Details As Beacon.ModDetails In Mods
-		    Self.ModsList.AddRow("", If(Details.ConsoleSafe, "Yes", "No"), Details.Name)
-		    Var Idx As Integer = Self.ModsList.LastAddedRowIndex
-		    Self.ModsList.RowTagAt(Idx) = Details
-		    Self.ModsList.CellCheckBoxValueAt(Idx, Self.ModColumnEnabled) = Self.Document.ModEnabled(Details.ModID)
-		  Next
-		  Self.ModsList.Sort
-		  Self.ModsList.ScrollPosition = ScrollPosition
-		  Self.ModsList.SelectedRowIndex = ListIndex
 		End Sub
 	#tag EndEvent
 
@@ -508,30 +365,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ModsList
-	#tag Event
-		Sub Open()
-		  Me.ColumnTypeAt(Self.ModColumnEnabled) = Listbox.CellTypes.CheckBox
-		  Me.ColumnAlignmentAt(Self.ModColumnConsoleSafe) = Listbox.Alignments.Center
-		  Me.TypeaheadColumn = Self.ModColumnName
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub CellAction(row As Integer, column As Integer)
-		  #Pragma Unused row
-		  
-		  If Self.SettingUp Or Column <> Self.ModColumnEnabled Then
-		    Return
-		  End If
-		  
-		  For I As Integer = 0 To Me.RowCount - 1
-		    Var ModID As String = Beacon.ModDetails(Me.RowTagAt(I)).ModID
-		    Self.Document.ModEnabled(ModID) = Me.CellCheckBoxValueAt(I, Self.ModColumnEnabled)
-		  Next
-		  Self.Changed = Self.Changed Or Self.Document.Modified
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events UncompressedCheckbox
 	#tag Event
 		Sub Action()
@@ -574,10 +407,9 @@ End
 		  Self.Document.Metadata.IsImplicit = False
 		  
 		  If Me.Value Then
-		    For Idx As Integer = 0 To Self.ModsList.LastRowIndex
-		      Var ModInfo As Beacon.ModDetails = Self.ModsList.RowTagAt(Idx)
+		    Var Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
+		    For Each ModInfo As Beacon.ModDetails In Mods
 		      If ModInfo.ConsoleSafe = False Then
-		        Self.ModsList.CellCheckBoxValueAt(Idx, Self.ModColumnEnabled) = False
 		        Self.Document.ModEnabled(ModInfo.ModID) = False
 		      End If
 		    Next

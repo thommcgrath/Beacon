@@ -474,6 +474,7 @@ Folder=Popover Support;Views/Popover Support;&h000000003CFCA7FF;&h0000000008A387
 Window=PopoverDialog;Views/Popover Support/PopoverDialog.xojo_window;&h00000000469BE7FF;&h000000003CFCA7FF;false
 Class=PopoverController;Views/Popover Support/PopoverController.xojo_code;&h00000000257387FF;&h000000003CFCA7FF;false
 Class=BeaconPopover;Views/Popover Support/BeaconPopover.xojo_code;&h000000001938A7FF;&h000000003CFCA7FF;false
+Window=ModSelectionGrid;Custom Controls/ModSelectionGrid.xojo_window;&h00000000043947FF;&h0000000030DCFFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=4
