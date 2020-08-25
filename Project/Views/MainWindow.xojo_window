@@ -317,48 +317,14 @@ End
 		Function CancelClose(appQuitting as Boolean) As Boolean
 		  #Pragma Unused AppQuitting
 		  
-		  Var ModifiedViews() As BeaconSubview
+		  Const AllowClose = False
+		  Const BlockClose = True
 		  
-		  For Each View As BeaconSubview In Self.mSubviews
-		    If View.Changed Then
-		      ModifiedViews.AddRow(View)
-		    End If
-		  Next
+		  If Self.DocumentsComponent1.ConfirmClose(AddressOf ShowView) = False Then
+		    Return BlockClose
+		  End If
 		  
-		  Select Case ModifiedViews.LastRowIndex
-		  Case -1
-		    Return False
-		  Case 0
-		    Return Not Self.DiscardView(ModifiedViews(0))
-		  Else
-		    Var NumChanges As Integer = ModifiedViews.LastRowIndex + 1
-		    
-		    Var Dialog As New MessageDialog
-		    Dialog.Title = ""
-		    Dialog.Message = "You have " + NumChanges.ToString + " documents with unsaved changes. Do you want to review these changes before quitting?"
-		    Dialog.Explanation = "If you don't review your documents, all your changes will be lost."
-		    Dialog.ActionButton.Caption = "Review Changes…"
-		    Dialog.CancelButton.Visible = True
-		    Dialog.AlternateActionButton.Caption = "Discard Changes"
-		    Dialog.AlternateActionButton.Visible = True
-		    
-		    Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
-		    If Choice = Dialog.ActionButton Then
-		      For Each View As BeaconSubview In ModifiedViews
-		        If Not Self.DiscardView(View) Then
-		          Return True
-		        End If
-		      Next
-		      Return False
-		    ElseIf Choice = Dialog.CancelButton Then
-		      Return True
-		    ElseIf Choice = Dialog.AlternateActionButton Then
-		      For Each View As BeaconSubview In ModifiedViews
-		        View.DiscardChanges()
-		      Next
-		      Return False
-		    End If
-		  End Select
+		  Return AllowClose
 		End Function
 	#tag EndEvent
 
@@ -560,13 +526,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CurrentView() As BeaconSubview
+		Attributes( Deprecated )  Function CurrentView() As BeaconSubview
 		  Return Self.mCurrentView
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DiscardView(View As BeaconSubview) As Boolean
+		Attributes( Deprecated )  Function DiscardView(View As BeaconSubview) As Boolean
 		  If View = DashboardPane1 Then
 		    Return False
 		  End If
@@ -720,60 +686,26 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ShowLibraryPane(PageIndex As Integer)
+		Attributes( Deprecated )  Sub ShowLibraryPane(PageIndex As Integer)
 		  Self.LibraryPane1.ShowPage(PageIndex)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub ShowView(View As BeaconSubview)
-		  If Self.mCurrentView = View Then
-		    Return
-		  End If
-		  
-		  If Self.mCurrentView <> Nil Then
-		    Self.mCurrentView.Visible = False
-		    Self.mCurrentView.SwitchedFrom()
-		  End If
-		  
-		  If View = Nil Or View = DashboardPane1 Then
-		    Self.Changed = False
-		    Self.mCurrentView = Nil
-		    Self.Views.SelectedPanelIndex = 0
-		    Self.TabBar1.SelectedIndex = 0
-		    Self.DashboardPane1.SwitchedTo()
-		    Self.Title = "Beacon"
-		    Self.UpdateEditorMenu()
-		    Return
-		  End If
-		  
-		  View.Visible = True
-		  Self.mCurrentView = View
-		  
-		  Var ViewIndex As Integer = Self.mSubviews.IndexOf(View)
-		  If ViewIndex = -1 Then
-		    Self.mSubviews.AddRow(View)
-		    ViewIndex = Self.mSubviews.LastRowIndex
-		    Self.TabBar1.Count = Self.mSubviews.LastRowIndex + 2
-		    View.EmbedWithinPanel(Self.Views, 1, 0, 0, Self.Views.Width, Self.Views.Height)
-		    
-		    View.AddObserver(Self, "ToolbarCaption")
-		    View.AddObserver(Self, "ToolbarIcon")
-		    
-		    AddHandler View.OwnerModifiedHook, WeakAddressOf Subview_ContentsChanged
-		  End If
-		  Self.TabBar1.SelectedIndex = ViewIndex + 1
-		  
-		  Self.Changed = View.Changed
-		  
-		  If Self.mCurrentView.ToolbarCaption.Length > 0 Then
-		    Self.Title = "Beacon: " + Self.mCurrentView.ToolbarCaption
+		  Var NewIndex As Integer
+		  Select Case View
+		  Case Self.BlueprintsComponent1
+		    NewIndex = Self.PageBlueprints
+		  Case Self.DocumentsComponent1
+		    NewIndex = Self.PageDocuments
+		  Case Self.DashboardPane1
+		    NewIndex = Self.PageHome
 		  Else
-		    Self.Title = "Beacon"
-		  End If
+		    Return
+		  End Select
 		  
-		  Self.mCurrentView.SwitchedTo()
-		  Self.Views.SelectedPanelIndex = 1
+		  Self.SwitchView(NewIndex)
 		End Sub
 	#tag EndMethod
 
@@ -835,7 +767,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Tools() As LibraryPaneTools
+		Attributes( Deprecated )  Function Tools() As LibraryPaneTools
 		  Return Self.LibraryPane1.ToolsPane
 		End Function
 	#tag EndMethod
@@ -869,13 +801,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ViewAtIndex(Idx As Integer) As BeaconSubview
+		Attributes( Deprecated )  Function ViewAtIndex(Idx As Integer) As BeaconSubview
 		  Return Self.mSubviews(Idx)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ViewCount() As UInteger
+		Attributes( Deprecated )  Function ViewCount() As UInteger
 		  Return Self.mSubviews.LastRowIndex + 1
 		End Function
 	#tag EndMethod

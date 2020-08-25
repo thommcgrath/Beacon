@@ -13,6 +13,42 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ConfirmClose(Callback As BeaconSubview.BringToFrontDelegate) As Boolean
+		  Const AllowClose = True
+		  Const BlockClose = False
+		  
+		  Var ModifiedViews() As BeaconSubview = Self.ModifiedPages()
+		  Var NumChanges As Integer = ModifiedViews.Count
+		  
+		  Select Case NumChanges
+		  Case 0
+		    Return AllowClose
+		  Case 1
+		    If Callback <> Nil Then
+		      Callback.Invoke(Self)
+		    End If
+		    Return ModifiedViews(0).ConfirmClose(AddressOf ShowView)
+		  Else
+		    Var ShouldClose As Boolean = True
+		    Var ShouldFocus As Boolean
+		    RaiseEvent ReviewChanges(NumChanges, ShouldClose, ShouldFocus)
+		    If ShouldClose Then
+		      Return AllowClose
+		    Else
+		      If ShouldFocus Then
+		        If Callback <> Nil Then
+		          Callback.Invoke(Self)
+		        End If
+		      End If
+		      Return BlockClose
+		    End If
+		  End Select
+		  
+		  Return AllowClose
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CurrentPage() As BeaconSubview
 		  Return Self.mPages(Self.mCurrentPageIndex)
 		End Function
@@ -90,6 +126,18 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ModifiedPages() As BeaconSubview()
+		  Var Pages() As BeaconSubview
+		  For Each Page As BeaconSubview In Self.mPages
+		    If Page.Changed Then
+		      Pages.AddRow(Page)
+		    End If
+		  Next
+		  Return Pages
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Page(Idx As Integer) As BeaconSubview
 		  If Idx <= Self.mPages.LastRowIndex And Idx >= 0 Then
 		    Return Self.mPages(Idx)
@@ -135,9 +183,19 @@ Inherits BeaconSubview
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub ShowView(View As BeaconSubview)
+		  Self.CurrentPage = View
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event PageChanged(OldIndex As Integer, NewIndex As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ReviewChanges(NumPages As Integer, ByRef ShouldClose As Boolean, ByRef ShouldFocus As Boolean)
 	#tag EndHook
 
 
@@ -352,14 +410,6 @@ Inherits BeaconSubview
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="ToolbarCaption"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Transparent"
 			Visible=true
 			Group="Behavior"
@@ -384,27 +434,11 @@ Inherits BeaconSubview
 			EditorType=""
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Progress"
-			Visible=false
-			Group="Behavior"
-			InitialValue="ProgressNone"
-			Type="Double"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="DoubleBuffer"
 			Visible=true
 			Group="Windows Behavior"
 			InitialValue="False"
 			Type="Boolean"
-			EditorType=""
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ToolbarIcon"
-			Visible=false
-			Group="Behavior"
-			InitialValue=""
-			Type="Picture"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

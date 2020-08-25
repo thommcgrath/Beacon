@@ -199,6 +199,32 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub ReviewChanges(NumPages As Integer, ByRef ShouldClose As Boolean, ByRef ShouldFocus As Boolean)
+		  Var Dialog As New MessageDialog
+		  Dialog.Title = ""
+		  Dialog.Message = "You have " + NumPages.ToString + " documents with unsaved changes. Do you want to review these changes before quitting?"
+		  Dialog.Explanation = "If you don't review your documents, all your changes will be lost."
+		  Dialog.ActionButton.Caption = "Review Changes…"
+		  Dialog.CancelButton.Visible = True
+		  Dialog.AlternateActionButton.Caption = "Discard Changes"
+		  Dialog.AlternateActionButton.Visible = True
+		  
+		  Var Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Select Case Choice
+		  Case Dialog.ActionButton
+		    ShouldClose = False
+		    ShouldFocus = True
+		  Case Dialog.CancelButton
+		    ShouldClose = False
+		    ShouldFocus = False
+		  Case Dialog.AlternateActionButton
+		    ShouldClose = True
+		    ShouldFocus = False // Doesn't matter
+		  End Select
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h21
 		Private Sub AttachControllerEvents(Controller As Beacon.DocumentController)
@@ -410,12 +436,6 @@ End
 		Sub OpenDocument(File As FolderItem, AddToRecents As Boolean = True)
 		  Var URL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(New BookmarkedFolderItem(File))
 		  Self.OpenDocument(URL, AddToRecents)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ShowView(View As BeaconSubview)
-		  Self.CurrentPage = View
 		End Sub
 	#tag EndMethod
 
