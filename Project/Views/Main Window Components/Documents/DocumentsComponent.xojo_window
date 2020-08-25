@@ -234,6 +234,13 @@ End
 		  View.LinkedOmniBarItem.CanBeClosed = True
 		  View.LinkedOmniBarItem.HasUnsavedChanges = View.Changed
 		  
+		  Select Case Sender.URL.Scheme
+		  Case Beacon.DocumentURL.TypeCloud
+		    View.LinkedOmniBarItem.Icon = IconCloudDocument
+		  Case Beacon.DocumentURL.TypeWeb
+		    View.LinkedOmniBarItem.Icon = IconCommunityDocument
+		  End Select
+		  
 		  Self.Views.AddPanel
 		  Var PanelIndex As Integer = Self.Views.LastAddedPanelIndex
 		  View.EmbedWithinPanel(Self.Views, PanelIndex, 0, 0, Self.Views.Width, Self.Views.Height)
@@ -304,6 +311,33 @@ End
 		  RemoveHandler Controller.LoadProgress, WeakAddressOf Controller_LoadProgress
 		  RemoveHandler Controller.LoadStarted, WeakAddressOf Controller_LoadStarted
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DiscardView(View As BeaconSubview) As Boolean
+		  If (View IsA DocumentEditorView) = False Then
+		    Return False
+		  End If
+		  
+		  Var Page As DocumentEditorView = DocumentEditorView(View)
+		  If Not Page.ConfirmClose(AddressOf ShowView) Then
+		    Return False
+		  End If
+		  
+		  Self.RemovePage(Page)
+		  
+		  Var NavItem As OmniBarItem = Page.LinkedOmniBarItem
+		  If (NavItem Is Nil) = False Then
+		    Self.Nav.Remove(NavItem)
+		  End If
+		  
+		  Var PanelIndex As Integer = Self.IndexOf(Page)
+		  If PanelIndex > -1 Then
+		    Self.Views.RemovePanelAt(PanelIndex)
+		  End If
+		  
+		  Self.CurrentPage = Self.RecentDocumentsComponent1
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -379,6 +413,12 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub ShowView(View As BeaconSubview)
+		  Self.CurrentPage = View
+		End Sub
+	#tag EndMethod
+
 
 	#tag Constant, Name = PageCloud, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
@@ -421,7 +461,13 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ShouldCloseItem(Item As OmniBarItem)
-		  Break
+		  For Idx As Integer = 0 To Self.LastPageIndex
+		    Var Page As BeaconSubview = Self.Page(Idx)
+		    If Page.LinkedOmniBarItem = Item Then
+		      Call Self.DiscardView(Page)
+		      Return
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents

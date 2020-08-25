@@ -310,7 +310,7 @@ Implements ObservationKit.Observable
 		  End If
 		  
 		  Var CaptionSpace As Double = If(WithAccessory, AccessoryRect.Left, G.Width) - CaptionOffset
-		  Var CaptionLeft As Double = NearestMultiple((CaptionSpace - Min(G.TextWidth(Self.Caption), Self.MaxCaptionWidth)) / 2, G.ScaleX)
+		  Var CaptionLeft As Double = NearestMultiple(CaptionOffset + ((CaptionSpace - Min(G.TextWidth(Self.Caption), Self.MaxCaptionWidth)) / 2), G.ScaleX)
 		  Var CaptionBaseline As Double = NearestMultiple((G.Height / 2) + (G.CapHeight / 2), G.ScaleY)
 		  
 		  G.DrawingColor = ShadowColor
