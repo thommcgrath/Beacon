@@ -59,6 +59,15 @@ Implements ObservationKit.Observable
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Clickable() As Boolean
+		  Select Case Self.Type
+		  Case OmniBarItem.Types.Tab, OmniBarItem.Types.Button
+		    Return True
+		  End Select
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Constructor(Type As OmniBarItem.Types, Name As String, Caption As String, Icon As Picture = Nil)
 		  Self.mType = Type
@@ -115,7 +124,10 @@ Implements ObservationKit.Observable
 		  Const CornerRadius = 6
 		  Const Spacing = 2
 		  
-		  Var CellHeight As Double = Self.ButtonIconSize + Spacing + G.TextHeight
+		  Var CellHeight As Double = Self.ButtonIconSize
+		  If Self.Caption.IsEmpty = False Then
+		    CellHeight = CellHeight + Spacing + G.TextHeight
+		  End If
 		  Var CellTop As Double = NearestMultiple((G.Height - CellHeight) / 2, G.ScaleY)
 		  
 		  Var ForeColor, BackColor, ShadowColor As Color = &c000000FF
@@ -151,14 +163,16 @@ Implements ObservationKit.Observable
 		  G.DrawPicture(Shadow, IconRect.Left, IconRect.Top + 1, IconRect.Width, IconRect.Height, 0, 0, Icon.Width, Icon.Height)
 		  G.DrawPicture(Icon, IconRect.Left, IconRect.Top, IconRect.Width, IconRect.Height, 0, 0, Icon.Width, Icon.Height)
 		  
-		  Var CaptionWidth As Double = G.TextWidth(Self.Caption)
-		  Var CaptionLeft As Double = NearestMultiple((G.Width - CaptionWidth) / 2, G.ScaleX)
-		  Var CaptionBaseline As Double = NearestMultiple(IconRect.Bottom + Spacing + G.FontAscent, G.ScaleY)
-		  
-		  G.DrawingColor = ShadowColor
-		  G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline + 1, G.Width, True)
-		  G.DrawingColor = ForeColor
-		  G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline, G.Width, True)
+		  If Self.Caption.IsEmpty = False Then
+		    Var CaptionWidth As Double = G.TextWidth(Self.Caption)
+		    Var CaptionLeft As Double = NearestMultiple((G.Width - CaptionWidth) / 2, G.ScaleX)
+		    Var CaptionBaseline As Double = NearestMultiple(IconRect.Bottom + Spacing + G.FontAscent, G.ScaleY)
+		    
+		    G.DrawingColor = ShadowColor
+		    G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline + 1, G.Width, True)
+		    G.DrawingColor = ForeColor
+		    G.DrawText(Self.Caption, CaptionLeft, CaptionBaseline, G.Width, True)
+		  End If
 		  
 		  If MouseDown And Self.Enabled Then
 		    G.DrawingColor = &c00000080

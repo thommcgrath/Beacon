@@ -288,8 +288,7 @@ Implements NotificationKit.Receiver
 
 	#tag MenuHandler
 		Function HelpCreateSupportTicket() As Boolean Handles HelpCreateSupportTicket.Action
-			Var Win As New SupportTicketWindow
-			Win.Show
+			Self.StartTicket()
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -1230,6 +1229,13 @@ Implements NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Sub ShowSpawnCodes()
 		  ShowURL(Beacon.WebURL("/spawn/"))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub StartTicket()
+		  Var Win As New SupportTicketWindow
+		  Win.Show
 		End Sub
 	#tag EndMethod
 

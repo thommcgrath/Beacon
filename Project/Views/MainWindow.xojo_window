@@ -82,34 +82,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Visible         =   True
       Width           =   759
    End
-   Begin ControlCanvas UpdateBar
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   25
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   41
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   -169
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1159
-   End
    Begin ControlCanvas OverlayCanvas
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -196,7 +168,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Top             =   0
       Transparent     =   True
       Visible         =   True
-      Width           =   1000
+      Width           =   1200
    End
    Begin PagePanel Pages
       AllowAutoDeactivate=   True
@@ -218,7 +190,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   0
+      Value           =   4
       Visible         =   True
       Width           =   1200
       Begin DocumentsComponent DocumentsComponent1
@@ -336,37 +308,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          Visible         =   True
          Width           =   1200
       End
-   End
-   Begin OmniBar AppBar
-      Alignment       =   2
-      AllowAutoDeactivate=   True
-      AllowFocus      =   False
-      AllowFocusRing  =   True
-      AllowTabs       =   False
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      Height          =   38
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   1000
-      LeftPadding     =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      RightPadding    =   7
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Tooltip         =   ""
-      Top             =   0
-      Transparent     =   True
-      Visible         =   True
-      Width           =   200
    End
 End
 #tag EndWindow
@@ -753,12 +694,27 @@ End
 		  If App.UpdateAvailable Then
 		    Var Data As Dictionary = App.UpdateDetails
 		    Var Preview As String = Data.Value("Preview")
-		    If Preview <> "" Then
-		      Self.mUpdateText = Preview + " Click here to update."
+		    If Preview.IsEmpty = False Then
+		      Preview = Preview + " Click here to update."
 		    Else
-		      Self.mUpdateText = "Beacon " + Data.Value("Version") + " is now available! Click here to update."
+		      Preview = "Beacon " + Data.Value("Version") + " is now available! Click here to update."
 		    End If
-		    Self.UpdateBarVisible = True
+		    
+		    Var UpdateItem As OmniBarItem = Self.NavBar.Item("NavUpdate")
+		    If UpdateItem Is Nil Then
+		      UpdateItem = OmniBarItem.CreateButton("NavUpdate", "", IconToolbarImport, Preview)
+		      UpdateItem.AlwaysUseActiveColor = True
+		      UpdateItem.ActiveColor = OmniBarItem.ActiveColors.Green
+		      
+		      Var Idx As Integer = Self.NavBar.IndexOf("NavUser")
+		      If Idx > -1 Then
+		        Self.NavBar.Insert(Idx, UpdateItem)
+		      Else
+		        Self.NavBar.Append(UpdateItem)
+		      End If
+		    Else
+		      UpdateItem.HelpTag = Preview
+		    End If
 		  End If
 		End Sub
 	#tag EndMethod
@@ -981,30 +937,6 @@ End
 		Private mViewsAnimation As AnimationKit.MoveTask
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h21
-		#tag Getter
-			Get
-			  Return Self.UpdateBar.Top + Self.UpdateBar.Height > 0
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.UpdateBarVisible = Value Then
-			    Return
-			  End If
-			  
-			  Var UpdateBarHeight As Integer = If(Value, Self.UpdateBar.Height, 0)
-			  
-			  Self.Views.Height = Self.Height - (Self.TabBar1.Height + UpdateBarHeight)
-			  Self.Views.Top = Self.Height - Self.Views.Height
-			  Self.TabBar1.Top = UpdateBarHeight
-			  Self.UpdateBar.Top = (Self.UpdateBar.Height * -1) + UpdateBarHeight
-			  Self.UpdateBar.Invalidate
-			End Set
-		#tag EndSetter
-		Private UpdateBarVisible As Boolean
-	#tag EndComputedProperty
-
 
 	#tag Constant, Name = MinSplitterPosition, Type = Double, Dynamic = False, Default = \"300", Scope = Private
 	#tag EndConstant
@@ -1068,62 +1000,6 @@ End
 		  If ViewIndex <= Self.mSubviews.LastRowIndex Then
 		    Self.ShowView(Self.mSubviews(ViewIndex))
 		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events UpdateBar
-	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  #Pragma Unused Areas
-		  
-		  G.DrawingColor = SystemColors.SelectedContentBackgroundColor
-		  G.FillRectangle(0, 0, G.Width, G.Height)
-		  G.DrawingColor = SystemColors.SeparatorColor
-		  G.FillRectangle(0, G.Height - 1, G.Width, 1)
-		  
-		  Var Caption As String = Self.mUpdateText
-		  Var MaxCaptionWidth As Integer = G.Width - 40
-		  Var CaptionWidth As Integer = Min(Ceiling(G.TextWidth(Caption)), MaxCaptionWidth)
-		  Var CaptionLeft As Integer = Round((G.Width - CaptionWidth) / 2)
-		  Var CaptionBaseline As Double = ((G.Height - 1) / 2) + (G.CapHeight / 2)
-		  
-		  G.DrawingColor = SystemColors.AlternateSelectedControlTextColor
-		  G.DrawText(Caption, CaptionLeft, CaptionBaseline, MaxCaptionWidth, True)
-		  
-		  If Self.mUpdateBarPressed Then
-		    G.DrawingColor = &c00000080
-		    G.FillRectangle(0, 0, G.Width, G.Height)
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  #Pragma Unused X
-		  #Pragma Unused Y
-		  
-		  Self.mUpdateBarPressed = True
-		  Self.UpdateBar.Invalidate
-		  Return True
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub MouseDrag(X As Integer, Y As Integer)
-		  Var Inside As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height - 1)
-		  If Inside <> Self.mUpdateBarPressed Then
-		    Self.mUpdateBarPressed = Inside
-		    Self.UpdateBar.Invalidate
-		  End If
-		  
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub MouseUp(X As Integer, Y As Integer)
-		  Var Inside As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height - 1)
-		  If Inside Then
-		    Call App.HandleURL("beacon://action/checkforupdate")
-		  End If
-		  Self.mUpdateBarPressed = False
-		  Self.UpdateBar.Invalidate
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1233,7 +1109,9 @@ End
 		  
 		  Var Help As OmniBarItem = OmniBarItem.CreateTab("NavHelp", "Help")
 		  
-		  Me.Append(Home, Documents, Blueprints, Presets, Help)
+		  Var User As OmniBarItem = OmniBarItem.CreateButton("NavUser", "", IconToolbarUser, "Access user settings")
+		  
+		  Me.Append(Home, Documents, Blueprints, Presets, Help, OmniBarItem.CreateFlexibleSpace, User)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1250,6 +1128,9 @@ End
 		    NewIndex = Self.PageHelp
 		  Case "NavHome"
 		    NewIndex = Self.PageHome
+		  Case "NavUpdate"
+		    Call App.HandleURL("beacon://action/checkforupdate")
+		    Return
 		  Else
 		    Return
 		  End Select
@@ -1282,6 +1163,18 @@ End
 		  Item.HasProgressIndicator = True
 		  Item.Progress = OmniBarItem.ProgressIndeterminate
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CancelLoad(URL as String) As Boolean
+		  Static TicketURL As String
+		  If TicketURL.IsEmpty Then
+		    TicketURL = Beacon.WebURL("/help/contact")
+		  End If
+		  If URL = TicketURL Then
+		    App.StartTicket()
+		    Return True
+		  End If
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events DashboardPane1

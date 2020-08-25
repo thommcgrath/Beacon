@@ -292,6 +292,10 @@ Implements ObservationKit.Observer, NotificationKit.Receiver
 		Private Function IndexAtPoint(Point As Point) As Integer
 		  For Idx As Integer = 0 To Self.mItemRects.LastRowIndex
 		    If (Self.mItemRects(Idx) Is Nil) = False And Self.mItemRects(Idx).Contains(Point) Then
+		      If Not Self.mItems(Idx).Clickable Then
+		        Return -1
+		      End If
+		      
 		      Return Idx
 		    End If
 		  Next
