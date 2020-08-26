@@ -987,12 +987,22 @@ End
 		    #if Beacon.NitradoIntegrationEngine.GuidedModeSupportEnabled
 		      Var UserData As Dictionary = Controller.UserData
 		      Var OffendingKey As String = UserData.Lookup("OffendingKey", "")
-		      If OffendingKey.IsEmpty = False Then
-		        Explanation = "The config key '" + OffendingKey + "' needs to be placed in your GameUserSettings.ini file but Nitrado does not have a built-in config for it."
+		      Var ContentLength As Integer = UserData.Lookup("ContentLength", 0)
+		      If ContentLength = 0 Then
+		        If OffendingKey.IsEmpty = False Then
+		          Explanation = "The config key '" + OffendingKey + "' needs to be placed in your GameUserSettings.ini file but Nitrado does not have a built-in config for it."
+		        Else
+		          Explanation = "There are one or more settings that need to be placed in your GameUserSettings.ini file, but Nitrado does not have a built-in config for them."
+		        End If
+		        Explanation = Explanation + " In order to build your GameUserSettings.ini correctly, the server must be switched to expert mode. Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
 		      Else
-		        Explanation = "There are one or more settings that need to be placed in your GameUserSettings.ini file, but Nitrado does not have a built-in config for them."
+		        If OffendingKey.IsEmpty = False Then
+		          Explanation = "The config key '" + OffendingKey + "' needs " + Format(ContentLength, "0,") + " characters of content, but Nitrado limits fields to 65,535 characters."
+		        Else
+		          Explanation = "There is a config key that needs " + Format(ContentLength, "0,") + " characters of content, but Nitrado limits fields to 65,535 characters."
+		        End If
+		        Explanation = Explanation + " In order to build your ini files correctly, the server must be switched to expert mode. Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
 		      End If
-		      Explanation = Explanation + " In order to build your GameUserSettings.ini correctly, the server must be switched to expert mode. Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
 		    #else
 		      Explanation = "Beacon cannot manage Nitrado's beginner mode settings. If you choose to continue, Beacon will restart the server to ensure the latest settings are converted into expert mode before enabling expert mode."
 		    #endif

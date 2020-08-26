@@ -41,7 +41,7 @@ Inherits Beacon.IntegrationEngine
 		      If ConfigKey.File = "GameUserSettings.ini" And ConfigKey.HasNitradoEquivalent = False Then
 		        // We need to put a setting in GUS but Nitrado doesn't have a key for it. That means expert mode is needed.
 		        App.Log("Cannot use guided deploy because the key " + ConfigKey.Key + " needs to be in GameUserSettings.ini but Nitrado does not have a config for it.")
-		        Self.SwitchToExpertMode(ConfigKey.Key)
+		        Self.SwitchToExpertMode(ConfigKey.Key, 0)
 		        Return False
 		      End If
 		      
@@ -59,6 +59,12 @@ Inherits Beacon.IntegrationEngine
 		      Else
 		        Continue
 		      End Select
+		      
+		      If NewValue.Length > 65535 Then
+		        App.Log("Cannot use guided deploy because the key " + ConfigKey.Key + " needs " + NewValue.Length.ToString + " characters, and Nitrado has a limit of 65,535 characters.")
+		        Self.SwitchToExpertMode(ConfigKey.Key, NewValue.Length)
+		        Return False
+		      End If
 		      
 		      Var CurrentValue As String = Self.GetViaDotNotation(Self.mCurrentSettings, ConfigKey.NitradoPath)
 		      If CurrentValue.Compare(NewValue, ComparisonOptions.CaseSensitive, Locale.Raw) <> 0 Then
@@ -88,7 +94,7 @@ Inherits Beacon.IntegrationEngine
 		        Var ConfigKey As Beacon.ConfigKey = Beacon.Data.GetConfigKey("", "", Key) // Allow any file so that command line options don't trigger this
 		        If ConfigKey Is Nil Or ConfigKey.HasNitradoEquivalent = False Then
 		          App.Log("Cannot use guided deploy because the key " + Key + " needs to be in GameUserSettings.ini but Nitrado does not have a config for it.")
-		          Self.SwitchToExpertMode(Key)
+		          Self.SwitchToExpertMode(Key, 0)
 		          Return False
 		        End If
 		      Next
@@ -857,9 +863,10 @@ Inherits Beacon.IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SwitchToExpertMode(OffendingKey As String)
+		Private Sub SwitchToExpertMode(OffendingKey As String, ContentLength As Integer)
 		  Var UserData As New Dictionary
 		  UserData.Value("OffendingKey") = OffendingKey
+		  UserData.Value("ContentLength") = ContentLength
 		  Var Controller As New Beacon.TaskWaitController("Needs Expert Mode", UserData)
 		  
 		  Self.Log("Waiting for user action…")
