@@ -506,6 +506,9 @@ Inherits Beacon.IntegrationEngine
 		    Case "backup_creation"
 		      Self.State = Self.StateOther
 		      Self.SetError("The server is creating a backup.")
+		    Case "updating"
+		      Self.State = Self.StateOther
+		      Self.SetError("The server is currently installing an update.")
 		    Else
 		      Self.State = Self.StateOther
 		      Self.SetError("Unknown server status: " + GameServer.Value("status").StringValue)
