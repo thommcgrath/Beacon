@@ -23,7 +23,7 @@ class Document implements \JsonSerializable {
 	protected $console_safe = true;
 	protected $mod_ids = '{}';
 	protected $editors = '{}';
-	protected $content = null;
+	protected $content = [];
 	
 	public function DocumentID() {
 		return $this->document_id;
@@ -153,22 +153,24 @@ class Document implements \JsonSerializable {
 		return $this->console_safe;
 	}
 	
-	public function PreloadContent() {
-		if (is_null($this->content) == false) {
-			return;
+	public function PreloadContent($version_id = null) {
+		$content_key = (is_null($version_id) === true ? '' : $version_id);
+		if (array_key_exists($content_key, $this->content) === true) {
+			return $content_key;
 		}
 		
-		$this->content = \BeaconCloudStorage::GetFile($this->CloudStoragePath(), true);
+		$this->content[$content_key] = \BeaconCloudStorage::GetFile($this->CloudStoragePath(), true, $version_id);
+		return $content_key;
 	}	
 	
-	public function Content(bool $compressed = false, bool $parsed = true) {
+	public function Content(bool $compressed = false, bool $parsed = true, $version_id = null) {
 		try {
-			$this->PreloadContent();
+			$content_key = $this->PreloadContent($version_id);
 		} catch (\Exception $err) {
 			return '';
 		}
 		
-		$content = $this->content;
+		$content = $this->content[$content_key];
 		$compressed = $compressed && ($parsed == false);
 		$is_compressed = \BeaconCommon::IsCompressed($content);
 		if ($is_compressed == true && $compressed == false) {

@@ -16,8 +16,12 @@ abstract class BeaconCloudStorage {
 		return $remote_path;
 	}
 	
-	private static function LocalPath(string $remote_path) {
-		return '/var/tmp' . static::ResourcePath($remote_path);
+	private static function LocalPath(string $remote_path, $version_id = null) {
+		$local_path = '/var/tmp' . static::ResourcePath($remote_path);
+		if (is_null($version_id) === false) {
+			$local_path .= '-' . $version_id;
+		}
+		return $local_path;
 	}
 	
 	private static function ResourcePath(string $remote_path) {
@@ -120,21 +124,53 @@ abstract class BeaconCloudStorage {
 	}
 	
 	private static function BuildSignedURL(string $remote_path, string $method) {
-		$expiration = time() + 60;
 		$resource_path = static::ResourcePath($remote_path);
-		$str_to_sign = implode("\n", array($method, '', '', $expiration, $resource_path));
+		$signing_path = $resource_path;
+		$pos = strpos($signing_path, '?');
+		if ($pos !== false) {
+			$signing_path = substr($resource_path, 0, $pos);
+			$query = substr($resource_path, $pos + 1);
+			$params = [];
+			parse_str($query, $params);
+			$subresource = [];
+			foreach ($params as $key => $value) {
+				switch ($key) {
+				case 'versions':
+				case 'acl':
+				case 'location':
+				case 'logging':
+				case 'torrent':
+				case 'versionId':
+					if (is_null($value)) {
+						$subresource[] = urlencode($key);
+					} else {
+						$subresource[] = urlencode($key) . '=' . urlencode($value);
+					}
+					break;
+				}
+			}
+			if (count($subresource) > 0) {
+				$signing_path .= '?' . implode('&', $subresource);
+			}
+		}
+		
+		$expiration = time() + 60;
+		$str_to_sign = implode("\n", array($method, '', '', $expiration, $signing_path));
 		$signature = base64_encode(hash_hmac('sha1', $str_to_sign, BeaconCommon::GetGlobal('Storage_Password'), true));
-		return 'https://' . BeaconCommon::GetGlobal('Storage_Host') . $resource_path . '?AWSAccessKeyId=' . urlencode(BeaconCommon::GetGlobal('Storage_Username')) . '&Expires=' . urlencode($expiration) . '&Signature=' . urlencode($signature);
+		return 'https://' . BeaconCommon::GetGlobal('Storage_Host') . $resource_path . (strpos($resource_path, '?') === false ? '?' : '&') . 'AWSAccessKeyId=' . urlencode(BeaconCommon::GetGlobal('Storage_Username')) . '&Expires=' . urlencode($expiration) . '&Signature=' . urlencode($signature);
 	}
 	
-	private static function WarmFile(string $remote_path) {
+	private static function WarmFile(string $remote_path, $version_id) {
 		$remote_path = static::CleanupRemotePath($remote_path);
 		$database = BeaconCommon::Database();
 		$results = $database->Query('SELECT hash, size_in_bytes FROM usercloud WHERE remote_path = $1;', $remote_path);
 		if ($results->RecordCount() == 0) {
 			return static::FILE_NOT_FOUND;
 		}
-		$local_path = static::LocalPath($remote_path);
+		$local_path = static::LocalPath($remote_path, $version_id);
+		if (is_null($version_id) === false) {
+			$remote_path .= '?versionId=' . urlencode($version_id);
+		}
 		$file_id = crc32($remote_path);
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
@@ -185,7 +221,7 @@ abstract class BeaconCloudStorage {
 			$cached_size = filesize($local_path);
 			$cached_hash = hash_file('sha256', $local_path);
 			
-			if ($cached_size != $correct_filesize || $cached_hash != $correct_hash) {
+			if (is_null($version_id) === true && ($cached_size != $correct_filesize || $cached_hash != $correct_hash)) {
 				static::DeleteLocalPath($local_path);
 				if (is_null($cache_id) == false) {
 					$database->Query('DELETE FROM usercloud_cache WHERE cache_id = $1;', $cache_id);
@@ -331,10 +367,10 @@ abstract class BeaconCloudStorage {
 		return $files;
 	}
 	
-	public static function GetFile(string $remote_path, bool $with_exceptions = false) {
+	public static function GetFile(string $remote_path, bool $with_exceptions = false, $version_id = null) {
 		$remote_path = static::CleanupRemotePath($remote_path);
 		
-		$local_path = static::WarmFile($remote_path);
+		$local_path = static::WarmFile($remote_path, $version_id);
 		if (is_int($local_path)) {
 			if ($with_exceptions) {
 				throw new Exception('Failed to retrieve file from storage server', $local_path);
@@ -346,8 +382,8 @@ abstract class BeaconCloudStorage {
 		return file_get_contents($local_path);
 	}
 	
-	public static function StreamFile(string $remote_path) {
-		$local_path = static::WarmFile($remote_path);
+	public static function StreamFile(string $remote_path, $version_id = null) {
+		$local_path = static::WarmFile($remote_path, $version_id);
 		if (is_int($local_path)) {
 			switch ($local_path) {
 			case static::FILE_NOT_FOUND:
@@ -472,4 +508,58 @@ abstract class BeaconCloudStorage {
 		$database->Query('INSERT INTO usercloud_queue (hostname, remote_path, request_method) VALUES ($1, $2, $3);', $hostname, $remote_path, 'DELETE');
 		$database->Commit();
 	}
+	
+	public static function VersionsForFile(string $remote_path) {
+		$remote_path = static::CleanupRemotePath($remote_path);
+		$path = '/?versions&prefix=' . urlencode(substr($remote_path, 1));
+		$url = static::BuildSignedURL($path, 'GET');
+		
+		$curl = curl_init();
+		if ($curl === false) {
+			throw new Exception('Unable to get curl handle');
+		}
+		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+		$response = curl_exec($curl);
+		$success = false;
+		$http_status = 0;
+		if ($response !== false) {
+			$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+			$success = $http_status >= 200 && $http_status < 300;
+		}
+		curl_close($curl);
+		
+		if ($success === false) {
+			return false;
+		}
+		
+		$xml = simplexml_load_string($response);
+		if ($xml === false) {
+			return false;
+		}
+		
+		$versions = [];
+		if (array_key_exists('Version', $xml) === false) {
+			return $versions;
+		}
+		
+		$elements = $xml->Version;
+		foreach ($elements as $element) {
+			$is_latest = strval($element->IsLatest[0]) === 'true';
+			$version_id = strval($element->VersionId[0]);
+			$date = new DateTime(strval($element->LastModified));
+			$bytes = intval($element->Size);
+			$versions[] = [
+				'latest' => $is_latest,
+				'version_id' => $version_id,
+				'date' => $date->format('Y-m-d H:i:sO'),
+				'size' => $bytes
+			];
+		}
+		
+		return $versions;
+	}
 }
+
+?>

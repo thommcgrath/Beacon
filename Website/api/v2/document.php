@@ -47,6 +47,21 @@ if (is_null($subobject) == false) {
 			break;
 		}
 		break;
+	case 'versions':
+		switch ($method) {
+		case 'GET':
+			$version_id = BeaconAPI::ObjectID(2);
+			if (is_null($version_id)) {
+				$versions = $document->Versions();
+				BeaconAPI::ReplySuccess($versions);
+			} else {
+				HandleDocumentDataRequest($document, $version_id);
+			}
+			break;
+		default:
+			BeaconAPI::ReplyError('Method not allowed', null, 405);
+			break;
+		}
 	default:
 		BeaconAPI::ReplyError('Action not found', null, 404);
 		break;
@@ -150,45 +165,7 @@ case 'GET':
 			if ($simple) {
 				BeaconAPI::ReplySuccess($documents[0]);
 			} else {
-				$best_option = '*';
-				$accept = isset($_SERVER['HTTP_ACCEPT_ENCODING']) ? strtolower(trim($_SERVER['HTTP_ACCEPT_ENCODING'])) : '';
-				if ($accept !== '') {
-					$pieces = explode(',', $accept);
-					$best_quality = 0;
-					$supported = array('gzip', '*');
-					foreach ($pieces as $piece) {
-						$piece = trim($piece);
-						if (strpos($piece, ';') === false) {
-							$option = $piece;
-							$quality = 1;
-						} else {
-							list($option, $quality) = explode(';', $piece, 2);
-							$quality = substr($quality, 2);
-						}
-						
-						if ($quality > $best_quality && in_array($option, $supported)) {
-							$best_option = $option;
-							$best_quality = $quality;
-						}
-					}
-				}
-				
-				$compressed = ($best_option == 'gzip');
-				if ($compressed) {
-					header('Content-Encoding: gzip');
-				}
-				try {
-					$documents[0]->PreloadContent(); // If there is an error, this one will fire the exception
-					echo $documents[0]->Content($compressed, false); // This one returns an empty string on error, but will call the preload if needed.
-					header('Content-Type: application/octet-stream');
-					header('Content-Disposition: attachment; filename="' . preg_replace('/[^a-z09\-_ \(\)]/i', '', $documents[0]->Name()) . '.beacon"');
-					http_response_code(200);
-				} catch (Exception $err) {
-					http_response_code(500);
-					header('Content-Type: application/json');
-					echo json_encode(['message' => $err->getMessage(), 'error' => true, 'code' => $err->getCode()]);
-				}
-				exit;
+				HandleDocumentDataRequest($documents[0], null);
 			}
 		} else {
 			BeaconAPI::ReplySuccess($documents);
@@ -284,6 +261,48 @@ case 'DELETE':
 	}
 	
 	break;
+}
+
+function HandleDocumentDataRequest(BeaconDocument $document, $version_id = null) {
+	$best_option = '*';
+	$accept = isset($_SERVER['HTTP_ACCEPT_ENCODING']) ? strtolower(trim($_SERVER['HTTP_ACCEPT_ENCODING'])) : '';
+	if ($accept !== '') {
+		$pieces = explode(',', $accept);
+		$best_quality = 0;
+		$supported = array('gzip', '*');
+		foreach ($pieces as $piece) {
+			$piece = trim($piece);
+			if (strpos($piece, ';') === false) {
+				$option = $piece;
+				$quality = 1;
+			} else {
+				list($option, $quality) = explode(';', $piece, 2);
+				$quality = substr($quality, 2);
+			}
+			
+			if ($quality > $best_quality && in_array($option, $supported)) {
+				$best_option = $option;
+				$best_quality = $quality;
+			}
+		}
+	}
+	
+	$compressed = ($best_option == 'gzip');
+	if ($compressed) {
+		header('Content-Encoding: gzip');
+	}
+	try {
+		$document->PreloadContent($version_id); // If there is an error, this one will fire the exception
+		echo $document->Content($compressed, false, $version_id); // This one returns an empty string on error, but will call the preload if needed.
+		header('Content-Type: application/octet-stream');
+		header('Content-Disposition: attachment; filename="' . preg_replace('/[^a-z09\-_ \(\)]/i', '', $document->Name()) . '.beacon"');
+		http_response_code(200);
+	} catch (Exception $err) {
+		http_response_code(500);
+		header('Content-Type: application/json');
+		echo json_encode(['message' => $err->getMessage(), 'error' => true, 'code' => $err->getCode()]);
+	}
+	exit;
 }
 
 ?>
