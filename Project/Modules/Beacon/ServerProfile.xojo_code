@@ -80,7 +80,11 @@ Protected Class ServerProfile
 
 	#tag Method, Flags = &h0
 		Function Mask() As UInt64
-		  Return Self.mMask
+		  If Self.mMask = 0 Then
+		    Return Beacon.Maps.All.Mask
+		  Else
+		    Return Self.mMask
+		  End If
 		End Function
 	#tag EndMethod
 
