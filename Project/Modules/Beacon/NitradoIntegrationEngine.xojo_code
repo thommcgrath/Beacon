@@ -127,7 +127,9 @@ Inherits Beacon.IntegrationEngine
 		    // Need to remove the header that the rewriter adds
 		    ExtraGameIni = ExtraGameIni.Replace("[" + Beacon.ShooterGameHeader + "]", "").Trim
 		    
-		    Self.UploadFile(Self.mGamePath + "user-settings.ini", ExtraGameIni)
+		    If Not Self.UploadFile(Self.mGamePath + "user-settings.ini", ExtraGameIni) Then
+		      Return False
+		    End If
 		    If Self.Finished Then
 		      Return False
 		    End If
@@ -624,8 +626,7 @@ Inherits Beacon.IntegrationEngine
 	#tag Event
 		Function UploadFile(Contents As String, Filename As String) As Boolean
 		  Var Path As String = Beacon.NitradoServerProfile(Self.Profile).ConfigPath + "/" + Filename
-		  Self.UploadFile(Path, Contents)
-		  Return True
+		  Return Self.UploadFile(Path, Contents)
 		End Function
 	#tag EndEvent
 
@@ -940,7 +941,7 @@ Inherits Beacon.IntegrationEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UploadFile(Path As String, FileContent As String)
+		Private Function UploadFile(Path As String, FileContent As String) As Boolean
 		  Var Sock As New SimpleHTTP.SynchronousHTTPSocket
 		  Sock.RequestHeader("Authorization") = "Bearer " + Self.mAccount.AccessToken
 		  
@@ -955,7 +956,7 @@ Inherits Beacon.IntegrationEngine
 		  Sock.SetFormData(FormData)
 		  Sock.Send("POST", "https://api.nitrado.net/services/" + Self.mServiceID.ToString(Locale.Raw, "#") + "/gameservers/file_server/upload")
 		  If Self.Finished Or Self.CheckError(Sock) Then
-		    Return
+		    Return False
 		  End If
 		  Var Content As String = Sock.LastString
 		  Var Status As Integer = Sock.LastHTTPStatus
@@ -965,7 +966,7 @@ Inherits Beacon.IntegrationEngine
 		    Var Response As Dictionary = Beacon.ParseJSON(Content)
 		    If Response.Value("status") <> "success" Then
 		      Self.SetError("Error: Could not upload " + Path + "/" + Filename + ".")
-		      Return
+		      Return False
 		    End If
 		    
 		    Var Data As Dictionary = Response.Value("data")
@@ -975,7 +976,7 @@ Inherits Beacon.IntegrationEngine
 		  Catch Err As RuntimeException
 		    App.LogAPIException(Err, CurrentMethodName, Status, Content)
 		    Self.SetError(Err)
-		    Return
+		    Return False
 		  End Try
 		  
 		  Var PutSocket As New SimpleHTTP.SynchronousHTTPSocket
@@ -984,10 +985,10 @@ Inherits Beacon.IntegrationEngine
 		  PutSocket.SetRequestContent(FileContent, "text/plain")
 		  PutSocket.Send("POST", PutURL)
 		  If Self.Finished Then
-		    Return
+		    Return False
 		  End If
-		  Call Self.CheckError(PutSocket)
-		End Sub
+		  Return Not Self.CheckError(PutSocket)
+		End Function
 	#tag EndMethod
 
 

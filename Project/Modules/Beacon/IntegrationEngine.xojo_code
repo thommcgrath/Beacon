@@ -202,7 +202,7 @@ Protected Class IntegrationEngine
 	#tag Method, Flags = &h21
 		Private Function PutFile(Contents As String, Filename As String) As Boolean
 		  Var Counter As Integer = 0
-		  Var DesiredHash As String = EncodeHex(Crypto.MD5(Contents))
+		  Var DesiredHash As String = EncodeHex(Crypto.MD5(Contents)).Lowercase
 		  Self.Log("Uploading " + Filename + "…")
 		  While Counter < 3
 		    If Self.Finished Then
@@ -219,12 +219,15 @@ Protected Class IntegrationEngine
 		        Return False
 		      End If
 		      
-		      Var CheckedHash As String = EncodeHex(Crypto.MD5(CheckedContents))
+		      Var CheckedHash As String = EncodeHex(Crypto.MD5(CheckedContents)).Lowercase
 		      If DesiredHash = CheckedHash Then
 		        Return True
 		      Else
-		        Self.Log("Retrying " + Filename + "…")
+		        Self.Log("Checksum of " + Filename + " is " + CheckedHash + ", expected " + DesiredHash + ".")
+		        Self.Log(Filename + " checksum does not match, retrying…")
 		      End If
+		    Else
+		      Self.Log(Filename + " upload failed, retrying…")
 		    End If
 		    Counter = Counter + 1
 		  Wend
