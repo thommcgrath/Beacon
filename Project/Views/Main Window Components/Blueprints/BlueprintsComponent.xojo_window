@@ -79,6 +79,7 @@ Begin BeaconSubview BlueprintsComponent Implements AnimationKit.ValueAnimator
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      ToolbarIcon     =   0
       Tooltip         =   ""
       Top             =   0
       Transparent     =   True
@@ -305,6 +306,30 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ToolbarCaption"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true

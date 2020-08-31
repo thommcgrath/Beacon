@@ -14,8 +14,8 @@ Implements ObservationKit.Observable
 		  RaiseEvent ContentsChanged
 		  RaiseEvent OwnerModifiedHook
 		  
-		  If (Self.LinkedOmniBarItem Is Nil) = False Then
-		    Self.LinkedOmniBarItem.HasUnsavedChanges = Self.Changed
+		  If (Self.mLinkedOmniBarItem Is Nil) = False Then
+		    Self.mLinkedOmniBarItem.HasUnsavedChanges = Self.Changed
 		  End If
 		End Sub
 	#tag EndEvent
@@ -256,9 +256,27 @@ Implements ObservationKit.Observable
 	#tag EndHook
 
 
-	#tag Property, Flags = &h0
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mLinkedOmniBarItem
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mLinkedOmniBarItem = Value
+			  
+			  If (Self.mLinkedOmniBarItem Is Nil) = False Then
+			    // Update the new OmniBarItem to match
+			    Self.Progress = Self.Progress
+			    Self.ToolbarCaption = Self.ToolbarCaption
+			    Self.ToolbarIcon = Self.ToolbarIcon
+			    Self.mLinkedOmniBarItem.HasUnsavedChanges = Self.Changed
+			  End If
+			End Set
+		#tag EndSetter
 		LinkedOmniBarItem As OmniBarItem
-	#tag EndProperty
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mClosed As Boolean
@@ -299,6 +317,10 @@ Implements ObservationKit.Observable
 		#tag EndSetter
 		MinimumWidth As Integer
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mLinkedOmniBarItem As OmniBarItem
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mMinimumHeight As Integer = 300
@@ -343,20 +365,20 @@ Implements ObservationKit.Observable
 			    Self.NotifyObservers("BeaconSubview.Progress", Value)
 			  End If
 			  
-			  If (Self.LinkedOmniBarItem Is Nil) = False Then
+			  If (Self.mLinkedOmniBarItem Is Nil) = False Then
 			    If Value = Self.ProgressNone Then
-			      Self.LinkedOmniBarItem.HasProgressIndicator = False
+			      Self.mLinkedOmniBarItem.HasProgressIndicator = False
 			    ElseIf Value = Self.ProgressIndeterminate Then
-			      Self.LinkedOmniBarItem.HasProgressIndicator = True
-			      Self.LinkedOmniBarItem.Progress = OmniBarItem.ProgressIndeterminate
+			      Self.mLinkedOmniBarItem.HasProgressIndicator = True
+			      Self.mLinkedOmniBarItem.Progress = OmniBarItem.ProgressIndeterminate
 			    Else
-			      Self.LinkedOmniBarItem.HasProgressIndicator = True
-			      Self.LinkedOmniBarItem.Progress = Value
+			      Self.mLinkedOmniBarItem.HasProgressIndicator = True
+			      Self.mLinkedOmniBarItem.Progress = Value
 			    End If
 			  End If
 			End Set
 		#tag EndSetter
-		Attributes( Deprecated = "LinkedOmniBarItem.Progress" ) Progress As Double
+		Progress As Double
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -378,12 +400,12 @@ Implements ObservationKit.Observable
 			    Self.NotifyObservers("ToolbarCaption", Value)
 			  End If
 			  
-			  If (Self.LinkedOmniBarItem Is Nil) = False Then
-			    Self.LinkedOmniBarItem.Caption = Value
+			  If (Self.mLinkedOmniBarItem Is Nil) = False Then
+			    Self.mLinkedOmniBarItem.Caption = Value
 			  End If
 			End Set
 		#tag EndSetter
-		Attributes( Deprecated = "LinkedOmniBarItem.Caption" ) ToolbarCaption As String
+		ToolbarCaption As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -394,19 +416,17 @@ Implements ObservationKit.Observable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mToolbarIcon = Value Then
-			    Return
+			  If Self.mToolbarIcon <> Value Then
+			    Self.mToolbarIcon = Value
+			    Self.NotifyObservers("ToolbarIcon", Value)
 			  End If
 			  
-			  Self.mToolbarIcon = Value
-			  Self.NotifyObservers("ToolbarIcon", Value)
-			  
-			  If (Self.LinkedOmniBarItem Is Nil) = False Then
-			    Self.LinkedOmniBarItem.Icon = Value
+			  If (Self.mLinkedOmniBarItem Is Nil) = False Then
+			    Self.mLinkedOmniBarItem.Icon = Value
 			  End If
 			End Set
 		#tag EndSetter
-		Attributes( Deprecated = "LinkedOmniBarItem.Icon" ) ToolbarIcon As Picture
+		ToolbarIcon As Picture
 	#tag EndComputedProperty
 
 
@@ -651,6 +671,30 @@ Implements ObservationKit.Observable
 			Group="Windows Behavior"
 			InitialValue="False"
 			Type="Boolean"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Progress"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Double"
+			EditorType=""
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ToolbarCaption"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ToolbarIcon"
+			Visible=false
+			Group="Behavior"
+			InitialValue=""
+			Type="Picture"
 			EditorType=""
 		#tag EndViewProperty
 	#tag EndViewBehavior

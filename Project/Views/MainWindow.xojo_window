@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconWindow MainWindow Implements ObservationKit.Observer, NotificationKit.Receiver
+Begin BeaconWindow MainWindow Implements ObservationKit.Observer,NotificationKit.Receiver
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
@@ -107,7 +107,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer, NotificationKi
       Tooltip         =   ""
       Top             =   38
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   1200
       Begin DocumentsComponent DocumentsComponent1
@@ -135,6 +135,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer, NotificationKi
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
+         ToolbarIcon     =   0
          Tooltip         =   ""
          Top             =   38
          Transparent     =   True
@@ -188,6 +189,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer, NotificationKi
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
+         ToolbarIcon     =   0
          Top             =   38
          Transparent     =   True
          UseFocusRing    =   False
@@ -219,6 +221,7 @@ Begin BeaconWindow MainWindow Implements ObservationKit.Observer, NotificationKi
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
+         ToolbarIcon     =   0
          Tooltip         =   ""
          Top             =   38
          Transparent     =   True
@@ -549,8 +552,38 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ShowBlueprints()
+		  Self.SwitchView(Self.PageBlueprints)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowDocuments()
+		  Self.SwitchView(Self.PageDocuments)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowHelp()
+		  Self.SwitchView(Self.PageHelp)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowHome()
+		  Self.SwitchView(Self.PageHome)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Attributes( Deprecated )  Sub ShowLibraryPane(PageIndex As Integer)
 		  Self.LibraryPane1.ShowPage(PageIndex)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowPresets()
+		  Self.SwitchView(Self.PagePresets)
 		End Sub
 	#tag EndMethod
 
@@ -561,7 +594,7 @@ End
 		  If Not Preferences.OnlineEnabled Then
 		    Base.AddMenu(New MenuItem("Enable Cloud && Community", "beacon://action/enableonline"))
 		  Else
-		    If App.IdentityManager.CurrentIdentity = Nil Or App.IdentityManager.CurrentIdentity.LoginKey = "" Then
+		    If App.IdentityManager.CurrentIdentity = Nil Or App.IdentityManager.CurrentIdentity.Username = "" Then
 		      Base.AddMenu(New MenuItem("Sign In", "beacon://action/signin"))
 		    Else
 		      Var IdentityItem As New MenuItem(App.IdentityManager.CurrentIdentity.Username(True), "")

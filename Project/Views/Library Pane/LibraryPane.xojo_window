@@ -73,6 +73,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabIndex        =   0
          TabPanelIndex   =   4
          TabStop         =   True
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -105,6 +106,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabIndex        =   0
          TabPanelIndex   =   5
          TabStop         =   True
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -136,6 +138,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabIndex        =   0
          TabPanelIndex   =   6
          TabStop         =   True
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -167,6 +170,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabIndex        =   0
          TabPanelIndex   =   7
          TabStop         =   True
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -198,6 +202,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabIndex        =   0
          TabPanelIndex   =   8
          TabStop         =   True
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -229,6 +234,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -260,6 +266,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False

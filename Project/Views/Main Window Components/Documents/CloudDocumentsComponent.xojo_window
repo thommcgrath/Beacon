@@ -517,30 +517,47 @@ End
 #tag Events APISocket
 	#tag Event
 		Sub WorkCompleted()
-		  If (Self.LinkedOmniBarItem Is Nil) = False Then
-		    Self.LinkedOmniBarItem.HasProgressIndicator = False
-		  End If
+		  Self.Progress = BeaconSubview.ProgressNone
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub WorkProgress(Request As BeaconAPI.Request, BytesReceived As Int64, BytesTotal As Int64)
 		  #Pragma Unused Request
 		  
-		  If (Self.LinkedOmniBarItem Is Nil) = False Then
-		    Self.LinkedOmniBarItem.Progress = BytesReceived / BytesTotal
-		  End If
+		  Self.Progress = BytesReceived / BytesTotal
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub WorkStarted()
-		  If (Self.LinkedOmniBarItem Is Nil) = False Then
-		    Self.LinkedOmniBarItem.HasProgressIndicator = True
-		    Self.LinkedOmniBarItem.Progress = OmniBarItem.ProgressIndeterminate
-		  End If
+		  Self.Progress = BeaconSubview.ProgressIndeterminate
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ToolbarCaption"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true

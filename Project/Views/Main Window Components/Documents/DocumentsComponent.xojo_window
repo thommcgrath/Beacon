@@ -104,6 +104,7 @@ Begin BeaconPagedSubview DocumentsComponent
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
+         ToolbarIcon     =   0
          Tooltip         =   ""
          Top             =   38
          Transparent     =   True
@@ -135,6 +136,7 @@ Begin BeaconPagedSubview DocumentsComponent
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
+         ToolbarIcon     =   0
          Tooltip         =   ""
          Top             =   38
          Transparent     =   True
@@ -166,6 +168,7 @@ Begin BeaconPagedSubview DocumentsComponent
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
+         ToolbarIcon     =   0
          Tooltip         =   ""
          Top             =   38
          Transparent     =   True
@@ -249,9 +252,9 @@ End
 		  
 		  Select Case Sender.URL.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
-		    View.LinkedOmniBarItem.Icon = IconCloudDocument
+		    View.ToolbarIcon = IconCloudDocument
 		  Case Beacon.DocumentURL.TypeWeb
-		    View.LinkedOmniBarItem.Icon = IconCommunityDocument
+		    View.ToolbarIcon = IconCommunityDocument
 		  End Select
 		  
 		  Self.Views.AddPanel
@@ -516,6 +519,30 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Picture"
+		EditorType=""
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ToolbarCaption"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Visible=false
+		Group="Behavior"
+		InitialValue=""
+		Type="Double"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true

@@ -612,7 +612,7 @@ Implements NotificationKit.Receiver
 		    Case "showengrams"
 		      NotificationKit.Post(LibraryPane.Notification_ShowPane, LibraryPane.PaneEngrams)
 		    Case "showmods"
-		      Self.mMainWindow.Tools.ShowMods()
+		      Self.mMainWindow.ShowBlueprints()
 		    Case "showidentity"
 		      Self.mMainWindow.Tools.ShowIdentity()
 		    Case "showguide"
